@@ -2079,4 +2079,64 @@ atools::geo::LineString MapIls::boundary() const
     return atools::geo::LineString({position, pos1, posmid, pos2, position});
 }
 
+void MapSearchResultMixed::addFromResult(const MapSearchResult& result, const MapObjectTypes& types)
+{
+  if(types & AIRPORT)
+    addCopyAll(result.airports);
+  if(types & RUNWAYEND)
+    addCopyAll(result.runwayEnds);
+  if(types & TOWER)
+    addCopyAll(result.towers);
+  if(types & PARKING)
+    addCopyAll(result.parkings);
+  if(types & HELIPAD)
+    addCopyAll(result.helipads);
+  if(types & WAYPOINT)
+    addCopyAll(result.waypoints);
+  if(types & VOR)
+    addCopyAll(result.vors);
+  if(types & NDB)
+    addCopyAll(result.ndbs);
+  if(types & MARKER)
+    addCopyAll(result.markers);
+  if(types & ILS)
+    addCopyAll(result.ils);
+  if(types & AIRWAY)
+    addCopyAll(result.airways);
+  if(types & AIRSPACE)
+    addCopyAll(result.airspaces);
+  if(types & USERPOINTROUTE)
+    addCopyAll(result.userPointsRoute);
+  if(types & USERPOINT)
+    addCopyAll(result.userpoints);
+  if(types & LOGBOOK)
+    addCopyAll(result.logbookEntries);
+}
+
+void MapSearchResultMixed::sortByDistance(const atools::geo::Pos& pos, bool reverse)
+{
+  if(vector.isEmpty() || !pos.isValid())
+    return;
+
+  std::sort(vector.begin(), vector.end(),
+            [ = ](const MapBase *obj1, const MapBase *obj2) -> bool
+    {
+      bool result = obj1->getPosition().distanceMeterTo(pos) < obj2->getPosition().distanceMeterTo(pos);
+      return reverse ? result : !result;
+    });
+}
+
+void MapSearchResultMixed::filterByDistance(const atools::geo::Pos& pos, float maxDistanceNm)
+{
+  float maxMeter = atools::geo::nmToMeter(maxDistanceNm);
+
+  auto it = std::remove_if(vector.begin(), vector.end(), [ = ](const MapBase *obj) -> bool
+    {
+      return obj->position.distanceMeterTo(pos) > maxMeter;
+    });
+
+  if(it != vector.end())
+    vector.erase(it, vector.end());
+}
+
 } // namespace types

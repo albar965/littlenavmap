@@ -77,6 +77,7 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
 {
   if(!overview)
   {
+    runway.id = record.valueInt("runway_id");
     runway.surface = record.valueStr("surface");
     runway.shoulder = record.valueStr("shoulder", QString()); // Optional X-Plane field
     runway.primaryName = record.valueStr("primary_name");
@@ -359,6 +360,9 @@ void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLog
 
   obj.perfFile = rec.valueStr("performance_file");
   obj.routeFile = rec.valueStr("flightplan_file");
+
+  if(obj.departurePos.isValid() && obj.destinationPos.isValid())
+    obj.position = Line(obj.departurePos, obj.destinationPos).boundingRect().getCenter();
 }
 
 void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
@@ -451,13 +455,11 @@ void MapTypesFactory::fillAirway(const SqlRecord& record, map::MapAirway& airway
   airway.from = Pos(record.valueFloat("from_lonx"), record.valueFloat("from_laty"));
   airway.to = Pos(record.valueFloat("to_lonx"), record.valueFloat("to_laty"));
 
-  float north = std::max(airway.from.getLatY(), airway.to.getLatY());
-  float south = std::min(airway.from.getLatY(), airway.to.getLatY());
-  float east = std::max(airway.from.getLonX(), airway.to.getLonX());
-  float west = std::min(airway.from.getLonX(), airway.to.getLonX());
-  if(east - west > 180.f)
-    std::swap(east, west);
-  airway.bounding = Rect(west, north, east, south);
+  if(airway.from.isValid() && airway.to.isValid())
+  {
+    airway.bounding = Line(airway.from, airway.to).boundingRect();
+    airway.position = airway.bounding.getCenter();
+  }
 }
 
 void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker)
@@ -559,4 +561,6 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   // explicit Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY);
   airspace.bounding = Rect(record.valueFloat("min_lonx"), record.valueFloat("max_laty"),
                            record.valueFloat("max_lonx"), record.valueFloat("min_laty"));
+
+  airspace.position = airspace.bounding.getCenter();
 }

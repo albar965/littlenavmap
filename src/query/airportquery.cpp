@@ -238,7 +238,7 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
     {
       map::MapApron ap;
 
-      ap.apronId = apronQuery->valueInt("apron_id");
+      ap.id = apronQuery->valueInt("apron_id");
       ap.surface = apronQuery->value("surface").toString();
       ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
 
@@ -247,6 +247,9 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
         // X-Plane specific - contains bezier points for apron and taxiways.
         atools::fs::common::XpGeometry geo(apronQuery->value("geometry").toByteArray());
         ap.geometry = geo.getGeometry();
+
+        // Set position to first for validity check
+        ap.position = ap.geometry.boundary.first().node;
       }
 
       // Decode vertices into a position list - FSX/P3D
@@ -254,6 +257,9 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
       {
         atools::fs::common::BinaryGeometry geo(apronQuery->value("vertices").toByteArray());
         geo.swapGeometry(ap.vertices);
+
+        // Set position to first for validity check
+        ap.position = ap.vertices.first();
       }
 
       aprons->append(ap);

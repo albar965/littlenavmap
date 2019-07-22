@@ -126,6 +126,19 @@ void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
     });
 }
 
+template<typename TYPE>
+void sortByDistance(QVector<TYPE>& list, const atools::geo::Pos& pos)
+{
+  if(list.isEmpty() || !pos.isValid())
+    return;
+
+  std::sort(list.begin(), list.end(),
+            [ = ](const TYPE& t1, const TYPE& t2) -> bool
+  {
+    return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
+  });
+}
+
 /* Functions will stop adding of number of elements exceeds this value */
 static Q_DECL_CONSTEXPR int MAX_LIST_ENTRIES = 5;
 
