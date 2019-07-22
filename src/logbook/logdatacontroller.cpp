@@ -418,6 +418,7 @@ void LogdataController::importCsv()
       numImported += manager->importCsv(file);
       mainWindow->setStatusMessage(tr("Imported %1 %2 from CSV file.").arg(numImported).
                                    arg(numImported == 1 ? tr("entry") : tr("entries")));
+      mainWindow->showLogbookSearch();
       emit refreshLogSearch(false /* load all */, false /* keep selection */);
     }
   }
@@ -510,7 +511,6 @@ void LogdataController::convertUserdata()
                        "LOGBOOK.html#convert-errors");
       error.setHtmlMessage(html.getHtml(), true /* print to log */);
       QGuiApplication::restoreOverrideCursor();
-
       error.exec();
     }
     else
@@ -520,6 +520,7 @@ void LogdataController::convertUserdata()
       QMessageBox::information(mainWindow, QApplication::applicationName(), resultText);
     }
 
+    mainWindow->showLogbookSearch();
     emit refreshLogSearch(false /* load all */, false /* keep selection */);
     emit logDataChanged();
 

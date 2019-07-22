@@ -2123,6 +2123,7 @@ void MainWindow::routeNewFromString()
                                         !routeStringDialog.isAltitudeIncluded() /*adjust alt*/);
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
+        showFlightPlan();
         setStatusMessage(tr("Created new flight plan."));
       }
     }
@@ -2139,6 +2140,7 @@ void MainWindow::routeNew()
   {
     routeController->newFlightplan();
     mapWidget->update();
+    showFlightPlan();
     setStatusMessage(tr("Created new empty flight plan."));
   }
 }
@@ -2167,6 +2169,7 @@ void MainWindow::routeOpenFile(QString filepath)
         routeFileHistory->addFile(filepath);
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
+        showFlightPlan();
         setStatusMessage(tr("Flight plan opened."));
       }
     }
@@ -2191,6 +2194,7 @@ void MainWindow::routeAppend()
       routeFileHistory->addFile(routeFile);
       if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
         routeCenter();
+      showFlightPlan();
       setStatusMessage(tr("Flight plan appended."));
     }
   }
@@ -2230,6 +2234,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
       {
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
+        showFlightPlan();
         setStatusMessage(tr("Flight plan opened."));
       }
     }
@@ -4046,6 +4051,26 @@ void MainWindow::updateErrorLabels()
 map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
 {
   return static_cast<map::MapThemeComboIndex>(mapThemeComboBox->currentIndex());
+}
+
+void MainWindow::showFlightPlan()
+{
+  actionShortcutFlightPlanTriggered();
+}
+
+void MainWindow::showAircraftPerformance()
+{
+  actionShortcutAircraftPerformanceTriggered();
+}
+
+void MainWindow::showLogbookSearch()
+{
+  actionShortcutLogbookSearchTriggered();
+}
+
+void MainWindow::showUserpointSearch()
+{
+  actionShortcutUserpointSearchTriggered();
 }
 
 void MainWindow::webserverStatusChanged(bool running)

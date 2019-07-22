@@ -186,6 +186,12 @@ public:
     return optionsDialog;
   }
 
+  /* Show and raise windows after loading or creating new files */
+  void showFlightPlan();
+  void showAircraftPerformance();
+  void showLogbookSearch();
+  void showUserpointSearch();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -211,6 +217,7 @@ private:
 
   void restoreStateMain();
   void updateActionStates();
+
   void updateOnlineActionStates();
 
   /* Update status bar section for online status */

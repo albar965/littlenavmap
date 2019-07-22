@@ -460,6 +460,7 @@ void UserdataController::importCsv()
 
     if(!files.isEmpty())
     {
+      mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
       emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     }
@@ -488,6 +489,7 @@ void UserdataController::importXplaneUserFixDat()
     if(!file.isEmpty())
     {
       int numImported = manager->importXplane(file);
+      mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
       emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     }
@@ -515,6 +517,7 @@ void UserdataController::importGarmin()
     if(!file.isEmpty())
     {
       int numImported = manager->importGarmin(file);
+      mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
       emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     }

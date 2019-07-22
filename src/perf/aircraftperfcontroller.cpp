@@ -111,6 +111,9 @@ void AircraftPerfController::create()
     perf->resetToDefault();
     currentFilepath.clear();
     changed = false;
+
+    mainWindow->showAircraftPerformance();
+    edit();
   }
 
   updateActionStates();
@@ -149,6 +152,7 @@ void AircraftPerfController::loadFile(const QString& perfFile)
         changed = false;
         fileHistory->addFile(perfFile);
         windChangeTimer.stop();
+        mainWindow->showAircraftPerformance();
         NavApp::setStatusMessage(tr("Aircraft performance loaded."));
       }
     }
@@ -193,6 +197,7 @@ void AircraftPerfController::loadAndMerge()
       changed = dialog.hasChanged();
       windChangeTimer.stop();
       updateActionStates();
+      mainWindow->showAircraftPerformance();
       NavApp::setStatusMessage(tr("Aircraft performance merged."));
     }
   }
@@ -249,6 +254,7 @@ void AircraftPerfController::load()
         changed = false;
         fileHistory->addFile(perfFile);
         windChangeTimer.stop();
+        mainWindow->showAircraftPerformance();
         NavApp::setStatusMessage(tr("Aircraft performance loaded."));
       }
     }
