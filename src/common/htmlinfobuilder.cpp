@@ -532,40 +532,61 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
         // Table header for detailed view
         head(html, tr("Best %1 for wind").arg(rwTxt));
         html.table();
-        html.tr(QColor()).th(rwTxt).th(tr("Surface")).th(tr("Length")).th(tr("Wind")).th(QString()).trEnd();
+        html.tr(QColor()).th(rwTxt).th(tr("Surface")).th(tr("Length")).th(tr("Headwind")).th(tr("Crosswind")).trEnd();
       }
 
       // Create runway table for details =====================================
 
-      // List for not detailed view
-      QStringList runways;
-      int num = 0;
-      for(const maptools::RwEnd& end : ends)
+      if(details)
       {
-        // Stop at maximum number or tailwind
-        if((end.head < .0f && num > 1) || num > max)
-          break;
-
-        if(details)
+        // Table for detailed view
+        int num = 0;
+        for(const maptools::RwEnd& end : ends)
         {
+          // Stop at maximum number - tailwind is alread sorted out
+          if(num > max)
+            break;
+
+          QString lengthTxt;
+          if(end.minlength == end.maxlength)
+            lengthTxt = Unit::distShortFeet(end.minlength);
+          else
+            // Grouped runways have a min and max length
+            lengthTxt = tr("%1-%2").
+                        arg(Unit::distShortFeet(end.minlength, false, false)).
+                        arg(Unit::distShortFeet(end.maxlength));
+
           // Table entry ==================
           html.tr(QColor()).
           td(end.names.join(tr(", ")), atools::util::html::BOLD).
           td(end.soft ? tr("Soft") : tr("Hard")).
-          td(Unit::distShortFeet(end.length)).
-          td(formatter::windInformationHead(end.head)).
-          td(formatter::windInformationCross(end.cross)).
+          td(lengthTxt, atools::util::html::ALIGN_RIGHT).
+          td(formatter::windInformationHead(end.head), atools::util::html::ALIGN_RIGHT).
+          td(Unit::speedKts(end.cross), atools::util::html::ALIGN_RIGHT).
           trEnd();
+          num++;
         }
-        else
-          runways.append(end.names);
-        num++;
-      }
-      if(details)
         html.tableEnd();
+      }
       else
-        html.br().b(tr(" Prefers %1: ").arg(rwTxt)).text(runways.mid(0, 4).join(tr(", ")));
+      {
+        // Simple runway list for tooltips only with headwind > 2
+        QStringList runways;
+        for(const maptools::RwEnd& end : ends)
+        {
+          if(end.head <= 2)
+            break;
+          runways.append(end.names);
+        }
+
+        if(!runways.isEmpty())
+          html.br().b(tr(" Prefers %1: ").arg(rwTxt)).text(runways.mid(0, 4).join(tr(", ")));
+      }
     }
+    else if(details)
+      // Either crosswind is equally strong and/or headwind too low
+      head(html, tr("All runways good for landing or takeoff."));
+
   }
 }
 

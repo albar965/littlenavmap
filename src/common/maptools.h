@@ -230,7 +230,7 @@ struct RwEnd
 
   QStringList names;
   bool soft;
-  int cross, head, length;
+  int cross, head, minlength, maxlength;
 };
 
 /* List of runway ends */
@@ -255,8 +255,14 @@ public:
     return totalNumber;
   }
 
+  /* All runways with a headwind below will be omitted. Default is two knots. */
+  void setMinHeadWindSpeed(float value)
+  {
+    minSpeed = value;
+  }
+
 private:
-  float speed, direction;
+  float speed, direction, minSpeed = 2.f;
   int totalNumber = 0;
 };
 

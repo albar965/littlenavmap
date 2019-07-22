@@ -37,29 +37,36 @@ struct RwKey
 inline bool operator<(const RwKey& key1, const RwKey& key2)
 {
   if(key1.head != key2.head)
+    // Sort first by headwind
     return key1.head > key2.head;
+  else if(key1.soft != key2.soft)
+    // Hard runways to front
+    return key1.soft < key2.soft;
   else
+    // Last criteria crosswind
     return key1.cross > key2.cross;
 }
 
 RwEnd::RwEnd(const QString& name, const QString& surf, int lengthParam, float headWind, float crossWind)
 {
-  length = lengthParam;
+  minlength = maxlength = lengthParam;
   names.append(name);
   soft = map::isSoftSurface(surf) || map::isWaterSurface(surf);
 
   head = atools::roundToInt(headWind);
-  cross = atools::roundToInt(crossWind);
+
+  // Don't care about crosswind direction
+  cross = atools::roundToInt(std::abs(crossWind));
 }
 
 void RwVector::appendRwEnd(const QString& name, const QString& surface, int length, float heading)
 {
-  if(speed >= 2.f)
+  if(speed >= minSpeed)
   {
     float headWind, crossWind;
     atools::geo::windForCourse(headWind, crossWind, speed, direction, heading);
 
-    if(headWind >= 0.f)
+    if(headWind > minSpeed)
     {
       RwEnd end(name, surface, length, headWind, crossWind);
       append(end);
@@ -79,7 +86,14 @@ void RwVector::sortRunwayEnds()
     {
       RwKey key(end);
       if(endMap.contains(key))
-        endMap[key].names.append(end.names);
+      {
+        RwEnd& e = endMap[key];
+
+        // Merge entries
+        e.names.append(end.names);
+        e.minlength = std::min(e.minlength, end.minlength);
+        e.maxlength = std::max(e.maxlength, end.maxlength);
+      }
       else
         endMap.insert(key, end);
     }
