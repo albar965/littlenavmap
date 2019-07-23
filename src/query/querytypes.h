@@ -26,6 +26,9 @@
 #include <marble/GeoDataLatLonBox.h>
 
 namespace atools {
+namespace geo {
+class Rect;
+}
 namespace sql {
 class SqlQuery;
 }
@@ -34,8 +37,12 @@ class SqlQuery;
 class MapLayer;
 
 namespace query {
-void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                               const QString& prefix = QString());
+void bindRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query, const QString& prefix = QString());
+void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, const QString& prefix = QString());
+
+/* Run query for rect potentially splitting at anti-meridian and call callback */
+void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
+                         std::function<void(atools::sql::SqlQuery *query)> callback);
 
 QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor,
                                                     double increment);
@@ -49,7 +56,7 @@ void inflateQueryRect(Marble::GeoDataLatLonBox& rect, double factor, double incr
 template<typename TYPE>
 struct SimpleRectCache
 {
-  typedef std::function<bool (const MapLayer * curLayer, const MapLayer * mapLayer)> LayerCompareFunc;
+  typedef std::function<bool (const MapLayer *curLayer, const MapLayer *mapLayer)> LayerCompareFunc;
 
   /*
    * @param rect bounding rectangle - all objects inside this rectangle are returned

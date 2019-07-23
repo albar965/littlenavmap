@@ -70,6 +70,7 @@ InfoController::InfoController(MainWindow *parent)
   ui->textBrowserRunwayInfo->setSearchPaths(paths);
   ui->textBrowserComInfo->setSearchPaths(paths);
   ui->textBrowserApproachInfo->setSearchPaths(paths);
+  ui->textBrowserNearest->setSearchPaths(paths);
   ui->textBrowserWeatherInfo->setSearchPaths(paths);
   ui->textBrowserNavaidInfo->setSearchPaths(paths);
   ui->textBrowserAirspaceInfo->setSearchPaths(paths);
@@ -86,6 +87,7 @@ InfoController::InfoController(MainWindow *parent)
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserComInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserApproachInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserNearest, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserWeatherInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserAirspaceInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
@@ -154,6 +156,7 @@ void InfoController::currentInfoTabChanged(int index)
     case ic::INFO_RUNWAYS:
     case ic::INFO_COM:
     case ic::INFO_APPROACHES:
+    case ic::INFO_NEAREST:
     case ic::INFO_WEATHER:
     case ic::INFO_AIRSPACE:
     case ic::INFO_LOGBOOK:
@@ -444,6 +447,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserRunwayInfo->clear();
   ui->textBrowserComInfo->clear();
   ui->textBrowserApproachInfo->clear();
+  ui->textBrowserNearest->clear();
   ui->textBrowserWeatherInfo->clear();
   ui->textBrowserNavaidInfo->clear();
   ui->textBrowserLogbookInfo->clear();
@@ -588,6 +592,11 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     atools::gui::util::updateTextEdit(ui->textBrowserApproachInfo, html.getHtml(),
                                       scrollToTop, !scrollToTop /* keep selection */);
 
+    html.clear();
+    infoBuilder->nearestText(airport, html);
+    atools::gui::util::updateTextEdit(ui->textBrowserNearest, html.getHtml(),
+                                      scrollToTop, !scrollToTop /* keep selection */);
+
     foundAirport = true;
   }
 
@@ -726,7 +735,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     ic::TabIndex idx = static_cast<ic::TabIndex>(ui->tabWidgetInformation->currentIndex());
     // Is any airport related tab active?
     bool airportActive = idx == ic::INFO_AIRPORT || idx == ic::INFO_RUNWAYS || idx == ic::INFO_COM ||
-                         idx == ic::INFO_APPROACHES || idx == ic::INFO_WEATHER;
+                         idx == ic::INFO_APPROACHES || idx == ic::INFO_NEAREST || idx == ic::INFO_WEATHER;
 
     ic::TabIndex newIdx = idx;
 
@@ -784,6 +793,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       case ic::INFO_RUNWAYS:
       case ic::INFO_COM:
       case ic::INFO_APPROACHES:
+      case ic::INFO_NEAREST:
       case ic::INFO_WEATHER:
         mainWindow->setStatusMessage(tr("Showing information for airport."));
         break;
@@ -1143,6 +1153,7 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserRunwayInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserComInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserApproachInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserNearest, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserWeatherInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserAirspaceInfo, infoFontPtSize, sizePercent);

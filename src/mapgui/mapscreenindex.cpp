@@ -497,7 +497,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   getNearestHighlights(xs, ys, maxDistance, result);
 
   // Get objects from cache - already present objects will be skipped
-  mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
+  mapQuery->getNearestScreenObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
                               shown &
                               (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT |
                                map::MARKER | map::AIRWAYJ | map::AIRWAYV | map::USERPOINT | map::LOGBOOK),

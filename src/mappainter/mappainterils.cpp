@@ -96,7 +96,7 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls
   QPoint p1 = wToS(ils.pos1, size, &visible);
   QPoint p2 = wToS(ils.pos2, size, &visible);
 
-  if(ils.slope > 0.f)
+  if(ils.slope > 0.1f)
   {
     context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
     context->painter->drawPolyline(QPolygonF({p1, pmid, p2}));

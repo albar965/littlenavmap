@@ -49,6 +49,11 @@ using map::MapParking;
 using map::MapHelipad;
 using map::MapUserpoint;
 
+inline uint qHash(const MapQuery::NearestCacheKeyNavaid& key)
+{
+  return qHash(key.pos) ^ qHash(key.type) ^ qHash(key.distanceNm) ^ key.sortNearToFar;
+}
+
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
 int MapQuery::queryMaxRows = 5000;
@@ -145,6 +150,66 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
   if(ndbNearestQuery->next())
     mapTypesFactory->fillNdb(ndbNearestQuery->record(), ndb);
   ndbNearestQuery->finish();
+}
+
+map::MapSearchResultMixed *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapObjectTypes type,
+                                                       bool sortNearToFar)
+{
+  NearestCacheKeyNavaid key = {pos, distanceNm, type, sortNearToFar};
+
+  map::MapSearchResultMixed *result = nearestNavaidCache.object(key);
+
+  if(result == nullptr)
+  {
+    result = new map::MapSearchResultMixed;
+
+    // Create a rectangle that roughly covers the requested region
+    atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm));
+
+    if(type & map::VOR)
+    {
+      query::fetchObjectsForRect(rect, vorsByRectQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+        map::MapVor obj;
+        mapTypesFactory->fillVor(query->record(), obj);
+        result->addCopy(obj);
+      });
+    }
+
+    if(type & map::NDB)
+    {
+      query::fetchObjectsForRect(rect, ndbsByRectQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+        map::MapNdb obj;
+        mapTypesFactory->fillNdb(query->record(), obj);
+        result->addCopy(obj);
+      });
+    }
+
+    if(type & map::WAYPOINT)
+    {
+      query::fetchObjectsForRect(rect, waypointsByRectQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+        map::MapWaypoint obj;
+        mapTypesFactory->fillWaypoint(query->record(), obj);
+        result->addCopy(obj);
+      });
+    }
+
+    if(type & map::ILS)
+    {
+      query::fetchObjectsForRect(rect, ilsByRectQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+        map::MapIls obj;
+        mapTypesFactory->fillIls(query->record(), obj);
+        result->addCopy(obj);
+      });
+    }
+    // Remove all that are too far away
+    result->filterByDistance(pos, distanceNm);
+
+    // Sort the rest by distance
+    result->sortByDistance(pos, sortNearToFar);
+
+    nearestNavaidCache.insert(key, result);
+  }
+  return result;
 }
 
 void MapQuery::getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId)
@@ -523,10 +588,10 @@ map::MapUserpoint MapQuery::getUserdataPointById(int id)
   return up;
 }
 
-void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                 bool airportDiagram, map::MapObjectTypes types,
-                                 int xs, int ys, int screenDistance,
-                                 map::MapSearchResult& result)
+void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
+                                       bool airportDiagram, map::MapObjectTypes types,
+                                       int xs, int ys, int screenDistance,
+                                       map::MapSearchResult& result)
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
@@ -710,7 +775,7 @@ const QList<map::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& re
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, waypointsByRectQuery);
+      query::bindRect(r, waypointsByRectQuery);
       waypointsByRectQuery->exec();
       while(waypointsByRectQuery->next())
       {
@@ -738,7 +803,7 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, vorsByRectQuery);
+      query::bindRect(r, vorsByRectQuery);
       vorsByRectQuery->exec();
       while(vorsByRectQuery->next())
       {
@@ -766,7 +831,7 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, ndbsByRectQuery);
+      query::bindRect(r, ndbsByRectQuery);
       ndbsByRectQuery->exec();
       while(ndbsByRectQuery->next())
       {
@@ -796,7 +861,7 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, userdataPointByRectQuery);
+      query::bindRect(r, userdataPointByRectQuery);
       userdataPointByRectQuery->bindValue(":dist", distance);
 
       QStringList queryTypes;
@@ -849,7 +914,7 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, markersByRectQuery);
+      query::bindRect(r, markersByRectQuery);
       markersByRectQuery->exec();
       while(markersByRectQuery->next())
       {
@@ -883,7 +948,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, ilsByRectQuery);
+      query::bindRect(r, ilsByRectQuery);
 
       ilsByRectQuery->exec();
       while(ilsByRectQuery->next())
@@ -912,7 +977,7 @@ const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, 
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, airwayByRectQuery);
+      query::bindRect(r, airwayByRectQuery);
       airwayByRectQuery->exec();
       while(airwayByRectQuery->next())
       {
@@ -955,7 +1020,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, query);
+      query::bindRect(r, query);
       query->exec();
       while(query->next())
       {

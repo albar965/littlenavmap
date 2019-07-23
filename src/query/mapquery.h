@@ -139,9 +139,14 @@ public:
    * @param screenDistance maximum distance to coordinates
    * @param result will receive objects based on type
    */
-  void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
-                         map::MapObjectTypes types, int xs, int ys, int screenDistance,
-                         map::MapSearchResult& result);
+  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
+                               map::MapObjectTypes types, int xs, int ys, int screenDistance,
+                               map::MapSearchResult& result);
+
+  /* Only VOR, NDB, ILS and waypoints */
+  /* All sorted by distance to pos with a maximum distance distanceNm */
+  map::MapSearchResultMixed *getNearestNavaids(const atools::geo::Pos& pos, float distanceNm,
+                                               map::MapObjectTypes type, bool sortNearToFar = true);
 
   /*
    * Fetch airports for a map coordinate rectangle
@@ -187,6 +192,29 @@ public:
   void deInitQueries();
 
 private:
+  /* Key for nearestCache combining all query parameters */
+  struct NearestCacheKeyNavaid
+  {
+    atools::geo::Pos pos;
+    float distanceNm;
+    map::MapObjectTypes type;
+    bool sortNearToFar;
+
+    bool operator==(const NearestCacheKeyNavaid& other) const
+    {
+      return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01 && type == other.type &&
+             sortNearToFar == other.sortNearToFar;
+    }
+
+    bool operator!=(const NearestCacheKeyNavaid& other) const
+    {
+      return !operator==(other);
+    }
+
+  };
+
+  friend inline uint qHash(const MapQuery::NearestCacheKeyNavaid& key);
+
   void mapObjectByIdentInternal(map::MapSearchResult& result, map::MapObjectTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
@@ -213,6 +241,7 @@ private:
 
   /* ID/object caches */
   QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
+  QCache<NearestCacheKeyNavaid, map::MapSearchResultMixed> nearestNavaidCache;
 
   static int queryMaxRows;
 

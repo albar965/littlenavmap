@@ -505,7 +505,7 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
     for(const Marble::GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, aircraftByRectQuery);
+      query::bindRect(r, aircraftByRectQuery);
       aircraftByRectQuery->exec();
       while(aircraftByRectQuery->next())
       {

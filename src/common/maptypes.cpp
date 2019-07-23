@@ -1147,9 +1147,19 @@ QString vorText(const MapVor& vor)
   return QObject::tr("%1 %2 (%3)").arg(vorType(vor)).arg(atools::capString(vor.name)).arg(vor.ident);
 }
 
+QString vorTextShort(const MapVor& vor)
+{
+  return QObject::tr("%1 (%2)").arg(atools::capString(vor.name)).arg(vor.ident);
+}
+
 QString ndbText(const MapNdb& ndb)
 {
   return QObject::tr("NDB %1 (%2)").arg(atools::capString(ndb.name)).arg(ndb.ident);
+}
+
+QString ndbTextShort(const MapNdb& ndb)
+{
+  return QObject::tr("%1 (%2)").arg(atools::capString(ndb.name)).arg(ndb.ident);
 }
 
 QString waypointText(const MapWaypoint& waypoint)
@@ -2023,7 +2033,7 @@ QString ilsText(const MapIls& ils)
                  QString::number(ils.frequency / 1000., 'f', 2) + " / " +
                  QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0) + QObject::tr("°M");
 
-  if(ils.slope > 0)
+  if(ils.slope > 0.1f)
     text += QObject::tr(" / GS ") + QString::number(ils.slope, 'f', 1) + QObject::tr("°");
   if(ils.hasDme)
     text += QObject::tr(" / DME");
@@ -2031,9 +2041,14 @@ QString ilsText(const MapIls& ils)
   return text;
 }
 
-QString ilsTextShort(map::MapIls& ils)
+QString ilsTextShort(const map::MapIls& ils)
 {
   return ilsTextShort(ils.ident, ils.name, ils.slope > 0.f, ils.hasDme);
+}
+
+QString ilsType(const map::MapIls& ils)
+{
+  return ils.slope > 0.f ? QObject::tr("ILS") : QObject::tr("LOC");
 }
 
 QString ilsTextShort(QString ident, QString name, bool gs, bool dme)
@@ -2113,7 +2128,7 @@ void MapSearchResultMixed::addFromResult(const MapSearchResult& result, const Ma
     addCopyAll(result.logbookEntries);
 }
 
-void MapSearchResultMixed::sortByDistance(const atools::geo::Pos& pos, bool reverse)
+void MapSearchResultMixed::sortByDistance(const atools::geo::Pos& pos, bool sortNearToFar)
 {
   if(vector.isEmpty() || !pos.isValid())
     return;
@@ -2122,7 +2137,7 @@ void MapSearchResultMixed::sortByDistance(const atools::geo::Pos& pos, bool reve
             [ = ](const MapBase *obj1, const MapBase *obj2) -> bool
     {
       bool result = obj1->getPosition().distanceMeterTo(pos) < obj2->getPosition().distanceMeterTo(pos);
-      return reverse ? result : !result;
+      return sortNearToFar ? result : !result;
     });
 }
 

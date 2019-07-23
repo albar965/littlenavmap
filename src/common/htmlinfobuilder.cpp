@@ -68,6 +68,8 @@ using atools::fs::weather::Metar;
 using atools::geo::Pos;
 using atools::fs::util::roundComFrequency;
 
+namespace ahtml = atools::util::html;
+
 const float HELIPAD_DISTANCE_KM = 0.200f;
 const float STARTPOS_DISTANCE_KM = 0.500f;
 
@@ -105,15 +107,15 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
   }
 
   // Adapt title to airport status
-  Flags titleFlags = atools::util::html::BOLD;
+  Flags titleFlags = ahtml::BOLD;
   if(airport.closed())
-    titleFlags |= atools::util::html::STRIKEOUT;
+    titleFlags |= ahtml::STRIKEOUT;
   if(airport.addon())
-    titleFlags |= atools::util::html::ITALIC;
+    titleFlags |= ahtml::ITALIC;
 
   if(info)
   {
-    html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags | atools::util::html::BIG);
+    html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags | ahtml::BIG);
     html.nbsp().nbsp();
     if(rating != -1)
       html.text(atools::ratingString(rating, 5)).nbsp().nbsp();
@@ -125,7 +127,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
       // Add link to map
       html.a(tr("Map"),
              QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT),
-             atools::util::html::LINK_NO_UL);
+             ahtml::LINK_NO_UL);
   }
   else
   {
@@ -440,7 +442,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     else
       html.row2(QString(), tr("None"));
     html.tableEnd();
-  }
+  } // if(info)
 
   // Add apt.dat or BGL file links
   if(info && !print)
@@ -455,6 +457,140 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 #endif
 }
 
+void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) const
+{
+  // Do not display as tooltip
+  if(info && infoQuery != nullptr && airport.isValid())
+  {
+    if(!print)
+      airportTitle(airport, html, -1);
+
+    // Get nearest VOR and NDB ====================================
+    MapSearchResultMixed *nearestNavaids = mapQuery->getNearestNavaids(airport.position, 50, map::VOR | map::NDB);
+    nearestMapObjectsText(airport, html, nearestNavaids, tr("Nearest Radio Navaids"), true, false, 15);
+
+    // Get nearest airports that have procedures ====================================
+    MapSearchResultMixed *nearestAirports = airportQueryNav->getNearestAirportsProc(airport.position, 50);
+    nearestMapObjectsText(airport, html, nearestAirports, tr("Nearest Airports with Procedures"), false, true, 15);
+  }
+}
+
+void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBuilder& html,
+                                               const QString& type, const QString& ident, const QString& name,
+                                               const QString& freq, const map::MapBase *base, float magVar,
+                                               bool frequencyCol, bool airportCol) const
+{
+  float distance = airport.position.distanceMeterTo(base->position);
+  float bearing = normalizeCourse(airport.position.angleDegToRhumb(base->position));
+  bearing = normalizeCourse(bearing - magVar);
+
+  QString url;
+  if(base->objType == map::AIRPORT)
+    // Show by id does only work for airport (needed for centering)
+    url = QString("lnm://show?id=%1&type=%2").arg(base->id).arg(base->objType);
+  else
+    // Show all other navaids by coordinate
+    url = QString("lnm://show?lonx=%1&laty=%2").arg(base->position.getLonX()).arg(base->position.getLatY());
+
+  // Create table row ==========================
+  html.tr(QColor());
+
+  if(airportCol)
+  {
+    // Airports have no type and link is on name
+    html.td(ident, ahtml::BOLD);
+    html.tdF(ahtml::ALIGN_RIGHT).a(name, url, ahtml::LINK_NO_UL).tdEnd();
+  }
+  else
+  {
+    // Navaid type
+    html.td(type, ahtml::BOLD);
+    html.td(ident, ahtml::BOLD);
+    html.tdF(ahtml::ALIGN_RIGHT).a(name, url, ahtml::LINK_NO_UL).tdEnd();
+  }
+
+  if(frequencyCol)
+    html.td(freq, ahtml::ALIGN_RIGHT);
+
+  html.td(locale.toString(bearing, 'f', 0), ahtml::ALIGN_RIGHT).
+  td(Unit::distMeter(distance, false), ahtml::ALIGN_RIGHT).
+  trEnd();
+}
+
+void HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuilder& html,
+                                            const map::MapSearchResultMixed *nearest, const QString& header,
+                                            bool frequencyCol, bool airportCol, int maxRows) const
+{
+  if(nearest != nullptr && !nearest->getVector().isEmpty())
+  {
+    html.br().br().text(header, ahtml::BOLD | ahtml::BIG);
+    html.table();
+
+    // Create table header ==========================
+    html.tr(QColor());
+
+    if(!airportCol)
+      html.th(tr("Type"));
+
+    html.th(tr("Ident")).
+    th(tr("Name"));
+
+    if(frequencyCol)
+      // Only for navaids
+      html.th(tr("Frequency\nkHz/MHz"));
+
+    html.th(tr("Bearing\n°M")).
+    th(tr("Distance\n%1").arg(Unit::getUnitDistStr())).
+    trEnd();
+
+    // Go through mixed list of map objects ============================================
+    int row = 1;
+    for(const map::MapBase *base : nearest->getVector())
+    {
+      if(row++ > maxRows)
+        // Stop at max
+        break;
+
+      // Airport ======================================
+      const map::MapAirport *ap = base->asType<map::MapAirport>(map::AIRPORT);
+      if(ap != nullptr)
+      {
+        // Convert navdatabase airport to simulator
+        map::MapAirport simAp = mapQuery->getAirportSim(*ap);
+
+        // Omit center airport used as reference
+        if(simAp.isValid() && simAp.id != airport.id)
+          nearestMapObjectsTextRow(airport, html, QString(), simAp.ident, simAp.name,
+                                   QString(), &simAp, simAp.magvar, frequencyCol, airportCol);
+      }
+
+      const map::MapVor *vor = base->asType<map::MapVor>(map::VOR);
+      if(vor != nullptr)
+        nearestMapObjectsTextRow(airport, html, map::vorType(*vor), vor->ident, vor->name,
+                                 locale.toString(vor->frequency / 1000., 'f',
+                                                 2), vor, vor->magvar, frequencyCol, airportCol);
+
+      const map::MapNdb *ndb = base->asType<map::MapNdb>(map::NDB);
+      if(ndb != nullptr)
+        nearestMapObjectsTextRow(airport, html, tr("NDB"), ndb->ident, ndb->name,
+                                 locale.toString(ndb->frequency / 100., 'f',
+                                                 1), ndb, ndb->magvar, frequencyCol, airportCol);
+
+      const map::MapWaypoint *waypoint = base->asType<map::MapWaypoint>(map::WAYPOINT);
+      if(waypoint != nullptr)
+        nearestMapObjectsTextRow(airport, html, tr("Waypoint"), waypoint->ident, QString(),
+                                 QString(), waypoint, waypoint->magvar, frequencyCol, airportCol);
+
+      const map::MapIls *ils = base->asType<map::MapIls>(map::ILS);
+      if(ils != nullptr)
+        nearestMapObjectsTextRow(airport, html, map::ilsType(*ils), ils->ident, ils->name,
+                                 QString::number(ils->frequency / 1000., 'f',
+                                                 2), ils, ils->magvar, frequencyCol, airportCol);
+    }
+    html.tableEnd();
+  }
+}
+
 void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) const
 {
   if(info && infoQuery != nullptr)
@@ -466,9 +602,9 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
     if(recVector != nullptr)
     {
       html.table();
-      html.tr(QColor()).td(tr("Type"), atools::util::html::BOLD).
-      td(tr("Frequency"), atools::util::html::BOLD).
-      td(tr("Name"), atools::util::html::BOLD).trEnd();
+      html.tr(QColor()).td(tr("Type"), ahtml::BOLD).
+      td(tr("Frequency"), ahtml::BOLD).
+      td(tr("Name"), ahtml::BOLD).trEnd();
 
       for(const SqlRecord& rec : *recVector)
       {
@@ -558,11 +694,11 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
 
           // Table entry ==================
           html.tr(QColor()).
-          td(end.names.join(tr(", ")), atools::util::html::BOLD).
+          td(end.names.join(tr(", ")), ahtml::BOLD).
           td(end.soft ? tr("Soft") : tr("Hard")).
-          td(lengthTxt, atools::util::html::ALIGN_RIGHT).
-          td(formatter::windInformationHead(end.head), atools::util::html::ALIGN_RIGHT).
-          td(Unit::speedKts(end.cross), atools::util::html::ALIGN_RIGHT).
+          td(lengthTxt, ahtml::ALIGN_RIGHT).
+          td(formatter::windInformationHead(end.head), ahtml::ALIGN_RIGHT).
+          td(Unit::speedKts(end.cross), ahtml::ALIGN_RIGHT).
           trEnd();
           num++;
         }
@@ -614,8 +750,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         bool closedSec = recSec->valueBool("has_closed_markings");
 
         html.br().text(tr("Runway ") + recPrim->valueStr("name") + ", " + recSec->valueStr("name"),
-                       (closedPrim & closedSec ? atools::util::html::STRIKEOUT : atools::util::html::NONE)
-                       | atools::util::html::UNDERLINE | atools::util::html::BIG | atools::util::html::BOLD);
+                       (closedPrim & closedSec ? ahtml::STRIKEOUT : ahtml::NONE)
+                       | ahtml::UNDERLINE | ahtml::BIG | ahtml::BOLD);
         html.table();
 
         html.row2(tr("Size:"), Unit::distShortFeet(rec.valueFloat("length"), false) +
@@ -718,8 +854,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           QString num = hasStart ? " " + heliRec.valueStr("runway_name") : tr(" (No Start Position)");
 
           html.h3(tr("Helipad%1").arg(num),
-                  (closed ? atools::util::html::STRIKEOUT : atools::util::html::NONE)
-                  | atools::util::html::UNDERLINE);
+                  (closed ? ahtml::STRIKEOUT : ahtml::NONE)
+                  | ahtml::UNDERLINE);
           html.nbsp().nbsp();
 
           Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
@@ -727,7 +863,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           if(!print)
             html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&distance=%3").
                    arg(pos.getLonX()).arg(pos.getLatY()).arg(HELIPAD_DISTANCE_KM),
-                   atools::util::html::LINK_NO_UL).br();
+                   ahtml::LINK_NO_UL).br();
 
           if(closed)
             html.text(tr("Is Closed"));
@@ -778,7 +914,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           else
             html.a(startText, QString("lnm://show?lonx=%1&laty=%2&distance=%3").
                    arg(pos.getLonX()).arg(pos.getLatY()).arg(STARTPOS_DISTANCE_KM),
-                   atools::util::html::LINK_NO_UL);
+                   ahtml::LINK_NO_UL);
           i++;
         }
       }
@@ -793,8 +929,8 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 {
   bool closed = rec->valueBool("has_closed_markings");
 
-  html.br().br().text(rec->valueStr("name"), (closed ? (atools::util::html::STRIKEOUT) : atools::util::html::NONE) |
-                      atools::util::html::BOLD | atools::util::html::BIG);
+  html.br().br().text(rec->valueStr("name"), (closed ? (ahtml::STRIKEOUT) : ahtml::NONE) |
+                      ahtml::BOLD | ahtml::BIG);
   html.table();
   if(closed)
     html.row2(tr("Closed"), QString());
@@ -901,7 +1037,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
       // Add map link if not tooltip
       html.nbsp().nbsp();
       html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-             arg(ilsRec->valueFloat("lonx")).arg(ilsRec->valueFloat("laty")), atools::util::html::LINK_NO_UL);
+             arg(ilsRec->valueFloat("lonx")).arg(ilsRec->valueFloat("laty")), ahtml::LINK_NO_UL);
     }
     html.table();
   }
@@ -911,7 +1047,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
       html.row2(prefix + tr(":"), name);
     else
     {
-      html.br().br().text(text, atools::util::html::BOLD | atools::util::html::BIG);
+      html.br().br().text(text, ahtml::BOLD | ahtml::BIG);
       html.table();
     }
   }
@@ -922,8 +1058,8 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     bearingText(atools::geo::Pos(ilsRec->valueFloat("lonx"), ilsRec->valueFloat("laty")),
                 ilsRec->valueFloat("mag_var"), html);
 
-    html.row2If(tr("Airport:"), ilsRec->valueStr("loc_airport_ident"), atools::util::html::BOLD);
-    html.row2If(tr("Runway:"), ilsRec->valueStr("loc_runway_name"), atools::util::html::BOLD);
+    html.row2If(tr("Airport:"), ilsRec->valueStr("loc_airport_ident"), ahtml::BOLD);
+    html.row2If(tr("Runway:"), ilsRec->valueStr("loc_runway_name"), ahtml::BOLD);
 
     if(info)
     {
@@ -975,7 +1111,7 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
     html.brText(tr("Is Closed"));
 }
 
-void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html,
+void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, HtmlBuilder& html,
                                float currentAltitude) const
 {
   if(!windStack.isEmpty())
@@ -988,7 +1124,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, ato
       // Display currently selected altitude bold
       float alt = wind.pos.getAltitude();
       Flags flags =
-        atools::almostEqual(alt, currentAltitude, 10.f) ? atools::util::html::BOLD : atools::util::html::NONE;
+        atools::almostEqual(alt, currentAltitude, 10.f) ? ahtml::BOLD : ahtml::NONE;
 
       // One table row with three data fields
       html.tr().
@@ -1048,7 +1184,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
           header = tr("Approach %1 %2 %3 %4").arg(proc::procedureType(procType)).
                    arg(recApp.valueStr("suffix")).arg(fix).arg(runwayTxt);
 
-        html.h3(header, atools::util::html::UNDERLINE);
+        html.h3(header, ahtml::UNDERLINE);
 
         // Fill table ==========================================================
         html.table();
@@ -1176,7 +1312,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
                   html.row2(tr("DME Channel:"), vorReg.valueStr("channel"));
                 html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
                 html.row2(tr("DME Morse:"), morse->getCode(vorReg.valueStr("ident")),
-                          atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+                          ahtml::BOLD | ahtml::NO_ENTITIES);
               }
               else
                 html.row2(tr("DME data not found for %1/%2.").
@@ -1197,7 +1333,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
   }
 }
 
-void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const SqlRecord& recApp) const
+void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& recApp) const
 {
   QString fixType = recApp.valueStr("fix_type");
 
@@ -1233,7 +1369,7 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
         if(vor.range > 0)
           html.row2(tr("VORTAC Range:"), Unit::distNm(vor.range));
         html.row2(tr("VORTAC Morse:"), morse->getCode(
-                    vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+                    vor.ident), ahtml::BOLD | ahtml::NO_ENTITIES);
       }
       else
       {
@@ -1242,7 +1378,7 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
         if(vor.range > 0)
           html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
         html.row2(tr("VOR Morse:"), morse->getCode(
-                    vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+                    vor.ident), ahtml::BOLD | ahtml::NO_ENTITIES);
       }
     }
 #ifdef DEBUG_INFORMATION
@@ -1267,13 +1403,13 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       if(!ndb.type.isEmpty())
         html.row2(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
 
-      html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) + tr(" MHz"));
+      html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) + tr(" kHz"));
 
       if(ndb.range > 0)
         html.row2(tr("NDB Range:"), Unit::distNm(ndb.range));
 
       html.row2(tr("NDB Morse:"), morse->getCode(ndb.ident),
-                atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+                ahtml::BOLD | ahtml::NO_ENTITIES);
     }
 #ifdef DEBUG_INFORMATION
     else
@@ -1282,10 +1418,10 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
   }
 }
 
-static const Flags WEATHER_TITLE_FLAGS = atools::util::html::BOLD | atools::util::html::BIG;
+static const Flags WEATHER_TITLE_FLAGS = ahtml::BOLD | ahtml::BIG;
 
 void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapAirport& airport,
-                                  atools::util::HtmlBuilder& html) const
+                                  HtmlBuilder& html) const
 {
   if(info)
   {
@@ -1329,7 +1465,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
           // Add link to airport
           html.nbsp().nbsp();
           html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT),
-                 atools::util::html::LINK_NO_UL);
+                 ahtml::LINK_NO_UL);
         }
 
         decodedMetar(html, airport, reportAirport, met, false /* interpolated */, fsxP3d,
@@ -1344,7 +1480,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       }
     }
     else if(!print && OptionData::instance().getFlags() & opts::WEATHER_INFO_FS)
-      html.p(tr("Not connected to simulator."), atools::util::html::BOLD);
+      html.p(tr("Not connected to simulator."), ahtml::BOLD);
 
     // Active Sky metar ===========================
     if(!context.asMetar.isEmpty())
@@ -1406,7 +1542,7 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
         html.nbsp().nbsp();
         html.a(tr("Map"),
                QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT),
-               atools::util::html::LINK_NO_UL);
+               ahtml::LINK_NO_UL);
       }
 
       decodedMetar(html, airport, reportAirport, met, false, false, mapDisplay);
@@ -1446,11 +1582,11 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
 
     QDateTime oldUtc = QDateTime::currentDateTimeUtc().addSecs(-3600 * WEATHER_MAX_AGE_HOURS);
-    atools::util::html::Flags flags = atools::util::html::NONE;
+    ahtml::Flags flags = ahtml::NONE;
     QColor color;
     if(time < oldUtc)
     {
-      flags |= atools::util::html::BOLD;
+      flags |= ahtml::BOLD;
       color = Qt::red;
     }
     html.row2(tr("Time: "), locale.toString(time, QLocale::ShortFormat) + " " + time.timeZoneAbbreviation(),
@@ -1567,7 +1703,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   html.tableEnd();
 
   if(hasClouds)
-    html.p(tr("Clouds"), atools::util::html::BOLD);
+    html.p(tr("Clouds"), ahtml::BOLD);
 
   html.table();
   if(hasClouds)
@@ -1586,24 +1722,24 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   html.tableEnd();
 
   if(parsed.getCavok())
-    html.p().text(tr("CAVOK:"), atools::util::html::BOLD).br().
+    html.p().text(tr("CAVOK:"), ahtml::BOLD).br().
     text(tr("No cloud below 5,000 ft (1,500 m), visibility of 10 km (6 nm) or more")).pEnd();
 
   if(!metar.getParsedMetar().getRemark().isEmpty())
-    html.p().text(tr("Remarks:"), atools::util::html::BOLD).br().
+    html.p().text(tr("Remarks:"), ahtml::BOLD).br().
     text(metar.getParsedMetar().getRemark()).pEnd();
 
   if(!parsed.isValid())
   {
     // Print error report if invalid
-    html.p(tr("Report is not valid. Raw and clean METAR were:"), atools::util::html::BOLD, Qt::red);
+    html.p(tr("Report is not valid. Raw and clean METAR were:"), ahtml::BOLD, Qt::red);
     html.pre(metar.getMetar());
     if(metar.getMetar() != metar.getCleanMetar())
       html.pre(metar.getCleanMetar());
   }
 
   if(!parsed.getUnusedData().isEmpty())
-    html.p().text(tr("Additional information:"), atools::util::html::BOLD).br().text(parsed.getUnusedData()).pEnd();
+    html.p().text(tr("Additional information:"), ahtml::BOLD).br().text(parsed.getUnusedData()).pEnd();
 
   bestRunwaysText(airport, html, windSpeedKts, parsed.getWindDir(), 8 /* max entries */, true /* details */);
 
@@ -1630,7 +1766,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(vor.position.getLonX()).arg(vor.position.getLatY()), atools::util::html::LINK_NO_UL);
+           arg(vor.position.getLonX()).arg(vor.position.getLatY()), ahtml::LINK_NO_UL);
   }
 
   html.table();
@@ -1670,7 +1806,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
   html.row2(tr("Morse:"), morse->getCode(vor.ident),
-            atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+            ahtml::BOLD | ahtml::NO_ENTITIES);
   addCoordinates(rec, html);
   html.tableEnd();
 
@@ -1699,7 +1835,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(ndb.position.getLonX()).arg(ndb.position.getLatY()), atools::util::html::LINK_NO_UL);
+           arg(ndb.position.getLonX()).arg(ndb.position.getLatY()), ahtml::LINK_NO_UL);
   }
 
   html.table();
@@ -1722,7 +1858,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     html.row2(tr("Elevation:"), Unit::altFeet(ndb.getPosition().getAltitude()));
   if(ndb.range > 0)
     html.row2(tr("Range:"), Unit::distNm(ndb.range));
-  html.row2(tr("Morse:"), morse->getCode(ndb.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+  html.row2(tr("Morse:"), morse->getCode(ndb.ident), ahtml::BOLD | ahtml::NO_ENTITIES);
   addCoordinates(rec, html);
   html.tableEnd();
 
@@ -1755,7 +1891,7 @@ void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
       // Add map link if not tooltip
       html.nbsp().nbsp();
       html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-             arg(userpoint.position.getLonX()).arg(userpoint.position.getLatY()), atools::util::html::LINK_NO_UL);
+             arg(userpoint.position.getLonX()).arg(userpoint.position.getLatY()), ahtml::LINK_NO_UL);
     }
 
     html.table();
@@ -1763,15 +1899,15 @@ void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     bearingText(userpoint.position, NavApp::getMagVar(userpoint.position), html);
 
     // Be cautious with user defined data and adapt it for HTML display
-    html.row2If(tr("Type:"), userpoint.type, atools::util::html::REPLACE_CRLF);
-    html.row2If(tr("Ident:"), userpoint.ident, atools::util::html::REPLACE_CRLF);
-    html.row2If(tr("Region:"), userpoint.region, atools::util::html::REPLACE_CRLF);
-    html.row2If(tr("Name:"), userpoint.name, atools::util::html::REPLACE_CRLF);
+    html.row2If(tr("Type:"), userpoint.type, ahtml::REPLACE_CRLF);
+    html.row2If(tr("Ident:"), userpoint.ident, ahtml::REPLACE_CRLF);
+    html.row2If(tr("Region:"), userpoint.region, ahtml::REPLACE_CRLF);
+    html.row2If(tr("Name:"), userpoint.name, ahtml::REPLACE_CRLF);
 
     QString description = atools::elideTextLinesShort(userpoint.description, info ? 40 : 4);
-    html.row2If(tr("Description:"), description, (info ? atools::util::html::AUTOLINK : atools::util::html::NONE));
+    html.row2If(tr("Description:"), description, (info ? ahtml::AUTOLINK : ahtml::NONE));
 
-    html.row2If(tr("Tags:"), userpoint.tags, atools::util::html::REPLACE_CRLF);
+    html.row2If(tr("Tags:"), userpoint.tags, ahtml::REPLACE_CRLF);
     if(!rec.isNull("altitude"))
       html.row2If(tr("Elevation:"), Unit::altFeet(rec.valueFloat("altitude")));
 
@@ -1795,7 +1931,7 @@ void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
       head(html, tr("File"));
       html.table();
       html.row2(tr("Imported from:"), filepathTextShow(rec.valueStr("import_file_path")),
-                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+                ahtml::NO_ENTITIES | ahtml::SMALL);
       html.tableEnd();
     }
 
@@ -1807,7 +1943,7 @@ void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     qWarning() << Q_FUNC_INFO << "Empty record";
 }
 
-void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlBuilder& html) const
+void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) const
 {
   atools::sql::SqlRecord rec = NavApp::getLogdataController()->getLogEntryRecordById(logEntry.id);
 
@@ -1827,7 +1963,7 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
     // atools::geo::Rect rect = logEntry.bounding();
     // html.a(tr("Map"), QString("lnm://show?west=%1&north=%2&east=%3&south=%4").
     // arg(rect.getWest()).arg(rect.getNorth()).arg(rect.getEast()).arg(rect.getSouth()),
-    // atools::util::html::LINK_NO_UL);
+    // ahtml::LINK_NO_UL);
     // }
     // else
     // html.text(tr("Map"));
@@ -1838,12 +1974,12 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
               airportLink(html, logEntry.departureIdent, logEntry.departureName) +
               (logEntry.departureIdent.isEmpty() ? QString() :
                tr(", %1").arg(Unit::altFeet(rec.valueFloat("departure_alt")))),
-              atools::util::html::NO_ENTITIES | atools::util::html::BOLD);
+              ahtml::NO_ENTITIES | ahtml::BOLD);
     html.row2(tr("To:"),
               airportLink(html, logEntry.destinationIdent, logEntry.destinationName) +
               (logEntry.destinationIdent.isEmpty() ? QString() :
                tr(", %1").arg(Unit::altFeet(rec.valueFloat("destination_alt")))),
-              atools::util::html::NO_ENTITIES | atools::util::html::BOLD);
+              ahtml::NO_ENTITIES | ahtml::BOLD);
 
     if(info)
     {
@@ -1869,7 +2005,7 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
       html.tableEnd();
 
       // Flight =======================================================
-      html.p(tr("Flight"), atools::util::html::BOLD);
+      html.p(tr("Flight"), ahtml::BOLD);
       html.table();
     }
 
@@ -1910,7 +2046,7 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
       html.tableEnd();
 
       // Departure =======================================================
-      html.p(tr("Departure"), atools::util::html::BOLD);
+      html.p(tr("Departure"), ahtml::BOLD);
       html.table();
 
       QDateTime departTime = rec.valueDateTime("departure_time");
@@ -1939,7 +2075,7 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
       html.tableEnd();
 
       // Destination =======================================================
-      html.p(tr("Destination"), atools::util::html::BOLD);
+      html.p(tr("Destination"), ahtml::BOLD);
       html.table();
 
       html.row2If(tr("Runway:"), rec.valueStr("destination_runway"));
@@ -1968,10 +2104,10 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
       // Fuel =======================================================
       if(rec.valueFloat("trip_fuel") > 0.f || rec.valueFloat("block_fuel") > 0.f || rec.valueFloat("block_fuel") > 0.f)
       {
-        html.p(tr("Fuel"), atools::util::html::BOLD);
+        html.p(tr("Fuel"), ahtml::BOLD);
         html.table();
         bool jetfuel = rec.valueBool("is_jetfuel");
-        atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
+        ahtml::Flags flags = ahtml::ALIGN_RIGHT;
         html.row2(tr("Type:"), jetfuel ? tr("Jetfuel") : tr("Avgas"));
         html.row2(tr("Trip:"), Unit::fuelLbsAndGal(rec.valueFloat("trip_fuel"),
                                                    fromLbsToGal(jetfuel, rec.valueFloat("trip_fuel"))), flags);
@@ -1985,12 +2121,12 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
       // Files =======================================================
       if(!rec.valueStr("flightplan_file").isEmpty() || !rec.valueStr("performance_file").isEmpty())
       {
-        html.p(tr("Files"), atools::util::html::BOLD);
+        html.p(tr("Files"), ahtml::BOLD);
         html.table();
         html.row2(tr("Flight plan:"), filepathTextShow(rec.valueStr("flightplan_file")),
-                  atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+                  ahtml::NO_ENTITIES | ahtml::SMALL);
         html.row2(tr("Aircraft performance:"), filepathTextShow(rec.valueStr("performance_file")),
-                  atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+                  ahtml::NO_ENTITIES | ahtml::SMALL);
         html.tableEnd();
       }
 
@@ -2001,7 +2137,7 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
         html.p().b(tr("Description")).pEnd();
         html.table();
         html.row2(QString(), atools::elideTextLinesShort(description, info ? 200 : 4),
-                  (info ? atools::util::html::AUTOLINK : atools::util::html::NONE));
+                  (info ? ahtml::AUTOLINK : ahtml::NONE));
       }
     } // if(info)
     html.tableEnd();
@@ -2020,8 +2156,8 @@ void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) c
     if(apSim.isValid())
     {
       HtmlBuilder apHtml = html.cleared();
-      apHtml.a(apSim.ident, QString("lnm://show?airport=%1").arg(apSim.ident), atools::util::html::LINK_NO_UL);
-      html.row2(tr("Airport:"), apHtml.getHtml(), atools::util::html::NO_ENTITIES);
+      apHtml.a(apSim.ident, QString("lnm://show?airport=%1").arg(apSim.ident), ahtml::LINK_NO_UL);
+      html.row2(tr("Airport:"), apHtml.getHtml(), ahtml::NO_ENTITIES);
     }
   }
 }
@@ -2044,7 +2180,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()), atools::util::html::LINK_NO_UL);
+           arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()), ahtml::LINK_NO_UL);
   }
 
   html.table();
@@ -2176,7 +2312,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
            arg(airspace.id).
            arg(map::AIRSPACE).
            arg(airspace.src),
-           atools::util::html::LINK_NO_UL);
+           ahtml::LINK_NO_UL);
   }
 
   QStringList header;
@@ -2333,18 +2469,18 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   if(info)
   {
     tempHtml.a(tr("%1/%2").arg(from.ident).arg(from.region), QString("lnm://show?lonx=%1&laty=%2").
-               arg(from.position.getLonX()).arg(from.position.getLatY()), atools::util::html::LINK_NO_UL);
+               arg(from.position.getLonX()).arg(from.position.getLatY()), ahtml::LINK_NO_UL);
     tempHtml.text(connector);
     tempHtml.a(tr("%1/%2").arg(to.ident).arg(to.region), QString("lnm://show?lonx=%1&laty=%2").
-               arg(to.position.getLonX()).arg(to.position.getLatY()), atools::util::html::LINK_NO_UL);
+               arg(to.position.getLonX()).arg(to.position.getLatY()), ahtml::LINK_NO_UL);
   }
   else
     tempHtml.text(tr("%1/%2%3%4/%5").arg(from.ident).arg(from.region).arg(connector).arg(to.ident).arg(to.region));
 
   if(airway.direction != map::DIR_BOTH)
-    html.row2(tr("Segment One-way:"), tempHtml.getHtml(), atools::util::html::NO_ENTITIES);
+    html.row2(tr("Segment One-way:"), tempHtml.getHtml(), ahtml::NO_ENTITIES);
   else
-    html.row2(tr("Segment:"), tempHtml.getHtml(), atools::util::html::NO_ENTITIES);
+    html.row2(tr("Segment:"), tempHtml.getHtml(), ahtml::NO_ENTITIES);
 
   QString altTxt = map::airwayAltText(airway);
 
@@ -2370,7 +2506,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
                        arg(wprec.valueStr("from_region")),
                        QString("lnm://show?lonx=%1&laty=%2").
                        arg(wprec.valueFloat("from_lonx")).
-                       arg(wprec.valueFloat("from_laty")), atools::util::html::LINK_NO_UL);
+                       arg(wprec.valueFloat("from_laty")), ahtml::LINK_NO_UL);
       }
       tempLinkHtml.text(", ");
       tempLinkHtml.a(tr("%1/%2").
@@ -2378,9 +2514,9 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
                      arg(waypoints.last().valueStr("to_region")),
                      QString("lnm://show?lonx=%1&laty=%2").
                      arg(waypoints.last().valueFloat("to_lonx")).
-                     arg(waypoints.last().valueFloat("to_laty")), atools::util::html::LINK_NO_UL);
+                     arg(waypoints.last().valueFloat("to_laty")), ahtml::LINK_NO_UL);
 
-      html.row2(tr("Waypoints Ident/Region:"), tempLinkHtml.getHtml(), atools::util::html::NO_ENTITIES);
+      html.row2(tr("Waypoints Ident/Region:"), tempLinkHtml.getHtml(), ahtml::NO_ENTITIES);
     }
   }
   html.tableEnd();
@@ -2424,7 +2560,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
     QString txt = atools::elideTextLinesShort(atools::blockText(parking.airlineCodes.split(","), 10, ",", "\n"), 8);
 
     // Do not allow tooltip to break line
-    html.br().text(tr("Airline Codes: ") + txt, atools::util::html::NOBR | atools::util::html::REPLACE_CRLF);
+    html.br().text(tr("Airline Codes: ") + txt, ahtml::NOBR | ahtml::REPLACE_CRLF);
   }
 }
 
@@ -2513,7 +2649,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   {
     aircraftText = tr("User Aircraft");
     if(info && !(NavApp::getShownMapFeatures() & map::AIRCRAFT))
-      html.p(tr("User aircraft is not shown on map."), atools::util::html::BOLD);
+      html.p(tr("User aircraft is not shown on map."), ahtml::BOLD);
   }
   else
   {
@@ -2551,7 +2687,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
       aircraftText = tr("%1%2").arg(typeText).arg(type);
 
     if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
-      html.p(tr("No %2 shown on map.").arg(typeText), atools::util::html::BOLD);
+      html.p(tr("No %2 shown on map.").arg(typeText), ahtml::BOLD);
   }
 
   head(html, aircraftText);
@@ -2779,7 +2915,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   {
     aircraftTitle(aircraft, html, moreLessSwitch, less);
     if(!(NavApp::getShownMapFeatures() & map::AIRCRAFT))
-      html.p(tr("User aircraft is not shown on map."), atools::util::html::BOLD);
+      html.p(tr("User aircraft is not shown on map."), ahtml::BOLD);
   }
 
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
@@ -3052,7 +3188,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
               html.row2(tr("Cross Track Distance:"),
                         Unit::distNm(std::abs(
-                                       crossTrackDistance)) + " " + crossDirection, atools::util::html::NO_ENTITIES);
+                                       crossTrackDistance)) + " " + crossDirection, ahtml::NO_ENTITIES);
             }
             else
               html.row2(tr("Cross Track Distance:"), tr("Not along Track"));
@@ -3087,8 +3223,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       head(html, tr("Flight Plan"));
 
     html.table();
-    html.row2(tr("Departure:"), airportLink(html, aircraft.getFromIdent()), atools::util::html::NO_ENTITIES);
-    html.row2(tr("Destination:"), airportLink(html, aircraft.getToIdent()), atools::util::html::NO_ENTITIES);
+    html.row2(tr("Departure:"), airportLink(html, aircraft.getFromIdent()), ahtml::NO_ENTITIES);
+    html.row2(tr("Destination:"), airportLink(html, aircraft.getToIdent()), ahtml::NO_ENTITIES);
     html.tableEnd();
     html.br();
   }
@@ -3108,7 +3244,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     hdg.append(locale.toString(heading, 'f', 0) + tr("°M"));
 
   if(!hdg.isEmpty())
-    html.row2(tr("Heading:"), hdg.join(", "), atools::util::html::BOLD);
+    html.row2(tr("Heading:"), hdg.join(", "), ahtml::BOLD);
 
   if(userAircaft != nullptr && info)
   {
@@ -3158,7 +3294,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(aircraft.getCategory() != atools::fs::sc::BOAT)
   {
     if(longDisplay && aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()), atools::util::html::BOLD);
+      html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()), ahtml::BOLD);
   }
   html.row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
 
@@ -3184,7 +3320,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       else if(diff <= -100)
         upDown = tr(", below <b>▲</b>");
 
-      html.row2(tr("Vertical Path Dev.:"), Unit::altFeet(diff) + upDown, atools::util::html::NO_ENTITIES);
+      html.row2(tr("Vertical Path Dev.:"), Unit::altFeet(diff) + upDown, ahtml::NO_ENTITIES);
     }
   }
   html.tableEnd();
@@ -3200,7 +3336,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.table();
     if(longDisplay && aircraft.getCategory() != atools::fs::sc::BOAT &&
        aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()), atools::util::html::BOLD);
+      html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()), ahtml::BOLD);
 
     if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(longDisplay ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
@@ -3233,7 +3369,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           vspeed = 0.f;
 
         html.row2(longDisplay ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
-                  atools::util::html::NO_ENTITIES);
+                  ahtml::NO_ENTITIES);
       }
     }
     html.tableEnd();
@@ -3261,7 +3397,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       // if(!value.isEmpty())
       // Keep an empty line to avoid flickering
-      html.row2(QString(), windPtr, atools::util::html::NO_ENTITIES);
+      html.row2(QString(), windPtr, ahtml::NO_ENTITIES);
     }
 
     // Total air temperature (TAT) is also called: indicated air temperature (IAT) or ram air temperature (RAT)
@@ -3334,12 +3470,12 @@ QString HtmlInfoBuilder::airportLink(const HtmlBuilder& html, const QString& ide
     {
       if(name.isEmpty())
         // Ident only
-        builder.a(ident, QString("lnm://show?airport=%1").arg(ident), atools::util::html::LINK_NO_UL);
+        builder.a(ident, QString("lnm://show?airport=%1").arg(ident), ahtml::LINK_NO_UL);
       else
       {
         // Name and ident
         builder.text(tr("%1 (").arg(name));
-        builder.a(ident, QString("lnm://show?airport=%1").arg(ident), atools::util::html::LINK_NO_UL);
+        builder.a(ident, QString("lnm://show?airport=%1").arg(ident), ahtml::LINK_NO_UL);
         builder.text(tr(")"));
       }
     }
@@ -3388,14 +3524,14 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
 
 #endif
 
-  html.text(title, atools::util::html::BOLD | atools::util::html::BIG);
+  html.text(title, ahtml::BOLD | ahtml::BIG);
 
   if(info && !print)
   {
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(aircraft.getPosition().getLonX()).arg(aircraft.getPosition().getLatY()),
-           atools::util::html::LINK_NO_UL);
+           ahtml::LINK_NO_UL);
     if(moreLessSwitch)
     {
       // Show more/less links =============================================
@@ -3405,12 +3541,12 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
         {"align", "right"}, {"valign", "top"}
       });
 
-      atools::util::HtmlBuilder linkHtml(html.cleared());
+      HtmlBuilder linkHtml(html.cleared());
       linkHtml.a(less ? tr("More") : tr("Less"), QString("lnm://do?lessprogress"),
-                 atools::util::html::LINK_NO_UL);
+                 ahtml::LINK_NO_UL);
 
-      atools::util::HtmlBuilder disabledLinkHtml(html.cleared());
-      disabledLinkHtml.text(less ? tr("Less") : tr("More"), atools::util::html::BOLD);
+      HtmlBuilder disabledLinkHtml(html.cleared());
+      disabledLinkHtml.text(less ? tr("Less") : tr("More"), ahtml::BOLD);
 
       if(less)
         html.textHtml(linkHtml).nbsp().nbsp().textHtml(disabledLinkHtml);
@@ -3438,7 +3574,7 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
   head(html, tr("Scenery"));
   html.table();
   html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")),
-            atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+            ahtml::NO_ENTITIES | ahtml::SMALL);
   html.tableEnd();
 }
 
@@ -3452,12 +3588,12 @@ void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& h
     html.table();
 
     html.row2(tr("Path:"), filepathTextOpen(AirportFiles::getAirportFilesBase(airport.ident), true),
-              atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+              ahtml::NO_ENTITIES | ahtml::SMALL);
 
     int i = 0;
     for(const QFileInfo& file : airportFiles)
       html.row2(i++ > 0 ? QString() : tr("Files:"), filepathTextOpen(file, false),
-                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+                ahtml::NO_ENTITIES | ahtml::SMALL);
     html.tableEnd();
   }
 }
@@ -3479,11 +3615,11 @@ void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& 
         title = i == 0 ? tr("X-Plane") : QString();
 
       html.row2(title, filepathTextShow(rec.valueStr("filepath")),
-                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+                ahtml::NO_ENTITIES | ahtml::SMALL);
       i++;
     }
 
-    atools::util::html::Flags linkFlags = atools::util::html::SMALL | atools::util::html::LINK_NO_UL;
+    ahtml::Flags linkFlags = ahtml::SMALL | ahtml::LINK_NO_UL;
     QStringList links;
 
     if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
@@ -3496,7 +3632,7 @@ void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& 
                                     arg(airport.ident), linkFlags).getHtml());
 
     if(!links.isEmpty())
-      html.row2(QString(), links.join(tr(", ")), atools::util::html::NO_ENTITIES);
+      html.row2(QString(), links.join(tr(", ")), ahtml::NO_ENTITIES);
   }
 
   html.tableEnd();
@@ -3507,7 +3643,7 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath) const
   HtmlBuilder link(true);
 
   if(QFileInfo::exists(filepath))
-    link.a(filepath, QString("lnm://show?filepath=%1").arg(filepath), atools::util::html::LINK_NO_UL);
+    link.a(filepath, QString("lnm://show?filepath=%1").arg(filepath), ahtml::LINK_NO_UL);
   else
     link.text(filepath);
   return link.getHtml();
@@ -3519,7 +3655,7 @@ QString HtmlInfoBuilder::filepathTextOpen(const QFileInfo& filepath, bool showPa
 
   if(filepath.exists())
     link.a(showPath ? filepath.filePath() : filepath.fileName(),
-           QUrl::fromLocalFile(filepath.filePath()).toString(QUrl::EncodeSpaces), atools::util::html::LINK_NO_UL);
+           QUrl::fromLocalFile(filepath.filePath()).toString(QUrl::EncodeSpaces), ahtml::LINK_NO_UL);
   return link.getHtml();
 }
 
@@ -3549,7 +3685,7 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text) const
 void HtmlInfoBuilder::navaidTitle(HtmlBuilder& html, const QString& text) const
 {
   if(info)
-    html.text(text, atools::util::html::BOLD | atools::util::html::BIG);
+    html.text(text, ahtml::BOLD | ahtml::BIG);
   else
     html.b(text);
 }

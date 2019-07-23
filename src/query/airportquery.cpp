@@ -20,6 +20,7 @@
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
 #include "common/maptools.h"
+#include "query/querytypes.h"
 #include "fs/common/binarygeometry.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
@@ -38,6 +39,11 @@ using namespace atools::geo;
 using map::MapAirport;
 using map::MapParking;
 using map::MapHelipad;
+
+inline uint qHash(const AirportQuery::NearestCacheKeyAirport& key)
+{
+  return qHash(key.pos) ^ qHash(key.distanceNm) ^ key.sortNearToFar;
+}
 
 /* maximum difference in angle for aircraft to recognize the right runway */
 const static float MAX_HEADING_RUNWAY_DEVIATION = 20.f;
@@ -501,6 +507,38 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
   }
 }
 
+map::MapSearchResultMixed *AirportQuery::getNearestAirportsProc(const Pos& pos, float distanceNm,
+                                                                bool sortNearToFar)
+{
+  NearestCacheKeyAirport key = {pos, distanceNm, sortNearToFar};
+
+  map::MapSearchResultMixed *result = nearestAirportCache.object(key);
+
+  if(result == nullptr)
+  {
+    result = new map::MapSearchResultMixed;
+
+    // Create a rectangle that roughly covers the requested region
+    atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm));
+
+    bool xplane = NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11;
+    query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+      map::MapAirport obj;
+      mapTypesFactory->fillAirport(query->record(), obj, true, navdata, xplane);
+      result->addCopy(obj);
+    });
+
+    // Remove all that are too far away
+    result->filterByDistance(pos, distanceNm);
+
+    // Sort the rest by distance
+    result->sortByDistance(pos, sortNearToFar);
+
+    nearestAirportCache.insert(key, result);
+  }
+  return result;
+}
+
 void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
                                               const QVector<map::MapRunway>& runways, const atools::geo::Pos& pos,
                                               float heading)
@@ -801,6 +839,10 @@ void AirportQuery::initQueries()
   airportCoordsByIdentQuery = new SqlQuery(db);
   airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = :ident ");
 
+  airportByRectAndProcQuery = new SqlQuery(db);
+  airportByRectAndProcQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
+                                     " and num_approach > 0 " + whereLimit);
+
   runwayEndByIdQuery = new SqlQuery(db);
   runwayEndByIdQuery->prepare("select runway_end_id, end_type, name, heading, left_vasi_pitch, right_vasi_pitch, is_pattern, "
                               "left_vasi_type, right_vasi_type, "
@@ -941,6 +983,9 @@ void AirportQuery::deInitQueries()
 
   delete airportCoordsByIdentQuery;
   airportCoordsByIdentQuery = nullptr;
+
+  delete airportByRectAndProcQuery;
+  airportByRectAndProcQuery = nullptr;
 
   delete runwayEndByIdQuery;
   runwayEndByIdQuery = nullptr;

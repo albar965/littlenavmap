@@ -4906,6 +4906,41 @@ Wind speed will be interpolated for climb and descent phases.</string>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="tabNearest">
+        <attribute name="title">
+         <string>Nearest</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Nearest navaids and airports in relation to airport</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_35">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserNearest">
+           <property name="placeholderText">
+            <string>No airport selected.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="tabWeatherInfo">
         <attribute name="title">
          <string>Weather</string>

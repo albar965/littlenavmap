@@ -196,7 +196,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
 
         for(const QString& typeStr : typeStrings)
         {
-          query::bindCoordinatePointInRect(r, query);
+          query::bindRect(r, query);
           query->bindValue(":type", typeStr);
 
           if(alt > 0)

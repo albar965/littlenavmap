@@ -52,6 +52,8 @@ struct MapProcedurePoint;
 struct MapProcedureRef;
 struct MapUserpoint;
 struct MapLogbookEntry;
+struct MapBase;
+struct MapSearchResultMixed;
 }
 
 namespace atools {
@@ -148,6 +150,10 @@ public:
    */
   void procedureText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
+  /* Get information for navaids and airports near the currently displayed airport */
+  void nearestText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+
+  /* Create HTML for decoded weather report for current airport */
   void weatherText(const map::WeatherContext& context, const map::MapAirport& airport,
                    atools::util::HtmlBuilder& html) const;
 
@@ -174,6 +180,9 @@ public:
    * @param background Background color for icons
    */
   void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
+
+  /* Get information for one ILS */
+  void ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
 
   /* Description for user defined points */
   void userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
@@ -275,10 +284,17 @@ public:
     symbolSizeTitle = value;
   }
 
-  void ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
-
 private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
+
+  void nearestMapObjectsText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
+                             const map::MapSearchResultMixed *nearest, const QString& header, bool frequencyCol,
+                             bool airportCol,
+                             int maxRows) const;
+  void nearestMapObjectsTextRow(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const QString& type,
+                                const QString& ident, const QString& name, const QString& freq,
+                                const map::MapBase *base,
+                                float magVar, bool frequencyCol, bool airportCol) const;
 
   /* Add scenery entries and links into table */
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
@@ -370,6 +386,7 @@ private:
   atools::fs::util::MorseCode *morse;
   bool info, print;
   QLocale locale;
+
 };
 
 #endif // MAPHTMLINFOBUILDER

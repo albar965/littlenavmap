@@ -104,11 +104,20 @@ bool isSoftSurface(const QString& surface);
 
 // =====================================================================
 /* Base struct for all map objects covering id and position
- * Position is used to check for validity, i.e. not initialized objects */
+ * Position is used to check for validity, i.e. not initialized objects
+ * Object type can be NONE if no polymorphism is needed */
 struct MapBase
 {
+  MapBase(map::MapObjectType type)
+    : objType(type)
+  {
+  }
+
   int id;
   atools::geo::Pos position;
+
+  /* Use simple type information to avoid vtable and RTTI overhead. Avoid QFlags here. */
+  map::MapObjectType objType;
 
   bool isValid() const
   {
@@ -125,6 +134,15 @@ struct MapBase
     return id;
   }
 
+  template<typename TYPE>
+  const TYPE *asType(map::MapObjectTypes type) const
+  {
+    if(objType == type)
+      return static_cast<const TYPE *>(this);
+    else
+      return nullptr;
+  }
+
 };
 
 // =====================================================================
@@ -133,6 +151,10 @@ struct MapBase
 struct MapAirport
   : public MapBase
 {
+  MapAirport() : MapBase(map::AIRPORT)
+  {
+  }
+
   QString ident, /* ICAO ident*/ name, region;
   int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0;
   int rating = -1;
@@ -192,6 +214,10 @@ struct MapAirport
 struct MapRunway
   : public MapBase
 {
+  MapRunway() : MapBase(map::NONE)
+  {
+  }
+
   QString surface, shoulder, primaryName, secondaryName, edgeLight;
   int length /* ft */, primaryEndId, secondaryEndId;
   float heading, patternAlt;
@@ -243,6 +269,10 @@ struct MapRunway
 struct MapRunwayEnd
   : public MapBase
 {
+  MapRunwayEnd() : MapBase(map::RUNWAYEND)
+  {
+  }
+
   QString name, leftVasiType, rightVasiType, pattern;
   float heading, leftVasiPitch = 0.f, rightVasiPitch = 0.f;
   bool secondary;
@@ -254,6 +284,10 @@ struct MapRunwayEnd
 struct MapApron
   : public MapBase
 {
+  MapApron() : MapBase(map::NONE)
+  {
+  }
+
   /* FSX/P3D simple geometry */
   atools::geo::LineString vertices;
 
@@ -291,6 +325,10 @@ struct MapTaxiPath
 struct MapParking
   : public MapBase
 {
+  MapParking() : MapBase(map::PARKING)
+  {
+  }
+
   QString type, name, airlineCodes /* Comma separated list of airline codes */;
   int airportId /* database id airport.airport_id */;
   int number, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
@@ -304,6 +342,10 @@ struct MapParking
 struct MapStart
   : public MapBase
 {
+  MapStart() : MapBase(map::NONE)
+  {
+  }
+
   QString type /* RUNWAY, HELIPAD or WATER */, runwayName /* not empty if this is a runway start */;
   int airportId /* database id airport.airport_id */;
   int heading, helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
@@ -314,6 +356,10 @@ struct MapStart
 struct MapHelipad
   : public MapBase
 {
+  MapHelipad() : MapBase(map::HELIPAD)
+  {
+  }
+
   QString surface, type, runwayName;
   int startId, airportId, length, width, heading, start;
   bool closed, transparent;
@@ -325,6 +371,10 @@ struct MapHelipad
 struct MapVor
   : public MapBase
 {
+  MapVor() : MapBase(map::VOR)
+  {
+  }
+
   QString ident, region, type /* HIGH, LOW, TERMINAL */, name /*, airportIdent*/;
   float magvar;
   int frequency /* MHz * 1000 */, range /* nm */;
@@ -348,6 +398,10 @@ struct MapVor
 struct MapNdb
   : public MapBase
 {
+  MapNdb() : MapBase(map::NDB)
+  {
+  }
+
   QString ident, region, type /* HH, H, COMPASS_POINT, etc. */, name /*, airportIdent*/;
   float magvar;
   int frequency /* kHz * 100 */, range /* nm */;
@@ -359,6 +413,10 @@ struct MapNdb
 struct MapWaypoint
   : public MapBase
 {
+  MapWaypoint() : MapBase(map::WAYPOINT)
+  {
+  }
+
   float magvar;
   QString ident, region, type /* NAMED, UNAMED, etc. *//*, airportIdent*/;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
@@ -379,6 +437,10 @@ struct MapAirwayWaypoint
 struct MapUserpointRoute
   : public MapBase
 {
+  MapUserpointRoute() : MapBase(map::USERPOINTROUTE)
+  {
+  }
+
   QString name;
   float magvar;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
@@ -389,6 +451,10 @@ struct MapUserpointRoute
 struct MapUserpoint
   : public MapBase
 {
+  MapUserpoint() : MapBase(map::USERPOINT)
+  {
+  }
+
   QString name, ident, region, type, description, tags;
   bool temp = false;
 };
@@ -398,6 +464,10 @@ struct MapUserpoint
 struct MapLogbookEntry
   : public MapBase
 {
+  MapLogbookEntry() : MapBase(map::LOGBOOK)
+  {
+  }
+
   QString departureName, departureIdent, departureRunway,
            destinationName, destinationIdent, destinationRunway,
            description, simulator, aircraftType,
@@ -443,6 +513,10 @@ enum MapAirwayDirection
 struct MapAirway
   : public MapBase
 {
+  MapAirway() : MapBase(map::AIRWAY)
+  {
+  }
+
   QString name;
   map::MapAirwayType type;
   int fromWaypointId, toWaypointId /* all database ids */;
@@ -461,6 +535,10 @@ struct MapAirway
 struct MapMarker
   : public MapBase
 {
+  MapMarker() : MapBase(map::MARKER)
+  {
+  }
+
   QString type, ident;
   int heading;
 };
@@ -471,6 +549,10 @@ struct MapMarker
 struct MapIls
   : public MapBase
 {
+  MapIls() : MapBase(map::ILS)
+  {
+  }
+
   QString ident, name, region;
   float magvar, slope, heading, width;
   int frequency /* MHz * 1000 */, range /* nm */;
@@ -487,6 +569,10 @@ struct MapIls
 struct MapAirspace
   : public MapBase
 {
+  MapAirspace() : MapBase(map::AIRSPACE)
+  {
+  }
+
   int minAltitude, maxAltitude;
   QString name, /* Airspace name or callsign for online ATC */
           comName, comType, minAltitudeType, maxAltitudeType,
@@ -679,7 +765,7 @@ struct MapSearchResultMixed
   void addFromResult(const map::MapSearchResult& result, const MapObjectTypes& types = map::ALL);
 
   /* Sort objects by distance to given position from closest to farthest */
-  void sortByDistance(const atools::geo::Pos& pos, bool reverse);
+  void sortByDistance(const atools::geo::Pos& pos, bool sortNearToFar);
 
   /* Remove all objects which are more far away  from pos than max distance */
   void filterByDistance(const atools::geo::Pos& pos, float maxDistanceNm);
@@ -854,7 +940,8 @@ const QString& navTypeNameNdb(const QString& type);
 const QString& navTypeNameWaypoint(const QString& type);
 
 QString ilsText(const map::MapIls& ils);
-QString ilsTextShort(map::MapIls& ils);
+QString ilsType(const MapIls& ils);
+QString ilsTextShort(const MapIls& ils);
 QString ilsTextShort(QString ident, QString name, bool gs, bool dme);
 
 QString edgeLights(const QString& type);
@@ -913,9 +1000,11 @@ QString airportText(const map::MapAirport& airport, int elideName = 1000);
 QString airportTextShort(const map::MapAirport& airport);
 QString vorFullShortText(const map::MapVor& vor);
 QString vorText(const map::MapVor& vor);
+QString vorTextShort(const MapVor& vor);
 QString vorType(const map::MapVor& vor);
 QString ndbFullShortText(const map::MapNdb& ndb);
 QString ndbText(const map::MapNdb& ndb);
+QString ndbTextShort(const MapNdb& ndb);
 QString waypointText(const map::MapWaypoint& waypoint);
 QString userpointRouteText(const map::MapUserpointRoute& userpoint);
 QString userpointText(const MapUserpoint& userpoint);

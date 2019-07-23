@@ -18,6 +18,7 @@
 #include "query/querytypes.h"
 
 #include "sql/sqlquery.h"
+#include "geo/rect.h"
 
 using namespace Marble;
 
@@ -47,13 +48,22 @@ void inflateQueryRect(Marble::GeoDataLatLonBox& rect, double factor, double incr
  * @param query
  * @param prefix used to prefix each bind variable
  */
-void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                               const QString& prefix)
+void bindRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
+              const QString& prefix)
 {
   query->bindValue(":" + prefix + "leftx", rect.west(GeoDataCoordinates::Degree));
   query->bindValue(":" + prefix + "rightx", rect.east(GeoDataCoordinates::Degree));
   query->bindValue(":" + prefix + "bottomy", rect.south(GeoDataCoordinates::Degree));
   query->bindValue(":" + prefix + "topy", rect.north(GeoDataCoordinates::Degree));
+}
+
+void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
+              const QString& prefix)
+{
+  query->bindValue(":" + prefix + "leftx", rect.getWest());
+  query->bindValue(":" + prefix + "rightx", rect.getEast());
+  query->bindValue(":" + prefix + "bottomy", rect.getSouth());
+  query->bindValue(":" + prefix + "topy", rect.getNorth());
 }
 
 /* Inflates the rectangle and splits it at the antimeridian (date line) if it overlaps */
@@ -82,6 +92,18 @@ QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonB
   }
   else
     return QList<GeoDataLatLonBox>({newRect});
+}
+
+void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
+                         std::function<void(atools::sql::SqlQuery *)> callback)
+{
+  for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())
+  {
+    query::bindRect(r, query);
+    query->exec();
+    while(query->next())
+      callback(query);
+  }
 }
 
 }
