@@ -94,7 +94,7 @@ public:
   virtual void styleChanged() override;
 
   /* Causes a selectionChanged signal to be emitted so map hightlights and status label can be updated */
-  virtual void updateTableSelection() override;
+  virtual void updateTableSelection(bool noFollow) override;
 
   /* Has to be called by the derived classes. Connects double click, context menu and some other actions */
   virtual void connectSearchSlots() override;
@@ -202,7 +202,7 @@ private:
   virtual void restoreViewState(bool distSearchActive) = 0;
   virtual void tabDeactivated() override;
 
-  void tableSelectionChanged();
+  void tableSelectionChangedInternal(bool noFollow);
   void resetView();
   void editStartTimer();
   void doubleClick(const QModelIndex& index);
@@ -227,6 +227,8 @@ private:
   void updateFromMaxSpinBox(int value, const Column *col);
   void showRow(int row, bool showInfo);
   void fontChanged();
+  void showApproaches(bool custom);
+  void fetchedMore();
 
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;
@@ -236,7 +238,6 @@ private:
 
   ViewEventFilter *viewEventFilter = nullptr;
   SearchWidgetEventFilter *widgetEventFilter = nullptr;
-  void showApproaches(bool custom);
 
 };
 

@@ -137,7 +137,7 @@ void SearchController::tabChanged(int index)
       allSearchTabs.at(i)->tabDeactivated();
   }
 
-  allSearchTabs.at(index)->updateTableSelection();
+  allSearchTabs.at(index)->updateTableSelection(true /* No follow */);
 }
 
 void SearchController::saveState()

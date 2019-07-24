@@ -275,9 +275,9 @@ void SearchBaseTable::styleChanged()
   view->update();
 }
 
-void SearchBaseTable::updateTableSelection()
+void SearchBaseTable::updateTableSelection(bool noFollow)
 {
-  tableSelectionChanged();
+  tableSelectionChangedInternal(noFollow);
 }
 
 void SearchBaseTable::searchMarkChanged(const atools::geo::Pos& mark)
@@ -555,8 +555,7 @@ void SearchBaseTable::connectSearchSlots()
   reconnectSelectionModel();
 
   connect(controller->getSqlModel(), &SqlModel::modelReset, this, &SearchBaseTable::reconnectSelectionModel);
-  void (SearchBaseTable::*selChangedPtr)() = &SearchBaseTable::tableSelectionChanged;
-  connect(controller->getSqlModel(), &SqlModel::fetchedMore, this, selChangedPtr);
+  connect(controller->getSqlModel(), &SqlModel::fetchedMore, this, &SearchBaseTable::fetchedMore);
 
   connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &SearchBaseTable::dockVisibilityChanged);
 }
@@ -595,7 +594,7 @@ void SearchBaseTable::tableSelectionChanged(const QItemSelection& selected, cons
   Q_UNUSED(selected);
   Q_UNUSED(deselected);
 
-  tableSelectionChanged();
+  tableSelectionChangedInternal(false /* follow selection */);
 }
 
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
@@ -603,10 +602,15 @@ void SearchBaseTable::dockVisibilityChanged(bool visible)
 {
   Q_UNUSED(visible);
 
-  tableSelectionChanged();
+  tableSelectionChangedInternal(true /* do not follow selection */);
 }
 
-void SearchBaseTable::tableSelectionChanged()
+void SearchBaseTable::fetchedMore()
+{
+  tableSelectionChangedInternal(true /* do not follow selection */);
+}
+
+void SearchBaseTable::tableSelectionChangedInternal(bool noFollow)
 {
   QItemSelectionModel *sm = view->selectionModel();
 
@@ -619,12 +623,15 @@ void SearchBaseTable::tableSelectionChanged()
   emit selectionChanged(this, selectedRows, controller->getVisibleRowCount(), controller->getTotalRowCount());
 
   // Follow selection =======================
-  if(sm != nullptr &&
-     sm->currentIndex().isValid() &&
-     sm->isSelected(sm->currentIndex()) &&
-     followModeAction() != nullptr &&
-     followModeAction()->isChecked())
-    showRow(sm->currentIndex().row(), false /* show info */);
+  if(!noFollow)
+  {
+    if(sm != nullptr &&
+       sm->currentIndex().isValid() &&
+       sm->isSelected(sm->currentIndex()) &&
+       followModeAction() != nullptr &&
+       followModeAction()->isChecked())
+      showRow(sm->currentIndex().row(), false /* show info */);
+  }
 }
 
 void SearchBaseTable::preDatabaseLoad()
@@ -655,14 +662,14 @@ void SearchBaseTable::refreshData(bool loadAll, bool keepSelection)
 {
   controller->refreshData(loadAll, keepSelection);
 
-  tableSelectionChanged();
+  tableSelectionChangedInternal(true /* do not follow selection */);
 }
 
 void SearchBaseTable::refreshView()
 {
   controller->refreshView();
 
-  tableSelectionChanged();
+  tableSelectionChangedInternal(true /* do not follow selection */);
 }
 
 int SearchBaseTable::getVisibleRowCount() const

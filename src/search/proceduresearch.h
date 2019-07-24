@@ -82,7 +82,7 @@ public:
   virtual void getSelectedMapObjects(map::MapSearchResult& result) const override;
   virtual void connectSearchSlots() override;
   virtual void updateUnits() override;
-  virtual void updateTableSelection() override;
+  virtual void updateTableSelection(bool noFollow) override;
   virtual void clearSelection() override;
   virtual bool hasSelection() const override;
 
@@ -132,6 +132,7 @@ private:
   virtual void tabDeactivated() override;
 
   void itemSelectionChanged();
+  void itemSelectionChangedInternal(bool noFollow);
   void itemDoubleClicked(QTreeWidgetItem *item, int column);
 
   /* Load legs dynamically as approaches or transitions are expanded */

@@ -637,7 +637,7 @@ void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref)
   }
 }
 
-void ProcedureSearch::itemSelectionChanged()
+void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
 {
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
   if(items.isEmpty() || NavApp::getMainUi()->tabWidgetSearch->currentIndex() != tabIndex)
@@ -663,7 +663,7 @@ void ProcedureSearch::itemSelectionChanged()
         fetchSingleTransitionId(ref);
         emit procedureSelected(ref);
 
-        if(!ref.isLeg() && NavApp::getMainUi()->actionSearchProcedureFollowSelection->isChecked())
+        if(!noFollow && !ref.isLeg() && NavApp::getMainUi()->actionSearchProcedureFollowSelection->isChecked())
           showEntry(item, false /* double click*/, true /* zoom */);
       }
 
@@ -671,7 +671,7 @@ void ProcedureSearch::itemSelectionChanged()
       {
         // Highlight legs
         emit procedureLegSelected(ref);
-        if(NavApp::getMainUi()->actionSearchProcedureFollowSelection->isChecked())
+        if(!noFollow && NavApp::getMainUi()->actionSearchProcedureFollowSelection->isChecked())
           showEntry(item, false /* double click*/, false /* zoom */);
       }
       else
@@ -1503,7 +1503,7 @@ void ProcedureSearch::updateUnits()
 {
 }
 
-void ProcedureSearch::updateTableSelection()
+void ProcedureSearch::updateTableSelection(bool noFollow)
 {
   if(NavApp::getMainUi()->tabWidgetSearch->currentIndex() != tabIndex)
   {
@@ -1512,7 +1512,7 @@ void ProcedureSearch::updateTableSelection()
     emit procedureLegSelected(proc::MapProcedureRef());
   }
   else
-    itemSelectionChanged();
+    itemSelectionChangedInternal(noFollow);
 }
 
 void ProcedureSearch::clearSelection()
@@ -1535,13 +1535,18 @@ void ProcedureSearch::dockVisibilityChanged(bool visible)
     emit procedureLegSelected(proc::MapProcedureRef());
   }
   else
-    itemSelectionChanged();
+    itemSelectionChangedInternal(true /* do not follow selection */);
 }
 
 void ProcedureSearch::tabDeactivated()
 {
   emit procedureSelected(proc::MapProcedureRef());
   emit procedureLegSelected(proc::MapProcedureRef());
+}
+
+void ProcedureSearch::itemSelectionChanged()
+{
+  itemSelectionChangedInternal(false /* follow selection */);
 }
 
 proc::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)

@@ -67,7 +67,7 @@ public:
   virtual void updateUnits() = 0;
 
   /* Causes a selectionChanged signal to be emitted so map hightlights and status label can be updated */
-  virtual void updateTableSelection() = 0;
+  virtual void updateTableSelection(bool noFollow) = 0;
   virtual void tabDeactivated() = 0;
 
   virtual void clearSelection() = 0;
