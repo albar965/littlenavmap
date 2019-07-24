@@ -6764,13 +6764,13 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove all Ranges, Measurements and Patterns</string>
+    <string>&amp;Remove all Ranges, Measurements, Patterns and Holds</string>
    </property>
    <property name="toolTip">
-    <string>Remove all range rings, distance measurement lines and airport traffic patterns from map</string>
+    <string>Remove all range rings, measurements,  traffic patterns and holds from map</string>
    </property>
    <property name="statusTip">
-    <string>Remove all range rings, distance measurement lines and airport traffic patterns from map</string>
+    <string>Remove all range rings, measurements,  traffic patterns and holds from map</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+H</string>
