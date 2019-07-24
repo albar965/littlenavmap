@@ -2143,6 +2143,9 @@ void MapSearchResultMixed::sortByDistance(const atools::geo::Pos& pos, bool sort
 
 void MapSearchResultMixed::filterByDistance(const atools::geo::Pos& pos, float maxDistanceNm)
 {
+  if(vector.isEmpty() || !pos.isValid())
+    return;
+
   float maxMeter = atools::geo::nmToMeter(maxDistanceNm);
 
   auto it = std::remove_if(vector.begin(), vector.end(), [ = ](const MapBase *obj) -> bool

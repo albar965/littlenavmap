@@ -776,6 +776,16 @@ struct MapSearchResultMixed
     return vector;
   }
 
+  bool isEmpty() const
+  {
+    return vector.isEmpty();
+  }
+
+  int size() const
+  {
+    return vector.size();
+  }
+
   template<typename TYPE>
   void addCopy(const TYPE& obj)
   {

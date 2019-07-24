@@ -42,7 +42,7 @@ using map::MapHelipad;
 
 inline uint qHash(const AirportQuery::NearestCacheKeyAirport& key)
 {
-  return qHash(key.pos) ^ qHash(key.distanceNm) ^ key.sortNearToFar;
+  return qHash(key.pos) ^ qHash(key.distanceNm);
 }
 
 /* maximum difference in angle for aircraft to recognize the right runway */
@@ -507,10 +507,17 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
   }
 }
 
-map::MapSearchResultMixed *AirportQuery::getNearestAirportsProc(const Pos& pos, float distanceNm,
-                                                                bool sortNearToFar)
+map::MapSearchResultMixed *AirportQuery::getNearestAirportsProc(const map::MapAirport& airport, float distanceNm)
 {
-  NearestCacheKeyAirport key = {pos, distanceNm, sortNearToFar};
+  map::MapSearchResultMixed *nearest = nearestAirportsProcInternal(airport, distanceNm);
+  if(nearest == nullptr || nearest->size() < 5)
+    nearest = nearestAirportsProcInternal(airport, distanceNm * 4.f);
+  return nearest;
+}
+
+map::MapSearchResultMixed *AirportQuery::nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm)
+{
+  NearestCacheKeyAirport key = {airport.position, distanceNm};
 
   map::MapSearchResultMixed *result = nearestAirportCache.object(key);
 
@@ -519,20 +526,21 @@ map::MapSearchResultMixed *AirportQuery::getNearestAirportsProc(const Pos& pos, 
     result = new map::MapSearchResultMixed;
 
     // Create a rectangle that roughly covers the requested region
-    atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm));
+    atools::geo::Rect rect(airport.position, atools::geo::nmToMeter(distanceNm));
 
     bool xplane = NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11;
     query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ = ](atools::sql::SqlQuery *query) -> void {
       map::MapAirport obj;
       mapTypesFactory->fillAirport(query->record(), obj, true, navdata, xplane);
-      result->addCopy(obj);
+      if(obj.ident != airport.ident)
+        result->addCopy(obj);
     });
 
     // Remove all that are too far away
-    result->filterByDistance(pos, distanceNm);
+    result->filterByDistance(airport.position, distanceNm);
 
     // Sort the rest by distance
-    result->sortByDistance(pos, sortNearToFar);
+    result->sortByDistance(airport.position, true /*sortNearToFar*/);
 
     nearestAirportCache.insert(key, result);
   }

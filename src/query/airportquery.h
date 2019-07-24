@@ -126,9 +126,9 @@ public:
 
   const QList<map::MapHelipad> *getHelipads(int airportId);
 
-  /* Get nearest airports that have a procedure sorted by distance to pos with a maximum distance distanceNm */
-  map::MapSearchResultMixed *getNearestAirportsProc(const atools::geo::Pos& pos, float distanceNm,
-                                                    bool sortNearToFar = true);
+  /* Get nearest airports that have a procedure sorted by distance to pos with a maximum distance distanceNm.
+   * Uses distance * 4 and searches again if nothing was found.*/
+  map::MapSearchResultMixed *getNearestAirportsProc(const map::MapAirport& airport, float distanceNm);
 
   /* Get a list of runways of all airports inside rectangle sorted by distance to pos */
   void getRunways(QVector<map::MapRunway>& runways, const atools::geo::Rect& rect, const atools::geo::Pos& pos);
@@ -159,12 +159,10 @@ private:
   {
     atools::geo::Pos pos;
     float distanceNm;
-    bool sortNearToFar;
 
     bool operator==(const NearestCacheKeyAirport& other) const
     {
-      return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01 &&
-             sortNearToFar == other.sortNearToFar;
+      return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01;
     }
 
     bool operator!=(const NearestCacheKeyAirport& other) const
@@ -175,6 +173,8 @@ private:
   };
 
   friend inline uint qHash(const AirportQuery::NearestCacheKeyAirport& key);
+
+  map::MapSearchResultMixed *nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm);
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query, bool reverse,

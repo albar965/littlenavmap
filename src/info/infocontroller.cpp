@@ -570,32 +570,39 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // when updating
     map::MapAirport airport = result.airports.first();
 
+    bool changed = currentSearchResult.hasAirports() && currentSearchResult.airports.first().id != airport.id;
+
     currentSearchResult.airports.clear();
     currentSearchResult.airportIds.clear();
     // Remember one airport
     currentSearchResult.airports.append(airport);
 
+    // Update parts that are variable because of weather or bearing changes ==================
     updateAirportInternal(true /* new */, false /* bearing change*/, scrollToTop, false /* force weather update */);
 
-    html.clear();
-    infoBuilder->runwayText(airport, html);
-    atools::gui::util::updateTextEdit(ui->textBrowserRunwayInfo, html.getHtml(),
-                                      scrollToTop, !scrollToTop /* keep selection */);
+    if(changed)
+    {
+      // Update parts that have now weather or bearing depenedency =====================
+      html.clear();
+      infoBuilder->runwayText(airport, html);
+      atools::gui::util::updateTextEdit(ui->textBrowserRunwayInfo, html.getHtml(),
+                                        scrollToTop, !scrollToTop /* keep selection */);
 
-    html.clear();
-    infoBuilder->comText(airport, html);
-    atools::gui::util::updateTextEdit(ui->textBrowserComInfo, html.getHtml(),
-                                      scrollToTop, !scrollToTop /* keep selection */);
+      html.clear();
+      infoBuilder->comText(airport, html);
+      atools::gui::util::updateTextEdit(ui->textBrowserComInfo, html.getHtml(),
+                                        scrollToTop, !scrollToTop /* keep selection */);
 
-    html.clear();
-    infoBuilder->procedureText(airport, html);
-    atools::gui::util::updateTextEdit(ui->textBrowserApproachInfo, html.getHtml(),
-                                      scrollToTop, !scrollToTop /* keep selection */);
+      html.clear();
+      infoBuilder->procedureText(airport, html);
+      atools::gui::util::updateTextEdit(ui->textBrowserApproachInfo, html.getHtml(),
+                                        scrollToTop, !scrollToTop /* keep selection */);
 
-    html.clear();
-    infoBuilder->nearestText(airport, html);
-    atools::gui::util::updateTextEdit(ui->textBrowserNearest, html.getHtml(),
-                                      scrollToTop, !scrollToTop /* keep selection */);
+      html.clear();
+      infoBuilder->nearestText(airport, html);
+      atools::gui::util::updateTextEdit(ui->textBrowserNearest, html.getHtml(),
+                                        scrollToTop, !scrollToTop /* keep selection */);
+    }
 
     foundAirport = true;
   }

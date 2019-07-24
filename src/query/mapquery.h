@@ -143,10 +143,11 @@ public:
                                map::MapObjectTypes types, int xs, int ys, int screenDistance,
                                map::MapSearchResult& result);
 
-  /* Only VOR, NDB, ILS and waypoints */
-  /* All sorted by distance to pos with a maximum distance distanceNm */
+  /* Only VOR, NDB, ILS and waypoints
+   * All sorted by distance to pos with a maximum distance distanceNm
+   * Uses distance * 4 and searches again if nothing was found.*/
   map::MapSearchResultMixed *getNearestNavaids(const atools::geo::Pos& pos, float distanceNm,
-                                               map::MapObjectTypes type, bool sortNearToFar = true);
+                                               map::MapObjectTypes type);
 
   /*
    * Fetch airports for a map coordinate rectangle
@@ -198,12 +199,10 @@ private:
     atools::geo::Pos pos;
     float distanceNm;
     map::MapObjectTypes type;
-    bool sortNearToFar;
 
     bool operator==(const NearestCacheKeyNavaid& other) const
     {
-      return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01 && type == other.type &&
-             sortNearToFar == other.sortNearToFar;
+      return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01 && type == other.type;
     }
 
     bool operator!=(const NearestCacheKeyNavaid& other) const
@@ -214,6 +213,9 @@ private:
   };
 
   friend inline uint qHash(const MapQuery::NearestCacheKeyNavaid& key);
+
+  map::MapSearchResultMixed *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
+                                                    map::MapObjectTypes type);
 
   void mapObjectByIdentInternal(map::MapSearchResult& result, map::MapObjectTypes type,
                                 const QString& ident, const QString& region, const QString& airport,

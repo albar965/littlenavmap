@@ -51,7 +51,7 @@ using map::MapUserpoint;
 
 inline uint qHash(const MapQuery::NearestCacheKeyNavaid& key)
 {
-  return qHash(key.pos) ^ qHash(key.type) ^ qHash(key.distanceNm) ^ key.sortNearToFar;
+  return qHash(key.pos) ^ qHash(key.type) ^ qHash(key.distanceNm);
 }
 
 static double queryRectInflationFactor = 0.2;
@@ -152,10 +152,17 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
   ndbNearestQuery->finish();
 }
 
-map::MapSearchResultMixed *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapObjectTypes type,
-                                                       bool sortNearToFar)
+map::MapSearchResultMixed *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapObjectTypes type)
 {
-  NearestCacheKeyNavaid key = {pos, distanceNm, type, sortNearToFar};
+  map::MapSearchResultMixed *nearest = nearestNavaidsInternal(pos, distanceNm, type);
+  if(nearest == nullptr || nearest->size() < 5)
+    nearest = nearestNavaidsInternal(pos, distanceNm * 4.f, type);
+  return nearest;
+}
+
+map::MapSearchResultMixed *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapObjectTypes type)
+{
+  NearestCacheKeyNavaid key = {pos, distanceNm, type};
 
   map::MapSearchResultMixed *result = nearestNavaidCache.object(key);
 
@@ -205,7 +212,7 @@ map::MapSearchResultMixed *MapQuery::getNearestNavaids(const Pos& pos, float dis
     result->filterByDistance(pos, distanceNm);
 
     // Sort the rest by distance
-    result->sortByDistance(pos, sortNearToFar);
+    result->sortByDistance(pos, true /* sortNearToFar */);
 
     nearestNavaidCache.insert(key, result);
   }

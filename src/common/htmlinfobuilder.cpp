@@ -73,6 +73,11 @@ namespace ahtml = atools::util::html;
 const float HELIPAD_DISTANCE_KM = 0.200f;
 const float STARTPOS_DISTANCE_KM = 0.500f;
 
+const float NEAREST_MAX_DISTANCE_AIRPORT_NM = 75.f;
+const float NEAREST_MAX_DISTANCE_NAVAID_NM = 50.f;
+const int NEAREST_MAX_NUM_AIRPORT = 10;
+const int NEAREST_MAX_NUM_NAVAID = 10;
+
 const float MIN_GROUND_SPEED = 30.f;
 
 // Print weather time in red if older than this
@@ -460,18 +465,27 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) const
 {
   // Do not display as tooltip
-  if(info && infoQuery != nullptr && airport.isValid())
+  if(info && airport.isValid())
   {
     if(!print)
       airportTitle(airport, html, -1);
 
-    // Get nearest VOR and NDB ====================================
-    MapSearchResultMixed *nearestNavaids = mapQuery->getNearestNavaids(airport.position, 50, map::VOR | map::NDB);
-    nearestMapObjectsText(airport, html, nearestNavaids, tr("Nearest Radio Navaids"), true, false, 15);
-
     // Get nearest airports that have procedures ====================================
-    MapSearchResultMixed *nearestAirports = airportQueryNav->getNearestAirportsProc(airport.position, 50);
-    nearestMapObjectsText(airport, html, nearestAirports, tr("Nearest Airports with Procedures"), false, true, 15);
+    MapSearchResultMixed *nearestAirports = airportQueryNav->getNearestAirportsProc(airport,
+                                                                                    NEAREST_MAX_DISTANCE_AIRPORT_NM);
+    if(!nearestMapObjectsText(airport, html, nearestAirports, tr("Nearest Airports with Procedures"), false, true,
+                              NEAREST_MAX_NUM_AIRPORT))
+      html.p().b(tr("No airports with procedures within a radius of %1.").
+                 arg(Unit::distNm(NEAREST_MAX_DISTANCE_AIRPORT_NM * 4.f))).pEnd();
+
+    // Get nearest VOR and NDB ====================================
+    MapSearchResultMixed *nearestNavaids = mapQuery->getNearestNavaids(airport.position,
+                                                                       NEAREST_MAX_DISTANCE_NAVAID_NM,
+                                                                       map::VOR | map::NDB);
+    if(!nearestMapObjectsText(airport, html, nearestNavaids, tr("Nearest Radio Navaids"), true, false,
+                              NEAREST_MAX_NUM_NAVAID))
+      html.p().b(tr("No navaids within a radius of %1.").
+                 arg(Unit::distNm(NEAREST_MAX_DISTANCE_NAVAID_NM * 4.f))).pEnd();
   }
 }
 
@@ -517,11 +531,11 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
   trEnd();
 }
 
-void HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuilder& html,
+bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuilder& html,
                                             const map::MapSearchResultMixed *nearest, const QString& header,
                                             bool frequencyCol, bool airportCol, int maxRows) const
 {
-  if(nearest != nullptr && !nearest->getVector().isEmpty())
+  if(nearest != nullptr && !nearest->isEmpty())
   {
     html.br().br().text(header, ahtml::BOLD | ahtml::BIG);
     html.table();
@@ -588,7 +602,9 @@ void HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
                                                  2), ils, ils->magvar, frequencyCol, airportCol);
     }
     html.tableEnd();
+    return true;
   }
+  return false;
 }
 
 void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) const
