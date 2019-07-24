@@ -570,7 +570,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // when updating
     map::MapAirport airport = result.airports.first();
 
-    bool changed = currentSearchResult.hasAirports() && currentSearchResult.airports.first().id != airport.id;
+    bool changed = currentSearchResult.isEmpty() || currentSearchResult.airports.first().id != airport.id;
 
     currentSearchResult.airports.clear();
     currentSearchResult.airportIds.clear();
