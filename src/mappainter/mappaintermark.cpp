@@ -119,7 +119,7 @@ void MapPainterMark::paintHome(const PaintContext *context)
 /* Draw rings around objects that are selected on the search or flight plan tables */
 void MapPainterMark::paintHighlights(PaintContext *context)
 {
-  // Draw hightlights from the search result view ------------------------------------------
+  // Draw hightlights from the search result view =====================================================
   const MapSearchResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
   int size = context->sz(context->symbolSizeAirport, 6);
 
@@ -152,26 +152,28 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   for(const MapUserpoint& user : highlightResultsSearch.userpoints)
     positions.append(user.position);
 
-  // for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
-  // positions.append(airspace.bounding.getCenter());
-
-  // for(const MapAirspace& airspace: mapWidget->getAirspaceHighlights())
-  // positions.append(airspace.bounding.getCenter());
-
   for(const atools::fs::sc::SimConnectAircraft& aircraft: highlightResultsSearch.onlineAircraft)
     positions.append(aircraft.getPosition());
 
-  // Draw boundary for selected online network airspaces ------------------------------------------
+  // Draw boundary for selected online network airspaces =====================================================
   for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
-    paintAirspace(context, airspace, size);
+    paintAirspace(context, airspace);
 
-  // Draw boundary for airspaces higlighted in the information window ------------------------------------------
+  // Draw boundary for airspaces higlighted in the information window =======================================
   for(const MapAirspace& airspace: mapPaintWidget->getAirspaceHighlights())
-    paintAirspace(context, airspace, size);
+    paintAirspace(context, airspace);
+
+  // Draw airways higlighted in the information window =====================================================
+  for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())
+    paintAirwayList(context, airwayFull);
+  for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())
+    paintAirwayTextList(context, airwayFull);
 
   // Selected logbook entries ------------------------------------------
   paintLogEntries(context, highlightResultsSearch.logbookEntries);
 
+  // ====================================================================
+  // Draw all highlight rings for positions collected above =============
   GeoPainter *painter = context->painter;
   if(context->mapLayerEffective->isAirport())
     size = context->sz(context->symbolSizeAirport,
@@ -198,7 +200,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     }
   }
 
-  // Draw hightlights from the approach selection ------------------------------------------
+  // Draw hightlights from the approach selection =====================================================
   const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
 
   if(leg.recFixPos.isValid())
@@ -274,7 +276,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   if(context->mapLayerEffective->isAirport())
     size = std::max(size, context->mapLayerEffective->getAirportSymbolSize());
 
-  // Draw hightlights from the flight plan view ------------------------------------------
+  // Draw hightlights from the flight plan view =====================================================
   const QList<int>& routeHighlightResults = mapPaintWidget->getRouteHighlights();
   positions.clear();
   for(int idx : routeHighlightResults)
@@ -301,7 +303,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     }
   }
 
-  // Draw hightlight from the elevation profile view ------------------------------------------
+  // Draw hightlight from the elevation profile view =====================================================
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::profileHighlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
   const Pos& pos = mapPaintWidget->getProfileHighlight();
@@ -320,7 +322,6 @@ void MapPainterMark::paintHighlights(PaintContext *context)
       painter->drawEllipse(QPoint(x, y), size, size);
     }
   }
-
 }
 
 void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::MapLogbookEntry>& entries)
@@ -406,19 +407,108 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   }
 }
 
-void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace& airspace, int size)
+void MapPainterMark::paintAirwayList(PaintContext *context, const QList<map::MapAirway>& airwayList)
+{
+  Marble::GeoPainter *painter = context->painter;
+
+  // Collect all waypoints from airway list ===========================
+  LineString linestring;
+  if(!airwayList.isEmpty())
+    linestring.append(airwayList.first().from);
+  for(const map::MapAirway& airway : airwayList)
+  {
+    if(airway.isValid())
+      linestring.append(airway.to);
+  }
+
+  // Build and draw marble line string ====================================================
+  GeoDataLineString ls;
+  ls.setTessellate(true);
+  for(int i = 1; i < linestring.size(); i++)
+  {
+    ls << GeoDataCoordinates(linestring.at(i - 1).getLonX(), linestring.at(i - 1).getLatY(), 0, DEG)
+       << GeoDataCoordinates(linestring.at(i).getLonX(), linestring.at(i).getLatY(), 0, DEG);
+  }
+
+  // Outline =================
+  float lineWidth = context->szF(context->thicknessRangeDistance, 5);
+  QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::RoundCap);
+  painter->setPen(outerPen);
+  context->painter->drawPolyline(ls);
+
+  // Inner line ================
+  QPen innerPen = mapcolors::airwayVictorPen;
+  innerPen.setWidthF(lineWidth * 0.5);
+  innerPen.setColor(innerPen.color().lighter(150));
+  painter->setPen(innerPen);
+  context->painter->drawPolyline(ls);
+
+  // Draw waypoint triangles =============================================
+  painter->setPen(QPen(mapcolors::highlightBackColor, lineWidth / 3., Qt::SolidLine, Qt::RoundCap));
+  painter->setBrush(Qt::white);
+  for(const atools::geo::Pos& pos : linestring)
+  {
+    QPointF pt = wToS(pos);
+    if(!pt.isNull())
+    {
+      // Draw a triangle
+      double radius = lineWidth * 0.8;
+      QPolygonF polygon;
+      polygon << QPointF(pt.x(), pt.y() - (radius * 1.2)) << QPointF(pt.x() + radius, pt.y() + radius)
+              << QPointF(pt.x() - radius, pt.y() + radius);
+
+      painter->drawConvexPolygon(polygon);
+    }
+  }
+}
+
+void MapPainterMark::paintAirwayTextList(PaintContext *context, const QList<map::MapAirway>& airwayList)
+{
+  context->szFont(context->textSizeRangeDistance);
+
+  for(const map::MapAirway& airway : airwayList)
+  {
+    if(airway.isValid())
+    {
+      QPen innerPen = mapcolors::penForAirway(airway);
+
+      // Draw text  at center position of a line
+      int x, y;
+      Pos center = airway.bounding.getCenter();
+      if(wToS(center, x, y))
+      {
+        bool visible1, hidden1, visible2, hidden2;
+        QPoint p1 = wToS(airway.from, DEFAULT_WTOS_SIZE, &visible1, &hidden1);
+        QPoint p2 = wToS(airway.to, DEFAULT_WTOS_SIZE, &visible2, &hidden2);
+
+        // Draw if not behind the globe and sufficient distance
+        if(!hidden1 && !hidden2 && (p1 - p2).manhattanLength() > 40)
+          symbolPainter->textBoxF(context->painter,
+                                  {tr("%1 / %2").arg(airway.name).arg(map::airwayTypeToShortString(airway.type))},
+                                  innerPen, x, y, textatt::CENTER);
+      }
+    }
+  }
+}
+
+void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace& airspace)
 {
   const LineString *airspaceGeometry = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
   Marble::GeoPainter *painter = context->painter;
 
-  QPen outerPen(mapcolors::highlightBackColor, size / 3. + 2., Qt::SolidLine, Qt::FlatCap);
+  float lineWidth = context->szF(context->thicknessRangeDistance, 6);
+
+  QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::FlatCap);
+
+  // Make boundary pen the same color as airspace boundary without transparency
   QPen innerPen = mapcolors::penForAirspace(airspace);
-  innerPen.setWidthF(size / 3.);
+  innerPen.setWidthF(lineWidth * 0.5);
   QColor c = innerPen.color();
   c.setAlpha(255);
   innerPen.setColor(c);
 
   painter->setBrush(mapcolors::colorForAirspaceFill(airspace));
+  context->szFont(context->textSizeRangeDistance);
 
   if(airspaceGeometry != nullptr)
   {

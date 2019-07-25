@@ -36,7 +36,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterNav::MapPainterNav(MapPaintWidget* mapWidget, MapScale *mapScale)
+MapPainterNav::MapPainterNav(MapPaintWidget *mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }
@@ -144,12 +144,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     if(airway.type == map::VICTOR && !context->objectTypes.testFlag(map::AIRWAYV))
       continue;
 
-    if(airway.type == map::VICTOR)
-      context->painter->setPen(mapcolors::airwayVictorPen);
-    else if(airway.type == map::JET)
-      context->painter->setPen(mapcolors::airwayJetPen);
-    else if(airway.type == map::BOTH)
-      context->painter->setPen(mapcolors::airwayBothPen);
+    context->painter->setPen(mapcolors::penForAirway(airway));
 
     // Get start and end point of airway segment in screen coordinates
     int x1, y1, x2, y2;

@@ -75,6 +75,9 @@ public:
   /* Get all waypoints or an airway ordered by fragment an sequence number */
   void getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName);
 
+  /* Get all airway segments for name and fragment - not cached */
+  void getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding, const QString& airwayName, int fragment);
+
   void getAirwayById(map::MapAirway& airway, int airwayId);
   map::MapAirway getAirwayById(int airwayId);
 
@@ -232,14 +235,14 @@ private:
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;
 
   /* Simple bounding rectangle caches */
-  SimpleRectCache<map::MapAirport> airportCache;
-  SimpleRectCache<map::MapWaypoint> waypointCache;
-  SimpleRectCache<map::MapUserpoint> userpointCache;
-  SimpleRectCache<map::MapVor> vorCache;
-  SimpleRectCache<map::MapNdb> ndbCache;
-  SimpleRectCache<map::MapMarker> markerCache;
-  SimpleRectCache<map::MapIls> ilsCache;
-  SimpleRectCache<map::MapAirway> airwayCache;
+  query::SimpleRectCache<map::MapAirport> airportCache;
+  query::SimpleRectCache<map::MapWaypoint> waypointCache;
+  query::SimpleRectCache<map::MapUserpoint> userpointCache;
+  query::SimpleRectCache<map::MapVor> vorCache;
+  query::SimpleRectCache<map::MapNdb> ndbCache;
+  query::SimpleRectCache<map::MapMarker> markerCache;
+  query::SimpleRectCache<map::MapIls> ilsCache;
+  query::SimpleRectCache<map::MapAirway> airwayCache;
 
   /* ID/object caches */
   QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
@@ -266,7 +269,7 @@ private:
 
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
                         *airwayByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr,
-                        *airwayWaypointsQuery = nullptr, *airwayByNameQuery = nullptr;
+                        *airwayWaypointsQuery = nullptr, *airwayByNameQuery = nullptr, *airwayFullQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

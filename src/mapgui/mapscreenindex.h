@@ -226,9 +226,19 @@ public:
     return airspaceHighlights;
   }
 
+  const QList<QList<map::MapAirway> >& getAirwayHighlights() const
+  {
+    return airwayHighlights;
+  }
+
   void changeAirspaceHighlights(const QList<map::MapAirspace>& value)
   {
     airspaceHighlights = value;
+  }
+
+  void changeAirwayHighlights(const QList<QList<map::MapAirway> >& value)
+  {
+    airwayHighlights = value;
   }
 
 private:
@@ -240,9 +250,10 @@ private:
   void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
                                      QList<proc::MapProcedurePoint> *procPoints) const;
-  void updateAirspaceScreenGeometry(QList<std::pair<map::MapAirspaceId, QPolygon> >& polygons,
-                                    map::MapAirspaceSources source,
-                                    const Marble::GeoDataLatLonBox& curBox);
+  void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids,
+                                            map::MapAirspaceSources source,
+                                            const Marble::GeoDataLatLonBox& curBox, bool highlights);
+  void updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight);
 
   void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
                                 const Marble::GeoDataLatLonBox& curBox,
@@ -266,6 +277,9 @@ private:
 
   /* All airspace highlights from information window */
   QList<map::MapAirspace> airspaceHighlights;
+
+  /* All airway highlights from information window */
+  QList<QList<map::MapAirway> > airwayHighlights;
 
   /* Circle from elevation profile */
   atools::geo::Pos profileHighlight;

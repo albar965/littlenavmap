@@ -88,7 +88,7 @@ private:
   atools::sql::SqlDatabase *db;
 
   /* Simple bounding rectangle caches */
-  SimpleRectCache<map::MapAirspace> airspaceCache;
+  query::SimpleRectCache<map::MapAirspace> airspaceCache;
   map::MapAirspaceFilter lastAirspaceFilter = {map::AIRSPACE_NONE, map::AIRSPACE_FLAG_NONE};
   float lastFlightplanAltitude = 0.f;
 

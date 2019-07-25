@@ -468,6 +468,27 @@ const QPen& penForAirspace(const map::MapAirspace& airspace)
   return airspacePens[airspace.type];
 }
 
+const QPen& penForAirway(const map::MapAirway& airway)
+{
+  static QPen EMPTY_PEN;
+
+  switch(airway.type)
+  {
+    case map::NO_AIRWAY:
+      break;
+
+    case map::VICTOR:
+      return airwayVictorPen;
+
+    case map::JET:
+      return airwayJetPen;
+
+    case map::BOTH:
+      return airwayBothPen;
+  }
+  return EMPTY_PEN;
+}
+
 /* Read ARGB color if value exists in settings or update in settings with given value */
 void syncColorArgb(QSettings& settings, const QString& key, QColor& color)
 {

@@ -192,7 +192,7 @@ private:
 
   QHash<QString, atools::geo::Pos> clientCallsignAndPosMap;
 
-  SimpleRectCache<atools::fs::sc::SimConnectAircraft> aircraftCache;
+  query::SimpleRectCache<atools::fs::sc::SimConnectAircraft> aircraftCache;
   atools::sql::SqlQuery *aircraftByRectQuery = nullptr;
 };
 

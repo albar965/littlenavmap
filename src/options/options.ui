@@ -2101,8 +2101,10 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
            <item row="0" column="2" rowspan="2">
             <widget class="QLabel" name="labelOptionsMapSizeRangeDistance">
              <property name="text">
-              <string>&amp;Range rings, pattern and
-distance measurement:</string>
+              <string>&amp;Range rings, pattern, hold,
+distance measurement,
+airway highlights
+and logbook entries:</string>
              </property>
              <property name="buddy">
               <cstring>spinBoxOptionsDisplayThicknessRangeDistance</cstring>

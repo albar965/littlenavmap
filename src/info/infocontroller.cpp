@@ -49,6 +49,8 @@ using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
+namespace ahtml = atools::util::html;
+
 InfoController::InfoController(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
@@ -195,6 +197,12 @@ void InfoController::anchorClicked(const QUrl& url)
         mapWidget->changeSearchHighlights(searchHighlights);
         mainWindow->updateHighlightActionStates();
       }
+      else if(query.hasQueryItem("hideairways"))
+      {
+        // Hide airway highlights from information window =========================================
+        mapWidget->clearAirwayHighlights();
+        mainWindow->updateHighlightActionStates();
+      }
       else if(query.hasQueryItem("lessprogress"))
       {
         // Handle more/less switch =====================================
@@ -231,9 +239,11 @@ void InfoController::anchorClicked(const QUrl& url)
         int id = query.queryItemValue("id").toInt();
 
         if(type == map::AIRPORT)
+          // Show airport by id ================================================
           emit showRect(airportQuery->getAirportById(id).bounding, false);
         else if(type == map::AIRSPACE)
         {
+          // Show airspaces by id and source ================================================
           map::MapAirspaceSources src(query.queryItemValue("source").toInt());
 
           // Append airspace to current highlight list if not already present
@@ -256,6 +266,22 @@ void InfoController::anchorClicked(const QUrl& url)
           }
           mainWindow->updateHighlightActionStates();
           emit showRect(airspace.bounding, false);
+        }
+        else if(type == map::AIRWAY)
+        {
+          // Show full airways by id ================================================
+          map::MapAirway airway = mapQuery->getAirwayById(id);
+
+          // Get all airway segments and the bounding rectangle
+          atools::geo::Rect bounding;
+          QList<map::MapAirway> airways;
+          mapQuery->getAirwayFull(airways, bounding, airway.name, airway.fragment);
+
+          QList<QList<map::MapAirway> > airwayHighlights = mapWidget->getAirwayHighlights();
+          airwayHighlights.append(airways);
+          mapWidget->changeAirwayHighlights(airwayHighlights);
+          mainWindow->updateHighlightActionStates();
+          emit showRect(bounding, false);
         }
         else
           qWarning() << Q_FUNC_INFO << "Unknwown type" << url << type;
@@ -624,8 +650,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     html.tdAtts({
       {"align", "right"}, {"valign", "top"}
     });
-    html.b().a(tr("Remove Highlights from Map"), QString("lnm://do?hideairspaces"),
-               atools::util::html::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
+    html.b().a(tr("Remove Airspace Highlights"), QString("lnm://do?hideairspaces"),
+               ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : result.getSimNavUserAirspaces())
     {
@@ -664,8 +690,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     html.tdAtts({
       {"align", "right"}, {"valign", "top"}
     });
-    html.b().a(tr("Remove Highlights from Map"), QString("lnm://do?hideonlineairspaces"),
-               atools::util::html::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
+    html.b().a(tr("Remove Center Highlights"), QString("lnm://do?hideonlineairspaces"),
+               ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : onlineAirspaces)
     {
@@ -839,6 +865,16 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
   HtmlBuilder html(true);
   Ui::MainWindow *ui = NavApp::getMainUi();
   bool foundNavaid = false;
+
+  // Remove header link ==============================
+  html.tableAtts({
+    {"width", "100%"}
+  }).tr();
+  html.tdAtts({
+    {"align", "right"}, {"valign", "top"}
+  });
+  html.b().a(tr("Remove Airway Highlights"), QString("lnm://do?hideairways"),
+             ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
   // Userpoints on top of the list
   for(map::MapUserpoint userpoint: result.userpoints)

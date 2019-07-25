@@ -245,8 +245,7 @@ void MapQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const Q
   }
 }
 
-void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints,
-                                            const QString& airwayName)
+void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName)
 {
   airwayWaypointsQuery->bindValue(":name", airwayName);
   airwayWaypointsQuery->exec();
@@ -292,6 +291,21 @@ void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypo
         qWarning() << "getWaypointListForAirwayName: no waypoint for" << airwayName << "wp id" << toId;
       waypoints.append(aw);
     }
+  }
+}
+
+void MapQuery::getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding, const QString& airwayName,
+                             int fragment)
+{
+  airwayFullQuery->bindValue(":name", airwayName);
+  airwayFullQuery->bindValue(":fragment", fragment);
+  airwayFullQuery->exec();
+  while(airwayFullQuery->next())
+  {
+    map::MapAirway airway;
+    mapTypesFactory->fillAirway(airwayFullQuery->record(), airway);
+    bounding.extend(airway.bounding);
+    airways.append(airway);
   }
 }
 
@@ -1287,6 +1301,11 @@ void MapQuery::initQueries()
   airwayWaypointsQuery = new SqlQuery(dbNav);
   airwayWaypointsQuery->prepare("select " + airwayQueryBase + " from airway where airway_name = :name "
                                                               " order by airway_fragment_no, sequence_no");
+
+  airwayFullQuery = new SqlQuery(dbNav);
+  airwayFullQuery->prepare("select " + airwayQueryBase +
+                           " from airway where airway_fragment_no = :fragment and airway_name = :name");
+
 }
 
 void MapQuery::deInitQueries()
@@ -1377,4 +1396,7 @@ void MapQuery::deInitQueries()
 
   delete airwayWaypointsQuery;
   airwayWaypointsQuery = nullptr;
+
+  delete airwayFullQuery;
+  airwayFullQuery = nullptr;
 }

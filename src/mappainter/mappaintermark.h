@@ -26,6 +26,7 @@ class GeoDataLineString;
 
 namespace map {
 struct MapAirspace;
+struct MapAirway;
 struct MapLogbookEntry;
 }
 
@@ -59,7 +60,9 @@ private:
   void paintRouteDrag(const PaintContext *context);
   void paintCompassRose(const PaintContext *context);
   void paintUserpointDrag(const PaintContext *context);
-  void paintAirspace(PaintContext *context, const map::MapAirspace& airspace, int size);
+  void paintAirspace(PaintContext *context, const map::MapAirspace& airspace);
+  void paintAirwayList(PaintContext *context, const QList<map::MapAirway>& airwayList);
+  void paintAirwayTextList(PaintContext *context, const QList<map::MapAirway>& airwayList);
   void paintLogEntries(PaintContext *context, const QList<map::MapLogbookEntry>& entries);
 
 };

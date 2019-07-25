@@ -201,7 +201,7 @@ private:
   bool ignoreUpdates = false;
 
   /* Wind positions as a result of querying the rectangle for caching */
-  SimpleRectCache<atools::grib::WindPos> windPosCache;
+  query::SimpleRectCache<atools::grib::WindPos> windPosCache;
   int cachedLevel = wind::NONE;
 };
 

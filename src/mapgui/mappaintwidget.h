@@ -211,11 +211,16 @@ public:
   /* Current weather source for icon display */
   map::MapWeatherSource getMapWeatherSource() const;
 
-  /* Airspaces from the information window are kept in a separate list */
+  /* Airspaces and airways from the information window are kept in separate lists */
   void changeAirspaceHighlights(const QList<map::MapAirspace>& airspaces);
+  void changeAirwayHighlights(const QList<QList<map::MapAirway> >& airways);
 
+  /* Highlights from clicking "Map" in information window */
   const QList<map::MapAirspace>& getAirspaceHighlights() const;
+  const QList<QList<map::MapAirway> >& getAirwayHighlights() const;
+
   void clearAirspaceHighlights();
+  void clearAirwayHighlights();
 
   /* Avoids dark background when printing in night mode */
   void setPrinting(bool value)

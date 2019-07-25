@@ -18,6 +18,9 @@
 #ifndef LNM_QUERYTYPES_H
 #define LNM_QUERYTYPES_H
 
+#include "sql/sqlrecord.h"
+#include "sql/sqlquery.h"
+
 #include <QList>
 
 #include <functional>
@@ -50,7 +53,13 @@ QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonB
 /* Inflate rect by width and height in degrees. If it crosses the poles or date line it will be limited */
 void inflateQueryRect(Marble::GeoDataLatLonBox& rect, double factor, double increment);
 
-}
+template<typename ID>
+const atools::sql::SqlRecord *cachedRecord(QCache<ID, atools::sql::SqlRecord>& cache,
+                                           atools::sql::SqlQuery *query, ID id);
+
+template<typename ID>
+const atools::sql::SqlRecordVector *cachedRecordVector(QCache<ID, atools::sql::SqlRecordVector>& cache,
+                                                       atools::sql::SqlQuery *query, ID id);
 
 /* Simple spatial cache that deals with objects in a bounding rectangle but does not run any queries to load data */
 template<typename TYPE>
@@ -117,6 +126,77 @@ void SimpleRectCache<TYPE>::clear()
   list.clear();
   curRect.clear();
   curMapLayer = nullptr;
+}
+
+/* Get a record from the cache or get it from a database query */
+template<typename ID>
+const atools::sql::SqlRecord *cachedRecord(QCache<ID, atools::sql::SqlRecord>& cache, atools::sql::SqlQuery *query,
+                                           ID id)
+{
+  atools::sql::SqlRecord *rec = cache.object(id);
+  if(rec != nullptr)
+  {
+    // Found record in cache
+    if(rec->isEmpty())
+      // Empty record that indicates that no result was found
+      return nullptr;
+    else
+      return rec;
+  }
+  else
+  {
+    query->exec();
+    if(query->next())
+    {
+      // Insert it into the cache
+      rec = new atools::sql::SqlRecord(query->record());
+      cache.insert(id, rec);
+    }
+    else
+      // Add empty record to indicate nothing found for this id
+      cache.insert(id, new atools::sql::SqlRecord());
+  }
+  query->finish();
+  return rec;
+}
+
+/* Get a record vector from the cache of get it from a database query */
+template<typename ID>
+const atools::sql::SqlRecordVector *cachedRecordVector(QCache<ID, atools::sql::SqlRecordVector>& cache,
+                                                       atools::sql::SqlQuery *query, ID id)
+{
+  atools::sql::SqlRecordVector *rec = cache.object(id);
+  if(rec != nullptr)
+  {
+    // Found record in cache
+    if(rec->isEmpty())
+      // Empty record that indicates that no result was found
+      return nullptr;
+    else
+      return rec;
+  }
+  else
+  {
+    query->exec();
+
+    rec = new atools::sql::SqlRecordVector;
+
+    while(query->next())
+      rec->append(query->record());
+
+    // Insert it into the cache
+    cache.insert(id, rec);
+
+    if(rec->isEmpty())
+      return nullptr;
+    else
+      return rec;
+  }
+  query->finish();
+  // Keep this here although it is never executed since some compilers throw an error
+  return nullptr;
+}
+
 }
 
 #endif // LNM_QUERYTYPES_H

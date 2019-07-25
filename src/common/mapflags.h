@@ -231,6 +231,16 @@ struct MapAirspaceId
   MapAirspaceSources src;
 };
 
+inline uint qHash(const map::MapAirspaceId& id)
+{
+  return static_cast<unsigned int>(id.id) ^ id.src;
+}
+
+inline bool operator==(const map::MapAirspaceId& id1, const map::MapAirspaceId& id2)
+{
+  return id1.id == id2.id && id1.src == id2.src;
+}
+
 /* Airport flags coverting most airport attributes and facilities. */
 enum MapAirportFlag
 {
@@ -346,5 +356,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
 
 Q_DECLARE_TYPEINFO(map::MapAirspaceFilter, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapAirspaceFilter);
+
+Q_DECLARE_TYPEINFO(map::MapAirspaceId, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(map::MapAirspaceId);
 
 #endif // LITTLENAVMAP_MAPFLAGS_H

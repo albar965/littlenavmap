@@ -21,6 +21,7 @@
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
 #include "settings/settings.h"
+#include "query/querytypes.h"
 #include "common/constants.h"
 
 using atools::sql::SqlQuery;
@@ -37,6 +38,7 @@ InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav)
   ndbCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "NdbCache", 100).toInt());
   waypointCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "WaypointCache", 100).toInt());
   airwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirwayCache", 100).toInt());
+  airwayWaypointCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirwayWpCache", 100).toInt());
   runwayEndCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayEndCache", 100).toInt());
   ilsCacheSim.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "IlsCache", 100).toInt());
   ilsCacheNav.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "IlsCache", 100).toInt());
@@ -58,52 +60,62 @@ InfoQuery::~InfoQuery()
 
 const SqlRecord *InfoQuery::getAirportInformation(int airportId)
 {
-  return cachedRecord(airportCache, airportQuery, airportId);
+  airportQuery->bindValue(":id", airportId);
+  return query::cachedRecord(airportCache, airportQuery, airportId);
 }
 
 const atools::sql::SqlRecordVector *InfoQuery::getAirportSceneryInformation(const QString& ident)
 {
-  return cachedRecordVector(airportSceneryCache, airportSceneryQuery, ident);
+  airportSceneryQuery->bindValue(":id", ident);
+  return query::cachedRecordVector(airportSceneryCache, airportSceneryQuery, ident);
 }
 
 const SqlRecordVector *InfoQuery::getComInformation(int airportId)
 {
-  return cachedRecordVector(comCache, comQuery, airportId);
+  comQuery->bindValue(":id", airportId);
+  return query::cachedRecordVector(comCache, comQuery, airportId);
 }
 
 const SqlRecordVector *InfoQuery::getApproachInformation(int airportId)
 {
-  return cachedRecordVector(approachCache, approachQuery, airportId);
+  approachQuery->bindValue(":id", airportId);
+  return query::cachedRecordVector(approachCache, approachQuery, airportId);
 }
 
 const SqlRecordVector *InfoQuery::getTransitionInformation(int approachId)
 {
-  return cachedRecordVector(transitionCache, transitionQuery, approachId);
+  transitionQuery->bindValue(":id", approachId);
+  return query::cachedRecordVector(transitionCache, transitionQuery, approachId);
 }
 
 const SqlRecordVector *InfoQuery::getRunwayInformation(int airportId)
 {
-  return cachedRecordVector(runwayCache, runwayQuery, airportId);
+  runwayQuery->bindValue(":id", airportId);
+  return query::cachedRecordVector(runwayCache, runwayQuery, airportId);
 }
 
 const SqlRecordVector *InfoQuery::getHelipadInformation(int airportId)
 {
-  return cachedRecordVector(helipadCache, helipadQuery, airportId);
+  helipadQuery->bindValue(":id", airportId);
+  return query::cachedRecordVector(helipadCache, helipadQuery, airportId);
 }
 
 const SqlRecordVector *InfoQuery::getStartInformation(int airportId)
 {
-  return cachedRecordVector(startCache, startQuery, airportId);
+  startQuery->bindValue(":id", airportId);
+  return query::cachedRecordVector(startCache, startQuery, airportId);
 }
 
 const atools::sql::SqlRecord *InfoQuery::getRunwayEndInformation(int runwayEndId)
 {
-  return cachedRecord(runwayEndCache, runwayEndQuery, runwayEndId);
+  runwayEndQuery->bindValue(":id", runwayEndId);
+  return query::cachedRecord(runwayEndCache, runwayEndQuery, runwayEndId);
 }
 
 const atools::sql::SqlRecord *InfoQuery::getIlsInformationSim(int runwayEndId)
 {
-  return cachedRecord(ilsCacheSim, ilsQuerySim, runwayEndId);
+  ilsQuerySim->bindValue(":id", runwayEndId);
+  return query::cachedRecord(ilsCacheSim, ilsQuerySim, runwayEndId);
 }
 
 atools::sql::SqlRecord InfoQuery::getIlsInformationSimById(int ilsId)
@@ -134,7 +146,8 @@ atools::sql::SqlRecord InfoQuery::getIlsInformationNavById(int ilsId)
 
 const atools::sql::SqlRecord *InfoQuery::getIlsInformationNav(int runwayEndId)
 {
-  return cachedRecord(ilsCacheNav, ilsQueryNav, runwayEndId);
+  ilsQueryNav->bindValue(":id", runwayEndId);
+  return query::cachedRecord(ilsCacheNav, ilsQueryNav, runwayEndId);
 }
 
 const atools::sql::SqlRecordVector *InfoQuery::getIlsInformationSimByName(const QString& airportIdent,
@@ -160,7 +173,8 @@ const atools::sql::SqlRecordVector *InfoQuery::getIlsInformationSimByName(const 
 
 const atools::sql::SqlRecord *InfoQuery::getVorInformation(int vorId)
 {
-  return cachedRecord(vorCache, vorQuery, vorId);
+  vorQuery->bindValue(":id", vorId);
+  return query::cachedRecord(vorCache, vorQuery, vorId);
 }
 
 const atools::sql::SqlRecord InfoQuery::getVorByIdentAndRegion(const QString& ident, const QString& region)
@@ -179,97 +193,27 @@ const atools::sql::SqlRecord InfoQuery::getVorByIdentAndRegion(const QString& id
 
 const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
 {
-  return cachedRecord(ndbCache, ndbQuery, ndbId);
+  ndbQuery->bindValue(":id", ndbId);
+  return query::cachedRecord(ndbCache, ndbQuery, ndbId);
 }
 
 const atools::sql::SqlRecord *InfoQuery::getWaypointInformation(int waypointId)
 {
-  return cachedRecord(waypointCache, waypointQuery, waypointId);
+  waypointQuery->bindValue(":id", waypointId);
+  return query::cachedRecord(waypointCache, waypointQuery, waypointId);
 }
 
 const atools::sql::SqlRecord *InfoQuery::getAirwayInformation(int airwayId)
 {
-  return cachedRecord(airwayCache, airwayQuery, airwayId);
+  airwayQuery->bindValue(":id", airwayId);
+  return query::cachedRecord(airwayCache, airwayQuery, airwayId);
 }
 
-atools::sql::SqlRecordVector InfoQuery::getAirwayWaypointInformation(const QString& name, int fragment)
+const atools::sql::SqlRecordVector *InfoQuery::getAirwayWaypointInformation(const QString& name, int fragment)
 {
   airwayWaypointQuery->bindValue(":name", name);
   airwayWaypointQuery->bindValue(":fragment", fragment);
-  airwayWaypointQuery->exec();
-
-  SqlRecordVector rec;
-  while(airwayWaypointQuery->next())
-    rec.append(airwayWaypointQuery->record());
-  return rec;
-}
-
-/* Get a record from the cache of get it from a database query */
-template<typename ID>
-const SqlRecord *InfoQuery::cachedRecord(QCache<ID, SqlRecord>& cache, SqlQuery *query, ID id)
-{
-  SqlRecord *rec = cache.object(id);
-  if(rec != nullptr)
-  {
-    // Found record in cache
-    if(rec->isEmpty())
-      // Empty record that indicates that no result was found
-      return nullptr;
-    else
-      return rec;
-  }
-  else
-  {
-    query->bindValue(":id", id);
-    query->exec();
-    if(query->next())
-    {
-      // Insert it into the cache
-      rec = new SqlRecord(query->record());
-      cache.insert(id, rec);
-    }
-    else
-      // Add empty record to indicate nothing found for this id
-      cache.insert(id, new SqlRecord());
-  }
-  query->finish();
-  return rec;
-}
-
-/* Get a record vector from the cache of get it from a database query */
-template<typename ID>
-const SqlRecordVector *InfoQuery::cachedRecordVector(QCache<ID, SqlRecordVector>& cache, SqlQuery *query, ID id)
-{
-  SqlRecordVector *rec = cache.object(id);
-  if(rec != nullptr)
-  {
-    // Found record in cache
-    if(rec->isEmpty())
-      // Empty record that indicates that no result was found
-      return nullptr;
-    else
-      return rec;
-  }
-  else
-  {
-    query->bindValue(":id", id);
-    query->exec();
-
-    rec = new SqlRecordVector;
-
-    while(query->next())
-      rec->append(query->record());
-
-    // Insert it into the cache
-    cache.insert(id, rec);
-
-    if(rec->isEmpty())
-      return nullptr;
-    else
-      return rec;
-  }
-  // Keep this here although it is never executed since some compilers throw an error
-  return nullptr;
+  return query::cachedRecordVector(airwayWaypointCache, airwayWaypointQuery, {name, fragment});
 }
 
 void InfoQuery::initQueries()
@@ -374,6 +318,7 @@ void InfoQuery::deInitQueries()
   ndbCache.clear();
   waypointCache.clear();
   airwayCache.clear();
+  airwayWaypointCache.clear();
   runwayEndCache.clear();
   ilsCacheSim.clear();
   ilsCacheNav.clear();

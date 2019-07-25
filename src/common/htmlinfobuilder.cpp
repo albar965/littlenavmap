@@ -2468,6 +2468,14 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) const
 {
   navaidTitle(html, tr("Airway: ") + airway.name);
+
+  if(info)
+  {
+    // Add map link if not tooltip
+    html.nbsp().nbsp();
+    html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(airway.id).arg(map::AIRWAY), ahtml::LINK_NO_UL);
+  }
+
   html.table();
   html.row2(tr("Segment type:"), map::airwayTypeToString(airway.type));
 
@@ -2507,13 +2515,13 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   if(infoQuery != nullptr && info)
   {
     // Show list of waypoints =================================================================
-    atools::sql::SqlRecordVector waypoints =
+    const atools::sql::SqlRecordVector *waypoints =
       infoQuery->getAirwayWaypointInformation(airway.name, airway.fragment);
 
-    if(!waypoints.isEmpty())
+    if(waypoints != nullptr && !waypoints->isEmpty())
     {
       HtmlBuilder tempLinkHtml = html.cleared();
-      for(const SqlRecord& wprec : waypoints)
+      for(const SqlRecord& wprec : *waypoints)
       {
         if(!tempLinkHtml.isEmpty())
           tempLinkHtml.text(", ");
@@ -2526,11 +2534,11 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
       }
       tempLinkHtml.text(", ");
       tempLinkHtml.a(tr("%1/%2").
-                     arg(waypoints.last().valueStr("to_ident")).
-                     arg(waypoints.last().valueStr("to_region")),
+                     arg(waypoints->last().valueStr("to_ident")).
+                     arg(waypoints->last().valueStr("to_region")),
                      QString("lnm://show?lonx=%1&laty=%2").
-                     arg(waypoints.last().valueFloat("to_lonx")).
-                     arg(waypoints.last().valueFloat("to_laty")), ahtml::LINK_NO_UL);
+                     arg(waypoints->last().valueFloat("to_lonx")).
+                     arg(waypoints->last().valueFloat("to_laty")), ahtml::LINK_NO_UL);
 
       html.row2(tr("Waypoints Ident/Region:"), tempLinkHtml.getHtml(), ahtml::NO_ENTITIES);
     }

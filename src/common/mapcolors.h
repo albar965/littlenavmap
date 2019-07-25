@@ -26,6 +26,7 @@ namespace map {
 struct MapAirport;
 
 struct MapAirspace;
+struct MapAirway;
 
 }
 
@@ -244,6 +245,8 @@ const QPen aircraftTrailPen(float size);
 
 const QPen& penForAirspace(const map::MapAirspace& airspace);
 const QColor& colorForAirspaceFill(const map::MapAirspace& airspace);
+
+const QPen& penForAirway(const map::MapAirway& airway);
 
 /* Convert current pen into dotted pen leaving style and color as is */
 void adjustPenForCircleToLand(QPainter *painter);
