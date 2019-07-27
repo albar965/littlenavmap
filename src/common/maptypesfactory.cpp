@@ -318,15 +318,18 @@ void MapTypesFactory::fillVorBase(const SqlRecord& record, map::MapVor& vor)
 
 void MapTypesFactory::fillUserdataPoint(const SqlRecord& rec, map::MapUserpoint& obj)
 {
-  obj.id = rec.valueInt("userdata_id");
-  obj.ident = rec.valueStr("ident");
-  obj.region = rec.valueStr("region");
-  obj.name = rec.valueStr("name");
-  obj.type = rec.valueStr("type");
-  obj.description = rec.valueStr("description");
-  obj.tags = rec.valueStr("tags");
-  obj.temp = rec.valueBool("temp", false);
-  obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
+  if(!rec.isEmpty())
+  {
+    obj.id = rec.valueInt("userdata_id");
+    obj.ident = rec.valueStr("ident");
+    obj.region = rec.valueStr("region");
+    obj.name = rec.valueStr("name");
+    obj.type = rec.valueStr("type");
+    obj.description = rec.valueStr("description");
+    obj.tags = rec.valueStr("tags");
+    obj.temp = rec.valueBool("temp", false);
+    obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
+  }
 }
 
 void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLogbookEntry& obj)
