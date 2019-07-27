@@ -451,7 +451,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   // Add apt.dat or BGL file links
   if(info && !print)
-    addAirportScenery(airport, html);
+    addAirportSceneryAndLinks(airport, html);
 
   // Add links to airport files directory "Documents/Airports/ICAO"
   if(info && !print)
@@ -682,7 +682,7 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
       if(details)
       {
         // Table header for detailed view
-        head(html, tr("Best %1 for wind").arg(rwTxt));
+        head(html, tr("Best %1 for wind").arg(rwTxt.toLower()));
         html.table();
         html.tr(QColor()).th(rwTxt).th(tr("Surface")).th(tr("Length")).th(tr("Headwind")).th(tr("Crosswind")).trEnd();
       }
@@ -3597,8 +3597,7 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
 {
   head(html, tr("Scenery"));
   html.table();
-  html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")),
-            ahtml::NO_ENTITIES | ahtml::SMALL);
+  html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")), ahtml::NO_ENTITIES);
   html.tableEnd();
 }
 
@@ -3622,15 +3621,17 @@ void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& h
   }
 }
 
-void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& html) const
+void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlBuilder& html) const
 {
-  head(html, tr("Scenery"));
-  html.table();
+  // Scenery library entries ============================================
   const atools::sql::SqlRecordVector *sceneryInfo =
     infoQuery->getAirportSceneryInformation(airport.ident);
 
   if(sceneryInfo != nullptr)
   {
+    head(html, tr("Scenery"));
+    html.table();
+
     int i = 0;
     for(const SqlRecord& rec : *sceneryInfo)
     {
@@ -3638,28 +3639,43 @@ void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& 
       if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
         title = i == 0 ? tr("X-Plane") : QString();
 
-      html.row2(title, filepathTextShow(rec.valueStr("filepath")),
-                ahtml::NO_ENTITIES | ahtml::SMALL);
+      html.row2(title, filepathTextShow(rec.valueStr("filepath")), ahtml::NO_ENTITIES);
       i++;
     }
-
-    ahtml::Flags linkFlags = ahtml::SMALL | ahtml::LINK_NO_UL;
-    QStringList links;
-
-    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
-      links.append(html.cleared().a(tr("X-Plane Scenery Gateway"),
-                                    QString("https://gateway.x-plane.com/scenery/page/%1").
-                                    arg(airport.ident), linkFlags).getHtml());
-
-    if(airport.ident.size() <= 4)
-      links.append(html.cleared().a(tr("Skyvector"), QString("https://skyvector.com/airport/%1").
-                                    arg(airport.ident), linkFlags).getHtml());
-
-    if(!links.isEmpty())
-      html.row2(QString(), links.join(tr(", ")), ahtml::NO_ENTITIES);
+    html.tableEnd();
   }
 
-  html.tableEnd();
+  // Links ============================================
+  QStringList links;
+  if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+    links.append(html.cleared().a(tr("X-Plane Scenery Gateway"),
+                                  QString("https://gateway.x-plane.com/scenery/page/%1").
+                                  arg(airport.ident), ahtml::LINK_NO_UL).getHtml());
+
+  // Skip X-Plane's obscure long idents
+  if(airport.ident.size() <= 4 && airport.ident.size() >= 3)
+  {
+    // Check if airport is in navdata
+    MapAirport airportNav = mapQuery->getAirportNav(airport);
+
+    if(airportNav.isValid() && airportNav.navdata)
+    {
+      links.append(html.cleared().a(tr("Skyvector"), QString("https://skyvector.com/airport/%1").
+                                    arg(airportNav.ident), ahtml::LINK_NO_UL).getHtml());
+      links.append(html.cleared().a(tr("FlightAware"), QString("https://www.flightaware.com/live/airport/%1").
+                                    arg(airportNav.ident), ahtml::LINK_NO_UL).getHtml());
+    }
+  }
+
+  // Display link table ===============
+  if(!links.isEmpty())
+  {
+    head(html, tr("Links"));
+    html.table();
+    for(const QString& link : links)
+      html.row2(QString(), link, ahtml::NO_ENTITIES);
+    html.tableEnd();
+  }
 }
 
 QString HtmlInfoBuilder::filepathTextShow(const QString& filepath) const
@@ -3667,9 +3683,9 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath) const
   HtmlBuilder link(true);
 
   if(QFileInfo::exists(filepath))
-    link.a(filepath, QString("lnm://show?filepath=%1").arg(filepath), ahtml::LINK_NO_UL);
+    link.a(filepath, QString("lnm://show?filepath=%1").arg(filepath), ahtml::LINK_NO_UL | ahtml::SMALL);
   else
-    link.text(filepath);
+    link.text(filepath, ahtml::SMALL);
   return link.getHtml();
 }
 

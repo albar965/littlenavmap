@@ -298,7 +298,7 @@ private:
 
   /* Add scenery entries and links into table */
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
-  void addAirportScenery(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void addAirportSceneryAndLinks(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addAirportFolder(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
   /* Add coordinates into table */
