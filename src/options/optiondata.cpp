@@ -50,6 +50,9 @@ opts::OnlineFormat OptionData::getOnlineFormat() const
 
     case opts::ONLINE_IVAO:
       return opts::ONLINE_FORMAT_IVAO;
+
+    case opts::ONLINE_PILOTEDGE:
+      return opts::ONLINE_FORMAT_VATSIM;
   }
   return opts::ONLINE_FORMAT_VATSIM;
 }
@@ -67,6 +70,9 @@ QString OptionData::getOnlineStatusUrl() const
 
     case opts::ONLINE_IVAO:
       return onlineIvaoStatusUrl;
+
+    case opts::ONLINE_PILOTEDGE:
+      return onlinePilotEdgeStatusUrl;
 
     case opts::ONLINE_CUSTOM_STATUS:
       return onlineStatusUrl;
@@ -86,6 +92,7 @@ QString OptionData::getOnlineWhazzupUrl() const
 
     case opts::ONLINE_VATSIM:
     case opts::ONLINE_IVAO:
+    case opts::ONLINE_PILOTEDGE:
     case opts::ONLINE_CUSTOM_STATUS:
       return QString();
   }

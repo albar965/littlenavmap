@@ -432,6 +432,9 @@ QString OnlinedataController::getNetworkTranslated() const
     case opts::ONLINE_IVAO:
       return tr("IVAO");
 
+    case opts::ONLINE_PILOTEDGE:
+      return tr("PilotEdge");
+
     case opts::ONLINE_CUSTOM_STATUS:
     case opts::ONLINE_CUSTOM:
       return tr("Custom Network");
@@ -452,6 +455,9 @@ QString OnlinedataController::getNetwork() const
 
     case opts::ONLINE_IVAO:
       return "IVAO";
+
+    case opts::ONLINE_PILOTEDGE:
+      return "PilotEdge";
 
     case opts::ONLINE_CUSTOM_STATUS:
     case opts::ONLINE_CUSTOM:

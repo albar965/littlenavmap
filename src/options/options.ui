@@ -3964,6 +3964,16 @@ Entering a wrong value might cause errors when downloading wind reports.</string
             </widget>
            </item>
            <item>
+            <widget class="QRadioButton" name="radioButtonOptionsOnlinePilotEdge">
+             <property name="toolTip">
+              <string>Use the PilotEdge network pre-defined configuration for online flying</string>
+             </property>
+             <property name="text">
+              <string>&amp;PilotEdge</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QRadioButton" name="radioButtonOptionsOnlineCustomStatus">
              <property name="toolTip">
               <string>Use a custom web address for the &quot;status.txt&quot; file</string>

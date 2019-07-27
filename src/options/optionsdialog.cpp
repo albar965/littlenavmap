@@ -338,6 +338,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->radioButtonOptionsOnlineNone,
      ui->radioButtonOptionsOnlineVatsim,
      ui->radioButtonOptionsOnlineIvao,
+     ui->radioButtonOptionsOnlinePilotEdge,
      ui->radioButtonOptionsOnlineCustomStatus,
      ui->radioButtonOptionsOnlineCustom,
 
@@ -490,6 +491,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::updateOnlineWidgetStatus);
   connect(ui->radioButtonOptionsOnlineIvao, &QRadioButton::clicked,
           this, &OptionsDialog::updateOnlineWidgetStatus);
+  connect(ui->radioButtonOptionsOnlinePilotEdge, &QRadioButton::clicked,
+          this, &OptionsDialog::updateOnlineWidgetStatus);
   connect(ui->radioButtonOptionsOnlineCustomStatus, &QRadioButton::clicked,
           this, &OptionsDialog::updateOnlineWidgetStatus);
   connect(ui->radioButtonOptionsOnlineCustom, &QRadioButton::clicked,
@@ -610,7 +613,7 @@ void OptionsDialog::updateOnlineWidgetStatus()
   qDebug() << Q_FUNC_INFO;
 
   if(ui->radioButtonOptionsOnlineNone->isChecked() || ui->radioButtonOptionsOnlineVatsim->isChecked() ||
-     ui->radioButtonOptionsOnlineIvao->isChecked())
+     ui->radioButtonOptionsOnlineIvao->isChecked() || ui->radioButtonOptionsOnlinePilotEdge->isChecked())
   {
     ui->lineEditOptionsOnlineStatusUrl->setEnabled(false);
     ui->lineEditOptionsOnlineWhazzupUrl->setEnabled(false);
@@ -789,8 +792,9 @@ void OptionsDialog::restoreState()
 
   QSettings networkSettings(networksPath, QSettings::IniFormat);
   OptionData& od = OptionData::instanceInternal();
-  od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();
   od.onlineVatsimStatusUrl = networkSettings.value("vatsim/statusurl").toString();
+  od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();
+  od.onlinePilotEdgeStatusUrl = networkSettings.value("pilotedge/statusurl").toString();
 
   int update;
   if(networkSettings.value("options/update").toString().trimmed().toLower() == "auto")
@@ -804,6 +808,7 @@ void OptionsDialog::restoreState()
 
   // Disable selection based on what was found in the file
   ui->radioButtonOptionsOnlineIvao->setVisible(!od.onlineIvaoStatusUrl.isEmpty());
+  ui->radioButtonOptionsOnlinePilotEdge->setVisible(!od.onlinePilotEdgeStatusUrl.isEmpty());
   ui->radioButtonOptionsOnlineVatsim->setVisible(!od.onlineVatsimStatusUrl.isEmpty());
 
   atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
@@ -1347,6 +1352,8 @@ void OptionsDialog::widgetsToOptionData()
     data.onlineNetwork = opts::ONLINE_VATSIM;
   else if(ui->radioButtonOptionsOnlineIvao->isChecked())
     data.onlineNetwork = opts::ONLINE_IVAO;
+  else if(ui->radioButtonOptionsOnlinePilotEdge->isChecked())
+    data.onlineNetwork = opts::ONLINE_PILOTEDGE;
   else if(ui->radioButtonOptionsOnlineCustomStatus->isChecked())
     data.onlineNetwork = opts::ONLINE_CUSTOM_STATUS;
   else if(ui->radioButtonOptionsOnlineCustom->isChecked())
@@ -1577,6 +1584,9 @@ void OptionsDialog::optionDataToWidgets()
       break;
     case opts::ONLINE_IVAO:
       ui->radioButtonOptionsOnlineIvao->setChecked(true);
+      break;
+    case opts::ONLINE_PILOTEDGE:
+      ui->radioButtonOptionsOnlinePilotEdge->setChecked(true);
       break;
     case opts::ONLINE_CUSTOM_STATUS:
       ui->radioButtonOptionsOnlineCustomStatus->setChecked(true);

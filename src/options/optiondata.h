@@ -399,6 +399,7 @@ enum OnlineNetwork
   ONLINE_NONE,
   ONLINE_VATSIM,
   ONLINE_IVAO,
+  ONLINE_PILOTEDGE,
   ONLINE_CUSTOM_STATUS,
   ONLINE_CUSTOM
 };
@@ -1155,6 +1156,7 @@ private:
   int onlineReloadSeconds = 180, onlineReloadSecondsConfig = 180;
   QString onlineVatsimStatusUrl;
   QString onlineIvaoStatusUrl;
+  QString onlinePilotEdgeStatusUrl;
 
   /* Webserver values */
   QString webDocumentRoot;
