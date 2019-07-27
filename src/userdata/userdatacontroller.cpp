@@ -26,6 +26,7 @@
 #include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "userdata/userdatadialog.h"
+#include "search/searchcontroller.h"
 #include "userdata/userdataicons.h"
 #include "settings/settings.h"
 #include "search/userdatasearch.h"
@@ -64,7 +65,7 @@ void UserdataController::showSearch()
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->raise();
-  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_USER);
+  NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_USER);
 }
 
 QString UserdataController::getDefaultType(const QString& type)

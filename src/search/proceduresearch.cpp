@@ -29,6 +29,7 @@
 #include "gui/actiontextsaver.h"
 #include "gui/actionstatesaver.h"
 #include "common/constants.h"
+#include "search/searchcontroller.h"
 #include "settings/settings.h"
 #include "gui/widgetstate.h"
 #include "query/mapquery.h"
@@ -104,7 +105,7 @@ bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
   return QObject::eventFilter(object, event);
 }
 
-ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::SearchTabIndex tabWidgetIndex)
+ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::TabSearchId tabWidgetIndex)
   : AbstractSearch(main, tabWidgetIndex), treeWidget(treeWidgetParam)
 {
   infoQuery = NavApp::getInfoQuery();
@@ -181,7 +182,7 @@ void ProcedureSearch::fontChanged()
 void ProcedureSearch::resetSearch()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
     // Only reset if this tab is active
     ui->comboBoxProcedureRunwayFilter->setCurrentIndex(FILTER_ALL_RUNWAYS);
@@ -254,7 +255,7 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->raise();
-  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_PROC);
+  NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_PROC);
   treeWidget->setFocus();
 
   if(NavApp::getRouteConst().isAirportDeparture(airport.ident))
@@ -640,7 +641,7 @@ void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref)
 void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
 {
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
-  if(items.isEmpty() || NavApp::getMainUi()->tabWidgetSearch->currentIndex() != tabIndex)
+  if(items.isEmpty() || NavApp::getSearchController()->getCurrentSearchTabId() != tabIndex)
   {
     NavApp::getMainUi()->pushButtonProcedureSearchClearSelection->setEnabled(false);
 
@@ -977,7 +978,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   }
   else if(action == ui->actionSearchProcedureShowInSearch)
   {
-    ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_AIRPORT);
+    NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_AIRPORT);
     emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airportSim.ident), true /* select */);
   }
   // Done by the actions themselves
@@ -1505,7 +1506,7 @@ void ProcedureSearch::updateUnits()
 
 void ProcedureSearch::updateTableSelection(bool noFollow)
 {
-  if(NavApp::getMainUi()->tabWidgetSearch->currentIndex() != tabIndex)
+  if(NavApp::getSearchController()->getCurrentSearchTabId() != tabIndex)
   {
     // Hide preview if another tab is activated
     emit procedureSelected(proc::MapProcedureRef());

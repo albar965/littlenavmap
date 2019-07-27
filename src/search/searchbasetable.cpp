@@ -23,6 +23,7 @@
 #include "logbook/logdatacontroller.h"
 #include "gui/widgetutil.h"
 #include "search/column.h"
+#include "search/searchcontroller.h"
 #include "ui_mainwindow.h"
 #include "common/mapcolors.h"
 #include "search/columnlist.h"
@@ -123,7 +124,7 @@ bool SearchWidgetEventFilter::eventFilter(QObject *object, QEvent *event)
 }
 
 SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                                 si::SearchTabIndex tabWidgetIndex)
+                                 si::TabSearchId tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView)
 {
   mapQuery = NavApp::getMapQuery();
@@ -649,8 +650,7 @@ void SearchBaseTable::postDatabaseLoad()
 /* Reset view sort order, column width and column order back to default values */
 void SearchBaseTable::resetView()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
     controller->resetView();
     updatePushButtons();
@@ -711,9 +711,7 @@ QVector<int> SearchBaseTable::getSelectedIds() const
 
 void SearchBaseTable::resetSearch()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
-  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
     controller->resetSearch();
     updatePushButtons();
@@ -724,8 +722,7 @@ void SearchBaseTable::resetSearch()
 /* Loads all rows into the table view */
 void SearchBaseTable::loadAllRowsIntoView()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
     // bool allSelected = getSelectedRowCount() == getVisibleRowCount();
 
@@ -1236,8 +1233,7 @@ void SearchBaseTable::showInformationTriggered()
 {
   qDebug() << Q_FUNC_INFO;
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
     // Index covers a cell
     QModelIndex index = view->currentIndex();
@@ -1268,8 +1264,7 @@ void SearchBaseTable::showApproachesCustomTriggered()
 
 void SearchBaseTable::showApproaches(bool custom)
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
     // Index covers a cell
     QModelIndex index = view->currentIndex();
@@ -1290,8 +1285,7 @@ void SearchBaseTable::showApproaches(bool custom)
 /* Show on map action in context menu */
 void SearchBaseTable::showOnMapTriggered()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
     QModelIndex index = view->currentIndex();
     if(index.isValid())

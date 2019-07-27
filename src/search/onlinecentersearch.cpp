@@ -30,7 +30,7 @@
 #include "sql/sqlrecord.h"
 #include "common/maptypesfactory.h"
 
-OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
+OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("atc", "atc_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

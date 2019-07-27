@@ -249,5 +249,6 @@
         <file>resources/icons/databaseairspace.svg</file>
         <file>resources/icons/hold.svg</file>
         <file>resources/icons/holdoff.svg</file>
+        <file>resources/icons/tabbutton.svg</file>
     </qresource>
 </RCC>

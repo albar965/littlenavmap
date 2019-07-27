@@ -28,6 +28,7 @@
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
 #include "gui/textdialog.h"
+#include "search/searchcontroller.h"
 #include "logbook/logdataconverter.h"
 #include "logbook/logdatadialog.h"
 #include "logbook/logstatisticsdialog.h"
@@ -70,7 +71,7 @@ void LogdataController::showSearch()
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->raise();
-  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_LOG);
+  NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_LOG);
 }
 
 void LogdataController::saveState()

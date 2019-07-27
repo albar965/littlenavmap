@@ -32,7 +32,7 @@
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
 
-LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
+LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("logbook", "logbook_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

@@ -35,7 +35,7 @@
 #include "sql/sqlrecord.h"
 #include "settings/settings.h"
 
-NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
+NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

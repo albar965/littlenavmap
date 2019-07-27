@@ -71,7 +71,7 @@ class SearchBaseTable :
 public:
   /* Class will take ownership of columnList */
   SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                  si::SearchTabIndex tabWidgetIndex);
+                  si::TabSearchId tabWidgetIndex);
   virtual ~SearchBaseTable() override;
 
   /* Disconnect and reconnect queries on database change */

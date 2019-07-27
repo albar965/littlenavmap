@@ -579,6 +579,11 @@ AircraftPerfController *NavApp::getAircraftPerfController()
   return aircraftPerfController;
 }
 
+SearchController *NavApp::getSearchController()
+{
+  return mainWindow->getSearchController();
+}
+
 const atools::fs::perf::AircraftPerf& NavApp::getAircraftPerformance()
 {
   return aircraftPerfController->getAircraftPerformance();

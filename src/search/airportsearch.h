@@ -41,7 +41,7 @@ class AirportSearch :
   Q_OBJECT
 
 public:
-  AirportSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
+  AirportSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
   virtual ~AirportSearch() override;
 
   /* All state saving is done through the widget state */

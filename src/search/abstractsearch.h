@@ -41,7 +41,7 @@ class AbstractSearch :
   Q_OBJECT
 
 public:
-  AbstractSearch(QMainWindow *parent, si::SearchTabIndex tabWidgetIndex);
+  AbstractSearch(QMainWindow *parent, si::TabSearchId tabWidgetIndex);
   virtual ~AbstractSearch();
 
   /* Disconnect and reconnect queries on database change */
@@ -73,7 +73,7 @@ public:
   virtual void clearSelection() = 0;
   virtual bool hasSelection() const = 0;
 
-  si::SearchTabIndex getTabIndex() const
+  si::TabSearchId getTabIndex() const
   {
     return tabIndex;
   }
@@ -82,7 +82,7 @@ protected:
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
   /* Tab index of this search tab on the search dock window */
-  si::SearchTabIndex tabIndex;
+  si::TabSearchId tabIndex;
   QMainWindow *mainWindow = nullptr;
 
 };

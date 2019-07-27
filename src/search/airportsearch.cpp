@@ -43,7 +43,7 @@ const QSet<QString> AirportSearch::NUMBER_COLUMNS(
    "num_parking_mil_cargo", "num_parking_mil_combat",
    "num_helipad"});
 
-AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
+AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("airport", "airport_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

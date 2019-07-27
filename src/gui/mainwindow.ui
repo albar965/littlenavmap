@@ -520,6 +520,12 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
+       </property>
        <widget class="QWidget" name="tabAirportSearch">
         <attribute name="title">
          <string>Airports</string>
@@ -4748,6 +4754,18 @@ Wind speed will be interpolated for climb and descent phases.</string>
        <property name="currentIndex">
         <number>0</number>
        </property>
+       <property name="documentMode">
+        <bool>false</bool>
+       </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
+       </property>
+       <property name="tabBarAutoHide">
+        <bool>false</bool>
+       </property>
        <widget class="QWidget" name="tabAirportInfo">
         <property name="toolTip">
          <string/>
@@ -4930,7 +4948,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextBrowser" name="textBrowserNearest">
+          <widget class="QTextBrowser" name="textBrowserNearestInfo">
            <property name="placeholderText">
             <string>No airport selected.</string>
            </property>
@@ -4981,7 +4999,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
          <string>Navaids</string>
         </attribute>
         <attribute name="toolTip">
-         <string>VOR, NDB, waypoint, airway and userpoint information</string>
+         <string>VOR, NDB, waypoint and airway information</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_14">
          <property name="spacing">
@@ -5005,7 +5023,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>No VOR, NDB, waypoint, airway or userpoint selected.</string>
+            <string>No VOR, NDB, waypoint or airway selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -5038,6 +5056,38 @@ Wind speed will be interpolated for climb and descent phases.</string>
           <widget class="QTextBrowser" name="textBrowserAirspaceInfo">
            <property name="placeholderText">
             <string>No airspace selected.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabUserpointsInfo">
+        <attribute name="title">
+         <string>Userpoints</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_36">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserUserpointInfo">
+           <property name="placeholderText">
+            <string>No userpoint selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -5587,6 +5637,12 @@ Wind speed will be interpolated for climb and descent phases.</string>
       <widget class="QTabWidget" name="tabWidgetAircraft">
        <property name="currentIndex">
         <number>0</number>
+       </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
        </property>
        <widget class="QWidget" name="tabAircraftInfo">
         <attribute name="title">

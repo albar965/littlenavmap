@@ -17,6 +17,8 @@
 
 #include "common/mapflags.h"
 
+#include "common/tabindexes.h"
+
 #include <QObject>
 
 #ifndef LITTLENAVMAP_SEARCHCONTROLLER_H
@@ -39,6 +41,10 @@ class QTreeWidget;
 class MapQuery;
 
 namespace atools {
+namespace gui {
+class TabWidgetHandler;
+
+}
 namespace sql {
 class SqlRecord;
 }
@@ -62,7 +68,7 @@ class SearchController :
   Q_OBJECT
 
 public:
-  SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearch);
+  SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam);
   virtual ~SearchController();
 
   /* Create the airport search tab */
@@ -152,6 +158,12 @@ public:
   /* True if any of the search windows has a selection */
   bool hasSelection();
 
+  void setCurrentSearchTabId(si::TabSearchId tabId);
+
+  si::TabSearchId getCurrentSearchTabId();
+
+  void resetWindowLayout();
+
 private:
   void tabChanged(int index);
   void postCreateSearch(AbstractSearch *search);
@@ -173,10 +185,11 @@ private:
   OnlineCenterSearch *onlineCenterSearch = nullptr;
   OnlineServerSearch *onlineServerSearch = nullptr;
 
-  QMainWindow *mainWindow;
-  QTabWidget *tabWidget = nullptr;
+  QMainWindow *mainWindow = nullptr;
+  QTabWidget *tabWidgetSearch = nullptr;
   QList<AbstractSearch *> allSearchTabs;
 
+  atools::gui::TabWidgetHandler *tabHandlerSearch = nullptr;
 };
 
 #endif // LITTLENAVMAP_SEARCHCONTROLLER_H

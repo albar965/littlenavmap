@@ -1472,7 +1472,7 @@ void MainWindow::actionShortcutAirportSearchTriggered()
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->activateWindow();
   ui->dockWidgetSearch->raise();
-  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_AIRPORT);
+  searchController->setCurrentSearchTabId(si::SEARCH_AIRPORT);
   ui->lineEditAirportIcaoSearch->setFocus();
 }
 
@@ -1482,7 +1482,7 @@ void MainWindow::actionShortcutNavaidSearchTriggered()
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->activateWindow();
   ui->dockWidgetSearch->raise();
-  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
+  searchController->setCurrentSearchTabId(si::SEARCH_NAV);
   ui->lineEditNavIcaoSearch->setFocus();
 }
 
@@ -1492,7 +1492,7 @@ void MainWindow::actionShortcutUserpointSearchTriggered()
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->activateWindow();
   ui->dockWidgetSearch->raise();
-  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_USER);
+  searchController->setCurrentSearchTabId(si::SEARCH_USER);
   ui->lineEditUserdataIdent->setFocus();
 }
 
@@ -1502,7 +1502,7 @@ void MainWindow::actionShortcutLogbookSearchTriggered()
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->activateWindow();
   ui->dockWidgetSearch->raise();
-  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_LOG);
+  searchController->setCurrentSearchTabId(si::SEARCH_LOG);
   ui->lineEditLogdataDeparture->setFocus();
 }
 
@@ -1532,7 +1532,7 @@ void MainWindow::actionShortcutAirportInformationTriggered()
   ui->dockWidgetInformation->show();
   ui->dockWidgetInformation->activateWindow();
   ui->dockWidgetInformation->raise();
-  ui->tabWidgetInformation->setCurrentIndex(ic::INFO_AIRPORT);
+  infoController->setCurrentInfoTabIndex(ic::INFO_AIRPORT);
   ui->textBrowserAirportInfo->setFocus();
 }
 
@@ -1542,7 +1542,7 @@ void MainWindow::actionShortcutAirportWeatherTriggered()
   ui->dockWidgetInformation->show();
   ui->dockWidgetInformation->activateWindow();
   ui->dockWidgetInformation->raise();
-  ui->tabWidgetInformation->setCurrentIndex(ic::INFO_WEATHER);
+  infoController->setCurrentInfoTabIndex(ic::INFO_WEATHER);
   ui->textBrowserWeatherInfo->setFocus();
 }
 
@@ -1552,7 +1552,7 @@ void MainWindow::actionShortcutNavaidInformationTriggered()
   ui->dockWidgetInformation->show();
   ui->dockWidgetInformation->activateWindow();
   ui->dockWidgetInformation->raise();
-  ui->tabWidgetInformation->setCurrentIndex(ic::INFO_NAVAID);
+  infoController->setCurrentInfoTabIndex(ic::INFO_NAVAID);
   ui->textBrowserNavaidInfo->setFocus();
 }
 
@@ -1562,7 +1562,7 @@ void MainWindow::actionShortcutAircraftProgressTriggered()
   ui->dockWidgetAircraft->show();
   ui->dockWidgetAircraft->activateWindow();
   ui->dockWidgetAircraft->raise();
-  ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_USER_PROGRESS);
+  infoController->setCurrentAircraftTabIndex(ic::AIRCRAFT_USER_PROGRESS);
   ui->textBrowserAircraftProgressInfo->setFocus();
 }
 
@@ -3164,41 +3164,11 @@ void MainWindow::raiseFloatingWindows()
 void MainWindow::updateOnlineActionStates()
 {
   if(NavApp::isOnlineNetworkActive())
-  {
     // Show action in menu and toolbar
     ui->actionViewAirspaceSrcOnline->setVisible(true);
-
-    // Add tabs in search widget
-    if(ui->tabWidgetSearch->indexOf(ui->tabOnlineClientSearch) == -1)
-      ui->tabWidgetSearch->addTab(ui->tabOnlineClientSearch, tr("Online Clients"));
-
-    if(ui->tabWidgetSearch->indexOf(ui->tabOnlineCenterSearch) == -1)
-      ui->tabWidgetSearch->addTab(ui->tabOnlineCenterSearch, tr("Online Centers"));
-
-    if(ui->tabWidgetSearch->indexOf(ui->tabOnlineServerSearch) == -1)
-      ui->tabWidgetSearch->addTab(ui->tabOnlineServerSearch, tr("Online Server"));
-
-    // Add tabs in information widget
-    if(ui->tabWidgetInformation->indexOf(ui->tabOnlineClientInfo) == -1)
-      ui->tabWidgetInformation->addTab(ui->tabOnlineClientInfo, tr("Online Clients"));
-
-    if(ui->tabWidgetInformation->indexOf(ui->tabOnlineCenterInfo) == -1)
-      ui->tabWidgetInformation->addTab(ui->tabOnlineCenterInfo, tr("Online Centers"));
-  }
   else
-  {
     // Hide action in menu and toolbar
     ui->actionViewAirspaceSrcOnline->setVisible(false);
-
-    // Remove the tabs in search from last to first. Order is important - the search objects remain
-    ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_SERVER);
-    ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_CENTER);
-    ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_CLIENT);
-
-    // Remove tabs in information
-    ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CENTER);
-    ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CLIENT);
-  }
 }
 
 /* Enable or disable actions */
@@ -3355,6 +3325,9 @@ void MainWindow::resetWindowLayout()
     ui->dockWidgetMap->hide();
   else
     ui->dockWidgetMap->show();
+
+  infoController->resetWindowLayout();
+  searchController->resetWindowLayout();
 }
 
 /* Read settings for all windows, docks, controller and manager classes */
@@ -3363,7 +3336,7 @@ void MainWindow::restoreStateMain()
   qDebug() << Q_FUNC_INFO << "enter";
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.restore({ui->statusBar, ui->tabWidgetSearch});
+  widgetState.restore(ui->statusBar);
 
   Settings& settings = Settings::instance();
 
@@ -3652,7 +3625,7 @@ void MainWindow::saveMainWindowStates()
   qDebug() << Q_FUNC_INFO;
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save({ui->statusBar, ui->tabWidgetSearch});
+  widgetState.save(ui->statusBar);
 
   Settings& settings = Settings::instance();
   settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE, saveState(lnm::MAINWINDOW_STATE_VERSION));

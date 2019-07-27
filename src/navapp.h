@@ -47,6 +47,7 @@ class QSplashScreen;
 class Route;
 class RouteAltitude;
 class RouteController;
+class SearchController;
 class StyleHandler;
 class UpdateHandler;
 class UserdataController;
@@ -268,6 +269,7 @@ public:
   static LogdataController *getLogdataController();
   static OnlinedataController *getOnlinedataController();
   static AircraftPerfController *getAircraftPerfController();
+  static SearchController *getSearchController();
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
 
   static AirspaceController *getAirspaceController();

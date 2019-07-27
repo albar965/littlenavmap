@@ -42,6 +42,7 @@
 #include "sql/sqlrecord.h"
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
+#include "gui/tabwidgethandler.h"
 
 #include <QUrlQuery>
 
@@ -63,6 +64,17 @@ InfoController::InfoController(MainWindow *parent)
 
   // Get base font size for widgets
   Ui::MainWindow *ui = NavApp::getMainUi();
+
+  tabHandlerInfo = new atools::gui::TabWidgetHandler(ui->tabWidgetInformation,
+                                                     QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
+                                                     tr("Open or close tabs"));
+  tabHandlerInfo->init(ic::TabInfoIds, lnm::INFOWINDOW_WIDGET_TABS);
+
+  tabHandlerAircraft = new atools::gui::TabWidgetHandler(ui->tabWidgetAircraft,
+                                                         QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
+                                                         tr("Open or close tabs"));
+  tabHandlerAircraft->init(ic::TabAircraftIds, lnm::INFOWINDOW_WIDGET_AIRCRAFT_TABS);
+
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
   simInfoFontPtSize = static_cast<float>(ui->textBrowserAircraftInfo->font().pointSizeF());
 
@@ -72,9 +84,10 @@ InfoController::InfoController(MainWindow *parent)
   ui->textBrowserRunwayInfo->setSearchPaths(paths);
   ui->textBrowserComInfo->setSearchPaths(paths);
   ui->textBrowserApproachInfo->setSearchPaths(paths);
-  ui->textBrowserNearest->setSearchPaths(paths);
+  ui->textBrowserNearestInfo->setSearchPaths(paths);
   ui->textBrowserWeatherInfo->setSearchPaths(paths);
   ui->textBrowserNavaidInfo->setSearchPaths(paths);
+  ui->textBrowserUserpointInfo->setSearchPaths(paths);
   ui->textBrowserAirspaceInfo->setSearchPaths(paths);
   ui->textBrowserLogbookInfo->setSearchPaths(paths);
   ui->textBrowserCenterInfo->setSearchPaths(paths);
@@ -89,9 +102,10 @@ InfoController::InfoController(MainWindow *parent)
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserComInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserApproachInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
-  connect(ui->textBrowserNearest, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserNearestInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserWeatherInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserUserpointInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserAirspaceInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserLogbookInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
@@ -102,8 +116,9 @@ InfoController::InfoController(MainWindow *parent)
   connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserAircraftAiInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
-  connect(ui->tabWidgetAircraft, &QTabWidget::currentChanged, this, &InfoController::currentAircraftTabChanged);
-  connect(ui->tabWidgetInformation, &QTabWidget::currentChanged, this, &InfoController::currentInfoTabChanged);
+  connect(tabHandlerAircraft, &atools::gui::TabWidgetHandler::tabChanged,
+          this, &InfoController::currentAircraftTabChanged);
+  connect(tabHandlerInfo, &atools::gui::TabWidgetHandler::tabChanged, this, &InfoController::currentInfoTabChanged);
 
   connect(ui->dockWidgetAircraft, &QDockWidget::visibilityChanged, this, &InfoController::visibilityChangedAircraft);
   connect(ui->dockWidgetInformation, &QDockWidget::visibilityChanged, this, &InfoController::visibilityChangedInfo);
@@ -111,25 +126,27 @@ InfoController::InfoController(MainWindow *parent)
 
 InfoController::~InfoController()
 {
+  delete tabHandlerInfo;
+  delete tabHandlerAircraft;
   delete infoBuilder;
 }
 
 void InfoController::visibilityChangedAircraft(bool visible)
 {
   if(visible)
-    currentAircraftTabChanged(NavApp::getMainUi()->tabWidgetAircraft->currentIndex());
+    currentAircraftTabChanged(tabHandlerAircraft->getCurrentTabId());
 }
 
 void InfoController::visibilityChangedInfo(bool visible)
 {
   if(visible)
-    currentInfoTabChanged(NavApp::getMainUi()->tabWidgetInformation->currentIndex());
+    currentInfoTabChanged(tabHandlerInfo->getCurrentTabId());
 }
 
-void InfoController::currentAircraftTabChanged(int index)
+void InfoController::currentAircraftTabChanged(int id)
 {
   // Update new tab to avoid half a second delay or obsolete information
-  switch(static_cast<ic::TabIndexAircraft>(index))
+  switch(static_cast<ic::TabAircraftId>(id))
   {
     case ic::AIRCRAFT_USER:
       updateUserAircraftText();
@@ -143,18 +160,24 @@ void InfoController::currentAircraftTabChanged(int index)
   }
 }
 
-void InfoController::currentInfoTabChanged(int index)
+void InfoController::currentInfoTabChanged(int id)
 {
   // Update new tab to avoid delay or obsolete information
-  switch(static_cast<ic::TabIndex>(index))
+  switch(static_cast<ic::TabInfoId>(id))
   {
     case ic::INFO_AIRPORT:
       updateAirportInternal(false /* new */, true /* bearing changed */, false /* scroll to top */,
                             false /* force weather update */);
       break;
+
     case ic::INFO_NAVAID:
       updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
       break;
+
+    case ic::INFO_USERPOINT:
+      updateUserpointInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
+      break;
+
     case ic::INFO_RUNWAYS:
     case ic::INFO_COM:
     case ic::INFO_APPROACHES:
@@ -305,8 +328,7 @@ void InfoController::anchorClicked(const QUrl& url)
 void InfoController::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save({ui->tabWidgetInformation, ui->tabWidgetAircraft,
-                                                         ui->tabWidgetLegend});
+  atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save({ui->tabWidgetLegend});
 
   // Store currently shown map objects in a string list containing id and type
   map::MapObjectRefList refs;
@@ -354,10 +376,16 @@ void InfoController::saveState()
 
   // More / less state ===================================
   settings.setValue(lnm::INFOWINDOW_MORE_LESS_PROGRESS, lessAircraftProgress);
+
+  tabHandlerInfo->saveState();
+  tabHandlerAircraft->saveState();
 }
 
 void InfoController::restoreState()
 {
+  tabHandlerInfo->restoreState();
+  tabHandlerAircraft->restoreState();
+
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_INFO)
   {
     lessAircraftProgress =
@@ -384,12 +412,11 @@ void InfoController::restoreState()
       res.airspaces.append(NavApp::getAirspaceController()->getAirspaceById(id));
     }
 
-    showInformationInternal(res, map::NONE, false /* show windows */, false /* scroll to top */);
+    showInformationInternal(res, map::NONE, false /* show windows */, false /* scroll to top */,
+                            true /* forceUpdate */);
 
     Ui::MainWindow *ui = NavApp::getMainUi();
-    atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation,
-                                                              ui->tabWidgetAircraft,
-                                                              ui->tabWidgetLegend});
+    atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetLegend});
   }
   updateTextEditFontSizes();
 }
@@ -473,9 +500,10 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserRunwayInfo->clear();
   ui->textBrowserComInfo->clear();
   ui->textBrowserApproachInfo->clear();
-  ui->textBrowserNearest->clear();
+  ui->textBrowserNearestInfo->clear();
   ui->textBrowserWeatherInfo->clear();
   ui->textBrowserNavaidInfo->clear();
+  ui->textBrowserUserpointInfo->clear();
   ui->textBrowserLogbookInfo->clear();
   ui->textBrowserAirspaceInfo->clear();
 
@@ -485,12 +513,14 @@ void InfoController::clearInfoTextBrowsers()
 
 void InfoController::showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType)
 {
-  showInformationInternal(result, preferredType, true /* Show windows */, true /* scroll to top */);
+  showInformationInternal(result, preferredType, true /* Show windows */, true /* scroll to top */,
+                          false /* forceUpdate */);
 }
 
 void InfoController::updateAllInformation()
 {
-  showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */);
+  showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */,
+                          false /* forceUpdate */);
 }
 
 void InfoController::onlineNetworkChanged()
@@ -505,18 +535,20 @@ void InfoController::onlineNetworkChanged()
       airspaces.append(airspace);
   currentSearchResult.airspaces = airspaces;
 
-  showInformationInternal(currentSearchResult, map::NONE, false /* show windows */, false /* scroll to top */);
+  showInformationInternal(currentSearchResult, map::NONE, false /* show windows */, false /* scroll to top */,
+                          true /* forceUpdate */);
 }
 
 void InfoController::onlineClientAndAtcUpdated()
 {
-  showInformationInternal(currentSearchResult, map::NONE, false /* show windows */, false /* scroll to top */);
+  showInformationInternal(currentSearchResult, map::NONE, false /* show windows */,
+                          false /* scroll to top */, true /* forceUpdate */);
 }
 
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
 void InfoController::showInformationInternal(map::MapSearchResult result, map::MapObjectTypes preferredType,
-                                             bool showWindows, bool scrollToTop)
+                                             bool showWindows, bool scrollToTop, bool forceUpdate)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -524,7 +556,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // Clear all except preferred - used by context menu "Show information for ..." to update only one topic
     result.clear(~preferredType);
 
-  bool foundAirport = false, foundNavaid = false /* also userpoints */,
+  bool foundAirport = false, foundNavaid = false, foundUserpoint = false,
        foundUserAircraft = false, foundUserAircraftShadow = false,
        foundAiAircraft = false, foundOnlineClient = false,
        foundAirspace = false, foundLogbookEntry = false, foundOnlineCenter = false;
@@ -596,7 +628,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // when updating
     map::MapAirport airport = result.airports.first();
 
-    bool changed = currentSearchResult.isEmpty() || currentSearchResult.airports.first().id != airport.id;
+    bool changed = !currentSearchResult.hasAirports() || currentSearchResult.airports.first().id != airport.id;
 
     currentSearchResult.airports.clear();
     currentSearchResult.airportIds.clear();
@@ -606,7 +638,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // Update parts that are variable because of weather or bearing changes ==================
     updateAirportInternal(true /* new */, false /* bearing change*/, scrollToTop, false /* force weather update */);
 
-    if(changed)
+    if(changed || forceUpdate)
     {
       // Update parts that have now weather or bearing depenedency =====================
       html.clear();
@@ -626,7 +658,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
 
       html.clear();
       infoBuilder->nearestText(airport, html);
-      atools::gui::util::updateTextEdit(ui->textBrowserNearest, html.getHtml(),
+      atools::gui::util::updateTextEdit(ui->textBrowserNearestInfo, html.getHtml(),
                                         scrollToTop, !scrollToTop /* keep selection */);
     }
 
@@ -726,15 +758,17 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       qDebug() << "Found log entry" << logEntry.id;
 
       currentSearchResult.logbookEntries.append(logEntry);
-      infoBuilder->logEntryText(logEntry, html);
+      foundLogbookEntry |= infoBuilder->logEntryText(logEntry, html);
       html.br();
-      foundLogbookEntry = true;
     }
 
     if(foundLogbookEntry)
       // Update and keep scroll position
       atools::gui::util::updateTextEdit(ui->textBrowserLogbookInfo, html.getHtml(),
                                         false /* scroll to top*/, true /* keep selection */);
+    else
+      ui->textBrowserLogbookInfo->clear();
+
   }
 
   // Navaids ================================================================
@@ -744,12 +778,13 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     currentSearchResult.clear(map::NAV_ALL | map::USERPOINT | map::ILS | map::AIRWAY | map::RUNWAYEND);
 
   foundNavaid = updateNavaidInternal(result, false /* bearing changed */, scrollToTop);
+  foundUserpoint = updateUserpointInternal(result, false /* bearing changed */, scrollToTop);
 
   // Show dock windows if needed
   if(showWindows)
   {
-    if(foundNavaid || foundAirport || foundAirspace || foundLogbookEntry || foundOnlineCenter || foundOnlineClient ||
-       foundUserAircraftShadow)
+    if(foundNavaid || foundUserpoint || foundAirport || foundAirspace || foundLogbookEntry || foundOnlineCenter ||
+       foundOnlineClient || foundUserAircraftShadow)
     {
       NavApp::getMainUi()->dockWidgetInformation->show();
       NavApp::getMainUi()->dockWidgetInformation->raise();
@@ -765,12 +800,12 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   if(showWindows)
   {
     // Select tab to activate ==========================================================
-    ic::TabIndex idx = static_cast<ic::TabIndex>(ui->tabWidgetInformation->currentIndex());
+    ic::TabInfoId idx = static_cast<ic::TabInfoId>(tabHandlerInfo->getCurrentTabId());
     // Is any airport related tab active?
     bool airportActive = idx == ic::INFO_AIRPORT || idx == ic::INFO_RUNWAYS || idx == ic::INFO_COM ||
                          idx == ic::INFO_APPROACHES || idx == ic::INFO_NEAREST || idx == ic::INFO_WEATHER;
 
-    ic::TabIndex newIdx = idx;
+    ic::TabInfoId newId = idx;
 
     if(preferredType != map::NONE)
     {
@@ -778,49 +813,50 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       if(preferredType & map::AIRPORT)
       {
         if(!airportActive)
-          newIdx = ic::INFO_AIRPORT;
+          newId = ic::INFO_AIRPORT;
       }
-      else if(preferredType & map::NAV_ALL || preferredType & map::USERPOINT || preferredType & map::AIRWAY)
-        newIdx = ic::INFO_NAVAID;
+      else if(preferredType & map::USERPOINT)
+        newId = ic::INFO_USERPOINT;
+      else if(preferredType & map::NAV_ALL || preferredType & map::AIRWAY)
+        newId = ic::INFO_NAVAID;
       else if(preferredType & map::AIRSPACE && foundOnlineCenter)
-        newIdx = ic::INFO_ONLINE_CENTER;
+        newId = ic::INFO_ONLINE_CENTER;
       else if(preferredType & map::AIRCRAFT_ONLINE)
-        newIdx = ic::INFO_ONLINE_CLIENT;
+        newId = ic::INFO_ONLINE_CLIENT;
       else if(preferredType & map::AIRSPACE)
-        newIdx = ic::INFO_AIRSPACE;
+        newId = ic::INFO_AIRSPACE;
       else if(preferredType & map::LOGBOOK)
-        newIdx = ic::INFO_LOGBOOK;
+        newId = ic::INFO_LOGBOOK;
     }
     else
     {
       bool onlineClient = foundOnlineClient || foundUserAircraftShadow;
 
-      // Decide which tab to activate automatically so that it tries to keep the current tab in front
-      if(foundAirspace && !foundOnlineCenter && !foundNavaid && !foundAirport && !onlineClient)
-        // Only airspace found - lowest priority
-        newIdx = ic::INFO_AIRSPACE;
-      else if(foundOnlineCenter && !foundNavaid && !foundAirport && !onlineClient)
-        // Only online center found
-        newIdx = ic::INFO_ONLINE_CENTER;
-      else if(foundNavaid && !foundAirport && !onlineClient)
-        newIdx = ic::INFO_NAVAID;
-      else if(foundAirport && !onlineClient)
+      //// Decide which tab to activate automatically so that it tries to keep the current tab in front
+      if(onlineClient)
+        newId = ic::INFO_ONLINE_CLIENT;
+      else if(foundUserpoint)
+        newId = ic::INFO_USERPOINT;
+      else if(foundLogbookEntry)
+        newId = ic::INFO_LOGBOOK;
+      else if(foundAirport)
       {
         if(!airportActive)
-          // Show airport tab if no airport related tab was active
-          newIdx = ic::INFO_AIRPORT;
+          newId = ic::INFO_AIRPORT;
       }
-      else if(foundLogbookEntry)
-        newIdx = ic::INFO_LOGBOOK;
-      else if(onlineClient)
-        // Only online client found
-        newIdx = ic::INFO_ONLINE_CLIENT;
+      else if(foundNavaid)
+        newId = ic::INFO_NAVAID;
+      else if(foundAirspace)
+        newId = ic::INFO_AIRSPACE;
+      else if(foundOnlineCenter)
+        newId = ic::INFO_ONLINE_CENTER;
     }
 
-    ui->tabWidgetInformation->setCurrentIndex(newIdx);
+    tabHandlerInfo->setCurrentTab(newId);
 
     // Select message ==========================================================
-    switch(newIdx)
+    QString objType;
+    switch(newId)
     {
       case ic::INFO_AIRPORT:
       case ic::INFO_RUNWAYS:
@@ -828,35 +864,45 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       case ic::INFO_APPROACHES:
       case ic::INFO_NEAREST:
       case ic::INFO_WEATHER:
-        mainWindow->setStatusMessage(tr("Showing information for airport."));
+        objType = tr("airport");
         break;
       case ic::INFO_NAVAID:
-        mainWindow->setStatusMessage(tr("Showing information for navaid."));
+        objType = tr("navaid");
+        break;
+      case ic::INFO_USERPOINT:
+        objType = tr("userpoint");
         break;
       case ic::INFO_AIRSPACE:
-        mainWindow->setStatusMessage(tr("Showing information for airspace."));
+        objType = tr("airspace");
         break;
       case ic::INFO_LOGBOOK:
-        mainWindow->setStatusMessage(tr("Showing information for logbook entry."));
+        objType = tr("logbook entry");
         break;
       case ic::INFO_ONLINE_CLIENT:
-        mainWindow->setStatusMessage(tr("Showing information for online clients."));
+        objType = tr("online clients");
         break;
       case ic::INFO_ONLINE_CENTER:
-        mainWindow->setStatusMessage(tr("Showing information for online center."));
+        objType = tr("online center");
         break;
     }
+    mainWindow->setStatusMessage(tr("Showing information for %1.").arg(objType));
 
     // Switch to a tab in aircraft window
-    ic::TabIndexAircraft acidx = static_cast<ic::TabIndexAircraft>(ui->tabWidgetAircraft->currentIndex());
+    ic::TabAircraftId acidx = static_cast<ic::TabAircraftId>(tabHandlerAircraft->getCurrentTabId());
     if(foundUserAircraft && !foundAiAircraft)
     {
       // If no user aircraft related tabs is shown bring user tab to front
       if(acidx != ic::AIRCRAFT_USER && acidx != ic::AIRCRAFT_USER_PROGRESS)
-        ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_USER);
+      {
+        // Open aircraft overview
+        tabHandlerAircraft->openTab(ic::AIRCRAFT_USER);
+
+        // Open and activate progress
+        tabHandlerAircraft->setCurrentTab(ic::AIRCRAFT_USER_PROGRESS);
+      }
     }
     if(!foundUserAircraft && foundAiAircraft)
-      ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_AI);
+      tabHandlerAircraft->setCurrentTab(ic::AIRCRAFT_AI);
   }
 }
 
@@ -875,22 +921,6 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
   });
   html.b().a(tr("Remove Airway Highlights"), QString("lnm://do?hideairways"),
              ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
-
-  // Userpoints on top of the list
-  for(map::MapUserpoint userpoint: result.userpoints)
-  {
-#ifdef DEBUG_INFORMATION
-    qDebug() << "Found waypoint" << userpoint.ident;
-#endif
-    // Get updated object in case of changes in the database
-    mapQuery->updateUserdataPoint(userpoint);
-
-    if(!bearingChanged)
-      currentSearchResult.userpoints.append(userpoint);
-    infoBuilder->userpointText(userpoint, html);
-    html.br();
-    foundNavaid = true;
-  }
 
   for(const map::MapVor& vor : result.vors)
   {
@@ -962,6 +992,36 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
                                       scrollToTop, !scrollToTop /* keep selection */);
 
   return foundNavaid;
+}
+
+bool InfoController::updateUserpointInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop)
+{
+  HtmlBuilder html(true);
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  bool foundUserpoint = false;
+
+  // Userpoints on top of the list
+  for(map::MapUserpoint userpoint: result.userpoints)
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << "Found waypoint" << userpoint.ident;
+#endif
+    // Get updated object in case of changes in the database
+    mapQuery->updateUserdataPoint(userpoint);
+
+    if(!bearingChanged)
+      currentSearchResult.userpoints.append(userpoint);
+    foundUserpoint |= infoBuilder->userpointText(userpoint, html);
+    html.br();
+  }
+
+  if(foundUserpoint)
+    atools::gui::util::updateTextEdit(ui->textBrowserUserpointInfo, html.getHtml(),
+                                      scrollToTop, !scrollToTop /* keep selection */);
+  else
+    ui->textBrowserUserpointInfo->clear();
+
+  return foundUserpoint;
 }
 
 void InfoController::preDatabaseLoad()
@@ -1103,13 +1163,13 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
     lastSimData = data;
     if(data.getUserAircraftConst().isValid() && ui->dockWidgetAircraft->isVisible())
     {
-      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER)
+      if(tabHandlerAircraft->getCurrentTabId() == ic::AIRCRAFT_USER)
         updateUserAircraftText();
 
-      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER_PROGRESS)
+      if(tabHandlerAircraft->getCurrentTabId() == ic::AIRCRAFT_USER_PROGRESS)
         updateAircraftProgressText();
 
-      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_AI)
+      if(tabHandlerAircraft->getCurrentTabId() == ic::AIRCRAFT_AI)
         updateAiAircraftText();
     }
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
@@ -1121,12 +1181,15 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
     // Last update was more than a second ago
     if(data.getUserAircraftConst().isValid() && ui->dockWidgetInformation->isVisible())
     {
-      if(ui->tabWidgetInformation->currentIndex() == ic::INFO_AIRPORT)
+      if(tabHandlerInfo->getCurrentTabId() == ic::INFO_AIRPORT)
         updateAirportInternal(false /* new */, true /* bearing change*/, false /* scroll to top */,
                               false /* force weather update */);
 
-      if(ui->tabWidgetInformation->currentIndex() == ic::INFO_NAVAID)
+      if(tabHandlerInfo->getCurrentTabId() == ic::INFO_NAVAID)
         updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
+
+      if(tabHandlerInfo->getCurrentTabId() == ic::INFO_USERPOINT)
+        updateUserpointInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
     }
     lastSimBearingUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }
@@ -1196,9 +1259,10 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserRunwayInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserComInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserApproachInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserNearest, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserNearestInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserWeatherInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserUserpointInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserAirspaceInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserLogbookInfo, infoFontPtSize, sizePercent);
 
@@ -1262,4 +1326,20 @@ QStringList InfoController::getAirportTextFull(const QString& ident) const
   retval.append(html.getHtml());
 
   return retval;
+}
+
+void InfoController::setCurrentInfoTabIndex(ic::TabInfoId tabId)
+{
+  tabHandlerInfo->setCurrentTab(tabId);
+}
+
+void InfoController::setCurrentAircraftTabIndex(ic::TabAircraftId tabId)
+{
+  tabHandlerAircraft->setCurrentTab(tabId);
+}
+
+void InfoController::resetWindowLayout()
+{
+  tabHandlerInfo->reset();
+  tabHandlerAircraft->reset();
 }
