@@ -127,6 +127,34 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
+  // Logbook entries ===========================================================================
+  for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
+  {
+    if(checkText(html, numEntries))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.textBar(10);
+
+    info.logEntryText(entry, html);
+
+    numEntries++;
+  }
+
+  // Userpoints ===========================================================================
+  for(const MapUserpoint& up : mapSearchResult.userpoints)
+  {
+    if(checkText(html, numEntries))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.textBar(10);
+
+    info.userpointText(up, html);
+
+    numEntries++;
+  }
+
   // Airports ===========================================================================
   if(opts & opts::TOOLTIP_AIRPORT)
   {
@@ -147,35 +175,9 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
-  // Logbook entries ===========================================================================
-  for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
-  {
-    if(checkText(html, numEntries))
-      return html.getHtml();
-
-    if(!html.isEmpty())
-      html.textBar(10);
-
-    info.logEntryText(entry, html);
-
-    numEntries++;
-  }
-
   // Navaids ===========================================================================
   if(opts & opts::TOOLTIP_NAVAID)
   {
-    for(const MapUserpoint& up : mapSearchResult.userpoints)
-    {
-      if(checkText(html, numEntries))
-        return html.getHtml();
-
-      if(!html.isEmpty())
-        html.textBar(10);
-
-      info.userpointText(up, html);
-
-      numEntries++;
-    }
 
     for(const MapVor& vor : mapSearchResult.vors)
     {

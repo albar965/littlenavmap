@@ -477,6 +477,13 @@ struct MapLogbookEntry
 
   map::MapAirport departure, destination;
 
+  atools::geo::LineString lineString() const
+  {
+    atools::geo::LineString l(departurePos, destinationPos);
+    l.removeInvalid();
+    return l;
+  }
+
   atools::geo::Rect bounding() const
   {
     atools::geo::Rect rect(departurePos);
@@ -487,6 +494,11 @@ struct MapLogbookEntry
   bool isDestAndDepartPosValid() const
   {
     return departurePos.isValid() && destinationPos.isValid();
+  }
+
+  bool isDestOrDepartPosValid() const
+  {
+    return departurePos.isValid() || destinationPos.isValid();
   }
 
 };

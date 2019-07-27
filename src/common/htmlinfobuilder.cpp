@@ -1963,19 +1963,21 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
   }
 }
 
-void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) const
+bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) const
 {
   atools::sql::SqlRecord rec = NavApp::getLogdataController()->getLogEntryRecordById(logEntry.id);
 
   // Update the structure since it might not have the latest changes
   logEntry = NavApp::getLogdataController()->getLogEntryById(logEntry.id);
 
-  if(!rec.isEmpty())
+  if(!rec.isEmpty() && logEntry.isValid())
   {
     html.img(QIcon(":/littlenavmap/resources/icons/logbook.svg"), QString(), QString(), symbolSizeTitle);
     html.nbsp().nbsp();
 
-    navaidTitle(html, tr("Logbook Entry - %1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent));
+    navaidTitle(html, tr("Logbook Entry - %1 to %2").
+                arg(logEntry.departureIdent.isEmpty() ? tr("-") : logEntry.departureIdent).
+                arg(logEntry.destinationIdent.isEmpty() ? tr("-") : logEntry.destinationIdent));
 
     // html.nbsp().nbsp();
     // if(logEntry.isDestAndDepartPosValid())
@@ -2040,9 +2042,9 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       if(rec.valueFloat("distance_flown") > 0.f)
         html.row2(tr("Distance flown:"), Unit::distNm(rec.valueFloat("distance_flown")));
 
-      if(logEntry.departurePos.isValid() && logEntry.destinationPos.isValid())
-        html.row2(tr("Great circle distance:"),
-                  Unit::distMeter(logEntry.departurePos.distanceMeterTo(logEntry.destinationPos)));
+      atools::geo::LineString line = logEntry.lineString();
+      if(line.isValid())
+        html.row2(tr("Great circle distance:"), Unit::distMeter(line.lengthMeter()));
     }
 
     float travelTimeHours = (rec.valueDateTime("destination_time_sim").toSecsSinceEpoch() -
@@ -2165,6 +2167,13 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
 #ifdef DEBUG_INFORMATION
     html.small(QString("Database: logbook_id = %1").arg(logEntry.id)).br();
 #endif
+
+    return true;
+  }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << "Empty record";
+    return false;
   }
 }
 

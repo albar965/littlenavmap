@@ -1504,6 +1504,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // ===================================================================================
   // Collect information from the search result - build text only for one object for several menu items
+  // Order is important - first items have lowest priority
   bool isAircraft = false;
   QString informationText, procedureText, measureText, rangeRingText, departureText, departureParkingText,
           destinationText, addRouteText, searchText, editUserpointText, patternText, holdText;

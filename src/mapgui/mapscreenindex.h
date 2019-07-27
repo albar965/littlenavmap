@@ -255,11 +255,12 @@ private:
                                             const Marble::GeoDataLatLonBox& curBox, bool highlights);
   void updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight);
 
-  void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
+  void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::LineString& line,
                                 const Marble::GeoDataLatLonBox& curBox,
                                 const CoordinateConverter& conv);
 
-  QVector<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance) const;
+  QSet<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance,
+                           bool lineDistanceOnly) const;
 
   template<typename TYPE>
   int getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList) const;

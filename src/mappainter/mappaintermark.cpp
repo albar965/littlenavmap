@@ -336,6 +336,7 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   QPen routePen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
   QPen routeOutlinePen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap,
                        Qt::RoundJoin);
+  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
 
   // Draw connecting lines ==========================================================================
   QVector<const MapLogbookEntry *> visibleLogEntries;
@@ -345,13 +346,28 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
       visibleLogEntries.append(&entry);
   }
 
-  painter->setPen(routeOutlinePen);
+  QVector<LineString> geo;
   for(const MapLogbookEntry *entry : visibleLogEntries)
-    drawLine(context, Line(entry->departurePos, entry->destinationPos));
+    geo.append(entry->lineString());
+
+  int circleSize = size;
+  painter->setPen(routeOutlinePen);
+  for(const LineString& line : geo)
+  {
+    if(line.size() > 1)
+      drawLineString(context, line);
+    else
+      drawCircle(context, line.getPos1(), circleSize);
+  }
 
   painter->setPen(routePen);
-  for(const MapLogbookEntry *entry : visibleLogEntries)
-    drawLine(context, Line(entry->departurePos, entry->destinationPos));
+  for(const LineString& line : geo)
+  {
+    if(line.size() > 1)
+      drawLineString(context, line);
+    else
+      drawCircle(context, line.getPos1(), circleSize);
+  }
 
   // Draw line text ==========================================================================
   context->szFont(context->textSizeRangeDistance);
@@ -360,7 +376,7 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   for(const MapLogbookEntry *entry : visibleLogEntries)
   {
     // Text for one line
-    LineString positions(entry->departurePos, entry->destinationPos);
+    LineString positions = entry->lineString();
 
     TextPlacement textPlacement(context->painter, this);
     textPlacement.setDrawFast(context->drawFast);
@@ -375,13 +391,15 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
       text.append(Unit::distNm(entry->distanceGc, true /* unit */, 20, true /* narrow */));
     text.removeAll(QString());
 
-    textPlacement.calculateTextAlongLines({Line(entry->departurePos, entry->destinationPos)}, {text.join(tr(","))});
-    textPlacement.drawTextAlongLines();
+    if(positions.size() >= 2)
+    {
+      textPlacement.calculateTextAlongLines({positions.toLine()}, {text.join(tr(","))});
+      textPlacement.drawTextAlongLines();
+    }
   }
 
   // Draw airport symbols and text ==========================================================================
   float x, y;
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
   textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
 
   QSet<int> airportIds;

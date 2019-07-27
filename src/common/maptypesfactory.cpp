@@ -356,13 +356,17 @@ void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLog
   obj.aircraftRegistration = rec.valueStr("aircraft_registration");
   obj.simulator = rec.valueStr("simulator");
   obj.distance = rec.valueFloat("distance");
-  obj.distanceGc = atools::geo::meterToNm(obj.departurePos.distanceMeterTo(obj.destinationPos));
+  obj.distanceGc = atools::geo::meterToNm(obj.lineString().lengthMeter());
 
   obj.perfFile = rec.valueStr("performance_file");
   obj.routeFile = rec.valueStr("flightplan_file");
 
   if(obj.departurePos.isValid() && obj.destinationPos.isValid())
     obj.position = Line(obj.departurePos, obj.destinationPos).boundingRect().getCenter();
+  else if(obj.departurePos.isValid())
+    obj.position = obj.departurePos;
+  else if(obj.destinationPos.isValid())
+    obj.position = obj.destinationPos;
 }
 
 void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)

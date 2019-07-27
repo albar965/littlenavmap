@@ -212,7 +212,7 @@ QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
       return formatModelData(col, displayRoleValue);
 
     case Qt::TextAlignmentRole:
-      if(col->getColumnName().endsWith("_ident") ||
+      if(col->getColumnName().endsWith("_ident") || col->getColumnName() == "distance" ||
          col->getColumnName().startsWith("departure_time") || col->getColumnName().startsWith("destination_time") ||
          displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt ||
          displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong ||
@@ -257,7 +257,7 @@ QString LogdataSearch::formatModelData(const Column *col, const QVariant& displa
   if(col->getColumnName().startsWith("departure_time") || col->getColumnName().startsWith("destination_time"))
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
   else if(col->getColumnName() == "distance")
-    return Unit::distNm(displayRoleValue.toFloat(), false);
+    return Unit::distNm(displayRoleValue.toFloat(), false, 0);
   else if(col->getColumnName() == "description")
     return atools::elideTextShort(displayRoleValue.toString().simplified(), 80);
   else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)

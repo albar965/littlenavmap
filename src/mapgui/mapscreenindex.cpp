@@ -36,11 +36,13 @@
 #include "common/constants.h"
 #include "settings/settings.h"
 #include "airspace/airspacecontroller.h"
+#include "geo/linestring.h"
 
 #include <marble/GeoDataLineString.h>
 
 using atools::geo::Pos;
 using atools::geo::Line;
+using atools::geo::LineString;
 using atools::geo::Rect;
 using map::MapAirway;
 using Marble::GeoDataLineString;
@@ -238,8 +240,8 @@ void MapScreenIndex::updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox
     CoordinateConverter conv(mapPaintWidget->viewport());
     for(map::MapLogbookEntry& entry : searchHighlights.logbookEntries)
     {
-      if(entry.isDestAndDepartPosValid())
-        updateLineScreenGeometry(logEntryLines, entry.id, Line(entry.departurePos, entry.destinationPos), curBox, conv);
+      if(entry.isValid())
+        updateLineScreenGeometry(logEntryLines, entry.id, entry.lineString(), curBox, conv);
     }
   }
 }
@@ -289,7 +291,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
             // Not visible by map setting
             continue;
 
-          updateLineScreenGeometry(airwayLines, airway.id, Line(airway.from, airway.to), curBox, conv);
+          updateLineScreenGeometry(airwayLines, airway.id, LineString(airway.from, airway.to), curBox, conv);
           ids.insert(airway.id);
         }
       }
@@ -303,7 +305,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
         {
           if(ids.contains(airway.id))
             continue;
-          updateLineScreenGeometry(airwayLines, airway.id, Line(airway.from, airway.to), curBox, conv);
+          updateLineScreenGeometry(airwayLines, airway.id, LineString(airway.from, airway.to), curBox, conv);
           ids.insert(airway.id);
         }
       }
@@ -312,7 +314,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
 }
 
 void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& index,
-                                              int id, const atools::geo::Line& line,
+                                              int id, const atools::geo::LineString& line,
                                               const Marble::GeoDataLatLonBox& curBox,
                                               const CoordinateConverter& conv)
 {
@@ -727,18 +729,17 @@ void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapSearchResult& r
   }
 }
 
-QVector<int> MapScreenIndex::nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys,
-                                            int maxDistance) const
+QSet<int> MapScreenIndex::nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys,
+                                         int maxDistance, bool lineDistanceOnly) const
 {
-  QVector<int> ids;
+  QSet<int> ids;
   for(int i = 0; i < lineList.size(); i++)
   {
     const std::pair<int, QLine>& linePair = lineList.at(i);
     const QLine& line = linePair.second;
 
-    if(atools::geo::distanceToLine(xs, ys, line.x1(), line.y1(), line.x2(), line.y2(),
-                                   true /* no dist to points */) < maxDistance)
-      ids.append(linePair.first);
+    if(atools::geo::distanceToLine(xs, ys, line.x1(), line.y1(), line.x2(), line.y2(), lineDistanceOnly) < maxDistance)
+      ids.insert(linePair.first);
   }
   return ids;
 }
@@ -746,7 +747,7 @@ QVector<int> MapScreenIndex::nearestLineIds(const QList<std::pair<int, QLine> >&
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
 {
-  for(int id : nearestLineIds(logEntryLines, xs, ys, maxDistance))
+  for(int id : nearestLineIds(logEntryLines, xs, ys, maxDistance, false /* also distance to points */))
     result.logbookEntries.append(NavApp::getLogdataController()->getLogEntryById(id));
 }
 
@@ -770,7 +771,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, map::MapSearchResult& result)
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
 {
-  for(int id : nearestLineIds(airwayLines, xs, ys, maxDistance))
+  for(int id : nearestLineIds(airwayLines, xs, ys, maxDistance, true /* no distance to points */))
     result.airways.append(mapQuery->getAirwayById(id));
 }
 

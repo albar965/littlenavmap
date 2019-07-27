@@ -188,7 +188,7 @@ public:
   bool userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
 
   /* Description for logbook entries */
-  void logEntryText(map::MapLogbookEntry logEntry, atools::util::HtmlBuilder& html) const;
+  bool logEntryText(map::MapLogbookEntry logEntry, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description of an airway. For info this includes all waypoints.

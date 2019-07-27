@@ -232,6 +232,13 @@ void MapPainter::drawLine(QPainter *painter, const QLineF& line)
   }
 }
 
+void MapPainter::drawCircle(const PaintContext *context, const atools::geo::Pos& center, int radius)
+{
+  QPoint pt = wToS(center);
+  if(!pt.isNull())
+    context->painter->drawEllipse(pt, radius, radius);
+}
+
 void MapPainter::drawLineString(const PaintContext *context, const atools::geo::LineString& linestring)
 {
   GeoDataLineString ls;
