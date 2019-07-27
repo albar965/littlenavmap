@@ -37,7 +37,8 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
 
-#if defined(Q_OS_WIN32)
+  // Override goofy fusion tab close buttons on Windows and macOS
+#if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
 
   QString fusionStyleSheet(
     QLatin1Literal("QTabBar::close-button "
@@ -81,10 +82,13 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
                    "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }") +
     QLatin1Literal("QRadioButton::indicator:unchecked "
                    "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }") +
+    // Night mode shows bright tab bars with this change in macOS
+#if !defined(Q_OS_MACOS)
     QLatin1Literal("QTabBar::close-button "
                    "{ image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }") +
     QLatin1Literal("QTabBar::close-button:hover "
                    "{ image: url(:/littlenavmap/resources/icons/tab_close_button_hover_night.png); }") +
+#endif
     QString("QToolButton:checked { background-color: %1;}").arg(darkPalette.color(QPalette::Window).lighter(600).name())
     );
 
