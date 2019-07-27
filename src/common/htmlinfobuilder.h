@@ -185,7 +185,7 @@ public:
   void ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
 
   /* Description for user defined points */
-  void userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
+  bool userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
 
   /* Description for logbook entries */
   void logEntryText(map::MapLogbookEntry logEntry, atools::util::HtmlBuilder& html) const;

@@ -1886,7 +1886,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 #endif
 }
 
-void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) const
+bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) const
 {
   atools::sql::SqlRecord rec = NavApp::getUserdataManager()->getRecord(userpoint.id);
 
@@ -1894,7 +1894,7 @@ void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
   userpoint = NavApp::getUserdataController()->getUserpointById(userpoint.id);
 
   // Check if userpoint still exists since it can be deleted in the background
-  if(!rec.isEmpty())
+  if(!rec.isEmpty() && userpoint.isValid())
   {
     QIcon icon(NavApp::getUserdataIcons()->getIconPath(userpoint.type));
     html.img(icon, QString(), QString(), symbolSizeTitle);
@@ -1954,9 +1954,13 @@ void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
 #ifdef DEBUG_INFORMATION
     html.small(QString("Database: uerpoint_id = %1").arg(userpoint.getId())).br();
 #endif
+    return true;
   }
   else
+  {
     qWarning() << Q_FUNC_INFO << "Empty record";
+    return false;
+  }
 }
 
 void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) const
