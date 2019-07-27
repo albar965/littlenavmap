@@ -505,7 +505,7 @@ void LogdataController::convertUserdata()
                 "repeated langings and/or takeoffs. These can be ignored."));
       html.ol();
       for(const QString& err : converter.getErrors())
-        html.li(err);
+        html.li(err, atools::util::html::NO_ENTITIES);
       html.olEnd();
 
       TextDialog error(mainWindow, QApplication::applicationName() + tr(" - Conversion Errors"),

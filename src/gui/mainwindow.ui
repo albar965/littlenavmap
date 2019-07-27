@@ -3361,6 +3361,102 @@
           </layout>
          </item>
          <item>
+          <widget class="Line" name="lineLogdataMoreDist">
+           <property name="lineWidth">
+            <number>4</number>
+           </property>
+           <property name="midLineWidth">
+            <number>2</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutLogdataDist">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="labelLogdataMinDist">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Distance: &amp;Min:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxLogdataMinDist</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxLogdataMinDist">
+             <property name="toolTip">
+              <string>Minimum flight plan distance</string>
+             </property>
+             <property name="statusTip">
+              <string>Minimum flight plan distance</string>
+             </property>
+             <property name="suffix">
+              <string> %dist%</string>
+             </property>
+             <property name="maximum">
+              <number>30000</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelLogdataMaxDist">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>&amp;Max:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxLogdataMaxDist</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxLogdataMaxDist">
+             <property name="toolTip">
+              <string>Maximum flight plan distance</string>
+             </property>
+             <property name="statusTip">
+              <string>Maximum flight plan distance</string>
+             </property>
+             <property name="suffix">
+              <string> %dist%</string>
+             </property>
+             <property name="maximum">
+              <number>30000</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>30000</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
           <widget class="QTableView" name="tableViewLogdata">
            <property name="font">
             <font>
@@ -8882,7 +8978,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show more search options</string>
    </property>
    <property name="statusTip">
-    <string>Show navaid distance search options</string>
+    <string>Show more search options</string>
    </property>
   </action>
   <action name="actionUserdataShowSearch">
@@ -10365,7 +10461,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show more search options</string>
    </property>
    <property name="statusTip">
-    <string>Show navaid distance search options</string>
+    <string>Show more search options</string>
    </property>
   </action>
   <action name="actionLogdataEdit">
@@ -10672,6 +10768,23 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Remove this hold</string>
+   </property>
+  </action>
+  <action name="actionLogdataSearchShowDistOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Distance search options</string>
+   </property>
+   <property name="toolTip">
+    <string>Show distance search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show distance search options</string>
    </property>
   </action>
  </widget>

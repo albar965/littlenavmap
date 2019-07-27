@@ -193,6 +193,9 @@ int LogdataConverter::convertFromUserdata()
       // Save entry =====================
       if(!rec.isNull("departure_ident"))
       {
+        // Fill null fields with empty strings to avoid issue when searching
+        atools::fs::userdata::LogdataManager::fixEmptyFields(rec);
+
         logManager->insertByRecord(rec);
         rec.clearValues();
         type = NONE;
@@ -335,6 +338,7 @@ void LogdataConverter::convertFromDescription(atools::sql::SqlQuery& queryFrom, 
 
     /*: The translated texts in this method should not be changed to avoid issues with the logbook conversion */
     update(recTo, "distance_flown", findNm(lines, UserdataController::tr("Flown Distance: %1"), "Flown Distance: "));
+    /* *INDENT-ON* */
 
     // Ignore time, speed and fuel values ===========================
     // findParam(lines, UserdataController::tr("Time: %1"), "Time: ");
@@ -342,7 +346,6 @@ void LogdataConverter::convertFromDescription(atools::sql::SqlQuery& queryFrom, 
     // findParam(lines, UserdataController::tr("Average True Airspeed: %1"), "Average True Airspeed: ");
     // findParam(lines, UserdataController::tr("Fuel consumed: %1"), "Fuel consumed: ");
     // findParam(lines, UserdataController::tr("Average fuel flow: %1"), "Average fuel flow: ");
-    /* *INDENT-ON* */
   }
 
   // Ignored columns in logbook table

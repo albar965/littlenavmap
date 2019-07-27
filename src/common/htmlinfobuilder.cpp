@@ -2034,8 +2034,7 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     if(rec.valueFloat("flightplan_cruise_altitude") > 0.f)
       html.row2(tr("Flight plan cruise altitude:"), Unit::altFeet(rec.valueFloat("flightplan_cruise_altitude")));
 
-    if(rec.valueFloat("distance") > 0.f)
-      html.row2(tr("Flight plan distance:"), Unit::distNm(rec.valueFloat("distance")));
+    html.row2(tr("Flight plan distance:"), Unit::distNm(rec.valueFloat("distance")));
 
     if(info)
     {

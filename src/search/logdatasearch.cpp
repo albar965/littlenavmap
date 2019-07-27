@@ -42,14 +42,17 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   {
     ui->horizontalLayoutLogdata,
     ui->horizontalLayoutLogdataMore,
+    ui->horizontalLayoutLogdataDist,
     ui->lineLogdataMore,
-    ui->actionLogdataSearchShowMoreOptions
+    ui->lineLogdataMoreDist,
+    ui->actionLogdataSearchShowMoreOptions,
+    ui->actionLogdataSearchShowDistOptions
   };
 
   // All drop down menu actions
   logdataSearchMenuActions =
   {
-    ui->actionLogdataSearchShowMoreOptions
+    ui->actionLogdataSearchShowMoreOptions, ui->actionLogdataSearchShowDistOptions
   };
 
   // Default view column descriptors
@@ -111,14 +114,22 @@ void LogdataSearch::connectSearchSlots()
   installEventFilterForWidget(ui->lineEditLogdataDescription);
   installEventFilterForWidget(ui->lineEditLogdataSimulator);
 
+  columns->assignMinMaxWidget("distance", ui->spinBoxLogdataMinDist, ui->spinBoxLogdataMaxDist);
+
   // Connect widgets to the controller
   SearchBaseTable::connectSearchWidgets();
-  ui->toolButtonLogdata->addActions({ui->actionLogdataSearchShowMoreOptions});
+  ui->toolButtonLogdata->addActions({ui->actionLogdataSearchShowMoreOptions, ui->actionLogdataSearchShowDistOptions});
 
   // Drop down menu actions
   connect(ui->actionLogdataSearchShowMoreOptions, &QAction::toggled, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutLogdataMore}, state, {ui->lineLogdataMore});
+    updateButtonMenu();
+  });
+
+  connect(ui->actionLogdataSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
+  {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutLogdataDist}, state, {ui->lineLogdataMoreDist});
     updateButtonMenu();
   });
 
@@ -159,7 +170,7 @@ void LogdataSearch::saveState()
   widgetState.save(logdataSearchWidgets);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.save({ui->horizontalLayoutLogdata, ui->horizontalLayoutLogdataMore,
+  widgetState.save({ui->horizontalLayoutLogdata, ui->horizontalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
                     ui->actionSearchLogdataFollowSelection});
 }
 
@@ -175,7 +186,7 @@ void LogdataSearch::restoreState()
 
     // Need to block signals here to avoid unwanted behavior
     widgetState.setBlockSignals(true);
-    widgetState.restore({ui->horizontalLayoutLogdata, ui->horizontalLayoutLogdataMore,
+    widgetState.restore({ui->horizontalLayoutLogdata, ui->horizontalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
                          ui->actionSearchLogdataFollowSelection});
   }
   else
@@ -325,6 +336,8 @@ void LogdataSearch::updateButtonMenu()
 
   atools::gui::util::changeStarIndication(ui->actionLogdataSearchShowMoreOptions,
                                           atools::gui::util::anyWidgetChanged({ui->horizontalLayoutLogdataMore}));
+  atools::gui::util::changeStarIndication(ui->actionLogdataSearchShowDistOptions,
+                                          atools::gui::util::anyWidgetChanged({ui->horizontalLayoutLogdataDist}));
 }
 
 void LogdataSearch::updatePushButtons()
