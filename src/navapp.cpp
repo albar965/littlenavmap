@@ -166,7 +166,7 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   updateHandler = new UpdateHandler(mainWindow);
 
-  styleHandler = new StyleHandler();
+  styleHandler = new StyleHandler(mainWindow);
 
   webController = new WebController(mainWindow);
 }

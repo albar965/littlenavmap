@@ -1038,6 +1038,12 @@ void InfoController::postDatabaseLoad()
   updateAircraftInfo();
 }
 
+void InfoController::styleChanged()
+{
+  showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */,
+                          true /* forceUpdate */);
+}
+
 void InfoController::updateUserAircraftText()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

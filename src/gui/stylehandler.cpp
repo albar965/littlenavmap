@@ -28,10 +28,13 @@
 #include <QStyleFactory>
 #include <QActionGroup>
 #include <QDebug>
+#include <QMainWindow>
+#include <QWindow>
 
 using atools::settings::Settings;
 
-StyleHandler::StyleHandler()
+StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
+  : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
   // Collect names and palettes from all system styles
   for(const QString& styleName : QStyleFactory::keys())
@@ -139,6 +142,16 @@ void StyleHandler::applyCurrentStyle()
 {
   qDebug() << Q_FUNC_INFO << "index" << currentStyleIndex;
 
+  // QEvent event(QEvent::StyleChange);
+  // for(QWidget *widget : QApplication::allWidgets())
+  // {
+  // widget->style()->polish(widget);
+  // widget->repaint();
+  // QApplication::sendEvent(widget, &event);
+  // }
+  // for(QWindow *window: QApplication::allWindows())
+  // QApplication::sendEvent(window, &event);
+
   const Style& style = styles.at(currentStyleIndex);
   QApplication::setStyle(QStyleFactory::create(style.styleName));
 
@@ -147,9 +160,6 @@ void StyleHandler::applyCurrentStyle()
 
   // Need to clear due to Qt bug
   QPixmapCache::clear();
-
-  // for(QWidget *widget : QApplication::allWidgets())
-  // widget->updat
 
   emit styleChanged(style.displayName, style.night);
 }

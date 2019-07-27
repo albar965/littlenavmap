@@ -426,7 +426,55 @@ void MainWindow::debugActionTriggered1()
 {
   qDebug() << Q_FUNC_INFO;
 
-  qDebug() << NavApp::getRouteConst();
+  QList<QObject *> objects = findChildren<QObject *>();
+
+  qDebug() << "====================================================================================";
+  qDebug() << "====================================================================================";
+  qDebug() << "====================================================================================";
+
+  for(QObject *obj : objects)
+  {
+    qDebug() << obj->objectName();
+  }
+
+  qDebug() << "====================================================================================";
+
+  QEvent event(QEvent::StyleChange);
+  for(const QObject *object : objects)
+  {
+    if(auto widget = qobject_cast<QWidget *>(const_cast<QObject *>(object)))
+    {
+      qDebug() << widget->objectName();
+      widget->style()->polish(widget);
+      QApplication::sendEvent(widget, &event);
+    }
+  }
+
+  qDebug() << "====================================================================================";
+
+  for(const QObject *object : objects)
+  {
+    if(auto widget = qobject_cast<QWidget *>(const_cast<QObject *>(object)))
+    {
+      qDebug() << widget->objectName();
+      widget->repaint();
+    }
+  }
+
+  qDebug() << "====================================================================================";
+
+  for(const QObject *object : objects)
+  {
+    if(auto widget = qobject_cast<QWidget *>(const_cast<QObject *>(object)))
+    {
+      qDebug() << widget->objectName();
+      widget->update();
+    }
+  }
+
+  qDebug() << "====================================================================================";
+  qDebug() << "====================================================================================";
+  qDebug() << "====================================================================================";
 }
 
 void MainWindow::debugActionTriggered2()
@@ -438,7 +486,7 @@ void MainWindow::debugActionTriggered2()
 void MainWindow::debugActionTriggered3()
 {
   qDebug() << Q_FUNC_INFO;
-
+  qDebug() << NavApp::getRouteConst();
 }
 
 #endif
@@ -856,6 +904,8 @@ void MainWindow::connectAllSlots()
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged,
+          NavApp::getInfoController(), &InfoController::styleChanged);
 
   AircraftPerfController *perfController = NavApp::getAircraftPerfController();
 

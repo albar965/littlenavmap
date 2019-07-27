@@ -84,6 +84,8 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  void styleChanged();
+
   /* Update aircraft and aircraft progress tab */
   void simDataChanged(atools::fs::sc::SimConnectData data);
   void connectedToSimulator();
