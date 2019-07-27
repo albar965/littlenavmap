@@ -36,21 +36,35 @@ using atools::settings::Settings;
 StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
+
+#if defined(Q_OS_WIN32)
+
+  QString fusionStyleSheet(
+    QLatin1Literal("QTabBar::close-button "
+                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button.png); }") +
+    QLatin1Literal("QTabBar::close-button:hover "
+                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button_hover.png); }"));
+#else
+  QString fusionStyleSheet;
+#endif
+
   // Collect names and palettes from all system styles
   for(const QString& styleName : QStyleFactory::keys())
   {
     QStyle *style = QStyleFactory::create(styleName);
 
     QPalette palette = style->standardPalette();
+    QString stylesheet;
     if(styleName == "Fusion")
     {
       // Store fusion palette settings a in a separate ini file
       QString filename = Settings::instance().getConfigFilename("_fusionstyle.ini");
       atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
       paletteSettings.syncPalette(palette);
+      stylesheet = fusionStyleSheet;
     }
 
-    styles.append({styleName, styleName, QString() /* stylesheet */, palette, false /* night */});
+    styles.append({styleName, styleName, stylesheet, palette, false /* night */});
     delete style;
   }
 
@@ -58,7 +72,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   createDarkPalette(darkPalette);
 
   // Add stylesheet for better checkbox radio button and toolbutton visibility
-  QString styleSheet(
+  QString nightStyleSheet(
     QLatin1Literal("QCheckBox::indicator:checked "
                    "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }") +
     QLatin1Literal("QCheckBox::indicator:unchecked "
@@ -67,6 +81,10 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
                    "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }") +
     QLatin1Literal("QRadioButton::indicator:unchecked "
                    "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }") +
+    QLatin1Literal("QTabBar::close-button "
+                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }") +
+    QLatin1Literal("QTabBar::close-button:hover "
+                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button_hover_night.png); }") +
     QString("QToolButton:checked { background-color: %1;}").arg(darkPalette.color(QPalette::Window).lighter(600).name())
     );
 
@@ -75,7 +93,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
   paletteSettings.syncPalette(darkPalette);
 
-  styles.append({"Night", "Fusion", styleSheet, darkPalette, true /* night */});
+  styles.append({"Night", "Fusion", nightStyleSheet, darkPalette, true /* night */});
 }
 
 StyleHandler::~StyleHandler()

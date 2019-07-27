@@ -250,5 +250,9 @@
         <file>resources/icons/hold.svg</file>
         <file>resources/icons/holdoff.svg</file>
         <file>resources/icons/tabbutton.svg</file>
+        <file>resources/icons/tab_close_button.png</file>
+        <file>resources/icons/tab_close_button_hover.png</file>
+        <file>resources/icons/tab_close_button_night.png</file>
+        <file>resources/icons/tab_close_button_hover_night.png</file>
     </qresource>
 </RCC>
