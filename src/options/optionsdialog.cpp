@@ -208,6 +208,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     {ui->listWidgetOptionPages,
      ui->splitterOptions,
      ui->checkBoxOptionsGuiCenterKml,
+     ui->checkBoxOptionsGuiProposeFilename,
      ui->checkBoxOptionsGuiCenterRoute,
      ui->checkBoxOptionsGuiAvoidOverwrite,
      ui->checkBoxOptionsGuiOverrideLanguage,
@@ -1208,6 +1209,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
   toFlags(ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
   toFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
+  toFlags2(ui->checkBoxOptionsGuiProposeFilename, opts::PROPOSE_FILENAME);
   toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   toFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   toFlags(ui->checkBoxOptionsGuiOverrideLanguage, opts::GUI_OVERRIDE_LANGUAGE);
@@ -1423,6 +1425,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
   fromFlags(ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
   fromFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
+  fromFlags2(ui->checkBoxOptionsGuiProposeFilename, opts::PROPOSE_FILENAME);
   fromFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   fromFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   fromFlags(ui->checkBoxOptionsGuiOverrideLanguage, opts::GUI_OVERRIDE_LANGUAGE);

@@ -23,6 +23,7 @@
 #include "gui/dialog.h"
 #include "sql/sqlexport.h"
 #include "search/sqlcontroller.h"
+#include "options/optiondata.h"
 
 #include "sql/sqlrecord.h"
 
@@ -51,7 +52,9 @@ QString CsvExporter::saveCsvFileDialog()
 {
   return dialog->saveFileDialog(tr("Export CSV Document"),
                                 tr("CSV Documents (*.csv);;All Files (*)"),
-                                "csv", lnm::EXPORT_FILEDIALOG);
+                                "csv", lnm::EXPORT_FILEDIALOG,
+                                QString(), QString(), false,
+                                OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
 }
 
 #ifdef ENABLE_CSV_EXPORT

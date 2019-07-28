@@ -319,7 +319,7 @@ bool AircraftPerfController::saveAs()
     tr("Aircraft Performance Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_AIRCRAFT_PERF),
     "lnmperf", "AircraftPerformance/",
     QString(), currentFilepath.isEmpty() ? perf->getName() + ".lnmperf" : QFileInfo(currentFilepath).fileName(),
-    false /* confirm overwrite */, true /* auto number */);
+    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
 
   try
   {

@@ -617,6 +617,21 @@ A restart is required for the settings to take effect.</string>
             <number>2</number>
            </property>
            <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
+             <property name="toolTip">
+              <string>If this option is checked: Little Navmap will propose a new name 
+on &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
+New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Propose new name if  file already exists on &quot;Save as&quot; or &quot;Export&quot;</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
              <property name="toolTip">
               <string>Does not apply to the KML files loaded after startup.</string>
@@ -774,7 +789,8 @@ This will scale the Little Navmap map graphics and icons for better visibility i
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsMapTooltipNavaid">
              <property name="toolTip">
-              <string>Show tooltips for waypoints, VOR, NDB and airways when hovering the cursor over the map</string>
+              <string>Show tooltips for waypoints, VOR, NDB, ILS and airways 
+when hovering the cursor over the map</string>
              </property>
              <property name="text">
               <string>Show for &amp;navaids and airways</string>

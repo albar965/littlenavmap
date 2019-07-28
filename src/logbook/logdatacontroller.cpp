@@ -42,6 +42,7 @@
 #include "sql/sqltransaction.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
+#include "options/optiondata.h"
 
 #include <QDebug>
 #include <QStandardPaths>
@@ -442,7 +443,8 @@ void LogdataController::exportCsv()
       tr("Export Logbook Entry CSV File"),
       tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
       ".csv",
-      "Logdata/Csv");
+      "Logdata/Csv",
+      QString(), QString(), false, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
 
     if(!file.isEmpty())
     {

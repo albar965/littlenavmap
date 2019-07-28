@@ -124,8 +124,14 @@ public:
    *  @return true if route can be saved anyway */
   bool routeValidate(bool validateParking, bool validateDepartureAndDestination);
 
+  /* Build short or long filename depending on settings.
+   * Short schema is ICAO{sep}ICAO{extension}{suffix}
+   *  Long schema is ICAO (NAME) ICAO (NAME){extension}{suffix}*/
+  QString buildDefaultFilename(const QString& sep = "_", const QString& suffix = ".pln",
+                               const QString& extension = QString()) const;
+
   /* Create a default filename based on departure and destination names. Suffix includes dot. */
-  QString buildDefaultFilename(const QString& extension = QString(), const QString& suffix = ".pln") const;
+  QString buildDefaultFilenameLong(const QString& extension = QString(), const QString& suffix = ".pln") const;
   QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
 
   /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.

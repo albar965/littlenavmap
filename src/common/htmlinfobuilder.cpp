@@ -1074,8 +1074,13 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     bearingText(atools::geo::Pos(ilsRec->valueFloat("lonx"), ilsRec->valueFloat("laty")),
                 ilsRec->valueFloat("mag_var"), html);
 
-    html.row2If(tr("Airport:"), ilsRec->valueStr("loc_airport_ident"), ahtml::BOLD);
-    html.row2If(tr("Runway:"), ilsRec->valueStr("loc_runway_name"), ahtml::BOLD);
+    QString runway = ilsRec->valueStr("loc_runway_name");
+    QString airportIdent = ilsRec->valueStr("loc_airport_ident");
+
+    if(runway.isEmpty())
+      html.row2If(tr("Airport:"), airportIdent, ahtml::BOLD);
+    else
+      html.row2If(tr("Airport and runway:"), tr("%1, %2").arg(airportIdent).arg(runway), ahtml::BOLD);
 
     if(info)
     {

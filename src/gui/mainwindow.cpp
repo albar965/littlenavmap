@@ -2359,10 +2359,8 @@ bool MainWindow::routeSaveAsPln()
       tr("Save Flight Plan as PLN Format"),
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
-      NavApp::getCurrentSimulatorFilesPath(),
-      (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
-      routeExport->buildDefaultFilenameShort("_", ".pln") : routeExport->buildDefaultFilename(),
-      false /* confirm overwrite */, true /* autonumber */);
+      NavApp::getCurrentSimulatorFilesPath(), routeExport->buildDefaultFilename(),
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2394,7 +2392,7 @@ bool MainWindow::routeSaveAsFlp()
       tr("FLP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLP),
       "flp", "Route/Flp", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
       routeExport->buildDefaultFilenameShort(QString(), ".flp"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2423,9 +2421,8 @@ bool MainWindow::routeSaveAsFlightGear()
       tr("Save Flight Plan as FlightGear Format"),
       tr("FlightGear Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTGEAR),
       "fgfp", "Route/FlightGear", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
-      routeExport->buildDefaultFilenameShort("_", ".fgfp") : routeExport->buildDefaultFilename(QString(), ".fgfp"),
-      false /* confirm overwrite */, true /* autonumber */);
+      routeExport->buildDefaultFilename("_", ".fgfp"),
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2474,9 +2471,8 @@ bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan as X-Plane FMS Format"),
       tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
-      "fms", "Route/Fms", xpBasePath,
-      routeExport->buildDefaultFilenameShort(QString(), ".fms"),
-      false /* confirm overwrite */, true /* autonumber */);
+      "fms", "Route/Fms", xpBasePath, routeExport->buildDefaultFilenameShort(QString(), ".fms"),
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2501,9 +2497,8 @@ bool MainWindow::routeExportClean()
       tr("Save Clean Flight Plan without Annotations"),
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/Clean" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
-      (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
-      routeExport->buildDefaultFilenameShort("_", ".pln") : routeExport->buildDefaultFilename(tr(" Clean")),
-      false /* confirm overwrite */, true /* autonumber */);
+      routeExport->buildDefaultFilename("_", ".pln", tr(" Clean")),
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2706,7 +2701,7 @@ void MainWindow::mapSaveImageAviTab()
           atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
           QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
           QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
-          false /* confirm overwrite */, true /* autonumber file */);
+          false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
 
         if(!imageFile.isEmpty())
         {
