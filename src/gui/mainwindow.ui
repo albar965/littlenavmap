@@ -210,6 +210,8 @@
     <addaction name="actionOpenWebserver"/>
     <addaction name="separator"/>
     <addaction name="actionResetMessages"/>
+    <addaction name="actionSaveAllNow"/>
+    <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuMap">
@@ -10785,6 +10787,17 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Show distance search options</string>
+   </property>
+  </action>
+  <action name="actionSaveAllNow">
+   <property name="text">
+    <string>&amp;Save Options and State</string>
+   </property>
+   <property name="toolTip">
+    <string>Saves all options and window layout now</string>
+   </property>
+   <property name="statusTip">
+    <string>Saves all options and window layout now</string>
    </property>
   </action>
  </widget>

@@ -175,6 +175,8 @@ void StyleHandler::applyCurrentStyle()
   // QApplication::sendEvent(window, &event);
 
   const Style& style = styles.at(currentStyleIndex);
+  emit preStyleChange(style.displayName, style.night);
+
   QApplication::setStyle(QStyleFactory::create(style.styleName));
 
   qApp->setPalette(style.palette);

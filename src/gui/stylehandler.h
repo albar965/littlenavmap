@@ -56,6 +56,7 @@ public:
 
 signals:
   /* Sent on change */
+  void preStyleChange(const QString& name, bool night);
   void styleChanged(const QString& name, bool night);
 
 private:

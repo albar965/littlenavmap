@@ -896,6 +896,9 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);
 
   // Style handler ===================================================================
+  // Save complete state due to crashes in Qt
+  connect(NavApp::getStyleHandler(), &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
+
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapcolors::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
@@ -1119,6 +1122,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
+  connect(ui->actionSaveAllNow, &QAction::triggered, this, &MainWindow::saveStateNow);
 
   // Windows menu ============================================================
   connect(ui->actionShowFloatingWindows, &QAction::triggered, this, &MainWindow::raiseFloatingWindows);
@@ -3516,6 +3520,11 @@ void MainWindow::restoreStateMain()
     ui->dockWidgetMap->show();
 
   qDebug() << Q_FUNC_INFO << "leave";
+}
+
+void MainWindow::saveStateNow()
+{
+  saveStateMain();
 }
 
 /* Write settings for all windows, docks, controller and manager classes */
