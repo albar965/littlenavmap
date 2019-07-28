@@ -77,6 +77,7 @@ struct PaintContext
 
   opts::DisplayOptions dispOpts;
   opts::DisplayOptionsRose dispOptsRose;
+  opts::DisplayOptionsRoute dispOptsRoute;
   opts::Flags flags;
   opts::Flags2 flags2;
   map::MapWeatherSource weatherSource;
@@ -123,6 +124,11 @@ struct PaintContext
   bool  dOptRose(const opts::DisplayOptionsRose& opts) const
   {
     return dispOptsRose & opts;
+  }
+
+  bool  dOptRoute(const opts::DisplayOptionsRoute& opts) const
+  {
+    return dispOptsRoute & opts;
   }
 
   /* Calculate real symbol size */

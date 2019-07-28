@@ -272,6 +272,19 @@ enum DisplayOptionRose
 Q_DECLARE_FLAGS(DisplayOptionsRose, DisplayOptionRose);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptionsRose);
 
+enum DisplayOptionRoute
+{
+  ROUTE_NONE = 0,
+  ROUTE_DISTANCE = 1 << 0,
+  ROUTE_MAG_COURSE_RHUMB = 1 << 1,
+  ROUTE_TRUE_COURSE_RHUMB = 1 << 2,
+  ROUTE_MAG_COURSE_GC = 1 << 3,
+  ROUTE_TRUE_COURSE_GC = 1 << 4
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptionsRoute);
+
 enum DisplayTooltipOption
 {
   TOOLTIP_NONE = 0,
@@ -727,6 +740,11 @@ public:
     return displayOptionsRose;
   }
 
+  const opts::DisplayOptionsRoute& getDisplayOptionsRoute() const
+  {
+    return displayOptionsRoute;
+  }
+
   opts::DisplayTooltipOptions getDisplayTooltipOptions() const
   {
     return displayTooltipOptions;
@@ -1139,6 +1157,8 @@ private:
   opts::DisplayOptionsRose displayOptionsRose =
     opts::ROSE_RANGE_RINGS | opts::ROSE_DEGREE_MARKS | opts::ROSE_DEGREE_LABELS | opts::ROSE_HEADING_LINE |
     opts::ROSE_TRACK_LINE | opts::ROSE_TRACK_LABEL | opts::ROSE_CRAB_ANGLE | opts::ROSE_NEXT_WAYPOINT;
+
+  opts::DisplayOptionsRoute displayOptionsRoute = opts::ROUTE_DISTANCE | opts::ROUTE_MAG_COURSE_RHUMB;
 
   opts::DisplayTooltipOptions displayTooltipOptions = opts::TOOLTIP_AIRPORT | opts::TOOLTIP_AIRSPACE |
                                                       opts::TOOLTIP_NAVAID;

@@ -41,6 +41,7 @@ using proc::MapProcedureLeg;
 using proc::MapProcedureLegs;
 using map::PosCourse;
 using atools::contains;
+namespace ageo = atools::geo;
 
 /* Do not draw barbs below this altitude */
 const static float MIN_WIND_BARB_ALTITUDE = 5000.f;
@@ -71,6 +72,62 @@ void MapPainterRoute::render(PaintContext *context)
   if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
      context->mapLayer->isRouteTextAndDetail())
     paintTopOfDescentAndClimb(context);
+}
+
+QString MapPainterRoute::buildLegText(const PaintContext *context, const RouteLeg& leg)
+{
+  return buildLegText(context, leg.getDistanceTo(), leg.getCourseToRhumbMag(), leg.getCourseToRhumbTrue(),
+                      leg.getCourseToMag(), leg.getCourseToTrue());
+}
+
+QString MapPainterRoute::buildLegText(const PaintContext *context, float dist, float courseRhumbMag,
+                                      float courseRhumbTrue, float courseGcMag, float courseGcTrue)
+{
+  if(context->distance > layer::DISTANCE_CUT_OFF_LIMIT)
+    return QString();
+
+  QStringList texts;
+
+  if(context->dOptRoute(opts::ROUTE_DISTANCE) && dist < map::INVALID_DISTANCE_VALUE / 2.f)
+    texts.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
+
+  bool magRhumb = context->dOptRoute(opts::ROUTE_MAG_COURSE_RHUMB) && courseRhumbMag < map::INVALID_COURSE_VALUE / 2.f;
+  bool trueRhumb = context->dOptRoute(opts::ROUTE_TRUE_COURSE_RHUMB) &&
+                   courseRhumbTrue < map::INVALID_COURSE_VALUE / 2.f;
+  bool magGc = context->dOptRoute(opts::ROUTE_MAG_COURSE_GC) && courseGcMag < map::INVALID_COURSE_VALUE / 2.f;
+  bool trueGc = context->dOptRoute(opts::ROUTE_TRUE_COURSE_GC) && courseGcTrue < map::INVALID_COURSE_VALUE / 2.f;
+
+  QString courseRhumbMagStr = QString::number(ageo::normalizeCourse(courseRhumbMag), 'f', 0);
+  QString courseRhumbTrueStr = QString::number(ageo::normalizeCourse(courseRhumbTrue), 'f', 0);
+  QString courseGcMagStr = QString::number(ageo::normalizeCourse(courseGcMag), 'f', 0);
+  QString courseGcTrueStr = QString::number(ageo::normalizeCourse(courseGcTrue), 'f', 0);
+
+  // Add indicator for rhumb/gc lines if true
+  bool rhumbAndGc = (magRhumb && magGc) || (trueRhumb && trueGc) || (trueRhumb && magGc) || (magRhumb && trueGc);
+
+  if(magRhumb && trueRhumb && courseRhumbMagStr == courseRhumbTrueStr)
+    // True and mag course are equal - combine
+    texts.append(courseRhumbMagStr + (rhumbAndGc ? tr("°M/T R") : tr("°M/T")));
+  else
+  {
+    if(magRhumb)
+      texts.append(courseRhumbMagStr + (rhumbAndGc ? tr("°M R") : tr("°M")));
+    if(trueRhumb)
+      texts.append(courseRhumbTrueStr + (rhumbAndGc ? tr("°T R") : tr("°T")));
+  }
+
+  if(magGc && trueGc && courseGcMagStr == courseGcTrueStr)
+    // True and mag course are equal - combine
+    texts.append(courseGcMagStr + (rhumbAndGc ? tr("°M/T GC") : tr("°M/T")));
+  else
+  {
+    if(magGc)
+      texts.append(courseGcMagStr + (rhumbAndGc ? tr("°M GC") : tr("°M")));
+    if(trueGc)
+      texts.append(courseGcTrueStr + (rhumbAndGc ? tr("°T GC") : tr("°T")));
+  }
+
+  return texts.join(tr(" / "));
 }
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
@@ -114,11 +171,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
     if(leg.isAlternate())
     {
-      if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
-        routeTexts.append(Unit::distNm(leg.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
-                          QString::number(leg.getCourseToRhumbMag(), 'f', 0) + tr("°M"));
-      else
-        routeTexts.append(QString());
+      routeTexts.append(buildLegText(context, leg));
       lines.append(Line(destLeg.getPosition(), leg.getPosition()));
     }
     else
@@ -128,9 +181,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
          (last.getProcedureLeg().isAnyDeparture() && leg.getProcedureLeg().isAnyArrival()) || // empty space from SID to STAR, transition or approach
          (last.getProcedureLeg().isStar() && leg.getProcedureLeg().isArrival())) // empty space from STAR to transition or approach
       {
-        if(i >= passedRouteLeg || context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
-          routeTexts.append(Unit::distNm(leg.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
-                            QString::number(leg.getCourseToRhumbMag(), 'f', 0) + tr("°M"));
+        if(i >= passedRouteLeg)
+          routeTexts.append(buildLegText(context, leg));
         else
           // No texts for passed legs
           routeTexts.append(QString());
@@ -519,23 +571,26 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
         }
         else
         {
-          QString approachText;
-          if(drawTextLines.at(i).distance)
-            approachText.append(Unit::distNm(leg.calculatedDistance, true /*addUnit*/, 20, true /*narrow*/));
+          float dist = map::INVALID_DISTANCE_VALUE;
+          if(drawTextLines.at(i).distance && context->dOptRoute(opts::ROUTE_DISTANCE))
+            dist = leg.calculatedDistance;
 
+          float courseRhumbMag = map::INVALID_COURSE_VALUE, courseRhumbTrue = map::INVALID_COURSE_VALUE,
+                courseGcMag = map::INVALID_COURSE_VALUE, courseGcTrue = map::INVALID_COURSE_VALUE;
           if(drawTextLines.at(i).course)
           {
             if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
             {
-              if(!approachText.isEmpty())
-                approachText.append(tr("/"));
-              approachText +=
-                (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
-                 tr("°M"));
+              if(context->dOptRoute(opts::ROUTE_MAG_COURSE_RHUMB))
+                // Use same values for rhumb and mag - does not make a difference at the small values in procedures
+                courseGcMag = courseRhumbMag = leg.calculatedTrueCourse - leg.magvar;
             }
+
+            if(context->dOptRoute(opts::ROUTE_TRUE_COURSE_RHUMB))
+              courseGcTrue = courseRhumbTrue = leg.calculatedTrueCourse;
           }
 
-          approachTexts.append(approachText);
+          approachTexts.append(buildLegText(context, dist, courseRhumbMag, courseRhumbTrue, courseGcMag, courseGcTrue));
           lines.append(leg.line);
           textColors.append(leg.missed ? mapcolors::routeProcedureMissedTextColor : mapcolors::routeProcedureTextColor);
         }
@@ -903,7 +958,7 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
   // Calculate distance to control points
   float dist = prevPos.distanceMeterToRhumb(nextPos);
 
-  if(dist < atools::geo::Pos::INVALID_VALUE)
+  if(dist < ageo::Pos::INVALID_VALUE)
   {
     // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
     float oneNmPixel = scale->getPixelForNm(0.95f);

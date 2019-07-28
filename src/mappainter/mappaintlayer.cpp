@@ -520,6 +520,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       context.dispOpts = od.getDisplayOptions();
       context.dispOptsRose = od.getDisplayOptionsRose();
+      context.dispOptsRoute = od.getDisplayOptionsRoute();
       context.flags = od.getFlags();
       context.flags2 = od.getFlags2();
 

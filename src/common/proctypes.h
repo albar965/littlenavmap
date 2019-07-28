@@ -298,7 +298,7 @@ struct MapProcedureLeg
   float course, /* magnetic from ARINC */
         distance /* Distance from source in nm */,
         calculatedDistance /* Calculated distance closer to the real one in nm */,
-        calculatedTrueCourse /* Calculated distance closer to the real one */,
+        calculatedTrueCourse /* Calculated distance closer to the real one - great circle line */,
         time /* Only for holds in minutes */,
         theta /* magnetic course to recommended navaid */,
         rho /* distance to recommended navaid */,

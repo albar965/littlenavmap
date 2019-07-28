@@ -29,6 +29,7 @@ class GeoDataLineString;
 class MapWidget;
 class RouteController;
 class Route;
+class RouteLeg;
 
 namespace proc {
 struct MapProcedureLegs;
@@ -123,6 +124,9 @@ private:
   void drawWindBarbAtWaypoint(const PaintContext *context, float windSpeed, float windDir, float x, float y);
   void drawRouteInternal(const PaintContext *context, QStringList routeTexts, QVector<atools::geo::Line> lines,
                          int passedRouteLeg);
+  QString buildLegText(const PaintContext *context, const RouteLeg& leg);
+  QString buildLegText(const PaintContext *context, float dist, float courseRhumbMag, float courseRhumbTrue,
+                       float courseGcMag, float courseGcTrue);
 
   const Route *route;
 };

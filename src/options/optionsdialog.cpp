@@ -165,6 +165,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<opts::DisplayOptions>(airport, displayOptItemIndex, tr("Runway Information"), tr("Show runway length, width and light inidcator text."), opts::ITEM_AIRPORT_RUNWAY, true);
   // addItem(ap, tr("Wind Pointer"), opts::ITEM_AIRPORT_WIND_POINTER, false);
 
+  QTreeWidgetItem *route = addTopItem(root, tr("Flight Plan"), tr("Select display options for the flight plan line."));
+  addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg."), opts::ROUTE_DISTANCE, true);
+  addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic rhumb course"), tr("Show magnetic rhumb line course along flight plan leg.\nIndicated with \"R\" if both are selected."), opts::ROUTE_MAG_COURSE_RHUMB, true);
+  addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True rhumb course"), tr("Show true rhumb line course along flight plan leg.\nIndicated with \"R\" if both are selected."), opts::ROUTE_TRUE_COURSE_RHUMB, false);
+  addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic great circle course"), tr("Show magnetic great circle course along flight plan leg.\nIndicated with \"GC\" if both are selected."), opts::ROUTE_MAG_COURSE_GC, true);
+  addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True great circle course"), tr("Show true great circle course along flight plan leg.\nIndicated with \"GC\" if both are selected."), opts::ROUTE_TRUE_COURSE_GC, false);
+
   QTreeWidgetItem *userAircraft = addTopItem(root, tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
   addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Registration"), QString(), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
   addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Type"), tr("Show the aircraft type, like B738, B350 or M20T."), opts::ITEM_USER_AIRCRAFT_TYPE);
@@ -759,6 +766,7 @@ void OptionsDialog::saveState()
                            false /* save visibility */, true /* block signals */).save(widgets);
   saveDisplayOptItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
   saveDisplayOptItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
+  saveDisplayOptItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
 
   Settings& settings = Settings::instance();
 
@@ -816,6 +824,7 @@ void OptionsDialog::restoreState()
                            false /*save visibility*/, true /*block signals*/).restore(widgets);
   restoreOptionItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
   restoreOptionItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
+  restoreOptionItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
 
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
     ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
@@ -1194,10 +1203,15 @@ void OptionsDialog::widgetsToOptionData()
   data.flightplanActiveColor = flightplanActiveColor;
   data.flightplanPassedColor = flightplanPassedColor;
   data.trailColor = trailColor;
+
   data.displayOptions = opts::ITEM_NONE;
   displayOptWidgetToOptionData(data.displayOptions, displayOptItemIndex);
+
   data.displayOptionsRose = opts::ROSE_NONE;
   displayOptWidgetToOptionData(data.displayOptionsRose, displayOptItemIndexRose);
+
+  data.displayOptionsRoute = opts::ROUTE_NONE;
+  displayOptWidgetToOptionData(data.displayOptionsRoute, displayOptItemIndexRoute);
 
   toFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
@@ -1414,6 +1428,7 @@ void OptionsDialog::optionDataToWidgets()
   trailColor = data.trailColor;
   displayOptDataToWidget(data.displayOptions, displayOptItemIndex);
   displayOptDataToWidget(data.displayOptionsRose, displayOptItemIndexRose);
+  displayOptDataToWidget(data.displayOptionsRoute, displayOptItemIndexRoute);
 
   fromFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   fromFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
