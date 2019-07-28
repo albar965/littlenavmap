@@ -364,22 +364,25 @@ bool MapWidget::event(QEvent *event)
 
 #endif
 
-    QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+    if(mouseState == mw::NONE)
+    {
+      QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
-    // Load tooltip data into mapSearchResultTooltip
-    mapSearchResultTooltip = map::MapSearchResult();
-    procPointsTooltip.clear();
-    getScreenIndexConst()->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
-                                         mapSearchResultTooltip, &procPointsTooltip);
-    NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
-                                                                  mapSearchResultTooltip.aiAircraft);
+      // Load tooltip data into mapSearchResultTooltip
+      mapSearchResultTooltip = map::MapSearchResult();
+      procPointsTooltip.clear();
+      getScreenIndexConst()->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
+                                           mapSearchResultTooltip, &procPointsTooltip);
+      NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
+                                                                    mapSearchResultTooltip.aiAircraft);
 
-    tooltipPos = helpEvent->globalPos();
+      tooltipPos = helpEvent->globalPos();
 
-    // Build HTML
-    showTooltip(false /* update */);
-    event->accept();
-    return true;
+      // Build HTML
+      showTooltip(false /* update */);
+      event->accept();
+      return true;
+    }
   }
 
   return QWidget::event(event);
