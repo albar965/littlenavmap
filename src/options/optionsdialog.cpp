@@ -169,7 +169,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg."), opts::ROUTE_DISTANCE, true);
   addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic rhumb course"), tr("Show magnetic rhumb line course along flight plan leg.\nIndicated with \"R\" if both are selected."), opts::ROUTE_MAG_COURSE_RHUMB, true);
   addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True rhumb course"), tr("Show true rhumb line course along flight plan leg.\nIndicated with \"R\" if both are selected."), opts::ROUTE_TRUE_COURSE_RHUMB, false);
-  addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic great circle course"), tr("Show magnetic great circle course along flight plan leg.\nIndicated with \"GC\" if both are selected."), opts::ROUTE_MAG_COURSE_GC, true);
+  addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic great circle course"), tr("Show magnetic great circle course along flight plan leg.\nIndicated with \"GC\" if both are selected."), opts::ROUTE_MAG_COURSE_GC, false);
   addItem<opts::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True great circle course"), tr("Show true great circle course along flight plan leg.\nIndicated with \"GC\" if both are selected."), opts::ROUTE_TRUE_COURSE_GC, false);
 
   QTreeWidgetItem *userAircraft = addTopItem(root, tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
