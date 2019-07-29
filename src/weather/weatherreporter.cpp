@@ -46,6 +46,7 @@
 #include <QTimer>
 #include <QRegularExpression>
 #include <QEventLoop>
+#include <functional>
 
 // Checks the first line of an ASN file if it has valid content
 static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
@@ -65,6 +66,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   : QObject(parentWindow), simType(type),
   mainWindow(parentWindow)
 {
+  using namespace std::placeholders;
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
   verbose = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
@@ -76,7 +78,9 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
   noaaWeather = new NoaaWeatherDownloader(parentWindow, indexSize, verbose);
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
-  noaaWeather->setFetchAirportCoords(fetchAirportCoordinates);
+
+  auto coordFunc = std::bind(&WeatherReporter::fetchAirportCoordinates, this, _1);
+  noaaWeather->setFetchAirportCoords(coordFunc);
 
   vatsimWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
@@ -84,7 +88,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   ivaoWeather = new WeatherNetDownload(parentWindow, indexSize, verbose);
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
   // Set callback so the reader can build an index for nearest airports
-  ivaoWeather->setFetchAirportCoords(fetchAirportCoordinates);
+  ivaoWeather->setFetchAirportCoords(coordFunc);
 
   // Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used
   updateTimeouts();
@@ -92,7 +96,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   initActiveSkyNext();
 
   // Set callback so the reader can build an index for nearest airports
-  xpWeatherReader->setFetchAirportCoords(fetchAirportCoordinates);
+  xpWeatherReader->setFetchAirportCoords(coordFunc);
   initXplane();
 
   connect(xpWeatherReader, &atools::fs::weather::XpWeatherReader::weatherUpdated,
@@ -185,7 +189,7 @@ void WeatherReporter::initXplane()
         // Use default base path
         path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
 
-      xpWeatherReader->readWeatherFile(path);
+      xpWeatherReader->setWeatherFile(path);
     }
     else
     {

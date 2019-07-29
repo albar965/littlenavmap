@@ -146,6 +146,11 @@ public:
   /* Update toolbar button and menu items */
   void updateToolButtonState();
 
+#ifdef DEBUG_INFORMATION
+  QString getDebug(const atools::geo::Pos& pos);
+
+#endif
+
 signals:
   /* Emitted when NOAA or X-Plane wind file changes or a request to weather was fullfilled */
   void windUpdated();
