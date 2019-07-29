@@ -385,10 +385,9 @@ private:
   void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet);
   void loadAlternateFromFlightplan(bool quiet);
 
-  void updateIcons();
   void beforeRouteCalc();
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
-  QIcon iconForLeg(const RouteLeg& leg, float size) const;
+  QIcon iconForLeg(const RouteLeg& leg, int size) const;
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
@@ -443,9 +442,7 @@ private:
   static Q_DECL_CONSTEXPR int ROUTE_ALT_CHANGE_DELAY_MS = 500;
   qint64 lastSimUpdate = 0;
 
-  QIcon ndbIcon, waypointIcon, userpointIcon, invalidIcon, procedureIcon;
   SymbolPainter *symbolPainter = nullptr;
-  int iconSize = 20;
 
   QTimer routeAltDelayTimer;
 

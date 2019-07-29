@@ -1578,6 +1578,7 @@ void MapPainterRoute::drawWindBarbs(const PaintContext *context,
   if(!route->hasAltitudeLegs() || !route->hasValidProfile())
     return;
 
+  QPointF lastPt;
   int i = 0;
   for(const QPointF& pt : startPoints)
   {
@@ -1586,12 +1587,16 @@ void MapPainterRoute::drawWindBarbs(const PaintContext *context,
 
     if(visibleStartPoints.testBit(i))
     {
-      int x = atools::roundToInt(pt.x());
-      int y = atools::roundToInt(pt.y());
+      bool distOk = lastPt.isNull() || (pt - lastPt).manhattanLength() > 50;
+
       const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(i);
       if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() &&
-         !altLeg.isAlternate())
-        drawWindBarbAtWaypoint(context, altLeg.getWindSpeed(), altLeg.getWindDirection(), x, y);
+         !altLeg.isAlternate() && distOk)
+      {
+        drawWindBarbAtWaypoint(context, altLeg.getWindSpeed(), altLeg.getWindDirection(),
+                               static_cast<float>(pt.x()), static_cast<float>(pt.y()));
+        lastPt = pt;
+      }
     }
     i++;
   }

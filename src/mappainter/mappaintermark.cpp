@@ -449,7 +449,7 @@ void MapPainterMark::paintAirwayList(PaintContext *context, const QList<map::Map
   }
 
   // Outline =================
-  float lineWidth = context->szF(context->thicknessRangeDistance, 5);
+  float lineWidth = context->szF(context->thicknessRangeDistance, 7);
   QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::RoundCap);
   painter->setPen(outerPen);
   context->painter->drawPolyline(ls);
@@ -514,7 +514,7 @@ void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace
   const LineString *airspaceGeometry = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
   Marble::GeoPainter *painter = context->painter;
 
-  float lineWidth = context->szF(context->thicknessRangeDistance, 6);
+  float lineWidth = context->szF(context->thicknessRangeDistance, 7);
 
   QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::FlatCap);
 

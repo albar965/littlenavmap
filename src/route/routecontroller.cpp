@@ -151,7 +151,6 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   // Use saved font size for table view
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
-  updateIcons();
 
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -454,7 +453,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel) const
       int sizeInt = atools::roundToInt(iconSizePixel);
 
       html.td();
-      html.img(iconForLeg(leg, iconSizePixel), QString(), QString(), QSize(sizeInt, sizeInt));
+      html.img(iconForLeg(leg, atools::roundToInt(iconSizePixel)), QString(), QString(), QSize(sizeInt, sizeInt));
       html.tdEnd();
     }
 
@@ -2331,7 +2330,7 @@ void RouteController::styleChanged()
 void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
-  updateIcons();
+
   updateTableHeaders();
   updateTableModel();
 
@@ -3307,24 +3306,23 @@ void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
 }
 
-QIcon RouteController::iconForLeg(const RouteLeg& leg, float size) const
+QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
 {
-  int sizeInt = atools::roundToInt(size);
   QIcon icon;
   if(leg.getMapObjectType() == map::AIRPORT)
-    icon = symbolPainter->createAirportIcon(leg.getAirport(), sizeInt);
+    icon = symbolPainter->createAirportIcon(leg.getAirport(), size - 2);
   else if(leg.getVor().isValid())
-    icon = symbolPainter->createVorIcon(leg.getVor(), sizeInt);
+    icon = symbolPainter->createVorIcon(leg.getVor(), size);
   else if(leg.getNdb().isValid())
-    icon = ndbIcon;
+    icon = symbolPainter->createNdbIcon(size);
   else if(leg.getWaypoint().isValid())
-    icon = waypointIcon;
+    icon = symbolPainter->createWaypointIcon(size);
   else if(leg.getMapObjectType() == map::USERPOINTROUTE)
-    icon = userpointIcon;
+    icon = symbolPainter->createUserpointIcon(size);
   else if(leg.getMapObjectType() == map::INVALID)
-    icon = invalidIcon;
+    icon = symbolPainter->createWaypointIcon(size, mapcolors::routeInvalidPointColor);
   else if(leg.isAnyProcedure())
-    icon = procedureIcon;
+    icon = symbolPainter->createProcedurePointIcon(size);
 
   return icon;
 }
@@ -3356,7 +3354,8 @@ void RouteController::updateTableModel()
     else
       identStr = leg.getIdent();
 
-    QStandardItem *ident = new QStandardItem(iconForLeg(leg, iconSize), identStr);
+    QStandardItem *ident =
+      new QStandardItem(iconForLeg(leg, view->verticalHeader()->defaultSectionSize() - 2), identStr);
     QFont f = ident->font();
     f.setBold(true);
     ident->setFont(f);
@@ -4173,15 +4172,6 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
     types |= proc::PROCEDURE_STAR_ALL;
 
   return types;
-}
-
-void RouteController::updateIcons()
-{
-  ndbIcon = symbolPainter->createNdbIcon(iconSize);
-  waypointIcon = symbolPainter->createWaypointIcon(iconSize);
-  userpointIcon = symbolPainter->createUserpointIcon(iconSize);
-  invalidIcon = symbolPainter->createWaypointIcon(iconSize, mapcolors::routeInvalidPointColor);
-  procedureIcon = symbolPainter->createProcedurePointIcon(iconSize);
 }
 
 void RouteController::updateErrorLabel()

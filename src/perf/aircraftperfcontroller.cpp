@@ -528,8 +528,8 @@ void AircraftPerfController::updateActionStates()
 
   bool routeValid = NavApp::getRouteConst().getSizeWithoutAlternates() >= 2;
 
-  ui->actionAircraftPerformanceMerge->setEnabled(perfHandler->isFinished());
-  ui->pushButtonAircraftPerfCollectMerge->setEnabled(perfHandler->isFinished());
+  // ui->actionAircraftPerformanceMerge->setEnabled(perfHandler->isFinished());
+  // ui->pushButtonAircraftPerfCollectMerge->setEnabled(perfHandler->isFinished());
 
   ui->actionAircraftPerformanceRestart->setEnabled(perfHandler->hasFlightSegment());
   ui->pushButtonAircraftPerfCollectRestart->setEnabled(perfHandler->hasFlightSegment());
