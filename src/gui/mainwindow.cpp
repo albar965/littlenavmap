@@ -894,6 +894,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::saveStateNow);
 
   // Style handler ===================================================================
   // Save complete state due to crashes in Qt
