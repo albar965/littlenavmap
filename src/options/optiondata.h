@@ -916,6 +916,16 @@ public:
     return cacheUserAirspaceExtensions;
   }
 
+  int getDisplayTransparencyMora() const
+  {
+    return displayTransparencyMora;
+  }
+
+  int getDisplayTextSizeMora() const
+  {
+    return displayTextSizeMora;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1137,6 +1147,12 @@ private:
 
   // spinBoxDisplayOnlineTower
   int displayOnlineTower = 20;
+
+  // spinBoxOptionsDisplayTransparencyMora
+  int displayTransparencyMora = 50;
+
+  // spinBoxOptionsDisplayTransparencyMora
+  int displayTextSizeMora = 100;
 
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, flightplanPassedColor, trailColor;
 

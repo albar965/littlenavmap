@@ -318,6 +318,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsDisplayTextSizeCompassRose,
      ui->spinBoxOptionsDisplayTextSizeRangeDistance,
 
+     ui->spinBoxOptionsDisplayTextSizeMora,
+     ui->spinBoxOptionsDisplayTransparencyMora,
+
      ui->comboBoxOptionsStartupUpdateChannels,
      ui->comboBoxOptionsStartupUpdateRate,
 
@@ -1347,6 +1350,9 @@ void OptionsDialog::widgetsToOptionData()
   data.displaySunShadingDimFactor = ui->spinBoxOptionsDisplaySunShadeDarkness->value();
   data.displayTrailType = static_cast<opts::DisplayTrailType>(ui->comboBoxOptionsDisplayTrailType->currentIndex());
 
+  data.displayTransparencyMora = ui->spinBoxOptionsDisplayTransparencyMora->value();
+  data.displayTextSizeMora = ui->spinBoxOptionsDisplayTextSizeMora->value();
+
   data.displayTextSizeRangeDistance = ui->spinBoxOptionsDisplayTextSizeRangeDistance->value();
   data.displayTextSizeCompassRose = ui->spinBoxOptionsDisplayTextSizeCompassRose->value();
 
@@ -1576,6 +1582,9 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsDisplayThicknessCompassRose->setValue(data.displayThicknessCompassRose);
   ui->spinBoxOptionsDisplaySunShadeDarkness->setValue(data.displaySunShadingDimFactor);
   ui->comboBoxOptionsDisplayTrailType->setCurrentIndex(data.displayTrailType);
+
+  ui->spinBoxOptionsDisplayTransparencyMora->setValue(data.displayTransparencyMora);
+  ui->spinBoxOptionsDisplayTextSizeMora->setValue(data.displayTextSizeMora);
 
   ui->spinBoxOptionsDisplayTextSizeRangeDistance->setValue(data.displayTextSizeRangeDistance);
   ui->spinBoxOptionsDisplayTextSizeCompassRose->setValue(data.displayTextSizeCompassRose);

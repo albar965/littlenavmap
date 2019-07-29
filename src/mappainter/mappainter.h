@@ -99,6 +99,8 @@ struct PaintContext
   float thicknessTrail = 1.f;
   float thicknessRangeDistance = 1.f;
   float thicknessCompassRose = 1.f;
+  float textSizeMora = 1.f;
+  float transparencyMora = 1.f;
 
   // Needs to be larger than number of highest level airports
   static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 4000;

@@ -1915,58 +1915,45 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
            <property name="spacing">
             <number>2</number>
            </property>
-           <item row="6" column="2">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>&amp;Sun shading darkness:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsDisplaySunShadeDarkness</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="2" colspan="2">
-            <widget class="Line" name="line_12">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="5" rowspan="9">
-            <widget class="QTreeWidget" name="treeWidgetOptionsDisplayTextOptions">
-             <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
-             </property>
-             <property name="showDropIndicator" stdset="0">
-              <bool>false</bool>
-             </property>
-             <property name="alternatingRowColors">
-              <bool>false</bool>
-             </property>
-             <property name="headerHidden">
-              <bool>true</bool>
-             </property>
-             <column>
-              <property name="text">
-               <string>Text Display Options</string>
-              </property>
-             </column>
-            </widget>
-           </item>
-           <item row="3" column="2" rowspan="2">
-            <widget class="QLabel" name="labelOptionsMapCompassRoseThickness">
+           <item row="1" column="3">
+            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeRangeDistance">
              <property name="toolTip">
-              <string>Thickness of the compass rose lines</string>
+              <string>Text size of the range ring, pattern and distance measurement line labels</string>
              </property>
-             <property name="text">
-              <string>&amp;Compass rose:</string>
+             <property name="suffix">
+              <string> %</string>
              </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsDisplayThicknessCompassRose</cstring>
+             <property name="prefix">
+              <string>Text </string>
+             </property>
+             <property name="minimum">
+              <number>50</number>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
              </property>
             </widget>
            </item>
-           <item row="7" column="3">
+           <item row="12" column="3">
+            <spacer name="verticalSpacer_12">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="11" column="3">
             <widget class="QSpinBox" name="spinBoxOptionsGuiThemeMapDimming">
              <property name="toolTip">
               <string>Darken the map and the flight plan elevation profile for the style &quot;Night&quot;. Lower values result in a darker display.</string>
@@ -1988,6 +1975,152 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
              </property>
              <property name="value">
               <number>50</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="5" rowspan="13">
+            <widget class="QTreeWidget" name="treeWidgetOptionsDisplayTextOptions">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>false</bool>
+             </property>
+             <property name="headerHidden">
+              <bool>true</bool>
+             </property>
+             <column>
+              <property name="text">
+               <string>Text Display Options</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item row="4" column="3">
+            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeCompassRose">
+             <property name="toolTip">
+              <string>Text size of the compass rose line labels</string>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="prefix">
+              <string>Text </string>
+             </property>
+             <property name="minimum">
+              <number>50</number>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="2" colspan="2">
+            <widget class="Line" name="line_12">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="3">
+            <widget class="QSpinBox" name="spinBoxOptionsDisplaySunShadeDarkness">
+             <property name="toolTip">
+              <string>Sun shading level. Lower values result in a darker display.</string>
+             </property>
+             <property name="suffix">
+              <string> % Brightness</string>
+             </property>
+             <property name="prefix">
+              <string/>
+             </property>
+             <property name="minimum">
+              <number>10</number>
+             </property>
+             <property name="maximum">
+              <number>90</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>40</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessRangeDistance">
+             <property name="toolTip">
+              <string>Thickness of the range ring, pattern and distance measurement lines</string>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="prefix">
+              <string>Width </string>
+             </property>
+             <property name="minimum">
+              <number>50</number>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2" colspan="2">
+            <widget class="Line" name="line_17">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2" rowspan="2" alignment="Qt::AlignTop">
+            <widget class="QLabel" name="labelOptionsMapCompassRoseThickness">
+             <property name="toolTip">
+              <string>Thickness of the compass rose lines</string>
+             </property>
+             <property name="text">
+              <string>&amp;Compass rose:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsDisplayThicknessCompassRose</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2" rowspan="2" alignment="Qt::AlignTop">
+            <widget class="QLabel" name="labelOptionsMapSizeRangeDistance">
+             <property name="text">
+              <string>&amp;Range rings, pattern, hold,
+distance measurement,
+airway highlights
+and logbook entries:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsDisplayThicknessRangeDistance</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="2">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>&amp;Sun shading darkness:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsDisplaySunShadeDarkness</cstring>
              </property>
             </widget>
            </item>
@@ -2016,114 +2149,20 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
              </property>
             </widget>
            </item>
-           <item row="8" column="3">
-            <spacer name="verticalSpacer_12">
+           <item row="0" column="4" rowspan="13">
+            <widget class="Line" name="line_16">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="3">
-            <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessRangeDistance">
-             <property name="toolTip">
-              <string>Thickness of the range ring, pattern and distance measurement lines</string>
-             </property>
-             <property name="suffix">
-              <string> %</string>
-             </property>
-             <property name="prefix">
-              <string>Width </string>
-             </property>
-             <property name="minimum">
-              <number>50</number>
-             </property>
-             <property name="maximum">
-              <number>200</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>100</number>
-             </property>
             </widget>
            </item>
-           <item row="7" column="2">
+           <item row="11" column="2">
             <widget class="QLabel" name="labelOptionsGuiThemeMapDimming">
              <property name="text">
               <string>Map &amp;dimming in night style:</string>
              </property>
              <property name="buddy">
               <cstring>spinBoxOptionsGuiThemeMapDimming</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeRangeDistance">
-             <property name="toolTip">
-              <string>Text size of the range ring, pattern and distance measurement line labels</string>
-             </property>
-             <property name="suffix">
-              <string> %</string>
-             </property>
-             <property name="prefix">
-              <string>Text </string>
-             </property>
-             <property name="minimum">
-              <number>50</number>
-             </property>
-             <property name="maximum">
-              <number>200</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="3">
-            <widget class="QSpinBox" name="spinBoxOptionsDisplaySunShadeDarkness">
-             <property name="toolTip">
-              <string>Sun shading level. Lower values result in a darker display.</string>
-             </property>
-             <property name="suffix">
-              <string> % Brightness</string>
-             </property>
-             <property name="prefix">
-              <string/>
-             </property>
-             <property name="minimum">
-              <number>10</number>
-             </property>
-             <property name="maximum">
-              <number>90</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>40</number>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2" rowspan="2">
-            <widget class="QLabel" name="labelOptionsMapSizeRangeDistance">
-             <property name="text">
-              <string>&amp;Range rings, pattern, hold,
-distance measurement,
-airway highlights
-and logbook entries:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsDisplayThicknessRangeDistance</cstring>
              </property>
             </widget>
            </item>
@@ -2134,10 +2173,10 @@ and logbook entries:</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="3">
-            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeCompassRose">
+           <item row="7" column="3">
+            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeMora">
              <property name="toolTip">
-              <string>Text size of the compass rose line labels</string>
+              <string>Text size of the MORA altitude labels</string>
              </property>
              <property name="suffix">
               <string> %</string>
@@ -2146,10 +2185,10 @@ and logbook entries:</string>
               <string>Text </string>
              </property>
              <property name="minimum">
-              <number>50</number>
+              <number>20</number>
              </property>
              <property name="maximum">
-              <number>200</number>
+              <number>150</number>
              </property>
              <property name="singleStep">
               <number>10</number>
@@ -2159,10 +2198,43 @@ and logbook entries:</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="4" rowspan="9">
-            <widget class="Line" name="line_16">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+           <item row="6" column="3">
+            <widget class="QSpinBox" name="spinBoxOptionsDisplayTransparencyMora">
+             <property name="toolTip">
+              <string>Text size of the MORA text and grid.
+Value 0 is opaque and 90 is most transparent.</string>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="prefix">
+              <string>Transparency </string>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>90</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>50</number>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="2" rowspan="2" alignment="Qt::AlignTop">
+            <widget class="QLabel" name="labelOptionsMapMora">
+             <property name="toolTip">
+              <string>Thickness of the compass rose lines</string>
+             </property>
+             <property name="text">
+              <string>&amp;Minimum altitude grid
+(MORA):</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsDisplayTransparencyMora</cstring>
              </property>
             </widget>
            </item>
