@@ -329,6 +329,12 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
       info.windText(winds, html, NavApp::getWindReporter()->getAltitude());
 
+#ifdef DEBUG_INFORMATION
+      html.hr().small(QString("Pos(%1, %2)").
+                      arg(mapSearchResult.windPos.getLonX()).arg(mapSearchResult.windPos.getLatY())).br();
+
+      html.small(NavApp::getWindReporter()->getDebug(mapSearchResult.windPos));
+#endif
       numEntries++;
     }
   }
