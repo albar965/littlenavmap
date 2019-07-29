@@ -4059,22 +4059,23 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::updateErrorLabels()
 {
-  QString tooltip;
+  QString toolTipTxt, statusTipTxt;
   QString err;
   // Show only if route is valid, there are errors and nothing is collecting performance
   bool showError = NavApp::getRoute().getSizeWithoutAlternates() >= 2 && NavApp::getAltitudeLegs().hasErrors();
   if(showError)
-    err = atools::util::HtmlBuilder::errorMessage(NavApp::getAltitudeLegs().getErrorStrings(tooltip).join(" "));
+    err = atools::util::HtmlBuilder::errorMessage(
+      NavApp::getAltitudeLegs().getErrorStrings(toolTipTxt, statusTipTxt).join(" "));
 
   ui->labelRouteError->setVisible(showError);
   ui->labelRouteError->setText(err);
-  ui->labelRouteError->setToolTip(tooltip);
-  ui->labelRouteError->setStatusTip(tooltip);
+  ui->labelRouteError->setToolTip(toolTipTxt);
+  ui->labelRouteError->setStatusTip(statusTipTxt);
 
   ui->labelProfileError->setVisible(showError);
   ui->labelProfileError->setText(err);
-  ui->labelProfileError->setToolTip(tooltip);
-  ui->labelProfileError->setStatusTip(tooltip);
+  ui->labelProfileError->setToolTip(toolTipTxt);
+  ui->labelProfileError->setStatusTip(statusTipTxt);
 }
 
 map::MapThemeComboIndex MainWindow::getMapThemeIndex() const

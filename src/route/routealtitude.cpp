@@ -22,6 +22,7 @@
 #include "geo/calculations.h"
 #include "fs/perf/aircraftperf.h"
 #include "grib/windquery.h"
+#include "common/unit.h"
 #include "navapp.h"
 #include "weather/windreporter.h"
 
@@ -166,25 +167,34 @@ float RouteAltitude::getContingencyFuel(const atools::fs::perf::AircraftPerf& pe
 
 bool RouteAltitude::hasErrors() const
 {
-  return altRestrictionsViolated() || !(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
-                                        getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE);
+  return !errors.isEmpty() || !(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
+                                getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE);
 }
 
-QStringList RouteAltitude::getErrorStrings(QString& tooltip) const
+QStringList RouteAltitude::getErrorStrings(QString& toolTip, QString& statusTip) const
 {
   QStringList messages;
 
-  if(altRestrictionsViolated())
+  if(!errors.isEmpty())
   {
-    messages << tr("Cannot comply with altitude restrictions.");
-    tooltip = tr("Invalid Flight Plan.\n"
-                 "Check the flight plan cruise altitude and procedures.");
+    messages << tr("Cannot comply with altitude restrictions. See tooltip on this message for details.");
+
+    statusTip = tr("Invalid Flight Plan. See tooltip on message for details.");
+    toolTip = tr("Invalid Flight Plan.\nCheck the cruise altitude and procedures.");
+
+    if(!errors.isEmpty())
+    {
+      toolTip.append(tr("\n"));
+      toolTip.append(errors.join(tr("\n")));
+    }
   }
   else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
             getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
   {
-    messages << tr("Cannot calculate top of climb or top of descent.");
-    tooltip = tr("Invalid Flight Plan or Aircraft Performance.\n"
+    messages << tr("Cannot calculate top of climb or top of descent. See tooltip on this message for details.");
+
+    statusTip = tr("Invalid Flight Plan or Aircraft Performance. See tooltip on message for details.");
+    toolTip = tr("Invalid Flight Plan or Aircraft Performance.\n"
                  "Check the flight plan cruise altitude and\n"
                  "climb/descent speeds in the Aircraft Performance.");
   }
@@ -287,8 +297,12 @@ float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::Ma
   return altitude;
 }
 
-bool RouteAltitude::violatesAltitudeRestriction(const RouteAltitudeLeg& leg) const
+bool RouteAltitude::violatesAltitudeRestriction(QString& errorMessage, int legIndex) const
 {
+  const RouteAltitudeLeg& leg = at(legIndex);
+  float legAlt = leg.y2();
+  bool retval = false;
+
   if(!leg.isEmpty())
   {
     switch(leg.restriction.descriptor)
@@ -296,22 +310,35 @@ bool RouteAltitude::violatesAltitudeRestriction(const RouteAltitudeLeg& leg) con
       case proc::MapAltRestriction::NONE:
       case proc::MapAltRestriction::ILS_AT:
       case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
-        return false;
+        break;
 
       case proc::MapAltRestriction::AT:
-        return atools::almostNotEqual(leg.y2(), leg.restriction.alt1, 10.f);
+        retval = atools::almostNotEqual(legAlt, leg.restriction.alt1, 10.f);
+        break;
 
       case proc::MapAltRestriction::AT_OR_ABOVE:
-        return leg.y2() < leg.restriction.alt1;
+        retval = legAlt < leg.restriction.alt1;
+        break;
 
       case proc::MapAltRestriction::AT_OR_BELOW:
-        return leg.y2() > leg.restriction.alt1;
+        retval = legAlt > leg.restriction.alt1;
+        break;
 
       case proc::MapAltRestriction::BETWEEN:
-        return leg.y2() > leg.restriction.alt1 || leg.y2() < leg.restriction.alt2;
+        retval = legAlt > leg.restriction.alt1 || legAlt < leg.restriction.alt2;
+        break;
     }
   }
-  return false;
+
+  if(retval)
+    errorMessage = tr("Leg number %1, %2 (%3) at %4 violates restriction \"%5\".").
+                   arg(legIndex + 1).
+                   arg(leg.getIdent()).
+                   arg(leg.getProcedureType()).
+                   arg(Unit::altFeet(legAlt)).
+                   arg(proc::altRestrictionText(leg.restriction));
+
+  return retval;
 }
 
 float RouteAltitude::findApproachMaxAltitude(int index) const
@@ -512,10 +539,12 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO
            << leftAlt->ident
+           << leftAlt->procedureType
            << QString("(%1)").arg(leftSkippedAlt != nullptr ? leftSkippedAlt->ident : QString("-"))
            << midAlt->ident
            << QString("(%1)").arg(rightSkippedAlt != nullptr ? rightSkippedAlt->ident : QString("-"))
            << rightAlt->ident
+           << rightAlt->procedureType
            << "departure" << departure;
 #endif
 
@@ -600,14 +629,22 @@ void RouteAltitude::calculate()
       calculateArrival();
 
     // Check for violations because of too low cruise
-    violatesRestrictions = false;
-    for(RouteAltitudeLeg& leg : *this)
+    errors.clear();
+    for(int i = 0; i < size(); i++)
     {
-      if(!leg.isMissed() && !leg.isAlternate())
-        violatesRestrictions |= violatesAltitudeRestriction(leg);
+      const RouteAltitudeLeg& leg = at(i);
 
-      if(violatesRestrictions)
-        qWarning() << Q_FUNC_INFO << "violating leg" << leg;
+      if(!leg.isMissed() && !leg.isAlternate())
+      {
+        QString errorMessage;
+        bool err = violatesAltitudeRestriction(errorMessage, i);
+
+        if(err)
+        {
+          qWarning() << Q_FUNC_INFO << "violating messge" << errorMessage << "leg" << leg;
+          errors.append(errorMessage);
+        }
+      }
     }
 
 #ifdef DEBUG_INFORMATION
@@ -615,7 +652,7 @@ void RouteAltitude::calculate()
     qDebug() << Q_FUNC_INFO << *this;
 #endif
 
-    if(violatesRestrictions || distanceTopOfClimb > distanceTopOfDescent ||
+    if(!errors.isEmpty() || distanceTopOfClimb > distanceTopOfDescent ||
        (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_INDEX_VALUE)) ||
        (calcTopOfDescent && !(distanceTopOfDescent < map::INVALID_INDEX_VALUE)))
     {
@@ -667,9 +704,8 @@ void RouteAltitude::calculateDistances()
 
     RouteAltitudeLeg alt;
 
-#ifdef DEBUG_INFORMATION
-    alt.ident = leg.getIdent() + "." + proc::procedureTypeText(leg.getProcedureType());
-#endif
+    alt.ident = leg.getIdent();
+    alt.procedureType = proc::procedureTypeText(leg.getProcedureType());
 
     if(i <= destinationLegIdx)
     {

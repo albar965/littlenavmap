@@ -125,12 +125,6 @@ public:
     calcTopOfClimb = value;
   }
 
-  /* true if the calculation result violates altitude restriction which can happen if the cruise altitude is too low */
-  bool altRestrictionsViolated() const
-  {
-    return violatesRestrictions;
-  }
-
   const RouteAltitudeLeg& at(int i) const
   {
     if(i < 0 || i > size() - 1)
@@ -218,7 +212,7 @@ public:
   }
 
   bool hasErrors() const;
-  QStringList getErrorStrings(QString& tooltip) const;
+  QStringList getErrorStrings(QString& toolTip, QString& statusTip) const;
 
   void setClimbRateFtPerNm(float value)
   {
@@ -262,6 +256,13 @@ public:
     return validProfile;
   }
 
+  /* Contains a list of messages if the calculation result violates altitude restrictions
+   * which can happen if the cruise altitude is too low */
+  const QStringList& getErrors() const
+  {
+    return errors;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
 
@@ -284,8 +285,8 @@ private:
   float distanceForAltitude(const RouteAltitudeLeg& leg, float altitude);
   float distanceForAltitude(const QPointF& leg1, const QPointF& leg2, float altitude);
 
-  /* Check if leg violates any altitude restricton */
-  bool violatesAltitudeRestriction(const RouteAltitudeLeg& leg) const;
+  /* Check if leg violates any altitude restricton. Returns true and error message if yes. */
+  bool violatesAltitudeRestriction(QString& errorMessage, int legIndex) const;
 
   /* Prefill all legs with distances and cruise altitude. Also mark the procedure flag for painting. */
   void calculateDistances();
@@ -331,14 +332,14 @@ private:
   bool calcTopOfDescent = true;
   bool calcTopOfClimb = true;
 
-  /* Set by calculate */
-  bool violatesRestrictions = false;
-
   /* Has TOC and TOD */
   bool validProfile = false;
 
   float climbRateFtPerNm = 333.f, descentRateFtPerNm = 333.f;
   float cruiseAltitide = 0.f;
+
+  /* Set by calculate */
+  QStringList errors;
 
   QVector<map::MapIls> destRunwayIls;
   map::MapRunwayEnd destRunwayEnd;

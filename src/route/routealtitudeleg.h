@@ -109,10 +109,16 @@ public:
     return topOfDescent;
   }
 
-  /* Mostly for  debugging purposes */
+  /* For debugging purposes and error reporting */
   const QString& getIdent() const
   {
     return ident;
+  }
+
+  /* For debugging purposes and error reporting */
+  const QString& getProcedureType() const
+  {
+    return procedureType;
   }
 
   /* Fuel consumption for this leg. Volume or weight (gal/lbs) depending on performance */
@@ -203,7 +209,7 @@ private:
   bool isPoint() const;
 
   atools::geo::LineString line;
-  QString ident;
+  QString ident, procedureType;
   QPolygonF geometry;
   proc::MapAltRestriction restriction;
   bool procedure = false, missed = false, alternate = false, topOfClimb = false, topOfDescent = false;
