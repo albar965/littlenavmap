@@ -569,7 +569,6 @@ unix:!macx {
     $$MARBLE_LIB_PATH/marble/plugins/libGraticulePlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libKmlPlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libLatLonPlugin.so \
-    $$MARBLE_LIB_PATH/marble/plugins/libLicense.so \
     $$MARBLE_LIB_PATH/marble/plugins/libMapScaleFloatItem.so \
     $$MARBLE_LIB_PATH/marble/plugins/libNavigationFloatItem.so \
     $$MARBLE_LIB_PATH/marble/plugins/libOsmPlugin.so \
@@ -700,7 +699,6 @@ message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
     $$MARBLE_LIB_PATH/plugins/libGraticulePlugin.so \
     $$MARBLE_LIB_PATH/plugins/libKmlPlugin.so \
     $$MARBLE_LIB_PATH/plugins/libLatLonPlugin.so \
-    $$MARBLE_LIB_PATH/plugins/libLicense.so \
     $$MARBLE_LIB_PATH/plugins/libMapScaleFloatItem.so \
     $$MARBLE_LIB_PATH/plugins/libNavigationFloatItem.so \
     $$MARBLE_LIB_PATH/plugins/libOsmPlugin.so \
@@ -714,7 +712,6 @@ message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libGraticulePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libKmlPlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libLatLonPlugin.so &&
-  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libLicense.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libMapScaleFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libNavigationFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOsmPlugin.so &&
@@ -750,7 +747,6 @@ win32 {
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libGraticulePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libKmlPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libLatLonPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libLicense$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libMapScaleFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libNavigationFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libOsmPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
