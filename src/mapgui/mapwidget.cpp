@@ -226,34 +226,35 @@ void MapWidget::handleInfoClick(QPoint pos)
 {
   qDebug() << Q_FUNC_INFO << pos;
 
-  map::MapSearchResult result;
-  getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result);
+  infoClickResult.clear();
+  getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistance, infoClickResult);
 
   // Remove all undesired features
   opts::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
   if(!(opts & opts::CLICK_AIRPORT))
   {
-    result.airports.clear();
-    result.airportIds.clear();
+    infoClickResult.airports.clear();
+    infoClickResult.airportIds.clear();
   }
 
   if(!(opts & opts::CLICK_NAVAID))
   {
-    result.vors.clear();
-    result.vorIds.clear();
-    result.ndbs.clear();
-    result.ndbIds.clear();
-    result.waypoints.clear();
-    result.waypointIds.clear();
-    result.ils.clear();
-    result.airways.clear();
-    result.userpoints.clear();
+    infoClickResult.vors.clear();
+    infoClickResult.vorIds.clear();
+    infoClickResult.ndbs.clear();
+    infoClickResult.ndbIds.clear();
+    infoClickResult.waypoints.clear();
+    infoClickResult.waypointIds.clear();
+    infoClickResult.ils.clear();
+    infoClickResult.airways.clear();
+    infoClickResult.userpoints.clear();
+    infoClickResult.logbookEntries.clear();
   }
 
   if(!(opts & opts::CLICK_AIRSPACE))
-    result.airspaces.clear();
+    infoClickResult.airspaces.clear();
 
-  emit showInformation(result, map::NONE);
+  emit showInformation(infoClickResult, map::NONE);
 }
 
 void MapWidget::fuelOnOffTimeout()
@@ -566,6 +567,10 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 
 void MapWidget::mousePressEvent(QMouseEvent *event)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
+#endif
+
 #ifdef DEBUG_MOVING_AIRPLANE
   debugMovingPlane(event);
 #endif
@@ -593,19 +598,27 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     setContextMenuPolicy(Qt::DefaultContextMenu);
   else
   {
-    // No drag and drop mode - use hand to indicate scrolling
-    if(event->button() == Qt::LeftButton && cursor().shape() != Qt::OpenHandCursor)
-      setCursor(Qt::OpenHandCursor);
+    if(touchAreaClicked(event))
+    {
+      // Touch/navigation areas are enabled and cursor is within a touch area
+      if(event->button() == Qt::LeftButton && cursor().shape() != Qt::PointingHandCursor)
+        setCursor(Qt::PointingHandCursor);
+    }
+    else
+    {
+      // No drag and drop mode - use hand to indicate scrolling
+      if(event->button() == Qt::LeftButton && cursor().shape() != Qt::OpenHandCursor)
+        setCursor(Qt::OpenHandCursor);
+    }
+
+    setViewContext(Marble::Still);
   }
 }
 
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO
-           << "state" << mouseState
-           << "modifiers" << event->modifiers()
-           << "pos" << event->pos();
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
 #endif
 
   // Take actions (add/remove range rings, measurement)
@@ -616,6 +629,11 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   hideTooltip();
 
   jumpBackToAircraftStart(true /* save distance too */);
+
+  // Check if mouse was move for dragging before switching to drag and drop
+  int mouseMoveTolerance = 4;
+  bool mouseMove = (event->pos() - mouseMoved).manhattanLength() >= mouseMoveTolerance;
+  bool touchArea = touchAreaClicked(event);
 
   if(mouseState & mw::DRAG_ROUTE_POINT || mouseState & mw::DRAG_ROUTE_LEG)
   {
@@ -685,13 +703,14 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     mouseState = mw::NONE;
     setViewContext(Marble::Still);
     update();
-
   }
-  else if(event->button() == Qt::LeftButton && (event->pos() - mouseMoved).manhattanLength() < 4)
+  else if(touchArea && !mouseMove)
+    // Touch/navigation areas are enabled and cursor is within a touch area - scroll, zoom, etc.
+    handleTouchAreaClick(event);
+  else if(event->button() == Qt::LeftButton && !mouseMove)
   {
-    // Start all dragging if left button was clicked and mouse was not moved
-    currentDistanceMarkerIndex = getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(),
-                                                                                    event->pos().y(),
+    // Start all dragging if left button was clicked and mouse was not moved ==========================
+    currentDistanceMarkerIndex = getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
                                                                                     screenSearchDistance);
     if(currentDistanceMarkerIndex != -1)
     {
@@ -778,14 +797,32 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         if(cursor().shape() != Qt::ArrowCursor)
           setCursor(Qt::ArrowCursor);
         handleInfoClick(event->pos());
+
+        if(OptionData::instance().getMapNavigation() == opts::MAP_NAV_CLICK_CENTER)
+        {
+          // Center map on click
+          qreal lon, lat;
+          bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+          if(visible)
+            showPos(Pos(lon, lat), map::INVALID_DISTANCE_VALUE, true);
+        }
       }
     }
-  }
+  } // else if(event->button() == Qt::LeftButton && mouseMove)
   else
   {
-    // No drag and drop mode - switch back to arrow after scrolling
-    if(cursor().shape() != Qt::ArrowCursor)
-      setCursor(Qt::ArrowCursor);
+    if(touchArea)
+    {
+      // Touch/navigation areas are enabled and cursor is within a touch area
+      if(cursor().shape() != Qt::PointingHandCursor)
+        setCursor(Qt::PointingHandCursor);
+    }
+    else
+    {
+      // No drag and drop mode - switch back to arrow after scrolling
+      if(cursor().shape() != Qt::ArrowCursor)
+        setCursor(Qt::ArrowCursor);
+    }
   }
 
   mouseMoved = QPoint();
@@ -794,7 +831,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-  qDebug() << Q_FUNC_INFO;
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
+#endif
 
   // Show pos and show rect already call this
   // jumpBackToAircraftStart();
@@ -802,10 +841,27 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   if(mouseState != mw::NONE)
     return;
 
+  if(touchAreaClicked(event))
+  {
+    // Touch/navigation areas are enabled and cursor is within a touch area - scroll, zoom, etc.
+    handleTouchAreaClick(event);
+    return;
+  }
+
   hideTooltip();
 
   map::MapSearchResult mapSearchResult;
-  getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
+
+  if(OptionData::instance().getMapNavigation() == opts::MAP_NAV_CLICK_CENTER &&
+     !infoClickResult.isEmpty(map::AIRPORT | map::AIRCRAFT_ALL | map::NAV_ALL | map::USERPOINT |
+                              map::USERPOINTROUTE))
+  {
+    // Do info click and use previouse result from single click event if the double click was on a map object
+    mapSearchResult = infoClickResult;
+    infoClickResult.clear();
+  }
+  else
+    getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
 
   if(mapSearchResult.userAircraft.isValid())
   {
@@ -882,10 +938,119 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       qreal lon2, lat2;
       geoCoordinates(event->pos().x(), event->pos().y(), lon2, lat2, Marble::GeoDataCoordinates::Degree);
 
-      // Correct position and move center back to mouse cursor position
-      centerOn(centerLon + (lon - lon2), centerLat + (lat - lat2));
+      if(OptionData::instance().getMapNavigation() == opts::MAP_NAV_CLICK_DRAG_MOVE)
+        // Correct position and move center back to mouse cursor position
+        centerOn(centerLon + (lon - lon2), centerLat + (lat - lat2));
     }
   }
+}
+
+bool MapWidget::touchAreaClicked(QMouseEvent *event)
+{
+  TouchArea click = touchAreaClick(event);
+  return click != CENTER && click != NONE;
+}
+
+MapWidget::TouchArea MapWidget::touchAreaClick(QMouseEvent *event)
+{
+  if(OptionData::instance().getMapNavigation() != opts::MAP_NAV_TOUCHSCREEN)
+    return NONE;
+  else
+  {
+    int areaSize = OptionData::instance().getMapNavTouchArea();
+    int w = width() * areaSize / 100;
+    int h = height() * areaSize / 100;
+
+    // 3 x 3 grid
+    int col, row, x = event->x(), y = event->y();
+    if(x < w)
+      col = 0;
+    else if(x < width() - w)
+      col = 1;
+    else
+      col = 2;
+
+    if(y < h)
+      row = 0;
+    else if(y < height() - h)
+      row = 1;
+    else
+      row = 2;
+
+    return static_cast<TouchArea>(col + row * 3);
+  }
+}
+
+bool MapWidget::handleTouchAreaClick(QMouseEvent *event)
+{
+  // Other should not proceed if true
+  bool eventConsumed = false;
+
+  if(OptionData::instance().getMapNavigation() != opts::MAP_NAV_TOUCHSCREEN)
+    // Areas not enabled
+    return eventConsumed;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
+#endif
+
+  switch(touchAreaClick(event))
+  {
+
+    case ZOOMIN:
+      eventConsumed = true;
+      zoomIn();
+      break;
+
+    case MOVEUP:
+      eventConsumed = true;
+      moveUp();
+      break;
+
+    case ZOOMOUT:
+      eventConsumed = true;
+      zoomOut();
+      break;
+
+    case MOVELEFT:
+      eventConsumed = true;
+      moveLeft();
+      break;
+
+    case NONE:
+    case CENTER:
+      // No-op
+      break;
+
+    case MOVERIGHT:
+      eventConsumed = true;
+      moveRight();
+      break;
+
+    case MapWidget::BACKWARD:
+      eventConsumed = true;
+      historyBack();
+      break;
+
+    case MOVEDOWN:
+      eventConsumed = true;
+      moveDown();
+      break;
+
+    case MapWidget::FORWARD:
+      eventConsumed = true;
+      historyNext();
+      break;
+  }
+
+  if(eventConsumed)
+  {
+    // Restore cursor
+    if(cursor().shape() != Qt::PointingHandCursor)
+      setCursor(Qt::PointingHandCursor);
+  }
+
+  return eventConsumed;
 }
 
 void MapWidget::elevationDisplayTimerTimeout()
@@ -1097,6 +1262,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
   qreal lon = 0., lat = 0.;
   bool visible = false;
+  // Change cursor and keep aircraft from centering if moving in any drag and drop mode ================
   if(mouseState & mw::DRAG_ALL)
   {
     jumpBackToAircraftStart(true /* save distance too */);
@@ -1110,6 +1276,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
   if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
   {
+    // Changing or adding distance measurment line ==========================================
     // Position is valid update the distance mark continuously
     if(visible && !getScreenIndexConst()->getDistanceMarks().isEmpty())
       getScreenIndex()->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
@@ -1117,60 +1284,77 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   }
   else if(mouseState & mw::DRAG_ROUTE_LEG || mouseState & mw::DRAG_ROUTE_POINT)
   {
+    // Dragging route leg or waypoint ==========================================
     if(visible)
       // Update current point
       routeDragCur = QPoint(event->pos().x(), event->pos().y());
   }
   else if(mouseState & mw::DRAG_USER_POINT)
   {
+    // Moving userpoint ==========================================
     if(visible)
       // Update current point
       userpointDragCur = QPoint(event->pos().x(), event->pos().y());
   }
   else if(mouseState == mw::NONE)
   {
+    // No drag mode - just mouse movement - change cursor =================================
+
     if(event->buttons() == Qt::NoButton)
     {
-      // No dragging going on now - update cursor over flight plan legs or markers
-      const Route& route = NavApp::getRouteConst();
+      TouchArea touchClick = touchAreaClick(event);
+      if(touchClick != NONE && touchClick != CENTER)
+      {
+        // Touchscreen mode and mouse over one area =====================================
+        if(cursor().shape() != Qt::PointingHandCursor)
+          setCursor(Qt::PointingHandCursor);
+      }
+      else
+      {
+        // Normal mode change cursor over route waypoints or legs and others  =====================================
 
-      Qt::CursorShape cursorShape = Qt::ArrowCursor;
-      bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
+        // No dragging going on now - update cursor over flight plan legs or markers
+        const Route& route = NavApp::getRouteConst();
 
-      // Make distance a bit larger to prefer points
-      if(routeEditMode &&
-         getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                          screenSearchDistance * 4 / 3) != -1 &&
-         route.size() > 1)
-        // Change cursor at one route point
-        cursorShape = Qt::SizeAllCursor;
-      else if(routeEditMode &&
-              getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(), event->pos().y(),
-                                                             screenSearchDistance) != -1 &&
-              route.size() > 1)
-        // Change cursor above a route line
-        cursorShape = Qt::CrossCursor;
-      else if(getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
-                                                                 screenSearchDistance) != -1)
-        // Change cursor at the end of an marker
-        cursorShape = Qt::CrossCursor;
-      else if(getScreenIndexConst()->getNearestTrafficPatternIndex(event->pos().x(), event->pos().y(),
+        Qt::CursorShape cursorShape = Qt::ArrowCursor;
+        bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
+
+        // Make distance a bit larger to prefer points
+        if(routeEditMode &&
+           getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
+                                                            screenSearchDistance * 4 / 3) != -1 &&
+           route.size() > 1)
+          // Change cursor at one route point
+          cursorShape = Qt::SizeAllCursor;
+        else if(routeEditMode &&
+                getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(), event->pos().y(),
+                                                               screenSearchDistance) != -1 &&
+                route.size() > 1)
+          // Change cursor above a route line
+          cursorShape = Qt::CrossCursor;
+        else if(getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
                                                                    screenSearchDistance) != -1)
-        // Change cursor at the active position
-        cursorShape = Qt::PointingHandCursor;
-      else if(getScreenIndexConst()->getNearestHoldIndex(event->pos().x(), event->pos().y(),
-                                                         screenSearchDistance) != -1)
-        // Change cursor at the active position
-        cursorShape = Qt::PointingHandCursor;
-      else if(getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
-                                                              screenSearchDistance) != -1)
-        // Change cursor at the end of an marker
-        cursorShape = Qt::PointingHandCursor;
+          // Change cursor at the end of an marker
+          cursorShape = Qt::CrossCursor;
+        else if(getScreenIndexConst()->getNearestTrafficPatternIndex(event->pos().x(), event->pos().y(),
+                                                                     screenSearchDistance) != -1)
+          // Change cursor at the active position
+          cursorShape = Qt::PointingHandCursor;
+        else if(getScreenIndexConst()->getNearestHoldIndex(event->pos().x(), event->pos().y(),
+                                                           screenSearchDistance) != -1)
+          // Change cursor at the active position
+          cursorShape = Qt::PointingHandCursor;
+        else if(getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
+                                                                screenSearchDistance) != -1)
+          // Change cursor at the end of an marker
+          cursorShape = Qt::PointingHandCursor;
 
-      if(cursor().shape() != cursorShape)
-        setCursor(cursorShape);
-    }
+        if(cursor().shape() != cursorShape)
+          setCursor(cursorShape);
+      }
+    } // if(event->buttons() == Qt::NoButton)
     else
+      // A mouse button is pressed
       jumpBackToAircraftStart(true /* save distance too */);
   }
 

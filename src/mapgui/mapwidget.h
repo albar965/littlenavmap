@@ -232,6 +232,24 @@ signals:
   void showProceduresCustom(map::MapAirport airport);
 
 private:
+  /* For touchscreen mode. Grid of 3x3 rectangles numbered from lef to right and top to bottom */
+  enum TouchArea
+  {
+    ZOOMIN,
+    MOVEUP,
+    ZOOMOUT,
+
+    MOVELEFT,
+    CENTER,
+    MOVERIGHT,
+
+    BACKWARD,
+    MOVEDOWN,
+    FORWARD,
+
+    NONE = 999
+  };
+
   /* Convert paint layer value to menu actions checked / not checked */
   virtual map::MapWeatherSource weatherSourceFromUi() override;
   void weatherSourceToUi(map::MapWeatherSource weatherSource);
@@ -245,6 +263,13 @@ private:
 
   /* Show information from context menu or single click */
   void handleInfoClick(QPoint pos);
+
+  /* Scroll and zoom for touchscreen area mode */
+  bool handleTouchAreaClick(QMouseEvent *event);
+  TouchArea touchAreaClick(QMouseEvent *event);
+
+  /* Touch/navigation areas are enabled and cursor is within a touch area. false for areas CENTER and NONE. */
+  bool touchAreaClicked(QMouseEvent *event);
 
   /* Cancel mouse actions */
   void cancelDragDistance();
@@ -352,6 +377,8 @@ private:
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipPos;
   map::MapSearchResult mapSearchResultTooltip;
+  map::MapSearchResult infoClickResult;
+
   QList<proc::MapProcedurePoint> procPointsTooltip;
   MapTooltip *mapTooltip;
 
