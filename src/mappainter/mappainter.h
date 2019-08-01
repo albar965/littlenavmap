@@ -104,7 +104,7 @@ struct PaintContext
   float transparencyMora = 1.f;
 
   // Needs to be larger than number of highest level airports
-  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 4000;
+  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 8000;
   int objectCount = 0;
 
   /* Increase drawn object count and return true if exceeded */
