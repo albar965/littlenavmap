@@ -246,6 +246,7 @@ protected:
 
   /* Draw arrow at line postion. pos = 0 is beginning and pos = 1 is end of line */
   void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);
+  void paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos = 0.5f);
 
   static bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
 

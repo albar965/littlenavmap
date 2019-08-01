@@ -534,6 +534,23 @@ QPolygonF MapPainter::buildArrow(float size, bool downwards)
   }
 }
 
+void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow,
+                                     float pos)
+{
+  Pos arrowPos = line.interpolate(pos);
+
+  bool visible, hidden;
+  QPoint pt = wToS(arrowPos, DEFAULT_WTOS_SIZE, &visible, &hidden);
+
+  if(visible && !hidden)
+  {
+    painter->translate(pt);
+    painter->rotate(atools::geo::opposedCourseDeg(line.angleDeg()));
+    painter->drawPolygon(arrow);
+    painter->resetTransform();
+  }
+}
+
 void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos)
 {
   painter->translate(line.pointAt(pos));

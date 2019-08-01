@@ -134,6 +134,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
   QHash<QString, int> lines;
   // Contains combined text for overlapping airway lines and points to index or airway in airway list
   QVector<Place> textlist;
+  QPolygonF arrow = buildArrow(static_cast<float>(mapcolors::airwayBothPen.widthF() * 2.5));
 
   for(int i = 0; i < airways->size(); i++)
   {
@@ -145,6 +146,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
       continue;
 
     context->painter->setPen(mapcolors::penForAirway(airway));
+    context->painter->setBrush(context->painter->pen().color());
 
     // Get start and end point of airway segment in screen coordinates
     int x1, y1, x2, y2;
@@ -170,6 +172,13 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
 
       if(!fast)
       {
+        if(airway.direction != map::DIR_BOTH && !context->mapLayer->isAirwayIdent())
+        {
+          Line arrLine = airway.direction != map::DIR_FORWARD ?
+                         Line(airway.from, airway.to) : Line(airway.to, airway.from);
+          paintArrowAlongLine(context->painter, arrLine, arrow, 0.5f);
+        }
+
         // Build text index
         QString text;
         if(context->mapLayer->isAirwayIdent())
