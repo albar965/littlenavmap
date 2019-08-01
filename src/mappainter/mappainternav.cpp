@@ -62,8 +62,7 @@ void MapPainterNav::render(PaintContext *context)
   if(drawAirway && !context->isOverflow())
   {
     // Draw airway lines
-    const QList<MapAirway> *airways = mapQuery->getAirways(curBox, context->mapLayer,
-                                                           context->viewContext == Marble::Animation);
+    const QList<MapAirway> *airways = mapQuery->getAirways(curBox, context->mapLayer, context->lazyUpdate);
     if(airways != nullptr)
       paintAirways(context, airways, context->drawFast);
   }

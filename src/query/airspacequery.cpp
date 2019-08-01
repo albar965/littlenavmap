@@ -211,17 +211,11 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
             if(ids.contains(query->valueInt("boundary_id")))
               continue;
 
-            // qreal north, qreal south, qreal east, qreal west
-            if(rect.intersects(GeoDataLatLonBox(query->valueFloat("max_laty"), query->valueFloat("min_laty"),
-                                                query->valueFloat("max_lonx"), query->valueFloat("min_lonx"),
-                                                GeoDataCoordinates::GeoDataCoordinates::Degree)))
-            {
-              map::MapAirspace airspace;
-              mapTypesFactory->fillAirspace(query->record(), airspace, source);
-              airspaceCache.list.append(airspace);
+            map::MapAirspace airspace;
+            mapTypesFactory->fillAirspace(query->record(), airspace, source);
+            airspaceCache.list.append(airspace);
 
-              ids.insert(airspace.id);
-            }
+            ids.insert(airspace.id);
           }
         }
       }

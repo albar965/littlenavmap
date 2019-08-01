@@ -1005,18 +1005,10 @@ const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, 
         if(ids.contains(airwayByRectQuery->valueInt("airway_id")))
           continue;
 
-        // qreal north, qreal south, qreal east, qreal west
-        if(rect.intersects(GeoDataLatLonBox(airwayByRectQuery->valueFloat("top_laty"),
-                                            airwayByRectQuery->valueFloat("bottom_laty"),
-                                            airwayByRectQuery->valueFloat("right_lonx"),
-                                            airwayByRectQuery->valueFloat("left_lonx"),
-                                            GeoDataCoordinates::GeoDataCoordinates::Degree)))
-        {
-          map::MapAirway airway;
-          mapTypesFactory->fillAirway(airwayByRectQuery->record(), airway);
-          airwayCache.list.append(airway);
-          ids.insert(airway.id);
-        }
+        map::MapAirway airway;
+        mapTypesFactory->fillAirway(airwayByRectQuery->record(), airway);
+        airwayCache.list.append(airway);
+        ids.insert(airway.id);
       }
     }
   }
