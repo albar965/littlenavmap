@@ -33,6 +33,7 @@
 #include "fs/perf/aircraftperf.h"
 #include "settings/settings.h"
 
+#include <QBitArray>
 #include <QRegularExpression>
 
 #include <marble/GeoDataLineString.h>
@@ -1020,6 +1021,18 @@ void Route::updateAlternateProperties()
     getFlightplan().getProperties().remove(atools::fs::pln::ALTERNATES);
 }
 
+QBitArray Route::getJetAirwayFlags() const
+{
+  QBitArray flags(size());
+
+  for(int i = 0; i < size(); i++)
+  {
+    const map::MapAirway& airway = at(i).getAirway();
+    flags.setBit(i, airway.isValid() && (airway.type == map::JET || airway.type == map::BOTH));
+  }
+  return flags;
+}
+
 void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties)
 {
   clearProcedureLegs(proc::PROCEDURE_ALL);
@@ -1626,12 +1639,17 @@ void Route::createRouteLegsFromFlightplan()
   }
 }
 
-Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp, bool replaceCustomWp) const
+Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp, bool replaceCustomWp,
+                                        bool removeAlternate) const
 {
   qDebug() << Q_FUNC_INFO << "saveApproachWp" << saveApproachWp << "saveSidStarWp" << saveSidStarWp
            << "replaceCustomWp" << replaceCustomWp;
 
+  // Create copy ==============
   Route route(*this);
+
+  if(removeAlternate)
+    route.removeAlternateLegs();
 
   // Copy flight plan profile altitudes into entries for FMS and other formats
   // All following functions have to use setCoords instead of setPosition to avoid overwriting

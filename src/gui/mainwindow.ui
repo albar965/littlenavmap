@@ -73,6 +73,7 @@
      <addaction name="actionRouteSaveAsFeelthereFpl"/>
      <addaction name="actionRouteSaveAsQwRte"/>
      <addaction name="actionRouteSaveAsMdr"/>
+     <addaction name="actionRouteSaveAsTfdi"/>
     </widget>
     <widget class="QMenu" name="menuE_xport_Flight_Plan_to_other_Formats">
      <property name="title">
@@ -10798,6 +10799,17 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Saves all options and window layout now</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsTfdi">
+   <property name="text">
+    <string>Export Flight Plan for TFDi Design 717 ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as XML file usable by the TFDi Design 717</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as XML file usable by the TFDi Design 717</string>
    </property>
   </action>
  </widget>

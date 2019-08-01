@@ -478,7 +478,8 @@ public:
 
   /* Removes approaches and SID/STAR depending on save options, deletes duplicates and returns a copy.
    *  All procedure legs are converted to normal flight plan (user) legs.  */
-  Route adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp, bool replaceCustomWp) const;
+  Route adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp, bool replaceCustomWp,
+                                   bool removeAlternate) const;
 
   /* Update user defined waypoint */
   void changeUserAndPosition(int index, const QString& name, const atools::geo::Pos& pos);
@@ -526,6 +527,10 @@ public:
   void clearFlightplanAlternateProperties();
 
   void updateAlternateProperties();
+
+  /* Get a bit array which indicates high/low airways - needed for some export formats.
+   *  True indicates high airway used towards waypoint at the same index. */
+  QBitArray getJetAirwayFlags() const;
 
 private:
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);

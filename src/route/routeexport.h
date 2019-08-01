@@ -120,6 +120,9 @@ public:
   /* Leonardo Maddog X */
   bool routeExportMdr();
 
+  /* TFDi Design 717 */
+  bool routeExportTfdi();
+
   /* Check if route has valid departure  and destination and departure parking.
    *  @return true if route can be saved anyway */
   bool routeValidate(bool validateParking, bool validateDepartureAndDestination);
@@ -136,8 +139,8 @@ public:
 
   /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.
    *  Also sets altitude into FlightplanEntry position. */
-  static Route routeAdjustedToProcedureOptions(const Route& route, bool replaceCustomWp);
-  Route routeAdjustedToProcedureOptions(bool replaceCustomWp);
+  static Route routeAdjustedToProcedureOptions(const Route& route, bool replaceCustomWp, bool removeAlternate);
+  Route routeAdjustedToProcedureOptions(bool replaceCustomWp, bool removeAlternate);
 
 signals:
   /* Show airport on map to allow parking selection */

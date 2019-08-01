@@ -1169,6 +1169,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsEfbr, &QAction::triggered, routeExport, &RouteExport::routeExportEfbr);
   connect(ui->actionRouteSaveAsQwRte, &QAction::triggered, routeExport, &RouteExport::routeExportQwRte);
   connect(ui->actionRouteSaveAsMdr, &QAction::triggered, routeExport, &RouteExport::routeExportMdr);
+  connect(ui->actionRouteSaveAsTfdi, &QAction::triggered, routeExport, &RouteExport::routeExportTfdi);
 
   // Online export options
   connect(ui->actionRouteSaveAsVfp, &QAction::triggered, routeExport, &RouteExport::routeExportVfp);

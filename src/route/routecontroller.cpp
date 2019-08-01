@@ -1162,11 +1162,14 @@ bool RouteController::saveFlighplanAs(const QString& filename, pln::FileFormat t
 /* Save flight plan using the same format indicated in the flight plan object */
 bool RouteController::saveFlightplan(bool cleanExport)
 {
-  bool replaceCustomWp = false;
+  bool replaceCustomWp = false, removeAlternates = false;
 
   if(cleanExport)
+  {
     // Replace approach with user waypoints
     replaceCustomWp = true;
+    removeAlternates = true;
+  }
   else
   {
     switch(route.getFlightplan().getFileFormat())
@@ -1174,6 +1177,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
       case atools::fs::pln::PLN_FSX:
         // Not clean FSX allows custom approaches
         replaceCustomWp = false;
+        removeAlternates = false;
         break;
 
       case atools::fs::pln::NONE:
@@ -1185,6 +1189,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
       case atools::fs::pln::FLIGHTGEAR:
         // Replace waypoints and do not insert approach information
         replaceCustomWp = true;
+        removeAlternates = true;
         break;
     }
   }
@@ -1192,7 +1197,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
   // Get a copy that has procedures replaced with waypoints depending on settings
   // Also fills altitude in flight plan entry position
   Flightplan flightplan =
-    RouteExport::routeAdjustedToProcedureOptions(route, replaceCustomWp).getFlightplan();
+    RouteExport::routeAdjustedToProcedureOptions(route, replaceCustomWp, removeAlternates).getFlightplan();
   qDebug() << Q_FUNC_INFO << "flightplan.getFileFormat()" << flightplan.getFileFormat()
            << "routeFileFormat" << routeFileFormat;
 
