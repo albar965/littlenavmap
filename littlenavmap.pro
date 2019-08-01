@@ -284,6 +284,7 @@ SOURCES += \
   src/mappainter/mappainternav.cpp \
   src/mappainter/mappainterroute.cpp \
   src/mappainter/mappaintership.cpp \
+  src/mappainter/mappaintertop.cpp \
   src/mappainter/mappainteruser.cpp \
   src/mappainter/mappaintervehicle.cpp \
   src/mappainter/mappainterweather.cpp \
@@ -426,6 +427,7 @@ HEADERS  += \
   src/mappainter/mappainternav.h \
   src/mappainter/mappainterroute.h \
   src/mappainter/mappaintership.h \
+  src/mappainter/mappaintertop.h \
   src/mappainter/mappainteruser.h \
   src/mappainter/mappaintervehicle.h \
   src/mappainter/mappainterweather.h \

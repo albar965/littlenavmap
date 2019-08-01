@@ -84,17 +84,11 @@ void MapPainterMark::paintMark(const PaintContext *context)
   int x, y;
   if(wToS(mapPaintWidget->getSearchMarkPos(), x, y))
   {
-    int size = context->sz(context->symbolSizeAirport, 10);
-    int size2 = context->sz(context->symbolSizeAirport, 8);
-
     context->painter->setPen(mapcolors::markBackPen);
-
-    context->painter->drawLine(x, y - size, x, y + size);
-    context->painter->drawLine(x - size, y, x + size, y);
+    drawCross(context, x, y, context->sz(context->symbolSizeAirport, 10));
 
     context->painter->setPen(mapcolors::markFillPen);
-    context->painter->drawLine(x, y - size2, x, y + size2);
-    context->painter->drawLine(x - size2, y, x + size2, y);
+    drawCross(context, x, y, context->sz(context->symbolSizeAirport, 8));
   }
 }
 
@@ -110,7 +104,8 @@ void MapPainterMark::paintHome(const PaintContext *context)
 
     if(x < INVALID_INT / 2 && y < INVALID_INT / 2)
     {
-      QPixmap pixmap = QIcon(":/littlenavmap/resources/icons/homemap.svg").pixmap(QSize(size, size));
+      QPixmap pixmap;
+      getPixmap(pixmap, ":/littlenavmap/resources/icons/homemap.svg", size);
       painter->drawPixmap(QPoint(x - size / 2, y - size / 2), pixmap);
     }
   }
@@ -461,9 +456,21 @@ void MapPainterMark::paintAirwayList(PaintContext *context, const QList<map::Map
   painter->setPen(innerPen);
   context->painter->drawPolyline(ls);
 
+  // Arrows ================
+  QPolygonF arrow = buildArrow(static_cast<float>(mapcolors::airwayBothPen.widthF() * 6.));
+  context->painter->setPen(QPen(mapcolors::highlightBackColor, lineWidth / 3., Qt::SolidLine, Qt::RoundCap));
+  context->painter->setBrush(Qt::white);
+  for(const map::MapAirway& airway : airwayList)
+  {
+    if(airway.direction != map::DIR_BOTH)
+    {
+      Line arrLine = airway.direction !=
+                     map::DIR_FORWARD ? Line(airway.from, airway.to) : Line(airway.to, airway.from);
+      paintArrowAlongLine(context->painter, arrLine, arrow, 0.3f);
+    }
+  }
+
   // Draw waypoint triangles =============================================
-  painter->setPen(QPen(mapcolors::highlightBackColor, lineWidth / 3., Qt::SolidLine, Qt::RoundCap));
-  painter->setBrush(Qt::white);
   for(const atools::geo::Pos& pos : linestring)
   {
     QPointF pt = wToS(pos);
@@ -493,17 +500,20 @@ void MapPainterMark::paintAirwayTextList(PaintContext *context, const QList<map:
       // Draw text  at center position of a line
       int x, y;
       Pos center = airway.bounding.getCenter();
-      if(wToS(center, x, y))
-      {
-        bool visible1, hidden1, visible2, hidden2;
-        QPoint p1 = wToS(airway.from, DEFAULT_WTOS_SIZE, &visible1, &hidden1);
-        QPoint p2 = wToS(airway.to, DEFAULT_WTOS_SIZE, &visible2, &hidden2);
+      bool visible1, hidden1, visible2, hidden2;
+      QPoint p1 = wToS(airway.from, DEFAULT_WTOS_SIZE, &visible1, &hidden1);
+      QPoint p2 = wToS(airway.to, DEFAULT_WTOS_SIZE, &visible2, &hidden2);
 
-        // Draw if not behind the globe and sufficient distance
-        if(!hidden1 && !hidden2 && (p1 - p2).manhattanLength() > 40)
-          symbolPainter->textBoxF(context->painter,
-                                  {tr("%1 / %2").arg(airway.name).arg(map::airwayTypeToShortString(airway.type))},
-                                  innerPen, x, y, textatt::CENTER);
+      // Draw if not behind the globe and sufficient distance
+      if((p1 - p2).manhattanLength() > 40)
+      {
+        if(wToS(center, x, y))
+        {
+          if(!hidden1 && !hidden2)
+            symbolPainter->textBoxF(context->painter,
+                                    {tr("%1 / %2").arg(airway.name).arg(map::airwayTypeToShortString(airway.type))},
+                                    innerPen, x, y, textatt::CENTER);
+        }
       }
     }
   }

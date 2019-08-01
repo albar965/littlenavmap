@@ -10,11 +10,11 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg3691"
-   height="10.146035"
-   width="16.029259"
+   height="18"
+   width="18"
    version="1.1"
    sodipodi:docname="arrowdown.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <metadata
      id="metadata1289">
     <rdf:RDF>
@@ -105,7 +105,7 @@
   </defs>
   <g
      id="layer1"
-     transform="matrix(1.0657468,0,0,-1.0657468,0.02152862,13.343364)">
+     transform="matrix(1.1818373,0,0,-1.1818373,0.02387371,21.54561)">
     <g
        id="g4946"
        style="enable-background:new"

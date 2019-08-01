@@ -133,10 +133,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                      arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 
   /* *INDENT-OFF* */
-  QListWidget*list=ui->listWidgetOptionPages;
+  QListWidget*list = ui->listWidgetOptionPages;
   list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));;
   list->addItem(pageListItem(list, tr("User Interface"), tr("Change text sizes and language settings."), ":/littlenavmap/resources/icons/statusbar.svg"));;
   list->addItem(pageListItem(list, tr("Map"), tr("General map settings: Zoom, click and tooltip settings."), ":/littlenavmap/resources/icons/mapsettings.svg"));;
+  list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click and screen navigation settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));;
   list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols and texts for map display objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));;
   list->addItem(pageListItem(list, tr("Map Display 2"), tr("Change colors, symbols and texts for marks, user aircraft and more."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));;
   list->addItem(pageListItem(list, tr("Map Display Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));;
@@ -157,6 +158,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   QTreeWidgetItem *topOfMap = addTopItem(root, tr("Top of Map"), tr("Select information that is displayed on top of the map."));
   addItem<opts::DisplayOptions>(topOfMap, displayOptItemIndex, tr("Wind Direction and Speed"), tr("Show wind direction and speed on the top center of the map."), opts::ITEM_USER_AIRCRAFT_WIND, true);
   addItem<opts::DisplayOptions>(topOfMap, displayOptItemIndex, tr("Wind Pointer"), tr("Show wind direction pointer on the top center of the map."), opts::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
+
+  QTreeWidgetItem *navAids = addTopItem(root, tr("Navigation Aids"), QString());
+  addItem<opts::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Center Cross"), tr("Shows the map center. Useful if \"Click map to center position\" on page \"Map Navigation\" is enabled."), opts::NAVAIDS_CENTER_CROSS, false);
+  addItem<opts::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Areas"), tr("Shows corner marks to highlight the screen areas. Helps if map areas are used for touchscreen navigation.\nOnly shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), opts::NAVAIDS_TOUCHSCREEN_AREAS, false);
+  addItem<opts::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Area Icons"), tr("Shows icons for the screen areas. Useful if map areas are used for touchscreen navigation.\nnOnly shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), opts::NAVAIDS_TOUCHSCREEN_ICONS, false);
 
   QTreeWidgetItem *airport = addTopItem(root, tr("Airport"), tr("Select airport labels to display on the map."));
   addItem<opts::DisplayOptions>(airport, displayOptItemIndex, tr("Name (Ident)"), QString(), opts::ITEM_AIRPORT_NAME, true);
@@ -271,6 +277,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->radioButtonOptionsSimUpdateFast,
      ui->radioButtonOptionsSimUpdateLow,
      ui->radioButtonOptionsSimUpdateMedium,
+
+     ui->radioButtonOptionsMapNavDragMove,
+     ui->radioButtonOptionsMapNavClickCenter,
+     ui->radioButtonOptionsMapNavTouchscreen,
+
      ui->checkBoxOptionsSimUpdatesConstant,
      ui->spinBoxOptionsSimUpdateBox,
      ui->spinBoxSimMaxTrackPoints,
@@ -320,6 +331,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
      ui->spinBoxOptionsDisplayTextSizeMora,
      ui->spinBoxOptionsDisplayTransparencyMora,
+     ui->spinBoxOptionsMapNavTouchArea,
 
      ui->comboBoxOptionsStartupUpdateChannels,
      ui->comboBoxOptionsStartupUpdateRate,
@@ -402,6 +414,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditOptionsWeatherXplanePath, &QLineEdit::textEdited,
           this, &OptionsDialog::updateXplanePathStatus);
 
+  // ===========================================================================
   // Online weather
   connect(ui->lineEditOptionsWeatherNoaaStationsUrl, &QLineEdit::textEdited,
           this, &OptionsDialog::updateWeatherButtonState);
@@ -417,6 +430,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditOptionsWeatherXplaneWind, &QLineEdit::textEdited,
           this, &OptionsDialog::updateXplaneWindStatus);
 
+  // ===========================================================================
   // Weather test buttons
   connect(ui->pushButtonOptionsWeatherNoaaTest, &QPushButton::clicked,
           this, &OptionsDialog::testWeatherNoaaUrlClicked);
@@ -429,6 +443,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::testWeatherNoaaWindUrlClicked);
   connect(ui->pushButtonOptionsWeatherXplaneWindPathSelect, &QPushButton::clicked,
           this, &OptionsDialog::weatherXplaneWindPathSelectClicked);
+
+  // ===========================================================================
+  // Map navigation
+  connect(ui->radioButtonOptionsMapNavDragMove, &QRadioButton::clicked, this, &OptionsDialog::updateNavOptions);
+  connect(ui->radioButtonOptionsMapNavClickCenter, &QRadioButton::clicked, this, &OptionsDialog::updateNavOptions);
+  connect(ui->radioButtonOptionsMapNavTouchscreen, &QRadioButton::clicked, this, &OptionsDialog::updateNavOptions);
 
   // ===========================================================================
   // Database exclude path
@@ -561,6 +581,7 @@ int OptionsDialog::exec()
   updateOnlineWidgetStatus();
   updateWebServerStatus();
   updateWebDocrootStatus();
+  updateNavOptions();
 
   return QDialog::exec();
 }
@@ -770,6 +791,7 @@ void OptionsDialog::saveState()
   saveDisplayOptItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
   saveDisplayOptItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   saveDisplayOptItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
+  saveDisplayOptItemStates(displayOptItemIndexNavAid, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID);
 
   Settings& settings = Settings::instance();
 
@@ -828,6 +850,7 @@ void OptionsDialog::restoreState()
   restoreOptionItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
   restoreOptionItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   restoreOptionItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
+  restoreOptionItemStates(displayOptItemIndexNavAid, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID);
 
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
     ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
@@ -1216,6 +1239,9 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOptionsRoute = opts::ROUTE_NONE;
   displayOptWidgetToOptionData(data.displayOptionsRoute, displayOptItemIndexRoute);
 
+  data.displayOptionsNavAid = opts::NAVAIDS_NONE;
+  displayOptWidgetToOptionData(data.displayOptionsNavAid, displayOptItemIndexNavAid);
+
   toFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
   toFlags(ui->checkBoxOptionsStartupLoadTrail, opts::STARTUP_LOAD_TRAIL);
@@ -1303,12 +1329,21 @@ void OptionsDialog::widgetsToOptionData()
 
   data.mapScrollDetail = static_cast<opts::MapScrollDetail>(ui->comboBoxMapScrollDetails->currentIndex());
 
+  // Details when moving map =========================================
   if(ui->radioButtonOptionsSimUpdateFast->isChecked())
     data.simUpdateRate = opts::FAST;
   else if(ui->radioButtonOptionsSimUpdateLow->isChecked())
     data.simUpdateRate = opts::LOW;
   else if(ui->radioButtonOptionsSimUpdateMedium->isChecked())
     data.simUpdateRate = opts::MEDIUM;
+
+  // Map navigation mode =========================================
+  if(ui->radioButtonOptionsMapNavDragMove->isChecked())
+    data.mapNavigation = opts::MAP_NAV_CLICK_DRAG_MOVE;
+  else if(ui->radioButtonOptionsMapNavClickCenter->isChecked())
+    data.mapNavigation = opts::MAP_NAV_CLICK_CENTER;
+  else if(ui->radioButtonOptionsMapNavTouchscreen->isChecked())
+    data.mapNavigation = opts::MAP_NAV_TOUCHSCREEN;
 
   data.simNoFollowAircraftOnScroll = ui->spinBoxSimDoNotFollowOnScrollTime->value();
   data.simUpdateBox = ui->spinBoxOptionsSimUpdateBox->value();
@@ -1352,6 +1387,7 @@ void OptionsDialog::widgetsToOptionData()
 
   data.displayTransparencyMora = ui->spinBoxOptionsDisplayTransparencyMora->value();
   data.displayTextSizeMora = ui->spinBoxOptionsDisplayTextSizeMora->value();
+  data.mapNavTouchArea = ui->spinBoxOptionsMapNavTouchArea->value();
 
   data.displayTextSizeRangeDistance = ui->spinBoxOptionsDisplayTextSizeRangeDistance->value();
   data.displayTextSizeCompassRose = ui->spinBoxOptionsDisplayTextSizeCompassRose->value();
@@ -1435,6 +1471,7 @@ void OptionsDialog::optionDataToWidgets()
   displayOptDataToWidget(data.displayOptions, displayOptItemIndex);
   displayOptDataToWidget(data.displayOptionsRose, displayOptItemIndexRose);
   displayOptDataToWidget(data.displayOptionsRoute, displayOptItemIndexRoute);
+  displayOptDataToWidget(data.displayOptionsNavAid, displayOptItemIndexNavAid);
 
   fromFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   fromFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
@@ -1532,6 +1569,8 @@ void OptionsDialog::optionDataToWidgets()
 
   ui->comboBoxMapScrollDetails->setCurrentIndex(data.mapScrollDetail);
 
+  // Details when moving map =========================================
+
   switch(data.simUpdateRate)
   {
     case opts::FAST:
@@ -1542,6 +1581,22 @@ void OptionsDialog::optionDataToWidgets()
       break;
     case opts::LOW:
       ui->radioButtonOptionsSimUpdateLow->setChecked(true);
+      break;
+  }
+
+  // Map navigation mode =========================================
+  switch(data.mapNavigation)
+  {
+    case opts::MAP_NAV_CLICK_DRAG_MOVE:
+      ui->radioButtonOptionsMapNavDragMove->setChecked(true);
+      break;
+
+    case opts::MAP_NAV_CLICK_CENTER:
+      ui->radioButtonOptionsMapNavClickCenter->setChecked(true);
+      break;
+
+    case opts::MAP_NAV_TOUCHSCREEN:
+      ui->radioButtonOptionsMapNavTouchscreen->setChecked(true);
       break;
   }
 
@@ -1585,6 +1640,7 @@ void OptionsDialog::optionDataToWidgets()
 
   ui->spinBoxOptionsDisplayTransparencyMora->setValue(data.displayTransparencyMora);
   ui->spinBoxOptionsDisplayTextSizeMora->setValue(data.displayTextSizeMora);
+  ui->spinBoxOptionsMapNavTouchArea->setValue(data.mapNavTouchArea);
 
   ui->spinBoxOptionsDisplayTextSizeRangeDistance->setValue(data.displayTextSizeRangeDistance);
   ui->spinBoxOptionsDisplayTextSizeCompassRose->setValue(data.displayTextSizeCompassRose);
@@ -1944,6 +2000,11 @@ void OptionsDialog::weatherXplaneWindPathSelectClicked()
     ui->lineEditOptionsWeatherXplaneWind->setText(QDir::toNativeSeparators(path));
 
   updateWeatherButtonState();
+}
+
+void OptionsDialog::updateNavOptions()
+{
+  ui->spinBoxOptionsMapNavTouchArea->setEnabled(ui->radioButtonOptionsMapNavTouchscreen->isChecked());
 }
 
 void OptionsDialog::clearMemCachedClicked()

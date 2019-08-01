@@ -151,6 +151,7 @@ private:
   void onlineTestUrl(const QString& url, bool statusFile);
   int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);
   void displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value);
+  void updateNavOptions();
 
   QVector<int> ringStrToVector(const QString& string) const;
 
@@ -177,6 +178,7 @@ private:
 
   // Maps options flags to items in the tree widget
   QHash<opts::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
+  QHash<opts::DisplayOptionsNavAid, QTreeWidgetItem *> displayOptItemIndexNavAid;
   QHash<opts::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
   QHash<opts::DisplayOptionsRoute, QTreeWidgetItem *> displayOptItemIndexRoute;
 

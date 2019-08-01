@@ -255,6 +255,18 @@ enum DisplayOption
 Q_DECLARE_FLAGS(DisplayOptions, DisplayOption);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptions);
 
+/* On-screen navigation aids */
+enum DisplayOptionNavAid
+{
+  NAVAIDS_NONE = 0,
+  NAVAIDS_CENTER_CROSS = 1 << 1,
+  NAVAIDS_TOUCHSCREEN_AREAS = 1 << 2,
+  NAVAIDS_TOUCHSCREEN_ICONS = 1 << 3,
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsNavAid, DisplayOptionNavAid);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptionsNavAid);
+
 enum DisplayOptionRose
 {
   ROSE_NONE = 0,
@@ -315,6 +327,14 @@ enum MapScrollDetail
   HIGHER,
   NORMAL,
   NONE
+};
+
+/* Navigation mode */
+enum MapNavigation
+{
+  MAP_NAV_CLICK_DRAG_MOVE,
+  MAP_NAV_CLICK_CENTER,
+  MAP_NAV_TOUCHSCREEN
 };
 
 /* Speed of simualator aircraft updates */
@@ -540,6 +560,11 @@ public:
     return mapScrollDetail;
   }
 
+  opts::MapNavigation getMapNavigation() const
+  {
+    return mapNavigation;
+  }
+
   opts::SimUpdateRate getSimUpdateRate() const
   {
     return simUpdateRate;
@@ -740,6 +765,11 @@ public:
     return displayOptionsRose;
   }
 
+  const opts::DisplayOptionsNavAid& getDisplayOptionsNavAid() const
+  {
+    return displayOptionsNavAid;
+  }
+
   const opts::DisplayOptionsRoute& getDisplayOptionsRoute() const
   {
     return displayOptionsRoute;
@@ -926,6 +956,11 @@ public:
     return displayTextSizeMora;
   }
 
+  int getMapNavTouchArea() const
+  {
+    return mapNavTouchArea;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -986,6 +1021,7 @@ private:
   QStringList databaseExclude;
 
   opts::MapScrollDetail mapScrollDetail = opts::HIGHER;
+  opts::MapNavigation mapNavigation = opts::MAP_NAV_CLICK_DRAG_MOVE;
 
   // ui->radioButtonOptionsMapSimUpdateFast
   // ui->radioButtonOptionsMapSimUpdateLow
@@ -1154,6 +1190,9 @@ private:
   // spinBoxOptionsDisplayTransparencyMora
   int displayTextSizeMora = 100;
 
+  // spinBoxOptionsMapNavTouchscreenArea
+  int mapNavTouchArea = 30;
+
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, flightplanPassedColor, trailColor;
 
   // comboBoxOptionsDisplayTrailType
@@ -1173,6 +1212,8 @@ private:
   opts::DisplayOptionsRose displayOptionsRose =
     opts::ROSE_RANGE_RINGS | opts::ROSE_DEGREE_MARKS | opts::ROSE_DEGREE_LABELS | opts::ROSE_HEADING_LINE |
     opts::ROSE_TRACK_LINE | opts::ROSE_TRACK_LABEL | opts::ROSE_CRAB_ANGLE | opts::ROSE_NEXT_WAYPOINT;
+
+  opts::DisplayOptionsNavAid displayOptionsNavAid = opts::NAVAIDS_NONE;
 
   opts::DisplayOptionsRoute displayOptionsRoute = opts::ROUTE_DISTANCE | opts::ROUTE_MAG_COURSE_RHUMB;
 

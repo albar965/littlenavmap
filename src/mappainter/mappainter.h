@@ -81,6 +81,7 @@ struct PaintContext
   opts::Flags flags;
   opts::Flags2 flags2;
   map::MapWeatherSource weatherSource;
+  bool visibleWidget;
 
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
@@ -205,6 +206,8 @@ protected:
   void drawLine(const PaintContext *context, const atools::geo::Line& line);
   void drawCircle(const PaintContext *context, const atools::geo::Pos& center, int radius);
 
+  void drawCross(const PaintContext *context, int x, int y, int size);
+
   /* No GC and no rhumb */
   void drawLineStraight(const PaintContext *context, const atools::geo::Line& line);
 
@@ -245,6 +248,9 @@ protected:
   void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);
 
   static bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
+
+  /* Interface method to QPixmapCache*/
+  void getPixmap(QPixmap& pixmap, const QString& resource, int size);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

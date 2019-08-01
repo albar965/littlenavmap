@@ -40,6 +40,7 @@ class MapPainterAirspace;
 class MapPainterNav;
 class MapPainterIls;
 class MapPainterMark;
+class MapPainterTop;
 class MapPainterRoute;
 class MapPainterAircraft;
 class MapPainterShip;
@@ -171,6 +172,7 @@ private:
   MapPainterMark *mapPainterMark;
   MapPainterRoute *mapPainterRoute;
   MapPainterAircraft *mapPainterAircraft;
+  MapPainterTop *mapPainterTop;
   MapPainterShip *mapPainterShip;
   MapPainterUser *mapPainterUser;
   MapPainterAltitude *mapPainterAltitude;

@@ -39,7 +39,7 @@ class MapWidget;
 class MapPainterMark :
   public MapPainter
 {
-  Q_DECLARE_TR_FUNCTIONS(MapPainter)
+  Q_DECLARE_TR_FUNCTIONS(MapPainterMark)
 
 public:
   MapPainterMark(MapPaintWidget *mapWidgetParam, MapScale *mapScale);

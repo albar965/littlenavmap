@@ -29,6 +29,8 @@
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 
+#include <QPixmapCache>
+
 using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
@@ -237,6 +239,12 @@ void MapPainter::drawCircle(const PaintContext *context, const atools::geo::Pos&
   QPoint pt = wToS(center);
   if(!pt.isNull())
     context->painter->drawEllipse(pt, radius, radius);
+}
+
+void MapPainter::drawCross(const PaintContext *context, int x, int y, int size)
+{
+  context->painter->drawLine(x, y - size, x, y + size);
+  context->painter->drawLine(x - size, y, x + size, y);
 }
 
 void MapPainter::drawLineString(const PaintContext *context, const atools::geo::LineString& linestring)
@@ -566,4 +574,16 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
   }
   else
     return ap1->emptyDraw(od) > ap2->emptyDraw(od);
+}
+
+void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
+{
+  QPixmap *pixmapPtr = QPixmapCache::find(resource + "_" + QString::number(size));
+  if(pixmapPtr == nullptr)
+  {
+    pixmap = QIcon(resource).pixmap(QSize(size, size));
+    QPixmapCache::insert(pixmap);
+  }
+  else
+    pixmap = *pixmapPtr;
 }

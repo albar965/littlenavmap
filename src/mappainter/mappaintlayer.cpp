@@ -34,6 +34,7 @@
 #include "mappainter/mappainterroute.h"
 #include "mappainter/mappainteruser.h"
 #include "mappainter/mappainteraltitude.h"
+#include "mappainter/mappaintertop.h"
 #include "mapgui/mapscale.h"
 #include "userdata/userdatacontroller.h"
 #include "route/route.h"
@@ -68,6 +69,7 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries)
   mapPainterAltitude = new MapPainterAltitude(mapWidget, mapScale);
   mapPainterWeather = new MapPainterWeather(mapWidget, mapScale);
   mapPainterWind = new MapPainterWind(mapWidget, mapScale);
+  mapPainterTop = new MapPainterTop(mapWidget, mapScale);
 
   // Default for visible object types
   objectTypes = map::MapObjectTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);
@@ -88,6 +90,7 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterAltitude;
   delete mapPainterWeather;
   delete mapPainterWind;
+  delete mapPainterTop;
 
   delete layers;
   delete mapScale;
@@ -169,10 +172,12 @@ void MapPaintLayer::initMapLayerSettings()
   if(layers != nullptr)
     delete layers;
 
+  // =====================================================================================
   // Create a list of map layers that define content for each zoom distance
   layers = new MapLayerSettings();
 
   // Create a default layer with all features enabled
+  // Features are switched off step by step when adding new (higher) layers
   MapLayer defLayer = MapLayer(0).airport().approach().approachTextAndDetail().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
 
@@ -527,6 +532,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.flags2 = od.getFlags2();
 
       context.weatherSource = weatherSource;
+      context.visibleWidget = mapWidget->isVisibleWidget();
 
       if(mapWidget->viewContext() == Marble::Still)
       {
@@ -591,6 +597,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       mapPainterMark->render(&context);
 
       mapPainterAircraft->render(&context);
+
+      mapPainterTop->render(&context);
 
       if(context.isOverflow())
         overflow = PaintContext::MAX_OBJECT_COUNT;
