@@ -37,6 +37,9 @@ using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
+/* Number of characters in the divider */
+static const int TEXT_BAR_LENGTH = 15;
+
 MapTooltip::MapTooltip(MainWindow *parentWindow)
   : mainWindow(parentWindow), mapQuery(NavApp::getMapQuery()), weather(NavApp::getWeatherReporter())
 {
@@ -48,9 +51,7 @@ MapTooltip::~MapTooltip()
   qDebug() << Q_FUNC_INFO;
 }
 
-QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
-                                 const QList<proc::MapProcedurePoint>& procPoints,
-                                 const Route& route, bool airportDiagram)
+QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, const Route& route, bool airportDiagram)
 {
   opts::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
 
@@ -65,11 +66,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   // User Aircraft ===========================================================================
   if(mapSearchResult.userAircraft.getPosition().isValid())
   {
-    if(checkText(html, numEntries))
+    if(checkText(html))
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.textBar(10);
+      html.textBar(TEXT_BAR_LENGTH);
 
     info.aircraftText(mapSearchResult.userAircraft, html);
     info.aircraftProgressText(mapSearchResult.userAircraft, html, route,
@@ -81,11 +82,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   // Online Aircraft ===========================================================================
   for(const SimConnectAircraft& aircraft : mapSearchResult.onlineAircraft)
   {
-    if(checkText(html, numEntries))
+    if(checkText(html))
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.textBar(10);
+      html.textBar(TEXT_BAR_LENGTH);
 
     info.aircraftText(aircraft, html);
     info.aircraftProgressText(aircraft, html, Route(),
@@ -97,11 +98,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   // AI Aircraft ===========================================================================
   for(const SimConnectAircraft& aircraft : mapSearchResult.aiAircraft)
   {
-    if(checkText(html, numEntries))
+    if(checkText(html))
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.textBar(10);
+      html.textBar(TEXT_BAR_LENGTH);
 
     info.aircraftText(aircraft, html);
     info.aircraftProgressText(aircraft, html, Route(),
@@ -113,13 +114,13 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   // Navaids from procedure points ===========================================================================
   if(opts & opts::TOOLTIP_NAVAID)
   {
-    for(const proc::MapProcedurePoint& ap : procPoints)
+    for(const proc::MapProcedurePoint& ap : mapSearchResult.procPoints)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.procedurePointText(ap, html, &route);
 
@@ -127,14 +128,42 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
-  // Logbook entries ===========================================================================
-  for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
+  // Holds ===========================================================================
+  for(const Hold& entry : mapSearchResult.holds)
   {
-    if(checkText(html, numEntries))
+    if(checkText(html))
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.textBar(10);
+      html.textBar(TEXT_BAR_LENGTH);
+
+    info.holdText(entry, html);
+
+    numEntries++;
+  }
+
+  // Holds ===========================================================================
+  for(const TrafficPattern& entry : mapSearchResult.trafficPatterns)
+  {
+    if(checkText(html))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.textBar(TEXT_BAR_LENGTH);
+
+    info.trafficPatternText(entry, html);
+
+    numEntries++;
+  }
+
+  // Logbook entries ===========================================================================
+  for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
+  {
+    if(checkText(html))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.textBar(TEXT_BAR_LENGTH);
 
     info.logEntryText(entry, html);
 
@@ -144,11 +173,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   // Userpoints ===========================================================================
   for(const MapUserpoint& up : mapSearchResult.userpoints)
   {
-    if(checkText(html, numEntries))
+    if(checkText(html))
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.textBar(10);
+      html.textBar(TEXT_BAR_LENGTH);
 
     info.userpointText(up, html);
 
@@ -160,11 +189,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   {
     for(const MapAirport& airport : mapSearchResult.airports)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       map::WeatherContext currentWeatherContext;
 
@@ -181,11 +210,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
     for(const MapVor& vor : mapSearchResult.vors)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.vorText(vor, html);
 
@@ -194,11 +223,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
     for(const MapNdb& ndb : mapSearchResult.ndbs)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.ndbText(ndb, html);
 
@@ -207,11 +236,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
     for(const MapWaypoint& wp : mapSearchResult.waypoints)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.waypointText(wp, html);
 
@@ -220,11 +249,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
     for(const MapMarker& m : mapSearchResult.markers)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.markerText(m, html);
 
@@ -233,11 +262,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
     for(const MapIls& ils : mapSearchResult.ils)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.ilsText(ils, html);
 
@@ -250,11 +279,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   {
     for(const MapAirport& ap : mapSearchResult.towers)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.towerText(ap, html);
 
@@ -262,11 +291,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
     for(const MapParking& p : mapSearchResult.parkings)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.parkingText(p, html);
 
@@ -274,11 +303,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
     for(const MapHelipad& p : mapSearchResult.helipads)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.helipadText(p, html);
 
@@ -290,11 +319,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   {
     for(const MapUserpointRoute& up : mapSearchResult.userPointsRoute)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.userpointTextRoute(up, html);
 
@@ -303,11 +332,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
     for(const MapAirway& airway : mapSearchResult.airways)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.airwayText(airway, html);
 
@@ -321,11 +350,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     atools::grib::WindPosVector winds = NavApp::getWindReporter()->getWindStackForPos(mapSearchResult.windPos);
     if(!winds.isEmpty())
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       info.windText(winds, html, NavApp::getWindReporter()->getAltitude());
 
@@ -347,11 +376,11 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
     for(const MapAirspace& airspace : res.airspaces)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.textBar(10);
+        html.textBar(TEXT_BAR_LENGTH);
 
       atools::sql::SqlRecord onlineRec;
       if(airspace.isOnline())
@@ -378,13 +407,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 }
 
 /* Check if the result HTML has more than the allowed number of lines and add a "more" text */
-bool MapTooltip::checkText(HtmlBuilder& html, int numEntries)
+bool MapTooltip::checkText(HtmlBuilder& html)
 {
-  if(numEntries >= MAX_ENTRIES)
-  {
-    html.textBar(10).b(tr("More ..."));
-    return true;
-  }
-
-  return html.checklength(MAX_LINES, tr("More ..."));
+  return html.checklengthTextBar(MAX_LINES, tr("More ..."), TEXT_BAR_LENGTH);
 }

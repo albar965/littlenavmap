@@ -54,6 +54,8 @@ struct MapUserpoint;
 struct MapLogbookEntry;
 struct MapBase;
 struct MapSearchResultMixed;
+struct Hold;
+struct TrafficPattern;
 }
 
 namespace atools {
@@ -242,7 +244,7 @@ public:
    */
   void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html, const Route *route) const;
+  void procedurePointText(const proc::MapProcedurePoint& procPoint, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates an overview HTML description for any AI or user aircraft in the simulator.
@@ -268,6 +270,9 @@ public:
    */
   void aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft, const atools::sql::SqlRecord& onlineRec,
                           atools::util::HtmlBuilder& html);
+
+  void holdText(const map::Hold& hold, atools::util::HtmlBuilder& html) const;
+  void trafficPatternText(const map::TrafficPattern& pattern, atools::util::HtmlBuilder& html) const;
 
   void setSymbolSize(const QSize& value)
   {

@@ -20,6 +20,7 @@
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
 #include "common/maptools.h"
+#include "common/proctypes.h"
 #include "fs/common/binarygeometry.h"
 #include "online/onlinedatacontroller.h"
 #include "airspace/airspacecontroller.h"

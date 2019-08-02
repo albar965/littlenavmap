@@ -22,6 +22,7 @@
 #include "common/unit.h"
 #include "options/optiondata.h"
 #include "navapp.h"
+#include "common/proctypes.h"
 
 #include <QDataStream>
 #include <QHash>
@@ -1057,7 +1058,7 @@ QDataStream& operator>>(QDataStream& dataStream, TrafficPattern& obj)
   >> obj.runwayLength
   >> obj.downwindDistance
   >> obj.baseDistance
-  >> obj.heading
+  >> obj.course
   >> obj.magvar
   >> obj.position;
 
@@ -1075,7 +1076,7 @@ QDataStream& operator<<(QDataStream& dataStream, const TrafficPattern& obj)
              << obj.runwayLength
              << obj.downwindDistance
              << obj.baseDistance
-             << obj.heading
+             << obj.course
              << obj.magvar
              << obj.position;
 
@@ -1087,6 +1088,10 @@ QDataStream& operator>>(QDataStream& dataStream, Hold& obj)
   dataStream
   >> obj.navIdent
   >> obj.navType
+  >> obj.vorDmeOnly
+  >> obj.vorHasDme
+  >> obj.vorTacan
+  >> obj.vorVortac
   >> obj.color
   >> obj.turnLeft
   >> obj.minutes
@@ -1094,7 +1099,6 @@ QDataStream& operator>>(QDataStream& dataStream, Hold& obj)
   >> obj.courseTrue
   >> obj.magvar
   >> obj.position;
-
   return dataStream;
 }
 
@@ -1103,6 +1107,10 @@ QDataStream& operator<<(QDataStream& dataStream, const Hold& obj)
   dataStream
     << obj.navIdent
     << obj.navType
+    << obj.vorDmeOnly
+    << obj.vorHasDme
+    << obj.vorTacan
+    << obj.vorVortac
     << obj.color
     << obj.turnLeft
     << obj.minutes
@@ -1116,16 +1124,21 @@ QDataStream& operator<<(QDataStream& dataStream, const Hold& obj)
 
 QString vorType(const MapVor& vor)
 {
-  if(vor.vortac)
+  return vorType(vor.dmeOnly, vor.hasDme, vor.tacan, vor.vortac);
+}
+
+QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac)
+{
+  if(vortac)
   {
-    if(vor.dmeOnly)
+    if(dmeOnly)
       return QObject::tr("DME only VORTAC");
     else
       return QObject::tr("VORTAC");
   }
-  else if(vor.tacan)
+  else if(tacan)
   {
-    if(vor.dmeOnly)
+    if(dmeOnly)
       return QObject::tr("DME only TACAN");
     else
       return QObject::tr("TACAN");
@@ -1133,9 +1146,9 @@ QString vorType(const MapVor& vor)
   }
   else
   {
-    if(vor.dmeOnly)
+    if(dmeOnly)
       return QObject::tr("DME");
-    else if(vor.hasDme)
+    else if(hasDme)
       return QObject::tr("VORDME");
     else
       return QObject::tr("VOR");
@@ -2081,9 +2094,14 @@ QString ilsTextShort(QString ident, QString name, bool gs, bool dme)
   return text;
 }
 
-float Hold::magHeading() const
+float Hold::magCourse() const
 {
   return atools::geo::normalizeCourse(courseTrue - magvar);
+}
+
+float TrafficPattern::magCourse() const
+{
+  return atools::geo::normalizeCourse(course - magvar);
 }
 
 atools::geo::LineString MapIls::boundary() const

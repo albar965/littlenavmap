@@ -56,8 +56,7 @@ public:
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
-  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                     QList<proc::MapProcedurePoint> *procPoints = nullptr) const;
+  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result, map::MapObjectQueryTypes types) const;
 
   /* Get nearest distance measurement line index (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */
@@ -247,9 +246,9 @@ private:
 
   void getNearestIls(int xs, int ys, map::MapSearchResult& result) const;
   void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result) const;
-  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
+  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result, map::MapObjectQueryTypes types) const;
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                                     QList<proc::MapProcedurePoint> *procPoints) const;
+                                     map::MapObjectQueryTypes types) const;
   void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids,
                                             map::MapAirspaceSources source,
                                             const Marble::GeoDataLatLonBox& curBox, bool highlights);

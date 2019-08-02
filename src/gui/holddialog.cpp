@@ -29,6 +29,7 @@
 #include "settings/settings.h"
 #include "common/unit.h"
 #include "geo/calculations.h"
+#include "common/proctypes.h"
 
 #include <QColor>
 #include <QColorDialog>
@@ -180,9 +181,15 @@ void HoldDialog::fillHold(map::Hold& hold)
   }
   else if(result->hasVor())
   {
-    hold.navIdent = result->vors.first().ident;
-    hold.position = result->vors.first().position;
-    hold.magvar = result->vors.first().magvar;
+    const map::MapVor& vor = result->vors.first();
+    hold.navIdent = vor.ident;
+    hold.position = vor.position;
+    hold.magvar = vor.magvar;
+    hold.vorDmeOnly = vor.dmeOnly;
+    hold.vorHasDme = vor.hasDme;
+    hold.vorTacan = vor.tacan;
+    hold.vorVortac = vor.vortac;
+
     hold.navType = map::VOR;
   }
   else if(result->hasNdb())

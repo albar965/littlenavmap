@@ -6919,13 +6919,13 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove all Ranges, Measurements, Patterns and Holds</string>
+    <string>&amp;Remove all Ranges, Measurements, Patterns and Holdings</string>
    </property>
    <property name="toolTip">
-    <string>Remove all range rings, measurements,  traffic patterns and holds from map</string>
+    <string>Remove all range rings, measurements,  traffic patterns and holdings from map</string>
    </property>
    <property name="statusTip">
-    <string>Remove all range rings, measurements,  traffic patterns and holds from map</string>
+    <string>Remove all range rings, measurements,  traffic patterns and holdings from map</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+H</string>
@@ -10749,13 +10749,13 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
    </property>
    <property name="text">
-    <string>Display Hold at %1</string>
+    <string>Display Holding at %1</string>
    </property>
    <property name="toolTip">
-    <string>Display hold at this position or navaid</string>
+    <string>Display holding at this position or navaid</string>
    </property>
    <property name="statusTip">
-    <string>Display hold at this position or navaid</string>
+    <string>Display holding at this position or navaid</string>
    </property>
   </action>
   <action name="actionMapHideHold">
@@ -10764,13 +10764,13 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/holdoff.svg</normaloff>:/littlenavmap/resources/icons/holdoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Remove Hold</string>
+    <string>Remove Holding</string>
    </property>
    <property name="toolTip">
-    <string>Remove this hold</string>
+    <string>Remove this holding</string>
    </property>
    <property name="statusTip">
-    <string>Remove this hold</string>
+    <string>Remove this holding</string>
    </property>
   </action>
   <action name="actionLogdataSearchShowDistOptions">

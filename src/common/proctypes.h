@@ -176,6 +176,10 @@ enum LegSpecialType
 /* Reduced procedure leg type for map index, tooltips and similar */
 struct MapProcedurePoint
 {
+  MapProcedurePoint()
+  {
+  }
+
   MapProcedurePoint(const MapProcedureLeg& leg, bool previewParam);
 
   float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;

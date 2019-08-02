@@ -463,7 +463,7 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
 }
 
 void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                                   QList<proc::MapProcedurePoint> *procPoints) const
+                                   map::MapObjectQueryTypes types) const
 {
   using maptools::insertSortedByDistance;
 
@@ -554,14 +554,15 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   if(shown.testFlag(map::FLIGHTPLAN))
   {
     // Get copies from flight plan if visible
-    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
+    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result,
+                                       types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS);
 
     // Get points of procedure preview
-    getNearestProcedureHighlights(xs, ys, maxDistance, result, procPoints);
+    getNearestProcedureHighlights(xs, ys, maxDistance, result, types);
   }
 
   // Get copies from highlightMapObjects
-  getNearestHighlights(xs, ys, maxDistance, result);
+  getNearestHighlights(xs, ys, maxDistance, result, types);
 
   // Get objects from cache - already present objects will be skipped
   mapQuery->getNearestScreenObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
@@ -598,7 +599,8 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   }
 }
 
-void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
+void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+                                          map::MapObjectQueryTypes types) const
 {
   using maptools::insertSorted;
   CoordinateConverter conv(mapPaintWidget->viewport());
@@ -614,10 +616,16 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
   insertSorted(conv, xs, ys, searchHighlights.onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds,
                maxDistance);
   insertSorted(conv, xs, ys, searchHighlights.runwayEnds, result.runwayEnds, nullptr, maxDistance);
+
+  if(types & map::QUERY_HOLDS)
+    insertSorted(conv, xs, ys, holds, result.holds, nullptr, maxDistance);
+
+  if(types & map::QUERY_PATTERNS)
+    insertSorted(conv, xs, ys, trafficPatterns, result.trafficPatterns, nullptr, maxDistance);
 }
 
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                                                   QList<proc::MapProcedurePoint> *procPoints) const
+                                                   map::MapObjectQueryTypes types) const
 {
   CoordinateConverter conv(mapPaintWidget->viewport());
   int x, y;
@@ -638,10 +646,13 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
     insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
     insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
-    if(procPoints != nullptr && conv.wToS(leg.line.getPos2(), x, y))
+    if(types & map::QUERY_PROC_POINTS)
     {
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        procPoints->append(proc::MapProcedurePoint(leg, true /* preview */));
+      if(conv.wToS(leg.line.getPos2(), x, y))
+      {
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+          result.procPoints.append(proc::MapProcedurePoint(leg, true /* preview */));
+      }
     }
   }
 }

@@ -22,6 +22,7 @@
 #include "common/unit.h"
 #include "mapgui/maplayer.h"
 #include "common/mapcolors.h"
+#include "common/proctypes.h"
 #include "geo/calculations.h"
 #include "route/routecontroller.h"
 #include "mapgui/mapscale.h"

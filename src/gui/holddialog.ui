@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Little Navmap - Hold</string>
+   <string>Little Navmap - Holding</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="0">
@@ -71,7 +71,7 @@
    <item row="5" column="1">
     <widget class="QDoubleSpinBox" name="doubleSpinBoxHoldTime">
      <property name="toolTip">
-      <string>Time to fly the straight legs of the hold</string>
+      <string>Time to fly the straight legs of the holding</string>
      </property>
      <property name="showGroupSeparator" stdset="0">
       <bool>true</bool>
@@ -161,7 +161,7 @@
    <item row="4" column="1">
     <widget class="QSpinBox" name="spinBoxHoldSpeed">
      <property name="toolTip">
-      <string>Aircraft speed in the hold</string>
+      <string>Aircraft speed in the holding</string>
      </property>
      <property name="showGroupSeparator" stdset="0">
       <bool>true</bool>

@@ -320,6 +320,9 @@ private:
   /* Set user defined time for sun shading */
   void sunShadingTimeSet();
 
+  /* From menu action - remove all measurment lines, patterns, holds, etc. */
+  void clearRangeRingsAndDistanceMarkers();
+
   /* Action from shortcut menu triggered */
   void actionShortcutMapTriggered();
   void actionShortcutProfileTriggered();

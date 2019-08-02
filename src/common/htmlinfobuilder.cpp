@@ -1891,6 +1891,46 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 #endif
 }
 
+void HtmlInfoBuilder::holdText(const Hold& hold, HtmlBuilder& html) const
+{
+  html.b(tr("Holding"));
+
+  QString navType;
+  if(hold.navType == map::AIRPORT)
+    navType = tr("Airport");
+  else if(hold.navType == map::VOR)
+    navType = map::vorType(hold.vorDmeOnly, hold.vorHasDme, hold.vorTacan, hold.vorVortac);
+  else if(hold.navType == map::NDB)
+    navType = tr("NBD");
+  else if(hold.navType == map::WAYPOINT)
+    navType = tr("Waypoint");
+
+  if(!navType.isEmpty())
+    // Hold has a navaid
+    html.brText(tr("%1 %2, %3°M at %4").
+                arg(navType).
+                arg(hold.navIdent).
+                arg(locale.toString(hold.magCourse(), 'f', 0)).
+                arg(Unit::altFeet(hold.position.getAltitude())));
+  else
+    // Hold at a position
+    html.brText(tr("%1°M at %2").
+                arg(locale.toString(hold.magCourse(), 'f', 0)).
+                arg(Unit::altFeet(hold.position.getAltitude())));
+  html.br();
+}
+
+void HtmlInfoBuilder::trafficPatternText(const TrafficPattern& pattern, atools::util::HtmlBuilder& html) const
+{
+  html.b(tr("Traffic Pattern"));
+
+  html.brText(tr("Airport %1, runway %2 at %3").
+              arg(pattern.airportIcao).
+              arg(pattern.runwayName).
+              arg(Unit::altFeet(pattern.position.getAltitude())));
+  html.br();
+}
+
 bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) const
 {
   atools::sql::SqlRecord rec = NavApp::getUserdataManager()->getRecord(userpoint.id);
@@ -2591,10 +2631,16 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
 {
   head(html, map::parkingName(parking.name) +
        (parking.number != -1 ? " " + locale.toString(parking.number) : QString()));
-  html.brText(map::parkingTypeName(parking.type));
-  html.brText(Unit::distShortFeet(parking.radius * 2.f));
+
+  if(!parking.type.isEmpty())
+    html.brText(map::parkingTypeName(parking.type));
+
+  if(parking.radius > 0.f)
+    html.brText(Unit::distShortFeet(parking.radius * 2.f));
+
   if(parking.jetway)
     html.brText(tr("Has Jetway"));
+
   if(!parking.airlineCodes.isEmpty())
   {
     // Turn text into blocks and strip number of lines and add ... if needed
@@ -2612,66 +2658,69 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
     html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
 }
 
-void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, HtmlBuilder& html, const Route *route) const
+void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& procPoint, HtmlBuilder& html,
+                                         const Route *route) const
 {
-  QString header = ap.preview ? proc::procedureTypeText(ap.mapType) : route->getProcedureLegText(ap.mapType);
+  QString header = procPoint.preview ? proc::procedureTypeText(procPoint.mapType) : route->getProcedureLegText(
+    procPoint.mapType);
 
   head(html, header);
 
   QStringList atts;
 
-  if(ap.flyover)
+  if(procPoint.flyover)
     atts += tr("Fly over");
 
   html.table();
 
   // Add IAF, MAP, ...
-  QString typeStr = proc::proceduresLegSecialTypeLongStr(proc::specialType(ap.arincDescrCode));
+  QString typeStr = proc::proceduresLegSecialTypeLongStr(proc::specialType(procPoint.arincDescrCode));
   if(!typeStr.isEmpty())
     html.row2(typeStr);
 
-  html.row2(tr("Leg Type:"), proc::procedureLegTypeStr(ap.type));
-  html.row2(tr("Fix:"), ap.fixIdent);
+  html.row2(tr("Leg Type:"), proc::procedureLegTypeStr(procPoint.type));
+  html.row2(tr("Fix:"), procPoint.fixIdent);
 
   if(!atts.isEmpty())
     html.row2(atts.join(", "));
 
-  if(!ap.remarks.isEmpty())
-    html.row2(ap.remarks.join(", "));
+  if(!procPoint.remarks.isEmpty())
+    html.row2(procPoint.remarks.join(", "));
 
-  if(ap.altRestriction.isValid())
-    html.row2(tr("Altitude Restriction:"), proc::altRestrictionText(ap.altRestriction));
+  if(procPoint.altRestriction.isValid())
+    html.row2(tr("Altitude Restriction:"), proc::altRestrictionText(procPoint.altRestriction));
 
-  if(ap.speedRestriction.isValid())
-    html.row2(tr("Speed Restriction:"), proc::speedRestrictionText(ap.speedRestriction));
+  if(procPoint.speedRestriction.isValid())
+    html.row2(tr("Speed Restriction:"), proc::speedRestrictionText(procPoint.speedRestriction));
 
-  if(ap.calculatedDistance > 0.f)
-    html.row2(tr("Distance:"), Unit::distNm(ap.calculatedDistance /*, true, 20, true*/));
-  if(ap.time > 0.f)
-    html.row2(tr("Time:"), locale.toString(ap.time, 'f', 0) + tr(" min"));
-  if(ap.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-    html.row2(tr("Course:"), locale.toString(normalizeCourse(ap.calculatedTrueCourse - ap.magvar), 'f', 0) +
+  if(procPoint.calculatedDistance > 0.f)
+    html.row2(tr("Distance:"), Unit::distNm(procPoint.calculatedDistance /*, true, 20, true*/));
+  if(procPoint.time > 0.f)
+    html.row2(tr("Time:"), locale.toString(procPoint.time, 'f', 0) + tr(" min"));
+  if(procPoint.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
+    html.row2(tr("Course:"), locale.toString(normalizeCourse(
+                                               procPoint.calculatedTrueCourse - procPoint.magvar), 'f', 0) +
               tr("°M"));
 
-  if(!ap.turnDirection.isEmpty())
+  if(!procPoint.turnDirection.isEmpty())
   {
-    if(ap.turnDirection == "L")
+    if(procPoint.turnDirection == "L")
       html.row2(tr("Turn:"), tr("Left"));
-    else if(ap.turnDirection == "R")
+    else if(procPoint.turnDirection == "R")
       html.row2(tr("Turn:"), tr("Right"));
-    else if(ap.turnDirection == "B")
+    else if(procPoint.turnDirection == "B")
       html.row2(tr("Turn:"), tr("Left or right"));
   }
 
-  if(!ap.recFixIdent.isEmpty())
+  if(!procPoint.recFixIdent.isEmpty())
   {
-    if(ap.rho > 0.f)
+    if(procPoint.rho > 0.f)
       html.row2(tr("Related Navaid:"),
-                tr("%1 / %2 / %3").arg(ap.recFixIdent).
-                arg(Unit::distNm(ap.rho /*, true, 20, true*/)).
-                arg(locale.toString(ap.theta) + tr("°M")));
+                tr("%1 / %2 / %3").arg(procPoint.recFixIdent).
+                arg(Unit::distNm(procPoint.rho /*, true, 20, true*/)).
+                arg(locale.toString(procPoint.theta) + tr("°M")));
     else
-      html.row2(tr("Related Navaid:"), tr("%1").arg(ap.recFixIdent));
+      html.row2(tr("Related Navaid:"), tr("%1").arg(procPoint.recFixIdent));
   }
 
   html.tableEnd();

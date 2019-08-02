@@ -21,6 +21,7 @@
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"
 #include "common/maptools.h"
+#include "common/proctypes.h"
 #include "atools.h"
 #include "fs/util/fsutil.h"
 #include "route/route.h"

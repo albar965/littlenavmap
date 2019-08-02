@@ -206,7 +206,7 @@ void AircraftPerfController::loadAndMerge()
 void AircraftPerfController::restartCollect()
 {
   int result = atools::gui::Dialog(mainWindow).
-               showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL,
+               showQuestionMsgBox(lnm::ACTIONS_SHOW_RESET_PERF,
                                   tr("Reset performance collection and loose all current values?"),
                                   tr("Do not &show this dialog again."),
                                   QMessageBox::Yes | QMessageBox::No,

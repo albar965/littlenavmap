@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_SEARCHBASE_H
 
 #include "common/maptypes.h"
+#include "common/proctypes.h"
 
 #include "search/abstractsearch.h"
 

@@ -112,6 +112,19 @@ enum MapObjectDisplayType
 Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectDisplayTypes);
 
+/* Query type for all getNearest and other functions. Covers all what is not included in MapObjectTypes */
+enum MapObjectQueryType
+{
+  QUERY_NONE = 0,
+  QUERY_PROC_POINTS = 1 << 0, /* Procedure points */
+  QUERY_HOLDS = 1 << 1, /* Holds */
+  QUERY_PATTERNS = 1 << 2, /* Traffic patterns */
+  QUERY_PROCEDURES = 1 << 3, /* Procedures when querying route */
+};
+
+Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes);
+
 /* Covers all airspace types */
 enum MapAirspaceType
 {

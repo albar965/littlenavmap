@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_NAVMAPPAINTWIDGET_H
 #define LITTLENAVMAP_NAVMAPPAINTWIDGET_H
 
-#include "common/maptypes.h"
+#include "common/proctypes.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>

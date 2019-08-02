@@ -629,6 +629,68 @@ struct MapAirspace
 };
 
 // =====================================================================
+/* All information for complete traffic pattern structure */
+/* Threshold position (end of final) and runway altitude MSL */
+struct TrafficPattern
+  : public MapBase
+{
+  TrafficPattern() : MapBase(map::NONE)
+  {
+  }
+
+  QString airportIcao, runwayName;
+  QColor color;
+  bool turnRight,
+       base45Degree /* calculate base turn from 45 deg after threshold */,
+       showEntryExit /* Entry and exit indicators */;
+  int runwayLength; /* ft Does not include displaced threshold */
+
+  float downwindDistance, baseDistance; /* NM */
+  float course; /* degree true final course*/
+  float magvar;
+
+  float magCourse() const;
+
+};
+
+QDataStream& operator>>(QDataStream& dataStream, map::TrafficPattern& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::TrafficPattern& obj);
+
+// =====================================================================
+/* All information for a hold
+ * position is hold reference position and altitude */
+struct Hold
+  : public MapBase
+{
+  Hold() : MapBase(map::NONE)
+  {
+  }
+
+  QString navIdent; /* Only for display purposes */
+  map::MapObjectTypes navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
+  bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
+  QColor color;
+
+  bool turnLeft; /* Standard is right */
+  float minutes, speedKts; /* Used to calculate segment length - speed in knots */
+
+  float courseTrue; /* degree true inbound course to fix */
+  float magvar; /* Taken from environment or navaid */
+
+  float magCourse() const;
+
+  /* Distance in NM */
+  float distance() const
+  {
+    return speedKts * minutes / 60.f;
+  }
+
+};
+
+QDataStream& operator>>(QDataStream& dataStream, map::Hold& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::Hold& obj);
+
+// =====================================================================
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
 struct MapSearchResult
 {
@@ -672,6 +734,10 @@ struct MapSearchResult
   QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
 
   atools::geo::Pos windPos;
+  QList<map::Hold> holds;
+  QList<map::TrafficPattern> trafficPatterns;
+
+  QList<proc::MapProcedurePoint> procPoints;
 
   /* true if none of the types exists in this result */
   bool isEmpty(const map::MapObjectTypes& types = map::ALL) const;
@@ -866,76 +932,6 @@ QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
 
 // =====================================================================
-/* All information for complete traffic pattern structure */
-struct TrafficPattern
-{
-  QString airportIcao, runwayName;
-  QColor color;
-  bool turnRight,
-       base45Degree /* calculate base turn from 45 deg after threshold */,
-       showEntryExit /* Entry and exit indicators */;
-  int runwayLength; /* ft Does not include displaced threshold */
-
-  float downwindDistance, baseDistance; /* NM */
-  float heading; /* degree true final course*/
-  float magvar;
-
-  atools::geo::Pos position; /* Threshold position (end of final) and runway altitude MSL */
-
-  bool isValid() const
-  {
-    return position.isValid();
-  }
-
-  const atools::geo::Pos& getPosition() const
-  {
-    return position;
-  }
-
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::TrafficPattern& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::TrafficPattern& obj);
-
-// =====================================================================
-/* All information for a hold */
-struct Hold
-{
-  QString navIdent; /* Only for display purposes */
-  map::MapObjectTypes navType;
-  QColor color;
-
-  bool turnLeft; /* Standard is right */
-  float minutes, speedKts; /* Used to calculate segment length - speed in knots */
-
-  float courseTrue; /* degree true inbound course to fix */
-  float magvar; /* Taken from environment or navaid */
-
-  atools::geo::Pos position; /* Hold reference position and altitude */
-
-  float magHeading() const;
-
-  float distance() const
-  {
-    return speedKts * minutes / 60.f;
-  }
-
-  bool isValid() const
-  {
-    return position.isValid();
-  }
-
-  const atools::geo::Pos& getPosition() const
-  {
-    return position;
-  }
-
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::Hold& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::Hold& obj);
-
-// =====================================================================
 /* Stores last METARs to avoid unneeded updates in widget */
 struct WeatherContext
 {
@@ -1024,6 +1020,7 @@ QString vorFullShortText(const map::MapVor& vor);
 QString vorText(const map::MapVor& vor);
 QString vorTextShort(const MapVor& vor);
 QString vorType(const map::MapVor& vor);
+QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac);
 QString ndbFullShortText(const map::MapNdb& ndb);
 QString ndbText(const map::MapNdb& ndb);
 QString ndbTextShort(const MapNdb& ndb);

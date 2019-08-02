@@ -297,7 +297,7 @@ private:
   void jumpBackToAircraftTimeout(const QVariantList& values);
 
   /* Needed filter to avoid and/or disable some Marble pecularities */
-  bool eventFilter(QObject *obj, QEvent *e) override;
+  bool eventFilter(QObject *obj, QEvent *evt) override;
 
   /* Check for modifiers on mouse click and start actions like range rings on Ctrl+Click */
   bool mousePressCheckModifierActions(QMouseEvent *event);
@@ -351,6 +351,9 @@ private:
 
   void zoomInOut(bool directionIn, bool smooth);
 
+  /* true if point is not hidden by globe */
+  bool pointVisible(const QPoint& point);
+
   int screenSearchDistance /* Radius for click sensitivity */,
       screenSearchDistanceTooltip /* Radius for tooltip sensitivity */;
 
@@ -377,9 +380,8 @@ private:
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipPos;
   map::MapSearchResult mapSearchResultTooltip;
-  map::MapSearchResult infoClickResult;
+  map::MapSearchResult mapSearchResultInfoClick;
 
-  QList<proc::MapProcedurePoint> procPointsTooltip;
   MapTooltip *mapTooltip;
 
   /* Backup of distance marker for drag and drop in case the action is cancelled */

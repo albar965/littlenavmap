@@ -178,7 +178,7 @@ void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
   pattern.baseDistance = Unit::rev(
     static_cast<float>(ui->doubleSpinBoxTrafficPatternBaseDistance->value()), Unit::distNmF);
 
-  pattern.heading = primary ? rw.heading : atools::geo::opposedCourseDeg(rw.heading);
+  pattern.course = primary ? rw.heading : atools::geo::opposedCourseDeg(rw.heading);
   pattern.magvar = airport.magvar;
   pattern.runwayLength = rw.length - (primary ? rw.primaryOffset : rw.secondaryOffset);
 

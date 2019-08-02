@@ -1289,7 +1289,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionMapHideRangeRings, &QAction::triggered, mapWidget, &MapWidget::clearRangeRingsAndDistanceMarkers);
+  connect(ui->actionMapHideRangeRings, &QAction::triggered, this, &MainWindow::clearRangeRingsAndDistanceMarkers);
 
   connect(ui->actionMapShowAirportWeather, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
 
@@ -2531,6 +2531,19 @@ bool MainWindow::openInSkyVector()
   return true;
 }
 
+void MainWindow::clearRangeRingsAndDistanceMarkers()
+{
+  int result = atools::gui::Dialog(this).
+               showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS,
+                                  tr("Delete all range rings, measurement lines, traffic patterns and holds from map?"),
+                                  tr("Do not &show this dialog again."),
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No, QMessageBox::Yes);
+
+  if(result == QMessageBox::Yes)
+    mapWidget->clearRangeRingsAndDistanceMarkers();
+}
+
 /* Called from menu or toolbar by action. Remove all KML from map */
 void MainWindow::kmlClear()
 {
@@ -2999,6 +3012,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
   s.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
   s.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
+  s.setValue(lnm::ACTIONS_SHOW_DELETE_MARKS, true);
   s.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
   s.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
   s.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
