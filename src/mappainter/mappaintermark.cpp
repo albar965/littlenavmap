@@ -1162,9 +1162,9 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
 
   for(const TrafficPattern& pattern : patterns)
   {
-    bool visible, hidden;
-    QPointF originPoint = wToS(pattern.getPosition(), DEFAULT_WTOS_SIZE, &visible, &hidden);
-    if(hidden)
+    bool visibleOrigin, hiddenOrigin;
+    QPointF originPoint = wToS(pattern.getPosition(), DEFAULT_WTOS_SIZE, &visibleOrigin, &hiddenOrigin);
+    if(hiddenOrigin)
       continue;
 
     float finalDistance = pattern.base45Degree ? pattern.downwindDistance : pattern.baseDistance;
@@ -1200,6 +1200,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
         Pos downwindEntry = downwindBase.endpoint(nmToMeter(finalDistance) + feetToMeter(
                                                     pattern.runwayLength), pattern.course).normalize();
 
+        bool visible, hidden;
         // Bail out if any points are hidden behind the globe
         QPointF baseFinalPoint = wToS(baseFinal, DEFAULT_WTOS_SIZE, &visible, &hidden);
         if(hidden)
@@ -1314,7 +1315,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
       }
     }
 
-    if(visible)
+    if(visibleOrigin)
     {
       // Draw ellipse at touchdown point - independent of zoom factor
       painter->setPen(QPen(pattern.color, lineWidth));
