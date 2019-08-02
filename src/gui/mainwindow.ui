@@ -386,6 +386,11 @@
      <addaction name="actionViewAirspaceSrcUser"/>
      <addaction name="actionViewAirspaceSrcOnline"/>
     </widget>
+    <widget class="QMenu" name="menuViewUserFeatures">
+     <property name="title">
+      <string>User &amp;Features</string>
+     </property>
+    </widget>
     <addaction name="actionMapResetSettings"/>
     <addaction name="menuViewDetails"/>
     <addaction name="separator"/>
@@ -394,6 +399,8 @@
     <addaction name="separator"/>
     <addaction name="menuViewAirspaces"/>
     <addaction name="menuViewAirspaceSource"/>
+    <addaction name="separator"/>
+    <addaction name="menuViewUserFeatures"/>
     <addaction name="separator"/>
     <addaction name="menuViewUserpoints"/>
     <addaction name="separator"/>

@@ -146,6 +146,7 @@ const QLatin1Literal MAP_OVERLAY_VISIBLE("Map/OverlayVisible");
 const QLatin1Literal MAP_WEATHER_SOURCE("Map/WeatherSource");
 const QLatin1Literal MAP_SUN_SHADING_TIME_OPTION("Map/SunShadingTimeOption");
 const QLatin1Literal MAP_SUN_SHADING_TIME("Map/SunShadingTime");
+const QLatin1Literal MAP_MARK_DISPLAY("Map/MarkDisplay");
 
 const QLatin1Literal NAVCONNECT_REMOTEHOSTS("NavConnect/RemoteHosts");
 const QLatin1Literal NAVCONNECT_REMOTE("NavConnect/Remote");

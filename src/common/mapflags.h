@@ -125,6 +125,7 @@ enum MapObjectQueryType
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes);
 
+/* ================================================================================== */
 /* Covers all airspace types */
 enum MapAirspaceType
 {
@@ -254,6 +255,22 @@ inline bool operator==(const map::MapAirspaceId& id1, const map::MapAirspaceId& 
   return id1.id == id2.id && id1.src == id2.src;
 }
 
+/* ================================================================================== */
+/* Visible user features. */
+enum MapMarkType
+{
+  MARK_NONE = 0,
+  MARK_RANGE_RINGS = 1 << 0, /* All range rings */
+  MARK_MEASUREMENT = 1 << 1, /* All measurement lines */
+  MARK_HOLDS = 1 << 2, /* Holdings */
+  MARK_PATTERNS = 1 << 3, /* Traffic patterns */
+  MARK_ALL = MARK_RANGE_RINGS | MARK_MEASUREMENT | MARK_HOLDS | MARK_PATTERNS
+};
+
+Q_DECLARE_FLAGS(MapMarkTypes, MapMarkType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapMarkTypes);
+
+/* ================================================================================== */
 /* Airport flags coverting most airport attributes and facilities. */
 enum MapAirportFlag
 {

@@ -57,6 +57,7 @@ class VehicleIcons;
 class WeatherReporter;
 class WebController;
 class WindReporter;
+class MapMarkHandler;
 
 namespace atools {
 
@@ -296,6 +297,8 @@ public:
 
   static WebController *getWebController();
 
+  static MapMarkHandler *getMapMarkHandler();
+
 private:
   static void initApplication();
   static void readMagDecFromDatabase();
@@ -315,6 +318,7 @@ private:
   /* minimum off route altitude from nav database */
   static atools::fs::common::MoraReader *moraReader;
   static UserdataController *userdataController;
+  static MapMarkHandler *mapMarkHandler;
   static LogdataController *logdataController;
   static OnlinedataController *onlinedataController;
   static AircraftPerfController *aircraftPerfController;

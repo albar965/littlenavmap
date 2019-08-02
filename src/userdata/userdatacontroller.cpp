@@ -92,22 +92,22 @@ void UserdataController::addToolbarButton()
 
   // Create and add select all action =====================================
   actionAll = new QAction(tr("All"), button);
-  actionAll->setToolTip(tr("Enable all userpoints"));
+  actionAll->setToolTip(tr("Hide all userpoints"));
   actionAll->setStatusTip(actionAll->toolTip());
   button->addAction(actionAll);
   connect(actionAll, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
 
   // Create and add select none action =====================================
   actionNone = new QAction(tr("None"), button);
-  actionNone->setToolTip(tr("Disable all userpoints"));
-  actionNone->setStatusTip(actionAll->toolTip());
+  actionNone->setToolTip(tr("Hide all userpoints"));
+  actionNone->setStatusTip(actionNone->toolTip());
   button->addAction(actionNone);
   connect(actionNone, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
 
   // Create and add select unknown action =====================================
   actionUnknown = new QAction(tr("Unknown Types"), button);
-  actionUnknown->setToolTip(tr("Enable or disable unknown userpoint types"));
-  actionUnknown->setStatusTip(tr("Enable or disable unknown userpoint types"));
+  actionUnknown->setToolTip(tr("Show or hide unknown userpoint types"));
+  actionUnknown->setStatusTip(actionUnknown->toolTip());
   actionUnknown->setCheckable(true);
   button->addAction(actionUnknown);
   ui->menuViewUserpoints->addAction(actionUnknown);
@@ -121,6 +121,8 @@ void UserdataController::addToolbarButton()
     QAction *action = new QAction(icon, type, button);
     action->setData(QVariant(type));
     action->setCheckable(true);
+    action->setToolTip(tr("Show or hide %1 userpoints").arg(type));
+    action->setStatusTip(action->toolTip());
     button->addAction(action);
     ui->menuViewUserpoints->addAction(action);
     connect(action, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);

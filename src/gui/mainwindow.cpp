@@ -76,6 +76,7 @@
 #include "logbook/logdatacontroller.h"
 #include "search/logdatasearch.h"
 #include "airspace/airspacecontroller.h"
+#include "mapgui/mapmarkhandler.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -271,6 +272,10 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Connecting slots";
     connectAllSlots();
     NavApp::getAircraftPerfController()->connectAllSlots();
+
+    // Add toolbar button for map marks like holds, patterns and others
+    // Order here defines order of buttons on toolbar
+    NavApp::getMapMarkHandler()->addToolbarButton();
 
     // Add user defined points toolbar button and submenu items
     NavApp::getUserdataController()->addToolbarButton();
@@ -1016,6 +1021,10 @@ void MainWindow::connectAllSlots()
           &InfoController::updateAllInformation);
   connect(userdataController, &UserdataController::userdataChanged, this, &MainWindow::updateMapObjectsShown);
   connect(userdataController, &UserdataController::refreshUserdataSearch, userSearch, &UserdataSearch::refreshData);
+
+  // Map marks, holds, etc.  ===================================================================================
+  MapMarkHandler *mapMarkHandler = NavApp::getMapMarkHandler();
+  connect(mapMarkHandler, &MapMarkHandler::updateMarkTypes, this, &MainWindow::updateMapObjectsShown);
 
   // Logbook ===================================================================================
   LogdataController *logdataController = NavApp::getLogdataController();
@@ -3469,6 +3478,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "logdataController";
   NavApp::getLogdataController()->restoreState();
 
+  qDebug() << "mapMarkHandler";
+  NavApp::getMapMarkHandler()->restoreState();
+
   qDebug() << "userdataController";
   NavApp::getUserdataController()->restoreState();
 
@@ -3616,6 +3628,10 @@ void MainWindow::saveStateMain()
   qDebug() << "userDataController";
   if(NavApp::getUserdataController() != nullptr)
     NavApp::getUserdataController()->saveState();
+
+  qDebug() << "mapMarkHandler";
+  if(NavApp::getMapMarkHandler() != nullptr)
+    NavApp::getMapMarkHandler()->saveState();
 
   qDebug() << "logdataController";
   if(NavApp::getLogdataController() != nullptr)

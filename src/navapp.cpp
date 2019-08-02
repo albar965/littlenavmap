@@ -44,6 +44,7 @@
 #include "exception.h"
 #include "gui/errorhandler.h"
 #include "airspace/airspacecontroller.h"
+#include "mapgui/mapmarkhandler.h"
 
 #include "ui_mainwindow.h"
 
@@ -70,6 +71,7 @@ atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 atools::fs::common::MoraReader *NavApp::moraReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
+MapMarkHandler *NavApp::mapMarkHandler = nullptr;
 LogdataController *NavApp::logdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
 AircraftPerfController *NavApp::aircraftPerfController = nullptr;
@@ -115,6 +117,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   databaseManager->openAllDatabases();
   userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
   logdataController = new LogdataController(databaseManager->getLogdataManager(), mainWindow);
+  mapMarkHandler = new MapMarkHandler(mainWindow);
 
   databaseMetaSim = new atools::fs::db::DatabaseMeta(getDatabaseSim());
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
@@ -191,6 +194,10 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete userdataController";
   delete userdataController;
   userdataController = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete mapMarkHandler";
+  delete mapMarkHandler;
+  mapMarkHandler = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete logdataController";
   delete logdataController;
@@ -562,6 +569,11 @@ atools::fs::userdata::LogdataManager *NavApp::getLogdataManager()
 UserdataController *NavApp::getUserdataController()
 {
   return userdataController;
+}
+
+MapMarkHandler *NavApp::getMapMarkHandler()
+{
+  return mapMarkHandler;
 }
 
 LogdataController *NavApp::getLogdataController()

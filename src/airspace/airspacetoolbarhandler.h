@@ -37,6 +37,7 @@ class AirspaceToolBarHandler :
 public:
   AirspaceToolBarHandler(MainWindow *parent);
   virtual ~AirspaceToolBarHandler();
+
   void createToolButtons();
 
   /* Update buttons and menus based on NavApp::getShownMapAirspaces() */

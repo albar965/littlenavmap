@@ -268,6 +268,7 @@ SOURCES += \
   src/mapgui/mapfunctions.cpp \
   src/mapgui/maplayer.cpp \
   src/mapgui/maplayersettings.cpp \
+  src/mapgui/mapmarkhandler.cpp \
   src/mapgui/mappaintwidget.cpp \
   src/mapgui/mapscale.cpp \
   src/mapgui/mapscreenindex.cpp \
@@ -411,6 +412,7 @@ HEADERS  += \
   src/mapgui/mapfunctions.h \
   src/mapgui/maplayer.h \
   src/mapgui/maplayersettings.h \
+  src/mapgui/mapmarkhandler.h \
   src/mapgui/mappaintwidget.h \
   src/mapgui/mapscale.h \
   src/mapgui/mapscreenindex.h \

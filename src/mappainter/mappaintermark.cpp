@@ -38,6 +38,7 @@
 #include "route/routecontroller.h"
 #include "util/paintercontextsaver.h"
 #include "common/textplacement.h"
+#include "mapgui/mapmarkhandler.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -66,13 +67,25 @@ void MapPainterMark::render(PaintContext *context)
   atools::util::PainterContextSaver saver(context->painter);
   Q_UNUSED(saver);
 
+  map::MapMarkTypes types = NavApp::getMapMarkHandler()->getMarkTypes();
+
   paintHighlights(context);
+
   paintMark(context);
   paintHome(context);
-  paintTrafficPatterns(context);
-  paintHolds(context);
-  paintRangeRings(context);
-  paintDistanceMarkers(context);
+
+  if(types & map::MARK_PATTERNS)
+    paintTrafficPatterns(context);
+
+  if(types & map::MARK_HOLDS)
+    paintHolds(context);
+
+  if(types & map::MARK_RANGE_RINGS)
+    paintRangeRings(context);
+
+  if(types & map::MARK_MEASUREMENT)
+    paintDistanceMarkers(context);
+
   paintCompassRose(context);
 
   paintRouteDrag(context);

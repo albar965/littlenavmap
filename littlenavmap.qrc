@@ -255,5 +255,6 @@
         <file>resources/icons/tab_close_button_night.png</file>
         <file>resources/icons/tab_close_button_hover_night.png</file>
         <file>resources/icons/mapnavigation.svg</file>
+        <file>resources/icons/userfeatures.svg</file>
     </qresource>
 </RCC>

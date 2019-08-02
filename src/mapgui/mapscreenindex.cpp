@@ -29,6 +29,7 @@
 #include "mapgui/maplayer.h"
 #include "common/maptypes.h"
 #include "query/airportquery.h"
+#include "mapgui/mapmarkhandler.h"
 #include "common/maptools.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
@@ -617,10 +618,11 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
                maxDistance);
   insertSorted(conv, xs, ys, searchHighlights.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
-  if(types & map::QUERY_HOLDS)
+  // Add only if requested and visible on map
+  if(types & map::QUERY_HOLDS && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDS)
     insertSorted(conv, xs, ys, holds, result.holds, nullptr, maxDistance);
 
-  if(types & map::QUERY_PATTERNS)
+  if(types & map::QUERY_PATTERNS && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_PATTERNS)
     insertSorted(conv, xs, ys, trafficPatterns, result.trafficPatterns, nullptr, maxDistance);
 }
 
@@ -659,22 +661,34 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
 
 int MapScreenIndex::getNearestTrafficPatternIndex(int xs, int ys, int maxDistance) const
 {
-  return getNearestIndex(xs, ys, maxDistance, trafficPatterns);
+  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_PATTERNS)
+    return getNearestIndex(xs, ys, maxDistance, trafficPatterns);
+  else
+    return -1;
 }
 
 int MapScreenIndex::getNearestHoldIndex(int xs, int ys, int maxDistance) const
 {
-  return getNearestIndex(xs, ys, maxDistance, holds);
+  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDS)
+    return getNearestIndex(xs, ys, maxDistance, holds);
+  else
+    return -1;
 }
 
 int MapScreenIndex::getNearestRangeMarkIndex(int xs, int ys, int maxDistance) const
 {
-  return getNearestIndex(xs, ys, maxDistance, rangeMarks);
+  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_RANGE_RINGS)
+    return getNearestIndex(xs, ys, maxDistance, rangeMarks);
+  else
+    return -1;
 }
 
 int MapScreenIndex::getNearestDistanceMarkIndex(int xs, int ys, int maxDistance) const
 {
-  return getNearestIndex(xs, ys, maxDistance, distanceMarks);
+  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_MEASUREMENT)
+    return getNearestIndex(xs, ys, maxDistance, distanceMarks);
+  else
+    return -1;
 }
 
 template<typename TYPE>
