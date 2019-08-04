@@ -92,9 +92,10 @@ void UserdataController::addToolbarButton()
 
   // Create and add select all action =====================================
   actionAll = new QAction(tr("All"), button);
-  actionAll->setToolTip(tr("Hide all userpoints"));
+  actionAll->setToolTip(tr("Show all userpoints"));
   actionAll->setStatusTip(actionAll->toolTip());
   button->addAction(actionAll);
+  ui->menuViewUserpoints->addAction(actionAll);
   connect(actionAll, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
 
   // Create and add select none action =====================================
@@ -102,6 +103,7 @@ void UserdataController::addToolbarButton()
   actionNone->setToolTip(tr("Hide all userpoints"));
   actionNone->setStatusTip(actionNone->toolTip());
   button->addAction(actionNone);
+  ui->menuViewUserpoints->addAction(actionNone);
   connect(actionNone, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
 
   // Create and add select unknown action =====================================

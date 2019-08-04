@@ -48,6 +48,23 @@ void MapMarkHandler::restoreState()
   flagsToActions();
 }
 
+QString MapMarkHandler::getMarkTypesText() const
+{
+  QStringList types;
+  if(markTypes == map::MARK_NONE)
+    return tr("None");
+
+  if(markTypes & map::MARK_RANGE_RINGS)
+    types.append(tr("Range Rings"));
+  if(markTypes & map::MARK_MEASUREMENT)
+    types.append(tr("Measurement Lines"));
+  if(markTypes & map::MARK_HOLDS)
+    types.append(tr("Holdings"));
+  if(markTypes & map::MARK_PATTERNS)
+    types.append(tr("Traffic Patterns"));
+  return types.join(tr((", ")));
+}
+
 void MapMarkHandler::addToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -64,6 +81,22 @@ void MapMarkHandler::addToolbarButton()
   ui->toolbarMapOptions->insertWidget(ui->actionMapShowRoute, toolButton);
 
   // Create and add actions to toolbar and menu =================================
+  actionAll = new QAction(tr("All"), toolButton);
+  actionAll->setToolTip(tr("Show all user features"));
+  actionAll->setStatusTip(actionAll->toolTip());
+  toolButton->addAction(actionAll);
+  ui->menuViewUserFeatures->addAction(actionAll);
+  connect(actionAll, &QAction::triggered, this, &MapMarkHandler::actionAllTriggered);
+
+  actionNone = new QAction(tr("None"), toolButton);
+  actionNone->setToolTip(tr("Hide all user features"));
+  actionNone->setStatusTip(actionNone->toolTip());
+  toolButton->addAction(actionNone);
+  ui->menuViewUserFeatures->addAction(actionNone);
+  connect(actionNone, &QAction::triggered, this, &MapMarkHandler::actionNoneTriggered);
+
+  ui->menuViewUserFeatures->addSeparator();
+
   actionRangeRings = addButton(":/littlenavmap/resources/icons/rangerings.svg", tr("Range Rings"),
                                tr("Show or hide range rings"), map::MARK_RANGE_RINGS);
   actionMeasurementLines = addButton(":/littlenavmap/resources/icons/distancemeasure.svg", tr("Measurement Lines"),
@@ -91,6 +124,18 @@ QAction *MapMarkHandler::addButton(const QString& icon, const QString& text, con
   connect(action, &QAction::triggered, this, &MapMarkHandler::toolbarActionTriggered);
 
   return action;
+}
+
+void MapMarkHandler::actionAllTriggered()
+{
+  markTypes = map::MARK_ALL;
+  flagsToActions();
+}
+
+void MapMarkHandler::actionNoneTriggered()
+{
+  markTypes = map::MARK_NONE;
+  flagsToActions();
 }
 
 void MapMarkHandler::toolbarActionTriggered()

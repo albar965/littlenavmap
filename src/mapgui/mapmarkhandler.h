@@ -47,19 +47,24 @@ public:
     return markTypes;
   }
 
+  QString getMarkTypesText() const;
+
 signals:
   /* Redraw map */
   void updateMarkTypes(map::MapMarkTypes types);
 
 private:
   void toolbarActionTriggered();
+  void actionAllTriggered();
+  void actionNoneTriggered();
+
   void flagsToActions();
   void actionsToFlags();
   QAction *addButton(const QString& icon, const QString& text, const QString& tooltip, map::MapMarkTypes type);
 
   /* Actions for toolbar button and menu */
-  QAction *actionRangeRings = nullptr, *actionMeasurementLines = nullptr, *actionHolds = nullptr,
-          *actionPatterns = nullptr;
+  QAction *actionAll = nullptr, *actionNone = nullptr, *actionRangeRings = nullptr, *actionMeasurementLines = nullptr,
+          *actionHolds = nullptr, *actionPatterns = nullptr;
 
   /* Toolbutton getting all actions for dropdown menu */
   QToolButton *toolButton = nullptr;

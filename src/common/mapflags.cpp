@@ -120,4 +120,4 @@ QString mapWeatherSourceString(MapWeatherSource source)
   return QString();
 }
 
-} // namespace types
+} // namespace map

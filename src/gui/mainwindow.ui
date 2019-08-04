@@ -3126,10 +3126,10 @@
            <item>
             <widget class="QPushButton" name="pushButtonLogdataAdd">
              <property name="toolTip">
-              <string>Add a new userpoint</string>
+              <string>Add a new logbook entry</string>
              </property>
              <property name="statusTip">
-              <string>Add a new userpoint</string>
+              <string>Add a new logbook entry</string>
              </property>
              <property name="text">
               <string/>
@@ -3143,10 +3143,10 @@
            <item>
             <widget class="QPushButton" name="pushButtonLogdataEdit">
              <property name="toolTip">
-              <string>Edit one or more userpoints</string>
+              <string>Edit one or more logbook entries</string>
              </property>
              <property name="statusTip">
-              <string>Edit one or more userpoints</string>
+              <string>Edit one or more logbook entries</string>
              </property>
              <property name="text">
               <string/>
@@ -3160,10 +3160,10 @@
            <item>
             <widget class="QPushButton" name="pushButtonLogdataDel">
              <property name="toolTip">
-              <string>Remove one or more userpoints</string>
+              <string>Remove one or more logbook entries</string>
              </property>
              <property name="statusTip">
-              <string>Remove one or more userpoints</string>
+              <string>Remove one or more logbook entries</string>
              </property>
              <property name="text">
               <string/>
@@ -3229,7 +3229,7 @@
 &lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="statusTip">
-              <string>Show help for the userdata search tab</string>
+              <string>Show help for the logbook search tab</string>
              </property>
              <property name="text">
               <string/>
