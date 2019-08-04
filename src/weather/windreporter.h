@@ -193,14 +193,15 @@ private:
   QActionGroup *actionGroup = nullptr;
 
   /* Levels for the dropdown menu in feet */
-  const QVector<int> levels = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
+  QVector<int> levels = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
+
+  /* Levels for the tooltip */
+  QVector<int> levelsTooltip = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
   /* Currently displayed altitude or one of SpecialLevels */
   int currentLevel = wind::NONE;
   wind::WindSource currentSource = wind::NOAA;
   bool showFlightplanWaypoints = false;
-
-  const QVector<int> levelsTooltip = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
   /* Avoid action signals when updating GUI elements */
   bool ignoreUpdates = false;

@@ -40,7 +40,22 @@ static int queryMaxRows = 5000;
 WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType type)
   : QObject(parent), simType(type)
 {
-  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  verbose = settings.getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
+  if(settings.contains(lnm::OPTIONS_WEATHER_LEVELS))
+  {
+    QStringList strlevels = settings.valueStrList(lnm::OPTIONS_WEATHER_LEVELS);
+    levels.clear();
+    levelsTooltip.clear();
+    for(const QString& str : strlevels)
+    {
+      bool ok;
+      int num = str.toInt(&ok);
+      if(ok && num > 0)
+        levels.append(num);
+      levelsTooltip.append(num);
+    }
+  }
 
   // Real wind ==================
   windQuery = new atools::grib::WindQuery(parent, verbose);
