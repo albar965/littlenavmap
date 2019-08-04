@@ -369,6 +369,40 @@ void WindReporter::valuesToAction()
   ignoreUpdates = false;
 }
 
+QString WindReporter::getLevelText() const
+{
+  switch(currentLevel)
+  {
+    case wind::NONE:
+      return tr("None");
+
+    case wind::AGL:
+      return tr("Ground");
+
+    case wind::FLIGHTPLAN:
+      return tr("Flight plan cruise altitude");
+
+    default:
+      return Unit::altFeet(currentLevel);
+  }
+}
+
+QString WindReporter::getSourceText() const
+{
+  switch(currentSource)
+  {
+    case wind::NO_SOURCE:
+      return tr("Disabled");
+
+    case wind::NOAA:
+      return tr("NOAA");
+
+    case wind::SIMULATOR:
+      return tr("Simulator");
+  }
+  return QString();
+}
+
 void WindReporter::actionToValues()
 {
   QAction *action = actionGroup->checkedAction();

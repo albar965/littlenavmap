@@ -146,6 +146,9 @@ public:
   /* Update toolbar button and menu items */
   void updateToolButtonState();
 
+  QString getLevelText() const;
+  QString getSourceText() const;
+
 #ifdef DEBUG_INFORMATION
   QString getDebug(const atools::geo::Pos& pos);
 

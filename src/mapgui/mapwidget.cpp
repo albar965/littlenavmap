@@ -184,6 +184,11 @@ void MapWidget::getUserpointDragPoints(QPoint& cur, QPixmap& pixmap)
   pixmap = userpointDragPixmap;
 }
 
+map::MapWeatherSource MapWidget::getMapWeatherSource() const
+{
+  return paintLayer->getWeatherSource();
+}
+
 void MapWidget::getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur)
 {
   fixedPos = routeDragFixed;

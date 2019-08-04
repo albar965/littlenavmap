@@ -23,7 +23,10 @@
 #include "navapp.h"
 #include "util/htmlbuilder.h"
 #include "gui/mainwindow.h"
+#include "weather/windreporter.h"
+#include "mapgui/mapmarkhandler.h"
 #include "common/maptypes.h"
+#include "userdata/userdatacontroller.h"
 
 #include <common/unit.h>
 
@@ -53,6 +56,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
     if(layer != nullptr)
     {
       map::MapObjectTypes shown = paintLayer->getShownMapObjects();
+      map::MapObjectDisplayTypes shownDispTypes = paintLayer->getShownMapObjectDisplayTypes();
 
       QStringList airportLabel;
       atools::util::HtmlBuilder tooltip(false);
@@ -271,6 +275,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       else
         tooltip.tr().td(tr("No airspaces")).trEnd();
 
+      // Collect AI information ==========================================================
       QStringList aiLabel;
       QStringList ai;
       if(NavApp::isConnected())
@@ -319,6 +324,26 @@ void MapVisible::updateVisibleObjectsStatusBar()
         tooltip.tr().td().b(tr("AI / Multiplayer / online client: ")).text(ai.join(", ")).tdEnd().trEnd();
       else
         tooltip.tr().td(tr("No AI / Multiplayer / online client")).trEnd();
+
+      // Weather ==========================================================
+      if(shownDispTypes.testFlag(map::AIRPORT_WEATHER) && layer->isAirportWeather())
+      {
+        tooltip.tr().td().b(tr("Airport weather source: ")).
+        text(map::mapWeatherSourceString(paintLayer->getWeatherSource())).tdEnd().trEnd();
+      }
+      else
+        tooltip.tr().td(tr("No airport weather shown")).trEnd();
+
+      if(shownDispTypes.testFlag(map::WIND_BARBS) && layer->isWindBarbs())
+      {
+        tooltip.tr().td().b(tr("Wind shown: ")).text(NavApp::getWindReporter()->getLevelText()).
+        b(tr(" Wind source: ")).text(NavApp::getWindReporter()->getSourceText()).tdEnd().trEnd();
+      }
+      else
+        tooltip.tr().td(tr("No wind shown")).trEnd();
+
+      tooltip.tr().td().b(tr("User features: ")).text(NavApp::getMapMarkHandler()->getMarkTypesText()).tdEnd().trEnd();
+
       tooltip.tableEnd();
 
       QStringList label;

@@ -99,6 +99,8 @@ public:
   /* Get source and current position while dragging a userpoint */
   void getUserpointDragPoints(QPoint& cur, QPixmap& pixmap);
 
+  map::MapWeatherSource getMapWeatherSource() const;
+
   /* Update zoom */
   void jumpBackToAircraftUpdateDistance();
 
