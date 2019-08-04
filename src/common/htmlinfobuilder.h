@@ -53,7 +53,7 @@ struct MapProcedureRef;
 struct MapUserpoint;
 struct MapLogbookEntry;
 struct MapBase;
-struct MapSearchResultMixed;
+struct MapSearchResultIndex;
 struct Hold;
 struct TrafficPattern;
 }
@@ -293,7 +293,7 @@ private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
   bool nearestMapObjectsText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
-                             const map::MapSearchResultMixed *nearest, const QString& header, bool frequencyCol,
+                             const map::MapSearchResultIndex *nearest, const QString& header, bool frequencyCol,
                              bool airportCol,
                              int maxRows) const;
   void nearestMapObjectsTextRow(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const QString& type,

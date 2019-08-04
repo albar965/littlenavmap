@@ -149,8 +149,8 @@ public:
   /* Only VOR, NDB, ILS and waypoints
    * All sorted by distance to pos with a maximum distance distanceNm
    * Uses distance * 4 and searches again if nothing was found.*/
-  map::MapSearchResultMixed *getNearestNavaids(const atools::geo::Pos& pos, float distanceNm,
-                                               map::MapObjectTypes type);
+  map::MapSearchResultIndex *getNearestNavaids(const atools::geo::Pos& pos, float distanceNm,
+                                               map::MapObjectTypes type, int maxIls, float maxIlsDist);
 
   /*
    * Fetch airports for a map coordinate rectangle
@@ -217,8 +217,8 @@ private:
 
   friend inline uint qHash(const MapQuery::NearestCacheKeyNavaid& key);
 
-  map::MapSearchResultMixed *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
-                                                    map::MapObjectTypes type);
+  map::MapSearchResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
+                                                    map::MapObjectTypes type, int maxIls, float maxIlsDist);
 
   void mapObjectByIdentInternal(map::MapSearchResult& result, map::MapObjectTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
@@ -246,7 +246,7 @@ private:
 
   /* ID/object caches */
   QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
-  QCache<NearestCacheKeyNavaid, map::MapSearchResultMixed> nearestNavaidCache;
+  QCache<NearestCacheKeyNavaid, map::MapSearchResultIndex> nearestNavaidCache;
 
   static int queryMaxRows;
 

@@ -128,7 +128,7 @@ public:
 
   /* Get nearest airports that have a procedure sorted by distance to pos with a maximum distance distanceNm.
    * Uses distance * 4 and searches again if nothing was found.*/
-  map::MapSearchResultMixed *getNearestAirportsProc(const map::MapAirport& airport, float distanceNm);
+  map::MapSearchResultIndex *getNearestAirportsProc(const map::MapAirport& airport, float distanceNm);
 
   /* Get a list of runways of all airports inside rectangle sorted by distance to pos */
   void getRunways(QVector<map::MapRunway>& runways, const atools::geo::Rect& rect, const atools::geo::Pos& pos);
@@ -174,7 +174,7 @@ private:
 
   friend inline uint qHash(const AirportQuery::NearestCacheKeyAirport& key);
 
-  map::MapSearchResultMixed *nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm);
+  map::MapSearchResultIndex *nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm);
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query, bool reverse,
@@ -201,7 +201,7 @@ private:
 
   QCache<QString, map::MapAirport> airportIdentCache;
   QCache<int, map::MapAirport> airportIdCache;
-  QCache<NearestCacheKeyAirport, map::MapSearchResultMixed> nearestAirportCache;
+  QCache<NearestCacheKeyAirport, map::MapSearchResultIndex> nearestAirportCache;
 
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,

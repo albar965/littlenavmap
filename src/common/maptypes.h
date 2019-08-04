@@ -827,58 +827,39 @@ QDebug operator<<(QDebug out, const map::MapSearchResult& record);
 
 // =====================================================================
 /* Mixed search result using inherited objects, Does not support aircraft objects */
-struct MapSearchResultMixed
+/* Maintains only pointers to the original objects and creates a copy the MapSearchResult. */
+struct MapSearchResultIndex
+  : public QVector<const map::MapBase *>
 {
-  MapSearchResultMixed()
-  {
-
-  }
-
-  ~MapSearchResultMixed()
-  {
-    qDeleteAll(vector);
-  }
-
-  /* Add all result objects to list */
-  void addFromResult(const map::MapSearchResult& result, const MapObjectTypes& types = map::ALL);
+  /* Add all result objects to list. Result and all objects are copied. */
+  void addFromResult(const map::MapSearchResult& resultParm, const MapObjectTypes& types = map::ALL);
 
   /* Sort objects by distance to given position from closest to farthest */
   void sortByDistance(const atools::geo::Pos& pos, bool sortNearToFar);
 
   /* Remove all objects which are more far away  from pos than max distance */
-  void filterByDistance(const atools::geo::Pos& pos, float maxDistanceNm);
+  void removeByDistance(const atools::geo::Pos& pos, float maxDistanceNm);
 
-  /* Disallow write access to vector */
-  const QVector<const map::MapBase *>& getVector() const
+  void clearAll()
   {
-    return vector;
+    clear();
+    result.clear();
   }
 
-  bool isEmpty() const
+  const map::MapSearchResult& getResult() const
   {
-    return vector.isEmpty();
-  }
-
-  int size() const
-  {
-    return vector.size();
-  }
-
-  template<typename TYPE>
-  void addCopy(const TYPE& obj)
-  {
-    vector.append(new TYPE(obj));
-  }
-
-  template<typename TYPE>
-  void addCopyAll(const QList<TYPE>& list)
-  {
-    for(const TYPE& obj : list)
-      addCopy(obj);
+    return result;
   }
 
 private:
-  QVector<const map::MapBase *> vector;
+  template<typename TYPE>
+  void addAll(const QList<TYPE>& list)
+  {
+    for(const TYPE& obj : list)
+      append(&obj);
+  }
+
+  map::MapSearchResult result;
 };
 
 // =====================================================================
@@ -888,7 +869,7 @@ struct RangeMarker
   QString text; /* Text to display like VOR name and frequency */
   QVector<int> ranges; /* Range ring list (nm) */
   atools::geo::Pos center;
-  MapObjectTypes type; /* VOR, NDB, AIRPORT, etc. - used to determine color */
+  MapObjectTypes type; /* VOR, NDB, AIRPORT, etc. */
 
   bool isValid() const
   {

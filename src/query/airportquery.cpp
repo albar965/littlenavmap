@@ -507,37 +507,39 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
   }
 }
 
-map::MapSearchResultMixed *AirportQuery::getNearestAirportsProc(const map::MapAirport& airport, float distanceNm)
+map::MapSearchResultIndex *AirportQuery::getNearestAirportsProc(const map::MapAirport& airport, float distanceNm)
 {
-  map::MapSearchResultMixed *nearest = nearestAirportsProcInternal(airport, distanceNm);
+  map::MapSearchResultIndex *nearest = nearestAirportsProcInternal(airport, distanceNm);
   if(nearest == nullptr || nearest->size() < 5)
     nearest = nearestAirportsProcInternal(airport, distanceNm * 4.f);
   return nearest;
 }
 
-map::MapSearchResultMixed *AirportQuery::nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm)
+map::MapSearchResultIndex *AirportQuery::nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm)
 {
   NearestCacheKeyAirport key = {airport.position, distanceNm};
 
-  map::MapSearchResultMixed *result = nearestAirportCache.object(key);
+  map::MapSearchResultIndex *result = nearestAirportCache.object(key);
 
   if(result == nullptr)
   {
-    result = new map::MapSearchResultMixed;
-
+    map::MapSearchResult res;
     // Create a rectangle that roughly covers the requested region
     atools::geo::Rect rect(airport.position, atools::geo::nmToMeter(distanceNm));
 
     bool xplane = NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11;
-    query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+    query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
       map::MapAirport obj;
       mapTypesFactory->fillAirport(query->record(), obj, true, navdata, xplane);
       if(obj.ident != airport.ident)
-        result->addCopy(obj);
+        res.airports.append(obj);
     });
 
+    result = new map::MapSearchResultIndex;
+    result->addFromResult(res);
+
     // Remove all that are too far away
-    result->filterByDistance(airport.position, distanceNm);
+    result->removeByDistance(airport.position, distanceNm);
 
     // Sort the rest by distance
     result->sortByDistance(airport.position, true /*sortNearToFar*/);

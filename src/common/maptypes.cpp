@@ -2061,7 +2061,10 @@ QString ilsTextShort(const map::MapIls& ils)
 
 QString ilsType(const map::MapIls& ils)
 {
-  return ils.slope > 0.f ? QObject::tr("ILS") : QObject::tr("LOC");
+  QString txt = ils.slope > 0.f ? QObject::tr("ILS, GS") : QObject::tr("LOC");
+  if(ils.hasDme)
+    txt.append(QObject::tr(", DME"));
+  return txt;
 }
 
 QString ilsTextShort(QString ident, QString name, bool gs, bool dme)
@@ -2112,67 +2115,114 @@ atools::geo::LineString MapIls::boundary() const
     return atools::geo::LineString({position, pos1, posmid, pos2, position});
 }
 
-void MapSearchResultMixed::addFromResult(const MapSearchResult& result, const MapObjectTypes& types)
+void MapSearchResultIndex::addFromResult(const MapSearchResult& resultParm, const MapObjectTypes& types)
 {
   if(types & AIRPORT)
-    addCopyAll(result.airports);
+  {
+    result.airports.append(resultParm.airports);
+    addAll(result.airports);
+  }
   if(types & RUNWAYEND)
-    addCopyAll(result.runwayEnds);
+  {
+    result.runwayEnds.append(resultParm.runwayEnds);
+    addAll(result.runwayEnds);
+  }
   if(types & TOWER)
-    addCopyAll(result.towers);
+  {
+    result.towers.append(resultParm.towers);
+    addAll(result.towers);
+  }
   if(types & PARKING)
-    addCopyAll(result.parkings);
+  {
+    result.parkings.append(resultParm.parkings);
+    addAll(result.parkings);
+  }
   if(types & HELIPAD)
-    addCopyAll(result.helipads);
+  {
+    result.helipads.append(resultParm.helipads);
+    addAll(result.helipads);
+  }
   if(types & WAYPOINT)
-    addCopyAll(result.waypoints);
+  {
+    result.waypoints.append(resultParm.waypoints);
+    addAll(result.waypoints);
+  }
   if(types & VOR)
-    addCopyAll(result.vors);
+  {
+    result.vors.append(resultParm.vors);
+    addAll(result.vors);
+  }
   if(types & NDB)
-    addCopyAll(result.ndbs);
+  {
+    result.ndbs.append(resultParm.ndbs);
+    addAll(result.ndbs);
+  }
   if(types & MARKER)
-    addCopyAll(result.markers);
+  {
+    result.markers.append(resultParm.markers);
+    addAll(result.markers);
+  }
   if(types & ILS)
-    addCopyAll(result.ils);
+  {
+    result.ils.append(resultParm.ils);
+    addAll(result.ils);
+  }
   if(types & AIRWAY)
-    addCopyAll(result.airways);
+  {
+    result.airways.append(resultParm.airways);
+    addAll(result.airways);
+  }
   if(types & AIRSPACE)
-    addCopyAll(result.airspaces);
+  {
+    result.airspaces.append(resultParm.airspaces);
+    addAll(result.airspaces);
+  }
   if(types & USERPOINTROUTE)
-    addCopyAll(result.userPointsRoute);
+  {
+    result.userPointsRoute.append(resultParm.userPointsRoute);
+    addAll(result.userPointsRoute);
+  }
   if(types & USERPOINT)
-    addCopyAll(result.userpoints);
+  {
+    result.userpoints.append(resultParm.userpoints);
+    addAll(result.userpoints);
+  }
   if(types & LOGBOOK)
-    addCopyAll(result.logbookEntries);
+  {
+    result.logbookEntries.append(resultParm.logbookEntries);
+    addAll(result.logbookEntries);
+  }
 }
 
-void MapSearchResultMixed::sortByDistance(const atools::geo::Pos& pos, bool sortNearToFar)
+void MapSearchResultIndex::sortByDistance(const atools::geo::Pos& pos, bool sortNearToFar)
 {
-  if(vector.isEmpty() || !pos.isValid())
+  if(isEmpty() || !pos.isValid())
     return;
 
-  std::sort(vector.begin(), vector.end(),
+  std::sort(begin(), end(),
             [ = ](const MapBase *obj1, const MapBase *obj2) -> bool
     {
-      bool result = obj1->getPosition().distanceMeterTo(pos) < obj2->getPosition().distanceMeterTo(pos);
-      return sortNearToFar ? result : !result;
+      bool res = obj1->getPosition().distanceMeterTo(pos) < obj2->getPosition().distanceMeterTo(pos);
+      return sortNearToFar ? res : !res;
     });
 }
 
-void MapSearchResultMixed::filterByDistance(const atools::geo::Pos& pos, float maxDistanceNm)
+void MapSearchResultIndex::removeByDistance(const atools::geo::Pos& pos, float maxDistanceNm)
 {
-  if(vector.isEmpty() || !pos.isValid())
+  if(isEmpty() || !pos.isValid())
     return;
 
   float maxMeter = atools::geo::nmToMeter(maxDistanceNm);
 
-  auto it = std::remove_if(vector.begin(), vector.end(), [ = ](const MapBase *obj) -> bool
+  auto it = std::remove_if(begin(), end(), [ = ](const MapBase *obj) -> bool
     {
       return obj->position.distanceMeterTo(pos) > maxMeter;
     });
 
-  if(it != vector.end())
-    vector.erase(it, vector.end());
+  if(it != end())
+    erase(it, end());
 }
+
+
 
 } // namespace types

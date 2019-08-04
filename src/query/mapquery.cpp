@@ -153,64 +153,75 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
   ndbNearestQuery->finish();
 }
 
-map::MapSearchResultMixed *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapObjectTypes type)
+map::MapSearchResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapObjectTypes type,
+                                                       int maxIls, float maxIlsDist)
 {
-  map::MapSearchResultMixed *nearest = nearestNavaidsInternal(pos, distanceNm, type);
+  map::MapSearchResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
   if(nearest == nullptr || nearest->size() < 5)
-    nearest = nearestNavaidsInternal(pos, distanceNm * 4.f, type);
+    nearest = nearestNavaidsInternal(pos, distanceNm * 4.f, type, maxIls, maxIlsDist);
   return nearest;
 }
 
-map::MapSearchResultMixed *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapObjectTypes type)
+map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapObjectTypes type,
+                                                            int maxIls, float maxIlsDist)
 {
   NearestCacheKeyNavaid key = {pos, distanceNm, type};
 
-  map::MapSearchResultMixed *result = nearestNavaidCache.object(key);
+  map::MapSearchResultIndex *result = nearestNavaidCache.object(key);
 
   if(result == nullptr)
   {
-    result = new map::MapSearchResultMixed;
+    map::MapSearchResult res;
 
     // Create a rectangle that roughly covers the requested region
     atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm));
 
     if(type & map::VOR)
     {
-      query::fetchObjectsForRect(rect, vorsByRectQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, vorsByRectQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
         map::MapVor obj;
         mapTypesFactory->fillVor(query->record(), obj);
-        result->addCopy(obj);
+        res.vors.append(obj);
       });
     }
 
     if(type & map::NDB)
     {
-      query::fetchObjectsForRect(rect, ndbsByRectQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, ndbsByRectQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
         map::MapNdb obj;
         mapTypesFactory->fillNdb(query->record(), obj);
-        result->addCopy(obj);
+        res.ndbs.append(obj);
       });
     }
 
     if(type & map::WAYPOINT)
     {
-      query::fetchObjectsForRect(rect, waypointsByRectQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, waypointsByRectQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
         map::MapWaypoint obj;
         mapTypesFactory->fillWaypoint(query->record(), obj);
-        result->addCopy(obj);
+        res.waypoints.append(obj);
       });
     }
 
     if(type & map::ILS)
     {
-      query::fetchObjectsForRect(rect, ilsByRectQuery, [ = ](atools::sql::SqlQuery *query) -> void {
+      QList<map::MapIls> ilsRes;
+
+      query::fetchObjectsForRect(rect, ilsByRectQuery, [ =, &ilsRes](atools::sql::SqlQuery *query) -> void {
         map::MapIls obj;
         mapTypesFactory->fillIls(query->record(), obj);
-        result->addCopy(obj);
+        ilsRes.append(obj);
       });
+      maptools::removeByDistance(ilsRes, pos, atools::geo::nmToMeter(maxIlsDist));
+      maptools::sortByDistance(ilsRes, pos);
+      res.ils.append(ilsRes.mid(0, maxIls));
     }
+
+    result = new map::MapSearchResultIndex;
+    result->addFromResult(res);
+
     // Remove all that are too far away
-    result->filterByDistance(pos, distanceNm);
+    result->removeByDistance(pos, distanceNm);
 
     // Sort the rest by distance
     result->sortByDistance(pos, true /* sortNearToFar */);
