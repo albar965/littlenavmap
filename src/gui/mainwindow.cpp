@@ -2697,7 +2697,7 @@ void MainWindow::mapSaveImage()
 
     if(!imageFile.isEmpty())
     {
-      if(!pixmap.save(imageFile))
+      if(!pixmap.save(imageFile, nullptr, 95))
         atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
       else
         setStatusMessage(tr("Map image saved."));
@@ -2734,7 +2734,7 @@ void MainWindow::mapSaveImageAviTab()
         if(!imageFile.isEmpty())
         {
 
-          if(!pixmap.save(imageFile))
+          if(!pixmap.save(imageFile, nullptr, 95))
             atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
           else
           {
