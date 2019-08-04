@@ -1965,25 +1965,27 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     html.row2If(tr("Region:"), userpoint.region, ahtml::REPLACE_CRLF);
     html.row2If(tr("Name:"), userpoint.name, ahtml::REPLACE_CRLF);
 
-    QString description = atools::elideTextLinesShort(userpoint.description, info ? 40 : 4);
-    html.row2If(tr("Description:"), description, (info ? ahtml::AUTOLINK : ahtml::NONE));
-
     html.row2If(tr("Tags:"), userpoint.tags, ahtml::REPLACE_CRLF);
     if(!rec.isNull("altitude"))
       html.row2If(tr("Elevation:"), Unit::altFeet(rec.valueFloat("altitude")));
 
     if(info)
-      addCoordinates(userpoint.position, html);
-    html.tableEnd();
-
-    if(info)
     {
-      html.br();
-      html.table();
       if(!rec.isNull("visible_from"))
         html.row2If(tr("Visible from:"), Unit::distNm(rec.valueFloat("visible_from")));
 
       html.row2(tr("Last Change:"), locale.toString(rec.value("last_edit_timestamp").toDateTime()));
+    }
+    if(info)
+      addCoordinates(userpoint.position, html);
+    html.tableEnd();
+
+    QString description = atools::elideTextLinesShort(userpoint.description, info ? 40 : 4);
+    if(!description.isEmpty())
+    {
+      html.p().b(tr("Userpoint Description")).pEnd();
+      html.table(1, 2, 0, 100, html.getRowBackColor());
+      html.tr().td(description, (info ? ahtml::AUTOLINK : ahtml::NONE)).trEnd();
       html.tableEnd();
     }
 

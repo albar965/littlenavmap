@@ -176,6 +176,8 @@ private:
   /* URL or show file in performance report clicked */
   void anchorClicked(const QUrl& url);
 
+  void fuelReportRunway(atools::util::HtmlBuilder& html);
+
   /* Make a string with fuel in lbs and gallons or kg and liter */
   /* To currently user selected fuel units */
   QString fuelWeightVolLocal(float valueLbsGal);
@@ -216,6 +218,7 @@ private:
 
   /* Timer to delay wind updates */
   QTimer windChangeTimer;
+
 };
 
 #endif // LNM_AIRCRAFTPERFCONTROLLER_H
