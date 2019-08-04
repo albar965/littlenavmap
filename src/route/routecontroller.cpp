@@ -2663,6 +2663,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   qDebug() << "route set start id" << start.id;
 
   RouteCommand *undoCommand = preChange(tr("Set Start Position"));
+  NavApp::showFlightPlan();
 
   if(route.isEmpty() || route.getDepartureAirportLeg().getMapObjectType() != map::AIRPORT ||
      route.getDepartureAirportLeg().getId() != start.airportId)
@@ -2706,6 +2707,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
   RouteCommand *undoCommand = preChange(tr("Set Departure"));
+  NavApp::showFlightPlan();
 
   routeSetDepartureInternal(airport);
 
@@ -2774,6 +2776,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
   RouteCommand *undoCommand = preChange(tr("Set Destination"));
+  NavApp::showFlightPlan();
 
   routeSetDestinationInternal(airport);
 
@@ -2800,8 +2803,8 @@ void RouteController::routeSetDestination(map::MapAirport airport)
 void RouteController::routeAddAlternate(map::MapAirport airport)
 {
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
-
   RouteCommand *undoCommand = preChange(tr("Add Alternate"));
+  NavApp::showFlightPlan();
 
   FlightplanEntry entry;
   entryBuilder->buildFlightplanEntry(airport, entry, true /* alternate */);

@@ -576,6 +576,26 @@ MapMarkHandler *NavApp::getMapMarkHandler()
   return mapMarkHandler;
 }
 
+void NavApp::showFlightPlan()
+{
+  mainWindow->showFlightPlan();
+}
+
+void NavApp::showAircraftPerformance()
+{
+  mainWindow->showAircraftPerformance();
+}
+
+void NavApp::showLogbookSearch()
+{
+  mainWindow->showLogbookSearch();
+}
+
+void NavApp::showUserpointSearch()
+{
+  mainWindow->showUserpointSearch();
+}
+
 LogdataController *NavApp::getLogdataController()
 {
   return logdataController;

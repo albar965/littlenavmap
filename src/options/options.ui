@@ -332,6 +332,58 @@
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsUserInterface">
        <layout class="QGridLayout" name="gridLayout_2">
+        <item row="9" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_13">
+          <property name="title">
+           <string>Files</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
+             <property name="toolTip">
+              <string>If this option is checked: Little Navmap will propose a new name 
+on &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
+New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Propose new name if  file already exists on &quot;Save as&quot; or &quot;Export&quot;</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
+             <property name="toolTip">
+              <string>Does not apply to the KML files loaded after startup.</string>
+             </property>
+             <property name="text">
+              <string>Center Google Earth &amp;KML after loading</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
         <item row="6" column="0" colspan="2">
          <widget class="QGroupBox" name="groupBox_8">
           <property name="title">
@@ -582,71 +634,6 @@ A restart is required for the settings to take effect.</string>
           </layout>
          </widget>
         </item>
-        <item row="10" column="0">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="9" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox_13">
-          <property name="title">
-           <string>Files</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_11">
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
-             <property name="toolTip">
-              <string>If this option is checked: Little Navmap will propose a new name 
-on &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
-New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Propose new name if  file already exists on &quot;Save as&quot; or &quot;Export&quot;</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
-             <property name="toolTip">
-              <string>Does not apply to the KML files loaded after startup.</string>
-             </property>
-             <property name="text">
-              <string>Center Google Earth &amp;KML after loading</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QGroupBox" name="groupBox_7">
           <property name="title">
@@ -676,6 +663,56 @@ This will scale the Little Navmap map graphics and icons for better visibility i
              </property>
              <property name="text">
               <string>Enable high &amp;DPI monitor support (restart required after change)</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="11" column="0">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="10" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_17">
+          <property name="title">
+           <string>Windows</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_14">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiRaiseWindows">
+             <property name="toolTip">
+              <string>This will open related windows and raise tabs on actions like opening files, modifying the flight plan or others.</string>
+             </property>
+             <property name="text">
+              <string>Raise related windows on actions (.e.g. show flight plan after opening file)</string>
              </property>
              <property name="checked">
               <bool>true</bool>

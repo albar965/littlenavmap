@@ -299,6 +299,11 @@ public:
 
   static MapMarkHandler *getMapMarkHandler();
 
+  static void showFlightPlan();
+  static void showAircraftPerformance();
+  static void showLogbookSearch();
+  static void showUserpointSearch();
+
 private:
   static void initApplication();
   static void readMagDecFromDatabase();

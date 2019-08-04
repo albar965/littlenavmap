@@ -4116,22 +4116,26 @@ map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
 
 void MainWindow::showFlightPlan()
 {
-  actionShortcutFlightPlanTriggered();
+  if(OptionData::instance().getFlags2() & opts::RAISE_WINDOWS)
+    actionShortcutFlightPlanTriggered();
 }
 
 void MainWindow::showAircraftPerformance()
 {
-  actionShortcutAircraftPerformanceTriggered();
+  if(OptionData::instance().getFlags2() & opts::RAISE_WINDOWS)
+    actionShortcutAircraftPerformanceTriggered();
 }
 
 void MainWindow::showLogbookSearch()
 {
-  actionShortcutLogbookSearchTriggered();
+  if(OptionData::instance().getFlags2() & opts::RAISE_WINDOWS)
+    actionShortcutLogbookSearchTriggered();
 }
 
 void MainWindow::showUserpointSearch()
 {
-  actionShortcutUserpointSearchTriggered();
+  if(OptionData::instance().getFlags2() & opts::RAISE_WINDOWS)
+    actionShortcutUserpointSearchTriggered();
 }
 
 void MainWindow::webserverStatusChanged(bool running)
