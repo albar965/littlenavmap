@@ -275,7 +275,7 @@ public:
   }
 
 private:
-  float speed, direction, minSpeed = 2.f;
+  float speed, direction, minSpeed = 0.5f;
   int totalNumber = 0;
 };
 

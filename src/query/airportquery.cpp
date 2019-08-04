@@ -21,6 +21,7 @@
 #include "common/maptypesfactory.h"
 #include "common/maptools.h"
 #include "query/querytypes.h"
+#include "common/proctypes.h"
 #include "fs/common/binarygeometry.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
@@ -248,24 +249,36 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
       ap.surface = apronQuery->value("surface").toString();
       ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
 
-      if(apronQuery->hasField("geometry"))
+      if(!apronQuery->isNull("geometry"))
       {
-        // X-Plane specific - contains bezier points for apron and taxiways.
-        atools::fs::common::XpGeometry geo(apronQuery->value("geometry").toByteArray());
-        ap.geometry = geo.getGeometry();
+        QByteArray bytes = apronQuery->value("geometry").toByteArray();
 
-        // Set position to first for validity check
-        ap.position = ap.geometry.boundary.first().node;
+        if(!bytes.isEmpty())
+        {
+          // X-Plane specific - contains bezier points for apron and taxiways.
+          atools::fs::common::XpGeometry geo(bytes);
+          ap.geometry = geo.getGeometry();
+
+          if(!ap.geometry.boundary.isEmpty())
+            // Set position to first for validity check
+            ap.position = ap.geometry.boundary.first().node;
+        }
       }
 
       // Decode vertices into a position list - FSX/P3D
       if(!apronQuery->isNull("vertices"))
       {
-        atools::fs::common::BinaryGeometry geo(apronQuery->value("vertices").toByteArray());
-        geo.swapGeometry(ap.vertices);
+        QByteArray bytes = apronQuery->value("vertices").toByteArray();
 
-        // Set position to first for validity check
-        ap.position = ap.vertices.first();
+        if(!bytes.isEmpty())
+        {
+          atools::fs::common::BinaryGeometry geo(bytes);
+          geo.swapGeometry(ap.vertices);
+
+          // Set position to first for validity check
+          if(!ap.vertices.isEmpty())
+            ap.position = ap.vertices.first();
+        }
       }
 
       aprons->append(ap);
