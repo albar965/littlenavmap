@@ -274,7 +274,8 @@ struct MapRunwayEnd
   }
 
   QString name, leftVasiType, rightVasiType, pattern;
-  float heading, leftVasiPitch = 0.f, rightVasiPitch = 0.f;
+  float heading, /* degree true */
+        leftVasiPitch = 0.f, rightVasiPitch = 0.f;
   bool secondary;
   bool navdata; /* true if source is third party nav database, false if source is simulator data */
 };

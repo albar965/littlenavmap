@@ -1034,7 +1034,6 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
 
   // Prefix for procedure information
   QString prefix;
-
   QString text = map::ilsTextShort(ident, name, gs, dme);
 
   if(gs)
@@ -1052,7 +1051,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
 
     if(info)
     {
-      // Add map link if not tooltip
+      // Add map link if not tooltip ==========================================
       html.nbsp().nbsp();
       html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
              arg(ilsRec->valueFloat("lonx")).arg(ilsRec->valueFloat("laty")), ahtml::LINK_NO_UL);
@@ -1072,10 +1071,11 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
 
   if(standalone)
   {
-    // Add bearing/distance to table
+    // Add bearing/distance to table ==========================
     bearingText(atools::geo::Pos(ilsRec->valueFloat("lonx"), ilsRec->valueFloat("laty")),
                 ilsRec->valueFloat("mag_var"), html);
 
+    // ILS information ==================================================
     QString runway = ilsRec->valueStr("loc_runway_name");
     QString airportIdent = ilsRec->valueStr("loc_airport_ident");
 
@@ -1101,6 +1101,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     rowForBool(html, ilsRec, "has_backcourse", tr("Has Backcourse"), false);
   }
 
+  // Localizer information ==================================================
   float hdg = ilsRec->valueFloat("loc_heading") - magvar;
   hdg = normalizeCourse(hdg);
 
@@ -1110,6 +1111,32 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     html.row2(prefix + tr("Localizer Heading and Width:"), locale.toString(hdg, 'f', 0) + tr("°M") +
               tr(", ") + locale.toString(ilsRec->valueFloat("loc_width"), 'f', 1) + tr("°"));
 
+  // Check for offset localizer ==================================================
+  map::MapRunwayEnd end;
+  int endId = ilsRec->valueInt("loc_runway_end_id", 0);
+  if(endId > 0)
+  {
+    // Get assigned runway end =====================
+    end = airportQuerySim->getRunwayEndById(endId);
+    if(end.isValid())
+    {
+      // The maximum angular offset for a LOC is 3° for FAA and 5° for ICAO.
+      // Everything else is named either LDA (FAA) or IGS (ICAO).
+      if(atools::geo::angleAbsDiff(end.heading, ilsRec->valueFloat("loc_heading")) > 2.5f)
+      {
+        // Get airport for consistent magnetic variation =====================
+        map::MapAirport airport = airportQuerySim->getAirportByIdent(ilsRec->valueStr("loc_airport_ident"));
+
+        // Prefer airport variation to have the same angle as in the runway information
+        float mvar = airport.isValid() ? airport.magvar : magvar;
+
+        html.row2(tr("Offset localizer."));
+        html.row2(tr("Runway heading:"), tr("%1 °M").
+                  arg(locale.toString(normalizeCourse(end.heading - mvar), 'f', 0)));
+      }
+    }
+  }
+
   if(gs)
     html.row2(prefix + tr("Glideslope Pitch:"),
               locale.toString(ilsRec->valueFloat("gs_pitch"), 'f', 1) + tr("°"));
@@ -1118,10 +1145,13 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     html.tableEnd();
 
   if(info && standalone && !approach)
+    // Add scenery indicator to clear source - either nav or sim
     addScenery(nullptr, html, true /* ILS */);
 
 #ifdef DEBUG_INFORMATION
   html.small(QString("Database: ils_id = %1").arg(ilsRec->valueInt("ils_id"))).br();
+  if(end.isValid())
+    html.small(QString("Database: runway_end_id = %1").arg(end.id)).br();
 #endif
 }
 
