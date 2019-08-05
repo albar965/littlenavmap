@@ -381,7 +381,7 @@ float RouteAltitude::findDepartureMaxAltitude(int index) const
     index = fixRange(index);
 
     // Check forward from index to end of SID for leg that limits the maximum altitude
-    int end = fixRange(route->getDepartureLegsOffset() + route->getDepartureLegs().size());
+    int end = fixRange(route->getSidLegsOffset() + route->getSidLegs().size());
     if(end == map::INVALID_INDEX_VALUE)
       // Search through the whole route
       end = route->size() - 1;
@@ -435,10 +435,10 @@ int RouteAltitude::findApproachFirstRestricion() const
 
 int RouteAltitude::findDepartureLastRestricion() const
 {
-  if(route->hasAnyDepartureProcedure())
+  if(route->hasAnySidProcedure())
   {
     // Search for first restriction in a SID
-    int start = fixRange(route->getDepartureLegsOffset() + route->getDepartureLegs().size());
+    int start = fixRange(route->getSidLegsOffset() + route->getSidLegs().size());
 
     if(start < map::INVALID_INDEX_VALUE)
     {
@@ -756,7 +756,7 @@ void RouteAltitude::calculateDistances()
 
 void RouteAltitude::calculateDeparture()
 {
-  int departureLegIdx = route->getDepartureLegIndex();
+  int departureLegIdx = route->getSidLegIndex();
   if(departureLegIdx == map::INVALID_INDEX_VALUE)
   {
     qWarning() << Q_FUNC_INFO << "departureLegIdx" << departureLegIdx;
@@ -848,7 +848,7 @@ void RouteAltitude::calculateDeparture()
 void RouteAltitude::calculateArrival()
 {
   int destinationLegIdx = route->getDestinationLegIndex();
-  int departureLegIndex = route->getDepartureLegIndex();
+  int departureLegIndex = route->getSidLegIndex();
   float lastAlt = getDestinationAltitude();
 
   if(departureLegIndex == map::INVALID_INDEX_VALUE || destinationLegIdx == map::INVALID_INDEX_VALUE)
@@ -1048,7 +1048,7 @@ float RouteAltitude::getDestinationDistance() const
 
 float RouteAltitude::departureAltitude() const
 {
-  const RouteLeg& startLeg = route->at(route->getDepartureLegIndex());
+  const RouteLeg& startLeg = route->at(route->getSidLegIndex());
   if(startLeg.isAnyProcedure() && startLeg.getProcedureLegAltRestr().isValid())
   {
     if(startLeg.getRunwayEnd().isValid())

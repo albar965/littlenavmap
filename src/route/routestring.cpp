@@ -182,7 +182,7 @@ QString RouteString::createGfpStringForRouteInternalProc(const Route& route, boo
   if(!retval.isEmpty() && !retval.startsWith(":F:"))
     retval.prepend(":F:");
 
-  if(route.hasAnyDepartureProcedure() && !userWaypointOption)
+  if(route.hasAnySidProcedure() && !userWaypointOption)
   {
     if(!departureRw.isEmpty() && !(departureRw.endsWith("L") || departureRw.endsWith("C") || departureRw.endsWith("R")))
       departureRw.append("O");

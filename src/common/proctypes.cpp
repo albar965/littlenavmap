@@ -665,6 +665,16 @@ const MapProcedureLeg *MapProcedureLegs::transitionLegById(int legId) const
   return nullptr;
 }
 
+atools::geo::LineString MapProcedureLegs::geometry() const
+{
+  atools::geo::LineString retval;
+  for(int i = 0; i < size(); i++)
+    retval.append(at(i).line.getPos2());
+  retval.removeInvalid();
+  retval.removeDuplicates();
+  return retval;
+}
+
 MapProcedureLeg& MapProcedureLegs::atInternal(int i)
 {
   if(isDeparture())

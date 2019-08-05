@@ -1704,22 +1704,22 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
 void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                        const proc::MapProcedureLegs& arrivalLegs,
                                                        const proc::MapProcedureLegs& starLegs,
-                                                       const proc::MapProcedureLegs& departureLegs)
+                                                       const proc::MapProcedureLegs& sidLegs)
 {
-  if(!departureLegs.isEmpty())
+  if(!sidLegs.isEmpty())
   {
-    if(!departureLegs.transitionFixIdent.isEmpty())
+    if(!sidLegs.transitionFixIdent.isEmpty())
     {
-      properties.insert(pln::SIDTRANS, departureLegs.transitionFixIdent);
-      properties.insert(pln::SIDTRANSDISTANCE, QString::number(departureLegs.transitionDistance, 'f', 1));
-      properties.insert(pln::SIDTRANSSIZE, QString::number(departureLegs.transitionLegs.size()));
+      properties.insert(pln::SIDTRANS, sidLegs.transitionFixIdent);
+      properties.insert(pln::SIDTRANSDISTANCE, QString::number(sidLegs.transitionDistance, 'f', 1));
+      properties.insert(pln::SIDTRANSSIZE, QString::number(sidLegs.transitionLegs.size()));
     }
-    if(!departureLegs.approachFixIdent.isEmpty())
+    if(!sidLegs.approachFixIdent.isEmpty())
     {
-      properties.insert(pln::SIDAPPR, departureLegs.approachFixIdent);
-      properties.insert(pln::SIDAPPRRW, departureLegs.procedureRunway);
-      properties.insert(pln::SIDAPPRDISTANCE, QString::number(departureLegs.approachDistance, 'f', 1));
-      properties.insert(pln::SIDAPPRSIZE, QString::number(departureLegs.approachLegs.size()));
+      properties.insert(pln::SIDAPPR, sidLegs.approachFixIdent);
+      properties.insert(pln::SIDAPPRRW, sidLegs.procedureRunway);
+      properties.insert(pln::SIDAPPRDISTANCE, QString::number(sidLegs.approachDistance, 'f', 1));
+      properties.insert(pln::SIDAPPRSIZE, QString::number(sidLegs.approachLegs.size()));
     }
   }
 
@@ -1955,7 +1955,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
                                                     const map::MapAirport& destination,
                                                     proc::MapProcedureLegs& arrivalLegs,
                                                     proc::MapProcedureLegs& starLegs,
-                                                    proc::MapProcedureLegs& departureLegs,
+                                                    proc::MapProcedureLegs& sidLegs,
                                                     QStringList& errors)
 {
   errors.clear();
@@ -2139,9 +2139,9 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     const proc::MapProcedureLegs *legs = getTransitionLegs(departureNav, sidTransId);
     if(legs != nullptr)
     {
-      departureLegs = *legs;
+      sidLegs = *legs;
       // Assign runway to the legs copy if procedure has parallel or all runway reference
-      insertSidStarRunway(departureLegs, properties.value(pln::SIDAPPRRW));
+      insertSidStarRunway(sidLegs, properties.value(pln::SIDAPPRRW));
     }
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << departureNav.id << sidTransId;
@@ -2151,9 +2151,9 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     const proc::MapProcedureLegs *legs = getApproachLegs(departureNav, sidApprId);
     if(legs != nullptr)
     {
-      departureLegs = *legs;
+      sidLegs = *legs;
       // Assign runway to the legs copy if procedure has parallel or all runway reference
-      insertSidStarRunway(departureLegs, properties.value(pln::SIDAPPRRW));
+      insertSidStarRunway(sidLegs, properties.value(pln::SIDAPPRRW));
     }
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << departureNav.id << sidApprId;

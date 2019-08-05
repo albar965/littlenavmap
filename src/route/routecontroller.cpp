@@ -937,10 +937,10 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
                                                               route.getDestinationAirportLeg().getAirport(),
                                                               arrival, star, departure, procedureLoadingErrors);
   // SID/STAR with multiple runways are already assigned
-  route.setDepartureProcedureLegs(departure);
+  route.setSidProcedureLegs(departure);
   route.setStarProcedureLegs(star);
   route.setArrivalProcedureLegs(arrival);
-  route.updateProcedureLegs(entryBuilder, clearOldProcedureProperties);
+  route.updateProcedureLegs(entryBuilder, clearOldProcedureProperties, false /* cleanup route */);
 
   if(!quiet && !procedureLoadingErrors.isEmpty())
   {
@@ -2955,7 +2955,7 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
     if(legs.mapType & proc::PROCEDURE_ARRIVAL)
       route.setArrivalProcedureLegs(legs);
 
-    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */);
+    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
   }
   else if(legs.mapType & proc::PROCEDURE_DEPARTURE)
   {
@@ -2970,8 +2970,9 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
     NavApp::getProcedureQuery()->insertSidStarRunway(legs, sidStarRunway);
 
     // Will take care of the flight plan entries too
-    route.setDepartureProcedureLegs(legs);
-    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */);
+    route.setSidProcedureLegs(legs);
+
+    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
   }
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
@@ -3849,7 +3850,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly) const
         QStringList procedureText;
         QVector<bool> boldTextFlag;
 
-        const proc::MapProcedureLegs& departureLegs = route.getDepartureLegs();
+        const proc::MapProcedureLegs& departureLegs = route.getSidLegs();
         if(!departureLegs.isEmpty())
         {
           // Add departure procedure to text
@@ -4170,8 +4171,8 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
     }
   }
 
-  if(types & proc::PROCEDURE_SID_TRANSITION && route.getDepartureLegs().approachLegs.isEmpty() &&
-     !route.getDepartureLegs().approachFixIdent.isEmpty())
+  if(types & proc::PROCEDURE_SID_TRANSITION && route.getSidLegs().approachLegs.isEmpty() &&
+     !route.getSidLegs().approachFixIdent.isEmpty())
     // Remove the empty SID structure too
     types |= proc::PROCEDURE_SID;
 

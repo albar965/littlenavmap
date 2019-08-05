@@ -526,6 +526,9 @@ struct MapProcedureLegs
     return atInternal(i);
   }
 
+  /* Positions of all legs */
+  atools::geo::LineString geometry() const;
+
 private:
   MapProcedureLeg& atInternal(int i);
   const MapProcedureLeg& atInternalConst(int i) const;

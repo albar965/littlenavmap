@@ -215,8 +215,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       paintProcedure(lastLegPoint, context, route->getStarLegs(), route->getStarLegsOffset(),
                      flightplanProcedureColor, false /* preview */);
 
-    if(route->hasAnyDepartureProcedure())
-      paintProcedure(lastLegPoint, context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
+    if(route->hasAnySidProcedure())
+      paintProcedure(lastLegPoint, context, route->getSidLegs(), route->getSidLegsOffset(),
                      flightplanProcedureColor, false /* preview */);
   }
 
@@ -270,7 +270,7 @@ void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList
     }
 
     // Do not draw a line from airport center to runway end
-    if(route->hasAnyDepartureProcedure())
+    if(route->hasAnySidProcedure())
     {
       lines.first() = Line();
       routeTexts.first().clear();
@@ -1367,7 +1367,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
       // Convert from procedure index to route leg index
       if(leg.isSid())
-        routeIdx += route->getDepartureLegsOffset();
+        routeIdx += route->getSidLegsOffset();
       else if(leg.isStar())
         routeIdx += route->getStarLegsOffset();
 

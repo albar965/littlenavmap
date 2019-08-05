@@ -40,7 +40,7 @@ class RouteAltitudeLeg;
  * Leg methods return invalid legs if unusable index.
  *
  * Example layout of the list:
- *  0	DEPARTURE
+ *  0	DEPARTURE (AIRPORT)
  *  1	SID Leg 1 (RW)
  *  2	SID Leg 2
  *  3	WPT 1
@@ -52,7 +52,7 @@ class RouteAltitudeLeg;
  *  8	APPR Leg 2 (RW)
  *  9	MISSED Leg 1 (excluded from total distance)
  * 10	MISSED Leg 2              "
- * 11	DESTINATION AIRPORT
+ * 11	DESTINATION (AIRPORT)
  * 12	ALTERNATE 1 (distance calculated from dest airport)
  * 13	ALTERNATE 2               "
  */
@@ -149,8 +149,8 @@ public:
   }
 
   /* First leg of departure procedure. 1 if SID used otherwise 0. */
-  int getDepartureLegIndex() const;
-  const RouteLeg& getDepartureLeg() const;
+  int getSidLegIndex() const;
+  const RouteLeg& getSidLeg() const;
 
   /* First leg. Always 0 if not empty. */
   int getDepartureAirportLegIndex() const;
@@ -280,7 +280,7 @@ public:
 
   bool hasAnyProcedure() const
   {
-    return hasAnyArrivalProcedure() || hasAnyDepartureProcedure() || hasAnyStarProcedure();
+    return hasAnyArrivalProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
   }
 
   bool hasAnyArrivalProcedure() const
@@ -298,9 +298,9 @@ public:
     return !starLegs.isEmpty();
   }
 
-  bool hasAnyDepartureProcedure() const
+  bool hasAnySidProcedure() const
   {
-    return !departureLegs.isEmpty();
+    return !sidLegs.isEmpty();
   }
 
   /* Get the various procedure names */
@@ -326,14 +326,15 @@ public:
     starLegs = legs;
   }
 
-  void setDepartureProcedureLegs(const proc::MapProcedureLegs& legs)
+  void setSidProcedureLegs(const proc::MapProcedureLegs& legs)
   {
-    departureLegs = legs;
+    sidLegs = legs;
   }
 
   /* Insert legs of procedures into flight plan and update all offsets and indexes */
-  void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties);
+  void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties, bool cleanupRoute);
 
+  /* Remove all intermediate legs between departure and destination. Procedures and alternates are not touched. */
   void removeRouteLegs();
 
   /* Does not delete flight plan properties. Clears the MapProcedure structures. */
@@ -349,7 +350,8 @@ public:
   void removeProcedureLegs();
   void removeProcedureLegs(proc::MapProcedureTypes type);
 
-  /* Removes duplicate waypoints when transitioning from route to procedure and vice versa */
+  /* Removes duplicate waypoints when transitioning from route to procedure and vice versa.
+   * Used after route calculation. */
   void removeDuplicateRouteLegs();
 
   /* Needed to activate missed approach sequencing or not depending on visibility state */
@@ -399,9 +401,9 @@ public:
   }
 
   /* Get SID legs only */
-  const proc::MapProcedureLegs& getDepartureLegs() const
+  const proc::MapProcedureLegs& getSidLegs() const
   {
-    return departureLegs;
+    return sidLegs;
   }
 
   /* Index of first transition and/or approach leg in the route */
@@ -411,9 +413,9 @@ public:
   }
 
   /* Index of first SID leg in the route */
-  int getDepartureLegsOffset() const
+  int getSidLegsOffset() const
   {
-    return departureLegsOffset;
+    return sidLegsOffset;
   }
 
   /* Index of first STAR leg in the route */
@@ -533,11 +535,23 @@ public:
   QBitArray getJetAirwayFlags() const;
 
 private:
+  /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
+   * no procedure legs. CPU intense do not use often. */
+  void cleanupFlightPlanForProcedures();
+
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
   /* Calculate all distances and courses for route map objects */
   void updateDistancesAndCourse();
   void updateBoundingRect();
+
+  /* Looks fuzzy for a waypoint at the given position from front to end or vice versa if reverse is true */
+  int legIndexForPosition(const atools::geo::Pos& pos, bool reverse);
+
+  /* Look for overlap with any of the points in the flight plan. Double loop. Use rarely. */
+  int legIndexForPositions(const atools::geo::LineString& line, bool reverse);
+
+  void removeLegs(int from, int to);
 
   /* Update and calculate magnetic variation for all route map objects */
   void updateMagvar();
@@ -557,13 +571,13 @@ private:
   float totalDistance = 0.f;
 
   atools::fs::pln::Flightplan flightplan;
-  proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
+  proc::MapProcedureLegs arrivalLegs, starLegs, sidLegs;
   map::MapObjectTypes shownTypes;
 
   int activeLegIndex = map::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;
   map::PosCourse activePos;
-  int departureLegsOffset = map::INVALID_INDEX_VALUE, /* First departure leg */
+  int sidLegsOffset = map::INVALID_INDEX_VALUE, /* First departure leg */
       starLegsOffset = map::INVALID_INDEX_VALUE, /* First STAR leg */
       arrivalLegsOffset = map::INVALID_INDEX_VALUE, /* First arrival leg */
       alternateLegsOffset = map::INVALID_INDEX_VALUE; /* First alternate airport*/

@@ -69,7 +69,7 @@ public:
                                       const map::MapAirport& departure,
                                       const map::MapAirport& destination,
                                       proc::MapProcedureLegs& arrivalLegs, proc::MapProcedureLegs& starLegs,
-                                      proc::MapProcedureLegs& departureLegs, QStringList& errors);
+                                      proc::MapProcedureLegs& sidLegs, QStringList& errors);
 
   static QString getSidAndTransition(QHash<QString, QString>& properties);
   static QString getStarAndTransition(QHash<QString, QString>& properties);
@@ -77,7 +77,7 @@ public:
   static void fillFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                 const proc::MapProcedureLegs& arrivalLegs,
                                                 const proc::MapProcedureLegs& starLegs,
-                                                const proc::MapProcedureLegs& departureLegs);
+                                                const proc::MapProcedureLegs& sidLegs);
 
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                  const proc::MapProcedureTypes& type);
