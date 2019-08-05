@@ -582,12 +582,12 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
           {
             if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
             {
-              if(context->dOptRoute(opts::ROUTE_MAG_COURSE_RHUMB))
+              if(context->dOptRoute(opts::ROUTE_MAG_COURSE_RHUMB | opts::ROUTE_MAG_COURSE_GC))
                 // Use same values for rhumb and mag - does not make a difference at the small values in procedures
                 courseGcMag = courseRhumbMag = leg.calculatedTrueCourse - leg.magvar;
             }
 
-            if(context->dOptRoute(opts::ROUTE_TRUE_COURSE_RHUMB))
+            if(context->dOptRoute(opts::ROUTE_TRUE_COURSE_RHUMB | opts::ROUTE_MAG_COURSE_GC))
               courseGcTrue = courseRhumbTrue = leg.calculatedTrueCourse;
           }
 
