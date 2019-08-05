@@ -1042,6 +1042,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   else if(!name.startsWith(QObject::tr("LOC")))
     prefix = approach ? tr("LOC ") : QString();
 
+  // Check if text is to be generated for navaid or procedures tab
   if(standalone)
   {
     html.img(QIcon(":/littlenavmap/resources/icons/ils.svg"), QString(), QString(), symbolSizeTitle);
@@ -1115,6 +1116,9 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
 
   if(!approach)
     html.tableEnd();
+
+  if(info && standalone && !approach)
+    addScenery(nullptr, html, true /* ILS */);
 
 #ifdef DEBUG_INFORMATION
   html.small(QString("Database: ils_id = %1").arg(ilsRec->valueInt("ils_id"))).br();
@@ -3662,11 +3666,14 @@ QString HtmlInfoBuilder::airplaneType(const atools::fs::sc::SimConnectAircraft& 
     return atools::fs::util::aircraftTypeForCode(aircraft.getAirplaneModel());
 }
 
-void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html) const
+void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool ils) const
 {
   head(html, tr("Scenery"));
   html.table();
-  html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")), ahtml::NO_ENTITIES);
+  if(ils)
+    html.row2(NavApp::isNavdataAll() ? tr("Navigraph") : tr("Simulator"));
+  else
+    html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")), ahtml::NO_ENTITIES);
   html.tableEnd();
 }
 

@@ -244,7 +244,8 @@ public:
    */
   void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void procedurePointText(const proc::MapProcedurePoint& procPoint, atools::util::HtmlBuilder& html, const Route *route) const;
+  void procedurePointText(const proc::MapProcedurePoint& procPoint, atools::util::HtmlBuilder& html,
+                          const Route *route) const;
 
   /*
    * Creates an overview HTML description for any AI or user aircraft in the simulator.
@@ -302,7 +303,7 @@ private:
                                 float magVar, bool frequencyCol, bool airportCol) const;
 
   /* Add scenery entries and links into table */
-  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
+  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool ils = false) const;
   void addAirportSceneryAndLinks(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addAirportFolder(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
