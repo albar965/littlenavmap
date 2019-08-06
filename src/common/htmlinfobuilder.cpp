@@ -1704,13 +1704,13 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   // Temperature  =============================================================
   float temp = parsed.getTemperatureC();
   if(temp < INVALID_METAR_VALUE)
-    html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
-              locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr("°F"));
+    html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temp)) + tr(" °C, ") +
+              locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr(" °F"));
 
   temp = parsed.getDewpointDegC();
   if(temp < INVALID_METAR_VALUE)
-    html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
-              locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr("°F"));
+    html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(temp)) + tr(" °C, ") +
+              locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr(" °F"));
 
   // Pressure  =============================================================
   float slp = parsed.getPressureMbar();
@@ -3531,8 +3531,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     float tat = userAircaft->getTotalAirTemperatureCelsius();
     if(tat < 0.f && tat > -0.5f)
       tat = 0.f;
-    html.row2(tr("Total Air Temperature:"), locale.toString(tat, 'f', 0) + tr("°C, ") +
-              locale.toString(atools::geo::degCToDegF(tat), 'f', 0) + tr("°F"));
+    html.row2(tr("Total Air Temperature:"), locale.toString(tat, 'f', 0) + tr(" °C, ") +
+              locale.toString(atools::geo::degCToDegF(tat), 'f', 0) + tr(" °F"));
 
     if(!less)
     {
@@ -3540,13 +3540,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       float sat = userAircaft->getAmbientTemperatureCelsius();
       if(sat < 0.f && sat > -0.5f)
         sat = 0.f;
-      html.row2(tr("Static Air Temperature:"), locale.toString(sat, 'f', 0) + tr("°C, ") +
-                locale.toString(atools::geo::degCToDegF(sat), 'f', 0) + tr("°F"));
+      html.row2(tr("Static Air Temperature:"), locale.toString(sat, 'f', 0) + tr(" °C, ") +
+                locale.toString(atools::geo::degCToDegF(sat), 'f', 0) + tr(" °F"));
 
       float isaDeviation = sat - atools::geo::isaTemperature(userAircaft->getPosition().getAltitude());
       if(isaDeviation < 0.f && isaDeviation > -0.5f)
         isaDeviation = 0.f;
-      html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr("°C"));
+      html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr(" °C"));
     }
 
     float slp = userAircaft->getSeaLevelPressureMbar();
