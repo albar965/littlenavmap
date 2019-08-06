@@ -581,6 +581,18 @@ map::MapIls MapQuery::getIlsById(int id)
 
 QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway)
 {
+  QVector<map::MapIls> ils;
+  for(const QString& rname: map::runwayNameZeroPrefixVariants(runway))
+  {
+    ils = ilsByAirportAndRunway(airportIdent, rname);
+    if(!ils.isEmpty())
+      break;
+  }
+  return ils;
+}
+
+QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent, const QString& runway)
+{
   QVector<map::MapIls> ilsList;
   ilsQuerySimByName->bindValue(":apt", airportIdent);
   ilsQuerySimByName->bindValue(":rwy", runway);
@@ -1093,6 +1105,17 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
  * position if no runway ends were found */
 void MapQuery::getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
                                        const map::MapAirport& airport, bool navData)
+{
+  for(const QString& rname: map::runwayNameZeroPrefixVariants(name))
+  {
+    runwayEndByNameFuzzy(runwayEnds, rname, airport, navData);
+    if(!runwayEnds.isEmpty())
+      return;
+  }
+}
+
+void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
+                                    const map::MapAirport& airport, bool navData)
 {
   AirportQuery *aquery = navData ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
   map::MapSearchResult result;

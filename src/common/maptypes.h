@@ -963,15 +963,23 @@ bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *de
 /* Get the closes matching runway name from the list of airport runways or empty if none */
 QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames);
 
-/* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list */
+/* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list.
+ *  Can deal with prefix "RW" and keeps it. */
 QStringList runwayNameVariants(QString name);
+
+/* Returns all variants of zero prefixed runways 09 vs 9
+ *  Can deal with prefix "RW" and keeps it. */
+QStringList runwayNameZeroPrefixVariants(QString name);
 
 /* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list for an
  * ARINC name like N32 or I19-Y */
 QStringList arincNameNameVariants(const QString& name);
 
-/* Compare runway numbers fuzzy */
+/* Compare runway numbers fuzzy by ignoring a deviation of one */
 bool runwayAlmostEqual(const QString& name1, const QString& name2);
+
+/* Compare runway numbers by ignoring leading zero */
+bool runwayEqual(QString name1, QString name2);
 
 /* Parking name from PLN to database name */
 const QString& parkingDatabaseName(const QString& name);

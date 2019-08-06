@@ -3968,7 +3968,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly) const
           approachRunway = arrivalLegs.runwayEnd.name;
         }
 
-        if(!approachRunway.isEmpty() && !starRunway.isEmpty() && approachRunway != starRunway)
+        if(!approachRunway.isEmpty() && !starRunway.isEmpty() && !map::runwayEqual(approachRunway, starRunway))
         {
           boldTextFlag << true;
           procedureText.append(atools::util::HtmlBuilder::errorMessage(tr("Runway mismatch: STAR %1 ≠ Approach %2.").

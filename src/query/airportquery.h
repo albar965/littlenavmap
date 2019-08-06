@@ -182,6 +182,10 @@ private:
 
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
   bool hasQueryByAirportIdent(atools::sql::SqlQuery& query, const QString& ident) const;
+  void startByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName,
+                         const atools::geo::Pos& position);
+  void runwayEndByNames(map::MapSearchResult& result, const QString& runwayName, const QString& airportIdent);
+  map::MapRunwayEnd runwayEndByName(int airportId, const QString& runway);
 
   const int queryRowLimit = 5000;
 

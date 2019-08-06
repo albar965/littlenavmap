@@ -23,6 +23,7 @@
 #include "settings/settings.h"
 #include "query/querytypes.h"
 #include "common/constants.h"
+#include "common/maptypes.h"
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
@@ -152,6 +153,19 @@ const atools::sql::SqlRecord *InfoQuery::getIlsInformationNav(int runwayEndId)
 
 const atools::sql::SqlRecordVector *InfoQuery::getIlsInformationSimByName(const QString& airportIdent,
                                                                           const QString& runway)
+{
+  const atools::sql::SqlRecordVector *retval = nullptr;
+  for(const QString& rname: map::runwayNameZeroPrefixVariants(runway))
+  {
+    retval = ilsInformationSimByName(airportIdent, rname);
+    if(retval != nullptr && !retval->isEmpty())
+      break;
+  }
+  return retval;
+}
+
+const atools::sql::SqlRecordVector *InfoQuery::ilsInformationSimByName(const QString& airportIdent,
+                                                                       const QString& runway)
 {
   std::pair<QString, QString> key = std::make_pair(airportIdent, runway);
   atools::sql::SqlRecordVector *rec = ilsCacheSimByName.object(key);

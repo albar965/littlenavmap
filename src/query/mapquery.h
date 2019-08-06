@@ -76,7 +76,8 @@ public:
   void getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName);
 
   /* Get all airway segments for name and fragment - not cached */
-  void getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding, const QString& airwayName, int fragment);
+  void getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding, const QString& airwayName,
+                     int fragment);
 
   void getAirwayById(map::MapAirway& airway, int airwayId);
   map::MapAirway getAirwayById(int airwayId);
@@ -228,8 +229,10 @@ private:
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,
                                               bool lazy, bool overview);
+  QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway);
 
-  bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
+  void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
+                            bool navData);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;

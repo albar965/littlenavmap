@@ -1827,6 +1827,20 @@ bool runwayAlmostEqual(const QString& name1, const QString& name2)
          rwdesignator1 == rwdesignator2;
 }
 
+bool runwayEqual(QString name1, QString name2)
+{
+  if(name1.startsWith('0'))
+    name1 = name1.mid(1);
+  else if(name1.startsWith("RW0"))
+    name1 = name1.mid(3);
+
+  if(name2.startsWith('0'))
+    name2 = name2.mid(1);
+  else if(name2.startsWith("RW0"))
+    name2 = name2.mid(3);
+  return name1.compare(name2, Qt::CaseInsensitive) == 0;
+}
+
 QString runwayNameJoin(int number, const QString& designator)
 {
   return QString("%1%2").arg(number, 2, 10, QChar('0')).arg(designator);
@@ -1852,6 +1866,18 @@ QStringList runwayNameVariants(QString name)
 
   // Try next lower runway number
   retval.append(prefix + map::runwayNameJoin(number > 1 ? number - 1 : 36, designator));
+
+  return retval;
+}
+
+QStringList runwayNameZeroPrefixVariants(QString name)
+{
+  QStringList retval({name});
+
+  if(name.startsWith('0'))
+    retval.append(name.mid(1));
+  else if(name.startsWith("RW0"))
+    retval.append("RW" + name.mid(3));
 
   return retval;
 }
@@ -1883,11 +1909,16 @@ QStringList arincNameNameVariants(const QString& name)
 
 QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames)
 {
-  bool hasPrefix = false;
+  // Get a extended list that also contains all variants like 09C vs 9C
+  QStringList names;
+  for(const QString& r : airportRunwayNames)
+    names.append(map::runwayNameZeroPrefixVariants(r));
+
+  QString prefix;
   QString rwname(procRunwayName);
   if(rwname.startsWith("RW"))
   {
-    hasPrefix = true;
+    prefix = "RW";
     rwname = rwname.mid(2);
   }
 
@@ -1895,14 +1926,27 @@ QString runwayBestFit(const QString& procRunwayName, const QStringList& airportR
     return QString();
 
   // First check for exact match
-  if(airportRunwayNames.contains(rwname))
+  if(names.contains(rwname))
+    return procRunwayName;
+
+  if(rwname.startsWith('0') && names.contains(rwname.mid(1)))
     return procRunwayName;
 
   QStringList variants = runwayNameVariants(rwname);
-  for(const QString& runway : airportRunwayNames)
+  for(const QString& runway : names)
   {
     if(variants.contains(runway))
-      return (hasPrefix ? "RW" : QString()) + runway;
+      return prefix + runway;
+  }
+
+  if(rwname.startsWith('0'))
+  {
+    variants = runwayNameVariants(rwname.mid(1));
+    for(const QString& runway : names)
+    {
+      if(variants.contains(runway))
+        return prefix + runway;
+    }
   }
   return QString();
 }
@@ -2222,7 +2266,5 @@ void MapSearchResultIndex::removeByDistance(const atools::geo::Pos& pos, float m
   if(it != end())
     erase(it, end());
 }
-
-
 
 } // namespace types

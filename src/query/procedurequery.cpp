@@ -2262,7 +2262,7 @@ bool ProcedureQuery::doesRunwayMatch(const QString& runway, const QString& runwa
     // Nothing to match - get all procedures
     return true;
 
-  if(runway == runwayFromQuery)
+  if(map::runwayEqual(runway, runwayFromQuery))
     return true;
 
   return doesSidStarRunwayMatch(runway, arincName, airportRunways);
@@ -2279,13 +2279,13 @@ bool ProcedureQuery::doesSidStarRunwayMatch(const QString& runway, const QString
   {
     // Check which runways are assigned from values like "RW12B"
     QString rwBaseName = arincName.mid(2, 2);
-    if(airportRunways.contains(runway) && runway == rwBaseName + "L")
+    if(airportRunways.contains(runway) && map::runwayEqual(runway, rwBaseName + "L"))
       return true;
 
-    if(airportRunways.contains(runway) && runway == rwBaseName + "R")
+    if(airportRunways.contains(runway) && map::runwayEqual(runway, rwBaseName + "R"))
       return true;
 
-    if(airportRunways.contains(runway) && runway == rwBaseName + "C")
+    if(airportRunways.contains(runway) && map::runwayEqual(runway, rwBaseName + "C"))
       return true;
   }
 

@@ -216,6 +216,17 @@ map::MapRunwayEnd AirportQuery::getRunwayEndById(int id)
 void AirportQuery::getRunwayEndByNames(map::MapSearchResult& result, const QString& runwayName,
                                        const QString& airportIdent)
 {
+  for(const QString& rname: map::runwayNameZeroPrefixVariants(runwayName))
+  {
+    runwayEndByNames(result, rname, airportIdent);
+    if(!result.runwayEnds.isEmpty())
+      return;
+  }
+}
+
+void AirportQuery::runwayEndByNames(map::MapSearchResult& result, const QString& runwayName,
+                                    const QString& airportIdent)
+{
   QString rname(runwayName);
   if(rname.startsWith("RW"))
     rname.remove(0, 2);
@@ -358,7 +369,7 @@ void AirportQuery::getBestStartPositionForAirport(map::MapStart& start, int airp
   {
     while(query.next())
     {
-      if(runwayName == query.valueStr("runway_name"))
+      if(map::runwayEqual(runwayName, query.valueStr("runway_name")))
       {
         mapTypesFactory->fillStart(query.record(), start);
         break;
@@ -392,14 +403,19 @@ void AirportQuery::getBestStartPositionForAirport(map::MapStart& start, int airp
 void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
                                         const QString& runwayEndName, const atools::geo::Pos& position)
 {
+  for(const QString& rname: map::runwayNameZeroPrefixVariants(runwayEndName))
+  {
+    startByNameAndPos(start, airportId, rname, position);
+    if(start.isValid())
+      break;
+  }
+}
+
+void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId,
+                                     const QString& runwayEndName, const atools::geo::Pos& position)
+{
   // Get runway number for the first part of the query fetching start positions (before union)
   int number = runwayEndName.toInt();
-
-  QString endName(runwayEndName);
-  QString name, designator;
-  if(map::runwayNameSplit(runwayEndName, &name, &designator))
-    // It is a runway name - build correct name including leading zero
-    endName = name + designator;
 
   // No need to create a permanent query here since it is called rarely
   SqlQuery query(db);
@@ -415,7 +431,7 @@ void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
     "where s.airport_id = :airportId and s.runway_name = :runwayName)");
 
   query.bindValue(":number", number);
-  query.bindValue(":runwayName", endName);
+  query.bindValue(":runwayName", runwayEndName);
   query.bindValue(":airportId", airportId);
   query.exec();
 
@@ -717,15 +733,27 @@ QStringList AirportQuery::getRunwayNames(int airportId)
 
 map::MapRunwayEnd AirportQuery::getRunwayEndByName(int airportId, const QString& runway)
 {
+  map::MapRunwayEnd end;
+  for(const QString& rname: map::runwayNameZeroPrefixVariants(runway))
+  {
+    end = runwayEndByName(airportId, rname);
+    if(end.isValid())
+      break;
+  }
+  return end;
+}
+
+map::MapRunwayEnd AirportQuery::runwayEndByName(int airportId, const QString& runway)
+{
   const QList<map::MapRunway> *aprunways = getRunways(airportId);
   if(aprunways != nullptr)
   {
     for(const map::MapRunway& mr : *aprunways)
     {
-      if(mr.primaryName == runway)
+      if(map::runwayEqual(mr.primaryName, runway))
         return getRunwayEndById(mr.primaryEndId);
 
-      if(mr.secondaryName == runway)
+      if(map::runwayEqual(mr.secondaryName, runway))
         return getRunwayEndById(mr.secondaryEndId);
     }
   }

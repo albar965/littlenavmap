@@ -100,6 +100,7 @@ public:
 private:
   /* Airway name and fragment ID */
   typedef std::pair<QString, int> AirwayKey;
+  const atools::sql::SqlRecordVector *ilsInformationSimByName(const QString& airportIdent, const QString& runway);
 
   /* Caches */
   QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, waypointCache, airwayCache, runwayEndCache,
