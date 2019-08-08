@@ -37,6 +37,7 @@
 #include "ui_mainwindow.h"
 #include "gui/actiontextsaver.h"
 #include "mapgui/maplayersettings.h"
+#include "mapgui/mapmarkhandler.h"
 #include "fs/perf/aircraftperf.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
@@ -495,8 +496,10 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
     getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result,
                                          map::QUERY_NONE);
 
+    // Range rings =======================================================================
     if(event->modifiers() == Qt::ShiftModifier)
     {
+      NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE_RINGS);
       int index = getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
                                                                   screenSearchDistance);
       if(index != -1)
@@ -519,6 +522,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       }
       return true;
     }
+    // Edit route =======================================================================
     else if(event->modifiers() == (Qt::AltModifier | Qt::ControlModifier) ||
             event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
     {
@@ -545,6 +549,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         return true;
       }
     }
+    // Edit userpoint =======================================================================
     else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
     {
       // Add or edit userpoint
@@ -557,8 +562,10 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         emit addUserpointFromMap(result, pos);
       }
     }
+    // Measurement =======================================================================
     else if(event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::AltModifier)
     {
+      NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_MEASUREMENT);
       int index = getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
                                                                      screenSearchDistance);
       if(index != -1)
@@ -1619,9 +1626,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Disable all menu items that depend on position
   ui->actionMapSetMark->setEnabled(visibleOnMap);
   ui->actionMapSetHome->setEnabled(visibleOnMap);
-  ui->actionMapMeasureDistance->setEnabled(visibleOnMap);
-  ui->actionMapMeasureRhumbDistance->setEnabled(visibleOnMap);
-  ui->actionMapRangeRings->setEnabled(visibleOnMap);
+  ui->actionMapMeasureDistance->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT));
+  ui->actionMapMeasureRhumbDistance->setEnabled(visibleOnMap &&
+                                                NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT));
+  ui->actionMapRangeRings->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS));
 
   ui->actionMapUserdataAdd->setEnabled(visibleOnMap);
   ui->actionMapUserdataEdit->setEnabled(false);
@@ -1639,7 +1647,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapShowApproaches->setEnabled(false);
   ui->actionMapShowApproachesCustom->setEnabled(false);
   ui->actionMapTrafficPattern->setEnabled(false);
-  ui->actionMapHold->setEnabled(visibleOnMap);
+  ui->actionMapHold->setEnabled(false);
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
   ui->actionRouteAddPos->setEnabled(visibleOnMap);
@@ -2047,7 +2055,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Traffic pattern ========================================
-  if(airport != nullptr && !airport->noRunways())
+  if(airport != nullptr && !airport->noRunways() && NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
   {
     ui->actionMapTrafficPattern->setEnabled(true);
     ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(patternText));
@@ -2056,11 +2064,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(QString()));
 
   // Hold ========================================
-  ui->actionMapHold->setEnabled(visibleOnMap);
-  if(!holdText.isEmpty() && visibleOnMap)
-    ui->actionMapHold->setText(ui->actionMapHold->text().arg(holdText));
+  if(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
+  {
+    ui->actionMapHold->setEnabled(true);
+    ui->actionMapHold->setText(ui->actionMapHold->text().arg(holdText.isEmpty() ? tr("Position") : holdText));
+  }
   else
-    ui->actionMapHold->setText(ui->actionMapHold->text().arg(tr("Position")));
+    ui->actionMapHold->setText(ui->actionMapHold->text().arg(QString()));
 
   // Update "delete in route"
   if(routeIndex != -1 && NavApp::getRouteConst().canEditPoint(routeIndex))
@@ -2081,7 +2091,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(tr("Position")));
 
   // Update "show range rings for Navaid"
-  if(vor != nullptr || ndb != nullptr)
+  if((vor != nullptr || ndb != nullptr) && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
   {
     ui->actionMapNavaidRange->setEnabled(true);
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(rangeRingText));
@@ -2089,7 +2099,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
 
-  if(parking == nullptr && helipad == nullptr && !measureText.isEmpty())
+  if(parking == nullptr && helipad == nullptr && !measureText.isEmpty() &&
+     NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT))
   {
     // Set text to measure "from airport" etc.
     ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(measureText));
@@ -2101,6 +2112,23 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(tr("here")));
     ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(tr("here")));
   }
+
+  // Update texts to give user a hint for hidden user features in the disabled menu items =====================
+  QString notShown(tr(" (hidden on map)"));
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT))
+  {
+    ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text() + notShown);
+    ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text() + notShown);
+  }
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
+  {
+    ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + notShown);
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text() + notShown);
+  }
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
+    ui->actionMapHold->setText(ui->actionMapHold->text() + notShown);
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
+    ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text() + notShown);
 
   qDebug() << "departureParkingAirportId " << departureParkingAirportId;
   qDebug() << "airport " << airport;
@@ -3532,6 +3560,7 @@ void MapWidget::addHold(const map::MapSearchResult& result, const atools::geo::P
     getHolds().append(hold);
 
     mainWindow->updateMarkActionStates();
+
     update();
     mainWindow->setStatusMessage(tr("Added hold."));
   }
@@ -3627,6 +3656,7 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes
   ring.ranges.append(range);
   getScreenIndex()->getRangeMarks().append(ring);
   qDebug() << "navaid range" << ring.center;
+
   update();
   mainWindow->updateMarkActionStates();
   mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(ident));

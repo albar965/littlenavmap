@@ -48,6 +48,12 @@ void MapMarkHandler::restoreState()
   flagsToActions();
 }
 
+void MapMarkHandler::showMarkTypes(map::MapMarkTypes types)
+{
+  markTypes |= types;
+  flagsToActions();
+}
+
 QString MapMarkHandler::getMarkTypesText() const
 {
   QStringList types;

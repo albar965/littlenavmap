@@ -40,6 +40,7 @@
 #include "sql/sqlrecord.h"
 #include "gui/dialog.h"
 #include "geo/calculations.h"
+#include "mapgui/mapmarkhandler.h"
 
 #include <QTimer>
 #include <QClipboard>
@@ -855,7 +856,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
                                       ui->actionRouteAirportAlternate, ui->actionRouteAddPos, ui->actionRouteAppendPos,
-                                      ui->actionMapNavaidRange, ui->actionSearchShowApproaches,
+                                      ui->actionMapRangeRings, ui->actionMapNavaidRange, ui->actionSearchShowApproaches,
                                       ui->actionSearchShowApproachesCustom, ui->actionMapTrafficPattern,
                                       ui->actionMapHold, ui->actionUserdataAdd, ui->actionUserdataDelete,
                                       ui->actionUserdataEdit, ui->actionLogdataAdd, ui->actionLogdataDelete,
@@ -988,13 +989,33 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionRouteAirportDest->setText(tr("Set as Flight Plan Destination"));
   ui->actionRouteAirportAlternate->setText(tr("Add as Flight Plan Alternate"));
   ui->actionMapTrafficPattern->setText(tr("Display Airport Traffic Pattern"));
-  ui->actionMapHold->setText(tr("Display Hold"));
+  ui->actionMapHold->setText(tr("Display Holding"));
 
   ui->actionSearchTableCopy->setEnabled(index.isValid());
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
   ui->actionSearchTableSelectNothing->setEnabled(
     controller->getTotalRowCount() > 0 &&
     (view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection()));
+
+  // Update texts to give user a hint for hidden user features in the disabled menu items =====================
+  QString notShown(tr(" (hidden on map)"));
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
+  {
+    ui->actionMapRangeRings->setDisabled(true);
+    ui->actionMapNavaidRange->setDisabled(true);
+    ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + notShown);
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text() + notShown);
+  }
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
+  {
+    ui->actionMapHold->setDisabled(true);
+    ui->actionMapHold->setText(ui->actionMapHold->text() + notShown);
+  }
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
+  {
+    ui->actionMapTrafficPattern->setDisabled(true);
+    ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text() + notShown);
+  }
 
   // Build the menu depending on tab =========================================================================
   int selectedRows = getSelectedRowCount();

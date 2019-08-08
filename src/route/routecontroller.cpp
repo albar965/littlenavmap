@@ -56,6 +56,7 @@
 #include "fs/pln/flightplanio.h"
 #include "route/routestringdialog.h"
 #include "util/htmlbuilder.h"
+#include "mapgui/mapmarkhandler.h"
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
 #include "common/unit.h"
@@ -1857,7 +1858,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   qDebug() << "tableContextMenu";
 
   // Save text which will be changed below
-  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint,
+  atools::gui::ActionTextSaver saver({ui->actionMapRangeRings, ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint,
                                       ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
                                       ui->actionRouteDeleteLeg, ui->actionRouteInsert, ui->actionMapTrafficPattern,
                                       ui->actionMapHold});
@@ -2016,7 +2017,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   ui->actionMapTrafficPattern->setText(tr("Display Airport Traffic Pattern"));
 
   ui->actionMapHold->setEnabled(routeLeg != nullptr);
-  ui->actionMapHold->setText(tr("Display Hold"));
+  ui->actionMapHold->setText(tr("Display Holding"));
 
   // Get selected rows in ascending order
   QList<int> rows;
@@ -2063,6 +2064,27 @@ void RouteController::tableContextMenu(const QPoint& pos)
     }
   }
 
+  // Update texts to give user a hint for hidden user features in the disabled menu items =====================
+  QString notShown(tr(" (hidden on map)"));
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
+  {
+    ui->actionMapRangeRings->setDisabled(true);
+    ui->actionMapNavaidRange->setDisabled(true);
+    ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + notShown);
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text() + notShown);
+  }
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
+  {
+    ui->actionMapHold->setDisabled(true);
+    ui->actionMapHold->setText(ui->actionMapHold->text() + notShown);
+  }
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
+  {
+    ui->actionMapTrafficPattern->setDisabled(true);
+    ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text() + notShown);
+  }
+
+  // ====================================================================
   menu.addAction(ui->actionRouteShowInformation);
   menu.addAction(ui->actionRouteShowApproaches);
   menu.addAction(ui->actionRouteShowApproachesCustom);

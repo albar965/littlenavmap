@@ -47,6 +47,13 @@ public:
     return markTypes;
   }
 
+  bool isShown(map::MapMarkTypes type) const
+  {
+    return markTypes & type;
+  }
+
+  void showMarkTypes(map::MapMarkTypes types);
+
   QString getMarkTypesText() const;
 
 signals:
