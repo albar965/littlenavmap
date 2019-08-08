@@ -2030,8 +2030,8 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     {
       head(html, tr("File"));
       html.table();
-      html.row2(tr("Imported from:"), filepathTextShow(rec.valueStr("import_file_path")),
-                ahtml::NO_ENTITIES | ahtml::SMALL);
+      html.row2If(tr("Imported from:"), filepathTextShow(rec.valueStr("import_file_path")),
+                  ahtml::NO_ENTITIES | ahtml::SMALL);
       html.tableEnd();
     }
 
@@ -2233,10 +2233,10 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       {
         html.p(tr("Files"), ahtml::BOLD);
         html.table();
-        html.row2(tr("Flight plan:"), filepathTextShow(rec.valueStr("flightplan_file")),
-                  ahtml::NO_ENTITIES | ahtml::SMALL);
-        html.row2(tr("Aircraft performance:"), filepathTextShow(rec.valueStr("performance_file")),
-                  ahtml::NO_ENTITIES | ahtml::SMALL);
+        html.row2If(tr("Flight plan:"), filepathTextShow(rec.valueStr("flightplan_file")),
+                    ahtml::NO_ENTITIES | ahtml::SMALL);
+        html.row2If(tr("Aircraft performance:"), filepathTextShow(rec.valueStr("performance_file")),
+                    ahtml::NO_ENTITIES | ahtml::SMALL);
         html.tableEnd();
       }
 
@@ -3067,6 +3067,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
   float neededFuelWeight = INVALID_WEIGHT_VALUE, neededFuelVol = INVALID_VOLUME_VALUE;
 
+  html.row2AlignRight();
+
   float toTod = map::INVALID_DISTANCE_VALUE;
   if(!route.isEmpty() && userAircaft != nullptr && info)
   {
@@ -3436,9 +3438,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       ice += tr("Structure ") + locale.toString(userAircaft->getStructuralIcePercent(), 'f', 0) + tr(" %");
     }
     if(ice.isEmpty())
-      ice = tr("None");
-
-    html.row2(tr("Ice:"), ice);
+      html.row2(tr("Ice:"), tr("None"));
+    else
+      html.row2Error(tr("Ice:"), ice);
   }
   html.tableEnd();
 
@@ -3617,6 +3619,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 #endif
     html.tableEnd();
   }
+  html.row2AlignRight(false);
 }
 
 QString HtmlInfoBuilder::airportLink(const HtmlBuilder& html, const QString& ident, const QString& name) const
@@ -3776,7 +3779,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
       if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
         title = i == 0 ? tr("X-Plane") : QString();
 
-      html.row2(title, filepathTextShow(rec.valueStr("filepath")), ahtml::NO_ENTITIES);
+      html.row2If(title, filepathTextShow(rec.valueStr("filepath")), ahtml::NO_ENTITIES);
       i++;
     }
     html.tableEnd();
@@ -3820,6 +3823,9 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 QString HtmlInfoBuilder::filepathTextShow(const QString& filepath) const
 {
   HtmlBuilder link(true);
+
+  if(filepath.isEmpty())
+    return QString();
 
   if(QFileInfo::exists(filepath))
     link.a(filepath, QString("lnm://show?filepath=%1").arg(filepath), ahtml::LINK_NO_UL | ahtml::SMALL);
