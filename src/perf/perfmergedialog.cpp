@@ -157,8 +157,8 @@ void PerfMergeDialog::process()
   // change flag is reset by proc method if values differ
   changed = false;
 
-  to.setName(proc(ui->comboBoxClimbFuelFlow, from.getName(), to.getName()));
-  to.setAircraftType(proc(ui->comboBoxClimbFuelFlow, from.getAircraftType(), to.getAircraftType()));
+  to.setName(proc(ui->comboBoxName, from.getName(), to.getName()));
+  to.setAircraftType(proc(ui->comboBoxType, from.getAircraftType(), to.getAircraftType()));
 
   to.setClimbFuelFlow(proc(ui->comboBoxClimbFuelFlow, from.getClimbFuelFlow(), to.getClimbFuelFlow()));
   to.setClimbSpeed(proc(ui->comboBoxClimbSpeed, from.getClimbSpeed(), to.getClimbSpeed()));

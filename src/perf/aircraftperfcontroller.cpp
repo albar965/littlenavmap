@@ -24,6 +24,7 @@
 #include "settings/settings.h"
 #include "gui/widgetutil.h"
 #include "navapp.h"
+#include "common/fueltool.h"
 #include "route/route.h"
 #include "geo/calculations.h"
 #include "weather/windreporter.h"
@@ -577,6 +578,12 @@ void AircraftPerfController::updateReport()
     // File path  =======================================================
     fuelReportFilepath(html, false /* print */);
 
+#ifdef DEBUG_INFORMATION
+    html.text("Climb " + Unit::speedKts(altitudeLegs.getHeadWindClimb()) +
+              " Descent " + Unit::speedKts(altitudeLegs.getHeadWindDescent()) +
+              " All " + Unit::speedKts(altitudeLegs.getHeadWindAverage()));
+#endif
+
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftPerformanceReport, html.getHtml(),
                                       false /*scrollToTop*/, true /* keep selection */);
   }
@@ -611,6 +618,7 @@ void AircraftPerfController::updateReportCurrent()
     // html.p().warning(tr("No valid flight plan.")).pEnd();
 
     atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
+    FuelTool ft(perf);
 
     // Display performance collection progress ==========================================================
     if(segment != atools::fs::perf::NONE)
@@ -631,8 +639,8 @@ void AircraftPerfController::updateReportCurrent()
       html.p().b(tr("Fuel")).pEnd();
       html.table();
       html.row2(tr("Fuel Type:"), curPerf.isAvgas() ? tr("Avgas") : tr("Jetfuel"), flags);
-      html.row2(tr("Total Fuel Consumed:"), fuelWeightVolLocal(perfHandler->getTotalFuelConsumed()), flags);
-      html.row2(tr("Taxi Fuel:"), fuelWeightVolLocal(curPerf.getTaxiFuel()), flags);
+      html.row2(tr("Total Fuel Consumed:"), ft.weightVolLocal(perfHandler->getTotalFuelConsumed()), flags);
+      html.row2(tr("Taxi Fuel:"), ft.weightVolLocal(curPerf.getTaxiFuel()), flags);
       html.tableEnd();
     }
 
@@ -643,7 +651,7 @@ void AircraftPerfController::updateReportCurrent()
       html.row2(tr("True Airspeed:"), Unit::speedKts(curPerf.getClimbSpeed()), flags);
       html.row2(tr("Vertical Speed:"), Unit::speedVertFpm(curPerf.getClimbVertSpeed()) + tr(" <b>▲</b>"),
                 atools::util::html::NO_ENTITIES | flags);
-      html.row2(tr("Fuel Flow:"), ffWeightVolLocal(curPerf.getClimbFuelFlow()), flags);
+      html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerf.getClimbFuelFlow()), flags);
       html.tableEnd();
     }
 
@@ -652,7 +660,7 @@ void AircraftPerfController::updateReportCurrent()
       html.p().b(tr("Cruise")).pEnd();
       html.table();
       html.row2(tr("True Airspeed:"), Unit::speedKts(curPerf.getCruiseSpeed()), flags);
-      html.row2(tr("Fuel Flow:"), ffWeightVolLocal(curPerf.getCruiseFuelFlow()), flags);
+      html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerf.getCruiseFuelFlow()), flags);
       html.tableEnd();
     }
     if(segment >= atools::fs::perf::DESCENT)
@@ -663,7 +671,7 @@ void AircraftPerfController::updateReportCurrent()
       // Descent speed is always positive
       html.row2(tr("Vertical Speed:"), Unit::speedVertFpm(-curPerf.getDescentVertSpeed()) + tr(" <b>▼</b>"),
                 atools::util::html::NO_ENTITIES | flags);
-      html.row2(tr("Fuel Flow:"), ffWeightVolLocal(curPerf.getDescentFuelFlow()), flags);
+      html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerf.getDescentFuelFlow()), flags);
       html.tableEnd();
     }
 
@@ -742,6 +750,8 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.h2(tr("Aircraft Performance %1 - %2").arg(perf->getName()).arg(perf->getAircraftType()),
             atools::util::html::BOLD | atools::util::html::BIG);
 
+  FuelTool ft(perf);
+
   // Warnings and errors =================================================
   if(!print)
   {
@@ -770,7 +780,8 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     {
       if(perf->getUsableFuel() > 1.f)
         if(altitudeLegs.getBlockFuel(*perf) > perf->getUsableFuel())
-          html.p().error(tr("Block fuel exceeds usable of %1.").arg(fuelWeightVolLocal(perf->getUsableFuel()))).pEnd();
+          html.p().error(tr("Block fuel exceeds usable of %1.").arg(ft.weightVolLocal(perf->getUsableFuel()))).pEnd();
+
     }
 
     if(perf->getUsableFuel() > 1.f && perf->getReserveFuel() > perf->getUsableFuel())
@@ -791,19 +802,30 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
   html.p().b(tr("Aircraft")).pEnd();
 
+  QString text = tr("Estimated range with reserve:");
   html.table();
   html.row2(tr("Fuel Type:"), perf->isAvgas() ? tr("Avgas") : tr("Jetfuel"), flags);
-  if(perf->getUsableFuel() > 0.f)
+  if(perf->getUsableFuel() > 1.f)
   {
-    html.row2(tr("Usable Fuel:"), fuelWeightVolLocal(perf->getUsableFuel()), flags);
+    html.row2(tr("Usable Fuel:"), ft.weightVolLocal(perf->getUsableFuel()), flags);
 
-    float speedKts = perf->getCruiseSpeed();
-    float enduranceHours = perf->getUsableFuelLbs() / perf->getCruiseFuelFlow();
-
-    html.row2(tr("Estimated range with reserve:"), tr("%1, %2").
-              arg(Unit::distNm(enduranceHours * speedKts)).
-              arg(formatter::formatMinutesHoursLong(enduranceHours)), flags);
+    if(perf->getCruiseSpeed() > 1.f)
+    {
+      if(perf->getCruiseFuelFlow() > 1.f)
+      {
+        float enduranceHours = perf->getUsableFuelLbs() / perf->getCruiseFuelFlow();
+        html.row2(text, tr("%1, %2").
+                  arg(Unit::distNm(enduranceHours * perf->getCruiseSpeed())).
+                  arg(formatter::formatMinutesHoursLong(enduranceHours)), flags);
+      }
+      else
+        html.row2Warning(text, tr("Cruise fuel flow not set"));
+    }
+    else
+      html.row2Warning(text, tr("Cruise speed not set"));
   }
+  else
+    html.row2Warning(text, tr("Usable fuel not set"));
 
   if(hasLegs)
   {
@@ -874,39 +896,37 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.p().b(tr("Fuel Plan")).pEnd();
     html.table();
 
-    html.row2(tr("Trip Fuel:"), tr("<b>%1</b> (%2)").
-              arg(fuelWeightVolLocal(altitudeLegs.getTripFuel())).
-              arg(fuelWeightVolOther(altitudeLegs.getTripFuel())), atools::util::html::NO_ENTITIES | flags);
+    html.row2(tr("Trip Fuel:"), ft.weightVolLocalOther(altitudeLegs.getTripFuel(),
+                                                       true /* bold */, false /* not small*/),
+              atools::util::html::NO_ENTITIES | flags);
     float blockFuel = altitudeLegs.getBlockFuel(*perf);
     QString percent = perf->getUsableFuel() >
                       1.f ? tr("<br/>%1 % of usable Fuel").arg(100.f / perf->getUsableFuel() * blockFuel, 0, 'f',
                                                                0) : QString();
-    html.row2(tr("Block Fuel:"), tr("<b>%1</b> (%2)%3").
-              arg(fuelWeightVolLocal(blockFuel)).
-              arg(fuelWeightVolOther(blockFuel)).
-              arg(percent),
-              atools::util::html::NO_ENTITIES | flags);
-    html.row2(tr("Fuel at Destination:"), fuelWeightVolLocal(altitudeLegs.getDestinationFuel(*perf)), flags);
+    html.row2(tr("Block Fuel:"), tr("%1%2").
+              arg(ft.weightVolLocalOther(blockFuel, true /* bold */, false /* not small*/)).
+              arg(percent), atools::util::html::NO_ENTITIES | flags);
+    html.row2(tr("Fuel at Destination:"), ft.weightVolLocal(altitudeLegs.getDestinationFuel(*perf)), flags);
 
     if(altitudeLegs.getAlternateFuel() > 0.f)
-      html.row2(tr("Alternate Fuel:"), fuelWeightVolLocal(altitudeLegs.getAlternateFuel()), flags);
+      html.row2(tr("Alternate Fuel:"), ft.weightVolLocal(altitudeLegs.getAlternateFuel()), flags);
   } // if(hasLegs)
 
   // Fuel information printed always =====================================================
-  html.row2(tr("Reserve Fuel:"), fuelWeightVolLocal(perf->getReserveFuel()), flags);
+  html.row2(tr("Reserve Fuel:"), ft.weightVolLocal(perf->getReserveFuel()), flags);
 
   if(perf->getTaxiFuel() > 0.f)
-    html.row2(tr("Taxi Fuel:"), fuelWeightVolLocal(perf->getTaxiFuel()), flags);
+    html.row2(tr("Taxi Fuel:"), ft.weightVolLocal(perf->getTaxiFuel()), flags);
 
   if(perf->getExtraFuel() > 0.f)
-    html.row2(tr("Extra Fuel:"), fuelWeightVolLocal(perf->getExtraFuel()), flags);
+    html.row2(tr("Extra Fuel:"), ft.weightVolLocal(perf->getExtraFuel()), flags);
 
   if(perf->getContingencyFuel() > 0.f)
   {
     if(hasLegs)
       html.row2(tr("Contingency Fuel:"), tr("%1 %, %2").
                 arg(perf->getContingencyFuel(), 0, 'f', 0).
-                arg(fuelWeightVolLocal(altitudeLegs.getContingencyFuel(*perf))), flags);
+                arg(ft.weightVolLocal(altitudeLegs.getContingencyFuel(*perf))), flags);
     else
       html.row2(tr("Contingency Fuel:"), tr("%1 %").arg(perf->getContingencyFuel(), 0, 'f', 0), flags);
   }
@@ -957,79 +977,6 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.p().b(tr("Performance File Description")).pEnd();
     html.table(1).row2(QString(), perf->getDescription()).tableEnd();
   }
-}
-
-QString fuelWeightVol(atools::fs::perf::AircraftPerf *perf, opts::UnitFuelAndWeight unitFuelAndWeight,
-                      float valueLbsGal)
-{
-  static const QString STR("%1 %2 %3 %4");
-
-  // Source value is always lbs or gallon depending on setting in perf
-  // convert according to unitFuelAndWeight or pass through
-  using namespace atools::geo;
-  switch(unitFuelAndWeight)
-  {
-    case opts::FUEL_WEIGHT_GAL_LBS:
-      if(perf->useFuelAsVolume())
-        // Pass volume through and convert volume to weight
-        return STR.
-               arg(fromGalToLbs(perf->isJetFuel(), valueLbsGal), 0, 'f', 0).
-               arg(Unit::getSuffixFuelWeightLbs()).
-               arg(valueLbsGal, 0, 'f', 0).
-               arg(Unit::getSuffixFuelVolGal());
-      else
-        // Pass weight through and convert weight to volume
-        return STR.
-               arg(valueLbsGal, 0, 'f', 0).
-               arg(Unit::getSuffixFuelWeightLbs()).
-               arg(fromLbsToGal(perf->isJetFuel(), valueLbsGal), 0, 'f', 0).
-               arg(Unit::getSuffixFuelVolGal());
-
-    case opts::FUEL_WEIGHT_LITER_KG:
-      if(perf->useFuelAsVolume())
-        // Convert to metric and pass volume  through and convert volume to weight
-        return STR.
-               arg(fromLiterToKg(perf->isJetFuel(), lbsToKg(valueLbsGal)), 0, 'f', 0).
-               arg(Unit::getSuffixFuelWeightKg()).
-               arg(gallonToLiter(valueLbsGal), 0, 'f', 0).
-               arg(Unit::getSuffixFuelVolLiter());
-      else
-        // Convert to metric and  pass weight through and convert weight to volume
-        return STR.
-               arg(lbsToKg(valueLbsGal), 0, 'f', 0).
-               arg(Unit::getSuffixFuelWeightKg()).
-               arg(fromLbsToGal(perf->isJetFuel(), gallonToLiter(valueLbsGal)), 0, 'f', 0).
-               arg(Unit::getSuffixFuelVolLiter());
-  }
-  return QString();
-}
-
-QString AircraftPerfController::fuelWeightVolLocal(float valueLbsGal)
-{
-  // Convert to locally selected unit
-  return fuelWeightVol(perf, OptionData::instance().getUnitFuelAndWeight(), valueLbsGal);
-}
-
-QString AircraftPerfController::fuelWeightVolOther(float valueLbsGal)
-{
-  // Convert to opposite of locally selected unit (lbs/gal vs. kg/l and vice versa)
-  switch(OptionData::instance().getUnitFuelAndWeight())
-  {
-    case opts::FUEL_WEIGHT_GAL_LBS:
-      return fuelWeightVol(perf, opts::FUEL_WEIGHT_LITER_KG, valueLbsGal);
-
-    case opts::FUEL_WEIGHT_LITER_KG:
-      return fuelWeightVol(perf, opts::FUEL_WEIGHT_GAL_LBS, valueLbsGal);
-  }
-  return QString();
-}
-
-QString AircraftPerfController::ffWeightVolLocal(float valueLbsGal)
-{
-  if(perf->useFuelAsVolume())
-    return Unit::ffLbsAndGal(atools::geo::fromGalToLbs(perf->isJetFuel(), valueLbsGal), valueLbsGal);
-  else
-    return Unit::ffLbsAndGal(valueLbsGal, atools::geo::fromLbsToGal(perf->isJetFuel(), valueLbsGal));
 }
 
 void AircraftPerfController::saveState()

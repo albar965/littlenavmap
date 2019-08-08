@@ -225,6 +225,7 @@ SOURCES += \
   src/common/dialogrecordhelper.cpp \
   src/common/elevationprovider.cpp \
   src/common/formatter.cpp \
+  src/common/fueltool.cpp \
   src/common/htmlinfobuilder.cpp \
   src/common/jumpback.cpp \
   src/common/mapcolors.cpp \
@@ -370,6 +371,7 @@ HEADERS  += \
   src/common/dialogrecordhelper.h \
   src/common/elevationprovider.h \
   src/common/formatter.h \
+  src/common/fueltool.h \
   src/common/htmlinfobuilder.h \
   src/common/jumpback.h \
   src/common/mapcolors.h \

@@ -20,6 +20,7 @@
 #include "options/optiondata.h"
 #include "navapp.h"
 #include "atools.h"
+#include "common/fueltool.h"
 #include "common/maptools.h"
 #include "common/airportfiles.h"
 #include "fs/online/onlinetypes.h"
@@ -48,6 +49,7 @@
 #include "fs/weather/metarparser.h"
 #include "common/vehicleicons.h"
 #include "grib/windquery.h"
+#include "fs/perf/aircraftperf.h"
 
 #include <QSize>
 #include <QFileInfo>
@@ -2131,6 +2133,9 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     float travelTimeHours = (rec.valueDateTime("destination_time_sim").toSecsSinceEpoch() -
                              rec.valueDateTime("departure_time_sim").toSecsSinceEpoch()) / 3600.f;
 
+    FuelTool ft(rec.valueBool("is_jetfuel"), false /* fuel is in lbs */);
+    float usedFuel = rec.valueFloat("used_fuel");
+    float grossWeight = rec.valueFloat("grossweight");
     if(travelTimeHours > 0.01)
     {
       html.row2(tr("Travel time:"), formatter::formatMinutesHoursLong(travelTimeHours));
@@ -2139,10 +2144,14 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
         if(rec.valueFloat("distance_flown") > 0.f)
           html.row2(tr("Average ground speed:"), Unit::speedKts(rec.valueFloat("distance_flown") / travelTimeHours));
 
-        if(rec.valueFloat("used_fuel") > 0.f)
-          html.row2(tr("Fuel flow:"), Unit::ffLbs(rec.valueFloat("used_fuel") / travelTimeHours));
+        if(usedFuel > 0.f)
+          html.row2(tr("Average fuel flow:"), ft.flowWeightVolLocal(usedFuel / travelTimeHours));
       }
     }
+
+    if(info && usedFuel > 0.f)
+      html.row2(tr("Used fuel from takeoff to landing:"), ft.weightVolLocal(usedFuel),
+                ahtml::NO_ENTITIES);
 
     if(info)
     {
@@ -2170,8 +2179,8 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     }
     if(info)
     {
-      if(rec.valueFloat("grossweight") > 0.f)
-        html.row2(tr("Gross Weight:"), Unit::fuelLbsGallon(rec.valueFloat("grossweight")));
+      if(grossWeight > 0.f)
+        html.row2(tr("Gross Weight:"), Unit::weightLbs(grossWeight), ahtml::NO_ENTITIES);
       addCoordinates(Pos(rec.valueFloat("departure_lonx"),
                          rec.valueFloat("departure_laty"),
                          rec.valueFloat("departure_alt", 0.f)), html);
@@ -2198,26 +2207,24 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
                     tr("%1 %2").arg(locale.toString(destTimeSim, QLocale::ShortFormat)).arg(destTimeZoneSim));
       }
 
+      if(grossWeight > 0.f)
+        html.row2(tr("Gross Weight:"), Unit::weightLbs(grossWeight - usedFuel), ahtml::NO_ENTITIES);
+
       addCoordinates(Pos(rec.valueFloat("destination_lonx"),
                          rec.valueFloat("destination_laty"),
                          rec.valueFloat("destination_alt", 0.f)), html);
       html.tableEnd();
 
-      using atools::geo::fromLbsToGal;
       // Fuel =======================================================
       if(rec.valueFloat("trip_fuel") > 0.f || rec.valueFloat("block_fuel") > 0.f || rec.valueFloat("block_fuel") > 0.f)
       {
         html.p(tr("Fuel"), ahtml::BOLD);
         html.table();
-        bool jetfuel = rec.valueBool("is_jetfuel");
         ahtml::Flags flags = ahtml::ALIGN_RIGHT;
-        html.row2(tr("Type:"), jetfuel ? tr("Jetfuel") : tr("Avgas"));
-        html.row2(tr("Trip:"), Unit::fuelLbsAndGal(rec.valueFloat("trip_fuel"),
-                                                   fromLbsToGal(jetfuel, rec.valueFloat("trip_fuel"))), flags);
-        html.row2(tr("Block:"), Unit::fuelLbsAndGal(rec.valueFloat("block_fuel"),
-                                                    fromLbsToGal(jetfuel, rec.valueFloat("block_fuel"))), flags);
-        html.row2(tr("Used:"), Unit::fuelLbsAndGal(rec.valueFloat("used_fuel"),
-                                                   fromLbsToGal(jetfuel, rec.valueFloat("block_fuel"))), flags);
+        html.row2(tr("Type:"), ft.getFuelTypeString());
+        html.row2(tr("Trip:"), ft.weightVolLocal(rec.valueFloat("trip_fuel")), flags);
+        html.row2(tr("Block:"), ft.weightVolLocal(rec.valueFloat("block_fuel")), flags);
+        html.row2(tr("Used:"), ft.weightVolLocal(usedFuel), flags);
         html.tableEnd();
       }
 
@@ -2998,22 +3005,34 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
   if(info)
   {
     head(html, tr("Weight and Fuel"));
-    html.table();
-    html.row2(tr("Max Gross Weight:"), Unit::weightLbs(userAircraft.getAirplaneMaxGrossWeightLbs()));
-    html.row2(tr("Gross Weight:"), Unit::weightLbs(userAircraft.getAirplaneTotalWeightLbs()));
+    html.table().row2AlignRight();
+
+    float maxGrossWeight = userAircraft.getAirplaneMaxGrossWeightLbs();
+    float grossWeight = userAircraft.getAirplaneTotalWeightLbs();
+
+    html.row2(tr("Max Gross Weight:"), Unit::weightLbsLocalOther(maxGrossWeight, false, true), ahtml::NO_ENTITIES);
+
+    if(grossWeight > maxGrossWeight)
+      html.row2Error(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight, false /* bold */, false /* small */));
+    else
+      html.row2(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight, true /* bold */), ahtml::NO_ENTITIES);
 
     html.row2(QString());
-    html.row2(tr("Empty Weight:"), Unit::weightLbs(userAircraft.getAirplaneEmptyWeightLbs()));
-    html.row2(tr("Zero Fuel Weight:"), Unit::weightLbs(userAircraft.getAirplaneTotalWeightLbs() -
-                                                       userAircraft.getFuelTotalWeightLbs()));
+    html.row2(tr("Empty Weight:"), Unit::weightLbsLocalOther(userAircraft.getAirplaneEmptyWeightLbs()),
+              ahtml::NO_ENTITIES);
+    html.row2(tr("Zero Fuel Weight:"), Unit::weightLbsLocalOther(userAircraft.getAirplaneTotalWeightLbs() -
+                                                                 userAircraft.getFuelTotalWeightLbs()),
+              ahtml::NO_ENTITIES);
 
-    html.row2(tr("Total Payload:"), Unit::weightLbs(userAircraft.getAirplaneTotalWeightLbs() -
-                                                    userAircraft.getAirplaneEmptyWeightLbs() -
-                                                    userAircraft.getFuelTotalWeightLbs()));
+    html.row2(tr("Total Payload:"), Unit::weightLbsLocalOther(userAircraft.getAirplaneTotalWeightLbs() -
+                                                              userAircraft.getAirplaneEmptyWeightLbs() -
+                                                              userAircraft.getFuelTotalWeightLbs()),
+              ahtml::NO_ENTITIES);
 
-    html.row2(tr("Fuel:"), Unit::fuelLbsAndGal(userAircraft.getFuelTotalWeightLbs(),
-                                               userAircraft.getFuelTotalQuantityGallons()));
-    html.tableEnd();
+    html.row2(tr("Fuel:"), Unit::fuelLbsAndGalLocalOther(userAircraft.getFuelTotalWeightLbs(),
+                                                         userAircraft.getFuelTotalQuantityGallons(), true /* bold */),
+              ahtml::NO_ENTITIES);
+    html.tableEnd().row2AlignRight(false);
   }
 }
 
@@ -3107,10 +3126,23 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                neededFuelVol < INVALID_VOLUME_VALUE && neededFuelWeight < INVALID_WEIGHT_VALUE)
             {
               html.row2(tr("Gross Weight:"),
-                        Unit::weightLbs(userAircaft->getAirplaneTotalWeightLbs() - neededFuelWeight));
-              html.row2(tr("Fuel:"),
-                        Unit::fuelLbsAndGal(userAircaft->getFuelTotalWeightLbs() - neededFuelWeight,
-                                            userAircaft->getFuelTotalQuantityGallons() - neededFuelVol));
+                        Unit::weightLbsLocalOther(userAircaft->getAirplaneTotalWeightLbs() - neededFuelWeight),
+                        ahtml::NO_ENTITIES);
+
+              float remainingFuelLbs = userAircaft->getFuelTotalWeightLbs() - neededFuelWeight;
+              float remainingFuelGal = userAircaft->getFuelTotalQuantityGallons() - neededFuelVol;
+
+              const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
+
+              if(remainingFuelLbs < 0.f || remainingFuelGal < 0.f)
+                html.row2Error(tr("Fuel:"),
+                               Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
+              else if(remainingFuelLbs < perf.getReserveFuelLbs() || remainingFuelGal < perf.getReserveFuelGal())
+                html.row2Warning(tr("Fuel:"),
+                                 Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
+              else
+                html.row2(tr("Fuel:"),
+                          Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal), ahtml::NO_ENTITIES);
             }
           }
 
@@ -3160,7 +3192,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(tr("Distance and Time:"), todTexts.join(tr(", ")));
 
           if(!less && fuelAtTod < INVALID_WEIGHT_VALUE && fuelVolAtTod < INVALID_VOLUME_VALUE)
-            html.row2(tr("Fuel:"), Unit::fuelLbsAndGal(fuelAtTod, fuelVolAtTod));
+            html.row2(tr("Fuel:"), Unit::fuelLbsAndGal(fuelAtTod, fuelVolAtTod), ahtml::NO_ENTITIES);
         }
         html.tableEnd();
       }
@@ -3380,8 +3412,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                 locale.toString(userAircaft->getTrackDegTrue(), 'f', 0) + tr("°T"));
 
     if(!less)
-      html.row2(tr("Fuel Flow:"), Unit::ffLbs(userAircaft->getFuelFlowPPH()) + ", " +
-                Unit::ffGallon(userAircaft->getFuelFlowGPH()));
+      html.row2(tr("Fuel Flow:"), Unit::ffLbsAndGal(userAircaft->getFuelFlowPPH(), userAircaft->getFuelFlowGPH()));
 
     if(userAircaft->getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
     {

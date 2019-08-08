@@ -208,12 +208,18 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
 
 void AircraftPerfDialog::updateRange()
 {
+  // Check values and display error message =======================
   if(ui->spinBoxUsableFuel->value() < 1.)
     ui->labelUsableFuelRange->setText(atools::util::HtmlBuilder::errorMessage(tr("Usable fuel not set.")));
   else if(ui->spinBoxUsableFuel->value() <= ui->spinBoxReserveFuel->value())
     ui->labelUsableFuelRange->setText(atools::util::HtmlBuilder::errorMessage(tr("Usable fuel smaller than reserve.")));
+  else if(ui->spinBoxCruiseSpeed->value() < 1.)
+    ui->labelUsableFuelRange->setText(atools::util::HtmlBuilder::errorMessage(tr("Cruise speed not set.")));
+  else if(ui->spinBoxCruiseFuelFlow->value() < 1.)
+    ui->labelUsableFuelRange->setText(atools::util::HtmlBuilder::errorMessage(tr("Cruise fuel flow not set.")));
   else if(ui->spinBoxUsableFuel->value() > 1.)
   {
+    // All is valid - display range =======================
     float speedKts = Unit::rev(static_cast<float>(ui->spinBoxCruiseSpeed->value()), Unit::speedKtsF);
     float fuelVolWeight = static_cast<float>(ui->spinBoxUsableFuel->value()) -
                           static_cast<float>(ui->spinBoxReserveFuel->value());

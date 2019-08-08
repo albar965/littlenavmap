@@ -178,14 +178,6 @@ private:
 
   void fuelReportRunway(atools::util::HtmlBuilder& html);
 
-  /* Make a string with fuel in lbs and gallons or kg and liter */
-  /* To currently user selected fuel units */
-  QString fuelWeightVolLocal(float valueLbsGal);
-  QString ffWeightVolLocal(float valueLbsGal);
-
-  /* To opposite of currently user selected fuel units */
-  QString fuelWeightVolOther(float valueLbsGal);
-
   /* Restart performance collection  */
   void restartCollect();
 

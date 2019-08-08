@@ -328,7 +328,7 @@ void InfoController::anchorClicked(const QUrl& url)
 void InfoController::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save({ui->tabWidgetLegend});
+  atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save(ui->tabWidgetLegend);
 
   // Store currently shown map objects in a string list containing id and type
   map::MapObjectRefList refs;
@@ -416,7 +416,7 @@ void InfoController::restoreState()
                             true /* forceUpdate */);
 
     Ui::MainWindow *ui = NavApp::getMainUi();
-    atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetLegend});
+    atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore(ui->tabWidgetLegend);
   }
   updateTextEditFontSizes();
 }

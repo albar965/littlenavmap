@@ -419,6 +419,56 @@ float Unit::weightKgF(float value)
   return 0.f;
 }
 
+QString Unit::localOtherText(bool localBold, bool otherSmall)
+{
+  return (localBold ? tr("<b>%1</b>") : tr("%1")) +
+         (otherSmall ? tr(" <small>(%2)</small>") : tr(" (%2)"));
+}
+
+QString Unit::localOtherText2(bool localBold, bool otherSmall)
+{
+  return (localBold ? tr("<b>%1, %2</b>") : tr("%1, %2")) +
+         (otherSmall ? tr(" <small>(%3, %4)</small>") : tr(" (%3, %4)"));
+}
+
+QString Unit::weightLbsLocalOther(float valueLbs, bool localBold, bool otherSmall)
+{
+  switch(unitFuelWeight)
+  {
+    case opts::FUEL_WEIGHT_GAL_LBS:
+      return localOtherText(localBold, otherSmall).
+             arg(u(valueLbs, suffixFuelWeightLbs, true)).
+             arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
+
+    case opts::FUEL_WEIGHT_LITER_KG:
+      return localOtherText(localBold, otherSmall).
+             arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+             arg(u(valueLbs, suffixFuelWeightKg, true));
+  }
+  return QString();
+}
+
+QString Unit::fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool localBold, bool otherSmall)
+{
+  switch(unitFuelWeight)
+  {
+    case opts::FUEL_WEIGHT_GAL_LBS:
+      return localOtherText2(localBold, otherSmall).
+             arg(u(valueLbs, suffixFuelWeightLbs, true)).
+             arg(u(valueGal, suffixFuelVolGal, true)).
+             arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+             arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
+
+    case opts::FUEL_WEIGHT_LITER_KG:
+      return localOtherText2(localBold, otherSmall).
+             arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+             arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true)).
+             arg(u(valueLbs, suffixFuelWeightLbs, true)).
+             arg(u(valueGal, suffixFuelVolGal, true));
+  }
+  return QString();
+}
+
 QString Unit::ffGallon(float value, bool addUnit)
 {
   return u(volGallonF(value), unitFfVolStr, addUnit);

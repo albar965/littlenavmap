@@ -107,6 +107,11 @@ public:
   static QString weightKg(float value, bool addUnit = true);
   static float weightKgF(float value);
 
+  /* Get unit string with unit as selected in options and other unit in brackets */
+  static QString weightLbsLocalOther(float value, bool localBold = false, bool otherSmall = true);
+  static QString fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool localBold = false,
+                                         bool otherSmall = true);
+
   /* Fuel flow US Gallon and lbs */
   static QString ffGallon(float value, bool addUnit = true);
   static float ffGallonF(float value);
@@ -325,6 +330,8 @@ private:
   /* Merges numbers and units depending on flags */
   static QString u(const QString& num, const QString& un, bool addUnit, bool narrow);
   static QString u(float num, const QString& un, bool addUnit, bool narrow = false);
+  static QString localOtherText(bool localBold, bool otherSmall);
+  static QString localOtherText2(bool localBold, bool otherSmall);
 
   static const OptionData *opts;
   static QLocale *locale, *clocale;
