@@ -59,7 +59,7 @@ void JumpBack::updateValues(const QVariantList& jumpBackValues)
 void JumpBack::start(const QVariantList& jumpBackValues)
 {
   if(NavApp::isConnectedAndAircraft() &&
-     OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
+     OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE)
   {
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << parent()->metaObject()->className() << jumpBackValues;

@@ -53,7 +53,7 @@ MapTooltip::~MapTooltip()
 
 QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, const Route& route, bool airportDiagram)
 {
-  opts::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
+  optsd::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
 
   HtmlBuilder html(false);
   HtmlInfoBuilder info(mainWindow, false);
@@ -112,7 +112,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Navaids from procedure points ===========================================================================
-  if(opts & opts::TOOLTIP_NAVAID)
+  if(opts & optsd::TOOLTIP_NAVAID)
   {
     for(const proc::MapProcedurePoint& ap : mapSearchResult.procPoints)
     {
@@ -185,7 +185,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Airports ===========================================================================
-  if(opts & opts::TOOLTIP_AIRPORT)
+  if(opts & optsd::TOOLTIP_AIRPORT)
   {
     for(const MapAirport& airport : mapSearchResult.airports)
     {
@@ -205,7 +205,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Navaids ===========================================================================
-  if(opts & opts::TOOLTIP_NAVAID)
+  if(opts & optsd::TOOLTIP_NAVAID)
   {
 
     for(const MapVor& vor : mapSearchResult.vors)
@@ -275,7 +275,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Airport stuff ===========================================================================
-  if(airportDiagram && opts & opts::TOOLTIP_AIRPORT)
+  if(airportDiagram && opts & optsd::TOOLTIP_AIRPORT)
   {
     for(const MapAirport& ap : mapSearchResult.towers)
     {
@@ -315,7 +315,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
     }
   }
 
-  if(opts & opts::TOOLTIP_NAVAID)
+  if(opts & optsd::TOOLTIP_NAVAID)
   {
     for(const MapUserpointRoute& up : mapSearchResult.userPointsRoute)
     {
@@ -345,7 +345,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // High altitude winds ===========================================================================
-  if(opts & opts::TOOLTIP_WIND && mapSearchResult.windPos.isValid())
+  if(opts & optsd::TOOLTIP_WIND && mapSearchResult.windPos.isValid())
   {
     atools::grib::WindPosVector winds = NavApp::getWindReporter()->getWindStackForPos(mapSearchResult.windPos);
     if(!winds.isEmpty())
@@ -369,7 +369,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Airspaces ===========================================================================
-  if(opts & opts::TOOLTIP_AIRSPACE)
+  if(opts & optsd::TOOLTIP_AIRSPACE)
   {
     // Put all online airspace on top of the list to have consistent ordering with menus and info windows
     MapSearchResult res = mapSearchResult.moveOnlineAirspacesToFront();

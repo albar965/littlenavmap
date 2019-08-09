@@ -66,7 +66,7 @@ void MapPainterUser::render(PaintContext *context)
 
 void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserpoint>& userpoints, bool drawFast)
 {
-  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+  bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
   UserdataIcons *icons = NavApp::getUserdataIcons();
 
   for(const MapUserpoint& userpoint : userpoints)

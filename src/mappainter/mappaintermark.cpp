@@ -731,7 +731,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     }
 
     // Draw tick marks ======================================================
-    if(context->dOptRose(opts::ROSE_DEGREE_MARKS))
+    if(context->dOptRose(optsd::ROSE_DEGREE_MARKS))
     {
       for(int i = 0; i < 360 / 5; i++)
       {
@@ -768,7 +768,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     painter->setPen(rosePenSmall);
 
     // Draw distance circles =======================================================
-    if(context->dOptRose(opts::ROSE_RANGE_RINGS))
+    if(context->dOptRose(optsd::ROSE_RANGE_RINGS))
     {
       for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
         paintCircle(context->painter, pos, i * stepsizeNm, context->drawFast, xt, yt);
@@ -779,7 +779,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     {
       // Solid track line
       painter->setPen(rosePen);
-      if(context->dOptRose(opts::ROSE_TRACK_LINE))
+      if(context->dOptRose(optsd::ROSE_TRACK_LINE))
       {
         float trackTrue = aircraft.getTrackDegTrue();
         Pos trueTrackPos = pos.endpoint(radiusMeter, trackTrue).normalize();
@@ -787,7 +787,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       }
 
       // Dotted heading line
-      if(context->dOptRose(opts::ROSE_HEADING_LINE))
+      if(context->dOptRose(optsd::ROSE_HEADING_LINE))
       {
         float headingTrue = aircraft.getHeadingDegTrue();
         Pos trueHeadingPos = pos.endpoint(radiusMeter, headingTrue).normalize();
@@ -801,7 +801,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     context->szFont(context->textSizeCompassRose * 1.4f);
     painter->setPen(mapcolors::compassRoseTextColor);
 
-    if(context->dOptRose(opts::ROSE_DIR_LABLES))
+    if(context->dOptRose(optsd::ROSE_DIR_LABLES))
     {
       for(int i = 0; i < 360 / 5; i++)
       {
@@ -830,13 +830,13 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     }
 
     // Draw small 15 deg labels ======================================================
-    if(mapPaintWidget->distance() < 1600 /* km */ && context->dOptRose(opts::ROSE_DEGREE_LABELS))
+    if(mapPaintWidget->distance() < 1600 /* km */ && context->dOptRose(optsd::ROSE_DEGREE_LABELS))
     {
       // Reduce font size
       context->szFont(context->textSizeCompassRose * 0.8f);
       for(int i = 0; i < 360 / 5; i++)
       {
-        if((i % (15 / 5)) == 0 && (!context->dOptRose(opts::ROSE_DIR_LABLES) || !((i % (90 / 5)) == 0)))
+        if((i % (15 / 5)) == 0 && (!context->dOptRose(optsd::ROSE_DIR_LABLES) || !((i % (90 / 5)) == 0)))
         {
           // All 15 deg but not at 90 deg boundaries
           symbolPainter->textBoxF(painter, {QString::number(i * 5)}, painter->pen(),
@@ -853,7 +853,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 
     // Distance labels along track line
     context->szFont(context->textSizeCompassRose * 0.8f);
-    if(context->dOptRose(opts::ROSE_RANGE_RINGS))
+    if(context->dOptRose(optsd::ROSE_RANGE_RINGS))
     {
       for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
       {
@@ -885,7 +885,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
           if((routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular()) && routeLeg.getPosition().isValid())
             courseToWptTrue = aircraft.getPosition().angleDegTo(routeLeg.getPosition());
 
-          if(context->dOptRose(opts::ROSE_CRAB_ANGLE) && courseToWptTrue < map::INVALID_COURSE_VALUE)
+          if(context->dOptRose(optsd::ROSE_CRAB_ANGLE) && courseToWptTrue < map::INVALID_COURSE_VALUE)
           {
             // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
             float crabAngle = windCorrectedHeading(aircraft.getWindSpeedKts(), aircraft.getWindDirectionDegT(),
@@ -899,7 +899,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
             painter->drawEllipse(crabScreenPos, lineWidth * 3, lineWidth * 3);
           }
 
-          if(context->dOptRose(opts::ROSE_NEXT_WAYPOINT) && courseToWptTrue < map::INVALID_COURSE_VALUE)
+          if(context->dOptRose(optsd::ROSE_NEXT_WAYPOINT) && courseToWptTrue < map::INVALID_COURSE_VALUE)
           {
             // Draw small line to show course to next waypoint ========================
             Pos endPt = pos.endpoint(radiusMeter, courseToWptTrue).normalize();
@@ -917,7 +917,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       }
 
       // Aircraft track label at end of track line ======================================================
-      if(context->dOptRose(opts::ROSE_TRACK_LABEL))
+      if(context->dOptRose(optsd::ROSE_TRACK_LABEL))
       {
         QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue).normalize());
         if(!trueTrackTextPoint.isNull())

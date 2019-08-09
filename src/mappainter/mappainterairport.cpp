@@ -138,7 +138,7 @@ void MapPainterAirport::render(PaintContext *context)
 
   std::sort(visibleAirports.begin(), visibleAirports.end(), sortAirportFunction);
 
-  if(context->mapLayerEffective->isAirportDiagramRunway() && context->flags2 & opts::MAP_AIRPORT_BOUNDARY)
+  if(context->mapLayerEffective->isAirportDiagramRunway() && context->flags2 & opts2::MAP_AIRPORT_BOUNDARY)
   {
     // In diagram mode draw background first to avoid overwriting other airports
     for(const PaintAirportType& airport : visibleAirports)
@@ -222,7 +222,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
       painter->resetTransform();
     }
 
-  if(context->mapLayerEffective->isAirportDiagram() && context->flags2 & opts::MAP_AIRPORT_DIAGRAM)
+  if(context->mapLayerEffective->isAirportDiagram() && context->flags2 & opts2::MAP_AIRPORT_DIAGRAM)
   {
     // For taxipaths
     const QList<MapTaxiPath> *taxipaths = airportQuery->getTaxiPaths(airport.id);
@@ -286,7 +286,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   QList<QRect> runwayRects, runwayOutlineRects;
   runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
 
-  if(!fast && context->flags2 & opts::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
+  if(!fast && context->flags2 & opts2::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
   {
     // Draw runway shoulders (X-Plane) --------------------------------
     painter->setPen(Qt::NoPen);
@@ -304,7 +304,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     }
   }
 
-  if(context->flags2 & opts::MAP_AIRPORT_DIAGRAM)
+  if(context->flags2 & opts2::MAP_AIRPORT_DIAGRAM)
   {
     if(context->mapLayerEffective->isAirportDiagram())
     {
@@ -597,7 +597,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     painter->setBackgroundMode(Qt::OpaqueMode);
   }
 
-  if(context->flags2 & opts::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
+  if(context->flags2 & opts2::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
   {
     // Draw parking --------------------------------
     const QList<MapParking> *parkings = airportQuery->getParkingsForAirport(airport.id);

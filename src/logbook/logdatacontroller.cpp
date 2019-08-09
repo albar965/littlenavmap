@@ -444,7 +444,7 @@ void LogdataController::exportCsv()
       tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
       ".csv",
       "Logdata/Csv",
-      QString(), QString(), false, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      QString(), QString(), false, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!file.isEmpty())
     {

@@ -149,7 +149,7 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls
         else
           textpos = -(featherLen + textw) / 2;
 
-        if(context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND)
+        if(context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {
           context->painter->setBackground(Qt::white);
           context->painter->setBackgroundMode(Qt::OpaqueMode);

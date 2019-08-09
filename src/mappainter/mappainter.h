@@ -75,11 +75,11 @@ struct PaintContext
               userPointTypesAll; /* All available tyes */
   bool userPointTypeUnknown; /* Show unknown types */
 
-  opts::DisplayOptions dispOpts;
-  opts::DisplayOptionsRose dispOptsRose;
-  opts::DisplayOptionsRoute dispOptsRoute;
+  optsd::DisplayOptions dispOpts;
+  optsd::DisplayOptionsRose dispOptsRose;
+  optsd::DisplayOptionsRoute dispOptsRoute;
   opts::Flags flags;
-  opts::Flags2 flags2;
+  opts2::Flags2 flags2;
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
 
@@ -119,17 +119,17 @@ struct PaintContext
     return objectCount > MAX_OBJECT_COUNT;
   }
 
-  bool  dOpt(const opts::DisplayOptions& opts) const
+  bool  dOpt(const optsd::DisplayOptions& opts) const
   {
     return dispOpts & opts;
   }
 
-  bool  dOptRose(const opts::DisplayOptionsRose& opts) const
+  bool  dOptRose(const optsd::DisplayOptionsRose& opts) const
   {
     return dispOptsRose & opts;
   }
 
-  bool  dOptRoute(const opts::DisplayOptionsRoute& opts) const
+  bool  dOptRoute(const optsd::DisplayOptionsRoute& opts) const
   {
     return dispOptsRoute & opts;
   }

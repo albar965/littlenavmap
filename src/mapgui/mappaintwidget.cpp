@@ -65,7 +65,7 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   screenIndex = new MapScreenIndex(this, paintLayer);
 
   setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
-  avoidBlurredMap = OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP;
+  avoidBlurredMap = OptionData::instance().getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
 
   // Initialize the X-Plane apron geometry cache
   apronGeometryCache = new ApronGeometryCache();
@@ -218,7 +218,7 @@ void MapPaintWidget::optionsChanged()
   // Updated sun shadow and force a tile refresh by changing the show status again
   setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
   setShowSunShading(showSunShading());
-  avoidBlurredMap = OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP;
+  avoidBlurredMap = OptionData::instance().getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
 
   // reloadMap();
   updateCacheSizes();
@@ -677,7 +677,7 @@ void MapPaintWidget::showAircraft(bool centerAircraftChecked)
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(!(OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE) || centerAircraftChecked)
+  if(!(OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE) || centerAircraftChecked)
   {
     // Keep old behavior if jump back to aircraft is disabled
 

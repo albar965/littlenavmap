@@ -182,7 +182,7 @@ MainWindow::MainWindow()
     // centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     // centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
     // setCentralWidget(centralWidget);
-    if(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK)
+    if(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK)
       centralWidget()->hide();
 
     setupUi();
@@ -230,7 +230,7 @@ MainWindow::MainWindow()
     // Create map widget and replace dummy widget in window
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
     mapWidget = new MapWidget(this);
-    if(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK)
+    if(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK)
     {
       ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
       ui->dockWidgetMap->show();
@@ -1512,7 +1512,7 @@ void MainWindow::connectAllSlots()
 void MainWindow::actionShortcutMapTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  if(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK)
+  if(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK)
   {
     ui->dockWidgetMap->show();
     ui->dockWidgetMap->activateWindow();
@@ -2370,7 +2370,7 @@ bool MainWindow::routeSaveAsPln()
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath(), routeExport->buildDefaultFilename(),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2402,7 +2402,7 @@ bool MainWindow::routeSaveAsFlp()
       tr("FLP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLP),
       "flp", "Route/Flp", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
       routeExport->buildDefaultFilenameShort(QString(), ".flp"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2432,7 +2432,7 @@ bool MainWindow::routeSaveAsFlightGear()
       tr("FlightGear Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTGEAR),
       "fgfp", "Route/FlightGear", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
       routeExport->buildDefaultFilename("_", ".fgfp"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2482,7 +2482,7 @@ bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
       tr("Save Flight Plan as X-Plane FMS Format"),
       tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
       "fms", "Route/Fms", xpBasePath, routeExport->buildDefaultFilenameShort(QString(), ".fms"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2508,7 +2508,7 @@ bool MainWindow::routeExportClean()
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/Clean" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
       routeExport->buildDefaultFilename("_", ".pln", tr(" Clean")),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -2724,7 +2724,7 @@ void MainWindow::mapSaveImageAviTab()
           atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
           QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
           QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
-          false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+          false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
         if(!imageFile.isEmpty())
         {
@@ -3390,7 +3390,7 @@ void MainWindow::resetWindowLayout()
 
   restoreState(lnm::DEFAULT_MAINWINDOW_STATE, lnm::MAINWINDOW_STATE_VERSION);
 
-  if(!(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK))
+  if(!(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK))
     ui->dockWidgetMap->hide();
   else
     ui->dockWidgetMap->show();
@@ -3537,7 +3537,7 @@ void MainWindow::restoreStateMain()
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
 
-  if(!(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK))
+  if(!(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK))
     ui->dockWidgetMap->hide();
   else
     ui->dockWidgetMap->show();
@@ -3855,8 +3855,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
  * weather has changed or an update is needed */
 bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport)
 {
-  opts::Flags flags = OptionData::instance().getFlags();
-  opts::Flags2 flags2 = OptionData::instance().getFlags2();
+  optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
   bool changed = false;
   bool newAirport = currentWeatherContext->ident != airport.ident;
 
@@ -3866,7 +3865,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 
   currentWeatherContext->ident = airport.ident;
 
-  if(flags & opts::WEATHER_INFO_FS)
+  if(flags & optsw::WEATHER_INFO_FS)
   {
     if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
     {
@@ -3897,7 +3896,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     }
   }
 
-  if(flags & opts::WEATHER_INFO_ACTIVESKY)
+  if(flags & optsw::WEATHER_INFO_ACTIVESKY)
   {
     fillActiveSkyType(*currentWeatherContext, airport.ident);
 
@@ -3910,7 +3909,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     }
   }
 
-  if(flags & opts::WEATHER_INFO_NOAA)
+  if(flags & optsw::WEATHER_INFO_NOAA)
   {
     atools::fs::weather::MetarResult noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
     if(newAirport || (!noaaMetar.isEmpty() && noaaMetar != currentWeatherContext->noaaMetar))
@@ -3921,7 +3920,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     }
   }
 
-  if(flags & opts::WEATHER_INFO_VATSIM)
+  if(flags & optsw::WEATHER_INFO_VATSIM)
   {
     QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
     if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->vatsimMetar))
@@ -3932,7 +3931,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     }
   }
 
-  if(flags2 & opts::WEATHER_INFO_IVAO)
+  if(flags & optsw::WEATHER_INFO_IVAO)
   {
     atools::fs::weather::MetarResult ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
     if(newAirport || (!ivaoMetar.isEmpty() && ivaoMetar != currentWeatherContext->ivaoMetar))
@@ -3956,12 +3955,11 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 /* Build a normal weather context - used by printing */
 void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
 {
-  opts::Flags flags = OptionData::instance().getFlags();
-  opts::Flags2 flags2 = OptionData::instance().getFlags2();
+  optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
   weatherContext.ident = airport.ident;
 
-  if(flags & opts::WEATHER_INFO_FS)
+  if(flags & optsw::WEATHER_INFO_FS)
   {
     if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
       weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
@@ -3970,19 +3968,19 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
         NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
   }
 
-  if(flags & opts::WEATHER_INFO_ACTIVESKY)
+  if(flags & optsw::WEATHER_INFO_ACTIVESKY)
   {
     weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
     fillActiveSkyType(weatherContext, airport.ident);
   }
 
-  if(flags & opts::WEATHER_INFO_NOAA)
+  if(flags & optsw::WEATHER_INFO_NOAA)
     weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
-  if(flags & opts::WEATHER_INFO_VATSIM)
+  if(flags & optsw::WEATHER_INFO_VATSIM)
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
 
-  if(flags2 & opts::WEATHER_INFO_IVAO)
+  if(flags & optsw::WEATHER_INFO_IVAO)
     weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
 }
 
@@ -3990,11 +3988,11 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
 void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherContext,
                                                const map::MapAirport& airport) const
 {
-  opts::Flags flags = OptionData::instance().getFlags();
+  optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
   weatherContext.ident = airport.ident;
 
-  if(flags & opts::WEATHER_TOOLTIP_FS)
+  if(flags & optsw::WEATHER_TOOLTIP_FS)
   {
     if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
       weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
@@ -4003,20 +4001,19 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
         NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
   }
 
-  if(flags & opts::WEATHER_TOOLTIP_ACTIVESKY)
+  if(flags & optsw::WEATHER_TOOLTIP_ACTIVESKY)
   {
     weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
     fillActiveSkyType(weatherContext, airport.ident);
   }
 
-  if(flags & opts::WEATHER_TOOLTIP_NOAA)
+  if(flags & optsw::WEATHER_TOOLTIP_NOAA)
     weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
-  if(flags & opts::WEATHER_TOOLTIP_VATSIM)
+  if(flags & optsw::WEATHER_TOOLTIP_VATSIM)
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
 
-  opts::Flags2 flags2 = OptionData::instance().getFlags2();
-  if(flags2 & opts::WEATHER_TOOLTIP_IVAO)
+  if(flags & optsw::WEATHER_TOOLTIP_IVAO)
     weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
 }
 
@@ -4111,25 +4108,25 @@ map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
 
 void MainWindow::showFlightPlan()
 {
-  if(OptionData::instance().getFlags2() & opts::RAISE_WINDOWS)
+  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutFlightPlanTriggered();
 }
 
 void MainWindow::showAircraftPerformance()
 {
-  if(OptionData::instance().getFlags2() & opts::RAISE_WINDOWS)
+  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutAircraftPerformanceTriggered();
 }
 
 void MainWindow::showLogbookSearch()
 {
-  if(OptionData::instance().getFlags2() & opts::RAISE_WINDOWS)
+  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutLogbookSearchTriggered();
 }
 
 void MainWindow::showUserpointSearch()
 {
-  if(OptionData::instance().getFlags2() & opts::RAISE_WINDOWS)
+  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutUserpointSearchTriggered();
 }
 

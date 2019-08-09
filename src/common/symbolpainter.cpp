@@ -959,7 +959,7 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
 }
 
 void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
-                                    opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size,
+                                    optsd::DisplayOptions dispOpts, textflags::TextFlags flags, int size,
                                     bool diagram, int maxTextLength)
 {
   QStringList texts = airportTexts(dispOpts, flags, airport, maxTextLength);
@@ -990,12 +990,12 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
   }
 }
 
-QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,
+QStringList SymbolPainter::airportTexts(optsd::DisplayOptions dispOpts, textflags::TextFlags flags,
                                         const map::MapAirport& airport, int maxTextLength)
 {
   QStringList texts;
 
-  if(flags & textflags::IDENT && flags & textflags::NAME && dispOpts & opts::ITEM_AIRPORT_NAME)
+  if(flags & textflags::IDENT && flags & textflags::NAME && dispOpts & optsd::ITEM_AIRPORT_NAME)
     texts.append(atools::elideTextShort(airport.name, maxTextLength) + " (" + airport.ident + ")");
   else if(flags & textflags::IDENT)
     texts.append(airport.ident);
@@ -1004,11 +1004,11 @@ QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags
 
   if(flags & textflags::INFO)
   {
-    if(airport.towerFrequency != 0 && dispOpts & opts::ITEM_AIRPORT_TOWER)
+    if(airport.towerFrequency != 0 && dispOpts & optsd::ITEM_AIRPORT_TOWER)
       texts.append(tr("CT ") + QString::number(roundComFrequency(airport.towerFrequency), 'f', 3));
 
     QString autoWeather;
-    if(dispOpts & opts::ITEM_AIRPORT_ATIS)
+    if(dispOpts & optsd::ITEM_AIRPORT_ATIS)
     {
       if(airport.atisFrequency > 0)
         autoWeather = tr("ATIS ") + QString::number(roundComFrequency(airport.atisFrequency), 'f', 3);
@@ -1022,7 +1022,7 @@ QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags
       texts.append(autoWeather);
 
     // bool elevUnit = Unit::getUnitAltStr() != Unit::getUnitShortDistStr();
-    if(dispOpts & opts::ITEM_AIRPORT_RUNWAY)
+    if(dispOpts & optsd::ITEM_AIRPORT_RUNWAY)
       if(airport.longestRunwayLength != 0 || airport.getPosition().getAltitude() != 0.f)
         texts.append(Unit::altFeet(airport.getPosition().getAltitude(),
                                    true /*addUnit*/, true /*narrow*/) + " " +

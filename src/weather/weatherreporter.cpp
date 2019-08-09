@@ -656,16 +656,17 @@ void WeatherReporter::updateTimeouts()
                                                WEATHER_SOURCE_SIMULATOR;
 
   // Disable periodic downloads if feature is not needed
+  optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
-  if(OptionData::instance().getFlags2() & opts::WEATHER_INFO_NOAA ||
-     OptionData::instance().getFlags2() & opts::WEATHER_TOOLTIP_NOAA ||
+  if(flags & optsw::WEATHER_INFO_NOAA ||
+     flags & optsw::WEATHER_TOOLTIP_NOAA ||
      airportWeatherSource == map::WEATHER_SOURCE_NOAA)
     noaaWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     noaaWeather->setUpdatePeriod(-1);
 
-  if(OptionData::instance().getFlags2() & opts::WEATHER_INFO_IVAO ||
-     OptionData::instance().getFlags2() & opts::WEATHER_TOOLTIP_IVAO ||
+  if(flags & optsw::WEATHER_INFO_IVAO ||
+     flags & optsw::WEATHER_TOOLTIP_IVAO ||
      airportWeatherSource == map::WEATHER_SOURCE_IVAO)
     ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else

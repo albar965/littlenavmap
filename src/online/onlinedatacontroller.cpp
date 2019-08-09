@@ -361,17 +361,17 @@ void OnlinedataController::showMessageDialog()
 
 LineString *OnlinedataController::geometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
 {
-  opts::Flags2 flags2 = OptionData::instance().getFlags2();
+  opts2::Flags2 flags2 = OptionData::instance().getFlags2();
 
   LineString *lineString = nullptr;
 
   // Try to get airspace boundary by name vs. callsign if set in options
-  if(flags2 & opts::ONLINE_AIRSPACE_BY_NAME)
+  if(flags2 & opts2::ONLINE_AIRSPACE_BY_NAME)
     lineString = NavApp::getAirspaceController()->
                  getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeText(type));
 
   // Try to get airspace boundary by file name vs. callsign if set in options
-  if(flags2 & opts::ONLINE_AIRSPACE_BY_FILE)
+  if(flags2 & opts2::ONLINE_AIRSPACE_BY_FILE)
   {
     if(lineString == nullptr)
       lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByFile(callsign);

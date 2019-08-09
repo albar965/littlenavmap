@@ -78,10 +78,14 @@ private:
   void toFlags(QRadioButton *radioButton, opts::Flags flag);
   void fromFlags(QCheckBox *checkBox, opts::Flags flag);
   void fromFlags(QRadioButton *radioButton, opts::Flags flag);
-  void toFlags2(QCheckBox *checkBox, opts::Flags2 flag);
-  void toFlags2(QRadioButton *radioButton, opts::Flags2 flag);
-  void fromFlags2(QCheckBox *checkBox, opts::Flags2 flag);
-  void fromFlags2(QRadioButton *radioButton, opts::Flags2 flag);
+
+  void toFlags2(QCheckBox *checkBox, opts2::Flags2 flag);
+  void toFlags2(QRadioButton *radioButton, opts2::Flags2 flag);
+  void fromFlags2(QCheckBox *checkBox, opts2::Flags2 flag);
+  void fromFlags2(QRadioButton *radioButton, opts2::Flags2 flag);
+
+  void toFlagsWeather(QCheckBox *checkBox, optsw::FlagsWeather flag);
+  void fromFlagsWeather(QCheckBox *checkBox, optsw::FlagsWeather flag);
 
   void selectActiveSkyPathClicked();
   void selectXplanePathClicked();
@@ -177,10 +181,10 @@ private:
   RangeRingValidator *rangeRingValidator;
 
   // Maps options flags to items in the tree widget
-  QHash<opts::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
-  QHash<opts::DisplayOptionsNavAid, QTreeWidgetItem *> displayOptItemIndexNavAid;
-  QHash<opts::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
-  QHash<opts::DisplayOptionsRoute, QTreeWidgetItem *> displayOptItemIndexRoute;
+  QHash<optsd::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
+  QHash<optsd::DisplayOptionsNavAid, QTreeWidgetItem *> displayOptItemIndexNavAid;
+  QHash<optsd::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
+  QHash<optsd::DisplayOptionsRoute, QTreeWidgetItem *> displayOptItemIndexRoute;
 
   UnitStringTool *units = nullptr;
 

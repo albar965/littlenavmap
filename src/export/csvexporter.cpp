@@ -54,7 +54,7 @@ QString CsvExporter::saveCsvFileDialog()
                                 tr("CSV Documents (*.csv);;All Files (*)"),
                                 "csv", lnm::EXPORT_FILEDIALOG,
                                 QString(), QString(), false,
-                                OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+                                OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 }
 
 #ifdef ENABLE_CSV_EXPORT

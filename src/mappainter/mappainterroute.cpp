@@ -89,14 +89,14 @@ QString MapPainterRoute::buildLegText(const PaintContext *context, float dist, f
 
   QStringList texts;
 
-  if(context->dOptRoute(opts::ROUTE_DISTANCE) && dist < map::INVALID_DISTANCE_VALUE / 2.f)
+  if(context->dOptRoute(optsd::ROUTE_DISTANCE) && dist < map::INVALID_DISTANCE_VALUE / 2.f)
     texts.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
 
-  bool magRhumb = context->dOptRoute(opts::ROUTE_MAG_COURSE_RHUMB) && courseRhumbMag < map::INVALID_COURSE_VALUE / 2.f;
-  bool trueRhumb = context->dOptRoute(opts::ROUTE_TRUE_COURSE_RHUMB) &&
+  bool magRhumb = context->dOptRoute(optsd::ROUTE_MAG_COURSE_RHUMB) && courseRhumbMag < map::INVALID_COURSE_VALUE / 2.f;
+  bool trueRhumb = context->dOptRoute(optsd::ROUTE_TRUE_COURSE_RHUMB) &&
                    courseRhumbTrue < map::INVALID_COURSE_VALUE / 2.f;
-  bool magGc = context->dOptRoute(opts::ROUTE_MAG_COURSE_GC) && courseGcMag < map::INVALID_COURSE_VALUE / 2.f;
-  bool trueGc = context->dOptRoute(opts::ROUTE_TRUE_COURSE_GC) && courseGcTrue < map::INVALID_COURSE_VALUE / 2.f;
+  bool magGc = context->dOptRoute(optsd::ROUTE_MAG_COURSE_GC) && courseGcMag < map::INVALID_COURSE_VALUE / 2.f;
+  bool trueGc = context->dOptRoute(optsd::ROUTE_TRUE_COURSE_GC) && courseGcTrue < map::INVALID_COURSE_VALUE / 2.f;
 
   QString courseRhumbMagStr = QString::number(ageo::normalizeCourse(courseRhumbMag), 'f', 0);
   QString courseRhumbTrueStr = QString::number(ageo::normalizeCourse(courseRhumbTrue), 'f', 0);
@@ -157,7 +157,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     return;
   }
 
-  int passedRouteLeg = context->flags2 & opts::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
+  int passedRouteLeg = context->flags2 & opts2::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
 
   // Collect line text and geometry from the route
   QStringList routeTexts;
@@ -345,7 +345,7 @@ void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList
   textPlacement.calculateTextPositions(positions);
   textPlacement.calculateTextAlongLines(lines, routeTexts);
   painter->save();
-  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+  if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
     painter->setBackgroundMode(Qt::TransparentMode);
   else
     painter->setBackgroundMode(Qt::OpaqueMode);
@@ -401,13 +401,13 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
     context->szFont(context->textSizeFlightplan);
 
     int transparency = 255;
-    if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+    if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
       transparency = 0;
 
     int activeLegIndex = route->getActiveLegIndex();
 
     // Draw the top of climb circle and text ======================
-    if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+    if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
        activeLegIndex == map::INVALID_INDEX_VALUE || route->getTopOfClimbLegIndex() > activeLegIndex - 1)
     {
       Pos pos = route->getTopOfClimbPos();
@@ -431,7 +431,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
     }
 
     // Draw the top of descent circle and text ======================
-    if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+    if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
        activeLegIndex == map::INVALID_INDEX_VALUE || route->getTopOfDescentLegIndex() > activeLegIndex - 1)
     {
       Pos pos = route->getTopOfDescentPos();
@@ -475,7 +475,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   // Get active approach leg
   bool activeValid = route->isActiveValid();
   int activeProcLeg = activeValid ? route->getActiveLegIndex() - legsRouteOffset : 0;
-  int passedProcLeg = context->flags2 & opts::MAP_ROUTE_DIM_PASSED ? activeProcLeg : 0;
+  int passedProcLeg = context->flags2 & opts2::MAP_ROUTE_DIM_PASSED ? activeProcLeg : 0;
 
   // Draw black background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
@@ -573,7 +573,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
         else
         {
           float dist = map::INVALID_DISTANCE_VALUE;
-          if(drawTextLines.at(i).distance && context->dOptRoute(opts::ROUTE_DISTANCE))
+          if(drawTextLines.at(i).distance && context->dOptRoute(optsd::ROUTE_DISTANCE))
             dist = leg.calculatedDistance;
 
           float courseRhumbMag = map::INVALID_COURSE_VALUE, courseRhumbTrue = map::INVALID_COURSE_VALUE,
@@ -582,12 +582,12 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
           {
             if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
             {
-              if(context->dOptRoute(opts::ROUTE_MAG_COURSE_RHUMB | opts::ROUTE_MAG_COURSE_GC))
+              if(context->dOptRoute(optsd::ROUTE_MAG_COURSE_RHUMB | optsd::ROUTE_MAG_COURSE_GC))
                 // Use same values for rhumb and mag - does not make a difference at the small values in procedures
                 courseGcMag = courseRhumbMag = leg.calculatedTrueCourse - leg.magvar;
             }
 
-            if(context->dOptRoute(opts::ROUTE_TRUE_COURSE_RHUMB | opts::ROUTE_MAG_COURSE_GC))
+            if(context->dOptRoute(optsd::ROUTE_TRUE_COURSE_RHUMB | optsd::ROUTE_MAG_COURSE_GC))
               courseGcTrue = courseRhumbTrue = leg.calculatedTrueCourse;
           }
 
@@ -1423,7 +1423,7 @@ void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, co
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   bool fill = true;
-  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+  if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
   {
     flags |= textflags::NO_BACKGROUND;
     fill = false;
@@ -1455,7 +1455,7 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   bool fill = true;
-  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+  if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
   {
     flags |= textflags::NO_BACKGROUND;
     fill = false;
@@ -1484,7 +1484,7 @@ void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int 
     flags |= textflags::IDENT;
 
   bool fill = true;
-  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+  if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
   {
     flags |= textflags::NO_BACKGROUND;
     fill = false;
@@ -1527,7 +1527,7 @@ void MapPainterRoute::paintText(const PaintContext *context, const QColor& color
     atts |= textatt::ROUTE_BG_COLOR;
 
   int transparency = 255;
-  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+  if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
     transparency = 0;
 
   if(!texts.isEmpty() && context->mapLayer->isWaypointRouteName())

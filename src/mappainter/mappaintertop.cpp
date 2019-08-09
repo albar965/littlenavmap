@@ -37,7 +37,7 @@ void MapPainterTop::render(PaintContext *context)
   if(!context->visibleWidget)
     return;
 
-  opts::DisplayOptionsNavAid opts = OptionData::instance().getDisplayOptionsNavAid();
+  optsd::DisplayOptionsNavAid opts = OptionData::instance().getDisplayOptionsNavAid();
   opts::MapNavigation nav = OptionData::instance().getMapNavigation();
 
   int size = context->sz(context->symbolSizeAirport, 10);
@@ -45,7 +45,7 @@ void MapPainterTop::render(PaintContext *context)
 
   // Draw center cross =====================================
   // Usable in all modes
-  if(opts & opts::NAVAIDS_CENTER_CROSS)
+  if(opts & optsd::NAVAIDS_CENTER_CROSS)
   {
     QRect vp = context->painter->viewport();
     int x = vp.center().x();
@@ -62,7 +62,7 @@ void MapPainterTop::render(PaintContext *context)
   // Show only if touch areas are enabled
   if(nav == opts::MAP_NAV_TOUCHSCREEN)
   {
-    if(opts & opts::NAVAIDS_TOUCHSCREEN_AREAS)
+    if(opts & optsd::NAVAIDS_TOUCHSCREEN_AREAS)
     {
       int areaSize = OptionData::instance().getMapNavTouchArea();
 
@@ -74,7 +74,7 @@ void MapPainterTop::render(PaintContext *context)
     }
 
     // Navigation icons in the corners
-    if(opts & opts::NAVAIDS_TOUCHSCREEN_ICONS)
+    if(opts & optsd::NAVAIDS_TOUCHSCREEN_ICONS)
     {
       // Make icon size dependent on screen size but limit min and max
       int iconSize = std::max(context->painter->viewport().height(), context->painter->viewport().width()) / 20;

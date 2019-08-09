@@ -467,7 +467,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 
         // Calculate text ==================
         painter.setPen(mapcolors::ilsTextColor);
-        if(OptionData::instance().getFlags2() & opts::MAP_NAVAID_TEXT_BACKGROUND)
+        if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {
           painter.setBackground(Qt::white);
           painter.setBackgroundMode(Qt::OpaqueMode);
@@ -566,7 +566,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
         painter.drawLine(center);
 
         painter.setPen(Qt::black);
-        if(OptionData::instance().getFlags2() & opts::MAP_NAVAID_TEXT_BACKGROUND)
+        if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {
           painter.setBackground(Qt::white);
           painter.setBackgroundMode(Qt::OpaqueMode);
@@ -807,13 +807,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Active normally start at 1 - this will consider all legs as not passed
   int activeRouteLeg = activeValid ? std::min(route.getActiveLegIndex(), waypointX.size() - 1) : 0;
-  int passedRouteLeg = optData.getFlags2() & opts::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
+  int passedRouteLeg = optData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
 
   if(route.isActiveAlternate())
   {
     // Disable active leg and show all legs as passed if an alternate is enabled
     activeRouteLeg = 0;
-    passedRouteLeg = optData.getFlags2() & opts::MAP_ROUTE_DIM_PASSED ?
+    passedRouteLeg = optData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ?
                      std::min(passedRouteLeg + 1, waypointX.size()) : 0;
   }
 
@@ -1050,7 +1050,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
         int activeLegIndex = route.getActiveLegIndex();
 
-        if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+        if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
            activeLegIndex == map::INVALID_INDEX_VALUE || route.getTopOfClimbLegIndex() > activeLegIndex - 1)
         {
           if(tocDist > 0.2f)
@@ -1072,7 +1072,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           }
         }
 
-        if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+        if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
            activeLegIndex == map::INVALID_INDEX_VALUE || route.getTopOfDescentLegIndex() > activeLegIndex - 1)
         {
           if(todDist < route.getTotalDistance() - 0.2f)
@@ -1872,7 +1872,7 @@ void ProfileWidget::jumpBackToAircraftCancel()
 void ProfileWidget::jumpBackToAircraftTimeout()
 {
   if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && NavApp::isConnectedAndAircraft() &&
-     OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE &&
+     OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE &&
      aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
   {
     if(QApplication::mouseButtons() & Qt::LeftButton || contextMenuActive)

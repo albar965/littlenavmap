@@ -282,7 +282,7 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
   bool drawAirwayV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
   bool drawAirwayJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
 
-  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+  bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
   for(const MapWaypoint& waypoint : *waypoints)
   {
@@ -312,7 +312,7 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
 
 void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, bool drawFast)
 {
-  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+  bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
   for(const MapVor& vor : *vors)
   {
@@ -343,7 +343,7 @@ void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, 
 
 void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, bool drawFast)
 {
-  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+  bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
   for(const MapNdb& ndb : *ndbs)
   {
@@ -372,7 +372,7 @@ void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, 
 
 void MapPainterNav::paintMarkers(PaintContext *context, const QList<MapMarker> *markers, bool drawFast)
 {
-  int transparency = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
+  int transparency = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
 
   for(const MapMarker& marker : *markers)
   {

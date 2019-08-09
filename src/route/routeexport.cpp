@@ -85,7 +85,7 @@ bool RouteExport::routeExportRxpGns()
       tr("Save Flight Plan as FPL for Reality XP GNS"),
       tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
       "fpl", "Route/RxpGns", path, buildDefaultFilenameShort("", ".fpl"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -126,7 +126,7 @@ bool RouteExport::routeExportRxpGtn()
       tr("Save Flight Plan as GFP for Reality XP GTN"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/RxpGfp", path,
-      buildDefaultFilenameShort("_", ".gfp"), false, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      buildDefaultFilenameShort("_", ".gfp"), false, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -154,7 +154,7 @@ bool RouteExport::routeExportGfp()
       "gfp", "Route/Gfp",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
       buildDefaultFilenameShort("-", ".gfp"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -180,7 +180,7 @@ bool RouteExport::routeExportTxt()
       tr("Text Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TXT), "txt", "Route/Txt",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft",
       buildDefaultFilenameShort(QString(), ".txt"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -206,7 +206,7 @@ bool RouteExport::routeExportRte()
       "rte", "Route/Rte",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
       buildDefaultFilenameShort(QString(), ".rte"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -271,7 +271,7 @@ bool RouteExport::routeExportFpl()
       QDir::separator() + "IXEG 737 Classic" +
       QDir::separator() + "coroutes",
       buildDefaultFilenameShort(QString(), ".fpl"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -329,7 +329,7 @@ bool RouteExport::routeExportFltplan()
       QDir::separator() + "navdata" +
       QDir::separator() + "FLTPLAN",
       buildDefaultFilenameShort(QString(), ".fltplan"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -363,7 +363,7 @@ bool RouteExport::routeExportXFmc()
       QDir::separator() + "XFMC" +
       QDir::separator() + "FlightPlans",
       buildDefaultFilenameShort(QString(), ".fpl"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -388,7 +388,7 @@ bool RouteExport::routeExportUFmc()
       tr("UFMC Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_UFMC), "ufmc", "Route/UFmc",
       NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort(QString(), ".ufmc"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -444,7 +444,7 @@ bool RouteExport::routeExportBbs()
       QDir::separator() + "Blackbox Simulation" +
       QDir::separator() + "Company Routes",
       buildDefaultFilenameShort(QString(), ".pln"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -469,7 +469,7 @@ bool RouteExport::routeExportFeelthereFpl()
       tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/FeelThereFpl",
       NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort("_", ".fpl"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -503,7 +503,7 @@ bool RouteExport::routeExportLeveldRte()
       QDir::separator() + "navdata" +
       QDir::separator() + "Flightplans",
       buildDefaultFilenameShort("_", ".rte"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -528,7 +528,7 @@ bool RouteExport::routeExportEfbr()
       tr("EFBR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_EFBR), "efbr", "Route/Efb",
       documentsLocation,
       buildDefaultFilenameShort("_", ".efbr"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -557,7 +557,7 @@ bool RouteExport::routeExportQwRte()
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE), "rte", "Route/QwRte",
       NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort(QString(), ".rte"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -582,7 +582,7 @@ bool RouteExport::routeExportMdr()
       tr("MDR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_MDR), "mdr", "Route/Mdx",
       NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort(QString(), ".mdr"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -614,7 +614,7 @@ bool RouteExport::routeExportTfdi()
       QDir::separator() + "Documents" +
       QDir::separator() + "Company Routes",
       buildDefaultFilenameShort(QString(), ".xml"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -655,7 +655,7 @@ bool RouteExport::routeExportVfp()
         tr("VFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_VFP), "vfp", "Route/Vfp",
         documentsLocation,
         buildDefaultFilenameShort(QString(), ".vfp"),
-        false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+        false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
       if(!routeFile.isEmpty())
       {
@@ -684,7 +684,7 @@ bool RouteExport::routeExportIvap()
         tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/Ivap",
         documentsLocation,
         buildDefaultFilenameShort(QString(), ".fpl"),
-        false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+        false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
       if(!routeFile.isEmpty())
       {
@@ -767,7 +767,7 @@ bool RouteExport::routeExportGpx()
       title,
       tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
       "gpx", "Route/Gpx", documentsLocation, buildDefaultFilename(QString(), ".gpx"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts::PROPOSE_FILENAME);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -858,7 +858,7 @@ bool RouteExport::routeValidate(bool validateParking, bool validateDepartureAndD
 
 QString RouteExport::buildDefaultFilename(const QString& sep, const QString& suffix, const QString& extension) const
 {
-  return (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
+  return (OptionData::instance().getFlags2() & opts2::ROUTE_SAVE_SHORT_NAME) ?
          buildDefaultFilenameShort(sep, suffix) : buildDefaultFilenameLong(extension, suffix);
 }
 

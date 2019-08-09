@@ -237,14 +237,14 @@ void MapWidget::handleInfoClick(QPoint pos)
                                        map::QUERY_NONE);
 
   // Remove all undesired features
-  opts::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
-  if(!(opts & opts::CLICK_AIRPORT))
+  optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
+  if(!(opts & optsd::CLICK_AIRPORT))
   {
     mapSearchResultInfoClick.airports.clear();
     mapSearchResultInfoClick.airportIds.clear();
   }
 
-  if(!(opts & opts::CLICK_NAVAID))
+  if(!(opts & optsd::CLICK_NAVAID))
   {
     mapSearchResultInfoClick.vors.clear();
     mapSearchResultInfoClick.vorIds.clear();
@@ -258,7 +258,7 @@ void MapWidget::handleInfoClick(QPoint pos)
     mapSearchResultInfoClick.logbookEntries.clear();
   }
 
-  if(!(opts & opts::CLICK_AIRSPACE))
+  if(!(opts & optsd::CLICK_AIRSPACE))
     mapSearchResultInfoClick.airspaces.clear();
 
   emit showInformation(mapSearchResultInfoClick, map::NONE);
@@ -336,7 +336,7 @@ void MapWidget::jumpBackToAircraftCancel()
 void MapWidget::jumpBackToAircraftTimeout(const QVariantList& values)
 {
   if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnectedAndAircraft() &&
-     OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
+     OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE)
   {
 
     if(mouseState != mw::NONE || viewContext() == Marble::Animation || contextMenuActive)
@@ -3086,7 +3086,7 @@ void MapWidget::connectOverlayMenus()
 bool MapWidget::isCenterLegAndAircraftActive()
 {
   const Route& route = NavApp::getRouteConst();
-  return OptionData::instance().getFlags2() & opts::ROUTE_AUTOZOOM && // Waypoint and aircraft center enabled
+  return OptionData::instance().getFlags2() & opts2::ROUTE_AUTOZOOM && // Waypoint and aircraft center enabled
          !route.isEmpty() && // Have a route
          route.getActiveLegIndex() < map::INVALID_INDEX_VALUE && // Active leg present - special case 0 for one waypoint only
          getScreenIndexConst()->getUserAircraft().isFlying() && // Aircraft in air

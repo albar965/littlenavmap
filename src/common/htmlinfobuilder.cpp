@@ -1537,7 +1537,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         decodedMetar(html, airport, map::MapAirport(), met, true /* interpolated */, fsxP3d, false /* map src */);
       }
     }
-    else if(!print && OptionData::instance().getFlags() & opts::WEATHER_INFO_FS)
+    else if(!print && OptionData::instance().getFlags() & optsw::WEATHER_INFO_FS)
       html.p(tr("Not connected to simulator."), ahtml::BOLD);
 
     // Active Sky metar ===========================
@@ -1569,7 +1569,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
     // IVAO or nearest
     decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
-  }
+  } // if(info)
 }
 
 void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather::MetarResult& metar,

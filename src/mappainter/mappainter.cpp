@@ -53,7 +53,7 @@ textflags::TextFlags PaintContext::airportTextFlags() const
   else if(mapLayer->isAirportName())
     textflags |= textflags::NAME;
 
-  if(!(flags2 & opts::MAP_AIRPORT_TEXT_BACKGROUND))
+  if(!(flags2 & opts2::MAP_AIRPORT_TEXT_BACKGROUND))
     textflags |= textflags::NO_BACKGROUND;
 
   return textflags;
@@ -74,7 +74,7 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
   if(mapLayer->isAirportRouteInfo())
     textflags |= textflags::NAME | textflags::INFO;
 
-  if(!(flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+  if(!(flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
     textflags |= textflags::NO_BACKGROUND;
 
   return textflags;
