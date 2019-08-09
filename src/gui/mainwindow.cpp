@@ -34,6 +34,7 @@
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/helphandler.h"
+#include "gui/tabwidgethandler.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
@@ -1577,7 +1578,7 @@ void MainWindow::actionShortcutFlightPlanTriggered()
   ui->dockWidgetRoute->show();
   ui->dockWidgetRoute->activateWindow();
   ui->dockWidgetRoute->raise();
-  ui->tabWidgetRoute->setCurrentIndex(rc::ROUTE);
+  NavApp::getRouteTabHandler()->setCurrentTab(rc::ROUTE);
   ui->tableViewRoute->setFocus();
 }
 
@@ -1587,7 +1588,7 @@ void MainWindow::actionShortcutAircraftPerformanceTriggered()
   ui->dockWidgetRoute->show();
   ui->dockWidgetRoute->activateWindow();
   ui->dockWidgetRoute->raise();
-  ui->tabWidgetRoute->setCurrentIndex(rc::AIRCRAFT);
+  NavApp::getRouteTabHandler()->setCurrentTab(rc::AIRCRAFT);
   ui->textBrowserAircraftPerformanceReport->setFocus();
 }
 
@@ -2109,13 +2110,7 @@ void MainWindow::updateWindowTitle()
     newTitle += tr(" - *");
 
   // Add a star to the flight plan tab if changed
-  if(routeController->hasChanged())
-  {
-    if(!ui->tabWidgetRoute->tabText(rc::ROUTE).endsWith(tr(" *")))
-      ui->tabWidgetRoute->setTabText(rc::ROUTE, ui->tabWidgetRoute->tabText(rc::ROUTE) + tr(" *"));
-  }
-  else
-    ui->tabWidgetRoute->setTabText(rc::ROUTE, ui->tabWidgetRoute->tabText(rc::ROUTE).replace(tr(" *"), QString()));
+  routeController->updateRouteTabChangedStatus();
 
   setWindowTitle(newTitle);
 }

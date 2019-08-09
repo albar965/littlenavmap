@@ -49,14 +49,14 @@ class MainWindow;
  *
  * Handles all menus, actions and buttons.
  */
-class AircraftPerfController :
-  public QObject
+class AircraftPerfController
+  : public QObject
 {
   Q_OBJECT
 
 public:
   explicit AircraftPerfController(MainWindow *parent);
-  virtual ~AircraftPerfController();
+  virtual ~AircraftPerfController() override;
 
   /* Load a new performance file from file history after asking to save currently unchanged */
   void loadFile(const QString& perfFile);
@@ -182,7 +182,7 @@ private:
   void restartCollect();
 
   /* Dock window or tab visibility changed */
-  void visibilityChanged();
+  void tabVisibilityChanged();
 
   /* Cruise altitude either from flight plan or widget */
   float cruiseAlt();

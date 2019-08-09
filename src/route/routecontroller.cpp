@@ -63,6 +63,7 @@
 #include "common/unitstringtool.h"
 #include "perf/aircraftperfcontroller.h"
 #include "fs/sc/simconnectdata.h"
+#include "gui/tabwidgethandler.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -133,6 +134,11 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   flightplanIO = new atools::fs::pln::FlightplanIO();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
+  tabHandlerRoute = new atools::gui::TabWidgetHandler(ui->tabWidgetRoute,
+                                                      QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
+                                                      tr("Open or close tabs"));
+  tabHandlerRoute->init(rc::TabRouteIds, lnm::ROUTEWINDOW_WIDGET_TABS);
+
   // Update units
   units = new UnitStringTool();
   units->init({
@@ -251,6 +257,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 RouteController::~RouteController()
 {
   routeAltDelayTimer.stop();
+  delete tabHandlerRoute;
   delete units;
   delete entryBuilder;
   delete model;
@@ -644,10 +651,10 @@ void RouteController::saveState()
 
   atools::gui::WidgetState(lnm::ROUTE_VIEW).save({view, ui->comboBoxRouteType,
                                                   ui->spinBoxRouteAlt,
-                                                  ui->actionRouteFollowSelection,
-                                                  ui->tabWidgetRoute});
+                                                  ui->actionRouteFollowSelection});
 
   atools::settings::Settings::instance().setValue(lnm::ROUTE_FILENAME, routeFilename);
+  tabHandlerRoute->saveState();
 }
 
 void RouteController::updateTableHeaders()
@@ -664,12 +671,12 @@ void RouteController::updateTableHeaders()
 
 void RouteController::restoreState()
 {
+  tabHandlerRoute->restoreState();
   Ui::MainWindow *ui = NavApp::getMainUi();
   updateTableHeaders();
 
   atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, true);
-  state.restore({view, ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection,
-                 ui->tabWidgetRoute});
+  state.restore({view, ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
   {
@@ -2929,6 +2936,18 @@ void RouteController::showProceduresCustom(map::MapAirport airport)
                                                       dialog.getEntryDistance(), dialog.getEntryAltitude());
     routeAttachProcedure(procedure, QString());
   }
+}
+
+void RouteController::updateRouteTabChangedStatus()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(hasChanged())
+  {
+    if(!ui->tabWidgetRoute->tabText(rc::ROUTE).endsWith(tr(" *")))
+      ui->tabWidgetRoute->setTabText(rc::ROUTE, ui->tabWidgetRoute->tabText(rc::ROUTE) + tr(" *"));
+  }
+  else
+    ui->tabWidgetRoute->setTabText(rc::ROUTE, ui->tabWidgetRoute->tabText(rc::ROUTE).replace(tr(" *"), QString()));
 }
 
 void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway)

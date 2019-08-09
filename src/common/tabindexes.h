@@ -22,12 +22,14 @@
 
 /* Flight plan dock window tabs */
 namespace rc {
-enum TabIndex
+enum TabRouteId
 {
   ROUTE = 0,
   AIRCRAFT = 1,
   COLLECTION = 2
 };
+
+const QVector<int> TabRouteIds = {ROUTE, AIRCRAFT, COLLECTION};
 
 }
 

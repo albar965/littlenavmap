@@ -45,6 +45,7 @@
 #include "gui/widgetstate.h"
 #include "fs/perf/aircraftperfhandler.h"
 #include "fs/sc/simconnectdata.h"
+#include "gui/tabwidgethandler.h"
 
 #include <QDebug>
 #include <QUrlQuery>
@@ -86,8 +87,7 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
           this, &AircraftPerfController::manualWindToggled);
 
   // Widgets are only updated if visible - update on visbility changes of dock or tabs
-  connect(ui->tabWidgetRoute, &QTabWidget::currentChanged, this, &AircraftPerfController::visibilityChanged);
-  connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &AircraftPerfController::visibilityChanged);
+  connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &AircraftPerfController::tabVisibilityChanged);
 
   // Create performance handler for background collection
   perfHandler = new AircraftPerfHandler(this);
@@ -545,7 +545,7 @@ void AircraftPerfController::updateActionStates()
 void AircraftPerfController::updateReport()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->tabWidgetRoute->currentIndex() == rc::AIRCRAFT && ui->textBrowserAircraftPerformanceReport->isVisible())
+  if(NavApp::getRouteTabHandler()->getCurrentTabId() == rc::AIRCRAFT && ui->dockWidgetRoute->isVisible())
   {
     // Write HTML report ================================================================
     HtmlBuilder html(true /* background color */);
@@ -996,6 +996,10 @@ void AircraftPerfController::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
+  // Need to initialize this late since route controller is not valid when AircraftPerfController constructor is called
+  connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabChanged,
+          this, &AircraftPerfController::tabVisibilityChanged);
+
   fileHistory->restoreState();
   loadFile(settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME));
 
@@ -1087,8 +1091,9 @@ void AircraftPerfController::manualWindToggled()
   emit aircraftPerformanceChanged(perf);
 }
 
-void AircraftPerfController::visibilityChanged()
+void AircraftPerfController::tabVisibilityChanged()
 {
+  qDebug() << Q_FUNC_INFO;
   updateReport();
   updateReportCurrent();
 }

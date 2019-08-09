@@ -60,6 +60,9 @@ class WindReporter;
 class MapMarkHandler;
 
 namespace atools {
+namespace gui {
+class TabWidgetHandler;
+}
 
 namespace geo {
 class Pos;
@@ -229,6 +232,7 @@ public:
   static MapWidget *getMapWidget();
   static MapPaintWidget *getMapPaintWidget();
   static RouteController *getRouteController();
+  static atools::gui::TabWidgetHandler *getRouteTabHandler();
   static const InfoController *getInfoController();
 
   static DatabaseManager *getDatabaseManager();

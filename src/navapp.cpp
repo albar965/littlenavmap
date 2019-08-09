@@ -762,6 +762,11 @@ RouteController *NavApp::getRouteController()
   return mainWindow->getRouteController();
 }
 
+atools::gui::TabWidgetHandler *NavApp::getRouteTabHandler()
+{
+  return getRouteController()->getTabHandler();
+}
+
 const InfoController *NavApp::getInfoController()
 {
   return mainWindow->getInfoController();

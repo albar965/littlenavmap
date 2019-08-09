@@ -20,6 +20,7 @@
 
 #include "route/routecommand.h"
 #include "route/route.h"
+#include "common/tabindexes.h"
 
 #include <QIcon>
 #include <QObject>
@@ -28,6 +29,7 @@
 namespace atools {
 namespace gui {
 class ItemViewZoomHandler;
+class TabWidgetHandler;
 }
 namespace util {
 class HtmlBuilder;
@@ -71,7 +73,7 @@ class RouteController :
 
 public:
   RouteController(QMainWindow *parent, QTableView *tableView);
-  virtual ~RouteController();
+  virtual ~RouteController() override;
 
   /* Creates a new plan and emits routeChanged */
   void newFlightplan();
@@ -255,6 +257,14 @@ public:
   const QString& getRouteFilepath() const
   {
     return routeFilename;
+  }
+
+  /* Update the changed file indication in the flight plan tab header */
+  void updateRouteTabChangedStatus();
+
+  atools::gui::TabWidgetHandler *getTabHandler() const
+  {
+    return tabHandlerRoute;
   }
 
 signals:
@@ -443,6 +453,8 @@ private:
   qint64 lastSimUpdate = 0;
 
   SymbolPainter *symbolPainter = nullptr;
+
+  atools::gui::TabWidgetHandler *tabHandlerRoute = nullptr;
 
   QTimer routeAltDelayTimer;
 

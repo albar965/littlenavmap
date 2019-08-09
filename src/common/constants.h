@@ -158,6 +158,7 @@ const QLatin1Literal ROUTE_PRINT_DIALOG("Route/PrintWidget");
 const QLatin1Literal ROUTE_STRING_DIALOG_SIZE("Route/StringDialogSize");
 const QLatin1Literal ROUTE_STRING_DIALOG_SPLITTER("Route/StringDialogSplitter");
 const QLatin1Literal ROUTE_STRING_DIALOG_OPTIONS("Route/StringDialogOptions");
+const QLatin1Literal ROUTEWINDOW_WIDGET_TABS("Route/WidgetTabs");
 const QLatin1Literal TRAFFIC_PATTERN_DIALOG("Route/TrafficPatternDialog");
 const QLatin1Literal TRAFFIC_PATTERN_DIALOG_COLOR("Route/TrafficPatternDialogColor");
 const QLatin1Literal HOLD_DIALOG("Route/HoldDialog");
