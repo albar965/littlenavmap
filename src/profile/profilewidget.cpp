@@ -600,23 +600,29 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   Route route = NavApp::getRoute();
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
 
-  if(legList.route.size() != route.size() ||
-     atools::almostNotEqual(legList.route.getTotalDistance(), route.getTotalDistance()))
-    // Do not draw if route is updated to avoid invalid indexes
-    return;
-
   // Keep margin to left, right and top
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
+  // Nothing to show label =========================
   SymbolPainter symPainter;
   QPainter painter(this);
-  if(!hasValidRouteForDisplay(route))
+  if(route.isEmpty())
   {
-    // Nothing to show label =========================
     symPainter.textBox(&painter, {tr("No Flight Plan loaded.")}, QApplication::palette().color(QPalette::Text),
                        X0 + w / 2, Y0 + h / 2, textatt::BOLD | textatt::CENTER, 0);
     return;
   }
+  else if(!hasValidRouteForDisplay(route))
+  {
+    symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QApplication::palette().color(QPalette::Text),
+                       X0 + w / 2, Y0 + h / 2, textatt::BOLD | textatt::CENTER, 0);
+    return;
+  }
+
+  if(legList.route.size() != route.size() ||
+     atools::almostNotEqual(legList.route.getTotalDistance(), route.getTotalDistance()))
+    // Do not draw if route is updated to avoid invalid indexes
+    return;
 
   if(altitudeLegs.size() != route.size())
   {

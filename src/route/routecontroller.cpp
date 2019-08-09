@@ -2934,7 +2934,7 @@ void RouteController::showProceduresCustom(map::MapAirport airport)
     proc::MapProcedureLegs procedure;
     NavApp::getProcedureQuery()->createCustomApproach(procedure, airport, end,
                                                       dialog.getEntryDistance(), dialog.getEntryAltitude());
-    routeAttachProcedure(procedure, QString());
+    routeAddProcedure(procedure, QString());
   }
 }
 
@@ -2950,7 +2950,7 @@ void RouteController::updateRouteTabChangedStatus()
     ui->tabWidgetRoute->setTabText(rc::ROUTE, ui->tabWidgetRoute->tabText(rc::ROUTE).replace(tr(" *"), QString()));
 }
 
-void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway)
+void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway)
 {
   qDebug() << Q_FUNC_INFO
            << legs.approachType << legs.approachFixIdent << legs.approachSuffix << legs.approachArincName
@@ -2966,6 +2966,9 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
 
   // if(route.getFlightplan().canSaveProcedures())
   undoCommand = preChange(tr("Add Procedure"));
+
+  if(route.isEmpty())
+    NavApp::showFlightPlan();
 
   // Airport id in legs is from nav database - convert to simulator database
   map::MapAirport airportSim;
@@ -3056,6 +3059,9 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   qDebug() << Q_FUNC_INFO << "insertIndex" << insertIndex;
 
   RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
+
+  if(route.isEmpty())
+    NavApp::showFlightPlan();
 
   Flightplan& flightplan = route.getFlightplan();
   flightplan.getEntries().insert(insertIndex, entry);
@@ -3833,11 +3839,19 @@ void RouteController::highlightProcedureItems()
 /* Update the dock window top level label */
 void RouteController::updateWindowLabel()
 {
-  QString text = buildFlightplanLabel() + "<br/>" + buildFlightplanLabel2();
-  NavApp::getMainUi()->labelRouteInfo->setText(text);
+  QString tooltip;
+  QString text = buildFlightplanLabel(false, false, &tooltip) + "<br/>" + buildFlightplanLabel2();
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->labelRouteInfo->setText(text);
+  ui->labelRouteInfo->setToolTip(tooltip);
+  ui->labelRouteInfo->setStatusTip(tooltip);
+
+  ui->tableViewRoute->setToolTip(tooltip);
+  ui->tableViewRoute->setStatusTip(tooltip);
 }
 
-QString RouteController::buildFlightplanLabel(bool print, bool titleOnly) const
+QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QString *tooltip) const
 {
   const Flightplan& flightplan = route.getFlightplan();
 
@@ -4026,13 +4040,20 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly) const
     }
   }
 
-  QString title(tr("No Flight Plan loaded."));
+  QString title;
   if(!flightplan.isEmpty())
   {
     if(print)
       title = tr("<h2>%1 to %2</h2>").arg(departure).arg(destination);
     else
       title = tr("<b>%1</b> to <b>%2</b>").arg(departure).arg(destination);
+  }
+  else
+  {
+    title = tr("<b>No Flight Plan loaded.</b>");
+    if(tooltip != nullptr)
+      *tooltip = tr("Use the right-click context menu on the map or the airport search (F4)\n"
+                    "to select departure and destination.");
   }
 
   if(print)

@@ -1486,89 +1486,96 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(!print)
       airportTitle(airport, html, -1);
 
-    // Source for map icon display
-    MapWeatherSource src = NavApp::getMapWeatherSource();
-    bool weatherShown = NavApp::isMapWeatherShown();
+    optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
-    // Simconnect or X-Plane weather file metar ===========================
-    if(context.fsMetar.isValid())
+    if(flags & optsw::WEATHER_INFO_ALL)
     {
-      // Only FSX/P3D allow remote requests for now
-      bool fsxP3d = context.fsMetar.simulator;
+      // Source for map icon display
+      MapWeatherSource src = NavApp::getMapWeatherSource();
+      bool weatherShown = NavApp::isMapWeatherShown();
 
-      const atools::fs::weather::MetarResult& metar = context.fsMetar;
-      QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
-
-      if(!metar.metarForStation.isEmpty())
+      // Simconnect or X-Plane weather file metar ===========================
+      if(context.fsMetar.isValid())
       {
-        Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
+        // Only FSX/P3D allow remote requests for now
+        bool fsxP3d = context.fsMetar.simulator;
 
-        html.p(tr("%1Station Weather").arg(sim), WEATHER_TITLE_FLAGS);
-        decodedMetar(html, airport, map::MapAirport(), met, false /* interpolated */, fsxP3d,
-                     src == WEATHER_SOURCE_SIMULATOR && weatherShown);
-      }
+        const atools::fs::weather::MetarResult& metar = context.fsMetar;
+        QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
 
-      if(!metar.metarForNearest.isEmpty())
-      {
-        Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
-        QString reportIcao = met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation();
-
-        html.p(tr("%2Nearest Weather - %1").arg(reportIcao).arg(sim), WEATHER_TITLE_FLAGS);
-
-        // Check if the station is an airport
-        map::MapAirport reportAirport;
-        airportQuerySim->getAirportByIdent(reportAirport, reportIcao);
-        if(!print && reportAirport.isValid())
+        if(!metar.metarForStation.isEmpty())
         {
-          // Add link to airport
-          html.nbsp().nbsp();
-          html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT),
-                 ahtml::LINK_NO_UL);
+          Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
+
+          html.p(tr("%1Station Weather").arg(sim), WEATHER_TITLE_FLAGS);
+          decodedMetar(html, airport, map::MapAirport(), met, false /* interpolated */, fsxP3d,
+                       src == WEATHER_SOURCE_SIMULATOR && weatherShown);
         }
 
-        decodedMetar(html, airport, reportAirport, met, false /* interpolated */, fsxP3d,
-                     src == WEATHER_SOURCE_SIMULATOR && weatherShown);
-      }
+        if(!metar.metarForNearest.isEmpty())
+        {
+          Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
+          QString reportIcao = met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation();
 
-      if(!metar.metarForInterpolated.isEmpty())
+          html.p(tr("%2Nearest Weather - %1").arg(reportIcao).arg(sim), WEATHER_TITLE_FLAGS);
+
+          // Check if the station is an airport
+          map::MapAirport reportAirport;
+          airportQuerySim->getAirportByIdent(reportAirport, reportIcao);
+          if(!print && reportAirport.isValid())
+          {
+            // Add link to airport
+            html.nbsp().nbsp();
+            html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT),
+                   ahtml::LINK_NO_UL);
+          }
+
+          decodedMetar(html, airport, reportAirport, met, false /* interpolated */, fsxP3d,
+                       src == WEATHER_SOURCE_SIMULATOR && weatherShown);
+        }
+
+        if(!metar.metarForInterpolated.isEmpty())
+        {
+          Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, fsxP3d);
+          html.p(tr("%2Interpolated Weather - %1").arg(met.getStation()).arg(sim), WEATHER_TITLE_FLAGS);
+          decodedMetar(html, airport, map::MapAirport(), met, true /* interpolated */, fsxP3d, false /* map src */);
+        }
+      } // if(context.fsMetar.isValid())
+      else if(!print && OptionData::instance().getFlags() & optsw::WEATHER_INFO_FS)
+        html.p(tr("Not connected to simulator."), ahtml::BOLD);
+
+      // Active Sky metar ===========================
+      if(!context.asMetar.isEmpty())
       {
-        Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, fsxP3d);
-        html.p(tr("%2Interpolated Weather - %1").arg(met.getStation()).arg(sim), WEATHER_TITLE_FLAGS);
-        decodedMetar(html, airport, map::MapAirport(), met, true /* interpolated */, fsxP3d, false /* map src */);
+        if(context.isAsDeparture && context.isAsDestination)
+          html.p(context.asType + tr(" - Departure and Destination"), WEATHER_TITLE_FLAGS);
+        else if(context.isAsDeparture)
+          html.p(context.asType + tr(" - Departure"), WEATHER_TITLE_FLAGS);
+        else if(context.isAsDestination)
+          html.p(context.asType + tr(" - Destination"), WEATHER_TITLE_FLAGS);
+        else
+          html.p(context.asType, WEATHER_TITLE_FLAGS);
+
+        decodedMetar(html, airport, map::MapAirport(), Metar(context.asMetar), false /* interpolated */,
+                     false /* FSX/P3D */, src == WEATHER_SOURCE_ACTIVE_SKY && weatherShown);
       }
-    }
-    else if(!print && OptionData::instance().getFlags() & optsw::WEATHER_INFO_FS)
-      html.p(tr("Not connected to simulator."), ahtml::BOLD);
 
-    // Active Sky metar ===========================
-    if(!context.asMetar.isEmpty())
-    {
-      if(context.isAsDeparture && context.isAsDestination)
-        html.p(context.asType + tr(" - Departure and Destination"), WEATHER_TITLE_FLAGS);
-      else if(context.isAsDeparture)
-        html.p(context.asType + tr(" - Departure"), WEATHER_TITLE_FLAGS);
-      else if(context.isAsDestination)
-        html.p(context.asType + tr(" - Destination"), WEATHER_TITLE_FLAGS);
-      else
-        html.p(context.asType, WEATHER_TITLE_FLAGS);
+      // NOAA or nearest
+      decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA && weatherShown);
 
-      decodedMetar(html, airport, map::MapAirport(), Metar(context.asMetar), false /* interpolated */,
-                   false /* FSX/P3D */, src == WEATHER_SOURCE_ACTIVE_SKY && weatherShown);
-    }
+      // Vatsim metar ===========================
+      if(!context.vatsimMetar.isEmpty())
+      {
+        html.p(tr("VATSIM Weather"), WEATHER_TITLE_FLAGS);
+        decodedMetar(html, airport, map::MapAirport(), Metar(context.vatsimMetar),
+                     false /* interpolated */, false /* FSX/P3D */, src == WEATHER_SOURCE_VATSIM && weatherShown);
+      }
 
-    // NOAA or nearest
-    decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA && weatherShown);
-
-    // Vatsim metar ===========================
-    if(!context.vatsimMetar.isEmpty())
-    {
-      html.p(tr("VATSIM Weather"), WEATHER_TITLE_FLAGS);
-      decodedMetar(html, airport, map::MapAirport(), Metar(context.vatsimMetar),
-                   false /* interpolated */, false /* FSX/P3D */, src == WEATHER_SOURCE_VATSIM && weatherShown);
-    }
-
-    // IVAO or nearest
-    decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
+      // IVAO or nearest
+      decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
+    } // if(flags & optsw::WEATHER_INFO_ALL)
+    else
+      html.p().b(tr("No weather display selected in options dialog."));
   } // if(info)
 }
 

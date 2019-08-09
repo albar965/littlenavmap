@@ -154,8 +154,6 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   createFonts();
 
-  ui->labelProcedureSearch->setText(tr("No Airport selected."));
-
   treeEventFilter = new TreeEventFilter(treeWidget);
   treeWidget->viewport()->installEventFilter(treeEventFilter);
 
@@ -302,11 +300,21 @@ void ProcedureSearch::updateHeaderLabel()
   for(QTreeWidgetItem *item : items)
     procs.append(approachAndTransitionText(item));
 
+  QString tooltip;
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(airportSim.isValid())
-    NavApp::getMainUi()->labelProcedureSearch->setText(
-      "<b>" + map::airportTextShort(airportSim) + "</b> " + procs);
+    ui->labelProcedureSearch->setText("<b>" + map::airportTextShort(airportSim) + "</b> " + procs);
   else
-    NavApp::getMainUi()->labelProcedureSearch->setText(tr("No Airport selected."));
+  {
+    ui->labelProcedureSearch->setText(tr("<b>No Airport selected.</b>"));
+    tooltip = tr("Use the right-click context menu in the map or\n"
+                 "the airport search result table (F4)\n"
+                 "and select \"Show Procedures\" for an airport.");
+  }
+  ui->labelProcedureSearch->setToolTip(tooltip);
+  ui->labelProcedureSearch->setStatusTip(tooltip);
+  treeWidget->setToolTip(tooltip);
+  treeWidget->setStatusTip(tooltip);
 }
 
 QString ProcedureSearch::approachAndTransitionText(const QTreeWidgetItem *item)

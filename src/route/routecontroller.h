@@ -163,7 +163,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAttachProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
+  void routeAddProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
@@ -386,7 +386,7 @@ private:
   void dockVisibilityChanged(bool visible);
   void eraseAirway(int row);
 
-  QString buildFlightplanLabel(bool print = false, bool titleOnly = false) const;
+  QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr) const;
   QString buildFlightplanLabel2() const;
 
   void updateTableHeaders();

@@ -755,8 +755,10 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   // Warnings and errors =================================================
   if(!print)
   {
-    if(!hasLegs)
-      html.p().warning(tr("No Flight Plan loaded.")).pEnd();
+    if(NavApp::getRoute().size() == 1)
+      html.p().b(tr("Flight Plan not valid.")).pEnd();
+    else if(!hasLegs)
+      html.p().b(tr("No Flight Plan loaded.")).pEnd();
 
     QStringList errs;
     if(perf->getUsableFuel() < 0.1f)
