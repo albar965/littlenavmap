@@ -579,9 +579,13 @@ void AircraftPerfController::updateReport()
     fuelReportFilepath(html, false /* print */);
 
 #ifdef DEBUG_INFORMATION
-    html.text("Climb " + Unit::speedKts(altitudeLegs.getHeadWindClimb()) +
-              " Descent " + Unit::speedKts(altitudeLegs.getHeadWindDescent()) +
-              " All " + Unit::speedKts(altitudeLegs.getHeadWindAverage()));
+    html.textBr("Climb " + Unit::speedKts(altitudeLegs.getClimbHeadWind()) +
+                ", cruise " + Unit::speedKts(altitudeLegs.getCruiseHeadWind()) +
+                ", descent " + Unit::speedKts(altitudeLegs.getDescentHeadWind()) +
+                ", all " + Unit::speedKts(altitudeLegs.getHeadWindAverage()));
+    html.text("Corrected: climb " + Unit::speedKts(altitudeLegs.getClimbSpeedWindCorrected()) +
+              ", cruise " + Unit::speedKts(altitudeLegs.getCruiseSpeedWindCorrected()) +
+              ", descent " + Unit::speedKts(altitudeLegs.getDescentSpeedWindCorrected()));
 #endif
 
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftPerformanceReport, html.getHtml(),
@@ -741,9 +745,9 @@ void AircraftPerfController::fuelReportRunway(atools::util::HtmlBuilder& html)
 
 void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool print)
 {
-  const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
+  const RouteAltitude& altLegs = NavApp::getAltitudeLegs();
 
-  bool hasLegs = altitudeLegs.size() > 1;
+  bool hasLegs = altLegs.size() > 1;
 
   if(print)
     // Include header here if printing
@@ -781,7 +785,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     if(hasLegs)
     {
       if(perf->getUsableFuel() > 1.f)
-        if(altitudeLegs.getBlockFuel(*perf) > perf->getUsableFuel())
+        if(altLegs.getBlockFuel(*perf) > perf->getUsableFuel())
           html.p().error(tr("Block fuel exceeds usable of %1.").arg(ft.weightVolLocal(perf->getUsableFuel()))).pEnd();
 
     }
@@ -838,20 +842,20 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.p().b(tr("Flight Plan")).pEnd();
     html.table();
 
-    if(altitudeLegs.getTravelTimeHours() > 0.f)
+    if(altLegs.getTravelTimeHours() > 0.f)
       html.row2(tr("Distance and Time:"), tr("%1, %2").
-                arg(Unit::distNm(altitudeLegs.getTotalDistance())).
-                arg(formatter::formatMinutesHoursLong(altitudeLegs.getTravelTimeHours())),
+                arg(Unit::distNm(altLegs.getTotalDistance())).
+                arg(formatter::formatMinutesHoursLong(altLegs.getTravelTimeHours())),
                 atools::util::html::BOLD | flags);
     else
       html.row2(tr("Distance:"), tr("%1").
-                arg(Unit::distNm(altitudeLegs.getTotalDistance())),
+                arg(Unit::distNm(altLegs.getTotalDistance())),
                 atools::util::html::BOLD | flags);
 
-    html.row2(tr("Average Ground Speed:"), Unit::speedKts(altitudeLegs.getAverageGroundSpeed()), flags);
+    html.row2(tr("Average Ground Speed:"), Unit::speedKts(altLegs.getAverageGroundSpeed()), flags);
     html.row2(tr("True Airspeed at Cruise:"), Unit::speedKts(perf->getCruiseSpeed()), flags);
 
-    float mach = atools::geo::tasToMachFromAlt(altitudeLegs.getCruiseAltitide(),
+    float mach = atools::geo::tasToMachFromAlt(altLegs.getCruiseAltitide(),
                                                static_cast<float>(perf->getCruiseSpeed()));
     if(mach > 0.4f)
       html.row2(tr("Mach at cruise:"), QLocale().toString(mach, 'f', 2), flags);
@@ -859,38 +863,44 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     // Wind =======================================================
     QStringList windText;
 
-    if(!isWindManual())
+    WindReporter *windReporter = NavApp::getWindReporter();
+
+    if(!isWindManual() && windReporter->hasWindData() && std::abs(altLegs.getWindSpeedAverage()) >= 1.f)
     {
-      if(NavApp::getWindReporter()->hasWindData())
-      {
-        if(std::abs(altitudeLegs.getWindSpeed()) >= 1.f)
-        {
-          windText.append(tr("%1°T, %2").
-                          arg(altitudeLegs.getWindDirection(), 0, 'f', 0).
-                          arg(Unit::speedKts(altitudeLegs.getWindSpeed())));
-        }
-      }
-      else
-        windText.append(tr("Wind source disabled"));
+      // Display direction and speed if wind is not manually selected and available ====================
+      windText.append(tr("%1°T, %2").
+                      arg(altLegs.getWindDirection(), 0, 'f', 0).
+                      arg(Unit::speedKts(altLegs.getWindSpeedAverage())));
     }
 
-    if(isWindManual() || NavApp::getWindReporter()->hasWindData())
+    QString windType;
+    if(isWindManual() || windReporter->hasWindData())
     {
-      // Headwind =======================
-      float headWind = altitudeLegs.getHeadWind();
+      // Display manual wind - only head- or tailwind =======================
+      float headWind = altLegs.getHeadWindAverage();
       if(std::abs(headWind) >= 1.f)
       {
         QString windPtr;
         if(headWind >= 1.f)
+        {
           windPtr = tr("◄");
+          windType = tr("headwind");
+        }
         else if(headWind <= -1.f)
+        {
           windPtr = tr("►");
-        windText.append(tr("%1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
+          windType = tr("tailwind");
+        }
+        windText.append(tr("%1 %2 %3").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))).arg(windType));
       }
     }
 
-    html.row2(tr("Average %1Wind:").arg(isWindManual() ? tr("Manual ") : QString()),
-              (windText.isEmpty() ? tr("None") : windText.join(tr(", "))), flags);
+    QString head = tr("Average wind (%1):");
+    if(!windText.isEmpty())
+      html.row2(head.arg(windReporter->getSourceText()), windText.join(tr("\n")), flags);
+    else
+      html.row2(head.arg(windReporter->getSourceText()),
+                windReporter->isWindManual() ? tr("No head- or tailwind") : tr("No wind"), flags);
 
     // Fuel Plan =======================================================
     html.tableEnd();
@@ -898,20 +908,20 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.p().b(tr("Fuel Plan")).pEnd();
     html.table();
 
-    html.row2(tr("Trip Fuel:"), ft.weightVolLocalOther(altitudeLegs.getTripFuel(),
+    html.row2(tr("Trip Fuel:"), ft.weightVolLocalOther(altLegs.getTripFuel(),
                                                        true /* bold */, false /* not small*/),
               atools::util::html::NO_ENTITIES | flags);
-    float blockFuel = altitudeLegs.getBlockFuel(*perf);
+    float blockFuel = altLegs.getBlockFuel(*perf);
     QString percent = perf->getUsableFuel() >
                       1.f ? tr("<br/>%1 % of usable Fuel").arg(100.f / perf->getUsableFuel() * blockFuel, 0, 'f',
                                                                0) : QString();
     html.row2(tr("Block Fuel:"), tr("%1%2").
               arg(ft.weightVolLocalOther(blockFuel, true /* bold */, false /* not small*/)).
               arg(percent), atools::util::html::NO_ENTITIES | flags);
-    html.row2(tr("Fuel at Destination:"), ft.weightVolLocal(altitudeLegs.getDestinationFuel(*perf)), flags);
+    html.row2(tr("Fuel at Destination:"), ft.weightVolLocal(altLegs.getDestinationFuel(*perf)), flags);
 
-    if(altitudeLegs.getAlternateFuel() > 0.f)
-      html.row2(tr("Alternate Fuel:"), ft.weightVolLocal(altitudeLegs.getAlternateFuel()), flags);
+    if(altLegs.getAlternateFuel() > 0.f)
+      html.row2(tr("Alternate Fuel:"), ft.weightVolLocal(altLegs.getAlternateFuel()), flags);
   } // if(hasLegs)
 
   // Fuel information printed always =====================================================
@@ -928,7 +938,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     if(hasLegs)
       html.row2(tr("Contingency Fuel:"), tr("%1 %, %2").
                 arg(perf->getContingencyFuel(), 0, 'f', 0).
-                arg(ft.weightVolLocal(altitudeLegs.getContingencyFuel(*perf))), flags);
+                arg(ft.weightVolLocal(altLegs.getContingencyFuel(*perf))), flags);
     else
       html.row2(tr("Contingency Fuel:"), tr("%1 %").arg(perf->getContingencyFuel(), 0, 'f', 0), flags);
   }
@@ -948,24 +958,25 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       html.row2(tr("Climb:"), tr("%1 at %2, %3° Flight Path Angle").
                 arg(Unit::speedVertFpm(perf->getClimbVertSpeed())).
                 arg(Unit::speedKts(perf->getClimbSpeed())).
-                arg(QLocale().toString(perf->getClimbFlightPathAngle(), 'f', 1)));
+                arg(QLocale().toString(perf->getClimbFlightPathAngle(altLegs.getClimbHeadWind()), 'f', 1)));
 
-      if(altitudeLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
+      if(altLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
         html.row2(tr("Time to Climb:"),
-                  formatter::formatMinutesHoursLong(altitudeLegs.getTopOfClimbDistance() /
-                                                    perf->getClimbSpeed()));
+                  formatter::formatMinutesHoursLong(perf->getTimeToClimb(altLegs.getDepartureAltitude(),
+                                                                         altLegs.getCruiseAltitide())));
     }
     else
       html.row2(tr("Climb not valid"));
 
     if(perf->isDescentValid())
     {
+      float wind = altLegs.getDescentHeadWind();
       html.row2(tr("Descent:"), tr("%1 at %2, %3° Flight Path Angle").
                 arg(Unit::speedVertFpm(perf->getDescentVertSpeed())).
                 arg(Unit::speedKts(perf->getDescentSpeed())).
-                arg(QLocale().toString(-perf->getDescentFlightPathAngle(), 'f', 1)));
+                arg(QLocale().toString(-perf->getDescentFlightPathAngle(wind), 'f', 1)));
       html.row2(tr("Descent Rule of Thumb:"), tr("%1 per %2 %3").
-                arg(Unit::distNm(1.f / perf->getDescentRateFtPerNm() * Unit::rev(1000.f, Unit::altFeetF))).
+                arg(Unit::distNm(1.f / perf->getDescentRateFtPerNm(wind) * Unit::rev(1000.f, Unit::altFeetF))).
                 arg(QLocale().toString(1000.f, 'f', 0)).
                 arg(Unit::getUnitAltStr()));
     }

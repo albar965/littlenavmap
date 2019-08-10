@@ -389,6 +389,9 @@ QString WindReporter::getLevelText() const
 
 QString WindReporter::getSourceText() const
 {
+  if(isWindManual())
+    return tr("Manual");
+
   switch(currentSource)
   {
     case wind::NO_SOURCE:

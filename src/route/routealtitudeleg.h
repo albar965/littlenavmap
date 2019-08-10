@@ -153,12 +153,6 @@ public:
     return avgWindHead;
   }
 
-  /* Average crosswind for this leg. If cross wind is < 0 wind is from left */
-  float getAverageCrossWind() const
-  {
-    return avgWindCross;
-  }
-
   float getWindSpeed() const
   {
     return windSpeed;
@@ -218,7 +212,7 @@ private:
   float averageSpeedKts = 0.f;
 
   // Average wind values for this leg
-  float avgWindDirection = 0.f, avgWindSpeed = 0.f, avgWindHead = 0.f, avgWindCross = 0.f;
+  float avgWindDirection = 0.f, avgWindSpeed = 0.f, avgWindHead = 0.f;
 
   // Wind at the waypoint (y2)
   float windSpeed = 0.f, windDirection = 0.f;

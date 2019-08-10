@@ -61,10 +61,9 @@ public:
    * can happen for short routes with too high cruise altitude.
    * Use perf to calculate climb and descent legs
    */
-  void calculate();
-
   /* Calculate travelling time and fuel consumption based on given performance object and wind */
-  void calculateTrip(const atools::fs::perf::AircraftPerf& perf);
+  /* value in feet. Require to set before compilation. */
+  void calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt);
 
   /* Get interpolated altitude value in ft for the given distance to destination in NM */
   float getAltitudeForDistance(float distanceToDest) const;
@@ -97,11 +96,8 @@ public:
   /* Distance to destination leg either airport or runway end in NM */
   float getDestinationDistance() const;
 
-  /* value in feet. Require to set before compilation. */
-  void setCruiseAltitude(float value)
-  {
-    cruiseAltitide = value;
-  }
+  /* Departure altitude. Either airport or runway. */
+  float getDepartureAltitude() const;
 
   /* Straighten out climb and descent segments which will also remove artifacts using
    * constant altitude before descending. */
@@ -173,8 +169,6 @@ public:
     return averageGroundSpeed;
   }
 
-  bool isFuelUnitVolume() const;
-
   /* Route distance in NM */
   float getTotalDistance() const;
 
@@ -211,18 +205,9 @@ public:
     return cruiseAltitide;
   }
 
+  /* True if result is not valid and error messages exist */
   bool hasErrors() const;
   QStringList getErrorStrings(QString& toolTip, QString& statusTip) const;
-
-  void setClimbRateFtPerNm(float value)
-  {
-    climbRateFtPerNm = value;
-  }
-
-  void setDesentRateFtPerNm(float value)
-  {
-    descentRateFtPerNm = value;
-  }
 
   /* Get an array for all altitudes in feet. Includes procedure points. */
   QVector<float> getAltitudes() const;
@@ -230,41 +215,77 @@ public:
   /* Average wind direction for route degrees true */
   float getWindDirection() const
   {
-    return windDirection;
+    return windDirectionAvg;
   }
 
   /* Average wind speed for this route in knots */
-  float getWindSpeed() const
+  float getWindSpeedAverage() const
   {
-    return windSpeed;
+    return windSpeedAvg;
   }
 
   /* Average head wind speed for this route in knots. Negative values are tailwind. */
-  float getHeadWind() const
+  float getHeadWindAverage() const
   {
-    return windHead;
+    return windHeadAvg;
   }
 
-  /* Average crosswind for this route. If cross wind is < 0 wind is from left */
-  float getCrossWind() const
-  {
-    return windCross;
-  }
-
+  /* true if result of calculation was valid */
   bool isValidProfile() const
   {
     return validProfile;
   }
 
-  /* Contains a list of messages if the calculation result violates altitude restrictions
-   * which can happen if the cruise altitude is too low */
-  const QStringList& getErrors() const
+  /* Average head wind for climb phase */
+  float getClimbHeadWind() const
   {
-    return errors;
+    return windHeadClimb;
+  }
+
+  /* Average head wind for cruise phase */
+  float getCruiseHeadWind() const
+  {
+    return windHeadCruise;
+  }
+
+  /* Average head wind for descent phase */
+  float getDescentHeadWind() const
+  {
+    return windHeadDescent;
+  }
+
+  /* was calculation restarted because of wind */
+  bool isAffectedByWind() const
+  {
+    return affectedByWind;
+  }
+
+  /* Equal to GS */
+  float getClimbSpeedWindCorrected() const
+  {
+    return climbSpeedWindCorrected;
+  }
+
+  /* Equal to GS */
+  float getDescentSpeedWindCorrected() const
+  {
+    return descentSpeedWindCorrected;
+  }
+
+  /* Equal to GS */
+  float getCruiseSpeedWindCorrected() const
+  {
+    return cruiseSpeedWindCorrected;
   }
 
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
+
+  /* Calculate altitudes for all legs.  */
+  void calculate();
+
+  /* Calculate travelling time and fuel consumption based on given performance object and wind */
+  void calculateTrip(const atools::fs::perf::AircraftPerf& perf);
 
   /* Adjust the altitude to fit into the restriction. I.e. raise if it is below an at or above restriction */
   float adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const;
@@ -277,9 +298,6 @@ private:
   /* find first and last altitude restriction for approach/STAR and SID  */
   int findApproachFirstRestricion() const;
   int findDepartureLastRestricion() const;
-
-  /* Departure altitude. Either airport or runway. */
-  float departureAltitude() const;
 
   /* interpolate distance where the given leg intersects the given altitude */
   float distanceForAltitude(const RouteAltitudeLeg& leg, float altitude);
@@ -318,8 +336,12 @@ private:
   float tripFuel = 0.f, alternateFuel = 0.f, travelTime = 0.f, averageGroundSpeed = 0.f;
   bool unflyableLegs = false;
 
-  // Average wind values for the whole route
-  float windDirection = 0.f, windSpeed = 0.f, windHead = 0.f, windCross = 0.f;
+  /*  Average wind values for the whole route */
+  float windDirectionAvg = 0.f, windSpeedAvg = 0.f, windHeadAvg = 0.f,
+        windHeadClimb = 0.f, windHeadCruise = 0.f, windHeadDescent = 0.f;
+
+  /* Wind corrected climb speeds for second iteration. Ground speed. */
+  float climbSpeedWindCorrected = 0.f, cruiseSpeedWindCorrected = 0.f, descentSpeedWindCorrected = 0.f;
 
   /* index in altitude legs */
   int legIndexTopOfClimb = map::INVALID_INDEX_VALUE,
@@ -328,17 +350,18 @@ private:
   const Route *route;
 
   /* Configuration options */
-  bool simplify = true;
-  bool calcTopOfDescent = true;
-  bool calcTopOfClimb = true;
+  bool simplify = true, calcTopOfDescent = true, calcTopOfClimb = true;
 
-  /* Has TOC and TOD */
-  bool validProfile = false;
+  /* Has TOC and TOD and was calculation restarted because of wind */
+  bool validProfile = false, affectedByWind = false;
 
-  float climbRateFtPerNm = 333.f, descentRateFtPerNm = 333.f;
-  float cruiseAltitide = 0.f;
+  /* From aircraft performance */
+  /* Climb and descent are corrected for tail/head wind duringfor second iteration in significant wind */
+  float climbRateWindFtPerNm = 333.f, descentRateWindFtPerNm = 333.f, cruiseAltitide = 0.f;
 
   /* Set by calculate */
+  /* Contains a list of messages if the calculation result violates altitude restrictions
+   * which can happen if the cruise altitude is too low */
   QStringList errors;
 
   QVector<map::MapIls> destRunwayIls;

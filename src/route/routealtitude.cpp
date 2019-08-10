@@ -29,6 +29,7 @@
 #include <QLineF>
 
 using atools::interpolate;
+namespace ageo = atools::geo;
 
 RouteAltitude::RouteAltitude(const Route *routeParam)
   : route(routeParam)
@@ -102,15 +103,15 @@ atools::geo::Pos RouteAltitude::getTopOfDescentPos() const
   if(isEmpty() || !(distanceTopOfDescent < map::INVALID_DISTANCE_VALUE) ||
      distanceTopOfDescent > route->getTotalDistance() - 0.2f ||
      legIndexTopOfDescent > map::INVALID_INDEX_VALUE / 2)
-    return atools::geo::EMPTY_POS;
+    return ageo::EMPTY_POS;
   else
   {
-    const atools::geo::LineString& line = value(legIndexTopOfDescent).getLineString();
+    const ageo::LineString& line = value(legIndexTopOfDescent).getLineString();
 
     if(!line.isEmpty())
       return line.value(line.size() - 2);
     else
-      return atools::geo::EMPTY_POS;
+      return ageo::EMPTY_POS;
   }
 }
 
@@ -119,7 +120,7 @@ atools::geo::Pos RouteAltitude::getTopOfClimbPos() const
   // Avoid any invalid points near departure
   if(isEmpty() || !(distanceTopOfClimb < map::INVALID_DISTANCE_VALUE) || distanceTopOfClimb < 0.2f ||
      legIndexTopOfClimb > map::INVALID_INDEX_VALUE / 2)
-    return atools::geo::EMPTY_POS;
+    return ageo::EMPTY_POS;
   else
     return value(legIndexTopOfClimb).getLineString().value(1);
 }
@@ -610,6 +611,71 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
   }
 }
 
+void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Get default climb speed
+  climbSpeedWindCorrected = perf.getClimbSpeed();
+  cruiseSpeedWindCorrected = perf.getCruiseSpeed();
+  descentSpeedWindCorrected = perf.getDescentSpeed();
+
+  // Calculate default climb rate
+  climbRateWindFtPerNm = perf.getClimbVertSpeed() * 60.f / climbSpeedWindCorrected;
+  descentRateWindFtPerNm = perf.getDescentVertSpeed() * 60.f / descentSpeedWindCorrected;
+
+  cruiseAltitide = cruiseAltitudeFt;
+  affectedByWind = false;
+  calculate();
+  calculateTrip(perf);
+
+  // Do a second iteration if difference in average climb or descent exceeds 10 knots ============================
+  if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 10.f) ||
+     atools::almostNotEqual(descentRateWindFtPerNm, perf.getDescentSpeed(), 10.f))
+  {
+    qDebug() << Q_FUNC_INFO << "Second iteration: windHeadClimb" << windHeadClimb << "windHeadCruise" << windHeadCruise
+             << "climbSpeedWindCorrected" << climbSpeedWindCorrected
+             << "descentSpeedWindCorrected" << descentSpeedWindCorrected;
+
+    climbRateWindFtPerNm = perf.getClimbVertSpeed() * 60.f / climbSpeedWindCorrected;
+    descentRateWindFtPerNm = perf.getDescentVertSpeed() * 60.f / descentSpeedWindCorrected;
+
+    qDebug() << Q_FUNC_INFO << "climbRateWindFtPerNm" << climbRateWindFtPerNm
+             << "descentRateWindFtPerNm" << descentRateWindFtPerNm;
+
+    calculate();
+    calculateTrip(perf);
+
+    affectedByWind = true;
+
+    // Do a third iteration if difference in average climb or descent exceeds 30 knots ============================
+    if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 30.f) ||
+       atools::almostNotEqual(descentRateWindFtPerNm, perf.getDescentSpeed(), 30.f))
+    {
+      calculate();
+      calculateTrip(perf);
+    }
+  }
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+  qDebug() << "windDirection" << windDirectionAvg << "windSpeed" << windSpeedAvg << "windHead" << windHeadAvg
+           << "windHeadClimb" << windHeadClimb << "windHeadCruise" << windHeadCruise
+           << "windHeadDescent" << windHeadDescent;
+  qDebug() << "distanceTopOfClimb" << distanceTopOfClimb << "distanceTopOfDescent" << distanceTopOfDescent;
+  qDebug() << "tripFuel" << tripFuel << "alternateFuel" << alternateFuel << "travelTime" << travelTime
+           << "averageGroundSpeed" << averageGroundSpeed;
+  qDebug() << "legIndexTopOfClimb" << legIndexTopOfClimb << "legIndexTopOfDescent" << legIndexTopOfDescent;
+  qDebug() << "validProfile" << validProfile << "unflyableLegs" << unflyableLegs;
+  qDebug() << "climbRateWindFtPerNm" << climbRateWindFtPerNm << "descentRateWindFtPerNm" << descentRateWindFtPerNm
+           << "cruiseAltitide" << cruiseAltitide;
+#endif
+
+  if(!errors.isEmpty())
+    qWarning() << "errors" << errors;
+  qDebug() << Q_FUNC_INFO;
+}
+
 void RouteAltitude::calculate()
 {
   clearAll();
@@ -763,13 +829,13 @@ void RouteAltitude::calculateDeparture()
     return;
   }
 
-  if(climbRateFtPerNm < 1.f)
+  if(climbRateWindFtPerNm < 1.f)
   {
-    qWarning() << Q_FUNC_INFO << "climbRateFtPerNm " << climbRateFtPerNm;
+    qWarning() << Q_FUNC_INFO << "climbRateWindFtPerNm " << climbRateWindFtPerNm;
     return;
   }
 
-  float departAlt = departureAltitude();
+  float departAlt = getDepartureAltitude();
 
   if(departureLegIdx > 0) // Assign altitude to dummy for departure airport too
     first().setAlt(departAlt);
@@ -794,7 +860,7 @@ void RouteAltitude::calculateDeparture()
       // Set geometry for climbing
       alt.setY1(lastLegAlt);
       // Use a default value of 3 nm per 1000 ft if performance is not available
-      alt.setY2(lastLegAlt + alt.getDistanceTo() * climbRateFtPerNm);
+      alt.setY2(lastLegAlt + alt.getDistanceTo() * climbRateWindFtPerNm);
     }
 
     if(!alt.isEmpty())
@@ -857,9 +923,9 @@ void RouteAltitude::calculateArrival()
     return;
   }
 
-  if(descentRateFtPerNm < 1.f)
+  if(descentRateWindFtPerNm < 1.f)
   {
-    qWarning() << Q_FUNC_INFO << "climbRateFtPerNm " << descentRateFtPerNm;
+    qWarning() << Q_FUNC_INFO << "descentRateWindFtPerNm " << descentRateWindFtPerNm;
     return;
   }
 
@@ -880,7 +946,7 @@ void RouteAltitude::calculateArrival()
 
       // Point of this leg
       // Use a default value of 3 nm per 1000 ft if performance is not available
-      newAltitude = lastAlt + distFromRight * descentRateFtPerNm;
+      newAltitude = lastAlt + distFromRight * descentRateWindFtPerNm;
     }
 
     if(!alt.isEmpty())
@@ -960,8 +1026,8 @@ void RouteAltitude::calculateApproachIlsAndSlopes()
                            [ = ](const map::MapIls& ils) -> bool
   {
     // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
-    return ils.slope < 0.1f || destRunwayEnd.position.distanceMeterTo(ils.position) > atools::geo::nmToMeter(4.) ||
-    atools::geo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
+    return ils.slope < 0.1f || destRunwayEnd.position.distanceMeterTo(ils.position) > ageo::nmToMeter(4.) ||
+    ageo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
   });
 
   if(it != destRunwayIls.end())
@@ -1046,7 +1112,7 @@ float RouteAltitude::getDestinationDistance() const
     return map::INVALID_DISTANCE_VALUE;
 }
 
-float RouteAltitude::departureAltitude() const
+float RouteAltitude::getDepartureAltitude() const
 {
   const RouteLeg& startLeg = route->at(route->getSidLegIndex());
   if(startLeg.isAnyProcedure() && startLeg.getProcedureLegAltRestr().isValid())
@@ -1096,6 +1162,9 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   tripFuel = 0.f;
   alternateFuel = 0.f;
   unflyableLegs = false;
+  averageGroundSpeed = windDirectionAvg = windSpeedAvg =
+    windHeadAvg = windHeadClimb = windHeadCruise = windHeadDescent =
+      climbSpeedWindCorrected = cruiseSpeedWindCorrected = descentSpeedWindCorrected = 0.f;
 
   float tocDist = getTopOfClimbDistance();
   float todDist = getTopOfDescentDistance();
@@ -1131,10 +1200,8 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       float endDist = leg.getDistanceFromStart();
 
       float climbDist = 0.f, cruiseDist = 0.f, descentDist = 0.f;
-
-      atools::grib::Wind climbWind = {0.f, 0.f}, cruiseWind = {0.f, 0.f}, descentWind = {0.f, 0.f};
-
       float climbSpeed = 0.f, cruiseSpeed = 0.f, descentSpeed = 0.f;
+      atools::grib::Wind climbWind = {0.f, 0.f}, cruiseWind = {0.f, 0.f}, descentWind = {0.f, 0.f};
 
       // Check if leg covers TOC and/or TOD =================================================
       // Calculate wind, distance and averate speed (TAS) for this leg
@@ -1202,11 +1269,9 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       }
 
       // Calculate ground speed for each phase (climb, cruise, descent) of this leg - 0 is phase is not touched
-      float course = route->at(i).getCourseToMag();
+      float course = route->at(i).getCourseToTrue();
 
-      float climbHeadWind = 0.f, climbCrossWind = 0.f,
-            cruiseHeadWind = 0.f, cruiseCrossWind = 0.f,
-            descentHeadWind = 0.f, descentCrossWind = 0.f;
+      float climbHeadWind = 0.f, cruiseHeadWind = 0.f, descentHeadWind = 0.f;
 
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << "=========== leg #" << i
@@ -1216,18 +1281,26 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       // Skip wind calculation for circular legs which have no course
       if(course < map::INVALID_COURSE_VALUE)
       {
-        // Calculate ground speed
-        climbSpeed = atools::geo::windCorrectedGroundSpeed(climbWind.speed, climbWind.dir, course, climbSpeed);
-        cruiseSpeed = atools::geo::windCorrectedGroundSpeed(cruiseWind.speed, cruiseWind.dir, course, cruiseSpeed);
-        descentSpeed = atools::geo::windCorrectedGroundSpeed(descentWind.speed, descentWind.dir, course, descentSpeed);
+        // Calculate ground speed if legs for phase found - Calculate head and cross wind for leg
+        if(climbSpeed > 0.f)
+        {
+          climbSpeed = ageo::windCorrectedGroundSpeed(climbWind.speed, climbWind.dir, course, climbSpeed);
+          climbHeadWind = ageo::headWindForCourse(climbWind.speed, climbWind.dir, course);
+        }
+        if(cruiseSpeed > 0.f)
+        {
+          cruiseSpeed = ageo::windCorrectedGroundSpeed(cruiseWind.speed, cruiseWind.dir, course, cruiseSpeed);
+          cruiseHeadWind = ageo::headWindForCourse(cruiseWind.speed, cruiseWind.dir, course);
+        }
 
-        // Calculate head and cross wind for leg
-        atools::geo::windForCourse(climbHeadWind, climbCrossWind, climbWind.speed, climbWind.dir, course);
-        atools::geo::windForCourse(cruiseHeadWind, cruiseCrossWind, cruiseWind.speed, cruiseWind.dir, course);
-        atools::geo::windForCourse(descentHeadWind, descentCrossWind, descentWind.speed, descentWind.dir, course);
+        if(descentSpeed > 0.f)
+        {
+          descentSpeed = ageo::windCorrectedGroundSpeed(descentWind.speed, descentWind.dir, course, descentSpeed);
+          descentHeadWind = ageo::headWindForCourse(descentWind.speed, descentWind.dir, course);
+        }
       }
 
-      // Check if wind is too strong
+      // Check if wind is too strong =====================================
       if(!(climbSpeed < map::INVALID_SPEED_VALUE))
       {
         unflyableLegs = true;
@@ -1255,7 +1328,17 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       // Assign values to leg =========================================================
       if(!leg.isMissed() && !leg.isAlternate() && legDist < map::INVALID_DISTANCE_VALUE)
       {
-        // Assign averages ==========================
+        // Calculate head wind for climb and descent separately =================================
+        windHeadClimb += climbHeadWind * climbDist;
+        windHeadCruise += cruiseHeadWind * cruiseDist;
+        windHeadDescent += descentHeadWind * descentDist;
+
+        // Wind corrected speeds for all phases (equal to GS) ========
+        climbSpeedWindCorrected += climbSpeed * climbDist;
+        cruiseSpeedWindCorrected += cruiseSpeed * cruiseDist;
+        descentSpeedWindCorrected += descentSpeed * descentDist;
+
+        // Assign averages to leg ==========================
         // Speed =============
         leg.averageSpeedKts = (climbSpeed * climbDist +
                                cruiseSpeed * cruiseDist +
@@ -1265,15 +1348,12 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
         leg.avgWindSpeed = (climbWind.speed * climbDist +
                             cruiseWind.speed * cruiseDist +
                             descentWind.speed * descentDist) / legDist;
-        leg.avgWindDirection = atools::geo::normalizeCourse((climbWind.dir * climbDist +
-                                                             cruiseWind.dir * cruiseDist +
-                                                             descentWind.dir * descentDist) / legDist);
+        leg.avgWindDirection = ageo::normalizeCourse((climbWind.dir * climbDist +
+                                                      cruiseWind.dir * cruiseDist +
+                                                      descentWind.dir * descentDist) / legDist);
         leg.avgWindHead = (climbHeadWind * climbDist +
                            cruiseHeadWind * cruiseDist +
                            descentHeadWind * descentDist) / legDist;
-        leg.avgWindCross = (climbCrossWind * climbDist +
-                            cruiseCrossWind * cruiseDist +
-                            descentCrossWind * descentDist) / legDist;
 
         // Sum up fuel for phases ============
         leg.fuel = perf.getClimbFuelFlow() * climbTime +
@@ -1293,6 +1373,15 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
     } // if(leg.isAlternate()) ... else
   } // for(int i = 0; i < size(); i++)
 
+  // Calculate average for summarized values ==============================
+  windHeadClimb /= tocDist;
+  windHeadCruise /= todDist - tocDist;
+  windHeadDescent /= route->getTotalDistance() - todDist;
+
+  climbSpeedWindCorrected /= tocDist;
+  cruiseSpeedWindCorrected /= todDist - tocDist;
+  descentSpeedWindCorrected /= route->getTotalDistance() - todDist;
+
   // Calculate alternate fuel  =====================================
   // Fuel to the farthest alternate
   alternateFuel = 0.f;
@@ -1304,7 +1393,6 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   }
 
   // Calculate average values for all =====================================
-  averageGroundSpeed = windDirection = windSpeed = windHead = windCross = 0.f;
   float accDist = 0.f, u = 0.f, v = 0.f;
   for(const RouteAltitudeLeg& leg : *this)
   {
@@ -1319,20 +1407,19 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
     averageGroundSpeed = ((leg.averageSpeedKts * legDist) + (averageGroundSpeed * accDist)) / (accDist + legDist);
 
     // Wind - sum up U/V components =================
-    u = ((atools::geo::windUComponent(leg.avgWindSpeed, leg.avgWindDirection) * legDist) + (u * accDist)) /
+    u = ((ageo::windUComponent(leg.avgWindSpeed, leg.avgWindDirection) * legDist) + (u * accDist)) /
         (accDist + legDist);
-    v = ((atools::geo::windVComponent(leg.avgWindSpeed, leg.avgWindDirection) * legDist) + (v * accDist)) /
+    v = ((ageo::windVComponent(leg.avgWindSpeed, leg.avgWindDirection) * legDist) + (v * accDist)) /
         (accDist + legDist);
 
-    windHead = ((leg.avgWindHead * legDist) + (windHead * accDist)) / (accDist + legDist);
-    windCross = ((leg.avgWindCross * legDist) + (windCross * accDist)) / (accDist + legDist);
+    windHeadAvg = ((leg.avgWindHead * legDist) + (windHeadAvg * accDist)) / (accDist + legDist);
 
     accDist += legDist;
   }
 
   // get back to direction/speed from U/V components
-  windDirection = atools::geo::windDirectionFromUV(u, v);
-  windSpeed = atools::geo::windSpeedFromUV(u, v);
+  windDirectionAvg = ageo::windDirectionFromUV(u, v);
+  windSpeedAvg = ageo::windSpeedFromUV(u, v);
 
 #ifdef DEBUG_INFORMATION
   qDebug() << "================================================================================================";

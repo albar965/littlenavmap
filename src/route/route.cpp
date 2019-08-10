@@ -29,7 +29,6 @@
 #include "navapp.h"
 #include "fs/util/fsutil.h"
 #include "route/routealtitude.h"
-#include "perf/aircraftperfcontroller.h"
 #include "fs/perf/aircraftperf.h"
 #include "settings/settings.h"
 
@@ -1417,27 +1416,13 @@ void Route::updateMagvar()
 
 void Route::updateLegAltitudes()
 {
-  AircraftPerfController *aircraftPerfController = NavApp::getAircraftPerfController();
-
-  // Calculate if values are valid or collecting data
-  altitude->setCalcTopOfClimb(aircraftPerfController->isClimbValid());
-  altitude->setCalcTopOfDescent(aircraftPerfController->isDescentValid());
-
-  // Use default values if invalid values or collecting data
-  const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
-  altitude->setClimbRateFtPerNm(perf.getClimbRateFtPerNm());
-  altitude->setDesentRateFtPerNm(perf.getDescentRateFtPerNm());
-
-  altitude->setSimplify(
-    atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
-
-  altitude->setCruiseAltitude(getCruisingAltitudeFeet());
+  // Uses default values if invalid values or collecting data
+  altitude->setSimplify(atools::settings::Settings::instance().
+                        getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
 
   // Need to update the wind data for manual wind setting
   NavApp::getWindReporter()->updateManualRouteWinds();
-  altitude->calculate();
-
-  altitude->calculateTrip(NavApp::getAircraftPerformance());
+  altitude->calculateAll(NavApp::getAircraftPerformance(), getCruisingAltitudeFeet());
 }
 
 /* Update the bounding rect using marble functions to catch anti meridian overlap */
