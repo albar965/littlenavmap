@@ -359,8 +359,9 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
       info.windText(winds, html, NavApp::getWindReporter()->getAltitude());
 
 #ifdef DEBUG_INFORMATION
-      html.hr().small(QString("Pos(%1, %2)").
-                      arg(mapSearchResult.windPos.getLonX()).arg(mapSearchResult.windPos.getLatY())).br();
+      html.hr().small(QString("Pos(%1, %2), alt(%3)").
+                      arg(mapSearchResult.windPos.getLonX()).arg(mapSearchResult.windPos.getLatY()).
+                      arg(NavApp::getWindReporter()->getAltitude(), 0, 'f', 2)).br();
 
       html.small(NavApp::getWindReporter()->getDebug(mapSearchResult.windPos));
 #endif

@@ -178,7 +178,7 @@ void WindReporter::addToolbarButton()
   windlevelToolButton = button;
   button->setIcon(QIcon(":/littlenavmap/resources/icons/wind.svg"));
   button->setPopupMode(QToolButton::InstantPopup);
-  button->setToolTip(tr("Wind altitude levels to display"));
+  button->setToolTip(tr("Wind forecast altitude levels to display"));
   button->setStatusTip(button->toolTip());
   button->setCheckable(true);
 
@@ -209,43 +209,48 @@ void WindReporter::addToolbarButton()
   ui->menuHighAltitudeWindLevels->addAction(actionNone);
   connect(actionNone, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
 
-  // Create and add ground/AGL action =====================================
-  actionAgl = new QAction(tr("Ground"), button);
-  actionAgl->setToolTip(tr("Show wind for 80 m / 250 ft above ground"));
-  actionAgl->setStatusTip(actionAgl->toolTip());
-  actionAgl->setData(wind::AGL);
-  actionAgl->setCheckable(true);
-  actionAgl->setActionGroup(actionGroup);
-  button->addAction(actionAgl);
-  ui->menuHighAltitudeWindLevels->addAction(actionAgl);
-  connect(actionAgl, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
-
-  // Create and add flight plan action =====================================
-  actionFlightplan = new QAction(tr("At Flight Plan Cruise Altitude"), button);
-  actionFlightplan->setToolTip(tr("Show wind at flight plan cruise altitude"));
-  actionFlightplan->setStatusTip(actionFlightplan->toolTip());
-  actionFlightplan->setData(wind::FLIGHTPLAN);
-  actionFlightplan->setCheckable(true);
-  actionFlightplan->setActionGroup(actionGroup);
-  button->addAction(actionFlightplan);
-  ui->menuHighAltitudeWindLevels->addAction(actionFlightplan);
-  connect(actionFlightplan, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
-
-  ui->menuHighAltitudeWindLevels->addSeparator();
-
   // Create and add level actions =====================================
   for(int level : levels)
   {
-    QAction *action = new QAction(tr("At %1").arg(Unit::altFeet(level)), button);
-    action->setToolTip(tr("Show wind at %1 altitude").arg(Unit::altFeet(level)));
-    action->setData(level);
-    action->setCheckable(true);
-    action->setStatusTip(action->toolTip());
-    action->setActionGroup(actionGroup);
-    button->addAction(action);
-    actionLevelVector.append(action);
-    ui->menuHighAltitudeWindLevels->addAction(action);
-    connect(action, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
+    if(level == wind::FLIGHTPLAN)
+    {
+      // Create and add flight plan action =====================================
+      actionFlightplan = new QAction(tr("At Flight Plan Cruise Altitude"), button);
+      actionFlightplan->setToolTip(tr("Show wind at flight plan cruise altitude"));
+      actionFlightplan->setStatusTip(actionFlightplan->toolTip());
+      actionFlightplan->setData(wind::FLIGHTPLAN);
+      actionFlightplan->setCheckable(true);
+      actionFlightplan->setActionGroup(actionGroup);
+      button->addAction(actionFlightplan);
+      ui->menuHighAltitudeWindLevels->addAction(actionFlightplan);
+      connect(actionFlightplan, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
+    }
+    else if(level == wind::AGL)
+    {
+      // Create and add ground/AGL action =====================================
+      actionAgl = new QAction(tr("Ground (only NOAA)"), button);
+      actionAgl->setToolTip(tr("Show wind for 80 m / 260 ft above ground"));
+      actionAgl->setStatusTip(actionAgl->toolTip());
+      actionAgl->setData(wind::AGL);
+      actionAgl->setCheckable(true);
+      actionAgl->setActionGroup(actionGroup);
+      button->addAction(actionAgl);
+      ui->menuHighAltitudeWindLevels->addAction(actionAgl);
+      connect(actionAgl, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
+    }
+    else
+    {
+      QAction *action = new QAction(tr("At %1").arg(Unit::altFeet(level)), button);
+      action->setToolTip(tr("Show wind at %1 altitude").arg(Unit::altFeet(level)));
+      action->setData(level);
+      action->setCheckable(true);
+      action->setStatusTip(action->toolTip());
+      action->setActionGroup(actionGroup);
+      button->addAction(action);
+      actionLevelVector.append(action);
+      ui->menuHighAltitudeWindLevels->addAction(action);
+      connect(action, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
+    }
   }
 }
 
@@ -535,7 +540,7 @@ atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::
     // Collect wind for all levels
     for(int i = 0; i < altitudesFt.size(); i++)
     {
-      float alt = altitudesFt.at(i);
+      float alt = altitudesFt.at(i) == wind::AGL ? 260.f : altitudesFt.at(i);
       float altNext = i < altitudesFt.size() - 1 ? altitudesFt.at(i + 1) : 100000.f;
 
       // Get wind for layer/altitude

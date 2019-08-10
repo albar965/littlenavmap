@@ -71,6 +71,7 @@ using atools::geo::Pos;
 using atools::fs::util::roundComFrequency;
 
 namespace ahtml = atools::util::html;
+namespace ageo = atools::geo;
 
 const float HELIPAD_DISTANCE_KM = 0.200f;
 const float STARTPOS_DISTANCE_KM = 0.500f;
@@ -86,7 +87,7 @@ const float MIN_GROUND_SPEED = 30.f;
 const int WEATHER_MAX_AGE_HOURS = 6;
 
 // Maximum distance for bearing display
-const int MAX_DISTANCE_FOR_BEARING_METER = atools::geo::nmToMeter(500);
+const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(500);
 
 HtmlInfoBuilder::HtmlInfoBuilder(QWidget *parent, bool formatInfo, bool formatPrint)
   : parentWidget(parent), info(formatInfo), print(formatPrint)
@@ -209,10 +210,10 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"));
 
       bool neverRises, neverSets;
-      QTime sunrise = atools::geo::calculateSunriseSunset(neverRises, neverSets, pos,
-                                                          datetime.date(), atools::geo::SUNRISE_CIVIL);
-      QTime sunset = atools::geo::calculateSunriseSunset(neverRises, neverSets, pos,
-                                                         datetime.date(), atools::geo::SUNSET_CIVIL);
+      QTime sunrise = ageo::calculateSunriseSunset(neverRises, neverSets, pos,
+                                                   datetime.date(), ageo::SUNRISE_CIVIL);
+      QTime sunset = ageo::calculateSunriseSunset(neverRises, neverSets, pos,
+                                                  datetime.date(), ageo::SUNSET_CIVIL);
       QString txt;
 
       if(neverRises)
@@ -1074,7 +1075,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   if(standalone)
   {
     // Add bearing/distance to table ==========================
-    bearingText(atools::geo::Pos(ilsRec->valueFloat("lonx"), ilsRec->valueFloat("laty")),
+    bearingText(ageo::Pos(ilsRec->valueFloat("lonx"), ilsRec->valueFloat("laty")),
                 ilsRec->valueFloat("mag_var"), html);
 
     // ILS information ==================================================
@@ -1124,7 +1125,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     {
       // The maximum angular offset for a LOC is 3° for FAA and 5° for ICAO.
       // Everything else is named either LDA (FAA) or IGS (ICAO).
-      if(atools::geo::angleAbsDiff(end.heading, ilsRec->valueFloat("loc_heading")) > 2.5f)
+      if(ageo::angleAbsDiff(end.heading, ilsRec->valueFloat("loc_heading")) > 2.5f)
       {
         // Get airport for consistent magnetic variation =====================
         map::MapAirport airport = airportQuerySim->getAirportByIdent(ilsRec->valueStr("loc_airport_ident"));
@@ -1179,15 +1180,21 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
     html.tr().th(Unit::getUnitAltStr()).th(tr("°M")).th(Unit::getUnitSpeedStr()).trEnd();
     for(const atools::grib::WindPos& wind : windStack)
     {
-      // Display currently selected altitude bold
+      Flags flags = ahtml::ALIGN_RIGHT;
+
       float alt = wind.pos.getAltitude();
-      Flags flags =
-        atools::almostEqual(alt, currentAltitude, 10.f) ? ahtml::BOLD : ahtml::NONE;
+      flags |= atools::almostEqual(alt, currentAltitude, 10.f) ? ahtml::BOLD : ahtml::NONE;
 
       // One table row with three data fields
+      QString course;
+      if(wind.wind.speed >= 1.f)
+        course = locale.toString(ageo::normalizeCourse(wind.wind.dir - NavApp::getMagVar(wind.pos)), 'f', 0);
+      else
+        course = tr("-");
+
       html.tr().
-      td(Unit::altFeet(alt, false), flags).
-      td(tr("%1").arg(atools::geo::normalizeCourse(wind.wind.dir - NavApp::getMagVar(wind.pos)), 0, 'f', 0), flags).
+      td(atools::almostEqual(alt, 260.f) ? tr("Ground") : Unit::altFeet(alt, false), flags).
+      td(tr("%1").arg(course), flags).
       td(tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0), flags).
       trEnd();
     }
@@ -1714,18 +1721,18 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   float temp = parsed.getTemperatureC();
   if(temp < INVALID_METAR_VALUE)
     html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temp)) + tr(" °C, ") +
-              locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr(" °F"));
+              locale.toString(atools::roundToInt(ageo::degCToDegF(temp))) + tr(" °F"));
 
   temp = parsed.getDewpointDegC();
   if(temp < INVALID_METAR_VALUE)
     html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(temp)) + tr(" °C, ") +
-              locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr(" °F"));
+              locale.toString(atools::roundToInt(ageo::degCToDegF(temp))) + tr(" °F"));
 
   // Pressure  =============================================================
   float slp = parsed.getPressureMbar();
   if(slp < INVALID_METAR_VALUE)
     html.row2(tr("Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +
-              locale.toString(atools::geo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
+              locale.toString(ageo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
 
   // Visibility =============================================================
   const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
@@ -2073,7 +2080,7 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     // html.nbsp().nbsp();
     // if(logEntry.isDestAndDepartPosValid())
     // {
-    // atools::geo::Rect rect = logEntry.bounding();
+    // ageo::Rect rect = logEntry.bounding();
     // html.a(tr("Map"), QString("lnm://show?west=%1&north=%2&east=%3&south=%4").
     // arg(rect.getWest()).arg(rect.getNorth()).arg(rect.getEast()).arg(rect.getSouth()),
     // ahtml::LINK_NO_UL);
@@ -2132,7 +2139,7 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       if(rec.valueFloat("distance_flown") > 0.f)
         html.row2(tr("Distance flown:"), Unit::distNm(rec.valueFloat("distance_flown")));
 
-      atools::geo::LineString line = logEntry.lineString();
+      ageo::LineString line = logEntry.lineString();
       if(line.isValid())
         html.row2(tr("Great circle distance:"), Unit::distMeter(line.lengthMeter()));
     }
@@ -2379,7 +2386,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 #endif
 }
 
-void HtmlInfoBuilder::bearingText(const atools::geo::Pos& pos, float magVar, HtmlBuilder& html) const
+void HtmlInfoBuilder::bearingText(const ageo::Pos& pos, float magVar, HtmlBuilder& html) const
 {
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = NavApp::getUserAircraft();
 
@@ -2535,7 +2542,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     float qnh = onlineRec.valueFloat("qnh_mb");
     if(qnh > 0.f && qnh < 10000.f)
       html.row2(tr("Sea Level Pressure:"), locale.toString(qnh, 'f', 0) + tr(" hPa, ") +
-                locale.toString(atools::geo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
+                locale.toString(ageo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
 
     if(onlineRec.isNull("administrative_rating") || onlineRec.isNull("atc_pilot_rating"))
       html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
@@ -2899,7 +2906,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     float qnh = onlineRec.valueFloat("qnh_mb");
     if(qnh > 0.f && qnh < 10000.f)
       html.row2(tr("Sea Level Pressure:"), locale.toString(qnh, 'f', 0) + tr(" hPa, ") +
-                locale.toString(atools::geo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
+                locale.toString(ageo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
 
     if(onlineRec.isNull("administrative_rating") || onlineRec.isNull("atc_pilot_rating"))
       html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
@@ -3331,10 +3338,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             if(!less && userAircaft != nullptr && userAircaft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
             {
               // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
-              float crabAngle = atools::geo::windCorrectedHeading(userAircaft->getWindSpeedKts(),
-                                                                  userAircaft->getWindDirectionDegT(),
-                                                                  courseToWptTrue,
-                                                                  userAircaft->getTrueAirspeedKts());
+              float crabAngle = ageo::windCorrectedHeading(userAircaft->getWindSpeedKts(),
+                                                           userAircaft->getWindDirectionDegT(),
+                                                           courseToWptTrue,
+                                                           userAircaft->getTrueAirspeedKts());
               if(crabAngle < INVALID_COURSE_VALUE)
               {
                 crabAngle = normalizeCourse(crabAngle - userAircaft->getMagVarDeg());
@@ -3556,7 +3563,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
     // Head/tail and crosswind =================================================
     float headWind = 0.f, crossWind = 0.f;
-    atools::geo::windForCourse(headWind, crossWind, windSpeed, windDir, userAircaft->getHeadingDegMag());
+    ageo::windForCourse(headWind, crossWind, windSpeed, windDir, userAircaft->getHeadingDegMag());
 
     if(!less)
     {
@@ -3572,7 +3579,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(tat < 0.f && tat > -0.5f)
       tat = 0.f;
     html.row2(tr("Total Air Temperature:"), locale.toString(tat, 'f', 0) + tr(" °C, ") +
-              locale.toString(atools::geo::degCToDegF(tat), 'f', 0) + tr(" °F"));
+              locale.toString(ageo::degCToDegF(tat), 'f', 0) + tr(" °F"));
 
     if(!less)
     {
@@ -3581,9 +3588,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(sat < 0.f && sat > -0.5f)
         sat = 0.f;
       html.row2(tr("Static Air Temperature:"), locale.toString(sat, 'f', 0) + tr(" °C, ") +
-                locale.toString(atools::geo::degCToDegF(sat), 'f', 0) + tr(" °F"));
+                locale.toString(ageo::degCToDegF(sat), 'f', 0) + tr(" °F"));
 
-      float isaDeviation = sat - atools::geo::isaTemperature(userAircaft->getPosition().getAltitude());
+      float isaDeviation = sat - ageo::isaTemperature(userAircaft->getPosition().getAltitude());
       if(isaDeviation < 0.f && isaDeviation > -0.5f)
         isaDeviation = 0.f;
       html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr(" °C"));
@@ -3591,7 +3598,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
     float slp = userAircaft->getSeaLevelPressureMbar();
     html.row2(tr("Sea Level Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +
-              locale.toString(atools::geo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
+              locale.toString(ageo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
 
     if(!less)
     {

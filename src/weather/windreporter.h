@@ -196,10 +196,10 @@ private:
   QActionGroup *actionGroup = nullptr;
 
   /* Levels for the dropdown menu in feet */
-  QVector<int> levels = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
+  QVector<int> levels = {wind::AGL, wind::FLIGHTPLAN, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
   /* Levels for the tooltip */
-  QVector<int> levelsTooltip = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
+  QVector<int> levelsTooltip = {wind::AGL, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
   /* Currently displayed altitude or one of SpecialLevels */
   int currentLevel = wind::NONE;
