@@ -18,6 +18,8 @@
 #include "mappainter/mappaintertop.h"
 
 #include "common/mapcolors.h"
+#include "navapp.h"
+#include "util/paintercontextsaver.h"
 
 #include <marble/GeoPainter.h>
 
@@ -34,6 +36,8 @@ MapPainterTop::~MapPainterTop()
 
 void MapPainterTop::render(PaintContext *context)
 {
+  paintCopyright(context);
+
   if(!context->visibleWidget)
     return;
 
@@ -45,16 +49,17 @@ void MapPainterTop::render(PaintContext *context)
 
   // Draw center cross =====================================
   // Usable in all modes
+  Marble::GeoPainter *painter = context->painter;
   if(opts & optsd::NAVAIDS_CENTER_CROSS)
   {
-    QRect vp = context->painter->viewport();
+    QRect vp = painter->viewport();
     int x = vp.center().x();
     int y = vp.center().y();
 
-    context->painter->setPen(mapcolors::centerCrossBackPen);
+    painter->setPen(mapcolors::centerCrossBackPen);
     drawCross(context, x, y, size);
 
-    context->painter->setPen(mapcolors::centerCrossFillPen);
+    painter->setPen(mapcolors::centerCrossFillPen);
     drawCross(context, x, y, size2);
   }
 
@@ -66,10 +71,10 @@ void MapPainterTop::render(PaintContext *context)
     {
       int areaSize = OptionData::instance().getMapNavTouchArea();
 
-      context->painter->setPen(mapcolors::centerCrossBackPen);
+      painter->setPen(mapcolors::centerCrossBackPen);
       drawTouchMarks(context, size, areaSize);
 
-      context->painter->setPen(mapcolors::centerCrossFillPen);
+      painter->setPen(mapcolors::centerCrossFillPen);
       drawTouchMarks(context, size2, areaSize);
     }
 
@@ -77,16 +82,42 @@ void MapPainterTop::render(PaintContext *context)
     if(opts & optsd::NAVAIDS_TOUCHSCREEN_ICONS)
     {
       // Make icon size dependent on screen size but limit min and max
-      int iconSize = std::max(context->painter->viewport().height(), context->painter->viewport().width()) / 20;
+      int iconSize = std::max(painter->viewport().height(), painter->viewport().width()) / 20;
       drawTouchIcons(context, std::max(std::min(iconSize, 30), 10));
     }
+  }
+}
+
+void MapPainterTop::paintCopyright(PaintContext *context)
+{
+  QString mapCopyright = NavApp::getMapCopyright();
+  if(!mapCopyright.isEmpty())
+  {
+    Marble::GeoPainter *painter = context->painter;
+    atools::util::PainterContextSaver saver(painter);
+
+    // Move text more into the center for web apps
+    int rightOffset = context->visibleWidget ? 0 : 20;
+    int bottomOffset = context->visibleWidget ? 0 : 4;
+
+    // Draw text
+    context->szFont(0.8f);
+    QFont font = painter->font();
+    font.setBold(false);
+    painter->setFont(font);
+    painter->setPen(Qt::black);
+    painter->setBackground(QColor("#b0ffffff"));
+    painter->setBrush(Qt::NoBrush);
+    painter->setBackgroundMode(Qt::OpaqueMode);
+    painter->drawText(painter->viewport().width() - painter->fontMetrics().width(mapCopyright) - rightOffset,
+                      painter->viewport().height() - painter->fontMetrics().descent() - bottomOffset, mapCopyright);
   }
 }
 
 void MapPainterTop::drawTouchIcons(const PaintContext *context, int iconSize)
 {
   Marble::GeoPainter *painter = context->painter;
-  QRect vp = context->painter->viewport();
+  QRect vp = painter->viewport();
   int w = vp.width();
   int h = vp.height();
   static const int borderDist = 5;

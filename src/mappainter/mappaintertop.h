@@ -21,7 +21,7 @@
 #include "mappainter/mappainter.h"
 
 /*
- * Draws navigation items on top of all map features.
+ * Draws navigation items and OSM copyright on top of all map features.
  */
 class MapPainterTop :
   public MapPainter
@@ -38,6 +38,9 @@ private:
 
   /* Draw navigation icons into the corners */
   void drawTouchIcons(const PaintContext *context, int iconSize);
+
+  /* Paint message into the right bottom corner */
+  void paintCopyright(PaintContext *context);
 
 };
 

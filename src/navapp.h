@@ -234,6 +234,7 @@ public:
   static RouteController *getRouteController();
   static atools::gui::TabWidgetHandler *getRouteTabHandler();
   static const InfoController *getInfoController();
+  static QString getMapCopyright();
 
   static DatabaseManager *getDatabaseManager();
 

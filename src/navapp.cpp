@@ -772,6 +772,11 @@ const InfoController *NavApp::getInfoController()
   return mainWindow->getInfoController();
 }
 
+QString NavApp::getMapCopyright()
+{
+  return mainWindow->getMapWidget()->getMapCopyright();
+}
+
 const QString& NavApp::getCurrentRouteFilepath()
 {
   return mainWindow->getRouteController()->getCurrentRouteFilepath();

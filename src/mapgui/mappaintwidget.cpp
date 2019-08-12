@@ -352,6 +352,33 @@ ApronGeometryCache *MapPaintWidget::getApronGeometryCache()
   return apronGeometryCache;
 }
 
+QString MapPaintWidget::getMapCopyright() const
+{
+  static const QString OSM("© OpenStreetMap contributors");
+  static const QString OTM("© OpenStreetMap / OpenTopoMap contributors");
+  static const QString NONE;
+
+  switch(currentThemeIndex)
+  {
+    case map::OPENTOPOMAP:
+      return OTM;
+
+    case map::OPENSTREETMAP:
+    case map::STAMENTERRAIN:
+    case map::CARTOLIGHT:
+    case map::CARTODARK:
+      return OSM;
+
+    case map::SIMPLE:
+    case map::PLAIN:
+    case map::ATLAS:
+    case map::CUSTOM:
+    case map::INVALID_THEME:
+      break;
+  }
+  return NONE;
+}
+
 void MapPaintWidget::preDatabaseLoad()
 {
   jumpBackToAircraftCancel();
