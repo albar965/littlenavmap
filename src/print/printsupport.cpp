@@ -450,5 +450,4 @@ void PrintSupport::drawWatermarkInternal(const QPoint& pos, QPainter *painter)
                     arg(QApplication::applicationVersion()).
                     arg(GIT_REVISION).
                     arg(QLocale().toString(QDateTime::currentDateTime())));
-
 }
