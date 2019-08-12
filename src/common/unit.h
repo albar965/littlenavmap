@@ -108,9 +108,9 @@ public:
   static float weightKgF(float value);
 
   /* Get unit string with unit as selected in options and other unit in brackets */
-  static QString weightLbsLocalOther(float value, bool localBold = false, bool otherSmall = true);
+  static QString weightLbsLocalOther(float value, bool localBold = false, bool otherSmall = false);
   static QString fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool localBold = false,
-                                         bool otherSmall = true);
+                                         bool otherSmall = false);
 
   /* Fuel flow US Gallon and lbs */
   static QString ffGallon(float value, bool addUnit = true);

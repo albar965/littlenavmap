@@ -1090,17 +1090,21 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     if(info)
     {
       html.row2If(tr("Region:"), ilsRec->valueStr("region"));
-      html.row2(tr("Elevation:"), Unit::altFeet(ilsRec->valueFloat("altitude")));
     }
   }
 
   html.row2(prefix + tr("Frequency:"),
             locale.toString(ilsRec->valueFloat("frequency") / 1000., 'f', 2) + tr(" MHz"));
+  if(!approach)
+  {
+    html.row2(tr("Magnetic declination:"), map::magvarText(magvar));
+    html.row2(tr("Elevation:"), Unit::altFeet(ilsRec->valueFloat("altitude")));
+  }
 
   if(!approach)
   {
     html.row2(tr("Range:"), Unit::distNm(ilsRec->valueFloat("range")));
-    html.row2(tr("Magnetic declination:"), map::magvarText(magvar));
+    html.row2(tr("Morse:"), morse->getCode(ilsRec->valueStr("ident")), ahtml::BOLD | ahtml::NO_ENTITIES);
     rowForBool(html, ilsRec, "has_backcourse", tr("Has Backcourse"), false);
   }
 
@@ -1877,8 +1881,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(vor.getPosition().getAltitude() < INVALID_ALTITUDE_VALUE)
     html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
-  html.row2(tr("Morse:"), morse->getCode(vor.ident),
-            ahtml::BOLD | ahtml::NO_ENTITIES);
+  html.row2(tr("Morse:"), morse->getCode(vor.ident), ahtml::BOLD | ahtml::NO_ENTITIES);
   addCoordinates(rec, html);
   html.tableEnd();
 
@@ -3024,10 +3027,10 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
     float maxGrossWeight = userAircraft.getAirplaneMaxGrossWeightLbs();
     float grossWeight = userAircraft.getAirplaneTotalWeightLbs();
 
-    html.row2(tr("Max Gross Weight:"), Unit::weightLbsLocalOther(maxGrossWeight, false, true), ahtml::NO_ENTITIES);
+    html.row2(tr("Max Gross Weight:"), Unit::weightLbsLocalOther(maxGrossWeight), ahtml::NO_ENTITIES);
 
     if(grossWeight > maxGrossWeight)
-      html.row2Error(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight, false /* bold */, false /* small */));
+      html.row2Error(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight));
     else
       html.row2(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight, true /* bold */), ahtml::NO_ENTITIES);
 
@@ -3152,10 +3155,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
               if(remainingFuelLbs < 0.f || remainingFuelGal < 0.f)
                 html.row2Error(tr("Fuel:"),
-                               Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
+                               Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal));
               else if(remainingFuelLbs < perf.getReserveFuelLbs() || remainingFuelGal < perf.getReserveFuelGal())
                 html.row2Warning(tr("Fuel:"),
-                                 Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
+                                 Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal));
               else
                 html.row2(tr("Fuel:"),
                           Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal), ahtml::NO_ENTITIES);

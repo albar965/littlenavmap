@@ -303,10 +303,10 @@ void ProcedureSearch::updateHeaderLabel()
   QString tooltip;
   Ui::MainWindow *ui = NavApp::getMainUi();
   if(airportSim.isValid())
-    ui->labelProcedureSearch->setText("<b>" + map::airportTextShort(airportSim) + "</b> " + procs);
+    ui->labelProcedureSearch->setText("<b>" + map::airportTextShort(airportSim) + "</b><br/>" + procs + "&nbsp;");
   else
   {
-    ui->labelProcedureSearch->setText(tr("<b>No Airport selected.</b>"));
+    ui->labelProcedureSearch->setText(tr("<b>No Airport selected.</b><br/>&nbsp;"));
     tooltip = tr("Use the right-click context menu in the map or\n"
                  "the airport search result table (F4)\n"
                  "and select \"Show Procedures\" for an airport.");

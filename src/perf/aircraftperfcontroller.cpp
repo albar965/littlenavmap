@@ -597,7 +597,7 @@ void AircraftPerfController::updateReportCurrent()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  if(ui->tabWidgetRoute->currentIndex() == rc::COLLECTION && ui->textBrowserAircraftPerformanceCurrent->isVisible())
+  if(NavApp::getRouteTabHandler()->getCurrentTabId() == rc::COLLECTION && ui->dockWidgetRoute->isVisible())
   {
     // Write HTML report ================================================================
     HtmlBuilder html(true /* background color */);
@@ -908,15 +908,14 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.p().b(tr("Fuel Plan")).pEnd();
     html.table();
 
-    html.row2(tr("Trip Fuel:"), ft.weightVolLocalOther(altLegs.getTripFuel(),
-                                                       true /* bold */, false /* not small*/),
+    html.row2(tr("Trip Fuel:"), ft.weightVolLocalOther(altLegs.getTripFuel(), true /* bold */),
               atools::util::html::NO_ENTITIES | flags);
     float blockFuel = altLegs.getBlockFuel(*perf);
     QString percent = perf->getUsableFuel() >
                       1.f ? tr("<br/>%1 % of usable Fuel").arg(100.f / perf->getUsableFuel() * blockFuel, 0, 'f',
                                                                0) : QString();
     html.row2(tr("Block Fuel:"), tr("%1%2").
-              arg(ft.weightVolLocalOther(blockFuel, true /* bold */, false /* not small*/)).
+              arg(ft.weightVolLocalOther(blockFuel, true /* bold */)).
               arg(percent), atools::util::html::NO_ENTITIES | flags);
     html.row2(tr("Fuel at Destination:"), ft.weightVolLocal(altLegs.getDestinationFuel(*perf)), flags);
 

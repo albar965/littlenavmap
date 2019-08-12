@@ -55,7 +55,7 @@ public:
   QString flowWeightVolLocal(float valueLbsGal) const;
 
   /* Get a string with local optinally bold and other unit in brackets */
-  QString weightVolLocalOther(float valueLbsGal, bool localBold = false, bool otherSmall = true) const;
+  QString weightVolLocalOther(float valueLbsGal, bool localBold = false, bool otherSmall = false) const;
 
   /* Jetfuel or avgas */
   QString getFuelTypeString() const;
