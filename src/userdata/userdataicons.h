@@ -20,7 +20,7 @@
 
 #include <QCache>
 #include <QMap>
-#include <QObject>
+#include <QApplication>
 
 class MainWindow;
 class QFileInfo;
@@ -30,13 +30,12 @@ class QFileInfo;
  * Icons with pattern userpoint_*.svg are taken from the resources and can be overloaded from the configuration directory.
  * New types can be added by adding new icons with above pattern where * is recognized as the new type.
  */
-class UserdataIcons :
-  public QObject
+class UserdataIcons
 {
-  Q_OBJECT
+  Q_DECLARE_TR_FUNCTIONS(UserdataIcons)
 
 public:
-  UserdataIcons(QObject *parent);
+  UserdataIcons();
   virtual ~UserdataIcons();
 
   QPixmap *getIconPixmap(const QString& type, int size);

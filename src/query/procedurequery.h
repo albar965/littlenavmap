@@ -41,10 +41,9 @@ class AirportQuery;
  * All navaids and procedure are taken from the nav database.
  * All structs of MapAirport are converted to simulator database airports when passed in.
  */
-class ProcedureQuery :
-  public QObject
+class ProcedureQuery
 {
-  Q_OBJECT
+  Q_DECLARE_TR_FUNCTIONS(ProcedureQuery)
 
 public:
   /*
@@ -52,7 +51,7 @@ public:
    * @param sqlDbNav for updated navaids
    */
   ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav);
-  virtual ~ProcedureQuery() override;
+  ~ProcedureQuery();
 
   const proc::MapProcedureLeg *getApproachLeg(const map::MapAirport& airport, int approachId, int legId);
   const proc::MapProcedureLeg *getTransitionLeg(const map::MapAirport& airport, int legId);

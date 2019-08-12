@@ -101,7 +101,7 @@ QString UserdataIcons::translatedToType(const QString& type)
   return translationToTypeMap.value(type, type);
 }
 
-UserdataIcons::UserdataIcons(QObject *parent) : QObject(parent)
+UserdataIcons::UserdataIcons()
 {
 
 }

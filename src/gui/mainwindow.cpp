@@ -859,6 +859,11 @@ void MainWindow::setupUi()
   ui->statusBar->addPermanentWidget(timeLabel);
 }
 
+void MainWindow::clearProcedureCache()
+{
+  NavApp::getProcedureQuery()->clearCache();
+}
+
 void MainWindow::connectAllSlots()
 {
   // Get "show in browser"  click
@@ -872,7 +877,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, &NavApp::optionsChanged);
 
   // Need to clean cache to regenerate some text if units have changed
-  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getProcedureQuery(), &ProcedureQuery::clearCache);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearProcedureCache);
 
   // Reset weather context first
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearWeatherContext);

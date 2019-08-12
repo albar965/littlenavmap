@@ -297,6 +297,7 @@ private:
   void showNavmapLegend();
   void loadNavmapLegend();
   bool openInSkyVector();
+  void clearProcedureCache();
 
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;

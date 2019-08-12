@@ -46,13 +46,10 @@ class MapLayer;
  * Several instances for different databases might be used depending on MapAirspaceSources src value.
  */
 class AirspaceQuery
-  : public QObject
 {
-  Q_OBJECT
-
 public:
   AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
-  virtual ~AirspaceQuery() override;
+  ~AirspaceQuery();
 
   void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 

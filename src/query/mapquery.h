@@ -44,10 +44,7 @@ class MapLayer;
  * All ids are database ids.
  */
 class MapQuery
-  : public QObject
 {
-  Q_OBJECT
-
 public:
   /*
    * @param sqlDb database for simulator scenery data

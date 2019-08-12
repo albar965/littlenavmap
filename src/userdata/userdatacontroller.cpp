@@ -48,7 +48,7 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   : manager(userdataManager), mainWindow(parent)
 {
   dialog = new atools::gui::Dialog(mainWindow);
-  icons = new UserdataIcons(mainWindow);
+  icons = new UserdataIcons();
   icons->loadIcons();
   lastAddedRecord = new SqlRecord();
 }
