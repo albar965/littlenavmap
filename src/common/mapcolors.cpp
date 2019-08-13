@@ -66,9 +66,9 @@ QColor rangeRingColor(Qt::red);
 QColor rangeRingTextColor(Qt::black);
 QColor distanceColor(Qt::black);
 
-QColor weatherBackgoundColor(Qt::white);
-QColor weatherWindColor(Qt::black);
 QColor weatherWindGustColor("#ff8040");
+QColor weatherWindColor(Qt::black);
+QColor weatherBackgoundColor(Qt::white);
 
 QColor weatherLifrColor(QColor("#d000d0"));
 QColor weatherIfrColor(QColor("#d00000"));
@@ -660,7 +660,7 @@ void adjustPenForCircleToLand(QPainter *painter)
   QPen pen = painter->pen();
   pen.setStyle(Qt::DotLine);
   pen.setCapStyle(Qt::FlatCap);
-  // pen.setWidthF(pen.widthF() * 3.f / 4.f);
+  // pen.setWidthF(pen.widthF() * 0.80);
   painter->setPen(pen);
 }
 
@@ -670,7 +670,19 @@ void adjustPenForVectors(QPainter *painter)
   QPen pen = painter->pen();
   pen.setStyle(Qt::DashLine);
   pen.setCapStyle(Qt::FlatCap);
-  // pen.setWidthF(pen.widthF() * 3.f / 4.f);
+  // pen.setWidthF(pen.widthF() * 0.80);
+  painter->setPen(pen);
+}
+
+void adjustPenForManual(QPainter *painter)
+{
+  // Use different pattern and smaller line for vector legs
+  QPen pen = painter->pen();
+  // The pattern must be specified as an even number of positive entries
+  // where the entries 1, 3, 5... are the dashes and 2, 4, 6... are the spaces.
+  pen.setDashPattern({1., 3.});
+  pen.setCapStyle(Qt::FlatCap);
+  // pen.setWidthF(pen.widthF() * 0.80);
   painter->setPen(pen);
 }
 

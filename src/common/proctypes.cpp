@@ -529,7 +529,7 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
   out << "magvar" << leg.magvar
       << "theta" << leg.theta
       << "rho" << leg.rho
-      << "dist" << leg.distance
+      << "distance" << leg.distance
       << "time" << leg.time << endl;
 
   out << "altDescriptor" << leg.altRestriction.descriptor
@@ -623,8 +623,8 @@ bool MapProcedureLeg::noDistanceDisplay() const
 {
   return atools::contains(type,
                           {proc::COURSE_TO_ALTITUDE, proc::FIX_TO_ALTITUDE,
-                           proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_ALTITUDE_TERMINATION,
-                           proc::HEADING_TO_MANUAL_TERMINATION, });
+                           proc::HEADING_TO_ALTITUDE_TERMINATION
+                           /*proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION*/});
 }
 
 proc::LegSpecialType specialType(const QString& arincDescrCode)

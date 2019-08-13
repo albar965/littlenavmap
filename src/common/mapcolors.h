@@ -254,6 +254,7 @@ const QPen& penForAirway(const map::MapAirway& airway);
 void adjustPenForCircleToLand(QPainter *painter);
 void adjustPenForVectors(QPainter *painter);
 void adjustPenForAlternate(QPainter *painter);
+void adjustPenForManual(QPainter *painter);
 
 /* Scale current font in painter. Uses defaultFont as a base otherwise current font in painter. */
 void scaleFont(QPainter *painter, float scale, const QFont *defaultFont = nullptr);

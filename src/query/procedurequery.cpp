@@ -746,8 +746,10 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
   // Correct overlapping conflicting altitude restrictions
   processLegsFixRestrictions(legs);
 
+  // Update bounding rectangle
   updateBounding(legs);
 
+  // Collect leg errors to procedure error
   processLegErrors(legs);
 
   // Check which leg is used to draw the maltesian cross
@@ -842,8 +844,8 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
             legList.first().line.setPos1(legList.first().line.getPos2());
 
             // Connect runway and initial fix
-            proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs);
-            sleg.type = proc::START_OF_PROCEDURE;
+            proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs, {});
+            sleg.type = proc::VECTORS;
             sleg.line = Line(legs.runwayEnd.position, legs.first().line.getPos1());
             sleg.mapType = legs.approachLegs.isEmpty() ? proc::PROCEDURE_SID_TRANSITION : proc::PROCEDURE_SID;
             legList.prepend(sleg);
@@ -868,7 +870,7 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
       // Add an artificial initial fix if first leg is no point to keep all consistent ========================
       if(!contains(legs.first().type, {proc::INITIAL_FIX}) && !legs.first().line.isPoint())
       {
-        proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs);
+        proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs, {tr("Start")});
         sleg.type = proc::START_OF_PROCEDURE;
         sleg.line = Line(legs.first().line.getPos1());
 
@@ -946,6 +948,8 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
 
     // ====================================================================================
     // Add vector legs between manual and next one that do not overlap
+
+    // Process in flying order
     for(int i = legs.size() - 2; i >= 0; i--)
     {
       // Look for the transition from approach to missed
@@ -987,8 +991,59 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
             vectorLeg.disabled = vectorLeg.malteseCross = false;
 
         legs.approachLegs.insert(i + 1, vectorLeg);
+      } // if(nextLeg.type == proc::INITIAL_FIX && ...
+    } // for(int i = legs.size() - 2; i >= 0; i--)
+  } // if(!legs.isEmpty() && addArtificialLegs)
+}
+
+void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs,
+                                             const proc::MapProcedureLegs& arrivalLegs,
+                                             const map::MapAirport& airport)
+{
+  bool changed = false;
+
+  // From procedure start to end
+  for(int i = 0; i < starLegs.size(); i++)
+  {
+    proc::MapProcedureLeg& curLeg = starLegs[i];
+    const proc::MapProcedureLeg *nextLeg = i < starLegs.size() - 1 ? &starLegs.at(i + 1) : nullptr;
+
+    if(nextLeg == nullptr && !arrivalLegs.isEmpty())
+      // Attach manual leg to arrival - otherwise to airport
+      nextLeg = &arrivalLegs.first();
+
+    if(contains(curLeg.type, {proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION}))
+    {
+      if(nextLeg != nullptr)
+        // Adjust geometry and attach it to the next approach leg
+        curLeg.line = Line(curLeg.line.getPos1(), nextLeg->line.getPos1());
+      else
+      {
+        // if(starLegs.runwayEnd.isValid())
+        // curLeg.line = Line(curLeg.line.getPos1(), starLegs.runwayEnd.position);
+        if(airport.isValid())
+          // Attach end to airport
+          curLeg.line = Line(curLeg.line.getPos1(), airport.position);
+        else
+          // Use fix position as last resort
+          curLeg.line = Line(curLeg.line.getPos1(), curLeg.fixPos);
       }
+      curLeg.geometry << curLeg.line.getPos1() << curLeg.line.getPos2();
+
+      // Clear ident to avoid display
+      curLeg.fixIdent.clear();
+      curLeg.fixRegion.clear();
+      curLeg.fixType.clear();
+
+      changed = true;
     }
+  }
+
+  if(changed)
+  {
+    // Update distances and bounding rectangle
+    processLegsDistanceAndCourse(starLegs);
+    updateBounding(starLegs);
   }
 }
 
@@ -1134,7 +1189,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
                             proc::HEADING_TO_ALTITUDE_TERMINATION,
                             proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION}))
     {
-      leg.calculatedDistance = 2.f;
+      leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
       leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
@@ -1210,7 +1265,12 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
   // Assumptions: 3.5 nm per min
   // Climb 500 ft/min
   // Intercept 30 for localizers and 30-45 for others
+
+  // Leg will be drawn from lastPos to curPos
   Pos lastPos;
+
+  // Iterate from start of procedure to end. E.g. from IF to airport for approaches and STAR and
+  // From airport to last fix for SID
   for(int i = 0; i < legs.size(); ++i)
   {
     if(legs.mapType & proc::PROCEDURE_DEPARTURE && i == 0)
@@ -1408,13 +1468,25 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
     // ===========================================================
     else if(contains(type, {proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION}))
     {
-      if(!lastPos.isValid())
-        lastPos = leg.fixPos;
-
       if(leg.fixPos.isValid())
-        curPos = leg.fixPos.endpoint(nmToMeter(3.f), leg.legTrueCourse()).normalize();
+      {
+        if(leg.course > 0)
+          // Use an exteneded line from fix with the given course as geometry
+          curPos = leg.fixPos.endpoint(nmToMeter(leg.distance > 0.f ? leg.distance : 3.f),
+                                       leg.legTrueCourse()).normalize();
+        else
+          curPos = leg.fixPos;
+      }
       else
-        curPos = lastPos.endpoint(nmToMeter(3.f), leg.legTrueCourse()).normalize();
+        // Use an exteneded line from last position with the given course as geometry
+        curPos = lastPos.endpoint(nmToMeter(leg.distance > 0.f ? leg.distance : 3.f), leg.legTrueCourse()).normalize();
+
+      // Geometry might be changed later in postProcessLegsForRoute()
+
+      // Do not draw ident for manual legs
+      leg.fixIdent.clear();
+      leg.fixRegion.clear();
+      leg.fixType.clear();
 
       leg.displayText << tr("Manual");
     }
@@ -2571,7 +2643,7 @@ proc::MapProcedureLeg ProcedureQuery::createRunwayLeg(const proc::MapProcedureLe
 
 /* Create start of procedure entry based on information in given leg */
 proc::MapProcedureLeg ProcedureQuery::createStartLeg(const proc::MapProcedureLeg& leg,
-                                                     const proc::MapProcedureLegs& legs)
+                                                     const proc::MapProcedureLegs& legs, const QStringList& displayText)
 {
   proc::MapProcedureLeg sleg;
   sleg.approachId = legs.ref.approachId;
@@ -2580,7 +2652,7 @@ proc::MapProcedureLeg ProcedureQuery::createStartLeg(const proc::MapProcedureLeg
 
   // Use a generated id base on the previous leg id
   sleg.legId = START_LEG_ID_BASE + leg.legId;
-  sleg.displayText.append(tr("Start"));
+  sleg.displayText.append(displayText);
   // geometry is populated later
 
   sleg.fixPos = leg.fixPos;

@@ -832,8 +832,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                         Qt::RoundJoin));
     for(int i = passedRouteLeg; i < waypointX.size(); i++)
     {
-      if(i > 0 && !route.at(i).getProcedureLeg().isCircleToLand() &&
-         !route.at(i).getProcedureLeg().isStraightIn() /*&& !route.at(i).getProcedureLeg().isVectors()*/)
+      const proc::MapProcedureLeg& leg = route.at(i).getProcedureLeg();
+      if(i > 0 && !leg.isCircleToLand() && !leg.isStraightIn() && !leg.isVectors() && !leg.isManual())
         painter.drawPolyline(altLegs.at(i));
     }
 
@@ -863,11 +863,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       for(int i = passedRouteLeg + 1; i < waypointX.size(); i++)
       {
         painter.setPen(altitudeLegs.at(i).isAnyProcedure() ? procedurePen : flightplanPen);
-
-        if(route.at(i).getProcedureLeg().isCircleToLand() || route.at(i).getProcedureLeg().isStraightIn())
+        const proc::MapProcedureLeg& leg = route.at(i).getProcedureLeg();
+        if(leg.isCircleToLand() || leg.isStraightIn())
           mapcolors::adjustPenForCircleToLand(&painter);
-        // else if(route.at(i).getProcedureLeg().isVectors())
-        // mapcolors::adjustPenForVectors(&painter);
+        else if(leg.isVectors())
+          mapcolors::adjustPenForVectors(&painter);
+        else if(leg.isManual())
+          mapcolors::adjustPenForManual(&painter);
 
         painter.drawPolyline(altLegs.at(i));
       }
@@ -881,11 +883,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.setPen(QPen(optData.getFlightplanActiveSegmentColor(), flightplanWidth,
                           Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-      if(route.at(activeRouteLeg).getProcedureLeg().isCircleToLand() ||
-         route.at(activeRouteLeg).getProcedureLeg().isStraightIn())
+      const proc::MapProcedureLeg& actProcLeg = route.at(activeRouteLeg).getProcedureLeg();
+      if(actProcLeg.isCircleToLand() || actProcLeg.isStraightIn())
         mapcolors::adjustPenForCircleToLand(&painter);
-      // else if(route.at(activeRouteLeg).getProcedureLeg().isVectors())
-      // mapcolors::adjustPenForVectors(&painter);
+      else if(actProcLeg.isVectors())
+        mapcolors::adjustPenForVectors(&painter);
+      else if(actProcLeg.isManual())
+        mapcolors::adjustPenForManual(&painter);
 
       painter.drawPolyline(altLegs.at(activeRouteLeg));
     }

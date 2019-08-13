@@ -733,6 +733,7 @@ int Route::getDestinationLegIndex() const
     }
     return getDestinationAirportLegIndex() - 1;
   }
+
   // Simple destination airport without approach
   return getDestinationAirportLegIndex();
 }
@@ -1101,6 +1102,10 @@ void Route::cleanupFlightPlanForProcedures()
 void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties,
                                 bool cleanupRoute)
 {
+  // Change STAR to connect manual legs to the arrival/approach or airport
+  // This can only be done with a copy of the procedures in the route
+  NavApp::getProcedureQuery()->postProcessLegsForRoute(starLegs, arrivalLegs, getDestinationAirportLeg().getAirport());
+
   // Remove all procedure / dummy legs from flight plan and route
   clearProcedureLegs(proc::PROCEDURE_ALL);
 

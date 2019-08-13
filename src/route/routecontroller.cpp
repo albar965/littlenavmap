@@ -2542,7 +2542,11 @@ void RouteController::deleteSelectedLegs()
       model->removeRow(row);
     }
 
-    route.removeProcedureLegs(procs);
+    if(procs & proc::PROCEDURE_ALL)
+    {
+      route.removeProcedureLegs(procs);
+      route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
+    }
 
     if(route.getSizeWithoutAlternates() == 0)
     {

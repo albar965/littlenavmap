@@ -491,7 +491,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   {
     // Do not draw background for passed legs but calculate lastLine
     bool draw = (i >= passedProcLeg) || !activeValid || preview;
-    if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn() /* || legs.at(i).isVectors()*/)
+    if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn() || legs.at(i).isVectors()|| legs.at(i).isManual())
       // Do not draw outline for circle-to-land approach legs
       draw = false;
 
@@ -543,8 +543,10 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
     if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn())
       // Use dashed line for CTL or straight in
       mapcolors::adjustPenForCircleToLand(painter);
-    // else if(legs.at(i).isVectors())
-    // mapcolors::adjustPenForVectors(painter);
+    else if(legs.at(i).isVectors())
+      mapcolors::adjustPenForVectors(painter);
+    else if(legs.at(i).isManual())
+      mapcolors::adjustPenForManual(painter);
 
     paintProcedureSegment(context, legs, i, lastLines, &drawTextLines, noText, preview, true /* draw */);
   }

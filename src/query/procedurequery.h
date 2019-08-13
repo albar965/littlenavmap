@@ -109,6 +109,11 @@ public:
    *  Should only be used on a copy of a procedure object and not the cached object.*/
   void insertSidStarRunway(proc::MapProcedureLegs& legs, const QString& runway);
 
+  /* Stitch manual legs between either STAR and airport or STAR and approach together.
+   * This will modify the procedures.*/
+  void postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, const proc::MapProcedureLegs& arrivalLegs,
+                               const map::MapAirport& airport);
+
 private:
   proc::MapProcedureLeg buildTransitionLegEntry(const map::MapAirport& airport);
   proc::MapProcedureLeg buildApproachLegEntry(const map::MapAirport& airport);
@@ -147,7 +152,7 @@ private:
   proc::MapProcedureLeg createRunwayLeg(const proc::MapProcedureLeg& leg,
                                         const proc::MapProcedureLegs& legs);
   proc::MapProcedureLeg createStartLeg(const proc::MapProcedureLeg& leg,
-                                       const proc::MapProcedureLegs& legs);
+                                       const proc::MapProcedureLegs& legs, const QStringList& displayText);
 
   proc::MapProcedureLegs *buildApproachLegs(const map::MapAirport& airport, int approachId);
   proc::MapProcedureLegs *fetchApproachLegs(const map::MapAirport& airport, int approachId);

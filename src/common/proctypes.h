@@ -396,6 +396,11 @@ struct MapProcedureLeg
     return type == proc::VECTORS;
   }
 
+  bool isManual() const
+  {
+    return type == HEADING_TO_MANUAL_TERMINATION || type == FROM_FIX_TO_MANUAL_TERMINATION;
+  }
+
   bool isFinalApproachFix() const;
   bool isFinalApproachCourseFix() const;
   bool isFinalEndpointFix() const;
