@@ -4047,25 +4047,31 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
   qDebug() << Q_FUNC_INFO;
   // Accept only one flight plan
-  if(event->mimeData()->urls().size() == 1)
+  if(event->mimeData() != nullptr && event->mimeData()->hasUrls() &&
+     event->mimeData()->urls().size() == 1)
   {
-    // Has to be a file
-    QUrl url = event->mimeData()->urls().first();
-    if(url.isLocalFile())
-    {
-      // accept if file exists, is readable and matches the supported extensions
-      QFileInfo file(url.toLocalFile());
-      if(file.exists() && file.isReadable() && file.isFile() &&
-         (atools::fs::pln::FlightplanIO::detectFormat(file.filePath()) ||
-          AircraftPerfController::isPerformanceFile(file.filePath())))
-      {
+    QList<QUrl> urls = event->mimeData()->urls();
 
-        qDebug() << Q_FUNC_INFO << "accepting" << url;
-        event->acceptProposedAction();
-        return;
+    if(!urls.isEmpty())
+    {
+      // Has to be a file
+      QUrl url = urls.first();
+      if(url.isLocalFile())
+      {
+        // accept if file exists, is readable and matches the supported extensions
+        QFileInfo file(url.toLocalFile());
+        if(file.exists() && file.isReadable() && file.isFile() &&
+           (atools::fs::pln::FlightplanIO::detectFormat(file.filePath()) ||
+            AircraftPerfController::isPerformanceFile(file.filePath())))
+        {
+
+          qDebug() << Q_FUNC_INFO << "accepting" << url;
+          event->acceptProposedAction();
+          return;
+        }
       }
+      qDebug() << Q_FUNC_INFO << "not accepting" << url;
     }
-    qDebug() << Q_FUNC_INFO << "not accepting" << url;
   }
 }
 

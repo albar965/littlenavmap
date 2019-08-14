@@ -315,10 +315,11 @@
            <item row="2" column="1">
             <widget class="QCheckBox" name="checkBoxOptionsStartupLoadSearch">
              <property name="toolTip">
-              <string>Restore the search settings in airport, navaid and procedure search tabs</string>
+              <string>Restore the search settings in airport, navaid, procedure, userpoint,
+logbook and other search tabs</string>
              </property>
              <property name="text">
-              <string>Restore &amp;airport, navaid and procedure searches</string>
+              <string>Restore &amp;search parameters</string>
              </property>
              <property name="checked">
               <bool>true</bool>
