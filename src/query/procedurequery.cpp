@@ -1292,31 +1292,44 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
     // ===========================================================
     else if(type == proc::COURSE_TO_FIX)
     {
-      // Calculate the leading extended position to the fix
-      Pos extended = leg.fixPos.endpoint(
-        nmToMeter(leg.distance > 0 ? leg.distance : 1.f /* Fix for missing distance */),
-        opposedCourseDeg(leg.legTrueCourse())).normalize();
+      // Calculate the leading extended position to the fix - this is the from position
+      Pos extended = leg.fixPos.endpoint(nmToMeter(leg.distance > 0 ? leg.distance : 1.f /* Fix for missing dist */),
+                                         opposedCourseDeg(leg.legTrueCourse())).normalize();
+
       atools::geo::LineDistance result;
       lastPos.distanceMeterToLine(extended, leg.fixPos, result);
 
-      // Check if lines overlap - if not calculate an intercept position
+      // Check if lines overlap or are close to each other.
+      // Connect if close to each other - if not calculate an intercept position
       if(std::abs(result.distance) > nmToMeter(1.f))
       {
         // Extended position leading towards the fix which is far away from last fix - calculate an intercept position
-        float crs = leg.legTrueCourse();
+        float legCourse = leg.legTrueCourse();
 
-        // Try left or right intercept
-        Pos intr1 = Pos::intersectingRadials(extended, crs, lastPos, crs - 45.f).normalize();
-        Pos intr2 = Pos::intersectingRadials(extended, crs, lastPos, crs + 45.f).normalize();
+        // Calculate course difference between last leg and this one
+        const proc::MapProcedureLeg *lastLeg = i > 0 ? &legs.at(i - 1) : nullptr;
+        float lastLegCourse = lastLeg != nullptr ? lastLeg->line.angleDeg() : map::INVALID_COURSE_VALUE;
+        float courseDiff = map::INVALID_COURSE_VALUE;
+        if(lastLegCourse < map::INVALID_COURSE_VALUE / 2)
+          courseDiff = atools::geo::angleAbsDiff(legCourse, lastLegCourse);
+
         Pos intersect;
 
-        // Use whatever course is shorter - calculate distance to interception candidates
-        float dist1 = intr1.distanceMeterTo(lastPos);
-        float dist2 = intr2.distanceMeterTo(lastPos);
-        if(dist1 < dist2)
-          intersect = intr1;
-        else
-          intersect = intr2;
+        // Check if this is a reversal maneuver which should be connected with a bow instead of an intercept
+        if(courseDiff < 130.)
+        {
+          // Try left or right intercept
+          Pos intr1 = Pos::intersectingRadials(extended, legCourse, lastPos, legCourse - 45.f).normalize();
+          Pos intr2 = Pos::intersectingRadials(extended, legCourse, lastPos, legCourse + 45.f).normalize();
+
+          // Use whatever course is shorter - calculate distance to interception candidates
+          float dist1 = intr1.distanceMeterTo(lastPos);
+          float dist2 = intr2.distanceMeterTo(lastPos);
+          if(dist1 < dist2)
+            intersect = intr1;
+          else
+            intersect = intr2;
+        }
 
         if(intersect.isValid())
         {
@@ -1350,7 +1363,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
                        << "invalid cross track"
                        << "approachId" << leg.approachId
                        << "transitionId" << leg.transitionId << "legId" << leg.legId;
-        }
+        } // intersect.isValid()
         else
         {
           // No intercept point in reasonable distance found
@@ -1359,7 +1372,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
             // Draw large bow to extended postition or allow intercept of leg
             lastPos = extended;
         }
-      }
+      } // if(std::abs(result.distance) > nmToMeter(1.f))
+
       if(leg.interceptPos.isValid())
       {
         // Add intercept for display
@@ -1442,17 +1456,35 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
     else if(contains(type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::COURSE_TO_DME_DISTANCE,
                             proc::HEADING_TO_DME_DISTANCE_TERMINATION}))
     {
-      Pos start = lastPos.isValid() ? lastPos : (leg.fixPos.isValid() ? leg.fixPos : leg.recFixPos);
-      Pos center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
+      Pos start, center;
+      if(type == proc::TRACK_FROM_FIX_TO_DME_DISTANCE)
+      {
+        // Leg that has a fix as origin
+        start = leg.fixPos;
+        center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
+      }
+      else
+      {
+        // These legs usually have no fix - use last position
+        start = lastPos.isValid() ? lastPos : (leg.fixPos.isValid() ? leg.fixPos : leg.recFixPos);
 
+        // Recommended is DME navaid - use if available
+        center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
+      }
+
+      // Distance from fix to navaid
       float distMeter = start.distanceMeterTo(center);
 
-      Line line(start, start.endpoint(distMeter * 2, leg.legTrueCourse()).normalize());
+      // Requested DME distance
+      float legDistMeter = nmToMeter(leg.distance);
+
+      // Create a extended line to calculate the intersection with the DME distance
+      Line line(start, start.endpoint(distMeter + legDistMeter * 4, leg.legTrueCourse()).normalize());
 
       if(!lastPos.isValid())
         lastPos = start;
-      Pos intersect = line.intersectionWithCircle(center, nmToMeter(leg.distance), 10.f);
 
+      Pos intersect = line.intersectionWithCircle(center, legDistMeter, 10.f);
       if(intersect.isValid())
         curPos = intersect;
       else
