@@ -32,6 +32,7 @@
 using atools::sql::SqlQuery;
 using atools::geo::Pos;
 using atools::geo::Line;
+using atools::geo::Rect;
 using atools::geo::LineString;
 using atools::contains;
 using atools::geo::meterToNm;
@@ -44,6 +45,7 @@ using proc::MapAltRestriction;
 using proc::MapSpeedRestriction;
 
 namespace pln = atools::fs::pln;
+namespace ageo = atools::geo;
 
 ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav)
   : dbNav(sqlDbNav)
@@ -497,11 +499,11 @@ void ProcedureQuery::mapObjectByIdent(map::MapSearchResult& result, map::MapObje
                                       const Pos& sortByDistancePos)
 {
   mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos,
-                                atools::geo::nmToMeter(1000.f), true /* airport from nav database */);
+                                nmToMeter(1000.f), true /* airport from nav database */);
   if(result.isEmpty(type))
     // Try again in 200 nm radius by excluding the region - result sorted by distance
     mapQuery->getMapObjectByIdent(result, type, ident, QString(), airport, sortByDistancePos,
-                                  atools::geo::nmToMeter(1000.f), true /* airport from nav database */);
+                                  nmToMeter(1000.f), true /* airport from nav database */);
 }
 
 void ProcedureQuery::updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs)
@@ -1140,8 +1142,8 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
     {
       if(leg.recFixPos.isValid())
       {
-        atools::geo::calcArcLength(leg.line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance,
-                                   &leg.geometry);
+        ageo::calcArcLength(leg.line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance,
+                            &leg.geometry);
         leg.calculatedDistance = meterToNm(leg.calculatedDistance);
         leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
       }
@@ -1296,7 +1298,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
       Pos extended = leg.fixPos.endpoint(nmToMeter(leg.distance > 0 ? leg.distance : 1.f /* Fix for missing dist */),
                                          opposedCourseDeg(leg.legTrueCourse())).normalize();
 
-      atools::geo::LineDistance result;
+      ageo::LineDistance result;
       lastPos.distanceMeterToLine(extended, leg.fixPos, result);
 
       // Check if lines overlap or are close to each other.
@@ -1311,7 +1313,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
         float lastLegCourse = lastLeg != nullptr ? lastLeg->line.angleDeg() : map::INVALID_COURSE_VALUE;
         float courseDiff = map::INVALID_COURSE_VALUE;
         if(lastLegCourse < map::INVALID_COURSE_VALUE / 2)
-          courseDiff = atools::geo::angleAbsDiff(legCourse, lastLegCourse);
+          courseDiff = ageo::angleAbsDiff(legCourse, lastLegCourse);
 
         Pos intersect;
 
@@ -1335,12 +1337,12 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
         {
           intersect.distanceMeterToLine(extended, leg.fixPos, result);
 
-          if(result.status == atools::geo::ALONG_TRACK)
+          if(result.status == ageo::ALONG_TRACK)
           {
             // Leg intercepted - set point for drawing
             leg.interceptPos = intersect;
           }
-          else if(result.status == atools::geo::AFTER_END)
+          else if(result.status == ageo::AFTER_END)
           {
             // Fly to fix - end of leg
 
@@ -1353,7 +1355,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
             }
             // else turn
           }
-          else if(result.status == atools::geo::BEFORE_START)
+          else if(result.status == ageo::BEFORE_START)
           {
             // Fly to start of leg
             lastPos = extended;
@@ -1431,7 +1433,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
 
       Pos intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), center, leg.theta + leg.magvar);
 
-      if(intersect.isValid() && intersect.distanceMeterTo(start) < atools::geo::nmToMeter(200.f))
+      if(intersect.isValid() && intersect.distanceMeterTo(start) < nmToMeter(200.f))
         curPos = intersect;
       else
       {
@@ -1596,11 +1598,11 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
 
           if(intersect.isValid() && intersect.distanceMeterTo(start) < nmToMeter(200.f))
           {
-            atools::geo::LineDistance result;
+            ageo::LineDistance result;
 
             next->line.distanceMeterToLine(intersect, result);
 
-            if(result.status == atools::geo::ALONG_TRACK)
+            if(result.status == ageo::ALONG_TRACK)
             {
               // Intercepting the next leg
               next->intercept = true;
@@ -1614,12 +1616,12 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
               else
                 leg.displayText << tr("Leg");
             }
-            else if(result.status == atools::geo::BEFORE_START)
+            else if(result.status == ageo::BEFORE_START)
             {
               // Link directly to start of next leg
               leg.line.setPos2(next->line.getPos2());
             }
-            else if(result.status == atools::geo::AFTER_END)
+            else if(result.status == ageo::AFTER_END)
             {
               // Link directly to end of next leg
               next->intercept = true;
@@ -1957,8 +1959,8 @@ int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QStri
 void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
                                           const map::MapRunwayEnd& runwayEndSim, float distance, float altitude)
 {
-  Pos initialFixPos = runwayEndSim.position.endpointRhumb(atools::geo::nmToMeter(distance),
-                                                          atools::geo::opposedCourseDeg(runwayEndSim.heading));
+  Pos initialFixPos = runwayEndSim.position.endpointRhumb(ageo::nmToMeter(distance),
+                                                          ageo::opposedCourseDeg(runwayEndSim.heading));
 
   // Create procedure ========================================
   procedure.ref.runwayEndId = runwayEndSim.id;
@@ -1974,7 +1976,7 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   procedure.approachCustomAltitude = altitude;
   procedure.gpsOverlay = procedure.hasError = procedure.circleToLand = false;
   procedure.transitionDistance = procedure.missedDistance = 0.f;
-  procedure.bounding = atools::geo::Rect(initialFixPos);
+  procedure.bounding = Rect(initialFixPos);
   procedure.bounding.extend(runwayEndSim.position);
 
   // Create an initial fix leg at the given distance =======================
@@ -2012,7 +2014,7 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   runwayLeg.altRestriction.alt1 = airportSim.position.getAltitude();
   runwayLeg.type = proc::COURSE_TO_FIX;
   runwayLeg.mapType = proc::PROCEDURE_APPROACH;
-  runwayLeg.course = atools::geo::normalizeCourse(runwayEndSim.heading - airportSim.magvar);
+  runwayLeg.course = ageo::normalizeCourse(runwayEndSim.heading - airportSim.magvar);
   runwayLeg.calculatedTrueCourse = runwayEndSim.heading;
   runwayLeg.distance = runwayLeg.calculatedDistance = distance;
   runwayLeg.theta = runwayLeg.rho = runwayLeg.time = 0.f;
