@@ -913,6 +913,8 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.ndbs.first().position, 0.f, true);
     else if(!mapSearchResult.waypoints.isEmpty())
       showPos(mapSearchResult.waypoints.first().position, 0.f, true);
+    else if(!mapSearchResult.ils.isEmpty())
+      showRect(mapSearchResult.ils.first().bounding, true);
     else if(!mapSearchResult.userPointsRoute.isEmpty())
       showPos(mapSearchResult.userPointsRoute.first().position, 0.f, true);
     else if(!mapSearchResult.userpoints.isEmpty())

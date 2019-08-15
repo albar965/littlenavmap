@@ -1377,6 +1377,9 @@ void MapSearchResult::clear(const MapObjectTypes& types)
     userpointIds.clear();
   }
 
+  if(types & map::LOGBOOK)
+    logbookEntries.clear();
+
   if(types & map::AIRCRAFT_AI)
     aiAircraft.clear();
 
@@ -1443,6 +1446,9 @@ void MapSearchResult::clearAllButFirst(const MapObjectTypes& types)
     clearAllButFirst(userpoints);
     userpointIds.clear();
   }
+
+  if(types & map::LOGBOOK)
+    clearAllButFirst(logbookEntries);
 
   if(types & map::AIRCRAFT_AI)
     clearAllButFirst(aiAircraft);
@@ -1676,6 +1682,12 @@ bool MapSearchResult::getIdAndType(int& id, MapObjectTypes& type, const QVector<
         type = t;
         break;
       }
+      else if(t == map::LOGBOOK)
+      {
+        id = logbookEntries.first().getId();
+        type = t;
+        break;
+      }
       else if(t == map::AIRCRAFT_AI)
       {
         id = aiAircraft.first().getId();
@@ -1706,6 +1718,7 @@ int MapSearchResult::getTotalSize(const MapObjectTypes& types) const
   totalSize += types & map::AIRSPACE ? airspaces.size() : 0;
   totalSize += types & map::USERPOINTROUTE ? userPointsRoute.size() : 0;
   totalSize += types & map::USERPOINT ? userpoints.size() : 0;
+  totalSize += types & map::LOGBOOK ? logbookEntries.size() : 0;
   totalSize += types & map::AIRCRAFT_AI ? aiAircraft.size() : 0;
   totalSize += types & map::AIRCRAFT_ONLINE ? onlineAircraft.size() : 0;
   return totalSize;
