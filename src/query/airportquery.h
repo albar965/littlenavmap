@@ -136,7 +136,7 @@ public:
   /* Get the best fitting runway end from the given list of runways according to heading.
    *  Only the rearest airport is returned if no runway was found */
   void getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
-                                  const QVector<map::MapRunway>& runways, const atools::geo::Pos& pos, float heading);
+                                  const QVector<map::MapRunway>& runways, const atools::geo::Pos& pos, float heading, float maxRwDistance, float maxHeadingDeviation);
 
   map::MapRunwayEnd getRunwayEndById(int id);
 
