@@ -1318,7 +1318,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
         Pos intersect;
 
         // Check if this is a reversal maneuver which should be connected with a bow instead of an intercept
-        if(courseDiff < 130.)
+        // Always intercept if course could not be calculated (e.g. first procedure leg)
+        if(courseDiff < 130. || !(courseDiff < map::INVALID_COURSE_VALUE))
         {
           // Try left or right intercept
           Pos intr1 = Pos::intersectingRadials(extended, legCourse, lastPos, legCourse - 45.f).normalize();
