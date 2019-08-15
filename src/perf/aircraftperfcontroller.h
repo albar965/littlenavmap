@@ -131,6 +131,9 @@ public:
   /* true if fuel flow can be used as a estimate for destination fuel. Aircraft has to be in cruise at least. */
   bool canEstimateFuel() const;
 
+  /* Restart performance collection  */
+  void restartCollection(bool quiet = false);
+
 signals:
   /* Sent if performance or wind has changed */
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);
@@ -184,9 +187,6 @@ private:
   void anchorClicked(const QUrl& url);
 
   void fuelReportRunway(atools::util::HtmlBuilder& html);
-
-  /* Restart performance collection  */
-  void restartCollect();
 
   /* Dock window or tab visibility changed */
   void tabVisibilityChanged();

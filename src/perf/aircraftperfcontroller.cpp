@@ -204,14 +204,17 @@ void AircraftPerfController::loadAndMerge()
   }
 }
 
-void AircraftPerfController::restartCollect()
+void AircraftPerfController::restartCollection(bool quiet)
 {
-  int result = atools::gui::Dialog(mainWindow).
-               showQuestionMsgBox(lnm::ACTIONS_SHOW_RESET_PERF,
-                                  tr("Reset performance collection and loose all current values?"),
-                                  tr("Do not &show this dialog again."),
-                                  QMessageBox::Yes | QMessageBox::No,
-                                  QMessageBox::No, QMessageBox::Yes);
+  int result = QMessageBox::Yes;
+
+  if(!quiet)
+    result = atools::gui::Dialog(mainWindow).
+             showQuestionMsgBox(lnm::ACTIONS_SHOW_RESET_PERF,
+                                tr("Reset performance collection and loose all current values?"),
+                                tr("Do not &show this dialog again."),
+                                QMessageBox::Yes | QMessageBox::No,
+                                QMessageBox::No, QMessageBox::Yes);
 
   if(result == QMessageBox::Yes)
   {
@@ -491,7 +494,7 @@ void AircraftPerfController::connectAllSlots()
 
   connect(ui->actionAircraftPerformanceLoadMerge, &QAction::triggered, this, &AircraftPerfController::loadAndMerge);
   connect(ui->actionAircraftPerformanceMerge, &QAction::triggered, this, &AircraftPerfController::mergeCollected);
-  connect(ui->actionAircraftPerformanceRestart, &QAction::triggered, this, &AircraftPerfController::restartCollect);
+  connect(ui->actionAircraftPerformanceRestart, &QAction::triggered, this, &AircraftPerfController::restartCollection);
 
   connect(ui->pushButtonAircraftPerformanceNew, &QPushButton::clicked, this, &AircraftPerfController::create);
   connect(ui->pushButtonAircraftPerformanceEdit, &QPushButton::clicked, this, &AircraftPerfController::edit);
@@ -501,7 +504,7 @@ void AircraftPerfController::connectAllSlots()
 
   connect(ui->pushButtonAircraftPerfCollectMerge, &QPushButton::clicked, this, &AircraftPerfController::mergeCollected);
   connect(ui->pushButtonAircraftPerfCollectRestart, &QPushButton::clicked, this,
-          &AircraftPerfController::restartCollect);
+          &AircraftPerfController::restartCollection);
 
   connect(ui->pushButtonAircraftPerformanceHelp, &QPushButton::clicked, this, &AircraftPerfController::helpClickedPerf);
   connect(ui->pushButtonAircraftPerfCollectHelp, &QPushButton::clicked, this,

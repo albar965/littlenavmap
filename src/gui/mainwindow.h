@@ -310,7 +310,7 @@ private:
   bool routeSaveCheckFMS11Warnings();
 
   /* Question dialog and then delete map and profile trail */
-  void deleteAircraftTrack();
+  void deleteAircraftTrack(bool quiet = false);
 
   void checkForUpdates();
   void updateClock() const;
@@ -323,6 +323,9 @@ private:
 
   /* From menu action - remove all measurment lines, patterns, holds, etc. */
   void clearRangeRingsAndDistanceMarkers();
+
+  /* Reset flight plan and other for new flight */
+  void routeResetAll();
 
   /* Action from shortcut menu triggered */
   void actionShortcutMapTriggered();

@@ -177,6 +177,8 @@ const QLatin1Literal SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView
 const QLatin1Literal IMAGE_EXPORT_DIALOG("Map/ImageExportDialog");
 const QLatin1Literal IMAGE_EXPORT_AVITAB_DIALOG("Map/ImageExportDialogAviTab");
 
+const QLatin1Literal RESET_FOR_NEW_FLIGHT_DIALOG("Route/ResetAllDialog");
+
 const QLatin1Literal PROFILE_WINDOW_OPTIONS("Profile/Options");
 
 const QLatin1Literal SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET("SearchPaneOnlineClient/WidgetView");

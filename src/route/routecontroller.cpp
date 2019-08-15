@@ -2227,6 +2227,15 @@ void RouteController::activateLegManually(int index)
   emit routeChanged(true);
 }
 
+void RouteController::resetActiveLeg()
+{
+  qDebug() << Q_FUNC_INFO;
+  route.resetActive();
+  highlightNextWaypoint(route.getActiveLegIndex());
+  // Use geometry changed flag to force redraw
+  emit routeChanged(true);
+}
+
 void RouteController::clearSelection()
 {
   view->clearSelection();

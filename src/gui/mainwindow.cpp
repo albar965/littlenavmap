@@ -78,6 +78,7 @@
 #include "search/logdatasearch.h"
 #include "airspace/airspacecontroller.h"
 #include "mapgui/mapmarkhandler.h"
+#include "gui/choicedialog.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -1147,6 +1148,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
 
   // Flight plan file actions ============================================================
+  connect(ui->actionRouteResetAll, &QAction::triggered, this, &MainWindow::routeResetAll);
+
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
   connect(ui->actionRouteNewFromString, &QAction::triggered, this, &MainWindow::routeNewFromString);
@@ -1836,6 +1839,55 @@ void MainWindow::renderStatusChanged(RenderStatus status)
   }
 }
 
+void MainWindow::routeResetAll()
+{
+  enum Choice
+  {
+    EMPTY_FLIGHT_PLAN,
+    DELETE_TRAIL,
+    DELETE_ACTIVE_LEG,
+    RESTART_PERF
+  };
+
+  qDebug() << Q_FUNC_INFO;
+
+  // Create a dialog with four checkboxes
+  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Select Items to Reset"),
+                            lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "MENUS.html#reset-for-new-flight");
+
+  choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("New empty flight plan"),
+                   tr("Create a new empty flight plan"));
+  choiceDialog.add(DELETE_TRAIL, tr("Delete aircaft trail"),
+                   tr("Delete simulator aircraft trail from map and elevation profile"));
+  choiceDialog.add(DELETE_ACTIVE_LEG, tr("Reset active flight plan leg"),
+                   tr("Remove the active (magenta) flight plan leg"));
+  choiceDialog.add(RESTART_PERF, tr("Restart Aircraft Performance Collection"),
+                   tr("Restarts the background aircraft performance collection"));
+  choiceDialog.restoreState();
+
+  if(choiceDialog.exec() == QDialog::Accepted)
+  {
+    for(int choice :  choiceDialog.getCheckedIds())
+    {
+      switch(static_cast<Choice>(choice))
+      {
+        case EMPTY_FLIGHT_PLAN:
+          routeNew();
+          break;
+        case DELETE_TRAIL:
+          deleteAircraftTrack(true /* do not ask questions */);
+          break;
+        case DELETE_ACTIVE_LEG:
+          NavApp::getRouteController()->resetActiveLeg();
+          break;
+        case RESTART_PERF:
+          NavApp::getAircraftPerfController()->restartCollection(true /* do not ask questions */);
+          break;
+      }
+    }
+  }
+}
+
 /* Route center action */
 void MainWindow::routeCenter()
 {
@@ -2120,14 +2172,17 @@ void MainWindow::updateWindowTitle()
   setWindowTitle(newTitle);
 }
 
-void MainWindow::deleteAircraftTrack()
+void MainWindow::deleteAircraftTrack(bool quiet)
 {
-  int result = atools::gui::Dialog(this).
-               showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL,
-                                  tr("Delete aircraft trail?"),
-                                  tr("Do not &show this dialog again."),
-                                  QMessageBox::Yes | QMessageBox::No,
-                                  QMessageBox::No, QMessageBox::Yes);
+  int result = QMessageBox::Yes;
+
+  if(!quiet)
+    result = atools::gui::Dialog(this).
+             showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL,
+                                tr("Delete aircraft trail?"),
+                                tr("Do not &show this dialog again."),
+                                QMessageBox::Yes | QMessageBox::No,
+                                QMessageBox::No, QMessageBox::Yes);
 
   if(result == QMessageBox::Yes)
   {

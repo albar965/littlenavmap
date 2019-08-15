@@ -237,6 +237,7 @@ public:
   void shownMapFeaturesChanged(map::MapObjectTypes types);
 
   void activateLegManually(int index);
+  void resetActiveLeg();
 
   QString procedureTypeText(const RouteLeg& leg);
 

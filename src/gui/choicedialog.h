@@ -15,21 +15,20 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_TEXTDIALOG_H
-#define LITTLENAVMAP_TEXTDIALOG_H
+#ifndef LNM_CHOICEDIALOG_H
+#define LNM_CHOICEDIALOG_H
 
 #include <QDialog>
 
 namespace Ui {
-class TextDialog;
+class ChoiceDialog;
 }
 
 class QAbstractButton;
+class QCheckBox;
 
-/*
- * Simple and general text dialog that shows a text browser with error messages for example.
- */
-class TextDialog :
+/* A dialog helper that allows to show the user a list of checkboxes. */
+class ChoiceDialog :
   public QDialog
 {
   Q_OBJECT
@@ -37,20 +36,29 @@ class TextDialog :
 public:
   /* settingsPrefixParam is used to save the dialog and checkbox state.
    * helpBaseUrlParam is the base URL of the help system. Help button will be hidden if empty.*/
-  explicit TextDialog(QWidget *parent, const QString& title, const QString& helpBaseUrlParam = QString());
-  virtual ~TextDialog() override;
+  ChoiceDialog(QWidget *parent, const QString& title, const QString& settingsPrefixParam,
+               const QString& helpBaseUrlParam);
+  virtual ~ChoiceDialog() override;
 
-  /* Set HTML text message to show.
-   * Set printToLog to true to print the HTML as plain text into the log as info when calling this method. */
-  void setHtmlMessage(const QString& messages, bool printToLog);
+  /* Add a checkbox with the given id, text and tooltip */
+  void add(int id, const QString& text, const QString& tooltip = QString());
+
+  /* Call after adding all buttons to restore button state */
+  void restoreState();
+
+  /* Get the ids of the checked checkboxes after calling exec */
+  QVector<int> getCheckedIds() const;
 
 private:
+  QVector<std::pair<int, bool> > getCheckState() const;
   void buttonBoxClicked(QAbstractButton *button);
-  void anchorClicked(const QUrl& url);
+  void saveState();
 
-  Ui::TextDialog *ui;
-  QString helpBaseUrl;
+  Ui::ChoiceDialog *ui;
+  QString helpBaseUrl, settingsPrefix;
 
+  /* Maps user given id to check box. */
+  QHash<int, QCheckBox *> index;
 };
 
-#endif // LITTLENAVMAP_TEXTDIALOG_H
+#endif // LNM_CHOICEDIALOG_H

@@ -236,6 +236,8 @@
     <property name="title">
      <string>Flight &amp;Plan</string>
     </property>
+    <addaction name="actionRouteResetAll"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteSelectParking"/>
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
@@ -5392,6 +5394,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <attribute name="toolBarBreak">
     <bool>true</bool>
    </attribute>
+   <addaction name="actionRouteResetAll"/>
    <addaction name="actionRouteSelectParking"/>
    <addaction name="actionRouteEditMode"/>
    <addaction name="separator"/>
@@ -7064,10 +7067,10 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>&amp;New Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Create a new flight plan</string>
+    <string>Create a new empty flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Create a new flight plan</string>
+    <string>Create a new empty flight plan</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -10823,6 +10826,24 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Save flight plan as XML file usable by the TFDi Design 717</string>
+   </property>
+  </action>
+  <action name="actionRouteResetAll">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/reset.svg</normaloff>:/littlenavmap/resources/icons/reset.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset all for a new Flight ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset flight plan, aircraft trail and more for a new flight</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset flight plan, aircraft trail and more for a new flight</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+R</string>
    </property>
   </action>
  </widget>
