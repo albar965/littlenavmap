@@ -43,7 +43,10 @@ class Route;
  * This class calculates altitudes for all route legs. This covers top of climb/descent
  * and sticks to all altitude restrictions of procedures while calculating.
  *
- * Also contains methods to calculate trip time, wind and fuel consumption base on AircraftPerf information.
+ * Also contains methods to calculate trip time, wind and fuel consumption based on AircraftPerf information.
+ *
+ * Fuel units (weight or volume) are based on what is used in the given AircraftPerf object. Uses always either gallon
+ * or lbs.
  *
  * Uses the route object for calculation and caches all values.
  */
@@ -60,9 +63,9 @@ public:
   /* Calculate altitudes for all legs. TOD and TOC are INVALID_DISTANCE_VALUE if these could not be calculated which
    * can happen for short routes with too high cruise altitude.
    * Use perf to calculate climb and descent legs
-   */
-  /* Calculate travelling time and fuel consumption based on given performance object and wind */
-  /* value in feet. Require to set before compilation. */
+   * Fuel units (weight or volume) are based on what is used in the given AircraftPerf object.
+   * Calculate travelling time and fuel consumption based on given performance object and wind
+   * value in feet. */
   void calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt);
 
   /* Get interpolated altitude value in ft for the given distance to destination in NM */

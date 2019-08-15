@@ -715,6 +715,27 @@ bool AircraftPerfController::isPerformanceFile(const QString& file)
   return lines.contains("[options]") && lines.contains("[perf]");
 }
 
+float AircraftPerfController::getFuelReserveAtDestinationLbs() const
+{
+  return perf->getReserveFuelLbs() +
+         (perf->useFuelAsVolume() ?
+          atools::geo::fromGalToLbs(perf->isJetFuel(), NavApp::getAltitudeLegs().getAlternateFuel()) :
+          NavApp::getAltitudeLegs().getAlternateFuel());
+}
+
+float AircraftPerfController::getFuelReserveAtDestinationGal() const
+{
+  return perf->getReserveFuelGal() +
+         (perf->useFuelAsVolume() ?
+          NavApp::getAltitudeLegs().getAlternateFuel() :
+          atools::geo::fromLbsToGal(perf->isJetFuel(), NavApp::getAltitudeLegs().getAlternateFuel()));
+}
+
+bool AircraftPerfController::canEstimateFuel() const
+{
+  return perfHandler->isActive() && perfHandler->getCurrentFlightSegment() >= atools::fs::perf::CRUISE;
+}
+
 void AircraftPerfController::fuelReportRunway(atools::util::HtmlBuilder& html)
 {
   QStringList runwayTxt;

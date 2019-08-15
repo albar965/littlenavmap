@@ -124,6 +124,13 @@ public:
   /* Detect format by reading the first few lines */
   static bool isPerformanceFile(const QString& file);
 
+  /* Required reserve at destination. Reserve + alternate fuel */
+  float getFuelReserveAtDestinationLbs() const;
+  float getFuelReserveAtDestinationGal() const;
+
+  /* true if fuel flow can be used as a estimate for destination fuel. Aircraft has to be in cruise at least. */
+  bool canEstimateFuel() const;
+
 signals:
   /* Sent if performance or wind has changed */
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);

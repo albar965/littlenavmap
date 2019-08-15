@@ -107,10 +107,12 @@ class MainWindow;
 }
 
 /*
- * Keeps most important handler, window and query classes for static access.
+ * Facade that keeps most important handler, window and query classes for static access.
  * Initialized and deinitialized in main window.
  *
  * Not all getters refer to aggregated values but are rather delegates that help to minimize dependencies.
+ *
+ * See the delegated methods for documentation.
  */
 class NavApp :
   public atools::gui::Application
@@ -277,6 +279,9 @@ public:
   static AircraftPerfController *getAircraftPerfController();
   static SearchController *getSearchController();
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
+  static float getFuelReserveAtDestinationLbs();
+  static float getFuelReserveAtDestinationGal();
+  static bool canEstimateFuel();
 
   static AirspaceController *getAirspaceController();
 

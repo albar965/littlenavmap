@@ -3148,20 +3148,26 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                         Unit::weightLbsLocalOther(userAircaft->getAirplaneTotalWeightLbs() - neededFuelWeight),
                         ahtml::NO_ENTITIES);
 
+              // Remaining fuel estimate at destination
               float remainingFuelLbs = userAircaft->getFuelTotalWeightLbs() - neededFuelWeight;
               float remainingFuelGal = userAircaft->getFuelTotalQuantityGallons() - neededFuelVol;
+              QString fuelHdr = tr("Fuel:");
+              QString fuelValue = Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal);
 
-              const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
-
-              if(remainingFuelLbs < 0.f || remainingFuelGal < 0.f)
-                html.row2Error(tr("Fuel:"),
-                               Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal));
-              else if(remainingFuelLbs < perf.getReserveFuelLbs() || remainingFuelGal < perf.getReserveFuelGal())
-                html.row2Warning(tr("Fuel:"),
-                                 Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal));
+              // Give fuel warnings only at or after cruise phase
+              if(NavApp::canEstimateFuel())
+              {
+                if(remainingFuelLbs < 0.f || remainingFuelGal < 0.f)
+                  html.row2Error(fuelHdr, fuelValue);
+                else if(remainingFuelLbs < NavApp::getFuelReserveAtDestinationLbs() ||
+                        remainingFuelGal < NavApp::getFuelReserveAtDestinationGal())
+                  // Required reserves at destination
+                  html.row2Warning(fuelHdr, fuelValue);
+                else
+                  html.row2(fuelHdr, fuelValue, ahtml::NO_ENTITIES);
+              }
               else
-                html.row2(tr("Fuel:"),
-                          Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal), ahtml::NO_ENTITIES);
+                html.row2(fuelHdr, fuelValue, ahtml::NO_ENTITIES);
             }
           }
 
