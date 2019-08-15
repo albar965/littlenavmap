@@ -152,9 +152,13 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   // Actions that cover the whole dock window
   ui->dockWidgetSearch->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
 
-  tableView->addActions({ui->actionSearchTableCopy, ui->actionSearchShowInformation,
-                         ui->actionSearchShowApproaches, ui->actionSearchShowApproachesCustom,
-                         ui->actionSearchShowOnMap, ui->actionSearchTableSelectNothing});
+  tableView->addActions({ui->actionSearchTableCopy, ui->actionSearchTableSelectNothing});
+
+  // Add actions to this tab
+  ui->tabWidgetSearch->widget(tabWidgetIndex)->addActions({ui->actionSearchShowInformation,
+                                                           ui->actionSearchShowApproaches,
+                                                           ui->actionSearchShowApproachesCustom,
+                                                           ui->actionSearchShowOnMap});
 
   // Update single shot timer
   updateTimer = new QTimer(this);
@@ -853,11 +857,12 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   QString fieldData = "Data";
 
   // Save and restore action texts on return
-  atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
+  atools::gui::ActionTextSaver saver({ui->actionSearchShowInformation, ui->actionSearchShowApproaches,
+                                      ui->actionSearchShowApproachesCustom, ui->actionSearchShowOnMap,
+                                      ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
                                       ui->actionRouteAirportAlternate, ui->actionRouteAddPos, ui->actionRouteAppendPos,
-                                      ui->actionMapRangeRings, ui->actionMapNavaidRange, ui->actionSearchShowApproaches,
-                                      ui->actionSearchShowApproachesCustom, ui->actionMapTrafficPattern,
+                                      ui->actionMapRangeRings, ui->actionMapNavaidRange, ui->actionMapTrafficPattern,
                                       ui->actionMapHold, ui->actionUserdataAdd, ui->actionUserdataDelete,
                                       ui->actionUserdataEdit, ui->actionLogdataAdd, ui->actionLogdataDelete,
                                       ui->actionLogdataEdit, ui->actionLogdataPerfLoad, ui->actionLogdataRouteOpen});
@@ -1252,12 +1257,12 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 /* Triggered by show information action in context menu. Populates map search result and emits show information */
 void SearchBaseTable::showInformationTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-
   if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
+    qDebug() << Q_FUNC_INFO;
+
     // Index covers a cell
-    QModelIndex index = view->currentIndex();
+    QModelIndex index = selectedOrFirstIndex();
     if(index.isValid())
     {
       map::MapObjectTypes navType = map::NONE;
@@ -1287,8 +1292,10 @@ void SearchBaseTable::showApproaches(bool custom)
 {
   if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
+    qDebug() << Q_FUNC_INFO;
+
     // Index covers a cell
-    QModelIndex index = view->currentIndex();
+    QModelIndex index = selectedOrFirstIndex();
     if(index.isValid())
     {
       map::MapObjectTypes navType = map::NONE;
@@ -1308,7 +1315,9 @@ void SearchBaseTable::showOnMapTriggered()
 {
   if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
-    QModelIndex index = view->currentIndex();
+    qDebug() << Q_FUNC_INFO;
+
+    QModelIndex index = selectedOrFirstIndex();
     if(index.isValid())
     {
       map::MapObjectTypes navType = map::NONE;
@@ -1361,6 +1370,14 @@ void SearchBaseTable::showOnMapTriggered()
       }
     }
   }
+}
+
+QModelIndex SearchBaseTable::selectedOrFirstIndex()
+{
+  QModelIndex idx = view->currentIndex();
+  if(!idx.isValid())
+    idx = view->model()->index(0, 0);
+  return idx;
 }
 
 void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int& id)

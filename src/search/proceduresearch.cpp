@@ -126,9 +126,10 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   ui->actionSearchProcedureShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchProcedureShowInSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  treeWidget->addActions({ui->actionSearchProcedureSelectNothing,
-                          ui->actionInfoApproachAttach, ui->actionSearchProcedureInformation,
-                          ui->actionSearchProcedureShowOnMap, ui->actionSearchProcedureShowInSearch});
+  treeWidget->addActions({ui->actionSearchProcedureSelectNothing, ui->actionInfoApproachAttach});
+
+  ui->tabProcedureSearch->addActions({ui->actionSearchProcedureInformation, ui->actionSearchProcedureShowOnMap,
+                                      ui->actionSearchProcedureShowInSearch});
 
   connect(ui->pushButtonProcedureSearchClearSelection, &QPushButton::clicked,
           this, &ProcedureSearch::clearSelectionTriggered);
