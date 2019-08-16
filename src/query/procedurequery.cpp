@@ -1319,7 +1319,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
 
         // Check if this is a reversal maneuver which should be connected with a bow instead of an intercept
         // Always intercept if course could not be calculated (e.g. first procedure leg)
-        if(courseDiff < 130. || !(courseDiff < map::INVALID_COURSE_VALUE))
+        // Everthing bigger than 150 degree is considered a reversal - draw bow instead of intercept
+        if(courseDiff < 150. || !(courseDiff < map::INVALID_COURSE_VALUE))
         {
           // Try left or right intercept
           Pos intr1 = Pos::intersectingRadials(extended, legCourse, lastPos, legCourse - 45.f).normalize();
@@ -1426,23 +1427,57 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
     // ===========================================================
     else if(contains(type, {proc::COURSE_TO_RADIAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION}))
     {
-      Pos start = lastPos.isValid() ? lastPos : leg.fixPos;
-      if(!lastPos.isValid())
-        lastPos = start;
+      // Distance to recommended fix for radial
+      float distToRecMeter = lastPos.distanceMeterTo(leg.recFixPos);
 
-      Pos center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
+      // Create a course line from start position with the given course
+      Line crsLine(lastPos, distToRecMeter * 10.f, leg.legTrueCourse());
 
-      Pos intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), center, leg.theta + leg.magvar);
+      // Create base distance for parallel line after turn to leg course
+      float parallelDist = 0.f;
+      if(leg.turnDirection == "L")
+        parallelDist = nmToMeter(2.f);
+      else if(leg.turnDirection == "R")
+        parallelDist = nmToMeter(-2.f);
 
-      if(intersect.isValid() && intersect.distanceMeterTo(start) < nmToMeter(200.f))
+      // Now create parallel lines based on the course line until a valid intersection with the radial can be found
+      // Move parallel one step away from course line and lengthen parallel a bit for each iteration
+      Pos intersect;
+      Line parallel;
+      bool valid = false;
+      float ext = 0.f;
+      for(int j = 0; j < 5; j++)
+      {
+        parallel = crsLine.parallel(parallelDist).extended(ext, ext);
+        intersect = Pos::intersectingRadials(parallel.getPos1(), parallel.angleDeg(),
+                                             leg.recFixPos, leg.theta + leg.magvar);
+
+        // Need maximum of 200 NM and minimum of 1.5 NM distance to the navaid from the intersection point
+        if(intersect.isValid() && intersect.distanceMeterTo(leg.recFixPos) < nmToMeter(200.f) &&
+           intersect.distanceMeterTo(leg.recFixPos) > nmToMeter(1.5f))
+        {
+          valid = true;
+          break;
+        }
+        // Move away from base
+        parallelDist *= 1.2f;
+
+        // Make half a NM longer
+        ext += 0.5f;
+      }
+
+      if(valid)
+      {
+        lastPos = parallel.getPos1();
         curPos = intersect;
+        leg.displayText << leg.recFixIdent + "/" + QLocale().toString(leg.theta, 'f', 0) + tr("°M");
+      }
       else
       {
-        curPos = center;
+        curPos = lastPos;
         qWarning() << "leg line type" << type << "fix" << leg.fixIdent << "no intersectingRadials found"
                    << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
       }
-      leg.displayText << leg.recFixIdent + "/" + QLocale().toString(leg.theta, 'f', 0);
     }
     // ===========================================================
     else if(type == proc::TRACK_FROM_FIX_FROM_DISTANCE)

@@ -206,6 +206,10 @@ protected:
   void drawLine(const PaintContext *context, const atools::geo::Line& line);
   void drawCircle(const PaintContext *context, const atools::geo::Pos& center, int radius);
 
+  /* Draw simple text with current settings. Corners are the text corners pointing to the position */
+  void drawText(const PaintContext *context, const atools::geo::Pos& pos, const QString& text, bool topCorner,
+                bool leftCorner);
+
   void drawCross(const PaintContext *context, int x, int y, int size);
 
   /* No GC and no rhumb */

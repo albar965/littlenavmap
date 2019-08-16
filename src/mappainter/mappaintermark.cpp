@@ -69,8 +69,6 @@ void MapPainterMark::render(PaintContext *context)
 
   map::MapMarkTypes types = NavApp::getMapMarkHandler()->getMarkTypes();
 
-  paintHighlights(context);
-
   paintMark(context);
   paintHome(context);
 
@@ -87,6 +85,8 @@ void MapPainterMark::render(PaintContext *context)
     paintDistanceMarkers(context);
 
   paintCompassRose(context);
+
+  paintHighlights(context);
 
   paintRouteDrag(context);
   paintUserpointDrag(context);
@@ -270,7 +270,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     {
       if(wToS(leg.procedureTurnPos, x, y))
       {
-        // Draw turn position of the procedur turn
+        // Draw turn position of the procedure turn
         if(!context->drawFast)
         {
           painter->setPen(QPen(mapcolors::highlightBackColor, size / 3 + 2));
@@ -282,10 +282,10 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     }
   }
 
+  // Draw hightlights from the flight plan view =====================================================
   if(context->mapLayerEffective->isAirport())
     size = std::max(size, context->mapLayerEffective->getAirportSymbolSize());
 
-  // Draw hightlights from the flight plan view =====================================================
   const QList<int>& routeHighlightResults = mapPaintWidget->getRouteHighlights();
   positions.clear();
   for(int idx : routeHighlightResults)

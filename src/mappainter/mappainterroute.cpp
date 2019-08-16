@@ -491,7 +491,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   {
     // Do not draw background for passed legs but calculate lastLine
     bool draw = (i >= passedProcLeg) || !activeValid || preview;
-    if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn() || legs.at(i).isVectors()|| legs.at(i).isManual())
+    if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn() || legs.at(i).isVectors() || legs.at(i).isManual())
       // Do not draw outline for circle-to-land approach legs
       draw = false;
 
@@ -743,13 +743,15 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
                               proc::HEADING_TO_ALTITUDE_TERMINATION,
                               proc::HEADING_TO_MANUAL_TERMINATION,
                               proc::COURSE_TO_INTERCEPT,
-                              proc::HEADING_TO_INTERCEPT}))
+                              proc::HEADING_TO_INTERCEPT,
+                              proc::COURSE_TO_RADIAL_TERMINATION,
+                              proc::HEADING_TO_RADIAL_TERMINATION}))
   {
     if(contains(leg.turnDirection, {"R", "L"}) &&
        prevLeg != nullptr && prevLeg->type != proc::INITIAL_FIX && prevLeg->type != proc::START_OF_PROCEDURE)
     {
       float lineDist = static_cast<float>(QLineF(lastLines.last().p2(), line.p1()).length());
-      if(!lastLines.last().p2().isNull() && lineDist > 2)
+      if(!lastLines.last().p2().isNull() && lineDist > 2.f)
       {
         // Lines are not connected which can happen if a CF follows after a FD or similar
         paintProcedureBow(prevLeg, lastLines, painter, line, leg, intersectPoint, draw);

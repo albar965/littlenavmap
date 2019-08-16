@@ -241,6 +241,19 @@ void MapPainter::drawCircle(const PaintContext *context, const atools::geo::Pos&
     context->painter->drawEllipse(pt, radius, radius);
 }
 
+void MapPainter::drawText(const PaintContext *context, const Pos& pos, const QString& text, bool topCorner,
+                          bool leftCorner)
+{
+  QPoint pt = wToS(pos);
+  if(!pt.isNull())
+  {
+    QFontMetrics metrics = context->painter->fontMetrics();
+    pt.setX(leftCorner ? pt.x() : pt.x() - metrics.width(text));
+    pt.setY(topCorner ? pt.y() + metrics.ascent() : pt.y() - metrics.descent());
+    context->painter->drawText(pt, text);
+  }
+}
+
 void MapPainter::drawCross(const PaintContext *context, int x, int y, int size)
 {
   context->painter->drawLine(x, y - size, x, y + size);

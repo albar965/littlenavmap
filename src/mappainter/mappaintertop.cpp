@@ -21,6 +21,11 @@
 #include "navapp.h"
 #include "util/paintercontextsaver.h"
 
+#ifdef DEBUG_INFORMATION
+#include "common/proctypes.h"
+#include "mapgui/mappaintwidget.h"
+#endif
+
 #include <marble/GeoPainter.h>
 
 MapPainterTop::MapPainterTop(MapPaintWidget *mapWidgetParam, MapScale *mapScale)
@@ -86,6 +91,56 @@ void MapPainterTop::render(PaintContext *context)
       drawTouchIcons(context, std::max(std::min(iconSize, 30), 10));
     }
   }
+
+#ifdef DEBUG_INFORMATION
+  {
+    const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
+    atools::util::PainterContextSaver saver(context->painter);
+    painter->setBrush(Qt::black);
+    painter->setBackgroundMode(Qt::OpaqueMode);
+    painter->setBackground(Qt::black);
+
+    if(leg.geometry.isValid())
+    {
+      painter->setPen(QPen(Qt::red, 6));
+      drawLineString(context, leg.geometry);
+    }
+    if(leg.line.isValid())
+    {
+      painter->setPen(QPen(Qt::yellow, 3));
+      drawLine(context, leg.line);
+      drawText(context, leg.line.getPos1(), "P1", false, false);
+      drawText(context, leg.line.getPos2(), QString("P2,%1°,%2nm").
+               arg(leg.course, 0, 'f', 1).arg(leg.distance, 0, 'f', 1), false, false);
+
+    }
+    if(leg.holdLine.isValid())
+    {
+      painter->setPen(QPen(Qt::blue, 3));
+      drawLine(context, leg.line);
+    }
+    if(leg.procedureTurnPos.isValid())
+    {
+      painter->setPen(QPen(Qt::blue, 2));
+      drawText(context, leg.procedureTurnPos, "PTFIX", false, false);
+    }
+    if(leg.interceptPos.isValid())
+    {
+      painter->setPen(QPen(Qt::yellow, 2));
+      drawText(context, leg.interceptPos, "ICPT", true, false);
+    }
+    if(leg.recFixPos.isValid())
+    {
+      painter->setPen(QPen(Qt::lightGray, 2));
+      drawText(context, leg.recFixPos, leg.recFixIdent.isEmpty() ? "RECFIX" : leg.recFixIdent, false, true);
+    }
+    if(leg.fixPos.isValid())
+    {
+      painter->setPen(QPen(Qt::white, 2));
+      drawText(context, leg.fixPos, leg.fixIdent.isEmpty() ? "FIX" : leg.fixIdent, true, true);
+    }
+  }
+#endif
 }
 
 void MapPainterTop::paintCopyright(PaintContext *context)
