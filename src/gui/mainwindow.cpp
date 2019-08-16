@@ -1852,16 +1852,17 @@ void MainWindow::routeResetAll()
   qDebug() << Q_FUNC_INFO;
 
   // Create a dialog with four checkboxes
-  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Select Items to Reset"),
+  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"),
+                            tr("Select items to reset for a new flight"),
                             lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "MENUS.html#reset-for-new-flight");
 
-  choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("New empty flight plan"),
+  choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("&New empty flight plan"),
                    tr("Create a new empty flight plan"));
-  choiceDialog.add(DELETE_TRAIL, tr("Delete aircaft trail"),
+  choiceDialog.add(DELETE_TRAIL, tr("&Delete aircaft trail"),
                    tr("Delete simulator aircraft trail from map and elevation profile"));
-  choiceDialog.add(DELETE_ACTIVE_LEG, tr("Reset active flight plan leg"),
+  choiceDialog.add(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
                    tr("Remove the active (magenta) flight plan leg"));
-  choiceDialog.add(RESTART_PERF, tr("Restart Aircraft Performance Collection"),
+  choiceDialog.add(RESTART_PERF, tr("Restart Aircraft &Performance Collection"),
                    tr("Restarts the background aircraft performance collection"));
   choiceDialog.restoreState();
 

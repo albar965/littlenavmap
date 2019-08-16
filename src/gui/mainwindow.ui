@@ -101,6 +101,8 @@
     <addaction name="actionRouteAppend"/>
     <addaction name="menuRecentRoutes"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteResetAll"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
     <addaction name="actionRouteSaveAsFms11"/>
@@ -236,7 +238,6 @@
     <property name="title">
      <string>Flight &amp;Plan</string>
     </property>
-    <addaction name="actionRouteResetAll"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSelectParking"/>
     <addaction name="actionRouteEditMode"/>
@@ -494,6 +495,8 @@
    <addaction name="actionRouteNew"/>
    <addaction name="actionRouteOpen"/>
    <addaction name="actionRouteSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionRouteResetAll"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidgetSearch">
@@ -5394,7 +5397,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <attribute name="toolBarBreak">
     <bool>true</bool>
    </attribute>
-   <addaction name="actionRouteResetAll"/>
    <addaction name="actionRouteSelectParking"/>
    <addaction name="actionRouteEditMode"/>
    <addaction name="separator"/>
@@ -10831,7 +10833,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <action name="actionRouteResetAll">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/reset.svg</normaloff>:/littlenavmap/resources/icons/reset.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/reload.svg</normaloff>:/littlenavmap/resources/icons/reload.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Reset all for a new Flight ...</string>

@@ -33,7 +33,8 @@
 
 const static char ID_PROPERTY[] = "checkboxid";
 
-ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString& settingsPrefixParam,
+ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString& header,
+                           const QString& settingsPrefixParam,
                            const QString& helpBaseUrlParam)
   : QDialog(parent), ui(new Ui::ChoiceDialog), helpBaseUrl(helpBaseUrlParam), settingsPrefix(settingsPrefixParam)
 {
@@ -41,6 +42,7 @@ ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString&
   setWindowTitle(title);
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
+  ui->groupBox->setTitle(header);
 
   if(helpBaseUrl.isEmpty())
     // Remove help button if not requested
@@ -63,7 +65,7 @@ void ChoiceDialog::add(int id, const QString& text, const QString& tooltip)
   index.insert(id, checkBox);
 
   // Add widget before the button box
-  ui->verticalLayout->insertWidget(ui->verticalLayout->count() - 1, checkBox);
+  ui->verticalLayoutGroupBox->insertWidget(-1, checkBox);
 }
 
 QVector<std::pair<int, bool> > ChoiceDialog::getCheckState() const

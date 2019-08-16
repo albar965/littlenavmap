@@ -36,7 +36,7 @@ class ChoiceDialog :
 public:
   /* settingsPrefixParam is used to save the dialog and checkbox state.
    * helpBaseUrlParam is the base URL of the help system. Help button will be hidden if empty.*/
-  ChoiceDialog(QWidget *parent, const QString& title, const QString& settingsPrefixParam,
+  ChoiceDialog(QWidget *parent, const QString& title, const QString& header, const QString& settingsPrefixParam,
                const QString& helpBaseUrlParam);
   virtual ~ChoiceDialog() override;
 
