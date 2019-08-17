@@ -625,12 +625,11 @@ void MainWindow::setupUi()
   scaleToolbar(ui->toolBarMain, 0.72f);
   scaleToolbar(ui->toolBarMap, 0.72f);
   scaleToolbar(ui->toolbarMapOptions, 0.72f);
+  scaleToolbar(ui->toolBarMapThemeProjection, 0.72f);
   scaleToolbar(ui->toolBarRoute, 0.72f);
   scaleToolbar(ui->toolBarAirspaces, 0.72f);
   scaleToolbar(ui->toolBarView, 0.72f);
 #endif
-
-  ui->toolbarMapOptions->addSeparator();
 
   // Projection combo box
   mapProjectionComboBox = new QComboBox(this);
@@ -640,7 +639,7 @@ void MainWindow::setupUi()
   mapProjectionComboBox->setStatusTip(helpText);
   mapProjectionComboBox->addItem(tr("Mercator"), Marble::Mercator);
   mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
-  ui->toolbarMapOptions->addWidget(mapProjectionComboBox);
+  ui->toolBarMapThemeProjection->addWidget(mapProjectionComboBox);
 
   // Projection menu items
   actionGroupMapProjection = new QActionGroup(ui->menuViewProjection);
@@ -662,7 +661,7 @@ void MainWindow::setupUi()
   mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
   mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
   mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");
-  ui->toolbarMapOptions->addWidget(mapThemeComboBox);
+  ui->toolBarMapThemeProjection->addWidget(mapThemeComboBox);
 
   // Sun shading sub menu
   actionGroupMapSunShading = new QActionGroup(ui->menuSunShading);
@@ -793,6 +792,7 @@ void MainWindow::setupUi()
                               {ui->toolBarMain->toggleViewAction(),
                                ui->toolBarMap->toggleViewAction(),
                                ui->toolbarMapOptions->toggleViewAction(),
+                               ui->toolBarMapThemeProjection->toggleViewAction(),
                                ui->toolBarRoute->toggleViewAction(),
                                ui->toolBarAirspaces->toggleViewAction(),
                                ui->toolBarView->toggleViewAction()});
@@ -3456,6 +3456,7 @@ void MainWindow::resetWindowLayout()
   else
     ui->dockWidgetMap->show();
 
+  NavApp::getRouteTabHandler()->reset();
   infoController->resetWindowLayout();
   searchController->resetWindowLayout();
 }

@@ -332,8 +332,8 @@ void NavApp::readMagDecFromDatabase()
     magDecReader->readFromWmm();
   }
 
-  qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate() <<
-    magDecReader->getWmmVersion();
+  qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate()
+           << magDecReader->getWmmVersion();
 }
 
 void NavApp::postDatabaseLoad()
