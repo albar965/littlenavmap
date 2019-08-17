@@ -40,7 +40,6 @@
 #include "mapgui/mapmarkhandler.h"
 #include "fs/perf/aircraftperf.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
 #include "sql/sqlrecord.h"
 #include "gui/trafficpatterndialog.h"
 #include "gui/holddialog.h"
@@ -2151,8 +2150,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   qDebug() << "searchText" << searchText;
   qDebug() << "patternText" << patternText;
   qDebug() << "holdText" << holdText;
-
-  atools::gui::util::addMenuShortcuts(&menu);
 
   // Show the menu ------------------------------------------------
   QAction *action = menu.exec(menuPos);

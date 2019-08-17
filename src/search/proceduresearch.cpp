@@ -21,7 +21,6 @@
 #include "navapp.h"
 #include "route/route.h"
 #include "common/mapcolors.h"
-#include "gui/widgetutil.h"
 #include "query/infoquery.h"
 #include "query/procedurequery.h"
 #include "sql/sqlrecord.h"
@@ -947,8 +946,6 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchResetSearch);
   menu.addAction(ui->actionInfoApproachClear);
   menu.addAction(ui->actionSearchResetView);
-
-  atools::gui::util::addMenuShortcuts(&menu);
 
   QAction *action = menu.exec(menuPos);
   if(action == ui->actionInfoApproachExpandAll)
