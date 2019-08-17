@@ -516,19 +516,28 @@ void AircraftPerfController::connectAllSlots()
           this, &AircraftPerfController::windBoxesChanged);
 }
 
+void AircraftPerfController::updateTabTiltle()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  int idx = NavApp::getRouteTabHandler()->getIndexForId(rc::AIRCRAFT);
+  if(idx != -1)
+  {
+    if(changed)
+    {
+      if(!ui->tabWidgetRoute->tabText(idx).endsWith(tr(" *")))
+        ui->tabWidgetRoute->setTabText(idx, ui->tabWidgetRoute->tabText(idx) + tr(" *"));
+    }
+    else
+      ui->tabWidgetRoute->setTabText(idx, ui->tabWidgetRoute->tabText(idx).replace(tr(" *"), QString()));
+  }
+}
+
 void AircraftPerfController::updateActionStates()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Update tab title to indicate change ========================================
-  if(changed)
-  {
-    if(!ui->tabWidgetRoute->tabText(rc::AIRCRAFT).endsWith(tr(" *")))
-      ui->tabWidgetRoute->setTabText(rc::AIRCRAFT, ui->tabWidgetRoute->tabText(rc::AIRCRAFT) + tr(" *"));
-  }
-  else
-    ui->tabWidgetRoute->setTabText(rc::AIRCRAFT,
-                                   ui->tabWidgetRoute->tabText(rc::AIRCRAFT).replace(tr(" *"), QString()));
+  updateTabTiltle();
 
   bool routeValid = NavApp::getRouteConst().getSizeWithoutAlternates() >= 2;
 
@@ -1035,6 +1044,8 @@ void AircraftPerfController::restoreState()
   // Need to initialize this late since route controller is not valid when AircraftPerfController constructor is called
   connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabChanged,
           this, &AircraftPerfController::tabVisibilityChanged);
+  connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabOpened,
+          this, &AircraftPerfController::updateTabTiltle);
 
   fileHistory->restoreState();
   loadFile(settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME));

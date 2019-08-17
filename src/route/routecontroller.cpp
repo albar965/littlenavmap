@@ -713,6 +713,9 @@ void RouteController::restoreState()
     updateFlightplanFromWidgets();
 
   units->update();
+
+  connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabOpened,
+          this, &RouteController::updateRouteTabChangedStatus);
 }
 
 void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
@@ -2954,13 +2957,17 @@ void RouteController::showProceduresCustom(map::MapAirport airport)
 void RouteController::updateRouteTabChangedStatus()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(hasChanged())
+  int idx = NavApp::getRouteTabHandler()->getIndexForId(rc::ROUTE);
+  if(idx != -1)
   {
-    if(!ui->tabWidgetRoute->tabText(rc::ROUTE).endsWith(tr(" *")))
-      ui->tabWidgetRoute->setTabText(rc::ROUTE, ui->tabWidgetRoute->tabText(rc::ROUTE) + tr(" *"));
+    if(hasChanged())
+    {
+      if(!ui->tabWidgetRoute->tabText(idx).endsWith(tr(" *")))
+        ui->tabWidgetRoute->setTabText(idx, ui->tabWidgetRoute->tabText(idx) + tr(" *"));
+    }
+    else
+      ui->tabWidgetRoute->setTabText(idx, ui->tabWidgetRoute->tabText(idx).replace(tr(" *"), QString()));
   }
-  else
-    ui->tabWidgetRoute->setTabText(rc::ROUTE, ui->tabWidgetRoute->tabText(rc::ROUTE).replace(tr(" *"), QString()));
 }
 
 void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway)

@@ -194,6 +194,9 @@ private:
   /* Cruise altitude either from flight plan or widget */
   float cruiseAlt();
 
+  /* Update * for changed if tab is reopened */
+  void updateTabTiltle();
+
   MainWindow *mainWindow;
 
   /* Default font size - can be changed in settings */
