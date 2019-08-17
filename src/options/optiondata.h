@@ -303,7 +303,10 @@ enum Flag2
   PROPOSE_FILENAME = 1 << 16,
 
   /* checkBoxOptionsGuiRaiseWindows */
-  RAISE_WINDOWS = 1 << 17
+  RAISE_WINDOWS = 1 << 17,
+
+  /* checkBoxOptionsUnitFuelOther */
+  UNIT_FUEL_SHOW_OTHER = 1 << 18
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);

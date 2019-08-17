@@ -2986,19 +2986,6 @@ user airspace filename has to match the callsign of the center.</string>
           </item>
          </widget>
         </item>
-        <item row="8" column="0" colspan="2">
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>A restart is recommended after changing units.</string>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="2">
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -3012,10 +2999,36 @@ user airspace filename has to match the callsign of the center.</string>
           </property>
          </spacer>
         </item>
-        <item row="7" column="0" colspan="2">
+        <item row="5" column="2">
+         <widget class="QCheckBox" name="checkBoxOptionsUnitFuelOther">
+          <property name="toolTip">
+           <string>Shows the other fuel units (lbs/gal or kg/liter) in information display as well</string>
+          </property>
+          <property name="text">
+           <string>&amp;Show other fuel units too</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0" colspan="3">
          <widget class="Line" name="line_8">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0" colspan="3">
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>A restart is recommended after changing units.</string>
           </property>
          </widget>
         </item>

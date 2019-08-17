@@ -3030,7 +3030,7 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
     html.row2(tr("Max Gross Weight:"), Unit::weightLbsLocalOther(maxGrossWeight), ahtml::NO_ENTITIES);
 
     if(grossWeight > maxGrossWeight)
-      html.row2Error(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight));
+      html.row2Error(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight, false, false));
     else
       html.row2(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight, true /* bold */), ahtml::NO_ENTITIES);
 
@@ -3158,11 +3158,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
               if(NavApp::canEstimateFuel())
               {
                 if(remainingFuelLbs < 0.f || remainingFuelGal < 0.f)
-                  html.row2Error(fuelHdr, fuelValue);
+                  html.row2Error(fuelHdr,
+                                 Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
                 else if(remainingFuelLbs < NavApp::getFuelReserveAtDestinationLbs() ||
                         remainingFuelGal < NavApp::getFuelReserveAtDestinationGal())
                   // Required reserves at destination
-                  html.row2Warning(fuelHdr, fuelValue);
+                  html.row2Warning(fuelHdr,
+                                   Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
                 else
                   html.row2(fuelHdr, fuelValue, ahtml::NO_ENTITIES);
               }

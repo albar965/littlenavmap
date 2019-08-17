@@ -1255,6 +1255,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   toFlags2(ui->checkBoxOptionsGuiProposeFilename, opts2::PROPOSE_FILENAME);
   toFlags2(ui->checkBoxOptionsGuiRaiseWindows, opts2::RAISE_WINDOWS);
+  toFlags2(ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
   toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   toFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   toFlags(ui->checkBoxOptionsGuiOverrideLanguage, opts::GUI_OVERRIDE_LANGUAGE);
@@ -1487,6 +1488,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   fromFlags2(ui->checkBoxOptionsGuiProposeFilename, opts2::PROPOSE_FILENAME);
   fromFlags2(ui->checkBoxOptionsGuiRaiseWindows, opts2::RAISE_WINDOWS);
+  fromFlags2(ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
   fromFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   fromFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   fromFlags(ui->checkBoxOptionsGuiOverrideLanguage, opts::GUI_OVERRIDE_LANGUAGE);

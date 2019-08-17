@@ -90,14 +90,17 @@ QString FuelTool::weightVolLocal(float valueLbsGal) const
 
 QString FuelTool::weightVolOther(float valueLbsGal) const
 {
-  // Convert to opposite of locally selected unit (lbs/gal vs. kg/l and vice versa)
-  switch(OptionData::instance().getUnitFuelAndWeight())
+  if(Unit::isShowOtherFuel())
   {
-    case opts::FUEL_WEIGHT_GAL_LBS:
-      return fuelWeightVol(opts::FUEL_WEIGHT_LITER_KG, valueLbsGal);
+    // Convert to opposite of locally selected unit (lbs/gal vs. kg/l and vice versa)
+    switch(OptionData::instance().getUnitFuelAndWeight())
+    {
+      case opts::FUEL_WEIGHT_GAL_LBS:
+        return fuelWeightVol(opts::FUEL_WEIGHT_LITER_KG, valueLbsGal);
 
-    case opts::FUEL_WEIGHT_LITER_KG:
-      return fuelWeightVol(opts::FUEL_WEIGHT_GAL_LBS, valueLbsGal);
+      case opts::FUEL_WEIGHT_LITER_KG:
+        return fuelWeightVol(opts::FUEL_WEIGHT_GAL_LBS, valueLbsGal);
+    }
   }
   return QString();
 }
@@ -113,8 +116,13 @@ QString FuelTool::flowWeightVolLocal(float valueLbsGal) const
 QString FuelTool::weightVolLocalOther(float valueLbsGal, bool localBold, bool otherSmall) const
 {
   QString local = localBold ? tr("<b>%1</b>") : tr("%1");
-  QString other = otherSmall ? tr(" <small>(%2)</small>") : tr(" (%2)");
-  return (local + other).arg(weightVolLocal(valueLbsGal)).arg(weightVolOther(valueLbsGal));
+  if(Unit::isShowOtherFuel())
+  {
+    QString other = otherSmall ? tr(" <span style=\"font-size: small;\">(%2)</span>") : tr(" (%2)");
+    return (local + other).arg(weightVolLocal(valueLbsGal)).arg(weightVolOther(valueLbsGal));
+  }
+  else
+    return local.arg(weightVolLocal(valueLbsGal));
 }
 
 QString FuelTool::getFuelTypeString() const

@@ -39,6 +39,7 @@ opts::UnitSpeed Unit::unitSpeed = opts::SPEED_KTS;
 opts::UnitVertSpeed Unit::unitVertSpeed = opts::VERT_SPEED_FPM;
 opts::UnitCoords Unit::unitCoords = opts::COORDS_DMS;
 opts::UnitFuelAndWeight Unit::unitFuelWeight = opts::FUEL_WEIGHT_GAL_LBS;
+bool Unit::showOtherFuel = true;
 
 QString Unit::unitDistStr;
 QString Unit::unitShortDistStr;
@@ -421,14 +422,20 @@ float Unit::weightKgF(float value)
 
 QString Unit::localOtherText(bool localBold, bool otherSmall)
 {
-  return (localBold ? tr("<b>%1</b>") : tr("%1")) +
-         (otherSmall ? tr(" <small>(%2)</small>") : tr(" (%2)"));
+  if(showOtherFuel)
+    return (localBold ? tr("<b>%1</b>") : tr("%1")) +
+           (otherSmall ? tr(" <span style=\"font-size: small;\">(%2)</span>") : tr(" (%2)"));
+  else
+    return localBold ? tr("<b>%1</b>") : tr("%1");
 }
 
 QString Unit::localOtherText2(bool localBold, bool otherSmall)
 {
-  return (localBold ? tr("<b>%1, %2</b>") : tr("%1, %2")) +
-         (otherSmall ? tr(" <small>(%3, %4)</small>") : tr(" (%3, %4)"));
+  if(showOtherFuel)
+    return (localBold ? tr("<b>%1, %2</b>") : tr("%1, %2")) +
+           (otherSmall ? tr(" <span style=\"font-size: small;\">(%3, %4)</span>") : tr(" (%3, %4)"));
+  else
+    return localBold ? tr("<b>%1, %2</b>") : tr("%1, %2");
 }
 
 QString Unit::weightLbsLocalOther(float valueLbs, bool localBold, bool otherSmall)
@@ -443,7 +450,7 @@ QString Unit::weightLbsLocalOther(float valueLbs, bool localBold, bool otherSmal
     case opts::FUEL_WEIGHT_LITER_KG:
       return localOtherText(localBold, otherSmall).
              arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
-             arg(u(valueLbs, suffixFuelWeightKg, true));
+             arg(u(valueLbs, suffixFuelWeightLbs, true));
   }
   return QString();
 }
@@ -665,6 +672,7 @@ void Unit::optionsChanged()
   unitVertSpeed = opts->getUnitVertSpeed();
   unitCoords = opts->getUnitCoords();
   unitFuelWeight = opts->getUnitFuelAndWeight();
+  showOtherFuel = opts->getFlags2() & opts2::UNIT_FUEL_SHOW_OTHER;
 
   switch(unitDist)
   {
