@@ -5,7 +5,7 @@
 CONF=debug
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US:en_GB
-export LD_LIBRARY_PATH=${APROJECTS}/Marble-${CONF}/lib:~/Qt/5.12.3/gcc_64/lib:${APROJECTS}/build-littlenavmap-${CONF}
+export LD_LIBRARY_PATH=${APROJECTS}/Marble-${CONF}/lib:~/Qt/5.12.4/gcc_64/lib:${APROJECTS}/build-littlenavmap-${CONF}
 
 cd ${APROJECTS}/build-littlenavmap-${CONF}
 
