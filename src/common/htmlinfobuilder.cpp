@@ -197,8 +197,6 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(info)
   {
-    addCoordinates(rec, html);
-
     // Sunrise and sunset ===========================
     QDateTime datetime =
       NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
@@ -227,6 +225,9 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
               arg(timesource);
 
       html.row2(tr("Sunrise and sunset:"), txt);
+
+      // Coordinates ===============================================
+      addCoordinates(rec, html);
     }
   }
 
@@ -954,7 +955,9 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   html.table();
   if(closed)
     html.row2(tr("Closed"), QString());
-  html.row2(tr("Heading:"), tr("%1°M").arg(locale.toString(hdgPrim, 'f', 0)));
+  html.row2(tr("Heading:"),
+            courseMagTrue(hdgPrim, atools::geo::normalizeCourse(hdgPrim + airport.magvar), true),
+            ahtml::NO_ENTITIES);
 
   float threshold = rec->valueFloat("offset_threshold");
   if(threshold > 1.f)
@@ -1690,7 +1693,9 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
     if(parsed.getWindDir() >= 0)
       // Wind direction given
-      windDir = locale.toString(normalizeCourse(parsed.getWindDir() - airport.magvar), 'f', 0) + tr("°M") + tr(", ");
+      windDir =
+        courseMagTrue(normalizeCourse(parsed.getWindDir() - airport.magvar), parsed.getWindDir(), false) +
+        tr(", ");
 
     if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
       // Wind direction range given (additionally to dir in some cases)
@@ -1707,10 +1712,10 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
       if(windSpeedKts < INVALID_METAR_VALUE)
         windSpeedStr = Unit::speedKts(windSpeedKts);
 
-      html.row2(tr("Wind:"), windDir + windSpeedStr + windVar);
+      html.row2(tr("Wind:"), windDir + windSpeedStr + windVar, ahtml::NO_ENTITIES);
     }
     else
-      html.row2(tr("Wind:"), windDir + tr("Speed not valid") + windVar);
+      html.row2(tr("Wind:"), windDir + tr("Speed not valid") + windVar, ahtml::NO_ENTITIES);
 
     hasWind = true;
   }
@@ -2759,9 +2764,8 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& procPoin
   if(procPoint.time > 0.f)
     html.row2(tr("Time:"), locale.toString(procPoint.time, 'f', 0) + tr(" min"));
   if(procPoint.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-    html.row2(tr("Course:"), locale.toString(normalizeCourse(
-                                               procPoint.calculatedTrueCourse - procPoint.magvar), 'f', 0) +
-              tr("°M"));
+    html.row2(tr("Course:"),
+              locale.toString(normalizeCourse(procPoint.calculatedTrueCourse - procPoint.magvar), 'f', 0) + tr("°M"));
 
   if(!procPoint.turnDirection.isEmpty())
   {
@@ -3280,7 +3284,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(!routeLegCorrected.getIdent().isEmpty())
           html.row2(tr("Name and Type:"), routeLegCorrected.getIdent() +
                     (routeLegCorrected.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") +
-                     routeLegCorrected.getMapObjectTypeName()));
+                     routeLegCorrected.getMapObjectTypeName()), ahtml::BOLD);
 
         // Next leg - approach related navaid ====================================================
         if(!less && !leg.recFixIdent.isEmpty())
@@ -3327,9 +3331,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
               html.row2(tr("Course:"),
                         locale.toString(normalizeCourse(courseToWptTrue - routeLeg.getMagvar()), 'f', 0));
             else
-              html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
-                        locale.toString(normalizeCourse(courseToWptTrue - routeLeg.getMagvar()), 'f', 0) +
-                        tr("°M, ") + timeStr);
+            {
+              html.row2(tr("Distance and Time:"), Unit::distNm(nearestLegDistance) + tr(", ") + timeStr,
+                        ahtml::NO_ENTITIES);
+              html.row2(tr("Course:"),
+                        courseMagTrue(normalizeCourse(courseToWptTrue - routeLeg.getMagvar()),
+                                      courseToWptTrue, true), ahtml::NO_ENTITIES);
+            }
           }
           else // if(!leg.noDistanceDisplay())
                // Only distance and time for arc legs
@@ -3344,7 +3352,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           {
             float legCourse = routeLeg.getCourseToRhumbMag();
             if(legCourse < INVALID_COURSE_VALUE)
-              html.row2(tr("Leg Course:"), locale.toString(legCourse, 'f', 0) + tr("°M"));
+              html.row2(tr("Leg Course:"), courseMagTrue(legCourse, routeLeg.getCourseToRhumbTrue(), true),
+                        ahtml::NO_ENTITIES);
 
             if(!less && userAircaft != nullptr && userAircaft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
             {
@@ -3427,16 +3436,17 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     heading = normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
 
   if(heading < atools::fs::sc::SC_INVALID_FLOAT)
-    hdg.append(locale.toString(heading, 'f', 0) + tr("°M"));
+    hdg.append(courseMagTrue(heading, aircraft.getHeadingDegTrue(), true));
 
   if(!hdg.isEmpty())
-    html.row2(tr("Heading:"), hdg.join(", "), ahtml::BOLD);
+    html.row2(tr("Heading:"), hdg.join(tr(", ")), ahtml::NO_ENTITIES);
 
   if(userAircaft != nullptr && info)
   {
     if(userAircaft != nullptr)
-      html.row2(tr("Track:"), locale.toString(userAircaft->getTrackDegMag(), 'f', 0) + tr("°M, ") +
-                locale.toString(userAircaft->getTrackDegTrue(), 'f', 0) + tr("°T"));
+      html.row2(tr("Track:"),
+                courseMagTrue(userAircaft->getTrackDegMag(), userAircaft->getTrackDegTrue()),
+                ahtml::NO_ENTITIES);
 
     if(!less)
       html.row2(tr("Fuel Flow:"), Unit::ffLbsAndGal(userAircaft->getFuelFlowPPH(), userAircaft->getFuelFlowGPH()));
@@ -3567,8 +3577,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     float windSpeed = userAircaft->getWindSpeedKts();
     float windDir = normalizeCourse(userAircaft->getWindDirectionDegT() - userAircaft->getMagVarDeg());
     if(windSpeed >= 1.f)
-      html.row2(tr("Wind Direction and Speed:"), locale.toString(windDir, 'f', 0) + tr("°M, ") +
-                Unit::speedKts(windSpeed));
+      html.row2(tr("Wind Direction and Speed:"), courseMagTrue(windDir, userAircaft->getWindDirectionDegT()) +
+                tr(", ") + Unit::speedKts(windSpeed));
     else
       html.row2(tr("Wind Direction and Speed:"), tr("None"));
 
@@ -4003,4 +4013,32 @@ void HtmlInfoBuilder::addFlightRulesSuffix(atools::util::HtmlBuilder& html,
   html.text(metar.getParsedMetar().getFlightRulesString());
   if(mapDisplay)
     html.nbsp().text(tr("-")).nbsp().text(tr("Map"));
+}
+
+QString HtmlInfoBuilder::courseMagTrue(float magCourse, float trueCourse, bool magBold) const
+{
+  QString magStr, trueStr;
+  if(magCourse < map::INVALID_COURSE_VALUE / 2.f)
+    magStr = locale.toString(magCourse, 'f', 0);
+  if(trueCourse < map::INVALID_COURSE_VALUE / 2.f)
+    trueStr = locale.toString(trueCourse, 'f', 0);
+
+  if(magStr == trueStr)
+  {
+    if(magStr.isEmpty())
+      return QString();
+
+    return magBold ? tr("<b>%1°M</b>").arg(magStr) : tr("%1°M").arg(magStr);
+  }
+  else
+  {
+    if(!magStr.isEmpty() && !trueStr.isEmpty())
+      return magBold ? tr("<b>%1°M</b>, <span style=\"font-size: small;\">%2°T</span>").arg(magStr).arg(trueStr) :
+             tr("%1°M, <span style=\"font-size: small;\">%2°T</span>").arg(magStr).arg(trueStr);
+    else if(!magStr.isEmpty())
+      return magBold ? tr("<b>%1°M</b>").arg(magStr) : tr("%1°M").arg(magStr);
+    else if(!trueStr.isEmpty())
+      return magBold ? tr("<b>%1°T</b>").arg(trueStr) : tr("%1°T").arg(trueStr);
+  }
+  return QString();
 }

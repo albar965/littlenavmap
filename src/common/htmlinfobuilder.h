@@ -376,6 +376,8 @@ private:
   void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, float windSpeed,
                        float windDirectionDeg, int max, bool details) const;
 
+  QString courseMagTrue(float magCourse, float trueCourse, bool magBold = false) const;
+
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
 
