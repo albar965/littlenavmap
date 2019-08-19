@@ -73,7 +73,6 @@ setlocal
 rem ===========================================================================
 rem ========================== atools 32 bit
 set PATH=%PATH%;%PATH_SHARED%
-goto :connect
 pushd "%APROJECTS%\build-atools-%CONF_TYPE%"
 
 del /S /Q /F "%APROJECTS%\build-atools-%CONF_TYPE%"
@@ -85,8 +84,6 @@ IF ERRORLEVEL 1 goto :err
 mingw32-make.exe -j4
 IF ERRORLEVEL 1 goto :err
 popd
-
-:connect
 
 rem ===========================================================================
 rem ========================== littlenavconnect 32 bit
