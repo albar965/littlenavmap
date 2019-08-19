@@ -133,6 +133,9 @@ public:
   /* Convert legacy logbook entries from userdata to the new logbook */
   void convertUserdata();
 
+  /* Resets detection of flight */
+  void resetTakeoffLandingDetection();
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshLogSearch(bool loadAll, bool keepSelection);
@@ -145,8 +148,8 @@ signals:
 
 private:
   /* Create a logbook entry on takeoff and update it on landing */
-  void createTakoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff, float flownDistanceNm,
-                           float averageTasKts);
+  void createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff, float flownDistanceNm,
+                            float averageTasKts);
 
   /* Callback function for X-Plane import */
   static void fetchAirportCoordinates(atools::geo::Pos& pos, QString& name, const QString& airportIdent);

@@ -149,17 +149,17 @@ atools::sql::SqlDatabase *LogdataController::getDatabase() const
 
 void LogdataController::aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft)
 {
-  createTakoffLanding(aircraft, true /*takeoff*/, 0.f, 0.f);
+  createTakeoffLanding(aircraft, true /*takeoff*/, 0.f, 0.f);
 }
 
 void LogdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
                                         float averageTasKts)
 {
-  createTakoffLanding(aircraft, false /*takeoff*/, flownDistanceNm, averageTasKts);
+  createTakeoffLanding(aircraft, false /*takeoff*/, flownDistanceNm, averageTasKts);
 }
 
-void LogdataController::createTakoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
-                                            float flownDistanceNm, float averageTasKts)
+void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
+                                             float flownDistanceNm, float averageTasKts)
 {
   Q_UNUSED(averageTasKts);
 
@@ -266,11 +266,16 @@ void LogdataController::createTakoffLanding(const atools::fs::sc::SimConnectUser
       qWarning() << Q_FUNC_INFO << "no previous takeoff";
   }
 
-  delete aircraftAtTakeoff;
-  aircraftAtTakeoff = nullptr;
+  resetTakeoffLandingDetection();
 
   if(takeoff)
     aircraftAtTakeoff = new atools::fs::sc::SimConnectUserAircraft(aircraft);
+}
+
+void LogdataController::resetTakeoffLandingDetection()
+{
+  delete aircraftAtTakeoff;
+  aircraftAtTakeoff = nullptr;
 }
 
 void LogdataController::editLogEntryFromMap(int id)

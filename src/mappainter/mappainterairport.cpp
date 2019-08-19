@@ -23,6 +23,7 @@
 #include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "geo/calculations.h"
+#include "common/formatter.h"
 #include "common/maptypes.h"
 #include "common/mapcolors.h"
 #include "common/unit.h"
@@ -857,7 +858,6 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       {
         const MapRunway& runway = runways->at(i);
         const QRect& runwayRect = runwayRects.at(i);
-        float magHeading = normalizeCourse(runway.heading - airport.magvar);
 
         QString textPrim;
         QString textSec;
@@ -867,16 +867,18 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         {
           // This case is rare (eg. LTAI) - probably primary in the wrong place
           rotate = runway.heading + 90.f;
-          textPrim = QString(tr("► ") +
-                             QString::number(normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + tr("°M"));
-          textSec = QString(QString::number(magHeading, 'f', 0) + tr("°M ◄"));
+          textPrim = tr("► ") +
+                     formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar, false, false);
+          textSec = formatter::courseTextFromTrue(runway.heading, airport.magvar, false, false) +
+                    tr(" ◄");
         }
         else
         {
           rotate = runway.heading - 90.f;
-          textPrim = QString(tr("► ") + QString::number(magHeading, 'f', 0) + tr("°M"));
-          textSec = QString(QString::number(
-                              normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + tr("°M ◄"));
+          textPrim = tr("► ") +
+                     formatter::courseTextFromTrue(runway.heading, airport.magvar, false, false);
+          textSec = formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar, false, false) +
+                    tr(" ◄");
         }
 
         QRect textRectPrim = rwHdgMetrics.boundingRect(textPrim);

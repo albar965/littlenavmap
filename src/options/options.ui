@@ -2790,28 +2790,95 @@ user airspace filename has to match the callsign of the center.</string>
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsUnits">
        <layout class="QGridLayout" name="gridLayout_11">
-        <item row="5" column="0">
-         <widget class="QLabel" name="labelOptionsUnitFuel">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelOptionsUnitDistance">
           <property name="text">
-           <string>&amp;Fuel and Weight:</string>
+           <string>&amp;Distance:</string>
           </property>
           <property name="buddy">
-           <cstring>comboBoxOptionsUnitFuelWeight</cstring>
+           <cstring>comboBoxOptionsUnitDistance</cstring>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="labelOptionsUnitSpeed">
-          <property name="text">
-           <string>&amp;Speed:</string>
+        <item row="5" column="2">
+         <widget class="QCheckBox" name="checkBoxOptionsUnitFuelOther">
+          <property name="toolTip">
+           <string>Shows other fuel units (lbs/gal or kg/liter) as small text in 
+information displays besides selected units.</string>
           </property>
-          <property name="buddy">
-           <cstring>comboBoxOptionsUnitSpeed</cstring>
+          <property name="text">
+           <string>&amp;Show other fuel units too</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="comboBoxOptionsUnitShortDistance">
+        <item row="8" column="0" colspan="3">
+         <widget class="Line" name="line_18">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QComboBox" name="comboBoxOptionsUnitFuelWeight">
+          <item>
+           <property name="text">
+            <string>US Gallon / Pound (gal / lbs)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Liter / Kilogram (l, kg)</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QComboBox" name="comboBoxOptionsUnitCoords">
+          <item>
+           <property name="text">
+            <string>Degree, Minutes, Seconds</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Decimal Degree</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Degree, Decimal Minutes</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="7" column="0" colspan="3">
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>A restart is recommended after changing units.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelOptionsUnitShortDistance">
+          <property name="text">
+           <string>&amp;Short Distance:</string>
+          </property>
+          <property name="buddy">
+           <cstring>comboBoxOptionsUnitShortDistance</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="comboBoxOptionsUnitAlt">
           <item>
            <property name="text">
             <string>Feet (ft)</string>
@@ -2838,6 +2905,42 @@ user airspace filename has to match the callsign of the center.</string>
           </item>
          </widget>
         </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelOptionsUnitSpeed">
+          <property name="text">
+           <string>&amp;Speed:</string>
+          </property>
+          <property name="buddy">
+           <cstring>comboBoxOptionsUnitSpeed</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="0" colspan="3">
+         <widget class="QCheckBox" name="checkBoxOptionsUnitTrueCourse">
+          <property name="toolTip">
+           <string>Shows true course/heading as small text in 
+information displays and tooltips besides magnetic course.
+Only magnetic course is shown if both values are equal.
+Also affects labels at holds and traffic patterns.</string>
+          </property>
+          <property name="text">
+           <string>Show &amp;true course and heading besides magntic course in information displays</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelOptionsUnitAlt">
+          <property name="text">
+           <string>&amp;Altitude and elevation:</string>
+          </property>
+          <property name="buddy">
+           <cstring>comboBoxOptionsUnitAlt</cstring>
+          </property>
+         </widget>
+        </item>
         <item row="6" column="0">
          <widget class="QLabel" name="labelOptionsUnitCoords">
           <property name="text">
@@ -2848,17 +2951,20 @@ user airspace filename has to match the callsign of the center.</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelOptionsUnitShortDistance">
-          <property name="text">
-           <string>&amp;Short Distance:</string>
+        <item row="2" column="2">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-          <property name="buddy">
-           <cstring>comboBoxOptionsUnitShortDistance</cstring>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
           </property>
-         </widget>
+         </spacer>
         </item>
-        <item row="9" column="1">
+        <item row="11" column="1">
          <spacer name="verticalSpacer_8">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -2871,26 +2977,6 @@ user airspace filename has to match the callsign of the center.</string>
           </property>
          </spacer>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="labelOptionsUnitAlt">
-          <property name="text">
-           <string>&amp;Altitude and elevation:</string>
-          </property>
-          <property name="buddy">
-           <cstring>comboBoxOptionsUnitAlt</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="labelOptionsUnitDistance">
-          <property name="text">
-           <string>&amp;Distance:</string>
-          </property>
-          <property name="buddy">
-           <cstring>comboBoxOptionsUnitDistance</cstring>
-          </property>
-         </widget>
-        </item>
         <item row="4" column="0">
          <widget class="QLabel" name="labelOptionsUnitVertSpeed">
           <property name="text">
@@ -2899,53 +2985,6 @@ user airspace filename has to match the callsign of the center.</string>
           <property name="buddy">
            <cstring>comboBoxOptionsUnitVertSpeed</cstring>
           </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QComboBox" name="comboBoxOptionsUnitFuelWeight">
-          <item>
-           <property name="text">
-            <string>US Gallon / Pound (gal / lbs)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Liter / Kilogram (l, kg)</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="comboBoxOptionsUnitAlt">
-          <item>
-           <property name="text">
-            <string>Feet (ft)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Meter (m)</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QComboBox" name="comboBoxOptionsUnitCoords">
-          <item>
-           <property name="text">
-            <string>Degree, Minutes, Seconds</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Decimal Degree</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Degree, Decimal Minutes</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item row="3" column="1">
@@ -2967,6 +3006,30 @@ user airspace filename has to match the callsign of the center.</string>
           </item>
          </widget>
         </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="labelOptionsUnitFuel">
+          <property name="text">
+           <string>&amp;Fuel and Weight:</string>
+          </property>
+          <property name="buddy">
+           <cstring>comboBoxOptionsUnitFuelWeight</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="comboBoxOptionsUnitShortDistance">
+          <item>
+           <property name="text">
+            <string>Feet (ft)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Meter (m)</string>
+           </property>
+          </item>
+         </widget>
+        </item>
         <item row="0" column="1">
          <widget class="QComboBox" name="comboBoxOptionsUnitDistance">
           <item>
@@ -2984,52 +3047,6 @@ user airspace filename has to match the callsign of the center.</string>
             <string>Statue Miles (mi)</string>
            </property>
           </item>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="5" column="2">
-         <widget class="QCheckBox" name="checkBoxOptionsUnitFuelOther">
-          <property name="toolTip">
-           <string>Shows the other fuel units (lbs/gal or kg/liter) in information display as well</string>
-          </property>
-          <property name="text">
-           <string>&amp;Show other fuel units too</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0" colspan="3">
-         <widget class="Line" name="line_8">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0" colspan="3">
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>A restart is recommended after changing units.</string>
-          </property>
          </widget>
         </item>
        </layout>
@@ -3357,90 +3374,6 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsFlightPlan">
        <layout class="QGridLayout" name="gridLayout_5">
-        <item row="7" column="0">
-         <widget class="QGroupBox" name="groupBox_5">
-          <property name="title">
-           <string>Loading, Saving and Export</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_6">
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
-             <property name="toolTip">
-              <string>Does not apply to the flight plan loaded after startup.</string>
-             </property>
-             <property name="text">
-              <string>Center &amp;flight plan on map after loading</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiAvoidOverwrite">
-             <property name="toolTip">
-              <string>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
-The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Avoid overwriting Flight Plan with not matching departure and destination</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsRouteShortName">
-             <property name="text">
-              <string>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX, P3D or
-FlightGear flight plans instead of the long name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="Line" name="line_10">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsRouteExportUserWpt">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This saves all waypoints as user defined waypoints when exporting flight plans for a Garmin unit. &lt;br/&gt;This avoids locked waypoints due to different AIRAC cycles and affects the export functions below: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Export Flight Plan as Garmin GTN GFP ... &lt;/li&gt;
-&lt;li&gt;Export Flight Plan to FPL for the Reality XP GNS ... &lt;/li&gt;
-&lt;li&gt;Export Flight Plan as GFP for Reality XP GTN ...&lt;/li&gt;
-&lt;/ul&gt;
-&lt;b&gt;Note that is not possible to export procedures if this is enabled.&lt;/b&gt;
-&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>&amp;Export navaids and airports as user defined waypoints for
-Garmin GTN and GNS to avoid locked waypoints</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
         <item row="0" column="0">
          <widget class="QGroupBox" name="groupBox_4">
           <property name="title">
@@ -3577,6 +3510,90 @@ Note that this value does not affect flight plan calculation or saving of flight
           </layout>
          </widget>
         </item>
+        <item row="7" column="0">
+         <widget class="QGroupBox" name="groupBox_5">
+          <property name="title">
+           <string>Loading, Saving and Export</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
+             <property name="toolTip">
+              <string>Does not apply to the flight plan loaded after startup.</string>
+             </property>
+             <property name="text">
+              <string>Center &amp;flight plan on map after loading</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiAvoidOverwrite">
+             <property name="toolTip">
+              <string>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
+The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Avoid overwriting Flight Plan with not matching departure and destination</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsRouteShortName">
+             <property name="text">
+              <string>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX, P3D or
+FlightGear flight plans instead of the long name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_10">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsRouteExportUserWpt">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This saves all waypoints as user defined waypoints when exporting flight plans for a Garmin unit. &lt;br/&gt;This avoids locked waypoints due to different AIRAC cycles and affects the export functions below: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Export Flight Plan as Garmin GTN GFP ... &lt;/li&gt;
+&lt;li&gt;Export Flight Plan to FPL for the Reality XP GNS ... &lt;/li&gt;
+&lt;li&gt;Export Flight Plan as GFP for Reality XP GTN ...&lt;/li&gt;
+&lt;/ul&gt;
+&lt;b&gt;Note that is not possible to export procedures if this is enabled.&lt;/b&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>&amp;Export navaids and airports as user defined waypoints for
+Garmin GTN and GNS to avoid locked waypoints</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
         <item row="10" column="0">
          <spacer name="verticalSpacer_3">
           <property name="orientation">
@@ -3589,6 +3606,46 @@ Note that this value does not affect flight plan calculation or saving of flight
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="8" column="0">
+         <widget class="QGroupBox" name="groupBox_18">
+          <property name="title">
+           <string>Course Calculation</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsRouteDeclination">
+             <property name="toolTip">
+              <string>Will calculate magnetic course based on environment and ignore the VOR declination value if checked.
+Little Navmap will use the station declination when calculating a course to a VOR 
+which can result in wrong course values if the calibration of a VOR is very old.
+Check this if prefer to fly by GPS.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Ignore declination of VOR and other radio navaids</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>

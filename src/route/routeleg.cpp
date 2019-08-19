@@ -25,6 +25,7 @@
 #include "atools.h"
 #include "fs/util/fsutil.h"
 #include "route/route.h"
+#include "options/optiondata.h"
 #include "navapp.h"
 
 #include <QRegularExpression>
@@ -79,7 +80,6 @@ void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLe
 {
   index = entryIndex;
   procedureLeg = legs.at(entryIndex);
-  magvar = procedureLeg.magvar;
 
   type = map::PROCEDURE;
 
@@ -99,8 +99,7 @@ void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLe
   valid = true;
 }
 
-void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last,
-                               float maxDistance)
+void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const Pos& last, float maxDistance)
 {
   map::MapSearchResult mapobjectResult;
   NavApp::getMapQuery()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
@@ -342,6 +341,7 @@ void RouteLeg::setDepartureStart(const map::MapStart& departureStart)
 
 void RouteLeg::updateMagvar()
 {
+  magvarPos = NavApp::getMagVar(getPosition());
   if(isAnyProcedure())
     magvar = procedureLeg.magvar;
   else if(waypoint.isValid())
@@ -354,7 +354,7 @@ void RouteLeg::updateMagvar()
   else if(airport.isValid())
     magvar = airport.magvar;
   else
-    magvar = NavApp::getMagVar(getPosition());
+    magvar = magvarPos;
 }
 
 void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
@@ -432,7 +432,7 @@ void RouteLeg::updateUserName(const QString& name)
   flightplan->getEntries()[index].setWaypointId(name);
 }
 
-void RouteLeg::updateUserPosition(const atools::geo::Pos& pos)
+void RouteLeg::updateUserPosition(const Pos& pos)
 {
   // Use setCoords to keep altitude
   flightplan->getEntries()[index].setCoords(pos);
@@ -510,13 +510,23 @@ QString RouteLeg::getMapObjectTypeName() const
 
 float RouteLeg::getCourseToMag() const
 {
-  return courseTo < map::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseTo - magvar) : courseTo;
+  if(OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION)
+    return courseTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseTo - magvarPos) : courseTo;
+  else
+    return courseTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseTo - magvar) : courseTo;
 }
 
 float RouteLeg::getCourseToRhumbMag() const
 {
-  return courseRhumbTo <
-         map::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseRhumbTo - magvar) : courseTo;
+  if(OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION)
+    return courseRhumbTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseRhumbTo - magvarPos) : courseTo;
+  else
+    return courseRhumbTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseRhumbTo - magvar) : courseTo;
+}
+
+float RouteLeg::getMagVarBySettings() const
+{
+  return OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION ? magvarPos : magvar;
 }
 
 const atools::geo::Pos& RouteLeg::getPosition() const
@@ -530,7 +540,7 @@ const atools::geo::Pos& RouteLeg::getPosition() const
       if(getFlightplanEntry().getPosition().isValid())
         return getFlightplanEntry().getPosition();
       else
-        return atools::geo::EMPTY_POS;
+        return EMPTY_POS;
     }
 
     if(airport.isValid())
@@ -548,7 +558,7 @@ const atools::geo::Pos& RouteLeg::getPosition() const
     else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
       return getFlightplanEntry().getPosition();
   }
-  return atools::geo::EMPTY_POS;
+  return EMPTY_POS;
 }
 
 float RouteLeg::getAltitude() const
@@ -835,6 +845,7 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
                           << ", " << leg.getPosition()
                           << ", course " << leg.getCourseToMag() << "°M " << leg.getCourseToTrue() << "°T"
                           << ", magvar " << leg.getMagvar()
+                          << ", magvarPos " << leg.getMagvarPos()
                           << (leg.isValid() ? ", valid" : QString())
                           << (leg.isNavdata() ? ", nav" : QString())
                           << (leg.isAlternate() ? ", alternate" : QString())

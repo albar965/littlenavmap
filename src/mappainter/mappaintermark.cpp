@@ -822,7 +822,8 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
                 text = tr("W", "West");
 
               symbolPainter->textBoxF(painter, {text}, painter->pen(),
-                                      endpointsScreen.at(i).x(), endpointsScreen.at(i).y(), textatt::CENTER);
+                                      static_cast<float>(endpointsScreen.at(i).x()),
+                                      static_cast<float>(endpointsScreen.at(i).y()), textatt::CENTER);
             }
           }
         }
@@ -840,7 +841,8 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
         {
           // All 15 deg but not at 90 deg boundaries
           symbolPainter->textBoxF(painter, {QString::number(i * 5)}, painter->pen(),
-                                  endpointsScreen.at(i).x(), endpointsScreen.at(i).y(), textatt::CENTER);
+                                  static_cast<float>(endpointsScreen.at(i).x()),
+                                  static_cast<float>(endpointsScreen.at(i).y()), textatt::CENTER);
         }
       }
     }
@@ -926,8 +928,10 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
           context->szFont(context->textSizeCompassRose);
           QString text =
             tr("%1°M").arg(QString::number(atools::roundToInt(aircraft.getTrackDegMag())));
-          symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(), trueTrackTextPoint.x(),
-                                  trueTrackTextPoint.y(), textatt::CENTER | textatt::ROUTE_BG_COLOR);
+          symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(),
+                                  static_cast<float>(trueTrackTextPoint.x()),
+                                  static_cast<float>(trueTrackTextPoint.y()),
+                                  textatt::CENTER | textatt::ROUTE_BG_COLOR);
         }
       }
     }
@@ -1110,16 +1114,18 @@ void MapPainterMark::paintHolds(const PaintContext *context)
         if(detail)
         {
           // Text for inbound leg =======================================
-          inboundText = tr("%1°M/%2min").
-                        arg(QLocale().toString(hold.magCourse(), 'f', 0)).
+          inboundText = tr("%1/%2min").
+                        arg(formatter::courseTextFromTrue(hold.courseTrue, hold.magvar,
+                                                          false /* no bold */, false /* no small*/)).
                         arg(QString::number(hold.minutes, 'g', 2));
 
           if(!hold.navIdent.isEmpty())
             inboundText += tr("/%1").arg(hold.navIdent);
 
           // Text for outbound leg =======================================
-          outboundText = tr("%1°M/%2/%3").
-                         arg(QLocale().toString(opposedCourseDeg(hold.magCourse()), 'f', 0)).
+          outboundText = tr("%1/%2/%3").
+                         arg(formatter::courseTextFromTrue(opposedCourseDeg(hold.courseTrue), hold.magvar,
+                                                           false /* no bold */, false /* no small*/)).
                          arg(Unit::speedKts(hold.speedKts, true, true)).
                          arg(Unit::altFeet(hold.position.getAltitude(), true, true));
         }
@@ -1173,19 +1179,19 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
 
       // Turn point base to final
       Pos baseFinal = pattern.position.endpoint(nmToMeter(finalDistance),
-                                                opposedCourseDeg(pattern.course)).normalize();
+                                                opposedCourseDeg(pattern.courseTrue)).normalize();
 
       // Turn point downwind to base
       Pos downwindBase = baseFinal.endpoint(nmToMeter(pattern.downwindDistance),
-                                            pattern.course + (pattern.turnRight ? 90.f : -90.f)).normalize();
+                                            pattern.courseTrue + (pattern.turnRight ? 90.f : -90.f)).normalize();
 
       // Turn point upwind to crosswind
       Pos upwindCrosswind = pattern.position.endpoint(nmToMeter(finalDistance) + feetToMeter(pattern.runwayLength),
-                                                      pattern.course).normalize();
+                                                      pattern.courseTrue).normalize();
 
       // Turn point crosswind to downwind
       Pos crosswindDownwind = upwindCrosswind.endpoint(nmToMeter(pattern.downwindDistance),
-                                                       pattern.course +
+                                                       pattern.courseTrue +
                                                        (pattern.turnRight ? 90.f : -90.f)).normalize();
 
       // Calculate bounding rectangle and check if it is at least partially visible
@@ -1198,7 +1204,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
       {
         // Entry at opposite runway threshold
         Pos downwindEntry = downwindBase.endpoint(nmToMeter(finalDistance) + feetToMeter(
-                                                    pattern.runwayLength), pattern.course).normalize();
+                                                    pattern.runwayLength), pattern.courseTrue).normalize();
 
         bool visible, hidden;
         // Bail out if any points are hidden behind the globe
@@ -1220,7 +1226,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
         bool drawDetails = QLineF(baseFinalPoint, crosswindDownwindPoint).length() > 50.;
 
         // Calculate polygon rounding in pixels =======================
-        float pixelForNm = scale->getPixelForNm(pattern.downwindDistance, pattern.course + 90.f);
+        float pixelForNm = scale->getPixelForNm(pattern.downwindDistance, pattern.courseTrue + 90.f);
         atools::util::RoundedPolygon polygon(pixelForNm / 3.f,
                                              {originPoint, upwindCrosswindPoint, crosswindDownwindPoint,
                                               downwindBasePoint, baseFinalPoint});
@@ -1274,18 +1280,20 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
           // Text for downwind leg =======================================
           QLineF final (baseFinalPoint, originPoint);
           QPointF center = downwind.center();
-          QString text = tr("%1/%2°M").
+          QString text = tr("%1/%2").
                          arg(Unit::altFeet(pattern.position.getAltitude(), true, true)).
-                         arg(QLocale().toString(opposedCourseDeg(pattern.magCourse()), 'f', 0));
+                         arg(formatter::courseTextFromTrue(opposedCourseDeg(pattern.courseTrue), pattern.magvar,
+                                                           false /* no bold */, false /* no small*/));
 
           painter->setBrush(Qt::white);
           textPlacement.drawTextAlongOneLine(text, angle, center, atools::roundToInt(downwind.length()),
                                              true /* both visible */);
 
           // Text for final leg =======================================
-          text = tr("RW%1/%2°M").
+          text = tr("RW%1/%2").
                  arg(pattern.runwayName).
-                 arg(QLocale().toString(pattern.magCourse(), 'f', 0));
+                 arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar,
+                                                   false /* no bold */, false /* no small*/));
           textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()),
                                              true /* both visible */);
 

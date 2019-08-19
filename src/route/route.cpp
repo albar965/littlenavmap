@@ -1927,7 +1927,7 @@ int Route::adjustAltitude(int minAltitude) const
     const Pos& departurePos = first().getPosition();
     const Pos& destinationPos = getDestinationAirportLeg().getPosition();
 
-    float magvar = (first().getMagvar() + getDestinationAirportLeg().getMagvar()) / 2;
+    float magvar = (first().getMagvar() + getDestinationAirportLeg().getMagVarBySettings()) / 2;
 
     float fpDir = atools::geo::normalizeCourse(departurePos.angleDegToRhumb(destinationPos) - magvar);
 

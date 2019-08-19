@@ -238,6 +238,7 @@
     <property name="title">
      <string>Flight &amp;Plan</string>
     </property>
+    <addaction name="actionShortcutFlightPlan"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSelectParking"/>
     <addaction name="actionRouteEditMode"/>
@@ -267,7 +268,7 @@
     <property name="title">
      <string>&amp;Userdata</string>
     </property>
-    <addaction name="actionUserdataShowSearch"/>
+    <addaction name="actionShortcutUserpointSearch"/>
     <addaction name="separator"/>
     <addaction name="actionUserdataImportCSV"/>
     <addaction name="actionUserdataImportUserfixDat"/>
@@ -443,6 +444,8 @@
      </property>
      <addaction name="actionAircraftPerformanceClearMenu"/>
     </widget>
+    <addaction name="actionShortcutAircraftPerformance"/>
+    <addaction name="separator"/>
     <addaction name="actionAircraftPerformanceNew"/>
     <addaction name="actionAircraftPerformanceLoad"/>
     <addaction name="actionAircraftPerformanceSave"/>
@@ -459,7 +462,8 @@
     <property name="title">
      <string>&amp;Logbook</string>
     </property>
-    <addaction name="actionLogdataShowSearch"/>
+    <addaction name="actionShortcutLogbookSearch"/>
+    <addaction name="separator"/>
     <addaction name="actionLogdataShowStatistics"/>
     <addaction name="separator"/>
     <addaction name="actionLogdataImportCSV"/>
@@ -9013,20 +9017,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show more search options</string>
    </property>
   </action>
-  <action name="actionUserdataShowSearch">
-   <property name="text">
-    <string>&amp;Show Search</string>
-   </property>
-   <property name="toolTip">
-    <string>Show Userpoint Search Tab</string>
-   </property>
-   <property name="statusTip">
-    <string>Show Userpoint Search Tab</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+U</string>
-   </property>
-  </action>
   <action name="actionUserdataImportCSV">
    <property name="text">
     <string>Import &amp;CSV ...</string>
@@ -10562,17 +10552,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Centers the selected userpoint on the map</string>
-   </property>
-  </action>
-  <action name="actionLogdataShowSearch">
-   <property name="text">
-    <string>&amp;Show Search</string>
-   </property>
-   <property name="toolTip">
-    <string>Show Logbook Search Tab</string>
-   </property>
-   <property name="statusTip">
-    <string>Show Logbook Search Tab</string>
    </property>
   </action>
   <action name="actionLogdataImportCSV">

@@ -108,7 +108,10 @@ enum Flag
   GUI_OVERRIDE_LOCALE = 1 << 21,
 
   /* checkBoxOptionsRouteExportUserWpt */
-  ROUTE_GARMIN_USER_WPT = 1 << 22
+  ROUTE_GARMIN_USER_WPT = 1 << 22,
+
+  /* checkBoxOptionsRouteDeclination */
+  ROUTE_IGNORE_VOR_DECLINATION = 1 << 23
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -306,7 +309,10 @@ enum Flag2
   RAISE_WINDOWS = 1 << 17,
 
   /* checkBoxOptionsUnitFuelOther */
-  UNIT_FUEL_SHOW_OTHER = 1 << 18
+  UNIT_FUEL_SHOW_OTHER = 1 << 18,
+
+  /* checkBoxOptionsUnitTrueCourse */
+  UNIT_TRUE_COURSE = 1 << 19
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);

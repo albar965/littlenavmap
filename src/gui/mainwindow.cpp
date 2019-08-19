@@ -1006,7 +1006,6 @@ void MainWindow::connectAllSlots()
   // User data ===================================================================================
   UserdataController *userdataController = NavApp::getUserdataController();
   connect(ui->actionUserdataClearDatabase, &QAction::triggered, userdataController, &UserdataController::clearDatabase);
-  connect(ui->actionUserdataShowSearch, &QAction::triggered, userdataController, &UserdataController::showSearch);
 
   // Import ================
   connect(ui->actionUserdataImportCSV, &QAction::triggered, userdataController, &UserdataController::importCsv);
@@ -1045,7 +1044,6 @@ void MainWindow::connectAllSlots()
 
   connect(logdataController, &LogdataController::showInSearch, searchController, &SearchController::showInSearch);
 
-  connect(ui->actionLogdataShowSearch, &QAction::triggered, logdataController, &LogdataController::showSearch);
   connect(ui->actionLogdataShowStatistics, &QAction::triggered, logdataController, &LogdataController::showStatistics);
   connect(ui->actionLogdataImportCSV, &QAction::triggered, logdataController, &LogdataController::importCsv);
   connect(ui->actionLogdataExportCSV, &QAction::triggered, logdataController, &LogdataController::exportCsv);
@@ -1846,7 +1844,8 @@ void MainWindow::routeResetAll()
     EMPTY_FLIGHT_PLAN,
     DELETE_TRAIL,
     DELETE_ACTIVE_LEG,
-    RESTART_PERF
+    RESTART_PERF,
+    RESTART_LOGBOOK
   };
 
   qDebug() << Q_FUNC_INFO;
@@ -1856,14 +1855,15 @@ void MainWindow::routeResetAll()
                             tr("Select items to reset for a new flight"),
                             lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "MENUS.html#reset-for-new-flight");
 
-  choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("&New empty flight plan"),
-                   tr("Create a new empty flight plan"));
+  choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"));
   choiceDialog.add(DELETE_TRAIL, tr("&Delete aircaft trail"),
                    tr("Delete simulator aircraft trail from map and elevation profile"));
   choiceDialog.add(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
                    tr("Remove the active (magenta) flight plan leg"));
   choiceDialog.add(RESTART_PERF, tr("Restart Aircraft &Performance Collection"),
                    tr("Restarts the background aircraft performance collection"));
+  choiceDialog.add(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
+                   tr("Reset the logbook to detect takeoff and landing for new logbook entries"));
   choiceDialog.restoreState();
 
   if(choiceDialog.exec() == QDialog::Accepted)
@@ -1883,6 +1883,9 @@ void MainWindow::routeResetAll()
           break;
         case RESTART_PERF:
           NavApp::getAircraftPerfController()->restartCollection(true /* do not ask questions */);
+          break;
+        case RESTART_LOGBOOK:
+          NavApp::getLogdataController()->resetTakeoffLandingDetection();
           break;
       }
     }

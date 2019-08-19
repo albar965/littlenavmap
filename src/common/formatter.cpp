@@ -21,6 +21,8 @@
 
 #include "atools.h"
 #include "fs/util/coordinates.h"
+#include "geo/calculations.h"
+#include "common/mapflags.h"
 #include "unit.h"
 #include "util/htmlbuilder.h"
 #include "geo/pos.h"
@@ -291,6 +293,68 @@ QString windInformation(float headWind, float crossWind)
   windTxt.append(windInformationCross(crossWind));
   windTxt.removeAll(QString());
   return windTxt.join(QObject::tr(", "));
+}
+
+QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool trueSmall)
+{
+  // true to magnetic
+  return courseText(atools::geo::normalizeCourse(trueCourse - magvar), trueCourse, magBold, trueSmall);
+}
+
+QString courseTextFromMag(float magCourse, float magvar, bool magBold, bool trueSmall)
+{
+  // magnetic to true
+  return courseText(magCourse, atools::geo::normalizeCourse(magCourse + magvar), magBold, trueSmall);
+}
+
+QString courseSuffix()
+{
+  return OptionData::instance().getFlags2() & opts2::UNIT_TRUE_COURSE ? QObject::tr("°M/T") : QObject::tr("°M");
+}
+
+QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSmall)
+{
+  QString magStr, trueStr;
+  if(magCourse < map::INVALID_COURSE_VALUE / 2.f)
+    magStr = QLocale().toString(magCourse, 'f', 0);
+
+  if(OptionData::instance().getFlags2() & opts2::UNIT_TRUE_COURSE)
+  {
+    if(trueCourse < map::INVALID_COURSE_VALUE / 2.f)
+      trueStr = QLocale().toString(trueCourse, 'f', 0);
+  }
+
+  // Formatting for magnetic course
+  QLatin1String bold = magBold ? QLatin1Literal("<b>") : QLatin1String();
+  QLatin1String boldEnd = magBold ? QLatin1Literal("</b>") : QLatin1String();
+
+  if(atools::almostEqual(magCourse, trueCourse, 1.5f))
+  {
+    if(magStr.isEmpty())
+      return QString();
+
+    // Values are close - display only magnetic
+    return QObject::tr("%1%2°M%3").arg(bold).arg(magStr).arg(boldEnd);
+  }
+  else
+  {
+    if(!magStr.isEmpty() && !trueStr.isEmpty())
+    {
+      // Formatting for true course
+      QLatin1String small = trueSmall ? QLatin1Literal("<span style=\"font-size: small;\">") : QLatin1String();
+      QLatin1String smallEnd = trueSmall ? QLatin1Literal("</span>") : QLatin1String();
+
+      // Values differ and both are valid - display magnetic and true
+      return QObject::tr("%1%2°M%3, %4%5°T%6").arg(bold).arg(magStr).arg(boldEnd).arg(small).arg(trueStr).arg(smallEnd);
+    }
+    else if(!magStr.isEmpty())
+      // Only mag value is valid
+      return QObject::tr("%1%2°M%3").arg(bold).arg(magStr).arg(boldEnd);
+    else if(!trueStr.isEmpty())
+      // Only true value is valid
+      return QObject::tr("%1%2°T%3").arg(bold).arg(trueStr).arg(boldEnd);
+  }
+  return QString();
 }
 
 } // namespace formatter

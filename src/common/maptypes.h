@@ -647,7 +647,7 @@ struct TrafficPattern
   int runwayLength; /* ft Does not include displaced threshold */
 
   float downwindDistance, baseDistance; /* NM */
-  float course; /* degree true final course*/
+  float courseTrue; /* degree true final course*/
   float magvar;
 
   float magCourse() const;

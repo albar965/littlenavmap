@@ -1058,7 +1058,7 @@ QDataStream& operator>>(QDataStream& dataStream, TrafficPattern& obj)
   >> obj.runwayLength
   >> obj.downwindDistance
   >> obj.baseDistance
-  >> obj.course
+  >> obj.courseTrue
   >> obj.magvar
   >> obj.position;
 
@@ -1076,7 +1076,7 @@ QDataStream& operator<<(QDataStream& dataStream, const TrafficPattern& obj)
              << obj.runwayLength
              << obj.downwindDistance
              << obj.baseDistance
-             << obj.course
+             << obj.courseTrue
              << obj.magvar
              << obj.position;
 
@@ -2161,7 +2161,7 @@ float Hold::magCourse() const
 
 float TrafficPattern::magCourse() const
 {
-  return atools::geo::normalizeCourse(course - magvar);
+  return atools::geo::normalizeCourse(courseTrue - magvar);
 }
 
 atools::geo::LineString MapIls::boundary() const

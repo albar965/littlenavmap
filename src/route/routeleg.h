@@ -122,11 +122,21 @@ public:
   QString getChannel() const;
   QString getFrequencyOrChannel() const;
 
-  /* Get magnetic variation. Source is always database. */
+  /* Get magnetic variation. Source is always database. Depending on settings
+   * either environment or radio navaid declination. */
   float getMagvar() const
   {
     return magvar;
   }
+
+  /* Get calculated declination from environment. */
+  float getMagvarPos() const
+  {
+    return magvarPos;
+  }
+
+  /* Gets either radio navaid declination or environment value depending on settings */
+  float getMagVarBySettings() const;
 
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
@@ -344,7 +354,8 @@ private:
         courseTo = 0.f,
         courseRhumbTo = 0.f,
         groundAltitude = 0.f,
-        magvar = 0.f; /* Either taken from navaid or average across the route */
+        magvar = 0.f, /* Either taken from navaid or average across the route */
+        magvarPos = 0.f; /* Calculate environment value */
   atools::geo::LineString geometry;
 
 };
