@@ -46,7 +46,8 @@ class AircraftPerfDialog :
 
 public:
   /* Will create a copy of AircraftPerf for editing */
-  explicit AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance);
+  explicit AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance,
+                              const QString& modeText);
   virtual ~AircraftPerfDialog();
 
   /* Get edited performance data */

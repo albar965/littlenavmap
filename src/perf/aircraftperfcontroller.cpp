@@ -106,36 +106,51 @@ void AircraftPerfController::create()
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(checkForChanges())
+  mainWindow->showAircraftPerformance();
+
+  AircraftPerf editPerf;
+  editPerf.resetToDefault();
+  if(editInternal(editPerf, tr("Create")))
   {
-    // Ok to overwrite
-    perf->resetToDefault();
-    currentFilepath.clear();
-    changed = false;
+    if(checkForChanges())
+    {
+      *perf = editPerf;
+      currentFilepath.clear();
+      changed = true;
 
-    mainWindow->showAircraftPerformance();
-    edit();
+      updateActionStates();
+      NavApp::setStatusMessage(tr("Aircraft performance created."));
+      emit aircraftPerformanceChanged(perf);
+    }
   }
+}
 
-  updateActionStates();
-  NavApp::setStatusMessage(tr("Aircraft performance created."));
-  emit aircraftPerformanceChanged(perf);
+bool AircraftPerfController::editInternal(atools::fs::perf::AircraftPerf& editPerf, const QString& modeText)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  AircraftPerfDialog dialog(mainWindow, editPerf, modeText);
+  if(dialog.exec() == QDialog::Accepted)
+  {
+    editPerf = dialog.getAircraftPerf();
+    return true;
+  }
+  else
+    return false;
 }
 
 void AircraftPerfController::edit()
 {
   qDebug() << Q_FUNC_INFO;
 
-  AircraftPerfDialog dialog(mainWindow, *perf);
-  if(dialog.exec() == QDialog::Accepted)
+  if(editInternal(*perf, tr("Edit")))
   {
-    *perf = dialog.getAircraftPerf();
     changed = true;
     windChangeTimer.stop();
     NavApp::setStatusMessage(tr("Aircraft performance changed."));
+    updateActionStates();
+    emit aircraftPerformanceChanged(perf);
   }
-  updateActionStates();
-  emit aircraftPerformanceChanged(perf);
 }
 
 void AircraftPerfController::loadFile(const QString& perfFile)

@@ -10172,7 +10172,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
   </action>
   <action name="actionShortcutAircraftPerformance">
    <property name="text">
-    <string>Aircraft &amp;Performance</string>
+    <string>&amp;Trip Report</string>
    </property>
    <property name="toolTip">
     <string>Show Aircraft Performance and Fuel Planning</string>

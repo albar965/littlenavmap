@@ -144,6 +144,7 @@ private:
 
   /* Opens the edit dialog. */
   void edit();
+  bool editInternal(atools::fs::perf::AircraftPerf &perf, const QString& modeText);
 
   /* Open file dialog and load a new performance file after asking to save currently unchanged */
   void load();

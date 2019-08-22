@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Little Navmap - Aircraft Performance</string>
+   <string>Little Navmap - %1 Aircraft Performance</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

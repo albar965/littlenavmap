@@ -35,13 +35,16 @@
 using atools::fs::perf::AircraftPerf;
 using atools::roundToInt;
 
-AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance)
+AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance,
+                                       const QString& modeText)
   : QDialog(parent), ui(new Ui::AircraftPerfDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
+
+  setWindowTitle(windowTitle().arg(modeText));
 
   // Copy performance object
   perf = new AircraftPerf;
@@ -142,6 +145,8 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
 
 AircraftPerfDialog::~AircraftPerfDialog()
 {
+  saveState();
+
   delete perf;
   delete perfBackup;
 
@@ -180,7 +185,6 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBox->button(QDialogButtonBox::Ok))
   {
-    saveState();
     fromDialogToPerf(perf);
     QDialog::accept();
   }
@@ -200,10 +204,7 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
     atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "AIRCRAFTPERFEDIT.html",
                                              lnm::helpLanguageOnline());
   else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
-  {
-    saveState();
     QDialog::reject();
-  }
 }
 
 void AircraftPerfDialog::updateRange()
