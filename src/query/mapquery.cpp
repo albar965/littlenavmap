@@ -25,6 +25,7 @@
 #include "online/onlinedatacontroller.h"
 #include "airspace/airspacecontroller.h"
 #include "logbook/logdatacontroller.h"
+#include "userdata/userdatacontroller.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
 #include "query/airportquery.h"
@@ -501,7 +502,7 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
   }
   else if(type == map::USERPOINT)
   {
-    map::MapUserpoint userPoint = getUserdataPointById(id);
+    map::MapUserpoint userPoint = NavApp::getUserdataController()->getUserpointById(id);
     if(userPoint.isValid())
       result.userpoints.append(userPoint);
   }
@@ -615,22 +616,6 @@ map::MapWaypoint MapQuery::getWaypointById(int id)
     mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
   waypointByIdQuery->finish();
   return wp;
-}
-
-void MapQuery::updateUserdataPoint(map::MapUserpoint& userpoint)
-{
-  userpoint = getUserdataPointById(userpoint.id);
-}
-
-map::MapUserpoint MapQuery::getUserdataPointById(int id)
-{
-  map::MapUserpoint up;
-  userdataPointByIdQuery->bindValue(":id", id);
-  userdataPointByIdQuery->exec();
-  if(userdataPointByIdQuery->next())
-    mapTypesFactory->fillUserdataPoint(userdataPointByIdQuery->record(), up);
-  userdataPointByIdQuery->finish();
-  return up;
 }
 
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
@@ -1235,9 +1220,6 @@ void MapQuery::initQueries()
   waypointByIdQuery = new SqlQuery(dbNav);
   waypointByIdQuery->prepare("select " + waypointQueryBase + " from waypoint where waypoint_id = :id");
 
-  userdataPointByIdQuery = new SqlQuery(dbUser);
-  userdataPointByIdQuery->prepare("select * from userdata where userdata_id = :id");
-
   ilsByIdQuery = new SqlQuery(dbSim);
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
 
@@ -1405,9 +1387,6 @@ void MapQuery::deInitQueries()
 
   delete waypointByIdQuery;
   waypointByIdQuery = nullptr;
-
-  delete userdataPointByIdQuery;
-  userdataPointByIdQuery = nullptr;
 
   delete ilsByIdQuery;
   ilsByIdQuery = nullptr;

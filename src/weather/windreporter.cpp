@@ -118,8 +118,8 @@ void WindReporter::restoreState()
   }
   valuesToAction();
 
-  // Download wind data with a delay of five seconds after startup
-  QTimer::singleShot(5000, this, &WindReporter::updateDataSource);
+  // Download wind data with a delay after startup
+  QTimer::singleShot(2000, this, &WindReporter::updateDataSource);
   updateToolButtonState();
 }
 

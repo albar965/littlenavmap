@@ -374,6 +374,7 @@ private:
   /* Adds text for preferred runways */
   void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, float windSpeed,
                        float windDirectionDeg, int max, bool details) const;
+  void descriptionText(const QString& descriptionText, atools::util::HtmlBuilder& html) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);

@@ -1006,9 +1006,6 @@ bool InfoController::updateUserpointInternal(const map::MapSearchResult& result,
 #ifdef DEBUG_INFORMATION
     qDebug() << "Found waypoint" << userpoint.ident;
 #endif
-    // Get updated object in case of changes in the database
-    mapQuery->updateUserdataPoint(userpoint);
-
     if(!bearingChanged)
       currentSearchResult.userpoints.append(userpoint);
     foundUserpoint |= infoBuilder->userpointText(userpoint, html);
@@ -1251,7 +1248,8 @@ void InfoController::updateAircraftInfo()
 void InfoController::optionsChanged()
 {
   updateTextEditFontSizes();
-  updateAllInformation();
+  showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */,
+                          true /* forceUpdate */);
   updateAircraftInfo();
 }
 

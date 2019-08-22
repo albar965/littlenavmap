@@ -3009,7 +3009,7 @@ void MainWindow::updateAirspaceTypes(map::MapAirspaceFilter types)
 {
   mapWidget->setShowMapAirspaces(types);
   mapWidget->updateMapObjectsShown();
-  setStatusMessage(tr("Map settings changed."));
+  // setStatusMessage(tr("Map settings changed."));
 }
 
 void MainWindow::resetMapObjectsShown()
@@ -3023,7 +3023,7 @@ void MainWindow::resetMapObjectsShown()
   mapWidget->updateMapObjectsShown();
   NavApp::getAirspaceController()->updateButtonsAndActions();
   profileWidget->update();
-  setStatusMessage(tr("Map settings changed."));
+  // setStatusMessage(tr("Map settings changed."));
 }
 
 /* A button like airport, vor, ndb, etc. was pressed - update the map */
@@ -3035,7 +3035,7 @@ void MainWindow::updateMapObjectsShown()
   mapWidget->updateMapObjectsShown();
   profileWidget->update();
   updateActionStates();
-  setStatusMessage(tr("Map settings changed."));
+  // setStatusMessage(tr("Map settings changed."));
 }
 
 /* Map history has changed */

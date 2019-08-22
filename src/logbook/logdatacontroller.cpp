@@ -362,9 +362,7 @@ void LogdataController::deleteLogEntries(const QVector<int>& ids)
 
     emit refreshLogSearch(false /* load all */, false /* keep selection */);
     emit logDataChanged();
-    mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").
-                                 arg(ids.size()).
-                                 arg(txt));
+    mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
   }
 }
 

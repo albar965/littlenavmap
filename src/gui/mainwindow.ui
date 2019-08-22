@@ -4135,7 +4135,7 @@
      <normaloff>:/littlenavmap/resources/icons/routedock.svg</normaloff>:/littlenavmap/resources/icons/routedock.svg</iconset>
    </property>
    <property name="windowTitle">
-    <string>Flight Plan</string>
+    <string>Flight Planning</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -4176,7 +4176,7 @@
        </property>
        <widget class="QWidget" name="tabRoutePlan">
         <attribute name="title">
-         <string>Plan</string>
+         <string>Flight Plan</string>
         </attribute>
         <attribute name="toolTip">
          <string>Flight Plan Table</string>
@@ -4406,10 +4406,10 @@
        </widget>
        <widget class="QWidget" name="tabAircraftPerformance">
         <attribute name="title">
-         <string>Aircraft Performance</string>
+         <string>Trip Report</string>
         </attribute>
         <attribute name="toolTip">
-         <string>Aircraft Performance and Fuel Planning</string>
+         <string>Fuel Planning and Aircraft Performance</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_31">
          <property name="spacing">

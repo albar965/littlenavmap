@@ -1980,6 +1980,9 @@ void HtmlInfoBuilder::trafficPatternText(const TrafficPattern& pattern, atools::
 
 bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) const
 {
+  if(!userpoint.isValid())
+    return false;
+
   atools::sql::SqlRecord rec = NavApp::getUserdataManager()->getRecord(userpoint.id);
 
   // Update the structure since it might not have the latest changes
@@ -2027,14 +2030,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
       addCoordinates(userpoint.position, html);
     html.tableEnd();
 
-    QString description = atools::elideTextLinesShort(userpoint.description, info ? 40 : 4);
-    if(!description.isEmpty())
-    {
-      html.p().b(tr("Userpoint Description")).pEnd();
-      html.table(1, 2, 0, 100, html.getRowBackColor());
-      html.tr().td(description, (info ? ahtml::AUTOLINK : ahtml::NONE)).trEnd();
-      html.tableEnd();
-    }
+    descriptionText(userpoint.description, html);
 
     if(info && !rec.isNull("import_file_path"))
     {
@@ -2059,6 +2055,9 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
 
 bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) const
 {
+  if(!logEntry.isValid())
+    return false;
+
   atools::sql::SqlRecord rec = NavApp::getLogdataController()->getLogEntryRecordById(logEntry.id);
 
   // Update the structure since it might not have the latest changes
@@ -2069,20 +2068,9 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     html.img(QIcon(":/littlenavmap/resources/icons/logbook.svg"), QString(), QString(), symbolSizeTitle);
     html.nbsp().nbsp();
 
-    navaidTitle(html, tr("Logbook Entry - %1 to %2").
+    navaidTitle(html, tr("Logbook Entry: %1 to %2").
                 arg(logEntry.departureIdent.isEmpty() ? tr("-") : logEntry.departureIdent).
                 arg(logEntry.destinationIdent.isEmpty() ? tr("-") : logEntry.destinationIdent));
-
-    // html.nbsp().nbsp();
-    // if(logEntry.isDestAndDepartPosValid())
-    // {
-    // ageo::Rect rect = logEntry.bounding();
-    // html.a(tr("Map"), QString("lnm://show?west=%1&north=%2&east=%3&south=%4").
-    // arg(rect.getWest()).arg(rect.getNorth()).arg(rect.getEast()).arg(rect.getSouth()),
-    // ahtml::LINK_NO_UL);
-    // }
-    // else
-    // html.text(tr("Map"));
 
     // From/to ================================================================
     html.table();
@@ -2168,7 +2156,8 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       html.tableEnd();
 
       // Departure =======================================================
-      html.p(tr("Departure"), ahtml::BOLD);
+      html.p(tr("Departure (%1)").
+             arg(logEntry.departureIdent.isEmpty() ? tr("-") : logEntry.departureIdent), ahtml::BOLD);
       html.table();
 
       QDateTime departTime = rec.valueDateTime("departure_time");
@@ -2197,7 +2186,8 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       html.tableEnd();
 
       // Destination =======================================================
-      html.p(tr("Destination"), ahtml::BOLD);
+      html.p(tr("Destination (%1)").
+             arg(logEntry.destinationIdent.isEmpty() ? tr("-") : logEntry.destinationIdent), ahtml::BOLD);
       html.table();
 
       html.row2If(tr("Runway:"), rec.valueStr("destination_runway"));
@@ -2251,14 +2241,7 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       }
 
       // Description =======================================================
-      QString description = logEntry.description;
-      if(!description.isEmpty())
-      {
-        html.p().b(tr("Description")).pEnd();
-        html.table();
-        html.row2(QString(), atools::elideTextLinesShort(description, info ? 200 : 4),
-                  (info ? ahtml::AUTOLINK : ahtml::NONE));
-      }
+      descriptionText(logEntry.description, html);
     } // if(info)
     html.tableEnd();
 
@@ -2272,6 +2255,21 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
   {
     qWarning() << Q_FUNC_INFO << "Empty record";
     return false;
+  }
+}
+
+void HtmlInfoBuilder::descriptionText(const QString& description, HtmlBuilder& html) const
+{
+  if(!description.isEmpty())
+  {
+    html.p().b(tr("Description")).pEnd();
+    if(info)
+      html.table(1, 2, 0, 100, html.getRowBackColor());
+    else
+      html.table();
+    html.tr().td(atools::elideTextLinesShort(description, info ? 200 : 4),
+                 (info ? ahtml::AUTOLINK : ahtml::NONE)).trEnd();
+    html.tableEnd();
   }
 }
 
@@ -2750,7 +2748,7 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& procPoin
   if(procPoint.time > 0.f)
     html.row2(tr("Time:"), locale.toString(procPoint.time, 'f', 0) + tr(" min"));
   if(procPoint.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-    html.row2(tr("Course:"), courseTextFromTrue(procPoint.calculatedTrueCourse, procPoint.magvar));
+    html.row2(tr("Course:"), courseTextFromTrue(procPoint.calculatedTrueCourse, procPoint.magvar), ahtml::NO_ENTITIES);
 
   if(!procPoint.turnDirection.isEmpty())
   {
@@ -3331,7 +3329,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             if(alternate)
               // Already part of the destination information when flying an alternate leg
               html.row2(tr("Course:"), courseTextFromTrue(courseToWptTrue,
-                                                          routeLeg.getMagVarBySettings(), true /* bold */));
+                                                          routeLeg.getMagVarBySettings(), true /* bold */),
+                        ahtml::NO_ENTITIES);
             else
             {
               html.row2(tr("Distance and Time:"), Unit::distNm(nearestLegDistance) + tr(", ") + timeStr,
