@@ -10838,6 +10838,24 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Ctrl+Alt+Shift+R</string>
    </property>
   </action>
+  <action name="actionRouteEditUserWaypoint">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edit Flight Plan Position</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit name and coordinates of user defined flight plan position</string>
+   </property>
+   <property name="statusTip">
+    <string>Edit name and coordinates of user defined flight plan position</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

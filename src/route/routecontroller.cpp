@@ -220,13 +220,15 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->actionRouteSetMark->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteResetView->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteEditUserWaypoint->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   // Add action/shortcuts to table view
   view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
                     ui->actionRouteTableCopy, ui->actionRouteShowInformation,
                     ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
                     ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
-                    ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark});
+                    ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark,
+                    ui->actionRouteEditUserWaypoint});
 
   void (RouteController::*selChangedPtr)(const QItemSelection& selected, const QItemSelection& deselected) =
     &RouteController::tableSelectionChanged;
@@ -239,6 +241,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveSelectedLegsDown);
   connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveSelectedLegsUp);
   connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteSelectedLegs);
+  connect(ui->actionRouteEditUserWaypoint, &QAction::triggered, this, &RouteController::editUserWaypointTriggered);
 
   connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
   connect(ui->actionRouteShowApproaches, &QAction::triggered, this, &RouteController::showProceduresMenu);
@@ -1867,7 +1870,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
   qDebug() << "tableContextMenu";
 
   // Save text which will be changed below
-  atools::gui::ActionTextSaver saver({ui->actionMapRangeRings, ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint,
+  atools::gui::ActionTextSaver saver({ui->actionMapRangeRings, ui->actionMapNavaidRange,
+                                      ui->actionRouteEditUserWaypoint,
                                       ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
                                       ui->actionRouteDeleteLeg, ui->actionRouteInsert, ui->actionMapTrafficPattern,
                                       ui->actionMapHold});
@@ -1878,7 +1882,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   {
     ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
     ui->actionRouteShowOnMap, ui->actionRouteActivateLeg, ui->actionRouteLegUp, ui->actionRouteLegDown,
-    ui->actionRouteDeleteLeg, ui->actionMapEditUserWaypoint, ui->actionRouteCalcRadionavSelected,
+    ui->actionRouteDeleteLeg, ui->actionRouteEditUserWaypoint, ui->actionRouteCalcRadionavSelected,
     ui->actionRouteCalcHighAltSelected, ui->actionRouteCalcLowAltSelected, ui->actionRouteCalcSetAltSelected,
     ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapNavaidRange,
     ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
@@ -2056,9 +2060,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
 
-  ui->actionMapEditUserWaypoint->setEnabled(routeLeg != nullptr &&
-                                            routeLeg->getMapObjectType() == map::USERPOINTROUTE);
-  ui->actionMapEditUserWaypoint->setText(tr("Edit Position"));
+  ui->actionRouteEditUserWaypoint->setEnabled(routeLeg != nullptr &&
+                                              routeLeg->getMapObjectType() == map::USERPOINTROUTE);
 
   QList<int> selectedRouteLegIndexes;
   getSelectedRouteLegs(selectedRouteLegIndexes);
@@ -2107,7 +2110,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteLegUp);
   menu.addAction(ui->actionRouteLegDown);
   menu.addAction(ui->actionRouteDeleteLeg);
-  menu.addAction(ui->actionMapEditUserWaypoint);
+  menu.addAction(ui->actionRouteEditUserWaypoint);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteInsert);
@@ -2197,8 +2200,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     }
     // else if(action == ui->actionMapHideRangeRings)
     // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly
-    else if(action == ui->actionMapEditUserWaypoint)
-      editUserWaypointName(index.row());
+    // else if(action == ui->actionRouteEditUserWaypoint)
+    // editUserWaypointName(index.row());
     // else if(action == ui->actionRouteTableAppend) // Done by signal from action
     // emit routeAppend();
     else if(action == ui->actionRouteInsert)
@@ -2246,24 +2249,32 @@ bool RouteController::hasSelection()
   return view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection();
 }
 
+void RouteController::editUserWaypointTriggered()
+{
+  editUserWaypointName(view->currentIndex().row());
+}
+
 void RouteController::editUserWaypointName(int index)
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << "index" << index;
 
-  UserWaypointDialog dialog(mainWindow, route.at(index).getIdent(), route.at(index).getPosition());
-  if(dialog.exec() == QDialog::Accepted && !dialog.getName().isEmpty())
+  if(index > 0 && route.at(index).getMapObjectType() == map::USERPOINTROUTE)
   {
-    RouteCommand *undoCommand = nullptr;
+    UserWaypointDialog dialog(mainWindow, route.at(index).getIdent(), route.at(index).getPosition());
+    if(dialog.exec() == QDialog::Accepted && !dialog.getName().isEmpty())
+    {
+      RouteCommand *undoCommand = nullptr;
 
-    // if(route.getFlightplan().canSaveUserWaypointName())
-    undoCommand = preChange(tr("Waypoint Name Change"));
+      // if(route.getFlightplan().canSaveUserWaypointName())
+      undoCommand = preChange(tr("Waypoint Name Change"));
 
-    route.changeUserAndPosition(index, dialog.getName(), dialog.getPos());
+      route.changeUserAndPosition(index, dialog.getName(), dialog.getPos());
 
-    model->item(index, rc::IDENT)->setText(dialog.getName());
-    postChange(undoCommand);
+      model->item(index, rc::IDENT)->setText(dialog.getName());
+      postChange(undoCommand);
 
-    emit routeChanged(true);
+      emit routeChanged(true);
+    }
   }
 }
 
