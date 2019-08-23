@@ -8441,7 +8441,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
    </property>
    <property name="text">
-    <string>Add custom approach for %1</string>
+    <string>Create approach</string>
    </property>
    <property name="toolTip">
     <string>Add a custom approach to the flight plan</string>

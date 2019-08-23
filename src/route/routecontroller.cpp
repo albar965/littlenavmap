@@ -1968,6 +1968,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   bool insert = false;
 
+  ui->actionRouteShowApproachesCustom->setEnabled(false);
+  ui->actionRouteShowApproaches->setEnabled(false);
+
   // Menu above a row
   if(routeLeg != nullptr)
   {
@@ -1993,8 +1996,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
         insert = routeLeg->isRoute();
     }
 
-    ui->actionRouteShowApproachesCustom->setEnabled(false);
-    ui->actionRouteShowApproaches->setEnabled(false);
     if(routeLeg->isValid() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
       bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(routeLeg->getIdent());
@@ -2042,7 +2043,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else
     {
       ui->actionRouteShowApproaches->setText(tr("Show procedures"));
-      ui->actionRouteShowApproachesCustom->setText(tr("Create procedure"));
+      ui->actionRouteShowApproachesCustom->setText(tr("Create approach"));
     }
 
     ui->actionRouteShowOnMap->setEnabled(true);
