@@ -1434,6 +1434,11 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived, mapWidget, &MapWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, profileWidget, &ProfileWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simDataChanged);
+
+  connect(connectClient, &ConnectClient::connectedToSimulator,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::updateReports);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::updateReports);
   connect(connectClient, &ConnectClient::dataPacketReceived,
           NavApp::getAircraftPerfController(), &AircraftPerfController::simDataChanged);
 
@@ -1472,7 +1477,7 @@ void MainWindow::connectAllSlots()
 
   // Wind update ===================================================
   connect(windReporter, &WindReporter::windUpdated, routeController, &RouteController::windUpdated);
-  connect(windReporter, &WindReporter::windUpdated, perfController, &AircraftPerfController::windUpdated);
+  connect(windReporter, &WindReporter::windUpdated, perfController, &AircraftPerfController::updateReports);
   connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateMapObjectsShown);
   connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateActionStates);
 

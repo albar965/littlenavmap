@@ -233,6 +233,11 @@ bool Route::isSmaller(const atools::geo::LineDistance& dist1, const atools::geo:
   return std::abs(dist1.distance) < std::abs(dist2.distance) + epsilon;
 }
 
+void Route::updateActivePos(const map::PosCourse& pos)
+{
+  activePos = pos;
+}
+
 void Route::updateActiveLegAndPos(const map::PosCourse& pos)
 {
   if(isEmpty() || !pos.isValid())
@@ -260,16 +265,15 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     // Special case point route - remain on first and only leg ==========================
     activeLegIndex = 0;
     // Test if still nearby
-    activePos.pos.distanceMeterToLine(
-      first().getPosition(), first().getPosition(), activeLegResult);
+    activePos.pos.distanceMeterToLine(first().getPosition(), first().getPosition(), activeLegResult);
   }
   else
   {
     if(activeLegIndex == 0)
       // Reset from point route ====================================
       activeLegIndex = 1;
-    activePos.pos.distanceMeterToLine(
-      getPrevPositionAt(activeLegIndex), getPositionAt(activeLegIndex), activeLegResult);
+    activePos.pos.distanceMeterToLine(getPrevPositionAt(activeLegIndex), getPositionAt(activeLegIndex),
+                                      activeLegResult);
   }
 
   if(getDistanceToFlightPlan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM)

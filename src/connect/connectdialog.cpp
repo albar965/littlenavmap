@@ -90,6 +90,9 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
 
 ConnectDialog::~ConnectDialog()
 {
+  atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
+  widgetState.save(this);
+
   delete ui;
 }
 

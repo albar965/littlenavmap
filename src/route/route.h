@@ -534,6 +534,7 @@ public:
    *  True indicates high airway used towards waypoint at the same index. */
   QBitArray getJetAirwayFlags() const;
 
+  void updateActivePos(const map::PosCourse& pos);
 private:
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
    * no procedure legs. CPU intense do not use often. */

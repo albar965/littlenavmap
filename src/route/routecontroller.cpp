@@ -3656,7 +3656,7 @@ void RouteController::updateModelRouteTimeFuel()
       const RouteLeg& leg = route.at(i);
 
       // Leg time =====================================================================
-      float travelTime = altitudeLegs.at(i).getTravelTimeHours();
+      float travelTime = altitudeLegs.at(i).getTime();
       if(row == 0 || !(travelTime < map::INVALID_TIME_VALUE) || leg.getProcedureLeg().isMissed())
         model->setItem(row, rc::LEG_TIME, new QStandardItem());
       else
@@ -3753,9 +3753,9 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
 
       // Sequence only for airborne airplanes
       // Use more than one parameter since first X-Plane data packets are unreliable
+      map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
       if(aircraft.isFlying())
       {
-        map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
         int previousRouteLeg = route.getActiveLegIndexCorrected();
         route.updateActiveLegAndPos(position);
         int routeLeg = route.getActiveLegIndexCorrected();
@@ -3770,6 +3770,8 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
             view->scrollTo(model->index(std::max(routeLeg - 1, 0), 0), QAbstractItemView::PositionAtTop);
         }
       }
+      else
+        route.updateActivePos(position);
     }
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }
@@ -4054,8 +4056,9 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
         if(!approachRunway.isEmpty() && !starRunway.isEmpty() && !map::runwayEqual(approachRunway, starRunway))
         {
           boldTextFlag << true;
-          procedureText.append(atools::util::HtmlBuilder::errorMessage(tr("Runway mismatch: STAR %1 ≠ Approach %2.").
-                                                                       arg(starRunway).arg(approachRunway)));
+          procedureText.append(
+            atools::util::HtmlBuilder::errorMessage(tr("Runway mismatch: STAR \"%1\" ≠ Approach \"%2\".").
+                                                    arg(starRunway).arg(approachRunway)));
         }
 
         for(int i = 0; i < procedureText.size(); i++)

@@ -621,21 +621,6 @@ const atools::fs::perf::AircraftPerf& NavApp::getAircraftPerformance()
   return aircraftPerfController->getAircraftPerformance();
 }
 
-float NavApp::getFuelReserveAtDestinationLbs()
-{
-  return aircraftPerfController->getFuelReserveAtDestinationLbs();
-}
-
-float NavApp::getFuelReserveAtDestinationGal()
-{
-  return aircraftPerfController->getFuelReserveAtDestinationGal();
-}
-
-bool NavApp::canEstimateFuel()
-{
-  return aircraftPerfController->canEstimateFuel();
-}
-
 AirspaceController *NavApp::getAirspaceController()
 {
   return airspaceController;

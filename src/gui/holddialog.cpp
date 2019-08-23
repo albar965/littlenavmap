@@ -72,6 +72,8 @@ HoldDialog::HoldDialog(QWidget *parent, const map::MapSearchResult& resultParam,
 
 HoldDialog::~HoldDialog()
 {
+  atools::gui::WidgetState(lnm::HOLD_DIALOG).save(this);
+
   delete units;
   delete ui;
   delete result;

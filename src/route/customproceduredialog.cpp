@@ -59,6 +59,8 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
 CustomProcedureDialog::~CustomProcedureDialog()
 {
+  atools::gui::WidgetState(lnm::CUSTOM_PROCEDURE_DIALOG).save(this);
+
   delete runwaySelection;
   delete units;
   delete ui;

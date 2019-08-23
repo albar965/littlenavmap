@@ -3852,25 +3852,37 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
         float distanceFromStart = route.getDistanceFromStart(pos);
         ground = distanceFromStart<0.5f || distanceFromStart> route.getTotalDistance() - 0.5f;
 
+        if(route.isActiveAlternate() || route.isActiveMissed())
+          ground = false;
+
         if(!ground)
         {
-          float tocDist = route.getTopOfClimbDistance();
-          float todDist = route.getTopOfDescentDistance();
-
-          tas = perf.getCruiseSpeed();
-          fuelflow = perf.getCruiseFuelFlowLbs();
-
-          if(projectionDistance < tocDist)
+          if(route.isActiveAlternate() || route.isActiveMissed())
           {
-            vertSpeed = perf.getClimbVertSpeed();
-            tas = perf.getClimbSpeed();
-            fuelflow = perf.getClimbFuelFlowLbs();
+            tas = perf.getAlternateSpeed();
+            fuelflow = perf.getAlternateFuelFlowLbs();
+            alt = NavApp::getRouteController()->getCruiseAltitudeWidget() / 2.f;
           }
-          if(projectionDistance > todDist)
+          else
           {
-            vertSpeed = -perf.getDescentVertSpeed();
-            tas = perf.getDescentSpeed();
-            fuelflow = perf.getDescentFuelFlowLbs();
+            float tocDist = route.getTopOfClimbDistance();
+            float todDist = route.getTopOfDescentDistance();
+
+            tas = perf.getCruiseSpeed();
+            fuelflow = perf.getCruiseFuelFlowLbs();
+
+            if(projectionDistance < tocDist)
+            {
+              vertSpeed = perf.getClimbVertSpeed();
+              tas = perf.getClimbSpeed();
+              fuelflow = perf.getClimbFuelFlowLbs();
+            }
+            if(projectionDistance > todDist)
+            {
+              vertSpeed = -perf.getDescentVertSpeed();
+              tas = perf.getDescentSpeed();
+              fuelflow = perf.getDescentFuelFlowLbs();
+            }
           }
         }
         else
@@ -3882,8 +3894,12 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
         }
       }
 
+      if(atools::almostEqual(fuelflow, 0.f) && !ground)
+        fuelflow = 100.f;
+
       if(!(alt < map::INVALID_ALTITUDE_VALUE))
         alt = route.getCruisingAltitudeFeet();
+
       pos.setAltitude(alt);
       SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow,
                                                                   totalFuel, 10.f);

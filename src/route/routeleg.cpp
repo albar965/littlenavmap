@@ -503,7 +503,7 @@ QString RouteLeg::getMapObjectTypeName() const
   else if(runwayEnd.isValid())
     return tr("Runway");
   else if(type == map::USERPOINTROUTE)
-    return EMPTY_STRING;
+    return tr("User");
   else
     return EMPTY_STRING;
 }

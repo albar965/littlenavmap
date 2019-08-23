@@ -53,6 +53,9 @@ ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString&
 
 ChoiceDialog::~ChoiceDialog()
 {
+  atools::gui::WidgetState widgetState(settingsPrefix, false);
+  widgetState.save(this);
+
   delete ui;
 }
 

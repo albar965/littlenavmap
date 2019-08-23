@@ -49,6 +49,9 @@ class Route;
  * or lbs.
  *
  * Uses the route object for calculation and caches all values.
+ *
+ * First leg is departure and has length 0. Destination leg is leg to destination airport.
+ * Order is same as in class Route.
  */
 class RouteAltitude
   : private QVector<RouteAltitudeLeg>
@@ -68,7 +71,8 @@ public:
    * value in feet. */
   void calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt);
 
-  /* Get interpolated altitude value in ft for the given distance to destination in NM */
+  /* Get interpolated altitude value in ft for the given distance to destination in NM.
+   *  Not for missed and alternate legs. */
   float getAltitudeForDistance(float distanceToDest) const;
 
   /* 0 if invalid */
@@ -172,7 +176,7 @@ public:
     return averageGroundSpeed;
   }
 
-  /* Route distance in NM */
+  /* Route distance in NM excluding alternates */
   float getTotalDistance() const;
 
   /* Trip fuel. Does not include reserve, extra, taxi and contingency fuel, Unit depends on performance settings. */
@@ -257,12 +261,6 @@ public:
     return windHeadDescent;
   }
 
-  /* was calculation restarted because of wind */
-  bool isAffectedByWind() const
-  {
-    return affectedByWind;
-  }
-
   /* Equal to GS */
   float getClimbSpeedWindCorrected() const
   {
@@ -280,6 +278,49 @@ public:
   {
     return cruiseSpeedWindCorrected;
   }
+
+  /* Fuel consumption of climb part of the flight plan */
+  float getClimbFuel() const
+  {
+    return climbFuel;
+  }
+
+  /* Fuel consumption of cruise part of the flight plan */
+  float getCruiseFuel() const
+  {
+    return cruiseFuel;
+  }
+
+  /* Fuel consumption of descent part of the flight plan */
+  float getDescentFuel() const
+  {
+    return descentFuel;
+  }
+
+  /* Time of climb part of the flight plan */
+  float getClimbTime() const
+  {
+    return climbTime;
+  }
+
+  /* Time of cruise part of the flight plan */
+  float getCruiseTime() const
+  {
+    return cruiseTime;
+  }
+
+  /* Time of descent part of the flight plan */
+  float getDescentTime() const
+  {
+    return descentTime;
+  }
+
+  /* Calculates needed fuel to destination and TOD. Falls back to current aircraft consumption values if profile or
+   * altitude legs are not valid. distanceToDest: Aircraft position distance to destination. */
+  bool calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest, float& fuelLbsToTod, float& fuelGalToTod,
+                              float& timeToDest, float& timeToTod, float distanceToDest,
+                              const atools::fs::perf::AircraftPerf& perf, float aircraftFuelFlowLbs,
+                              float aircraftFuelFlowGal, float aircraftGroundSpeed, int activeLeg) const;
 
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
@@ -331,12 +372,20 @@ private:
   /* Fill line object in leg with geometry */
   void fillGeometry();
 
+  int indexForDistance(float distanceToDest) const;
+
   /* NM from start */
   float distanceTopOfClimb = map::INVALID_DISTANCE_VALUE,
         distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
 
   /* Fuel and performance calculation results */
-  float tripFuel = 0.f, alternateFuel = 0.f, travelTime = 0.f, averageGroundSpeed = 0.f;
+  float travelTime = 0.f, averageGroundSpeed = 0.f;
+
+  /* Accumulated time and fuel for each phase */
+  float climbFuel = 0.f, cruiseFuel = 0.f, descentFuel = 0.f,
+        climbTime = 0.f, cruiseTime = 0.f, descentTime = 0.f;
+
+  float tripFuel = 0.f, alternateFuel = 0.f;
   bool unflyableLegs = false;
 
   /*  Average wind values for the whole route */
@@ -355,8 +404,8 @@ private:
   /* Configuration options */
   bool simplify = true, calcTopOfDescent = true, calcTopOfClimb = true;
 
-  /* Has TOC and TOD and was calculation restarted because of wind */
-  bool validProfile = false, affectedByWind = false;
+  /* Has TOC and TOD  */
+  bool validProfile = false;
 
   /* From aircraft performance */
   /* Climb and descent are corrected for tail/head wind duringfor second iteration in significant wind */

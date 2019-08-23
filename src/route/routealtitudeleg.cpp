@@ -42,6 +42,107 @@ float RouteAltitudeLeg::getDistanceTo() const
     return static_cast<float>(getDistanceFromStart() - geometry.first().x());
 }
 
+float RouteAltitudeLeg::climbDist() const
+{
+  return static_cast<float>(topOfClimb ? geometry.at(1).x() - geometry.at(0).x() : 0.);
+}
+
+float RouteAltitudeLeg::tocPos() const
+{
+  return static_cast<float>(topOfClimb ? geometry.at(1).x() : map::INVALID_DISTANCE_VALUE);
+}
+
+float RouteAltitudeLeg::todPos() const
+{
+  return static_cast<float>(topOfDescent ? geometry.at(topOfClimb ? 2 : 1).x() : map::INVALID_DISTANCE_VALUE);
+}
+
+float RouteAltitudeLeg::descentDist() const
+{
+  return static_cast<float>(topOfDescent ?
+                            geometry.at(topOfClimb ? 3 : 2).x() - geometry.at(topOfClimb ? 2 : 1).x() : 0.);
+}
+
+float RouteAltitudeLeg::cruiseDist() const
+{
+  return getDistanceTo() - descentDist() - climbDist();
+}
+
+void RouteAltitudeLeg::getFuelAndTimeFromDistToDestination(float& fuelToDist, float& timeToDist,
+                                                           float distFromStart) const
+{
+  // Time of all legs after this one
+  timeToDist = timeToDest - getTime();
+
+  // Fuel of all legs after this one
+  fuelToDist = fuelToDest - getFuel();
+
+  // Length of given distance to end of this leg
+  float legRemainingLength = x2() - distFromStart;
+
+  if(topOfClimb && topOfDescent)
+  {
+    // TOC and TOC leg =========================================================
+    if(distFromStart < tocPos())
+    {
+      // Before TOC
+      fuelToDist += climbFuel / climbDist() * (tocPos() - distFromStart) + cruiseFuel + descentFuel;
+      timeToDist += climbTime / climbDist() * (tocPos() - distFromStart) + cruiseTime + descentTime;
+    }
+    else if(distFromStart < todPos())
+    {
+      // After TOC - part is cruise and all descent
+      fuelToDist += cruiseFuel / cruiseDist() * (todPos() - distFromStart) + descentFuel;
+      timeToDist += cruiseTime / cruiseDist() * (todPos() - distFromStart) + descentTime;
+    }
+    else
+    {
+      // After TOD - part is descent
+      fuelToDist += descentFuel / descentDist() * legRemainingLength;
+      timeToDist += descentTime / descentDist() * legRemainingLength;
+    }
+  }
+  else if(topOfClimb)
+  {
+    // TOC leg =========================================================
+    if(distFromStart < tocPos())
+    {
+      // Before TOC - part of climb and full cruise
+      fuelToDist += climbFuel / climbDist() * (tocPos() - distFromStart) + cruiseFuel;
+      timeToDist += climbTime / climbDist() * (tocPos() - distFromStart) + cruiseTime;
+    }
+    else
+    {
+      // After TOC - all is cruise
+      fuelToDist += cruiseFuel / cruiseDist() * legRemainingLength;
+      timeToDist += cruiseTime / cruiseDist() * legRemainingLength;
+    }
+  }
+  else if(topOfDescent)
+  {
+    // TOD leg =========================================================
+    if(distFromStart < todPos())
+    {
+      // Part of cruise and full descent
+      fuelToDist += cruiseFuel / cruiseDist() * (todPos() - distFromStart) + descentFuel;
+      timeToDist += cruiseTime / cruiseDist() * (todPos() - distFromStart) + descentTime;
+    }
+    else
+    {
+      // After TOD - all is descent
+      fuelToDist += descentFuel / descentDist() * legRemainingLength;
+      timeToDist += descentTime / descentDist() * legRemainingLength;
+    }
+  }
+  else
+  {
+    // Normal leg =========================================================
+    // All is either climb, cruise, descent or alternate
+    fuelToDist += getFuel() / getDistanceTo() * legRemainingLength;
+    timeToDist += getTime() / getDistanceTo() * legRemainingLength;
+  }
+}
+
 void RouteAltitudeLeg::setAlt(float alt)
 {
   // Set altitude for all points
@@ -80,19 +181,26 @@ float RouteAltitudeLeg::dx() const
 
 QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
 {
-  out << obj.getIdent()
-      << obj.getLineString()
-      << "TOC" << obj.isTopOfClimb()
-      << "TOD" << obj.isTopOfDescent()
-      << "speed" << obj.getAverageSpeedKts()
-      << "travel" << obj.getTravelTimeHours()
-      << "fuel" << obj.getFuel()
-      << "missed" << obj.isMissed()
-      << "procedure" << obj.isAnyProcedure()
-      << "avg wind speed" << obj.getAverageWindSpeed()
-      << "avg wind dir" << obj.getAverageWindDirection()
-      << "wind speed" << obj.getWindSpeed()
-      << "wind dir" << obj.getWindDirection()
-      << "geometry" << obj.getGeometry() << "NM/ft";
+  out << obj.ident
+      << obj.line
+      << "TOC" << obj.topOfClimb
+      << "TOD" << obj.topOfDescent
+      << "alternate" << obj.alternate
+      << "missed" << obj.missed
+      << "procedure" << obj.procedure
+      << "speed" << obj.averageSpeedKts << endl
+      << "climb time" << obj.climbTime
+      << "cruise time" << obj.cruiseTime
+      << "descent time" << obj.descentTime << endl
+      << "climb fuel" << obj.climbFuel
+      << "cruise fuel" << obj.cruiseFuel
+      << "descent fuel" << obj.descentFuel
+      << "fuel to dest" << obj.fuelToDest << endl
+      << "time to dest" << obj.timeToDest << endl
+      << "avg wind speed" << obj.avgWindSpeed
+      << "avg wind dir" << obj.avgWindDirection << endl
+      << "wind speed" << obj.windSpeed
+      << "wind dir" << obj.windDirection << endl
+      << "geometry" << obj.geometry << "NM/ft";
   return out;
 }

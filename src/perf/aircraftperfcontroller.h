@@ -108,7 +108,7 @@ public:
 
   /* Sent back after aircraftPerformanceChanged was sent from here */
   void routeChanged(bool geometryChanged, bool newFlightplan = false);
-  void windUpdated();
+  void updateReports();
   void routeAltitudeChanged(float altitudeFeet);
 
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
@@ -128,11 +128,13 @@ public:
   float getFuelReserveAtDestinationLbs() const;
   float getFuelReserveAtDestinationGal() const;
 
-  /* true if fuel flow can be used as a estimate for destination fuel. Aircraft has to be in cruise at least. */
-  bool canEstimateFuel() const;
-
   /* Restart performance collection  */
   void restartCollection(bool quiet = false);
+
+  /* Calculates values based on performance profile if valid - otherwise estimated by aircraft fuel flow and speed */
+  bool calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest, float& fuelLbsToTod, float& fuelGalToTod,
+                              float& timeToDest, float& timeToTod,
+                              float distanceToDest, int activeLeg) const;
 
 signals:
   /* Sent if performance or wind has changed */
@@ -144,7 +146,7 @@ private:
 
   /* Opens the edit dialog. */
   void edit();
-  bool editInternal(atools::fs::perf::AircraftPerf &perf, const QString& modeText);
+  bool editInternal(atools::fs::perf::AircraftPerf& perf, const QString& modeText);
 
   /* Open file dialog and load a new performance file after asking to save currently unchanged */
   void load();

@@ -85,6 +85,8 @@ PerfMergeDialog::PerfMergeDialog(QWidget *parent, const AircraftPerf& sourcePerf
 
 PerfMergeDialog::~PerfMergeDialog()
 {
+  atools::gui::WidgetState(lnm::AIRCRAFT_PERF_MERGE_DIALOG).save(this);
+
   delete ui;
 }
 

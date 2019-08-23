@@ -27,9 +27,11 @@
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
 #include "route/routecontroller.h"
+#include "perf/aircraftperfcontroller.h"
 #include "route/routealtitude.h"
 #include "common/aircrafttrack.h"
 #include "common/unit.h"
+#include "common/formatter.h"
 #include "settings/settings.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
@@ -138,12 +140,10 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
     return;
 
   bool updateWidget = false;
-  bool updateLabelWidget = false;
   const Route& route = routeController->getRoute();
 
   if(!NavApp::getRouteConst().isFlightplanEmpty())
   {
-
     if((showAircraft || showAircraftTrack))
     {
       simData = simulatorData;
@@ -199,9 +199,6 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
                           deltas.altitudeDelta) // Altitude change
            )
         {
-          // Aircraft position has changed enough
-          updateLabelWidget = true;
-
           movingBackwards = (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) &&
                             (lastAircraftDistanceFromStart > aircraftDistanceFromStart);
 
@@ -216,6 +213,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && !jumpBack->isActive())
             scrollArea->centerAircraft(toScreen(currentPoint));
 
+          // Aircraft position has changed enough
           updateWidget = true;
         }
       } // if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
@@ -232,8 +230,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
   if(updateWidget)
     update();
 
-  if(updateLabelWidget)
-    updateLabel();
+  updateLabel();
 }
 
 void ProfileWidget::connectedToSimulator()
@@ -1603,10 +1600,29 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   }
 
 #ifdef DEBUG_INFORMATION
-  variableLabelText.append(QString(" [alt %1,idx %2,crs %3]").
+  float fuelLbs = 0.f, fuelGal = 0.f, fuelLbsTod = 0.f, fuelGalTod = 0.f, timeToDest = 0.f, timeToTod = 0.f;
+  NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(fuelLbs, fuelGal,
+                                                              fuelLbsTod, fuelGalTod,
+                                                              timeToDest, timeToTod,
+                                                              distanceToGo,
+                                                              index + 1);
+
+  variableLabelText.append(QString("<br/><code>[alt %1,idx %2, crs %3, "
+                                     "fuel dest %4/%5, fuel TOD %6/%7, "
+                                     "time dest %8 (%9), time TOD %10 (%11)]</code>").
                            arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)).
                            arg(index).
-                           arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-"));
+                           arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-").
+                           arg(fuelLbs, 0, 'f', 2).
+                           arg(fuelGal, 0, 'f', 2).
+                           arg(fuelLbsTod < map::INVALID_WEIGHT_VALUE ? fuelLbsTod : -1., 0, 'f', 2).
+                           arg(fuelGalTod < map::INVALID_VOLUME_VALUE ? fuelGalTod : -1., 0, 'f', 2).
+                           arg(timeToDest, 0, 'f', 2).
+                           arg(formatter::formatMinutesHours(timeToDest)).
+                           arg(timeToTod < map::INVALID_TIME_VALUE ? timeToTod : -1., 0, 'f', 2).
+                           arg(timeToTod < map::INVALID_TIME_VALUE ?
+                               formatter::formatMinutesHours(timeToTod) : "-1")
+                           );
 #endif
 
   // Allow event to propagate to scroll widget
@@ -1709,26 +1725,32 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
 
 void ProfileWidget::updateLabel()
 {
-  float distFromStartNm = 0.f, distToDestNm = 0.f;
+  float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f;
 
   if(simData.getUserAircraftConst().getPosition().isValid())
   {
-    if(routeController->getRoute().getRouteDistances(&distFromStartNm, &distToDestNm))
+    if(routeController->getRoute().getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance))
     {
       if(routeController->getRoute().isActiveMissed())
         distToDestNm = 0.f;
 
-      if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
-         routeController->getRoute().getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
-      {
-        float toTod = routeController->getRoute().getTopOfDescentDistance() - distFromStartNm;
-
-        fixedLabelText = tr("<b>To Destination: %1, to Top of Descent: %2.</b>&nbsp;&nbsp;").
-                         arg(Unit::distNm(distToDestNm)).
-                         arg(toTod > 0 ? Unit::distNm(toTod) : tr("Passed"));
-      }
+      if(routeController->getRoute().isActiveAlternate())
+        // Use distance to alternate instead of destination
+        fixedLabelText = tr("<b>To Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
       else
-        fixedLabelText = tr("<b>To Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
+      {
+        if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
+           routeController->getRoute().getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
+        {
+          float toTod = routeController->getRoute().getTopOfDescentDistance() - distFromStartNm;
+
+          fixedLabelText = tr("<b>To Destination: %1, to Top of Descent: %2.</b>&nbsp;&nbsp;").
+                           arg(Unit::distNm(distToDestNm)).
+                           arg(toTod > 0.f ? Unit::distNm(toTod) : tr("Passed"));
+        }
+        else
+          fixedLabelText = tr("<b>To Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
+      }
     }
   }
   else

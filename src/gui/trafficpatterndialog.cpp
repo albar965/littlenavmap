@@ -66,6 +66,8 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
 
 TrafficPatternDialog::~TrafficPatternDialog()
 {
+  atools::gui::WidgetState(lnm::TRAFFIC_PATTERN_DIALOG).save(this);
+
   delete runwaySelection;
   delete units;
   delete ui;

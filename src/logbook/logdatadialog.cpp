@@ -156,6 +156,8 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
 
 LogdataDialog::~LogdataDialog()
 {
+  atools::gui::WidgetState(lnm::LOGDATA_EDIT_ADD_DIALOG).save(this);
+
   delete units;
   delete record;
   delete ui;

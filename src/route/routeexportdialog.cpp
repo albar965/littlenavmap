@@ -158,6 +158,8 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
 
 RouteExportDialog::~RouteExportDialog()
 {
+  atools::gui::WidgetState(lnm::FLIGHTPLAN_ONLINE_EXPORT + routeTypeAsString(type)).save(this);
+
   delete units;
   delete ui;
   delete exportDataSaved;

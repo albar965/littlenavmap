@@ -239,6 +239,22 @@ void AircraftPerfController::restartCollection(bool quiet)
   }
 }
 
+bool AircraftPerfController::calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest,
+                                                    float& fuelLbsToTod, float& fuelGalToTod,
+                                                    float& timeToDest, float& timeToTod,
+                                                    float distanceToDest, int activeLeg) const
+{
+
+  const atools::fs::sc::SimConnectUserAircraft& ac = NavApp::getUserAircraft();
+  return NavApp::getAltitudeLegs().calculateFuelAndTimeTo(fuelLbsToDest, fuelGalToDest,
+                                                          fuelLbsToTod, fuelGalToTod,
+                                                          timeToDest, timeToTod,
+                                                          distanceToDest, *perf,
+                                                          ac.getFuelFlowPPH(), ac.getFuelFlowGPH(),
+                                                          ac.getGroundSpeedKts(),
+                                                          activeLeg);
+}
+
 void AircraftPerfController::mergeCollected()
 {
   qDebug() << Q_FUNC_INFO;
@@ -455,7 +471,7 @@ void AircraftPerfController::routeChanged(bool geometryChanged, bool newFlightpl
   updateActionStates();
 }
 
-void AircraftPerfController::windUpdated()
+void AircraftPerfController::updateReports()
 {
   updateReport();
   updateReportCurrent();
@@ -606,13 +622,16 @@ void AircraftPerfController::updateReport()
     fuelReportFilepath(html, false /* print */);
 
 #ifdef DEBUG_INFORMATION
-    html.textBr("Climb " + Unit::speedKts(altitudeLegs.getClimbHeadWind()) +
-                ", cruise " + Unit::speedKts(altitudeLegs.getCruiseHeadWind()) +
-                ", descent " + Unit::speedKts(altitudeLegs.getDescentHeadWind()) +
-                ", all " + Unit::speedKts(altitudeLegs.getHeadWindAverage()));
-    html.text("Corrected: climb " + Unit::speedKts(altitudeLegs.getClimbSpeedWindCorrected()) +
-              ", cruise " + Unit::speedKts(altitudeLegs.getCruiseSpeedWindCorrected()) +
-              ", descent " + Unit::speedKts(altitudeLegs.getDescentSpeedWindCorrected()));
+    html.hr().pre("Climb " + Unit::speedKts(altitudeLegs.getClimbHeadWind()) +
+                  ", cruise " + Unit::speedKts(altitudeLegs.getCruiseHeadWind()) +
+                  ", descent " + Unit::speedKts(altitudeLegs.getDescentHeadWind()) +
+                  ", all " + Unit::speedKts(altitudeLegs.getHeadWindAverage()) +
+                  "\nCorrected: climb " + Unit::speedKts(altitudeLegs.getClimbSpeedWindCorrected()) +
+                  ", cruise " + Unit::speedKts(altitudeLegs.getCruiseSpeedWindCorrected()) +
+                  ", descent " + Unit::speedKts(altitudeLegs.getDescentSpeedWindCorrected()) +
+                  "\nFuel: climb " + QString::number(altitudeLegs.getClimbFuel(), 'f', 1) +
+                  ", cruise " + QString::number(altitudeLegs.getCruiseFuel(), 'f', 1) +
+                  ", descent " + QString::number(altitudeLegs.getDescentFuel(), 'f', 1));
 #endif
 
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftPerformanceReport, html.getHtml(),
@@ -758,11 +777,6 @@ float AircraftPerfController::getFuelReserveAtDestinationGal() const
           atools::geo::fromLbsToGal(perf->isJetFuel(), NavApp::getAltitudeLegs().getAlternateFuel()));
 }
 
-bool AircraftPerfController::canEstimateFuel() const
-{
-  return perfHandler->isActive() && perfHandler->getCurrentFlightSegment() >= atools::fs::perf::CRUISE;
-}
-
 void AircraftPerfController::fuelReportRunway(atools::util::HtmlBuilder& html)
 {
   QStringList runwayTxt;
@@ -847,8 +861,10 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     {
       QString model = NavApp::getUserAircraft().getAirplaneModel();
       if(!model.isEmpty() && perf->getAircraftType() != model)
-        html.p().warning(tr("Airplane model does not match:\nSimulator %1 ≠ Performance File %2.").
-                         arg(model).arg(perf->getAircraftType())).pEnd();
+        html.p().
+        warning(tr("Airplane model does not match:")).br().
+        warning(tr("Simulator \"%1\" ≠ Performance File \"%2\".").arg(model).arg(perf->getAircraftType())).
+        pEnd();
     }
   } // if(!print)
 
@@ -1009,8 +1025,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
       if(altLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
         html.row2(tr("Time to Climb:"),
-                  formatter::formatMinutesHoursLong(perf->getTimeToClimb(altLegs.getDepartureAltitude(),
-                                                                         altLegs.getCruiseAltitide())));
+                  formatter::formatMinutesHoursLong(NavApp::getAltitudeLegs().getClimbTime()));
     }
     else
       html.row2(tr("Climb not valid"));

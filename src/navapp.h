@@ -279,9 +279,6 @@ public:
   static AircraftPerfController *getAircraftPerfController();
   static SearchController *getSearchController();
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
-  static float getFuelReserveAtDestinationLbs();
-  static float getFuelReserveAtDestinationGal();
-  static bool canEstimateFuel();
 
   static AirspaceController *getAirspaceController();
 

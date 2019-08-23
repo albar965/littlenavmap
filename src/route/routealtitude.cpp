@@ -42,10 +42,10 @@ RouteAltitude::~RouteAltitude()
 
 }
 
-float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
+int RouteAltitude::indexForDistance(float distanceToDest) const
 {
   if(isEmpty())
-    return map::INVALID_ALTITUDE_VALUE;
+    return map::INVALID_INDEX_VALUE;
 
   float distFromStart = route->getTotalDistance() - distanceToDest;
 
@@ -59,9 +59,25 @@ float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
   });
 
   if(it != end())
+    return static_cast<int>(std::distance(begin(), it));
+
+  return map::INVALID_INDEX_VALUE;
+}
+
+float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
+{
+  if(isEmpty())
+    return map::INVALID_ALTITUDE_VALUE;
+
+  float distFromStart = route->getTotalDistance() - distanceToDest;
+
+  // Search through all legs to find one that overlaps with distanceToDest
+  int idx = indexForDistance(distanceToDest);
+
+  if(idx != map::INVALID_INDEX_VALUE)
   {
     // Now search through the geometry to find a matching line (if more than one)
-    const RouteAltitudeLeg& leg = *it;
+    const RouteAltitudeLeg& leg = at(idx);
 
     QPolygonF::const_iterator itGeo =
       std::lower_bound(leg.geometry.begin(), leg.geometry.end(), distFromStart,
@@ -91,7 +107,7 @@ float RouteAltitude::getTravelTimeHours() const
 
 float RouteAltitude::getTopOfDescentFromDestination() const
 {
-  if(isEmpty())
+  if(isEmpty() || !(distanceTopOfDescent < map::INVALID_DISTANCE_VALUE))
     return map::INVALID_DISTANCE_VALUE;
   else
     return route->getTotalDistance() - distanceTopOfDescent;
@@ -244,6 +260,114 @@ QVector<float> RouteAltitude::getAltitudes() const
   }
 
   return retval;
+}
+
+bool RouteAltitude::calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest,
+                                           float& fuelLbsToTod, float& fuelGalToTod,
+                                           float& timeToDest, float& timeToTod,
+                                           float distanceToDest, const atools::fs::perf::AircraftPerf& perf,
+                                           float aircraftFuelFlowLbs, float aircraftFuelFlowGal,
+                                           float aircraftGroundSpeed, int activeLeg) const
+{
+  // otherwise estimated using aircraft fuel flow
+  bool fuelCalculated = false;
+
+  if(distanceToDest >= 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
+  {
+    if(!(getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE))
+      // Bail out if TOD is not valid - means whole profile is not valid
+      return false;
+
+    // Distance from aircraft to TOD
+    float curDistToTod = distanceToDest - getTopOfDescentFromDestination();
+
+    // Need fuel flow and speed to calculate fuel and time
+    if(isValidProfile() && perf.isFuelFlowValid() && perf.isSpeedValid())
+    {
+      // Calculate values based on profile data ======================================
+      if(activeLeg != map::INVALID_INDEX_VALUE)
+      {
+        const RouteAltitudeLeg& leg = at(activeLeg);
+
+        // Calculate time and fuel to destination ============================================
+        // Fuel from end of leg to destination
+        float distFromDeparture = getTotalDistance() - distanceToDest;
+        float fuelToDest = 0.f;
+        // calulate fuel and time from this leg
+        leg.getFuelAndTimeFromDistToDestination(fuelToDest, timeToDest, distFromDeparture);
+
+        // Convert units
+        if(perf.useFuelAsVolume())
+        {
+          fuelLbsToDest = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToDest);
+          fuelGalToDest = fuelToDest;
+        }
+        else
+        {
+          fuelLbsToDest = fuelToDest;
+          fuelGalToDest = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToDest);
+        }
+
+        // Calculate time and fuel to TOD ============================================
+        float fuelToTod = 0.f;
+        int todIdx = getTopOfDescentLegIndex();
+        if(curDistToTod > 0.f && todIdx != map::INVALID_INDEX_VALUE)
+        {
+          // Calculate fuel and time from TOD to destination
+          leg.getFuelAndTimeFromDistToDestination(fuelToTod, timeToTod, distFromDeparture);
+
+          // Calculate fuel and time from aircraft to TOD
+          fuelToTod = fuelToDest - fuelToTod;
+          timeToTod = timeToDest - timeToTod;
+
+          if(perf.useFuelAsVolume())
+          {
+            fuelLbsToTod = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToTod);
+            fuelGalToTod = fuelToTod;
+          }
+          else
+          {
+            fuelLbsToTod = fuelToTod;
+            fuelGalToTod = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToTod);
+          }
+        }
+        else
+        {
+          fuelLbsToTod = map::INVALID_WEIGHT_VALUE;
+          fuelGalToTod = map::INVALID_VOLUME_VALUE;
+          timeToTod = map::INVALID_TIME_VALUE;
+        }
+      }
+      fuelCalculated = true;
+    }
+    else if(aircraftFuelFlowLbs > 0.01f && aircraftGroundSpeed > map::MIN_GROUND_SPEED)
+    {
+      // No valid profile - calculate values based on aircraft ======================================
+      // Use classic calculation based on actual consumption values ==================
+      fuelLbsToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowLbs;
+      fuelGalToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowGal;
+      timeToDest = distanceToDest / aircraftGroundSpeed;
+
+      // Calculate time and fuel to TOD ============================================
+      if(curDistToTod > 0.f)
+      {
+        timeToTod = curDistToTod / aircraftGroundSpeed;
+
+        if(perf.useFuelAsVolume())
+        {
+          fuelLbsToTod = fuelLbsToDest - atools::geo::fromGalToLbs(perf.isJetFuel(), descentFuel);
+          fuelGalToTod = fuelGalToDest - descentFuel;
+        }
+        else
+        {
+          fuelLbsToTod = fuelLbsToDest - descentFuel;
+          fuelGalToTod = fuelGalToDest - atools::geo::fromLbsToGal(perf.isJetFuel(), descentFuel);
+        }
+      }
+      fuelCalculated = false;
+    }
+  }
+  return fuelCalculated;
 }
 
 void RouteAltitude::adjustAltitudeForRestriction(RouteAltitudeLeg& leg) const
@@ -625,7 +749,6 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   descentRateWindFtPerNm = perf.getDescentVertSpeed() * 60.f / descentSpeedWindCorrected;
 
   cruiseAltitide = cruiseAltitudeFt;
-  affectedByWind = false;
   calculate();
 
   if(validProfile)
@@ -653,8 +776,6 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
       {
         calculateTrip(perf);
 
-        affectedByWind = true;
-
         // Do a third iteration if difference in average climb or descent exceeds 30 knots ============================
         if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 30.f) ||
            atools::almostNotEqual(descentRateWindFtPerNm, perf.getDescentSpeed(), 30.f))
@@ -674,6 +795,8 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   qDebug() << "distanceTopOfClimb" << distanceTopOfClimb << "distanceTopOfDescent" << distanceTopOfDescent;
   qDebug() << "tripFuel" << tripFuel << "alternateFuel" << alternateFuel << "travelTime" << travelTime
            << "averageGroundSpeed" << averageGroundSpeed;
+  qDebug() << "climbFuel" << climbFuel << "cruiseFuel" << cruiseFuel << "descentFuel" << descentFuel;
+  qDebug() << "climbTime" << climbTime << "cruiseTime" << cruiseTime << "descentTime" << descentTime;
   qDebug() << "legIndexTopOfClimb" << legIndexTopOfClimb << "legIndexTopOfDescent" << legIndexTopOfDescent;
   qDebug() << "validProfile" << validProfile << "unflyableLegs" << unflyableLegs;
   qDebug() << "climbRateWindFtPerNm" << climbRateWindFtPerNm << "descentRateWindFtPerNm" << descentRateWindFtPerNm
@@ -1167,9 +1290,9 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
 
   WindReporter *windReporter = NavApp::getWindReporter();
 
+  climbFuel = cruiseFuel = descentFuel = climbTime = cruiseTime = descentTime = tripFuel = alternateFuel = 0.f;
+
   travelTime = 0.f;
-  tripFuel = 0.f;
-  alternateFuel = 0.f;
   unflyableLegs = false;
   averageGroundSpeed = windDirectionAvg = windSpeedAvg =
     windHeadAvg = windHeadClimb = windHeadCruise = windHeadDescent =
@@ -1198,15 +1321,16 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
     {
       // Alternate legs are calculated from destination airport - use cruise if alternate speed is not set
       leg.averageSpeedKts = perf.getAlternateSpeed() > 1.f ? perf.getAlternateSpeed() : perf.getCruiseSpeed();
-      leg.travelTimeHours = legDist / leg.averageSpeedKts;
-      leg.fuel = (perf.getAlternateFuelFlow() > 0.f ? perf.getAlternateFuelFlow() : perf.getCruiseFuelFlow()) *
-                 leg.travelTimeHours;
+      leg.cruiseTime = legDist / leg.averageSpeedKts;
+      leg.cruiseFuel = (perf.getAlternateFuelFlow() > 0.f ?
+                        perf.getAlternateFuelFlow() :
+                        perf.getCruiseFuelFlow()) * leg.cruiseTime;
     }
     else
     {
       // Beginning and end of this leg
-      float startDist = leg.getDistanceFromStart() - leg.getDistanceTo();
-      float endDist = leg.getDistanceFromStart();
+      float startDistLeg = leg.getDistanceFromStart() - leg.getDistanceTo();
+      float endDistLeg = leg.getDistanceFromStart();
 
       float climbDist = 0.f, cruiseDist = 0.f, descentDist = 0.f;
       float climbSpeed = 0.f, cruiseSpeed = 0.f, descentSpeed = 0.f;
@@ -1215,25 +1339,25 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       // Check if leg covers TOC and/or TOD =================================================
       // Calculate wind, distance and averate speed (TAS) for this leg
       // Wind is interpolated by altitude
-      if(endDist < tocDist)
+      if(endDistLeg < tocDist)
       {
         // All climb before TOC ==========================
         climbDist = legDist;
         climbWind = windReporter->getWindForLineStringRoute(leg.getLineString());
         climbSpeed = perf.getClimbSpeed();
       }
-      else if(startDist > todDist)
+      else if(startDistLeg > todDist)
       {
         // All descent after TOD ==========================
         descentDist = legDist;
         descentWind = windReporter->getWindForLineStringRoute(leg.getLineString());
         descentSpeed = perf.getDescentSpeed();
       }
-      else if(startDist < tocDist && endDist > todDist)
+      else if(startDistLeg < tocDist && endDistLeg > todDist)
       {
         // Crosses TOC *and* TOD  - phases climb, cruise and descent ==========================
-        // start to TOC ===================
-        climbDist = tocDist - startDist;
+        // Climb to TOC ===================
+        climbDist = tocDist - startDistLeg;
         climbWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
         climbSpeed = perf.getClimbSpeed();
 
@@ -1243,29 +1367,32 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
         cruiseSpeed = perf.getCruiseSpeed();
 
         // TOD to destination ===================
-        descentDist = endDist - todDist;
+        descentDist = endDistLeg - todDist;
         descentWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
         descentSpeed = perf.getDescentSpeed();
       }
-      else if(startDist < tocDist && endDist < todDist)
+      else if(startDistLeg < tocDist && endDistLeg < todDist)
       {
         // Crosses TOC and goes into cruise ==========================
-        climbDist = tocDist - startDist;
+        climbDist = tocDist - startDistLeg;
         climbWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
         climbSpeed = perf.getClimbSpeed();
 
-        cruiseDist = endDist - tocDist;
+        // Cruise to TOD ==========================
+        cruiseDist = endDistLeg - tocDist;
         cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
         cruiseSpeed = perf.getCruiseSpeed();
       }
-      else if(startDist > tocDist && endDist > todDist)
+      else if(startDistLeg > tocDist && endDistLeg > todDist)
       {
         // Goes from cruise to and after TOD ==========================
-        cruiseDist = todDist - startDist;
+        // Cruise to TOD ==========================
+        cruiseDist = todDist - startDistLeg;
         cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
         cruiseSpeed = perf.getCruiseSpeed();
 
-        descentDist = endDist - todDist;
+        // TOD to destination ===================
+        descentDist = endDistLeg - todDist;
         descentWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
         descentSpeed = perf.getDescentSpeed();
       }
@@ -1330,9 +1457,9 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
         qWarning() << Q_FUNC_INFO << "Distance differs" << (climbDist + cruiseDist + descentDist) << legDist;
 
       // Calculate leg time ================================================================
-      float climbTime = climbSpeed > 0.f ? (climbDist / climbSpeed) : 0.f;
-      float cruiseTime = cruiseSpeed > 0.f ? (cruiseDist / cruiseSpeed) : 0.f;
-      float descentTime = descentSpeed > 0.f ? (descentDist / descentSpeed) : 0.f;
+      leg.climbTime = climbSpeed > 0.f ? (climbDist / climbSpeed) : 0.f;
+      leg.cruiseTime = cruiseSpeed > 0.f ? (cruiseDist / cruiseSpeed) : 0.f;
+      leg.descentTime = descentSpeed > 0.f ? (descentDist / descentSpeed) : 0.f;
 
       // Assign values to leg =========================================================
       if(!leg.isMissed() && !leg.isAlternate() && legDist < map::INVALID_DISTANCE_VALUE)
@@ -1364,20 +1491,28 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
                            cruiseHeadWind * cruiseDist +
                            descentHeadWind * descentDist) / legDist;
 
-        // Sum up fuel for phases ============
-        leg.fuel = perf.getClimbFuelFlow() * climbTime +
-                   perf.getCruiseFuelFlow() * cruiseTime +
-                   perf.getDescentFuelFlow() * descentTime;
-
-        // Sum up time for phases ===============
-        leg.travelTimeHours = climbTime + cruiseTime + descentTime;
+        // Sum up fuel for phases for this leg ============
+        leg.climbFuel = perf.getClimbFuelFlow() * leg.climbTime;
+        leg.cruiseFuel = perf.getCruiseFuelFlow() * leg.cruiseTime;
+        leg.descentFuel = perf.getDescentFuelFlow() * leg.descentTime;
 
         atools::grib::Wind wind = windReporter->getWindForPosRoute(leg.getLineString().getPos2());
         leg.windSpeed = wind.speed;
         leg.windDirection = wind.dir;
 
-        travelTime += leg.travelTimeHours;
-        tripFuel += leg.fuel;
+        // Summarize trip values ====================
+        travelTime += leg.getTime();
+        tripFuel += leg.getFuel();
+
+        // Summarize fuel for each phase ====================
+        climbFuel += perf.getClimbFuelFlow() * leg.climbTime;
+        cruiseFuel += perf.getCruiseFuelFlow() * leg.cruiseTime;
+        descentFuel += perf.getDescentFuelFlow() * leg.descentTime;
+
+        // Summarize time for each phase ====================
+        climbTime += leg.climbTime;
+        cruiseTime += leg.cruiseTime;
+        descentTime += leg.descentTime;
       } // if(!leg.isMissed() && !leg.isAlternate() && legDist < map::INVALID_DISTANCE_VALUE)
     } // if(leg.isAlternate()) ... else
   } // for(int i = 0; i < size(); i++)
@@ -1391,14 +1526,37 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   cruiseSpeedWindCorrected /= todDist - tocDist;
   descentSpeedWindCorrected /= route->getTotalDistance() - todDist;
 
-  // Calculate alternate fuel  =====================================
-  // Fuel to the farthest alternate
+  // Calculate alternate fuel and time =====================================
   alternateFuel = 0.f;
   int offset = route->getAlternateLegsOffset();
   if(offset != map::INVALID_INDEX_VALUE)
   {
     for(int idx = offset; idx < offset + route->getNumAlternateLegs(); idx++)
+    {
+      // Fuel to the farthest alternate
       alternateFuel = std::max(at(idx).getFuel(), alternateFuel);
+
+      RouteAltitudeLeg& leg = (*this)[idx];
+      leg.fuelToDest = tripFuel + leg.getFuel();
+      leg.timeToDest = travelTime + leg.getTime();
+    }
+  }
+
+  // Calculate fuel and time to destination for each leg ===================================
+  float fuelToDest = tripFuel;
+  float timeToDest = travelTime;
+  for(int i = 0; i < size(); i++)
+  {
+    RouteAltitudeLeg& leg = (*this)[i];
+    if(leg.isMissed() || leg.isAlternate())
+      break;
+
+    // Fuel and time to destination from start point
+    leg.fuelToDest = fuelToDest;
+    fuelToDest -= leg.getFuel();
+
+    leg.timeToDest = timeToDest;
+    timeToDest -= leg.getTime();
   }
 
   // Calculate average values for all =====================================
@@ -1450,6 +1608,6 @@ QDebug operator<<(QDebug out, const RouteAltitude& obj)
       << endl;
 
   for(int i = 0; i < obj.size(); i++)
-    out << i << obj.at(i) << endl;
+    out << "++++++++++++++++++++++" << endl << i << obj.at(i) << endl;
   return out;
 }

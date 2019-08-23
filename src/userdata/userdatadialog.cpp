@@ -121,11 +121,15 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
           this, &UserdataDialog::resetClicked);
   connect(ui->buttonBoxUserdata, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
+  atools::gui::WidgetState(lnm::TRAFFIC_PATTERN_DIALOG).restore(this);
+
   updateWidgets();
 }
 
 UserdataDialog::~UserdataDialog()
 {
+  atools::gui::WidgetState(lnm::USERDATA_EDIT_ADD_DIALOG).save(this);
+
   delete units;
   delete ui;
   delete record;

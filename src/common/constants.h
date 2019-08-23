@@ -209,8 +209,13 @@ const QLatin1Literal USERDATA_EXPORT_DIALOG("UserdataExport/Widget");
 /* Edit dialog */
 const QLatin1Literal USERDATA_EDIT_ADD_DIALOG("UserdataDialog/Widget");
 
+const QLatin1Literal ROUTE_USERWAYPOINT_DIALOG("Route/UserWaypointDialog");
+
+const QLatin1Literal TIME_DIALOG("Map/TimeDialog");
+
 /* Flightplan export dialog for online formats */
 const QLatin1Literal FLIGHTPLAN_ONLINE_EXPORT("Route/FlightplanOnlineExport");
+const QLatin1Literal ROUTE_PARKING_DIALOG("Route/ParkingDialog");
 
 const QLatin1Literal LOGDATA_EDIT_ADD_DIALOG("LogdataDialog/Widget");
 const QLatin1Literal LOGDATA_STATS_DIALOG("LogdataStatsDialog/Widget");

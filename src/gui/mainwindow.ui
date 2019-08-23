@@ -239,6 +239,7 @@
      <string>Flight &amp;Plan</string>
     </property>
     <addaction name="actionShortcutFlightPlan"/>
+    <addaction name="actionShortcutAircraftPerformance"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSelectParking"/>
     <addaction name="actionRouteEditMode"/>
@@ -444,8 +445,6 @@
      </property>
      <addaction name="actionAircraftPerformanceClearMenu"/>
     </widget>
-    <addaction name="actionShortcutAircraftPerformance"/>
-    <addaction name="separator"/>
     <addaction name="actionAircraftPerformanceNew"/>
     <addaction name="actionAircraftPerformanceLoad"/>
     <addaction name="actionAircraftPerformanceSave"/>

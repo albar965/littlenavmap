@@ -72,6 +72,8 @@ ImageExportDialog::ImageExportDialog(QWidget *parent, const QString& titleParam,
 
 ImageExportDialog::~ImageExportDialog()
 {
+  atools::gui::WidgetState(optionPrefix).save(this);
+
   delete ui;
 }
 
@@ -123,7 +125,6 @@ void ImageExportDialog::saveState()
     ui->spinBoxHeight,
     ui->checkBoxAvoidBlurred
   });
-
 }
 
 void ImageExportDialog::restoreState()
