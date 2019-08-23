@@ -10855,6 +10855,17 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Return</string>
    </property>
   </action>
+  <action name="actionRouteVisibleColumns">
+   <property name="text">
+    <string>&amp;Select visible Columns</string>
+   </property>
+   <property name="toolTip">
+    <string>Hide or show columns in table</string>
+   </property>
+   <property name="statusTip">
+    <string>Hide or show columns in table</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

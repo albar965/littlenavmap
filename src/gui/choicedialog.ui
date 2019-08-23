@@ -19,7 +19,11 @@
      <property name="title">
       <string/>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayoutGroupBox"/>
+     <layout class="QVBoxLayout" name="verticalLayoutGroupBox">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+     </layout>
     </widget>
    </item>
    <item>

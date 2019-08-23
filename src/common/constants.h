@@ -178,6 +178,7 @@ const QLatin1Literal IMAGE_EXPORT_DIALOG("Map/ImageExportDialog");
 const QLatin1Literal IMAGE_EXPORT_AVITAB_DIALOG("Map/ImageExportDialogAviTab");
 
 const QLatin1Literal RESET_FOR_NEW_FLIGHT_DIALOG("Route/ResetAllDialog");
+const QLatin1Literal ROUTE_FLIGHTPLAN_COLUMS_DIALOG("Route/FlightPlanTableColumns");
 
 const QLatin1Literal PROFILE_WINDOW_OPTIONS("Profile/Options");
 

@@ -409,6 +409,7 @@ private:
   void activateLegTriggered();
   void fontChanged();
 
+  void visibleColumnsTriggered();
   void contextMenu(const QPoint& pos);
 
   void updateUnits();
@@ -462,7 +463,7 @@ private:
   QTimer routeAltDelayTimer;
 
   // Route table colum headings
-  QStringList routeColumns;
+  QStringList routeColumns, routeColumnTooltips;
   UnitStringTool *units = nullptr;
 };
 

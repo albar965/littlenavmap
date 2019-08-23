@@ -63,6 +63,7 @@
 #include "perf/aircraftperfcontroller.h"
 #include "fs/sc/simconnectdata.h"
 #include "gui/tabwidgethandler.h"
+#include "gui/choicedialog.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -87,6 +88,8 @@ enum RouteColumns
   RANGE,
   COURSE,
   DIRECT,
+  COURSETRUE,
+  DIRECTTRUE,
   DIST,
   REMAINING_DISTANCE,
   LEG_TIME,
@@ -122,6 +125,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("Range\n%dist%"),
                                  QObject::tr("Course\n°M"),
                                  QObject::tr("Direct\n°M"),
+                                 QObject::tr("Course\n°T"),
+                                 QObject::tr("Direct\n°T"),
                                  QObject::tr("Distance\n%dist%"),
                                  QObject::tr("Remaining\n%dist%"),
                                  QObject::tr("Leg Time\nhh:mm"),
@@ -129,6 +134,36 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("Fuel Rem.\n%weight%"),
                                  QObject::tr("Fuel Rem.\n%volume%"),
                                  QObject::tr("Remarks")});
+
+  routeColumnTooltips = QList<QString>(
+  {
+    QObject::tr("ICAO ident of the navaid or airport."),
+    QObject::tr("Two letter region code of a navaid."),
+    QObject::tr("Name of airport or radio navaid."),
+    QObject::tr("Either SID, SID transition, STAR, STAR transition, transition, "
+                "approach or missed plus the name of the procedure."),
+    QObject::tr("Contains the airway name for en route legs or procedure instruction."),
+    QObject::tr("Either minimum altitude for en route airway segment, "
+                "procedure altitude restriction or procedure speed limit."),
+    QObject::tr("Type of a radio navaid. Shows ILS or LOC for ILS or\n"
+                "localizer approaches on the last runway leg."),
+    QObject::tr("Frequency or channel of a radio navaid.\n"
+                "Also shows ILS or localizer frequency for corresponding approaches on the last runway leg."),
+    QObject::tr("Range of a radio navaid if available."),
+    QObject::tr("Magnetic start course of the great circle route connecting the two waypoints of the leg."),
+    QObject::tr("Magnetic constant course of the rhumb line connecting two waypoints of a leg."),
+    QObject::tr("True start course of the great circle route connecting the two waypoints of the leg."),
+    QObject::tr("True constant course of the rhumb line connecting two waypoints of a leg."),
+    QObject::tr("Distance of the flight plan leg."),
+    QObject::tr("Remaining distance to destination airport or procedure end point."),
+    QObject::tr("Flying time for this leg.\nCalculated based on the selected aircraft performance profile."),
+    QObject::tr("Estimated time of arrival.\nCalculated based on the selected aircraft performance profile."),
+    QObject::tr("Fuel weight remaining at waypoint, once for volume and once for weight.\n"
+                "Calculated based on the aircraft performance profile."),
+    QObject::tr("Fuel volume remaining at waypoint, once for volume and once for weight.\n"
+                "Calculated based on the aircraft performance profile."),
+    QObject::tr("Turn instructions, flyover or related navaid for procedure legs.")
+  });
 
   flightplanIO = new atools::fs::pln::FlightplanIO();
 
@@ -254,6 +289,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::clearSelection);
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
+  connect(ui->actionRouteVisibleColumns, &QAction::triggered, this, &RouteController::visibleColumnsTriggered);
 }
 
 RouteController::~RouteController()
@@ -1835,6 +1871,28 @@ void RouteController::showOnMapMenu()
   }
 }
 
+void RouteController::visibleColumnsTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  ChoiceDialog dialog(mainWindow, QApplication::applicationName() + tr(" - Flight Plan Table"),
+                      tr("Select columns to show in flight plan table"),
+                      lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns");
+
+  QHeaderView *header = view->horizontalHeader();
+  for(int col = rc::FIRST_COLUMN; col <= rc::LAST_COLUMN; col++)
+    dialog.add(col, Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " "),
+               routeColumnTooltips.at(col),
+               !header->isSectionHidden(col));
+
+  if(dialog.exec() == QDialog::Accepted)
+  {
+    for(int col = rc::LAST_COLUMN; col >= rc::FIRST_COLUMN; col--)
+      header->setSectionHidden(col, !dialog.isChecked(col));
+    updateModelRouteTimeFuel();
+  }
+}
+
 void RouteController::activateLegTriggered()
 {
   QList<int> rows;
@@ -2137,6 +2195,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteResetView);
+  menu.addAction(ui->actionRouteVisibleColumns);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteSetMark);
@@ -2151,6 +2210,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   {
     if(action == ui->actionRouteResetView)
     {
+      for(int col = rc::FIRST_COLUMN; col <= rc::LAST_COLUMN; col++)
+        view->showColumn(col);
+
       // Reorder columns to match model order
       QHeaderView *header = view->horizontalHeader();
       for(int i = 0; i < header->count(); i++)
@@ -3537,6 +3599,10 @@ void RouteController::updateTableModel()
         itemRow[rc::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0));
       if(leg.getCourseToRhumbMag() < map::INVALID_COURSE_VALUE)
         itemRow[rc::DIRECT] = new QStandardItem(QLocale().toString(leg.getCourseToRhumbMag(), 'f', 0));
+      if(leg.getCourseToTrue() < map::INVALID_COURSE_VALUE)
+        itemRow[rc::COURSETRUE] = new QStandardItem(QLocale().toString(leg.getCourseToTrue(), 'f', 0));
+      if(leg.getCourseToRhumbTrue() < map::INVALID_COURSE_VALUE)
+        itemRow[rc::DIRECTTRUE] = new QStandardItem(QLocale().toString(leg.getCourseToRhumbTrue(), 'f', 0));
     }
 
     if(!afterArrivalAirport)
@@ -3576,6 +3642,8 @@ void RouteController::updateTableModel()
     itemRow[rc::DIST]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::COURSE]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::DIRECT]->setTextAlignment(Qt::AlignRight);
+    itemRow[rc::COURSETRUE]->setTextAlignment(Qt::AlignRight);
+    itemRow[rc::DIRECTTRUE]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::RANGE]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::FREQ]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::RESTRICTION]->setTextAlignment(Qt::AlignRight);
@@ -3636,10 +3704,12 @@ void RouteController::updateModelRouteTimeFuel()
     totalFuelLbsOrGal += perf.getExtraFuel() + perf.getReserveFuel();
   }
 
-  int widthLegTime = view->columnWidth(rc::LEG_TIME);
-  int widthEta = view->columnWidth(rc::ETA);
-  int widthFuelWeight = view->columnWidth(rc::FUEL_WEIGHT);
-  int widthFuelVol = view->columnWidth(rc::FUEL_VOLUME);
+  // Remember colum widths
+  QHeaderView *header = view->horizontalHeader();
+  int widthLegTime = header->isSectionHidden(rc::LEG_TIME) ? -1 : view->columnWidth(rc::LEG_TIME);
+  int widthEta = header->isSectionHidden(rc::ETA) ? -1 : view->columnWidth(rc::ETA);
+  int widthFuelWeight = header->isSectionHidden(rc::FUEL_WEIGHT) ? -1 : view->columnWidth(rc::FUEL_WEIGHT);
+  int widthFuelVol = header->isSectionHidden(rc::FUEL_VOLUME) ? -1 : view->columnWidth(rc::FUEL_VOLUME);
 
   for(int i = 0; i < route.size(); i++)
   {
@@ -3727,10 +3797,23 @@ void RouteController::updateModelRouteTimeFuel()
     row++;
   } // for(int i = 0; i < route.size(); i++)
 
-  view->setColumnWidth(rc::LEG_TIME, widthLegTime);
-  view->setColumnWidth(rc::ETA, widthEta);
-  view->setColumnWidth(rc::FUEL_WEIGHT, widthFuelWeight);
-  view->setColumnWidth(rc::FUEL_VOLUME, widthFuelVol);
+  // Set back column widths if visible - widget changes widths on setItem
+  if(widthLegTime > 0)
+    view->setColumnWidth(rc::LEG_TIME, widthLegTime);
+  else
+    header->hideSection(rc::LEG_TIME);
+  if(widthEta > 0)
+    view->setColumnWidth(rc::ETA, widthEta);
+  else
+    header->hideSection(rc::ETA);
+  if(widthFuelWeight > 0)
+    view->setColumnWidth(rc::FUEL_WEIGHT, widthFuelWeight);
+  else
+    header->hideSection(rc::FUEL_WEIGHT);
+  if(widthFuelVol > 0)
+    view->setColumnWidth(rc::FUEL_VOLUME, widthFuelVol);
+  else
+    header->hideSection(rc::FUEL_VOLUME);
 }
 
 void RouteController::disconnectedFromSimulator()

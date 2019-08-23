@@ -41,13 +41,16 @@ public:
   virtual ~ChoiceDialog() override;
 
   /* Add a checkbox with the given id, text and tooltip */
-  void add(int id, const QString& text, const QString& tooltip = QString());
+  void add(int id, const QString& text, const QString& tooltip = QString(), bool checked = false);
 
   /* Call after adding all buttons to restore button state */
   void restoreState();
 
   /* Get the ids of the checked checkboxes after calling exec */
   QVector<int> getCheckedIds() const;
+
+  /* true if box for id is checked */
+  bool isChecked(int id) const;
 
 private:
   QVector<std::pair<int, bool> > getCheckState() const;

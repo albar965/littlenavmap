@@ -59,12 +59,13 @@ ChoiceDialog::~ChoiceDialog()
   delete ui;
 }
 
-void ChoiceDialog::add(int id, const QString& text, const QString& tooltip)
+void ChoiceDialog::add(int id, const QString& text, const QString& tooltip, bool checked)
 {
   QCheckBox *checkBox = new QCheckBox(text, this);
   checkBox->setToolTip(tooltip);
   checkBox->setStatusTip(tooltip);
   checkBox->setProperty(ID_PROPERTY, id);
+  checkBox->setChecked(checked);
   index.insert(id, checkBox);
 
   // Add widget before the button box
@@ -91,6 +92,11 @@ QVector<int> ChoiceDialog::getCheckedIds() const
       ids.append(id);
   }
   return ids;
+}
+
+bool ChoiceDialog::isChecked(int id) const
+{
+  return index.value(id)->isChecked();
 }
 
 void ChoiceDialog::buttonBoxClicked(QAbstractButton *button)
