@@ -14,7 +14,7 @@
    height="22"
    width="22"
    version="1.0"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="newroutefromstring.svg">
   <metadata
      id="metadata19">
@@ -41,13 +41,14 @@
      inkscape:window-height="963"
      id="namedview17"
      showgrid="false"
-     inkscape:zoom="15.170655"
-     inkscape:cx="-7.5024659"
-     inkscape:cy="13.516652"
+     inkscape:zoom="7.5853275"
+     inkscape:cx="-34.11843"
+     inkscape:cy="23.905641"
      inkscape:window-x="48"
      inkscape:window-y="24"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="svg2"
+     inkscape:snap-global="false" />
   <defs
      id="defs4">
     <linearGradient
@@ -191,11 +192,16 @@
   <path
      inkscape:connector-curvature="0"
      id="path8101-3"
-     d="M 9.8940741,10.907434 Z"
+     d="M 8.9712399,10.907434 Z"
      style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.1615385px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
   <path
      inkscape:connector-curvature="0"
-     id="path2262"
-     style="color:#000000;fill:url(#radialGradient3137);stroke:url(#linearGradient3139);stroke-width:0.72096556;stroke-linecap:round;stroke-linejoin:round"
-     d="m 14.485327,14.801897 0,-2.941865 3.658127,0 0,2.941865 2.931842,0 0,3.658127 -2.931842,0 0,2.931842 -3.658127,0 0,-2.931842 -2.931842,0 0,-3.658127 2.931842,0 z" />
+     id="path2262-1-3"
+     style="color:#000000;fill:#7a7cfd;fill-opacity:1;stroke:#010000;stroke-width:1.44986749;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 12.997415,13.088426 V 9.422465 h 4.558519 v 3.665961 h 3.653469 v 4.558519 h -3.653469 v 3.65347 h -4.558519 v -3.65347 H 9.3439418 v -4.558519 z" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path2272-8-6"
+     style="opacity:0.4;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.91170388;stroke-opacity:1"
+     d="m 13.909118,14.000129 v -3.646814 h 2.735111 v 3.646814 h 3.66505 v 2.735112 h -3.66505 v 3.646816 h -2.735111 v -3.646816 h -3.646816 v -2.735112 z" />
 </svg>
