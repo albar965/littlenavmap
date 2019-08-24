@@ -309,12 +309,14 @@ bool RouteAltitude::calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalT
         }
 
         // Calculate time and fuel to TOD ============================================
-        float fuelToTod = 0.f;
         int todIdx = getTopOfDescentLegIndex();
-        if(curDistToTod > 0.f && todIdx != map::INVALID_INDEX_VALUE)
+        float todDistanceFromDeparture = getTopOfDescentDistance();
+        if(curDistToTod > 0.f && todIdx != map::INVALID_INDEX_VALUE &&
+           todDistanceFromDeparture < map::INVALID_DISTANCE_VALUE)
         {
+          float fuelToTod = 0.f;
           // Calculate fuel and time from TOD to destination
-          leg.getFuelAndTimeFromDistToDestination(fuelToTod, timeToTod, distFromDeparture);
+          at(todIdx).getFuelAndTimeFromDistToDestination(fuelToTod, timeToTod, todDistanceFromDeparture);
 
           // Calculate fuel and time from aircraft to TOD
           fuelToTod = fuelToDest - fuelToTod;

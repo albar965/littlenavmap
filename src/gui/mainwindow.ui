@@ -4405,7 +4405,7 @@
        </widget>
        <widget class="QWidget" name="tabAircraftPerformance">
         <attribute name="title">
-         <string>Trip Report</string>
+         <string>Fuel Report</string>
         </attribute>
         <attribute name="toolTip">
          <string>Fuel Planning and Aircraft Performance</string>
@@ -10171,7 +10171,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
   </action>
   <action name="actionShortcutAircraftPerformance">
    <property name="text">
-    <string>&amp;Trip Report</string>
+    <string>&amp;Fuel Report</string>
    </property>
    <property name="toolTip">
     <string>Show Aircraft Performance and Fuel Planning</string>

@@ -3105,6 +3105,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                                                                    timeToDest, timeToTod,
                                                                    distToDestNm, activeLeg);
 
+      if(!fuelCalculated)
+        html.warning(tr("Invalid aircraft performance. Fuel and time estimated."));
+
       html.table();
       dateAndTime(userAircaft, html);
       html.tableEnd();
@@ -3189,13 +3192,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           QStringList todTexts;
           todTexts.append(Unit::distNm(distanceToTod));
 
+          if(!less && timeToTod < map::INVALID_TIME_VALUE)
+            todTexts.append(formatter::formatMinutesHoursLong(timeToTod));
+
           if(todTexts.size() == 1)
             html.row2(tr("Distance:"), todTexts.first());
           else
             html.row2(tr("Distance and Time:"), todTexts.join(tr(", ")));
-
-          if(!less && timeToTod < map::INVALID_TIME_VALUE)
-            todTexts.append(formatter::formatMinutesHoursLong(timeToTod));
 
           if(!less && fuelToTodLbs < INVALID_WEIGHT_VALUE && fuelToTodGal < INVALID_VOLUME_VALUE)
           {

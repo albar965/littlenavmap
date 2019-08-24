@@ -625,13 +625,22 @@ void AircraftPerfController::updateReport()
     html.hr().pre("Climb " + Unit::speedKts(altitudeLegs.getClimbHeadWind()) +
                   ", cruise " + Unit::speedKts(altitudeLegs.getCruiseHeadWind()) +
                   ", descent " + Unit::speedKts(altitudeLegs.getDescentHeadWind()) +
-                  ", all " + Unit::speedKts(altitudeLegs.getHeadWindAverage()) +
-                  "\nCorrected: climb " + Unit::speedKts(altitudeLegs.getClimbSpeedWindCorrected()) +
+                  ", all " + Unit::speedKts(altitudeLegs.getHeadWindAverage()) + "\n" +
+
+                  "Corrected: climb " + Unit::speedKts(altitudeLegs.getClimbSpeedWindCorrected()) +
                   ", cruise " + Unit::speedKts(altitudeLegs.getCruiseSpeedWindCorrected()) +
-                  ", descent " + Unit::speedKts(altitudeLegs.getDescentSpeedWindCorrected()) +
-                  "\nFuel: climb " + QString::number(altitudeLegs.getClimbFuel(), 'f', 1) +
+                  ", descent " + Unit::speedKts(altitudeLegs.getDescentSpeedWindCorrected()) + "\n" +
+
+                  "Fuel: climb " + QString::number(altitudeLegs.getClimbFuel(), 'f', 1) +
                   ", cruise " + QString::number(altitudeLegs.getCruiseFuel(), 'f', 1) +
-                  ", descent " + QString::number(altitudeLegs.getDescentFuel(), 'f', 1));
+                  ", descent " + QString::number(altitudeLegs.getDescentFuel(), 'f', 1) + "\n" +
+
+                  "Time: climb " + QString::number(altitudeLegs.getClimbTime(), 'f', 2) + " (" +
+                  formatter::formatMinutesHours(altitudeLegs.getClimbTime()) + ")" +
+                  ", cruise " + QString::number(altitudeLegs.getCruiseTime(), 'f', 2) + " (" +
+                  formatter::formatMinutesHours(altitudeLegs.getCruiseTime()) + ")" +
+                  ", descent " + QString::number(altitudeLegs.getDescentTime(), 'f', 2) + " (" +
+                  formatter::formatMinutesHours(altitudeLegs.getDescentTime()) + ")");
 #endif
 
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftPerformanceReport, html.getHtml(),
