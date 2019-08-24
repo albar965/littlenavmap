@@ -350,6 +350,9 @@ void UserdataDialog::dialogToRecord()
   if(editMode != ud::EDIT_MULTIPLE)
   {
     atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditUserdataLatLon->text());
+    if(OptionData::instance().getUnitCoords() == opts::COORDS_LONX_LATY)
+      // Parsing uses lat/lon - swap for lon/lat
+      pos.swapLonXLatY();
     record->setValue("lonx", pos.getLonX());
     record->setValue("laty", pos.getLatY());
   }

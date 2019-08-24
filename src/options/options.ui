@@ -357,7 +357,7 @@ logbook and other search tabs</string>
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
              <property name="toolTip">
-              <string>If this option is checked: Little Navmap will propose a new name 
+              <string>If this option is checked: Little Navmap will propose a new name
 on &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
 New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
              </property>
@@ -764,7 +764,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsMapTooltipNavaid">
              <property name="toolTip">
-              <string>Show tooltips for waypoints, VOR, NDB, airways, 
+              <string>Show tooltips for waypoints, VOR, NDB, airways,
 userpoints and logbook entries when hovering the cursor over the map</string>
              </property>
              <property name="text">
@@ -841,7 +841,7 @@ userpoints and logbook entries when hovering the cursor over the map</string>
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsMapClickNavaid">
              <property name="toolTip">
-              <string>Show information for waypoints, VOR, NDB, airways, 
+              <string>Show information for waypoints, VOR, NDB, airways,
 userpoints and logbook entries when clicking on the map</string>
              </property>
              <property name="text">
@@ -2803,7 +2803,7 @@ user airspace filename has to match the callsign of the center.</string>
         <item row="5" column="2">
          <widget class="QCheckBox" name="checkBoxOptionsUnitFuelOther">
           <property name="toolTip">
-           <string>Shows other fuel units (lbs/gal or kg/liter) as small text in 
+           <string>Shows other fuel units (lbs/gal or kg/liter) as small text in
 information displays besides selected units.</string>
           </property>
           <property name="text">
@@ -2837,6 +2837,10 @@ information displays besides selected units.</string>
         </item>
         <item row="6" column="1">
          <widget class="QComboBox" name="comboBoxOptionsUnitCoords">
+          <property name="toolTip">
+           <string>The formats latitude/longitude and longitude/latitude with sign
+also define the order when reading coordinates in the user interface if enabled.</string>
+          </property>
           <item>
            <property name="text">
             <string>Degree, Minutes, Seconds</string>
@@ -2850,6 +2854,16 @@ information displays besides selected units.</string>
           <item>
            <property name="text">
             <string>Degree, Decimal Minutes</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Latitude and Longitude with sign</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Longitude and Latitude with sign</string>
            </property>
           </item>
          </widget>
@@ -2918,7 +2932,7 @@ information displays besides selected units.</string>
         <item row="9" column="0" colspan="3">
          <widget class="QCheckBox" name="checkBoxOptionsUnitTrueCourse">
           <property name="toolTip">
-           <string>Shows true course/heading as small text in 
+           <string>Shows true course/heading as small text in
 information displays and tooltips besides magnetic course.
 Only magnetic course is shown if both values are equal.
 Also affects labels at holds and traffic patterns.</string>
@@ -3632,7 +3646,7 @@ Garmin GTN and GNS to avoid locked waypoints</string>
             <widget class="QCheckBox" name="checkBoxOptionsRouteDeclination">
              <property name="toolTip">
               <string>Will calculate magnetic course based on environment and ignore the VOR declination value if checked.
-Little Navmap will use the station declination when calculating a course to a VOR 
+Little Navmap will use the station declination when calculating a course to a VOR
 which can result in wrong course values if the calibration of a VOR is very old.
 Check this if prefer to fly by GPS.</string>
              </property>
@@ -4897,7 +4911,7 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
            <item row="2" column="0">
             <widget class="QLabel" name="labelCacheUserAirspaceExtensions">
              <property name="toolTip">
-              <string>Files with these extensions will be loaded as airspaces. 
+              <string>Files with these extensions will be loaded as airspaces.
 Currently only OpenAir is supported (*.txt). </string>
              </property>
              <property name="text">

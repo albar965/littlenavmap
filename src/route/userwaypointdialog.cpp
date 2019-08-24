@@ -69,7 +69,11 @@ QString UserWaypointDialog::getName() const
 
 atools::geo::Pos UserWaypointDialog::getPos() const
 {
-  return atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
+  atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
+  if(OptionData::instance().getUnitCoords() == opts::COORDS_LONX_LATY)
+    // Parsing uses lat/lon - swap for lon/lat
+    pos.swapLonXLatY();
+  return pos;
 }
 
 void UserWaypointDialog::coordsEdited(const QString& text)

@@ -190,9 +190,11 @@ enum UnitVertSpeed
 /* comboBoxOptionsUnitCoords */
 enum UnitCoords
 {
-  COORDS_DMS,
-  COORDS_DEC,
-  COORDS_DM
+  COORDS_DMS, /* Degree, minute and seconds */
+  COORDS_DEC, /* Decimal degree */
+  COORDS_DM, /* Degree and minutes */
+  COORDS_LATY_LONX, /* lat/lon with sign */
+  COORDS_LONX_LATY /* lon/lat with sign */
 };
 
 /* comboBoxOptionsUnitVertFuel */

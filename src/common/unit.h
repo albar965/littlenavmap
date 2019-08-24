@@ -153,8 +153,13 @@ public:
 
   /* Coordinates: Returns either decimal or sexagesimal notation */
   static QString coords(const atools::geo::Pos& pos);
+  static QString coords(const atools::geo::Pos& pos, opts::UnitCoords coordUnit);
+
   static QString coordsLatY(const atools::geo::Pos& pos);
+  static QString coordsLatY(const atools::geo::Pos& pos, opts::UnitCoords coordUnit);
+
   static QString coordsLonX(const atools::geo::Pos& pos);
+  static QString coordsLonX(const atools::geo::Pos& pos, opts::UnitCoords coordUnit);
 
   /* Program options changed - update units */
   static void optionsChanged();
@@ -219,6 +224,11 @@ public:
   static opts::UnitVertSpeed getUnitVertSpeed()
   {
     return unitVertSpeed;
+  }
+
+  static opts::UnitCoords getUnitCoords()
+  {
+    return unitCoords;
   }
 
   /* ==================================================================

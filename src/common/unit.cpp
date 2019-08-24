@@ -578,19 +578,38 @@ float Unit::ffKgLiterF(float value, bool fuelAsVolume)
 
 QString Unit::coords(const atools::geo::Pos& pos)
 {
-  if(!pos.isValid())
-    return QObject::tr("Invalid");
-
-  return coordsLatY(pos) + " " + coordsLonX(pos);
+  return coords(pos, unitCoords);
 }
 
-QString Unit::coordsLonX(const atools::geo::Pos& pos)
+QString Unit::coords(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
 {
   if(!pos.isValid())
     return QObject::tr("Invalid");
 
-  switch(unitCoords)
+  if(coordUnit == opts::COORDS_LATY_LONX)
+    return tr("%1 %2").arg(QLocale().toString(pos.getLatY(), 'f', 5)).arg(QLocale().toString(pos.getLonX(), 'f', 5));
+  else if(coordUnit == opts::COORDS_LONX_LATY)
+    return tr("%1 %2").arg(QLocale().toString(pos.getLonX(), 'f', 5)).arg(QLocale().toString(pos.getLatY(), 'f', 5));
+  else
+    return tr("%1 %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
+}
+
+QString Unit::coordsLonX(const atools::geo::Pos& pos)
+{
+  return coordsLonX(pos, unitCoords);
+}
+
+QString Unit::coordsLonX(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
+{
+  if(!pos.isValid())
+    return QObject::tr("Invalid");
+
+  switch(coordUnit)
   {
+    case opts::COORDS_LATY_LONX:
+    case opts::COORDS_LONX_LATY:
+      return QLocale().toString(pos.getLonX(), 'f', 5);
+
     case opts::COORDS_DMS:
       return COORDS_DMS_FORMAT_LONX.
              arg(atools::absInt(pos.getLonXDeg())).
@@ -614,11 +633,20 @@ QString Unit::coordsLonX(const atools::geo::Pos& pos)
 
 QString Unit::coordsLatY(const atools::geo::Pos& pos)
 {
+  return coordsLatY(pos, unitCoords);
+}
+
+QString Unit::coordsLatY(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
+{
   if(!pos.isValid())
     return QObject::tr("Invalid");
 
-  switch(unitCoords)
+  switch(coordUnit)
   {
+    case opts::COORDS_LATY_LONX:
+    case opts::COORDS_LONX_LATY:
+      return QLocale().toString(pos.getLatY(), 'f', 5);
+
     case opts::COORDS_DMS:
       return COORDS_DMS_FORMAT_LATY.
              arg(atools::absInt(pos.getLatYDeg())).

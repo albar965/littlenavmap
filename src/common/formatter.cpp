@@ -169,7 +169,12 @@ bool checkCoordinates(QString& message, const QString& text)
   {
     QString coords = Unit::coords(pos);
     if(coords != text)
-      message = QObject::tr("Coordinates are valid: %1").arg(coords);
+    {
+      if(Unit::getUnitCoords() == opts::COORDS_LATY_LONX || Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+        message = QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(pos, opts::COORDS_DMS));
+      else
+        message = QObject::tr("Coordinates are valid: %1").arg(coords);
+    }
     else
       // Same as in line edit. No need to show again
       message = QObject::tr("Coordinates are valid.");
