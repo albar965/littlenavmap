@@ -276,7 +276,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
                                       activeLegResult);
   }
 
-  if(getDistanceToFlightPlan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM)
+  if(isTooFarToFlightPlan())
   {
     // Too far away from plan - remove active leg
     activeLegIndex = map::INVALID_INDEX_VALUE;
@@ -1362,12 +1362,16 @@ bool Route::isActiveMissed() const
 
 void Route::setActiveLeg(int value)
 {
-  if(value > 0 && value < size())
-    activeLegIndex = value;
-  else
-    activeLegIndex = 1;
+  if(size() > 1)
+  {
+    if(value > 0 && value < size())
+      activeLegIndex = value;
+    else
+      activeLegIndex = 1;
 
-  activePos.pos.distanceMeterToLine(getPrevPositionAt(activeLegIndex), getPositionAt(activeLegIndex), activeLegResult);
+    activePos.pos.distanceMeterToLine(getPrevPositionAt(activeLegIndex), getPositionAt(activeLegIndex),
+                                      activeLegResult);
+  }
 }
 
 bool Route::isAirportAfterArrival(int index)
@@ -2017,6 +2021,11 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunway
     if(runwayEnd != nullptr)
       *runwayEnd = runwayEnds.isEmpty() ? map::MapRunwayEnd() : runwayEnds.first();
   }
+}
+
+bool Route::isTooFarToFlightPlan() const
+{
+  return getDistanceToFlightPlan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM;
 }
 
 float Route::getDistanceToFlightPlan() const

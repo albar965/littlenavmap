@@ -518,6 +518,7 @@ public:
 
   /* general distance in NM which is either cross track, previous or next waypoint */
   float getDistanceToFlightPlan() const;
+  bool isTooFarToFlightPlan() const;
 
   /* SID RAMY6, Approach ILS 12, etc. */
   QString getProcedureLegText(proc::MapProcedureTypes mapType) const;
@@ -535,6 +536,7 @@ public:
   QBitArray getJetAirwayFlags() const;
 
   void updateActivePos(const map::PosCourse& pos);
+
 private:
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
    * no procedure legs. CPU intense do not use often. */

@@ -3106,7 +3106,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                                                                    distToDestNm, activeLeg);
 
       if(!fuelCalculated)
-        html.warning(tr("Invalid aircraft performance. Fuel and time estimated."));
+      {
+        if(route.size() < 2)
+          html.warning(tr("Flight plan not valid. Fuel and time estimated."));
+        else
+          html.warning(tr("Aircraft performance not valid. Fuel and time estimated."));
+      }
 
       html.table();
       dateAndTime(userAircaft, html);
@@ -3377,18 +3382,21 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         qWarning() << "Invalid route leg index" << activeLegCorrected;
 
       html.tableEnd();
-    }
+    } // if(activeLegCorrected != map::INVALID_INDEX_VALUE && ...
     else
     {
-      head(html, tr("No Active Flight Plan Leg"));
+      if(route.isTooFarToFlightPlan())
+        html.warning(tr("No Active Flight Plan Leg. Too far from flight plan."));
+      else
+        html.b(tr("No Active Flight Plan Leg."));
       html.table();
       dateAndTime(userAircaft, html);
       html.tableEnd();
     }
-  }
+  } // if(!route.isEmpty() && userAircaft != nullptr && info)
   else if(info && userAircaft != nullptr)
   {
-    head(html, tr("No Flight Plan"));
+    html.b(tr("No Flight Plan."));
     html.table();
     dateAndTime(userAircaft, html);
     html.tableEnd();
@@ -3635,16 +3643,18 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
 #ifdef DEBUG_INFORMATION
   if(info)
-    html.hr().pre("distFromStartNm " + QString::number(distFromStartNm, 'f', 2) +
-                  " distToDestNm " + QString::number(distToDestNm, 'f', 1) +
-                  "\nnearestLegDistance " + QString::number(nearestLegDistance, 'f', 2) +
-                  " crossTrackDistance " + QString::number(crossTrackDistance, 'f', 2) +
-                  "\nfuelToDestinationLbs " + QString::number(fuelToDestinationLbs, 'f', 2) +
-                  " fuelToDestinationGal " + QString::number(fuelToDestinationGal, 'f', 2) +
-                  (distanceToTod > 0.f ?
-                   ("\ndistanceToTod " + QString::number(distanceToTod, 'f', 2) +
-                    " fuelToTodLbs " + QString::number(fuelToTodLbs, 'f', 2) +
-                    " fuelToTodGal " + QString::number(fuelToTodGal, 'f', 2)) : QString()));
+    html.hr().pre(
+      "distanceToFlightPlan " + QString::number(route.getDistanceToFlightPlan(), 'f', 2) +
+      "distFromStartNm " + QString::number(distFromStartNm, 'f', 2) +
+      " distToDestNm " + QString::number(distToDestNm, 'f', 1) +
+      "\nnearestLegDistance " + QString::number(nearestLegDistance, 'f', 2) +
+      " crossTrackDistance " + QString::number(crossTrackDistance, 'f', 2) +
+      "\nfuelToDestinationLbs " + QString::number(fuelToDestinationLbs, 'f', 2) +
+      " fuelToDestinationGal " + QString::number(fuelToDestinationGal, 'f', 2) +
+      (distanceToTod > 0.f ?
+       ("\ndistanceToTod " + QString::number(distanceToTod, 'f', 2) +
+        " fuelToTodLbs " + QString::number(fuelToTodLbs, 'f', 2) +
+        " fuelToTodGal " + QString::number(fuelToTodGal, 'f', 2)) : QString()));
 #endif
 }
 
