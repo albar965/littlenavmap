@@ -136,7 +136,8 @@ void UserdataIcons::loadIcons()
 {
   // First get new and overloaded icons from the configuration directory
   QDir configDir(atools::settings::Settings::instance().getPath());
-  for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg"}))
+  for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg", "userpoint_*.png",
+                                                        "userpoint_*.jpg", "userpoint_*.gif"}))
     loadIcon(entry);
 
   // Get default icons from resources if not already loaded before
@@ -157,7 +158,7 @@ QString UserdataIcons::getDefaultType(const QString& type)
 
 void UserdataIcons::loadIcon(const QFileInfo& entry)
 {
-  static QRegularExpression typeRegexp("userpoint_(.+)\\.svg");
+  static QRegularExpression typeRegexp("userpoint_(.+)\\.(svg|png|jpg|gif)");
   QString name = atools::settings::Settings::instance().getOverloadedPath(entry.filePath());
 
   QRegularExpressionMatch match = typeRegexp.match(entry.fileName());
