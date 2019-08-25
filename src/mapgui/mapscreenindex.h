@@ -56,7 +56,8 @@ public:
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
-  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result, map::MapObjectQueryTypes types) const;
+  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+                     map::MapObjectQueryTypes types) const;
 
   /* Get nearest distance measurement line index (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */
@@ -244,9 +245,10 @@ private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
 
-  void getNearestIls(int xs, int ys, map::MapSearchResult& result) const;
+  void getNearestIls(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result) const;
-  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result, map::MapObjectQueryTypes types) const;
+  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+                            map::MapObjectQueryTypes types) const;
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
                                      map::MapObjectQueryTypes types) const;
   void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids,
@@ -300,8 +302,10 @@ private:
   /* Geometry objects that are cached in screen coordinate system for faster access to tooltips etc. */
   QList<std::pair<int, QLine> > airwayLines;
   QList<std::pair<int, QLine> > logEntryLines;
-  QList<std::pair<map::MapAirspaceId, QPolygon> > airspaceGeo;
-  QList<std::pair<int, QPolygon> > ilsGeo;
+  QList<std::pair<map::MapAirspaceId, QPolygon> > airspacePolygons;
+  QList<std::pair<int, QPolygon> > ilsPolygons;
+  QList<std::pair<int, QLine> > ilsLines; /* Index ILS center lines separately to allow
+                                           * tooltips when getting the cursor near a line */
 
 };
 

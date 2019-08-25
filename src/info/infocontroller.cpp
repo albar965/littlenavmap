@@ -306,6 +306,9 @@ void InfoController::anchorClicked(const QUrl& url)
           mainWindow->updateHighlightActionStates();
           emit showRect(bounding, false);
         }
+        else if(type == map::ILS)
+          // Show ILS by bounding rectangle ================================================
+          emit showRect(mapQuery->getIlsById(id).bounding, false);
         else
           qWarning() << Q_FUNC_INFO << "Unknwown type" << url << type;
       }

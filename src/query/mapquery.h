@@ -88,8 +88,13 @@ public:
   void getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos);
 
   /* Get map objects by unique database id  */
+  /* From nav db, depending on mode */
   map::MapVor getVorById(int id);
+
+  /* From nav db, depending on mode */
   map::MapNdb getNdbById(int id);
+
+  /* Always from sim db */
   map::MapIls getIlsById(int id);
 
   QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway);

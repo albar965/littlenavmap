@@ -569,11 +569,16 @@ struct MapIls
   QString ident, name, region;
   float magvar, slope, heading, width;
   int frequency /* MHz * 1000 */, range /* nm */;
-  atools::geo::Pos pos1, pos2, posmid; /* drawing positions for the feather */
+
+  /* MapBase pos is the origin (pointy end) */
+  atools::geo::Pos pos1, /* Position 1 of the feather end */
+                   pos2, /* Position 2 of the feather end */
+                   posmid; /* Middle position of the feather end - depends on type ILS or LOC */
   atools::geo::Rect bounding;
   bool hasDme;
 
   atools::geo::LineString boundary() const;
+  atools::geo::Line centerLine() const;
 
 };
 

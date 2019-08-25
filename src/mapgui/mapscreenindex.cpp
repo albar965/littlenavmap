@@ -78,8 +78,9 @@ void MapScreenIndex::copy(const MapScreenIndex& other)
   routeLines = other.routeLines;
   airwayLines = other.airwayLines;
   logEntryLines = other.logEntryLines;
-  airspaceGeo = other.airspaceGeo;
-  ilsGeo = other.ilsGeo;
+  airspacePolygons = other.airspacePolygons;
+  ilsPolygons = other.ilsPolygons;
+  ilsLines = other.ilsLines;
   routePoints = other.routePoints;
 }
 
@@ -135,7 +136,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
           // Cut off all polygon parts that are not visible on screen
           polygon = polygon.intersected(QPolygon(mapPaintWidget->rect()));
 
-          airspaceGeo.append(std::make_pair(airspace->combinedId(), polygon));
+          airspacePolygons.append(std::make_pair(airspace->combinedId(), polygon));
           ids.insert(airspace->combinedId());
         }
       }
@@ -151,12 +152,13 @@ void MapScreenIndex::resetAirspaceOnlineScreenGeometry()
 
 void MapScreenIndex::resetIlsOnlineScreenGeometry()
 {
-  ilsGeo.clear();
+  ilsPolygons.clear();
+  ilsLines.clear();
 }
 
 void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
 {
-  airspaceGeo.clear();
+  airspacePolygons.clear();
   if(paintLayer == nullptr || paintLayer->getMapLayer() == nullptr)
     return;
 
@@ -182,7 +184,8 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
 
 void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
 {
-  ilsGeo.clear();
+  ilsPolygons.clear();
+  ilsLines.clear();
 
   if(paintLayer == nullptr || paintLayer->getMapLayer() == nullptr)
     return;
@@ -213,16 +216,21 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
 
           if(ilsbox.intersects(curBox))
           {
-            QPolygon polygon;
+            QLine line;
+            atools::geo::Line centerLine = ils.centerLine();
+            line.setP1(conv.wToS(centerLine.getPos1()));
+            line.setP2(conv.wToS(centerLine.getPos2()));
+            ilsLines.append(std::make_pair(ils.id, line));
 
+            QPolygon polygon;
+            int x, y;
             for(const Pos& pos : ils.boundary())
             {
-              int x, y;
               conv.wToS(pos, x, y /*, QSize(2000, 2000)*/);
               polygon.append(QPoint(x, y));
             }
             polygon = polygon.intersected(QPolygon(mapPaintWidget->rect()));
-            ilsGeo.append(std::make_pair(ils.id, polygon));
+            ilsPolygons.append(std::make_pair(ils.id, polygon));
           }
         }
       }
@@ -550,7 +558,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   getNearestLogEntries(xs, ys, maxDistance, result);
   getNearestAirways(xs, ys, maxDistance, result);
   getNearestAirspaces(xs, ys, result);
-  getNearestIls(xs, ys, result);
+  getNearestIls(xs, ys, maxDistance, result);
 
   if(shown.testFlag(map::FLIGHTPLAN))
   {
@@ -741,9 +749,9 @@ void MapScreenIndex::updateAllGeometry(const Marble::GeoDataLatLonBox& curBox)
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapSearchResult& result) const
 {
-  for(int i = 0; i < airspaceGeo.size(); i++)
+  for(int i = 0; i < airspacePolygons.size(); i++)
   {
-    const std::pair<map::MapAirspaceId, QPolygon>& polyPair = airspaceGeo.at(i);
+    const std::pair<map::MapAirspaceId, QPolygon>& polyPair = airspacePolygons.at(i);
 
     if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
     {
@@ -776,20 +784,27 @@ void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::
     result.logbookEntries.append(NavApp::getLogdataController()->getLogEntryById(id));
 }
 
-void MapScreenIndex::getNearestIls(int xs, int ys, map::MapSearchResult& result) const
+void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
 {
   if(!paintLayer->getShownMapObjects().testFlag(map::ILS))
     return;
 
-  for(int i = 0; i < ilsGeo.size(); i++)
-  {
-    const std::pair<int, QPolygon>& polyPair = ilsGeo.at(i);
+  // Get nearest center lines (also considering buffer)
+  QSet<int> ilsIds = nearestLineIds(ilsLines, xs, ys, maxDistance, false /* also distance to points */);
 
+  // Get nearest ILS by geometry - duplicates are removed in set
+  for(int i = 0; i < ilsPolygons.size(); i++)
+  {
+    const std::pair<int, QPolygon>& polyPair = ilsPolygons.at(i);
     if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
-    {
-      map::MapIls ils = mapQuery->getIlsById(polyPair.first);
-      result.ils.append(ils);
-    }
+      ilsIds.insert(polyPair.first);
+  }
+
+  // Get ILS map objects for ids
+  for(int id : ilsIds)
+  {
+    map::MapIls ils = mapQuery->getIlsById(id);
+    result.ils.append(ils);
   }
 }
 

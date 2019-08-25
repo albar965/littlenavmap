@@ -1055,8 +1055,8 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     {
       // Add map link if not tooltip ==========================================
       html.nbsp().nbsp();
-      html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-             arg(ilsRec->valueFloat("lonx")).arg(ilsRec->valueFloat("laty")), ahtml::LINK_NO_UL);
+      html.a(tr("Map"),
+             QString("lnm://show?id=%1&type=%2").arg(ilsRec->valueInt("ils_id")).arg(map::ILS), ahtml::LINK_NO_UL);
     }
     html.table();
   }

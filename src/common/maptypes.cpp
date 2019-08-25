@@ -2164,6 +2164,11 @@ float TrafficPattern::magCourse() const
   return atools::geo::normalizeCourse(courseTrue - magvar);
 }
 
+atools::geo::Line MapIls::centerLine() const
+{
+  return atools::geo::Line(position, posmid);
+}
+
 atools::geo::LineString MapIls::boundary() const
 {
   if(slope > 0.f)
