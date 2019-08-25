@@ -357,8 +357,8 @@ logbook and other search tabs</string>
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
              <property name="toolTip">
-              <string>If this option is checked: Little Navmap will propose a new name
-on &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
+              <string>This this option is checked: Little Navmap will suggest a new name
+on all &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
 New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
              </property>
              <property name="text">
@@ -523,7 +523,7 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
            <item row="2" column="0">
             <widget class="QLabel" name="labelOptionsGuiAircraftPerf">
              <property name="text">
-              <string>Text size for &amp;aircraft performance report:</string>
+              <string>Text size for &amp;flight plan fuel report:</string>
              </property>
              <property name="buddy">
               <cstring>spinBoxOptionsGuiAircraftPerf</cstring>
@@ -710,7 +710,8 @@ This will scale the Little Navmap map graphics and icons for better visibility i
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsGuiRaiseWindows">
              <property name="toolTip">
-              <string>This will open related windows and raise tabs on actions like opening files, modifying the flight plan or others.</string>
+              <string>This will open related windows and raise tabs on actions like 
+opening files, modifying the flight plan and other operations.</string>
              </property>
              <property name="text">
               <string>Raise related windows on actions (.e.g. show flight plan after opening file)</string>
@@ -764,8 +765,8 @@ This will scale the Little Navmap map graphics and icons for better visibility i
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsMapTooltipNavaid">
              <property name="toolTip">
-              <string>Show tooltips for waypoints, VOR, NDB, airways,
-userpoints and logbook entries when hovering the cursor over the map</string>
+              <string>Show tooltips for waypoints, VOR, NDB, ILS, airways,
+userpoints and logbook entries when hovering the cursor over the mapmap</string>
              </property>
              <property name="text">
               <string>&amp;Navaids, airways, userpoints and logbook</string>
@@ -791,13 +792,13 @@ userpoints and logbook entries when hovering the cursor over the map</string>
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsMapTooltipWind">
              <property name="toolTip">
-              <string>Show tooltips for high altitude winds when hovering the cursor over a wind barb.</string>
+              <string>Show a tooltip for high altitude winds when hovering the cursor over a wind barb.</string>
              </property>
              <property name="text">
               <string>Show for high altitude &amp;wind barbs</string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1073,7 +1074,7 @@ together with &quot;Treat empty airports special&quot;.</string>
             <widget class="QRadioButton" name="radioButtonOptionsMapNavTouchscreen">
              <property name="toolTip">
               <string>You can still use the default click and drag method to scroll and the mousewheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display 2&quot; to display hints for the areas.</string>
+Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display 2&quot; to display hints on the map.</string>
              </property>
              <property name="text">
               <string>Use map &amp;areas for easier navigation. Useful when using touchscreens.</string>
@@ -1093,7 +1094,8 @@ Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &qu
            <item row="1" column="0" colspan="2">
             <widget class="QRadioButton" name="radioButtonOptionsMapNavClickCenter">
              <property name="toolTip">
-              <string>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on options page &quot;Map Display 2&quot; to display a screen center hint.</string>
+              <string>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on 
+options page &quot;Map Display 2&quot; to display a screen center hint.</string>
              </property>
              <property name="text">
               <string>Click &amp;map to center position. Mouse wheel zooms to the map center position.</string>
@@ -1103,7 +1105,7 @@ Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &qu
            <item row="0" column="0" colspan="2">
             <widget class="QRadioButton" name="radioButtonOptionsMapNavDragMove">
              <property name="text">
-              <string>&amp;Click and drag map to move. Mouse wheel zooms to the cursor position.</string>
+              <string>&amp;Click and drag map to move. Mouse wheel zooms to cursor position.</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -1777,7 +1779,7 @@ Enable &quot;Dim passed Legs&quot; to see his color.</string>
            <item row="7" column="1">
             <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeNavaid">
              <property name="toolTip">
-              <string>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
+              <string>For VOR, NDB, waypoints, top of climb and top of descent (also for flight plan).
 Afftects map and elevation profile.</string>
              </property>
              <property name="suffix">
@@ -1816,7 +1818,7 @@ Afftects map and elevation profile.</string>
            <item row="3" column="1">
             <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAirportWeather">
              <property name="toolTip">
-              <string/>
+              <string>Size of airport weather symbols</string>
              </property>
              <property name="suffix">
               <string> %</string>
@@ -1939,7 +1941,7 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
            <item row="4" column="1">
             <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeWindBarbs">
              <property name="toolTip">
-              <string/>
+              <string>Size of high altitude wind barbs</string>
              </property>
              <property name="suffix">
               <string> %</string>
@@ -2061,7 +2063,7 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
            <item row="1" column="3">
             <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeRangeDistance">
              <property name="toolTip">
-              <string>Text size of the range ring, pattern and distance measurement line labels</string>
+              <string>Text size for labels</string>
              </property>
              <property name="suffix">
               <string> %</string>
@@ -2202,7 +2204,7 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
            <item row="0" column="3">
             <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessRangeDistance">
              <property name="toolTip">
-              <string>Thickness of the range ring, pattern and distance measurement lines</string>
+              <string>Line thickness</string>
              </property>
              <property name="suffix">
               <string> %</string>
@@ -2247,10 +2249,12 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
            <item row="0" column="2" rowspan="2" alignment="Qt::AlignTop">
             <widget class="QLabel" name="labelOptionsMapSizeRangeDistance">
              <property name="text">
-              <string>&amp;Range rings, pattern, hold,
-distance measurement,
-airway highlights
-and logbook entries:</string>
+              <string>&amp;Range rings,
+traffic patterns,
+holdings,
+distance measurements,
+airway highlights and
+logbook entries:</string>
              </property>
              <property name="buddy">
               <cstring>spinBoxOptionsDisplayThicknessRangeDistance</cstring>
@@ -2759,7 +2763,7 @@ Value 0 is opaque and 90 is most transparent.</string>
             <widget class="QCheckBox" name="checkBoxDisplayOnlineFileLookup">
              <property name="toolTip">
               <string>Look in the user airspaces for a boundary where the
-user airspace name has to match the callsign of the center.</string>
+airspace name has to match the callsign of the online center.</string>
              </property>
              <property name="text">
               <string>By airspace &amp;name vs. callsign</string>
@@ -2773,7 +2777,7 @@ user airspace name has to match the callsign of the center.</string>
             <widget class="QCheckBox" name="checkBoxDisplayOnlineNameLookup">
              <property name="toolTip">
               <string>Look in the user airspaces for a boundary where the
-user airspace filename has to match the callsign of the center.</string>
+airspace filename has to match the callsign of the online center.</string>
              </property>
              <property name="text">
               <string>By airspace &amp;file name vs. callsign</string>
@@ -2803,8 +2807,8 @@ user airspace filename has to match the callsign of the center.</string>
         <item row="5" column="2">
          <widget class="QCheckBox" name="checkBoxOptionsUnitFuelOther">
           <property name="toolTip">
-           <string>Shows other fuel units (lbs/gal or kg/liter) as small text in
-information displays besides selected units.</string>
+           <string>Shows values for other fuel units (lbs/gal or kg/liter) as small text in
+information displays and tooltips besides selected units.</string>
           </property>
           <property name="text">
            <string>&amp;Show other fuel units too</string>
@@ -2932,8 +2936,8 @@ also define the order when reading coordinates in the user interface if enabled.
         <item row="9" column="0" colspan="3">
          <widget class="QCheckBox" name="checkBoxOptionsUnitTrueCourse">
           <property name="toolTip">
-           <string>Shows true course/heading as small text in
-information displays and tooltips besides magnetic course.
+           <string>Shows true course or heading values as small text besides magnetic course
+in information displays and tooltips .
 Only magnetic course is shown if both values are equal.
 Also affects labels at holds and traffic patterns.</string>
           </property>
@@ -3646,9 +3650,9 @@ Garmin GTN and GNS to avoid locked waypoints</string>
             <widget class="QCheckBox" name="checkBoxOptionsRouteDeclination">
              <property name="toolTip">
               <string>Will calculate magnetic course based on environment and ignore the VOR declination value if checked.
-Little Navmap will use the station declination when calculating a course to a VOR
+Little Navmap normally uses the station declination when calculating a course to a VOR
 which can result in wrong course values if the calibration of a VOR is very old.
-Check this if prefer to fly by GPS.</string>
+Check this if you rely on GPS when flying.</string>
              </property>
              <property name="text">
               <string>&amp;Ignore declination of VOR and other radio navaids</string>
@@ -4038,7 +4042,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <widget class="QLineEdit" name="lineEditOptionsWeatherXplaneWind">
              <property name="toolTip">
               <string>This file &quot;global_winds.grib&quot; will be used only if X-Plane is selected.
-If this field is empty, the default X-Plane wind file will be used.</string>
+The default X-Plane wind file will be used if this field is empty.</string>
              </property>
              <property name="placeholderText">
               <string>No &quot;global_winds.grib&quot; selected. Using X-Plane base path.</string>
@@ -4053,7 +4057,7 @@ If this field is empty, the default X-Plane wind file will be used.</string>
              <property name="toolTip">
               <string>Base URL of the NOAA weather service.
 There is usually no need to change this URL.
-Entering a wrong value might cause errors when downloading wind reports.</string>
+Entering a wrong value will cause errors when downloading wind reports.</string>
              </property>
              <property name="text">
               <string>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</string>
@@ -4594,8 +4598,8 @@ Change this if you get an error message like &quot;Bound address already in use&
          <widget class="QLineEdit" name="lineEditOptionsWebDocroot">
           <property name="toolTip">
            <string>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
-Use this to server your own modifed Little Navmap web page.
-</string>
+There is usually no need to change this value.
+Use this to serve your own modifed Little Navmap web page.</string>
           </property>
          </widget>
         </item>
@@ -4605,7 +4609,7 @@ Use this to server your own modifed Little Navmap web page.
            <string>Use a so-called self-signed example certificate for an encrypted connection.
 Browsers will show a warning when using such a connection and you have to add an security exception in the browser.
 You have to use &quot;https//...&quot; instead of &quot;http://...&quot; when accessing the page. Otherwise you will get an error in the web browser.
-Be aware that this example certificate do not provide absolute security since the private key is available publicly in the
+Be aware that the used example certificate does not provide security since the private key is available publicly in the
 Little Navmap GIT repository.
 </string>
           </property>
@@ -4888,7 +4892,8 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
            <item row="0" column="1">
             <widget class="QLineEdit" name="lineEditCacheUserAirspacePath">
              <property name="toolTip">
-              <string>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
+              <string>Select the directoy that contains the user airspace text files.
+Little Navmap can currently only read OpenAIR files.</string>
              </property>
              <property name="placeholderText">
               <string>No directory for user airspaces selected.</string>
@@ -4898,7 +4903,7 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
            <item row="2" column="1">
             <widget class="QLineEdit" name="lineEditCacheUserAirspaceExtensions">
              <property name="toolTip">
-              <string>Space separated list of file extension to read as airspace files.</string>
+              <string>Space separated list of file extension to read as OpenAIR airspace files.</string>
              </property>
              <property name="text">
               <string>*.txt</string>
@@ -5097,6 +5102,7 @@ Changes only settings that can be done with this dialog.</string>
   </layout>
  </widget>
  <tabstops>
+  <tabstop>listWidgetOptionPages</tabstop>
   <tabstop>checkBoxOptionsStartupLoadRoute</tabstop>
   <tabstop>checkBoxOptionsStartupLoadMapSettings</tabstop>
   <tabstop>checkBoxOptionsStartupLoadTrail</tabstop>
@@ -5109,6 +5115,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>comboBoxOptionsStartupUpdateRate</tabstop>
   <tabstop>comboBoxOptionsStartupUpdateChannels</tabstop>
   <tabstop>pushButtonOptionsStartupCheckUpdate</tabstop>
+  <tabstop>checkBoxOptionsGuiHighDpi</tabstop>
   <tabstop>spinBoxOptionsGuiRouteText</tabstop>
   <tabstop>spinBoxOptionsGuiAircraftPerf</tabstop>
   <tabstop>spinBoxOptionsGuiSearchText</tabstop>
@@ -5116,16 +5123,37 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsGuiSimInfoText</tabstop>
   <tabstop>checkBoxOptionsGuiOverrideLanguage</tabstop>
   <tabstop>checkBoxOptionsGuiOverrideLocale</tabstop>
+  <tabstop>checkBoxOptionsGuiProposeFilename</tabstop>
+  <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
+  <tabstop>checkBoxOptionsGuiRaiseWindows</tabstop>
   <tabstop>checkBoxOptionsMapUndock</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
+  <tabstop>checkBoxOptionsMapEmptyAirports3D</tabstop>
+  <tabstop>comboBoxMapScrollDetails</tabstop>
+  <tabstop>lineEditOptionsMapRangeRings</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAirport</tabstop>
   <tabstop>checkBoxOptionsMapTooltipNavaid</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAirspace</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipWind</tabstop>
   <tabstop>checkBoxOptionsMapClickAirport</tabstop>
   <tabstop>checkBoxOptionsMapClickNavaid</tabstop>
   <tabstop>checkBoxOptionsMapClickAirspace</tabstop>
+  <tabstop>radioButtonOptionsMapNavDragMove</tabstop>
+  <tabstop>radioButtonOptionsMapNavClickCenter</tabstop>
+  <tabstop>radioButtonOptionsMapNavTouchscreen</tabstop>
+  <tabstop>spinBoxOptionsMapNavTouchArea</tabstop>
+  <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
+  <tabstop>spinBoxOptionsMapClickRect</tabstop>
+  <tabstop>doubleSpinBoxOptionsMapZoomShowMapMenu</tabstop>
+  <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
+  <tabstop>checkBoxOptionsMapZoomAvoidBlurred</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAirport</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirport</tabstop>
+  <tabstop>checkBoxOptionsMapAirportDiagram</tabstop>
+  <tabstop>checkBoxOptionsMapAirportBoundary</tabstop>
+  <tabstop>checkBoxOptionsMapAirportText</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeAirportWeather</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeWindBarbs</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeNavaid</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeNavaid</tabstop>
   <tabstop>checkBoxOptionsMapNavaidText</tabstop>
@@ -5139,10 +5167,23 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsMapFlightplanText</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanActiveColor</tabstop>
+  <tabstop>checkBoxOptionsMapFlightplanDimPassed</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanPassedColor</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanProcedureColor</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
   <tabstop>comboBoxOptionsDisplayTrailType</tabstop>
+  <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessRangeDistance</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeRangeDistance</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessCompassRose</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeCompassRose</tabstop>
+  <tabstop>spinBoxOptionsDisplayTransparencyMora</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeMora</tabstop>
+  <tabstop>spinBoxOptionsDisplaySunShadeDarkness</tabstop>
+  <tabstop>spinBoxOptionsGuiThemeMapDimming</tabstop>
+  <tabstop>treeWidgetOptionsDisplayTextOptions</tabstop>
+  <tabstop>checkBoxDisplayOnlineFileLookup</tabstop>
+  <tabstop>checkBoxDisplayOnlineNameLookup</tabstop>
   <tabstop>spinBoxDisplayOnlineObserver</tabstop>
   <tabstop>checkBoxDisplayOnlineObserverRange</tabstop>
   <tabstop>spinBoxDisplayOnlineFir</tabstop>
@@ -5165,7 +5206,9 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>comboBoxOptionsUnitSpeed</tabstop>
   <tabstop>comboBoxOptionsUnitVertSpeed</tabstop>
   <tabstop>comboBoxOptionsUnitFuelWeight</tabstop>
+  <tabstop>checkBoxOptionsUnitFuelOther</tabstop>
   <tabstop>comboBoxOptionsUnitCoords</tabstop>
+  <tabstop>checkBoxOptionsUnitTrueCourse</tabstop>
   <tabstop>radioButtonOptionsSimUpdateLow</tabstop>
   <tabstop>radioButtonOptionsSimUpdateMedium</tabstop>
   <tabstop>radioButtonOptionsSimUpdateFast</tabstop>
@@ -5179,10 +5222,13 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsRoutePreferVor</tabstop>
   <tabstop>checkBoxOptionsRoutePreferNdb</tabstop>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
+  <tabstop>comboBoxOptionsRouteAltitudeRuleType</tabstop>
+  <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
   <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
   <tabstop>checkBoxOptionsRouteShortName</tabstop>
   <tabstop>checkBoxOptionsRouteExportUserWpt</tabstop>
+  <tabstop>checkBoxOptionsRouteDeclination</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoAsn</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoNoaa</tabstop>
@@ -5193,6 +5239,8 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsWeatherTooltipNoaa</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipVatsim</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipIvao</tabstop>
+  <tabstop>lineEditOptionsWeatherXplanePath</tabstop>
+  <tabstop>pushButtonOptionsWeatherXplanePathSelect</tabstop>
   <tabstop>lineEditOptionsWeatherAsnPath</tabstop>
   <tabstop>pushButtonOptionsWeatherAsnPathSelect</tabstop>
   <tabstop>lineEditOptionsWeatherNoaaStationsUrl</tabstop>
@@ -5201,9 +5249,14 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>pushButtonOptionsWeatherVatsimTest</tabstop>
   <tabstop>lineEditOptionsWeatherIvaoUrl</tabstop>
   <tabstop>pushButtonOptionsWeatherIvaoTest</tabstop>
+  <tabstop>lineEditOptionsWeatherXplaneWind</tabstop>
+  <tabstop>pushButtonOptionsWeatherXplaneWindPathSelect</tabstop>
+  <tabstop>lineEditOptionsWeatherNoaaWindUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherNoaaWindTest</tabstop>
   <tabstop>radioButtonOptionsOnlineNone</tabstop>
   <tabstop>radioButtonOptionsOnlineVatsim</tabstop>
   <tabstop>radioButtonOptionsOnlineIvao</tabstop>
+  <tabstop>radioButtonOptionsOnlinePilotEdge</tabstop>
   <tabstop>radioButtonOptionsOnlineCustomStatus</tabstop>
   <tabstop>radioButtonOptionsOnlineCustom</tabstop>
   <tabstop>lineEditOptionsOnlineStatusUrl</tabstop>
@@ -5212,6 +5265,11 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>pushButtonOptionsOnlineTestWhazzupUrl</tabstop>
   <tabstop>spinBoxOptionsOnlineUpdate</tabstop>
   <tabstop>comboBoxOptionsOnlineFormat</tabstop>
+  <tabstop>lineEditOptionsWebDocroot</tabstop>
+  <tabstop>pushButtonOptionsWebSelectDocroot</tabstop>
+  <tabstop>spinBoxOptionsWebPort</tabstop>
+  <tabstop>checkBoxOptionsWebEncrypted</tabstop>
+  <tabstop>pushButtonOptionsWebStart</tabstop>
   <tabstop>spinBoxOptionsCacheMemorySize</tabstop>
   <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
   <tabstop>spinBoxOptionsCacheDiskSize</tabstop>
@@ -5221,6 +5279,9 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>radioButtonCacheUseOffineElevation</tabstop>
   <tabstop>lineEditCacheOfflineDataPath</tabstop>
   <tabstop>pushButtonCacheOfflineDataSelect</tabstop>
+  <tabstop>lineEditCacheUserAirspacePath</tabstop>
+  <tabstop>pushButtonCacheUserAirspacePathSelect</tabstop>
+  <tabstop>lineEditCacheUserAirspaceExtensions</tabstop>
   <tabstop>listWidgetOptionsDatabaseExclude</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddExcludeDir</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddExcludeFile</tabstop>

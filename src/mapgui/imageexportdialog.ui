@@ -144,6 +144,10 @@ Note that all options except &quot;Current Map View&quot; will change visible de
    </item>
    <item row="3" column="0" colspan="2" alignment="Qt::AlignRight">
     <widget class="QCheckBox" name="checkBoxAvoidBlurred">
+     <property name="toolTip">
+      <string>Zooms the map out to get a sharper image. 
+This will change the shown map region and might change details.</string>
+     </property>
      <property name="text">
       <string>&amp;Zoom out to avoid blurred map</string>
      </property>

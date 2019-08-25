@@ -1260,7 +1260,7 @@ private:
   optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE_RHUMB;
 
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
-                                                       optsd::TOOLTIP_NAVAID;
+                                                       optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND;
   optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRPORT | optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
 
   opts::UpdateRate updateRate = opts::DAILY;

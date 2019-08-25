@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidgetLogbook">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabLogbookEntry">
       <attribute name="title">
@@ -238,7 +238,7 @@
           <item row="0" column="5">
            <widget class="QLineEdit" name="lineEditDepartureRunway">
             <property name="toolTip">
-             <string/>
+             <string>Departure airport runway</string>
             </property>
            </widget>
           </item>
@@ -304,7 +304,7 @@
              <string>&amp;Runway</string>
             </property>
             <property name="buddy">
-             <cstring>lineEditDeparture</cstring>
+             <cstring>lineEditDepartureRunway</cstring>
             </property>
            </widget>
           </item>
@@ -319,7 +319,11 @@
            </widget>
           </item>
           <item row="5" column="5">
-           <widget class="QLineEdit" name="lineEditDestinationRunway"/>
+           <widget class="QLineEdit" name="lineEditDestinationRunway">
+            <property name="toolTip">
+             <string>Destination airport runway</string>
+            </property>
+           </widget>
           </item>
           <item row="7" column="2">
            <widget class="QLabel" name="labelDestinationDateTimeReal">
@@ -357,7 +361,7 @@
              <string>&amp;Runway</string>
             </property>
             <property name="buddy">
-             <cstring>lineEditDeparture</cstring>
+             <cstring>lineEditDestinationRunway</cstring>
             </property>
            </widget>
           </item>
@@ -726,7 +730,7 @@ Does not update distance and cruise altitude when changed.</string>
        <item row="3" column="2">
         <widget class="QSpinBox" name="spinBoxFuelBlock">
          <property name="toolTip">
-          <string>Fuel that has to be loaded into aircraft as calculated by aircraft performance</string>
+          <string>Fuel to be loaded into aircraft as calculated by aircraft performance</string>
          </property>
          <property name="showGroupSeparator" stdset="0">
           <bool>true</bool>

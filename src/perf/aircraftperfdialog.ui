@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>694</height>
+    <width>568</width>
+    <height>724</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -166,75 +166,20 @@ Use an approximate value for max takeoff weight.</string>
         <number>2</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="spacing">
-          <number>6</number>
+        <widget class="QLabel" name="label">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
-         <property name="topMargin">
-          <number>0</number>
+         <property name="text">
+          <string>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.</string>
          </property>
-         <item>
-          <widget class="QLabel" name="labelFuelUnits">
-           <property name="text">
-            <string>&amp;Fuel units:</string>
-           </property>
-           <property name="buddy">
-            <cstring>comboBoxFuelUnit</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="comboBoxFuelUnit">
-           <item>
-            <property name="text">
-             <string>Weight (lbs)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Volume (gal)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Weight (kg)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Volume (liter)</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="labelFuelType">
-           <property name="text">
-            <string>&amp;Fuel type:</string>
-           </property>
-           <property name="buddy">
-            <cstring>comboBoxFuelType</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="comboBoxFuelType">
-           <property name="toolTip">
-            <string>Used to convert from weight to volume units.</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>Avgas</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Jetfuel</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="margin">
+          <number>5</number>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox">
@@ -257,79 +202,7 @@ Use an approximate value for max takeoff weight.</string>
           <property name="spacing">
            <number>2</number>
           </property>
-          <item row="8" column="1">
-           <widget class="QSpinBox" name="spinBoxContingencyFuel">
-            <property name="toolTip">
-             <string>This accounts for additional enroute fuel consumption
-caused by wind or routing changes.
-This will increase the trip fuel by the given percentage.</string>
-            </property>
-            <property name="suffix">
-             <string> percent</string>
-            </property>
-            <property name="maximum">
-             <number>1000</number>
-            </property>
-            <property name="singleStep">
-             <number>5</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QSpinBox" name="spinBoxReserveFuel">
-            <property name="toolTip">
-             <string>Minimum fuel required to fly for 30 minutes at 1,500 feet
-above the alternate or at the destination at holding speed if
-an alternate is not required</string>
-            </property>
-            <property name="suffix">
-             <string> %fuel%</string>
-            </property>
-            <property name="maximum">
-             <number>1000000</number>
-            </property>
-            <property name="singleStep">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBoxUsableFuel">
-            <property name="toolTip">
-             <string>Usable fuel in tanks</string>
-            </property>
-            <property name="suffix">
-             <string> %fuel%</string>
-            </property>
-            <property name="maximum">
-             <number>1000000</number>
-            </property>
-            <property name="singleStep">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="labelExtraCruiseFuel">
-            <property name="text">
-             <string>&amp;Contingency fuel:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxContingencyFuel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelUsableFuel">
-            <property name="text">
-             <string>&amp;Usable fuel:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxUsableFuel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
+          <item row="7" column="1">
            <widget class="QSpinBox" name="spinBoxTaxiFuel">
             <property name="toolTip">
              <string>Fuel used prior to takeoff by APU, engine start and taxi</string>
@@ -348,7 +221,52 @@ an alternate is not required</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="1">
+          <item row="8" column="0">
+           <widget class="QLabel" name="labelCruiseExtraFuel">
+            <property name="text">
+             <string>&amp;Extra fuel:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxExtraFuel</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QSpinBox" name="spinBoxReserveFuel">
+            <property name="toolTip">
+             <string>Minimum fuel required to fly for 30 minutes at 1,500 feet
+above the alternate or at the destination at holding speed if
+an alternate is not required</string>
+            </property>
+            <property name="suffix">
+             <string> %fuel%</string>
+            </property>
+            <property name="maximum">
+             <number>1000000</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
+           <widget class="QLabel" name="labelUsableFuelRange">
+            <property name="toolTip">
+             <string>Estimated range considering reserve fuel.
+Based on cruise speed and fuel flow.</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="margin">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
            <widget class="QSpinBox" name="spinBoxExtraFuel">
             <property name="toolTip">
              <string>Fuel added at the discretion of the
@@ -369,26 +287,6 @@ captain or the dispatcher</string>
            </widget>
           </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="labelTaxiFuel">
-            <property name="text">
-             <string>&amp;Taxi fuel:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxTaxiFuel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="labelCruiseExtraFuel">
-            <property name="text">
-             <string>&amp;Extra fuel:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxExtraFuel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
            <widget class="QLabel" name="labelReserveFuel">
             <property name="text">
              <string>&amp;Reserve fuel:</string>
@@ -398,22 +296,140 @@ captain or the dispatcher</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="QLabel" name="labelUsableFuelRange">
-            <property name="toolTip">
-             <string>Estimated range considering reserve fuel.
-Based on cruise speed and fuel flow.</string>
-            </property>
+          <item row="9" column="0">
+           <widget class="QLabel" name="labelExtraCruiseFuel">
             <property name="text">
-             <string/>
+             <string>&amp;Contingency fuel:</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <property name="buddy">
+             <cstring>spinBoxContingencyFuel</cstring>
             </property>
-            <property name="margin">
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="labelUsableFuel">
+            <property name="text">
+             <string>&amp;Usable fuel:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxUsableFuel</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="1">
+           <widget class="QSpinBox" name="spinBoxContingencyFuel">
+            <property name="toolTip">
+             <string>This accounts for additional enroute fuel consumption
+caused by wind or routing changes.
+This will increase the trip fuel by the given percentage.</string>
+            </property>
+            <property name="suffix">
+             <string> percent</string>
+            </property>
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="singleStep">
              <number>5</number>
             </property>
            </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="spinBoxUsableFuel">
+            <property name="toolTip">
+             <string>Usable fuel in tanks</string>
+            </property>
+            <property name="suffix">
+             <string> %fuel%</string>
+            </property>
+            <property name="maximum">
+             <number>1000000</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="labelTaxiFuel">
+            <property name="text">
+             <string>&amp;Taxi fuel:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxTaxiFuel</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelFuelUnits">
+              <property name="text">
+               <string>&amp;Fuel units:</string>
+              </property>
+              <property name="buddy">
+               <cstring>comboBoxFuelUnit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxFuelUnit">
+              <item>
+               <property name="text">
+                <string>Weight (lbs)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Volume (gal)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Weight (kg)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Volume (liter)</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelFuelType">
+              <property name="text">
+               <string>&amp;Fuel type:</string>
+              </property>
+              <property name="buddy">
+               <cstring>comboBoxFuelType</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxFuelType">
+              <property name="toolTip">
+               <string>Used to convert from weight to volume units.</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Avgas</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Jetfuel</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -466,6 +482,12 @@ Based on cruise speed and fuel flow.</string>
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="labelClimbSpeed">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Average &amp;climb speed:</string>
             </property>
@@ -476,6 +498,12 @@ Based on cruise speed and fuel flow.</string>
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="labelVertClimbSpeed">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Average vertical &amp;climb speed:</string>
             </property>
@@ -486,6 +514,12 @@ Based on cruise speed and fuel flow.</string>
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="labelClimbFuelFlow">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Average fuel flow for &amp;climb:</string>
             </property>
@@ -567,6 +601,12 @@ Based on cruise speed and fuel flow.</string>
           </property>
           <item row="0" column="0">
            <widget class="QLabel" name="labelCruiseSpeed">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>C&amp;ruise speed at typical cruise altitude:</string>
             </property>
@@ -599,6 +639,12 @@ Based on cruise speed and fuel flow.</string>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="labelCruiseFuelFlow">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Fuel flow in c&amp;ruise:</string>
             </property>
@@ -649,6 +695,12 @@ Based on cruise speed and fuel flow.</string>
           </property>
           <item row="3" column="0">
            <widget class="QLabel" name="labelDescentVertSpeed">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Average vertical &amp;descent speed:</string>
             </property>
@@ -659,6 +711,12 @@ Based on cruise speed and fuel flow.</string>
           </item>
           <item row="0" column="0">
            <widget class="QLabel" name="labelDescentSpeed">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Average &amp;descent speed:</string>
             </property>
@@ -691,6 +749,12 @@ Based on cruise speed and fuel flow.</string>
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="labelDescentFuelFlow">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Average fuel flow for &amp;descent:</string>
             </property>
@@ -786,7 +850,7 @@ the given descent speeds</string>
             <property name="toolTip">
              <string>Fuel flow  when flying to an alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
-The default is the cruise TAS.</string>
+The default is the cruise fuel flow.</string>
             </property>
             <property name="showGroupSeparator" stdset="0">
              <bool>true</bool>
@@ -825,9 +889,9 @@ The default is the cruise TAS.</string>
           <item row="0" column="1">
            <widget class="QSpinBox" name="spinBoxAlternateSpeed">
             <property name="toolTip">
-             <string>Average speed in TAS when flying to alternate typically at low altitudes.
+             <string>Average true airspeed when flying to alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
-Default is cruise fuel flow.</string>
+Default is cruise speed.</string>
             </property>
             <property name="showGroupSeparator" stdset="0">
              <bool>true</bool>

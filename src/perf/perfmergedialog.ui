@@ -670,7 +670,7 @@
    <item row="30" column="0">
     <widget class="QLabel" name="labelAllValues">
      <property name="text">
-      <string>Set all to:</string>
+      <string>Set all operations to:</string>
      </property>
     </widget>
    </item>

@@ -22,6 +22,9 @@
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <widget class="QSplitter" name="splitterRouteString">
+     <property name="toolTip">
+      <string>Resize upper or lower part or open and close lower message part of the dialog.</string>
+     </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>

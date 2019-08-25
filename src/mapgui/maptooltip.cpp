@@ -157,17 +157,20 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Logbook entries ===========================================================================
-  for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
+  if(opts & optsd::TOOLTIP_NAVAID)
   {
-    if(checkText(html))
-      return html.getHtml();
+    for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
+    {
+      if(checkText(html))
+        return html.getHtml();
 
-    if(!html.isEmpty())
-      html.textBar(TEXT_BAR_LENGTH);
+      if(!html.isEmpty())
+        html.textBar(TEXT_BAR_LENGTH);
 
-    info.logEntryText(entry, html);
+      info.logEntryText(entry, html);
 
-    numEntries++;
+      numEntries++;
+    }
   }
 
   // Userpoints ===========================================================================
