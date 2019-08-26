@@ -31,7 +31,6 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
-
   ui->setupUi(this);
 
   widgets.append(ui->checkBoxHeavy);
@@ -60,7 +59,6 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
       break;
 
     case re::VFP:
-
       ui->lineEditFlightType->setVisible(false);
       ui->labelFlightType->setVisible(false);
       ui->lineEditAircraftType->setVisible(false);
@@ -104,16 +102,44 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
 
       break;
 
-    case re::IVAP:
-
+    case re::XIVAP:
       ui->checkBoxHeavy->setVisible(false);
+
       ui->lineEditVoiceType->setVisible(false);
       ui->labelVoiceType->setVisible(false);
+
       ui->timeEditDepartureActual->setVisible(false);
       ui->labelTimeDepartureActual->setVisible(false);
+
       ui->lineEditEquipmentPrefix->setVisible(false);
       ui->lineEditEquipmentSuffix->setVisible(false);
       ui->labelEquipmentPrefixSuffix->setVisible(false);
+
+      ui->lineEditLivery->setVisible(false);
+      ui->labelLivery->setVisible(false);
+      break;
+
+    case re::IVAP:
+      ui->checkBoxHeavy->setVisible(false);
+
+      ui->lineEditVoiceType->setVisible(false);
+      ui->labelVoiceType->setVisible(false);
+
+      ui->timeEditDepartureActual->setVisible(false);
+      ui->labelTimeDepartureActual->setVisible(false);
+
+      ui->lineEditEquipmentPrefix->setVisible(false);
+      ui->lineEditEquipmentSuffix->setVisible(false);
+      ui->labelEquipmentPrefixSuffix->setVisible(false);
+
+      ui->lineEditLivery->setVisible(false);
+      ui->labelLivery->setVisible(false);
+
+      ui->lineEditPilotInCommand->setVisible(false);
+      ui->labelPilotInCommand->setVisible(false);
+
+      ui->lineEditAirline->setVisible(false);
+      ui->labelAirline->setVisible(false);
 
       // [FLIGHTPLAN]
       // CALLSIGN=VPI333
@@ -146,19 +172,18 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
       break;
   }
 
+  setWindowTitle(tr("%1 - Export for %2").arg(QApplication::applicationName()).arg(getRouteTypeAsDisplayString(type)));
+
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &RouteExportDialog::buttonBoxClicked);
 
   // Saves original texts and restores them on deletion
   units = new UnitStringTool();
-  units->init({
-    ui->spinBoxTrueAirspeed,
-    ui->spinBoxCruiseAltitude,
-  });
+  units->init({ui->spinBoxTrueAirspeed, ui->spinBoxCruiseAltitude});
 }
 
 RouteExportDialog::~RouteExportDialog()
 {
-  atools::gui::WidgetState(lnm::FLIGHTPLAN_ONLINE_EXPORT + routeTypeAsString(type)).save(this);
+  atools::gui::WidgetState(lnm::FLIGHTPLAN_ONLINE_EXPORT + getRouteTypeAsString(type)).save(this);
 
   delete units;
   delete ui;
@@ -263,7 +288,7 @@ void RouteExportDialog::dialogToData(RouteExportData& data)
   data.setRemarks(ui->lineEditRemarks->text());
 }
 
-QString RouteExportDialog::routeTypeAsString(re::RouteExportType routeType)
+QString RouteExportDialog::getRouteTypeAsString(re::RouteExportType routeType)
 {
   switch(routeType)
   {
@@ -275,6 +300,29 @@ QString RouteExportDialog::routeTypeAsString(re::RouteExportType routeType)
 
     case re::IVAP:
       return "Ivap";
+
+    case re::XIVAP:
+      return "XIvap";
+
+  }
+  return QString();
+}
+
+QString RouteExportDialog::getRouteTypeAsDisplayString(re::RouteExportType routeType)
+{
+  switch(routeType)
+  {
+    case re::UNKNOWN:
+      break;
+
+    case re::VFP:
+      return tr("VPilot");
+
+    case re::IVAP:
+      return tr("IvAp");
+
+    case re::XIVAP:
+      return tr("X-IvAp");
 
   }
   return QString();
@@ -316,14 +364,14 @@ void RouteExportDialog::clearDialog()
 
 void RouteExportDialog::restoreState()
 {
-  atools::gui::WidgetState ws(lnm::FLIGHTPLAN_ONLINE_EXPORT + routeTypeAsString(type));
+  atools::gui::WidgetState ws(lnm::FLIGHTPLAN_ONLINE_EXPORT + getRouteTypeAsString(type));
   ws.restore(this);
   ws.restore(widgets);
 }
 
 void RouteExportDialog::saveState()
 {
-  atools::gui::WidgetState ws(lnm::FLIGHTPLAN_ONLINE_EXPORT + routeTypeAsString(type));
+  atools::gui::WidgetState ws(lnm::FLIGHTPLAN_ONLINE_EXPORT + getRouteTypeAsString(type));
   ws.save(this);
   ws.save(widgets);
 }

@@ -95,6 +95,7 @@
      </property>
      <addaction name="actionRouteSaveAsVfp"/>
      <addaction name="actionRouteSaveAsIvap"/>
+     <addaction name="actionRouteSaveAsXIvap"/>
     </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
@@ -10247,13 +10248,13 @@ relation to shown airport</string>
   </action>
   <action name="actionRouteSaveAsIvap">
    <property name="text">
-    <string>Export Flight Plan as &amp;IvAp or X-IvAp FPL ...</string>
+    <string>Export Flight Plan as &amp;IvAp FPL ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as FPL file for IvAp or X-IvAp</string>
+    <string>Save flight plan as FPL file for IvAp</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FPL file for IvAp or X-IvAp</string>
+    <string>Save flight plan as FPL file for IvAp</string>
    </property>
   </action>
   <action name="actionShortcutMap">
@@ -10877,6 +10878,17 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Hide or show columns in table</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsXIvap">
+   <property name="text">
+    <string>Export Flight Plan as X-IvAp FPL ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FPL file for X-IvAp</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file for X-IvAp</string>
    </property>
   </action>
  </widget>

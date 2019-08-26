@@ -42,6 +42,7 @@ class Dialog;
 class MainWindow;
 class Route;
 class RouteExportData;
+class QTextStream;
 
 /*
  * Covers all flight plan export and export related functions including validation and warning dialogs.
@@ -104,6 +105,7 @@ public:
 
   /* IVAP or X-IVAP for IVAO */
   bool routeExportIvap();
+  bool routeExportXIvap();
 
   /* FeelThere or Wilco aircraft */
   bool routeExportFeelthereFpl();
@@ -164,6 +166,8 @@ private:
   bool exportFlighplan(const QString& filename, std::function<void(const atools::fs::pln::Flightplan&,
                                                                    const QString&)> exportFunc);
 
+  bool routeExportIvapInternal(re::RouteExportType type);
+
   /* Show online network dialog which allows the user to enter needed data */
   bool routeExportDialog(RouteExportData& exportData, re::RouteExportType flightplanType);
 
@@ -174,8 +178,11 @@ private:
   bool exportFlighplanAsVfp(const RouteExportData& exportData, const QString& filename);
 
   /* Export IVAP or X-IVAP */
-  bool exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename);
+  bool exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename, re::RouteExportType type);
   QString minToHourMinStr(int minutes);
+
+  void writeIvapLine(QTextStream& stream, const QString& key, const QString& value, re::RouteExportType type);
+  void writeIvapLine(QTextStream& stream, const QString& key, int value, re::RouteExportType type);
 
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;

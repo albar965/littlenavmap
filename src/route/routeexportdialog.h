@@ -29,7 +29,8 @@ enum RouteExportType
 {
   UNKNOWN,
   VFP, /* VATSIM VFP format - vPilot */
-  IVAP /* IVAO IVAP or X-IVAP */
+  IVAP, /* IVAO IVAP */
+  XIVAP /* IVAO X-IVAP */
 };
 
 }
@@ -56,11 +57,13 @@ public:
   RouteExportData getExportData() const;
   void setExportData(const RouteExportData& value);
 
+  static QString getRouteTypeAsDisplayString(re::RouteExportType routeType);
+  static QString getRouteTypeAsString(re::RouteExportType routeType);
+
 private:
   void buttonBoxClicked(QAbstractButton *button);
   void dataToDialog(const RouteExportData& data);
   void dialogToData(RouteExportData& data);
-  QString routeTypeAsString(re::RouteExportType routeType);
   void clearDialog();
 
   Ui::RouteExportDialog *ui;

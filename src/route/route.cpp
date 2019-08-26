@@ -233,11 +233,6 @@ bool Route::isSmaller(const atools::geo::LineDistance& dist1, const atools::geo:
   return std::abs(dist1.distance) < std::abs(dist2.distance) + epsilon;
 }
 
-void Route::updateActivePos(const map::PosCourse& pos)
-{
-  activePos = pos;
-}
-
 void Route::updateActiveLegAndPos(const map::PosCourse& pos)
 {
   if(isEmpty() || !pos.isValid())
@@ -1011,10 +1006,7 @@ void Route::updateAlternateProperties()
   int offset = getAlternateLegsOffset();
   if(offset != map::INVALID_INDEX_VALUE)
   {
-    QStringList alternates;
-    for(int idx = offset; idx < offset + getNumAlternateLegs(); idx++)
-      alternates.append(at(idx).getIdent());
-
+    QStringList alternates = getAlternateIdents();
     if(!alternates.isEmpty())
       getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates.join("#"));
     else
@@ -1022,6 +1014,18 @@ void Route::updateAlternateProperties()
   }
   else
     getFlightplan().getProperties().remove(atools::fs::pln::ALTERNATES);
+}
+
+QStringList Route::getAlternateIdents() const
+{
+  QStringList alternates;
+  int offset = getAlternateLegsOffset();
+  if(offset != map::INVALID_INDEX_VALUE)
+  {
+    for(int idx = offset; idx < offset + getNumAlternateLegs(); idx++)
+      alternates.append(at(idx).getIdent());
+  }
+  return alternates;
 }
 
 QBitArray Route::getJetAirwayFlags() const

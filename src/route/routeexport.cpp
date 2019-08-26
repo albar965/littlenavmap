@@ -670,27 +670,39 @@ bool RouteExport::routeExportVfp()
   return false;
 }
 
+bool RouteExport::routeExportXIvap()
+{
+  return routeExportIvapInternal(re::XIVAP);
+}
+
 bool RouteExport::routeExportIvap()
+{
+  return routeExportIvapInternal(re::IVAP);
+}
+
+bool RouteExport::routeExportIvapInternal(re::RouteExportType type)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    RouteExportData exportData = createRouteExportData(re::IVAP);
-    if(routeExportDialog(exportData, re::IVAP))
+    RouteExportData exportData = createRouteExportData(type);
+    if(routeExportDialog(exportData, type))
     {
+      QString typeStr = RouteExportDialog::getRouteTypeAsDisplayString(type);
       QString routeFile = dialog->saveFileDialog(
-        tr("Export Flight Plan as IvAp/X-IvAp FPL"),
-        tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/Ivap",
+        tr("Export Flight Plan as %1 FPL").arg(typeStr),
+        tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl",
+        "Route/" + RouteExportDialog::getRouteTypeAsString(type),
         documentsLocation,
         buildDefaultFilenameShort(QString(), ".fpl"),
         false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
       if(!routeFile.isEmpty())
       {
-        if(exportFlighplanAsIvap(exportData, routeFile))
+        if(exportFlighplanAsIvap(exportData, routeFile, type))
         {
-          mainWindow->setStatusMessage(tr("Flight plan saved for IvAp/X-IvAp."));
+          mainWindow->setStatusMessage(tr("Flight plan saved for %1.").arg(typeStr));
           return true;
         }
       }
@@ -702,6 +714,7 @@ bool RouteExport::routeExportIvap()
 RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExportType)
 {
   RouteExportData exportData;
+
   const Route& route = NavApp::getRouteConst();
   exportData.setRoute(RouteString::createStringForRoute(route, 0.f, rs::SID_STAR));
   exportData.setDeparture(route.getFlightplan().getDepartureIdent());
@@ -709,6 +722,12 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
   exportData.setDepartureTime(QDateTime::currentDateTimeUtc().time());
   exportData.setDepartureTimeActual(QDateTime::currentDateTimeUtc().time());
   exportData.setCruiseAltitude(atools::roundToInt(route.getCruisingAltitudeFeet()));
+
+  QStringList alternates = route.getAlternateIdents();
+  if(alternates.size() > 0)
+    exportData.setAlternate(alternates.at(0));
+  if(alternates.size() > 1)
+    exportData.setAlternate2(alternates.at(1));
 
   atools::fs::pln::FlightplanType flightplanType = route.getFlightplan().getFlightplanType();
   switch(routeExportType)
@@ -724,6 +743,7 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
       break;
 
     case re::IVAP:
+    case re::XIVAP:
 
       // [FLIGHTPLAN]
       // FLIGHTTYPE=N
@@ -1130,7 +1150,8 @@ bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const 
   }
 }
 
-bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename)
+bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename,
+                                        re::RouteExportType type)
 {
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -1164,31 +1185,43 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
     // RULES=I
     QTextStream stream(&file);
     stream << "[FLIGHTPLAN]" << endl;
-    stream << "CALLSIGN=" << exportData.getCallsign() << endl;
-    stream << "PIC=" << exportData.getPilotInCommand() << endl;
-    stream << "LIVERY=" << exportData.getLivery() << endl;
-    stream << "AIRLINE=" << exportData.getAirline() << endl;
-    stream << "SPEEDTYPE=N" << endl;
-    stream << "POB=" << exportData.getPassengers() << endl;
-    stream << "ENDURANCE=" << minToHourMinStr(exportData.getEnduranceMinutes()) << endl;
-    stream << "OTHER=" << exportData.getRemarks() << endl;
-    stream << "ALT2ICAO=" << exportData.getAlternate2() << endl;
-    stream << "ALTICAO=" << exportData.getAlternate() << endl;
-    stream << "EET=" << minToHourMinStr(exportData.getEnrouteMinutes()) << endl;
-    stream << "DESTICAO=" << exportData.getDestination() << endl;
-    stream << "ROUTE=" << exportData.getRoute() << endl;
-    stream << "LEVEL=" << exportData.getCruiseAltitude() / 100 << endl;
-    stream << "LEVELTYPE=F" << endl;
-    stream << "SPEED=" << exportData.getSpeed() << endl;
-    stream << "DEPTIME=" << exportData.getDepartureTime().toString("HHmm") << endl;
-    stream << "DEPICAO=" << exportData.getDeparture() << endl;
-    stream << "TRANSPONDER=" << exportData.getTransponder() << endl;
-    stream << "EQUIPMENT=" << exportData.getEquipment() << endl;
-    stream << "WAKECAT=" << exportData.getWakeCategory() << endl;
-    stream << "ACTYPE=" << exportData.getAircraftType() << endl;
-    stream << "NUMBER=1" << endl;
-    stream << "FLIGHTTYPE=" << exportData.getFlightType() << endl;
-    stream << "RULES=" << exportData.getFlightRules() << endl;
+
+    if(type == re::XIVAP)
+    {
+      stream << endl;
+      writeIvapLine(stream, "CALLSIGN", exportData.getCallsign(), type);
+      writeIvapLine(stream, "LIVERY", exportData.getLivery(), type);
+      writeIvapLine(stream, "AIRLINE", exportData.getAirline(), type);
+      writeIvapLine(stream, "PIC", exportData.getPilotInCommand(), type);
+      writeIvapLine(stream, "ALT2ICAO", exportData.getAlternate2(), type);
+      writeIvapLine(stream, "FMCROUTE", QString(), type);
+    }
+    else
+    {
+      writeIvapLine(stream, "ID", exportData.getCallsign(), type);
+      writeIvapLine(stream, "ALTICAO2", exportData.getAlternate2(), type);
+    }
+
+    writeIvapLine(stream, "SPEEDTYPE", "N", type);
+    writeIvapLine(stream, "POB", exportData.getPassengers(), type);
+    writeIvapLine(stream, "ENDURANCE", minToHourMinStr(exportData.getEnduranceMinutes()), type);
+    writeIvapLine(stream, "OTHER", exportData.getRemarks(), type);
+    writeIvapLine(stream, "ALTICAO", exportData.getAlternate(), type);
+    writeIvapLine(stream, "EET", minToHourMinStr(exportData.getEnrouteMinutes()), type);
+    writeIvapLine(stream, "DESTICAO", exportData.getDestination(), type);
+    writeIvapLine(stream, "ROUTE", exportData.getRoute(), type);
+    writeIvapLine(stream, "LEVEL", exportData.getCruiseAltitude() / 100, type);
+    writeIvapLine(stream, "LEVELTYPE", "F", type);
+    writeIvapLine(stream, "SPEED", exportData.getSpeed(), type);
+    writeIvapLine(stream, "DEPTIME", exportData.getDepartureTime().toString("HHmm"), type);
+    writeIvapLine(stream, "DEPICAO", exportData.getDeparture(), type);
+    writeIvapLine(stream, "TRANSPONDER", exportData.getTransponder(), type);
+    writeIvapLine(stream, "EQUIPMENT", exportData.getEquipment(), type);
+    writeIvapLine(stream, "WAKECAT", exportData.getWakeCategory(), type);
+    writeIvapLine(stream, "ACTYPE", exportData.getAircraftType(), type);
+    writeIvapLine(stream, "NUMBER", "1", type);
+    writeIvapLine(stream, "FLIGHTTYPE", exportData.getFlightType(), type);
+    writeIvapLine(stream, "RULES", exportData.getFlightRules(), type);
 
     file.close();
     return true;
@@ -1446,4 +1479,18 @@ QString RouteExport::minToHourMinStr(int minutes)
 {
   int enrouteHours = minutes / 60;
   return QString("%1%2").arg(enrouteHours, 2, 10, QChar('0')).arg(minutes - enrouteHours * 60, 2, 10, QChar('0'));
+}
+
+void RouteExport::writeIvapLine(QTextStream& stream, const QString& key, const QString& value, re::RouteExportType type)
+{
+  stream << key << "=" << value << endl;
+  if(type == re::XIVAP)
+    stream << endl;
+}
+
+void RouteExport::writeIvapLine(QTextStream& stream, const QString& key, int value, re::RouteExportType type)
+{
+  stream << key << "=" << value << endl;
+  if(type == re::XIVAP)
+    stream << endl;
 }

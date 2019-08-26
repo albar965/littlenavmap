@@ -1190,6 +1190,7 @@ void MainWindow::connectAllSlots()
   // Online export options
   connect(ui->actionRouteSaveAsVfp, &QAction::triggered, routeExport, &RouteExport::routeExportVfp);
   connect(ui->actionRouteSaveAsIvap, &QAction::triggered, routeExport, &RouteExport::routeExportIvap);
+  connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, routeExport, &RouteExport::routeExportXIvap);
 
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
@@ -3372,6 +3373,7 @@ void MainWindow::updateActionStates()
 
   ui->actionRouteSaveAsVfp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsIvap->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsXIvap->setEnabled(hasFlightplan);
   ui->actionRouteShowSkyVector->setEnabled(hasFlightplan);
 
   ui->actionRouteCenter->setEnabled(hasFlightplan);
