@@ -2025,7 +2025,8 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunway
 
 bool Route::isTooFarToFlightPlan() const
 {
-  return getDistanceToFlightPlan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM;
+  return getDistanceToFlightPlan() < map::INVALID_DISTANCE_VALUE &&
+         getDistanceToFlightPlan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM;
 }
 
 float Route::getDistanceToFlightPlan() const

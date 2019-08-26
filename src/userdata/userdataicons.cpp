@@ -58,7 +58,8 @@ void UserdataIcons::initTranslateableTexts()
     {QLatin1Literal("DME"), tr("DME", "UserpointType")},
     {QLatin1Literal("VORTAC"), tr("VORTAC", "UserpointType")},
     {QLatin1Literal("TACAN"), tr("TACAN", "UserpointType")},
-    {QLatin1Literal("NDB"), tr("NDB", "UserpointType")}
+    {QLatin1Literal("NDB"), tr("NDB", "UserpointType")},
+    {QLatin1Literal("Lighthouse"), tr("Lighthouse", "UserpointType")}
   });
 
   translationToTypeMap = QHash<QString, QString>(
@@ -87,7 +88,8 @@ void UserdataIcons::initTranslateableTexts()
     {tr("DME", "UserpointType"), QLatin1Literal("DME")},
     {tr("VORTAC", "UserpointType"), QLatin1Literal("VORTAC")},
     {tr("TACAN", "UserpointType"), QLatin1Literal("TACAN")},
-    {tr("NDB", "UserpointType"), QLatin1Literal("NDB")}
+    {tr("NDB", "UserpointType"), QLatin1Literal("NDB")},
+    {tr("Lighthouse", "UserpointType"), QLatin1Literal("Lighthouse")}
   });
 }
 

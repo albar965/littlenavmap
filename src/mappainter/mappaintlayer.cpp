@@ -216,7 +216,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
-         userpoint().userpointInfo().userpoinSymbolSize(24).userpointMaxTextLength(30).
+         userpoint().userpointInfo().userpoinSymbolSize(28).userpointMaxTextLength(30).
          markerSymbolSize(24).markerInfo().
          airportMaxTextLength(30)).
 
@@ -228,7 +228,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
-         userpoint().userpointInfo().userpoinSymbolSize(24).userpointMaxTextLength(30).
+         userpoint().userpointInfo().userpoinSymbolSize(28).userpointMaxTextLength(30).
          markerSymbolSize(24).markerInfo().
          airportMaxTextLength(30)).
 
@@ -242,7 +242,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
-         userpoint().userpointInfo().userpoinSymbolSize(24).userpointMaxTextLength(30).
+         userpoint().userpointInfo().userpoinSymbolSize(28).userpointMaxTextLength(30).
          markerSymbolSize(24).markerInfo().
          airportMaxTextLength(30)).
 
@@ -255,7 +255,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
-         userpoint().userpointInfo().userpoinSymbolSize(24).userpointMaxTextLength(20).
+         userpoint().userpointInfo().userpoinSymbolSize(26).userpointMaxTextLength(20).
          markerSymbolSize(24).markerInfo().
          airportMaxTextLength(30)).
 
@@ -268,7 +268,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayWaypoint().
-         userpoint().userpointInfo().userpoinSymbolSize(24).userpointMaxTextLength(20).
+         userpoint().userpointInfo().userpoinSymbolSize(26).userpointMaxTextLength(20).
          markerSymbolSize(24).
          airportMaxTextLength(20)).
 
