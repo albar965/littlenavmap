@@ -134,21 +134,21 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   /* *INDENT-OFF* */
   QListWidget*list = ui->listWidgetOptionPages;
-  list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));;
-  list->addItem(pageListItem(list, tr("User Interface"), tr("Change text sizes and language settings."), ":/littlenavmap/resources/icons/statusbar.svg"));;
+  list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and\nchange update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));;
+  list->addItem(pageListItem(list, tr("User Interface"), tr("Change text sizes and language settings\nand other user interface behavior."), ":/littlenavmap/resources/icons/statusbar.svg"));;
   list->addItem(pageListItem(list, tr("Map"), tr("General map settings: Zoom, click and tooltip settings."), ":/littlenavmap/resources/icons/mapsettings.svg"));;
   list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click and screen navigation settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));;
   list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols and texts for map display objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));;
   list->addItem(pageListItem(list, tr("Map Display 2"), tr("Change colors, symbols and texts for marks, user aircraft and more."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));;
   list->addItem(pageListItem(list, tr("Map Display Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));;
-  list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordindate units as well as options for course and heading display."), ":/littlenavmap/resources/icons/units.svg"));;
-  list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft."), ":/littlenavmap/resources/icons/aircraft.svg"));;
+  list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordindate units as well as\noptions for course and heading display."), ":/littlenavmap/resources/icons/units.svg"));;
+  list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft and trail."), ":/littlenavmap/resources/icons/aircraft.svg"));;
   list->addItem(pageListItem(list, tr("Flight Plan"), tr("Options for flight plan calculation, saving and loading."), ":/littlenavmap/resources/icons/route.svg"));
   list->addItem(pageListItem(list, tr("Weather"), tr("Define paths as well weather sources for information and tooltips."), ":/littlenavmap/resources/icons/weather.svg"));
   list->addItem(pageListItem(list, tr("Online Flying"), tr("Select online flying services like VATSIM, IVAO or custom."), ":/littlenavmap/resources/icons/aircraft_online.svg"));;
   list->addItem(pageListItem(list, tr("Web Server"), tr("Change settings for the internal web server."), ":/littlenavmap/resources/icons/web.svg"));;
-  list->addItem(pageListItem(list, tr("Cache and Files"), tr("Change map cache and select elevation data source."), ":/littlenavmap/resources/icons/filesave.svg"));;
-  list->addItem(pageListItem(list, tr("Scenery Library Database"), tr("Exclude scenery files from loading."), ":/littlenavmap/resources/icons/database.svg"));;
+  list->addItem(pageListItem(list, tr("Cache and Files"), tr("Change map cache, select elevation data source and the path for user airspaces."), ":/littlenavmap/resources/icons/filesave.svg"));;
+  list->addItem(pageListItem(list, tr("Scenery Library Database"), tr("Exclude scenery files from loading and\nadd-on recognition."), ":/littlenavmap/resources/icons/database.svg"));;
   /* *INDENT-ON* */
 
   // Build tree settings to map tab =====================================================
