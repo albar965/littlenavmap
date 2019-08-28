@@ -70,6 +70,9 @@ public:
   /* Garmin exchange format. Not a flight plan format.  */
   bool routeExportGpx();
 
+  /* Export as HTML page */
+  bool routeExportHtml();
+
   /* Majestic Dash binary format */
   bool routeExportFpr();
 

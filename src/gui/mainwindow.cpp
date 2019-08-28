@@ -1170,6 +1170,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsFpl, &QAction::triggered, routeExport, &RouteExport::routeExportFpl);
   connect(ui->actionRouteSaveAsCorteIn, &QAction::triggered, routeExport, &RouteExport::routeExportCorteIn);
   connect(ui->actionRouteSaveAsGpx, &QAction::triggered, routeExport, &RouteExport::routeExportGpx);
+  connect(ui->actionRouteSaveAsHtml, &QAction::triggered, routeExport, &RouteExport::routeExportHtml);
   connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
 
   connect(ui->actionRouteSaveAsRxpGns, &QAction::triggered, routeExport, &RouteExport::routeExportRxpGns);
@@ -3358,6 +3359,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsRxpGtn->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsRxpGns->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsHtml->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsClean->setEnabled(hasFlightplan);
 
   ui->actionRouteSaveAsIFly->setEnabled(hasFlightplan);

@@ -303,6 +303,7 @@ const QLatin1Literal FILE_PATTERN_TFDI("(*.xml)");
 
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
+const QLatin1Literal FILE_PATTERN_HTML("(*.html *.htm)");
 
 const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv)");
 const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
@@ -336,6 +337,7 @@ const QLatin1Literal FILE_PATTERN_TFDI("(*.xml *.Xml *.XML)");
 
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.Gpx *.GPX)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");
+const QLatin1Literal FILE_PATTERN_HTML("(*.html *.Html *.HTML)");
 
 const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv *.Csv *.CSV)");
 const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");

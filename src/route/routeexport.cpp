@@ -22,6 +22,7 @@
 #include "common/aircrafttrack.h"
 #include "fs/perf/aircraftperf.h"
 #include "route/route.h"
+#include "route/routecontroller.h"
 #include "io/fileroller.h"
 #include "options/optiondata.h"
 #include "gui/dialog.h"
@@ -800,6 +801,35 @@ bool RouteExport::routeExportGpx()
         return true;
       }
     }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportHtml()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString routeFile = dialog->saveFileDialog(
+    tr("Save Flight Plan as HTML Page"),
+    tr("HTML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_HTML),
+    "html", "Route/Html", documentsLocation, buildDefaultFilename(QString(), ".html"),
+    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+
+  if(!routeFile.isEmpty())
+  {
+    QString htmlpage = NavApp::getRouteController()->getFlightplanTableAsHtml(24);
+
+    QFile file(routeFile);
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream(&file);
+      stream.setCodec("UTF-8");
+      stream << htmlpage;
+      mainWindow->setStatusMessage(tr("Flight plan saved as HTML."));
+      return true;
+    }
+    else
+      atools::gui::ErrorHandler(mainWindow).handleIOError(file);
   }
   return false;
 }

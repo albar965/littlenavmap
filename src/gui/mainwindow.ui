@@ -85,6 +85,7 @@
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsEfbr"/>
      <addaction name="separator"/>
+     <addaction name="actionRouteSaveAsHtml"/>
      <addaction name="actionRouteSaveAsGpx"/>
      <addaction name="separator"/>
      <addaction name="actionRouteShowSkyVector"/>
@@ -10889,6 +10890,17 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Save flight plan as FPL file for X-IvAp</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsHtml">
+   <property name="text">
+    <string>Export Flight Plan as HTML ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export the flight plan as a HTML page</string>
+   </property>
+   <property name="statusTip">
+    <string>Export the flight plan as a HTML page</string>
    </property>
   </action>
  </widget>
