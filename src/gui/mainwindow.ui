@@ -10894,7 +10894,7 @@ relation to shown airport</string>
   </action>
   <action name="actionRouteSaveAsHtml">
    <property name="text">
-    <string>Export Flight Plan as HTML ...</string>
+    <string>Export Flight Plan as HTML Page ...</string>
    </property>
    <property name="toolTip">
     <string>Export the flight plan as a HTML page</string>

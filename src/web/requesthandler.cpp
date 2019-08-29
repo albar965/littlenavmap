@@ -224,7 +224,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
             // ===========================================================================
             // Flight plan
             if(t.contains("{flightplanText}"))
-              t.setVariable("flightplanText", emit getFlightplanTableAsHtml(20));
+              t.setVariable("flightplanText", emit getFlightplanTableAsHtml(20, false));
 
             // ===========================================================================
             // Airport information

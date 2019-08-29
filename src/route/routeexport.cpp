@@ -817,14 +817,12 @@ bool RouteExport::routeExportHtml()
 
   if(!routeFile.isEmpty())
   {
-    QString htmlpage = NavApp::getRouteController()->getFlightplanTableAsHtml(24);
-
     QFile file(routeFile);
     if(file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QTextStream stream(&file);
       stream.setCodec("UTF-8");
-      stream << htmlpage;
+      stream << NavApp::getRouteController()->getFlightplanTableAsHtmlDoc(24);
       mainWindow->setStatusMessage(tr("Flight plan saved as HTML."));
       return true;
     }
@@ -912,7 +910,7 @@ QString RouteExport::buildDefaultFilename(const QString& sep, const QString& suf
          buildDefaultFilenameShort(sep, suffix) : buildDefaultFilenameLong(extension, suffix);
 }
 
-QString RouteExport::buildDefaultFilenameLong(const QString& extension, const QString& suffix) const
+QString RouteExport::buildDefaultFilenameLong(const QString& extension, const QString& suffix)
 {
   QString filename;
 
@@ -944,7 +942,7 @@ QString RouteExport::buildDefaultFilenameLong(const QString& extension, const QS
   return filename;
 }
 
-QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix) const
+QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix)
 {
   QString filename;
 

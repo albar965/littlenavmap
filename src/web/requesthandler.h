@@ -69,7 +69,7 @@ signals:
 
   atools::fs::sc::SimConnectUserAircraft getUserAircraft();
   Route getRoute();
-  QString getFlightplanTableAsHtml(int iconSize);
+  QString getFlightplanTableAsHtml(int iconSize, bool print);
   QStringList getAirportText(QString ident);
   atools::geo::Pos getCurrentMapWidgetPos();
 

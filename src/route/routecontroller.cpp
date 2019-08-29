@@ -460,7 +460,18 @@ void RouteController::flightplanHeader(atools::util::HtmlBuilder& html, bool tit
     html.p(buildFlightplanLabel2(), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
 }
 
-QString RouteController::getFlightplanTableAsHtml(float iconSizePixel) const
+QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
+{
+  atools::util::HtmlBuilder html(true);
+  html.doc(tr("%1 - %2").arg(QApplication::applicationName()).
+           arg(RouteExport::buildDefaultFilenameLong(QString(), QString())));
+  html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, false),
+            atools::util::html::NO_ENTITIES);
+  html.docEnd();
+  return html.getHtml();
+}
+
+QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool print) const
 {
   qDebug() << Q_FUNC_INFO;
   using atools::util::HtmlBuilder;
@@ -469,7 +480,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel) const
   int minColWidth = view->horizontalHeader()->minimumSectionSize() + 1;
 
   // Header lines
-  html.p(buildFlightplanLabel(true /* print */), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+  html.p(buildFlightplanLabel(print), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
   html.p(buildFlightplanLabel2(), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
   html.table();
 

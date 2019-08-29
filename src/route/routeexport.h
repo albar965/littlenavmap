@@ -139,8 +139,8 @@ public:
                                const QString& extension = QString()) const;
 
   /* Create a default filename based on departure and destination names. Suffix includes dot. */
-  QString buildDefaultFilenameLong(const QString& extension = QString(), const QString& suffix = ".pln") const;
-  QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
+  static QString buildDefaultFilenameLong(const QString& extension = QString(), const QString& suffix = ".pln");
+  static QString buildDefaultFilenameShort(const QString& sep, const QString& suffix);
 
   /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.
    *  Also sets altitude into FlightplanEntry position. */
