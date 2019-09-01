@@ -1102,7 +1102,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   if(!approach)
   {
     html.row2(tr("Range:"), Unit::distNm(ilsRec->valueFloat("range")));
-    html.row2(tr("Morse:"), morse->getCode(ilsRec->valueStr("ident")), ahtml::BOLD | ahtml::NO_ENTITIES);
+    addMorse(html, tr("Morse:"), ilsRec->valueStr("ident"));
     rowForBool(html, ilsRec, "has_backcourse", tr("Has Backcourse"), false);
   }
 
@@ -1155,6 +1155,9 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   if(end.isValid())
     html.small(QString("Database: runway_end_id = %1").arg(end.id)).br();
 #endif
+
+  if(info)
+    html.br();
 }
 
 void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) const
@@ -1366,8 +1369,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
                 if(!vorReg.valueStr("channel").isEmpty())
                   html.row2(tr("DME Channel:"), vorReg.valueStr("channel"));
                 html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
-                html.row2(tr("DME Morse:"), morse->getCode(vorReg.valueStr("ident")),
-                          ahtml::BOLD | ahtml::NO_ENTITIES);
+                addMorse(html, tr("DME Morse:"), vorReg.valueStr("ident"));
               }
               else
                 html.row2(tr("DME data not found for %1/%2.").
@@ -1423,8 +1425,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
           html.row2(tr("VORTAC Channel:"), vor.channel);
         if(vor.range > 0)
           html.row2(tr("VORTAC Range:"), Unit::distNm(vor.range));
-        html.row2(tr("VORTAC Morse:"), morse->getCode(
-                    vor.ident), ahtml::BOLD | ahtml::NO_ENTITIES);
+        addMorse(html, tr("VORTAC Morse:"), vor.ident);
       }
       else
       {
@@ -1432,8 +1433,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
         html.row2(tr("VOR Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
         if(vor.range > 0)
           html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
-        html.row2(tr("VOR Morse:"), morse->getCode(
-                    vor.ident), ahtml::BOLD | ahtml::NO_ENTITIES);
+        addMorse(html, tr("VOR Morse:"), vor.ident);
       }
     }
 #ifdef DEBUG_INFORMATION
@@ -1463,8 +1463,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       if(ndb.range > 0)
         html.row2(tr("NDB Range:"), Unit::distNm(ndb.range));
 
-      html.row2(tr("NDB Morse:"), morse->getCode(ndb.ident),
-                ahtml::BOLD | ahtml::NO_ENTITIES);
+      addMorse(html, tr("NDB Morse:"), ndb.ident);
     }
 #ifdef DEBUG_INFORMATION
     else
@@ -1865,7 +1864,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(vor.getPosition().getAltitude() < INVALID_ALTITUDE_VALUE)
     html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
-  html.row2(tr("Morse:"), morse->getCode(vor.ident), ahtml::BOLD | ahtml::NO_ENTITIES);
+  addMorse(html, tr("Morse:"), vor.ident);
   addCoordinates(rec, html);
   html.tableEnd();
 
@@ -1875,6 +1874,9 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
 #ifdef DEBUG_INFORMATION
   html.small(QString("Database: vor_id = %1").arg(vor.getId())).br();
 #endif
+
+  if(info)
+    html.br();
 }
 
 void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
@@ -1917,7 +1919,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     html.row2(tr("Elevation:"), Unit::altFeet(ndb.getPosition().getAltitude()));
   if(ndb.range > 0)
     html.row2(tr("Range:"), Unit::distNm(ndb.range));
-  html.row2(tr("Morse:"), morse->getCode(ndb.ident), ahtml::BOLD | ahtml::NO_ENTITIES);
+  addMorse(html, tr("Morse:"), ndb.ident);
   addCoordinates(rec, html);
   html.tableEnd();
 
@@ -1927,6 +1929,9 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 #ifdef DEBUG_INFORMATION
   html.small(QString("Database: ndb_id = %1").arg(ndb.getId())).br();
 #endif
+
+  if(info)
+    html.br();
 }
 
 void HtmlInfoBuilder::holdText(const Hold& hold, HtmlBuilder& html) const
@@ -2376,6 +2381,10 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 #ifdef DEBUG_INFORMATION
   html.small(QString("Database: waypoint_id = %1").arg(waypoint.getId())).br();
 #endif
+
+  if(info)
+    html.br();
+
 }
 
 void HtmlInfoBuilder::bearingText(const ageo::Pos& pos, float magVar, HtmlBuilder& html) const
@@ -2653,6 +2662,9 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 #ifdef DEBUG_INFORMATION
   html.small(QString("Database: airway_id = %1").arg(airway.getId())).br();
 #endif
+
+  if(info)
+    html.br();
 }
 
 void HtmlInfoBuilder::markerText(const MapMarker& marker, HtmlBuilder& html) const
@@ -2661,6 +2673,7 @@ void HtmlInfoBuilder::markerText(const MapMarker& marker, HtmlBuilder& html) con
     head(html, tr("Marker: %1").arg(atools::capString(marker.type)));
   else
     head(html, tr("Marker: %1 (%2)").arg(marker.ident).arg(atools::capString(marker.type)));
+  html.br();
 }
 
 void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) const
@@ -4014,4 +4027,9 @@ void HtmlInfoBuilder::addFlightRulesSuffix(atools::util::HtmlBuilder& html,
   html.text(metar.getParsedMetar().getFlightRulesString());
   if(mapDisplay)
     html.nbsp().text(tr("-")).nbsp().text(tr("Map"));
+}
+
+void HtmlInfoBuilder::addMorse(atools::util::HtmlBuilder& html, const QString& name, const QString& code) const
+{
+  html.row2(name, morse->getCode(code), ahtml::BOLD | ahtml::NO_ENTITIES);
 }

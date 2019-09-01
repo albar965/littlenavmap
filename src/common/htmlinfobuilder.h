@@ -376,6 +376,8 @@ private:
                        float windDirectionDeg, int max, bool details) const;
   void descriptionText(const QString& descriptionText, atools::util::HtmlBuilder& html) const;
 
+  void addMorse(atools::util::HtmlBuilder& html, const QString& name, const QString& code) const;
+
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
 
