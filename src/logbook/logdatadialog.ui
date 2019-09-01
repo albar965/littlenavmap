@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidgetLogbook">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabLogbookEntry">
       <attribute name="title">
@@ -272,6 +272,9 @@
             </property>
             <property name="margin">
              <number>5</number>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>
@@ -679,6 +682,9 @@ Does not update distance and cruise altitude when changed.</string>
             <property name="margin">
              <number>5</number>
             </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
            </widget>
           </item>
           <item row="6" column="1" colspan="3">
@@ -688,6 +694,9 @@ Does not update distance and cruise altitude when changed.</string>
             </property>
             <property name="margin">
              <number>5</number>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>
