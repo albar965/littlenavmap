@@ -303,6 +303,9 @@ void MapPaintWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
 
   if(type & map::AIRSPACE)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
+
+  if(type & map::ILS)
+    screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show)
