@@ -1185,6 +1185,9 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
     float magVar = NavApp::getMagVar(windStack.first().pos);
     for(const atools::grib::WindPos& wind : windStack)
     {
+      if(!(wind.wind.dir < map::INVALID_COURSE_VALUE) && !(wind.wind.speed < map::INVALID_SPEED_VALUE))
+        continue;
+
       Flags flags = ahtml::ALIGN_RIGHT;
 
       float alt = wind.pos.getAltitude();
@@ -1192,15 +1195,21 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
 
       // One table row with three data fields
       QString courseTxt;
-      if(wind.wind.speed >= 1.f)
-        courseTxt = courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, false /* no small */);
+      if(wind.wind.speed >= 1.f && wind.wind.dir < map::INVALID_COURSE_VALUE)
+        courseTxt = courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */);
       else
         courseTxt = tr("-");
+
+      QString speedTxt;
+      if(wind.wind.speed >= 1.f && wind.wind.speed < map::INVALID_SPEED_VALUE)
+        speedTxt = tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0);
+      else
+        speedTxt = tr("-");
 
       html.tr().
       td(atools::almostEqual(alt, 260.f) ? tr("Ground") : Unit::altFeet(alt, false), flags).
       td(courseTxt, flags | ahtml::NO_ENTITIES).
-      td(tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0), flags).
+      td(speedTxt, flags).
       trEnd();
     }
     html.tableEnd();

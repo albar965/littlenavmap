@@ -527,8 +527,7 @@ atools::grib::Wind WindReporter::getWindForLineStringRoute(const atools::geo::Li
          getWindAverageForLineString(line);
 }
 
-atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos,
-                                                             QVector<int> altitudesFt)
+atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos, QVector<int> altitudesFt)
 {
   atools::grib::WindPosVector winds;
 
@@ -545,7 +544,10 @@ atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::
 
       // Get wind for layer/altitude
       wp.pos = pos.alt(alt);
-      wp.wind = windQuery->getWindForPos(wp.pos);
+      if(currentSource != wind::NOAA && altitudesFt.at(i) == wind::AGL)
+        wp.wind = {map::INVALID_COURSE_VALUE, map::INVALID_SPEED_VALUE};
+      else
+        wp.wind = windQuery->getWindForPos(wp.pos);
       winds.append(wp);
 
       if(currentLevel == wind::FLIGHTPLAN && curAlt > alt && curAlt < altNext)
