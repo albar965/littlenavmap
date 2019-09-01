@@ -5054,7 +5054,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
          <string>Nearest</string>
         </attribute>
         <attribute name="toolTip">
-         <string>Nearest navaids and airports in 
+         <string>Nearest navaids and airports in
 relation to shown airport</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -5456,20 +5456,8 @@ relation to shown airport</string>
      </property>
      <item>
       <widget class="QSplitter" name="splitterProfile">
-       <property name="toolTip">
-        <string>Show or hide zoom buttons</string>
-       </property>
-       <property name="statusTip">
-        <string>Show or hide zoom buttons</string>
-       </property>
-       <property name="lineWidth">
-        <number>0</number>
-       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="handleWidth">
-        <number>6</number>
        </property>
        <widget class="QWidget" name="layoutWidgetProfileDrawing">
         <layout class="QGridLayout" name="gridLayoutProfileDrawing">

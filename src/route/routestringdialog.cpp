@@ -50,6 +50,12 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
 
   // Disallow collapsing of the upper view
   ui->splitterRouteString->setCollapsible(0, false);
+  if(ui->splitterRouteString->handle(1) != nullptr)
+  {
+    ui->splitterRouteString->handle(1)->
+    setToolTip(tr("Resize upper and lower part or open and close lower message area of the dialog."));
+    ui->splitterRouteString->handle(1)->setStatusTip(ui->splitterRouteString->handle(1)->toolTip());
+  }
 
   QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
 #if defined(Q_OS_MACOS)

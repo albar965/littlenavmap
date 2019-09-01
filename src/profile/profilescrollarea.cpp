@@ -54,6 +54,11 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
 
   // Disallow collapsing of the profile view
   ui->splitterProfile->setCollapsible(0, false);
+  if(ui->splitterProfile->handle(1) != nullptr)
+  {
+    ui->splitterProfile->handle(1)->setToolTip(tr("Show, hide or resize zoom button area."));
+    ui->splitterProfile->handle(1)->setStatusTip(ui->splitterProfile->handle(1)->toolTip());
+  }
 
   // Connect zoom sliders
   connect(ui->horizontalSliderProfileZoom, &QSlider::valueChanged,
@@ -496,7 +501,7 @@ void ProfileScrollArea::scaleViewAll()
 
 void ProfileScrollArea::scaleView(QScrollBar *scrollBar)
 {
-  QSize size(horizScaleFactor *scrollArea->viewport()->width(), vertScaleFactor *scrollArea->viewport()->height());
+  QSize size(horizScaleFactor * scrollArea->viewport()->width(), vertScaleFactor *scrollArea->viewport()->height());
 
   // Do not update the last scroll position values by vertScrollBarChanged or horizScrollBarChanged
   noLastScrollPosUpdate = true;

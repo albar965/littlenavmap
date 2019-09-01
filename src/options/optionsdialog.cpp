@@ -126,11 +126,15 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
-  // Make the splitter handle better visible
-  ui->splitterOptions->setStyleSheet(QString("QSplitter::handle { "
-                                             "background: %1;"
-                                             "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); }").
+  // Make splitter handle better visible - update background color
+  ui->splitterOptions->setStyleSheet(QString("QSplitter::handle { background: %1; }").
                                      arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+
+  if(ui->splitterOptions->handle(1) != nullptr)
+  {
+    ui->splitterOptions->handle(1)->setToolTip(tr("Resize options list."));
+    ui->splitterOptions->handle(1)->setStatusTip(ui->splitterOptions->handle(1)->toolTip());
+  }
 
   /* *INDENT-OFF* */
   QListWidget*list = ui->listWidgetOptionPages;
