@@ -1577,25 +1577,27 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
   {
     atools::grib::Wind wind = windReporter->getWindForPosRoute(pos.alt(altitude));
-
-    float headWind = 0.f, crossWind = 0.f;
-    atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseToTrue());
-
-    float magVar = NavApp::getMagVar(pos);
-
-    variableLabelText.append(tr(", %1Wind %2°M, %3").
-                             arg(windReporter->isWindManual() ? tr("Manual ") : QString()).
-                             arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
-                             arg(Unit::speedKts(wind.speed)));
-
-    if(std::abs(headWind) >= 1.f)
+    if(wind.isValid() && !wind.isNull())
     {
-      QString windPtr;
-      if(headWind >= 1.f)
-        windPtr = tr("◄");
-      else if(headWind <= -1.f)
-        windPtr = tr("►");
-      variableLabelText.append(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
+      float headWind = 0.f, crossWind = 0.f;
+      atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseToTrue());
+
+      float magVar = NavApp::getMagVar(pos);
+
+      variableLabelText.append(tr(", %1Wind %2°M, %3").
+                               arg(windReporter->isWindManual() ? tr("Manual ") : QString()).
+                               arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
+                               arg(Unit::speedKts(wind.speed)));
+
+      if(std::abs(headWind) >= 1.f)
+      {
+        QString windPtr;
+        if(headWind >= 1.f)
+          windPtr = tr("◄");
+        else if(headWind <= -1.f)
+          windPtr = tr("►");
+        variableLabelText.append(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
+      }
     }
   }
 

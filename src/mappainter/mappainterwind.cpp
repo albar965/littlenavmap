@@ -62,6 +62,9 @@ void MapPainterWind::render(PaintContext *context)
 
     for(const atools::grib::WindPos& windPos : *windForRect)
     {
+      if(!windPos.wind.isValid())
+        continue;
+
       if(rect.contains(windPos.pos))
       {
         bool isVisible, isHidden;

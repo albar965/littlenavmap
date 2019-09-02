@@ -1336,7 +1336,9 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
 
       float climbDist = 0.f, cruiseDist = 0.f, descentDist = 0.f;
       float climbSpeed = 0.f, cruiseSpeed = 0.f, descentSpeed = 0.f;
-      atools::grib::Wind climbWind = {0.f, 0.f}, cruiseWind = {0.f, 0.f}, descentWind = {0.f, 0.f};
+      atools::grib::Wind climbWind = atools::grib::EMPTY_WIND,
+                         cruiseWind = atools::grib::EMPTY_WIND,
+                         descentWind = atools::grib::EMPTY_WIND;
 
       // Check if leg covers TOC and/or TOD =================================================
       // Calculate wind, distance and averate speed (TAS) for this leg

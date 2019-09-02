@@ -490,7 +490,6 @@ const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoD
 atools::grib::WindPos WindReporter::getWindForPos(const atools::geo::Pos& pos, float altFeet)
 {
   atools::grib::WindPos wp;
-  wp.init();
   if(windQuery->hasWindData())
   {
     wp.pos = pos;
@@ -506,8 +505,7 @@ atools::grib::WindPos WindReporter::getWindForPos(const atools::geo::Pos& pos)
 
 atools::grib::Wind WindReporter::getWindForPosRoute(const atools::geo::Pos& pos)
 {
-  return (NavApp::getAircraftPerfController()->isWindManual() ? windQueryManual : windQuery)->
-         getWindForPos(pos);
+  return (NavApp::getAircraftPerfController()->isWindManual() ? windQueryManual : windQuery)->getWindForPos(pos);
 }
 
 atools::grib::Wind WindReporter::getWindForLineRoute(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2)

@@ -1185,7 +1185,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
     float magVar = NavApp::getMagVar(windStack.first().pos);
     for(const atools::grib::WindPos& wind : windStack)
     {
-      if(!(wind.wind.dir < map::INVALID_COURSE_VALUE) && !(wind.wind.speed < map::INVALID_SPEED_VALUE))
+      if(!wind.wind.isValid())
         continue;
 
       Flags flags = ahtml::ALIGN_RIGHT;
@@ -1195,16 +1195,16 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
 
       // One table row with three data fields
       QString courseTxt;
-      if(wind.wind.speed >= 1.f && wind.wind.dir < map::INVALID_COURSE_VALUE)
-        courseTxt = courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */);
-      else
+      if(wind.wind.isNull())
         courseTxt = tr("-");
+      else
+        courseTxt = courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */);
 
       QString speedTxt;
-      if(wind.wind.speed >= 1.f && wind.wind.speed < map::INVALID_SPEED_VALUE)
-        speedTxt = tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0);
+      if(wind.wind.isNull())
+        speedTxt = tr("0");
       else
-        speedTxt = tr("-");
+        speedTxt = tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0);
 
       html.tr().
       td(atools::almostEqual(alt, 260.f) ? tr("Ground") : Unit::altFeet(alt, false), flags).
