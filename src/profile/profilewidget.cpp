@@ -606,12 +606,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   {
     symPainter.textBox(&painter, {tr("No Flight Plan loaded.")}, QApplication::palette().color(QPalette::Text),
                        X0 + w / 2, Y0 + h / 2, textatt::BOLD | textatt::CENTER, 0);
+    scrollArea->updateLabelWidget();
     return;
   }
   else if(!hasValidRouteForDisplay(route))
   {
     symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QApplication::palette().color(QPalette::Text),
                        X0 + w / 2, Y0 + h / 2, textatt::BOLD | textatt::CENTER, 0);
+    scrollArea->updateLabelWidget();
     return;
   }
 
