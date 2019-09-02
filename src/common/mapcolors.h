@@ -119,6 +119,13 @@ extern QColor mapPrintRowColor;
 extern QColor mapPrintRowColorAlt;
 extern QColor mapPrintHeaderColor;
 
+/* Marks, crosses and other colors */
+extern QPen searchCenterBackPen;
+extern QPen searchCenterFillPen;
+extern QPen touchMarkBackPen;
+extern QPen touchMarkFillPen;
+extern QColor touchRegionFillColor;
+
 // ==========================================================================
 
 /* Web page table background colors */
@@ -162,19 +169,10 @@ const QColor logTextBoxColor = QColor(150, 240, 255);
 
 const QColor airportSymbolFillColor = QColor(Qt::white);
 
-const QPen markBackPen = QPen(QBrush(QColor(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
-const QPen markFillPen = QPen(QBrush(QColor(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
-
-const QPen centerCrossBackPen = QPen(QBrush(QColor(0, 0, 0)), 4, Qt::SolidLine, Qt::FlatCap);
-const QPen centerCrossFillPen = QPen(QBrush(QColor(255, 255, 255)), 2, Qt::SolidLine, Qt::FlatCap);
-
-const QPen aircraftBackPen = QPen(QBrush(QColor(Qt::black)), 7, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftFillPen = QPen(QBrush(QColor(Qt::yellow)), 4, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftGroundBackPen = QPen(QBrush(QColor(Qt::darkGray)), 7, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftGroundFillPen = QPen(QBrush(QColor(Qt::yellow)), 4, Qt::SolidLine, Qt::RoundCap);
-
-const QPen homeBackPen = QPen(QBrush(QColor(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
-const QColor homeFillColor = QColor(Qt::yellow);
+const QPen aircraftBackPen = QPen(Qt::black, 7, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftGroundBackPen = QPen(Qt::darkGray, 7, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftGroundFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundCap);
 
 const QColor highlightApproachColor = QColor(150, 150, 255);
 const QColor highlightApproachColorFast = QColor(0, 0, 150);

@@ -423,9 +423,10 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptions);
 enum DisplayOptionNavAid
 {
   NAVAIDS_NONE = 0,
-  NAVAIDS_CENTER_CROSS = 1 << 1,
-  NAVAIDS_TOUCHSCREEN_AREAS = 1 << 2,
-  NAVAIDS_TOUCHSCREEN_ICONS = 1 << 3,
+  NAVAIDS_CENTER_CROSS = 1 << 1, /* White center cross on black background */
+  NAVAIDS_TOUCHSCREEN_AREAS = 1 << 2, /* White center marks showing touch areas on black background */
+  NAVAIDS_TOUCHSCREEN_REGIONS = 1 << 3, /* Dim gray highlighted touch areas  */
+  NAVAIDS_TOUCHSCREEN_ICONS = 1 << 4 /* Icons */
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsNavAid, DisplayOptionNavAid);

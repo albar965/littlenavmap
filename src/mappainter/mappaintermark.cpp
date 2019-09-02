@@ -98,10 +98,10 @@ void MapPainterMark::paintMark(const PaintContext *context)
   int x, y;
   if(wToS(mapPaintWidget->getSearchMarkPos(), x, y))
   {
-    context->painter->setPen(mapcolors::markBackPen);
+    context->painter->setPen(mapcolors::searchCenterBackPen);
     drawCross(context, x, y, context->sz(context->symbolSizeAirport, 10));
 
-    context->painter->setPen(mapcolors::markFillPen);
+    context->painter->setPen(mapcolors::searchCenterFillPen);
     drawCross(context, x, y, context->sz(context->symbolSizeAirport, 8));
   }
 }

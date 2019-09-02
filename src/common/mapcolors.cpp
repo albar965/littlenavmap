@@ -119,6 +119,12 @@ QColor mapPrintRowColor(250, 250, 250);
 QColor mapPrintRowColorAlt(240, 240, 240);
 QColor mapPrintHeaderColor(220, 220, 220);
 
+QPen searchCenterBackPen(QColor(0, 0, 0), 6, Qt::SolidLine, Qt::FlatCap);
+QPen searchCenterFillPen(QColor(255, 255, 0), 2, Qt::SolidLine, Qt::FlatCap);
+QPen touchMarkBackPen(QColor(0, 0, 0), 4, Qt::SolidLine, Qt::FlatCap);
+QPen touchMarkFillPen(QColor(255, 255, 255), 2, Qt::SolidLine, Qt::FlatCap);
+QColor touchRegionFillColor("#40888888");
+
 /* Alternating colors */
 static QColor rowBgColor;
 static QColor rowAltBgColor;
@@ -590,6 +596,11 @@ void syncColors()
   syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);
   syncColor(colorSettings, "CompassRoseColor", compassRoseColor);
   syncColor(colorSettings, "CompassRoseTextColor", compassRoseTextColor);
+  syncPen(colorSettings, "SearchCenterBackPen", searchCenterBackPen);
+  syncPen(colorSettings, "SearchCenterFillPen", searchCenterFillPen);
+  syncPen(colorSettings, "TouchMarkBackPen", touchMarkBackPen);
+  syncPen(colorSettings, "TouchMarkFillPen", touchMarkFillPen);
+  syncColorArgb(colorSettings, "TouchRegionFillColor", touchRegionFillColor);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Highlight");

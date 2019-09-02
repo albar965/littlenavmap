@@ -35,6 +35,7 @@ public:
 private:
   /* Highlight click/touch areas */
   void drawTouchMarks(const PaintContext *context, int lineSize, int areaSize);
+  void drawTouchRegions(const PaintContext *context, int areaSize);
 
   /* Draw navigation icons into the corners */
   void drawTouchIcons(const PaintContext *context, int iconSize);

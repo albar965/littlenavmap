@@ -163,9 +163,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptions>(topOfMap, displayOptItemIndex, tr("Wind Direction and Speed"), tr("Show wind direction and speed on the top center of the map."), optsd::ITEM_USER_AIRCRAFT_WIND, true);
   addItem<optsd::DisplayOptions>(topOfMap, displayOptItemIndex, tr("Wind Pointer"), tr("Show wind direction pointer on the top center of the map."), optsd::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
-  QTreeWidgetItem *navAids = addTopItem(root, tr("Navigation Aids"), QString());
+  QTreeWidgetItem *navAids = addTopItem(root, tr("Map Navigation Aids"), QString());
   addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Center Cross"), tr("Shows the map center. Useful if \"Click map to center position\" on page \"Map Navigation\" is enabled."), optsd::NAVAIDS_CENTER_CROSS, false);
-  addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Areas"), tr("Shows corner marks to highlight the screen areas. Helps if map areas are used for touchscreen navigation.\nOnly shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_AREAS, false);
+  addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Area"), tr("Highlight click- or touchable areas on screen.\nOnly shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_REGIONS, false);
+  addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Areas Marks"), tr("Shows corner marks to highlight the screen areas. Helps if map areas are used for touchscreen navigation.\nOnly shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_AREAS, false);
   addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Area Icons"), tr("Shows icons for the screen areas. Useful if map areas are used for touchscreen navigation.\nnOnly shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_ICONS, false);
 
   QTreeWidgetItem *airport = addTopItem(root, tr("Airport"), tr("Select airport labels to display on the map."));

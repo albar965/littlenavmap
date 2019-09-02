@@ -61,10 +61,10 @@ void MapPainterTop::render(PaintContext *context)
     int x = vp.center().x();
     int y = vp.center().y();
 
-    painter->setPen(mapcolors::centerCrossBackPen);
+    painter->setPen(mapcolors::touchMarkBackPen);
     drawCross(context, x, y, size);
 
-    painter->setPen(mapcolors::centerCrossFillPen);
+    painter->setPen(mapcolors::touchMarkFillPen);
     drawCross(context, x, y, size2);
   }
 
@@ -72,14 +72,16 @@ void MapPainterTop::render(PaintContext *context)
   // Show only if touch areas are enabled
   if(nav == opts::MAP_NAV_TOUCHSCREEN)
   {
+    int areaSize = OptionData::instance().getMapNavTouchArea();
+    if(opts & optsd::NAVAIDS_TOUCHSCREEN_REGIONS)
+      drawTouchRegions(context, areaSize);
+
     if(opts & optsd::NAVAIDS_TOUCHSCREEN_AREAS)
     {
-      int areaSize = OptionData::instance().getMapNavTouchArea();
-
-      painter->setPen(mapcolors::centerCrossBackPen);
+      painter->setPen(mapcolors::touchMarkBackPen);
       drawTouchMarks(context, size, areaSize);
 
-      painter->setPen(mapcolors::centerCrossFillPen);
+      painter->setPen(mapcolors::touchMarkFillPen);
       drawTouchMarks(context, size2, areaSize);
     }
 
@@ -202,6 +204,32 @@ void MapPainterTop::drawTouchIcons(const PaintContext *context, int iconSize)
 
   getPixmap(pixmap, ":/littlenavmap/resources/icons/next.svg", iconSize);
   painter->drawPixmap(QPoint(w - iconSize - borderDist, h - iconSize - borderDist), pixmap);
+}
+
+void MapPainterTop::drawTouchRegions(const PaintContext *context, int areaSize)
+{
+  Marble::GeoPainter *painter = context->painter;
+  atools::util::PainterContextSaver saver(painter);
+
+  QRect vp = context->painter->viewport();
+  QPolygon poly;
+  poly << vp.topLeft() << vp.topRight() << vp.bottomRight() << vp.bottomLeft();
+
+  int w = vp.width() * areaSize / 100;
+  int h = vp.height() * areaSize / 100;
+  QPolygon hole;
+  hole << QPoint(vp.left() + w, vp.top() + h)
+       << QPoint(vp.right() - w, vp.top() + h)
+       << QPoint(vp.right() - w, vp.bottom() - h)
+       << QPoint(vp.left() + w, vp.bottom() - h);
+
+  poly = poly.subtracted(hole);
+
+  painter->setBrush(mapcolors::touchRegionFillColor);
+  painter->setPen(QPen(painter->brush().color(), 0));
+  painter->setBackground(painter->brush().color());
+  painter->setBackgroundMode(Qt::OpaqueMode);
+  painter->drawPolygon(poly);
 }
 
 void MapPainterTop::drawTouchMarks(const PaintContext *context, int lineSize, int areaSize)
