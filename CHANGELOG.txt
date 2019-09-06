@@ -48,6 +48,7 @@ User Interface:
 * Fixed issue where table cells where initially not resized and appeared too large despite
   selecting a small font.
 * Added display of SSL version into about dialog for easier problem diagnosis.
+* Fixed issues where update notification dialog could not be closed.
 
 Options:
 * Replaced tabs in options dialog with list including icons and tooltips for better overview.
