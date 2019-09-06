@@ -10,7 +10,6 @@ Limitations:
   English.
 * The online and offline manuals are not updated yet. Neither the English nor the translated
   versions. Help buttons and links are functional but point to empty placeholder pages.
-* The legend is not updated yet.
 
 Installation:
 * You have to install the Microsoft Visual C++ 2015 Redistributable on a fresh installation of
@@ -23,6 +22,7 @@ Installation:
 Help:
 * Draft manuals can be accessed here: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/
 * List of closed issues: https://github.com/albar965/littlenavmap/milestone/7?closed=1
+* Included map legend updated.
 
 User Interface:
 * Tabs can now be closed and moved in information display, aircraft progress, flight plan and

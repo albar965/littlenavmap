@@ -1077,7 +1077,7 @@ together with &quot;Treat empty airports special&quot;.</string>
 Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display 2&quot; to display hints on the map.</string>
              </property>
              <property name="text">
-              <string>Use map &amp;areas for easier navigation. Useful when using touchscreens.</string>
+              <string>Use map &amp;areas for navigation. Useful when using touchscreens.</string>
              </property>
             </widget>
            </item>

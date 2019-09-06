@@ -156,7 +156,7 @@ void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
 
   qDebug() << Q_FUNC_INFO << buttonType;
 
-  if(buttonType == QDialogButtonBox::Ok)
+  if(buttonType == QDialogButtonBox::Ok || buttonType == QDialogButtonBox::Close)
   {
     saveState();
     accept();
