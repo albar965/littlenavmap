@@ -267,7 +267,7 @@ const QLatin1Literal OPTIONS_PROFILE_SIMPLYFY("Options/SimplifyProfile");
 /* Used to override  default URL */
 const QLatin1Literal OPTIONS_UPDATE_URL("Update/Url");
 
-const QLatin1Literal OPTIONS_UPDATE_CHECKED("Update/AlreadyChecked");
+const QLatin1Literal OPTIONS_UPDATE_ALREADY_CHECKED("Update/AlreadyChecked");
 const QLatin1Literal OPTIONS_UPDATE_LAST_CHECKED("Update/LastCheckTimestamp");
 
 /* Need to update these according to program version */

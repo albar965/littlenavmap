@@ -27,7 +27,10 @@ class UpdateDialog;
 }
 
 /*
- * Shows the update HTML text from the downloaded file
+ * Shows the update HTML text from the downloaded file and allows the user to download,
+ * ignore or remind later for updates.
+ *
+ * Handles all actions except ignoring a specific update.
  */
 class UpdateDialog :
   public QDialog
@@ -35,23 +38,19 @@ class UpdateDialog :
   Q_OBJECT
 
 public:
-  explicit UpdateDialog(QWidget *parent, bool manualParam, bool hasDownloadParam);
+  /*
+   * manualCheck = user checked manually
+   * downloadAvailable = download is available
+   */
+  explicit UpdateDialog(QWidget *parent, bool manualCheck, bool downloadAvailable);
   ~UpdateDialog();
 
   /* HTML text and URL for the download button */
   void setMessage(const QString& text, const QUrl& url);
   QDialogButtonBox *getButtonBox();
 
-  /*
-   * DestructiveRole = ignore
-   * NoRole = later
-   * RejectRole = Close (manual only)
-   * YesRole = download (has download only)
-   */
-  QDialogButtonBox::ButtonRole getButtonClickedRole() const
-  {
-    return buttonClickedRole;
-  }
+  /* true if user clicked "ignore this update" */
+  bool isIgnoreThisUpdate() const;
 
 private:
   void anchorClicked(const QUrl& url);

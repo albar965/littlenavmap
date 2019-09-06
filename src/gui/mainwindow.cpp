@@ -488,6 +488,10 @@ void MainWindow::debugActionTriggered2()
 {
   qDebug() << Q_FUNC_INFO;
 
+  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_LAST_CHECKED);
+  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
+
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
 }
 
 void MainWindow::debugActionTriggered3()

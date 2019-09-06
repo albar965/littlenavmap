@@ -90,7 +90,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
   QString checked;
   if(!manuallyTriggered)
     // Get skipped update
-    checked = Settings::instance().valueStr(lnm::OPTIONS_UPDATE_CHECKED);
+    checked = Settings::instance().valueStr(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
 
   // Copy combo box selection to channel enum
   atools::util::UpdateChannels channels = atools::util::STABLE;
@@ -164,26 +164,20 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     NavApp::deleteSplashScreen();
 
     // Show dialog
-    UpdateDialog information(mainWindow, manual, hasDownload);
-    information.setMessage(html.getHtml(), update.download);
+    UpdateDialog updateDialog(mainWindow, manual, hasDownload);
+    updateDialog.setMessage(html.getHtml(), update.download);
 
     // Show dialog
-    information.exec();
+    updateDialog.exec();
 
     if(!manual)
     {
-      // DestructiveRole = ignore
-      // NoRole = later
-      // RejectRole = Close (manual only)
-      // YesRole = download (has download only)
-      QDialogButtonBox::ButtonRole role = information.getButtonClickedRole();
-
-      if(role == QDialogButtonBox::DestructiveRole)
+      if(updateDialog.isIgnoreThisUpdate())
       {
         // Add latest update - do not report anything earlier or equal again
         QString ignore = updates.first().version;
         qDebug() << Q_FUNC_INFO << "Ignoring updates now" << ignore;
-        Settings::instance().setValue(lnm::OPTIONS_UPDATE_CHECKED, ignore);
+        Settings::instance().setValue(lnm::OPTIONS_UPDATE_ALREADY_CHECKED, ignore);
       }
     }
   }
