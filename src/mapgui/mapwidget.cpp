@@ -233,7 +233,7 @@ void MapWidget::handleInfoClick(QPoint pos)
 
   mapSearchResultInfoClick.clear();
   getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistance, mapSearchResultInfoClick,
-                                       map::QUERY_NONE);
+                                       map::QUERY_HOLDS | map::QUERY_PATTERNS /* For double click */);
 
   // Remove all undesired features
   optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
@@ -876,13 +876,13 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
      !mapSearchResultInfoClick.isEmpty(map::AIRPORT | map::AIRCRAFT_ALL | map::NAV_ALL | map::USERPOINT |
                                        map::USERPOINTROUTE))
   {
-    // Do info click and use previouse result from single click event if the double click was on a map object
+    // Do info click and use previous result from single click event if the double click was on a map object
     mapSearchResult = mapSearchResultInfoClick;
     mapSearchResultInfoClick.clear();
   }
   else
     getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult,
-                                         map::QUERY_NONE);
+                                         map::QUERY_HOLDS | map::QUERY_PATTERNS);
 
   if(mapSearchResult.userAircraft.isValid())
   {
@@ -918,7 +918,11 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.userPointsRoute.first().position, 0.f, true);
     else if(!mapSearchResult.userpoints.isEmpty())
       showPos(mapSearchResult.userpoints.first().position, 0.f, true);
-    mainWindow->setStatusMessage(QString(tr("Showing navaid or userpoint on map.")));
+    else if(!mapSearchResult.trafficPatterns.isEmpty())
+      showPos(mapSearchResult.trafficPatterns.first().position, 0.f, true);
+    else if(!mapSearchResult.holds.isEmpty())
+      showPos(mapSearchResult.holds.first().position, 0.f, true);
+    mainWindow->setStatusMessage(QString(tr("Showing on map.")));
   }
 }
 
