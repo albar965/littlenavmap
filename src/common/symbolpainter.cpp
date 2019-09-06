@@ -399,8 +399,8 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
   if(altWind)
   {
     // High altitude wind barbs only - center circle
-    painter->setPen(QPen(background, bgLineWidth * .6f, Qt::SolidLine, Qt::RoundCap,
-                         Qt::RoundJoin));
+    painter->setPen(QPen(background, bgLineWidth * .6f, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->setBrush(background);
     painter->drawEllipse(QPointF(x, y), bgLineWidth / 2.f, bgLineWidth / 2.f);
   }
 
