@@ -542,13 +542,18 @@ void MainWindow::loadNavmapLegend()
                                         OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE);
   qDebug() << "legendUrl" << legendFile;
 
-  QString legendText;
   QFile legend(legendFile);
   if(legend.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&legend);
     stream.setCodec("UTF-8");
-    legendText.append(stream.readAll());
+    QString legendText = stream.readAll();
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "==========================================";
+    qDebug().noquote().nospace() << legendText;
+    qDebug() << Q_FUNC_INFO << "==========================================";
+#endif
 
     QString searchPath = QCoreApplication::applicationDirPath() + QDir::separator() + "help";
     ui->textBrowserLegendNavInfo->setSearchPaths({searchPath});
