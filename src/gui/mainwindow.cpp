@@ -3654,6 +3654,8 @@ void MainWindow::saveStateMain()
   QString out;
   QTextStream stream(&out, QIODevice::WriteOnly);
 
+  stream << "| Menu | Shortcut |" << endl;
+  stream << "| --- | --- |" << endl;
   for(const QAction *mainmenus : ui->menuBar->actions())
   {
     if(mainmenus->menu() != nullptr)
@@ -3669,7 +3671,7 @@ void MainWindow::saveStateMain()
             if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
               stream << "| " << mainmenu << " -> " << submenu << " -> "
                      << subAction->text().remove("&")
-                     << " | " << subAction->shortcut().toString() << " |" << endl;
+                     << " | `" << subAction->shortcut().toString() << "` |" << endl;
           }
           submenu.clear();
         }
@@ -3678,7 +3680,7 @@ void MainWindow::saveStateMain()
           if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
             stream << "| " << mainmenu << " -> "
                    << mainAction->text().remove("&")
-                   << " | " << mainAction->shortcut().toString() << " |" << endl;
+                   << " | `" << mainAction->shortcut().toString() << "` |" << endl;
         }
       }
     }
