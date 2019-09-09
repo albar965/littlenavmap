@@ -12,12 +12,16 @@ Limitations:
   versions. Help buttons and links are functional but point to empty placeholder pages.
 
 Installation:
-* You have to install the Microsoft Visual C++ 2015 Redistributable on a fresh installation of
+* You might have to install the Microsoft Visual C++ 2015 Redistributable on a fresh installation of
   Windows 10. Most will have this already installed since it is needed by many programs.
-  You can get the Redistributable from the download links below:
-    https://www.microsoft.com/en-us/download/details.aspx?id=52685
-    https://www.littlenavmap.org/downloads/Windows%20Redistributable%20Packages/
-  **Install both 32 bit and 64 bit versions.**
+  You can get the Redistributable from the following download links:
+  **►  Microsoft Visual C++ 2015-2019 Redistributable Package 14.22.27821.0:**
+     64 bit: https://www.littlenavmap.org/downloads/Windows%20Redistributable%20Packages/vc_redist.x64_2015-2019.exe)
+     32 bit: https://www.littlenavmap.org/downloads/Windows%20Redistributable%20Packages/vc_redist.x86_2015-2019.exe)
+  **Install both 32 bit and 64 bit versions if needed.**<br/>
+  **You can safely skip the installation if you get an error about a newer version already installed.**
+* Reloading the scenery library is recommended.
+* Reinstall the _Little Xpconnect_ X-Plane plugin to see bug fixes.
 
 Help:
 * Draft manuals can be accessed here: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/
@@ -62,7 +66,7 @@ Options:
   with high or unreliable magnetic declination.
 * Added option to ignore radio navaid declination when calculating magnetic flight plan leg course.
   This is helpful if you use mostly GPS for flying and do not care about radials of VOR which might
-  have an  outdated calibration. Dialog "Options" -> "Units" -> "Show true course ...".
+  have an  outdated calibration. Dialog "Options" -> "Flight Plan" -> "Ignore Declination ...".
 * Other fuel units (kg/liter vs. lb/gal) can now be displayed in small font besides selected fuel
   unit. This affects the fuel plan and aircraft progress tabs. See dialog "Options" -> "Units" ->
   "Show other fuel  units too". #401
@@ -81,6 +85,7 @@ Scenery Database:
 * Added recursive import of OpenAir airspaces for user database from folder. #236 and #426
   - New folder setting in options dialog for default airspace base folder and file extensions.
     See dialog "Options" -> "Cache and Files".
+  - Load airspaces from folder in "Scenery Library" -> "Load Airspaces ...".
   - Added switches in menu for airspace source databases and added separate user airspace database.
     User can now choose between any combination of simulator, Navigraph, user or online airspaces.
     Menu "View"  -> "Airspace Source".
@@ -167,7 +172,7 @@ Flight Plan Export:
   which comes from incorrect SimBrief plans.
 * Fixed issue where flight plan was saved in wrong format when exporting to clean PLN.
 * Added flight plan table export to HTML page. #4
-* Fixed issue when saving flight plans from airports with empty names which could crashes Prepar3D.
+* Fixed issue when saving flight plans from airports with empty names which could crash Prepar3D.
 
 Weather:
 * Added NOAA and X-Plane high altitude winds (Prepar3D does neither provide a documented format nor
