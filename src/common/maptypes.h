@@ -472,7 +472,7 @@ struct MapLogbookEntry
   QString departureName, departureIdent, departureRunway,
            destinationName, destinationIdent, destinationRunway,
            description, simulator, aircraftType,
-           aircraftRegistration, routeFile, perfFile;
+           aircraftRegistration, routeString, routeFile, perfFile;
   float distance, distanceGc;
   atools::geo::Pos departurePos, destinationPos;
 

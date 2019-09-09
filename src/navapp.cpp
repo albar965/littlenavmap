@@ -45,6 +45,7 @@
 #include "gui/errorhandler.h"
 #include "airspace/airspacecontroller.h"
 #include "mapgui/mapmarkhandler.h"
+#include "route/routestring.h"
 
 #include "ui_mainwindow.h"
 
@@ -439,6 +440,11 @@ const Route& NavApp::getRouteConst()
 Route& NavApp::getRoute()
 {
   return mainWindow->getRouteController()->getRoute();
+}
+
+QString NavApp::getRouteString()
+{
+  return RouteString::createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(), rs::DEFAULT_OPTIONS);
 }
 
 const atools::geo::Rect& NavApp::getRouteRect()

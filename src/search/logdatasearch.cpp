@@ -76,6 +76,7 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("flightplan_file").hidden()).
   append(Column("distance", tr("Distance\n%dist%"))).
   append(Column("departure_time_sim", tr("Departure\nSim. Time UTC"))).
+  append(Column("route_string").hidden()).
   append(Column("description", ui->lineEditLogdataDescription, tr("Description")).filter()).
   append(Column("departure_lonx").hidden()).
   append(Column("departure_laty").hidden()).

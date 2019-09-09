@@ -352,6 +352,7 @@ void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLog
   obj.destinationPos = atools::geo::Pos(rec.value("destination_lonx"), rec.value("destination_laty"),
                                         rec.value("destination_alt"));
 
+  obj.routeString = rec.valueStr("route_string");
   obj.simulator = rec.valueStr("simulator");
   obj.description = rec.valueStr("description");
 

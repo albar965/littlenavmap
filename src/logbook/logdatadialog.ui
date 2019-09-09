@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>732</width>
-    <height>679</height>
+    <height>705</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -425,8 +425,8 @@
           <property name="verticalSpacing">
            <number>2</number>
           </property>
-          <item row="2" column="4">
-           <widget class="QCheckBox" name="checkBoxFlightCruiseAltitude">
+          <item row="4" column="4">
+           <widget class="QCheckBox" name="checkBoxFlightPlanFile">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -441,11 +441,28 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1" colspan="2">
+          <item row="6" column="3">
+           <widget class="QPushButton" name="pushButtonFlightPerfFileSelect">
+            <property name="text">
+             <string>&amp;Select ...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" colspan="2">
            <widget class="QLineEdit" name="lineEditFlightPlanFile">
             <property name="toolTip">
-             <string>Used flight plan file for trip. 
+             <string>Used flight plan file for trip.
 Does not update distance and cruise altitude when changed.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelFlightNumber">
+            <property name="text">
+             <string>Flight &amp;number:</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEditFlightNumber</cstring>
             </property>
            </widget>
           </item>
@@ -465,36 +482,30 @@ Does not update distance and cruise altitude when changed.</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="1">
-           <widget class="QSpinBox" name="spinBoxFlightDistance">
-            <property name="toolTip">
-             <string>Flight plan distance</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %dist%</string>
-            </property>
-            <property name="maximum">
-             <number>100000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="labelFlightDistance">
+          <item row="5" column="1" colspan="3">
+           <widget class="QLabel" name="labelFlightPlanFileStatus">
             <property name="text">
-             <string>&amp;Distance:</string>
+             <string/>
             </property>
-            <property name="buddy">
-             <cstring>spinBoxFlightDistance</cstring>
+            <property name="margin">
+             <number>5</number>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>
-          <item row="8" column="1">
+          <item row="0" column="1" colspan="3">
+           <widget class="QLineEdit" name="lineEditFlightSimulator">
+            <property name="toolTip">
+             <string>Simulator like &quot;X-Plane 11&quot; or &quot;Prepar3D v4&quot;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="3">
+           <widget class="QLineEdit" name="lineEditFlightNumber"/>
+          </item>
+          <item row="9" column="1">
            <widget class="QSpinBox" name="spinBoxFlightDistanceFlown">
             <property name="toolTip">
              <string>Actual flown distance</string>
@@ -513,8 +524,84 @@ Does not update distance and cruise altitude when changed.</string>
             </property>
            </widget>
           </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="labelFlightDistance">
+            <property name="text">
+             <string>&amp;Distance:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxFlightDistance</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QPushButton" name="pushButtonFlightPlanFileSelect">
+            <property name="text">
+             <string>&amp;Select ...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QSpinBox" name="spinBoxFlightDistance">
+            <property name="toolTip">
+             <string>Flight plan distance</string>
+            </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
+            <property name="suffix">
+             <string> %dist%</string>
+            </property>
+            <property name="maximum">
+             <number>100000</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1" colspan="3">
+           <widget class="QLabel" name="labelFlightPerfFileStatus">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="margin">
+             <number>5</number>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="labelFlightDistanceFlown">
+            <property name="text">
+             <string>&amp;Distance flown:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxFlightDistanceFlown</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="labelFlightPerfFile">
+            <property name="text">
+             <string>Aircraft &amp;performance file:</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEditFlightPerfFile</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" colspan="2">
+           <widget class="QLineEdit" name="lineEditFlightPerfFile">
+            <property name="toolTip">
+             <string>Used aircraft performance file for trip</string>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="4">
-           <widget class="QCheckBox" name="checkBoxFlightPlanFile">
+           <widget class="QCheckBox" name="checkBoxFlightCruiseAltitude">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -526,63 +613,6 @@ Does not update distance and cruise altitude when changed.</string>
             </property>
             <property name="text">
              <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="labelFlightCruiseAltitude">
-            <property name="text">
-             <string>&amp;Cruise altitude:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxFlightCruiseAltitude</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelFlightSimulator">
-            <property name="text">
-             <string>&amp;Simulator:</string>
-            </property>
-            <property name="buddy">
-             <cstring>lineEditFlightSimulator</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelFlightNumber">
-            <property name="text">
-             <string>Flight &amp;number:</string>
-            </property>
-            <property name="buddy">
-             <cstring>lineEditFlightNumber</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="labelFlightDistanceFlown">
-            <property name="text">
-             <string>&amp;Distance flown:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxFlightDistanceFlown</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="labelFlightPerfFile">
-            <property name="text">
-             <string>Aircraft &amp;performance file:</string>
-            </property>
-            <property name="buddy">
-             <cstring>lineEditFlightPerfFile</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1" colspan="2">
-           <widget class="QLineEdit" name="lineEditFlightPerfFile">
-            <property name="toolTip">
-             <string>Used aircraft performance file for trip</string>
             </property>
            </widget>
           </item>
@@ -602,57 +632,7 @@ Does not update distance and cruise altitude when changed.</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelFlightPlanFile">
-            <property name="text">
-             <string>&amp;Flightplan file:</string>
-            </property>
-            <property name="buddy">
-             <cstring>lineEditFlightPlanFile</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="4">
-           <widget class="QCheckBox" name="checkBoxFlightPerfFile">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Check to change this field for all selected logbook entries</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QPushButton" name="pushButtonFlightPlanFileSelect">
-            <property name="text">
-             <string>&amp;Select ...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QPushButton" name="pushButtonFlightPerfFileSelect">
-            <property name="text">
-             <string>&amp;Select ...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" colspan="3">
-           <widget class="QLineEdit" name="lineEditFlightSimulator">
-            <property name="toolTip">
-             <string>Simulator like &quot;X-Plane 11&quot; or &quot;Prepar3D v4&quot;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" colspan="3">
-           <widget class="QLineEdit" name="lineEditFlightNumber"/>
-          </item>
-          <item row="2" column="1" colspan="3">
+          <item row="3" column="1" colspan="3">
            <widget class="QSpinBox" name="spinBoxFlightCruiseAltitude">
             <property name="toolTip">
              <string>Cruise altitude from flight plan</string>
@@ -674,29 +654,78 @@ Does not update distance and cruise altitude when changed.</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1" colspan="3">
-           <widget class="QLabel" name="labelFlightPlanFileStatus">
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelFlightCruiseAltitude">
             <property name="text">
-             <string/>
+             <string>&amp;Cruise altitude:</string>
             </property>
-            <property name="margin">
-             <number>5</number>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            <property name="buddy">
+             <cstring>spinBoxFlightCruiseAltitude</cstring>
             </property>
            </widget>
           </item>
-          <item row="6" column="1" colspan="3">
-           <widget class="QLabel" name="labelFlightPerfFileStatus">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelFlightSimulator">
+            <property name="text">
+             <string>&amp;Simulator:</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEditFlightSimulator</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="labelFlightPlanFile">
+            <property name="text">
+             <string>&amp;Flightplan file:</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEditFlightPlanFile</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="4">
+           <widget class="QCheckBox" name="checkBoxFlightPerfFile">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Check to change this field for all selected logbook entries</string>
+            </property>
             <property name="text">
              <string/>
             </property>
-            <property name="margin">
-             <number>5</number>
+           </widget>
+          </item>
+          <item row="2" column="1" colspan="3">
+           <widget class="QLineEdit" name="lineEditRouteString"/>
+          </item>
+          <item row="2" column="4">
+           <widget class="QCheckBox" name="checkBoxRouteString">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            <property name="toolTip">
+             <string>Check to change this field for all selected logbook entries</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelFlightNumber_2">
+            <property name="text">
+             <string>&amp;Route Description:</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEditRouteString</cstring>
             </property>
            </widget>
           </item>
@@ -996,6 +1025,8 @@ Does not update distance and cruise altitude when changed.</string>
   <tabstop>checkBoxFlightSimulator</tabstop>
   <tabstop>lineEditFlightNumber</tabstop>
   <tabstop>checkBoxFlightNumber</tabstop>
+  <tabstop>lineEditRouteString</tabstop>
+  <tabstop>checkBoxRouteString</tabstop>
   <tabstop>spinBoxFlightCruiseAltitude</tabstop>
   <tabstop>checkBoxFlightCruiseAltitude</tabstop>
   <tabstop>lineEditFlightPlanFile</tabstop>

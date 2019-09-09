@@ -120,6 +120,7 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
     ui->checkBoxFlightPerfFile,
     ui->checkBoxFlightPlanFile,
     ui->checkBoxFlightSimulator,
+    ui->checkBoxRouteString,
     ui->checkBoxAircraftDescription,
     ui->checkBoxFuelType
   });
@@ -407,9 +408,13 @@ void LogdataDialog::recordToDialog()
 
   ui->textEditDescription->setText(record->valueStr("description")); // varchar(2048) collate nocase
   ui->lineEditFlightSimulator->setText(record->valueStr("simulator")); // varchar(2048) collate nocase
+  ui->lineEditRouteString->setText(record->valueStr("route_string")); // varchar(2048) collate nocase
 
   if(ui->lineEditFlightSimulator->text().isEmpty() && editMode == ld::ADD)
     ui->lineEditFlightSimulator->setText(NavApp::getCurrentSimulatorName());
+
+  if(ui->lineEditRouteString->text().isEmpty() && editMode == ld::ADD)
+    ui->lineEditRouteString->setText(NavApp::getRouteString());
 
   // Date and time ========================================================
   valueDateTime(ui->dateTimeEditDepartureDateTimeReal, "departure_time");
@@ -435,6 +440,7 @@ void LogdataDialog::dialogToRecord()
 
   helper.dialogToRecordStr(ui->textEditDescription, "description", ui->checkBoxAircraftDescription);
   helper.dialogToRecordStr(ui->lineEditFlightSimulator, "simulator", ui->checkBoxFlightSimulator);
+  helper.dialogToRecordStr(ui->lineEditRouteString, "route_string", ui->checkBoxRouteString);
 
   helper.dialogToRecordInt(ui->spinBoxFlightCruiseAltitude, "flightplan_cruise_altitude",
                            ui->checkBoxFlightCruiseAltitude, Unit::altFeetF);
@@ -545,6 +551,7 @@ void LogdataDialog::clearWidgets()
   ui->lineEditAircraftType->clear();
   ui->textEditDescription->clear();
   ui->lineEditFlightSimulator->clear();
+  ui->lineEditRouteString->clear();
   ui->lineEditDeparture->clear();
   ui->lineEditDepartureRunway->clear();
   ui->lineEditDestination->clear();
@@ -576,6 +583,7 @@ void LogdataDialog::updateWidgets()
     ui->lineEditAircraftType->setEnabled(ui->checkBoxAircraftType->isChecked());
     ui->textEditDescription->setEnabled(ui->checkBoxAircraftDescription->isChecked());
     ui->lineEditFlightSimulator->setEnabled(ui->checkBoxFlightSimulator->isChecked());
+    ui->lineEditRouteString->setEnabled(ui->checkBoxRouteString->isChecked());
     ui->lineEditDestination->setEnabled(ui->checkBoxDestination->isChecked());
     ui->spinBoxFlightCruiseAltitude->setEnabled(ui->checkBoxFlightCruiseAltitude->isChecked());
     ui->lineEditFlightNumber->setEnabled(ui->checkBoxFlightNumber->isChecked());

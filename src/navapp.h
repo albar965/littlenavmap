@@ -164,6 +164,9 @@ public:
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
+
+  /* Get a generic route string */
+  static QString getRouteString();
   static const atools::geo::Rect& getRouteRect();
 
   static const RouteAltitude& getAltitudeLegs();

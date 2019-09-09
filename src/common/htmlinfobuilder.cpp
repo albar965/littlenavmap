@@ -2143,6 +2143,7 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
 
     if(info)
     {
+      html.row2If(tr("Route Description:"), rec.valueStr("route_string"));
       html.tableEnd();
 
       // Flight =======================================================
@@ -2183,10 +2184,6 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
           html.row2(tr("Average fuel flow:"), ft.flowWeightVolLocal(usedFuel / travelTimeHours));
       }
     }
-
-    if(info && usedFuel > 0.f)
-      html.row2(tr("Used fuel from takeoff to landing:"), ft.weightVolLocal(usedFuel),
-                ahtml::NO_ENTITIES);
 
     if(info)
     {
@@ -2253,15 +2250,15 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       html.tableEnd();
 
       // Fuel =======================================================
-      if(rec.valueFloat("trip_fuel") > 0.f || rec.valueFloat("block_fuel") > 0.f || rec.valueFloat("block_fuel") > 0.f)
+      if(rec.valueFloat("trip_fuel") > 0.f || rec.valueFloat("block_fuel") > 0.f || usedFuel > 0.f)
       {
         html.p(tr("Fuel"), ahtml::BOLD);
         html.table();
         ahtml::Flags flags = ahtml::ALIGN_RIGHT;
         html.row2(tr("Type:"), ft.getFuelTypeString());
-        html.row2(tr("Trip:"), ft.weightVolLocal(rec.valueFloat("trip_fuel")), flags);
-        html.row2(tr("Block:"), ft.weightVolLocal(rec.valueFloat("block_fuel")), flags);
-        html.row2(tr("Used:"), ft.weightVolLocal(usedFuel), flags);
+        html.row2(tr("Trip from plan:"), ft.weightVolLocal(rec.valueFloat("trip_fuel")), flags);
+        html.row2(tr("Block from plan:"), ft.weightVolLocal(rec.valueFloat("block_fuel")), flags);
+        html.row2(tr("Used from takeoff to landing:"), ft.weightVolLocal(usedFuel), flags);
         html.tableEnd();
       }
 

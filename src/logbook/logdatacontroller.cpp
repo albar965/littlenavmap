@@ -161,7 +161,7 @@ void LogdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAirc
 void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
                                              float flownDistanceNm, float averageTasKts)
 {
-  Q_UNUSED(averageTasKts);
+  Q_UNUSED(averageTasKts)
 
   if(NavApp::getMainUi()->actionLogdataCreateLogbook->isChecked())
   {
@@ -204,6 +204,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("departure_time", QDateTime::currentDateTime()); // varchar(100),
       record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
       record.setValue("simulator", NavApp::getCurrentSimulatorName()); // varchar(50),
+      record.setValue("route_string", NavApp::getRouteString()); // varchar(1024),
 
       // Determine fuel type =========================
       float weightVolRatio = 0.f;
