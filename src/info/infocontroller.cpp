@@ -776,9 +776,13 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
 
   // Navaids ================================================================
   if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.ils.isEmpty() ||
-     !result.airways.isEmpty() || !result.userpoints.isEmpty())
+     !result.airways.isEmpty())
     // if any navaids are to be shown clear search result before
-    currentSearchResult.clear(map::NAV_ALL | map::USERPOINT | map::ILS | map::AIRWAY | map::RUNWAYEND);
+    currentSearchResult.clear(map::NAV_ALL | map::ILS | map::AIRWAY | map::RUNWAYEND);
+
+  if(!result.userpoints.isEmpty())
+    // if any userpoints are to be shown clear search result before
+    currentSearchResult.clear(map::USERPOINT);
 
   foundNavaid = updateNavaidInternal(result, false /* bearing changed */, scrollToTop);
   foundUserpoint = updateUserpointInternal(result, false /* bearing changed */, scrollToTop);
@@ -838,10 +842,10 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       //// Decide which tab to activate automatically so that it tries to keep the current tab in front
       if(onlineClient)
         newId = ic::INFO_ONLINE_CLIENT;
-      else if(foundUserpoint)
-        newId = ic::INFO_USERPOINT;
       else if(foundLogbookEntry)
         newId = ic::INFO_LOGBOOK;
+      else if(foundUserpoint)
+        newId = ic::INFO_USERPOINT;
       else if(foundAirport)
       {
         if(!airportActive)
@@ -849,10 +853,10 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       }
       else if(foundNavaid)
         newId = ic::INFO_NAVAID;
-      else if(foundAirspace)
-        newId = ic::INFO_AIRSPACE;
       else if(foundOnlineCenter)
         newId = ic::INFO_ONLINE_CENTER;
+      else if(foundAirspace)
+        newId = ic::INFO_AIRSPACE;
     }
 
     tabHandlerInfo->setCurrentTab(newId);

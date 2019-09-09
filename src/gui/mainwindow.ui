@@ -386,7 +386,7 @@
     </widget>
     <widget class="QMenu" name="menuViewAirspaceSource">
      <property name="title">
-      <string>Airspace &amp;source</string>
+      <string>Airspace &amp;Source</string>
      </property>
      <addaction name="actionViewAirspaceSrcSimulator"/>
      <addaction name="actionViewAirspaceSrcNavigraph"/>
@@ -10764,7 +10764,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/databaseairspace.svg</normaloff>:/littlenavmap/resources/icons/databaseairspace.svg</iconset>
    </property>
    <property name="text">
-    <string>Load Airspaces ...</string>
+    <string>Load User Airspaces ...</string>
    </property>
    <property name="iconText">
     <string>Load Airspaces</string>
