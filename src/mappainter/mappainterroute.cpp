@@ -134,7 +134,6 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
 
   context->painter->setBrush(Qt::NoBrush);
 
@@ -389,7 +388,6 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
   if(route->getSizeWithoutAlternates() >= 2)
   {
     atools::util::PainterContextSaver saver(context->painter);
-    Q_UNUSED(saver);
 
     float width = context->sz(context->symbolSizeNavaid, 3);
     int radius = atools::roundToInt(context->sz(context->symbolSizeNavaid, 6));
@@ -464,7 +462,6 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
 
   QPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
 
   context->painter->setBackgroundMode(Qt::OpaqueMode);
   context->painter->setBackground(Qt::white);

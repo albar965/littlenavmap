@@ -1199,19 +1199,19 @@ void OptionsDialog::updateDatabaseButtonState()
 
 void OptionsDialog::simUpdatesConstantClicked(bool state)
 {
-  Q_UNUSED(state);
+  Q_UNUSED(state)
   ui->spinBoxOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
 }
 
 void OptionsDialog::mapEmptyAirportsClicked(bool state)
 {
-  Q_UNUSED(state);
+  Q_UNUSED(state)
   ui->checkBoxOptionsMapEmptyAirports3D->setEnabled(ui->checkBoxOptionsMapEmptyAirports->isChecked());
 }
 
 void OptionsDialog::simNoFollowAircraftOnScrollClicked(bool state)
 {
-  Q_UNUSED(state);
+  Q_UNUSED(state)
   ui->spinBoxSimDoNotFollowOnScrollTime->setEnabled(ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked());
 }
 

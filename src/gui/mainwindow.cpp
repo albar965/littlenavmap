@@ -1690,7 +1690,7 @@ void MainWindow::findCustomMaps(QFileInfoList& customDgmlFiles)
 /* Called by the toolbar combo box */
 void MainWindow::changeMapProjection(int index)
 {
-  Q_UNUSED(index);
+  Q_UNUSED(index)
 
   mapWidget->cancelDragAll();
 
@@ -2101,8 +2101,8 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
 
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 {
-  Q_UNUSED(x);
-  Q_UNUSED(y);
+  Q_UNUSED(x)
+  Q_UNUSED(y)
 
   if(pos.isValid())
   {
@@ -2865,8 +2865,8 @@ void MainWindow::sunShadingTimeSet()
 /* Selection in flight plan table has changed */
 void MainWindow::routeSelectionChanged(int selected, int total)
 {
-  Q_UNUSED(selected);
-  Q_UNUSED(total);
+  Q_UNUSED(selected)
+  Q_UNUSED(total)
   QList<int> result;
   routeController->getSelectedRouteLegs(result);
   mapWidget->changeRouteHighlights(result);

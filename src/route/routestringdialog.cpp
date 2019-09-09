@@ -138,7 +138,7 @@ void RouteStringDialog::updateButtonClicked()
 
 void RouteStringDialog::toolButtonOptionTriggered(QAction *action)
 {
-  Q_UNUSED(action);
+  Q_UNUSED(action)
 
   // Copy menu state for options bitfield
   for(const QAction *act : ui->toolButtonRouteStringOptions->actions())

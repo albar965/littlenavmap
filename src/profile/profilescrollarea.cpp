@@ -121,8 +121,8 @@ void ProfileScrollArea::expandWidget()
 
 void ProfileScrollArea::splitterMoved(int pos, int index)
 {
-  Q_UNUSED(pos);
-  Q_UNUSED(index);
+  Q_UNUSED(pos)
+  Q_UNUSED(index)
 
   // Uncheck menu action if the split containing the zoom sliders is collapsed
   Ui::MainWindow *ui = NavApp::getMainUi();

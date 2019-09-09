@@ -1206,7 +1206,7 @@ void ProfileWidget::elevationUpdateAvailable()
 
 void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
 {
-  Q_UNUSED(altitudeFeet);
+  Q_UNUSED(altitudeFeet)
 
   if(!widgetVisible || databaseLoadStatus)
     return;
