@@ -45,6 +45,9 @@ Q_DECL_CONSTEXPR static float DEFAULT_ILS_WIDTH = 4.f;
 /* minimum ground speed for fuel flow calculations and other */
 Q_DECL_CONSTEXPR static float MIN_GROUND_SPEED = 30.f;
 
+/* Do not draw barbs below this altitude */
+Q_DECL_CONSTEXPR static float MIN_WIND_BARB_ALTITUDE = 4000.f;
+
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapObjectType
 {

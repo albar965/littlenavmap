@@ -28,6 +28,7 @@
 #include "sql/sqlrecord.h"
 #include "weather/windreporter.h"
 #include "grib/windquery.h"
+#include "route/routealtitudeleg.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -350,7 +351,8 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   // High altitude winds ===========================================================================
   if(opts & optsd::TOOLTIP_WIND && mapSearchResult.windPos.isValid())
   {
-    atools::grib::WindPosVector winds = NavApp::getWindReporter()->getWindStackForPos(mapSearchResult.windPos);
+    WindReporter *windReporter = NavApp::getWindReporter();
+    atools::grib::WindPosVector winds = windReporter->getWindStackForPos(mapSearchResult.windPos);
     if(!winds.isEmpty())
     {
       if(checkText(html))
@@ -359,14 +361,14 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
       if(!html.isEmpty())
         html.textBar(TEXT_BAR_LENGTH);
 
-      info.windText(winds, html, NavApp::getWindReporter()->getAltitude());
+      info.windText(winds, html, windReporter->getAltitude(), windReporter->getSourceText());
 
 #ifdef DEBUG_INFORMATION
       html.hr().small(QString("Pos(%1, %2), alt(%3)").
                       arg(mapSearchResult.windPos.getLonX()).arg(mapSearchResult.windPos.getLatY()).
-                      arg(NavApp::getWindReporter()->getAltitude(), 0, 'f', 2)).br();
+                      arg(windReporter->getAltitude(), 0, 'f', 2)).br();
 
-      html.small(NavApp::getWindReporter()->getDebug(mapSearchResult.windPos));
+      html.small(windReporter->getDebug(mapSearchResult.windPos));
 #endif
       numEntries++;
     }

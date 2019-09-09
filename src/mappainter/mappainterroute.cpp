@@ -44,9 +44,6 @@ using map::PosCourse;
 using atools::contains;
 namespace ageo = atools::geo;
 
-/* Do not draw barbs below this altitude */
-const static float MIN_WIND_BARB_ALTITUDE = 5000.f;
-
 MapPainterRoute::MapPainterRoute(MapPaintWidget *mapWidget, MapScale *mapScale, const Route *routeParam)
   : MapPainter(mapWidget, mapScale), route(routeParam)
 {
@@ -1378,7 +1375,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
       // Do not draw wind barbs for approaches
       const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(routeIdx);
-      if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE)
+      if(altLeg.getLineString().getPos2().getAltitude() > map::MIN_WIND_BARB_ALTITUDE)
         drawWindBarbAtWaypoint(context, altLeg.getWindSpeed(), altLeg.getWindDirection(), x, y);
     }
   }
@@ -1596,7 +1593,7 @@ void MapPainterRoute::drawWindBarbs(const PaintContext *context,
       bool distOk = lastPt.isNull() || (pt - lastPt).manhattanLength() > 50;
 
       const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(i);
-      if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() &&
+      if(altLeg.getLineString().getPos2().getAltitude() > map::MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() &&
          !altLeg.isAlternate() && distOk)
       {
         drawWindBarbAtWaypoint(context, altLeg.getWindSpeed(), altLeg.getWindDirection(),
@@ -1693,6 +1690,9 @@ void MapPainterRoute::drawStartParking(const PaintContext *context)
 void MapPainterRoute::drawWindBarbAtWaypoint(const PaintContext *context, float windSpeed, float windDir,
                                              float x, float y)
 {
+  if(!route->hasAltitudeLegs() || !route->hasValidProfile())
+    return;
+
   int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getWindBarbsSymbolSize());
   symbolPainter->drawWindBarbs(context->painter, windSpeed, 0.f /* gust */, windDir, x - 5, y - 5, size,
                                true /* barbs */, true /* alt wind */, true /* route */, context->drawFast);

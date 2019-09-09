@@ -266,7 +266,7 @@ bool WindReporter::isRouteWindShown() const
 
 bool WindReporter::isWindSourceEnabled() const
 {
-  return NavApp::getMainUi()->actionMapShowWindDisabled->isChecked();
+  return !NavApp::getMainUi()->actionMapShowWindDisabled->isChecked();
 }
 
 bool WindReporter::hasWindData() const

@@ -235,7 +235,7 @@ public:
    * @param html Result containing HTML snippet
    */
   void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html,
-                float currentAltitude) const;
+                float currentAltitude, const QString& source) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.
@@ -376,7 +376,11 @@ private:
                        float windDirectionDeg, int max, bool details) const;
   void descriptionText(const QString& descriptionText, atools::util::HtmlBuilder& html) const;
 
+  /* Add morse code row2line */
   void addMorse(atools::util::HtmlBuilder& html, const QString& name, const QString& code) const;
+
+  /* Add wind text for flight plan waypoints */
+  void routeWindText(atools::util::HtmlBuilder& html, const Route& route, int index) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);

@@ -49,7 +49,9 @@
 #include "fs/weather/metarparser.h"
 #include "common/vehicleicons.h"
 #include "grib/windquery.h"
+#include "weather/windreporter.h"
 #include "perf/aircraftperfcontroller.h"
+#include "route/routealtitudeleg.h"
 
 #include <QSize>
 #include <QFileInfo>
@@ -174,6 +176,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       html.row2(tr("Alternate Airport"), QString());
     else
       html.row2(tr("Flight Plan position:"), locale.toString(airport.routeIndex + 1));
+    routeWindText(html, *route, airport.routeIndex);
   }
 
   // Add bearing/distance to table
@@ -1173,46 +1176,62 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
 }
 
 void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, HtmlBuilder& html,
-                               float currentAltitude) const
+                               float currentAltitude, const QString& source) const
 {
   if(!windStack.isEmpty())
   {
-    head(html, tr("Wind"));
-    html.table();
-    html.tr().th(Unit::getUnitAltStr()).th(courseSuffix()).th(Unit::getUnitSpeedStr()).trEnd();
-
-    // Wind reports are all at the same position
     float magVar = NavApp::getMagVar(windStack.first().pos);
-    for(const atools::grib::WindPos& wind : windStack)
+    if(windStack.size() == 1)
     {
-      if(!wind.wind.isValid())
-        continue;
-
-      Flags flags = ahtml::ALIGN_RIGHT;
-
-      float alt = wind.pos.getAltitude();
-      flags |= atools::almostEqual(alt, currentAltitude, 10.f) ? ahtml::BOLD : ahtml::NONE;
-
-      // One table row with three data fields
-      QString courseTxt;
-      if(wind.wind.isNull())
-        courseTxt = tr("-");
-      else
-        courseTxt = courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */);
-
-      QString speedTxt;
-      if(wind.wind.isNull())
-        speedTxt = tr("0");
-      else
-        speedTxt = tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0);
-
-      html.tr().
-      td(atools::almostEqual(alt, 260.f) ? tr("Ground") : Unit::altFeet(alt, false), flags).
-      td(courseTxt, flags | ahtml::NO_ENTITIES).
-      td(speedTxt, flags).
-      trEnd();
+      // Single line wind report for flight plan waypoints =============================================
+      const atools::grib::WindPos& wind = windStack.first();
+      if(wind.isValid())
+      {
+        html.row2(tr("Flight Plan wind (%1)").arg(source), tr("%2, %3, %4").
+                  arg(Unit::altFeet(wind.pos.getAltitude())).
+                  arg(courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */)).
+                  arg(Unit::speedKts(wind.wind.speed)), ahtml::NO_ENTITIES);
+      }
     }
-    html.tableEnd();
+    else
+    {
+      // Several wind layers report for wind barbs =============================================
+      head(html, tr("Wind (%1)").arg(source));
+      html.table();
+      html.tr().th(Unit::getUnitAltStr()).th(courseSuffix()).th(Unit::getUnitSpeedStr()).trEnd();
+
+      // Wind reports are all at the same position
+      for(const atools::grib::WindPos& wind : windStack)
+      {
+        if(!wind.wind.isValid())
+          continue;
+
+        Flags flags = ahtml::ALIGN_RIGHT;
+
+        float alt = wind.pos.getAltitude();
+        flags |= atools::almostEqual(alt, currentAltitude, 10.f) ? ahtml::BOLD : ahtml::NONE;
+
+        // One table row with three data fields
+        QString courseTxt;
+        if(wind.wind.isNull())
+          courseTxt = tr("-");
+        else
+          courseTxt = courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */);
+
+        QString speedTxt;
+        if(wind.wind.isNull())
+          speedTxt = tr("0");
+        else
+          speedTxt = tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0);
+
+        html.tr().
+        td(atools::almostEqual(alt, 260.f) ? tr("Ground") : Unit::altFeet(alt, false), flags).
+        td(courseTxt, flags | ahtml::NO_ENTITIES).
+        td(speedTxt, flags).
+        trEnd();
+      }
+      html.tableEnd();
+    }
   }
 }
 
@@ -1839,7 +1858,10 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
 
   html.table();
   if(!info && vor.routeIndex >= 0)
+  {
     html.row2(tr("Flight Plan position:"), locale.toString(vor.routeIndex + 1));
+    routeWindText(html, NavApp::getRouteConst(), vor.routeIndex);
+  }
 
   // Add bearing/distance to table
   bearingText(vor.position, vor.magvar, html);
@@ -1910,7 +1932,10 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 
   html.table();
   if(!info && ndb.routeIndex >= 0)
+  {
     html.row2(tr("Flight Plan position "), locale.toString(ndb.routeIndex + 1));
+    routeWindText(html, NavApp::getRouteConst(), ndb.routeIndex);
+  }
 
   // Add bearing/distance to table
   bearingText(ndb.position, ndb.magvar, html);
@@ -2322,7 +2347,10 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   html.table();
   if(!info && waypoint.routeIndex >= 0)
+  {
     html.row2(tr("Flight Plan position:"), locale.toString(waypoint.routeIndex + 1));
+    routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
+  }
 
   // Add bearing/distance to table
   bearingText(waypoint.position, waypoint.magvar, html);
@@ -2725,7 +2753,10 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
 {
   head(html, tr("Position: ") + userpoint.name);
   if(!info && userpoint.routeIndex >= 0)
+  {
     html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
+    routeWindText(html, NavApp::getRouteConst(), userpoint.routeIndex);
+  }
 }
 
 void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& procPoint, HtmlBuilder& html,
@@ -4041,4 +4072,27 @@ void HtmlInfoBuilder::addFlightRulesSuffix(atools::util::HtmlBuilder& html,
 void HtmlInfoBuilder::addMorse(atools::util::HtmlBuilder& html, const QString& name, const QString& code) const
 {
   html.row2(name, morse->getCode(code), ahtml::BOLD | ahtml::NO_ENTITIES);
+}
+
+void HtmlInfoBuilder::routeWindText(HtmlBuilder& html, const Route& route, int index) const
+{
+  if(index >= 0)
+  {
+    // Wind text is always shown independent of barb status at route
+    if(NavApp::getWindReporter()->isWindSourceEnabled() && route.hasValidProfile())
+    {
+      const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
+      if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() &&
+         !altLeg.isAlternate())
+      {
+        atools::grib::WindPos wp;
+        wp.pos = altLeg.getLineString().getPos2();
+        wp.wind.dir = altLeg.getWindDirection();
+        wp.wind.speed = altLeg.getWindSpeed();
+
+        windText({wp}, html, altLeg.getLineString().getPos2().getAltitude(),
+                 NavApp::getWindReporter()->getSourceText());
+      }
+    }
+  }
 }
