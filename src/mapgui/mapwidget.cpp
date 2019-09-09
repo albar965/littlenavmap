@@ -981,7 +981,8 @@ bool MapWidget::touchAreaClicked(QMouseEvent *event)
 
 MapWidget::TouchArea MapWidget::touchAreaClick(QMouseEvent *event)
 {
-  if(OptionData::instance().getMapNavigation() != opts::MAP_NAV_TOUCHSCREEN)
+  if((event->button() != Qt::LeftButton && event->button() != Qt::NoButton) ||
+     OptionData::instance().getMapNavigation() != opts::MAP_NAV_TOUCHSCREEN)
     return NONE;
   else
   {

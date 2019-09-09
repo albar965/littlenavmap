@@ -226,7 +226,7 @@ void MapPainterTop::drawTouchRegions(const PaintContext *context, int areaSize)
   poly = poly.subtracted(hole);
 
   painter->setBrush(mapcolors::touchRegionFillColor);
-  painter->setPen(QPen(painter->brush().color(), 0));
+  painter->setPen(Qt::transparent);
   painter->setBackground(painter->brush().color());
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->drawPolygon(poly);
