@@ -572,17 +572,13 @@ void AircraftPerfController::updateActionStates()
 
   bool routeValid = NavApp::getRouteConst().getSizeWithoutAlternates() >= 2;
 
-  // ui->actionAircraftPerformanceMerge->setEnabled(perfHandler->isFinished());
-  // ui->pushButtonAircraftPerfCollectMerge->setEnabled(perfHandler->isFinished());
-
   ui->actionAircraftPerformanceRestart->setEnabled(perfHandler->hasFlightSegment());
   ui->pushButtonAircraftPerfCollectRestart->setEnabled(perfHandler->hasFlightSegment());
 
-  ui->spinBoxAircraftPerformanceWindDirection->setEnabled(routeValid);
-  ui->spinBoxAircraftPerformanceWindSpeed->setEnabled(routeValid);
-
-  ui->spinBoxAircraftPerformanceWindSpeed->setEnabled(ui->checkBoxAircraftPerformanceWindMan->isChecked());
-  ui->spinBoxAircraftPerformanceWindDirection->setEnabled(ui->checkBoxAircraftPerformanceWindMan->isChecked());
+  bool manWind = ui->checkBoxAircraftPerformanceWindMan->isChecked();
+  ui->spinBoxAircraftPerformanceWindDirection->setEnabled(manWind && routeValid);
+  ui->spinBoxAircraftPerformanceWindSpeed->setEnabled(manWind && routeValid);
+  atools::gui::util::showHideLayoutElements({ui->horizontalLayoutManWind}, manWind, {});
 }
 
 void AircraftPerfController::updateReport()

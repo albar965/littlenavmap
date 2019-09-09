@@ -4458,49 +4458,10 @@ wind display in the elevation profile top line.</string>
                 <string>Use manual wind settings for fuel calculation.</string>
                </property>
                <property name="text">
-                <string>&amp;Wind</string>
+                <string>&amp;Manual Wind</string>
                </property>
                <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindSpeed">
-               <property name="toolTip">
-                <string>Average wind at flight plan cruise level.
-Wind speed will be interpolated for climb and descent phases.</string>
-               </property>
-               <property name="statusTip">
-                <string>Average wind at flight plan cruise level. Wind speed will be interpolated for climb and descent phases.</string>
-               </property>
-               <property name="suffix">
-                <string> %speed%</string>
-               </property>
-               <property name="maximum">
-                <number>300</number>
-               </property>
-               <property name="singleStep">
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindDirection">
-               <property name="toolTip">
-                <string>Average true wind direction at flight plan cruise level</string>
-               </property>
-               <property name="statusTip">
-                <string>Average true wind direction at flight plan cruise level</string>
-               </property>
-               <property name="suffix">
-                <string> °T</string>
-               </property>
-               <property name="maximum">
-                <number>360</number>
-               </property>
-               <property name="singleStep">
-                <number>10</number>
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -4666,6 +4627,68 @@ Wind speed will be interpolated for climb and descent phases.</string>
                <property name="icon">
                 <iconset resource="../../littlenavmap.qrc">
                  <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayoutManWind">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="labelAircraftPerformanceWind">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&amp;Wind:</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAircraftPerformanceWindDirection</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindDirection">
+               <property name="toolTip">
+                <string>Average true wind direction at flight plan cruise level</string>
+               </property>
+               <property name="statusTip">
+                <string>Average true wind direction at flight plan cruise level</string>
+               </property>
+               <property name="suffix">
+                <string> °T</string>
+               </property>
+               <property name="maximum">
+                <number>360</number>
+               </property>
+               <property name="singleStep">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindSpeed">
+               <property name="toolTip">
+                <string>Average wind at flight plan cruise level.
+Wind speed will be interpolated for climb and descent phases.</string>
+               </property>
+               <property name="statusTip">
+                <string>Average wind at flight plan cruise level. Wind speed will be interpolated for climb and descent phases.</string>
+               </property>
+               <property name="suffix">
+                <string> %speed%</string>
+               </property>
+               <property name="maximum">
+                <number>300</number>
+               </property>
+               <property name="singleStep">
+                <number>10</number>
                </property>
               </widget>
              </item>
@@ -10901,14 +10924,14 @@ relation to shown airport</string>
   <tabstop>pushButtonRouteHelp</tabstop>
   <tabstop>tableViewRoute</tabstop>
   <tabstop>checkBoxAircraftPerformanceWindMan</tabstop>
-  <tabstop>spinBoxAircraftPerformanceWindSpeed</tabstop>
-  <tabstop>spinBoxAircraftPerformanceWindDirection</tabstop>
   <tabstop>pushButtonAircraftPerformanceEdit</tabstop>
   <tabstop>pushButtonAircraftPerformanceNew</tabstop>
   <tabstop>pushButtonAircraftPerformanceLoad</tabstop>
   <tabstop>pushButtonAircraftPerformanceSave</tabstop>
   <tabstop>pushButtonAircraftPerformanceSaveAs</tabstop>
   <tabstop>pushButtonAircraftPerformanceHelp</tabstop>
+  <tabstop>spinBoxAircraftPerformanceWindDirection</tabstop>
+  <tabstop>spinBoxAircraftPerformanceWindSpeed</tabstop>
   <tabstop>textBrowserAircraftPerformanceReport</tabstop>
   <tabstop>pushButtonAircraftPerfCollectRestart</tabstop>
   <tabstop>pushButtonAircraftPerfCollectMerge</tabstop>
