@@ -611,13 +611,35 @@ void ProfileScrollArea::restoreState()
   ui->splitterProfile->setHandleWidth(6);
 }
 
-bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
+bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint, float verticalSpeed)
 {
   // Use rectangle on the left side of the view
-  int xmarginLeft = viewport->width() / 10;
-  int ymarginTop = viewport->height() / 4;
-  int xmarginRight = viewport->width() * 2 / 3;
-  int ymarginBottom = viewport->height() / 4;
+  int xmarginLeft = viewport->width() / 20;
+  int xmarginRight = viewport->width() * 8 / 10;
+
+  int ymarginTop, ymarginBottom, vertPos;
+  if(verticalSpeed > 250)
+  {
+    // Climb - keep aircraft in the bottom left corner
+    ymarginTop = viewport->height() * 8 / 10;
+    ymarginBottom = viewport->height() / 10;
+    vertPos = viewport->height() - ymarginBottom;
+  }
+  else if(verticalSpeed < -250)
+  {
+    // Descent - keep aircraft in the top left corner
+    ymarginTop = viewport->height() / 10;
+    ymarginBottom = viewport->height() * 8 / 10;
+    vertPos = ymarginTop;
+  }
+  else
+  {
+    // Keep aircraft in the center left corner
+    ymarginTop = viewport->height() / 4;
+    ymarginBottom = viewport->height() / 4;
+    vertPos = viewport->height() / 2;
+  }
+
   int x = screenPoint.x();
   int y = screenPoint.y();
 
@@ -632,8 +654,7 @@ bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
   if(y - ymarginTop < vertScrollBar->value() || y > vertScrollBar->value() + viewport->height() - ymarginBottom)
   {
     centered = true;
-    vertScrollBar->setValue(std::min(std::max(vertScrollBar->minimum(), y - viewport->height() / 2),
-                                     vertScrollBar->maximum()));
+    vertScrollBar->setValue(std::min(std::max(vertScrollBar->minimum(), y - vertPos), vertScrollBar->maximum()));
   }
   centeringAircraft = false;
   return centered;

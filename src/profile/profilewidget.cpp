@@ -211,7 +211,8 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
           // Probably center aircraft on scroll area
           if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && !jumpBack->isActive())
-            scrollArea->centerAircraft(toScreen(currentPoint));
+            scrollArea->centerAircraft(toScreen(currentPoint),
+                                       simData.getUserAircraftConst().getVerticalSpeedFeetPerMin());
 
           // Aircraft position has changed enough
           updateWidget = true;
@@ -1178,9 +1179,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     att |= textatt::ROUTE_BG_COLOR;
 
-    if(texty + rect.bottom() > Y0 + h)
-      // Move text down when approaching top boundary
-      texty -= rect.bottom() + 20.f;
+    if(acy - rect.height() > scrollArea->getOffset().y() + Y0)
+      texty -= rect.bottom() + 20.f; // Text at top
 
     symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
   }
@@ -1914,8 +1914,9 @@ void ProfileWidget::jumpBackToAircraftTimeout()
     else
     {
       jumpBack->cancel();
-      bool centered = scrollArea->centerAircraft(toScreen(QPointF(aircraftDistanceFromStart,
-                                                                  simData.getUserAircraft().getPosition().getAltitude())));
+
+      QPoint pt = toScreen(QPointF(aircraftDistanceFromStart, simData.getUserAircraft().getPosition().getAltitude()));
+      bool centered = scrollArea->centerAircraft(pt, simData.getUserAircraft().getVerticalSpeedFeetPerMin());
 
       if(centered)
         NavApp::setStatusMessage(tr("Jumped back to aircraft."));
