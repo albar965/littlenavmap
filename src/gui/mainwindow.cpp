@@ -79,6 +79,7 @@
 #include "airspace/airspacecontroller.h"
 #include "mapgui/mapmarkhandler.h"
 #include "gui/choicedialog.h"
+#include "gui/dockwidgethandler.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -161,6 +162,9 @@ MainWindow::MainWindow()
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
     helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
+    dockHandler = new atools::gui::DockWidgetHandler(this, {ui->dockWidgetLegend, ui->dockWidgetAircraft,
+                                                            ui->dockWidgetSearch, ui->dockWidgetProfile,
+                                                            ui->dockWidgetInformation, ui->dockWidgetRoute});
 
     marbleAbout = new Marble::MarbleAboutDialog(this);
     marbleAbout->setApplicationTitle(QApplication::applicationName());
@@ -393,6 +397,8 @@ MainWindow::~MainWindow()
   delete errorHandler;
   qDebug() << Q_FUNC_INFO << "delete helpHandler";
   delete helpHandler;
+  qDebug() << Q_FUNC_INFO << "delete dockHandler";
+  delete dockHandler;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapProjection";
   delete actionGroupMapProjection;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapTheme";
@@ -520,8 +526,7 @@ void MainWindow::showNavmapLegend()
 {
   if(!legendFile.isEmpty() && QFile::exists(legendFile))
   {
-    ui->dockWidgetLegend->show();
-    ui->dockWidgetLegend->raise();
+    dockHandler->activateWindow(ui->dockWidgetLegend);
     ui->tabWidgetLegend->setCurrentIndex(0);
     setStatusMessage(tr("Opened navigation map legend."));
   }
@@ -602,8 +607,7 @@ void MainWindow::showOfflineHelp()
 /* Show marble legend */
 void MainWindow::showMapLegend()
 {
-  ui->dockWidgetLegend->show();
-  ui->dockWidgetLegend->raise();
+  dockHandler->activateWindow(ui->dockWidgetLegend);
   ui->tabWidgetLegend->setCurrentIndex(1);
   setStatusMessage(tr("Opened map legend."));
 }
@@ -784,6 +788,9 @@ void MainWindow::setupUi()
   ui->dockWidgetLegend->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                        arg(ui->dockWidgetLegend->windowTitle()));
   ui->dockWidgetLegend->toggleViewAction()->setStatusTip(ui->dockWidgetLegend->toggleViewAction()->toolTip());
+
+  // Connect to methods internally
+  dockHandler->connectDockWindows();
 
   // Add dock actions to main menu
   ui->menuView->insertActions(ui->actionShowStatusbar,
@@ -1538,7 +1545,7 @@ void MainWindow::actionShortcutMapTriggered()
   {
     ui->dockWidgetMap->show();
     ui->dockWidgetMap->activateWindow();
-    raiseFloatingWindow(ui->dockWidgetMap);
+    dockHandler->raiseFloatingWindow(ui->dockWidgetMap);
   }
   mapWidget->activateWindow();
   mapWidget->setFocus();
@@ -1547,9 +1554,7 @@ void MainWindow::actionShortcutMapTriggered()
 void MainWindow::actionShortcutProfileTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetProfile->show();
-  ui->dockWidgetProfile->activateWindow();
-  ui->dockWidgetProfile->raise();
+  dockHandler->activateWindow(ui->dockWidgetProfile);
   profileWidget->activateWindow();
   profileWidget->setFocus();
 }
@@ -1557,9 +1562,7 @@ void MainWindow::actionShortcutProfileTriggered()
 void MainWindow::actionShortcutAirportSearchTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetSearch->show();
-  ui->dockWidgetSearch->activateWindow();
-  ui->dockWidgetSearch->raise();
+  dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_AIRPORT);
   ui->lineEditAirportIcaoSearch->setFocus();
 }
@@ -1567,9 +1570,7 @@ void MainWindow::actionShortcutAirportSearchTriggered()
 void MainWindow::actionShortcutNavaidSearchTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetSearch->show();
-  ui->dockWidgetSearch->activateWindow();
-  ui->dockWidgetSearch->raise();
+  dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_NAV);
   ui->lineEditNavIcaoSearch->setFocus();
 }
@@ -1577,9 +1578,7 @@ void MainWindow::actionShortcutNavaidSearchTriggered()
 void MainWindow::actionShortcutUserpointSearchTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetSearch->show();
-  ui->dockWidgetSearch->activateWindow();
-  ui->dockWidgetSearch->raise();
+  dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_USER);
   ui->lineEditUserdataIdent->setFocus();
 }
@@ -1587,9 +1586,7 @@ void MainWindow::actionShortcutUserpointSearchTriggered()
 void MainWindow::actionShortcutLogbookSearchTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetSearch->show();
-  ui->dockWidgetSearch->activateWindow();
-  ui->dockWidgetSearch->raise();
+  dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_LOG);
   ui->lineEditLogdataDeparture->setFocus();
 }
@@ -1597,9 +1594,7 @@ void MainWindow::actionShortcutLogbookSearchTriggered()
 void MainWindow::actionShortcutFlightPlanTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetRoute->show();
-  ui->dockWidgetRoute->activateWindow();
-  ui->dockWidgetRoute->raise();
+  dockHandler->activateWindow(ui->dockWidgetRoute);
   NavApp::getRouteTabHandler()->setCurrentTab(rc::ROUTE);
   ui->tableViewRoute->setFocus();
 }
@@ -1607,9 +1602,7 @@ void MainWindow::actionShortcutFlightPlanTriggered()
 void MainWindow::actionShortcutAircraftPerformanceTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetRoute->show();
-  ui->dockWidgetRoute->activateWindow();
-  ui->dockWidgetRoute->raise();
+  dockHandler->activateWindow(ui->dockWidgetRoute);
   NavApp::getRouteTabHandler()->setCurrentTab(rc::AIRCRAFT);
   ui->textBrowserAircraftPerformanceReport->setFocus();
 }
@@ -1617,9 +1610,7 @@ void MainWindow::actionShortcutAircraftPerformanceTriggered()
 void MainWindow::actionShortcutAirportInformationTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetInformation->show();
-  ui->dockWidgetInformation->activateWindow();
-  ui->dockWidgetInformation->raise();
+  dockHandler->activateWindow(ui->dockWidgetInformation);
   infoController->setCurrentInfoTabIndex(ic::INFO_AIRPORT);
   ui->textBrowserAirportInfo->setFocus();
 }
@@ -1627,9 +1618,7 @@ void MainWindow::actionShortcutAirportInformationTriggered()
 void MainWindow::actionShortcutAirportWeatherTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetInformation->show();
-  ui->dockWidgetInformation->activateWindow();
-  ui->dockWidgetInformation->raise();
+  dockHandler->activateWindow(ui->dockWidgetInformation);
   infoController->setCurrentInfoTabIndex(ic::INFO_WEATHER);
   ui->textBrowserWeatherInfo->setFocus();
 }
@@ -1637,9 +1626,7 @@ void MainWindow::actionShortcutAirportWeatherTriggered()
 void MainWindow::actionShortcutNavaidInformationTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetInformation->show();
-  ui->dockWidgetInformation->activateWindow();
-  ui->dockWidgetInformation->raise();
+  dockHandler->activateWindow(ui->dockWidgetInformation);
   infoController->setCurrentInfoTabIndex(ic::INFO_NAVAID);
   ui->textBrowserNavaidInfo->setFocus();
 }
@@ -1647,9 +1634,7 @@ void MainWindow::actionShortcutNavaidInformationTriggered()
 void MainWindow::actionShortcutAircraftProgressTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  ui->dockWidgetAircraft->show();
-  ui->dockWidgetAircraft->activateWindow();
-  ui->dockWidgetAircraft->raise();
+  dockHandler->activateWindow(ui->dockWidgetAircraft);
   infoController->setCurrentAircraftTabIndex(ic::AIRCRAFT_USER_PROGRESS);
   ui->textBrowserAircraftProgressInfo->setFocus();
 }
@@ -3139,6 +3124,9 @@ void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
+  // Enable dock handler
+  dockHandler->setHandleDockViews(true);
+
   // Postpone loading of KML etc. until now when everything is set up
   mapWidget->mainWindowShown();
   profileWidget->mainWindowShown();
@@ -3271,22 +3259,12 @@ void MainWindow::mainWindowShown()
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
-void MainWindow::raiseFloatingWindow(QDockWidget *dockWidget)
-{
-  if(dockWidget->isVisible() && dockWidget->isFloating())
-    dockWidget->raise();
-}
-
 void MainWindow::raiseFloatingWindows()
 {
-  raiseFloatingWindow(ui->dockWidgetLegend);
-  raiseFloatingWindow(ui->dockWidgetAircraft);
-  raiseFloatingWindow(ui->dockWidgetSearch);
-  raiseFloatingWindow(ui->dockWidgetProfile);
-  raiseFloatingWindow(ui->dockWidgetInformation);
-  raiseFloatingWindow(ui->dockWidgetRoute);
+  dockHandler->raiseFloatingWindows();
 
-  raiseFloatingWindow(ui->dockWidgetMap);
+  // Map window is not used by dockHandler
+  dockHandler->raiseFloatingWindow(ui->dockWidgetMap);
 
   // Avoid having random widget focus
   mapWidget->setFocus();

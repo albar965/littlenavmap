@@ -66,6 +66,7 @@ class Dialog;
 class ErrorHandler;
 class HelpHandler;
 class FileHistoryHandler;
+class DockWidgetHandler;
 }
 
 }
@@ -208,7 +209,6 @@ private:
   void connectAllSlots();
   void mainWindowShown();
   void raiseFloatingWindows();
-  void raiseFloatingWindow(QDockWidget *dockWidget);
 
   void saveStateMain();
   void saveActionStates();
@@ -390,6 +390,7 @@ private:
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
+  atools::gui::DockWidgetHandler *dockHandler = nullptr;
 
   /* Map theme submenu actions */
   QList<QAction *> customMapThemeMenuActions;
