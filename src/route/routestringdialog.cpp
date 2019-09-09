@@ -45,7 +45,8 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   // Make the splitter handle better visible
   ui->splitterRouteString->setStyleSheet(QString("QSplitter::handle { "
                                                  "background: %1;"
-                                                 "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); }").
+                                                 "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); "
+                                                 "}").
                                          arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 
   // Disallow collapsing of the upper view
@@ -166,6 +167,7 @@ void RouteStringDialog::restoreState()
 {
   atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).restore(
     {this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType});
+  ui->splitterRouteString->setHandleWidth(6);
   options = getOptionsFromSettings();
   updateButtonState();
 

@@ -126,9 +126,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
-  // Make splitter handle better visible - update background color
-  ui->splitterOptions->setStyleSheet(QString("QSplitter::handle { background: %1; }").
-                                     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+  ui->splitterOptions->setStyleSheet(
+    QString("QSplitter::handle { "
+            "background: %1;"
+            "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png);"
+            " }").
+    arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 
   if(ui->splitterOptions->handle(1) != nullptr)
   {
@@ -861,6 +864,8 @@ void OptionsDialog::restoreState()
   restoreOptionItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   restoreOptionItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
   restoreOptionItemStates(displayOptItemIndexNavAid, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID);
+
+  ui->splitterOptions->setHandleWidth(6);
 
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
     ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));

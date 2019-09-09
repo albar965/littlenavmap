@@ -608,6 +608,7 @@ void ProfileScrollArea::restoreState()
     ui->actionProfileShowIls,
     ui->actionProfileShowVasi
   });
+  ui->splitterProfile->setHandleWidth(6);
 }
 
 bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
@@ -644,7 +645,8 @@ void ProfileScrollArea::styleChanged()
   NavApp::getMainUi()->splitterProfile->setStyleSheet(
     QString("QSplitter::handle { "
             "background: %1;"
-            "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png); }").
+            "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png);"
+            " }").
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 }
 
