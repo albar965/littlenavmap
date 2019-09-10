@@ -361,24 +361,6 @@
      <addaction name="actionMapShowVictorAirways"/>
      <addaction name="actionMapShowJetAirways"/>
     </widget>
-    <widget class="QMenu" name="menuMapShowAirportWeatherSource">
-     <property name="title">
-      <string>Airport Weather &amp;Source</string>
-     </property>
-     <addaction name="actionMapShowWeatherSimulator"/>
-     <addaction name="actionMapShowWeatherActiveSky"/>
-     <addaction name="actionMapShowWeatherNoaa"/>
-     <addaction name="actionMapShowWeatherVatsim"/>
-     <addaction name="actionMapShowWeatherIvao"/>
-    </widget>
-    <widget class="QMenu" name="menuHighAltitudeWindSource">
-     <property name="title">
-      <string>Wind source</string>
-     </property>
-     <addaction name="actionMapShowWindDisabled"/>
-     <addaction name="actionMapShowWindSimulator"/>
-     <addaction name="actionMapShowWindNOAA"/>
-    </widget>
     <widget class="QMenu" name="menuHighAltitudeWindLevels">
      <property name="title">
       <string>Wind levels</string>
@@ -399,6 +381,7 @@
      </property>
     </widget>
     <addaction name="actionMapResetSettings"/>
+    <addaction name="separator"/>
     <addaction name="menuViewDetails"/>
     <addaction name="separator"/>
     <addaction name="menuViewAirport"/>
@@ -426,10 +409,8 @@
     <addaction name="actionMapShowMinimumAltitude"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAirportWeather"/>
-    <addaction name="menuMapShowAirportWeatherSource"/>
     <addaction name="separator"/>
     <addaction name="menuHighAltitudeWindLevels"/>
-    <addaction name="menuHighAltitudeWindSource"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowSunShading"/>
     <addaction name="menuSunShading"/>
@@ -475,14 +456,40 @@
     <addaction name="separator"/>
     <addaction name="actionLogdataCreateLogbook"/>
    </widget>
+   <widget class="QMenu" name="menuWeather">
+    <property name="title">
+     <string>W&amp;eather</string>
+    </property>
+    <widget class="QMenu" name="menuMapShowAirportWeatherSource">
+     <property name="title">
+      <string>Airport Weather &amp;Source</string>
+     </property>
+     <addaction name="actionMapShowWeatherSimulator"/>
+     <addaction name="actionMapShowWeatherActiveSky"/>
+     <addaction name="actionMapShowWeatherNoaa"/>
+     <addaction name="actionMapShowWeatherVatsim"/>
+     <addaction name="actionMapShowWeatherIvao"/>
+    </widget>
+    <widget class="QMenu" name="menuHighAltitudeWindSource">
+     <property name="title">
+      <string>Wind source</string>
+     </property>
+     <addaction name="actionMapShowWindDisabled"/>
+     <addaction name="actionMapShowWindSimulator"/>
+     <addaction name="actionMapShowWindNOAA"/>
+    </widget>
+    <addaction name="menuMapShowAirportWeatherSource"/>
+    <addaction name="menuHighAltitudeWindSource"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRoute"/>
    <addaction name="menuMap"/>
    <addaction name="menuMapView"/>
-   <addaction name="menuDatabase"/>
+   <addaction name="menuWeather"/>
    <addaction name="menuUserdata"/>
    <addaction name="menuLogbook"/>
    <addaction name="menuAircraftPerformance"/>
+   <addaction name="menuDatabase"/>
    <addaction name="menuTools"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
@@ -9537,7 +9544,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -10695,6 +10702,9 @@ relation to shown airport</string>
   </action>
   <action name="actionViewAirspaceSrcSimulator">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
