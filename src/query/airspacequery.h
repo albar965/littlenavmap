@@ -73,14 +73,24 @@ public:
   /* Tries to fetch online airspace geometry by  file name. */
   atools::geo::LineString *getAirspaceGeometryByFile(QString callsign);
 
-  /* Close all query objects thus disconnecting from the database */
-  void initQueries();
+  /* True if tables atc or boundary have content. Updated in clearCache and initQueries */
+  bool hasAirspacesDatabase()
+  {
+    return hasAirspaces;
+  }
 
   /* Create and prepare all queries */
+  void initQueries();
+
+  /* Close all query objects thus disconnecting from the database */
   void deInitQueries();
+
+  /* Clear all internal caches after reloading online centers */
   void clearCache();
 
 private:
+  void updateAirspaceStatus();
+
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
 
@@ -94,6 +104,8 @@ private:
   QCache<QString, atools::geo::LineString> onlineCenterGeoCache, onlineCenterGeoFileCache;
 
   static int queryMaxRows;
+
+  bool hasAirspaces = false;
 
   /* Database queries */
   atools::sql::SqlQuery *airspaceByRectQuery = nullptr, *airspaceByRectBelowAltQuery = nullptr,

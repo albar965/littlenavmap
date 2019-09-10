@@ -102,6 +102,8 @@ public:
     return sources;
   }
 
+  bool hasAnyAirspaces() const;
+
   /* Get sources as string */
   QStringList getAirspaceSourcesStr() const;
 

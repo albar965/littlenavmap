@@ -23,6 +23,7 @@
 #include "fs/common/binarygeometry.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
+#include "sql/sqlutil.h"
 #include "query/airportquery.h"
 #include "fs/common/binarygeometry.h"
 #include "navapp.h"
@@ -298,7 +299,7 @@ LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
 
 LineString *AirspaceQuery::getAirspaceGeometryByName(const QString& callsign, const QString& facilityType)
 {
-  Q_UNUSED(facilityType);
+  Q_UNUSED(facilityType)
 
   if(airspaceGeoByNameQuery != nullptr)
   {
@@ -346,8 +347,18 @@ SqlRecord AirspaceQuery::getAirspaceInfoRecordById(int airspaceId)
   return retval;
 }
 
+void AirspaceQuery::updateAirspaceStatus()
+{
+  if(source & map::AIRSPACE_SRC_ONLINE)
+    hasAirspaces = SqlUtil(db).hasTableAndRows("atc");
+  else
+    hasAirspaces = SqlUtil(db).hasTableAndRows("boundary");
+}
+
 void AirspaceQuery::initQueries()
 {
+  updateAirspaceStatus();
+
   QString airspaceQueryBase, table, id;
   if(source == map::AIRSPACE_SRC_ONLINE)
   {
@@ -474,4 +485,6 @@ void AirspaceQuery::clearCache()
   airspaceLineCache.clear();
   onlineCenterGeoCache.clear();
   onlineCenterGeoFileCache.clear();
+
+  updateAirspaceStatus();
 }

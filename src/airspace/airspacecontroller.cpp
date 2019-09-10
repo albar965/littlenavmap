@@ -291,6 +291,16 @@ void AirspaceController::updateButtonsAndActions()
   airspaceHandler->updateButtonsAndActions();
 }
 
+bool AirspaceController::hasAnyAirspaces() const
+{
+  for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
+  {
+    if((sources & src) && queries.contains(src) && queries.value(src)->hasAirspacesDatabase())
+      return true;
+  }
+  return false;
+}
+
 void AirspaceController::loadAirspaces()
 {
   qDebug() << Q_FUNC_INFO;

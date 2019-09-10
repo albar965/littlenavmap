@@ -48,7 +48,8 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
   // qDebug() << Q_FUNC_INFO << types;
 
   QAction *airspaceAction = NavApp::getMainUi()->actionShowAirspaces;
-  bool hasAirspaces = NavApp::hasDatabaseAirspaces();
+
+  bool hasAirspaces = NavApp::hasAnyAirspaces();
   airspaceAction->setEnabled(hasAirspaces);
 
   // Enable or disable all tool buttons

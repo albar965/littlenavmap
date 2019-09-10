@@ -632,6 +632,11 @@ AirspaceController *NavApp::getAirspaceController()
   return airspaceController;
 }
 
+bool NavApp::hasAnyAirspaces()
+{
+  return getAirspaceController()->hasAnyAirspaces();
+}
+
 atools::fs::common::MagDecReader *NavApp::getMagDecReader()
 {
   return magDecReader;
@@ -816,11 +821,6 @@ QString NavApp::getDatabaseAiracCycleSim()
 QString NavApp::getDatabaseAiracCycleNav()
 {
   return databaseMetaNav != nullptr ? databaseMetaNav->getAiracCycle() : QString();
-}
-
-bool NavApp::hasDatabaseAirspaces()
-{
-  return databaseMetaNav != nullptr ? databaseMetaNav->hasAirspaces() : false;
 }
 
 bool NavApp::hasOnlineData()

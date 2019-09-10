@@ -1348,6 +1348,9 @@ void MainWindow::connectAllSlots()
   AirspaceController *airspaceController = NavApp::getAirspaceController();
   connect(airspaceController, &AirspaceController::updateAirspaceSources,
           this, &MainWindow::updateMapObjectsShown);
+  connect(airspaceController, &AirspaceController::updateAirspaceSources,
+          NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
+
   connect(airspaceController, &AirspaceController::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
   connect(airspaceController, &AirspaceController::userAirspacesUpdated,
           NavApp::getOnlinedataController(), &OnlinedataController::userAirspacesUpdated);

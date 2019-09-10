@@ -252,9 +252,6 @@ public:
   static QString getDatabaseAiracCycleSim();
   static QString getDatabaseAiracCycleNav();
 
-  /* True if the database contains any airspaces or boundaries. */
-  static bool hasDatabaseAirspaces();
-
   /* True if online data and ATC centers are available */
   static bool hasOnlineData();
 
@@ -284,6 +281,7 @@ public:
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
 
   static AirspaceController *getAirspaceController();
+  static bool hasAnyAirspaces();
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 
