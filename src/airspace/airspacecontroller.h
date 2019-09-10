@@ -116,6 +116,8 @@ public:
   /* Tries to fetch online airspace geometry by file name. */
   atools::geo::LineString *getOnlineAirspaceGeoByFile(const QString& callsign);
 
+  void resetSettingsToDefault();
+
 signals:
   /* Filter in drop down buttons have changed */
   void updateAirspaceTypes(map::MapAirspaceFilter types);

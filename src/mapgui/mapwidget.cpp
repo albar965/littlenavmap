@@ -51,6 +51,7 @@
 #include "common/unit.h"
 #include "common/aircrafttrack.h"
 #include "weather/windreporter.h"
+#include "gui/signalblocker.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -3297,63 +3298,63 @@ void MapWidget::resetSettingActionsToDefault()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  ui->actionMapShowAirports->blockSignals(true);
-  ui->actionMapShowAirports->setChecked(true);
-  ui->actionMapShowAirports->blockSignals(false);
-  ui->actionMapShowSoftAirports->blockSignals(true);
-  ui->actionMapShowSoftAirports->setChecked(true);
-  ui->actionMapShowSoftAirports->blockSignals(false);
-  ui->actionMapShowEmptyAirports->blockSignals(true);
-  ui->actionMapShowEmptyAirports->setChecked(true);
-  ui->actionMapShowEmptyAirports->blockSignals(false);
-  ui->actionMapShowAddonAirports->blockSignals(true);
-  ui->actionMapShowAddonAirports->setChecked(true);
-  ui->actionMapShowAddonAirports->blockSignals(false);
-  ui->actionMapShowVor->blockSignals(true);
-  ui->actionMapShowVor->setChecked(true);
-  ui->actionMapShowVor->blockSignals(false);
-  ui->actionMapShowNdb->blockSignals(true);
-  ui->actionMapShowNdb->setChecked(true);
-  ui->actionMapShowNdb->blockSignals(false);
-  ui->actionMapShowWp->blockSignals(true);
-  ui->actionMapShowWp->setChecked(true);
-  ui->actionMapShowWp->blockSignals(false);
-  ui->actionMapShowIls->blockSignals(true);
-  ui->actionMapShowIls->setChecked(true);
-  ui->actionMapShowIls->blockSignals(false);
-  ui->actionMapShowVictorAirways->blockSignals(true);
-  ui->actionMapShowVictorAirways->setChecked(false);
-  ui->actionMapShowVictorAirways->blockSignals(false);
-  ui->actionMapShowJetAirways->blockSignals(true);
-  ui->actionMapShowJetAirways->setChecked(false);
-  ui->actionMapShowJetAirways->blockSignals(false);
-  ui->actionShowAirspaces->blockSignals(true);
-  ui->actionShowAirspaces->setChecked(true);
-  ui->actionShowAirspaces->blockSignals(false);
-  ui->actionMapShowRoute->blockSignals(true);
-  ui->actionMapShowRoute->setChecked(true);
-  ui->actionMapShowRoute->blockSignals(false);
-  ui->actionMapShowAircraft->blockSignals(true);
-  ui->actionMapShowAircraft->setChecked(true);
-  ui->actionMapShowAircraft->blockSignals(false);
-  ui->actionMapShowCompassRose->blockSignals(true);
-  ui->actionMapShowCompassRose->setChecked(false);
-  ui->actionMapShowCompassRose->blockSignals(false);
-  ui->actionMapAircraftCenter->blockSignals(true);
+  atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
+                                      ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports,
+                                      ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
+                                      ui->actionMapShowIls, ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+                                      ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowAircraft,
+                                      ui->actionMapShowCompassRose, ui->actionMapAircraftCenter,
+                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
+                                      ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
+                                      ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
+                                      ui->actionMapShowMinimumAltitude,
+                                      ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
+
+  // Menu map =====================================
   ui->actionMapAircraftCenter->setChecked(true);
-  ui->actionMapAircraftCenter->blockSignals(false);
-  ui->actionMapShowAircraftAi->blockSignals(true);
-  ui->actionMapShowAircraftAi->setChecked(true);
-  ui->actionMapShowAircraftAi->blockSignals(false);
-  ui->actionMapShowAircraftAiBoat->blockSignals(true);
-  ui->actionMapShowAircraftAiBoat->setChecked(false);
-  ui->actionMapShowAircraftAiBoat->blockSignals(false);
-  ui->actionMapShowAircraftTrack->blockSignals(true);
-  ui->actionMapShowAircraftTrack->setChecked(true);
-  ui->actionMapShowAircraftTrack->blockSignals(false);
-  ui->actionInfoApproachShowMissedAppr->blockSignals(true);
+
+  // Menu view =====================================
+  // Submenu airports
+  ui->actionMapShowAirports->setChecked(true);
+  ui->actionMapShowSoftAirports->setChecked(true);
+  ui->actionMapShowEmptyAirports->setChecked(true);
+  ui->actionMapShowAddonAirports->setChecked(true);
+
+  // Submenu navaids
+  ui->actionMapShowVor->setChecked(true);
+  ui->actionMapShowNdb->setChecked(true);
+  ui->actionMapShowWp->setChecked(true);
+  ui->actionMapShowIls->setChecked(true);
+  ui->actionMapShowVictorAirways->setChecked(false);
+  ui->actionMapShowJetAirways->setChecked(false);
+
+  // Submenu airspaces
+  ui->actionShowAirspaces->setChecked(true);
+
+  // -----------------
+  ui->actionMapShowRoute->setChecked(true);
   ui->actionInfoApproachShowMissedAppr->setChecked(true);
-  ui->actionInfoApproachShowMissedAppr->blockSignals(false);
+  ui->actionMapShowAircraft->setChecked(true);
+  ui->actionMapShowAircraftTrack->setChecked(true);
+  ui->actionMapShowCompassRose->setChecked(false);
+
+  // -----------------
+  ui->actionMapShowAircraftAi->setChecked(true);
+  ui->actionMapShowAircraftAiBoat->setChecked(false);
+
+  // -----------------
+  ui->actionMapShowGrid->setChecked(true);
+  ui->actionMapShowCities->setChecked(true);
+  ui->actionMapShowHillshading->setChecked(true);
+  ui->actionMapShowMinimumAltitude->setChecked(true);
+
+  // -----------------
+  ui->actionMapShowAirportWeather->setChecked(true);
+  // Weather sources unmodified
+
+  // -----------------
+  ui->actionMapShowSunShading->setChecked(false);
+  // Sun shading data unmodified
 }
 
 void MapWidget::updateThemeUi(int index)

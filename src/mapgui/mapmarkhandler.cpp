@@ -71,6 +71,12 @@ QString MapMarkHandler::getMarkTypesText() const
   return types.join(tr((", ")));
 }
 
+void MapMarkHandler::resetSettingsToDefault()
+{
+  markTypes = map::MARK_ALL;
+  flagsToActions();
+}
+
 void MapMarkHandler::addToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

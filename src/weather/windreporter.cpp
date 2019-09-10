@@ -411,6 +411,14 @@ QString WindReporter::getSourceText() const
   return QString();
 }
 
+void WindReporter::resetSettingsToDefault()
+{
+  currentLevel = wind::NONE;
+  showFlightplanWaypoints = false;
+
+  valuesToAction();
+}
+
 void WindReporter::actionToValues()
 {
   QAction *action = actionGroup->checkedAction();

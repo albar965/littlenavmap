@@ -286,6 +286,16 @@ void AirspaceController::resetAirspaceOnlineScreenGeometry()
   }
 }
 
+void AirspaceController::resetSettingsToDefault()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->actionViewAirspaceSrcSimulator->setChecked(true);
+  ui->actionViewAirspaceSrcNavigraph->setChecked(true);
+  ui->actionViewAirspaceSrcUser->setChecked(true);
+  ui->actionViewAirspaceSrcOnline->setChecked(true);
+  updateButtonsAndActions();
+}
+
 void AirspaceController::updateButtonsAndActions()
 {
   airspaceHandler->updateButtonsAndActions();

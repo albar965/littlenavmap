@@ -3024,10 +3024,16 @@ void MainWindow::resetMapObjectsShown()
   mapWidget->resetSettingsToDefault();
   NavApp::getUserdataController()->resetSettingsToDefault();
 
+  NavApp::getAirspaceController()->resetSettingsToDefault();
+  NavApp::getWindReporter()->resetSettingsToDefault();
+  NavApp::getMapMarkHandler()->resetSettingsToDefault();
+
   mapWidget->updateMapObjectsShown();
-  NavApp::getAirspaceController()->updateButtonsAndActions();
+
+  mapWidget->update();
   profileWidget->update();
-  // setStatusMessage(tr("Map settings changed."));
+
+  setStatusMessage(tr("Map settings reset."));
 }
 
 /* A button like airport, vor, ndb, etc. was pressed - update the map */

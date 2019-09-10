@@ -154,6 +154,8 @@ public:
 
 #endif
 
+  void resetSettingsToDefault();
+
 signals:
   /* Emitted when NOAA or X-Plane wind file changes or a request to weather was fullfilled */
   void windUpdated();
