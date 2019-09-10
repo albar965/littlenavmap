@@ -2451,6 +2451,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 
 void RouteController::styleChanged()
 {
+  tabHandlerRoute->styleChanged();
   highlightProcedureItems();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 }

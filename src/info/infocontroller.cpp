@@ -1044,6 +1044,8 @@ void InfoController::postDatabaseLoad()
 
 void InfoController::styleChanged()
 {
+  tabHandlerInfo->styleChanged();
+  tabHandlerAircraft->styleChanged();
   showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */,
                           true /* forceUpdate */);
 }

@@ -101,6 +101,7 @@ void SearchController::optionsChanged()
 
 void SearchController::styleChanged()
 {
+  tabHandlerSearch->styleChanged();
   for(AbstractSearch *search : allSearchTabs)
     search->styleChanged();
 }

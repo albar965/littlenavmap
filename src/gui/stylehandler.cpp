@@ -164,16 +164,6 @@ void StyleHandler::applyCurrentStyle()
 {
   qDebug() << Q_FUNC_INFO << "index" << currentStyleIndex;
 
-  // QEvent event(QEvent::StyleChange);
-  // for(QWidget *widget : QApplication::allWidgets())
-  // {
-  // widget->style()->polish(widget);
-  // widget->repaint();
-  // QApplication::sendEvent(widget, &event);
-  // }
-  // for(QWindow *window: QApplication::allWindows())
-  // QApplication::sendEvent(window, &event);
-
   const Style& style = styles.at(currentStyleIndex);
   emit preStyleChange(style.displayName, style.night);
 
