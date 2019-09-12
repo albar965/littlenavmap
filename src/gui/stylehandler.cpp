@@ -205,15 +205,9 @@ void StyleHandler::restoreState()
   {
     // Select default style - first startup ==================================
 
-    // Use Fusion for macOS since the default style is a mess (cannot resize windows)
-#if defined(Q_OS_MACOS)
-    QString currentStyleName("Fusion");
-#else
-    QString currentStyleName = QApplication::style()->objectName();
-#endif
-
     // Look for default style in the list
     int index = 0;
+    QString currentStyleName = QApplication::style()->objectName();
     for(const QString& styleName : QStyleFactory::keys())
     {
       if(styleName.compare(currentStyleName, Qt::CaseInsensitive) == 0)
