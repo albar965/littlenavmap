@@ -36,6 +36,7 @@ using atools::fs::pln::FlightplanEntry;
 using map::MapSearchResult;
 using atools::geo::Pos;
 namespace coords = atools::fs::util;
+namespace plnentry = atools::fs::pln::entry;
 
 // Maximum distance to previous waypoint - everything above will be sorted out
 const static float MAX_WAYPOINT_DISTANCE_NM = 5000.f;
@@ -195,7 +196,7 @@ QString RouteString::createGfpStringForRouteInternalProc(const Route& route, boo
   else
   {
     // Add departure airport only - no coordinates since these are not accurate
-    retval.prepend("FPN/RI:F:" + route.getDestinationAirportLeg().getIdent());
+    retval.prepend("FPN/RI:F:" + route.getDepartureAirportLeg().getIdent());
   }
 
   if((route.hasAnyArrivalProcedure() || route.hasAnyStarProcedure()) && !userWaypointOption)
@@ -449,6 +450,9 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       retval.append(arrivalTransition);
   }
 
+  if(options & rs::ALTERNATES)
+    retval.append(route.getAlternateIdents());
+
   if(options & rs::FLIGHTLEVEL)
     retval.append(QString("FL%1").arg(static_cast<int>(route.getCruisingAltitudeFeet()) / 100));
 
@@ -457,15 +461,16 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   return retval;
 }
 
-bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan)
+bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
+                                        rs::RouteStringOptions options)
 {
   float speeddummy;
   bool altdummy;
-  return createRouteFromString(routeString, flightplan, speeddummy, altdummy);
+  return createRouteFromString(routeString, flightplan, speeddummy, altdummy, options);
 }
 
 bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                                        float& speedKts, bool& altIncluded)
+                                        float& speedKts, bool& altIncluded, rs::RouteStringOptions options)
 {
   qDebug() << Q_FUNC_INFO;
   messages.clear();
@@ -497,12 +502,22 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   if(!addDeparture(flightplan, cleanItems))
     return false;
 
-  if(!addDestination(flightplan, cleanItems))
+  if(!addDestination(flightplan, cleanItems, options))
     return false;
 
-  if(speedKts > 0.f && altitude > 0.f)
-    appendMessage(tr("Using <b>%1</b> and cruise altitude <b>%2</b>.").
-                  arg(Unit::speedKts(speedKts)).arg(Unit::altFeet(altitude)));
+  if(altitude > 0.f)
+    appendMessage(tr("Using cruise altitude <b>%1</b> for flight plan.").arg(Unit::altFeet(altitude)));
+
+  if(speedKts > 0.f)
+  {
+    float cruise = NavApp::getRouteCruiseSpeedKts();
+    if(atools::almostEqual(speedKts, cruise, 1.f))
+      appendWarning(tr("Ignoring speed instruction %1.").arg(Unit::speedKts(speedKts)));
+    else
+      appendWarning(tr("Ignoring speed instruction %1 in favor of aircraft performance (%2 true airspeed).").
+                    arg(Unit::speedKts(speedKts)).
+                    arg(Unit::speedKts(NavApp::getRouteCruiseSpeedKts())));
+  }
 
   // Do not get any navaids that are too far away
   float maxDistance = atools::geo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM, flightplan.getDistanceNm() * 2.0f));
@@ -816,29 +831,149 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
   }
 }
 
-bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems)
+bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems,
+                                 rs::RouteStringOptions options)
 {
-  QString ident = extractAirportIdent(cleanItems.takeLast());
+  if(options & rs::READ_ALTERNATES)
+  {
+    // Read airports at end of list as alternates =============================================
 
-  map::MapAirport destination;
-  airportQuerySim->getAirportByIdent(destination, ident);
+    // List of consecutive airports at end of string - destination is last entry, alternates before
+    QVector<proc::MapProcedureLegs> stars;
+    QVector<map::MapAirport> airports;
+
+    // Iterate from end of list
+    int idx = cleanItems.size() - 1;
+    while(idx >= 0)
+    {
+      proc::MapProcedureLegs star;
+      map::MapAirport ap;
+
+      // Get airport and STAR
+      destinationInternal(ap, star, cleanItems, idx);
+
+      if(!star.isEmpty())
+      {
+        // Found a STAR - this is the destination
+        stars.append(star);
+        airports.append(ap);
+        break;
+      }
+
+      if(ap.isValid())
+      {
+        // Found a valid airport, add and continue with previous one
+        stars.append(star);
+        airports.append(ap);
+        idx--;
+      }
+      else
+        // No valid airport - stop here
+        break;
+    }
+
+    if(!airports.isEmpty())
+    {
+      // Consume items in list
+      for(int i = 0; i < airports.size() && !cleanItems.isEmpty(); i++)
+        cleanItems.removeLast();
+
+      // Get and remove destination airport ========================
+      map::MapAirport dest = airports.takeLast();
+      proc::MapProcedureLegs star = stars.takeLast();
+
+      flightplan.setDestinationAiportName(dest.name);
+      flightplan.setDestinationIdent(dest.ident);
+      flightplan.setDestinationPosition(dest.getPosition());
+
+      FlightplanEntry entry;
+      entryBuilder->buildFlightplanEntry(dest, entry, false /* alternate */);
+      flightplan.getEntries().append(entry);
+
+      // Get destination STAR ========================
+      if(!star.isEmpty())
+      {
+        // Consume STAR in list
+        cleanItems.removeLast();
+
+        // Add information to the flight plan property list
+        proc::MapProcedureLegs arrivalLegs, departureLegs;
+        procQuery->fillFlightplanProcedureProperties(flightplan.getProperties(), arrivalLegs, star, departureLegs);
+      }
+
+      // Collect alternates ========================
+      QStringList alternateIdents;
+      for(const map::MapAirport& alt : airports)
+        alternateIdents.prepend(alt.ident);
+
+      if(!alternateIdents.isEmpty())
+      {
+        flightplan.getProperties().insert(atools::fs::pln::ALTERNATES, alternateIdents.join("#"));
+        appendMessage(tr("Found alternate %1 <b>%2</b>.").
+                      arg(alternateIdents.size() == 1 ? tr("airport") : tr("airports")).
+                      arg(alternateIdents.join(tr(", "))));
+      }
+    } // if(!airports.isEmpty())
+    else
+    {
+      appendError(tr("Required destination airport %1 not found.").arg(cleanItems.last()));
+      return false;
+    }
+  } // if(options & rs::READ_ALTERNATES)
+  else
+  {
+    // Read airports at end of list as waypoints =============================================
+    proc::MapProcedureLegs star;
+    map::MapAirport dest;
+
+    // Get airport and STAR at end of list ================================
+    destinationInternal(dest, star, cleanItems, cleanItems.size() - 1);
+
+    if(dest.isValid())
+    {
+      flightplan.setDestinationAiportName(dest.name);
+      flightplan.setDestinationIdent(dest.ident);
+      flightplan.setDestinationPosition(dest.getPosition());
+
+      FlightplanEntry entry;
+      entryBuilder->buildFlightplanEntry(dest, entry, false /* alternate */);
+      flightplan.getEntries().append(entry);
+
+      // Consume airport
+      cleanItems.removeLast();
+
+      // Get destination STAR ========================
+      if(!star.isEmpty())
+      {
+        // Consume STAR in list
+        cleanItems.removeLast();
+
+        // Add information to the flight plan property list
+        proc::MapProcedureLegs arrivalLegs, departureLegs;
+        procQuery->fillFlightplanProcedureProperties(flightplan.getProperties(), arrivalLegs, star, departureLegs);
+      }
+
+      // Remaining airports are handled by other waypoint code
+    }
+    else
+    {
+      appendError(tr("Required destination airport %1 not found.").arg(cleanItems.last()));
+      return false;
+    }
+  }
+  return true;
+}
+
+void RouteString::destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs,
+                                      const QStringList& cleanItems, int index)
+{
+  airportQuerySim->getAirportByIdent(destination, extractAirportIdent(cleanItems.at(index)));
   if(destination.isValid())
   {
-    // qDebug() << "found" << destination.ident << "id" << destination.id;
-
-    flightplan.setDestinationAiportName(destination.name);
-    flightplan.setDestinationIdent(destination.ident);
-    flightplan.setDestinationPosition(destination.position);
-
-    FlightplanEntry entry;
-    entryBuilder->buildFlightplanEntry(destination, entry, false /* alternate */);
-    flightplan.getEntries().append(entry);
-
-    if(!cleanItems.isEmpty())
+    if(cleanItems.size() > 1 && index > 0)
     {
-      QString starTrans = cleanItems.last();
+      QString starTrans = cleanItems.at(index - 1);
 
-      bool foundStar = false;
       QRegularExpressionMatch starMatch = SID_STAR_TRANS.match(starTrans);
       if(starMatch.hasMatch())
       {
@@ -850,6 +985,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
           star.remove(4, 1);
 
         int starTransId = -1;
+        bool foundStar = false;
         int starId = procQuery->getStarId(destination, star);
         if(starId != -1 && !trans.isEmpty())
         {
@@ -861,10 +997,6 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
 
         if(foundStar)
         {
-          // Consume item
-          cleanItems.removeLast();
-
-          proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
           if(starId != -1 && starTransId == -1)
           {
             // Only STAR
@@ -879,19 +1011,9 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
             if(legs != nullptr)
               starLegs = *legs;
           }
-          // Add information to the flight plan property list
-          procQuery->fillFlightplanProcedureProperties(
-            flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
         }
       }
     }
-
-    return true;
-  }
-  else
-  {
-    appendError(tr("Mandatory destination airport %1 not found.").arg(ident));
-    return false;
   }
 }
 

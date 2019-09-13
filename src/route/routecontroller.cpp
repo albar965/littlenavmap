@@ -833,7 +833,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
     // Use route string to overwrite the current incomplete flight plan object
     RouteString rs(entryBuilder);
     rs.setPlaintextMessages(true);
-    bool ok = rs.createRouteFromString(routeString.join(" "), flightplan);
+    bool ok = rs.createRouteFromString(routeString.join(" "), flightplan, rs::NONE);
     qInfo() << "createRouteFromString messages" << rs.getMessages();
 
     if(!ok)

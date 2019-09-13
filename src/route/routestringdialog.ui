@@ -44,8 +44,10 @@
          <property name="toolTip">
           <string>Format is: FROM[ETD] [SPEEDALT] [SID][.TRANS] [ENROUTE] [STAR][.TRANS] TO[ETA] [ALTERNATES]
 FROM and TO airports are required, everything else is optional.
+SPEEDALT describes flight plan cruise altitude and speed.
 ENROUTE is a space separated list of navaids, airway/navaid combinations or user defined waypoints.
-ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR procedure.
+ALTERNATES is a list of alternate airports.
+ETD and ETA are ignored.
 </string>
          </property>
          <property name="plainText">

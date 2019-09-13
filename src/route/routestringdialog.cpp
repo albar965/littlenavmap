@@ -26,6 +26,7 @@
 #include "gui/widgetstate.h"
 #include "common/constants.h"
 #include "common/unit.h"
+#include "atools.h"
 
 #include "ui_routestringdialog.h"
 
@@ -33,6 +34,7 @@
 #include <QAction>
 
 using atools::gui::HelpHandler;
+namespace apln = atools::fs::pln;
 
 RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeController)
   : QDialog(parent), ui(new Ui::RouteStringDialog), controller(routeController)
@@ -67,42 +69,52 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
 
   ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create Flight &Plan"));
 
-  flightplan = new atools::fs::pln::Flightplan;
+  flightplan = new apln::Flightplan;
   routeString = new RouteString(routeController->getFlightplanEntryBuilder());
 
   // Build options dropdown menu
   QAction *action;
-  action = new QAction(tr("Add departure and destination airport"), ui->toolButtonRouteStringOptions);
+  action = new QAction(tr("Write departure and destination airport"), ui->toolButtonRouteStringOptions);
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::START_AND_DEST));
   ui->toolButtonRouteStringOptions->addAction(action);
 
-  action = new QAction(tr("Add DCT (direct) instructions"), ui->toolButtonRouteStringOptions);
+  action = new QAction(tr("Write DCT (direct) instructions"), ui->toolButtonRouteStringOptions);
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::DCT));
   ui->toolButtonRouteStringOptions->addAction(action);
 
-  action = new QAction(tr("Add cruise speed and altitude instruction"), ui->toolButtonRouteStringOptions);
+  action = new QAction(tr("Write cruise speed and altitude instruction"), ui->toolButtonRouteStringOptions);
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::ALT_AND_SPEED));
   ui->toolButtonRouteStringOptions->addAction(action);
 
   if(NavApp::hasSidStarInDatabase())
   {
-    action = new QAction(tr("Add SID and STAR"), ui->toolButtonRouteStringOptions);
+    action = new QAction(tr("Write SID and STAR"), ui->toolButtonRouteStringOptions);
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::SID_STAR));
     ui->toolButtonRouteStringOptions->addAction(action);
   }
 
-  action = new QAction(tr("Add generic SID and STAR"), ui->toolButtonRouteStringOptions);
+  action = new QAction(tr("Write generic SID and STAR"), ui->toolButtonRouteStringOptions);
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::SID_STAR_GENERIC));
   ui->toolButtonRouteStringOptions->addAction(action);
 
-  action = new QAction(tr("Add Waypoints instead of Airways"), ui->toolButtonRouteStringOptions);
+  action = new QAction(tr("Write Waypoints instead of Airways"), ui->toolButtonRouteStringOptions);
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::NO_AIRWAYS));
+  ui->toolButtonRouteStringOptions->addAction(action);
+
+  action = new QAction(tr("Write Alternates"), ui->toolButtonRouteStringOptions);
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::ALTERNATES));
+  ui->toolButtonRouteStringOptions->addAction(action);
+
+  action = new QAction(tr("Read trailing Airports as Alternates"), ui->toolButtonRouteStringOptions);
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::READ_ALTERNATES));
   ui->toolButtonRouteStringOptions->addAction(action);
 
   connect(ui->pushButtonRouteStringRead, &QPushButton::clicked, this, &RouteStringDialog::readButtonClicked);
@@ -192,7 +204,7 @@ void RouteStringDialog::readButtonClicked()
   flightplan->getProperties().clear();
 
   bool success = routeString->createRouteFromString(
-    ui->plainTextEditRouteString->toPlainText(), *flightplan, speedKts, altitudeIncluded);
+    ui->plainTextEditRouteString->toPlainText(), *flightplan, speedKts, altitudeIncluded, options);
 
   ui->textEditRouteStringErrors->clear();
 
@@ -202,22 +214,31 @@ void RouteStringDialog::readButtonClicked()
 
   if(success)
   {
-    msg =
-      tr("Found %1 waypoints. Flight plan from <b>%3 (%4)</b> to <b>%5 (%6)</b>.<br/>Distance is %2.<br/>").
-      arg(flightplan->getEntries().size()).
-      arg(Unit::distNm(flightplan->getDistanceNm())).
-      arg(flightplan->getDepartureAiportName()).
-      arg(flightplan->getDepartureIdent()).
-      arg(flightplan->getDestinationAiportName()).
-      arg(flightplan->getDestinationIdent());
+    msg = tr("Flight plan from <b>%1 (%2)</b> to <b>%3 (%4)</b>.<br/>").
+          arg(flightplan->getDepartureAiportName()).
+          arg(flightplan->getDepartureIdent()).
+          arg(flightplan->getDestinationAiportName()).
+          arg(flightplan->getDestinationIdent());
+
+    msg.append(tr("Distance without procedures: <b>%1</b>.<br/>").arg(Unit::distNm(flightplan->getDistanceNm())));
+
+    QStringList idents;
+    for(apln::FlightplanEntry& entry : flightplan->getEntries())
+      idents.append(entry.getIcaoIdent());
+
+    if(!idents.isEmpty())
+      msg.append(tr("Found %1 %2: <b>%3</b>.<br/>").
+                 arg(idents.size()).
+                 arg(idents.size() == 1 ? tr("waypoint") : tr("waypoints")).
+                 arg(atools::elideTextShortMiddle(idents.join(tr(" ")), 150)));
 
     QString sid = ProcedureQuery::getSidAndTransition(flightplan->getProperties());
     if(!sid.isEmpty())
-      msg += tr("Found SID <b>%1</b>.<br/>").arg(sid);
+      msg += tr("Found SID: <b>%1</b>.<br/>").arg(sid);
 
     QString star = ProcedureQuery::getStarAndTransition(flightplan->getProperties());
     if(!star.isEmpty())
-      msg += tr("Found STAR <b>%1</b>.<br/>").arg(star);
+      msg += tr("Found STAR: <b>%1</b>.<br/>").arg(star);
 
     ui->textEditRouteStringErrors->setHtml(msg);
   }
@@ -250,12 +271,12 @@ void RouteStringDialog::updateFlightplan()
   // Low / high altitude is set later when resolving the airways
 
   if(ui->comboBoxRouteStringFlightplanType->currentIndex() == 0)
-    flightplan->setFlightplanType(atools::fs::pln::IFR);
+    flightplan->setFlightplanType(apln::IFR);
   else
-    flightplan->setFlightplanType(atools::fs::pln::VFR);
+    flightplan->setFlightplanType(apln::VFR);
 
   if(flightplan->getEntries().size() == 2)
-    flightplan->setRouteType(atools::fs::pln::DIRECT);
+    flightplan->setRouteType(apln::DIRECT);
   else if(flightplan->getEntries().size() > 2)
   {
     // Check if this is a VOR / NDB only route
@@ -263,10 +284,10 @@ void RouteStringDialog::updateFlightplan()
 
     for(int i = 1; i < flightplan->getEntries().size() - 1; i++)
     {
-      const atools::fs::pln::FlightplanEntry& entry = flightplan->getEntries().at(i);
+      const apln::FlightplanEntry& entry = flightplan->getEntries().at(i);
       if(!entry.getAirway().isEmpty() ||
-         (entry.getWaypointType() != atools::fs::pln::entry::VOR &&
-          entry.getWaypointType() != atools::fs::pln::entry::NDB))
+         (entry.getWaypointType() != apln::entry::VOR &&
+          entry.getWaypointType() != apln::entry::NDB))
       {
         foundOtherThanVorOrNdb = true;
         break;
@@ -274,7 +295,7 @@ void RouteStringDialog::updateFlightplan()
     }
 
     if(!foundOtherThanVorOrNdb)
-      flightplan->setRouteType(atools::fs::pln::VOR);
+      flightplan->setRouteType(apln::VOR);
   }
 }
 
