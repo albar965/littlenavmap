@@ -41,7 +41,10 @@ class QListWidget;
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
  * OptionData will be populated by the OptionsDialog which loads widget data from the settings
- * and transfers this data into the OptionData class. */
+ * and transfers this data into the OptionData class.
+ *
+ * Dialog is kept alive during the whole program lifespan.
+ */
 class OptionsDialog :
   public QDialog
 {
@@ -58,7 +61,7 @@ public:
   void restoreState();
 
   /* Show the dialog */
-  virtual int exec() override;
+  virtual void open() override;
 
   static bool isOverrideLanguage();
   static bool isOverrideLocale();
@@ -70,6 +73,9 @@ signals:
   void optionsChanged();
 
 private:
+  /* Catch close button too since dialog is kept alive */
+  virtual void reject() override;
+
   void buttonBoxClicked(QAbstractButton *button);
   void widgetsToOptionData();
   void optionDataToWidgets();
@@ -171,6 +177,12 @@ private:
   void updateWebServerStatus();
   void startStopWebServerClicked();
 
+  /* copy values from widgets to server for instant check of parameters */
+  void updateWebOptionsFromGui();
+
+  /* Update web server with saved parameters */
+  void updateWebOptionsFromData();
+
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
   Ui::Options *ui;
@@ -187,7 +199,6 @@ private:
   QHash<optsd::DisplayOptionsRoute, QTreeWidgetItem *> displayOptItemIndexRoute;
 
   UnitStringTool *units = nullptr;
-
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

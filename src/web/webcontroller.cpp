@@ -106,9 +106,8 @@ void WebController::startServer()
 
   requestHandler = new RequestHandler(this, mapController, htmlInfoBuilder, verbose);
 
-  // Set port if not set by user
-  if(!listenerSettings.contains("port"))
-    listenerSettings.insert("port", port);
+  // Set port - always override configuration file
+  listenerSettings.insert("port", port);
 
   if(encrypted)
   {
@@ -218,9 +217,9 @@ void WebController::stopServer()
   emit webserverStatusChanged(false);
 }
 
-void WebController::restartServer()
+void WebController::restartServer(bool force)
 {
-  if(isRunning())
+  if(isRunning() || force)
   {
     stopServer();
     startServer();
@@ -250,7 +249,7 @@ QStringList WebController::getUrlStr() const
 void WebController::optionsChanged()
 {
   if(updateSettings())
-    restartServer();
+    restartServer(true);
 }
 
 bool WebController::updateSettings()
@@ -259,6 +258,7 @@ bool WebController::updateSettings()
   int newport = OptionData::instance().getWebPort();
   if(port != newport)
   {
+    qDebug() << Q_FUNC_INFO << "Port changed from " << port << "to" << newport;
     port = newport;
     changed = true;
   }
@@ -266,6 +266,7 @@ bool WebController::updateSettings()
   int newencrypted = OptionData::instance().isWebEncrypted();
   if(encrypted != newencrypted)
   {
+    qDebug() << Q_FUNC_INFO << "encrypted changed from " << encrypted << "to" << newencrypted;
     encrypted = newencrypted;
     changed = true;
   }
@@ -275,6 +276,7 @@ bool WebController::updateSettings()
 
   if(QDir::fromNativeSeparators(QFileInfo(documentRoot).canonicalFilePath()) != newdocumentRoot)
   {
+    qDebug() << Q_FUNC_INFO << "Document Root changed from " << documentRoot << "to" << newdocumentRoot;
     documentRoot = newdocumentRoot;
     changed = true;
   }

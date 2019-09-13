@@ -225,7 +225,6 @@ private:
 
   void setupUi();
 
-  void options();
   void preDatabaseLoad();
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 

@@ -53,7 +53,7 @@ public:
 
   /* Stop server if running. Ignored if already stopped. */
   void stopServer();
-  void restartServer();
+  void restartServer(bool force);
 
   /* Open the server address in the default web browser */
   void openPage();

@@ -576,6 +576,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsWebStart, &QPushButton::clicked, this, &OptionsDialog::startStopWebServerClicked);
 }
 
+/* called at program end */
 OptionsDialog::~OptionsDialog()
 {
   delete rangeRingValidator;
@@ -583,20 +584,32 @@ OptionsDialog::~OptionsDialog()
   delete ui;
 }
 
-int OptionsDialog::exec()
+void OptionsDialog::open()
 {
+  qDebug() << Q_FUNC_INFO;
   optionDataToWidgets();
-  updateWeatherButtonState();
+
   updateCacheElevationStates();
   updateCacheUserAirspaceStates();
-  updateWidgetUnits();
   updateDatabaseButtonState();
-  updateOnlineWidgetStatus();
-  updateWebServerStatus();
-  updateWebDocrootStatus();
   updateNavOptions();
+  updateOnlineWidgetStatus();
+  updateWeatherButtonState();
+  updateWebDocrootStatus();
+  updateWebServerStatus();
+  updateWidgetUnits();
 
-  return QDialog::exec();
+  QDialog::open();
+}
+
+void OptionsDialog::reject()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Need to catch this here since dialog is owned by main window and kept alive
+  updateWebOptionsFromData();
+
+  QDialog::reject();
 }
 
 void OptionsDialog::onlineDisplayRangeClicked()
@@ -739,19 +752,23 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     emit optionsChanged();
 
     // Update dialog internal stuff
-    updateWidgetUnits();
-    updateActiveSkyPathStatus();
-    updateXplaneWindStatus();
-    updateWebDocrootStatus();
-    updateWebServerStatus();
-    updateWeatherButtonState();
+    updateCacheElevationStates();
+    updateCacheUserAirspaceStates();
     updateDatabaseButtonState();
+    updateNavOptions();
+    updateOnlineWidgetStatus();
+    updateWeatherButtonState();
+    updateWidgetUnits();
+
+    updateWebOptionsFromData();
+    updateWebServerStatus();
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
   {
     widgetsToOptionData();
     saveState();
     updateWidgetUnits();
+    updateWebOptionsFromData();
     emit optionsChanged();
     accept();
   }
@@ -759,10 +776,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "OPTIONS.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
   {
-    // Need to restore settings in web server since it might be started from the configuration page
-    WebController *webController = NavApp::getWebController();
-    if(webController != nullptr)
-      webController->optionsChanged();
+    updateWebOptionsFromData();
     reject();
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
@@ -783,13 +797,16 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
       saveState();
       emit optionsChanged();
 
-      updateWidgetUnits();
-      updateActiveSkyPathStatus();
-      updateXplaneWindStatus();
-      updateWebDocrootStatus();
-      updateWebServerStatus();
-      updateWeatherButtonState();
+      updateCacheElevationStates();
+      updateCacheUserAirspaceStates();
       updateDatabaseButtonState();
+      updateNavOptions();
+      updateOnlineWidgetStatus();
+      updateWeatherButtonState();
+      updateWidgetUnits();
+
+      updateWebOptionsFromData();
+      updateWebServerStatus();
     }
   }
 }
@@ -2138,7 +2155,7 @@ void OptionsDialog::updateWebDocrootStatus()
     else if(!fileinfo.isDir())
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Is not a directory.")));
     else if(!QFileInfo(path + QDir::separator() + "index.html").exists())
-      ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::warningMessage(tr("Warning: No index.html found.")));
+      ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::warningMessage(tr("Warning: No file \"index.html\" found.")));
     else
       ui->labelOptionWebDocrootStatus->setText(tr("Document root is valid."));
   }
@@ -2171,20 +2188,43 @@ void OptionsDialog::selectWebDocrootClicked()
 void OptionsDialog::startStopWebServerClicked()
 {
   qDebug() << Q_FUNC_INFO;
+
   WebController *webController = NavApp::getWebController();
   if(webController != nullptr)
   {
     if(webController->isRunning())
       webController->stopServer();
     else
-    {
       // Update options from page before starting
-      webController->setDocumentRoot(
-        QDir::fromNativeSeparators(QFileInfo(ui->lineEditOptionsWebDocroot->text()).canonicalFilePath()));
-      webController->setPort(ui->spinBoxOptionsWebPort->value());
-      webController->setEncrypted(ui->checkBoxOptionsWebEncrypted->isChecked());
-      webController->startServer();
-    }
+      updateWebOptionsFromGui();
+
+    updateWebServerStatus();
   }
-  updateWebServerStatus();
+}
+
+void OptionsDialog::updateWebOptionsFromData()
+{
+  WebController *webController = NavApp::getWebController();
+  if(webController != nullptr)
+  {
+    OptionData& data = OptionData::instanceInternal();
+
+    webController->setDocumentRoot(QDir::fromNativeSeparators(QFileInfo(data.getWebDocumentRoot()).canonicalFilePath()));
+    webController->setPort(data.getWebPort());
+    webController->setEncrypted(data.isWebEncrypted());
+    webController->restartServer(true /* force */);
+  }
+}
+
+void OptionsDialog::updateWebOptionsFromGui()
+{
+  WebController *webController = NavApp::getWebController();
+  if(webController != nullptr)
+  {
+    webController->setDocumentRoot(QDir::fromNativeSeparators(QFileInfo(ui->lineEditOptionsWebDocroot->text()).
+                                                              canonicalFilePath()));
+    webController->setPort(ui->spinBoxOptionsWebPort->value());
+    webController->setEncrypted(ui->checkBoxOptionsWebEncrypted->isChecked());
+    webController->restartServer(true /* force */);
+  }
 }

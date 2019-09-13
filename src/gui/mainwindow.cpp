@@ -178,6 +178,12 @@ MainWindow::MainWindow()
     // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();
 
+    // Dialog is opened with asynchronous open()
+    connect(optionsDialog, &QDialog::finished, [ = ](int result) {
+      if(result == QDialog::Accepted)
+        setStatusMessage(tr("Options changed."));
+    });
+
     // Setup central widget ==================================================
     // Set one pixel fixed width
     // QWidget *centralWidget = new QWidget(this);
@@ -921,8 +927,10 @@ void MainWindow::connectAllSlots()
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::saveStateNow);
+
+  // Updated manually in dialog
+  // connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);
 
   // Style handler ===================================================================
   // Save complete state due to crashes in Qt
@@ -1151,7 +1159,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
 
-  connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
+  connect(ui->actionOptions, &QAction::triggered, optionsDialog, &QDialog::open);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
   connect(ui->actionSaveAllNow, &QAction::triggered, this, &MainWindow::saveStateNow);
 
@@ -3115,17 +3123,6 @@ void MainWindow::setStatusMessage(const QString& message)
 void MainWindow::setDetailLabelText(const QString& text)
 {
   detailLabel->setText(text);
-}
-
-/* From menu: Show options dialog */
-void MainWindow::options()
-{
-  int retval = optionsDialog->exec();
-  optionsDialog->hide();
-
-  // Dialog saves its own states
-  if(retval == QDialog::Accepted)
-    setStatusMessage(tr("Options changed."));
 }
 
 /* Called by window shown event when the main window is visible the first time */

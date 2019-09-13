@@ -4556,7 +4556,7 @@ Use lower values only for private networks.&lt;/b&gt;</string>
         <item row="9" column="0">
          <widget class="QPushButton" name="pushButtonOptionsWebStart">
           <property name="toolTip">
-           <string>Start the server to test the values above.</string>
+           <string>Start or stop the server to test the values above.</string>
           </property>
           <property name="text">
            <string>&amp;Start Server</string>
