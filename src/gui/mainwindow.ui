@@ -7423,7 +7423,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
-    <string>Select a &amp;Start Position for Departure</string>
+    <string>Select a &amp;Start Position for Departure ...</string>
    </property>
    <property name="toolTip">
     <string>Select start position for flight plan departure</string>
@@ -8144,7 +8144,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;New Flight Plan from Route Description</string>
+    <string>&amp;New Flight Plan from Route Description ...</string>
    </property>
    <property name="toolTip">
     <string>Create a new flight plan from route description</string>
@@ -9531,7 +9531,7 @@ relation to shown airport</string>
   </action>
   <action name="actionMapShowSunShadingSetTime">
    <property name="text">
-    <string>&amp;Set User defined Time</string>
+    <string>&amp;Set User defined Time ...</string>
    </property>
    <property name="toolTip">
     <string>Set user defined time for sun shading</string>
@@ -9977,7 +9977,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;New Aircraft Performance</string>
+    <string>&amp;New Aircraft Performance ...</string>
    </property>
    <property name="toolTip">
     <string>Add new aircraft performance data</string>

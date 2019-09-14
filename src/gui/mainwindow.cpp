@@ -1874,15 +1874,15 @@ void MainWindow::routeResetAll()
                             tr("Select items to reset for a new flight"),
                             lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "MENUS.html#reset-for-new-flight");
 
-  choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"));
+  choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
   choiceDialog.add(DELETE_TRAIL, tr("&Delete aircaft trail"),
-                   tr("Delete simulator aircraft trail from map and elevation profile"));
+                   tr("Delete simulator aircraft trail from map and elevation profile"), true);
   choiceDialog.add(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
-                   tr("Remove the active (magenta) flight plan leg"));
+                   tr("Remove the active (magenta) flight plan leg"), true);
   choiceDialog.add(RESTART_PERF, tr("Restart Aircraft &Performance Collection"),
-                   tr("Restarts the background aircraft performance collection"));
+                   tr("Restarts the background aircraft performance collection"), true);
   choiceDialog.add(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
-                   tr("Reset the logbook to detect takeoff and landing for new logbook entries"));
+                   tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
   choiceDialog.restoreState();
 
   if(choiceDialog.exec() == QDialog::Accepted)
