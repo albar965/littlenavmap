@@ -430,7 +430,13 @@ MainWindow::~MainWindow()
 
   // Delete settings singleton
   qDebug() << Q_FUNC_INFO << "Settings::shutdown()";
-  Settings::shutdown();
+
+  if(NavApp::isRestartProcess())
+    Settings::clearAndShutdown();
+  else
+    Settings::shutdown();
+
+  // Free translations
   atools::gui::Translator::unload();
 
   atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
@@ -1144,6 +1150,7 @@ void MainWindow::connectAllSlots()
   connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
+  connect(ui->actionResetAllSettings, &QAction::triggered, this, &MainWindow::resetAllSettings);
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapPaintWidget::showRect);
@@ -3441,6 +3448,34 @@ void MainWindow::updateActionStates()
   ui->actionMapShowMark->setEnabled(mapWidget->getSearchMarkPos().isValid());
 }
 
+void MainWindow::resetAllSettings()
+{
+  QString settingFile = Settings::instance().getFilename();
+  QString settingPath = Settings::instance().getPath();
+
+  QMessageBox::StandardButton retval =
+    QMessageBox::warning(this, QApplication::applicationName() + tr("Reset all Settings "),
+                         tr("<b>This will reset all options, window layout, dialog layout, "
+                              "aircraft trail, map position history and file histories "
+                              "back to default and restart <i>%1</i>.</b><br/><br/>"
+                              "User features like range rings or patterns as well as"
+                              "scenery, logbook and userpoint databases are not affected.<br/><br/>"
+                              "A copy of the settings file<br/><br/>"
+                              "<i>%2</i><br/><br/>"
+                              "will be created in the folder<br/><br/>"
+                              "<i>%3</i><br/><br/>"
+                              "which allows you to undo this change."
+                            ).arg(QApplication::applicationName()).arg(settingFile).arg(settingPath)
+                         , QMessageBox::Ok | QMessageBox::Cancel,
+                         QMessageBox::Cancel);
+
+  if(retval == QMessageBox::Ok)
+  {
+    NavApp::setRestartProcess(true);
+    close();
+  }
+}
+
 void MainWindow::resetWindowLayout()
 {
   qDebug() << Q_FUNC_INFO;
@@ -3679,6 +3714,13 @@ void MainWindow::saveStateMain()
   qDebug() << "===============================================================================";
 #endif
 
+  // About to reset all settings and restart application
+  if(NavApp::isRestartProcess())
+  {
+    deleteAircraftTrack(true /* do not ask questions */);
+    mapWidget->clearHistory();
+  }
+
   saveMainWindowStates();
 
   qDebug() << "searchController";
@@ -3828,6 +3870,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if(!routeCheckForChanges())
     {
       event->ignore();
+      // Do not restart process after settings reset
+      NavApp::setRestartProcess(false);
       return;
     }
   }
@@ -3837,18 +3881,24 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if(!NavApp::getAircraftPerfController()->checkForChanges())
     {
       event->ignore();
+      // Do not restart process after settings reset
+      NavApp::setRestartProcess(false);
       return;
     }
   }
 
-  int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT,
-                                          tr("Really Quit?"),
-                                          tr("Do not &show this dialog again."),
-                                          QMessageBox::Yes | QMessageBox::No,
-                                          QMessageBox::No, QMessageBox::Yes);
+  // Do not ask if user did a reset settings
+  if(!NavApp::isRestartProcess())
+  {
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT,
+                                            tr("Really Quit?"),
+                                            tr("Do not &show this dialog again."),
+                                            QMessageBox::Yes | QMessageBox::No,
+                                            QMessageBox::No, QMessageBox::Yes);
 
-  if(result != QMessageBox::Yes)
-    event->ignore();
+    if(result != QMessageBox::Yes)
+      event->ignore();
+  }
 
   saveStateMain();
 }

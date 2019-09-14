@@ -2994,6 +2994,11 @@ void MapWidget::showSavedPosOnStartup()
   history.activate();
 }
 
+void MapWidget::clearHistory()
+{
+  history.clear();
+}
+
 void MapWidget::showOverlays(bool show, bool showScalebar)
 {
   for(const QString& name : mapOverlays.keys())

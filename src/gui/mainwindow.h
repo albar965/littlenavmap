@@ -263,6 +263,7 @@ private:
   bool routeCheckForChanges();
   void showMapLegend();
   void resetMessages();
+  void resetAllSettings();
   void showDatabaseFiles();
 
   /* Save map as images */

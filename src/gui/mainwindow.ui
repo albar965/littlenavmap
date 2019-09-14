@@ -215,6 +215,7 @@
     <addaction name="actionOpenWebserver"/>
     <addaction name="separator"/>
     <addaction name="actionResetMessages"/>
+    <addaction name="actionResetAllSettings"/>
     <addaction name="actionSaveAllNow"/>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
@@ -10922,6 +10923,17 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Export the flight plan as a HTML page</string>
+   </property>
+  </action>
+  <action name="actionResetAllSettings">
+   <property name="text">
+    <string>&amp;Reset all Settings and Restart</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset all settings and window layout back to default and restart program.</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset all settings and window layout back to default and restart program.</string>
    </property>
   </action>
  </widget>

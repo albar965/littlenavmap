@@ -188,6 +188,9 @@ public:
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrack();
 
+  /* Clear all entries and reset current index */
+  void clearHistory();
+
 signals:
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
