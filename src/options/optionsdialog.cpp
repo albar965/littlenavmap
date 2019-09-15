@@ -2164,7 +2164,7 @@ void OptionsDialog::updateWebDocrootStatus()
     // Use default path
     WebController *webController = NavApp::getWebController();
     if(webController != nullptr)
-      ui->labelOptionWebDocrootStatus->setText(tr("Using default document root %1.").arg(
+      ui->labelOptionWebDocrootStatus->setText(tr("Using default document root \"%1\".").arg(
                                                  webController->getAbsoluteWebrootFilePath()));
     else
       // Might happen only at startup

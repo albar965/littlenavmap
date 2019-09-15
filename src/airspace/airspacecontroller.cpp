@@ -325,8 +325,8 @@ void AirspaceController::loadAirspaces()
 
     /*: Make sure that dialog and tab name match translations in the options dialog */
     atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE,
-                                                   tr("You can change this path in the dialog <i>Options</i> "
-                                                      "on the tab <i>Cache and Files</i>."),
+                                                   tr("You can change this path in the dialog <code>Options</code> "
+                                                      "on the tab <code>Cache and Files</code>."),
                                                    tr("Do not &show this dialog again."));
   }
 

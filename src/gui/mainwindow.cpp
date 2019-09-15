@@ -3461,9 +3461,9 @@ void MainWindow::resetAllSettings()
                               "User features like range rings or patterns as well as"
                               "scenery, logbook and userpoint databases are not affected.<br/><br/>"
                               "A copy of the settings file<br/><br/>"
-                              "<i>%2</i><br/><br/>"
+                              "\"%2\"<br/><br/>"
                               "will be created in the folder<br/><br/>"
-                              "<i>%3</i><br/><br/>"
+                              "\"%3\"<br/><br/>"
                               "which allows you to undo this change."
                             ).arg(QApplication::applicationName()).arg(settingFile).arg(settingPath)
                          , QMessageBox::Ok | QMessageBox::Cancel,

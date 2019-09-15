@@ -400,7 +400,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
           {
             qWarning() << "Removing database failed" << dbfile;
             atools::gui::Dialog::warning(nullptr,
-                                         tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                                         tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
                                             "Remove the database file manually and restart the program.").arg(dbfile));
             ok = false;
           }
@@ -546,13 +546,13 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
         if(!resultRemove)
           atools::gui::Dialog::warning(nullptr,
-                                       tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                                       tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
                                           "Remove the database file manually and restart the program.").arg(settingsDb));
 
         if(!resultCopy)
           atools::gui::Dialog::warning(nullptr,
-                                       tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
-                                          "<i>%2</i><br/><br/>.").arg(appDb).arg(settingsDb));
+                                       tr("Cannot copy database<br/><br/>\"%1\"<br/><br/>to<br/><br/>"
+                                          "\"%2\"<br/><br/>.").arg(appDb).arg(settingsDb));
       }
     }
   }
