@@ -2212,7 +2212,7 @@ void OptionsDialog::updateWebOptionsFromData()
     webController->setDocumentRoot(QDir::fromNativeSeparators(QFileInfo(data.getWebDocumentRoot()).canonicalFilePath()));
     webController->setPort(data.getWebPort());
     webController->setEncrypted(data.isWebEncrypted());
-    webController->restartServer(true /* force */);
+    webController->restartServer(false /* force */);
   }
 }
 
