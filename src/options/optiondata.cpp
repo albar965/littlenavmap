@@ -26,7 +26,6 @@ OptionData *OptionData::optionData = nullptr;
 /* Default values for well known networks */
 
 OptionData::OptionData()
-  : flightplanColor(Qt::yellow), flightplanActiveColor(Qt::magenta), trailColor(Qt::black)
 {
 
 }

@@ -365,7 +365,7 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
               <string>&amp;Propose new name if  file already exists on &quot;Save as&quot; or &quot;Export&quot;</string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -1039,6 +1039,9 @@ together with &quot;Treat empty airports special&quot;.</string>
              </property>
              <property name="text">
               <string>&amp;Consider all X-Plane airports not being 3D empty</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1811,7 +1814,7 @@ Afftects map and elevation profile.</string>
               <string>Diagram &amp;Boundary</string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -3121,7 +3124,7 @@ This setting is also used in the elevation profile.</string>
               <number>300</number>
              </property>
              <property name="value">
-              <number>4</number>
+              <number>10</number>
              </property>
             </widget>
            </item>
@@ -3146,7 +3149,7 @@ See notes in the manual for details of this setting and how to move around in th
               <string>&amp;Allow scrolling and zooming in the map</string>
              </property>
              <property name="checked">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -3157,6 +3160,9 @@ See notes in the manual for details of this setting and how to move around in th
              </property>
              <property name="text">
               <string>&amp;Keep active leg on top of flight plan table</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -3263,6 +3269,9 @@ This is als used for &quot;Center map on aircraft and next flight plan waypoint&
              </property>
              <property name="text">
               <string>&amp;Center map on aircraft and next flight plan waypoint</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -4517,6 +4526,9 @@ Use lower values only for private networks.&lt;/b&gt;</string>
          <widget class="QLabel" name="labelOptionWebDocrootStatus">
           <property name="text">
            <string>Valid</string>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
           </property>
          </widget>
         </item>

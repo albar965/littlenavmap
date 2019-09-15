@@ -92,10 +92,10 @@ enum Flag
   /* checkBoxOptionsShowTod*/
   FLIGHT_PLAN_SHOW_TOD = 1 << 16,
 
-  /* checkBoxOptionsStartupLoadSearch */
+  /* checkBoxOptionsStartupLoadInfoContent */
   STARTUP_LOAD_INFO = 1 << 17,
 
-  /* checkBoxOptionsStartupLoadInfoContent */
+  /* checkBoxOptionsStartupLoadSearch */
   STARTUP_LOAD_SEARCH = 1 << 18,
 
   /* checkBoxOptionsStartupLoadTrail */
@@ -490,6 +490,9 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayClickOptions);
 /*
  * Contains global options that are provided using a singelton pattern.
  * All default values are defined in the widgets in the options.ui file.
+ *
+ * Values applied by the reset function in the options dialog are defined in this structure.
+ *
  * This class will be populated by the OptionsDialog which loads widget data from the settings
  * and transfers this data into this class.
  */
@@ -1014,23 +1017,11 @@ private:
   static OptionData *optionData;
 
   // Defines the defaults used for reset
-  opts::Flags flags =
-    opts::STARTUP_LOAD_KML |
-    opts::STARTUP_LOAD_MAP_SETTINGS |
-    opts::STARTUP_LOAD_ROUTE |
-    opts::STARTUP_SHOW_LAST |
-
-    opts::GUI_CENTER_KML |
-    opts::GUI_CENTER_ROUTE |
-    opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN |
-
-    opts::MAP_EMPTY_AIRPORTS |
-
-    opts::ROUTE_ALTITUDE_RULE |
-
-    opts::FLIGHT_PLAN_SHOW_TOD |
-    opts::CACHE_USE_ONLINE_ELEVATION
-  ;
+  opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE |
+                      opts::STARTUP_SHOW_LAST | opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE |
+                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
+                      opts::FLIGHT_PLAN_SHOW_TOD | opts::CACHE_USE_ONLINE_ELEVATION |
+                      opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL;
 
   // Defines the defaults used for reset
   optsw::FlagsWeather flagsWeather =
@@ -1042,20 +1033,22 @@ private:
     optsw::WEATHER_TOOLTIP_NOAA;
 
   opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_ROUTE_TEXT_BACKGROUND |
-                         opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AIRPORT_BOUNDARY | opts2::MAP_AIRPORT_DIAGRAM |
+                         opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AIRPORT_DIAGRAM |
                          opts2::MAP_ALLOW_UNDOCK | opts2::MAP_AVOID_BLURRED_MAP | opts2::ONLINE_AIRSPACE_BY_FILE |
-                         opts2::ONLINE_AIRSPACE_BY_NAME | opts2::PROPOSE_FILENAME | opts2::RAISE_WINDOWS;
+                         opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS | opts2::MAP_EMPTY_AIRPORTS_3D |
+                         opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |
+                         opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_AUTOZOOM | opts2::ROUTE_NO_FOLLOW_ON_MOVE;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
           weatherXplanePath, // lineEditOptionsWeatherXplanePath
-          weatherNoaaUrl = "https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT",
+          weatherNoaaUrl = "https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT",
           weatherVatsimUrl = "https://metar.vatsim.net/metar.php?id=%1",
           weatherIvaoUrl = "http://wx.ivao.aero/metar.php";
 
-  QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions;
+  QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions = "*.txt";
 
   // ui->listWidgetOptionsDatabaseAddon
   QStringList databaseAddonExclude;
@@ -1234,9 +1227,11 @@ private:
   int displayTextSizeMora = 100;
 
   // spinBoxOptionsMapNavTouchscreenArea
-  int mapNavTouchArea = 30;
+  int mapNavTouchArea = 10;
 
-  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, flightplanPassedColor, trailColor;
+  QColor flightplanColor = QColor(Qt::yellow), flightplanProcedureColor = QColor(255, 150, 0),
+         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray),
+         trailColor = QColor(Qt::black);
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;
@@ -1254,7 +1249,8 @@ private:
 
   optsd::DisplayOptionsRose displayOptionsRose =
     optsd::ROSE_RANGE_RINGS | optsd::ROSE_DEGREE_MARKS | optsd::ROSE_DEGREE_LABELS | optsd::ROSE_HEADING_LINE |
-    optsd::ROSE_TRACK_LINE | optsd::ROSE_TRACK_LABEL | optsd::ROSE_CRAB_ANGLE | optsd::ROSE_NEXT_WAYPOINT;
+    optsd::ROSE_TRACK_LINE | optsd::ROSE_TRACK_LABEL | optsd::ROSE_CRAB_ANGLE | optsd::ROSE_NEXT_WAYPOINT |
+    optsd::ROSE_DIR_LABLES;
 
   optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
 
@@ -1288,7 +1284,7 @@ private:
   bool webEncrypted = false;
 
   /* X-Plane GRIB file or NOAA GRIB base URL */
-  QString weatherXplaneWind, weatherNoaaWindBaseUrl;
+  QString weatherXplaneWind, weatherNoaaWindBaseUrl = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl";
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H
