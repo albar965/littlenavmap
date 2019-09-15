@@ -47,7 +47,9 @@ the examples below. Avoid paths with spaces if possible.
 
 ## Windows
 
-- Get the latest `Win32 OpenSSL v1.1.1` from https://slproweb.com/products/Win32OpenSSL.html and install it.
+- Get OpenSSL binaries from https://bintray.com/vszakats/generic/openssl and extract them
+  to the project directory. You need to get one like "openssl-1.1.1d-win32-mingw.zip".
+  You might use any 1.1.1 version but have to adapt the OPENSSL_PATH if it differs.
 - Install SimConnect if needed (optional). The FSX SP2 is the preferred version.
 - Clone littlenavmap from GIT (`git clone https://github.com/albar965/littlenavmap.git`)
   to e.g.: `C:\Projects\littlenavmap`
