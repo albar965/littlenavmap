@@ -21,6 +21,9 @@ rem set MARBLE_LIB_PATH=C:\Users\YOURNAME\Programme\Marble-debug\lib
 rem set MARBLE_INC_PATH=C:\Users\YOURNAME\Programme\Marble-debug\include
 rem set OPENSSL_PATH="C:\Program Files (x86)\OpenSSL-Win32"
 rem set XPSDK_BASE="C:\X-Plane SDK"
+rem
+rem See links below for OpenSSL binaries
+rem https://wiki.openssl.org/index.php/Binaries and https://bintray.com/vszakats/generic/openssl
 
 if defined CONF_TYPE ( echo %CONF_TYPE% ) else ( set CONF_TYPE=release)
 if defined ATOOLS_INC_PATH ( echo %ATOOLS_INC_PATH% ) else ( set ATOOLS_INC_PATH=%APROJECTS%\atools\src)
@@ -31,7 +34,7 @@ if defined DEPLOY_BASE ( echo %DEPLOY_BASE% ) else ( set DEPLOY_BASE=%APROJECTS%
 if defined DATABASE_BASE ( echo %DATABASE_BASE% ) else ( set DATABASE_BASE=%APROJECTS%\little_navmap_db)
 if defined HELP_BASE ( echo %HELP_BASE% ) else ( set HELP_BASE=%APROJECTS%\little_navmap_help)
 if defined ATOOLS_GIT_PATH ( echo %ATOOLS_GIT_PATH% ) else ( set ATOOLS_GIT_PATH=C:\Git\bin\git)
-if defined OPENSSL_PATH ( echo %OPENSSL_PATH% ) else ( set OPENSSL_PATH="C:\Program Files (x86)\OpenSSL-Win32")
+if defined OPENSSL_PATH ( echo %OPENSSL_PATH% ) else ( set OPENSSL_PATH="%APROJECTS%\openssl-1.1.1d-win32-mingw")
 
 rem Windows/qmake cannot deal with paths containing spaces/quotes - defines these variables in the Windows GUI
 rem if defined ATOOLS_SIMCONNECT_PATH ( echo ATOOLS_SIMCONNECT_PATH ) else ( set ATOOLS_SIMCONNECT_PATH="C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK")
