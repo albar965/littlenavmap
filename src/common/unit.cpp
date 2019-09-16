@@ -443,14 +443,26 @@ QString Unit::weightLbsLocalOther(float valueLbs, bool localBold, bool otherSmal
   switch(unitFuelWeight)
   {
     case opts::FUEL_WEIGHT_GAL_LBS:
-      return localOtherText(localBold, otherSmall).
-             arg(u(valueLbs, suffixFuelWeightLbs, true)).
-             arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
+      if(showOtherFuel)
+        // lbs (kg)
+        return localOtherText(localBold, otherSmall).
+               arg(u(valueLbs, suffixFuelWeightLbs, true)).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
+      else
+        // lbs only
+        return localOtherText(localBold, otherSmall).
+               arg(u(valueLbs, suffixFuelWeightLbs, true));
 
     case opts::FUEL_WEIGHT_LITER_KG:
-      return localOtherText(localBold, otherSmall).
-             arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
-             arg(u(valueLbs, suffixFuelWeightLbs, true));
+      if(showOtherFuel)
+        // kg (lbs)
+        return localOtherText(localBold, otherSmall).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(valueLbs, suffixFuelWeightLbs, true));
+      else
+        // kg only
+        return localOtherText(localBold, otherSmall).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
   }
   return QString();
 }
@@ -460,18 +472,32 @@ QString Unit::fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool local
   switch(unitFuelWeight)
   {
     case opts::FUEL_WEIGHT_GAL_LBS:
-      return localOtherText2(localBold, otherSmall).
-             arg(u(valueLbs, suffixFuelWeightLbs, true)).
-             arg(u(valueGal, suffixFuelVolGal, true)).
-             arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
-             arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
+      if(showOtherFuel)
+        // lbs, gal (kg, liter)
+        return localOtherText2(localBold, otherSmall).
+               arg(u(valueLbs, suffixFuelWeightLbs, true)).
+               arg(u(valueGal, suffixFuelVolGal, true)).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
+      else
+        // lbs, gal only
+        return localOtherText2(localBold, otherSmall).
+               arg(u(valueLbs, suffixFuelWeightLbs, true)).
+               arg(u(valueGal, suffixFuelVolGal, true));
 
     case opts::FUEL_WEIGHT_LITER_KG:
-      return localOtherText2(localBold, otherSmall).
-             arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
-             arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true)).
-             arg(u(valueLbs, suffixFuelWeightLbs, true)).
-             arg(u(valueGal, suffixFuelVolGal, true));
+      if(showOtherFuel)
+        // kg, liter (lbs, gal)
+        return localOtherText2(localBold, otherSmall).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true)).
+               arg(u(valueLbs, suffixFuelWeightLbs, true)).
+               arg(u(valueGal, suffixFuelVolGal, true));
+      else
+        // kg, liter only
+        return localOtherText2(localBold, otherSmall).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
   }
   return QString();
 }
