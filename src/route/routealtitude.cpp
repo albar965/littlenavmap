@@ -188,35 +188,16 @@ bool RouteAltitude::hasErrors() const
                                 getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE);
 }
 
-QStringList RouteAltitude::getErrorStrings(QString& toolTip, QString& statusTip) const
+QString RouteAltitude::getErrorStrings(QString& toolTip, QString& statusTip) const
 {
-  QStringList messages;
-
   if(!errors.isEmpty())
   {
-    messages << tr("Cannot comply with altitude restrictions. See tooltip on this message for details.");
-
-    statusTip = tr("Invalid Flight Plan. See tooltip on message for details.");
-    toolTip = tr("Invalid Flight Plan.\nCheck the cruise altitude and procedures.");
-
-    if(!errors.isEmpty())
-    {
-      toolTip.append(tr("\n"));
-      toolTip.append(errors.join(tr("\n")));
-    }
+    statusTip = tr("Cannot calculate profile.");
+    toolTip = errors.join(tr("\n"));
+    return tr("Cannot calculate profile. See tooltip on this message for details.");
   }
-  else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
-            getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
-  {
-    messages << tr("Cannot calculate top of climb or top of descent. See tooltip on this message for details.");
-
-    statusTip = tr("Invalid Flight Plan or Aircraft Performance. See tooltip on message for details.");
-    toolTip = tr("Invalid Flight Plan or Aircraft Performance.\n"
-                 "Check the flight plan cruise altitude and\n"
-                 "climb/descent speeds in the Aircraft Performance.");
-  }
-
-  return messages;
+  else
+    return QString();
 }
 
 QVector<float> RouteAltitude::getAltitudes() const
@@ -737,6 +718,20 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
   }
 }
 
+void RouteAltitude::collectErrors(const QStringList& altRestrErrors)
+{
+  if(!altRestrErrors.isEmpty())
+  {
+    errors.append(tr("Check the cruise altitude and procedures."));
+    errors.append(altRestrErrors);
+  }
+  else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
+            getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
+    errors.append(tr("Cannot calculate top of climb or top of descent.\n"
+                     "Check the flight plan cruise altitude and the\n"
+                     "climb/descent speeds in the Aircraft Performance."));
+}
+
 void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt)
 {
   qDebug() << Q_FUNC_INFO;
@@ -751,39 +746,80 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   descentRateWindFtPerNm = perf.getDescentVertSpeed() * 60.f / descentSpeedWindCorrected;
 
   cruiseAltitide = cruiseAltitudeFt;
-  calculate();
 
-  if(validProfile)
+  errors.clear();
+  clearAll();
+
+  bool invalid = false;
+  if(route->getTotalDistance() < 0.5f)
   {
-    calculateTrip(perf);
+    errors.append(tr("Flight plan is too short."));
+    qWarning() << Q_FUNC_INFO << "Flight plan too short";
+    invalid = true;
+  }
 
-    // Do a second iteration if difference in average climb or descent exceeds 10 knots ============================
-    if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 10.f) ||
-       atools::almostNotEqual(descentRateWindFtPerNm, perf.getDescentSpeed(), 10.f))
+  const RouteLeg destinationLeg = route->getDestinationLeg();
+  if(!destinationLeg.isValid() ||
+     (destinationLeg.getMapObjectType() != map::AIRPORT && destinationLeg.getMapObjectType() != map::PROCEDURE))
+  {
+    errors.append(tr("Destination is not valid. Must be an airport."));
+    qWarning() << Q_FUNC_INFO << "Destination is not valid or neither airport nor runway";
+    invalid = true;
+  }
+
+  const RouteLeg departureLeg = route->getDepartureAirportLeg();
+  if(!departureLeg.isValid() ||
+     (departureLeg.getMapObjectType() != map::AIRPORT && departureLeg.getMapObjectType() != map::PROCEDURE))
+  {
+    errors.append(tr("Departure is not valid. Must be an airport."));
+    qWarning() << Q_FUNC_INFO << "Departure is not valid or neither airport nor runway";
+    invalid = true;
+  }
+
+  if(!invalid)
+  {
+    QStringList altRestrErrors;
+    calculate(altRestrErrors);
+    collectErrors(altRestrErrors);
+
+    if(validProfile)
     {
-      qDebug() << Q_FUNC_INFO << "Second iteration: windHeadClimb" << windHeadClimb << "windHeadCruise" <<
-        windHeadCruise
-               << "climbSpeedWindCorrected" << climbSpeedWindCorrected
-               << "descentSpeedWindCorrected" << descentSpeedWindCorrected;
+      calculateTrip(perf);
 
-      climbRateWindFtPerNm = perf.getClimbVertSpeed() * 60.f / climbSpeedWindCorrected;
-      descentRateWindFtPerNm = perf.getDescentVertSpeed() * 60.f / descentSpeedWindCorrected;
-
-      qDebug() << Q_FUNC_INFO << "climbRateWindFtPerNm" << climbRateWindFtPerNm
-               << "descentRateWindFtPerNm" << descentRateWindFtPerNm;
-
-      calculate();
-
-      if(validProfile)
+      // Do a second iteration if difference in average climb or descent exceeds 10 knots ============================
+      if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 10.f) ||
+         atools::almostNotEqual(descentRateWindFtPerNm, perf.getDescentSpeed(), 10.f))
       {
-        calculateTrip(perf);
+        qDebug() << Q_FUNC_INFO << "Second iteration: windHeadClimb" << windHeadClimb << "windHeadCruise" <<
+          windHeadCruise
+                 << "climbSpeedWindCorrected" << climbSpeedWindCorrected
+                 << "descentSpeedWindCorrected" << descentSpeedWindCorrected;
 
-        // Do a third iteration if difference in average climb or descent exceeds 30 knots ============================
-        if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 30.f) ||
-           atools::almostNotEqual(descentRateWindFtPerNm, perf.getDescentSpeed(), 30.f))
+        climbRateWindFtPerNm = perf.getClimbVertSpeed() * 60.f / climbSpeedWindCorrected;
+        descentRateWindFtPerNm = perf.getDescentVertSpeed() * 60.f / descentSpeedWindCorrected;
+
+        qDebug() << Q_FUNC_INFO << "climbRateWindFtPerNm" << climbRateWindFtPerNm
+                 << "descentRateWindFtPerNm" << descentRateWindFtPerNm;
+
+        clearAll();
+        calculate(altRestrErrors);
+        collectErrors(altRestrErrors);
+
+        if(validProfile)
         {
-          calculate();
           calculateTrip(perf);
+
+          // Do a third iteration if difference in average climb or descent exceeds 30 knots ============================
+          if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 30.f) ||
+             atools::almostNotEqual(descentRateWindFtPerNm, perf.getDescentSpeed(), 30.f))
+          {
+            clearAll();
+            calculate(altRestrErrors);
+            collectErrors(altRestrErrors);
+
+            if(validProfile)
+              calculateTrip(perf);
+          }
         }
       }
     }
@@ -810,79 +846,75 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   qDebug() << Q_FUNC_INFO;
 }
 
-void RouteAltitude::calculate()
+void RouteAltitude::calculate(QStringList& altRestErrors)
 {
-  clearAll();
+  altRestErrors.clear();
 
-  if(route->getSizeWithoutAlternates() > 1)
+  if(route->getSizeWithoutAlternates() <= 1)
+    return;
+
+  // Prefill all legs with distance and cruise altitude
+  calculateDistances();
+
+  if(calcTopOfClimb)
+    calculateDeparture();
+
+  if(calcTopOfDescent)
+    calculateArrival();
+
+  // Check for violations because of too low cruise
+  for(int i = 0; i < size(); i++)
   {
-    if(route->getTotalDistance() < 0.5f)
-      return;
+    const RouteAltitudeLeg& leg = at(i);
 
-    // Prefill all legs with distance and cruise altitude
-    calculateDistances();
-
-    if(calcTopOfClimb)
-      calculateDeparture();
-
-    if(calcTopOfDescent)
-      calculateArrival();
-
-    // Check for violations because of too low cruise
-    errors.clear();
-    for(int i = 0; i < size(); i++)
+    if(!leg.isMissed() && !leg.isAlternate())
     {
-      const RouteAltitudeLeg& leg = at(i);
+      QString errorMessage;
+      bool err = violatesAltitudeRestriction(errorMessage, i);
 
-      if(!leg.isMissed() && !leg.isAlternate())
+      if(err)
       {
-        QString errorMessage;
-        bool err = violatesAltitudeRestriction(errorMessage, i);
-
-        if(err)
-        {
-          qWarning() << Q_FUNC_INFO << "violating messge" << errorMessage << "leg" << leg;
-          errors.append(errorMessage);
-        }
+        qWarning() << Q_FUNC_INFO << "violating messge" << errorMessage << "leg" << leg;
+        altRestErrors.append(errorMessage);
       }
     }
-
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "Before cleanup ==================================";
-    qDebug() << Q_FUNC_INFO << *this;
-#endif
-
-    if(!errors.isEmpty() || distanceTopOfClimb > distanceTopOfDescent ||
-       (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_INDEX_VALUE)) ||
-       (calcTopOfDescent && !(distanceTopOfDescent < map::INVALID_INDEX_VALUE)))
-    {
-      // TOD and TOC overlap or are invalid or restrictions violated  - cruise altitude is too high
-      clearAll();
-
-      // Reset all to cruise level - profile will print a message
-      calculateDistances();
-
-      validProfile = false;
-    }
-    else
-    {
-      // Success - flatten legs
-      if(simplify && (calcTopOfClimb || calcTopOfDescent))
-        simplyfyRouteAltitudes();
-
-      // Fetch ILS and VASI at destination
-      calculateApproachIlsAndSlopes();
-      validProfile = true;
-    }
-
-    // Set coordinates into legs
-    fillGeometry();
-
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "Finished ==================================";
-    qDebug() << Q_FUNC_INFO << *this;
-#endif
   }
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Before cleanup ==================================";
+  qDebug() << Q_FUNC_INFO << *this;
+#endif
+
+  if(!altRestErrors.isEmpty() || distanceTopOfClimb > distanceTopOfDescent ||
+     (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_INDEX_VALUE)) ||
+     (calcTopOfDescent && !(distanceTopOfDescent < map::INVALID_INDEX_VALUE)))
+  {
+    // TOD and TOC overlap or are invalid or restrictions violated  - cruise altitude is too high
+    clearAll();
+
+    // Reset all to cruise level - profile will print a message
+    calculateDistances();
+
+    validProfile = false;
+  }
+  else
+  {
+    // Success - flatten legs
+    if(simplify && (calcTopOfClimb || calcTopOfDescent))
+      simplyfyRouteAltitudes();
+
+    // Fetch ILS and VASI at destination
+    calculateApproachIlsAndSlopes();
+    validProfile = true;
+  }
+
+  // Set coordinates into legs
+  fillGeometry();
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Finished ==================================";
+  qDebug() << Q_FUNC_INFO << *this;
+#endif
 }
 
 void RouteAltitude::calculateDistances()

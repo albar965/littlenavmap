@@ -4212,8 +4212,7 @@ void MainWindow::updateErrorLabels()
   // Show only if route is valid, there are errors and nothing is collecting performance
   bool showError = NavApp::getRoute().getSizeWithoutAlternates() >= 2 && NavApp::getAltitudeLegs().hasErrors();
   if(showError)
-    err = atools::util::HtmlBuilder::errorMessage(
-      NavApp::getAltitudeLegs().getErrorStrings(toolTipTxt, statusTipTxt).join(" "));
+    err = atools::util::HtmlBuilder::errorMessage(NavApp::getAltitudeLegs().getErrorStrings(toolTipTxt, statusTipTxt));
 
   ui->labelRouteError->setVisible(showError);
   ui->labelRouteError->setText(err);

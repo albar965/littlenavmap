@@ -214,7 +214,7 @@ public:
 
   /* True if result is not valid and error messages exist */
   bool hasErrors() const;
-  QStringList getErrorStrings(QString& toolTip, QString& statusTip) const;
+  QString getErrorStrings(QString& toolTip, QString& statusTip) const;
 
   /* Get an array for all altitudes in feet. Includes procedure points. */
   QVector<float> getAltitudes() const;
@@ -325,8 +325,8 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
 
-  /* Calculate altitudes for all legs.  */
-  void calculate();
+  /* Calculate altitudes for all legs. Error list will be filled with altitude restriction violations. */
+  void calculate(QStringList& altRestErrors);
 
   /* Calculate travelling time and fuel consumption based on given performance object and wind */
   void calculateTrip(const atools::fs::perf::AircraftPerf& perf);
@@ -373,6 +373,8 @@ private:
   void fillGeometry();
 
   int indexForDistance(float distanceToDest) const;
+
+  void collectErrors(const QStringList& altRestrErrors);
 
   /* NM from start */
   float distanceTopOfClimb = map::INVALID_DISTANCE_VALUE,
