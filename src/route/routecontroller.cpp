@@ -1177,7 +1177,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
     route.updateLegAltitudes();
 
-    route.updateActiveLegAndPos(true /* force update */);
+    updateActiveLeg();
     updateTableModel();
 
     postChange(undoCommand);
@@ -1593,7 +1593,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
                              type != atools::fs::pln::VOR;
       route.updateAirwaysAndAltitude(!useSetAltitude /* adjustRouteAltitude */, adjustRouteType);
 
-      route.updateActiveLegAndPos(true /* force update */);
+      updateActiveLeg();
 
       route.updateLegAltitudes();
 
@@ -1698,7 +1698,7 @@ void RouteController::reverseRoute()
   route.updateLegAltitudes();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
 
-  route.updateActiveLegAndPos(true /* force update */);
+  updateActiveLeg();
   updateTableModel();
 
   postChange(undoCommand);
@@ -1737,7 +1737,7 @@ void RouteController::postDatabaseLoad()
      flightplan.getDepartureParkingName().isEmpty())
     updateStartPositionBestRunway(false, true);
 
-  route.updateActiveLegAndPos(true /* force update */);
+  updateActiveLeg();
   updateTableModel();
   updateErrorLabel();
   NavApp::updateWindowTitle();
@@ -1944,7 +1944,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
                                       ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
                                       ui->actionRouteDeleteLeg, ui->actionRouteInsert, ui->actionMapTrafficPattern,
                                       ui->actionMapHold});
-  Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
   atools::gui::ActionStateSaver stateSaver(
@@ -1957,7 +1956,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
     ui->actionRouteResetView, ui->actionRouteSetMark,
     ui->actionRouteInsert, ui->actionRouteTableAppend});
-  Q_UNUSED(stateSaver);
 
   QModelIndex index = view->indexAt(pos);
   const RouteLeg *routeLeg = nullptr, *prevRouteLeg = nullptr;
@@ -2313,6 +2311,11 @@ void RouteController::resetActiveLeg()
   emit routeChanged(true);
 }
 
+void RouteController::updateActiveLeg()
+{
+  route.updateActiveLegAndPos(true /* force update */, aircraft.isFlying());
+}
+
 void RouteController::clearSelection()
 {
   view->clearSelection();
@@ -2362,7 +2365,7 @@ void RouteController::shownMapFeaturesChanged(map::MapObjectTypes types)
 /* Hide or show map hightlights if dock visibility changes */
 void RouteController::dockVisibilityChanged(bool visible)
 {
-  Q_UNUSED(visible);
+  Q_UNUSED(visible)
 
   // Visible - send update to show map highlights
   // Not visible - send update to hide highlights
@@ -2371,8 +2374,8 @@ void RouteController::dockVisibilityChanged(bool visible)
 
 void RouteController::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-  Q_UNUSED(selected);
-  Q_UNUSED(deselected);
+  Q_UNUSED(selected)
+  Q_UNUSED(deselected)
 
   updateMoveAndDeleteActions();
   QItemSelectionModel *sm = view->selectionModel();
@@ -2581,7 +2584,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
 
-    route.updateActiveLegAndPos(true /* force update */);
+    updateActiveLeg();
     updateTableModel();
 
     // Restore current position at new moved position
@@ -2662,7 +2665,7 @@ void RouteController::deleteSelectedLegs()
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
 
-    route.updateActiveLegAndPos(true /* force update */);
+    updateActiveLeg();
     updateTableModel();
 
     // Update current position at the beginning of the former selection
@@ -2849,7 +2852,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  route.updateActiveLegAndPos(true /* force update */);
+  updateActiveLeg();
   updateTableModel();
 
   postChange(undoCommand);
@@ -2918,7 +2921,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  route.updateActiveLegAndPos(true /* force update */);
+  updateActiveLeg();
   updateTableModel();
 
   postChange(undoCommand);
@@ -2958,7 +2961,7 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  route.updateActiveLegAndPos(true /* force update */);
+  updateActiveLeg();
   updateTableModel();
 
   postChange(undoCommand);
@@ -3130,7 +3133,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  route.updateActiveLegAndPos(true /* force update */);
+  updateActiveLeg();
   updateTableModel();
 
   postChange(undoCommand);
@@ -3193,7 +3196,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  route.updateActiveLegAndPos(true /* force update */);
+  updateActiveLeg();
   updateTableModel();
 
   postChange(undoCommand);
@@ -3263,7 +3266,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  route.updateActiveLegAndPos(true /* force update */);
+  updateActiveLeg();
   updateTableModel();
 
   postChange(undoCommand);
@@ -3677,13 +3680,11 @@ void RouteController::updateTableModel()
     // Set spin box and block signals to avoid recursive call
     {
       QSignalBlocker blocker(ui->spinBoxRouteAlt);
-      Q_UNUSED(blocker);
       ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAltitude());
     }
 
     { // Set combo box and block signals to avoid recursive call
       QSignalBlocker blocker(ui->comboBoxRouteType);
-      Q_UNUSED(blocker);
       if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
         ui->comboBoxRouteType->setCurrentIndex(0);
       else if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
@@ -3845,7 +3846,7 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
   {
     if(simulatorData.isUserAircraftValid())
     {
-      const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+      aircraft = simulatorData.getUserAircraftConst();
 
       // Sequence only for airborne airplanes
       // Use more than one parameter since first X-Plane data packets are unreliable

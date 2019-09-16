@@ -212,7 +212,7 @@ void Route::getArrivalNames(QString& arrivalArincName, QString& arrivalTransitio
   }
 }
 
-void Route::updateActiveLegAndPos(bool force)
+void Route::updateActiveLegAndPos(bool force, bool flying)
 {
   if(force)
   {
@@ -223,7 +223,9 @@ void Route::updateActiveLegAndPos(bool force)
     activeLegResult.status = atools::geo::INVALID;
     activeLegIndex = map::INVALID_INDEX_VALUE;
   }
-  updateActiveLegAndPos(activePos);
+
+  if(flying)
+    updateActiveLegAndPos(activePos);
 }
 
 /* Compare crosstrack distance fuzzy */
