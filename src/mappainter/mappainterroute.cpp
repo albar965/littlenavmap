@@ -1127,7 +1127,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     speedRestr = proc::MapSpeedRestriction();
   }
 
-  QStringList texts, textsLeft;
+  QStringList texts;
   // if(index > 0 && legs.isApproach(index) &&
   // legs.isTransition(index - 1) && context->objectTypes & proctypes::APPROACH &&
   // context->objectTypes & proctypes::APPROACH_TRANSITION)
@@ -1183,7 +1183,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     // All legs with a calculated end point
     if(wToS(leg.line.getPos2(), x, y))
     {
-      textsLeft.append(leg.displayText);
+      texts.append(leg.displayText);
       texts.append(proc::altRestrictionTextNarrow(altRestr));
       texts.append(proc::speedRestrictionTextNarrow(speedRestr));
       if(drawTextDetail)
@@ -1215,7 +1215,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       if(wToS(leg.interceptPos, x, y))
       {
         // Draw intercept comment - no altitude restriction there
-        textsLeft.append(leg.displayText);
+        texts.append(leg.displayText);
         if(drawTextDetail)
           paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
         paintProcedurePoint(context, x, y, false);
@@ -1233,7 +1233,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       if(lastInTransition)
         return;
 
-      textsLeft.append(leg.displayText);
+      texts.append(leg.displayText);
       texts.append(proc::altRestrictionTextNarrow(altRestr));
       texts.append(proc::speedRestrictionTextNarrow(speedRestr));
     }
@@ -1243,7 +1243,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     if(lastInTransition)
       return;
 
-    textsLeft.append(leg.displayText);
+    texts.append(leg.displayText);
     texts.append(proc::altRestrictionTextNarrow(altRestr));
     texts.append(proc::speedRestrictionTextNarrow(speedRestr));
   }
@@ -1351,9 +1351,9 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   }
 
   // Draw left aligned texts like intercept or manual =====================================
-  if(!textsLeft.isEmpty() && drawTextDetail)
-    paintText(context, mapcolors::routeProcedurePointColor, x - symbolSize * 3 / 2, y, textsLeft,
-              true /* draw as route */, textatt::RIGHT);
+  // if(!texts.isEmpty() && drawTextDetail)
+  // paintText(context, mapcolors::routeProcedurePointColor, x - symbolSize * 3 / 2, y, texts,
+  // true /* draw as route */, textatt::RIGHT);
 
   // Draw wind barbs for SID and STAR (not approaches) =======================================
   if(!preview && (leg.isSid() || leg.isStar()))
