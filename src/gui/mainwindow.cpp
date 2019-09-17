@@ -3458,7 +3458,7 @@ void MainWindow::resetAllSettings()
                          tr("<b>This will reset all options, window layout, dialog layout, "
                               "aircraft trail, map position history and file histories "
                               "back to default and restart <i>%1</i>.</b><br/><br/>"
-                              "User features like range rings or patterns as well as"
+                              "User features like range rings or patterns as well as "
                               "scenery, logbook and userpoint databases are not affected.<br/><br/>"
                               "A copy of the settings file<br/><br/>"
                               "\"%2\"<br/><br/>"

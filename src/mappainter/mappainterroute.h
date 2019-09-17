@@ -90,7 +90,7 @@ private:
                     const QStringList *additionalText = nullptr);
   void paintAirportText(const PaintContext *context, int x, int y, bool drawAsRoute, const map::MapAirport& obj);
   void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts,
-                 bool drawAsRoute);
+                 bool drawAsRoute, textatt::TextAttributes atts = textatt::NONE);
   void paintUserpoint(const PaintContext *context, int x, int y, bool preview);
   void paintProcedurePoint(const PaintContext *context, int x, int y, bool preview);
 

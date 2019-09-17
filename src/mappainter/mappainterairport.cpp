@@ -68,35 +68,12 @@ MapPainterAirport::~MapPainterAirport()
 
 void MapPainterAirport::render(PaintContext *context)
 {
-  // Get all airports from the route and add them to the map to avoid duplicate drawing
-  QSet<int> routeAirportIdMap; // Collect all airports from route and bounding rectangle
-
-  if(context->objectTypes.testFlag(map::FLIGHTPLAN))
-  {
-    for(int i = 0; i < route->size(); i++)
-    {
-      const RouteLeg& routeLeg = route->at(i);
-      if(routeLeg.getMapObjectType() == map::AIRPORT)
-        routeAirportIdMap.insert(routeLeg.getAirport().id);
-    }
-  }
-
-  // Get airports from logbook highlight to avoid duplicate drawing
-  const MapSearchResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
-  for(const MapLogbookEntry& entry : highlightResultsSearch.logbookEntries)
-  {
-    if(entry.departurePos.isValid())
-      routeAirportIdMap.insert(entry.departure.id);
-    if(entry.destinationPos.isValid())
-      routeAirportIdMap.insert(entry.destination.id);
-  }
-
   if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
-     (!context->mapLayerEffective->isAirportDiagramRunway()) && routeAirportIdMap.isEmpty())
+     (!context->mapLayerEffective->isAirportDiagramRunway()) && context->routeIdMap.isEmpty())
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
+  Q_UNUSED(saver)
 
   // Get airports from cache/database for the bounding rectangle and add them to the map
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
@@ -126,7 +103,8 @@ void MapPainterAirport::render(PaintContext *context)
         airport.bounding.overlaps(context->viewportRect);
 
         // Either part of the route or enabled in the actions/menus/toolbar
-        bool drawAirport = airport.isVisible(context->objectTypes) || routeAirportIdMap.contains(airport.id);
+        bool drawAirport = airport.isVisible(context->objectTypes) ||
+                           context->routeIdMap.contains(airport.getRef());
 
         if(visibleOnMap)
         {
@@ -170,7 +148,7 @@ void MapPainterAirport::render(PaintContext *context)
       drawAirportSymbolOverview(context, *airport, x, y);
 
     // More detailed symbol will be drawn by the route or log painter - so skip here
-    if(!routeAirportIdMap.contains(airport->id))
+    if(!context->routeIdMap.contains(airport->getRef()))
     {
       // Symbol will be omitted for runway overview
       drawAirportSymbol(context, *airport, x, y);
@@ -273,7 +251,6 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 {
   Marble::GeoPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
   bool fast = context->drawFast;
 
   painter->setBackgroundMode(Qt::OpaqueMode);

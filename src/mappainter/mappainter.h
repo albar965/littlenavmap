@@ -48,6 +48,7 @@ class MapPaintWidget;
 
 namespace map {
 struct MapAirport;
+struct MapObjectRef;
 
 }
 
@@ -74,6 +75,9 @@ struct PaintContext
   QStringList userPointTypes, /* In menu selected types */
               userPointTypesAll; /* All available tyes */
   bool userPointTypeUnknown; /* Show unknown types */
+
+  // All waypoints from the route and add them to the map to avoid duplicate drawing
+  QSet<map::MapObjectRef> routeIdMap;
 
   optsd::DisplayOptions dispOpts;
   optsd::DisplayOptionsRose dispOptsRose;

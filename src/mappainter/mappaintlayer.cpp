@@ -450,8 +450,8 @@ void MapPaintLayer::updateLayers()
 bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos,
                            GeoSceneLayer *layer)
 {
-  Q_UNUSED(renderPos);
-  Q_UNUSED(layer);
+  Q_UNUSED(renderPos)
+  Q_UNUSED(layer)
 
   if(!databaseLoadStatus && !mapWidget->isNoNavPaint())
   {
@@ -534,6 +534,42 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.weatherSource = weatherSource;
       context.visibleWidget = mapWidget->isVisibleWidget();
 
+      // ====================================
+      // Get all waypoints from the route and add them to the map to avoid duplicate drawing
+      if(context.objectTypes.testFlag(map::FLIGHTPLAN))
+      {
+        const Route& route = NavApp::getRouteConst();
+        for(int i = 0; i < route.size(); i++)
+        {
+          const RouteLeg& routeLeg = route.at(i);
+          map::MapObjectTypes type = routeLeg.getMapObjectType();
+          if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
+            context.routeIdMap.insert({routeLeg.getId(), routeLeg.getMapObjectType()});
+          else if(type == map::PROCEDURE)
+          {
+            const map::MapSearchResult& navaids = routeLeg.getProcedureLeg().navaids;
+            if(navaids.hasWaypoints())
+              context.routeIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
+            if(navaids.hasVor())
+              context.routeIdMap.insert({navaids.vors.first().id, map::VOR});
+            if(navaids.hasNdb())
+              context.routeIdMap.insert({navaids.ndbs.first().id, map::NDB});
+          }
+        }
+      }
+
+      // ====================================
+      // Get airports from logbook highlight to avoid duplicate drawing
+      const map::MapSearchResult& highlightResultsSearch = mapWidget->getSearchHighlights();
+      for(const map::MapLogbookEntry& entry : highlightResultsSearch.logbookEntries)
+      {
+        if(entry.departurePos.isValid())
+          context.routeIdMap.insert({entry.departure.id, map::AIRPORT});
+        if(entry.destinationPos.isValid())
+          context.routeIdMap.insert({entry.destination.id, map::AIRPORT});
+      }
+
+      // Set render hints depending on context (moving, still) =====================
       if(mapWidget->viewContext() == Marble::Still)
       {
         painter->setRenderHint(QPainter::Antialiasing, true);
@@ -546,6 +582,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         painter->setRenderHint(QPainter::TextAntialiasing, false);
         painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
       }
+
+      // =========================================================================
+      // Draw ====================================
 
       // Altitude below all others
       mapPainterAltitude->render(&context);

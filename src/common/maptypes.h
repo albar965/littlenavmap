@@ -134,6 +134,11 @@ struct MapBase
     return id;
   }
 
+  map::MapObjectRef getRef() const
+  {
+    return {id, objType};
+  }
+
   template<typename TYPE>
   const TYPE *asType(map::MapObjectTypes type) const
   {

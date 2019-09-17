@@ -379,7 +379,7 @@ enum TextAttribute
   ITALIC = 0x0002,
   UNDERLINE = 0x0004,
   OVERLINE = 0x0008,
-  RIGHT = 0x0010,
+  RIGHT = 0x0010, /* Reference point is at the right of the text (left-aligned) */
   LEFT = 0x0020,
   CENTER = 0x0040,
   ROUTE_BG_COLOR = 0x0080, /* Use light yellow background for route objects */

@@ -50,7 +50,6 @@ void MapPainterNav::render(PaintContext *context)
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
 
   // Airways -------------------------------------------------
   bool drawAirway = context->mapLayer->isAirway() &&
@@ -290,6 +289,9 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
     if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways)))
       continue;
 
+    if(context->routeIdMap.contains(waypoint.getRef()))
+      continue;
+
     int x, y;
     bool visible = wToS(waypoint.position, x, y);
 
@@ -316,6 +318,9 @@ void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, 
 
   for(const MapVor& vor : *vors)
   {
+    if(context->routeIdMap.contains(vor.getRef()))
+      continue;
+
     int x, y;
     bool visible = wToS(vor.position, x, y);
 
@@ -347,6 +352,9 @@ void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, 
 
   for(const MapNdb& ndb : *ndbs)
   {
+    if(context->routeIdMap.contains(ndb.getRef()))
+      continue;
+
     int x, y;
     bool visible = wToS(ndb.position, x, y);
 
