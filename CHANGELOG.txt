@@ -14,6 +14,10 @@ Program:
 Flight Plan:
 * Fixed issue where flight plans exported for Reality XP had departure wrongly set to destination.
 * Fixed small issue where flight plan legs were activated when editing plan with aircraft on ground.
+* Showing minimum and maximum altitude for airways in flight plan table now.
+* Airway now shown as red text if either direction, minimum or maximum altitude is violated.
+* Tooltips on red text in flight plan table now show information for airway restriction
+  violations or invalid waypoints.
 
 Route Description:
 * Added missing alternate airport parsing functionality to route description dialog.
