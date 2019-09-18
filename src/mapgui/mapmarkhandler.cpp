@@ -93,14 +93,14 @@ void MapMarkHandler::addToolbarButton()
   ui->toolbarMapOptions->insertWidget(ui->actionMapShowRoute, toolButton);
 
   // Create and add actions to toolbar and menu =================================
-  actionAll = new QAction(tr("All"), toolButton);
+  actionAll = new QAction(tr("&All"), toolButton);
   actionAll->setToolTip(tr("Show all user features"));
   actionAll->setStatusTip(actionAll->toolTip());
   toolButton->addAction(actionAll);
   ui->menuViewUserFeatures->addAction(actionAll);
   connect(actionAll, &QAction::triggered, this, &MapMarkHandler::actionAllTriggered);
 
-  actionNone = new QAction(tr("None"), toolButton);
+  actionNone = new QAction(tr("&None"), toolButton);
   actionNone->setToolTip(tr("Hide all user features"));
   actionNone->setStatusTip(actionNone->toolTip());
   toolButton->addAction(actionNone);
@@ -109,13 +109,13 @@ void MapMarkHandler::addToolbarButton()
 
   ui->menuViewUserFeatures->addSeparator();
 
-  actionRangeRings = addButton(":/littlenavmap/resources/icons/rangerings.svg", tr("Range Rings"),
+  actionRangeRings = addButton(":/littlenavmap/resources/icons/rangerings.svg", tr("&Range Rings"),
                                tr("Show or hide range rings"), map::MARK_RANGE_RINGS);
-  actionMeasurementLines = addButton(":/littlenavmap/resources/icons/distancemeasure.svg", tr("Measurement Lines"),
+  actionMeasurementLines = addButton(":/littlenavmap/resources/icons/distancemeasure.svg", tr("&Measurement Lines"),
                                      tr("Show or hide measurement lines"), map::MARK_MEASUREMENT);
-  actionHolds = addButton(":/littlenavmap/resources/icons/hold.svg", tr("Holdings"),
+  actionHolds = addButton(":/littlenavmap/resources/icons/hold.svg", tr("&Holdings"),
                           tr("Show or hide holdings"), map::MARK_HOLDS);
-  actionPatterns = addButton(":/littlenavmap/resources/icons/trafficpattern.svg", tr("Traffic Patterns"),
+  actionPatterns = addButton(":/littlenavmap/resources/icons/trafficpattern.svg", tr("&Traffic Patterns"),
                              tr("Show or hide traffic patterns"), map::MARK_PATTERNS);
 }
 

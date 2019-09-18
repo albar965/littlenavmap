@@ -91,7 +91,7 @@ void UserdataController::addToolbarButton()
   ui->toolbarMapOptions->insertSeparator(ui->actionMapShowRoute);
 
   // Create and add select all action =====================================
-  actionAll = new QAction(tr("All"), button);
+  actionAll = new QAction(tr("&All"), button);
   actionAll->setToolTip(tr("Show all userpoints"));
   actionAll->setStatusTip(actionAll->toolTip());
   button->addAction(actionAll);
@@ -99,7 +99,7 @@ void UserdataController::addToolbarButton()
   connect(actionAll, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
 
   // Create and add select none action =====================================
-  actionNone = new QAction(tr("None"), button);
+  actionNone = new QAction(tr("&None"), button);
   actionNone->setToolTip(tr("Hide all userpoints"));
   actionNone->setStatusTip(actionNone->toolTip());
   button->addAction(actionNone);
@@ -107,7 +107,7 @@ void UserdataController::addToolbarButton()
   connect(actionNone, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
 
   // Create and add select unknown action =====================================
-  actionUnknown = new QAction(tr("Unknown Types"), button);
+  actionUnknown = new QAction(tr("&Unknown Types"), button);
   actionUnknown->setToolTip(tr("Show or hide unknown userpoint types"));
   actionUnknown->setStatusTip(actionUnknown->toolTip());
   actionUnknown->setCheckable(true);

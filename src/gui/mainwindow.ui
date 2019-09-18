@@ -463,7 +463,7 @@
     </property>
     <widget class="QMenu" name="menuMapShowAirportWeatherSource">
      <property name="title">
-      <string>Airport Weather &amp;Source</string>
+      <string>&amp;Airport Weather Source</string>
      </property>
      <addaction name="actionMapShowWeatherSimulator"/>
      <addaction name="actionMapShowWeatherActiveSky"/>
@@ -473,7 +473,7 @@
     </widget>
     <widget class="QMenu" name="menuHighAltitudeWindSource">
      <property name="title">
-      <string>Wind source</string>
+      <string>&amp;Wind source</string>
      </property>
      <addaction name="actionMapShowWindDisabled"/>
      <addaction name="actionMapShowWindSimulator"/>
@@ -8640,7 +8640,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airspace.svg</normaloff>:/littlenavmap/resources/icons/airspace.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Airspaces</string>
+    <string>Show &amp;Airspaces</string>
    </property>
    <property name="toolTip">
     <string>Show or hide all airspaces</string>
@@ -10478,7 +10478,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftperfmerge.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfmerge.svg</iconset>
    </property>
    <property name="text">
-    <string>Merge collected Aircraft Performance ...</string>
+    <string>&amp;Merge collected Aircraft Performance ...</string>
    </property>
    <property name="toolTip">
     <string>Merge the recorded performance into current</string>
@@ -10493,7 +10493,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftperfreset.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfreset.svg</iconset>
    </property>
    <property name="text">
-    <string>Restart Aircraft Performance Collection</string>
+    <string>&amp;Restart Aircraft Performance Collection</string>
    </property>
    <property name="toolTip">
     <string>Restart Aircraft Performance Collection</string>
@@ -10775,7 +10775,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/databaseairspace.svg</normaloff>:/littlenavmap/resources/icons/databaseairspace.svg</iconset>
    </property>
    <property name="text">
-    <string>Load User Airspaces ...</string>
+    <string>Load &amp;User Airspaces ...</string>
    </property>
    <property name="iconText">
     <string>Load Airspaces</string>

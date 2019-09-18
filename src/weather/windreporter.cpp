@@ -187,7 +187,7 @@ void WindReporter::addToolbarButton()
   ui->menuHighAltitudeWindLevels->clear();
 
   // Create and add flight plan action =====================================
-  actionFlightplanWaypoints = new QAction(tr("At Flight Plan Waypoints"), button);
+  actionFlightplanWaypoints = new QAction(tr("&At Flight Plan Waypoints"), button);
   actionFlightplanWaypoints->setToolTip(tr("Show wind at flight plan waypoints"));
   actionFlightplanWaypoints->setStatusTip(actionFlightplanWaypoints->toolTip());
   actionFlightplanWaypoints->setCheckable(true);
@@ -199,7 +199,7 @@ void WindReporter::addToolbarButton()
 
   actionGroup = new QActionGroup(button);
   // Create and add none action =====================================
-  actionNone = new QAction(tr("None"), button);
+  actionNone = new QAction(tr("&None"), button);
   actionNone->setToolTip(tr("Do not show wind barbs"));
   actionNone->setStatusTip(actionNone->toolTip());
   actionNone->setData(wind::NONE);
