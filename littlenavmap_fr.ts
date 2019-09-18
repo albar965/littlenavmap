@@ -1445,8 +1445,9 @@ de la scène</translation>
     </message>
     <message>
         <location filename="src/airspace/airspacetoolbarhandler.cpp" line="229"/>
-        <source>All</source>
-        <translation>Tout</translation>
+        <source>&amp;All</source>
+        <oldsource>All</oldsource>
+        <translation type="unfinished">Tout</translation>
     </message>
     <message>
         <location filename="src/airspace/airspacetoolbarhandler.cpp" line="230"/>
@@ -1464,8 +1465,9 @@ de la scène</translation>
     </message>
     <message>
         <location filename="src/airspace/airspacetoolbarhandler.cpp" line="240"/>
-        <source>None</source>
-        <translation>Rien</translation>
+        <source>&amp;None</source>
+        <oldsource>None</oldsource>
+        <translation type="unfinished">Rien</translation>
     </message>
     <message>
         <source>Disable all airspaces in this category</source>
@@ -5107,7 +5109,8 @@ Sim. Heure UTC</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="466"/>
-        <source>Airport Weather &amp;Source</source>
+        <source>&amp;Airport Weather Source</source>
+        <oldsource>Airport Weather &amp;Source</oldsource>
         <translation type="unfinished">&amp;Source météo de l&apos;aérodrome</translation>
     </message>
     <message>
@@ -5246,7 +5249,8 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="476"/>
-        <source>Wind source</source>
+        <source>&amp;Wind source</source>
+        <oldsource>Wind source</oldsource>
         <translation type="unfinished">Source du vent</translation>
     </message>
     <message>
@@ -5353,7 +5357,6 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="4782"/>
         <location filename="src/gui/mainwindow.ui" line="4785"/>
-        <location filename="src/gui/mainwindow.ui" line="10496"/>
         <location filename="src/gui/mainwindow.ui" line="10499"/>
         <location filename="src/gui/mainwindow.ui" line="10502"/>
         <source>Restart Aircraft Performance Collection</source>
@@ -6093,8 +6096,14 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10481"/>
-        <source>Merge collected Aircraft Performance ...</source>
+        <source>&amp;Merge collected Aircraft Performance ...</source>
+        <oldsource>Merge collected Aircraft Performance ...</oldsource>
         <translation type="unfinished">Fusionner les performances de l&apos;aéronef recueillies...</translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="10496"/>
+        <source>&amp;Restart Aircraft Performance Collection</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10528"/>
@@ -6147,7 +6156,8 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10778"/>
-        <source>Load User Airspaces ...</source>
+        <source>Load &amp;User Airspaces ...</source>
+        <oldsource>Load User Airspaces ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9268,8 +9278,9 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8643"/>
-        <source>Show Airspaces</source>
-        <translation>Afficher Espaces aériens</translation>
+        <source>Show &amp;Airspaces</source>
+        <oldsource>Show Airspaces</oldsource>
+        <translation type="unfinished">Afficher Espaces aériens</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8646"/>
@@ -13308,31 +13319,26 @@ kHz/MHz</translation>
     <name>MapMarkHandler</name>
     <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="61"/>
-        <location filename="src/mapgui/mapmarkhandler.cpp" line="103"/>
         <source>None</source>
         <translation type="unfinished">Aucun</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="64"/>
-        <location filename="src/mapgui/mapmarkhandler.cpp" line="112"/>
         <source>Range Rings</source>
         <translation type="unfinished">Anneaux de portée</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="66"/>
-        <location filename="src/mapgui/mapmarkhandler.cpp" line="114"/>
         <source>Measurement Lines</source>
         <translation type="unfinished">Lignes de mesure</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="68"/>
-        <location filename="src/mapgui/mapmarkhandler.cpp" line="116"/>
         <source>Holdings</source>
         <translation type="unfinished">Attentes</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="70"/>
-        <location filename="src/mapgui/mapmarkhandler.cpp" line="118"/>
         <source>Traffic Patterns</source>
         <translation type="unfinished">Circulations de trafic</translation>
     </message>
@@ -13343,7 +13349,8 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="96"/>
-        <source>All</source>
+        <source>&amp;All</source>
+        <oldsource>All</oldsource>
         <translation type="unfinished">Tout</translation>
     </message>
     <message>
@@ -13352,9 +13359,19 @@ kHz/MHz</translation>
         <translation type="unfinished">Afficher toutes les fonctionnalités utilisateur</translation>
     </message>
     <message>
+        <location filename="src/mapgui/mapmarkhandler.cpp" line="103"/>
+        <source>&amp;None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="104"/>
         <source>Hide all user features</source>
         <translation type="unfinished">Masquer toutes les fonctionnalités utilisateur</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapmarkhandler.cpp" line="112"/>
+        <source>&amp;Range Rings</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="113"/>
@@ -13362,14 +13379,29 @@ kHz/MHz</translation>
         <translation type="unfinished">Afficher ou masquer les anneaux de portée</translation>
     </message>
     <message>
+        <location filename="src/mapgui/mapmarkhandler.cpp" line="114"/>
+        <source>&amp;Measurement Lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="115"/>
         <source>Show or hide measurement lines</source>
         <translation type="unfinished">Afficher ou masquer les lignes de mesure</translation>
     </message>
     <message>
+        <location filename="src/mapgui/mapmarkhandler.cpp" line="116"/>
+        <source>&amp;Holdings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="117"/>
         <source>Show or hide holdings</source>
         <translation type="unfinished">Afficher ou masquer les attentes</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapmarkhandler.cpp" line="118"/>
+        <source>&amp;Traffic Patterns</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapmarkhandler.cpp" line="119"/>
@@ -24382,8 +24414,9 @@ Les formats ci-dessus doivent être donnés exactement comme dans les exemples.<
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="94"/>
-        <source>All</source>
-        <translation>Tout</translation>
+        <source>&amp;All</source>
+        <oldsource>All</oldsource>
+        <translation type="unfinished">Tout</translation>
     </message>
     <message>
         <source>Enable all userpoints</source>
@@ -24391,8 +24424,9 @@ Les formats ci-dessus doivent être donnés exactement comme dans les exemples.<
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="102"/>
-        <source>None</source>
-        <translation>Aucun</translation>
+        <source>&amp;None</source>
+        <oldsource>None</oldsource>
+        <translation type="unfinished">Aucun</translation>
     </message>
     <message>
         <source>Disable all userpoints</source>
@@ -24400,8 +24434,9 @@ Les formats ci-dessus doivent être donnés exactement comme dans les exemples.<
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="110"/>
-        <source>Unknown Types</source>
-        <translation>Types inconnus</translation>
+        <source>&amp;Unknown Types</source>
+        <oldsource>Unknown Types</oldsource>
+        <translation type="unfinished">Types inconnus</translation>
     </message>
     <message>
         <source>Enable or disable unknown userpoint types</source>
@@ -25320,7 +25355,8 @@ from File</source>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="190"/>
-        <source>At Flight Plan Waypoints</source>
+        <source>&amp;At Flight Plan Waypoints</source>
+        <oldsource>At Flight Plan Waypoints</oldsource>
         <translation type="unfinished">Aux waypoints du plan de vol</translation>
     </message>
     <message>
@@ -25329,7 +25365,6 @@ from File</source>
         <translation type="unfinished">Afficher le vent aux waypoints du plan de vol</translation>
     </message>
     <message>
-        <location filename="src/weather/windreporter.cpp" line="202"/>
         <location filename="src/weather/windreporter.cpp" line="382"/>
         <source>None</source>
         <translation type="unfinished">Aucun</translation>
@@ -25338,6 +25373,11 @@ from File</source>
         <location filename="src/weather/windreporter.cpp" line="203"/>
         <source>Do not show wind barbs</source>
         <translation type="unfinished">Ne pas afficher les barbes de vent</translation>
+    </message>
+    <message>
+        <location filename="src/weather/windreporter.cpp" line="202"/>
+        <source>&amp;None</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="231"/>
