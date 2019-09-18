@@ -1221,15 +1221,16 @@ QString airwayAltText(const MapAirway& airway)
   return altTxt;
 }
 
-QString airwayAltTextShort(const MapAirway& airway)
+QString airwayAltTextShort(const MapAirway& airway, bool addUnit, bool narrow)
 {
-  QString altTxt;
-  if(airway.minAltitude > 0)
-    altTxt = Unit::altFeet(airway.minAltitude, true /*addUnit*/, true /*narrow*/);
-
   if(airway.maxAltitude > 0 && airway.maxAltitude < 60000)
-    altTxt += QObject::tr("<") + Unit::altFeet(airway.maxAltitude, true /*addUnit*/, true /*narrow*/);
-  return altTxt;
+    return QObject::tr("%1-%2").
+           arg(Unit::altFeet(airway.minAltitude, false /*addUnit*/, narrow)).
+           arg(Unit::altFeet(airway.maxAltitude, addUnit, narrow));
+  else if(airway.minAltitude > 0)
+    return Unit::altFeet(airway.minAltitude, addUnit, narrow);
+  else
+    return QString();
 }
 
 QString airportText(const MapAirport& airport, int elideName)

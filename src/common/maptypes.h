@@ -1034,7 +1034,7 @@ QString airwayText(const map::MapAirway& airway);
 QString airwayAltText(const MapAirway& airway);
 
 /* Short for map display */
-QString airwayAltTextShort(const MapAirway& airway);
+QString airwayAltTextShort(const MapAirway& airway, bool addUnit = true, bool narrow = true);
 
 QString magvarText(float magvar, bool shortText = false);
 

@@ -27,6 +27,7 @@
 #include "route/route.h"
 #include "options/optiondata.h"
 #include "navapp.h"
+#include "common/unit.h"
 
 #include <QRegularExpression>
 
@@ -730,20 +731,58 @@ bool RouteLeg::isApproachPoint() const
           procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
-bool RouteLeg::isAirwaySetAndInvalid() const
+bool RouteLeg::isAirwaySetAndInvalid(float altitude, QStringList *errors) const
 {
-  if(!getAirwayName().isEmpty() && airway.isValid())
+  bool invalid = true;
+  if(airway.isValid())
   {
     // Set and valid - check direction
     if(airway.direction == map::DIR_BOTH)
       // Always valid in both directions
-      return false;
+      invalid = false;
     else if(airway.direction == map::DIR_FORWARD)
       // From this to airway "from" is wrong direction - invalid
-      return getId() == airway.fromWaypointId;
+      invalid = getId() == airway.fromWaypointId;
     else if(airway.direction == map::DIR_BACKWARD)
       // From this to airway "to" is wrong direction for backward - invalid
-      return getId() == airway.toWaypointId;
+      invalid = getId() == airway.toWaypointId;
+
+    if(errors != nullptr && invalid)
+      errors->append(tr("Wrong direction in one-way segment."));
+
+    if(altitude < map::INVALID_ALTITUDE_VALUE)
+    {
+      if(altitude < airway.minAltitude)
+      {
+        invalid = true;
+        if(errors != nullptr)
+          errors->append(tr("Cruise altitude %1 is below minimum altitude of %2.").
+                         arg(Unit::altFeet(altitude)).arg(Unit::altFeet(airway.minAltitude)));
+      }
+
+      if(altitude > airway.maxAltitude)
+      {
+        invalid = true;
+        if(errors != nullptr)
+          errors->append(tr("Cruise altitude %1 is above maximum altitude of %2.").
+                         arg(Unit::altFeet(altitude)).arg(Unit::altFeet(airway.maxAltitude)));
+      }
+    }
+
+    if(invalid && errors != nullptr)
+      // General violations message
+      errors->prepend(tr("Leg to \"%1\" violates restrictions for airway \"%2\":").
+                      arg(getIdent()).arg(getAirwayName()));
+    return invalid;
+  }
+  else
+  {
+    if(!getAirwayName().isEmpty())
+    {
+      invalid = true;
+      if(errors != nullptr)
+        errors->append(tr("Airway %1 not found for %2.").arg(getAirwayName()).arg(getIdent()));
+    }
   }
 
   return !getAirwayName().isEmpty() && !airway.isValid();

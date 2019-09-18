@@ -396,7 +396,7 @@ private:
 
   void updateTableHeaders();
   void highlightNextWaypoint(int nearestLegIndex);
-  void highlightProcedureItems();
+  void updateModelHighlights();
   void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet);
   void loadAlternateFromFlightplan(bool quiet);
 

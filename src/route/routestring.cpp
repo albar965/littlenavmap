@@ -352,7 +352,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
         ident = coords::toDegMinFormat(leg.getPosition());
     }
 
-    if(airway.isEmpty() || leg.isAirwaySetAndInvalid() || options & rs::NO_AIRWAYS)
+    if(airway.isEmpty() || leg.isAirwaySetAndInvalid(map::INVALID_ALTITUDE_VALUE) || options & rs::NO_AIRWAYS)
     {
       // Do not use  airway string if not found in database
       if(!lastId.isEmpty())

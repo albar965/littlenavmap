@@ -424,7 +424,8 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
                                    mapcolors::routeProcedureMissedTableColor :
                                    mapcolors::routeProcedureTableColor);
         else if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() && leg.isAirwaySetAndInvalid()))
+                (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
+                 leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
           textFormat.setForeground(Qt::red);
         else
           textFormat.setForeground(Qt::black);
@@ -531,7 +532,8 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
                     mapcolors::routeProcedureMissedTableColor :
                     mapcolors::routeProcedureTableColor;
           else if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                  (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() && leg.isAirwaySetAndInvalid()))
+                  (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
+                   leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
             color = Qt::red;
 
           if(item->textAlignment().testFlag(Qt::AlignRight))
@@ -576,7 +578,7 @@ void RouteController::aircraftPerformanceChanged()
 
     updateModelRouteTimeFuel();
 
-    highlightProcedureItems();
+    updateModelHighlights();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
     updateErrorLabel();
   }
@@ -598,7 +600,7 @@ void RouteController::windUpdated()
 
     updateModelRouteTimeFuel();
 
-    highlightProcedureItems();
+    updateModelHighlights();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
     updateErrorLabel();
   }
@@ -635,6 +637,8 @@ void RouteController::routeAltChangedDelayed()
 
   // Update performance
   updateModelRouteTimeFuel();
+  updateModelHighlights();
+
   updateErrorLabel();
   updateWindowLabel();
 
@@ -2455,7 +2459,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 void RouteController::styleChanged()
 {
   tabHandlerRoute->styleChanged();
-  highlightProcedureItems();
+  updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 }
 
@@ -3524,6 +3528,7 @@ void RouteController::updateTableModel()
     ident->setTextAlignment(Qt::AlignRight);
 
     itemRow[rc::IDENT] = ident;
+    // highlightProcedureItems() does error checking for IDENT
 
     // Region, navaid name, procedure type ===========================================
     itemRow[rc::REGION] = new QStandardItem(leg.getRegion());
@@ -3537,19 +3542,24 @@ void RouteController::updateTableModel()
     // Airway or leg type and restriction ===========================================
     if(leg.isRoute())
     {
+      // Airway ========================
       itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(leg.getAirwayName());
-      if(leg.getAirway().isValid() && leg.getAirway().minAltitude > 0)
-        itemRow[rc::RESTRICTION] = new QStandardItem(Unit::altFeet(leg.getAirway().minAltitude, false));
+      const map::MapAirway& airway = leg.getAirway();
+      if(airway.isValid())
+        itemRow[rc::RESTRICTION] =
+          new QStandardItem(map::airwayAltTextShort(airway, false /* addUnit */, false /* narrow */));
+      // highlightProcedureItems() does error checking
     }
     else
     {
+      // Procedure ========================
       itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(proc::procedureLegTypeStr(leg.getProcedureLegType()));
 
       QString restrictions;
       if(leg.getProcedureLegAltRestr().isValid())
         restrictions.append(proc::altRestrictionTextShort(leg.getProcedureLegAltRestr()));
       if(leg.getProcedureLeg().speedRestriction.isValid())
-        restrictions.append("/" + proc::speedRestrictionTextShort(leg.getProcedureLeg().speedRestriction));
+        restrictions.append(tr("/") + proc::speedRestrictionTextShort(leg.getProcedureLeg().speedRestriction));
 
       itemRow[rc::RESTRICTION] = new QStandardItem(restrictions);
     }
@@ -3692,7 +3702,7 @@ void RouteController::updateTableModel()
     }
   }
 
-  highlightProcedureItems();
+  updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
   updateWindowLabel();
 }
@@ -3919,14 +3929,16 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
       }
     }
   }
-  highlightProcedureItems();
+  updateModelHighlights();
 }
 
 /* Set colors for procedures and missing objects like waypoints and airways */
-void RouteController::highlightProcedureItems()
+void RouteController::updateModelHighlights()
 {
-  const QColor defaultColor = QApplication::palette().color(QPalette::Normal, QPalette::Text);
   bool night = NavApp::isCurrentGuiStyleNight();
+  const QColor defaultColor = QApplication::palette().color(QPalette::Normal, QPalette::Text);
+  const QColor invalidColor = night ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor;
+
   for(int row = 0; row < model->rowCount(); ++row)
   {
     const RouteLeg& leg = route.at(row);
@@ -3936,7 +3948,7 @@ void RouteController::highlightProcedureItems()
       QStandardItem *item = model->item(row, col);
       if(item != nullptr)
       {
-        // Set default font color
+        // Set default font color for all items ==============
         item->setForeground(defaultColor);
 
         if(leg.isAlternate())
@@ -3950,13 +3962,40 @@ void RouteController::highlightProcedureItems()
             item->setForeground(night ? mapcolors::routeProcedureTableColorDark : mapcolors::routeProcedureTableColor);
         }
 
-        if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
-           (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() && leg.isAirwaySetAndInvalid()))
+        // Ident colum ==========================================
+        if(col == rc::IDENT)
         {
-          item->setForeground(night ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor);
-          QFont font = item->font();
-          font.setBold(true);
-          item->setFont(font);
+          if(leg.getMapObjectType() == map::INVALID)
+          {
+            item->setForeground(invalidColor);
+            item->setToolTip(tr("Waypoint \"%1\" not found.").arg(leg.getIdent()));
+          }
+          else
+            item->setToolTip(QString());
+        }
+
+        // Airway colum ==========================================
+        if(col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute())
+        {
+          QStringList errors;
+          if(leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet(), &errors))
+          {
+            // Has airway but errors
+            item->setForeground(invalidColor);
+            QFont font = item->font();
+            font.setBold(true);
+            item->setFont(font);
+            if(!errors.isEmpty())
+              item->setToolTip(errors.join(tr("\n")));
+          }
+          else
+          {
+            // No airway or no errors
+            QFont font = item->font();
+            font.setBold(false);
+            item->setFont(font);
+            item->setToolTip(QString());
+          }
         }
       }
     }
