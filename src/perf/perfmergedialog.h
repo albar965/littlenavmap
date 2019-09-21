@@ -57,12 +57,19 @@ public:
   }
 
 private:
-  /* Indexes of all combo boxes */
-  enum ComboBoxIndex
+  /* Indexes of all combo boxes for numeric values */
+  enum ComboBoxIndexNum
   {
-    COPY,
-    MERGE,
-    IGNORE
+    NUM_COPY,
+    NUM_MERGE,
+    NUM_IGNORE
+  };
+
+  /* Indexes of all combo boxes for string values */
+  enum ComboBoxIndexStr
+  {
+    STR_COPY,
+    STR_IGNORE
   };
 
   void restoreState();
@@ -74,11 +81,12 @@ private:
   void process();
 
   /* Copy, merge or ignore values based on combo box index and update changed flag */
-  float proc(QComboBox *combo, float fromValue, float toValue);
-  QString proc(QComboBox *combo, QString fromValue, QString toValue);
+  float procNum(QComboBox *combo, float fromValue, float toValue);
+  QString procStr(QComboBox *combo, QString fromValue, QString toValue);
 
   /* Set all combo boxes to the given index */
-  void updateComboBoxWidgets(ComboBoxIndex idx);
+  void updateComboBoxWidgetsNum(ComboBoxIndexNum idx);
+  void updateComboBoxWidgetsStr(ComboBoxIndexStr idx);
 
   /* Update labels showing the current values */
   void updateWidgetValues();

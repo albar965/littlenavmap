@@ -159,28 +159,28 @@ void PerfMergeDialog::process()
   // change flag is reset by proc method if values differ
   changed = false;
 
-  to.setName(proc(ui->comboBoxName, from.getName(), to.getName()));
-  to.setAircraftType(proc(ui->comboBoxType, from.getAircraftType(), to.getAircraftType()));
+  to.setName(procStr(ui->comboBoxName, from.getName(), to.getName()));
+  to.setAircraftType(procStr(ui->comboBoxType, from.getAircraftType(), to.getAircraftType()));
 
-  to.setClimbFuelFlow(proc(ui->comboBoxClimbFuelFlow, from.getClimbFuelFlow(), to.getClimbFuelFlow()));
-  to.setClimbSpeed(proc(ui->comboBoxClimbSpeed, from.getClimbSpeed(), to.getClimbSpeed()));
-  to.setClimbVertSpeed(proc(ui->comboBoxClimbVertSpeed, from.getClimbVertSpeed(), to.getClimbVertSpeed()));
-  to.setCruiseFuelFlow(proc(ui->comboBoxCruiseFuelFlow, from.getCruiseFuelFlow(), to.getCruiseFuelFlow()));
-  to.setCruiseSpeed(proc(ui->comboBoxCruiseSpeed, from.getCruiseSpeed(), to.getCruiseSpeed()));
-  to.setDescentFuelFlow(proc(ui->comboBoxDescentFuelFlow, from.getDescentFuelFlow(), to.getDescentFuelFlow()));
-  to.setDescentSpeed(proc(ui->comboBoxDescentSpeed, from.getDescentSpeed(), to.getDescentSpeed()));
-  to.setDescentVertSpeed(proc(ui->comboBoxDescentVertSpeed, from.getDescentVertSpeed(), to.getDescentVertSpeed()));
-  to.setTaxiFuel(proc(ui->comboBoxTaxiFuel, from.getTaxiFuel(), to.getTaxiFuel()));
+  to.setClimbFuelFlow(procNum(ui->comboBoxClimbFuelFlow, from.getClimbFuelFlow(), to.getClimbFuelFlow()));
+  to.setClimbSpeed(procNum(ui->comboBoxClimbSpeed, from.getClimbSpeed(), to.getClimbSpeed()));
+  to.setClimbVertSpeed(procNum(ui->comboBoxClimbVertSpeed, from.getClimbVertSpeed(), to.getClimbVertSpeed()));
+  to.setCruiseFuelFlow(procNum(ui->comboBoxCruiseFuelFlow, from.getCruiseFuelFlow(), to.getCruiseFuelFlow()));
+  to.setCruiseSpeed(procNum(ui->comboBoxCruiseSpeed, from.getCruiseSpeed(), to.getCruiseSpeed()));
+  to.setDescentFuelFlow(procNum(ui->comboBoxDescentFuelFlow, from.getDescentFuelFlow(), to.getDescentFuelFlow()));
+  to.setDescentSpeed(procNum(ui->comboBoxDescentSpeed, from.getDescentSpeed(), to.getDescentSpeed()));
+  to.setDescentVertSpeed(procNum(ui->comboBoxDescentVertSpeed, from.getDescentVertSpeed(), to.getDescentVertSpeed()));
+  to.setTaxiFuel(procNum(ui->comboBoxTaxiFuel, from.getTaxiFuel(), to.getTaxiFuel()));
 
   if(showAllWidgets)
   {
-    to.setAlternateFuelFlow(proc(ui->comboBoxAlternateFuelFlow, from.getAlternateFuelFlow(),
-                                 to.getAlternateFuelFlow()));
-    to.setAlternateSpeed(proc(ui->comboBoxAlternateSpeed, from.getAlternateSpeed(), to.getAlternateSpeed()));
-    to.setContingencyFuel(proc(ui->comboBoxContingencyFuel, from.getContingencyFuel(), to.getContingencyFuel()));
-    to.setExtraFuel(proc(ui->comboBoxExtraFuel, from.getExtraFuel(), to.getExtraFuel()));
-    to.setReserveFuel(proc(ui->comboBoxReserveFuel, from.getReserveFuel(), to.getReserveFuel()));
-    to.setUsableFuel(proc(ui->comboBoxUsableFuel, from.getUsableFuel(), to.getUsableFuel()));
+    to.setAlternateFuelFlow(procNum(ui->comboBoxAlternateFuelFlow, from.getAlternateFuelFlow(),
+                                    to.getAlternateFuelFlow()));
+    to.setAlternateSpeed(procNum(ui->comboBoxAlternateSpeed, from.getAlternateSpeed(), to.getAlternateSpeed()));
+    to.setContingencyFuel(procNum(ui->comboBoxContingencyFuel, from.getContingencyFuel(), to.getContingencyFuel()));
+    to.setExtraFuel(procNum(ui->comboBoxExtraFuel, from.getExtraFuel(), to.getExtraFuel()));
+    to.setReserveFuel(procNum(ui->comboBoxReserveFuel, from.getReserveFuel(), to.getReserveFuel()));
+    to.setUsableFuel(procNum(ui->comboBoxUsableFuel, from.getUsableFuel(), to.getUsableFuel()));
   }
 }
 
@@ -274,25 +274,31 @@ void PerfMergeDialog::updateWidgetValues()
 
 void PerfMergeDialog::ignoreClicked()
 {
-  updateComboBoxWidgets(IGNORE);
+  updateComboBoxWidgetsNum(NUM_IGNORE);
+  updateComboBoxWidgetsStr(STR_IGNORE);
 }
 
 void PerfMergeDialog::copyClicked()
 {
-  updateComboBoxWidgets(COPY);
+  updateComboBoxWidgetsNum(NUM_COPY);
+  updateComboBoxWidgetsStr(STR_COPY);
 }
 
 void PerfMergeDialog::mergeClicked()
 {
-  updateComboBoxWidgets(MERGE);
+  updateComboBoxWidgetsNum(NUM_MERGE);
+  updateComboBoxWidgetsStr(STR_COPY);
 }
 
-void PerfMergeDialog::updateComboBoxWidgets(ComboBoxIndex idx)
+void PerfMergeDialog::updateComboBoxWidgetsStr(ComboBoxIndexStr idx)
 {
   /* Ignore copy merge */
   ui->comboBoxName->setCurrentIndex(idx);
   ui->comboBoxType->setCurrentIndex(idx);
+}
 
+void PerfMergeDialog::updateComboBoxWidgetsNum(ComboBoxIndexNum idx)
+{
   ui->comboBoxClimbFuelFlow->setCurrentIndex(idx);
   ui->comboBoxClimbSpeed->setCurrentIndex(idx);
   ui->comboBoxClimbVertSpeed->setCurrentIndex(idx);
@@ -314,34 +320,32 @@ void PerfMergeDialog::updateComboBoxWidgets(ComboBoxIndex idx)
   }
 }
 
-float PerfMergeDialog::proc(QComboBox *combo, float fromValue, float toValue)
+float PerfMergeDialog::procNum(QComboBox *combo, float fromValue, float toValue)
 {
-  ComboBoxIndex idx = static_cast<ComboBoxIndex>(combo->currentIndex());
-  if(idx != IGNORE)
+  ComboBoxIndexNum idx = static_cast<ComboBoxIndexNum>(combo->currentIndex());
+  if(idx != NUM_IGNORE)
   {
     if(atools::almostNotEqual(fromValue, toValue))
       changed = true;
 
-    if(idx == COPY)
+    if(idx == NUM_COPY)
       return fromValue;
-    else if(idx == MERGE)
+    else if(idx == NUM_MERGE)
       return (toValue + fromValue) / 2.f;
   }
   return toValue;
 }
 
-QString PerfMergeDialog::proc(QComboBox *combo, QString fromValue, QString toValue)
+QString PerfMergeDialog::procStr(QComboBox *combo, QString fromValue, QString toValue)
 {
-  ComboBoxIndex idx = static_cast<ComboBoxIndex>(combo->currentIndex());
-  if(idx != IGNORE)
+  ComboBoxIndexStr idx = static_cast<ComboBoxIndexStr>(combo->currentIndex());
+  if(idx != STR_IGNORE)
   {
     if(fromValue != toValue)
       changed = true;
 
-    if(idx == COPY)
+    if(idx == STR_COPY)
       return fromValue;
-    else if(idx == MERGE)
-      return toValue + PerfMergeDialog::tr(" / ") + fromValue;
   }
   return toValue;
 }

@@ -88,11 +88,6 @@
      </item>
      <item>
       <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Ignore</string>
       </property>
      </item>
@@ -792,11 +787,6 @@
      <item>
       <property name="text">
        <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
       </property>
      </item>
      <item>
