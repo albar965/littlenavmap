@@ -150,7 +150,7 @@ void MapScreenIndex::resetAirspaceOnlineScreenGeometry()
   NavApp::getAirspaceController()->resetAirspaceOnlineScreenGeometry();
 }
 
-void MapScreenIndex::resetIlsOnlineScreenGeometry()
+void MapScreenIndex::resetIlsScreenGeometry()
 {
   ilsPolygons.clear();
   ilsLines.clear();
@@ -184,8 +184,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
 
 void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
 {
-  ilsPolygons.clear();
-  ilsLines.clear();
+  resetIlsScreenGeometry();
 
   if(paintLayer == nullptr || paintLayer->getMapLayer() == nullptr)
     return;

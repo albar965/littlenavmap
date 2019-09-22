@@ -3820,6 +3820,7 @@ void MapWidget::setDetailLevel(int factor)
   updateMapVisibleUi();
   getScreenIndex()->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
   getScreenIndex()->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
+  getScreenIndex()->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
 #ifdef DEBUG_MOVING_AIRPLANE

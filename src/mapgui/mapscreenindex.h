@@ -86,7 +86,7 @@ public:
 
   /* Clear internal caches */
   void resetAirspaceOnlineScreenGeometry();
-  void resetIlsOnlineScreenGeometry();
+  void resetIlsScreenGeometry();
 
   /* Save and restore distance markers and range rings */
   void saveState() const;
