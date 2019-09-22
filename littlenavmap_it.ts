@@ -787,7 +787,7 @@ Utilizzare un valore approssimativo per il peso massimo al decollo.</translation
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="94"/>
         <source>Aircraft &amp;type:</source>
-        <translation>&amp;tipo Aereo:</translation>
+        <translation>&amp;Tipo aereo:</translation>
     </message>
     <message>
         <source>ICAO aircraft type like B732 or C172</source>
@@ -6545,7 +6545,7 @@ Orario Sim. UTC</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10331"/>
         <source>Export Flight Plan as Level-D &amp;RTE ...</source>
-        <translation>Salva Piano di Volo come Level-D &amp;RTE ...</translation>
+        <translation>Esporta Piano di Volo come Level-D &amp;RTE ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10334"/>
@@ -9671,7 +9671,7 @@ Il simulatore potrebbe non essere in grado di caricare il piano di volo.</transl
     </message>
     <message>
         <source>The old X-Plane FMS format version 3 does not allow saving of:&lt;ul&gt;&lt;li&gt;Procedures&lt;/li&gt;&lt;li&gt;Airways&lt;/li&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;/ul&gt;This information will be lost when reloading the file.&lt;br/&gt;&lt;br/&gt;Really save as FMS file?&lt;br/&gt;</source>
-        <translation type="vanished">Il vecchio formato X-Plane FMS versione 3 non consente il salvataggio di:&lt;ul&gt;&lt;li&gt; Procedure&lt;/li&gt;&lt;li&gt;Aerovie&lt;/li&gt;&lt;li&gt;Velocità a terra&lt;/li&gt;&lt;li&gt; Posizione di parcheggio di partenza&lt;/li&gt;&lt;li&gt; Tipi (IFR / VFR, Alt.Inferiri/Alt.Superiori)&lt;/li&gt;&lt;/ul&gt; Queste informazioni andranno perse ricaricando il file.&lt;br/&gt;&lt;br/&gt; Salva veramente come file FMS?&lt;br/&gt;</translation>
+        <translation type="vanished">Il vecchio formato X-Plane FMS versione 3 non consente il salvataggio di:&lt;ul&gt;&lt;li&gt; Procedure&lt;/li&gt;&lt;li&gt;Aerovie&lt;/li&gt;&lt;li&gt;Velocità al suolo&lt;/li&gt;&lt;li&gt; Posizione di parcheggio di partenza&lt;/li&gt;&lt;li&gt; Tipi (IFR / VFR, Alt.Inferiri/Alt.Superiori)&lt;/li&gt;&lt;/ul&gt; Queste informazioni andranno perse ricaricando il file.&lt;br/&gt;&lt;br/&gt; Salva veramente come file FMS?&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2025"/>
@@ -12566,7 +12566,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="3423"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3427"/>
         <source>Cross Track Distance:</source>
-        <translation>Distanza Attraversamento Traccia:</translation>
+        <translation>Scostamento dalla Rotta:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3427"/>
@@ -12879,7 +12879,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3582"/>
         <source>Groundspeed:</source>
-        <translation>Velocità a terra:</translation>
+        <translation>Velocità al suolo:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3586"/>
@@ -14519,7 +14519,7 @@ Durata</translation>
         <source>Groundspeed
 %speed%</source>
         <oldsource>Groundspeed</oldsource>
-        <translation>Velocità a terra
+        <translation>Velocità al suolo
 %speed%</translation>
     </message>
     <message>
@@ -17167,7 +17167,7 @@ Cambia solo le impostazioni che possono essere fatte con questa finestra di dial
         <location filename="src/options/optionsdialog.cpp" line="195"/>
         <location filename="src/options/optionsdialog.cpp" line="207"/>
         <source>Ground Speed</source>
-        <translation>Velocità a terra</translation>
+        <translation>Velocità al suolo</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="196"/>
@@ -18020,6 +18020,26 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="86"/>
+        <location filename="src/perf/perfmergedialog.ui" line="176"/>
+        <location filename="src/perf/perfmergedialog.ui" line="195"/>
+        <location filename="src/perf/perfmergedialog.ui" line="227"/>
+        <location filename="src/perf/perfmergedialog.ui" line="379"/>
+        <location filename="src/perf/perfmergedialog.ui" line="490"/>
+        <location filename="src/perf/perfmergedialog.ui" line="554"/>
+        <location filename="src/perf/perfmergedialog.ui" line="676"/>
+        <location filename="src/perf/perfmergedialog.ui" line="734"/>
+        <location filename="src/perf/perfmergedialog.ui" line="763"/>
+        <location filename="src/perf/perfmergedialog.ui" line="789"/>
+        <location filename="src/perf/perfmergedialog.ui" line="855"/>
+        <location filename="src/perf/perfmergedialog.ui" line="942"/>
+        <location filename="src/perf/perfmergedialog.ui" line="984"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1003"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1058"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1077"/>
+        <source>Copy</source>
+        <translation>Copia</translation>
+    </message>
+    <message>
         <location filename="src/perf/perfmergedialog.ui" line="181"/>
         <location filename="src/perf/perfmergedialog.ui" line="200"/>
         <location filename="src/perf/perfmergedialog.ui" line="232"/>
@@ -18029,6 +18049,27 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
         <location filename="src/perf/perfmergedialog.ui" line="681"/>
         <location filename="src/perf/perfmergedialog.ui" line="739"/>
         <location filename="src/perf/perfmergedialog.ui" line="768"/>
+        <location filename="src/perf/perfmergedialog.ui" line="860"/>
+        <location filename="src/perf/perfmergedialog.ui" line="947"/>
+        <location filename="src/perf/perfmergedialog.ui" line="989"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1008"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1063"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1082"/>
+        <source>Merge</source>
+        <translation>Unisci</translation>
+    </message>
+    <message>
+        <location filename="src/perf/perfmergedialog.ui" line="91"/>
+        <location filename="src/perf/perfmergedialog.ui" line="186"/>
+        <location filename="src/perf/perfmergedialog.ui" line="205"/>
+        <location filename="src/perf/perfmergedialog.ui" line="237"/>
+        <location filename="src/perf/perfmergedialog.ui" line="330"/>
+        <location filename="src/perf/perfmergedialog.ui" line="389"/>
+        <location filename="src/perf/perfmergedialog.ui" line="500"/>
+        <location filename="src/perf/perfmergedialog.ui" line="564"/>
+        <location filename="src/perf/perfmergedialog.ui" line="686"/>
+        <location filename="src/perf/perfmergedialog.ui" line="744"/>
+        <location filename="src/perf/perfmergedialog.ui" line="773"/>
         <location filename="src/perf/perfmergedialog.ui" line="794"/>
         <location filename="src/perf/perfmergedialog.ui" line="865"/>
         <location filename="src/perf/perfmergedialog.ui" line="952"/>
@@ -18036,201 +18077,157 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
         <location filename="src/perf/perfmergedialog.ui" line="1013"/>
         <location filename="src/perf/perfmergedialog.ui" line="1068"/>
         <location filename="src/perf/perfmergedialog.ui" line="1087"/>
-        <source>Copy</source>
-        <translation>Copia</translation>
-    </message>
-    <message>
-        <location filename="src/perf/perfmergedialog.ui" line="91"/>
-        <location filename="src/perf/perfmergedialog.ui" line="186"/>
-        <location filename="src/perf/perfmergedialog.ui" line="205"/>
-        <location filename="src/perf/perfmergedialog.ui" line="237"/>
-        <location filename="src/perf/perfmergedialog.ui" line="389"/>
-        <location filename="src/perf/perfmergedialog.ui" line="500"/>
-        <location filename="src/perf/perfmergedialog.ui" line="564"/>
-        <location filename="src/perf/perfmergedialog.ui" line="686"/>
-        <location filename="src/perf/perfmergedialog.ui" line="744"/>
-        <location filename="src/perf/perfmergedialog.ui" line="773"/>
-        <location filename="src/perf/perfmergedialog.ui" line="799"/>
-        <location filename="src/perf/perfmergedialog.ui" line="870"/>
-        <location filename="src/perf/perfmergedialog.ui" line="957"/>
-        <location filename="src/perf/perfmergedialog.ui" line="999"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1018"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1073"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1092"/>
-        <source>Merge</source>
-        <translation>Unisci</translation>
-    </message>
-    <message>
-        <location filename="src/perf/perfmergedialog.ui" line="96"/>
-        <location filename="src/perf/perfmergedialog.ui" line="191"/>
-        <location filename="src/perf/perfmergedialog.ui" line="210"/>
-        <location filename="src/perf/perfmergedialog.ui" line="242"/>
-        <location filename="src/perf/perfmergedialog.ui" line="335"/>
-        <location filename="src/perf/perfmergedialog.ui" line="394"/>
-        <location filename="src/perf/perfmergedialog.ui" line="505"/>
-        <location filename="src/perf/perfmergedialog.ui" line="569"/>
-        <location filename="src/perf/perfmergedialog.ui" line="691"/>
-        <location filename="src/perf/perfmergedialog.ui" line="749"/>
-        <location filename="src/perf/perfmergedialog.ui" line="778"/>
-        <location filename="src/perf/perfmergedialog.ui" line="804"/>
-        <location filename="src/perf/perfmergedialog.ui" line="875"/>
-        <location filename="src/perf/perfmergedialog.ui" line="962"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1004"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1023"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1078"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1097"/>
         <source>Ignore</source>
         <translation>Ignora</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="130"/>
+        <location filename="src/perf/perfmergedialog.ui" line="125"/>
         <source>Average vertical &amp;descent speed:</source>
         <translation>Velocità media verticale di &amp;discesa:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="147"/>
+        <location filename="src/perf/perfmergedialog.ui" line="142"/>
         <source>C&amp;ruise speed at typical cruise altitude:</source>
         <translation>Velocità di c&amp;rociera alla tipica altitudine di crociera:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="170"/>
+        <location filename="src/perf/perfmergedialog.ui" line="165"/>
         <source>&amp;Extra fuel:</source>
         <translation>Carburante &amp;extra:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="321"/>
+        <location filename="src/perf/perfmergedialog.ui" line="316"/>
         <source>&amp;Copy</source>
         <translation>&amp;Copia</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="328"/>
+        <location filename="src/perf/perfmergedialog.ui" line="323"/>
         <source>&amp;Merge</source>
         <translation>&amp;Unisci</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="402"/>
+        <location filename="src/perf/perfmergedialog.ui" line="397"/>
         <source>Average &amp;descent speed:</source>
         <translation>Velocità media di &amp;discesa:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="425"/>
+        <location filename="src/perf/perfmergedialog.ui" line="420"/>
         <source>Fuel flow in c&amp;ruise:</source>
         <translation>Consumo carburante in c&amp;rociera:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="448"/>
+        <location filename="src/perf/perfmergedialog.ui" line="443"/>
         <source>&amp;Reserve fuel:</source>
         <translation>Carburante di &amp;riserva:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="484"/>
+        <location filename="src/perf/perfmergedialog.ui" line="479"/>
         <source>&amp;Usable fuel:</source>
         <translation>Carburante &amp;utilizzabile:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="526"/>
+        <location filename="src/perf/perfmergedialog.ui" line="521"/>
         <source>Average fuel flow for &amp;climb:</source>
         <translation>Consumo carburante medio di &amp;salita:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="542"/>
+        <location filename="src/perf/perfmergedialog.ui" line="537"/>
         <source>Current Value</source>
         <translation>Valore Corrente</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="577"/>
+        <location filename="src/perf/perfmergedialog.ui" line="572"/>
         <source>Average fuel flow for &amp;alternate:</source>
         <translation>Consumo carburante medio per l&apos;&amp;alternato:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="653"/>
+        <location filename="src/perf/perfmergedialog.ui" line="648"/>
         <source>Average fuel flow for &amp;descent:</source>
         <translation>Consumo carburante medio di &amp;discesa:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="663"/>
+        <location filename="src/perf/perfmergedialog.ui" line="658"/>
         <source>&amp;Alternate speed:</source>
         <translation>Velocità per l&apos;&amp;alternato:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="673"/>
+        <location filename="src/perf/perfmergedialog.ui" line="668"/>
         <source>Set all operations to:</source>
         <translation>Reimposta tutte le opzioni a:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="757"/>
+        <location filename="src/perf/perfmergedialog.ui" line="752"/>
         <source>Average &amp;climb speed:</source>
         <translation>Velocità media di &amp;salita:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="928"/>
+        <location filename="src/perf/perfmergedialog.ui" line="918"/>
         <source>New Value ►</source>
         <translation>Nuovo Valore ►</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="941"/>
+        <location filename="src/perf/perfmergedialog.ui" line="931"/>
         <source>Aircraft &amp;model:</source>
         <translation>&amp;Modello aereo:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="983"/>
+        <location filename="src/perf/perfmergedialog.ui" line="973"/>
         <source>Aircraft &amp;type:</source>
         <translation>&amp;Tipo aereo:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="1031"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1021"/>
         <source>Average vertical &amp;climb speed:</source>
         <translation>Velocità media verticale di &amp;salita:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="1105"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1095"/>
         <source>&amp;Taxi fuel:</source>
         <translation>Carburante per il &amp;Taxi:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.cpp" line="189"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="202"/>
         <source> ►</source>
         <translation> ►</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.cpp" line="194"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="207"/>
         <source>Fuel type does not match.</source>
         <translation>Il tipo di carburante non corrisponde.</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.cpp" line="198"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="211"/>
         <source>&lt;p&gt;From &lt;b&gt;%1&lt;/b&gt;, type &lt;b&gt;%2&lt;/b&gt;, fuel type &lt;b&gt;%3&lt;/b&gt;&lt;br/&gt;to &lt;b&gt;%4&lt;/b&gt;, type &lt;b&gt;%5&lt;/b&gt;, fuel type &lt;b&gt;%6&lt;/b&gt;&lt;/p&gt;%7</source>
         <translation>&lt;p&gt;Da &lt;b&gt;%1&lt;/b&gt;, tipo &lt;b&gt;%2&lt;/b&gt;, tipo carburante &lt;b&gt;%3&lt;/b&gt;&lt;br/&gt;a &lt;b&gt;%4&lt;/b&gt;, tipo &lt;b&gt;%5&lt;/b&gt;, tipo carburante &lt;b&gt;%6&lt;/b&gt;&lt;/p&gt;%7</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.cpp" line="202"/>
-        <location filename="src/perf/perfmergedialog.cpp" line="205"/>
-        <location filename="src/perf/perfmergedialog.cpp" line="212"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="215"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="218"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="225"/>
         <source>Avgas</source>
         <translation>Benzina avio</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.cpp" line="202"/>
-        <location filename="src/perf/perfmergedialog.cpp" line="205"/>
-        <location filename="src/perf/perfmergedialog.cpp" line="212"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="215"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="218"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="225"/>
         <source>Jetfuel</source>
         <translation>Carburante per Jet</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.cpp" line="208"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="221"/>
         <source>&lt;p&gt;Merge current background collected performance to&lt;br/&gt;&lt;b&gt;%1&lt;/b&gt;, type &lt;b&gt;%2&lt;/b&gt;, fuel type &lt;b&gt;%3&lt;/b&gt;&lt;/p&gt;%4</source>
         <translation>&lt;p&gt;Unisci le prestazioni attuali raccolte in background a&lt;br/&gt;&lt;b&gt;%1&lt;/b&gt;, tipo &lt;b&gt;%2&lt;/b&gt;, tipo carburante &lt;b&gt;%3&lt;/b&gt;&lt;/p&gt;%4</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.cpp" line="261"/>
-        <location filename="src/perf/perfmergedialog.cpp" line="262"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="275"/>
+        <location filename="src/perf/perfmergedialog.cpp" line="276"/>
         <source> percent</source>
         <translation> percento</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.cpp" line="344"/>
         <source> / </source>
-        <translation> / </translation>
+        <translation type="vanished"> / </translation>
     </message>
 </context>
 <context>
@@ -21258,7 +21255,7 @@ MHz/kHz/Cha.</translation>
         <location filename="src/route/routecontroller.cpp" line="131"/>
         <source>Remaining
 %dist%</source>
-        <translation>Reimanente
+        <translation>Rimanente
 %dist%</translation>
     </message>
     <message>
@@ -22856,7 +22853,7 @@ per selezionare partenza e destinazione.</translation>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="392"/>
         <source>Aircraft &amp;type:</source>
-        <translation>&amp;tipo Aereo:</translation>
+        <translation>&amp;Tipo aereo:</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="402"/>
