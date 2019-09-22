@@ -34,11 +34,17 @@
 
 using atools::fs::perf::AircraftPerf;
 
-PerfMergeDialog::PerfMergeDialog(QWidget *parent, const AircraftPerf& sourcePerf, AircraftPerf& destPerf, bool showAll)
-  : QDialog(parent), ui(new Ui::PerfMergeDialog), from(sourcePerf), to(destPerf), showAllWidgets(showAll)
+PerfMergeDialog::PerfMergeDialog(QWidget *parent, const AircraftPerf& sourcePerfLbs, AircraftPerf& destPerf,
+                                 bool showAll)
+  : QDialog(parent), ui(new Ui::PerfMergeDialog), to(destPerf), showAllWidgets(showAll)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
+
+  from = new atools::fs::perf::AircraftPerf(sourcePerfLbs);
+
+  if(to.useFuelAsVolume())
+    from->fromLbsToGal();
 
   ui->setupUi(this);
 
@@ -87,6 +93,7 @@ PerfMergeDialog::~PerfMergeDialog()
 {
   atools::gui::WidgetState(lnm::AIRCRAFT_PERF_MERGE_DIALOG).save(this);
 
+  delete from;
   delete ui;
 }
 
@@ -111,6 +118,12 @@ void PerfMergeDialog::restoreState()
               ui->comboBoxExtraFuel,
               ui->comboBoxReserveFuel,
               ui->comboBoxUsableFuel});
+
+  // Reset values after change from beta 2.4.1 to 2.4.2
+  if(ui->comboBoxName->currentIndex() < 0 || ui->comboBoxName->currentIndex() > 1)
+    ui->comboBoxName->setCurrentIndex(0);
+  if(ui->comboBoxType->currentIndex() < 0 || ui->comboBoxType->currentIndex() > 1)
+    ui->comboBoxType->setCurrentIndex(0);
 }
 
 void PerfMergeDialog::saveState()
@@ -159,28 +172,28 @@ void PerfMergeDialog::process()
   // change flag is reset by proc method if values differ
   changed = false;
 
-  to.setName(procStr(ui->comboBoxName, from.getName(), to.getName()));
-  to.setAircraftType(procStr(ui->comboBoxType, from.getAircraftType(), to.getAircraftType()));
+  to.setName(procStr(ui->comboBoxName, from->getName(), to.getName()));
+  to.setAircraftType(procStr(ui->comboBoxType, from->getAircraftType(), to.getAircraftType()));
 
-  to.setClimbFuelFlow(procNum(ui->comboBoxClimbFuelFlow, from.getClimbFuelFlow(), to.getClimbFuelFlow()));
-  to.setClimbSpeed(procNum(ui->comboBoxClimbSpeed, from.getClimbSpeed(), to.getClimbSpeed()));
-  to.setClimbVertSpeed(procNum(ui->comboBoxClimbVertSpeed, from.getClimbVertSpeed(), to.getClimbVertSpeed()));
-  to.setCruiseFuelFlow(procNum(ui->comboBoxCruiseFuelFlow, from.getCruiseFuelFlow(), to.getCruiseFuelFlow()));
-  to.setCruiseSpeed(procNum(ui->comboBoxCruiseSpeed, from.getCruiseSpeed(), to.getCruiseSpeed()));
-  to.setDescentFuelFlow(procNum(ui->comboBoxDescentFuelFlow, from.getDescentFuelFlow(), to.getDescentFuelFlow()));
-  to.setDescentSpeed(procNum(ui->comboBoxDescentSpeed, from.getDescentSpeed(), to.getDescentSpeed()));
-  to.setDescentVertSpeed(procNum(ui->comboBoxDescentVertSpeed, from.getDescentVertSpeed(), to.getDescentVertSpeed()));
-  to.setTaxiFuel(procNum(ui->comboBoxTaxiFuel, from.getTaxiFuel(), to.getTaxiFuel()));
+  to.setClimbFuelFlow(procNum(ui->comboBoxClimbFuelFlow, from->getClimbFuelFlow(), to.getClimbFuelFlow()));
+  to.setClimbSpeed(procNum(ui->comboBoxClimbSpeed, from->getClimbSpeed(), to.getClimbSpeed()));
+  to.setClimbVertSpeed(procNum(ui->comboBoxClimbVertSpeed, from->getClimbVertSpeed(), to.getClimbVertSpeed()));
+  to.setCruiseFuelFlow(procNum(ui->comboBoxCruiseFuelFlow, from->getCruiseFuelFlow(), to.getCruiseFuelFlow()));
+  to.setCruiseSpeed(procNum(ui->comboBoxCruiseSpeed, from->getCruiseSpeed(), to.getCruiseSpeed()));
+  to.setDescentFuelFlow(procNum(ui->comboBoxDescentFuelFlow, from->getDescentFuelFlow(), to.getDescentFuelFlow()));
+  to.setDescentSpeed(procNum(ui->comboBoxDescentSpeed, from->getDescentSpeed(), to.getDescentSpeed()));
+  to.setDescentVertSpeed(procNum(ui->comboBoxDescentVertSpeed, from->getDescentVertSpeed(), to.getDescentVertSpeed()));
+  to.setTaxiFuel(procNum(ui->comboBoxTaxiFuel, from->getTaxiFuel(), to.getTaxiFuel()));
 
   if(showAllWidgets)
   {
-    to.setAlternateFuelFlow(procNum(ui->comboBoxAlternateFuelFlow, from.getAlternateFuelFlow(),
+    to.setAlternateFuelFlow(procNum(ui->comboBoxAlternateFuelFlow, from->getAlternateFuelFlow(),
                                     to.getAlternateFuelFlow()));
-    to.setAlternateSpeed(procNum(ui->comboBoxAlternateSpeed, from.getAlternateSpeed(), to.getAlternateSpeed()));
-    to.setContingencyFuel(procNum(ui->comboBoxContingencyFuel, from.getContingencyFuel(), to.getContingencyFuel()));
-    to.setExtraFuel(procNum(ui->comboBoxExtraFuel, from.getExtraFuel(), to.getExtraFuel()));
-    to.setReserveFuel(procNum(ui->comboBoxReserveFuel, from.getReserveFuel(), to.getReserveFuel()));
-    to.setUsableFuel(procNum(ui->comboBoxUsableFuel, from.getUsableFuel(), to.getUsableFuel()));
+    to.setAlternateSpeed(procNum(ui->comboBoxAlternateSpeed, from->getAlternateSpeed(), to.getAlternateSpeed()));
+    to.setContingencyFuel(procNum(ui->comboBoxContingencyFuel, from->getContingencyFuel(), to.getContingencyFuel()));
+    to.setExtraFuel(procNum(ui->comboBoxExtraFuel, from->getExtraFuel(), to.getExtraFuel()));
+    to.setReserveFuel(procNum(ui->comboBoxReserveFuel, from->getReserveFuel(), to.getReserveFuel()));
+    to.setUsableFuel(procNum(ui->comboBoxUsableFuel, from->getUsableFuel(), to.getUsableFuel()));
   }
 }
 
@@ -190,16 +203,16 @@ void PerfMergeDialog::updateWidgetValues()
 
   // Show error if fuel type mismatch =====================================================
   QString err;
-  if(from.isJetFuel() != to.isJetFuel())
+  if(from->isJetFuel() != to.isJetFuel())
     err = "<p>" + atools::util::HtmlBuilder::errorMessage(tr("Fuel type does not match.")) + "</p>";
 
   // Update header =====================================================
   if(showAllWidgets)
     ui->labelAircraft->setText(tr("<p>From <b>%1</b>, type <b>%2</b>, fuel type <b>%3</b><br/>"
                                   "to <b>%4</b>, type <b>%5</b>, fuel type <b>%6</b></p>%7").
-                               arg(from.getName()).
-                               arg(from.getAircraftType()).
-                               arg(from.isAvgas() ? tr("Avgas") : tr("Jetfuel")).
+                               arg(from->getName()).
+                               arg(from->getAircraftType()).
+                               arg(from->isAvgas() ? tr("Avgas") : tr("Jetfuel")).
                                arg(to.getName()).
                                arg(to.getAircraftType()).
                                arg(to.isAvgas() ? tr("Avgas") : tr("Jetfuel")).
@@ -213,61 +226,62 @@ void PerfMergeDialog::updateWidgetValues()
                                arg(err));
 
   // Update labels with current values from and to =============================================
-  ui->labelNameValue->setText(from.getName() + arr);
+  ui->labelNameValue->setText(from->getName() + arr);
   ui->labelNameValue2->setText(to.getName());
-  ui->labelTypeValue->setText(from.getAircraftType() + arr);
+  ui->labelTypeValue->setText(from->getAircraftType() + arr);
   ui->labelTypeValue2->setText(to.getAircraftType());
 
-  ui->labelClimbFuelFlowValue->setText(Unit::ffLbsAndGal(from.getClimbFuelFlowLbs(), from.getClimbFuelFlowGal()) + arr);
+  ui->labelClimbFuelFlowValue->setText(Unit::ffLbsAndGal(from->getClimbFuelFlowLbs(),
+                                                         from->getClimbFuelFlowGal()) + arr);
   ui->labelClimbFuelFlowValue2->setText(Unit::ffLbsAndGal(to.getClimbFuelFlowLbs(), to.getClimbFuelFlowGal()));
 
-  ui->labelClimbSpeedValue->setText(Unit::speedKts(from.getClimbSpeed()) + arr);
+  ui->labelClimbSpeedValue->setText(Unit::speedKts(from->getClimbSpeed()) + arr);
   ui->labelClimbSpeedValue2->setText(Unit::speedKts(to.getClimbSpeed()));
 
-  ui->labelClimbVertSpeedValue->setText(Unit::speedVertFpm(from.getClimbVertSpeed()) + arr);
+  ui->labelClimbVertSpeedValue->setText(Unit::speedVertFpm(from->getClimbVertSpeed()) + arr);
   ui->labelClimbVertSpeedValue2->setText(Unit::speedVertFpm(to.getClimbVertSpeed()));
 
-  ui->labelCruiseFuelFlowValue->setText(Unit::ffLbsAndGal(from.getCruiseFuelFlowLbs(),
-                                                          from.getCruiseFuelFlowGal()) + arr);
+  ui->labelCruiseFuelFlowValue->setText(Unit::ffLbsAndGal(from->getCruiseFuelFlowLbs(),
+                                                          from->getCruiseFuelFlowGal()) + arr);
   ui->labelCruiseFuelFlowValue2->setText(Unit::ffLbsAndGal(to.getCruiseFuelFlowLbs(), to.getCruiseFuelFlowGal()));
 
-  ui->labelCruiseSpeedValue->setText(Unit::speedKts(from.getCruiseSpeed()) + arr);
+  ui->labelCruiseSpeedValue->setText(Unit::speedKts(from->getCruiseSpeed()) + arr);
   ui->labelCruiseSpeedValue2->setText(Unit::speedKts(to.getCruiseSpeed()));
 
-  ui->labelDescentFuelFlowValue->setText(Unit::ffLbsAndGal(from.getDescentFuelFlowLbs(),
-                                                           from.getDescentFuelFlowGal()) + arr);
+  ui->labelDescentFuelFlowValue->setText(Unit::ffLbsAndGal(from->getDescentFuelFlowLbs(),
+                                                           from->getDescentFuelFlowGal()) + arr);
   ui->labelDescentFuelFlowValue2->setText(Unit::ffLbsAndGal(to.getDescentFuelFlowLbs(), to.getDescentFuelFlowGal()));
 
-  ui->labelDescentSpeedValue->setText(Unit::speedKts(from.getDescentSpeed()) + arr);
+  ui->labelDescentSpeedValue->setText(Unit::speedKts(from->getDescentSpeed()) + arr);
   ui->labelDescentSpeedValue2->setText(Unit::speedKts(to.getDescentSpeed()));
 
-  ui->labelDescentVertSpeedValue->setText(Unit::speedVertFpm(from.getDescentVertSpeed()) + arr);
+  ui->labelDescentVertSpeedValue->setText(Unit::speedVertFpm(from->getDescentVertSpeed()) + arr);
   ui->labelDescentVertSpeedValue2->setText(Unit::speedVertFpm(to.getDescentVertSpeed()));
 
-  ui->labelTaxiFuelValue->setText(Unit::fuelLbsAndGal(from.getTaxiFuelLbs(), from.getTaxiFuelGal()) + arr);
+  ui->labelTaxiFuelValue->setText(Unit::fuelLbsAndGal(from->getTaxiFuelLbs(), from->getTaxiFuelGal()) + arr);
   ui->labelTaxiFuelValue2->setText(Unit::fuelLbsAndGal(to.getTaxiFuelLbs(), to.getTaxiFuelGal()));
 
   if(showAllWidgets)
   {
-    ui->labelAlternateFuelFlowValue->setText(Unit::ffLbsAndGal(from.getAlternateFuelFlowLbs(),
-                                                               from.getAlternateFuelFlowGal()) + arr);
+    ui->labelAlternateFuelFlowValue->setText(Unit::ffLbsAndGal(from->getAlternateFuelFlowLbs(),
+                                                               from->getAlternateFuelFlowGal()) + arr);
     ui->labelAlternateFuelFlowValue2->setText(Unit::ffLbsAndGal(to.getAlternateFuelFlowLbs(),
                                                                 to.getAlternateFuelFlowGal()));
 
-    ui->labelAlternateSpeedValue->setText(Unit::speedKts(from.getAlternateSpeed()) + arr);
+    ui->labelAlternateSpeedValue->setText(Unit::speedKts(from->getAlternateSpeed()) + arr);
     ui->labelAlternateSpeedValue2->setText(Unit::speedKts(to.getAlternateSpeed()));
 
-    ui->labelContingencyFuelValue->setText(QLocale().toString(from.getContingencyFuel(), 'f',
+    ui->labelContingencyFuelValue->setText(QLocale().toString(from->getContingencyFuel(), 'f',
                                                               0) + tr(" percent") + arr);
     ui->labelContingencyFuelValue2->setText(QLocale().toString(to.getContingencyFuel(), 'f', 0) + tr(" percent"));
 
-    ui->labelExtraFuelValue->setText(Unit::fuelLbsAndGal(from.getExtraFuelLbs(), from.getExtraFuelGal()) + arr);
+    ui->labelExtraFuelValue->setText(Unit::fuelLbsAndGal(from->getExtraFuelLbs(), from->getExtraFuelGal()) + arr);
     ui->labelExtraFuelValue2->setText(Unit::fuelLbsAndGal(to.getExtraFuelLbs(), to.getExtraFuelGal()));
 
-    ui->labelReserveFuelValue->setText(Unit::fuelLbsAndGal(from.getReserveFuelLbs(), from.getReserveFuelGal()) + arr);
+    ui->labelReserveFuelValue->setText(Unit::fuelLbsAndGal(from->getReserveFuelLbs(), from->getReserveFuelGal()) + arr);
     ui->labelReserveFuelValue2->setText(Unit::fuelLbsAndGal(to.getReserveFuelLbs(), to.getReserveFuelGal()));
 
-    ui->labelUsableFuelValue->setText(Unit::fuelLbsAndGal(from.getUsableFuelLbs(), from.getUsableFuelGal()) + arr);
+    ui->labelUsableFuelValue->setText(Unit::fuelLbsAndGal(from->getUsableFuelLbs(), from->getUsableFuelGal()) + arr);
     ui->labelUsableFuelValue2->setText(Unit::fuelLbsAndGal(to.getUsableFuelLbs(), to.getUsableFuelGal()));
   }
 }

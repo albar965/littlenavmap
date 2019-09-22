@@ -46,7 +46,7 @@ class PerfMergeDialog :
 public:
   /* Create dialog with source and destination peformance data. showAll = true allows to merge all fields,
    * otherwise shows only fields relevant for performance collection */
-  explicit PerfMergeDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& sourcePerf,
+  explicit PerfMergeDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& sourcePerfLbs,
                            atools::fs::perf::AircraftPerf& destPerf, bool showAll);
   virtual ~PerfMergeDialog() override;
 
@@ -98,7 +98,7 @@ private:
 
   Ui::PerfMergeDialog *ui;
 
-  const atools::fs::perf::AircraftPerf& from;
+  atools::fs::perf::AircraftPerf *from;
   atools::fs::perf::AircraftPerf& to;
 
   bool showAllWidgets = true, changed = false;

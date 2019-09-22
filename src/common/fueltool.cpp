@@ -47,6 +47,7 @@ QString FuelTool::fuelWeightVol(opts::UnitFuelAndWeight unitFuelAndWeight, float
   using namespace atools::geo;
   switch(unitFuelAndWeight)
   {
+    // Imperial units requested =================================
     case opts::FUEL_WEIGHT_GAL_LBS:
       if(fuelAsVolume)
         // Pass volume through and convert volume to weight
@@ -63,6 +64,7 @@ QString FuelTool::fuelWeightVol(opts::UnitFuelAndWeight unitFuelAndWeight, float
                arg(fromLbsToGal(jetfuel, valueLbsGal), 0, 'f', 0).
                arg(Unit::getSuffixFuelVolGal());
 
+    // Metric units requested =================================
     case opts::FUEL_WEIGHT_LITER_KG:
       if(fuelAsVolume)
         // Convert to metric and pass volume  through and convert volume to weight
