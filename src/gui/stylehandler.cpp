@@ -257,6 +257,7 @@ void StyleHandler::createDarkPalette(QPalette& palette)
   palette.setColor(QPalette::Disabled, QPalette::Text, QColor(100, 100, 100));
   palette.setColor(QPalette::Disabled, QPalette::Button, QColor(65, 65, 65));
   palette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(100, 100, 100));
+  palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(100, 100, 100));
 
   // darkPalette.setColor(QPalette::Active, QPalette::Text, QColor(100, 100, 100));
   // darkPalette.setColor(QPalette::Active, QPalette::ButtonText, QColor(100, 100, 100));
