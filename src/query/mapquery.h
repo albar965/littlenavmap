@@ -196,6 +196,9 @@ public:
   /* Create and prepare all queries */
   void deInitQueries();
 
+  bool hasAnyArrivalProcedures(const map::MapAirport& airport);
+  bool hasDepartureProcedures(const map::MapAirport& airport);
+
 private:
   /* Key for nearestCache combining all query parameters */
   struct NearestCacheKeyNavaid

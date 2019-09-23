@@ -160,7 +160,11 @@ struct MapAirport
   {
   }
 
-  QString ident, /* ICAO ident*/ name, region;
+  QString ident, /* Ident in simulator mostly ICAO */
+           icao, /* Real ICAO ident */
+           iata, /* IATA ident */
+           name, /* Full name */
+           region; /* Two letter region code */
   int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0;
   int rating = -1;
   map::MapAirportFlags flags = AP_NONE;

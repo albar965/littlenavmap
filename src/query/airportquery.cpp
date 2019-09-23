@@ -144,6 +144,39 @@ void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& id
   }
 }
 
+void AirportQuery::getAirportFuzzy(map::MapAirport& airport, map::MapAirport airportFrom)
+{
+  // airportFrom has to be copied to avoid overwriting
+  // Try ident first
+  getAirportByIdent(airport, airportFrom.ident);
+
+  // Try ICAO code if given as second attempt
+  if(!airport.isValid() && !airportFrom.icao.isEmpty() && airportFrom.icao != airportFrom.ident)
+    getAirportByIdent(airport, airportFrom.icao);
+
+  if(!airport.isValid())
+  {
+    // Fall back to coordinate based search and look for centers withing 0.2 NM
+    ageo::Rect rect(airportFrom.position, ageo::nmToMeter(10.f));
+    QList<map::MapAirport> airports;
+
+    bool xplane = NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11;
+    query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &airports](atools::sql::SqlQuery *query) -> void {
+      map::MapAirport obj;
+      mapTypesFactory->fillAirport(query->record(), obj, true, navdata, xplane);
+
+      if(obj.position.distanceMeterTo(airportFrom.position) < atools::geo::nmToMeter(0.2f))
+        airports.append(obj);
+    });
+
+    if(!airports.isEmpty())
+    {
+      maptools::sortByDistance(airports, airportFrom.position);
+      airport = airports.first();
+    }
+  }
+}
+
 atools::geo::Pos AirportQuery::getAirportPosByIdent(const QString& ident)
 {
   ageo::Pos pos;
@@ -151,7 +184,7 @@ atools::geo::Pos AirportQuery::getAirportPosByIdent(const QString& ident)
   airportCoordsByIdentQuery->exec();
   if(airportCoordsByIdentQuery->next())
     pos = ageo::Pos(airportCoordsByIdentQuery->value("lonx").toFloat(),
-              airportCoordsByIdentQuery->value("laty").toFloat());
+                    airportCoordsByIdentQuery->value("laty").toFloat());
   airportCoordsByIdentQuery->finish();
   return pos;
 }
@@ -823,6 +856,10 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
   });
 
   SqlRecord aprec = db->record("airport");
+  if(aprec.contains("icao"))
+    airportQueryBase.append("icao");
+  if(aprec.contains("iata"))
+    airportQueryBase.append("iata");
   if(aprec.contains("region"))
     airportQueryBase.append("region");
   if(aprec.contains("is_3d"))
@@ -888,6 +925,11 @@ void AirportQuery::initQueries()
 
   airportByIdentQuery = new SqlQuery(db);
   airportByIdentQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where ident = :ident ");
+
+  airportByPosQuery = new SqlQuery(db);
+  airportByPosQuery->prepare("select " + airportQueryBase.join(", ") +
+                             " from airport "
+                             "where " + whereRect + " " + whereLimit);
 
   airportCoordsByIdentQuery = new SqlQuery(db);
   airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = :ident ");
@@ -1033,6 +1075,9 @@ void AirportQuery::deInitQueries()
 
   delete airportByIdentQuery;
   airportByIdentQuery = nullptr;
+
+  delete airportByPosQuery;
+  airportByPosQuery = nullptr;
 
   delete airportCoordsByIdentQuery;
   airportCoordsByIdentQuery = nullptr;

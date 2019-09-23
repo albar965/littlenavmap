@@ -161,9 +161,6 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   airportTitle(airport, html, rating);
 
-  QString city, state, country;
-  airportQuerySim->getAirportAdminNamesById(airport.id, city, state, country);
-
   html.table();
   if(!info && route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
   {
@@ -184,21 +181,25 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     bearingText(airport.position, airport.magvar, html);
 
   // Administrative information
-  if(!city.isEmpty())
-    html.row2(tr("City:"), city);
-  if(!state.isEmpty())
-    html.row2(tr("State or Province:"), state);
-  if(!country.isEmpty())
-    html.row2(tr("Country or Area Code:"), country);
-  if(!airport.region.isEmpty())
-    html.row2(tr("Region:"), airport.region);
+  if(info)
+  {
+    html.row2If(tr("ICAO:"), rec->valueStr("ICAO", QString()));
+    html.row2If(tr("IATA:"), rec->valueStr("IATA", QString()));
+    html.row2If(tr("Region:"), airport.region);
+  }
+
+  QString city, state, country;
+  airportQuerySim->getAirportAdminNamesById(airport.id, city, state, country);
+  html.row2If(tr("City:"), city);
+  html.row2If(tr("State or Province:"), state);
+  html.row2If(tr("Country or Area Code:"), country);
   html.row2(tr("Elevation:"), Unit::altFeet(airport.getPosition().getAltitude()));
   html.row2(tr("Magnetic declination:"), map::magvarText(airport.magvar));
 
   // Get transition altitude from nav database
   map::MapAirport navAirport = airport;
   NavApp::getMapQuery()->getAirportNavReplace(navAirport);
-  if(navAirport.transitionAltitude > 0)
+  if(navAirport.isValid() && navAirport.transitionAltitude > 0)
     html.row2(tr("Transition altitude:"), Unit::altFeet(navAirport.transitionAltitude));
 
   if(info)
@@ -465,7 +466,11 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     addAirportFolder(airport, html);
 
 #ifdef DEBUG_INFORMATION
-  html.small(QString("Database: airport_id = %1").arg(airport.getId())).br();
+  MapAirport airportNav = mapQuery->getAirportNav(airport);
+
+  html.small(QString("Database: airport_id = %1 (sim %2, %3)").arg(airport.getId()).
+             arg(airportNav.getId()).arg(airportNav.ident)).br();
+
 #endif
 }
 

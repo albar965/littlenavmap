@@ -82,12 +82,30 @@ MapQuery::~MapQuery()
   delete mapTypesFactory;
 }
 
+bool MapQuery::hasAnyArrivalProcedures(const map::MapAirport& airport)
+{
+  map::MapAirport airportNav = getAirportNav(airport);
+  if(airportNav.isValid())
+    return NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airportNav.ident);
+
+  return false;
+}
+
+bool MapQuery::hasDepartureProcedures(const map::MapAirport& airport)
+{
+  map::MapAirport airportNav = getAirportNav(airport);
+  if(airportNav.isValid())
+    return NavApp::getAirportQueryNav()->hasDepartureProcedures(airportNav.ident);
+
+  return false;
+}
+
 map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport)
 {
   if(airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQuerySim()->getAirportByIdent(retval, airport.ident);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport);
     return retval;
   }
   return airport;
@@ -98,7 +116,7 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
   if(!airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQueryNav()->getAirportByIdent(retval, airport.ident);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport);
     return retval;
   }
   return airport;
@@ -107,13 +125,13 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
 void MapQuery::getAirportSimReplace(map::MapAirport& airport)
 {
   if(airport.navdata)
-    NavApp::getAirportQuerySim()->getAirportByIdent(airport, airport.ident);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport);
 }
 
 void MapQuery::getAirportNavReplace(map::MapAirport& airport)
 {
   if(!airport.navdata)
-    NavApp::getAirportQueryNav()->getAirportByIdent(airport, airport.ident);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport);
 }
 
 void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)

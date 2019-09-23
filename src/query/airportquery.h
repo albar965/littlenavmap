@@ -65,6 +65,7 @@ public:
 
   void getAirportByIdent(map::MapAirport& airport, const QString& ident);
   map::MapAirport getAirportByIdent(const QString& ident);
+  void getAirportFuzzy(map::MapAirport& airport, map::MapAirport airportFrom);
 
   atools::geo::Pos getAirportPosByIdent(const QString& ident);
 
@@ -136,7 +137,8 @@ public:
   /* Get the best fitting runway end from the given list of runways according to heading.
    *  Only the rearest airport is returned if no runway was found */
   void getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
-                                  const QVector<map::MapRunway>& runways, const atools::geo::Pos& pos, float heading, float maxRwDistance, float maxHeadingDeviation);
+                                  const QVector<map::MapRunway>& runways, const atools::geo::Pos& pos, float heading,
+                                  float maxRwDistance, float maxHeadingDeviation);
 
   map::MapRunwayEnd getRunwayEndById(int id);
 
@@ -215,8 +217,8 @@ private:
                         *parkingTypeAndNumberQuery = nullptr,
                         *parkingNameQuery = nullptr;
 
-  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportCoordsByIdentQuery = nullptr,
-                        *airportByRectAndProcQuery = nullptr,
+  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportByPosQuery = nullptr,
+                        *airportCoordsByIdentQuery = nullptr, *airportByRectAndProcQuery = nullptr,
                         *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr, *airportByIdQuery = nullptr,
                         *airportAdminByIdQuery = nullptr, *airportProcByIdentQuery = nullptr,
                         *procArrivalByAirportIdentQuery = nullptr, *procDepartureByAirportIdentQuery = nullptr;

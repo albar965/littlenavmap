@@ -30,6 +30,7 @@
 #include "route/routecontroller.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
+#include "query/mapquery.h"
 #include "common/symbolpainter.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/mapvisible.h"
@@ -1540,7 +1541,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
                                           ui->actionMapUserdataMove, ui->actionMapLogdataEdit,
                                           ui->actionMapTrafficPattern, ui->actionMapHold});
-  Q_UNUSED(textSaver);
 
   // Re-enable actions on exit to allow keystrokes
   atools::gui::ActionStateSaver stateSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
@@ -1554,7 +1554,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                             ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
                                             ui->actionMapUserdataMove, ui->actionMapLogdataEdit,
                                             ui->actionMapTrafficPattern, ui->actionMapHold});
-  Q_UNUSED(textSaver);
 
   // ===================================================================================
   // Build menu - add actions
@@ -2011,8 +2010,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(airport != nullptr)
   {
-    bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airport->ident);
-    bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(airport->ident);
+    bool hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(*airport);
+    bool hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(*airport);
 
     if(hasAnyArrival || hasDeparture)
     {

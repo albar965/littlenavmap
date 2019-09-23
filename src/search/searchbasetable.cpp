@@ -865,7 +865,6 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                       ui->actionMapHold, ui->actionUserdataAdd, ui->actionUserdataDelete,
                                       ui->actionUserdataEdit, ui->actionLogdataAdd, ui->actionLogdataDelete,
                                       ui->actionLogdataEdit, ui->actionLogdataPerfLoad, ui->actionLogdataRouteOpen});
-  Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
   atools::gui::ActionStateSaver stateSaver(
@@ -877,7 +876,6 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ui->actionRouteAirportAlternate, ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionSearchTableCopy,
     ui->actionSearchTableSelectAll, ui->actionSearchTableSelectNothing, ui->actionSearchResetView,
     ui->actionSearchSetMark, ui->actionLogdataPerfLoad, ui->actionLogdataRouteOpen});
-  Q_UNUSED(stateSaver);
 
   bool columnCanFilter = false;
   atools::geo::Pos position;
@@ -938,8 +936,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowApproachesCustom->setEnabled(false);
   if(navType == map::AIRPORT && airport.isValid())
   {
-    bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airport.ident);
-    bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(airport.ident);
+    bool hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(airport);
+    bool hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(airport);
     bool airportDestination = NavApp::getRouteConst().isAirportDestination(airport.ident);
     bool airportDeparture = NavApp::getRouteConst().isAirportDeparture(airport.ident);
 

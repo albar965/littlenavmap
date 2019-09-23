@@ -1260,10 +1260,38 @@ bool RouteController::saveFlightplan(bool cleanExport)
 
   // Get a copy that has procedures replaced with waypoints depending on settings
   // Also fills altitude in flight plan entry position
-  Flightplan flightplan =
-    RouteExport::routeAdjustedToProcedureOptions(route, replaceCustomWp, removeAlternates).getFlightplan();
+  Route saveRoute = RouteExport::routeAdjustedToProcedureOptions(route, replaceCustomWp, removeAlternates);
+  Flightplan flightplan = saveRoute.getFlightplan();
   qDebug() << Q_FUNC_INFO << "flightplan.getFileFormat()" << flightplan.getFileFormat()
            << "routeFileFormat" << routeFileFormat;
+
+  if(flightplan.getFileFormat() == atools::fs::pln::FMS11)
+  {
+    // Need to use the real ICAO code instead of the X-Plane fake code if procedures are used
+    if(saveRoute.hasAnySidProcedure())
+    {
+      const map::MapAirport& departAirport = saveRoute.getDepartureAirportLeg().getAirport();
+      if(departAirport.isValid() && !departAirport.icao.isEmpty() && departAirport.ident != departAirport.icao)
+      {
+        qDebug() << Q_FUNC_INFO << "Correcting departure from" << departAirport.ident << "to" << departAirport.icao;
+        flightplan.setDepartureIdent(departAirport.icao);
+        flightplan.getEntries().first().setIcaoIdent(departAirport.icao);
+        flightplan.getEntries().first().setWaypointId(departAirport.icao);
+      }
+    }
+
+    if(saveRoute.hasAnyArrivalProcedure())
+    {
+      const map::MapAirport& destAirport = saveRoute.getDestinationAirportLeg().getAirport();
+      if(destAirport.isValid() && destAirport.ident != destAirport.icao)
+      {
+        qDebug() << Q_FUNC_INFO << "Correcting destination from" << destAirport.ident << "to" << destAirport.icao;
+        flightplan.setDestinationIdent(destAirport.icao);
+        flightplan.getEntries().last().setIcaoIdent(destAirport.icao);
+        flightplan.getEntries().last().setWaypointId(destAirport.icao);
+      }
+    }
+  }
 
   try
   {
@@ -1299,14 +1327,14 @@ bool RouteController::saveFlightplan(bool cleanExport)
     // Check for a circle-to-land approach without runway - add a random (best) runway from the airport to
     // satisfy the X-Plane GPS/FMC/G1000
     bool dummyRwAdded = false;
-    if(route.getDestinationAirportLeg().getAirport().isValid() &&
+    if(saveRoute.getDestinationAirportLeg().getAirport().isValid() &&
        flightplan.getFileFormat() == atools::fs::pln::FMS11 &&
        flightplan.getProperties().value(atools::fs::pln::APPROACHRW).isEmpty() &&
        (!flightplan.getProperties().value(atools::fs::pln::APPROACH).isEmpty() ||
         !flightplan.getProperties().value(atools::fs::pln::APPROACH_ARINC).isEmpty()))
     {
       // Get best runway - longest with probably hard surface
-      const QList<map::MapRunway> *runways = airportQuery->getRunways(route.getDestinationAirportLeg().getId());
+      const QList<map::MapRunway> *runways = airportQuery->getRunways(saveRoute.getDestinationAirportLeg().getId());
       if(runways != nullptr && !runways->isEmpty())
       {
         dummyRwAdded = true;
@@ -2011,8 +2039,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     if(routeLeg->isValid() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
-      bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(routeLeg->getIdent());
-      bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(routeLeg->getIdent());
+      bool hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(routeLeg->getAirport());
+      bool hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(routeLeg->getAirport());
       bool airportDeparture = NavApp::getRouteConst().isAirportDeparture(routeLeg->getIdent());
       bool airportDestination = NavApp::getRouteConst().isAirportDestination(routeLeg->getIdent());
 
