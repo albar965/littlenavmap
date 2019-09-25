@@ -1,6 +1,30 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.4.2.beta
+
+* Fixed crash when reading GRIB winds aloft or WMM (magentic declination) data on Windows if
+  user's home path contains special characters like umlauts or accents.
+* Fuel flow and amount is now displayed correctly in current performance tab if fuel unit is
+  changed to volume in edit dialog. Was too high before.
+* Removed merge options for aircraft type and model in performance merge dialog which resulted in
+  unwanted changes. Now limited to copy and ignore.
+* Added real ICAO code to airport to avoid issues with X-Plane's artificial airport ids. Now finds
+  procedures for e.g. "AT4" where ICAO is actually "CAT4". Reload the scenery library to see this fix.
+* X-Plane FMS flight plan is now adjusted for real ICAO airport idents when using procedures to
+  avoid problems loading plan.
+* Added IATA and ICAO codes to airport information display.
+* Adjusted window texts in night style to better see disabled checkboxes like in weather
+  tab in options dialog.
+* Solved problem where ILS tooltips and click regions appeared in the wrong places on the map.
+* Now ignoring first zero value when interpolating fuel for aircraft performance.
+* Updated French and Italian translations. Now complete. Thanks to Flavio, Patrick and Valerio!
+
+related from atools version 3.4.2.beta
+See CHANGELOG.txt in atools project for more technical details. Relevant comments were added to list above.
+
+===============================================================================
+
 Version 2.4.1.beta
 
 Program:
