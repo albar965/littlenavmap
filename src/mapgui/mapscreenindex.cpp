@@ -217,19 +217,31 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
           {
             QLine line;
             atools::geo::Line centerLine = ils.centerLine();
-            line.setP1(conv.wToS(centerLine.getPos1()));
-            line.setP2(conv.wToS(centerLine.getPos2()));
-            ilsLines.append(std::make_pair(ils.id, line));
+
+            int xs1, ys1, xs2, ys2;
+            bool hidden1, hidden2;
+            conv.wToS(centerLine.getPos1(), xs1, ys1, CoordinateConverter::DEFAULT_WTOS_SIZE, &hidden1);
+            conv.wToS(centerLine.getPos2(), xs2, ys2, CoordinateConverter::DEFAULT_WTOS_SIZE, &hidden2);
+
+            if(!hidden1 && !hidden2)
+            {
+              line.setP1(QPoint(xs1, ys1));
+              line.setP2(QPoint(xs2, ys2));
+              ilsLines.append(std::make_pair(ils.id, line));
+            }
 
             QPolygon polygon;
-            int x, y;
+            bool hidden;
             for(const Pos& pos : ils.boundary())
             {
-              conv.wToS(pos, x, y /*, QSize(2000, 2000)*/);
-              polygon.append(QPoint(x, y));
+              int xs, ys;
+              conv.wToS(pos, xs, ys, CoordinateConverter::DEFAULT_WTOS_SIZE, &hidden);
+              if(!hidden)
+                polygon.append(QPoint(xs, ys));
             }
             polygon = polygon.intersected(QPolygon(mapPaintWidget->rect()));
-            ilsPolygons.append(std::make_pair(ils.id, polygon));
+            if(!polygon.isEmpty())
+              ilsPolygons.append(std::make_pair(ils.id, polygon));
           }
         }
       }
@@ -789,7 +801,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapSear
     return;
 
   // Get nearest center lines (also considering buffer)
-  QSet<int> ilsIds = nearestLineIds(ilsLines, xs, ys, maxDistance, false /* also distance to points */);
+  QSet<int> ilsIds = nearestLineIds(ilsLines, xs, ys, maxDistance, false /* lineDistanceOnly */);
 
   // Get nearest ILS by geometry - duplicates are removed in set
   for(int i = 0; i < ilsPolygons.size(); i++)
@@ -810,7 +822,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapSear
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
 {
-  for(int id : nearestLineIds(airwayLines, xs, ys, maxDistance, true /* no distance to points */))
+  for(int id : nearestLineIds(airwayLines, xs, ys, maxDistance, true /* lineDistanceOnly */))
     result.airways.append(mapQuery->getAirwayById(id));
 }
 
