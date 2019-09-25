@@ -19,6 +19,7 @@ Version 2.4.2.beta
 * Solved problem where ILS tooltips and click regions appeared in the wrong places on the map.
 * Now ignoring first zero value when interpolating fuel for aircraft performance.
 * Updated French and Italian translations. Now complete. Thanks to Flavio, Patrick and Valerio!
+* Resetting route description dialog options to default.
 
 related from atools version 3.4.2.beta
 See CHANGELOG.txt in atools project for more technical details. Relevant comments were added to list above.
