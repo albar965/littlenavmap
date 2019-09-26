@@ -204,7 +204,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   {
     const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
     if(route->hasAnyArrivalProcedure())
-      paintProcedure(lastLegPoint, context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
+      paintProcedure(lastLegPoint, context, route->getApproachLegs(), route->getApproachLegsOffset(),
                      flightplanProcedureColor, false /* preview */);
 
     if(route->hasAnyStarProcedure())

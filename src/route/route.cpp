@@ -96,13 +96,13 @@ void Route::copy(const Route& other)
   boundingRect = other.boundingRect;
   activePos = other.activePos;
 
-  arrivalLegs = other.arrivalLegs;
+  approachLegs = other.approachLegs;
   starLegs = other.starLegs;
   sidLegs = other.sidLegs;
 
   sidLegsOffset = other.sidLegsOffset;
   starLegsOffset = other.starLegsOffset;
-  arrivalLegsOffset = other.arrivalLegsOffset;
+  approachLegsOffset = other.approachLegsOffset;
 
   alternateLegsOffset = other.alternateLegsOffset;
   numAlternateLegs = other.numAlternateLegs;
@@ -154,7 +154,7 @@ bool Route::canEditLeg(int index) const
   if(hasAnyStarProcedure() && index > starLegsOffset)
     return false;
 
-  if(hasAnyArrivalProcedure() && index > arrivalLegsOffset)
+  if(hasAnyArrivalProcedure() && index > approachLegsOffset)
     return false;
 
   if(hasAlternates() && index >= alternateLegsOffset)
@@ -181,7 +181,7 @@ void Route::getRunwayNames(QString& departure, QString& arrival) const
   departure = sidLegs.runwayEnd.name;
 
   if(hasAnyArrivalProcedure())
-    arrival = arrivalLegs.runwayEnd.name;
+    arrival = approachLegs.runwayEnd.name;
   else if(hasAnyStarProcedure())
     arrival = starLegs.runwayEnd.name;
   else
@@ -195,15 +195,15 @@ const QString& Route::getStarRunwayName() const
 
 const QString& Route::getApproachRunwayName() const
 {
-  return arrivalLegs.runwayEnd.name;
+  return approachLegs.runwayEnd.name;
 }
 
 void Route::getArrivalNames(QString& arrivalArincName, QString& arrivalTransition) const
 {
   if(hasAnyArrivalProcedure())
   {
-    arrivalArincName = arrivalLegs.approachArincName;
-    arrivalTransition = arrivalLegs.transitionFixIdent;
+    arrivalArincName = approachLegs.approachArincName;
+    arrivalTransition = approachLegs.transitionFixIdent;
   }
   else
   {
@@ -726,7 +726,7 @@ int Route::getDestinationLegIndex() const
   if(hasAnyArrivalProcedure())
   {
     // Last leg before missed approach is destination runway
-    for(int i = arrivalLegsOffset; i <= getDestinationAirportLegIndex(); i++)
+    for(int i = approachLegsOffset; i <= getDestinationAirportLegIndex(); i++)
     {
       const RouteLeg& leg = at(i);
       if((leg.isAnyProcedure() && leg.getProcedureLeg().isMissed()) || leg.isAlternate())
@@ -971,9 +971,27 @@ void Route::clearProcedures(proc::MapProcedureTypes type)
     starLegs.clearApproach();
 
   if(type & proc::PROCEDURE_TRANSITION)
-    arrivalLegs.clearTransition();
+    approachLegs.clearTransition();
   if(type & proc::PROCEDURE_APPROACH)
-    arrivalLegs.clearApproach();
+    approachLegs.clearApproach();
+}
+
+void Route::reloadProcedures(proc::MapProcedureTypes procs)
+{
+  ProcedureQuery *procQuery = NavApp::getProcedureQuery();
+  AirportQuery *apQuery = NavApp::getAirportQueryNav();
+
+  // Check which transitions are deleted where procedures are not touched
+  // Reload procedures to get a clean version which is not modified by the transition
+  if(procs & proc::PROCEDURE_SID_TRANSITION && !(procs & proc::PROCEDURE_SID))
+    sidLegs = *procQuery->getApproachLegs(apQuery->getAirportById(sidLegs.ref.airportId), sidLegs.ref.approachId);
+
+  if(procs & proc::PROCEDURE_STAR_TRANSITION && !(procs & proc::PROCEDURE_STAR))
+    starLegs = *procQuery->getApproachLegs(apQuery->getAirportById(starLegs.ref.airportId), starLegs.ref.approachId);
+
+  if(procs & proc::PROCEDURE_TRANSITION && !(procs & proc::PROCEDURE_APPROACH))
+    approachLegs = *procQuery->getApproachLegs(apQuery->getAirportById(approachLegs.ref.airportId),
+                                               approachLegs.ref.approachId);
 }
 
 void Route::removeProcedureLegs()
@@ -1093,7 +1111,7 @@ void Route::cleanupFlightPlanForProcedures()
     fromIdx = 1;
   }
 
-  if(!starLegs.isEmpty() || !arrivalLegs.isEmpty())
+  if(!starLegs.isEmpty() || !approachLegs.isEmpty())
   {
     // Arrivals - start at first point and look for overlap with route traversing route from start to end
     updateAlternateIndicesAndOffsets();
@@ -1101,8 +1119,8 @@ void Route::cleanupFlightPlanForProcedures()
 
     if(!starLegs.isEmpty())
       fromIdx = legIndexForPositions(starLegs.geometry(), true /* reverse */);
-    else if(!arrivalLegs.isEmpty())
-      fromIdx = legIndexForPositions(arrivalLegs.geometry(), true /* reverse */);
+    else if(!approachLegs.isEmpty())
+      fromIdx = legIndexForPositions(approachLegs.geometry(), true /* reverse */);
   }
 
   if(fromIdx > 0 && toIdx > 0)
@@ -1114,7 +1132,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
 {
   // Change STAR to connect manual legs to the arrival/approach or airport
   // This can only be done with a copy of the procedures in the route
-  NavApp::getProcedureQuery()->postProcessLegsForRoute(starLegs, arrivalLegs, getDestinationAirportLeg().getAirport());
+  NavApp::getProcedureQuery()->postProcessLegsForRoute(starLegs, approachLegs, getDestinationAirportLeg().getAirport());
 
   // Remove all procedure / dummy legs from flight plan and route
   clearProcedureLegs(proc::PROCEDURE_ALL);
@@ -1124,7 +1142,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
 
   sidLegsOffset = map::INVALID_INDEX_VALUE;
   starLegsOffset = map::INVALID_INDEX_VALUE;
-  arrivalLegsOffset = map::INVALID_INDEX_VALUE;
+  approachLegsOffset = map::INVALID_INDEX_VALUE;
 
   // Create route legs and flight plan entries from departure
   if(!sidLegs.isEmpty())
@@ -1163,19 +1181,19 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
   }
 
   // Create route legs and flight plan entries from arrival
-  if(!arrivalLegs.isEmpty())
-    arrivalLegsOffset = size() - insertOffset;
+  if(!approachLegs.isEmpty())
+    approachLegsOffset = size() - insertOffset;
 
-  for(int i = 0; i < arrivalLegs.size(); i++)
+  for(int i = 0; i < approachLegs.size(); i++)
   {
     const RouteLeg *prev = size() >= 2 ? &at(size() - 2) : nullptr;
 
     RouteLeg obj(&flightplan);
-    obj.createFromProcedureLeg(i, arrivalLegs, prev);
+    obj.createFromProcedureLeg(i, approachLegs, prev);
     insert(size() - insertOffset, obj);
 
     FlightplanEntry entry;
-    entryBuilder->buildFlightplanEntry(arrivalLegs.at(i), entry, true);
+    entryBuilder->buildFlightplanEntry(approachLegs.at(i), entry, true);
     entries.insert(entries.size() - insertOffset, entry);
   }
 
@@ -1183,7 +1201,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
   if(clearOldProcedureProperties)
     clearFlightplanProcedureProperties(proc::PROCEDURE_ALL);
 
-  ProcedureQuery::fillFlightplanProcedureProperties(flightplan.getProperties(), arrivalLegs, starLegs, sidLegs);
+  ProcedureQuery::fillFlightplanProcedureProperties(flightplan.getProperties(), approachLegs, starLegs, sidLegs);
 }
 
 void Route::removeLegs(int from, int to)
@@ -1280,7 +1298,7 @@ void Route::updateIndicesAndOffsets()
   activeLegIndex = adjustedActiveLeg();
   sidLegsOffset = map::INVALID_INDEX_VALUE;
   starLegsOffset = map::INVALID_INDEX_VALUE;
-  arrivalLegsOffset = map::INVALID_INDEX_VALUE;
+  approachLegsOffset = map::INVALID_INDEX_VALUE;
 
   // Update offsets
   for(int i = 0; i < size(); i++)
@@ -1294,8 +1312,8 @@ void Route::updateIndicesAndOffsets()
     if(leg.getProcedureLeg().isAnyStar() && starLegsOffset == map::INVALID_INDEX_VALUE)
       starLegsOffset = i;
 
-    if(leg.getProcedureLeg().isArrival() && arrivalLegsOffset == map::INVALID_INDEX_VALUE)
-      arrivalLegsOffset = i;
+    if(leg.getProcedureLeg().isArrival() && approachLegsOffset == map::INVALID_INDEX_VALUE)
+      approachLegsOffset = i;
   }
   updateAlternateIndicesAndOffsets();
 }
@@ -1598,7 +1616,7 @@ int Route::getDestinationIndexBeforeProcedure() const
   if(hasAnyStarProcedure())
     return starLegsOffset;
   else if(hasAnyArrivalProcedure())
-    return arrivalLegsOffset;
+    return approachLegsOffset;
   else
     return size() - numAlternateLegs - 1;
 }
@@ -1613,7 +1631,7 @@ void Route::removeDuplicateRouteLegs()
     if(hasAnyStarProcedure())
       offset = getStarLegsOffset();
     else if(hasAnyArrivalProcedure())
-      offset = getArrivalLegsOffset();
+      offset = getApproachLegsOffset();
 
     if(offset != -1 && offset < size() - 1)
     {
@@ -1744,7 +1762,7 @@ Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp,
   for(int i = 0; i < route.size(); i++)
     route.getFlightplan().getEntries()[i].setAltitude(altVector.at(i));
 
-  if(route.getArrivalLegs().isCustom() && replaceCustomWp)
+  if(route.getApproachLegs().isCustom() && replaceCustomWp)
     saveApproachWp = true;
 
   // First remove properties and procedure structures
@@ -1815,7 +1833,7 @@ Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp,
           entry.setWaypointType(atools::fs::pln::entry::USER);
 
           if((replaceCustomWp || saveApproachWp) &&
-             getArrivalLegs().isCustom() && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
+             getApproachLegs().isCustom() && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
             entry.setWaypointId(leg.getProcedureLeg().fixIdent);
           else
             entry.setWaypointId(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
@@ -2001,8 +2019,8 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunway
 
     // Get the runway end for arrival
     QList<map::MapRunwayEnd> runwayEnds;
-    if(arrivalLegs.runwayEnd.isValid())
-      NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, arrivalLegs.runwayEnd.name, destLeg.getAirport(),
+    if(approachLegs.runwayEnd.isValid())
+      NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name, destLeg.getAirport(),
                                                      false /* nav data */);
 
     ils.clear();
@@ -2051,12 +2069,12 @@ QString Route::getProcedureLegText(proc::MapProcedureTypes mapType) const
   {
     procText = QObject::tr("%1 %2 %3%4").
                arg(mapType & proc::PROCEDURE_MISSED ? tr("Missed") : tr("Approach")).
-               arg(arrivalLegs.approachType).
-               arg(arrivalLegs.approachFixIdent).
-               arg(arrivalLegs.approachSuffix.isEmpty() ? QString() : (tr("-") + arrivalLegs.approachSuffix));
+               arg(approachLegs.approachType).
+               arg(approachLegs.approachFixIdent).
+               arg(approachLegs.approachSuffix.isEmpty() ? QString() : (tr("-") + approachLegs.approachSuffix));
   }
   else if(mapType & proc::PROCEDURE_TRANSITION)
-    procText = QObject::tr("Transition %1").arg(arrivalLegs.transitionFixIdent);
+    procText = QObject::tr("Transition %1").arg(approachLegs.transitionFixIdent);
   else if(mapType & proc::PROCEDURE_STAR)
     procText = QObject::tr("STAR %1").arg(starLegs.approachFixIdent);
   else if(mapType & proc::PROCEDURE_SID)
@@ -2088,8 +2106,8 @@ QDebug operator<<(QDebug out, const Route& route)
   out << "offset" << route.getStarLegsOffset() << endl;
   out << route.getStarLegs() << endl;
   out << "Arrival Procedure ========" << endl;
-  out << "offset" << route.getArrivalLegsOffset() << endl;
-  out << route.getArrivalLegs() << endl;
+  out << "offset" << route.getApproachLegsOffset() << endl;
+  out << route.getApproachLegs() << endl;
   out << "Alternates ========" << endl;
   out << "offset" << route.getAlternateLegsOffset() << "num" << route.getNumAlternateLegs() << endl;
   out << "==================================================================" << endl;

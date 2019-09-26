@@ -305,13 +305,13 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   route.getSidStarNames(sid, sidTrans, star, starTrans);
   route.getRunwayNames(depRwy, destRwy);
   route.getArrivalNames(arrivalName, arrivalTransition);
-  if(route.hasAnyArrivalProcedure() && !route.getArrivalLegs().approachType.isEmpty())
+  if(route.hasAnyArrivalProcedure() && !route.getApproachLegs().approachType.isEmpty())
   {
     // Flight factor specialities - there are probably more to guess
-    if(route.getArrivalLegs().approachType == "RNAV")
+    if(route.getApproachLegs().approachType == "RNAV")
       arrivalName = "RNV" + destRwy;
     else
-      arrivalName = route.getArrivalLegs().approachType + destRwy;
+      arrivalName = route.getApproachLegs().approachType + destRwy;
   }
 
   if(route.getSizeWithoutAlternates() == 0)

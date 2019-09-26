@@ -524,7 +524,7 @@ int RouteAltitude::findApproachFirstRestricion() const
     int start = route->getStarLegsOffset();
     if(!(start < map::INVALID_INDEX_VALUE))
       // No STAR - use arrival
-      start = route->getArrivalLegsOffset();
+      start = route->getApproachLegsOffset();
 
     if(start < map::INVALID_INDEX_VALUE)
     {

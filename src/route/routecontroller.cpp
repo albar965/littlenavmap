@@ -2674,7 +2674,14 @@ void RouteController::deleteSelectedLegs()
 
     if(procs & proc::PROCEDURE_ALL)
     {
+      // Remove dummy legs from flight plan and route
       route.removeProcedureLegs(procs);
+
+      // Reload procedures from the database after deleting a transition.
+      // This is needed since attached transitions can change procedures.
+      route.reloadProcedures(procs);
+
+      // Reload legs from procedures
       route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
     }
 
@@ -3218,6 +3225,10 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   proc::MapProcedureTypes procs = affectedProcedures({insertIndex});
   route.removeProcedureLegs(procs);
 
+  // Reload procedures from the database after deleting a transition.
+  // This is needed since attached transitions can change procedures.
+  route.reloadProcedures(procs);
+
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
   route.updateLegAltitudes();
@@ -3594,7 +3605,7 @@ void RouteController::updateTableModel()
 
     // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
     QVector<map::MapIls> ilsByAirportAndRunway;
-    if(route.getArrivalLegs().hasIlsGuidance() &&
+    if(route.getApproachLegs().hasIlsGuidance() &&
        leg.isAnyProcedure() && leg.getProcedureLeg().isApproach() && leg.getRunwayEnd().isValid())
       route.getApproachRunwayEndAndIls(ilsByAirportAndRunway);
 
@@ -4092,7 +4103,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
     if(!titleOnly)
     {
       // Add procedures to text ==============================================================
-      const proc::MapProcedureLegs& arrivalLegs = route.getArrivalLegs();
+      const proc::MapProcedureLegs& arrivalLegs = route.getApproachLegs();
       const proc::MapProcedureLegs& starLegs = route.getStarLegs();
       if(route.hasAnyProcedure())
       {

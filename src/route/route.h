@@ -285,12 +285,12 @@ public:
 
   bool hasAnyArrivalProcedure() const
   {
-    return !arrivalLegs.isEmpty();
+    return !approachLegs.isEmpty();
   }
 
   bool hasTransitionProcedure() const
   {
-    return !arrivalLegs.transitionLegs.isEmpty();
+    return !approachLegs.transitionLegs.isEmpty();
   }
 
   bool hasAnyStarProcedure() const
@@ -318,7 +318,7 @@ public:
    *  call updateProcedureLegs after setting */
   void setArrivalProcedureLegs(const proc::MapProcedureLegs& legs)
   {
-    arrivalLegs = legs;
+    approachLegs = legs;
   }
 
   void setStarProcedureLegs(const proc::MapProcedureLegs& legs)
@@ -389,9 +389,9 @@ public:
   bool isAirportAfterArrival(int index);
 
   /* Get approach and transition in one legs struct */
-  const proc::MapProcedureLegs& getArrivalLegs() const
+  const proc::MapProcedureLegs& getApproachLegs() const
   {
-    return arrivalLegs;
+    return approachLegs;
   }
 
   /* Get STAR legs only */
@@ -407,9 +407,9 @@ public:
   }
 
   /* Index of first transition and/or approach leg in the route */
-  int getArrivalLegsOffset() const
+  int getApproachLegsOffset() const
   {
-    return arrivalLegsOffset;
+    return approachLegsOffset;
   }
 
   /* Index of first SID leg in the route */
@@ -543,6 +543,10 @@ public:
     activePos = pos;
   }
 
+  /* Reload procedures from the database after deleting a transition.
+   * This is needed since attached transitions can change procedures. */
+  void reloadProcedures(proc::MapProcedureTypes procs);
+
 private:
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
    * no procedure legs. CPU intense do not use often. */
@@ -580,7 +584,7 @@ private:
   float totalDistance = 0.f;
 
   atools::fs::pln::Flightplan flightplan;
-  proc::MapProcedureLegs arrivalLegs, starLegs, sidLegs;
+  proc::MapProcedureLegs approachLegs, starLegs, sidLegs;
   map::MapObjectTypes shownTypes;
 
   int activeLegIndex = map::INVALID_INDEX_VALUE;
@@ -588,7 +592,7 @@ private:
   map::PosCourse activePos;
   int sidLegsOffset = map::INVALID_INDEX_VALUE, /* First departure leg */
       starLegsOffset = map::INVALID_INDEX_VALUE, /* First STAR leg */
-      arrivalLegsOffset = map::INVALID_INDEX_VALUE, /* First arrival leg */
+      approachLegsOffset = map::INVALID_INDEX_VALUE, /* First approach leg */
       alternateLegsOffset = map::INVALID_INDEX_VALUE; /* First alternate airport*/
   int numAlternateLegs = 0;
 

@@ -13,6 +13,7 @@ Version 2.4.2.beta
   procedures for e.g. "AT4" where ICAO is actually "CAT4". Reload the scenery library to see this fix.
 * X-Plane FMS flight plan is now adjusted for real ICAO airport idents when using procedures to
   avoid problems loading plan.
+* Fixed display problem when deleting transitions from a flight plan.
 * Added IATA and ICAO codes to airport information display.
 * Adjusted window texts in night style to better see disabled checkboxes like in weather
   tab in options dialog.
