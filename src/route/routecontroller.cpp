@@ -1283,7 +1283,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
     if(saveRoute.hasAnyArrivalProcedure())
     {
       const map::MapAirport& destAirport = saveRoute.getDestinationAirportLeg().getAirport();
-      if(destAirport.isValid() && destAirport.ident != destAirport.icao)
+      if(destAirport.isValid() && !destAirport.icao.isEmpty() && destAirport.ident != destAirport.icao)
       {
         qDebug() << Q_FUNC_INFO << "Correcting destination from" << destAirport.ident << "to" << destAirport.icao;
         flightplan.setDestinationIdent(destAirport.icao);
