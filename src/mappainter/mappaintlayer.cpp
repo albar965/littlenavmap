@@ -547,13 +547,16 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
             context.routeIdMap.insert({routeLeg.getId(), routeLeg.getMapObjectType()});
           else if(type == map::PROCEDURE)
           {
-            const map::MapSearchResult& navaids = routeLeg.getProcedureLeg().navaids;
-            if(navaids.hasWaypoints())
-              context.routeIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
-            if(navaids.hasVor())
-              context.routeIdMap.insert({navaids.vors.first().id, map::VOR});
-            if(navaids.hasNdb())
-              context.routeIdMap.insert({navaids.ndbs.first().id, map::NDB});
+            if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
+            {
+              const map::MapSearchResult& navaids = routeLeg.getProcedureLeg().navaids;
+              if(navaids.hasWaypoints())
+                context.routeIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
+              if(navaids.hasVor())
+                context.routeIdMap.insert({navaids.vors.first().id, map::VOR});
+              if(navaids.hasNdb())
+                context.routeIdMap.insert({navaids.ndbs.first().id, map::NDB});
+            }
           }
         }
       }
