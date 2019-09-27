@@ -449,57 +449,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::debugActionTriggered1()
 {
+  qDebug() << "======================================================================================";
   qDebug() << Q_FUNC_INFO;
-
-  QList<QObject *> objects = findChildren<QObject *>();
-
-  qDebug() << "====================================================================================";
-  qDebug() << "====================================================================================";
-  qDebug() << "====================================================================================";
-
-  for(QObject *obj : objects)
-  {
-    qDebug() << obj->objectName();
-  }
-
-  qDebug() << "====================================================================================";
-
-  QEvent event(QEvent::StyleChange);
-  for(const QObject *object : objects)
-  {
-    if(auto widget = qobject_cast<QWidget *>(const_cast<QObject *>(object)))
-    {
-      qDebug() << widget->objectName();
-      widget->style()->polish(widget);
-      QApplication::sendEvent(widget, &event);
-    }
-  }
-
-  qDebug() << "====================================================================================";
-
-  for(const QObject *object : objects)
-  {
-    if(auto widget = qobject_cast<QWidget *>(const_cast<QObject *>(object)))
-    {
-      qDebug() << widget->objectName();
-      widget->repaint();
-    }
-  }
-
-  qDebug() << "====================================================================================";
-
-  for(const QObject *object : objects)
-  {
-    if(auto widget = qobject_cast<QWidget *>(const_cast<QObject *>(object)))
-    {
-      qDebug() << widget->objectName();
-      widget->update();
-    }
-  }
-
-  qDebug() << "====================================================================================";
-  qDebug() << "====================================================================================";
-  qDebug() << "====================================================================================";
+  qDebug() << NavApp::getRouteConst();
+  qDebug() << "======================================================================================";
 }
 
 void MainWindow::debugActionTriggered2()
@@ -514,8 +467,6 @@ void MainWindow::debugActionTriggered2()
 
 void MainWindow::debugActionTriggered3()
 {
-  qDebug() << Q_FUNC_INFO;
-  qDebug() << NavApp::getRouteConst();
 }
 
 #endif

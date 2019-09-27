@@ -1267,29 +1267,23 @@ bool RouteController::saveFlightplan(bool cleanExport)
 
   if(flightplan.getFileFormat() == atools::fs::pln::FMS11)
   {
-    // Need to use the real ICAO code instead of the X-Plane fake code if procedures are used
-    if(saveRoute.hasAnySidProcedure())
+    // Need to use the real ICAO code instead of the X-Plane fake ID
+    const map::MapAirport& departAirport = saveRoute.getDepartureAirportLeg().getAirport();
+    if(departAirport.isValid() && !departAirport.icao.isEmpty() && departAirport.ident != departAirport.icao)
     {
-      const map::MapAirport& departAirport = saveRoute.getDepartureAirportLeg().getAirport();
-      if(departAirport.isValid() && !departAirport.icao.isEmpty() && departAirport.ident != departAirport.icao)
-      {
-        qDebug() << Q_FUNC_INFO << "Correcting departure from" << departAirport.ident << "to" << departAirport.icao;
-        flightplan.setDepartureIdent(departAirport.icao);
-        flightplan.getEntries().first().setIcaoIdent(departAirport.icao);
-        flightplan.getEntries().first().setWaypointId(departAirport.icao);
-      }
+      qDebug() << Q_FUNC_INFO << "Correcting departure from" << departAirport.ident << "to" << departAirport.icao;
+      flightplan.setDepartureIdent(departAirport.icao);
+      flightplan.getEntries().first().setIcaoIdent(departAirport.icao);
+      flightplan.getEntries().first().setWaypointId(departAirport.icao);
     }
 
-    if(saveRoute.hasAnyArrivalProcedure())
+    const map::MapAirport& destAirport = saveRoute.getDestinationAirportLeg().getAirport();
+    if(destAirport.isValid() && !destAirport.icao.isEmpty() && destAirport.ident != destAirport.icao)
     {
-      const map::MapAirport& destAirport = saveRoute.getDestinationAirportLeg().getAirport();
-      if(destAirport.isValid() && !destAirport.icao.isEmpty() && destAirport.ident != destAirport.icao)
-      {
-        qDebug() << Q_FUNC_INFO << "Correcting destination from" << destAirport.ident << "to" << destAirport.icao;
-        flightplan.setDestinationIdent(destAirport.icao);
-        flightplan.getEntries().last().setIcaoIdent(destAirport.icao);
-        flightplan.getEntries().last().setWaypointId(destAirport.icao);
-      }
+      qDebug() << Q_FUNC_INFO << "Correcting destination from" << destAirport.ident << "to" << destAirport.icao;
+      flightplan.setDestinationIdent(destAirport.icao);
+      flightplan.getEntries().last().setIcaoIdent(destAirport.icao);
+      flightplan.getEntries().last().setWaypointId(destAirport.icao);
     }
   }
 
