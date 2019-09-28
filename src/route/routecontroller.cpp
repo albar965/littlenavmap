@@ -895,7 +895,9 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 
   route.createRouteLegsFromFlightplan();
 
-  loadProceduresFromFlightplan(true /* clear old procedure properties */, false /* quiet */);
+  // test and error after undo/redo and switch
+
+  loadProceduresFromFlightplan(false /* clear old procedure properties */, false /* quiet */);
   loadAlternateFromFlightplan(false /* quiet */);
   route.updateAll();
   route.updateAirwaysAndAltitude(adjustAltitude, adjustRouteType);
@@ -1739,6 +1741,10 @@ void RouteController::preDatabaseLoad()
   routeNetworkRadio->deInitQueries();
   routeNetworkAirway->deInitQueries();
   routeAltDelayTimer.stop();
+
+  // Reset active to avoid crash when indexes change
+  route.resetActive();
+  highlightNextWaypoint(route.getActiveLegIndex());
 }
 
 void RouteController::postDatabaseLoad()
@@ -2465,7 +2471,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   // Change format in plan according to last saved format
   route.getFlightplan().setFileFormat(routeFileFormat);
   route.createRouteLegsFromFlightplan();
-  loadProceduresFromFlightplan(true /* clear old procedure properties */, true /* quiet */);
+  loadProceduresFromFlightplan(false /* clear old procedure properties */, true /* quiet */);
   loadAlternateFromFlightplan(true /* quiet */);
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);

@@ -362,7 +362,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
 {
   index = entryIndex;
 
-  if(prevLeg != nullptr && prevLeg->isValid())
+  if(prevLeg != nullptr)
   {
     const Pos& prevPos = prevLeg->getPosition();
 
@@ -760,7 +760,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitude, QStringList *errors) const
                          arg(Unit::altFeet(altitude)).arg(Unit::altFeet(airway.minAltitude)));
       }
 
-      if(altitude > airway.maxAltitude)
+      if(airway.maxAltitude > 0 && altitude > airway.maxAltitude)
       {
         invalid = true;
         if(errors != nullptr)
