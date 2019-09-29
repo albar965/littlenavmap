@@ -425,7 +425,9 @@ public:
   }
 
   /* Create copies of list methods to ease tracking of usage */
-  const RouteLeg& at(int i) const;
+
+  /* Returns empty object if index is invalid */
+  const RouteLeg& value(int i) const;
 
   int size() const
   {

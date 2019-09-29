@@ -290,7 +290,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   positions.clear();
   for(int idx : routeHighlightResults)
   {
-    const RouteLeg& routeLeg = NavApp::getRouteConst().at(idx);
+    const RouteLeg& routeLeg = NavApp::getRouteConst().value(idx);
     positions.append(routeLeg.getPosition());
   }
 
@@ -881,7 +881,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
           // If approaching an initial fix use corrected version
           int activeLeg = route.getActiveLegIndex();
           const RouteLeg& routeLeg = activeLeg != map::INVALID_INDEX_VALUE && isCorrected ?
-                                     route.at(activeLeg) : route.at(activeLegCorrected);
+                                     route.value(activeLeg) : route.value(activeLegCorrected);
 
           float courseToWptTrue = map::INVALID_COURSE_VALUE;
           if((routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular()) && routeLeg.getPosition().isValid())

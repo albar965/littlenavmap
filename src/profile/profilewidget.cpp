@@ -688,7 +688,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   for(int i = 0; i < altitudeLegs.size(); i++)
   {
-    const RouteAltitudeLeg& routeAlt = altitudeLegs.at(i);
+    const RouteAltitudeLeg& routeAlt = altitudeLegs.value(i);
     if(routeAlt.isMissed() || routeAlt.isAlternate())
       break;
 
@@ -706,7 +706,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   QVector<int> indexes;
   for(int i = 0; i <= route.getDestinationLegIndex(); i++)
   {
-    if(route.at(i).getProcedureLeg().isMissed() || route.at(i).isAlternate())
+    if(route.value(i).getProcedureLeg().isMissed() || route.value(i).isAlternate())
       break;
     indexes.prepend(i);
   }
@@ -727,10 +727,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     for(int routeIndex : indexes)
     {
-      if(route.at(routeIndex).isAnyProcedure() && route.at(routeIndex).getRunwayEnd().isValid())
+      if(route.value(routeIndex).isAnyProcedure() && route.value(routeIndex).getRunwayEnd().isValid())
         continue;
 
-      const proc::MapAltRestriction& restriction = altitudeLegs.at(routeIndex).getRestriction();
+      const proc::MapAltRestriction& restriction = altitudeLegs.value(routeIndex).getRestriction();
 
       if(restriction.isValid() && restriction.descriptor != proc::MapAltRestriction::ILS_AT &&
          restriction.descriptor != proc::MapAltRestriction::ILS_AT_OR_ABOVE)
@@ -831,7 +831,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                         Qt::RoundJoin));
     for(int i = passedRouteLeg; i < waypointX.size(); i++)
     {
-      const proc::MapProcedureLeg& leg = route.at(i).getProcedureLeg();
+      const proc::MapProcedureLeg& leg = route.value(i).getProcedureLeg();
       if(i > 0 && !leg.isCircleToLand() && !leg.isStraightIn() && !leg.isVectors() && !leg.isManual())
         painter.drawPolyline(altLegs.at(i));
     }
@@ -861,8 +861,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     {
       for(int i = passedRouteLeg + 1; i < waypointX.size(); i++)
       {
-        painter.setPen(altitudeLegs.at(i).isAnyProcedure() ? procedurePen : flightplanPen);
-        const proc::MapProcedureLeg& leg = route.at(i).getProcedureLeg();
+        painter.setPen(altitudeLegs.value(i).isAnyProcedure() ? procedurePen : flightplanPen);
+        const proc::MapProcedureLeg& leg = route.value(i).getProcedureLeg();
         if(leg.isCircleToLand() || leg.isStraightIn())
           mapcolors::adjustPenForCircleToLand(&painter);
         else if(leg.isVectors())
@@ -882,7 +882,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.setPen(QPen(optData.getFlightplanActiveSegmentColor(), flightplanWidth,
                           Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-      const proc::MapProcedureLeg& actProcLeg = route.at(activeRouteLeg).getProcedureLeg();
+      const proc::MapProcedureLeg& actProcLeg = route.value(activeRouteLeg).getProcedureLeg();
       if(actProcLeg.isCircleToLand() || actProcLeg.isStraightIn())
         mapcolors::adjustPenForCircleToLand(&painter);
       else if(actProcLeg.isVectors())
@@ -911,7 +911,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
-      const RouteLeg& leg = route.at(routeIndex);
+      const RouteLeg& leg = route.value(routeIndex);
 
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
@@ -963,7 +963,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
-      const RouteLeg& leg = route.at(routeIndex);
+      const RouteLeg& leg = route.value(routeIndex);
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
@@ -1000,7 +1000,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
-      const RouteLeg& leg = route.at(routeIndex);
+      const RouteLeg& leg = route.value(routeIndex);
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
@@ -1369,11 +1369,11 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
       // Return empty result
       return ElevationLegList();
 
-    const RouteLeg& routeLeg = legs.route.at(i);
+    const RouteLeg& routeLeg = legs.route.value(i);
     if(routeLeg.getProcedureLeg().isMissed() || routeLeg.isAlternate())
       break;
 
-    const RouteLeg& lastLeg = legs.route.at(i - 1);
+    const RouteLeg& lastLeg = legs.route.value(i - 1);
     ElevationLeg leg;
 
     // Skip for too long segments when using the marble online provider
@@ -1552,8 +1552,8 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   calculateDistancesAndPos(x, pos, index, distance, distanceToGo, groundElevation, maxElev);
 
   // Get from/to text
-  QString from = atools::elideTextShort(legList.route.at(index).getIdent(), 20);
-  QString to = atools::elideTextShort(legList.route.at(index + 1).getIdent(), 20);
+  QString from = atools::elideTextShort(legList.route.value(index).getIdent(), 20);
+  QString to = atools::elideTextShort(legList.route.value(index + 1).getIdent(), 20);
 
   float altitude = NavApp::getRoute().getAltitudeForDistance(distanceToGo);
   float aboveGround = map::INVALID_ALTITUDE_VALUE;
@@ -1574,7 +1574,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
      tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev) : QString());
 
   // Show wind at altitude===============================================
-  const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.at(index + 1) : nullptr;
+  const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.value(index + 1) : nullptr;
   WindReporter *windReporter = NavApp::getWindReporter();
   if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
   {

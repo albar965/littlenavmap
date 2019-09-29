@@ -163,8 +163,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   const RouteLeg& destLeg = route->getDestinationAirportLeg();
   for(int i = 1; i < route->size(); i++)
   {
-    const RouteLeg& leg = route->at(i);
-    const RouteLeg& last = route->at(i - 1);
+    const RouteLeg& leg = route->value(i);
+    const RouteLeg& last = route->value(i - 1);
 
     if(leg.isAlternate())
     {
@@ -333,7 +333,7 @@ void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList
   // Collect coordinates for text placement and lines first ============================
   LineString positions;
   for(int i = 0; i < route->size(); i++)
-    positions.append(route->at(i).getPosition());
+    positions.append(route->value(i).getPosition());
 
   TextPlacement textPlacement(painter, this);
   textPlacement.setDrawFast(context->drawFast);
@@ -361,7 +361,7 @@ void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList
   for(int i = 0; i < route->size(); i++)
   {
     // Make all approach points except the last one invisible to avoid text and symbol overlay over approach
-    if(route->at(i).isAnyProcedure())
+    if(route->value(i).isAnyProcedure())
       visibleStartPoints.clearBit(i);
   }
 
@@ -1542,7 +1542,7 @@ void MapPainterRoute::drawSymbols(const PaintContext *context,
     {
       int x = atools::roundToInt(pt.x());
       int y = atools::roundToInt(pt.y());
-      const RouteLeg& obj = route->at(i);
+      const RouteLeg& obj = route->value(i);
       map::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {
@@ -1611,7 +1611,7 @@ void MapPainterRoute::drawRouteSymbolText(const PaintContext *context,
     {
       int x = atools::roundToInt(pt.x());
       int y = atools::roundToInt(pt.y());
-      const RouteLeg& obj = route->at(i);
+      const RouteLeg& obj = route->value(i);
       map::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {
@@ -1647,7 +1647,7 @@ void MapPainterRoute::drawStartParking(const PaintContext *context)
   if(!route->isEmpty() && context->mapLayerEffective->isAirportDiagram())
   {
     // Draw start position or parking circle into the airport diagram
-    const RouteLeg& first = route->at(0);
+    const RouteLeg& first = route->value(0);
     if(first.getMapObjectType() == map::AIRPORT)
     {
       int size = 25;

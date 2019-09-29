@@ -17,6 +17,11 @@
 
 #include "route/routealtitudeleg.h"
 
+RouteAltitudeLeg::RouteAltitudeLeg()
+{
+
+}
+
 float RouteAltitudeLeg::getMaxAltitude() const
 {
   if(geometry.isEmpty())

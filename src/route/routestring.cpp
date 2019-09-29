@@ -329,7 +329,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   int lastIndex = 0;
   for(int i = 0; i <= route.getDestinationAirportLegIndex(); i++)
   {
-    const RouteLeg& leg = route.at(i);
+    const RouteLeg& leg = route.value(i);
     if(leg.isAnyProcedure())
       continue;
 

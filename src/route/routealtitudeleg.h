@@ -38,6 +38,8 @@
 class RouteAltitudeLeg
 {
 public:
+  RouteAltitudeLeg();
+
   /* Maximum altitude for this leg in feet */
   float getMaxAltitude() const;
 

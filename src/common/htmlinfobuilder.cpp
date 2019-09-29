@@ -3278,7 +3278,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         wpText = tr(" - Alternate");
       else if(activeLegCorrected != map::INVALID_INDEX_VALUE)
       {
-        const RouteLeg& routeLeg = route.at(activeLegCorrected);
+        const RouteLeg& routeLeg = route.value(activeLegCorrected);
 
         if(routeLeg.getProcedureLeg().isApproach())
           wpText = tr(" - Approach");
@@ -3294,11 +3294,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(activeLegCorrected != map::INVALID_INDEX_VALUE)
       {
         // If approaching an initial fix use corrected version
-        const RouteLeg& routeLegCorrected = route.at(activeLegCorrected);
+        const RouteLeg& routeLegCorrected = route.value(activeLegCorrected);
 
         // For course and distance use not corrected leg
         const RouteLeg& routeLeg = activeLeg != map::INVALID_INDEX_VALUE &&
-                                   isCorrected ? route.at(activeLeg) : routeLegCorrected;
+                                   isCorrected ? route.value(activeLeg) : routeLegCorrected;
 
         const proc::MapProcedureLeg& leg = routeLegCorrected.getProcedureLeg();
 

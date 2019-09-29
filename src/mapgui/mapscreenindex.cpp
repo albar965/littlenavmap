@@ -409,7 +409,7 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
 
     for(int i = 0; i < route.size(); i++)
     {
-      const RouteLeg& routeLeg = route.at(i);
+      const RouteLeg& routeLeg = route.value(i);
 
       const Pos& p2 = routeLeg.getPosition();
       int x2, y2;

@@ -541,7 +541,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         const Route& route = NavApp::getRouteConst();
         for(int i = 0; i < route.size(); i++)
         {
-          const RouteLeg& routeLeg = route.at(i);
+          const RouteLeg& routeLeg = route.value(i);
           map::MapObjectTypes type = routeLeg.getMapObjectType();
           if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
             context.routeIdMap.insert({routeLeg.getId(), routeLeg.getMapObjectType()});

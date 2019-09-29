@@ -397,7 +397,7 @@ private:
   void updateTableHeaders();
   void highlightNextWaypoint(int nearestLegIndex);
   void updateModelHighlights();
-  void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet);
+  void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet, QStringList *procedureLoadingErrors);
   void loadAlternateFromFlightplan(bool quiet);
 
   void beforeRouteCalc();
@@ -407,6 +407,7 @@ private:
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
+  void reportProcedureErrors(const QStringList& procedureLoadingErrors);
 
   void selectAllTriggered();
 
@@ -459,6 +460,7 @@ private:
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;
   static Q_DECL_CONSTEXPR int ROUTE_ALT_CHANGE_DELAY_MS = 500;
 
+  bool loadingDatabaseState = false;
   qint64 lastSimUpdate = 0;
   atools::fs::sc::SimConnectUserAircraft aircraft;
 
@@ -466,6 +468,7 @@ private:
 
   atools::gui::TabWidgetHandler *tabHandlerRoute = nullptr;
 
+  /* Calls RouteController::routeAltChangedDelayed */
   QTimer routeAltDelayTimer;
 
   // Route table colum headings

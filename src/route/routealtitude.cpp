@@ -77,7 +77,7 @@ float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
   if(idx != map::INVALID_INDEX_VALUE)
   {
     // Now search through the geometry to find a matching line (if more than one)
-    const RouteAltitudeLeg& leg = at(idx);
+    const RouteAltitudeLeg& leg = value(idx);
 
     QPolygonF::const_iterator itGeo =
       std::lower_bound(leg.geometry.begin(), leg.geometry.end(), distFromStart,
@@ -156,6 +156,18 @@ void RouteAltitude::clearAll()
   validProfile = false;
 }
 
+const RouteAltitudeLeg& RouteAltitude::value(int i) const
+{
+  const static RouteAltitudeLeg EMPTY_ROUTE_ALT_LEG;
+  if(!atools::inRange(*this, i))
+  {
+    qWarning() << Q_FUNC_INFO << "Invalid index" << i;
+    return EMPTY_ROUTE_ALT_LEG;
+  }
+  else
+    return QVector::at(i);
+}
+
 float RouteAltitude::getTotalDistance() const
 {
   return route->getTotalDistance();
@@ -229,7 +241,7 @@ QVector<float> RouteAltitude::getAltitudes() const
     // No altitude legs - copy airport and cruise altitude ==========================
     for(int i = 0; i < route->size(); i++)
     {
-      const RouteLeg& leg = route->at(i);
+      const RouteLeg& leg = route->value(i);
 
       if(i == 0 && leg.getAirport().isValid())
         retval.append(leg.getPosition().getAltitude());
@@ -268,7 +280,7 @@ bool RouteAltitude::calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalT
       // Calculate values based on profile data ======================================
       if(activeLeg != map::INVALID_INDEX_VALUE)
       {
-        const RouteAltitudeLeg& leg = at(activeLeg);
+        const RouteAltitudeLeg& leg = value(activeLeg);
 
         // Calculate time and fuel to destination ============================================
         // Fuel from end of leg to destination
@@ -297,7 +309,7 @@ bool RouteAltitude::calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalT
         {
           float fuelToTod = 0.f;
           // Calculate fuel and time from TOD to destination
-          at(todIdx).getFuelAndTimeFromDistToDestination(fuelToTod, timeToTod, todDistanceFromDeparture);
+          value(todIdx).getFuelAndTimeFromDistToDestination(fuelToTod, timeToTod, todDistanceFromDeparture);
 
           // Calculate fuel and time from aircraft to TOD
           fuelToTod = fuelToDest - fuelToTod;
@@ -407,7 +419,7 @@ float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::Ma
 
 bool RouteAltitude::violatesAltitudeRestriction(QString& errorMessage, int legIndex) const
 {
-  const RouteAltitudeLeg& leg = at(legIndex);
+  const RouteAltitudeLeg& leg = value(legIndex);
   float legAlt = leg.y2();
   bool retval = false;
 
@@ -461,7 +473,7 @@ float RouteAltitude::findApproachMaxAltitude(int index) const
       // Check backwards from index for a arrival/STAR leg that limits the maximum altitude
       for(int i = index - 1; i >= 0; i--)
       {
-        const RouteLeg& leg = route->at(i);
+        const RouteLeg& leg = route->value(i);
 
         if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyArrival() && leg.getProcedureLegAltRestr().isValid())
         {
@@ -498,7 +510,7 @@ float RouteAltitude::findDepartureMaxAltitude(int index) const
     {
       for(int i = index; i < end; i++)
       {
-        const RouteLeg& leg = route->at(i);
+        const RouteLeg& leg = route->value(i);
 
         if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyDeparture() && leg.getProcedureLegAltRestr().isValid())
         {
@@ -530,7 +542,7 @@ int RouteAltitude::findApproachFirstRestricion() const
     {
       for(int i = start; i < route->size(); i++)
       {
-        const RouteLeg& leg = route->at(i);
+        const RouteLeg& leg = route->value(i);
         if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyArrival() && leg.getProcedureLegAltRestr().isValid())
           return i;
       }
@@ -552,7 +564,7 @@ int RouteAltitude::findDepartureLastRestricion() const
     {
       for(int i = start; i > 0; i--)
       {
-        const RouteLeg& leg = route->at(i);
+        const RouteLeg& leg = route->value(i);
 
         if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyDeparture() && leg.getProcedureLegAltRestr().isValid())
           return i;
@@ -865,7 +877,7 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
   // Check for violations because of too low cruise
   for(int i = 0; i < size(); i++)
   {
-    const RouteAltitudeLeg& leg = at(i);
+    const RouteAltitudeLeg& leg = value(i);
 
     if(!leg.isMissed() && !leg.isAlternate())
     {
@@ -932,7 +944,7 @@ void RouteAltitude::calculateDistances()
   // Fill all legs with distance and cruise altitude and add them to the vector
   for(int i = 0; i < route->size(); i++)
   {
-    const RouteLeg& leg = route->at(i);
+    const RouteLeg& leg = route->value(i);
 
     RouteAltitudeLeg alt;
 
@@ -961,10 +973,10 @@ void RouteAltitude::calculateDistances()
   // Set the flags which are needed for drawing
   for(int i = 1; i < route->size(); i++)
   {
-    const RouteLeg& leg = route->at(i);
-    const RouteLeg& last = route->at(i - 1);
+    const RouteLeg& leg = route->value(i);
+    const RouteLeg& last = route->value(i - 1);
     RouteAltitudeLeg& altLeg = (*this)[i];
-    const RouteAltitudeLeg& lastAltLeg = at(i - 1);
+    const RouteAltitudeLeg& lastAltLeg = value(i - 1);
 
     if(leg.getProcedureLeg().isAnyArrival() && altLeg.isPoint() && lastAltLeg.restriction.isValid())
     {
@@ -1016,7 +1028,7 @@ void RouteAltitude::calculateDeparture()
       continue;
 
     // Altitude of last leg
-    float lastLegAlt = i > departureLegIdx ? at(i - 1).y2() : departAlt;
+    float lastLegAlt = i > departureLegIdx ? value(i - 1).y2() : departAlt;
 
     if(i <= departureLegIdx)
       // Departure leg - assign altitude to airport and RW too if available
@@ -1138,12 +1150,12 @@ void RouteAltitude::calculateArrival()
       if(!altitudeRestricts && !(distanceTopOfDescent < map::INVALID_ALTITUDE_VALUE) &&
          uncorrectedAltitude > cruiseAltitide && i + 1 < size())
       {
-        if(at(i + 1).isEmpty())
+        if(value(i + 1).isEmpty())
           // Stepped into the dummies after arrival runway - bail out
           break;
 
         // Reached TOD - calculate distance
-        distanceTopOfDescent = distanceForAltitude(at(i + 1).getGeometry().last(),
+        distanceTopOfDescent = distanceForAltitude(value(i + 1).getGeometry().last(),
                                                    QPointF(
                                                      alt.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitide);
         legIndexTopOfDescent = i + 1;
@@ -1209,7 +1221,7 @@ void RouteAltitude::fillGeometry()
   for(int i = 0; i < route->size(); i++)
   {
     RouteAltitudeLeg& altLeg = (*this)[i];
-    const RouteLeg& routeLeg = route->at(i);
+    const RouteLeg& routeLeg = route->value(i);
 
     altLeg.line.clear();
 
@@ -1225,7 +1237,7 @@ void RouteAltitude::fillGeometry()
       else
       {
         if(i > 0)
-          altLeg.line.append(route->at(i - 1).getPosition().alt(altLeg.y1()));
+          altLeg.line.append(route->value(i - 1).getPosition().alt(altLeg.y1()));
         altLeg.line.append(routeLeg.getPosition().alt(altLeg.y2()));
       }
 
@@ -1273,14 +1285,14 @@ float RouteAltitude::getDestinationDistance() const
   int idx = route->getDestinationLegIndex();
 
   if(idx < map::INVALID_INDEX_VALUE)
-    return at(idx).getDistanceFromStart();
+    return value(idx).getDistanceFromStart();
   else
     return map::INVALID_DISTANCE_VALUE;
 }
 
 float RouteAltitude::getDepartureAltitude() const
 {
-  const RouteLeg& startLeg = route->at(route->getSidLegIndex());
+  const RouteLeg& startLeg = route->value(route->getSidLegIndex());
   if(startLeg.isAnyProcedure() && startLeg.getProcedureLegAltRestr().isValid())
   {
     if(startLeg.getRunwayEnd().isValid())
@@ -1441,7 +1453,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       }
 
       // Calculate ground speed for each phase (climb, cruise, descent) of this leg - 0 is phase is not touched
-      float course = route->at(i).getCourseToTrue();
+      float course = route->value(i).getCourseToTrue();
 
       float climbHeadWind = 0.f, cruiseHeadWind = 0.f, descentHeadWind = 0.f;
 
@@ -1570,7 +1582,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
     for(int idx = offset; idx < offset + route->getNumAlternateLegs(); idx++)
     {
       // Fuel to the farthest alternate
-      alternateFuel = std::max(at(idx).getFuel(), alternateFuel);
+      alternateFuel = std::max(value(idx).getFuel(), alternateFuel);
 
       RouteAltitudeLeg& leg = (*this)[idx];
       leg.fuelToDest = tripFuel + leg.getFuel();
@@ -1644,6 +1656,6 @@ QDebug operator<<(QDebug out, const RouteAltitude& obj)
       << endl;
 
   for(int i = 0; i < obj.size(); i++)
-    out << "++++++++++++++++++++++" << endl << i << obj.at(i) << endl;
+    out << "++++++++++++++++++++++" << endl << i << obj.value(i) << endl;
   return out;
 }

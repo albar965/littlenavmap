@@ -765,7 +765,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             routeDragCur = QPoint(event->pos().x(), event->pos().y());
             routeDragFixed.clear();
 
-            if(routePoint > 0 && route.at(routePoint).isAlternate())
+            if(routePoint > 0 && route.value(routePoint).isAlternate())
             {
               // Alternate airports are treated as endpoints
               routeDragFixed.append(route.getDestinationAirportLeg().getPosition());
@@ -774,19 +774,19 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             {
               // Add all lines to alternates as fixed lines if moving destination with alternates
               if(routePoint > 0)
-                routeDragFixed.append(route.at(routePoint - 1).getPosition());
+                routeDragFixed.append(route.value(routePoint - 1).getPosition());
               for(int i = route.getAlternateLegsOffset(); i < route.size(); i++)
-                routeDragFixed.append(route.at(i).getPosition());
+                routeDragFixed.append(route.value(i).getPosition());
             }
             else
             {
               if(routePoint > 0)
                 // First point of route
-                routeDragFixed.append(route.at(routePoint - 1).getPosition());
+                routeDragFixed.append(route.value(routePoint - 1).getPosition());
 
               if(routePoint < route.size() - 1)
                 // Last point of plan
-                routeDragFixed.append(route.at(routePoint + 1).getPosition());
+                routeDragFixed.append(route.value(routePoint + 1).getPosition());
             }
 
             setContextMenuPolicy(Qt::PreventContextMenu);
@@ -806,8 +806,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
               routeDragCur = QPoint(event->pos().x(), event->pos().y());
 
               routeDragFixed.clear();
-              routeDragFixed.append(route.at(routeLeg).getPosition());
-              routeDragFixed.append(route.at(routeLeg + 1).getPosition());
+              routeDragFixed.append(route.value(routeLeg).getPosition());
+              routeDragFixed.append(route.value(routeLeg + 1).getPosition());
               setContextMenuPolicy(Qt::PreventContextMenu);
             }
           }
@@ -2463,7 +2463,7 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
   // Allow only aiports for alterates
   if(point >= 0)
   {
-    if(NavApp::getRouteConst().at(point).isAlternate())
+    if(NavApp::getRouteConst().value(point).isAlternate())
       result.clear(map::MapObjectType(~map::AIRPORT));
   }
 

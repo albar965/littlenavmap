@@ -128,13 +128,8 @@ public:
     calcTopOfClimb = value;
   }
 
-  const RouteAltitudeLeg& at(int i) const
-  {
-    if(i < 0 || i > size() - 1)
-      qWarning() << Q_FUNC_INFO << "Invalid index" << i;
-
-    return QVector::at(i);
-  }
+  /* Returns empty object if index is invalid */
+  const RouteAltitudeLeg& value(int i) const;
 
   int size() const
   {
