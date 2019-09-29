@@ -1785,10 +1785,12 @@ void RouteController::postDatabaseLoad()
     updateStartPositionBestRunway(false, true);
 
   updateActiveLeg();
+
+  // Need to update model to reflect the flight plan changes before other methods call updateModelHighlights
+  updateTableModel();
   updateErrorLabel();
   routeAltChangedDelayed();
 
-  updateTableModel();
 
   NavApp::updateWindowTitle();
   loadingDatabaseState = false;
