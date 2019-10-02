@@ -113,10 +113,10 @@ void MapMarkHandler::addToolbarButton()
                                tr("Show or hide range rings"), map::MARK_RANGE_RINGS);
   actionMeasurementLines = addButton(":/littlenavmap/resources/icons/distancemeasure.svg", tr("&Measurement Lines"),
                                      tr("Show or hide measurement lines"), map::MARK_MEASUREMENT);
-  actionHolds = addButton(":/littlenavmap/resources/icons/hold.svg", tr("&Holdings"),
-                          tr("Show or hide holdings"), map::MARK_HOLDS);
   actionPatterns = addButton(":/littlenavmap/resources/icons/trafficpattern.svg", tr("&Traffic Patterns"),
                              tr("Show or hide traffic patterns"), map::MARK_PATTERNS);
+  actionHolds = addButton(":/littlenavmap/resources/icons/hold.svg", tr("&Holdings"),
+                          tr("Show or hide holdings"), map::MARK_HOLDS);
 }
 
 QAction *MapMarkHandler::addButton(const QString& icon, const QString& text, const QString& tooltip,
