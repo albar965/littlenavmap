@@ -497,7 +497,7 @@ public:
   bool hasValidParking() const;
 
   void updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteType);
-  int adjustAltitude(int minAltitude) const;
+  int adjustAltitude(int newAltitude) const;
 
   /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
   atools::geo::Pos getPositionAtDistance(float distFromStartNm) const;

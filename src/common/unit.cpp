@@ -348,6 +348,11 @@ float Unit::altFeetF(float value)
   return altMeterF(atools::geo::feetToMeter(value));
 }
 
+int Unit::altFeetI(int value)
+{
+  return atools::roundToInt(altMeterF(atools::geo::feetToMeter(value)));
+}
+
 QString Unit::volGallon(float value, bool addUnit)
 {
   return u(volGallonF(value), unitVolStr, addUnit);

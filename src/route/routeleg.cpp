@@ -731,7 +731,7 @@ bool RouteLeg::isApproachPoint() const
           procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
-bool RouteLeg::isAirwaySetAndInvalid(float altitude, QStringList *errors) const
+bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors) const
 {
   bool invalid = true;
   if(airway.isValid())
@@ -750,22 +750,23 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitude, QStringList *errors) const
     if(errors != nullptr && invalid)
       errors->append(tr("Wrong direction in one-way segment."));
 
-    if(altitude < map::INVALID_ALTITUDE_VALUE)
+    if(altitudeFt < map::INVALID_ALTITUDE_VALUE)
     {
-      if(altitude < airway.minAltitude)
+      // Use a buffer for comparison to avoid rounding errors
+      if(altitudeFt < airway.minAltitude - 10.f)
       {
         invalid = true;
         if(errors != nullptr)
           errors->append(tr("Cruise altitude %1 is below minimum altitude of %2.").
-                         arg(Unit::altFeet(altitude)).arg(Unit::altFeet(airway.minAltitude)));
+                         arg(Unit::altFeet(altitudeFt)).arg(Unit::altFeet(airway.minAltitude)));
       }
 
-      if(airway.maxAltitude > 0 && altitude > airway.maxAltitude)
+      if(airway.maxAltitude > 0 && altitudeFt > airway.maxAltitude + 10.f)
       {
         invalid = true;
         if(errors != nullptr)
           errors->append(tr("Cruise altitude %1 is above maximum altitude of %2.").
-                         arg(Unit::altFeet(altitude)).arg(Unit::altFeet(airway.maxAltitude)));
+                         arg(Unit::altFeet(altitudeFt)).arg(Unit::altFeet(airway.maxAltitude)));
       }
     }
 

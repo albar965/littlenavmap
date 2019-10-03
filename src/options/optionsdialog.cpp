@@ -574,6 +574,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsWebSelectDocroot, &QPushButton::clicked, this, &OptionsDialog::selectWebDocrootClicked);
   connect(ui->lineEditOptionsWebDocroot, &QLineEdit::textEdited, this, &OptionsDialog::updateWebDocrootStatus);
   connect(ui->pushButtonOptionsWebStart, &QPushButton::clicked, this, &OptionsDialog::startStopWebServerClicked);
+
+  // Flight plan =======================================================================
+  connect(ui->checkBoxOptionsRouteEastWestRule, &QPushButton::clicked, this, &OptionsDialog::eastWestRuleClicked);
 }
 
 /* called at program end */
@@ -597,6 +600,7 @@ void OptionsDialog::open()
   updateWeatherButtonState();
   updateWebDocrootStatus();
   updateWebServerStatus();
+  eastWestRuleClicked();
   updateWidgetUnits();
 
   QDialog::open();
@@ -610,6 +614,11 @@ void OptionsDialog::reject()
   updateWebOptionsFromData();
 
   QDialog::reject();
+}
+
+void OptionsDialog::eastWestRuleClicked()
+{
+  ui->comboBoxOptionsRouteAltitudeRuleType->setEnabled(ui->checkBoxOptionsRouteEastWestRule->isChecked());
 }
 
 void OptionsDialog::onlineDisplayRangeClicked()
@@ -907,6 +916,7 @@ void OptionsDialog::restoreState()
   simNoFollowAircraftOnScrollClicked(false);
   updateButtonColors();
   onlineDisplayRangeClicked();
+  eastWestRuleClicked();
 
   updateWebServerStatus();
   updateWebDocrootStatus();

@@ -621,7 +621,7 @@ int Route::getTopOfDescentLegIndex() const
 
 float Route::getCruisingAltitudeFeet() const
 {
-  return Unit::rev(getFlightplan().getCruisingAltitude(), Unit::altFeetF);
+  return Unit::rev(flightplan.getCruisingAltitude(), Unit::altFeetF);
 }
 
 float Route::getAltitudeForDistance(float currentDistToDest) const
@@ -1908,7 +1908,7 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteT
     return;
 
   bool hasAirway = false;
-  int minAltitude = 0;
+  int minAltitude = 0, maxAltitude = 100000;
   for(int i = 1; i < size(); i++)
   {
     RouteLeg& routeLeg = (*this)[i];
@@ -1921,42 +1921,73 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteT
                                                         routeLeg.getIdent());
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);
+      if(airway.maxAltitude > 0)
+        maxAltitude = std::min(airway.maxAltitude, maxAltitude);
 
       hasAirway |= !routeLeg.getAirwayName().isEmpty();
-      // qDebug() << "min" << airway.minAltitude << "max" << airway.maxAltitude;
     }
     else
       routeLeg.setAirway(map::MapAirway());
   }
 
-  if(minAltitude > 0 && adjustRouteAltitude)
-  {
-    if(OptionData::instance().getFlags() & opts::ROUTE_ALTITUDE_RULE)
-      // Apply simplified east/west rule
-      minAltitude = adjustAltitude(minAltitude);
-    getFlightplan().setCruisingAltitude(minAltitude);
+  // Convert feet to local unit
+  minAltitude = Unit::altFeetI(minAltitude);
+  maxAltitude = Unit::altFeetI(maxAltitude);
 
-    qDebug() << Q_FUNC_INFO << "Updating flight plan altitude to" << minAltitude;
+  if(adjustRouteAltitude)
+  {
+    // Check airway limits after calculation ===========================
+
+    // Add 500 ft/m for VFR
+    float offset = flightplan.getFlightplanType() == atools::fs::pln::IFR ? 0.f : 500.f;
+    int cruisingAltitude = flightplan.getCruisingAltitude();
+
+    // First round up to next rule adhering altitude independent of flight direction
+    // cruisingAltitude = static_cast<int>(std::ceil((cruisingAltitude - offset) / 1000.f) * 1000.f + offset);
+
+    if(cruisingAltitude < minAltitude)
+      // Below min altitude - use min altitude and round up to next valid level
+      cruisingAltitude = static_cast<int>(std::ceil((minAltitude - offset) / 1000.f) * 1000.f + offset);
+
+    if(cruisingAltitude > maxAltitude)
+      // Above max altitude - use max altitude and round down
+      cruisingAltitude = static_cast<int>(std::floor((maxAltitude - offset) / 1000.f) * 1000.f + offset);
+
+    // Adjust altitude after route calculation ===========================
+    if(OptionData::instance().getFlags() & opts::ROUTE_ALTITUDE_RULE)
+    {
+      // Apply simplified east/west or other rule - always rounds up =============================
+      int adjusted = adjustAltitude(cruisingAltitude);
+
+      if(adjusted > maxAltitude)
+        adjusted = adjustAltitude(cruisingAltitude - 1000);
+      cruisingAltitude = adjusted;
+    }
+
+    qDebug() << Q_FUNC_INFO << "Updating flight plan altitude"
+             << "minAltitude" << minAltitude << "maxAltitude" << maxAltitude << "cruisingAltitude" << cruisingAltitude;
+
+    flightplan.setCruisingAltitude(cruisingAltitude);
   }
 
   if(adjustRouteType)
   {
     if(hasAirway)
     {
-      if(getFlightplan().getCruisingAltitude() >= Unit::altFeetF(20000))
-        getFlightplan().setRouteType(atools::fs::pln::HIGH_ALTITUDE);
+      if(getCruisingAltitudeFeet() >= 20000.f)
+        flightplan.setRouteType(atools::fs::pln::HIGH_ALTITUDE);
       else
-        getFlightplan().setRouteType(atools::fs::pln::LOW_ALTITUDE);
+        flightplan.setRouteType(atools::fs::pln::LOW_ALTITUDE);
     }
     else
-      getFlightplan().setRouteType(atools::fs::pln::DIRECT);
+      flightplan.setRouteType(atools::fs::pln::DIRECT);
 
-    qDebug() << Q_FUNC_INFO << "Updating flight plan route type to" << getFlightplan().getRouteType();
+    qDebug() << Q_FUNC_INFO << "Updating flight plan route type to" << flightplan.getRouteType();
   }
 }
 
 /* Apply simplified east/west or north/south rule */
-int Route::adjustAltitude(int minAltitude) const
+int Route::adjustAltitude(int newAltitude) const
 {
   if(getSizeWithoutAlternates() > 1)
   {
@@ -1969,7 +2000,7 @@ int Route::adjustAltitude(int minAltitude) const
 
     if(fpDir < Pos::INVALID_VALUE)
     {
-      qDebug() << Q_FUNC_INFO << "minAltitude" << minAltitude << "fp dir" << fpDir;
+      qDebug() << Q_FUNC_INFO << "minAltitude" << newAltitude << "fp dir" << fpDir;
 
       // East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans
       // and nearest even thousand feet for westward flight plans.
@@ -1989,27 +2020,29 @@ int Route::adjustAltitude(int minAltitude) const
 
       if(getFlightplan().getFlightplanType() == atools::fs::pln::IFR)
       {
+        // IFR - 1000
         if(odd)
           // round up to the next odd value
-          minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+          newAltitude = static_cast<int>(std::ceil((newAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
         else
           // round up to the next even value
-          minAltitude = static_cast<int>(std::ceil((minAltitude) / 2000.f) * 2000.f);
+          newAltitude = static_cast<int>(std::ceil(newAltitude / 2000.f) * 2000.f);
       }
       else
       {
+        // VFR - 500
         if(odd)
           // round up to the next odd value + 500
-          minAltitude = static_cast<int>(std::ceil((minAltitude - 1500.f) / 2000.f) * 2000.f + 1500.f);
+          newAltitude = static_cast<int>(std::ceil((newAltitude - 1500.f) / 2000.f) * 2000.f + 1500.f);
         else
           // round up to the next even value + 500
-          minAltitude = static_cast<int>(std::ceil((minAltitude - 500.f) / 2000.f) * 2000.f + 500.f);
+          newAltitude = static_cast<int>(std::ceil((newAltitude - 500.f) / 2000.f) * 2000.f + 500.f);
       }
 
-      qDebug() << "corrected minAltitude" << minAltitude;
+      qDebug() << "corrected minAltitude" << newAltitude;
     }
   }
-  return minAltitude;
+  return newAltitude;
 }
 
 void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd *runwayEnd) const

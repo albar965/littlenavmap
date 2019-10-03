@@ -93,6 +93,7 @@ public:
 
   static float altMeterF(float value);
   static float altFeetF(float value);
+  static int altFeetI(int value);
 
   /* Volume: Returns either gal or l for fuel*/
   static QString volGallon(float value, bool addUnit = true);

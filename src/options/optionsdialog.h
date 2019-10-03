@@ -127,6 +127,7 @@ private:
   void flightplanProcedureColorClicked();
   void trailColorClicked();
   void onlineDisplayRangeClicked();
+  void eastWestRuleClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
   QTreeWidgetItem *addTopItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip);
