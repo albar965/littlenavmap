@@ -7471,7 +7471,7 @@ relation to shown airport</string>
     <string>About the Marble Widget</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="actionRouteCalcSetAlt">
