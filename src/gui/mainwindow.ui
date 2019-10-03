@@ -6500,7 +6500,7 @@ relation to shown airport</string>
     <string>About Little Navmap</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="actionHelpAboutQt">
@@ -6518,7 +6518,7 @@ relation to shown airport</string>
     <string>About Qt</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
   <action name="actionOptions">
@@ -6536,7 +6536,7 @@ relation to shown airport</string>
     <string>Open the options dialog</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::TextHeuristicRole</enum>
+    <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
   <action name="actionAirportSearchShowAllOptions">
