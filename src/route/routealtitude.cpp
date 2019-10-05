@@ -771,7 +771,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   }
 
   const RouteLeg destinationLeg = route->getDestinationLeg();
-  if(!destinationLeg.isValid() ||
+  if(!destinationLeg.isValidWaypoint() ||
      (destinationLeg.getMapObjectType() != map::AIRPORT && destinationLeg.getMapObjectType() != map::PROCEDURE))
   {
     errors.append(tr("Destination is not valid. Must be an airport."));
@@ -780,7 +780,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   }
 
   const RouteLeg departureLeg = route->getDepartureAirportLeg();
-  if(!departureLeg.isValid() ||
+  if(!departureLeg.isValidWaypoint() ||
      (departureLeg.getMapObjectType() != map::AIRPORT && departureLeg.getMapObjectType() != map::PROCEDURE))
   {
     errors.append(tr("Departure is not valid. Must be an airport."));
@@ -1258,7 +1258,7 @@ float RouteAltitude::getDestinationAltitude() const
 {
   const RouteLeg& destLeg = route->getDestinationLeg();
 
-  if(!destLeg.isValid())
+  if(!destLeg.isValidWaypoint())
     qWarning() << Q_FUNC_INFO << "dest leg not valid";
   else
   {

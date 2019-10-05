@@ -226,6 +226,12 @@ public:
   }
 
   /* @return false if this waypoint was not found in the database */
+  bool isValidWaypoint() const
+  {
+    return validWaypoint;
+  }
+
+  /* @return false if this is default constructed */
   bool isValid() const
   {
     return valid;
@@ -346,8 +352,7 @@ private:
   proc::MapProcedureLeg procedureLeg;
   map::MapAirway airway;
 
-  bool valid = false;
-  bool alternate = false;
+  bool validWaypoint = false, alternate = false, valid = false;
 
   float distanceTo = 0.f,
         distanceToRhumb = 0.f,

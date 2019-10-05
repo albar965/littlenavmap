@@ -74,7 +74,7 @@ void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirpo
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
-  valid = true;
+  valid = validWaypoint = true;
 }
 
 void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg)
@@ -97,7 +97,7 @@ void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLe
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
-  valid = true;
+  valid = validWaypoint = true;
 }
 
 void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const Pos& last, float maxDistance)
@@ -110,17 +110,17 @@ void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry
   if(mapobjectResult.hasVor())
   {
     assignVor(mapobjectResult, flightplanEntry);
-    valid = true;
+    valid = validWaypoint = true;
   }
   else if(mapobjectResult.hasNdb())
   {
     assignNdb(mapobjectResult, flightplanEntry);
-    valid = true;
+    valid = validWaypoint = true;
   }
   else if(mapobjectResult.hasWaypoints())
   {
     assignIntersection(mapobjectResult, flightplanEntry);
-    valid = true;
+    valid = validWaypoint = true;
   }
 }
 
@@ -165,7 +165,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           {
             // Use navaid at airway
             assignIntersection(mapobjectResult, flightplanEntry);
-            valid = true;
+            validWaypoint = true;
           }
           else
           {
@@ -188,7 +188,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
         alternate = flightplanEntry->getFlags() & atools::fs::pln::entry::ALTERNATE;
 
-        valid = true;
+        validWaypoint = true;
 
         // Resolve parking ==============================
         QString name = flightplan->getDepartureParkingName().trimmed();
@@ -274,20 +274,20 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       if(!mapobjectResult.waypoints.isEmpty())
       {
         assignIntersection(mapobjectResult, flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       else if(!mapobjectResult.airports.isEmpty())
       {
         // FSC saves airports in the flight plan wrongly as intersections
         assignAirport(mapobjectResult, flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       else if(!atools::fs::util::isValidIdent(flightplanEntry->getIcaoIdent()))
       {
         // Name contains funny characters - must me a user fix from FSC
         flightplanEntry->setWaypointId(flightplanEntry->getIcaoIdent());
         assignUser(flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       break;
 
@@ -298,7 +298,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       if(!mapobjectResult.vors.isEmpty())
       {
         assignVor(mapobjectResult, flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       break;
 
@@ -309,20 +309,22 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       if(!mapobjectResult.ndbs.isEmpty())
       {
         assignNdb(mapobjectResult, flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       break;
 
     // =============================== Navaid user coordinates
     case atools::fs::pln::entry::USER:
       assignUser(flightplanEntry);
-      valid = true;
+      validWaypoint = true;
       break;
   }
 
-  if(!valid)
+  if(!validWaypoint)
     // Leave the flight plan type as is and change internal type only
     type = map::INVALID;
+
+  valid = true;
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
@@ -886,7 +888,7 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
                           << ", course " << leg.getCourseToMag() << "°M " << leg.getCourseToTrue() << "°T"
                           << ", magvar " << leg.getMagvar()
                           << ", magvarPos " << leg.getMagvarPos()
-                          << (leg.isValid() ? ", valid" : QString())
+                          << (leg.isValidWaypoint() ? ", valid" : QString())
                           << (leg.isNavdata() ? ", nav" : QString())
                           << (leg.isAlternate() ? ", alternate" : QString())
                           << (leg.isAnyProcedure() ? ", procedure" : QString())

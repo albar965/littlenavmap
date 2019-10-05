@@ -1791,7 +1791,6 @@ void RouteController::postDatabaseLoad()
   updateErrorLabel();
   routeAltChangedDelayed();
 
-
   NavApp::updateWindowTitle();
   loadingDatabaseState = false;
   reportProcedureErrors(procedureLoadingErrors);
@@ -2036,12 +2035,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // Menu above a row
   if(routeLeg != nullptr)
   {
-    ui->actionRouteShowInformation->setEnabled(routeLeg->isValid() &&
+    ui->actionRouteShowInformation->setEnabled(routeLeg->isValidWaypoint() &&
                                                (routeLeg->isRoute() || routeLeg->isAlternate()) &&
                                                routeLeg->getMapObjectType() != map::USERPOINTROUTE &&
                                                routeLeg->getMapObjectType() != map::INVALID);
 
-    if(routeLeg->isValid())
+    if(routeLeg->isValidWaypoint())
     {
       if(prevRouteLeg == nullptr)
         // allow to insert before first one
@@ -2058,7 +2057,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         insert = routeLeg->isRoute();
     }
 
-    if(routeLeg->isValid() && routeLeg->getMapObjectType() == map::AIRPORT)
+    if(routeLeg->isValidWaypoint() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
       bool hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(routeLeg->getAirport());
       bool hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(routeLeg->getAirport());
@@ -2116,7 +2115,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     // tr("Delete Procedure") : tr("Delete selected Legs"));
 
 #ifdef DEBUG_MOVING_AIRPLANE
-    ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid());
+    ui->actionRouteActivateLeg->setEnabled(routeLeg->isValidWaypoint());
 #else
     ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid() && NavApp::isConnected());
 #endif
@@ -4002,6 +4001,12 @@ void RouteController::updateModelHighlights()
   for(int row = 0; row < model->rowCount(); ++row)
   {
     const RouteLeg& leg = route.value(row);
+    if(!leg.isValid())
+    {
+      // Have to check here since sim updates can still happen while building the flight plan
+      qWarning() << Q_FUNC_INFO << "Invalid index" << row;
+      break;
+    }
 
     for(int col = 0; col < model->columnCount(); ++col)
     {
