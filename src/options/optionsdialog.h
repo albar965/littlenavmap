@@ -76,22 +76,24 @@ private:
   /* Catch close button too since dialog is kept alive */
   virtual void reject() override;
 
+  void updateWidgetStates();
+
   void buttonBoxClicked(QAbstractButton *button);
   void widgetsToOptionData();
-  void optionDataToWidgets();
+  void optionDataToWidgets(const OptionData& data);
 
   void toFlags(QCheckBox *checkBox, opts::Flags flag);
   void toFlags(QRadioButton *radioButton, opts::Flags flag);
-  void fromFlags(QCheckBox *checkBox, opts::Flags flag);
-  void fromFlags(QRadioButton *radioButton, opts::Flags flag);
+  void fromFlags(const OptionData& data, QCheckBox *checkBox, opts::Flags flag);
+  void fromFlags(const OptionData& data, QRadioButton *radioButton, opts::Flags flag);
 
   void toFlags2(QCheckBox *checkBox, opts2::Flags2 flag);
   void toFlags2(QRadioButton *radioButton, opts2::Flags2 flag);
-  void fromFlags2(QCheckBox *checkBox, opts2::Flags2 flag);
-  void fromFlags2(QRadioButton *radioButton, opts2::Flags2 flag);
+  void fromFlags2(const OptionData& data, QCheckBox *checkBox, opts2::Flags2 flag);
+  void fromFlags2(const OptionData& data, QRadioButton *radioButton, opts2::Flags2 flag);
 
   void toFlagsWeather(QCheckBox *checkBox, optsw::FlagsWeather flag);
-  void fromFlagsWeather(QCheckBox *checkBox, optsw::FlagsWeather flag);
+  void fromFlagsWeather(const OptionData& data, QCheckBox *checkBox, optsw::FlagsWeather flag);
 
   void selectActiveSkyPathClicked();
   void selectXplanePathClicked();
