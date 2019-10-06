@@ -2945,7 +2945,7 @@ Only magnetic course is shown if both values are equal.
 Also affects labels at holds and traffic patterns.</string>
           </property>
           <property name="text">
-           <string>Show &amp;true course and heading besides magntic course in information displays</string>
+           <string>Show &amp;true course and heading besides magnetic course in information displays</string>
           </property>
           <property name="checked">
            <bool>false</bool>
