@@ -699,7 +699,7 @@ ElevationProvider *NavApp::getElevationProvider()
 
 WeatherReporter *NavApp::getWeatherReporter()
 {
-  return mainWindow->getWeatherReporter();
+  return mainWindow != nullptr ? mainWindow->getWeatherReporter() : nullptr;
 }
 
 WindReporter *NavApp::getWindReporter()

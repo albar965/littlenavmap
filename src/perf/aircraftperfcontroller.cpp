@@ -888,7 +888,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     {
       if(perf->getCruiseFuelFlow() > 1.f)
       {
-        float enduranceHours = perf->getUsableFuelLbs() / perf->getCruiseFuelFlow();
+        float enduranceHours = (perf->getUsableFuel() - perf->getReserveFuel()) / perf->getCruiseFuelFlow();
         html.row2(text, tr("%1, %2").
                   arg(Unit::distNm(enduranceHours * perf->getCruiseSpeed())).
                   arg(formatter::formatMinutesHoursLong(enduranceHours)), flags);

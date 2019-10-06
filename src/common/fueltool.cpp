@@ -50,36 +50,36 @@ QString FuelTool::fuelWeightVol(opts::UnitFuelAndWeight unitFuelAndWeight, float
     // Imperial units requested =================================
     case opts::FUEL_WEIGHT_GAL_LBS:
       if(fuelAsVolume)
-        // Pass volume through and convert volume to weight
+        // Pass volume through and convert volume to weight - input its gallon
         return STR.
-               arg(fromGalToLbs(jetfuel, valueLbsGal), 0, 'f', 0).
-               arg(Unit::getSuffixFuelWeightLbs()).
-               arg(valueLbsGal, 0, 'f', 0).
-               arg(Unit::getSuffixFuelVolGal());
+               // lbs
+               arg(fromGalToLbs(jetfuel, valueLbsGal), 0, 'f', 0).arg(Unit::getSuffixFuelWeightLbs()).
+               // gal
+               arg(valueLbsGal, 0, 'f', 0).arg(Unit::getSuffixFuelVolGal());
       else
-        // Pass weight through and convert weight to volume
+        // Pass weight through and convert weight to volume - input its lbs
         return STR.
-               arg(valueLbsGal, 0, 'f', 0).
-               arg(Unit::getSuffixFuelWeightLbs()).
-               arg(fromLbsToGal(jetfuel, valueLbsGal), 0, 'f', 0).
-               arg(Unit::getSuffixFuelVolGal());
+               // lbs
+               arg(valueLbsGal, 0, 'f', 0).arg(Unit::getSuffixFuelWeightLbs()).
+               // gal
+               arg(fromLbsToGal(jetfuel, valueLbsGal), 0, 'f', 0).arg(Unit::getSuffixFuelVolGal());
 
     // Metric units requested =================================
     case opts::FUEL_WEIGHT_LITER_KG:
       if(fuelAsVolume)
-        // Convert to metric and pass volume  through and convert volume to weight
+        // Convert to metric and pass volume  through and convert volume to weight - input its gallon
         return STR.
-               arg(fromLiterToKg(jetfuel, lbsToKg(valueLbsGal)), 0, 'f', 0).
-               arg(Unit::getSuffixFuelWeightKg()).
-               arg(gallonToLiter(valueLbsGal), 0, 'f', 0).
-               arg(Unit::getSuffixFuelVolLiter());
+               // kg
+               arg(lbsToKg(fromGalToLbs(jetfuel, valueLbsGal)), 0, 'f', 0).arg(Unit::getSuffixFuelWeightKg()).
+               // liter
+               arg(gallonToLiter(valueLbsGal), 0, 'f', 0).arg(Unit::getSuffixFuelVolLiter());
       else
-        // Convert to metric and  pass weight through and convert weight to volume
+        // Convert to metric and  pass weight through and convert weight to volume - input its lbs
         return STR.
-               arg(lbsToKg(valueLbsGal), 0, 'f', 0).
-               arg(Unit::getSuffixFuelWeightKg()).
-               arg(fromLbsToGal(jetfuel, gallonToLiter(valueLbsGal)), 0, 'f', 0).
-               arg(Unit::getSuffixFuelVolLiter());
+               // kg
+               arg(lbsToKg(valueLbsGal), 0, 'f', 0).arg(Unit::getSuffixFuelWeightKg()).
+               // liter
+               arg(gallonToLiter(fromLbsToGal(jetfuel, valueLbsGal)), 0, 'f', 0).arg(Unit::getSuffixFuelVolLiter());
   }
   return QString();
 }

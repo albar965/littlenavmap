@@ -339,8 +339,7 @@ float PerfMergeDialog::procNum(QComboBox *combo, float fromValue, float toValue)
   ComboBoxIndexNum idx = static_cast<ComboBoxIndexNum>(combo->currentIndex());
   if(idx != NUM_IGNORE)
   {
-    if(atools::almostNotEqual(fromValue, toValue))
-      changed = true;
+    changed = idx == NUM_COPY || idx == NUM_MERGE;
 
     if(idx == NUM_COPY)
       return fromValue;
@@ -355,8 +354,7 @@ QString PerfMergeDialog::procStr(QComboBox *combo, QString fromValue, QString to
   ComboBoxIndexStr idx = static_cast<ComboBoxIndexStr>(combo->currentIndex());
   if(idx != STR_IGNORE)
   {
-    if(fromValue != toValue)
-      changed = true;
+    changed = idx == STR_COPY;
 
     if(idx == STR_COPY)
       return fromValue;
