@@ -15701,7 +15701,7 @@ Change this if you get an error message like &quot;Bound address already in use&
     </message>
     <message>
         <location filename="src/options/options.ui" line="4632"/>
-        <source>&amp;Use encrpted connection (HTTPS / SSL)</source>
+        <source>&amp;Use encrypted connection (HTTPS / SSL)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18829,131 +18829,131 @@ Werkelijk gebruiken?</translation>
         <translation type="vanished">Geen Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="479"/>
+        <location filename="src/profile/profilewidget.cpp" line="484"/>
         <source> ►</source>
         <translation> ►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="518"/>
+        <location filename="src/profile/profilewidget.cpp" line="523"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="581"/>
+        <location filename="src/profile/profilewidget.cpp" line="586"/>
         <source>%1° ►</source>
         <translation>%1° ►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="583"/>
+        <location filename="src/profile/profilewidget.cpp" line="588"/>
         <source>%1° / %2 ►</source>
         <translation>%1° / %2 ►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="608"/>
+        <location filename="src/profile/profilewidget.cpp" line="613"/>
         <source>No Flight Plan loaded.</source>
         <translation>Geen Vluchtplan geladen.</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="615"/>
+        <location filename="src/profile/profilewidget.cpp" line="620"/>
         <source>Flight Plan not valid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1074"/>
+        <location filename="src/profile/profilewidget.cpp" line="1079"/>
         <source>TOC</source>
         <translation>TOC</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1096"/>
+        <location filename="src/profile/profilewidget.cpp" line="1101"/>
         <source>TOD</source>
         <translation>TOD</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1162"/>
+        <location filename="src/profile/profilewidget.cpp" line="1167"/>
         <source> ▲</source>
         <translation> ▲</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1164"/>
+        <location filename="src/profile/profilewidget.cpp" line="1169"/>
         <source> ▼</source>
         <translation> ▼</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1566"/>
-        <location filename="src/profile/profilewidget.cpp" line="1567"/>
+        <location filename="src/profile/profilewidget.cpp" line="1571"/>
+        <location filename="src/profile/profilewidget.cpp" line="1572"/>
         <source> ► </source>
         <translation> ► </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1566"/>
-        <location filename="src/profile/profilewidget.cpp" line="1568"/>
-        <location filename="src/profile/profilewidget.cpp" line="1570"/>
-        <location filename="src/profile/profilewidget.cpp" line="1572"/>
+        <location filename="src/profile/profilewidget.cpp" line="1571"/>
+        <location filename="src/profile/profilewidget.cpp" line="1573"/>
+        <location filename="src/profile/profilewidget.cpp" line="1575"/>
+        <location filename="src/profile/profilewidget.cpp" line="1577"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1570"/>
+        <location filename="src/profile/profilewidget.cpp" line="1575"/>
         <source> Ground Elevation </source>
         <translation> Hoogtepeil Terrein </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1572"/>
+        <location filename="src/profile/profilewidget.cpp" line="1577"/>
         <source> Above Ground Altitude </source>
         <translation> Boven Terrein Hoogtepeil </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1574"/>
+        <location filename="src/profile/profilewidget.cpp" line="1579"/>
         <source> Leg Safe Altitude </source>
         <translation> Veilige Hoogte Deel </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1589"/>
+        <location filename="src/profile/profilewidget.cpp" line="1594"/>
         <source>, %1Wind %2°M, %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1590"/>
+        <location filename="src/profile/profilewidget.cpp" line="1595"/>
         <source>Manual </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1598"/>
+        <location filename="src/profile/profilewidget.cpp" line="1603"/>
         <source>◄</source>
         <translation type="unfinished">◄</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1600"/>
+        <location filename="src/profile/profilewidget.cpp" line="1605"/>
         <source>►</source>
         <translation type="unfinished">►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1601"/>
+        <location filename="src/profile/profilewidget.cpp" line="1606"/>
         <source>, %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1743"/>
+        <location filename="src/profile/profilewidget.cpp" line="1748"/>
         <source>&lt;b&gt;To Alternate: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1751"/>
+        <location filename="src/profile/profilewidget.cpp" line="1756"/>
         <source>&lt;b&gt;To Destination: %1, to Top of Descent: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
         <translation>&lt;b&gt;Naar Bestemming: %1, naar Top of Descent: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1753"/>
+        <location filename="src/profile/profilewidget.cpp" line="1758"/>
         <source>Passed</source>
         <translation>Gepasseerd</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1756"/>
+        <location filename="src/profile/profilewidget.cpp" line="1761"/>
         <source>&lt;b&gt;To Destination: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
         <translation>&lt;b&gt;Naar Bestemming: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1922"/>
+        <location filename="src/profile/profilewidget.cpp" line="1927"/>
         <source>Jumped back to aircraft.</source>
         <translation>Teruggekeerd naar vliegtuig.</translation>
     </message>

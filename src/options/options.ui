@@ -4629,7 +4629,7 @@ Little Navmap GIT repository.
 </string>
           </property>
           <property name="text">
-           <string>&amp;Use encrpted connection (HTTPS / SSL)</string>
+           <string>&amp;Use encrypted connection (HTTPS / SSL)</string>
           </property>
          </widget>
         </item>
