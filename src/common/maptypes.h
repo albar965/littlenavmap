@@ -177,6 +177,11 @@ struct MapAirport
   atools::geo::Rect bounding;
   int routeIndex = -1;
 
+  const QString& icaoIdent()
+  {
+    return !icao.isEmpty() ? icao : ident;
+  }
+
   bool closed() const;
   bool hard() const;
   bool soft() const;
