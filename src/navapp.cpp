@@ -101,7 +101,7 @@ void NavApp::initApplication()
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
   setOrganizationDomain("littlenavmap.org");
-  setApplicationVersion("2.4.2.beta"); // VERSION_NUMBER - Little Navmap
+  setApplicationVersion("2.4.3.rc1"); // VERSION_NUMBER - Little Navmap
 }
 
 NavApp *NavApp::navAppInstance()

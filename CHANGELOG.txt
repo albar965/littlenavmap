@@ -1,6 +1,61 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.4.3.rc1
+
+**Please reload the scenery library.**
+
+Fuel Report and Aircraft Performance:
+* Fixed several issues with fuel conversion: Metric units now shown correctly in fuel report and
+  merge dialog.
+* Fuel flow, amount and estimated range now shown correctly if aircraft performance is based on
+  fuel volume instead of weight.
+* Estimated range in fuel report now considers reserve as in performance edit dialog. Numbers were
+  different before.
+* Merging collected values into current performance now set changed state of performance file
+  correctly to avoid data loss.
+
+Flight Plan:
+* X-Plane FMS flight plans now get correct ICAO ID for destination if available. Destination could
+  receive an empty id before which resulted in an invalid FMS flight plan.
+* Fixed issue where procedure information was lost when loading flight plan into a database which
+  does not contain procedures or after switching databases.
+* Fixed crash when loading flight plan with invalid waypoint while being connected to simulator.
+* Fixed crash that happens with invalid flight plans when switching databases in connected state.
+  The active leg is now reset when switching to avoid crashes.
+* Removed wrong warning of airway altitude violations where upper limit is 0.
+* User set cruise altitude remains unchanged now after victor or jet calculation when east/west rule
+  adjustment is off.
+* Cruise altitude is now adjusted to next valid value for east/west rule based on the current value
+  entered in the user interface. Was always set to lowest allowed value. Now also lowering or raising
+  cruise altitude if not valid for used airways when using jet or victor calculation.
+* Fixed issues which cruise altitude correction when using metric units.
+
+Elevation Profile:
+* Fixed problem where aircraft trail was not recorded in elevation profile when window was closed
+  or program was hidden/minimized.
+* Fixed issue where flight plan and elevation profile was built incorrectly if waypoints were not
+  valid in plan.
+
+Options:
+* Restore defaults in options dialog can now be reverted by pressing cancel.
+* Resetting map theme back to OpenStreetMap to avoid wrong selection of disabled OpenMapSurfer theme.
+* Other small user interface fixes.
+
+Procedures:
+* Fixed display issue for procedure leg names like "XAROL+5". Was using wrong distance value before.
+* Fixed issue where navaids were hidden on the map if part of a missed procedure in the flight plan.
+* Fixed display problem when deleting transitions from a flight plan resulting in invalid approach.
+
+Apple macOS:
+* Now showing correct application name and correct application menus on macOS.
+* Fixed wrong color button appearance in options dialog on macOS..
+
+related from atools version 3.4.3.rc1
+See CHANGELOG.txt in atools project for more technical details. Relevant comments were added to list above.
+
+===============================================================================
+
 Version 2.4.2.beta
 
 * Fixed crash when reading GRIB winds aloft or WMM (magentic declination) data on Windows if

@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<SimBase.Document Type="AceXML" version="1,0">
+    <Descr>AceXML Document</Descr>
+    <!-- LNMDATA
+         _lnm=Created by Little Navmap Version 2.4.2.beta (revision f710744) on 2019 10 06T22:14:25|
+         aircraftperffile=|
+         aircraftperfname=|
+         aircraftperftype=|
+         approach=FD13|
+         approacharinc=D13|
+         approachdistance=5.2|
+         approachrw=13|
+         approachsize=6|
+         approachsuffix=|
+         approachtype=VORDME|
+         cycle=1909|
+         navdata=NAVIGRAPH|
+         simdata=XP11|
+         speed=100.0000|
+         transition=CHINN|
+         transitiondistance=71.8|
+         transitionsize=8|
+         transitiontype=D
+-->
+    <FlightPlan.FlightPlan>
+        <Title>EGHJ to EGPC</Title>
+        <FPType>IFR</FPType>
+        <RouteType>LowAlt</RouteType>
+        <CruisingAlt>10000</CruisingAlt>
+        <DepartureID>EGHJ</DepartureID>
+        <DepartureLLA>N50° 40' 47.30",W1° 6' 53.25",+000055.00</DepartureLLA>
+        <DestinationID>EGPC</DestinationID>
+        <DestinationLLA>N58° 27' 31.52",W3° 5' 34.67",+000125.00</DestinationLLA>
+        <Descr>EGHJ, EGPC</Descr>
+        <DeparturePosition>12</DeparturePosition>
+        <DepartureName>Bembridge</DepartureName>
+        <DestinationName>Wick</DestinationName>
+        <AppVersion>
+            <AppVersionMajor>10</AppVersionMajor>
+            <AppVersionBuild>61472</AppVersionBuild>
+        </AppVersion>
+        <ATCWaypoint id="EGHJ">
+            <ATCWaypointType>Airport</ATCWaypointType>
+            <WorldPosition>N50° 40' 41.01",W1° 6' 34.02",+000055.00</WorldPosition>
+            <ICAO>
+                <ICAOIdent>EGHJ</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="SAM">
+            <ATCWaypointType>VOR</ATCWaypointType>
+            <WorldPosition>N50° 57' 18.90",W1° 20' 42.20",+000000.00</WorldPosition>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>SAM</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="PEPIS">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N51° 11' 47.95",W1° 14' 37.22",+000000.00</WorldPosition>
+            <ATCAirway>Q41</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>PEPIS</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="TABEN">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N51° 21' 48.99",W1° 10' 22.00",+000000.00</WorldPosition>
+            <ATCAirway>Q41</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>TABEN</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="NORRY">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N51° 28' 47.00",W1° 7' 24.00",+000000.00</WorldPosition>
+            <ATCAirway>Q41</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>NORRY</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="COWLY">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N51° 36' 58.00",W1° 3' 54.00",+000000.00</WorldPosition>
+            <ATCAirway>Q41</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>COWLY</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="SILVA">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N51° 50' 51.00",W1° 0' 19.00",+000000.00</WorldPosition>
+            <ATCAirway>Q41</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>SILVA</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="FINMA">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N51° 59' 46.99",W1° 3' 13.00",+000000.00</WorldPosition>
+            <ATCAirway>M605</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>FINMA</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="DTY">
+            <ATCWaypointType>VOR</ATCWaypointType>
+            <WorldPosition>N52° 10' 48.51",W1° 6' 49.64",+000000.00</WorldPosition>
+            <ATCAirway>M605</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>DTY</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="PEDIG">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N52° 44' 48.00",W1° 43' 10.00",+000000.00</WorldPosition>
+            <ATCAirway>M605</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>PEDIG</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="POL">
+            <ATCWaypointType>VOR</ATCWaypointType>
+            <WorldPosition>N53° 44' 37.56",W2° 6' 11.98",+000000.00</WorldPosition>
+            <ATCAirway>M605</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>POL</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="NELSA">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N53° 51' 48.00",W2° 11' 5.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>NELSA</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="RIBEL">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N54° 0' 57.99",W2° 17' 23.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>RIBEL</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="ERGAB">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N54° 9' 22.01",W2° 23' 12.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>ERGAB</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="SHAPP">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N54° 30' 0.00",W2° 37' 38.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>SHAPP</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="ABEVI">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N54° 42' 27.00",W2° 46' 29.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>ABEVI</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="INPIP">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N54° 52' 36.00",W2° 53' 46.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>INPIP</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="UTOGU">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N55° 7' 40.00",W3° 4' 43.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>UTOGU</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="INREV">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N55° 8' 57.00",W3° 5' 39.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>INREV</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="ESKDO">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N55° 17' 56.00",W3° 12' 15.26",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>ESKDO</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="IPDOR">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N55° 22' 39.00",W3° 15' 45.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>IPDOR</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="TLA">
+            <ATCWaypointType>VOR</ATCWaypointType>
+            <WorldPosition>N55° 29' 56.92",W3° 21' 10.20",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>TLA</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="GRICE">
+            <ATCWaypointType>Intersection</ATCWaypointType>
+            <WorldPosition>N56° 11' 48.00",W3° 41' 8.00",+000000.00</WorldPosition>
+            <ATCAirway>N601</ATCAirway>
+            <ICAO>
+                <ICAORegion>EG</ICAORegion>
+                <ICAOIdent>GRICE</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+        <ATCWaypoint id="EGPC">
+            <ATCWaypointType>Airport</ATCWaypointType>
+            <WorldPosition>N58° 27' 31.00",W3° 5' 33.98",+000125.00</WorldPosition>
+            <ICAO>
+                <ICAOIdent>EGPC</ICAOIdent>
+            </ICAO>
+        </ATCWaypoint>
+    </FlightPlan.FlightPlan>
+</SimBase.Document>

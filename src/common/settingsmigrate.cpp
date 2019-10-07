@@ -103,6 +103,13 @@ void checkAndMigrateSettings()
         nightstyleSettings.sync();
       }
 
+      if(optionsVersion < Version("2.4.3.rc1"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.3.rc1";
+        settings.remove("MainWindow/Widget_mapThemeComboBox");
+        settings.syncSettings();
+      }
+
       // CenterRadiusACC=60 and CenterRadiusFIR=60
       if(optionsVersion <= Version(2, 0, 2))
       {
