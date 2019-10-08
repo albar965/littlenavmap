@@ -5,6 +5,41 @@ Version 2.4.3.rc1
 
 **Please reload the scenery library.**
 
+Help:
+* All help buttons and links are functional now in the program.
+* English online manual is now complete. PDF and other formats are available for download:
+  https://albar965.github.io/pages/24/littlenavmapmanuals.html
+* PDF Manuals for French, Italian and German are included in download archive but still based on version 2.2.
+* Sources for the manuals are committed to Github and can be found on branch "release/2.4".
+
+Help - New Chapters:
+* Dock Windows: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/DOCKWINDOWS.html
+* Tabs: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/TABS.html
+* Holding: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/HOLD.html
+* Image Export: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/IMAGEEXPORT.html
+* User Defined Approach: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/CUSTOMPROCEDURE.html
+* Reset all for a new Flight: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/RESET.html
+* Aircraft Performance Merge: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/AIRCRAFTPERFMERGE.html
+* Logbook: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/LOGBOOK.html
+* Winds aloft: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/WEATHER.html#wind
+* OpenAir Airspaces: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/SCENERY.html#load-scenery-library-openair-airspaces
+* Web Server: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/WEBSERVER.html
+* Tutorial - Creating an Aircraft Performance Profile: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/TUTORIALPERF.html
+* Keyboard Shortcuts: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/SHORTCUTS.html
+
+Help - Updated Chapters:
+* Menus and Toolbars. Updated for new functions: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/MENUS.html
+* Overview. Updated images and added image for help: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/QUICKOVERVIEW.html
+* Legend. Updated for new features: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/LEGEND.html
+* Flight Plan Tab. Wind and alternates: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/FLIGHTPLAN.html
+* Flight Plan Route Description. Updated for alternates: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/ROUTEDESCR.html
+* Edit Aircraft Performance. Updated for wind and changed report: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/AIRCRAFTPERFEDIT.html
+* Aircraft Performance Collection. Permanent collection: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/AIRCRAFTPERFCOLL.html
+* Aircraft Performance. New performance features: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/AIRCRAFTPERF.html
+* Information Dock Window. Logbook and userpoint tabs. Nearest and preferred runways: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/INFO.html
+* Options Dialog: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/OPTIONS.html
+* All Tutorials: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/TUTORIALS.html
+
 Fuel Report and Aircraft Performance:
 * Fixed several issues with fuel conversion: Metric units now shown correctly in fuel report and
   merge dialog.
