@@ -4,6 +4,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 Version 2.4.3.rc1
 
 **Please reload the scenery library.**
+**Map theme is reset back to OpenStreetMap.**
 
 Help:
 * All help buttons and links are functional now in the program.
@@ -36,7 +37,7 @@ Help - Updated Chapters:
 * Edit Aircraft Performance. Updated for wind and changed report: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/AIRCRAFTPERFEDIT.html
 * Aircraft Performance Collection. Permanent collection: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/AIRCRAFTPERFCOLL.html
 * Aircraft Performance. New performance features: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/AIRCRAFTPERF.html
-* Information Dock Window. Logbook and userpoint tabs. Nearest and preferred runways: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/INFO.html
+* Information Dock Window. Logbook, userpoint tabs and airport file links. Nearest and preferred runways: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/INFO.html
 * Options Dialog: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/OPTIONS.html
 * All Tutorials: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/TUTORIALS.html
 
