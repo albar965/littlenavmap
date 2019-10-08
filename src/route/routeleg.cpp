@@ -48,8 +48,6 @@ const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
 // Appended to X-Plane free parking names - obsolete
 const static QLatin1Literal PARKING_NO_NUMBER(" NULL");
 
-RouteLeg RouteLeg::EMPTY_ROUTELEG;
-
 RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
   : flightplan(parentFlightplan)
 {
@@ -432,13 +430,19 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
 
 void RouteLeg::updateUserName(const QString& name)
 {
-  flightplan->getEntries()[index].setWaypointId(name);
+  if(index >= 0)
+    flightplan->getEntries()[index].setWaypointId(name);
+  else
+    qWarning() << Q_FUNC_INFO << "invalid index" << index;
 }
 
 void RouteLeg::updateUserPosition(const Pos& pos)
 {
-  // Use setCoords to keep altitude
-  flightplan->getEntries()[index].setCoords(pos);
+  if(index >= 0)
+    // Use setCoords to keep altitude
+    flightplan->getEntries()[index].setCoords(pos);
+  else
+    qWarning() << Q_FUNC_INFO << "invalid index" << index;
 }
 
 int RouteLeg::getId() const
@@ -712,10 +716,15 @@ int RouteLeg::getFrequency() const
 
 const atools::fs::pln::FlightplanEntry& RouteLeg::getFlightplanEntry() const
 {
-  if(isRoute())
-    return flightplan->at(index);
+  if(index >= 0)
+  {
+    if(isRoute())
+      return flightplan->at(index);
+  }
   else
-    return EMPTY_FLIGHTPLAN_ENTRY;
+    qWarning() << Q_FUNC_INFO << "invalid index" << index;
+
+  return EMPTY_FLIGHTPLAN_ENTRY;
 }
 
 const LineString& RouteLeg::getGeometry() const

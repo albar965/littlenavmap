@@ -320,9 +320,6 @@ public:
 
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
 
-  /* Invalid empty leg to avoid unneeded instantiations */
-  static RouteLeg EMPTY_ROUTELEG;
-
 private:
   // TODO assign functions are duplicatd in FlightplanEntryBuilder
   void assignIntersection(const map::MapSearchResult& mapobjectResult,

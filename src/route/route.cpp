@@ -50,6 +50,8 @@ using atools::fs::pln::Flightplan;
 // Disable leg activation if distance is larger
 const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 50.f;
 
+const static RouteLeg EMPTY_ROUTELEG;
+
 Route::Route()
 {
   resetActive();
@@ -742,7 +744,7 @@ int Route::getDestinationLegIndex() const
 const RouteLeg& Route::getDestinationLeg() const
 {
   int idx = getDestinationLegIndex();
-  return idx != map::INVALID_INDEX_VALUE ? value(idx) : RouteLeg::EMPTY_ROUTELEG;
+  return idx != map::INVALID_INDEX_VALUE ? value(idx) : EMPTY_ROUTELEG;
 }
 
 int Route::getDestinationAirportLegIndex() const
@@ -757,7 +759,7 @@ int Route::getDestinationAirportLegIndex() const
 const RouteLeg& Route::getDestinationAirportLeg() const
 {
   int idx = getDestinationAirportLegIndex();
-  return idx != map::INVALID_INDEX_VALUE ? value(idx) : RouteLeg::EMPTY_ROUTELEG;
+  return idx != map::INVALID_INDEX_VALUE ? value(idx) : EMPTY_ROUTELEG;
 }
 
 int Route::getSidLegIndex() const
@@ -774,7 +776,7 @@ int Route::getSidLegIndex() const
 const RouteLeg& Route::getSidLeg() const
 {
   int idx = getSidLegIndex();
-  return idx != map::INVALID_INDEX_VALUE ? value(idx) : RouteLeg::EMPTY_ROUTELEG;
+  return idx != map::INVALID_INDEX_VALUE ? value(idx) : EMPTY_ROUTELEG;
 }
 
 int Route::getDepartureAirportLegIndex() const
@@ -788,7 +790,7 @@ int Route::getDepartureAirportLegIndex() const
 const RouteLeg& Route::getDepartureAirportLeg() const
 {
   int idx = getDepartureAirportLegIndex();
-  return idx != map::INVALID_INDEX_VALUE ? value(idx) : RouteLeg::EMPTY_ROUTELEG;
+  return idx != map::INVALID_INDEX_VALUE ? value(idx) : EMPTY_ROUTELEG;
 }
 
 void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
