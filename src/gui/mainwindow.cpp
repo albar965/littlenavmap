@@ -1823,7 +1823,7 @@ void MainWindow::routeResetAll()
   // Create a dialog with four checkboxes
   ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"),
                             tr("Select items to reset for a new flight"),
-                            lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "MENUS.html#reset-for-new-flight");
+                            lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
 
   choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
   choiceDialog.add(DELETE_TRAIL, tr("&Delete aircaft trail"),
@@ -3417,7 +3417,7 @@ void MainWindow::resetAllSettings()
                               "\"%3\"<br/><br/>"
                               "which allows you to undo this change."
                             ).arg(QApplication::applicationName()).arg(settingFile).arg(settingPath)
-                         , QMessageBox::Ok | QMessageBox::Cancel,
+                         , QMessageBox::Ok | QMessageBox::Cancel | QMessageBox::Help,
                          QMessageBox::Cancel);
 
   if(retval == QMessageBox::Ok)
@@ -3425,6 +3425,9 @@ void MainWindow::resetAllSettings()
     NavApp::setRestartProcess(true);
     close();
   }
+  else if(retval == QMessageBox::Help)
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "MENUS.html#reset-and-restart",
+                                             lnm::helpLanguageOnline());
 }
 
 void MainWindow::resetWindowLayout()
