@@ -397,6 +397,12 @@ struct MapVor
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
   bool dmeOnly, hasDme, tacan, vortac;
 
+  /* true if this is valid and a real VOR with calibration (VOR, VORDME or VORTAC) */
+  bool isCalibratedVor() const
+  {
+    return isValid() && !tacan && !dmeOnly;
+  }
+
   QString getFrequencyOrChannel() const
   {
     if(frequency > 0)

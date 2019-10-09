@@ -129,6 +129,11 @@ public:
     return magvar;
   }
 
+  void setMagvar(float value)
+  {
+    magvar = value;
+  }
+
   /* Get calculated declination from environment. */
   float getMagvarPos() const
   {

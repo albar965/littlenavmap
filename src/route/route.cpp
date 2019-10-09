@@ -1454,7 +1454,27 @@ void Route::updateMagvar()
 {
   // get magvar from internal database objects (waypoints, VOR and others)
   for(int i = 0; i < size(); i++)
-    (*this)[i].updateMagvar();
+  {
+    RouteLeg& leg = (*this)[i];
+    leg.updateMagvar();
+  }
+
+  // Update variance for to VOR legs and for legs which are outbound from VOR to other waypoint type
+  for(int i = 1; i < size(); i++)
+  {
+    RouteLeg& leg = (*this)[i];
+    if(!leg.isRoute())
+      continue;
+
+    const map::MapVor& vor = leg.getVor();
+    const map::MapVor& prevVor = value(i - 1).getVor();
+    if(vor.isCalibratedVor())
+      // This is a VOR at the end of the leg - user variance from calibration
+      leg.setMagvar(vor.magvar);
+    else if(prevVor.isCalibratedVor())
+      // No VOR at the end of the leg but previous one is a VOR - use previous variance
+      leg.setMagvar(prevVor.magvar);
+  }
 }
 
 void Route::updateLegAltitudes()
