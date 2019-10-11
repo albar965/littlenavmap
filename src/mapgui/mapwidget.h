@@ -111,7 +111,7 @@ public:
   /* The main window show event was triggered after program startup. */
   void mainWindowShown();
 
-  /* Show home postion or last postion on map after program startup */
+  /* Show home position or last postion on map after program startup */
   void showSavedPosOnStartup();
 
   /* Show or hide all map overlays (optionally excluding scalebar) */

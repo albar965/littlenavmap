@@ -341,7 +341,7 @@ void LogdataDialog::fileUpdated(QLineEdit *lineEdit, QLabel *label, bool perf)
     if(fi.exists())
     {
       if(fi.isDir())
-        label->setText(atools::util::HtmlBuilder::errorMessage(tr("File a directory.")));
+        label->setText(atools::util::HtmlBuilder::errorMessage(tr("File or directory.")));
       else
       {
         if(perf)

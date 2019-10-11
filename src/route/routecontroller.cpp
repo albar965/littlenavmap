@@ -145,7 +145,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     QObject::tr("Contains the airway name for en route legs or procedure instruction."),
     QObject::tr("Either minimum altitude for en route airway segment, "
                 "procedure altitude restriction or procedure speed limit."),
-    QObject::tr("Type of a radio navaid. Shows ILS or LOC for ILS or\n"
+    QObject::tr("Type of a radio navaid. Shows ILS or LOC for\n"
                 "localizer approaches on the last runway leg."),
     QObject::tr("Frequency or channel of a radio navaid.\n"
                 "Also shows ILS or localizer frequency for corresponding approaches on the last runway leg."),

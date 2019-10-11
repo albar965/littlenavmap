@@ -3896,7 +3896,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
     if(airportNav.isValid() && airportNav.navdata)
     {
-      links.append(html.cleared().a(tr("Skyvector"), QString("https://skyvector.com/airport/%1").
+      links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
                                     arg(airportNav.icaoIdent()), ahtml::LINK_NO_UL).getHtml());
       links.append(html.cleared().a(tr("FlightAware"), QString("https://www.flightaware.com/live/airport/%1").
                                     arg(airportNav.icaoIdent()), ahtml::LINK_NO_UL).getHtml());

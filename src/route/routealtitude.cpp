@@ -635,7 +635,7 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
   {
     if(leftAlt->geometry.size() <= 2)
     {
-      // This duplicate leg with the same postion (IAF, etc.) will be skipped
+      // This duplicate leg with the same position (IAF, etc.) will be skipped
       leftSkippedAlt = &(*this)[index - 1];
 
       // Adjust leg if two equal legs (IAF) are after each other - otherwise no change will be done
@@ -648,7 +648,7 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
   {
     if(rightAlt->geometry.size() <= 2)
     {
-      // This duplicate leg with the same postion (IAF, etc.) will be skipped
+      // This duplicate leg with the same position (IAF, etc.) will be skipped
       rightSkippedAlt = &(*this)[index + 1];
 
       // Adjust leg if two equal legs (IAF) are after each other - otherwise no change will be done

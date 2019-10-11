@@ -316,7 +316,7 @@ QString RouteExportDialog::getRouteTypeAsDisplayString(re::RouteExportType route
       break;
 
     case re::VFP:
-      return tr("VPilot");
+      return tr("vPilot");
 
     case re::IVAP:
       return tr("IvAp");

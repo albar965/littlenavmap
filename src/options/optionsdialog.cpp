@@ -1845,7 +1845,7 @@ void OptionsDialog::userAirspacePathSelectClicked()
     defaultPath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
 
   QString path = atools::gui::Dialog(mainWindow).openDirectoryDialog(
-    tr("Select Direcory for User Airspaces"), lnm::DATABASE_USER_AIRSPACE_PATH, defaultPath);
+    tr("Select Directory for User Airspaces"), lnm::DATABASE_USER_AIRSPACE_PATH, defaultPath);
 
   if(!path.isEmpty())
   {

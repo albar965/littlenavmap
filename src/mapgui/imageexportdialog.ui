@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>LittleNavmap - Export Map as Image</string>
+   <string>Little Navmap - Export Map as Image</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="5" column="0" colspan="2">

@@ -2481,7 +2481,7 @@ Activez l&apos;option &quot;Lire les entrées de scènes inactives ou désactiv�
     <name>ImageExportDialog</name>
     <message>
         <location filename="src/mapgui/imageexportdialog.ui" line="14"/>
-        <source>LittleNavmap - Export Map as Image</source>
+        <source>Little Navmap - Export Map as Image</source>
         <translation type="unfinished">LittleNavmap - EXPORTER LA CARTE SOUS FORME D&apos;IMAGE</translation>
     </message>
     <message>
@@ -3778,7 +3778,7 @@ Ne met pas à jour la distance et l&apos;altitude de croisière lorsqu&apos;elle
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.cpp" line="344"/>
-        <source>File a directory.</source>
+        <source>File or directory.</source>
         <translation type="unfinished">Classez un répertoire.</translation>
     </message>
     <message>
@@ -10300,14 +10300,14 @@ Assurez-vous que la carte remplit complètement la fenêtre.</translation>
         <translation type="unfinished">&lt;b&gt;Cela réinitialisera toutes les options, la disposition des fenêtres, la disposition des dialogues, la piste de l&apos;aéronef, l&apos;historique des positions de la carte et l&apos;historique des fichiers, et redémarrera &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Les caractéristiques de l&apos;utilisateur telles que les anneaux de portée ou les circulations ainsi que les scènes, les journaux de bord et les bases de données de points d&apos;utilisateur ne sont pas affectées.&lt;br/&gt;&lt;br/&gt;Une copie du fichier de paramètres&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;sera créée dans le dossier&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;qui vous permet de revenir à ce changement.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3845"/>
+        <location filename="src/gui/mainwindow.cpp" line="3848"/>
         <source>Really Quit?</source>
         <translation>Voulez-vous vraiment Quitter?</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2157"/>
         <location filename="src/gui/mainwindow.cpp" line="2577"/>
-        <location filename="src/gui/mainwindow.cpp" line="3846"/>
+        <location filename="src/gui/mainwindow.cpp" line="3849"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished">Ne montrer plu&amp;s cette boite de dialogue.</translation>
     </message>
@@ -13284,8 +13284,8 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3899"/>
-        <source>Skyvector</source>
-        <translation type="unfinished">Skyvector</translation>
+        <source>SkyVector</source>
+        <translation type="unfinished">SkyVector</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4049"/>
@@ -16802,7 +16802,7 @@ Le nouveau nom sera &quot;filename_1.pln&quot; si &quot;filename.pln&quot; exist
     </message>
     <message>
         <location filename="src/options/options.ui" line="713"/>
-        <source>This will open related windows and raise tabs on actions like 
+        <source>This will open related windows and raise tabs on actions like
 opening files, modifying the flight plan and other operations.</source>
         <oldsource>This will open related windows and raise tabs on actions like
 opening files, modifying the flight plan and other operations.</oldsource>
@@ -16817,7 +16817,7 @@ l&apos;ouverture des dossiers, la modification du plan de vol et d&apos;autres o
     <message>
         <location filename="src/options/options.ui" line="768"/>
         <source>Show tooltips for waypoints, VOR, NDB, ILS, airways,
-userpoints and logbook entries when hovering the cursor over the mapmap</source>
+userpoints and logbook entries when hovering the cursor over the map</source>
         <translation type="unfinished">Afficher les infobulles pour les waypoints, VOR, NDB, ILS, voies aériennes,
 les points utilisateur et les entrées du journal de bord lors du survol du curseur sur la carte cartographique</translation>
     </message>
@@ -16864,7 +16864,7 @@ Activez &quot;Aides à la navigation&quot;, &quot;Zones d&apos;écran&quot; sur 
     </message>
     <message>
         <location filename="src/options/options.ui" line="1100"/>
-        <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on 
+        <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
 options page &quot;Map Display 2&quot; to display a screen center hint.</source>
         <oldsource>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
 options page &quot;Map Display 2&quot; to display a screen center hint.</oldsource>
@@ -17825,7 +17825,7 @@ Indiqué par &quot;GC&quot; si rhumb et grand cercle sont sélectionnés.</trans
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1848"/>
-        <source>Select Direcory for User Airspaces</source>
+        <source>Select Directory for User Airspaces</source>
         <translation type="unfinished">Sélectionner un répertoire pour les espaces aériens utilisateurs</translation>
     </message>
     <message>
@@ -21534,11 +21534,12 @@ en %volume%</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="146"/>
         <source>Either minimum altitude for en route airway segment, procedure altitude restriction or procedure speed limit.</source>
+        <oldsource>Either airway altitude restriction, procedure altitude restriction or procedure speed limit.</oldsource>
         <translation type="unfinished">Soit l&apos;altitude minimale pour le segment de voie aérienne en route, la restriction d&apos;altitude de procédure ou la limite de vitesse de procédure.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="148"/>
-        <source>Type of a radio navaid. Shows ILS or LOC for ILS or
+        <source>Type of a radio navaid. Shows ILS or LOC for
 localizer approaches on the last runway leg.</source>
         <translation type="unfinished">Type de radio navaid. Indique ILS ou LOC pour ILS ou
 le radiophare d&apos;alignement de piste s&apos;approche sur le dernier tronçon de piste.</translation>
@@ -21630,32 +21631,32 @@ Calculé en fonction du profil de performance de l&apos;aéronef.</translation>
         <translation>Remarques</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2107"/>
+        <location filename="src/route/route.cpp" line="2129"/>
         <source>%1 %2 %3%4</source>
         <translation type="unfinished">%1 %2 %3%4</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2114"/>
+        <location filename="src/route/route.cpp" line="2136"/>
         <source>Transition %1</source>
         <translation type="unfinished">Transition %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2116"/>
+        <location filename="src/route/route.cpp" line="2138"/>
         <source>STAR %1</source>
         <translation type="unfinished">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2118"/>
+        <location filename="src/route/route.cpp" line="2140"/>
         <source>SID %1</source>
         <translation type="unfinished">SID %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2120"/>
+        <location filename="src/route/route.cpp" line="2142"/>
         <source>SID Transition %1</source>
         <translation type="unfinished">Transition SID %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2122"/>
+        <location filename="src/route/route.cpp" line="2144"/>
         <source>STAR Transition %1</source>
         <translation type="unfinished">Transition STAR %1</translation>
     </message>
@@ -21780,17 +21781,17 @@ Cliquer ou recharger pour continuer.</translation>
 <context>
     <name>Route</name>
     <message>
-        <location filename="src/route/route.cpp" line="2108"/>
+        <location filename="src/route/route.cpp" line="2130"/>
         <source>Missed</source>
         <translation type="unfinished">Manqué</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2108"/>
+        <location filename="src/route/route.cpp" line="2130"/>
         <source>Approach</source>
         <translation type="unfinished">Approche</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2111"/>
+        <location filename="src/route/route.cpp" line="2133"/>
         <source>-</source>
         <translation type="unfinished">-</translation>
     </message>
@@ -23139,8 +23140,8 @@ pour sélectionner le départ et la destination.</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.cpp" line="319"/>
-        <source>VPilot</source>
-        <translation type="unfinished">VPilot</translation>
+        <source>vPilot</source>
+        <translation type="unfinished">vPilot</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.cpp" line="322"/>
@@ -23156,67 +23157,67 @@ pour sélectionner le départ et la destination.</translation>
 <context>
     <name>RouteLeg</name>
     <message>
-        <location filename="src/route/routeleg.cpp" line="495"/>
+        <location filename="src/route/routeleg.cpp" line="499"/>
         <source>Invalid</source>
         <translation>Invalide</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="497"/>
+        <location filename="src/route/routeleg.cpp" line="501"/>
         <source>Waypoint</source>
         <translation>Waypoint</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="501"/>
+        <location filename="src/route/routeleg.cpp" line="505"/>
         <source>NDB (%1)</source>
         <translation>NDB (%1)</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="501"/>
+        <location filename="src/route/routeleg.cpp" line="505"/>
         <source>NDB</source>
         <translation>NDB</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="503"/>
+        <location filename="src/route/routeleg.cpp" line="507"/>
         <source>Airport</source>
         <translation>Aérodrome</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="505"/>
+        <location filename="src/route/routeleg.cpp" line="509"/>
         <source>ILS</source>
         <translation>ILS</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="507"/>
+        <location filename="src/route/routeleg.cpp" line="511"/>
         <source>Runway</source>
         <translation>Piste</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="509"/>
+        <location filename="src/route/routeleg.cpp" line="513"/>
         <source>User</source>
         <translation type="unfinished">Utilisateur</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="753"/>
+        <location filename="src/route/routeleg.cpp" line="762"/>
         <source>Wrong direction in one-way segment.</source>
         <translation type="unfinished">Mauvais sens dans un segment unidirectionnel.</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="762"/>
+        <location filename="src/route/routeleg.cpp" line="771"/>
         <source>Cruise altitude %1 is below minimum altitude of %2.</source>
         <translation type="unfinished">L&apos;altitude de croisière %1 est inférieure à l&apos;altitude minimale de %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="770"/>
+        <location filename="src/route/routeleg.cpp" line="779"/>
         <source>Cruise altitude %1 is above maximum altitude of %2.</source>
         <translation type="unfinished">L&apos;altitude de croisière %1 est supérieure à l&apos;altitude maximale de %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="777"/>
+        <location filename="src/route/routeleg.cpp" line="786"/>
         <source>Leg to &quot;%1&quot; violates restrictions for airway &quot;%2&quot;:</source>
         <translation type="unfinished">Le segment jusqu&apos;à &quot;%1&quot; viole les restrictions pour la voie aérienne &quot;%2&quot;:</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="787"/>
+        <location filename="src/route/routeleg.cpp" line="796"/>
         <source>Airway %1 not found for %2.</source>
         <translation type="unfinished">Voies aériennes %1 non trouvé pour %2.</translation>
     </message>
@@ -24353,7 +24354,7 @@ Other formats:
 - Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
 - Degrees only 46N078W
 - Degrees and minutes 4620N07805W
-- Degrees, minutes and seconds 481200N0112842E (Skyvector)
+- Degrees, minutes and seconds 481200N0112842E (SkyVector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
@@ -24368,7 +24369,7 @@ Autres formats :
 Degrés et minutes : N44124W122451, N14544W017479 ou S31240E136502.
 Degrés seulement 46N078W
 Degrés et minutes 4620N07805W
-Degrés, minutes et secondes 481200N0112842E (Skyvector)
+Degrés, minutes et secondes 481200N0112842E (SkyVector)
 Degrés et minutes par paire &quot;N6500 W08000&quot; ou &quot;N6500/W08000&quot; ou &quot;N6500/W08000&quot;
 NAT type 5020N
 Les formats ci-dessus doivent être donnés exactement comme dans les exemples.</translation>
@@ -24385,7 +24386,7 @@ Other formats:
 - Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
 - Degrees only 46N078W
 - Degrees and minutes 4620N07805W
-- Degrees, minutes and seconds 481200N0112842E (Skyvector)
+- Degrees, minutes and seconds 481200N0112842E (SkyVector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
@@ -24400,7 +24401,7 @@ Autres formats :
 Degrés et minutes : N44124W122451, N14544W017479 ou S31240E136502.
 Degrés seulement 46N078W
 Degrés et minutes 4620N07805W
-Degrés, minutes et secondes 481200N0112842E (Skyvector)
+Degrés, minutes et secondes 481200N0112842E (SkyVector)
 Degrés et minutes par paire &quot;N6500 W08000&quot; ou &quot;N6500/W08000&quot; ou &quot;N6500/W08000&quot;
 NAT type 5020N
 Les formats ci-dessus doivent être donnés exactement comme dans les exemples.</translation>
@@ -24808,7 +24809,7 @@ Other formats:
 - Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
 - Degrees only 46N078W
 - Degrees and minutes 4620N07805W
-- Degrees, minutes and seconds 481200N0112842E (Skyvector)
+- Degrees, minutes and seconds 481200N0112842E (SkyVector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
@@ -24823,7 +24824,7 @@ Other formats:
 - Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
 - Degrees only 46N078W
 - Degrees and minutes 4620N07805W
-- Degrees, minutes and seconds 481200N0112842E (Skyvector)
+- Degrees, minutes and seconds 481200N0112842E (SkyVector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</oldsource>
@@ -24838,7 +24839,7 @@ Autres formats :
 Degrés et minutes : N44124W122451, N14544W017479 ou S31240E136502.
 Degrés seulement 46N078W
 Degrés et minutes 4620N07805W
-Degrés, minutes et secondes 481200N0112842E (Skyvector)
+Degrés, minutes et secondes 481200N0112842E (SkyVector)
 Degrés et minutes par paire &quot;N6500 W08000&quot; ou &quot;N6500/W08000&quot; ou &quot;N6500/W08000&quot;
 NAT type 5020N
 Les formats ci-dessus doivent être donnés exactement comme dans les exemples.</translation>

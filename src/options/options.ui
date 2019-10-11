@@ -710,7 +710,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsGuiRaiseWindows">
              <property name="toolTip">
-              <string>This will open related windows and raise tabs on actions like 
+              <string>This will open related windows and raise tabs on actions like
 opening files, modifying the flight plan and other operations.</string>
              </property>
              <property name="text">
@@ -766,7 +766,7 @@ opening files, modifying the flight plan and other operations.</string>
             <widget class="QCheckBox" name="checkBoxOptionsMapTooltipNavaid">
              <property name="toolTip">
               <string>Show tooltips for waypoints, VOR, NDB, ILS, airways,
-userpoints and logbook entries when hovering the cursor over the mapmap</string>
+userpoints and logbook entries when hovering the cursor over the map</string>
              </property>
              <property name="text">
               <string>&amp;Navaids, airways, userpoints and logbook</string>
@@ -1097,7 +1097,7 @@ Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &qu
            <item row="1" column="0" colspan="2">
             <widget class="QRadioButton" name="radioButtonOptionsMapNavClickCenter">
              <property name="toolTip">
-              <string>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on 
+              <string>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
 options page &quot;Map Display 2&quot; to display a screen center hint.</string>
              </property>
              <property name="text">
