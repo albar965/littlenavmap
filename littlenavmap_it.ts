@@ -737,7 +737,7 @@ Questo aumenterà il carburante di viaggio in base alla percentuale indicata.</t
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="523"/>
         <source>Average vertical &amp;climb speed:</source>
-        <translation>Velocità media verticale di &amp;salita:</translation>
+        <translation>Velocità media verticale di &amp;Salita:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="574"/>
@@ -747,7 +747,7 @@ Questo aumenterà il carburante di viaggio in base alla percentuale indicata.</t
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="539"/>
         <source>Average fuel flow for &amp;climb:</source>
-        <translation>Consumo carburante medio di &amp;salita:</translation>
+        <translation>Consumo carburante medio di &amp;Salita:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="24"/>
@@ -766,7 +766,7 @@ Questo aumenterà il carburante di viaggio in base alla percentuale indicata.</t
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="50"/>
         <source>&amp;Required runway:</source>
-        <translation>Pista &amp;richiesta:</translation>
+        <translation>Pista &amp;necessaria:</translation>
     </message>
     <message>
         <source>Minimum required runway length for takeoff or landing.
@@ -911,7 +911,7 @@ Basato sulla velocità di crociera e sul flusso di carburante.</translation>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="626"/>
         <source>C&amp;ruise speed at typical cruise altitude:</source>
-        <translation>Velocità di c&amp;rociera alla tipica altitudine di crociera:</translation>
+        <translation>Velocità di c&amp;rociera alla tipica altitudine di Crociera:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="664"/>
@@ -936,7 +936,7 @@ Basato sulla velocità di crociera e sul flusso di carburante.</translation>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="736"/>
         <source>Average &amp;descent speed:</source>
-        <translation>Velocità media di &amp;discesa:</translation>
+        <translation>Velocità media di &amp;Discesa:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="825"/>
@@ -948,7 +948,7 @@ la velocità di discesa data</translation>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="774"/>
         <source>Average fuel flow for &amp;descent:</source>
-        <translation>Consumo carburante medio di &amp;discesa:</translation>
+        <translation>Consumo carburante medio di &amp;Discesa:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="42"/>
@@ -972,7 +972,7 @@ Questo è solo a scopo informativo.</translation>
 The fuel report will show a warning if this does not match the simulator aircraft type.</source>
         <oldsource>ICAO aircraft type like B732 or C172.
 The fuel report will show a warning if this does not match the simulator aircraft type.</oldsource>
-        <translation type="unfinished">Tipo ICAO di aero come B732 o C172.
+        <translation>Tipo ICAO di aero come B732 o C172.
 Il rapporto sul carburante mostrerà un avviso se questo non corrisponde al tipo di aereo del simulatore.</translation>
     </message>
     <message>
@@ -997,12 +997,12 @@ L&apos;impostazione predefinita è il flusso di carburante da crociera.</transla
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="890"/>
         <source>Average speed for &amp;alternate:</source>
-        <translation>Velocità media per l&apos;&amp;alternato:</translation>
+        <translation>Velocità media per l&apos;&amp;Alternato:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="900"/>
         <source>Average fuel flow for &amp;alternate:</source>
-        <translation>Consumo carburante medio per l&apos;&amp;alternato:</translation>
+        <translation>Consumo carburante medio per l&apos;&amp;Alternato:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="910"/>
@@ -2463,7 +2463,7 @@ Abilita l&apos;opzione &quot;Leggi voci scenario inattive o disabilitate&quot; o
 Note that all options except &quot;Current Map View&quot; will change visible details.</source>
         <oldsource>Select predefined image resolution in pixels.
 Note that all options except &quot;Current Map View&quot; will change visible details.</oldsource>
-        <translation type="unfinished">Seleziona la risoluzione dell&apos;immagine predefinita in pixel.
+        <translation>Seleziona la risoluzione dell&apos;immagine predefinita in pixel.
 Tieni presente che tutte le opzioni tranne &quot;Visualizzazione mappa attuale&quot; modificheranno i dettagli visibili.</translation>
     </message>
     <message>
@@ -2523,7 +2523,7 @@ Tieni presente che tutte le opzioni tranne &quot;Visualizzazione mappa attuale&q
 This will change the shown map region and might change details.</source>
         <oldsource>Zooms the map out to get a sharper image.
 This will change the shown map region and might change details.</oldsource>
-        <translation type="unfinished">Diminuisci l&apos;ingrandimento la mappa per ottenere un&apos;immagine più nitida.
+        <translation>Diminuisci l&apos;ingrandimento la mappa per ottenere un&apos;immagine più nitida.
 Questo cambierà la regione della mappa mostrata e potrebbe cambiare i dettagli.</translation>
     </message>
     <message>
@@ -6035,13 +6035,13 @@ Orario Sim. UTC</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7282"/>
         <source>Move selected Legs Up</source>
-        <translation>Sposta verso l&apos;Alto Segmenti selezionati</translation>
+        <translation>Sposta verso l&apos;Alto i Segmenti selezionati</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7285"/>
         <location filename="src/gui/mainwindow.ui" line="7288"/>
         <source>Move selected flight plan legs up</source>
-        <translation>Sposta verso l&apos;alto segmenti selezionati del piano di volo</translation>
+        <translation>Sposta verso l&apos;alto i segmenti selezionati del piano di volo</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7291"/>
@@ -6051,13 +6051,13 @@ Orario Sim. UTC</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7300"/>
         <source>Move selected Legs Down</source>
-        <translation>Sposta verso il Basso Segmenti selezionati</translation>
+        <translation>Sposta verso il Basso i Segmenti selezionati</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7303"/>
         <location filename="src/gui/mainwindow.ui" line="7306"/>
         <source>Move selected flight plan legs down</source>
-        <translation>Sposta verso il basso segmenti selezionati del piano di volo</translation>
+        <translation>Sposta verso il basso i segmenti selezionati del piano di volo</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7309"/>
@@ -10209,12 +10209,12 @@ Assicurati che la mappa riempia completamente la finestra.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="186"/>
         <source>ICAO:</source>
-        <translation type="unfinished"></translation>
+        <translation>ICAO:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="187"/>
         <source>IATA:</source>
-        <translation type="unfinished"></translation>
+        <translation>IATA:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="193"/>
@@ -15924,7 +15924,7 @@ Questo ridimensionerà la grafica e le icone della mappa Little Navmap per una m
 opening files, modifying the flight plan and other operations.</source>
         <oldsource>This will open related windows and raise tabs on actions like
 opening files, modifying the flight plan and other operations.</oldsource>
-        <translation type="unfinished">Questo aprirà finestre correlate e porterà in primo piano le schede su azioni come
+        <translation>Questo aprirà finestre correlate e porterà in primo piano le schede su azioni come
 apertura dei file, modifica del piano di volo e altre operazioni.</translation>
     </message>
     <message>
@@ -15990,7 +15990,7 @@ Abilita &quot;Strumenti di Navigazione&quot;, &quot;Aree dello Schermo&quot; nel
 options page &quot;Map Display 2&quot; to display a screen center hint.</source>
         <oldsource>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
 options page &quot;Map Display 2&quot; to display a screen center hint.</oldsource>
-        <translation type="unfinished">Abilita attivazione &quot;Strumenti di navigazione&quot;, &quot;Croce centrale&quot; nella
+        <translation>Abilita attivazione &quot;Strumenti di navigazione&quot;, &quot;Croce centrale&quot; nella
 pagina delle opzioni &quot;Visualizzazione Mappa 2&quot; per visualizzare un suggerimento al centro dello schermo.</translation>
     </message>
     <message>
@@ -18094,7 +18094,7 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="142"/>
         <source>C&amp;ruise speed at typical cruise altitude:</source>
-        <translation>Velocità di c&amp;rociera alla tipica altitudine di crociera:</translation>
+        <translation>Velocità di c&amp;rociera alla tipica altitudine di Crociera:</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="165"/>
@@ -18114,7 +18114,7 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="397"/>
         <source>Average &amp;descent speed:</source>
-        <translation>Velocità media di &amp;discesa:</translation>
+        <translation>Velocità media di &amp;Discesa:</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="420"/>
@@ -18124,7 +18124,7 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="443"/>
         <source>&amp;Reserve fuel:</source>
-        <translation>Carburante di &amp;riserva:</translation>
+        <translation>Carburante di &amp;Riserva:</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="479"/>
@@ -18134,7 +18134,7 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="521"/>
         <source>Average fuel flow for &amp;climb:</source>
-        <translation>Consumo carburante medio di &amp;salita:</translation>
+        <translation>Consumo carburante medio di &amp;Salita:</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="537"/>
@@ -18144,12 +18144,12 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="572"/>
         <source>Average fuel flow for &amp;alternate:</source>
-        <translation>Consumo carburante medio per l&apos;&amp;alternato:</translation>
+        <translation>Consumo carburante medio per l&apos;&amp;Alternato:</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="648"/>
         <source>Average fuel flow for &amp;descent:</source>
-        <translation>Consumo carburante medio di &amp;discesa:</translation>
+        <translation>Consumo carburante medio di &amp;Discesa:</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="658"/>
@@ -18184,7 +18184,7 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="1021"/>
         <source>Average vertical &amp;climb speed:</source>
-        <translation>Velocità media verticale di &amp;salita:</translation>
+        <translation>Velocità media verticale di &amp;Salita:</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="1095"/>
@@ -21326,7 +21326,7 @@ hh:mm</translation>
         <location filename="src/route/routecontroller.cpp" line="146"/>
         <source>Either minimum altitude for en route airway segment, procedure altitude restriction or procedure speed limit.</source>
         <oldsource>Either airway altitude restriction, procedure altitude restriction or procedure speed limit.</oldsource>
-        <translation type="unfinished">Altitudine minima per il segmento delle vie aeree in rotta, limitazione dell&apos;altitudine della procedura o limite di velocità della procedura.</translation>
+        <translation>Altitudine minima per il segmento delle vie aeree in rotta, limitazione dell&apos;altitudine della procedura o limite di velocità della procedura.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="148"/>
@@ -24111,7 +24111,7 @@ Fai clic con il tasto destro sulla mappa e seleziona
 will be removed when reloading a flight plan.</source>
         <oldsource>Name of the waypoint. Note that special characters
 will be removed when reloading a flight plan.</oldsource>
-        <translation type="unfinished">Nome del puntorotta. Nota che i caratteri speciali
+        <translation>Nome del puntorotta. Nota che i caratteri speciali
 verranno rimossi quando si ricarica un piano di volo.</translation>
     </message>
     <message>
@@ -24588,7 +24588,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
