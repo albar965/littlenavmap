@@ -653,9 +653,9 @@
         <location filename="src/perf/aircraftperfdialog.ui" line="287"/>
         <source>Fuel added at the discretion of the
 captain or the dispatcher</source>
-        <oldsource>Fuel added at the discretion of the
+        <oldsource>Fuel added at the discretion of the 
 captain or the dispatcher</oldsource>
-        <translation type="unfinished">Carburant ajouté à la discrétion du
+        <translation type="unfinished">Carburant ajouté à la discrétion du 
 capitaine ou du répartiteur</translation>
     </message>
     <message>
@@ -686,10 +686,10 @@ capitaine ou du répartiteur</translation>
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
         <oldsource>Minimum fuel required to fly for 30 minutes at 1,500 feet
-above the alternate or at the destination at holding speed if
+above the alternate or at the destination at holding speed if 
 an alternate is not required</oldsource>
         <translation type="unfinished">Carburant minimum requis pour voler pendant 30 minutes à 1 500 pieds
-au-dessus du terrain de dégagement ou à destination à la vitesse d&apos;attente si
+au-dessus du terrain de dégagement ou à destination à la vitesse d&apos;attente si 
 un terrain de dégagement n&apos;est pas nécessaire</translation>
     </message>
     <message>
@@ -702,11 +702,11 @@ un terrain de dégagement n&apos;est pas nécessaire</translation>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <oldsource>This accounts for additional enroute fuel consumption
-caused by wind or routing changes.
+        <oldsource>This accounts for additional enroute fuel consumption 
+caused by wind or routing changes. 
 This will increase the trip fuel by the given percentage.</oldsource>
-        <translation type="unfinished">Cela explique la consommation supplémentaire de carburant en route
-causés par le vent ou les changements de route.
+        <translation type="unfinished">Cela explique la consommation supplémentaire de carburant en route 
+causés par le vent ou les changements de route. 
 Ceci augmentera le carburant du trajet par le pourcentage donné.</translation>
     </message>
     <message>
@@ -814,12 +814,12 @@ Utilisez une valeur approximative pour la masse maximale de décollage.</transla
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="116"/>
         <source>Hard and Soft</source>
-        <translation type="unfinished">Dure et souple</translation>
+        <translation type="unfinished">pour aéronef lourd et léger</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="121"/>
         <source>Hard</source>
-        <translation type="unfinished">pour aéronefs lourds</translation>
+        <translation type="unfinished">pour aéronef lourd</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="126"/>
@@ -845,7 +845,7 @@ Utilisez une valeur approximative pour la masse maximale de décollage.</transla
         <location filename="src/perf/aircraftperfdialog.ui" line="267"/>
         <source>Estimated range considering reserve fuel.
 Based on cruise speed and fuel flow.</source>
-        <translation type="unfinished">Portée estimée en tenant compte de la réserve de carburant.
+        <translation type="unfinished">Plage estimée en tenant compte de la réserve de carburant.
 Basé sur la vitesse de croisière et le débit de carburant.</translation>
     </message>
     <message>
@@ -931,9 +931,7 @@ Ces renseignements sont fournis à titre d&apos;information seulement.</translat
         <location filename="src/perf/aircraftperfdialog.ui" line="104"/>
         <source>ICAO aircraft type like B732 or C172. 
 The fuel report will show a warning if this does not match the simulator aircraft type.</source>
-        <oldsource>ICAO aircraft type like B732 or C172.
-The fuel report will show a warning if this does not match the simulator aircraft type.</oldsource>
-        <translation type="unfinished">Aéronefs OACI de type B732 ou C172.
+        <translation type="unfinished">Aéronefs OACI de type B732 ou C172. 
 Le rapport de carburant affichera un avertissement si celui-ci ne correspond pas au type d&apos;aéronef du simulateur.</translation>
     </message>
     <message>
@@ -1012,6 +1010,12 @@ the given descent speeds</source>
 données de vitesse de descente</translation>
     </message>
     <message>
+        <source>Equivalent rule of thumb for 
+the given descent speeds</source>
+        <translation type="obsolete">Règle empirique équivalente pour les 
+les vitesses de descente données</translation>
+    </message>
+    <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="774"/>
         <source>Average fuel flow for &amp;descent:</source>
         <translation type="unfinished">Débit moyen de carburant en &amp;descente:</translation>
@@ -1063,7 +1067,7 @@ données de vitesse de descente</translation>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="231"/>
         <source>Estimated range with reserve %1, %2.</source>
-        <translation type="unfinished">Intervalle estimé avec réserve %1, %2.</translation>
+        <translation type="unfinished">Plage estimée avec réserve %1, %2.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="245"/>
@@ -1254,7 +1258,7 @@ Pistes</translation>
         <location filename="src/search/airportsearch.cpp" line="196"/>
         <source>Largest
 Ramp</source>
-        <translation type="unfinished">Taille de la
+        <translation type="unfinished">Plus large
 Rampe</translation>
     </message>
     <message>
@@ -1918,6 +1922,14 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
 Utile si vous utilisez des outils pour désactiver et activer certaines scènes pour chaque vol.</translation>
     </message>
     <message>
+        <source>Will read also the inactive or disabled scenery entries when checked. 
+Useful if you use tools to disable and enable certain scenery for each flight.</source>
+        <oldsource>Will read also the inactive scenery entries when checked. 
+Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
+        <translation type="obsolete">Lit également les entrées de scènes inactives lorsqu&apos;elles sont cochées.
+Utile si vous utilisez des outils pour désactiver et activer certaines scènes pour chaque vol.</translation>
+    </message>
+    <message>
         <source>Will read also the inactive scenery entries when checked.  Useful if you use tools to disable and enable certain scenery for each flight.</source>
         <translation type="vanished">Lit également les entrées de scènes inactives lorsqu&apos;elles sont cochées. Utile si vous utilisez des outils pour désactiver et activer certaines scènes pour chaque vol.</translation>
     </message>
@@ -2482,6 +2494,7 @@ Activez l&apos;option &quot;Lire les entrées de scènes inactives ou désactiv�
     <message>
         <location filename="src/mapgui/imageexportdialog.ui" line="14"/>
         <source>Little Navmap - Export Map as Image</source>
+        <oldsource>LittleNavmap - Export Map as Image</oldsource>
         <translation type="unfinished">LittleNavmap - EXPORTER LA CARTE SOUS FORME D&apos;IMAGE</translation>
     </message>
     <message>
@@ -2493,9 +2506,7 @@ Activez l&apos;option &quot;Lire les entrées de scènes inactives ou désactiv�
         <location filename="src/mapgui/imageexportdialog.ui" line="40"/>
         <source>Select predefined image resolution in pixels. 
 Note that all options except &quot;Current Map View&quot; will change visible details.</source>
-        <oldsource>Select predefined image resolution in pixels.
-Note that all options except &quot;Current Map View&quot; will change visible details.</oldsource>
-        <translation type="unfinished">Sélectionnez la résolution d&apos;image prédéfinie en pixels.
+        <translation type="unfinished">Sélectionnez la résolution d&apos;image prédéfinie en pixels. 
 Notez que toutes les options, à l&apos;exception de &quot;Vue de la carte actuelle&quot;, modifient les détails visibles.</translation>
     </message>
     <message>
@@ -2553,9 +2564,7 @@ Notez que toutes les options, à l&apos;exception de &quot;Vue de la carte actue
         <location filename="src/mapgui/imageexportdialog.ui" line="148"/>
         <source>Zooms the map out to get a sharper image. 
 This will change the shown map region and might change details.</source>
-        <oldsource>Zooms the map out to get a sharper image.
-This will change the shown map region and might change details.</oldsource>
-        <translation type="unfinished">Agrandit la carte pour obtenir une image plus nette.
+        <translation type="unfinished">Agrandit la carte pour obtenir une image plus nette. 
 Cela changera la région de la carte affichée et pourrait changer les détails.</translation>
     </message>
     <message>
@@ -3546,10 +3555,9 @@ Cela sera perdu définitivement.</translation>
         <translation type="unfinished">Vol</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatadialog.ui" line="454"/>
-        <source>Used flight plan file for trip.
+        <source>Used flight plan file for trip. 
 Does not update distance and cruise altitude when changed.</source>
-        <translation type="unfinished">Fichier de plan de vol utilisé pour le voyage.
+        <translation type="obsolete">Fichier de plan de vol utilisé pour le voyage.
 Ne met pas à jour la distance et l&apos;altitude de croisière lorsqu&apos;elles sont modifiées.</translation>
     </message>
     <message>
@@ -3613,6 +3621,13 @@ Ne met pas à jour la distance et l&apos;altitude de croisière lorsqu&apos;elle
         <location filename="src/logbook/logdatadialog.ui" line="540"/>
         <source>&amp;Select ...</source>
         <translation type="unfinished">&amp;Sélectionnez ...</translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logdatadialog.ui" line="454"/>
+        <source>Used flight plan file for trip.
+Does not update distance and cruise altitude when changed.</source>
+        <translation type="unfinished">Fichier de plan de vol utilisé pour le voyage.
+Ne met pas à jour la distance et l&apos;altitude de croisière lorsqu&apos;elles sont modifiées.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="501"/>
@@ -3779,6 +3794,7 @@ Ne met pas à jour la distance et l&apos;altitude de croisière lorsqu&apos;elle
     <message>
         <location filename="src/logbook/logdatadialog.cpp" line="344"/>
         <source>File or directory.</source>
+        <oldsource>File a directory.</oldsource>
         <translation type="unfinished">Classez un répertoire.</translation>
     </message>
     <message>
@@ -5112,7 +5128,7 @@ Sim. Heure UTC</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="428"/>
         <source>&amp;Recent Performance Files</source>
-        <translation type="unfinished">Fichiers de performance &amp;récents</translation>
+        <translation type="unfinished">&amp;Fichiers de performances récents</translation>
     </message>
     <message>
         <source>Plan</source>
@@ -5133,10 +5149,9 @@ Sim. Heure UTC</translation>
         <translation type="unfinished">&amp;Vent:</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="4686"/>
-        <source>Average wind at flight plan cruise level.
+        <source>Average wind at flight plan cruise level. 
 Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="unfinished">Vent moyen au niveau croisière du plan de vol.
+        <translation type="obsolete">Vent moyen au niveau croisière du plan de vol. 
 La vitesse du vent sera interpolée pour les phases de montée et de descente.</translation>
     </message>
     <message>
@@ -5316,6 +5331,13 @@ l&apos;affichage du vent sur la ligne supérieure du profil d&apos;élévation.<
         <translation type="obsolete">&amp;Vent</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="4686"/>
+        <source>Average wind at flight plan cruise level.
+Wind speed will be interpolated for climb and descent phases.</source>
+        <translation type="unfinished">Vent moyen au palier de croisière du plan de vol.
+La vitesse du vent sera interpolée pour les phases de montée et de descente.</translation>
+    </message>
+    <message>
         <location filename="src/gui/mainwindow.ui" line="4667"/>
         <location filename="src/gui/mainwindow.ui" line="4670"/>
         <source>Average true wind direction at flight plan cruise level</source>
@@ -5404,7 +5426,7 @@ l&apos;affichage du vent sur la ligne supérieure du profil d&apos;élévation.<
         <location filename="src/gui/mainwindow.ui" line="5868"/>
         <location filename="src/gui/mainwindow.ui" line="5903"/>
         <source>Not connected to simulator.</source>
-        <translation>Pas connecté au simulateur.</translation>
+        <translation type="unfinished">Non connecté au simulateur.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5841"/>
@@ -6071,7 +6093,7 @@ l&apos;affichage du vent sur la ligne supérieure du profil d&apos;élévation.<
     <message>
         <location filename="src/gui/mainwindow.ui" line="10466"/>
         <source>&amp;Open Aircraft Performance and Merge ...</source>
-        <translation type="unfinished">&amp;Ouvrir performances et fusion de l&apos;aéronef ...</translation>
+        <translation type="unfinished">&amp;Ouvrir les performances et fusion de l&apos;aéronef ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10469"/>
@@ -6877,7 +6899,7 @@ l&apos;affichage du vent sur la ligne supérieure du profil d&apos;élévation.<
     <message>
         <location filename="src/gui/mainwindow.ui" line="10123"/>
         <source>&amp;Userpoint Search</source>
-        <translation type="unfinished">Recherche point &amp;utilisateur</translation>
+        <translation type="unfinished">Recherche Point &amp;Utilisateur</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10126"/>
@@ -7883,7 +7905,7 @@ l&apos;affichage du vent sur la ligne supérieure du profil d&apos;élévation.<
     <message>
         <location filename="src/gui/mainwindow.ui" line="9257"/>
         <source>Save Waypoints for &amp;Approaches</source>
-        <translation type="unfinished">Sauver les waypoints pour &amp;approches</translation>
+        <translation type="unfinished">Sauver les waypoints pour &amp;Approches</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9260"/>
@@ -8273,7 +8295,7 @@ l&apos;affichage du vent sur la ligne supérieure du profil d&apos;élévation.<
     <message>
         <location filename="src/gui/mainwindow.ui" line="4424"/>
         <source>Fuel Planning and Aircraft Performance</source>
-        <translation type="unfinished">Planification de la consommation de carburant et performance des aéronefs</translation>
+        <translation type="unfinished">Planification de la consommation de carburant et performances des aéronefs</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4469"/>
@@ -9342,7 +9364,7 @@ l&apos;affichage du vent sur la ligne supérieure du profil d&apos;élévation.<
         <location filename="src/gui/mainwindow.ui" line="5088"/>
         <source>Nearest navaids and airports in
 relation to shown airport</source>
-        <oldsource>Nearest navaids and airports in
+        <oldsource>Nearest navaids and airports in 
 relation to shown airport</oldsource>
         <translation type="unfinished">Navaids et aérodromes à proximités
 par rapport à l&apos;aérodrome indiqué</translation>
@@ -12736,7 +12758,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="3024"/>
         <source>Estimated Enroute time hh:mm:</source>
         <oldsource>Enroute hh:mm</oldsource>
-        <translation type="unfinished">Temps en route estimé hh:mm:</translation>
+        <translation type="unfinished">Durée totale estimée hh:mm:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3027"/>
@@ -13237,6 +13259,11 @@ kHz/MHz</translation>
         <translation type="unfinished">Simulateur</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3899"/>
+        <source>SkyVector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3901"/>
         <source>FlightAware</source>
         <translation type="unfinished">FlightAware</translation>
@@ -13283,9 +13310,8 @@ kHz/MHz</translation>
         <translation type="unfinished">Portail des scènes X-Plane</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3899"/>
-        <source>SkyVector</source>
-        <translation type="unfinished">SkyVector</translation>
+        <source>Skyvector</source>
+        <translation type="obsolete">Skyvector</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4049"/>
@@ -15629,7 +15655,7 @@ Un redémarrage est nécessaire pour que les réglages prennent effet.</translat
     <message>
         <location filename="src/options/options.ui" line="3209"/>
         <source>&amp;Low - Aircraft position and label is updated rarely, only for large course or altitude changes.</source>
-        <translation type="unfinished">Faible - &amp;La position et l&apos;étiquette de l&apos;aéronef sont rarement mises à jour, seulement pour les changements de route ou d&apos;altitude importants.</translation>
+        <translation type="unfinished">Faible - &amp;La position et l&apos;étiquette de l&apos;aéronef sont rarement mises à jour, seulement pour les changements de cap ou d&apos;altitude importants.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3216"/>
@@ -15639,7 +15665,7 @@ Un redémarrage est nécessaire pour que les réglages prennent effet.</translat
     <message>
         <location filename="src/options/options.ui" line="3226"/>
         <source>&amp;High - Aircraft position and label is updated often, even for small course or altitude changes.</source>
-        <translation type="unfinished">&amp;Elevée - La position et l&apos;étiquette de l&apos;aéronef sont souvent mises à jour, même pour de petits changements de route ou d&apos;altitude.</translation>
+        <translation type="unfinished">&amp;Elevée - La position et l&apos;étiquette de l&apos;aéronef sont souvent mises à jour, même pour de petits changements de cap ou d&apos;altitude.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3362"/>
@@ -16046,9 +16072,14 @@ Little Navmap GIT repository.
         <translation type="unfinished">Utilisez un exemple de certificat auto-signé pour une connexion cryptée.
 Les navigateurs afficheront un avertissement lorsqu&apos;ils utilisent une telle connexion et vous devez ajouter une exception de sécurité dans le navigateur.
 Vous devez utiliser &quot;https///...&quot; au lieu de &quot;http://...&quot; pour accéder à la page. Sinon, vous obtiendrez une erreur dans le navigateur Web.
-Sachez que l&apos;exemple de certificat utilisé n&apos;offre pas de sécurité puisque la clé privée est disponible publiquement dans le
+Sachez que l&apos;exemple de certificat utilisé n&apos;offre pas de sécurité puisque la clé privée est disponible publiquement dans le 
 dépôt GIT de Little Navmap.
 </translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="4632"/>
+        <source>&amp;Use encrypted connection (HTTPS / SSL)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4865"/>
@@ -16367,9 +16398,9 @@ Changer de couleur avec la &quot;Couleur du Segment Passé&quot;.</translation>
         <location filename="src/options/options.ui" line="1923"/>
         <source>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</source>
-        <oldsource>Draw airport diagrams.
+        <oldsource>Draw airport diagrams. 
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</oldsource>
-        <translation type="unfinished">Dessiner des diagrammes d&apos;aérodrome.
+        <translation type="unfinished">Dessiner des diagrammes d&apos;aérodrome. 
 Le parking, aprons, les taxiways, le carburant et les tour de controle seront omis s&apos;ils ne sont pas sélectionnés.</translation>
     </message>
     <message>
@@ -16804,9 +16835,9 @@ Le nouveau nom sera &quot;filename_1.pln&quot; si &quot;filename.pln&quot; exist
         <location filename="src/options/options.ui" line="713"/>
         <source>This will open related windows and raise tabs on actions like
 opening files, modifying the flight plan and other operations.</source>
-        <oldsource>This will open related windows and raise tabs on actions like
+        <oldsource>This will open related windows and raise tabs on actions like 
 opening files, modifying the flight plan and other operations.</oldsource>
-        <translation type="unfinished">Ceci ouvrira les fenêtres associées et fera apparaître des onglets sur des actions telles que
+        <translation type="unfinished">Ceci ouvrira les fenêtres associées et fera apparaître des onglets sur des actions telles que 
 l&apos;ouverture des dossiers, la modification du plan de vol et d&apos;autres opérations.</translation>
     </message>
     <message>
@@ -16818,6 +16849,8 @@ l&apos;ouverture des dossiers, la modification du plan de vol et d&apos;autres o
         <location filename="src/options/options.ui" line="768"/>
         <source>Show tooltips for waypoints, VOR, NDB, ILS, airways,
 userpoints and logbook entries when hovering the cursor over the map</source>
+        <oldsource>Show tooltips for waypoints, VOR, NDB, ILS, airways,
+userpoints and logbook entries when hovering the cursor over the mapmap</oldsource>
         <translation type="unfinished">Afficher les infobulles pour les waypoints, VOR, NDB, ILS, voies aériennes,
 les points utilisateur et les entrées du journal de bord lors du survol du curseur sur la carte cartographique</translation>
     </message>
@@ -16866,9 +16899,9 @@ Activez &quot;Aides à la navigation&quot;, &quot;Zones d&apos;écran&quot; sur 
         <location filename="src/options/options.ui" line="1100"/>
         <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
 options page &quot;Map Display 2&quot; to display a screen center hint.</source>
-        <oldsource>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
+        <oldsource>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on 
 options page &quot;Map Display 2&quot; to display a screen center hint.</oldsource>
-        <translation type="unfinished">Activer &quot;Aides à la navigation&quot;, &quot;Centrer la croix&quot; sur
+        <translation type="unfinished">Activer &quot;Aides à la navigation&quot;, &quot;Centrer la croix&quot; sur 
 page d&apos;options &quot;Affichage de la carte 2&quot; pour afficher une astuce au centre de l&apos;écran.</translation>
     </message>
     <message>
@@ -17028,7 +17061,7 @@ définissent également l&apos;ordre lors de la lecture des coordonnées dans l&
 in information displays and tooltips .
 Only magnetic course is shown if both values are equal.
 Also affects labels at holds and traffic patterns.</source>
-        <translation type="unfinished">Affiche les valeurs vraies de cap ou de cap sous la forme d&apos;un petit texte en plus du cap magnétique
+        <translation type="unfinished">Affiche les valeurs vraies de cap ou sous la forme d&apos;un petit texte en plus du cap magnétique
 dans les affichages d&apos;informations et les infobulles.
 Seul le cap magnétique est affiché si les deux valeurs sont égales.
 Affecte également les étiquettes au niveau des attentes et les circulations de trafic.</translation>
@@ -17036,6 +17069,7 @@ Affecte également les étiquettes au niveau des attentes et les circulations de
     <message>
         <location filename="src/options/options.ui" line="2948"/>
         <source>Show &amp;true course and heading besides magnetic course in information displays</source>
+        <oldsource>Show &amp;true course and heading besides magntic course in information displays</oldsource>
         <translation type="unfinished">Afficher le cap vrai en plus du cap magné&amp;tique dans les affichages d&apos;information</translation>
     </message>
     <message>
@@ -17195,9 +17229,8 @@ Modifier ceci si vous obtenez un message d&apos;erreur comme &quot;Adresse liée
         <translation type="unfinished">&amp;Sélectionner répertoire ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4632"/>
-        <source>&amp;Use encrypted connection (HTTPS / SSL)</source>
-        <translation type="unfinished">&amp;Utiliser une connexion cryptée (HTTPS / SSL)</translation>
+        <source>&amp;Use encrpted connection (HTTPS / SSL)</source>
+        <translation type="obsolete">&amp;Utiliser une connexion cryptée (HTTPS / SSL)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4733"/>
@@ -17826,7 +17859,11 @@ Indiqué par &quot;GC&quot; si rhumb et grand cercle sont sélectionnés.</trans
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1848"/>
         <source>Select Directory for User Airspaces</source>
-        <translation type="unfinished">Sélectionner un répertoire pour les espaces aériens utilisateurs</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Direcory for User Airspaces</source>
+        <translation type="obsolete">Sélectionner un répertoire pour les espaces aériens utilisateurs</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1870"/>
@@ -18067,8 +18104,7 @@ Affiché uniquement si &quot;Utiliser les zones de la carte&quot; à la page &qu
         <location filename="src/options/optionsdialog.cpp" line="173"/>
         <source>Shows icons for the screen areas. Useful if map areas are used for touchscreen navigation.
 Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is enabled as well.</source>
-        <translation>Affiche des icônes pour les zones d&apos;écran. Utile si des zones cartographiques sont utilisées pour la navigation sur l&apos;écran tactile.
-Affiché uniquement si &quot;Utiliser les zones de la carte&quot; à la page &quot;Navigation sur la carte&quot; est également activé.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="202"/>
@@ -20232,7 +20268,7 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="361"/>
         <source>Pilot Activated Lighting</source>
-        <translation>Éclairage piloté activé</translation>
+        <translation type="unfinished">Balisage activé par le pilote</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="362"/>
@@ -21534,13 +21570,14 @@ en %volume%</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="146"/>
         <source>Either minimum altitude for en route airway segment, procedure altitude restriction or procedure speed limit.</source>
-        <oldsource>Either airway altitude restriction, procedure altitude restriction or procedure speed limit.</oldsource>
         <translation type="unfinished">Soit l&apos;altitude minimale pour le segment de voie aérienne en route, la restriction d&apos;altitude de procédure ou la limite de vitesse de procédure.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="148"/>
         <source>Type of a radio navaid. Shows ILS or LOC for
 localizer approaches on the last runway leg.</source>
+        <oldsource>Type of a radio navaid. Shows ILS or LOC for ILS or
+localizer approaches on the last runway leg.</oldsource>
         <translation type="unfinished">Type de radio navaid. Indique ILS ou LOC pour ILS ou
 le radiophare d&apos;alignement de piste s&apos;approche sur le dernier tronçon de piste.</translation>
     </message>
@@ -21597,7 +21634,7 @@ Calculé en fonction du profil de performance de l&apos;aéronef sélectionné.<
         <location filename="src/route/routecontroller.cpp" line="160"/>
         <source>Estimated time of arrival.
 Calculated based on the selected aircraft performance profile.</source>
-        <translation type="unfinished">Heure d&apos;arrivée prévue.
+        <translation type="unfinished">Heure d&apos;arrivée estimée.
 Calculé en fonction du profil de performance de l&apos;aéronef sélectionné.</translation>
     </message>
     <message>
@@ -23141,7 +23178,8 @@ pour sélectionner le départ et la destination.</translation>
     <message>
         <location filename="src/route/routeexportdialog.cpp" line="319"/>
         <source>vPilot</source>
-        <translation type="unfinished">vPilot</translation>
+        <oldsource>VPilot</oldsource>
+        <translation type="unfinished">VPilot</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.cpp" line="322"/>
@@ -24335,9 +24373,7 @@ Cliquez avec le bouton droit de la souris sur la carte et sélectionnez
         <location filename="src/route/userwaypointdialog.ui" line="30"/>
         <source>Name of the waypoint. Note that special characters 
 will be removed when reloading a flight plan.</source>
-        <oldsource>Name of the waypoint. Note that special characters
-will be removed when reloading a flight plan.</oldsource>
-        <translation type="unfinished">Nom du waypoint. Noter que les caractères spéciaux
+        <translation type="unfinished">Nom du waypoint. Noter que les caractères spéciaux 
 sera supprimée lors du rechargement d&apos;un plan de vol.</translation>
     </message>
     <message>
@@ -24358,20 +24394,36 @@ Other formats:
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
+        <oldsource>Recognized coordinate formats:
+- Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
+- Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
+- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9.2015°
+- Degrees with sign: 49.4449 9.2015. Negative is west or south. Order for latitude and longitude depends on option settings.
+Degree, minute and second signs can be omitted for above formats.
+Latitude has to be first and N/S and E/W designators are required.
+A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
+Other formats:
+- Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
+- Degrees only 46N078W
+- Degrees and minutes 4620N07805W
+- Degrees, minutes and seconds 481200N0112842E (Skyvector)
+- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
+- NAT type 5020N
+Formats above have to be given exactly as shown in the examples.</oldsource>
         <translation type="unfinished">Formats de coordonnées reconnus :
 Degrés, minutes et secondes : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; ou 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 Degrés et minutes : N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 ou 49° 26.69&apos; N 9° 12.09&apos; E
 Degrés seulement : 49,4449° N 9,2015° E ou N 49,4449° E 9:2015° E.
-Les signes de degré, de minute et de seconde peuvent être omis pour les formats ci-dessus.
+Les signes de degré, de minute et de seconde peuvent être omis pour les formats ci-dessus. 
 Latitude doit être la première et les indicatifs N/S et E/W sont requis.
 Un espace n&apos;est nécessaire que pour séparer la latitude et la longitude ou les degrés/minutes/secondes si aucun signe n&apos;est utilisé.
 Autres formats :
 Degrés et minutes : N44124W122451, N14544W017479 ou S31240E136502.
 Degrés seulement 46N078W
 Degrés et minutes 4620N07805W
-Degrés, minutes et secondes 481200N0112842E (SkyVector)
+Degrés, minutes et secondes 481200N0112842E (Skyvector)
 Degrés et minutes par paire &quot;N6500 W08000&quot; ou &quot;N6500/W08000&quot; ou &quot;N6500/W08000&quot;
-NAT type 5020N
+NAT type 5020N 
 Les formats ci-dessus doivent être donnés exactement comme dans les exemples.</translation>
     </message>
     <message>
@@ -24386,7 +24438,7 @@ Other formats:
 - Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
 - Degrees only 46N078W
 - Degrees and minutes 4620N07805W
-- Degrees, minutes and seconds 481200N0112842E (SkyVector)
+- Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
@@ -24401,7 +24453,7 @@ Autres formats :
 Degrés et minutes : N44124W122451, N14544W017479 ou S31240E136502.
 Degrés seulement 46N078W
 Degrés et minutes 4620N07805W
-Degrés, minutes et secondes 481200N0112842E (SkyVector)
+Degrés, minutes et secondes 481200N0112842E (Skyvector)
 Degrés et minutes par paire &quot;N6500 W08000&quot; ou &quot;N6500/W08000&quot; ou &quot;N6500/W08000&quot;
 NAT type 5020N
 Les formats ci-dessus doivent être donnés exactement comme dans les exemples.</translation>
@@ -24816,7 +24868,8 @@ Formats above have to be given exactly as shown in the examples.</source>
         <oldsource>Recognized coordinate formats:
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
-- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
+- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9.2015°
+- Degrees with sign: 49.4449 9.2015. Negative is west or south. Order for latitude and longitude depends on option settings.
 Degree, minute and second signs can be omitted for above formats.
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
@@ -24824,7 +24877,7 @@ Other formats:
 - Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
 - Degrees only 46N078W
 - Degrees and minutes 4620N07805W
-- Degrees, minutes and seconds 481200N0112842E (SkyVector)
+- Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</oldsource>
@@ -24832,16 +24885,16 @@ Formats above have to be given exactly as shown in the examples.</oldsource>
 Degrés, minutes et secondes : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; ou 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 Degrés et minutes : N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 ou 49° 26.69&apos; N 9° 12.09&apos; E
 Degrés seulement : 49,4449° N 9,2015° E ou N 49,4449° E 9:2015° E.
-Les signes de degré, de minute et de seconde peuvent être omis pour les formats ci-dessus.
+Les signes de degré, de minute et de seconde peuvent être omis pour les formats ci-dessus. 
 Latitude doit être la première et les indicatifs N/S et E/W sont requis.
 Un espace n&apos;est nécessaire que pour séparer la latitude et la longitude ou les degrés/minutes/secondes si aucun signe n&apos;est utilisé.
 Autres formats :
 Degrés et minutes : N44124W122451, N14544W017479 ou S31240E136502.
 Degrés seulement 46N078W
 Degrés et minutes 4620N07805W
-Degrés, minutes et secondes 481200N0112842E (SkyVector)
+Degrés, minutes et secondes 481200N0112842E (Skyvector)
 Degrés et minutes par paire &quot;N6500 W08000&quot; ou &quot;N6500/W08000&quot; ou &quot;N6500/W08000&quot;
-NAT type 5020N
+NAT type 5020N 
 Les formats ci-dessus doivent être donnés exactement comme dans les exemples.</translation>
     </message>
     <message>
