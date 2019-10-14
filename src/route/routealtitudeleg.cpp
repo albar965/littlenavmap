@@ -193,7 +193,6 @@ QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
       << "alternate" << obj.alternate
       << "missed" << obj.missed
       << "procedure" << obj.procedure
-      << "speed" << obj.averageSpeedKts << endl
       << "climb time" << obj.climbTime
       << "cruise time" << obj.cruiseTime
       << "descent time" << obj.descentTime << endl
@@ -202,8 +201,6 @@ QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
       << "descent fuel" << obj.descentFuel
       << "fuel to dest" << obj.fuelToDest << endl
       << "time to dest" << obj.timeToDest << endl
-      << "avg wind speed" << obj.avgWindSpeed
-      << "avg wind dir" << obj.avgWindDirection << endl
       << "wind speed" << obj.windSpeed
       << "wind dir" << obj.windDirection << endl
       << "geometry" << obj.geometry << "NM/ft";

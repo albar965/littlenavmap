@@ -618,25 +618,32 @@ void AircraftPerfController::updateReport()
     fuelReportFilepath(html, false /* print */);
 
 #ifdef DEBUG_INFORMATION
-    html.hr().pre("Climb " + Unit::speedKts(altitudeLegs.getClimbHeadWind()) +
+    html.hr().pre("Headwind: climb " + Unit::speedKts(altitudeLegs.getClimbHeadWind()) +
                   ", cruise " + Unit::speedKts(altitudeLegs.getCruiseHeadWind()) +
                   ", descent " + Unit::speedKts(altitudeLegs.getDescentHeadWind()) +
-                  ", all " + Unit::speedKts(altitudeLegs.getHeadWindAverage()) + "\n" +
+                  ", avg " + Unit::speedKts(altitudeLegs.getHeadWindAverage()) + "\n" +
 
-                  "Corrected: climb " + Unit::speedKts(altitudeLegs.getClimbSpeedWindCorrected()) +
+                  "GS: climb " + Unit::speedKts(altitudeLegs.getClimbSpeedWindCorrected()) +
                   ", cruise " + Unit::speedKts(altitudeLegs.getCruiseSpeedWindCorrected()) +
-                  ", descent " + Unit::speedKts(altitudeLegs.getDescentSpeedWindCorrected()) + "\n" +
+                  ", descent " + Unit::speedKts(altitudeLegs.getDescentSpeedWindCorrected()) +
+                  ", avg " + Unit::speedKts(altitudeLegs.getAverageGroundSpeed()) + "\n" +
 
                   "Fuel: climb " + QString::number(altitudeLegs.getClimbFuel(), 'f', 1) +
                   ", cruise " + QString::number(altitudeLegs.getCruiseFuel(), 'f', 1) +
                   ", descent " + QString::number(altitudeLegs.getDescentFuel(), 'f', 1) + "\n" +
+
+                  "Dist: climb " + Unit::distNm(altitudeLegs.getTopOfClimbDistance()) +
+                  ", cruise " + Unit::distNm(altitudeLegs.getCruiseDistance()) +
+                  ", descent " + Unit::distNm(altitudeLegs.getTopOfDescentFromDestination()) + "\n" +
 
                   "Time: climb " + QString::number(altitudeLegs.getClimbTime(), 'f', 2) + " (" +
                   formatter::formatMinutesHours(altitudeLegs.getClimbTime()) + ")" +
                   ", cruise " + QString::number(altitudeLegs.getCruiseTime(), 'f', 2) + " (" +
                   formatter::formatMinutesHours(altitudeLegs.getCruiseTime()) + ")" +
                   ", descent " + QString::number(altitudeLegs.getDescentTime(), 'f', 2) + " (" +
-                  formatter::formatMinutesHours(altitudeLegs.getDescentTime()) + ")");
+                  formatter::formatMinutesHours(altitudeLegs.getDescentTime()) + ")" +
+                  ", all " + QString::number(altitudeLegs.getTravelTimeHours(), 'f', 2) + " (" +
+                  formatter::formatMinutesHours(altitudeLegs.getTravelTimeHours()) + ")");
 #endif
 
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftPerformanceReport, html.getHtml(),

@@ -90,12 +90,6 @@ public:
     return climbTime + cruiseTime + descentTime;
   }
 
-  /* TAS */
-  float getAverageSpeedKts() const
-  {
-    return averageSpeedKts;
-  }
-
   /* First point is equal to last point of previous leg. Last point is position of the waypoint for this leg.
    * Can contain more than two points for TOC and/or TOD legs.
    * x = distance from start and y = altitude
@@ -151,24 +145,6 @@ public:
   const atools::geo::LineString& getLineString() const
   {
     return line;
-  }
-
-  /* Average wind direction for leg degrees true */
-  float getAverageWindDirection() const
-  {
-    return avgWindDirection;
-  }
-
-  /* Average wind speed for this leg in knots */
-  float getAverageWindSpeed() const
-  {
-    return avgWindSpeed;
-  }
-
-  /* Average head wind speed for this leg in knots. Negative values are tailwind. */
-  float getAverageHeadWind() const
-  {
-    return avgWindHead;
   }
 
   float getWindSpeed() const
@@ -257,13 +233,13 @@ private:
   float climbTime = 0.f, cruiseTime = 0.f, descentTime = 0.f;
   float climbFuel = 0.f, cruiseFuel = 0.f, descentFuel = 0.f;
 
+  /* Internal values used during calculation */
+  float climbWindSpeed = 0.f, cruiseWindSpeed = 0.f, descentWindSpeed = 0.f;
+  float climbWindDir = 0.f, cruiseWindDir = 0.f, descentWindDir = 0.f;
+  float climbWindHead = 0.f, cruiseWindHead = 0.f, descentWindHead = 0.f;
+
   float fuelToDest = 0.f; /* Fuel from start of this leg to the destination or alternate */
   float timeToDest = 0.f; /* Time from start of this leg to the destination or alternate */
-
-  float averageSpeedKts = 0.f;
-
-  // Average wind values for this leg
-  float avgWindDirection = 0.f, avgWindSpeed = 0.f, avgWindHead = 0.f;
 
   // Wind at the waypoint (y2)
   float windSpeed = 0.f, windDirection = 0.f;

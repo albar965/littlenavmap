@@ -23,6 +23,9 @@
 #include <QApplication>
 
 namespace atools {
+namespace grib {
+struct Wind;
+}
 namespace geo {
 class LineString;
 }
@@ -95,6 +98,12 @@ public:
   float getTopOfDescentDistance() const
   {
     return distanceTopOfDescent;
+  }
+
+  /* Distance for cruise phase only in NM */
+  float getCruiseDistance() const
+  {
+    return getTotalDistance() - distanceTopOfClimb - getTopOfDescentFromDestination();
   }
 
   /* Destination altitude. Either airport or runway if approach used. */
@@ -370,6 +379,8 @@ private:
   int indexForDistance(float distanceToDest) const;
 
   void collectErrors(const QStringList& altRestrErrors);
+
+  float windCorrectedGroundSpeed(atools::grib::Wind& wind, float course, float speed);
 
   /* NM from start */
   float distanceTopOfClimb = map::INVALID_DISTANCE_VALUE,
