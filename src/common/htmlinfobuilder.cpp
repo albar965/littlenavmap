@@ -3846,8 +3846,8 @@ void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& h
     head(html, tr("Files"));
     html.table();
 
-    html.row2(tr("Path:"), filepathTextOpen(AirportFiles::getAirportFilesBase(airport.ident), true),
-              ahtml::NO_ENTITIES | ahtml::SMALL);
+    for(const QString& dir : AirportFiles::getAirportFilesBase(airport.ident))
+      html.row2(tr("Path:"), filepathTextOpen(dir, true), ahtml::NO_ENTITIES | ahtml::SMALL);
 
     int i = 0;
     for(const QFileInfo& file : airportFiles)

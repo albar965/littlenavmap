@@ -35,8 +35,9 @@ public:
   /* Get all files related to this airport ICAO */
   static QFileInfoList getAirportFiles(const QString& airportIdent);
 
-  /* Get base folder "Documents/Little Navmap Files/ICAO" for this airport ICAO */
-  static QString getAirportFilesBase(const QString& airportIdent);
+  /* Get base folder "Documents/Little Navmap Files/ICAO" for this airport ICAO
+   *  Looks up folders using translated names and untranslated names. */
+  static QStringList getAirportFilesBase(const QString& airportIdent);
 
 private:
   AirportFiles();

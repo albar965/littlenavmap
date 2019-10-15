@@ -19,7 +19,9 @@
 
 #include <QApplication>
 #include <QDir>
+#include <QSet>
 #include <QStandardPaths>
+#include <QDebug>
 
 QString AirportFiles::airportFilesIdent;
 QFileInfoList AirportFiles::airportFiles;
@@ -35,15 +37,31 @@ QFileInfoList AirportFiles::getAirportFiles(const QString& airportIdent)
   return airportFiles;
 }
 
-QString AirportFiles::getAirportFilesBase(const QString& airportIdent)
+QStringList AirportFiles::getAirportFilesBase(const QString& airportIdent)
 {
-  /*: Important path parts "Files/Airports" to airport and files (".../Documents/Litte Navmap Files/Airports"). */
-  return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
-         QDir::separator() + QApplication::applicationName() +
-         tr(" Files") +
-         QDir::separator() +
-         tr("Airports") +
-         QDir::separator() + airportIdent;
+  QSet<QString> retval;
+
+  /*: Important path parts "Files/Airports" to airport and files (".../Documents/Litte Navmap Files/Airports").
+   *  Do not change after initial translation to avoid breaking the file lookup. */
+  QFileInfo translatedPath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
+                             QDir::separator() + QApplication::applicationName() +
+                             tr(" Files") +
+                             QDir::separator() +
+                             tr("Airports") +
+                             QDir::separator() + airportIdent;
+  if(translatedPath.exists() && translatedPath.isDir())
+    retval.insert(translatedPath.canonicalFilePath());
+
+  QFileInfo path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
+                   QDir::separator() + QApplication::applicationName() +
+                   " Files" +
+                   QDir::separator() +
+                   "Airports" +
+                   QDir::separator() + airportIdent;
+
+  if(path.exists() && path.isDir())
+    retval.insert(path.canonicalFilePath());
+  return retval.toList();
 }
 
 void AirportFiles::updateAirportFiles(const QString& airportIdent)
@@ -53,10 +71,26 @@ void AirportFiles::updateAirportFiles(const QString& airportIdent)
     airportFilesIdent = airportIdent;
     airportFiles.clear();
 
-    // Collect from translated airports name
-    QDir airportTrDir = getAirportFilesBase(airportIdent);
-    if(airportTrDir.exists())
-      airportFiles.append(airportTrDir.entryInfoList(QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot,
-                                                     QDir::Name | QDir::LocaleAware));
+    QSet<QString> filter;
+
+    for(const QString& dir : getAirportFilesBase(airportIdent))
+    {
+      // Collect from translated airports name
+      QDir airportDir = dir;
+      if(airportDir.exists())
+      {
+        QFileInfoList entryInfoList = airportDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot,
+                                                               QDir::Name | QDir::LocaleAware);
+
+        for(const QFileInfo& file : entryInfoList)
+        {
+          if(!filter.contains(file.canonicalFilePath()))
+          {
+            filter.insert(file.canonicalFilePath());
+            airportFiles.append(file);
+          }
+        }
+      }
+    }
   }
 }
