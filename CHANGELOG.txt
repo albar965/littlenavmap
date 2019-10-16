@@ -1,6 +1,23 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.4.4
+
+* Fixed airport file links to use both English and translated path names.
+  https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/INFO.html#tabs-in-information-dock-window
+* Fixed issue in fuel report where average wind and average groundspeed were calculated incorrectly.
+* Fixed magnetic course calculation when flying outbound from a VOR.
+  https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/FLIGHTPLAN.html#magnetic-declination
+* Corrected help URL for reset all for new flight.
+* Added help button to reset and restart dialog.
+* Now using correct ICAO ident in web page links in airport information.
+* Finished German translation.
+* Fixed typos in German and English texts.
+* Fixed issue where scenery entries were read despite being disabled in add-ons.cfg for P3D.
+* Discovery paths from add-ons.cfg are now read for P3D.
+
+===============================================================================
+
 Version 2.4.3.rc2
 
 * Finished German translation.
@@ -11,7 +28,6 @@ Version 2.4.3.rc2
 * Now using correct ICAO ident in web page links in airport information instead of X-Plane internal ids.
 
 ===============================================================================
-
 
 Version 2.4.3.rc1
 
