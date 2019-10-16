@@ -7020,7 +7020,7 @@ relação ao aeroporto mostrado</translation>
         <location filename="src/gui/mainwindow.ui" line="7336"/>
         <location filename="src/gui/mainwindow.ui" line="7339"/>
         <source>Calculate a high altitude (Jet airways) flight plan</source>
-        <translation>Caucular plano de voo em uma alta altitude (Jet airways)</translation>
+        <translation>Calcular plano de voo em uma alta altitude (Jet airways)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7351"/>
@@ -21768,7 +21768,7 @@ velocidades de subida / descida na perfomance da aeronave.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1472"/>
         <source>Calculated high altitude (Jet airways) flight plan.</source>
-        <translation>Caucular plano de voo em uma alta altitude (Jet airways).</translation>
+        <translation>Calcular plano de voo em uma alta altitude (Jet airways).</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1520"/>
