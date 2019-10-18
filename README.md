@@ -20,8 +20,8 @@
 
 ## Little Navmap
 
-[![Little Navmap](https://albar965.github.io/assets/images/navroute.png)](littlenavmap.html) [**► Little
-Navmap**](littlenavmap.html) is a free open source flight planner, navigation tool, moving map,
+[![Little Navmap](https://albar965.github.io/assets/images/navroute.png)](https://albar965.github.io/littlenavmap.html) [**► Little
+Navmap**](https://albar965.github.io/littlenavmap.html) is a free open source flight planner, navigation tool, moving map,
 airport search and airport information system for **Flight Simulator X, Prepar3D and X-Plane** and is available for **Windows, Apple macOS and Linux**.
 
 _Little Navmap_ comes with a 270 page manual also including tutorials which is available online as well as in PDF and other formats.
