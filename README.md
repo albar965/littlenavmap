@@ -1,18 +1,18 @@
 ## Links
 
-[**► User manuals for _Little Navmap_ and _Little Navconnect_ in all formats and languages.**](/manuals.html)
+[**► User manuals for _Little Navmap_ and _Little Navconnect_ in all formats and languages.**](https://albar965.github.io/manuals.html)
 
 [**► Support Forum at Avsim**](https://www.avsim.com/forum/780-little-navmap-little-navconnect-little-logbook-support-forum) **Support and help for users.**
 
-[**► Little Navmap - Frequently asked Questions**](littlenavmap-faq.html)
+[**► Little Navmap - Frequently asked Questions**](https://albar965.github.io/littlenavmap-faq.html)
 
-[**► Little Navmap - Install Navigraph Updates**](littlenavmap_navigraph.html) Shows how to update the included Navigraph database to the latest cycle.
+[**► Little Navmap - Install Navigraph Updates**](https://albar965.github.io/littlenavmap_navigraph.html) Shows how to update the included Navigraph database to the latest cycle.
 
 [**► Little Navmap Downloads**](https://www.littlenavmap.org/downloads)
 
-[**► Donations / Spenden**](donate.html)
+[**► Donations / Spenden**](https://albar965.github.io/donate.html)
 
-[![Donate](https://albar965.github.io/assets/images/donate.png)](donate.html)
+[![Donate](https://albar965.github.io/assets/images/donate.png)](https://albar965.github.io/donate.html)
 
 **Donate to show your appreciation if you like my programs.**
 
