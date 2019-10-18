@@ -27,8 +27,7 @@ airport search and airport information system for **Flight Simulator X, Prepar3D
 _Little Navmap_ comes with a 270 page manual also including tutorials which is available online as well as in PDF and other formats.
 Help buttons in all relevant areas of the program display corresponding chapters in the online manual.
 
-| ---- | ---- |
-| [![Little Navmap 2.2.2 spherical map projection and elevation profile with flight plan](https://albar965.github.io/assets/images/spherical_small.jpg)](https://albar965.github.io/assets/images/spherical.jpg) | [![Little Navmap 2.2.2 sun shadow on globe](https://albar965.github.io/assets/images/sunshadow_small.jpg)](https://albar965.github.io/assets/images/sunshadow.jpg) |
+[![Little Navmap 2.2.2 spherical map projection and elevation profile with flight plan](https://albar965.github.io/assets/images/spherical_small.jpg)](https://albar965.github.io/assets/images/spherical.jpg) [![Little Navmap 2.2.2 sun shadow on globe](https://albar965.github.io/assets/images/sunshadow_small.jpg)](https://albar965.github.io/assets/images/sunshadow.jpg)
 
 A widely configurable map display using the OpenStreetMap as a background map which is only one
 option of many online and included offline maps. The map shows airports, navaids, airways,
@@ -37,8 +36,7 @@ taxiways, displaced thresholds, overrun areas, aprons, parking spots and more.
 
 User can place airport traffic patterns or holdings as a visual guidance on the map .
 
-| ---- | ---- |
-| [![Little Navmap 2.4.4 winds aloft](https://albar965.github.io/assets/images/user_features_small.jpg)](https://albar965.github.io/assets/images/user_features.jpg) | [![Little Navmap 2.4.4 User Features](https://albar965.github.io/assets/images/wind_small.jpg)](https://albar965.github.io/assets/images/wind.jpg) |
+[![Little Navmap 2.4.4 winds aloft](https://albar965.github.io/assets/images/user_features_small.jpg)](https://albar965.github.io/assets/images/user_features.jpg) [![Little Navmap 2.4.4 User Features](https://albar965.github.io/assets/images/wind_small.jpg)](https://albar965.github.io/assets/images/wind.jpg)
 
 It supports approach and departure procedures like SIDs, STARs, custom final approaches, offers several automatic flight
 plan calculation options and multiple export formats like GFP \(Reality XP GTN and Flight1 GTN\),
@@ -59,8 +57,7 @@ criteria also including a spatial search.
 
 _Little Navmap_ comes with its own logbook allowing to automatically record, search and edit logbook entries.
 
-| ---- | ---- |
-| [![Little Navmap 2.4.4 Logbook](https://albar965.github.io/assets/images/logbook_small.jpg)](https://albar965.github.io/assets/images/logbook.jpg) | [![Little Navmap 2.2.2 Airport Weather](https://albar965.github.io/assets/images/airportweather_small.jpg)](https://albar965.github.io/assets/images/airportweather.jpg) |
+[![Little Navmap 2.4.4 Logbook](https://albar965.github.io/assets/images/logbook_small.jpg)](https://albar965.github.io/assets/images/logbook.jpg) [![Little Navmap 2.2.2 Airport Weather](https://albar965.github.io/assets/images/airportweather_small.jpg)](https://albar965.github.io/assets/images/airportweather.jpg)
 
 The program can generate an ATS route description from flight plans and vice versa where the output is widely configurable.
 
