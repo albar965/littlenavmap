@@ -26,14 +26,14 @@ Little Navmap supports FSX, FSX Steam Edition, Prepar3d Versions 2, 3, 4 and X-P
 ------------------------------------------------------------------------------
 
 See the Little Navmap help for more information.
-All online here: https://albar965.gitbooks.io/little-navmap-user-manual/content/en/
+All online here: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/
 
 ------------------------------------------------------------------------------
 -- INSTALLATION --------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 See online manual for a more detailed description:
-https://albar965.gitbooks.io/little-navmap-user-manual/content/en/INSTALLATION.html
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/INSTALLATION.html
 
 The installation of Little Navmap does not change any registry entries (in Windows) and involves a
 simple copy of files therefore an installer or setup program is not required.
@@ -44,7 +44,7 @@ folders, therefore other problems might occur like replaced or deleted files.
 
 Extract the Zip archive into a folder like "c:\Little Navmap". Then start the program by
 double-clicking "littlenavmap.exe". See online manual for more information on the first start after
-installation (https://albar965.gitbooks.io/little-navmap-user-manual/content/en/INTRO.html#first-start).
+installation (https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/INTRO.html#first-start).
 
 In some cases you have to install the MS Visual C++ 2013 Redistributable package
 (https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads). Install
@@ -83,7 +83,7 @@ directories except custom map themes.
 In any case do not merge the installation directories.
 
 The program automatically checks for updates. See here in the manual:
-https://albar965.gitbooks.io/little-navmap-user-manual/content/en/UPDATE.html
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/UPDATE.html
 
 ------------------------------------------------------------------------------
 -- FSX and Prepar3D ----------------------------------------------------------
@@ -92,7 +92,7 @@ See the online manual if installing for other Simulators than FSX SP2. You might
 additional SimConnect version since Little Navmap is compatible from FSX SP2 up.
 
 See the online manual for more information about configuration and database
-files (https://albar965.gitbooks.io/little-navmap-user-manual/content/en/FILES.html).
+files (https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/FILES.html).
 Do not delete these.
 
 Little Navmap is a 32-bit application and was tested with Windows 7, Windows 8 and Windows 10

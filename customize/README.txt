@@ -25,7 +25,7 @@ SafeAltLegLinePen=#ee6666, 3, Solid
 SafeAltLineDarkPen=#ee6666, 4, Solid
 SafeAltLinePen=#ee6666, 4, Solid
 SkyColor=#0000cc
-SkyDarkColor=#0000cc 
+SkyDarkColor=#0000cc
 WaypointLineDarkPen=#dddddd, 1, Solid
 WaypointLinePen=#dddddd, 1, Solid
 ```
@@ -34,5 +34,5 @@ WaypointLinePen=#dddddd, 1, Solid
 
 See the online manual for more information how to use these files:
 
-https://albar965.gitbooks.io/little-navmap-user-manual/en/CUSTOMIZE.html
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/CUSTOMIZE.html
 
