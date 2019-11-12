@@ -137,7 +137,7 @@ UserdataDialog::~UserdataDialog()
 
 void UserdataDialog::coordsEdited(const QString& text)
 {
-  Q_UNUSED(text);
+  Q_UNUSED(text)
 
   QString message;
   bool valid = formatter::checkCoordinates(message, ui->lineEditUserdataLatLon->text());

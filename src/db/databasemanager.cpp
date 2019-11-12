@@ -1382,7 +1382,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
 
     TextDialog errorDialog(progressDialog,
                            QApplication::applicationName() + tr(" - Load Scenery Library Errors"),
-                           "SCENERY.html#errors");
+                           "SCENERY.html#errors"); // anchor for future use
     errorDialog.setHtmlMessage(errorTexts, true /* print to log */);
     errorDialog.exec();
   }
