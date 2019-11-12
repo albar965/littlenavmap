@@ -515,7 +515,7 @@ void LogdataController::convertUserdata()
       html.olEnd();
 
       TextDialog error(mainWindow, QApplication::applicationName() + tr(" - Conversion Errors"),
-                       "LOGBOOK.html#convert-errors");
+                       "LOGBOOK.html#convert-errors"); // anchor for future use
       error.setHtmlMessage(html.getHtml(), true /* print to log */);
       QGuiApplication::restoreOverrideCursor();
       error.exec();
