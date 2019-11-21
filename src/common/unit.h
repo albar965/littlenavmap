@@ -44,7 +44,7 @@ public:
 
   ~Unit();
 
-  /* Reverse function. Convert local unit to known unit */
+  /* Reverse functions. Convert local unit to known unit */
   static inline float rev(float value, std::function<float(float value)> func)
   {
     return value / func(1.f);
@@ -55,8 +55,10 @@ public:
     return value / func(1.f, fuelAsVolume);
   }
 
+  /* Replace values in text like "%dist%" or "%fuel% and returns new string. Saves original test in origtext. */
   static QString replacePlaceholders(const QString& text, QString& origtext, bool fuelAsVolume = false);
   static QString replacePlaceholders(const QString& text, bool fuelAsVolume = false);
+  static QString replacePlaceholders(const QString& text, bool fuelAsVolume, opts::UnitFuelAndWeight unit);
 
   /* Read all unit names (Meter, Nm, ...) in the methods as "from" values */
 
@@ -77,9 +79,9 @@ public:
   static float distShortFeetF(float value);
 
   /* Speed: Returns either kts, km/h or m/h */
-  static QString speedKts(float value, bool addUnit = true);
+  static QString speedKts(float value, bool addUnit = true, bool narrow = false);
   static float speedKtsF(float value);
-  static QString speedMeterPerSec(float value, bool addUnit = true);
+  static QString speedMeterPerSec(float value, bool addUnit = true, bool narrow = false);
   static float speedMeterPerSecF(float value = true);
 
   static QString speedVertFpm(float value, bool addUnit = true);
@@ -91,6 +93,7 @@ public:
 
   static float altMeterF(float value);
   static float altFeetF(float value);
+  static int altFeetI(int value);
 
   /* Volume: Returns either gal or l for fuel*/
   static QString volGallon(float value, bool addUnit = true);
@@ -105,7 +108,12 @@ public:
   static QString weightKg(float value, bool addUnit = true);
   static float weightKgF(float value);
 
-  /* Fuel flow */
+  /* Get unit string with unit as selected in options and other unit in brackets */
+  static QString weightLbsLocalOther(float value, bool localBold = false, bool otherSmall = true);
+  static QString fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool localBold = false,
+                                         bool otherSmall = true);
+
+  /* Fuel flow US Gallon and lbs */
   static QString ffGallon(float value, bool addUnit = true);
   static float ffGallonF(float value);
   static QString ffLbs(float value, bool addUnit = true);
@@ -116,18 +124,49 @@ public:
   static QString fuelLbsAndGal(float valueLbs, float valueGal, bool addUnit = true);
 
   static QString fuelLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);
+
+  /* Converts either volume or weight to current unit */
   static float fuelLbsGallonF(float value, bool fuelAsVolume = false);
 
   static QString ffLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);
   static float ffLbsGallonF(float value, bool fuelAsVolume = false);
 
+  /* Fuel flow metric */
+  static QString ffLiter(float value, bool addUnit = true);
+  static float ffLiterF(float value);
+  static QString ffKg(float value, bool addUnit = true);
+  static float ffKgF(float value);
+
+  /* Return string containing both units - weight and volume */
+  static QString ffKgAndLiter(float valueKg, float valueLiter, bool addUnit = true);
+  static QString fuelKgAndLiter(float valueKg, float valueLiter, bool addUnit = true);
+
+  static QString fuelKgLiter(float value, bool addUnit = true, bool fuelAsVolume = false);
+  static float fuelKgLiterF(float value, bool fuelAsVolume = false);
+
+  static QString ffKgLiter(float value, bool addUnit = true, bool fuelAsVolume = false);
+  static float ffKgLiterF(float value, bool fuelAsVolume = false);
+
+  /* Can be used as function pointers for conversion. fromCopy is a dummy returning the same value */
+  static float fromUsToMetric(float value, bool fuelAsVolume);
+  static float fromMetricToUs(float value, bool fuelAsVolume);
+  static float fromCopy(float value, bool fuelAsVolume);
+
   /* Coordinates: Returns either decimal or sexagesimal notation */
   static QString coords(const atools::geo::Pos& pos);
-  static QString coordsLatY(const atools::geo::Pos& pos);
-  static QString coordsLonX(const atools::geo::Pos& pos);
+  static QString coords(const atools::geo::Pos& pos, opts::UnitCoords coordUnit);
 
+  static QString coordsLatY(const atools::geo::Pos& pos);
+  static QString coordsLatY(const atools::geo::Pos& pos, opts::UnitCoords coordUnit);
+
+  static QString coordsLonX(const atools::geo::Pos& pos);
+  static QString coordsLonX(const atools::geo::Pos& pos, opts::UnitCoords coordUnit);
+
+  /* Program options changed - update units */
   static void optionsChanged();
 
+  /* ==================================================================
+   * Getters for current units strings / suffixes from options */
   static const QString& getUnitDistStr()
   {
     return unitDistStr;
@@ -188,10 +227,127 @@ public:
     return unitVertSpeed;
   }
 
+  static opts::UnitCoords getUnitCoords()
+  {
+    return unitCoords;
+  }
+
+  /* ==================================================================
+   * Getters for fixed Unit suffixes */
+  static const QString& getSuffixDistNm()
+  {
+    return suffixDistNm;
+  }
+
+  static const QString& getSuffixDistKm()
+  {
+    return suffixDistKm;
+  }
+
+  static const QString& getSuffixDistMi()
+  {
+    return suffixDistMi;
+  }
+
+  static const QString& getSuffixDistShortFt()
+  {
+    return suffixDistShortFt;
+  }
+
+  static const QString& getSuffixDistShortMeter()
+  {
+    return suffixDistShortMeter;
+  }
+
+  static const QString& getSuffixAltFt()
+  {
+    return suffixAltFt;
+  }
+
+  static const QString& getSuffixAltMeter()
+  {
+    return suffixAltMeter;
+  }
+
+  static const QString& getSuffixSpeedKts()
+  {
+    return suffixSpeedKts;
+  }
+
+  static const QString& getSuffixSpeedKmH()
+  {
+    return suffixSpeedKmH;
+  }
+
+  static const QString& getSuffixSpeedMph()
+  {
+    return suffixSpeedMph;
+  }
+
+  static const QString& getSuffixVertSpeedFpm()
+  {
+    return suffixVertSpeedFpm;
+  }
+
+  static const QString& getSuffixVertSpeedMs()
+  {
+    return suffixVertSpeedMs;
+  }
+
+  static const QString& getSuffixFuelVolGal()
+  {
+    return suffixFuelVolGal;
+  }
+
+  static const QString& getSuffixFuelWeightLbs()
+  {
+    return suffixFuelWeightLbs;
+  }
+
+  static const QString& getSuffixFfWeightPpH()
+  {
+    return suffixFfWeightPpH;
+  }
+
+  static const QString& getSuffixFfGalGpH()
+  {
+    return suffixFfGalGpH;
+  }
+
+  static const QString& getSuffixFuelVolLiter()
+  {
+    return suffixFuelVolLiter;
+  }
+
+  static const QString& getSuffixFuelWeightKg()
+  {
+    return suffixFuelWeightKg;
+  }
+
+  static const QString& getSuffixFfWeightKgH()
+  {
+    return suffixFfWeightKgH;
+  }
+
+  static const QString& getSuffixFfVolLiterH()
+  {
+    return suffixFfVolLiterH;
+  }
+
+  static bool isShowOtherFuel()
+  {
+    return showOtherFuel;
+  }
+
 private:
+  /* Singleton */
   Unit();
+
+  /* Merges numbers and units depending on flags */
   static QString u(const QString& num, const QString& un, bool addUnit, bool narrow);
   static QString u(float num, const QString& un, bool addUnit, bool narrow = false);
+  static QString localOtherText(bool localBold, bool otherSmall);
+  static QString localOtherText2(bool localBold, bool otherSmall);
 
   static const OptionData *opts;
   static QLocale *locale, *clocale;
@@ -203,7 +359,9 @@ private:
   static opts::UnitVertSpeed unitVertSpeed;
   static opts::UnitCoords unitCoords;
   static opts::UnitFuelAndWeight unitFuelWeight;
+  static bool showOtherFuel;
 
+  /* Currently selected unit suffixes */
   static QString unitDistStr;
   static QString unitShortDistStr;
   static QString unitAltStr;
@@ -215,6 +373,28 @@ private:
 
   static QString unitFfVolStr;
   static QString unitFfWeightStr;
+
+  /* Fixed unit suffixes only updated for translations */
+  static QString suffixDistNm;
+  static QString suffixDistKm;
+  static QString suffixDistMi;
+  static QString suffixDistShortFt;
+  static QString suffixDistShortMeter;
+  static QString suffixAltFt;
+  static QString suffixAltMeter;
+  static QString suffixSpeedKts;
+  static QString suffixSpeedKmH;
+  static QString suffixSpeedMph;
+  static QString suffixVertSpeedFpm;
+  static QString suffixVertSpeedMs;
+  static QString suffixFuelVolGal;
+  static QString suffixFuelWeightLbs;
+  static QString suffixFfWeightPpH;
+  static QString suffixFfGalGpH;
+  static QString suffixFuelVolLiter;
+  static QString suffixFuelWeightKg;
+  static QString suffixFfWeightKgH;
+  static QString suffixFfVolLiterH;
 };
 
 #endif // LITTLENAVMAP_UNIT_H

@@ -33,7 +33,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterWeather::MapPainterWeather(MapPaintWidget* mapWidget, MapScale *mapScale)
+MapPainterWeather::MapPainterWeather(MapPaintWidget *mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }
@@ -45,8 +45,7 @@ MapPainterWeather::~MapPainterWeather()
 void MapPainterWeather::render(PaintContext *context)
 {
   bool drawWeather = context->objectDisplayTypes.testFlag(map::AIRPORT_WEATHER) &&
-                     context->mapLayer->isAirportWeather() &&
-                     context->viewContext == Marble::Still;
+                     context->mapLayer->isAirportWeather();
 
   if(!drawWeather)
     return;
@@ -90,7 +89,7 @@ void MapPainterWeather::render(PaintContext *context)
 void MapPainterWeather::drawAirportWeather(PaintContext *context,
                                            const atools::fs::weather::Metar& metar, float x, float y)
 {
-  float size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
+  float size = context->sz(context->symbolSizeAirportWeather, context->mapLayerEffective->getAirportSymbolSize());
   bool windBarbs = context->mapLayer->isAirportWeatherDetails();
 
   symbolPainter->drawAirportWeather(context->painter, metar, x - size * 4.f / 5.f, y - size * 4.f / 5.f, size,

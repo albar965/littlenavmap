@@ -62,7 +62,7 @@ public:
   void restoreState();
 
   /* Check if position is outside margins and position it into left third of the profile if yes */
-  bool centerAircraft(const QPoint& screenPoint);
+  bool centerAircraft(const QPoint& screenPoint, float verticalSpeed);
 
   /* Update split on style change */
   void styleChanged();

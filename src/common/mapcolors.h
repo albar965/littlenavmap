@@ -26,6 +26,7 @@ namespace map {
 struct MapAirport;
 
 struct MapAirspace;
+struct MapAirway;
 
 }
 
@@ -72,6 +73,7 @@ extern QColor distanceColor;
 /* Weather icon colors */
 extern QColor weatherBackgoundColor;
 extern QColor weatherWindColor;
+extern QColor weatherWindGustColor;
 extern QColor weatherLifrColor;
 extern QColor weatherIfrColor;
 extern QColor weatherMvfrColor;
@@ -117,7 +119,18 @@ extern QColor mapPrintRowColor;
 extern QColor mapPrintRowColorAlt;
 extern QColor mapPrintHeaderColor;
 
+/* Marks, crosses and other colors */
+extern QPen searchCenterBackPen;
+extern QPen searchCenterFillPen;
+extern QPen touchMarkBackPen;
+extern QPen touchMarkFillPen;
+extern QColor touchRegionFillColor;
+
 // ==========================================================================
+
+/* Web page table background colors */
+const QColor webTableBackgroundColor("#f3f3f3");
+const QColor webTableAltBackgroundColor("#eceae8");
 
 extern QPen taxiwayLinePen;
 extern QColor taxiwayNameColor;
@@ -152,20 +165,14 @@ const QColor textBoxColor = QColor(Qt::white);
 
 /* Text background color for flight plan waypoints */
 const QColor routeTextBoxColor = QColor(255, 255, 150);
+const QColor logTextBoxColor = QColor(150, 240, 255);
 
 const QColor airportSymbolFillColor = QColor(Qt::white);
 
-const QPen markBackPen = QPen(QBrush(QColor(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
-const QPen markFillPen = QPen(QBrush(QColor(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
-const QPen magneticPolePen = QPen(QBrush(QColor(Qt::darkGreen)), 2, Qt::SolidLine, Qt::FlatCap);
-
-const QPen aircraftBackPen = QPen(QBrush(QColor(Qt::black)), 7, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftFillPen = QPen(QBrush(QColor(Qt::yellow)), 4, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftGroundBackPen = QPen(QBrush(QColor(Qt::darkGray)), 7, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftGroundFillPen = QPen(QBrush(QColor(Qt::yellow)), 4, Qt::SolidLine, Qt::RoundCap);
-
-const QPen homeBackPen = QPen(QBrush(QColor(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
-const QColor homeFillColor = QColor(Qt::yellow);
+const QPen aircraftBackPen = QPen(Qt::black, 7, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftGroundBackPen = QPen(Qt::darkGray, 7, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftGroundFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundCap);
 
 const QColor highlightApproachColor = QColor(150, 150, 255);
 const QColor highlightApproachColorFast = QColor(0, 0, 150);
@@ -175,8 +182,12 @@ const QColor mapDragColor = QColor(Qt::darkYellow);
 
 /* Flight plan line colors */
 const QColor routeOutlineColor = QColor(Qt::black);
+const QColor routeAlternateOutlineColor = QColor(Qt::darkGray);
 
 const QColor routeProcedureOutlineColor = QColor(Qt::black);
+
+const QColor routeLogEntryColor = QColor(50, 100, 255);
+const QColor routeLogEntryOutlineColor = QColor(Qt::black);
 
 const QColor routeProcedurePreviewColor = QColor(0, 180, 255);
 const QColor routeProcedurePreviewMissedColor = QColor(0, 180, 255);
@@ -194,10 +205,18 @@ const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */
 const QColor routeInvalidPointColor = QColor(Qt::red);
 
+/* Procedure colors */
 const QColor routeProcedureMissedTableColor = QColor(Qt::darkRed);
 const QColor routeProcedureMissedTableColorDark = QColor(240, 170, 120);
 const QColor routeProcedureTableColor = QColor(Qt::darkBlue);
 const QColor routeProcedureTableColorDark = QColor(140, 200, 240);
+
+/* Alternate airport leg colors */
+const QColor routeAlternateTableColor = QColor(Qt::darkGray);
+const QColor routeAlternateTableColorDark = QColor(Qt::gray);
+
+const QColor routeInvalidTableColor = QColor(Qt::red);
+const QColor routeInvalidTableColorDark = QColor(Qt::red);
 
 const QColor nextWaypointColor(QColor(255, 100, 255));
 const QColor nextWaypointColorDark(QColor(150, 20, 150));
@@ -227,9 +246,13 @@ const QPen aircraftTrailPen(float size);
 const QPen& penForAirspace(const map::MapAirspace& airspace);
 const QColor& colorForAirspaceFill(const map::MapAirspace& airspace);
 
+const QPen& penForAirway(const map::MapAirway& airway);
+
 /* Convert current pen into dotted pen leaving style and color as is */
 void adjustPenForCircleToLand(QPainter *painter);
 void adjustPenForVectors(QPainter *painter);
+void adjustPenForAlternate(QPainter *painter);
+void adjustPenForManual(QPainter *painter);
 
 /* Scale current font in painter. Uses defaultFont as a base otherwise current font in painter. */
 void scaleFont(QPainter *painter, float scale, const QFont *defaultFont = nullptr);

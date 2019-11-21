@@ -46,6 +46,7 @@ void initTranslateableTexts()
       {proc::FAF, QObject::tr("FAF")},
       {proc::FACF, QObject::tr("FACF")},
       {proc::MAP, QObject::tr("MAP")},
+      {proc::FEP, QObject::tr("FEP")},
       {proc::NONE, QString()}
     });
 
@@ -55,6 +56,7 @@ void initTranslateableTexts()
       {proc::FAF, QObject::tr("Final Approach Fix")},
       {proc::FACF, QObject::tr("Final Approach Course Fix")},
       {proc::MAP, QObject::tr("Missed Approach Point")},
+      {proc::FEP, QObject::tr("Final Endpoint Fix")},
       {proc::NONE, QString()}
     });
 
@@ -67,7 +69,8 @@ void initTranslateableTexts()
       {"TN", QObject::tr("Terminal NDB")},
       {"W", QObject::tr("Waypoint")},
       {"TW", QObject::tr("Terminal Waypoint")},
-      {"R", QObject::tr("Runway")}
+      {"R", QObject::tr("Runway")},
+      {"CST", QObject::tr("Custom Fix")}
     });
 
   approachTypeToStr = QHash<QString, QString>(
@@ -90,8 +93,10 @@ void initTranslateableTexts()
       {"GNSS", QObject::tr("GNSS")},
       {"TCN", QObject::tr("TACAN")},
       {"CTL", QObject::tr("Circle to Land")},
-      {"MLS", QObject::tr("MLS")}
+      {"MLS", QObject::tr("MLS")},
 
+      /* User defined approach procedure */
+      {"CUSTOM", QObject::tr("Custom")}
     });
 
   approachLegTypeToStr = QHash<ProcedureLegType, QString>(
@@ -242,7 +247,7 @@ QString procedureLegFixStr(const MapProcedureLeg& leg)
   {
     if(fix.isEmpty())
       fix = leg.recFixIdent;
-    fix += "+" + QString::number(static_cast<int>(leg.distance));
+    fix += "+" + QString::number(static_cast<int>(leg.calculatedDistance));
   }
 
   QString specialType(proc::proceduresLegSecialTypeShortStr(proc::specialType(leg.arincDescrCode)));
@@ -524,7 +529,7 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
   out << "magvar" << leg.magvar
       << "theta" << leg.theta
       << "rho" << leg.rho
-      << "dist" << leg.distance
+      << "distance" << leg.distance
       << "time" << leg.time << endl;
 
   out << "altDescriptor" << leg.altRestriction.descriptor
@@ -598,6 +603,11 @@ bool MapProcedureLeg::isFinalApproachCourseFix() const
   return proc::specialType(arincDescrCode) == proc::FACF;
 }
 
+bool MapProcedureLeg::isFinalEndpointFix() const
+{
+  return proc::specialType(arincDescrCode) == proc::FEP;
+}
+
 bool MapProcedureLeg::isHold() const
 {
   return atools::contains(type,
@@ -613,8 +623,8 @@ bool MapProcedureLeg::noDistanceDisplay() const
 {
   return atools::contains(type,
                           {proc::COURSE_TO_ALTITUDE, proc::FIX_TO_ALTITUDE,
-                           proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_ALTITUDE_TERMINATION,
-                           proc::HEADING_TO_MANUAL_TERMINATION, });
+                           proc::HEADING_TO_ALTITUDE_TERMINATION
+                           /*proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION*/});
 }
 
 proc::LegSpecialType specialType(const QString& arincDescrCode)
@@ -622,6 +632,10 @@ proc::LegSpecialType specialType(const QString& arincDescrCode)
   QChar idx3(atools::strAt(arincDescrCode, 3));
   if(idx3 == 'A' /* IAF */ || idx3 == 'C' /* IAF and hold */ || idx3 == 'D' /* IAF with final approach course fix */)
     return proc::IAF;
+
+  if(idx3 == 'E')
+    // Final endpoint fix
+    return proc::FEP;
 
   if(idx3 == 'M')
     // Missed approach point
@@ -649,6 +663,16 @@ const MapProcedureLeg *MapProcedureLegs::transitionLegById(int legId) const
       return &leg;
   }
   return nullptr;
+}
+
+atools::geo::LineString MapProcedureLegs::geometry() const
+{
+  atools::geo::LineString retval;
+  for(int i = 0; i < size(); i++)
+    retval.append(at(i).line.getPos2());
+  retval.removeInvalid();
+  retval.removeDuplicates();
+  return retval;
 }
 
 MapProcedureLeg& MapProcedureLegs::atInternal(int i)

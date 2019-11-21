@@ -60,7 +60,8 @@ public:
   FlightplanEntryBuilder();
   virtual ~FlightplanEntryBuilder();
 
-  void buildFlightplanEntry(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry) const;
+  void buildFlightplanEntry(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry,
+                            bool alternate) const;
 
   void buildFlightplanEntry(int id, const atools::geo::Pos& userPos, map::MapObjectTypes type,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
@@ -81,7 +82,7 @@ public:
 
   void entryFromVor(const map::MapVor& vor, atools::fs::pln::FlightplanEntry& entry) const;
 
-  void entryFromAirport(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry) const;
+  void entryFromAirport(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry, bool alternate) const;
 
   void entryFromWaypoint(const map::MapWaypoint& waypoint, atools::fs::pln::FlightplanEntry& entry,
                          bool resolveWaypoints) const;

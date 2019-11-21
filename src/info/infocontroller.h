@@ -20,6 +20,7 @@
 
 #include "fs/sc/simconnectdata.h"
 #include "common/maptypes.h"
+#include "common/tabindexes.h"
 
 #include <QObject>
 
@@ -30,6 +31,16 @@ class AirspaceQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
+class AirspaceController;
+
+namespace atools {
+namespace gui {
+class TabWidgetHandler;
+}
+namespace util {
+class HtmlBuilder;
+}
+}
 
 /*
  * Takes care of the information and simulator aircraft dock windows and tabs
@@ -73,6 +84,8 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  void styleChanged();
+
   /* Update aircraft and aircraft progress tab */
   void simDataChanged(atools::fs::sc::SimConnectData data);
   void connectedToSimulator();
@@ -81,10 +94,14 @@ public:
   /* Program options have changed */
   void optionsChanged();
 
-  const HtmlInfoBuilder *getHtmlInfoBuilder() const
-  {
-    return infoBuilder;
-  }
+  /* Get airport information as HTML in the string list. Order is main, runway, com, procedure and weather.
+   * List is empty if airport does not exist. Uses own white background color for tables. */
+  QStringList getAirportTextFull(const QString& ident) const;
+
+  void setCurrentInfoTabIndex(ic::TabInfoId tabId);
+  void setCurrentAircraftTabIndex(ic::TabAircraftId tabId);
+
+  void resetWindowLayout();
 
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
@@ -100,13 +117,14 @@ private:
 
   void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop, bool forceWeatherUpdate);
   bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
+  bool updateUserpointInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
   void showInformationInternal(map::MapSearchResult result, map::MapObjectTypes preferredType,
-                               bool showWindows, bool scrollToTop);
+                               bool showWindows, bool scrollToTop, bool forceUpdate);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateUserAircraftText();
   void updateAircraftProgressText();
@@ -114,8 +132,8 @@ private:
   void updateAircraftInfo();
 
   /* QTabWidget::currentChanged - update content when visible */
-  void currentAircraftTabChanged(int index);
-  void currentInfoTabChanged(int index);
+  void currentAircraftTabChanged(int id);
+  void currentInfoTabChanged(int id);
 
   /* QDockWidget::visibilityChanged - update when shown */
   void visibilityChangedAircraft(bool visible);
@@ -131,13 +149,14 @@ private:
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;
-  AirspaceQuery *airspaceQuery = nullptr;
-  AirspaceQuery *airspaceQueryOnline = nullptr;
   AirportQuery *airportQuery = nullptr;
+  AirspaceController *airspaceController = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
   bool lessAircraftProgress = false;
+
+  atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAircraft = nullptr;
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

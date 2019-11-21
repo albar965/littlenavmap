@@ -18,17 +18,26 @@
 #ifndef LNM_TRAFFICPATTERN_H
 #define LNM_TRAFFICPATTERN_H
 
-#include "common/maptypes.h"
-
 #include <QDialog>
 
 namespace Ui {
 class TrafficPatternDialog;
 }
 
+namespace map {
+struct MapAirport;
+struct TrafficPattern;
+}
+
 class QAbstractButton;
 class UnitStringTool;
+class RunwaySelection;
 
+/*
+ * Shows airport and runway information and allows to configure a traffic pattern for a selected runway.
+ *
+ * Reads state on intiantiation and saves it on destruction
+ */
 class TrafficPatternDialog :
   public QDialog
 {
@@ -38,27 +47,27 @@ public:
   explicit TrafficPatternDialog(QWidget *parent, const map::MapAirport& mapAirport);
   virtual ~TrafficPatternDialog();
 
-  void restoreState();
-  void saveState();
-
   void fillTrafficPattern(map::TrafficPattern& pattern);
 
 private:
-  Ui::TrafficPatternDialog *ui;
-  void updateWidgets();
-  void updateRunwayLabel(int index);
-  void fillRunwayComboBox();
-  void fillAirportLabel();
-  void buttonBoxClicked(QAbstractButton *button);
+  void restoreState();
+  void saveState();
 
-  QList<map::MapRunway> runways;
-  map::MapAirport airport;
+  void updateWidgets();
+  void updateRunwayLabel();
+  void buttonBoxClicked(QAbstractButton *button);
+  void colorButtonClicked();
+  void updateButtonColor();
+  void doubleClicked();
+
+  Ui::TrafficPatternDialog *ui;
+
   QColor color;
 
   UnitStringTool *units = nullptr;
 
-  void colorButtonClicked();
-  void updateButtonColor();
+  RunwaySelection *runwaySelection = nullptr;
+
 };
 
 #endif // LNM_TRAFFICPATTERN_H

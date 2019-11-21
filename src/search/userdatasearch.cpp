@@ -36,7 +36,7 @@
 #include "sql/sqlrecord.h"
 #include "userdata/userdataicons.h"
 
-UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
+UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("userdata", "userdata_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -85,8 +85,6 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::S
   append(Column("import_file_path", ui->lineEditUserdataFilepath, tr("Imported\nfrom File")).filter())
   ;
 
-  ui->labelUserdataOverride->hide();
-
   // Add icon delegate for the ident column
   iconDelegate = new UserIconDelegate(columns, NavApp::getUserdataIcons());
   view->setItemDelegateForColumn(columns->getColumn("type")->getIndex(), iconDelegate);
@@ -100,23 +98,6 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::S
 UserdataSearch::~UserdataSearch()
 {
   delete iconDelegate;
-}
-
-void UserdataSearch::overrideMode(const QStringList& overrideColumnTitles)
-{
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
-  if(overrideColumnTitles.isEmpty())
-  {
-    ui->labelUserdataOverride->hide();
-    ui->labelUserdataOverride->clear();
-  }
-  else
-  {
-    ui->labelUserdataOverride->show();
-    ui->labelUserdataOverride->setText(tr("%1 overriding all other search options.").
-                                       arg(overrideColumnTitles.join(" and ")));
-  }
 }
 
 void UserdataSearch::connectSearchSlots()
@@ -154,8 +135,6 @@ void UserdataSearch::connectSearchSlots()
   ui->actionUserdataDelete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   ui->tableViewUserdata->addActions({ui->actionUserdataEdit, ui->actionUserdataAdd, ui->actionUserdataDelete});
-
-  connect(controller->getSqlModel(), &SqlModel::overrideMode, this, &UserdataSearch::overrideMode);
 
   connect(ui->pushButtonUserdataEdit, &QPushButton::clicked, this, &UserdataSearch::editUserpointsTriggered);
   connect(ui->actionUserdataEdit, &QAction::triggered, this, &UserdataSearch::editUserpointsTriggered);
@@ -195,9 +174,9 @@ void UserdataSearch::saveState()
 void UserdataSearch::restoreState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
+  atools::gui::WidgetState widgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
-    atools::gui::WidgetState widgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET);
     widgetState.restore(userdataSearchWidgets);
 
     restoreViewState(false);
@@ -209,6 +188,10 @@ void UserdataSearch::restoreState()
   }
   else
   {
+    QList<QObject *> objList;
+    atools::convertList(objList, userdataSearchMenuActions);
+    widgetState.restore(objList);
+
     atools::gui::WidgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET).restore(ui->tableViewUserdata);
     ui->comboBoxUserdataType->setCurrentIndex(0);
     ui->comboBoxUserdataType->clearEditText();

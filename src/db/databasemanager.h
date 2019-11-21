@@ -31,6 +31,7 @@ class NavDatabaseProgress;
 
 namespace userdata {
 class UserdataManager;
+class LogdataManager;
 }
 
 namespace online {
@@ -78,9 +79,6 @@ public:
   /* Opens the dialog that allows to (re)load a new scenery database. */
   void run();
 
-  /* Copy the boundary table from the currently selected FSX/P3D database to the X-Plane database */
-  void copyAirspaces();
-
   /* Save and restore all paths and current simulator settings */
   void saveState();
 
@@ -90,7 +88,7 @@ public:
   /* Returns true if there are any flight simulator databases found (probably copied by the user) */
   bool hasSimulatorDatabases() const;
 
-  /* Opens Sim and Nav Sqlite databases in readonly mode. If the database is new or does not contain a schema
+  /* Opens Sim, Nav and respective airspace Sqlite databases in readonly mode. If the database is new or does not contain a schema
    * an empty schema is created.
    * Will not return if an exception is caught during opening.
    * Only for scenery database */
@@ -99,12 +97,14 @@ public:
   /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
   void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName,
                              bool backup);
+  void closeLogDatabase();
   void closeUserDatabase();
+  void closeUserAirspaceDatabase();
   void closeOnlineDatabase();
 
   /* Close all simulator databases - not the user database.
    * Will not return if an exception is caught during opening. */
-  void closeDatabases();
+  void closeAllDatabases();
 
   /* Get the simulator database. Will return null if not opened before. */
   atools::sql::SqlDatabase *getDatabaseSim();
@@ -114,6 +114,12 @@ public:
 
   /* Get nav database for MORA data */
   atools::sql::SqlDatabase *getDatabaseMora();
+
+  /* Get the simulator database for airspaces which is independent of nav data mode. Will return null if not opened before. */
+  atools::sql::SqlDatabase *getDatabaseSimAirspace();
+
+  /* Get the nav database for airspaces which is independent of nav data mode. Will return null if not opened before. */
+  atools::sql::SqlDatabase *getDatabaseNavAirspace();
 
   /*
    * Insert actions for switching between installed flight simulators.
@@ -154,6 +160,11 @@ public:
     return userdataManager;
   }
 
+  atools::fs::userdata::LogdataManager *getLogdataManager() const
+  {
+    return logdataManager;
+  }
+
   atools::fs::online::OnlinedataManager *getOnlinedataManager() const
   {
     return onlinedataManager;
@@ -164,7 +175,20 @@ public:
     return databaseUser;
   }
 
+  atools::sql::SqlDatabase *getDatabaseLogbook() const
+  {
+    return databaseLogbook;
+  }
+
+  atools::sql::SqlDatabase *getDatabaseUserAirspace() const
+  {
+    return databaseUserAirspace;
+  }
+
   atools::sql::SqlDatabase *getDatabaseOnline() const;
+
+  /* Create an empty database schema. Boundary option does not use transaction. */
+  void createEmptySchema(atools::sql::SqlDatabase *db, bool boundary = false);
 
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
@@ -189,7 +213,6 @@ private:
 
   void restoreState();
 
-  void createEmptySchema(atools::sql::SqlDatabase *db);
   bool isDatabaseCompatible(atools::sql::SqlDatabase *db);
   bool hasSchema(atools::sql::SqlDatabase *db);
   bool hasData(atools::sql::SqlDatabase *db);
@@ -203,16 +226,16 @@ private:
   /* Database stored in settings directory */
   QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
 
-  /* Database stored in application directory or settings directory */
-  QString buildDatabaseFileNameAppDirOrSettings(atools::fs::FsPaths::SimulatorType type);
-
   /* Database stored in application directory */
   QString buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type);
 
   /* Temporary name stored in settings directory */
   QString buildCompilingDatabaseFileName();
 
+  /* Simulator changed from main menu */
   void switchSimFromMainMenu();
+
+  /* Navdatabase mode change from main menu */
   void switchNavFromMainMenu();
 
   void freeActions();
@@ -229,7 +252,7 @@ private:
                     const QString& file);
 
   /* Database name for all loaded from simulators */
-  const QString DATABASE_NAME = "LNMDB";
+  const QString DATABASE_NAME_SIM = "LNMDBSIM";
 
   /* Navaid database e.g. from Navigraph */
   const QString DATABASE_NAME_NAV = "LNMDBNAV";
@@ -239,6 +262,14 @@ private:
 
   /* Userpoint database */
   const QString DATABASE_NAME_USER = "LNMDBUSER";
+
+  /* Logbook database */
+  const QString DATABASE_NAME_LOGBOOK = "LNMDBLOG";
+
+  /* User airspace database */
+  const QString DATABASE_NAME_USER_AIRSPACE = "LNMDBUSERAS";
+  const QString DATABASE_NAME_SIM_AIRSPACE = "LNMDBSIMAS";
+  const QString DATABASE_NAME_NAV_AIRSPACE = "LNMDBNAVAS";
 
   /* Network online player data */
   const QString DATABASE_NAME_ONLINE = "LNMDBONLINE";
@@ -252,11 +283,16 @@ private:
   qint64 progressTimerElapsed = 0L;
 
   // Need a pointer since it has to be deleted before the destructor is left
-  atools::sql::SqlDatabase *databaseSim = nullptr /* Database for simulator content */,
-                           *databaseNav = nullptr /* Database for third party navigation data */,
-                           *databaseMora = nullptr /* Database for MORA data - always nav */,
-                           *databaseUser = nullptr /* Database for user data */,
-                           *databaseOnline = nullptr /* Database for network online data */;
+  atools::sql::SqlDatabase
+  *databaseSim = nullptr /* Database for simulator content */,
+  *databaseNav = nullptr /* Database for third party navigation data */,
+  *databaseMora = nullptr /* Database for MORA data - always nav */,
+  *databaseUser = nullptr /* Database for user data */,
+  *databaseLogbook = nullptr /* Database for logbook */,
+  *databaseUserAirspace = nullptr /* Database for user airspaces */,
+  *databaseSimAirspace = nullptr /* Airspace database from simulator independent from nav switch */,
+  *databaseNavAirspace = nullptr /* Airspace database from navdata independent from nav switch */,
+  *databaseOnline = nullptr /* Database for network online data */;
 
   MainWindow *mainWindow = nullptr;
   QProgressDialog *progressDialog = nullptr;
@@ -288,6 +324,7 @@ private:
 
   /* Also keep the database-close manager classes here */
   atools::fs::userdata::UserdataManager *userdataManager = nullptr;
+  atools::fs::userdata::LogdataManager *logdataManager = nullptr;
   atools::fs::online::OnlinedataManager *onlinedataManager = nullptr;
 
 };

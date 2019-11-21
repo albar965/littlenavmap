@@ -20,6 +20,8 @@
 
 #include "options/optiondata.h"
 
+#include "common/mapflags.h"
+
 #include <QColor>
 #include <QIcon>
 #include <QApplication>
@@ -29,6 +31,7 @@ namespace atools {
 namespace fs {
 namespace weather {
 class Metar;
+class MetarParser;
 }
 }
 }
@@ -53,46 +56,6 @@ struct MapMarker;
 
 struct MapAirspace;
 
-}
-
-namespace textflags {
-/* Flags that determine what information is added to an icon */
-enum TextFlag
-{
-  NONE = 0x0000,
-  IDENT = 0x0001, /* Draw airport or navaid ICAO ident */
-  TYPE = 0x0002, /* Draw navaid type (HIGH, MEDIUM, TERMINAL, HH, H, etc.) */
-  FREQ = 0x0004, /* Draw navaid frequency */
-  NAME = 0x0008,
-  MORSE = 0x0010, /* Draw navaid morse code */
-  INFO = 0x0020, /* Additional airport information like tower frequency, etc. */
-  ROUTE_TEXT = 0x0040, /* Object is part of route */
-  ABS_POS = 0x0080, /* Use absolute text positioning */
-  NO_BACKGROUND = 0x0100, /* No background */
-  ALL = 0x00ff
-};
-
-Q_DECLARE_FLAGS(TextFlags, TextFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags);
-}
-
-namespace textatt {
-/* Low level text attributes for custom text boxes */
-enum TextAttribute
-{
-  NONE = 0x00,
-  BOLD = 0x01,
-  ITALIC = 0x02,
-  UNDERLINE = 0x04,
-  OVERLINE = 0x08,
-  RIGHT = 0x10,
-  LEFT = 0x20,
-  CENTER = 0x40,
-  ROUTE_BG_COLOR = 0x80 /* Use light yellow background for route objects */
-};
-
-Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
-Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
 }
 
 /*
@@ -126,7 +89,7 @@ public:
   void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, int size,
                          bool isAirportDiagram, bool fast);
   void drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
-                       opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size, bool diagram,
+                       optsd::DisplayOptions dispOpts, textflags::TextFlags flags, int size, bool diagram,
                        int maxTextLength);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
@@ -191,14 +154,25 @@ public:
   /* Get dimensions of a custom text box */
   QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
 
+  /* Upper level winds */
+  void drawWindBarbs(QPainter *painter, float wind, float gust, float dir, float x, float y, float size,
+                     bool windBarbs, bool altWind, bool route, bool fast) const;
+
 private:
-  QStringList airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,
+  QStringList airportTexts(optsd::DisplayOptions dispOpts, textflags::TextFlags flags,
                            const map::MapAirport& airport, int maxTextLength);
   const QPixmap *windPointerFromCache(int size);
   const QPixmap *trackLineFromCache(int size);
 
   QCache<int, QPixmap> windPointerPixmaps, trackLinePixmaps;
   void prepareForIcon(QPainter& painter);
+
+  void drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar, float x, float y,
+                     float size, bool windBarbs, bool altWind, bool route, bool fast) const;
+
+  QVector<int> calculateWindBarbs(float& lineLength, float lineWidth, float wind, bool useBarb50) const;
+  void drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,
+                        float barbLength10, float barbLength50, float barbStep) const;
 
 };
 

@@ -33,7 +33,7 @@
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
 
-OnlineServerSearch::OnlineServerSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
+OnlineServerSearch::OnlineServerSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("server", "server_id"), tabWidgetIndex)
 {
   // Default view column descriptors

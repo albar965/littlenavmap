@@ -64,7 +64,7 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context, const SimCon
   float x, y;
   if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
   {
-    if(!hidden)
+    if(!hidden && x < INVALID_INDEX_VALUE / 2 && y < INVALID_INDEX_VALUE / 2)
     {
       float rotate = calcRotation(context, vehicle);
 
@@ -107,7 +107,7 @@ void MapPainterVehicle::paintUserAircraft(const PaintContext *context,
   context->szFont(context->textSizeAircraftUser);
   int offset = -(size / 2);
 
-  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_TRACK_LINE) &&
+  if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_TRACK_LINE) &&
      userAircraft.getGroundSpeedKts() > 30 &&
      userAircraft.getTrackDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
   {
@@ -123,7 +123,7 @@ void MapPainterVehicle::paintUserAircraft(const PaintContext *context,
   // Get projection corrected rotation angle
   float rotate = calcRotation(context, userAircraft);
 
-  if(rotate < map::INVALID_COURSE_VALUE)
+  if(rotate < map::INVALID_COURSE_VALUE && x < INVALID_INDEX_VALUE / 2 && y < INVALID_INDEX_VALUE / 2)
   {
     context->painter->translate(x, y);
     context->painter->rotate(atools::geo::normalizeCourse(rotate));
@@ -233,16 +233,16 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
      (aircraft.isOnline() && context->mapLayer->isOnlineAircraftText()) || // All online
      forceLabel) // Force label for nearby aircraft
   {
-    appendAtcText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_REGISTRATION),
-                  context->dOpt(opts::ITEM_AI_AIRCRAFT_TYPE),
-                  context->dOpt(opts::ITEM_AI_AIRCRAFT_AIRLINE),
-                  context->dOpt(opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER));
+    appendAtcText(texts, aircraft, context->dOpt(optsd::ITEM_AI_AIRCRAFT_REGISTRATION),
+                  context->dOpt(optsd::ITEM_AI_AIRCRAFT_TYPE),
+                  context->dOpt(optsd::ITEM_AI_AIRCRAFT_AIRLINE),
+                  context->dOpt(optsd::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER));
 
     if(aircraft.getGroundSpeedKts() > 30)
-      appendSpeedText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_IAS),
-                      context->dOpt(opts::ITEM_AI_AIRCRAFT_GS));
+      appendSpeedText(texts, aircraft, context->dOpt(optsd::ITEM_AI_AIRCRAFT_IAS),
+                      context->dOpt(optsd::ITEM_AI_AIRCRAFT_GS));
 
-    if(context->dOpt(opts::ITEM_AI_AIRCRAFT_DEP_DEST) &&
+    if(context->dOpt(optsd::ITEM_AI_AIRCRAFT_DEP_DEST) &&
        (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()))
     {
       texts.append(tr("%1 to %2").
@@ -252,25 +252,26 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
 
     if(!aircraft.isOnGround())
     {
-      if(context->dOpt(opts::ITEM_AI_AIRCRAFT_HEADING))
+      if(context->dOpt(optsd::ITEM_AI_AIRCRAFT_HEADING))
       {
         float heading = atools::fs::sc::SC_INVALID_FLOAT;
         if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
           heading = aircraft.getHeadingDegMag();
         else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-          heading = aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition());
+          heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() -
+                                                 NavApp::getMagVar(aircraft.getPosition()));
 
         if(heading < atools::fs::sc::SC_INVALID_FLOAT)
           texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
       }
 
-      if(context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+      if(context->dOpt(optsd::ITEM_AI_AIRCRAFT_CLIMB_SINK))
         appendClimbSinkText(texts, aircraft);
 
-      if(context->dOpt(opts::ITEM_AI_AIRCRAFT_ALTITUDE))
+      if(context->dOpt(optsd::ITEM_AI_AIRCRAFT_ALTITUDE))
       {
         QString upDown;
-        if(!context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+        if(!context->dOpt(optsd::ITEM_AI_AIRCRAFT_CLIMB_SINK))
           climbSinkPointer(upDown, aircraft);
         texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
       }
@@ -287,27 +288,27 @@ void MapPainterVehicle::paintTextLabelUser(const PaintContext *context, float x,
 {
   QStringList texts;
 
-  appendAtcText(texts, aircraft, context->dOpt(opts::ITEM_USER_AIRCRAFT_REGISTRATION),
-                context->dOpt(opts::ITEM_USER_AIRCRAFT_TYPE),
-                context->dOpt(opts::ITEM_USER_AIRCRAFT_AIRLINE),
-                context->dOpt(opts::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER));
+  appendAtcText(texts, aircraft, context->dOpt(optsd::ITEM_USER_AIRCRAFT_REGISTRATION),
+                context->dOpt(optsd::ITEM_USER_AIRCRAFT_TYPE),
+                context->dOpt(optsd::ITEM_USER_AIRCRAFT_AIRLINE),
+                context->dOpt(optsd::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER));
 
   if(aircraft.getGroundSpeedKts() > 30)
   {
-    appendSpeedText(texts, aircraft, context->dOpt(opts::ITEM_USER_AIRCRAFT_IAS),
-                    context->dOpt(opts::ITEM_USER_AIRCRAFT_GS));
+    appendSpeedText(texts, aircraft, context->dOpt(optsd::ITEM_USER_AIRCRAFT_IAS),
+                    context->dOpt(optsd::ITEM_USER_AIRCRAFT_GS));
   }
 
-  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_HEADING) && aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
+  if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_HEADING) && aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
     texts.append(tr("HDG %3°M").arg(QString::number(aircraft.getHeadingDegMag(), 'f', 0)));
 
-  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_USER_AIRCRAFT_CLIMB_SINK))
+  if(!aircraft.isOnGround() && context->dOpt(optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK))
     appendClimbSinkText(texts, aircraft);
 
-  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_USER_AIRCRAFT_ALTITUDE))
+  if(!aircraft.isOnGround() && context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE))
   {
     QString upDown;
-    if(!context->dOpt(opts::ITEM_USER_AIRCRAFT_CLIMB_SINK))
+    if(!context->dOpt(optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK))
       climbSinkPointer(upDown, aircraft);
 
     texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
@@ -408,7 +409,7 @@ void MapPainterVehicle::paintTextLabelWind(const PaintContext *context, int x, i
   {
     QStringList texts;
 
-    if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND))
+    if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND))
     {
       texts.append(tr("%1 °M").arg(QString::number(atools::geo::normalizeCourse(
                                                      aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),

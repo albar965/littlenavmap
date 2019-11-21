@@ -52,7 +52,14 @@ void UserdataIcons::initTranslateableTexts()
     {QLatin1Literal("Seaport"), tr("Seaport", "UserpointType")},
     {QLatin1Literal("Unknown"), tr("Unknown", "UserpointType")},
     {QLatin1Literal("VRP"), tr("VRP", "UserpointType")},
-    {QLatin1Literal("Waypoint"), tr("Waypoint", "UserpointType")}
+    {QLatin1Literal("Waypoint"), tr("Waypoint", "UserpointType")},
+    {QLatin1Literal("VOR"), tr("VOR", "UserpointType")},
+    {QLatin1Literal("VORDME"), tr("VORDME", "UserpointType")},
+    {QLatin1Literal("DME"), tr("DME", "UserpointType")},
+    {QLatin1Literal("VORTAC"), tr("VORTAC", "UserpointType")},
+    {QLatin1Literal("TACAN"), tr("TACAN", "UserpointType")},
+    {QLatin1Literal("NDB"), tr("NDB", "UserpointType")},
+    {QLatin1Literal("Lighthouse"), tr("Lighthouse", "UserpointType")}
   });
 
   translationToTypeMap = QHash<QString, QString>(
@@ -75,7 +82,14 @@ void UserdataIcons::initTranslateableTexts()
     {tr("Seaport", "UserpointType"), QLatin1Literal("Seaport")},
     {tr("Unknown", "UserpointType"), QLatin1Literal("Unknown")},
     {tr("VRP", "UserpointType"), QLatin1Literal("VRP")},
-    {tr("Waypoint", "UserpointType"), QLatin1Literal("Waypoint")}
+    {tr("Waypoint", "UserpointType"), QLatin1Literal("Waypoint")},
+    {tr("VOR", "UserpointType"), QLatin1Literal("VOR")},
+    {tr("VORDME", "UserpointType"), QLatin1Literal("VORDME")},
+    {tr("DME", "UserpointType"), QLatin1Literal("DME")},
+    {tr("VORTAC", "UserpointType"), QLatin1Literal("VORTAC")},
+    {tr("TACAN", "UserpointType"), QLatin1Literal("TACAN")},
+    {tr("NDB", "UserpointType"), QLatin1Literal("NDB")},
+    {tr("Lighthouse", "UserpointType"), QLatin1Literal("Lighthouse")}
   });
 }
 
@@ -89,7 +103,7 @@ QString UserdataIcons::translatedToType(const QString& type)
   return translationToTypeMap.value(type, type);
 }
 
-UserdataIcons::UserdataIcons(QObject *parent) : QObject(parent)
+UserdataIcons::UserdataIcons()
 {
 
 }
@@ -124,7 +138,8 @@ void UserdataIcons::loadIcons()
 {
   // First get new and overloaded icons from the configuration directory
   QDir configDir(atools::settings::Settings::instance().getPath());
-  for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg"}))
+  for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg", "userpoint_*.png",
+                                                        "userpoint_*.jpg", "userpoint_*.gif"}))
     loadIcon(entry);
 
   // Get default icons from resources if not already loaded before
@@ -145,7 +160,7 @@ QString UserdataIcons::getDefaultType(const QString& type)
 
 void UserdataIcons::loadIcon(const QFileInfo& entry)
 {
-  static QRegularExpression typeRegexp("userpoint_(.+)\\.svg");
+  static QRegularExpression typeRegexp("userpoint_(.+)\\.(svg|png|jpg|gif)");
   QString name = atools::settings::Settings::instance().getOverloadedPath(entry.filePath());
 
   QRegularExpressionMatch match = typeRegexp.match(entry.fileName());

@@ -9,7 +9,7 @@ if [ -z "$APROJECTS" ] ; then echo APROJECTS environment variable not set ; exit
 if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
 
 # Override by envrionment variable for another target
-export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"darkon:/data/alex/Public/Releases"}
+export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"sol:/data/alex/Public/Releases"}
 
 export FILENAME=`date "+20%y%m%d-%H%M"`
 

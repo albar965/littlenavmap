@@ -40,7 +40,7 @@ QColor taxiwayNameColor(Qt::black);
 QColor taxiwayNameBackgroundColor(255, 255, 120);
 
 QColor airportDetailBackColor(255, 255, 255);
-QColor airportEmptyColor(110, 110, 110);
+QColor airportEmptyColor(130, 130, 130);
 QColor toweredAirportColor(15, 70, 130);
 QColor unToweredAirportColor(126, 58, 91);
 QColor vorSymbolColor(Qt::darkBlue);
@@ -66,8 +66,9 @@ QColor rangeRingColor(Qt::red);
 QColor rangeRingTextColor(Qt::black);
 QColor distanceColor(Qt::black);
 
-QColor weatherBackgoundColor(Qt::white);
+QColor weatherWindGustColor("#ff8040");
 QColor weatherWindColor(Qt::black);
+QColor weatherBackgoundColor(Qt::white);
 
 QColor weatherLifrColor(QColor("#d000d0"));
 QColor weatherIfrColor(QColor("#d00000"));
@@ -117,6 +118,12 @@ QColor profileHighlightColorFast(Qt::darkCyan);
 QColor mapPrintRowColor(250, 250, 250);
 QColor mapPrintRowColorAlt(240, 240, 240);
 QColor mapPrintHeaderColor(220, 220, 220);
+
+QPen searchCenterBackPen(QColor(0, 0, 0), 6, Qt::SolidLine, Qt::FlatCap);
+QPen searchCenterFillPen(QColor(255, 255, 0), 2, Qt::SolidLine, Qt::FlatCap);
+QPen touchMarkBackPen(QColor(0, 0, 0), 4, Qt::SolidLine, Qt::FlatCap);
+QPen touchMarkFillPen(QColor(255, 255, 255), 2, Qt::SolidLine, Qt::FlatCap);
+QColor touchRegionFillColor("#40888888");
 
 /* Alternating colors */
 static QColor rowBgColor;
@@ -467,6 +474,27 @@ const QPen& penForAirspace(const map::MapAirspace& airspace)
   return airspacePens[airspace.type];
 }
 
+const QPen& penForAirway(const map::MapAirway& airway)
+{
+  static QPen EMPTY_PEN;
+
+  switch(airway.type)
+  {
+    case map::NO_AIRWAY:
+      break;
+
+    case map::VICTOR:
+      return airwayVictorPen;
+
+    case map::JET:
+      return airwayJetPen;
+
+    case map::BOTH:
+      return airwayBothPen;
+  }
+  return EMPTY_PEN;
+}
+
 /* Read ARGB color if value exists in settings or update in settings with given value */
 void syncColorArgb(QSettings& settings, const QString& key, QColor& color)
 {
@@ -568,6 +596,11 @@ void syncColors()
   syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);
   syncColor(colorSettings, "CompassRoseColor", compassRoseColor);
   syncColor(colorSettings, "CompassRoseTextColor", compassRoseTextColor);
+  syncPen(colorSettings, "SearchCenterBackPen", searchCenterBackPen);
+  syncPen(colorSettings, "SearchCenterFillPen", searchCenterFillPen);
+  syncPen(colorSettings, "TouchMarkBackPen", touchMarkBackPen);
+  syncPen(colorSettings, "TouchMarkFillPen", touchMarkFillPen);
+  syncColorArgb(colorSettings, "TouchRegionFillColor", touchRegionFillColor);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Highlight");
@@ -591,6 +624,7 @@ void syncColors()
   colorSettings.beginGroup("Weather");
   syncColor(colorSettings, "WeatherBackgoundColor", weatherBackgoundColor);
   syncColor(colorSettings, "WeatherWindColor", weatherWindColor);
+  syncColor(colorSettings, "WeatherWindGustColor", weatherWindGustColor);
   syncColor(colorSettings, "WeatherLifrColor", weatherLifrColor);
   syncColor(colorSettings, "WeatherIfrColor", weatherIfrColor);
   syncColor(colorSettings, "WeatherMvfrColor", weatherMvfrColor);
@@ -637,7 +671,7 @@ void adjustPenForCircleToLand(QPainter *painter)
   QPen pen = painter->pen();
   pen.setStyle(Qt::DotLine);
   pen.setCapStyle(Qt::FlatCap);
-  // pen.setWidthF(pen.widthF() * 3.f / 4.f);
+  // pen.setWidthF(pen.widthF() * 0.80);
   painter->setPen(pen);
 }
 
@@ -647,8 +681,31 @@ void adjustPenForVectors(QPainter *painter)
   QPen pen = painter->pen();
   pen.setStyle(Qt::DashLine);
   pen.setCapStyle(Qt::FlatCap);
-  // pen.setWidthF(pen.widthF() * 3.f / 4.f);
+  // pen.setWidthF(pen.widthF() * 0.80);
   painter->setPen(pen);
+}
+
+void adjustPenForManual(QPainter *painter)
+{
+  // Use different pattern and smaller line for vector legs
+  QPen pen = painter->pen();
+  // The pattern must be specified as an even number of positive entries
+  // where the entries 1, 3, 5... are the dashes and 2, 4, 6... are the spaces.
+  pen.setDashPattern({1., 3.});
+  pen.setCapStyle(Qt::FlatCap);
+  // pen.setWidthF(pen.widthF() * 0.80);
+  painter->setPen(pen);
+}
+
+void adjustPenForAlternate(QPainter *painter)
+{
+  // Use different pattern and smaller line for vector legs
+  QPen pen = painter->pen();
+  pen.setStyle(Qt::DotLine);
+  pen.setCapStyle(Qt::FlatCap);
+  painter->setPen(pen);
+  painter->setBackground(Qt::white);
+  painter->setBackgroundMode(Qt::OpaqueMode);
 }
 
 void scaleFont(QPainter *painter, float scale, const QFont *defaultFont)

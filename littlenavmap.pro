@@ -42,8 +42,10 @@
 # Example: $HOME/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib
 #
 # OPENSSL_PATH
-# Required for Windows only. Base path of WinSSL 1.0.1 installation (https://slproweb.com/products/Win32OpenSSL.html).
-# Defaults to "C:\OpenSSL-Win32" if empty.
+# Windows: Base path of WinSSL 1.1.1 installation (https://slproweb.com/products/Win32OpenSSL.html).
+#          Defaults to "../openssl-1.1.1d-win32-mingw" if empty.
+# Linux:   Not used.
+# macOS:   Not used.
 #
 # ATOOLS_GIT_PATH
 # Optional. Path to GIT executable. Revision will be set to "UNKNOWN" if not set.
@@ -83,7 +85,7 @@ TEMPLATE = app
 TARGET_NAME=Little Navmap
 
 # =======================================================================
-# Copy ennvironment variables into qmake variables
+# Copy environment variables into qmake variables
 ATOOLS_INC_PATH=$$(ATOOLS_INC_PATH)
 ATOOLS_LIB_PATH=$$(ATOOLS_LIB_PATH)
 MARBLE_INC_PATH=$$(MARBLE_INC_PATH)
@@ -113,7 +115,7 @@ isEmpty(ATOOLS_LIB_PATH) : ATOOLS_LIB_PATH=$$PWD/../build-atools-$$CONF_TYPE
 isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
 isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 
-win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=C:\OpenSSL-Win32
+win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$PWD/../openssl-1.1.1d-win32-mingw
 
 # =======================================================================
 # Set compiler flags and paths
@@ -121,9 +123,6 @@ win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=C:\OpenSSL-Win32
 unix:!macx {
   isEmpty(GIT_PATH) : GIT_PATH=git
 
-  # Find OpenSSL location
-  exists( /lib/x86_64-linux-gnu/libssl.so.1.0.0 ) :  OPENSSL_PATH=/lib/x86_64-linux-gnu
-  exists( /usr/lib/x86_64-linux-gnu/libssl.so.1.0.0 ) : OPENSSL_PATH=/usr/lib/x86_64-linux-gnu
   QMAKE_LFLAGS += -no-pie
 
   # Makes the shell script and setting LD_LIBRARY_PATH redundant
@@ -146,6 +145,7 @@ win32 {
   CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5d
   CONFIG(release, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5
   LIBS += -L$$ATOOLS_LIB_PATH -latools -lz
+  LIBS += -L$$OPENSSL_PATH
 
   !isEmpty(SIMCONNECT_PATH) {
     DEFINES += SIMCONNECT_BUILD
@@ -207,12 +207,16 @@ message(-----------------------------------)
 # Files
 
 SOURCES += \
+  src/airspace/airspacecontroller.cpp \
+  src/airspace/airspacetoolbarhandler.cpp \
   src/common/aircrafttrack.cpp \
   src/common/airportfiles.cpp \
   src/common/constants.cpp \
   src/common/coordinateconverter.cpp \
+  src/common/dialogrecordhelper.cpp \
   src/common/elevationprovider.cpp \
   src/common/formatter.cpp \
+  src/common/fueltool.cpp \
   src/common/htmlinfobuilder.cpp \
   src/common/jumpback.cpp \
   src/common/mapcolors.cpp \
@@ -232,25 +236,32 @@ SOURCES += \
   src/connect/connectclient.cpp \
   src/connect/connectdialog.cpp \
   src/db/databasedialog.cpp \
-  src/db/databaseerrordialog.cpp \
   src/db/databasemanager.cpp \
   src/db/dbtypes.cpp \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
   src/export/htmlexporter.cpp \
-  src/gui/airspacetoolbarhandler.cpp \
+  src/gui/choicedialog.cpp \
+  src/gui/holddialog.cpp \
   src/gui/mainwindow.cpp \
+  src/gui/runwayselection.cpp \
   src/gui/stylehandler.cpp \
+  src/gui/textdialog.cpp \
   src/gui/timedialog.cpp \
   src/gui/trafficpatterndialog.cpp \
   src/gui/updatedialog.cpp \
   src/info/infocontroller.cpp \
+  src/logbook/logdatacontroller.cpp \
+  src/logbook/logdataconverter.cpp \
+  src/logbook/logdatadialog.cpp \
+  src/logbook/logstatisticsdialog.cpp \
   src/main.cpp\
   src/mapgui/aprongeometrycache.cpp \
   src/mapgui/imageexportdialog.cpp \
   src/mapgui/mapfunctions.cpp \
   src/mapgui/maplayer.cpp \
   src/mapgui/maplayersettings.cpp \
+  src/mapgui/mapmarkhandler.cpp \
   src/mapgui/mappaintwidget.cpp \
   src/mapgui/mapscale.cpp \
   src/mapgui/mapscreenindex.cpp \
@@ -267,9 +278,11 @@ SOURCES += \
   src/mappainter/mappainternav.cpp \
   src/mappainter/mappainterroute.cpp \
   src/mappainter/mappaintership.cpp \
+  src/mappainter/mappaintertop.cpp \
   src/mappainter/mappainteruser.cpp \
   src/mappainter/mappaintervehicle.cpp \
   src/mappainter/mappainterweather.cpp \
+  src/mappainter/mappainterwind.cpp \
   src/mappainter/mappaintlayer.cpp \
   src/navapp.cpp \
   src/online/onlinedatacontroller.cpp \
@@ -277,6 +290,7 @@ SOURCES += \
   src/options/optionsdialog.cpp \
   src/perf/aircraftperfcontroller.cpp \
   src/perf/aircraftperfdialog.cpp \
+  src/perf/perfmergedialog.cpp \
   src/print/printdialog.cpp \
   src/print/printsupport.cpp \
   src/profile/profilelabelwidget.cpp \
@@ -288,6 +302,7 @@ SOURCES += \
   src/query/mapquery.cpp \
   src/query/procedurequery.cpp \
   src/query/querytypes.cpp \
+  src/route/customproceduredialog.cpp \
   src/route/flightplanentrybuilder.cpp \
   src/route/parkingdialog.cpp \
   src/route/route.cpp \
@@ -311,6 +326,7 @@ SOURCES += \
   src/search/airportsearch.cpp \
   src/search/column.cpp \
   src/search/columnlist.cpp \
+  src/search/logdatasearch.cpp \
   src/search/navicondelegate.cpp \
   src/search/navsearch.cpp \
   src/search/onlinecentersearch.cpp \
@@ -328,15 +344,26 @@ SOURCES += \
   src/userdata/userdatadialog.cpp \
   src/userdata/userdataexportdialog.cpp \
   src/userdata/userdataicons.cpp \
-  src/weather/weatherreporter.cpp
+  src/weather/weatherreporter.cpp \
+  src/weather/windreporter.cpp \
+  src/web/webcontroller.cpp \
+  src/web/requesthandler.cpp \
+  src/web/webmapcontroller.cpp \
+    src/web/webtools.cpp \
+    src/web/webflags.cpp \
+    src/web/webapp.cpp
 
 HEADERS  += \
+  src/airspace/airspacecontroller.h \
+  src/airspace/airspacetoolbarhandler.h \
   src/common/aircrafttrack.h \
   src/common/airportfiles.h \
   src/common/constants.h \
   src/common/coordinateconverter.h \
+  src/common/dialogrecordhelper.h \
   src/common/elevationprovider.h \
   src/common/formatter.h \
+  src/common/fueltool.h \
   src/common/htmlinfobuilder.h \
   src/common/jumpback.h \
   src/common/mapcolors.h \
@@ -356,24 +383,31 @@ HEADERS  += \
   src/connect/connectclient.h \
   src/connect/connectdialog.h \
   src/db/databasedialog.h \
-  src/db/databaseerrordialog.h \
   src/db/databasemanager.h \
   src/db/dbtypes.h \
   src/export/csvexporter.h \
   src/export/exporter.h \
   src/export/htmlexporter.h \
-  src/gui/airspacetoolbarhandler.h \
+  src/gui/choicedialog.h \
+  src/gui/holddialog.h \
   src/gui/mainwindow.h \
+  src/gui/runwayselection.h \
   src/gui/stylehandler.h \
+  src/gui/textdialog.h \
   src/gui/timedialog.h \
   src/gui/trafficpatterndialog.h \
   src/gui/updatedialog.h \
   src/info/infocontroller.h \
+  src/logbook/logdatacontroller.h \
+  src/logbook/logdataconverter.h \
+  src/logbook/logdatadialog.h \
+  src/logbook/logstatisticsdialog.h \
   src/mapgui/aprongeometrycache.h \
   src/mapgui/imageexportdialog.h \
   src/mapgui/mapfunctions.h \
   src/mapgui/maplayer.h \
   src/mapgui/maplayersettings.h \
+  src/mapgui/mapmarkhandler.h \
   src/mapgui/mappaintwidget.h \
   src/mapgui/mapscale.h \
   src/mapgui/mapscreenindex.h \
@@ -390,9 +424,11 @@ HEADERS  += \
   src/mappainter/mappainternav.h \
   src/mappainter/mappainterroute.h \
   src/mappainter/mappaintership.h \
+  src/mappainter/mappaintertop.h \
   src/mappainter/mappainteruser.h \
   src/mappainter/mappaintervehicle.h \
   src/mappainter/mappainterweather.h \
+  src/mappainter/mappainterwind.h \
   src/mappainter/mappaintlayer.h \
   src/navapp.h \
   src/online/onlinedatacontroller.h \
@@ -400,6 +436,7 @@ HEADERS  += \
   src/options/optionsdialog.h \
   src/perf/aircraftperfcontroller.h \
   src/perf/aircraftperfdialog.h \
+  src/perf/perfmergedialog.h \
   src/print/printdialog.h \
   src/print/printsupport.h \
   src/profile/profilelabelwidget.h \
@@ -411,6 +448,7 @@ HEADERS  += \
   src/query/mapquery.h \
   src/query/procedurequery.h \
   src/query/querytypes.h \
+  src/route/customproceduredialog.h \
   src/route/flightplanentrybuilder.h \
   src/route/parkingdialog.h \
   src/route/route.h \
@@ -434,6 +472,7 @@ HEADERS  += \
   src/search/airportsearch.h \
   src/search/column.h \
   src/search/columnlist.h \
+  src/search/logdatasearch.h \
   src/search/navicondelegate.h \
   src/search/navsearch.h \
   src/search/onlinecentersearch.h \
@@ -451,20 +490,33 @@ HEADERS  += \
   src/userdata/userdatadialog.h \
   src/userdata/userdataexportdialog.h \
   src/userdata/userdataicons.h \
-  src/weather/weatherreporter.h
+  src/weather/weatherreporter.h \
+  src/weather/windreporter.h \
+  src/web/webcontroller.h \
+  src/web/requesthandler.h \
+  src/web/webmapcontroller.h \
+    src/web/webtools.h \
+    src/web/webflags.h \
+    src/web/webapp.h
 
 FORMS += \
   src/connect/connectdialog.ui \
   src/db/databasedialog.ui \
-  src/db/databaseerrordialog.ui \
+  src/gui/choicedialog.ui \
+  src/gui/holddialog.ui \
   src/gui/mainwindow.ui \
+  src/gui/textdialog.ui \
   src/gui/timedialog.ui \
   src/gui/trafficpatterndialog.ui \
   src/gui/updatedialog.ui \
+  src/logbook/logdatadialog.ui \
+  src/logbook/logstatisticsdialog.ui \
   src/mapgui/imageexportdialog.ui \
   src/options/options.ui \
   src/perf/aircraftperfdialog.ui \
+  src/perf/perfmergedialog.ui \
   src/print/printdialog.ui \
+  src/route/customproceduredialog.ui \
   src/route/parkingdialog.ui \
   src/route/routeexportdialog.ui \
   src/route/routestringdialog.ui \
@@ -490,8 +542,10 @@ OTHER_FILES += \
   $$files(desktop/*, true) \
   $$files(etc/*, true) \
   $$files(help/*, true) \
-  $$files(magdec/*, true) \
+  $$files(web/*, true) \
   $$files(marble/*, true) \
+  .travis.yml \
+  .gitignore \
   *.ts \
   BUILD.txt \
   CHANGELOG.txt \
@@ -513,7 +567,6 @@ unix:!macx {
     $$MARBLE_LIB_PATH/marble/plugins/libGraticulePlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libKmlPlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libLatLonPlugin.so \
-    $$MARBLE_LIB_PATH/marble/plugins/libLicense.so \
     $$MARBLE_LIB_PATH/marble/plugins/libMapScaleFloatItem.so \
     $$MARBLE_LIB_PATH/marble/plugins/libNavigationFloatItem.so \
     $$MARBLE_LIB_PATH/marble/plugins/libOsmPlugin.so \
@@ -525,8 +578,8 @@ unix:!macx {
   copydata.commands += cp -avfu $$PWD/*.qm $$OUT_PWD/translations &&
   copydata.commands += cp -avfu $$ATOOLS_INC_PATH/../*.qm $$OUT_PWD/translations &&
   copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
+  copydata.commands += cp -avfu $$PWD/web $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/customize $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/magdec $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
   copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh
@@ -535,8 +588,8 @@ unix:!macx {
 # Mac OS X - Copy help and Marble plugins and data
 macx {
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
+  copydata.commands += cp -Rv $$PWD/web $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/customize $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
-  copydata.commands += cp -Rv $$PWD/magdec $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$PWD/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$ATOOLS_INC_PATH/../*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS
@@ -564,9 +617,9 @@ unix:!macx {
   deploy.commands += cp -Rvf $$OUT_PWD/plugins $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/data $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/help $$DEPLOY_DIR &&
+  deploy.commands += cp -Rvf $$OUT_PWD/web $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/customize $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/translations $$DEPLOY_DIR &&
-  deploy.commands += cp -Rvf $$OUT_PWD/magdec $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/littlenavmap $$DEPLOY_DIR &&
   deploy.commands += cp -vfa $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_DIR/translations &&
   deploy.commands += cp -vfa $$[QT_INSTALL_TRANSLATIONS]/qt_??_??.qm  $$DEPLOY_DIR/translations &&
@@ -579,6 +632,8 @@ unix:!macx {
   deploy.commands += cp -vf $$PWD/LICENSE.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/resources/icons/littlenavmap.svg $$DEPLOY_DIR &&
   deploy.commands += cp -vf \"$$PWD/desktop/Little Navmap.desktop\" $$DEPLOY_DIR &&
+  exists(/usr/lib/x86_64-linux-gnu/libssl.so) : deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libssl.so $${DEPLOY_DIR_LIB}/libssl.so &&
+  exists(/usr/lib/x86_64-linux-gnu/libcrypto.so) : deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libcrypto.so $${DEPLOY_DIR_LIB}/libcrypto.so &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/iconengines/libqsvgicon.so*  $$DEPLOY_DIR_LIB/iconengines &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqgif.so*  $$DEPLOY_DIR_LIB/imageformats &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqjpeg.so*  $$DEPLOY_DIR_LIB/imageformats &&
@@ -594,8 +649,6 @@ unix:!macx {
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/platformthemes/libqgtk*.so*  $$DEPLOY_DIR_LIB/platformthemes &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/printsupport/libcupsprintersupport.so*  $$DEPLOY_DIR_LIB/printsupport &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/sqldrivers/libqsqlite.so*  $$DEPLOY_DIR_LIB/sqldrivers &&
-  deploy.commands += cp -vfa $$OPENSSL_PATH/libssl.so.1.0.0 $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$OPENSSL_PATH/libcrypto.so.1.0.0 $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libicudata.so*  $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libicui18n.so*  $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libicuuc.so*  $$DEPLOY_DIR_LIB &&
@@ -642,7 +695,6 @@ message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
     $$MARBLE_LIB_PATH/plugins/libGraticulePlugin.so \
     $$MARBLE_LIB_PATH/plugins/libKmlPlugin.so \
     $$MARBLE_LIB_PATH/plugins/libLatLonPlugin.so \
-    $$MARBLE_LIB_PATH/plugins/libLicense.so \
     $$MARBLE_LIB_PATH/plugins/libMapScaleFloatItem.so \
     $$MARBLE_LIB_PATH/plugins/libNavigationFloatItem.so \
     $$MARBLE_LIB_PATH/plugins/libOsmPlugin.so \
@@ -656,7 +708,6 @@ message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libGraticulePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libKmlPlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libLatLonPlugin.so &&
-  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libLicense.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libMapScaleFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libNavigationFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOsmPlugin.so &&
@@ -668,6 +719,7 @@ message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_APP/Contents/MacOS &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??_??.qm  $$DEPLOY_APP/Contents/MacOS &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qtbase*.qm  $$DEPLOY_APP/Contents/MacOS &&
+  deploy.commands += cp -fv $$PWD/build/mac/Info.plist $$ $$DEPLOY_APP/Contents &&
   deploy.commands += cp -fv $$PWD/LICENSE.txt $$DEPLOY_DIR &&
   deploy.commands += cp -fv $$PWD/README.txt $$DEPLOY_DIR/README-LittleNavmap.txt &&
   deploy.commands += cp -fv $$PWD/CHANGELOG.txt $$DEPLOY_DIR/CHANGELOG-LittleNavmap.txt
@@ -692,7 +744,6 @@ win32 {
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libGraticulePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libKmlPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libLatLonPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libLicense$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libMapScaleFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libNavigationFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libOsmPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
@@ -709,8 +760,8 @@ win32 {
   exists($$HELP_BASE) : deploy.commands += xcopy /i /s /e /f /y $$p($$HELP_BASE) $$p($$DEPLOY_BASE/$$TARGET_NAME/help) &&
   deploy.commands += xcopy $$p($$PWD/littlenavmap.exe.simconnect) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/help) $$p($$DEPLOY_BASE/$$TARGET_NAME/help) &&
+  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/web) $$p($$DEPLOY_BASE/$$TARGET_NAME/web) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/customize) $$p($$DEPLOY_BASE/$$TARGET_NAME/customize) &&
-  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/magdec) $$p($$DEPLOY_BASE/$$TARGET_NAME/magdec) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/etc) $$p($$DEPLOY_BASE/$$TARGET_NAME/etc) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/marble/data) $$p($$DEPLOY_BASE/$$TARGET_NAME/data) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../libmarblewidget-qt5$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
@@ -718,9 +769,8 @@ win32 {
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libgcc*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libstdc*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libwinpthread*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$OPENSSL_PATH/bin/libeay32.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$OPENSSL_PATH/bin/ssleay32.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$OPENSSL_PATH/libssl32.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$OPENSSL_PATH\libcrypto-1_1.dll $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$OPENSSL_PATH\libssl-1_1.dll $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5DBus$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Network$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5PrintSupport$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&

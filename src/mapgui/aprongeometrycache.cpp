@@ -77,7 +77,7 @@ QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, fl
 #if !defined(DEBUG_NO_XP_APRON_CACHE)
 
   // Build key and get path from the cache
-  Key key(apron.apronId, zoomDistanceMeter, fast);
+  Key key(apron.id, zoomDistanceMeter, fast);
   QPainterPath *painterPath = geometryCache.object(key);
 
   if(painterPath != nullptr)

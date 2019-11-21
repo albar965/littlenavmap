@@ -44,16 +44,13 @@ class MapLayer;
  * All ids are database ids.
  */
 class MapQuery
-  : public QObject
 {
-  Q_OBJECT
-
 public:
   /*
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav,
+  MapQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav,
            atools::sql::SqlDatabase *sqlDbUser);
   ~MapQuery();
 
@@ -75,6 +72,10 @@ public:
   /* Get all waypoints or an airway ordered by fragment an sequence number */
   void getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName);
 
+  /* Get all airway segments for name and fragment - not cached */
+  void getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding, const QString& airwayName,
+                     int fragment);
+
   void getAirwayById(map::MapAirway& airway, int airwayId);
   map::MapAirway getAirwayById(int airwayId);
 
@@ -87,8 +88,13 @@ public:
   void getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos);
 
   /* Get map objects by unique database id  */
+  /* From nav db, depending on mode */
   map::MapVor getVorById(int id);
+
+  /* From nav db, depending on mode */
   map::MapNdb getNdbById(int id);
+
+  /* Always from sim db */
   map::MapIls getIlsById(int id);
 
   QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway);
@@ -99,8 +105,6 @@ public:
                                const map::MapAirport& airport, bool navData);
 
   map::MapWaypoint getWaypointById(int id);
-  map::MapUserpoint getUserdataPointById(int id);
-  void updateUserdataPoint(map::MapUserpoint& userpoint);
 
   /*
    * Get a map object by type, ident and region
@@ -124,7 +128,8 @@ public:
    * @param type AIRPORT, VOR, NDB or WAYPOINT
    * @param id database id
    */
-  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id, bool airportFromNavDatabase);
+  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, map::MapAirspaceSources src, int id,
+                        bool airportFromNavDatabase);
 
   /*
    * Get objects near a screen coordinate from the cache which will cover all visible objects.
@@ -138,9 +143,15 @@ public:
    * @param screenDistance maximum distance to coordinates
    * @param result will receive objects based on type
    */
-  void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
-                         map::MapObjectTypes types, int xs, int ys, int screenDistance,
-                         map::MapSearchResult& result);
+  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
+                               map::MapObjectTypes types, int xs, int ys, int screenDistance,
+                               map::MapSearchResult& result);
+
+  /* Only VOR, NDB, ILS and waypoints
+   * All sorted by distance to pos with a maximum distance distanceNm
+   * Uses distance * 4 and searches again if nothing was found.*/
+  map::MapSearchResultIndex *getNearestNavaids(const atools::geo::Pos& pos, float distanceNm,
+                                               map::MapObjectTypes type, int maxIls, float maxIlsDist);
 
   /*
    * Fetch airports for a map coordinate rectangle
@@ -185,7 +196,34 @@ public:
   /* Create and prepare all queries */
   void deInitQueries();
 
+  bool hasAnyArrivalProcedures(const map::MapAirport& airport);
+  bool hasDepartureProcedures(const map::MapAirport& airport);
+
 private:
+  /* Key for nearestCache combining all query parameters */
+  struct NearestCacheKeyNavaid
+  {
+    atools::geo::Pos pos;
+    float distanceNm;
+    map::MapObjectTypes type;
+
+    bool operator==(const NearestCacheKeyNavaid& other) const
+    {
+      return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01 && type == other.type;
+    }
+
+    bool operator!=(const NearestCacheKeyNavaid& other) const
+    {
+      return !operator==(other);
+    }
+
+  };
+
+  friend inline uint qHash(const MapQuery::NearestCacheKeyNavaid& key);
+
+  map::MapSearchResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
+                                                    map::MapObjectTypes type, int maxIls, float maxIlsDist);
+
   void mapObjectByIdentInternal(map::MapSearchResult& result, map::MapObjectTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
@@ -194,24 +232,27 @@ private:
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,
                                               bool lazy, bool overview);
+  QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway);
 
-  bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
+  void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
+                            bool navData);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;
 
   /* Simple bounding rectangle caches */
-  SimpleRectCache<map::MapAirport> airportCache;
-  SimpleRectCache<map::MapWaypoint> waypointCache;
-  SimpleRectCache<map::MapUserpoint> userpointCache;
-  SimpleRectCache<map::MapVor> vorCache;
-  SimpleRectCache<map::MapNdb> ndbCache;
-  SimpleRectCache<map::MapMarker> markerCache;
-  SimpleRectCache<map::MapIls> ilsCache;
-  SimpleRectCache<map::MapAirway> airwayCache;
+  query::SimpleRectCache<map::MapAirport> airportCache;
+  query::SimpleRectCache<map::MapWaypoint> waypointCache;
+  query::SimpleRectCache<map::MapUserpoint> userpointCache;
+  query::SimpleRectCache<map::MapVor> vorCache;
+  query::SimpleRectCache<map::MapNdb> ndbCache;
+  query::SimpleRectCache<map::MapMarker> markerCache;
+  query::SimpleRectCache<map::MapIls> ilsCache;
+  query::SimpleRectCache<map::MapAirway> airwayCache;
 
   /* ID/object caches */
   QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
+  QCache<NearestCacheKeyNavaid, map::MapSearchResultIndex> nearestNavaidCache;
 
   static int queryMaxRows;
 
@@ -234,7 +275,7 @@ private:
 
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
                         *airwayByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr,
-                        *airwayWaypointsQuery = nullptr, *airwayByNameQuery = nullptr;
+                        *airwayWaypointsQuery = nullptr, *airwayByNameQuery = nullptr, *airwayFullQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

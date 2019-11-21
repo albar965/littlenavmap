@@ -20,9 +20,16 @@
 
 #include <QString>
 
+class QDateTime;
+
 class QElapsedTimer;
 
 namespace formatter {
+
+void initTranslateableTexts();
+
+/* try to read a date time string using local and English locale and yyyy/yy variants */
+QDateTime readDateTime(QString str);
 
 /* Checks if the lat long coordinate string is valid and returns an error message or a message for validity checking*/
 bool checkCoordinates(QString& message, const QString& text);
@@ -56,6 +63,17 @@ QString formatFloatUnit(float value, const QString& unit = QString(), int precis
 
 /* Format elapsed time to minutes and seconds */
 QString formatElapsed(const QElapsedTimer& timer);
+
+/* Format wind as string with pointer */
+QString windInformation(float headWind, float crossWind);
+QString windInformationCross(float crossWind);
+QString windInformationHead(float headWind);
+
+/* Get course or heading text with magnetic and/or true course depending on settings */
+QString courseText(float magCourse, float trueCourse, bool magBold = false, bool trueSmall = true);
+QString courseSuffix();
+QString courseTextFromMag(float magCourse, float magvar, bool magBold = false, bool trueSmall = true);
+QString courseTextFromTrue(float trueCourse, float magvar, bool magBold = false, bool trueSmall = true);
 
 } // namespace formatter
 

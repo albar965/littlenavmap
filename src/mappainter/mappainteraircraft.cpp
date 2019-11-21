@@ -122,7 +122,7 @@ void MapPainterAircraft::render(PaintContext *context)
   {
     if(pos.isValid())
     {
-      if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND_POINTER))
+      if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND_POINTER))
         paintWindPointer(context, userAircraft, context->painter->device()->width() / 2, 0);
 
       bool hidden = false;

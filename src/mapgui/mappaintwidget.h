@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_NAVMAPPAINTWIDGET_H
 #define LITTLENAVMAP_NAVMAPPAINTWIDGET_H
 
-#include "common/maptypes.h"
+#include "common/proctypes.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>
@@ -33,6 +33,7 @@ class SimConnectData;
 class MainWindow;
 class MapPaintLayer;
 class MapScreenIndex;
+class ApronGeometryCache;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -68,9 +69,11 @@ public:
   void copyView(const MapPaintWidget& other);
 
   /* Jump to position on the map using the given zoom distance.
-   *  Keep current zoom if  distanceNm is INVALID_DISTANCE_VALUE.
-   *  Use predefined zoom if distanceNm is 0 */
-  void showPos(const atools::geo::Pos& pos, float distanceNm, bool doubleClick);
+  *  Keep current zoom if  distanceNm is INVALID_DISTANCE_VALUE.
+  *  Use predefined zoom if distanceNm is 0
+  * not adjusted version ignores "avoid blurry map" setting. */
+  void showPosNotAdjusted(const atools::geo::Pos& pos, float distanceKm, bool doubleClick);
+  void showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick);
 
   /* Show the bounding rectangle on the map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -126,8 +129,10 @@ public:
   const QList<map::DistanceMarker>& getDistanceMarkers() const;
 
   const QList<map::TrafficPattern>& getTrafficPatterns() const;
-
   QList<map::TrafficPattern>& getTrafficPatterns();
+
+  const QList<map::Hold>& getHolds() const;
+  QList<map::Hold>& getHolds();
 
   const atools::geo::Pos& getProfileHighlight() const;
 
@@ -175,6 +180,7 @@ public:
   void setShowMapAirspaces(map::MapAirspaceFilter types);
 
   map::MapObjectTypes getShownMapFeatures() const;
+  map::MapObjectDisplayTypes getShownMapFeaturesDisplay() const;
   map::MapAirspaceFilter getShownAirspaces() const;
   map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
 
@@ -199,14 +205,22 @@ public:
   /* Redraw map to reflect weather changes */
   void weatherUpdated();
 
+  /* Redraw map to reflect wind barb changes */
+  void windUpdated();
+
   /* Current weather source for icon display */
   map::MapWeatherSource getMapWeatherSource() const;
 
-  /* Airspaces from the information window are kept in a separate list */
+  /* Airspaces and airways from the information window are kept in separate lists */
   void changeAirspaceHighlights(const QList<map::MapAirspace>& airspaces);
+  void changeAirwayHighlights(const QList<QList<map::MapAirway> >& airways);
 
+  /* Highlights from clicking "Map" in information window */
   const QList<map::MapAirspace>& getAirspaceHighlights() const;
+  const QList<QList<map::MapAirway> >& getAirwayHighlights() const;
+
   void clearAirspaceHighlights();
+  void clearAirwayHighlights();
 
   /* Avoids dark background when printing in night mode */
   void setPrinting(bool value)
@@ -247,10 +261,48 @@ public:
   /* Try several iterations to show the given rectangele as precise as possible.
    * More CPU intense than other functions. */
   void centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect, bool allowAdjust);
+  void centerRectOnMapPrecise(const atools::geo::Rect& rect, bool allowAdjust);
 
   /* Resizes the widget if width and height are bigger than 0 and returns map content as pixmap. */
   QPixmap getPixmap(int width = -1, int height = -1);
   QPixmap getPixmap(const QSize& size);
+
+  /* Prepare Marble widget drawing with a dummy paint event without drawing navaids */
+  void prepareDraw(int width, int height);
+
+  bool isAvoidBlurredMap() const
+  {
+    return avoidBlurredMap;
+  }
+
+  void setAvoidBlurredMap(bool value)
+  {
+    avoidBlurredMap = value;
+  }
+
+  /* Pos includes distance in km as altitude */
+  atools::geo::Pos getCurrentViewCenterPos() const;
+  atools::geo::Rect getCurrentViewRect() const;
+
+  bool isNoNavPaint() const
+  {
+    return noNavPaint;
+  }
+
+  void setNoNavPaint(bool value)
+  {
+    noNavPaint = value;
+  }
+
+  ApronGeometryCache *getApronGeometryCache();
+
+  /* true if real map display widget - false if hidden for online services or other applications */
+  bool isVisibleWidget() const
+  {
+    return visibleWidget;
+  }
+
+  QString getMapCopyright() const;
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
@@ -270,7 +322,7 @@ signals:
 protected:
   /* Internal zooming and centering. Zooms one step out to get a sharper map display if allowAdjust is true */
   void centerPosOnMap(const atools::geo::Pos& pos);
-  void setDistanceToMap(double distance, bool allowAdjust = true);
+  void setDistanceToMap(double dist, bool allowAdjust = true);
   void centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust = true);
   void centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool allowAdjust);
 
@@ -286,6 +338,11 @@ protected:
   {
     return screenIndex;
   }
+
+  void showPosInternal(const atools::geo::Pos& pos, float distanceKm, bool doubleClick, bool allowAdjust);
+
+  /* Zoom out once to get a sharp map display */
+  void adjustMapDistance();
 
   bool loadKml(const QString& filename, bool center);
 
@@ -329,6 +386,9 @@ protected:
   /* Update internal values for visible map objects based on menus - default is no-op */
   virtual void updateMapObjectsShown();
 
+  /* Caches complex X-Plane apron geometry as objects in screen coordinates for faster painting. */
+  ApronGeometryCache *apronGeometryCache;
+
   /* Keep the the overlays for the GUI widget from updating */
   bool ignoreOverlayUpdates = false;
 
@@ -345,6 +405,9 @@ protected:
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
 
+  /* Need to maintain this parallel since Marble has no method to read properties */
+  bool hillshading = false;
+
   MapPaintLayer *paintLayer;
 
   /* Do not draw while database is unavailable */
@@ -359,8 +422,14 @@ protected:
   /* Keep the visible world rectangle when resizing and zoom out one step to keep image sharp */
   bool adjustOnResize = false;
 
+  /* Zoom one step out to avoid blurred maps */
+  bool avoidBlurredMap = false;
+
   /* true if real window/widget */
   bool visibleWidget = false;
+
+  /* Dummy paint cycle without any navigation stuff. Just used to initialize Marble */
+  bool noNavPaint = false;
 
   /* Index of the theme combo box in the toolbar */
   map::MapThemeComboIndex currentThemeIndex = map::INVALID_THEME;

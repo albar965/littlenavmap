@@ -22,7 +22,8 @@
 #include "route/route.h"
 #include "mapgui/maplayer.h"
 #include "query/mapquery.h"
-#include "query/airspacequery.h"
+#include "airspace/airspacecontroller.h"
+#include "navapp.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -35,7 +36,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirspace::MapPainterAirspace(MapPaintWidget* mapWidget, MapScale *mapScale,
+MapPainterAirspace::MapPainterAirspace(MapPaintWidget *mapWidget, MapScale *mapScale,
                                        const Route *routeParam)
   : MapPainter(mapWidget, mapScale), route(routeParam)
 {
@@ -48,43 +49,24 @@ MapPainterAirspace::~MapPainterAirspace()
 
 void MapPainterAirspace::render(PaintContext *context)
 {
-  if(!context->mapLayer->isAirspace() ||
-     !(context->objectTypes.testFlag(map::AIRSPACE) || context->objectTypes.testFlag(map::AIRSPACE_ONLINE)))
+  if(!context->mapLayer->isAirspace() || !(context->objectTypes.testFlag(map::AIRSPACE)))
     return;
 
   if(context->mapLayerEffective->isAirportDiagram())
     return;
 
+  AirspaceController *controller = NavApp::getAirspaceController();
+
   // Get online and offline airspace and merge then into one list =============
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
-  QList<const MapAirspace *> airspaces;
+  AirspaceVector airspaces;
 
   if(context->objectTypes.testFlag(map::AIRSPACE))
   {
     // qDebug() << Q_FUNC_INFO << "NON ONLINE";
-    const QList<MapAirspace> *airspacesNav =
-      airspaceQuery->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer,
-                                  route->getCruisingAltitudeFeet(),
-                                  context->viewContext == Marble::Animation);
-    if(airspacesNav != nullptr)
-    {
-      for(const MapAirspace& airspace : *airspacesNav)
-        airspaces.append(&airspace);
-    }
-  }
-
-  if(context->objectTypes.testFlag(map::AIRSPACE_ONLINE))
-  {
-    // qDebug() << Q_FUNC_INFO << "ONLINE";
-    const QList<MapAirspace> *airspacesOnline =
-      airspaceQueryOnline->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer,
-                                        route->getCruisingAltitudeFeet(),
-                                        context->viewContext == Marble::Animation);
-    if(airspacesOnline != nullptr)
-    {
-      for(const MapAirspace& airspace : *airspacesOnline)
-        airspaces.append(&airspace);
-    }
+    controller->getAirspaces(airspaces, curBox, context->mapLayer, context->airspaceFilterByLayer,
+                             route->getCruisingAltitudeFeet(),
+                             context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL);
   }
 
   if(!airspaces.isEmpty())
@@ -115,13 +97,15 @@ void MapPainterAirspace::render(PaintContext *context)
         if(!context->drawFast)
           painter->setBrush(mapcolors::colorForAirspaceFill(*airspace));
 
-        const LineString *lines =
-          (airspace->online ? airspaceQueryOnline : airspaceQuery)->getAirspaceGeometry(airspace->id);
+        const LineString *lines = controller->getAirspaceGeometry(airspace->combinedId());
 
-        for(const Pos& pos : *lines)
-          linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+        if(lines != nullptr)
+        {
+          for(const Pos& pos : *lines)
+            linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
 
-        painter->drawPolygon(linearRing);
+          painter->drawPolygon(linearRing);
+        }
       }
     }
   }

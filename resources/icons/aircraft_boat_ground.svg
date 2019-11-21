@@ -13,7 +13,7 @@
    width="128"
    height="128"
    id="svg1953"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="aircraft_boat_ground.svg">
   <metadata
      id="metadata7">
@@ -55,7 +55,7 @@
   <defs
      id="defs1956" />
   <path
-     style="fill:#ffffff;fill-rule:evenodd;stroke:#464646;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+     style="fill:#ff7f00;fill-rule:evenodd;stroke:#464646;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
      d="m 34.870849,44.505046 c -6.991404,22.148305 2.787872,80.470704 2.787872,80.470704 l 54.624325,0.22159 c 0,0 6.912483,-58.81016 -0.232323,-80.913884 C 86.890432,28.319176 71.2987,3.1064404 63.624868,3.0883096 57.202194,3.073135 39.875686,28.650055 34.870849,44.505046 Z"
      id="path4137"
      inkscape:connector-curvature="0"

@@ -28,26 +28,44 @@
 #include <QStyleFactory>
 #include <QActionGroup>
 #include <QDebug>
+#include <QMainWindow>
+#include <QWindow>
 
 using atools::settings::Settings;
 
-StyleHandler::StyleHandler()
+StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
+  : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
+
+  // Override goofy fusion tab close buttons on Windows and macOS
+#if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
+
+  QString fusionStyleSheet(
+    QLatin1Literal("QTabBar::close-button "
+                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button.png); }") +
+    QLatin1Literal("QTabBar::close-button:hover "
+                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button_hover.png); }"));
+#else
+  QString fusionStyleSheet;
+#endif
+
   // Collect names and palettes from all system styles
   for(const QString& styleName : QStyleFactory::keys())
   {
     QStyle *style = QStyleFactory::create(styleName);
 
     QPalette palette = style->standardPalette();
+    QString stylesheet;
     if(styleName == "Fusion")
     {
       // Store fusion palette settings a in a separate ini file
       QString filename = Settings::instance().getConfigFilename("_fusionstyle.ini");
       atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
       paletteSettings.syncPalette(palette);
+      stylesheet = fusionStyleSheet;
     }
 
-    styles.append({styleName, styleName, QString() /* stylesheet */, palette, false /* night */});
+    styles.append({styleName, styleName, stylesheet, palette, false /* night */});
     delete style;
   }
 
@@ -55,7 +73,7 @@ StyleHandler::StyleHandler()
   createDarkPalette(darkPalette);
 
   // Add stylesheet for better checkbox radio button and toolbutton visibility
-  QString styleSheet(
+  QString nightStyleSheet(
     QLatin1Literal("QCheckBox::indicator:checked "
                    "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }") +
     QLatin1Literal("QCheckBox::indicator:unchecked "
@@ -64,6 +82,13 @@ StyleHandler::StyleHandler()
                    "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }") +
     QLatin1Literal("QRadioButton::indicator:unchecked "
                    "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }") +
+    // Night mode shows bright tab bars with this change in macOS
+#if !defined(Q_OS_MACOS)
+    QLatin1Literal("QTabBar::close-button "
+                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }") +
+    QLatin1Literal("QTabBar::close-button:hover "
+                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button_hover_night.png); }") +
+#endif
     QString("QToolButton:checked { background-color: %1;}").arg(darkPalette.color(QPalette::Window).lighter(600).name())
     );
 
@@ -72,7 +97,7 @@ StyleHandler::StyleHandler()
   atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
   paletteSettings.syncPalette(darkPalette);
 
-  styles.append({"Night", "Fusion", styleSheet, darkPalette, true /* night */});
+  styles.append({"Night", "Fusion", nightStyleSheet, darkPalette, true /* night */});
 }
 
 StyleHandler::~StyleHandler()
@@ -140,6 +165,8 @@ void StyleHandler::applyCurrentStyle()
   qDebug() << Q_FUNC_INFO << "index" << currentStyleIndex;
 
   const Style& style = styles.at(currentStyleIndex);
+  emit preStyleChange(style.displayName, style.night);
+
   QApplication::setStyle(QStyleFactory::create(style.styleName));
 
   qApp->setPalette(style.palette);
@@ -147,9 +174,6 @@ void StyleHandler::applyCurrentStyle()
 
   // Need to clear due to Qt bug
   QPixmapCache::clear();
-
-  // for(QWidget *widget : QApplication::allWidgets())
-  // widget->updat
 
   emit styleChanged(style.displayName, style.night);
 }
@@ -179,15 +203,18 @@ void StyleHandler::restoreState()
   }
   else
   {
-    // Select default style
-    int index = 0;
-    QStyle *currentStyle = QApplication::style();
+    // Select default style - first startup ==================================
 
     // Look for default style in the list
+    int index = 0;
+    QString currentStyleName = QApplication::style()->objectName();
     for(const QString& styleName : QStyleFactory::keys())
     {
-      if(styleName.compare(currentStyle->objectName(), Qt::CaseInsensitive) == 0)
+      if(styleName.compare(currentStyleName, Qt::CaseInsensitive) == 0)
       {
+        if(index >= menuItems.size())
+          index = 0;
+
         currentStyleIndex = index;
         menuItems[currentStyleIndex]->setChecked(true);
         break;
@@ -230,6 +257,7 @@ void StyleHandler::createDarkPalette(QPalette& palette)
   palette.setColor(QPalette::Disabled, QPalette::Text, QColor(100, 100, 100));
   palette.setColor(QPalette::Disabled, QPalette::Button, QColor(65, 65, 65));
   palette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(100, 100, 100));
+  palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(100, 100, 100));
 
   // darkPalette.setColor(QPalette::Active, QPalette::Text, QColor(100, 100, 100));
   // darkPalette.setColor(QPalette::Active, QPalette::ButtonText, QColor(100, 100, 100));

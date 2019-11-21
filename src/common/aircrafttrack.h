@@ -74,10 +74,16 @@ public:
   using QList::begin;
   using QList::end;
 
+  /* Track will be pruned if it contains more track entries than this value. Default is 20000. */
   void setMaxTrackEntries(int value)
   {
     maxTrackEntries = value;
   }
+
+  /* Write and read the whole track to and from a binary stream */
+  void saveToStream(QDataStream& out);
+
+  bool readFromStream(QDataStream & in);
 
 private:
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */

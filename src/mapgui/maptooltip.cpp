@@ -23,9 +23,12 @@
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
 #include "route/route.h"
-#include "query/airspacequery.h"
+#include "airspace/airspacecontroller.h"
 #include "options/optiondata.h"
 #include "sql/sqlrecord.h"
+#include "weather/windreporter.h"
+#include "grib/windquery.h"
+#include "route/routealtitudeleg.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -34,6 +37,9 @@ using namespace map;
 using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
+
+/* Number of characters in the divider */
+static const int TEXT_BAR_LENGTH = 15;
 
 MapTooltip::MapTooltip(MainWindow *parentWindow)
   : mainWindow(parentWindow), mapQuery(NavApp::getMapQuery()), weather(NavApp::getWeatherReporter())
@@ -46,11 +52,9 @@ MapTooltip::~MapTooltip()
   qDebug() << Q_FUNC_INFO;
 }
 
-QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
-                                 const QList<proc::MapProcedurePoint>& procPoints,
-                                 const Route& route, bool airportDiagram)
+QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, const Route& route, bool airportDiagram)
 {
-  opts::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
+  optsd::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
 
   HtmlBuilder html(false);
   HtmlInfoBuilder info(mainWindow, false);
@@ -63,275 +67,353 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   // User Aircraft ===========================================================================
   if(mapSearchResult.userAircraft.getPosition().isValid())
   {
-    if(checkText(html, numEntries))
+    if(checkText(html))
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.hr();
+      html.textBar(TEXT_BAR_LENGTH);
 
-    html.p();
     info.aircraftText(mapSearchResult.userAircraft, html);
     info.aircraftProgressText(mapSearchResult.userAircraft, html, route,
                               false /* show more/less switch */, false /* true if less info mode */);
-    html.pEnd();
+
     numEntries++;
   }
 
   // Online Aircraft ===========================================================================
   for(const SimConnectAircraft& aircraft : mapSearchResult.onlineAircraft)
   {
-    if(checkText(html, numEntries))
+    if(checkText(html))
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.hr();
+      html.textBar(TEXT_BAR_LENGTH);
 
-    html.p();
     info.aircraftText(aircraft, html);
     info.aircraftProgressText(aircraft, html, Route(),
                               false /* show more/less switch */, false /* true if less info mode */);
-    html.pEnd();
+
     numEntries++;
   }
 
   // AI Aircraft ===========================================================================
   for(const SimConnectAircraft& aircraft : mapSearchResult.aiAircraft)
   {
-    if(checkText(html, numEntries))
+    if(checkText(html))
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.hr();
+      html.textBar(TEXT_BAR_LENGTH);
 
-    html.p();
     info.aircraftText(aircraft, html);
     info.aircraftProgressText(aircraft, html, Route(),
                               false /* show more/less switch */, false /* true if less info mode */);
-    html.pEnd();
+
     numEntries++;
   }
 
   // Navaids from procedure points ===========================================================================
-  if(opts & opts::TOOLTIP_NAVAID)
+  if(opts & optsd::TOOLTIP_NAVAID)
   {
-    for(const proc::MapProcedurePoint& ap : procPoints)
+    for(const proc::MapProcedurePoint& ap : mapSearchResult.procPoints)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.procedurePointText(ap, html, &route);
-      html.pEnd();
+
       numEntries++;
     }
   }
 
-  // Airports ===========================================================================
-  if(opts & opts::TOOLTIP_AIRPORT)
+  // Holds ===========================================================================
+  for(const Hold& entry : mapSearchResult.holds)
   {
-    for(const MapAirport& airport : mapSearchResult.airports)
+    if(checkText(html))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.textBar(TEXT_BAR_LENGTH);
+
+    info.holdText(entry, html);
+
+    numEntries++;
+  }
+
+  // Holds ===========================================================================
+  for(const TrafficPattern& entry : mapSearchResult.trafficPatterns)
+  {
+    if(checkText(html))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.textBar(TEXT_BAR_LENGTH);
+
+    info.trafficPatternText(entry, html);
+
+    numEntries++;
+  }
+
+  // Logbook entries ===========================================================================
+  if(opts & optsd::TOOLTIP_NAVAID)
+  {
+    for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
+
+      info.logEntryText(entry, html);
+
+      numEntries++;
+    }
+  }
+
+  // Userpoints ===========================================================================
+  for(const MapUserpoint& up : mapSearchResult.userpoints)
+  {
+    if(checkText(html))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.textBar(TEXT_BAR_LENGTH);
+
+    info.userpointText(up, html);
+
+    numEntries++;
+  }
+
+  // Airports ===========================================================================
+  if(opts & optsd::TOOLTIP_AIRPORT)
+  {
+    for(const MapAirport& airport : mapSearchResult.airports)
+    {
+      if(checkText(html))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.textBar(TEXT_BAR_LENGTH);
 
       map::WeatherContext currentWeatherContext;
 
-      html.p();
       mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
       info.airportText(airport, currentWeatherContext, html, &route);
-      html.pEnd();
+
       numEntries++;
     }
   }
 
   // Navaids ===========================================================================
-  if(opts & opts::TOOLTIP_NAVAID)
+  if(opts & optsd::TOOLTIP_NAVAID)
   {
-    for(const MapUserpoint& up : mapSearchResult.userpoints)
-    {
-      if(checkText(html, numEntries))
-        return html.getHtml();
-
-      if(!html.isEmpty())
-        html.hr();
-
-      html.p();
-      info.userpointText(up, html);
-      html.pEnd();
-      numEntries++;
-    }
 
     for(const MapVor& vor : mapSearchResult.vors)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.vorText(vor, html);
-      html.pEnd();
+
       numEntries++;
     }
 
     for(const MapNdb& ndb : mapSearchResult.ndbs)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.ndbText(ndb, html);
-      html.pEnd();
+
       numEntries++;
     }
 
     for(const MapWaypoint& wp : mapSearchResult.waypoints)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.waypointText(wp, html);
-      html.pEnd();
+
       numEntries++;
     }
 
     for(const MapMarker& m : mapSearchResult.markers)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.markerText(m, html);
-      html.pEnd();
+
+      numEntries++;
+    }
+
+    for(const MapIls& ils : mapSearchResult.ils)
+    {
+      if(checkText(html))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.textBar(TEXT_BAR_LENGTH);
+
+      info.ilsText(ils, html);
+
       numEntries++;
     }
   }
 
   // Airport stuff ===========================================================================
-  if(airportDiagram && opts & opts::TOOLTIP_AIRPORT)
+  if(airportDiagram && opts & optsd::TOOLTIP_AIRPORT)
   {
     for(const MapAirport& ap : mapSearchResult.towers)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.towerText(ap, html);
-      html.pEnd();
+
       numEntries++;
     }
     for(const MapParking& p : mapSearchResult.parkings)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.parkingText(p, html);
-      html.pEnd();
+
       numEntries++;
     }
     for(const MapHelipad& p : mapSearchResult.helipads)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.helipadText(p, html);
-      html.pEnd();
+
       numEntries++;
     }
   }
 
-  if(opts & opts::TOOLTIP_NAVAID)
+  if(opts & optsd::TOOLTIP_NAVAID)
   {
     for(const MapUserpointRoute& up : mapSearchResult.userPointsRoute)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.userpointTextRoute(up, html);
-      html.pEnd();
+
       numEntries++;
     }
 
     for(const MapAirway& airway : mapSearchResult.airways)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
-      html.p();
       info.airwayText(airway, html);
-      html.pEnd();
+
+      numEntries++;
+    }
+  }
+
+  // High altitude winds ===========================================================================
+  if(opts & optsd::TOOLTIP_WIND && mapSearchResult.windPos.isValid())
+  {
+    WindReporter *windReporter = NavApp::getWindReporter();
+    atools::grib::WindPosVector winds = windReporter->getWindStackForPos(mapSearchResult.windPos);
+    if(!winds.isEmpty())
+    {
+      if(checkText(html))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.textBar(TEXT_BAR_LENGTH);
+
+      info.windText(winds, html, windReporter->getAltitude(), windReporter->getSourceText());
+
+#ifdef DEBUG_INFORMATION
+      html.hr().small(QString("Pos(%1, %2), alt(%3)").
+                      arg(mapSearchResult.windPos.getLonX()).arg(mapSearchResult.windPos.getLatY()).
+                      arg(windReporter->getAltitude(), 0, 'f', 2)).br();
+
+      html.small(windReporter->getDebug(mapSearchResult.windPos));
+#endif
       numEntries++;
     }
   }
 
   // Airspaces ===========================================================================
-  if(opts & opts::TOOLTIP_AIRSPACE)
+  if(opts & optsd::TOOLTIP_AIRSPACE)
   {
-    for(const MapAirspace& airspace : mapSearchResult.airspaces)
+    // Put all online airspace on top of the list to have consistent ordering with menus and info windows
+    MapSearchResult res = mapSearchResult.moveOnlineAirspacesToFront();
+
+    for(const MapAirspace& airspace : res.airspaces)
     {
-      if(checkText(html, numEntries))
+      if(checkText(html))
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(TEXT_BAR_LENGTH);
 
       atools::sql::SqlRecord onlineRec;
-      if(airspace.online)
-        onlineRec = NavApp::getAirspaceQueryOnline()->getAirspaceRecordById(airspace.id);
+      if(airspace.isOnline())
+        onlineRec = NavApp::getAirspaceController()->getOnlineAirspaceRecordById(airspace.id);
 
-      html.p();
       info.airspaceText(airspace, onlineRec, html);
-      html.pEnd();
+
       numEntries++;
     }
   }
 
-  return html.getHtml();
+  QString str = html.getHtml();
+  if(str.endsWith("<br/>"))
+    str.chop(5);
+
+#ifdef DEBUG_INFORMATION_TOOLTIP
+
+  qDebug().noquote().nospace() << Q_FUNC_INFO << html.getHtml();
+
+#endif
+
+  return str;
+
 }
 
 /* Check if the result HTML has more than the allowed number of lines and add a "more" text */
-bool MapTooltip::checkText(HtmlBuilder& html, int numEntries)
+bool MapTooltip::checkText(HtmlBuilder& html)
 {
-  if(numEntries >= MAX_ENTRIES)
-  {
-    html.hr().b(tr("More ..."));
-    return true;
-  }
-
-  return html.checklength(MAX_LINES, tr("More ..."));
+  return html.checklengthTextBar(MAX_LINES, tr("More ..."), TEXT_BAR_LENGTH);
 }

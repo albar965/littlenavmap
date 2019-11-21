@@ -21,10 +21,13 @@
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"
 #include "common/maptools.h"
+#include "common/proctypes.h"
 #include "atools.h"
 #include "fs/util/fsutil.h"
 #include "route/route.h"
+#include "options/optiondata.h"
 #include "navapp.h"
+#include "common/unit.h"
 
 #include <QRegularExpression>
 
@@ -51,6 +54,11 @@ RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
 
 }
 
+RouteLeg::RouteLeg()
+{
+
+}
+
 RouteLeg::~RouteLeg()
 {
 
@@ -64,14 +72,13 @@ void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirpo
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
-  valid = true;
+  valid = validWaypoint = true;
 }
 
-void RouteLeg::createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg)
+void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg)
 {
   index = entryIndex;
   procedureLeg = legs.at(entryIndex);
-  magvar = procedureLeg.magvar;
 
   type = map::PROCEDURE;
 
@@ -88,11 +95,10 @@ void RouteLeg::createFromApproachLeg(int entryIndex, const proc::MapProcedureLeg
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
-  valid = true;
+  valid = validWaypoint = true;
 }
 
-void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last,
-                               float maxDistance)
+void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const Pos& last, float maxDistance)
 {
   map::MapSearchResult mapobjectResult;
   NavApp::getMapQuery()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
@@ -102,17 +108,17 @@ void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry
   if(mapobjectResult.hasVor())
   {
     assignVor(mapobjectResult, flightplanEntry);
-    valid = true;
+    valid = validWaypoint = true;
   }
   else if(mapobjectResult.hasNdb())
   {
     assignNdb(mapobjectResult, flightplanEntry);
-    valid = true;
+    valid = validWaypoint = true;
   }
   else if(mapobjectResult.hasWaypoints())
   {
     assignIntersection(mapobjectResult, flightplanEntry);
-    valid = true;
+    valid = validWaypoint = true;
   }
 }
 
@@ -157,7 +163,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           {
             // Use navaid at airway
             assignIntersection(mapobjectResult, flightplanEntry);
-            valid = true;
+            validWaypoint = true;
           }
           else
           {
@@ -177,7 +183,10 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       if(!mapobjectResult.airports.isEmpty())
       {
         assignAirport(mapobjectResult, flightplanEntry);
-        valid = true;
+
+        alternate = flightplanEntry->getFlags() & atools::fs::pln::entry::ALTERNATE;
+
+        validWaypoint = true;
 
         // Resolve parking ==============================
         QString name = flightplan->getDepartureParkingName().trimmed();
@@ -263,20 +272,20 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       if(!mapobjectResult.waypoints.isEmpty())
       {
         assignIntersection(mapobjectResult, flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       else if(!mapobjectResult.airports.isEmpty())
       {
         // FSC saves airports in the flight plan wrongly as intersections
         assignAirport(mapobjectResult, flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       else if(!atools::fs::util::isValidIdent(flightplanEntry->getIcaoIdent()))
       {
         // Name contains funny characters - must me a user fix from FSC
         flightplanEntry->setWaypointId(flightplanEntry->getIcaoIdent());
         assignUser(flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       break;
 
@@ -287,7 +296,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       if(!mapobjectResult.vors.isEmpty())
       {
         assignVor(mapobjectResult, flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       break;
 
@@ -298,20 +307,22 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       if(!mapobjectResult.ndbs.isEmpty())
       {
         assignNdb(mapobjectResult, flightplanEntry);
-        valid = true;
+        validWaypoint = true;
       }
       break;
 
     // =============================== Navaid user coordinates
     case atools::fs::pln::entry::USER:
       assignUser(flightplanEntry);
-      valid = true;
+      validWaypoint = true;
       break;
   }
 
-  if(!valid)
+  if(!validWaypoint)
     // Leave the flight plan type as is and change internal type only
     type = map::INVALID;
+
+  valid = true;
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
@@ -331,6 +342,7 @@ void RouteLeg::setDepartureStart(const map::MapStart& departureStart)
 
 void RouteLeg::updateMagvar()
 {
+  magvarPos = NavApp::getMagVar(getPosition());
   if(isAnyProcedure())
     magvar = procedureLeg.magvar;
   else if(waypoint.isValid())
@@ -343,7 +355,7 @@ void RouteLeg::updateMagvar()
   else if(airport.isValid())
     magvar = airport.magvar;
   else
-    magvar = NavApp::getMagVar(getPosition());
+    magvar = magvarPos;
 }
 
 void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
@@ -356,15 +368,14 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
 
     if(isAnyProcedure())
     {
-      if(
-        (prevLeg->isRoute() || // Transition from route to procedure
-         (prevLeg->getProcedureLeg().isAnyDeparture() && procedureLeg.isAnyArrival()) || // from SID to aproach, STAR or transition
-         (prevLeg->getProcedureLeg().isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
-        ) && // Direct connection between procedures
+      if((prevLeg->isRoute() || // Transition from route to procedure
+          (prevLeg->getProcedureLeg().isAnyDeparture() && procedureLeg.isAnyArrival()) || // from SID to aproach, STAR or transition
+          (prevLeg->getProcedureLeg().isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
+          ) && // Direct connection between procedures
 
-        (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) ||
-         procedureLeg.line.isPoint()) // Beginning of procedure
-        )
+         (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) ||
+          procedureLeg.line.isPoint()) // Beginning of procedure
+         )
       {
         // qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;
 
@@ -397,6 +408,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
       }
       else
       {
+        // Calculate for normal or alternate leg - prev is destination airport for alternate legs
         distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
         distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
         courseTo = normalizeCourse(prevLeg->getPosition().angleDegTo(getPosition()));
@@ -418,13 +430,19 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
 
 void RouteLeg::updateUserName(const QString& name)
 {
-  flightplan->getEntries()[index].setWaypointId(name);
+  if(index >= 0)
+    flightplan->getEntries()[index].setWaypointId(name);
+  else
+    qWarning() << Q_FUNC_INFO << "invalid index" << index;
 }
 
-void RouteLeg::updateUserPosition(const atools::geo::Pos& pos)
+void RouteLeg::updateUserPosition(const Pos& pos)
 {
-  // Use setCoords to keep altitude
-  flightplan->getEntries()[index].setCoords(pos);
+  if(index >= 0)
+    // Use setCoords to keep altitude
+    flightplan->getEntries()[index].setCoords(pos);
+  else
+    qWarning() << Q_FUNC_INFO << "invalid index" << index;
 }
 
 int RouteLeg::getId() const
@@ -492,20 +510,30 @@ QString RouteLeg::getMapObjectTypeName() const
   else if(runwayEnd.isValid())
     return tr("Runway");
   else if(type == map::USERPOINTROUTE)
-    return EMPTY_STRING;
+    return tr("User");
   else
     return EMPTY_STRING;
 }
 
 float RouteLeg::getCourseToMag() const
 {
-  return courseTo < map::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseTo - magvar) : courseTo;
+  if(OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION)
+    return courseTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseTo - magvarPos) : courseTo;
+  else
+    return courseTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseTo - magvar) : courseTo;
 }
 
 float RouteLeg::getCourseToRhumbMag() const
 {
-  return courseRhumbTo <
-         map::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseRhumbTo - magvar) : courseTo;
+  if(OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION)
+    return courseRhumbTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseRhumbTo - magvarPos) : courseTo;
+  else
+    return courseRhumbTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseRhumbTo - magvar) : courseTo;
+}
+
+float RouteLeg::getMagVarBySettings() const
+{
+  return OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION ? magvarPos : magvar;
 }
 
 const atools::geo::Pos& RouteLeg::getPosition() const
@@ -519,7 +547,7 @@ const atools::geo::Pos& RouteLeg::getPosition() const
       if(getFlightplanEntry().getPosition().isValid())
         return getFlightplanEntry().getPosition();
       else
-        return atools::geo::EMPTY_POS;
+        return EMPTY_POS;
     }
 
     if(airport.isValid())
@@ -537,7 +565,33 @@ const atools::geo::Pos& RouteLeg::getPosition() const
     else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
       return getFlightplanEntry().getPosition();
   }
-  return atools::geo::EMPTY_POS;
+  return EMPTY_POS;
+}
+
+float RouteLeg::getAltitude() const
+{
+  if(airport.isValid())
+    return airport.position.getAltitude();
+  else if(vor.isValid())
+    return vor.position.getAltitude();
+  else if(ndb.isValid())
+    return ndb.position.getAltitude();
+  else if(waypoint.isValid())
+    return 0.f;
+  else if(ils.isValid())
+    return ils.position.getAltitude();
+  else if(runwayEnd.isValid())
+    return runwayEnd.getPosition().getAltitude();
+  else if(!procedureLeg.displayText.isEmpty())
+    return 0.f;
+  else if(type == map::INVALID)
+    return 0.f;
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
+    return 0.f;
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+    return 0.f;
+  else
+    return 0.f;
 }
 
 QString RouteLeg::getIdent() const
@@ -592,7 +646,9 @@ bool RouteLeg::isNavdata() const
 
 QString RouteLeg::getRegion() const
 {
-  if(vor.isValid())
+  if(airport.isValid())
+    return airport.region;
+  else if(vor.isValid())
     return vor.region;
   else if(ndb.isValid())
     return ndb.region;
@@ -660,10 +716,15 @@ int RouteLeg::getFrequency() const
 
 const atools::fs::pln::FlightplanEntry& RouteLeg::getFlightplanEntry() const
 {
-  if(isRoute())
-    return flightplan->at(index);
+  if(index >= 0)
+  {
+    if(isRoute())
+      return flightplan->at(index);
+  }
   else
-    return EMPTY_FLIGHTPLAN_ENTRY;
+    qWarning() << Q_FUNC_INFO << "invalid index" << index;
+
+  return EMPTY_FLIGHTPLAN_ENTRY;
 }
 
 const LineString& RouteLeg::getGeometry() const
@@ -681,20 +742,59 @@ bool RouteLeg::isApproachPoint() const
           procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
-bool RouteLeg::isAirwaySetAndInvalid() const
+bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors) const
 {
-  if(!getAirwayName().isEmpty() && airway.isValid())
+  bool invalid = true;
+  if(airway.isValid())
   {
     // Set and valid - check direction
     if(airway.direction == map::DIR_BOTH)
       // Always valid in both directions
-      return false;
+      invalid = false;
     else if(airway.direction == map::DIR_FORWARD)
       // From this to airway "from" is wrong direction - invalid
-      return getId() == airway.fromWaypointId;
+      invalid = getId() == airway.fromWaypointId;
     else if(airway.direction == map::DIR_BACKWARD)
       // From this to airway "to" is wrong direction for backward - invalid
-      return getId() == airway.toWaypointId;
+      invalid = getId() == airway.toWaypointId;
+
+    if(errors != nullptr && invalid)
+      errors->append(tr("Wrong direction in one-way segment."));
+
+    if(altitudeFt < map::INVALID_ALTITUDE_VALUE)
+    {
+      // Use a buffer for comparison to avoid rounding errors
+      if(altitudeFt < airway.minAltitude - 10.f)
+      {
+        invalid = true;
+        if(errors != nullptr)
+          errors->append(tr("Cruise altitude %1 is below minimum altitude of %2.").
+                         arg(Unit::altFeet(altitudeFt)).arg(Unit::altFeet(airway.minAltitude)));
+      }
+
+      if(airway.maxAltitude > 0 && altitudeFt > airway.maxAltitude + 10.f)
+      {
+        invalid = true;
+        if(errors != nullptr)
+          errors->append(tr("Cruise altitude %1 is above maximum altitude of %2.").
+                         arg(Unit::altFeet(altitudeFt)).arg(Unit::altFeet(airway.maxAltitude)));
+      }
+    }
+
+    if(invalid && errors != nullptr)
+      // General violations message
+      errors->prepend(tr("Leg to \"%1\" violates restrictions for airway \"%2\":").
+                      arg(getIdent()).arg(getAirwayName()));
+    return invalid;
+  }
+  else
+  {
+    if(!getAirwayName().isEmpty())
+    {
+      invalid = true;
+      if(errors != nullptr)
+        errors->append(tr("Airway %1 not found for %2.").arg(getAirwayName()).arg(getIdent()));
+    }
   }
 
   return !getAirwayName().isEmpty() && !airway.isValid();
@@ -786,17 +886,24 @@ void RouteLeg::assignRunwayOrHelipad(const QString& name)
 
 QDebug operator<<(QDebug out, const RouteLeg& leg)
 {
-  out << "RouteLeg[id" << leg.getId() << leg.getPosition()
-      << "magvar" << leg.getMagvar()
-      << "distance" << leg.getDistanceTo()
-      << "course mag" << leg.getCourseToMag()
-      << "course true" << leg.getCourseToTrue()
-      << "id" << leg.getId()
-      << "ident" << leg.getIdent()
-      << "nav" << leg.isNavdata()
-      << leg.getIdent() << leg.getMapObjectTypeName()
-      << proc::procedureLegTypeStr(leg.getProcedureLegType())
-      << "airway" << leg.getAirway().id << leg.getAirwayName() << (leg.getAirway().isValid() ? "valid" : "invalid")
-      << "]";
+  QDebugStateSaver saver(out);
+
+  out.noquote().nospace() << "RouteLeg["
+                          << "id " << leg.getId()
+                          << ", " << leg.getIdent()
+                          << ", " << leg.getMapObjectTypeName()
+                          << ", distance " << leg.getDistanceTo()
+                          << ", " << leg.getPosition()
+                          << ", course " << leg.getCourseToMag() << "°M " << leg.getCourseToTrue() << "°T"
+                          << ", magvar " << leg.getMagvar()
+                          << ", magvarPos " << leg.getMagvarPos()
+                          << (leg.isValidWaypoint() ? ", valid" : QString())
+                          << (leg.isNavdata() ? ", nav" : QString())
+                          << (leg.isAlternate() ? ", alternate" : QString())
+                          << (leg.isAnyProcedure() ? ", procedure" : QString())
+                          << ", " << proc::procedureLegTypeStr(leg.getProcedureLegType())
+                          << ", airway " << leg.getAirway().id << " " << leg.getAirwayName()
+                          << (leg.getAirway().isValid() ? " valid" : " invalid")
+                          << "]";
   return out;
 }

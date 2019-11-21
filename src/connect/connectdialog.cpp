@@ -90,13 +90,16 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
 
 ConnectDialog::~ConnectDialog()
 {
+  atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
+  widgetState.save(this);
+
   delete ui;
 }
 
 /* A button box button was clicked */
 void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
 {
-  qDebug() << "host" << ui->comboBoxConnectHostname->currentText();
+  qDebug() << Q_FUNC_INFO << "host" << ui->comboBoxConnectHostname->currentText();
 
   if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Ok))
   {

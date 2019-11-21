@@ -62,15 +62,13 @@ public:
    * displayed in airport diagrams.
    * @return HTML code of the tooltip
    */
-  QString buildTooltip(const map::MapSearchResult& mapSearchResult,
-                       const QList<proc::MapProcedurePoint>& procPoints, const Route& route,
+  QString buildTooltip(const map::MapSearchResult& mapSearchResult, const Route& route,
                        bool airportDiagram);
 
 private:
-  bool checkText(atools::util::HtmlBuilder& html, int numEntries);
+  bool checkText(atools::util::HtmlBuilder& html);
 
   static Q_DECL_CONSTEXPR int MAX_LINES = 20;
-  static Q_DECL_CONSTEXPR int MAX_ENTRIES = 3;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;

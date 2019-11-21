@@ -37,9 +37,10 @@ FlightplanEntryBuilder::~FlightplanEntryBuilder()
 }
 
 /* Copy airport attributes to flight plan entry */
-void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry) const
+void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry,
+                                                  bool alternate) const
 {
-  entryFromAirport(airport, entry);
+  entryFromAirport(airport, entry, alternate);
 }
 
 /* create a flight plan entry from object id/type or user position */
@@ -48,7 +49,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos
                                                   bool resolveWaypoints)
 {
   map::MapSearchResult result;
-  mapQuery->getMapObjectById(result, type, id, false /* airport from nav database */);
+  mapQuery->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id, false /* airport from nav database */);
   buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
 
@@ -100,7 +101,8 @@ void FlightplanEntryBuilder::entryFromVor(const map::MapVor& vor, FlightplanEntr
   entry.setFrequency(vor.frequency);
 }
 
-void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, FlightplanEntry& entry) const
+void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, FlightplanEntry& entry,
+                                              bool alternate) const
 {
   entry.setIcaoIdent(airport.ident);
   entry.setPosition(airport.position);
@@ -108,6 +110,7 @@ void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, Fl
   entry.setWaypointId(entry.getIcaoIdent());
   entry.setName(airport.name);
   entry.setMagvar(airport.magvar);
+  entry.setFlag(atools::fs::pln::entry::ALTERNATE, alternate);
 }
 
 bool FlightplanEntryBuilder::vorForWaypoint(const map::MapWaypoint& waypoint, map::MapVor& vor) const
@@ -202,7 +205,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
   }
 
   if(moType == map::AIRPORT)
-    entryFromAirport(result.airports.first(), entry);
+    entryFromAirport(result.airports.first(), entry, false /* alternate */);
   else if(moType == map::WAYPOINT)
     entryFromWaypoint(result.waypoints.first(), entry, resolveWaypoints);
   else if(moType == map::VOR)
@@ -238,5 +241,5 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const proc::MapProcedureLeg& l
     entryFromUserPos(leg.line.getPos1(), entry);
 
   // Do not save procedure legs
-  entry.setNoSave(true);
+  entry.setFlag(atools::fs::pln::entry::PROCEDURE);
 }

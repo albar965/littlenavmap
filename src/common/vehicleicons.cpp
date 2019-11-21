@@ -103,7 +103,8 @@ const QPixmap *VehicleIcons::pixmapFromCache(const PixmapKey& key, int rotate)
 
       painter.translate(size / 2.f, size / 2.f);
       painter.rotate(rotate);
-      painter.drawPixmap(QPointF(-size / 2.f, -size / 2.f), pixmap, QRectF(0, 0, size, size));
+      painter.drawPixmap(QPointF(-size / 2.f, -size / 2.f), pixmap,
+                         QRectF(0, 0, size * pixmap.devicePixelRatio(), size * pixmap.devicePixelRatio()));
       painter.resetTransform();
       newPx = new QPixmap(painterPixmap);
     }

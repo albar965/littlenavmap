@@ -75,213 +75,47 @@ enum Flag
    * ui->checkBoxOptionsRoutePreferVor */
   ROUTE_PREFER_VOR = 1 << 11,
 
-  /* Show ASN weather in info panel.
-   * ui->checkBoxOptionsWeatherInfoAsn */
-  WEATHER_INFO_ACTIVESKY = 1 << 12,
-
-  /* Show NOAA weather in info panel.
-   * ui->checkBoxOptionsWeatherInfoNoaa */
-  WEATHER_INFO_NOAA = 1 << 13,
-
-  /* Show Vatsim weather in info panel.
-   * ui->checkBoxOptionsWeatherInfoVatsim */
-  WEATHER_INFO_VATSIM = 1 << 14,
-
-  /* Show FSX/P3D or X-Plane weather in info panel.
-   * ui->checkBoxOptionsWeatherInfoFs */
-  WEATHER_INFO_FS = 1 << 15,
-
-  /* Show ASN weather in tooltip.
-   * ui->checkBoxOptionsWeatherTooltipAsn */
-  WEATHER_TOOLTIP_ACTIVESKY = 1 << 16,
-
-  /* Show NOAA weather in tooltip.
-   * ui->checkBoxOptionsWeatherTooltipNoaa */
-  WEATHER_TOOLTIP_NOAA = 1 << 17,
-
-  /* Show Vatsim weather in tooltip.
-   * ui->checkBoxOptionsWeatherTooltipVatsim */
-  WEATHER_TOOLTIP_VATSIM = 1 << 18,
-
-  /* Show FSX/P3D or X-Plane weather in tooltip.
-   * ui->checkBoxOptionsWeatherTooltipFs */
-  WEATHER_TOOLTIP_FS = 1 << 19,
-
   /* No box mode when moving map.
    * ui->checkBoxOptionsSimUpdatesConstant */
-  SIM_UPDATE_MAP_CONSTANTLY = 1 << 20,
+  SIM_UPDATE_MAP_CONSTANTLY = 1 << 12,
 
   /* Center flight plan after loading.
    * ui->checkBoxOptionsGuiAvoidOverwrite */
-  GUI_AVOID_OVERWRITE_FLIGHTPLAN = 1 << 21,
+  GUI_AVOID_OVERWRITE_FLIGHTPLAN = 1 << 13,
 
   /* radioButtonCacheUseOnlineElevation */
-  CACHE_USE_ONLINE_ELEVATION = 1 << 22,
+  CACHE_USE_ONLINE_ELEVATION = 1 << 14,
 
   /* radioButtonCacheUseOnlineElevation */
-  CACHE_USE_OFFLINE_ELEVATION = 1 << 23,
+  CACHE_USE_OFFLINE_ELEVATION = 1 << 15,
 
   /* checkBoxOptionsShowTod*/
-  FLIGHT_PLAN_SHOW_TOD = 1 << 24,
-
-  /* checkBoxOptionsStartupLoadSearch */
-  STARTUP_LOAD_INFO = 1 << 25,
+  FLIGHT_PLAN_SHOW_TOD = 1 << 16,
 
   /* checkBoxOptionsStartupLoadInfoContent */
-  STARTUP_LOAD_SEARCH = 1 << 26,
+  STARTUP_LOAD_INFO = 1 << 17,
+
+  /* checkBoxOptionsStartupLoadSearch */
+  STARTUP_LOAD_SEARCH = 1 << 18,
 
   /* checkBoxOptionsStartupLoadTrail */
-  STARTUP_LOAD_TRAIL = 1 << 27,
+  STARTUP_LOAD_TRAIL = 1 << 19,
 
   /* checkBoxOptionsGuiOverrideLanguage */
-  GUI_OVERRIDE_LANGUAGE = 1 << 28,
+  GUI_OVERRIDE_LANGUAGE = 1 << 20,
 
   /* checkBoxOptionsGuiOverrideLocale */
-  GUI_OVERRIDE_LOCALE = 1 << 29,
+  GUI_OVERRIDE_LOCALE = 1 << 21,
 
   /* checkBoxOptionsRouteExportUserWpt */
-  ROUTE_GARMIN_USER_WPT = 1 << 30
+  ROUTE_GARMIN_USER_WPT = 1 << 22,
+
+  /* checkBoxOptionsRouteDeclination */
+  ROUTE_IGNORE_VOR_DECLINATION = 1 << 23
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags);
-
-/* Extension from flags to avoid overflow */
-enum Flag2
-{
-  NO_FLAGS2 = 0,
-
-  /* Treat empty airports special.
-   * ui->checkBoxOptionsMapEmptyAirports3D */
-  MAP_EMPTY_AIRPORTS_3D = 1 << 0,
-
-  /* Save PLN using short names
-   * ui->checkBoxOptionsRouteShortName */
-  ROUTE_SAVE_SHORT_NAME = 1 << 1,
-
-  /* ui->checkBoxOptionsMapAirportText */
-  MAP_AIRPORT_TEXT_BACKGROUND = 1 << 2,
-
-  /* ui->checkBoxOptionsMapNavaidText */
-  MAP_NAVAID_TEXT_BACKGROUND = 1 << 3,
-
-  /* ui->checkBoxOptionsMapFlightplanText */
-  MAP_ROUTE_TEXT_BACKGROUND = 1 << 4,
-
-  /* ui->checkBoxOptionsMapAirportBoundary */
-  MAP_AIRPORT_BOUNDARY = 1 << 5,
-
-  /* ui->checkBoxOptionsMapFlightplanDimPassed */
-  MAP_ROUTE_DIM_PASSED = 1 << 6,
-
-  /* ui->checkBoxOptionsSimDoNotFollowOnScroll */
-  ROUTE_NO_FOLLOW_ON_MOVE = 1 << 7,
-
-  /* ui->checkBoxOptionsSimCenterLeg */
-  ROUTE_AUTOZOOM = 1 << 8,
-
-  /* ui->checkBoxOptionsMapAirportDiagram */
-  MAP_AIRPORT_DIAGRAM = 1 << 9,
-
-  /* ui->checkBoxOptionsSimCenterLegTable */
-  ROUTE_CENTER_ACTIVE_LEG = 1 << 10,
-
-  /* Show IVAO weather in info panel.
-   * ui->checkBoxOptionsWeatherInfoIvao*/
-  WEATHER_INFO_IVAO = 1 << 11,
-
-  /* Show IVAO weather in tooltip.
-   * ui->checkBoxOptionsWeatherTooltipIvao*/
-  WEATHER_TOOLTIP_IVAO = 1 << 12,
-
-  /* checkBoxOptionsMapZoomAvoidBlurred */
-  MAP_AVOID_BLURRED_MAP = 1 << 13,
-
-  /* checkBoxOptionsMapUndock */
-  MAP_ALLOW_UNDOCK = 1 << 14
-
-};
-
-Q_DECLARE_FLAGS(Flags2, Flag2);
-Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags2);
-
-/* Changing these option values will also change the saved values thus invalidating user settings */
-enum DisplayOption
-{
-  ITEM_NONE = 0,
-
-  ITEM_AIRPORT_NAME = 1 << 1,
-  ITEM_AIRPORT_TOWER = 1 << 2,
-  ITEM_AIRPORT_ATIS = 1 << 3,
-  ITEM_AIRPORT_RUNWAY = 1 << 4,
-  // ITEM_AIRPORT_WIND_POINTER = 1 << 5,
-
-  ITEM_USER_AIRCRAFT_REGISTRATION = 1 << 8,
-  ITEM_USER_AIRCRAFT_TYPE = 1 << 9,
-  ITEM_USER_AIRCRAFT_AIRLINE = 1 << 10,
-  ITEM_USER_AIRCRAFT_FLIGHT_NUMBER = 1 << 11,
-  ITEM_USER_AIRCRAFT_IAS = 1 << 12,
-  ITEM_USER_AIRCRAFT_GS = 1 << 13,
-  ITEM_USER_AIRCRAFT_CLIMB_SINK = 1 << 14,
-  ITEM_USER_AIRCRAFT_HEADING = 1 << 15,
-  ITEM_USER_AIRCRAFT_ALTITUDE = 1 << 16,
-  ITEM_USER_AIRCRAFT_WIND = 1 << 17,
-  ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
-  ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
-
-  ITEM_AI_AIRCRAFT_DEP_DEST = 1 << 21,
-  ITEM_AI_AIRCRAFT_REGISTRATION = 1 << 22,
-  ITEM_AI_AIRCRAFT_TYPE = 1 << 23,
-  ITEM_AI_AIRCRAFT_AIRLINE = 1 << 24,
-  ITEM_AI_AIRCRAFT_FLIGHT_NUMBER = 1 << 25,
-  ITEM_AI_AIRCRAFT_IAS = 1 << 26,
-  ITEM_AI_AIRCRAFT_GS = 1 << 27,
-  ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 28,
-  ITEM_AI_AIRCRAFT_HEADING = 1 << 29,
-  ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 30
-};
-
-Q_DECLARE_FLAGS(DisplayOptions, DisplayOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptions);
-
-enum DisplayOptionRose
-{
-  ROSE_NONE = 0,
-  ROSE_RANGE_RINGS = 1 << 0,
-  ROSE_DEGREE_MARKS = 1 << 1,
-  ROSE_DEGREE_LABELS = 1 << 2,
-  ROSE_HEADING_LINE = 1 << 3,
-  ROSE_TRACK_LINE = 1 << 4,
-  ROSE_TRACK_LABEL = 1 << 5,
-  ROSE_CRAB_ANGLE = 1 << 6,
-  ROSE_NEXT_WAYPOINT = 1 << 7,
-  ROSE_DIR_LABLES = 1 << 8
-};
-
-Q_DECLARE_FLAGS(DisplayOptionsRose, DisplayOptionRose);
-Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptionsRose);
-
-enum DisplayTooltipOption
-{
-  TOOLTIP_NONE = 0,
-  TOOLTIP_AIRPORT = 1 << 1,
-  TOOLTIP_NAVAID = 1 << 2,
-  TOOLTIP_AIRSPACE = 1 << 3
-};
-
-Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayTooltipOptions);
-
-enum DisplayClickOption
-{
-  CLICK_NONE = 0,
-  CLICK_AIRPORT = 1 << 1,
-  CLICK_NAVAID = 1 << 2,
-  CLICK_AIRSPACE = 1 << 3
-};
-
-Q_DECLARE_FLAGS(DisplayClickOptions, DisplayClickOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayClickOptions);
 
 /* Map detail level during scrolling or zooming */
 enum MapScrollDetail
@@ -290,6 +124,14 @@ enum MapScrollDetail
   HIGHER,
   NORMAL,
   NONE
+};
+
+/* Navigation mode */
+enum MapNavigation
+{
+  MAP_NAV_CLICK_DRAG_MOVE,
+  MAP_NAV_CLICK_CENTER,
+  MAP_NAV_TOUCHSCREEN
 };
 
 /* Speed of simualator aircraft updates */
@@ -348,9 +190,11 @@ enum UnitVertSpeed
 /* comboBoxOptionsUnitCoords */
 enum UnitCoords
 {
-  COORDS_DMS,
-  COORDS_DEC,
-  COORDS_DM
+  COORDS_DMS, /* Degree, minute and seconds */
+  COORDS_DEC, /* Decimal degree */
+  COORDS_DM, /* Degree and minutes */
+  COORDS_LATY_LONX, /* lat/lon with sign */
+  COORDS_LONX_LATY /* lon/lat with sign */
 };
 
 /* comboBoxOptionsUnitVertFuel */
@@ -390,6 +234,7 @@ enum OnlineNetwork
   ONLINE_NONE,
   ONLINE_VATSIM,
   ONLINE_IVAO,
+  ONLINE_PILOTEDGE,
   ONLINE_CUSTOM_STATUS,
   ONLINE_CUSTOM
 };
@@ -401,11 +246,253 @@ enum OnlineFormat
   ONLINE_FORMAT_IVAO
 };
 
-}
+} // namespace opts
+
+namespace opts2 {
+/* Extension from flags to avoid overflow */
+enum Flag2
+{
+  NO_FLAGS2 = 0,
+
+  /* Treat empty airports special.
+   * ui->checkBoxOptionsMapEmptyAirports3D */
+  MAP_EMPTY_AIRPORTS_3D = 1 << 0,
+
+  /* Save PLN using short names
+   * ui->checkBoxOptionsRouteShortName */
+  ROUTE_SAVE_SHORT_NAME = 1 << 1,
+
+  /* ui->checkBoxOptionsMapAirportText */
+  MAP_AIRPORT_TEXT_BACKGROUND = 1 << 2,
+
+  /* ui->checkBoxOptionsMapNavaidText */
+  MAP_NAVAID_TEXT_BACKGROUND = 1 << 3,
+
+  /* ui->checkBoxOptionsMapFlightplanText */
+  MAP_ROUTE_TEXT_BACKGROUND = 1 << 4,
+
+  /* ui->checkBoxOptionsMapAirportBoundary */
+  MAP_AIRPORT_BOUNDARY = 1 << 5,
+
+  /* ui->checkBoxOptionsMapFlightplanDimPassed */
+  MAP_ROUTE_DIM_PASSED = 1 << 6,
+
+  /* ui->checkBoxOptionsSimDoNotFollowOnScroll */
+  ROUTE_NO_FOLLOW_ON_MOVE = 1 << 7,
+
+  /* ui->checkBoxOptionsSimCenterLeg */
+  ROUTE_AUTOZOOM = 1 << 8,
+
+  /* ui->checkBoxOptionsMapAirportDiagram */
+  MAP_AIRPORT_DIAGRAM = 1 << 9,
+
+  /* ui->checkBoxOptionsSimCenterLegTable */
+  ROUTE_CENTER_ACTIVE_LEG = 1 << 10,
+
+  /* checkBoxOptionsMapZoomAvoidBlurred */
+  MAP_AVOID_BLURRED_MAP = 1 << 11,
+
+  /* checkBoxOptionsMapUndock */
+  MAP_ALLOW_UNDOCK = 1 << 12,
+
+  /* checkBoxOptionsGuiHighDpi */
+  HIGH_DPI_DISPLAY_SUPPORT = 1 << 13,
+
+  /* checkBoxDisplayOnlineNameLookup */
+  ONLINE_AIRSPACE_BY_NAME = 1 << 14,
+
+  /* checkBoxDisplayOnlineFilenameLookup */
+  ONLINE_AIRSPACE_BY_FILE = 1 << 15,
+
+  /* checkBoxOptionsGuiProposeFilename */
+  PROPOSE_FILENAME = 1 << 16,
+
+  /* checkBoxOptionsGuiRaiseWindows */
+  RAISE_WINDOWS = 1 << 17,
+
+  /* checkBoxOptionsUnitFuelOther */
+  UNIT_FUEL_SHOW_OTHER = 1 << 18,
+
+  /* checkBoxOptionsUnitTrueCourse */
+  UNIT_TRUE_COURSE = 1 << 19
+};
+
+Q_DECLARE_FLAGS(Flags2, Flag2);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts2::Flags2);
+
+} // namespace opts2
+
+namespace optsw {
+
+enum FlagWeather
+{
+  NO_WEATHER_FLAGS = 0,
+
+  /* Show ASN weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoAsn */
+  WEATHER_INFO_ACTIVESKY = 1 << 0,
+
+  /* Show NOAA weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoNoaa */
+  WEATHER_INFO_NOAA = 1 << 1,
+
+  /* Show Vatsim weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoVatsim */
+  WEATHER_INFO_VATSIM = 1 << 2,
+
+  /* Show FSX/P3D or X-Plane weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoFs */
+  WEATHER_INFO_FS = 1 << 3,
+
+  /* Show IVAO weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoIvao*/
+  WEATHER_INFO_IVAO = 1 << 4,
+
+  /* Show ASN weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipAsn */
+  WEATHER_TOOLTIP_ACTIVESKY = 1 << 5,
+
+  /* Show NOAA weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipNoaa */
+  WEATHER_TOOLTIP_NOAA = 1 << 6,
+
+  /* Show Vatsim weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipVatsim */
+  WEATHER_TOOLTIP_VATSIM = 1 << 7,
+
+  /* Show FSX/P3D or X-Plane weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipFs */
+  WEATHER_TOOLTIP_FS = 1 << 8,
+
+  /* Show IVAO weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipIvao*/
+  WEATHER_TOOLTIP_IVAO = 1 << 9,
+
+  WEATHER_INFO_ALL = WEATHER_INFO_ACTIVESKY | WEATHER_INFO_NOAA | WEATHER_INFO_VATSIM | WEATHER_INFO_FS |
+                     WEATHER_INFO_IVAO,
+
+  WEATHER_TOOLTIP_ALL = WEATHER_TOOLTIP_ACTIVESKY | WEATHER_TOOLTIP_NOAA | WEATHER_TOOLTIP_VATSIM | WEATHER_TOOLTIP_FS |
+                        WEATHER_TOOLTIP_IVAO
+};
+
+Q_DECLARE_FLAGS(FlagsWeather, FlagWeather);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsw::FlagsWeather);
+} // namespace opts2
+
+namespace optsd {
+/* Changing these option values will also change the saved values thus invalidating user settings */
+enum DisplayOption
+{
+  ITEM_NONE = 0,
+
+  ITEM_AIRPORT_NAME = 1 << 1,
+  ITEM_AIRPORT_TOWER = 1 << 2,
+  ITEM_AIRPORT_ATIS = 1 << 3,
+  ITEM_AIRPORT_RUNWAY = 1 << 4,
+  // ITEM_AIRPORT_WIND_POINTER = 1 << 5,
+
+  ITEM_USER_AIRCRAFT_REGISTRATION = 1 << 8,
+  ITEM_USER_AIRCRAFT_TYPE = 1 << 9,
+  ITEM_USER_AIRCRAFT_AIRLINE = 1 << 10,
+  ITEM_USER_AIRCRAFT_FLIGHT_NUMBER = 1 << 11,
+  ITEM_USER_AIRCRAFT_IAS = 1 << 12,
+  ITEM_USER_AIRCRAFT_GS = 1 << 13,
+  ITEM_USER_AIRCRAFT_CLIMB_SINK = 1 << 14,
+  ITEM_USER_AIRCRAFT_HEADING = 1 << 15,
+  ITEM_USER_AIRCRAFT_ALTITUDE = 1 << 16,
+  ITEM_USER_AIRCRAFT_WIND = 1 << 17,
+  ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
+  ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
+
+  ITEM_AI_AIRCRAFT_DEP_DEST = 1 << 21,
+  ITEM_AI_AIRCRAFT_REGISTRATION = 1 << 22,
+  ITEM_AI_AIRCRAFT_TYPE = 1 << 23,
+  ITEM_AI_AIRCRAFT_AIRLINE = 1 << 24,
+  ITEM_AI_AIRCRAFT_FLIGHT_NUMBER = 1 << 25,
+  ITEM_AI_AIRCRAFT_IAS = 1 << 26,
+  ITEM_AI_AIRCRAFT_GS = 1 << 27,
+  ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 28,
+  ITEM_AI_AIRCRAFT_HEADING = 1 << 29,
+  ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 30
+};
+
+Q_DECLARE_FLAGS(DisplayOptions, DisplayOption);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptions);
+
+/* On-screen navigation aids */
+enum DisplayOptionNavAid
+{
+  NAVAIDS_NONE = 0,
+  NAVAIDS_CENTER_CROSS = 1 << 1, /* White center cross on black background */
+  NAVAIDS_TOUCHSCREEN_AREAS = 1 << 2, /* White center marks showing touch areas on black background */
+  NAVAIDS_TOUCHSCREEN_REGIONS = 1 << 3, /* Dim gray highlighted touch areas  */
+  NAVAIDS_TOUCHSCREEN_ICONS = 1 << 4 /* Icons */
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsNavAid, DisplayOptionNavAid);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsNavAid);
+
+enum DisplayOptionRose
+{
+  ROSE_NONE = 0,
+  ROSE_RANGE_RINGS = 1 << 0,
+  ROSE_DEGREE_MARKS = 1 << 1,
+  ROSE_DEGREE_LABELS = 1 << 2,
+  ROSE_HEADING_LINE = 1 << 3,
+  ROSE_TRACK_LINE = 1 << 4,
+  ROSE_TRACK_LABEL = 1 << 5,
+  ROSE_CRAB_ANGLE = 1 << 6,
+  ROSE_NEXT_WAYPOINT = 1 << 7,
+  ROSE_DIR_LABLES = 1 << 8
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsRose, DisplayOptionRose);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRose);
+
+enum DisplayOptionRoute
+{
+  ROUTE_NONE = 0,
+  ROUTE_DISTANCE = 1 << 0,
+  ROUTE_MAG_COURSE_RHUMB = 1 << 1,
+  ROUTE_TRUE_COURSE_RHUMB = 1 << 2,
+  ROUTE_MAG_COURSE_GC = 1 << 3,
+  ROUTE_TRUE_COURSE_GC = 1 << 4
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRoute);
+
+enum DisplayTooltipOption
+{
+  TOOLTIP_NONE = 0,
+  TOOLTIP_AIRPORT = 1 << 1,
+  TOOLTIP_NAVAID = 1 << 2,
+  TOOLTIP_AIRSPACE = 1 << 3,
+  TOOLTIP_WIND = 1 << 4
+};
+
+Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayTooltipOptions);
+
+enum DisplayClickOption
+{
+  CLICK_NONE = 0,
+  CLICK_AIRPORT = 1 << 1,
+  CLICK_NAVAID = 1 << 2,
+  CLICK_AIRSPACE = 1 << 3
+};
+
+Q_DECLARE_FLAGS(DisplayClickOptions, DisplayClickOption);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayClickOptions);
+
+} // namespace optsd
 
 /*
  * Contains global options that are provided using a singelton pattern.
  * All default values are defined in the widgets in the options.ui file.
+ *
+ * Values applied by the reset function in the options dialog are defined in this structure.
+ *
  * This class will be populated by the OptionsDialog which loads widget data from the settings
  * and transfers this data into this class.
  */
@@ -424,7 +511,7 @@ public:
     return flags;
   }
 
-  opts::Flags2 getFlags2() const
+  opts2::Flags2 getFlags2() const
   {
     return flags2;
   }
@@ -459,7 +546,7 @@ public:
     return unitCoords;
   }
 
-  opts::UnitFuelAndWeight getUnitFuelWeight() const
+  opts::UnitFuelAndWeight getUnitFuelAndWeight() const
   {
     return unitFuelWeight;
   }
@@ -474,6 +561,12 @@ public:
   const QString& getWeatherActiveSkyPath() const
   {
     return weatherActiveSkyPath;
+  }
+
+  /* X-Plane path that overrides the default */
+  const QString& getWeatherXplanePath() const
+  {
+    return weatherXplanePath;
   }
 
   const QString& getWeatherNoaaUrl() const
@@ -506,6 +599,11 @@ public:
   opts::MapScrollDetail getMapScrollDetail() const
   {
     return mapScrollDetail;
+  }
+
+  opts::MapNavigation getMapNavigation() const
+  {
+    return mapNavigation;
   }
 
   opts::SimUpdateRate getSimUpdateRate() const
@@ -618,6 +716,16 @@ public:
     return displaySymbolSizeAirport;
   }
 
+  int getDisplaySymbolSizeAirportWeather() const
+  {
+    return displaySymbolSizeAirportWeather;
+  }
+
+  int getDisplaySymbolSizeWindBarbs() const
+  {
+    return displaySymbolSizeWindBarbs;
+  }
+
   int getDisplaySymbolSizeAircraftAi() const
   {
     return displaySymbolSizeAircraftAi;
@@ -688,22 +796,32 @@ public:
     return trailColor;
   }
 
-  const opts::DisplayOptions& getDisplayOptions() const
+  const optsd::DisplayOptions& getDisplayOptions() const
   {
     return displayOptions;
   }
 
-  const opts::DisplayOptionsRose& getDisplayOptionsRose() const
+  const optsd::DisplayOptionsRose& getDisplayOptionsRose() const
   {
     return displayOptionsRose;
   }
 
-  opts::DisplayTooltipOptions getDisplayTooltipOptions() const
+  const optsd::DisplayOptionsNavAid& getDisplayOptionsNavAid() const
+  {
+    return displayOptionsNavAid;
+  }
+
+  const optsd::DisplayOptionsRoute& getDisplayOptionsRoute() const
+  {
+    return displayOptionsRoute;
+  }
+
+  optsd::DisplayTooltipOptions getDisplayTooltipOptions() const
   {
     return displayTooltipOptions;
   }
 
-  opts::DisplayClickOptions getDisplayClickOptions() const
+  optsd::DisplayClickOptions getDisplayClickOptions() const
   {
     return displayClickOptions;
   }
@@ -834,6 +952,61 @@ public:
     return displayOnlineTower;
   }
 
+  QString getWebDocumentRoot() const
+  {
+    return webDocumentRoot;
+  }
+
+  int getWebPort() const
+  {
+    return webPort;
+  }
+
+  bool isWebEncrypted() const
+  {
+    return webEncrypted;
+  }
+
+  const QString& getWeatherXplaneWind() const
+  {
+    return weatherXplaneWind;
+  }
+
+  const QString& getWeatherNoaaWindBaseUrl() const
+  {
+    return weatherNoaaWindBaseUrl;
+  }
+
+  const QString& getCacheUserAirspacePath() const
+  {
+    return cacheUserAirspacePath;
+  }
+
+  const QString& getCacheUserAirspaceExtensions() const
+  {
+    return cacheUserAirspaceExtensions;
+  }
+
+  int getDisplayTransparencyMora() const
+  {
+    return displayTransparencyMora;
+  }
+
+  int getDisplayTextSizeMora() const
+  {
+    return displayTextSizeMora;
+  }
+
+  int getMapNavTouchArea() const
+  {
+    return mapNavTouchArea;
+  }
+
+  optsw::FlagsWeather getFlagsWeather() const
+  {
+    return flagsWeather;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -844,47 +1017,38 @@ private:
   static OptionData *optionData;
 
   // Defines the defaults used for reset
-  opts::Flags flags =
-    opts::STARTUP_LOAD_KML |
-    opts::STARTUP_LOAD_MAP_SETTINGS |
-    opts::STARTUP_LOAD_ROUTE |
-    opts::STARTUP_SHOW_LAST |
+  opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE |
+                      opts::STARTUP_SHOW_LAST | opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE |
+                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
+                      opts::FLIGHT_PLAN_SHOW_TOD | opts::CACHE_USE_ONLINE_ELEVATION |
+                      opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL;
 
-    opts::GUI_CENTER_KML |
-    opts::GUI_CENTER_ROUTE |
-    opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN |
+  // Defines the defaults used for reset
+  optsw::FlagsWeather flagsWeather =
+    optsw::WEATHER_INFO_FS |
+    optsw::WEATHER_INFO_ACTIVESKY |
+    optsw::WEATHER_INFO_NOAA |
+    optsw::WEATHER_TOOLTIP_FS |
+    optsw::WEATHER_TOOLTIP_ACTIVESKY |
+    optsw::WEATHER_TOOLTIP_NOAA;
 
-    opts::MAP_EMPTY_AIRPORTS |
-
-    opts::ROUTE_ALTITUDE_RULE |
-
-    opts::WEATHER_INFO_FS |
-    opts::WEATHER_INFO_ACTIVESKY |
-    opts::WEATHER_INFO_NOAA |
-    opts::WEATHER_INFO_VATSIM |
-
-    opts::WEATHER_TOOLTIP_FS |
-    opts::WEATHER_TOOLTIP_ACTIVESKY |
-    opts::WEATHER_TOOLTIP_NOAA |
-
-    opts::FLIGHT_PLAN_SHOW_TOD |
-    opts::CACHE_USE_ONLINE_ELEVATION
-  ;
-
-  opts::Flags2 flags2 = opts::MAP_AIRPORT_TEXT_BACKGROUND | opts::MAP_ROUTE_TEXT_BACKGROUND |
-                        opts::MAP_ROUTE_DIM_PASSED | opts::MAP_AIRPORT_BOUNDARY | opts::MAP_AIRPORT_DIAGRAM |
-                        opts::MAP_ALLOW_UNDOCK | opts::MAP_AVOID_BLURRED_MAP;
+  opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_ROUTE_TEXT_BACKGROUND |
+                         opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AIRPORT_DIAGRAM |
+                         opts2::MAP_ALLOW_UNDOCK | opts2::MAP_AVOID_BLURRED_MAP | opts2::ONLINE_AIRSPACE_BY_FILE |
+                         opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS | opts2::MAP_EMPTY_AIRPORTS_3D |
+                         opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |
+                         opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_AUTOZOOM | opts2::ROUTE_NO_FOLLOW_ON_MOVE;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});
 
-  // ui->lineEditOptionsWeatherAsnPath
-  QString weatherActiveSkyPath,
-          weatherNoaaUrl = "https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT",
+  QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
+          weatherXplanePath, // lineEditOptionsWeatherXplanePath
+          weatherNoaaUrl = "https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT",
           weatherVatsimUrl = "https://metar.vatsim.net/metar.php?id=%1",
           weatherIvaoUrl = "http://wx.ivao.aero/metar.php";
 
-  QString cacheOfflineElevationPath;
+  QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions = "*.txt";
 
   // ui->listWidgetOptionsDatabaseAddon
   QStringList databaseAddonExclude;
@@ -893,6 +1057,7 @@ private:
   QStringList databaseExclude;
 
   opts::MapScrollDetail mapScrollDetail = opts::HIGHER;
+  opts::MapNavigation mapNavigation = opts::MAP_NAV_CLICK_DRAG_MOVE;
 
   // ui->radioButtonOptionsMapSimUpdateFast
   // ui->radioButtonOptionsMapSimUpdateLow
@@ -980,6 +1145,12 @@ private:
   // spinBoxOptionsDisplaySymbolSizeAirport
   int displaySymbolSizeAirport = 100;
 
+  // spinBoxOptionsDisplaySymbolSizeAirportWeather
+  int displaySymbolSizeAirportWeather = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeWindBarbs
+  int displaySymbolSizeWindBarbs = 100;
+
   // spinBoxOptionsDisplaySymbolSizeAircraftAi
   int displaySymbolSizeAircraftAi = 100;
 
@@ -1049,29 +1220,45 @@ private:
   // spinBoxDisplayOnlineTower
   int displayOnlineTower = 20;
 
-  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, flightplanPassedColor, trailColor;
+  // spinBoxOptionsDisplayTransparencyMora
+  int displayTransparencyMora = 50;
+
+  // spinBoxOptionsDisplayTransparencyMora
+  int displayTextSizeMora = 100;
+
+  // spinBoxOptionsMapNavTouchscreenArea
+  int mapNavTouchArea = 10;
+
+  QColor flightplanColor = QColor(Qt::yellow), flightplanProcedureColor = QColor(255, 150, 0),
+         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray),
+         trailColor = QColor(Qt::black);
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;
 
   /* Default values are set by widget states - these are needed for the reset button */
-  opts::DisplayOptions displayOptions =
-    opts::ITEM_AIRPORT_NAME | opts::ITEM_AIRPORT_TOWER | opts::ITEM_AIRPORT_ATIS |
-    opts::ITEM_AIRPORT_RUNWAY |
-    opts::ITEM_USER_AIRCRAFT_GS | opts::ITEM_USER_AIRCRAFT_ALTITUDE |
-    opts::ITEM_USER_AIRCRAFT_WIND | opts::ITEM_USER_AIRCRAFT_TRACK_LINE |
-    opts::ITEM_USER_AIRCRAFT_WIND_POINTER |
-    opts::ITEM_AI_AIRCRAFT_REGISTRATION | opts::ITEM_AI_AIRCRAFT_TYPE |
-    opts::ITEM_AI_AIRCRAFT_AIRLINE | opts::ITEM_AI_AIRCRAFT_GS |
-    opts::ITEM_AI_AIRCRAFT_ALTITUDE | opts::ITEM_AI_AIRCRAFT_DEP_DEST;
+  optsd::DisplayOptions displayOptions =
+    optsd::ITEM_AIRPORT_NAME | optsd::ITEM_AIRPORT_TOWER | optsd::ITEM_AIRPORT_ATIS |
+    optsd::ITEM_AIRPORT_RUNWAY |
+    optsd::ITEM_USER_AIRCRAFT_GS | optsd::ITEM_USER_AIRCRAFT_ALTITUDE |
+    optsd::ITEM_USER_AIRCRAFT_WIND | optsd::ITEM_USER_AIRCRAFT_TRACK_LINE |
+    optsd::ITEM_USER_AIRCRAFT_WIND_POINTER |
+    optsd::ITEM_AI_AIRCRAFT_REGISTRATION | optsd::ITEM_AI_AIRCRAFT_TYPE |
+    optsd::ITEM_AI_AIRCRAFT_AIRLINE | optsd::ITEM_AI_AIRCRAFT_GS |
+    optsd::ITEM_AI_AIRCRAFT_ALTITUDE | optsd::ITEM_AI_AIRCRAFT_DEP_DEST;
 
-  opts::DisplayOptionsRose displayOptionsRose =
-    opts::ROSE_RANGE_RINGS | opts::ROSE_DEGREE_MARKS | opts::ROSE_DEGREE_LABELS | opts::ROSE_HEADING_LINE |
-    opts::ROSE_TRACK_LINE | opts::ROSE_TRACK_LABEL | opts::ROSE_CRAB_ANGLE | opts::ROSE_NEXT_WAYPOINT;
+  optsd::DisplayOptionsRose displayOptionsRose =
+    optsd::ROSE_RANGE_RINGS | optsd::ROSE_DEGREE_MARKS | optsd::ROSE_DEGREE_LABELS | optsd::ROSE_HEADING_LINE |
+    optsd::ROSE_TRACK_LINE | optsd::ROSE_TRACK_LABEL | optsd::ROSE_CRAB_ANGLE | optsd::ROSE_NEXT_WAYPOINT |
+    optsd::ROSE_DIR_LABLES;
 
-  opts::DisplayTooltipOptions displayTooltipOptions = opts::TOOLTIP_AIRPORT | opts::TOOLTIP_AIRSPACE |
-                                                      opts::TOOLTIP_NAVAID;
-  opts::DisplayClickOptions displayClickOptions = opts::CLICK_AIRPORT | opts::CLICK_AIRSPACE | opts::CLICK_NAVAID;
+  optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
+
+  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE_RHUMB;
+
+  optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
+                                                       optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND;
+  optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRPORT | optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
 
   opts::UpdateRate updateRate = opts::DAILY;
   opts::UpdateChannels updateChannels = opts::STABLE;
@@ -1088,6 +1275,16 @@ private:
   int onlineReloadSeconds = 180, onlineReloadSecondsConfig = 180;
   QString onlineVatsimStatusUrl;
   QString onlineIvaoStatusUrl;
+  QString onlinePilotEdgeStatusUrl;
+
+  /* Webserver values */
+  QString webDocumentRoot;
+  int webPort = 8965;
+  /* true for HTTPS / SSL */
+  bool webEncrypted = false;
+
+  /* X-Plane GRIB file or NOAA GRIB base URL */
+  QString weatherXplaneWind, weatherNoaaWindBaseUrl = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl";
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

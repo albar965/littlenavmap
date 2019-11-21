@@ -26,8 +26,14 @@
 #include <QClipboard>
 #include <QMimeData>
 
-UpdateDialog::UpdateDialog(QWidget *parent, bool manualParam, bool hasDownloadParam) :
-  QDialog(parent), ui(new Ui::UpdateDialog), manual(manualParam), hasDownload(hasDownloadParam)
+static const QDialogButtonBox::ButtonRole IGNORE_THIS_UPDATE_ROLE = QDialogButtonBox::DestructiveRole;
+static const QDialogButtonBox::ButtonRole REMIND_LATER_ROLE = QDialogButtonBox::NoRole;
+static const QDialogButtonBox::ButtonRole CLOSE_ROLE = QDialogButtonBox::RejectRole;
+static const QDialogButtonBox::ButtonRole DOWNLOAD_ROLE = QDialogButtonBox::YesRole;
+static const QDialogButtonBox::ButtonRole COPY_ROLE = QDialogButtonBox::ActionRole;
+
+UpdateDialog::UpdateDialog(QWidget *parent, bool manualCheck, bool downloadAvailable)
+  : QDialog(parent), ui(new Ui::UpdateDialog), manual(manualCheck), hasDownload(downloadAvailable)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
@@ -36,20 +42,20 @@ UpdateDialog::UpdateDialog(QWidget *parent, bool manualParam, bool hasDownloadPa
   if(!manual)
   {
     // Set ignore and remind me buttons
-    ui->buttonBoxUpdate->addButton(tr("&Ignore this Update"), QDialogButtonBox::DestructiveRole);
-    QPushButton *later = ui->buttonBoxUpdate->addButton(tr("&Remind me Later"), QDialogButtonBox::NoRole);
+    ui->buttonBoxUpdate->addButton(tr("&Ignore this Update"), IGNORE_THIS_UPDATE_ROLE);
+    QPushButton *later = ui->buttonBoxUpdate->addButton(tr("&Remind me Later"), REMIND_LATER_ROLE);
     later->setDefault(true);
   }
   else
   {
-    QPushButton *close = ui->buttonBoxUpdate->addButton(QDialogButtonBox::Close); // RejectRole
+    QPushButton *close = ui->buttonBoxUpdate->addButton(tr("&Close"), CLOSE_ROLE);
     close->setDefault(true);
   }
 
   if(hasDownload)
-    ui->buttonBoxUpdate->addButton(tr("&Download in Web Browser"), QDialogButtonBox::YesRole);
+    ui->buttonBoxUpdate->addButton(tr("&Download in Web Browser"), DOWNLOAD_ROLE);
 
-  ui->buttonBoxUpdate->addButton(tr("&Copy to Clipboard"), QDialogButtonBox::ActionRole);
+  ui->buttonBoxUpdate->addButton(tr("&Copy to Clipboard"), COPY_ROLE);
 
   connect(ui->buttonBoxUpdate, &QDialogButtonBox::clicked, this, &UpdateDialog::buttonBoxClicked);
   connect(ui->textBrowserUpdate, &QTextBrowser::anchorClicked, this, &UpdateDialog::anchorClicked);
@@ -60,9 +66,9 @@ void UpdateDialog::buttonBoxClicked(QAbstractButton *button)
 {
   buttonClickedRole = ui->buttonBoxUpdate->buttonRole(button);
 
-  if(buttonClickedRole == QDialogButtonBox::ButtonRole::YesRole)
+  if(buttonClickedRole == DOWNLOAD_ROLE)
     atools::gui::HelpHandler::openUrl(this, downloadUrl);
-  else if(buttonClickedRole == QDialogButtonBox::ButtonRole::ActionRole)
+  else if(buttonClickedRole == COPY_ROLE)
   {
     // Copy formatted and plain text to clipboard
     QMimeData *data = new QMimeData;
@@ -70,7 +76,7 @@ void UpdateDialog::buttonBoxClicked(QAbstractButton *button)
     data->setText(ui->textBrowserUpdate->toPlainText());
     QGuiApplication::clipboard()->setMimeData(data);
   }
-  else if(buttonClickedRole == QDialogButtonBox::ButtonRole::RejectRole)
+  else
     QDialog::accept();
 }
 
@@ -88,6 +94,11 @@ void UpdateDialog::setMessage(const QString& text, const QUrl& url)
 QDialogButtonBox *UpdateDialog::getButtonBox()
 {
   return ui->buttonBoxUpdate;
+}
+
+bool UpdateDialog::isIgnoreThisUpdate() const
+{
+  return buttonClickedRole == IGNORE_THIS_UPDATE_ROLE;
 }
 
 void UpdateDialog::anchorClicked(const QUrl& url)

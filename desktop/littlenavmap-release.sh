@@ -1,6 +1,11 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH=${APROJECTS}/Marble-release/lib:~/Qt/5.9.5/gcc_64/lib
+# Script for internal debugging/startup
 
-cd $HOME/Projekte/build-littlenavmap-release
-$HOME/Projekte/build-littlenavmap-release/littlenavmap $@
+CONF=release
+
+cd ${APROJECTS}/build-littlenavmap-${CONF}
+
+export LD_LIBRARY_PATH=${APROJECTS}/Marble-${CONF}/lib:~/Qt/5.12.5/gcc_64/lib:${APROJECTS}/build-littlenavmap-${CONF}
+
+${APROJECTS}/build-littlenavmap-${CONF}/littlenavmap $@

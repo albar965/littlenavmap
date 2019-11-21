@@ -23,6 +23,7 @@
 #include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "geo/calculations.h"
+#include "common/formatter.h"
 #include "common/maptypes.h"
 #include "common/mapcolors.h"
 #include "common/unit.h"
@@ -55,7 +56,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirport::MapPainterAirport(MapPaintWidget* mapWidget, MapScale *mapScale,
+MapPainterAirport::MapPainterAirport(MapPaintWidget *mapWidget, MapScale *mapScale,
                                      const Route *routeParam)
   : MapPainter(mapWidget, mapScale), route(routeParam)
 {
@@ -67,24 +68,12 @@ MapPainterAirport::~MapPainterAirport()
 
 void MapPainterAirport::render(PaintContext *context)
 {
-  // Get all airports from the route and add them to the map
-  QSet<int> routeAirportIdMap; // Collect all airports from route and bounding rectangle
-
-  if(context->objectTypes.testFlag(map::FLIGHTPLAN))
-  {
-    for(const RouteLeg& routeLeg : *route)
-    {
-      if(routeLeg.getMapObjectType() == map::AIRPORT)
-        routeAirportIdMap.insert(routeLeg.getAirport().id);
-    }
-  }
-
   if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
-     (!context->mapLayerEffective->isAirportDiagramRunway()) && routeAirportIdMap.isEmpty())
+     (!context->mapLayerEffective->isAirportDiagramRunway()) && context->routeIdMap.isEmpty())
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
+  Q_UNUSED(saver)
 
   // Get airports from cache/database for the bounding rectangle and add them to the map
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
@@ -114,7 +103,8 @@ void MapPainterAirport::render(PaintContext *context)
         airport.bounding.overlaps(context->viewportRect);
 
         // Either part of the route or enabled in the actions/menus/toolbar
-        bool drawAirport = airport.isVisible(context->objectTypes) || routeAirportIdMap.contains(airport.id);
+        bool drawAirport = airport.isVisible(context->objectTypes) ||
+                           context->routeIdMap.contains(airport.getRef());
 
         if(visibleOnMap)
         {
@@ -127,7 +117,7 @@ void MapPainterAirport::render(PaintContext *context)
 
   std::sort(visibleAirports.begin(), visibleAirports.end(), sortAirportFunction);
 
-  if(context->mapLayerEffective->isAirportDiagramRunway() && context->flags2 & opts::MAP_AIRPORT_BOUNDARY)
+  if(context->mapLayerEffective->isAirportDiagramRunway() && context->flags2 & opts2::MAP_AIRPORT_BOUNDARY)
   {
     // In diagram mode draw background first to avoid overwriting other airports
     for(const PaintAirportType& airport : visibleAirports)
@@ -142,12 +132,13 @@ void MapPainterAirport::render(PaintContext *context)
       drawAirportDiagram(context, *airport.airport);
   }
 
+  textflags::TextFlags apTextFlags = context->airportTextFlags();
+
   // Add airport symbols on top of diagrams
   for(int i = 0; i < visibleAirports.size(); i++)
   {
     const MapAirport *airport = visibleAirports.at(i).airport;
     const QPointF& pt = visibleAirports.at(i).point;
-    const MapLayer *layer = context->mapLayer;
     float x = static_cast<float>(pt.x());
     float y = static_cast<float>(pt.y());
 
@@ -156,29 +147,15 @@ void MapPainterAirport::render(PaintContext *context)
       // Draw simplified runway lines
       drawAirportSymbolOverview(context, *airport, x, y);
 
-    // More detailed symbol will be drawn by the route painter - so skip here
-    if(!routeAirportIdMap.contains(airport->id))
+    // More detailed symbol will be drawn by the route or log painter - so skip here
+    if(!context->routeIdMap.contains(airport->getRef()))
     {
       // Symbol will be omitted for runway overview
       drawAirportSymbol(context, *airport, x, y);
 
-      // Build and draw airport text
-      textflags::TextFlags flags;
-
-      if(layer->isAirportInfo())
-        flags = textflags::IDENT | textflags::NAME | textflags::INFO;
-
-      if(layer->isAirportIdent())
-        flags |= textflags::IDENT;
-      else if(layer->isAirportName())
-        flags |= textflags::NAME;
-
-      if(!(context->flags2 & opts::MAP_AIRPORT_TEXT_BACKGROUND))
-        flags |= textflags::NO_BACKGROUND;
-
       context->szFont(context->textSizeAirport);
       symbolPainter->drawAirportText(context->painter, *airport, x, y,
-                                     context->dispOpts, flags,
+                                     context->dispOpts, apTextFlags,
                                      context->sz(context->symbolSizeAirport,
                                                  context->mapLayerEffective->getAirportSymbolSize()),
                                      context->mapLayerEffective->isAirportDiagramRunway(),
@@ -224,7 +201,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
       painter->resetTransform();
     }
 
-  if(context->mapLayerEffective->isAirportDiagram() && context->flags2 & opts::MAP_AIRPORT_DIAGRAM)
+  if(context->mapLayerEffective->isAirportDiagram() && context->flags2 & opts2::MAP_AIRPORT_DIAGRAM)
   {
     // For taxipaths
     const QList<MapTaxiPath> *taxipaths = airportQuery->getTaxiPaths(airport.id);
@@ -263,7 +240,7 @@ void MapPainterAirport::drawXplaneApron(const PaintContext *context, const map::
 {
   // Create the apron boundary or get it from the cache for this zoom distance
   QPainterPath boundaryPath =
-    NavApp::getApronGeometryCache()->getApronGeometry(apron, context->zoomDistanceMeter, fast);
+    mapPaintWidget->getApronGeometryCache()->getApronGeometry(apron, context->zoomDistanceMeter, fast);
 
   if(!boundaryPath.isEmpty())
     context->painter->drawPath(boundaryPath);
@@ -274,7 +251,6 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 {
   Marble::GeoPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
   bool fast = context->drawFast;
 
   painter->setBackgroundMode(Qt::OpaqueMode);
@@ -288,7 +264,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   QList<QRect> runwayRects, runwayOutlineRects;
   runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
 
-  if(!fast && context->flags2 & opts::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
+  if(!fast && context->flags2 & opts2::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
   {
     // Draw runway shoulders (X-Plane) --------------------------------
     painter->setPen(Qt::NoPen);
@@ -306,7 +282,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     }
   }
 
-  if(context->flags2 & opts::MAP_AIRPORT_DIAGRAM)
+  if(context->flags2 & opts2::MAP_AIRPORT_DIAGRAM)
   {
     if(context->mapLayerEffective->isAirportDiagram())
     {
@@ -599,7 +575,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     painter->setBackgroundMode(Qt::OpaqueMode);
   }
 
-  if(context->flags2 & opts::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
+  if(context->flags2 & opts2::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
   {
     // Draw parking --------------------------------
     const QList<MapParking> *parkings = airportQuery->getParkingsForAirport(airport.id);
@@ -859,7 +835,6 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       {
         const MapRunway& runway = runways->at(i);
         const QRect& runwayRect = runwayRects.at(i);
-        float magHeading = normalizeCourse(runway.heading - airport.magvar);
 
         QString textPrim;
         QString textSec;
@@ -869,16 +844,18 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         {
           // This case is rare (eg. LTAI) - probably primary in the wrong place
           rotate = runway.heading + 90.f;
-          textPrim = QString(tr("► ") +
-                             QString::number(normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + tr("°M"));
-          textSec = QString(QString::number(magHeading, 'f', 0) + tr("°M ◄"));
+          textPrim = tr("► ") +
+                     formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar, false, false);
+          textSec = formatter::courseTextFromTrue(runway.heading, airport.magvar, false, false) +
+                    tr(" ◄");
         }
         else
         {
           rotate = runway.heading - 90.f;
-          textPrim = QString(tr("► ") + QString::number(magHeading, 'f', 0) + tr("°M"));
-          textSec = QString(QString::number(
-                              normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + tr("°M ◄"));
+          textPrim = tr("► ") +
+                     formatter::courseTextFromTrue(runway.heading, airport.magvar, false, false);
+          textSec = formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar, false, false) +
+                    tr(" ◄");
         }
 
         QRect textRectPrim = rwHdgMetrics.boundingRect(textPrim);

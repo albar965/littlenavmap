@@ -42,6 +42,7 @@ class Dialog;
 class MainWindow;
 class Route;
 class RouteExportData;
+class QTextStream;
 
 /*
  * Covers all flight plan export and export related functions including validation and warning dialogs.
@@ -68,6 +69,9 @@ public:
 
   /* Garmin exchange format. Not a flight plan format.  */
   bool routeExportGpx();
+
+  /* Export as HTML page */
+  bool routeExportHtml();
 
   /* Majestic Dash binary format */
   bool routeExportFpr();
@@ -104,6 +108,7 @@ public:
 
   /* IVAP or X-IVAP for IVAO */
   bool routeExportIvap();
+  bool routeExportXIvap();
 
   /* FeelThere or Wilco aircraft */
   bool routeExportFeelthereFpl();
@@ -118,20 +123,29 @@ public:
   bool routeExportQwRte();
 
   /* Leonardo Maddog X */
-  bool routeExportMdx();
+  bool routeExportMdr();
+
+  /* TFDi Design 717 */
+  bool routeExportTfdi();
 
   /* Check if route has valid departure  and destination and departure parking.
    *  @return true if route can be saved anyway */
   bool routeValidate(bool validateParking, bool validateDepartureAndDestination);
 
+  /* Build short or long filename depending on settings.
+   * Short schema is ICAO{sep}ICAO{extension}{suffix}
+   *  Long schema is ICAO (NAME) ICAO (NAME){extension}{suffix}*/
+  QString buildDefaultFilename(const QString& sep = "_", const QString& suffix = ".pln",
+                               const QString& extension = QString()) const;
+
   /* Create a default filename based on departure and destination names. Suffix includes dot. */
-  QString buildDefaultFilename(const QString& extension = QString(), const QString& suffix = ".pln") const;
-  QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
+  static QString buildDefaultFilenameLong(const QString& extension = QString(), const QString& suffix = ".pln");
+  static QString buildDefaultFilenameShort(const QString& sep, const QString& suffix);
 
   /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.
    *  Also sets altitude into FlightplanEntry position. */
-  static Route routeAdjustedToProcedureOptions(const Route& route);
-  Route routeAdjustedToProcedureOptions();
+  static Route routeAdjustedToProcedureOptions(const Route& route, bool replaceCustomWp, bool removeAlternate);
+  Route routeAdjustedToProcedureOptions(bool replaceCustomWp, bool removeAlternate);
 
 signals:
   /* Show airport on map to allow parking selection */
@@ -155,6 +169,8 @@ private:
   bool exportFlighplan(const QString& filename, std::function<void(const atools::fs::pln::Flightplan&,
                                                                    const QString&)> exportFunc);
 
+  bool routeExportIvapInternal(re::RouteExportType type);
+
   /* Show online network dialog which allows the user to enter needed data */
   bool routeExportDialog(RouteExportData& exportData, re::RouteExportType flightplanType);
 
@@ -165,8 +181,11 @@ private:
   bool exportFlighplanAsVfp(const RouteExportData& exportData, const QString& filename);
 
   /* Export IVAP or X-IVAP */
-  bool exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename);
+  bool exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename, re::RouteExportType type);
   QString minToHourMinStr(int minutes);
+
+  void writeIvapLine(QTextStream& stream, const QString& key, const QString& value, re::RouteExportType type);
+  void writeIvapLine(QTextStream& stream, const QString& key, int value, re::RouteExportType type);
 
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;

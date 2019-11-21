@@ -22,8 +22,10 @@
 #include "common/unit.h"
 #include "common/constants.h"
 #include "common/formatter.h"
+#include "common/constants.h"
 #include "gui/helphandler.h"
 #include "fs/util/coordinates.h"
+#include "gui/widgetstate.h"
 
 #include <QPushButton>
 
@@ -43,10 +45,14 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const QString& name, con
   connect(ui->lineEditRouteUserWaypointLatLon, &QLineEdit::textChanged, this, &UserWaypointDialog::coordsEdited);
   connect(ui->buttonBoxRouteUserWaypoint->button(QDialogButtonBox::Help), &QPushButton::clicked,
           this, &UserWaypointDialog::helpClicked);
+
+  atools::gui::WidgetState(lnm::ROUTE_USERWAYPOINT_DIALOG).restore(this);
 }
 
 UserWaypointDialog::~UserWaypointDialog()
 {
+  atools::gui::WidgetState(lnm::ROUTE_USERWAYPOINT_DIALOG).save(this);
+
   delete ui;
 }
 
@@ -63,7 +69,11 @@ QString UserWaypointDialog::getName() const
 
 atools::geo::Pos UserWaypointDialog::getPos() const
 {
-  return atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
+  atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
+  if(OptionData::instance().getUnitCoords() == opts::COORDS_LONX_LATY)
+    // Parsing uses lat/lon - swap for lon/lat
+    pos.swapLonXLatY();
+  return pos;
 }
 
 void UserWaypointDialog::coordsEdited(const QString& text)

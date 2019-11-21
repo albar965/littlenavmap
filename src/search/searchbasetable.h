@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_SEARCHBASE_H
 
 #include "common/maptypes.h"
+#include "common/proctypes.h"
 
 #include "search/abstractsearch.h"
 
@@ -71,7 +72,7 @@ class SearchBaseTable :
 public:
   /* Class will take ownership of columnList */
   SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                  si::SearchTabIndex tabWidgetIndex);
+                  si::TabSearchId tabWidgetIndex);
   virtual ~SearchBaseTable() override;
 
   /* Disconnect and reconnect queries on database change */
@@ -94,7 +95,7 @@ public:
   virtual void styleChanged() override;
 
   /* Causes a selectionChanged signal to be emitted so map hightlights and status label can be updated */
-  virtual void updateTableSelection() override;
+  virtual void updateTableSelection(bool noFollow) override;
 
   /* Has to be called by the derived classes. Connects double click, context menu and some other actions */
   virtual void connectSearchSlots() override;
@@ -132,6 +133,8 @@ public:
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
 
+  void selectAll();
+
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -150,6 +153,7 @@ signals:
 
   /* Show approaches in context menu selected */
   void showProcedures(const map::MapAirport& airport);
+  void showProceduresCustom(const map::MapAirport& airport);
 
   /* Set airport as flight plan departure (from context menu) */
   void routeSetDeparture(const map::MapAirport& airport);
@@ -157,8 +161,15 @@ signals:
   /* Set airport as flight plan destination (from context menu) */
   void routeSetDestination(const map::MapAirport& airport);
 
+  /* Add an alternate airport */
+  void routeAddAlternate(const map::MapAirport& airport);
+
   /* Add airport or navaid to flight plan. Leg will be selected automatically */
   void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
+
+  /* Load flight plan or load aircraft performance file triggered from logbook */
+  void loadRouteFile(const QString& filepath);
+  void loadPerfFile(const QString& filepath);
 
 protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
@@ -184,26 +195,29 @@ protected:
   /* Column definitions that will be used to create the SQL queries */
   ColumnList *columns;
   QTableView *view;
-  QMainWindow *mainWindow;
+  MapQuery *mapQuery;
+  AirportQuery *airportQuery;
 
 private:
   virtual void saveViewState(bool distSearchActive) = 0;
   virtual void restoreViewState(bool distSearchActive) = 0;
   virtual void tabDeactivated() override;
 
-  void tableSelectionChanged();
+  void tableSelectionChangedInternal(bool noFollow);
   void resetView();
   void editStartTimer();
   void doubleClick(const QModelIndex& index);
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void reconnectSelectionModel();
   void getNavTypeAndId(int row, map::MapObjectTypes& navType, int& id);
+  void getNavTypeAndId(int row, map::MapObjectTypes& navType, map::MapAirspaceSources& airspaceSource, int& id);
   void editTimeout();
 
   void loadAllRowsIntoView();
   void tableCopyClipboard();
   void showInformationTriggered();
   void showApproachesTriggered();
+  void showApproachesCustomTriggered();
   void showOnMapTriggered();
   void contextMenu(const QPoint& pos);
   void dockVisibilityChanged(bool visible);
@@ -212,19 +226,23 @@ private:
   void updateFromSpinBox(int value, const Column *col);
   void updateFromMinSpinBox(int value, const Column *col);
   void updateFromMaxSpinBox(int value, const Column *col);
-  void showRow(int row);
+  void showRow(int row, bool showInfo);
   void fontChanged();
+  void showApproaches(bool custom);
+  void fetchedMore();
+
+  /* Get selected index or index of first entry in the result table */
+  QModelIndex selectedOrFirstIndex();
 
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;
-  MapQuery *mapQuery;
-  AirportQuery *airportQuery;
 
   /* Used to delay search when using the time intensive distance search */
   QTimer *updateTimer;
 
   ViewEventFilter *viewEventFilter = nullptr;
   SearchWidgetEventFilter *widgetEventFilter = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_SEARCHBASE_H

@@ -44,8 +44,10 @@ void checkAndMigrateSettings()
   if(optionsVersion.isValid())
   {
     // Migrate map style file =======================================================================
+    QFile nightstyleFile(Settings::getPath() + QDir::separator() + "little_navmap_nightstyle.ini");
     QFile mapstyleFile(Settings::getPath() + QDir::separator() + "little_navmap_mapstyle.ini");
     QSettings mapstyleSettings(mapstyleFile.fileName(), QSettings::IniFormat);
+    QSettings nightstyleSettings(nightstyleFile.fileName(), QSettings::IniFormat);
     Version mapstyleVersion(mapstyleSettings.value("Options/Version").toString());
 
     // No version or old
@@ -91,6 +93,23 @@ void checkAndMigrateSettings()
         }
       }
 
+      if(optionsVersion < Version("2.4.2.beta"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.2.beta";
+        settings.remove(lnm::ROUTE_STRING_DIALOG_OPTIONS);
+        settings.syncSettings();
+
+        nightstyleSettings.remove("StyleColors/Disabled_WindowText");
+        nightstyleSettings.sync();
+      }
+
+      if(optionsVersion < Version("2.4.3.rc1"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.3.rc1";
+        settings.remove("MainWindow/Widget_mapThemeComboBox");
+        settings.syncSettings();
+      }
+
       // CenterRadiusACC=60 and CenterRadiusFIR=60
       if(optionsVersion <= Version(2, 0, 2))
       {
@@ -114,6 +133,7 @@ void checkAndMigrateSettings()
         settings.remove(lnm::MAINWINDOW_WIDGET_STATE_POS);
         settings.remove(lnm::MAINWINDOW_WIDGET_STATE_SIZE);
         settings.remove(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED);
+        settings.syncSettings();
       }
 
       // Test the update channels

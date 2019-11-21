@@ -17,6 +17,8 @@
 
 #include "common/mapflags.h"
 
+#include "common/tabindexes.h"
+
 #include <QObject>
 
 #ifndef LITTLENAVMAP_SEARCHCONTROLLER_H
@@ -28,6 +30,7 @@ class AirportSearch;
 class NavSearch;
 class ProcedureSearch;
 class UserdataSearch;
+class LogdataSearch;
 class OnlineClientSearch;
 class OnlineCenterSearch;
 class OnlineServerSearch;
@@ -38,6 +41,10 @@ class QTreeWidget;
 class MapQuery;
 
 namespace atools {
+namespace gui {
+class TabWidgetHandler;
+
+}
 namespace sql {
 class SqlRecord;
 }
@@ -61,7 +68,7 @@ class SearchController :
   Q_OBJECT
 
 public:
-  SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearch);
+  SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam);
   virtual ~SearchController();
 
   /* Create the airport search tab */
@@ -73,6 +80,7 @@ public:
   void createProcedureSearch(QTreeWidget *treeWidget);
 
   void createUserdataSearch(QTableView *tableView);
+  void createLogdataSearch(QTableView *tableView);
 
   void createOnlineClientSearch(QTableView *tableView);
   void createOnlineCenterSearch(QTableView *tableView);
@@ -96,6 +104,11 @@ public:
   UserdataSearch *getUserdataSearch() const
   {
     return userdataSearch;
+  }
+
+  LogdataSearch *getLogdataSearch() const
+  {
+    return logdataSearch;
   }
 
   OnlineClientSearch *getOnlineClientSearch() const
@@ -123,7 +136,7 @@ public:
 
   /* Reset search and show the given type in the search result. Search widgets are populated with the
    * given parameters. Types can be airport, VOR, NDB or waypoint */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
 
   /* Get all selected airports or navaids from the active search tab */
   void getSelectedMapObjects(map::MapSearchResult& result) const;
@@ -137,11 +150,19 @@ public:
   /* Refresh after import or changes */
   void refreshUserdata();
 
+  void refreshLogdata();
+
   /* Clear selection in all search windows  */
   void clearSelection();
 
   /* True if any of the search windows has a selection */
   bool hasSelection();
+
+  void setCurrentSearchTabId(si::TabSearchId tabId);
+
+  si::TabSearchId getCurrentSearchTabId();
+
+  void resetWindowLayout();
 
 private:
   void tabChanged(int index);
@@ -151,6 +172,7 @@ private:
   void helpPressedUserdata();
   void helpPressedOnlineClient();
   void helpPressedOnlineCenter();
+  void helpPressedLogdata();
 
   MapQuery *mapQuery;
 
@@ -158,14 +180,16 @@ private:
   NavSearch *navSearch = nullptr;
   ProcedureSearch *procedureSearch = nullptr;
   UserdataSearch *userdataSearch = nullptr;
+  LogdataSearch *logdataSearch = nullptr;
   OnlineClientSearch *onlineClientSearch = nullptr;
   OnlineCenterSearch *onlineCenterSearch = nullptr;
   OnlineServerSearch *onlineServerSearch = nullptr;
 
-  QMainWindow *mainWindow;
-  QTabWidget *tabWidget = nullptr;
+  QMainWindow *mainWindow = nullptr;
+  QTabWidget *tabWidgetSearch = nullptr;
   QList<AbstractSearch *> allSearchTabs;
 
+  atools::gui::TabWidgetHandler *tabHandlerSearch = nullptr;
 };
 
 #endif // LITTLENAVMAP_SEARCHCONTROLLER_H

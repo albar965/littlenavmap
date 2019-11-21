@@ -22,6 +22,7 @@
 #include "common/aircrafttrack.h"
 #include "fs/perf/aircraftperf.h"
 #include "route/route.h"
+#include "route/routecontroller.h"
 #include "io/fileroller.h"
 #include "options/optiondata.h"
 #include "gui/dialog.h"
@@ -37,12 +38,13 @@
 #include "route/routealtitude.h"
 #include "ui_mainwindow.h"
 #include "fs/pln/flightplanio.h"
+#include "exception.h"
 
+#include <QBitArray>
 #include <QDir>
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QXmlStreamReader>
-#include <exception.h>
 
 RouteExport::RouteExport(MainWindow *parent)
   : mainWindow(parent)
@@ -83,9 +85,8 @@ bool RouteExport::routeExportRxpGns()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan as FPL for Reality XP GNS"),
       tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
-      "fpl", "Route/RxpGns", path,
-      buildDefaultFilenameShort("", ".fpl"),
-      false /* confirm overwrite */, true /* autonumber */);
+      "fpl", "Route/RxpGns", path, buildDefaultFilenameShort("", ".fpl"),
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -126,7 +127,7 @@ bool RouteExport::routeExportRxpGtn()
       tr("Save Flight Plan as GFP for Reality XP GTN"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/RxpGfp", path,
-      buildDefaultFilenameShort("_", ".gfp"));
+      buildDefaultFilenameShort("_", ".gfp"), false, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -154,7 +155,7 @@ bool RouteExport::routeExportGfp()
       "gfp", "Route/Gfp",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
       buildDefaultFilenameShort("-", ".gfp"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -180,7 +181,7 @@ bool RouteExport::routeExportTxt()
       tr("Text Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TXT), "txt", "Route/Txt",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft",
       buildDefaultFilenameShort(QString(), ".txt"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -206,7 +207,7 @@ bool RouteExport::routeExportRte()
       "rte", "Route/Rte",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
       buildDefaultFilenameShort(QString(), ".rte"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -271,7 +272,7 @@ bool RouteExport::routeExportFpl()
       QDir::separator() + "IXEG 737 Classic" +
       QDir::separator() + "coroutes",
       buildDefaultFilenameShort(QString(), ".fpl"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -329,7 +330,7 @@ bool RouteExport::routeExportFltplan()
       QDir::separator() + "navdata" +
       QDir::separator() + "FLTPLAN",
       buildDefaultFilenameShort(QString(), ".fltplan"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -363,7 +364,7 @@ bool RouteExport::routeExportXFmc()
       QDir::separator() + "XFMC" +
       QDir::separator() + "FlightPlans",
       buildDefaultFilenameShort(QString(), ".fpl"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -388,7 +389,7 @@ bool RouteExport::routeExportUFmc()
       tr("UFMC Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_UFMC), "ufmc", "Route/UFmc",
       NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort(QString(), ".ufmc"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -444,7 +445,7 @@ bool RouteExport::routeExportBbs()
       QDir::separator() + "Blackbox Simulation" +
       QDir::separator() + "Company Routes",
       buildDefaultFilenameShort(QString(), ".pln"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -469,7 +470,7 @@ bool RouteExport::routeExportFeelthereFpl()
       tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/FeelThereFpl",
       NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort("_", ".fpl"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -503,7 +504,7 @@ bool RouteExport::routeExportLeveldRte()
       QDir::separator() + "navdata" +
       QDir::separator() + "Flightplans",
       buildDefaultFilenameShort("_", ".rte"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -528,7 +529,7 @@ bool RouteExport::routeExportEfbr()
       tr("EFBR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_EFBR), "efbr", "Route/Efb",
       documentsLocation,
       buildDefaultFilenameShort("_", ".efbr"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -557,7 +558,7 @@ bool RouteExport::routeExportQwRte()
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE), "rte", "Route/QwRte",
       NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort(QString(), ".rte"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -572,26 +573,71 @@ bool RouteExport::routeExportQwRte()
   return false;
 }
 
-bool RouteExport::routeExportMdx()
+bool RouteExport::routeExportMdr()
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan for Maddog X Aircraft"),
-      tr("MDX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_MDX), "mdx", "Route/Mdx",
+      tr("MDR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_MDR), "mdr", "Route/Mdx",
       NavApp::getCurrentSimulatorBasePath(),
-      buildDefaultFilenameShort(QString(), ".mdx"),
-      false /* confirm overwrite */, true /* autonumber */);
+      buildDefaultFilenameShort(QString(), ".mdr"),
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveMdx, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveMdr, flightplanIO, _1, _2)))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved for Maddog X."));
         return true;
       }
+    }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportTfdi()
+{
+  // {Simulator}\SimObjects\Airplanes\TFDi_Design_717\Documents\Company Routes/
+
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan for TFDi Design 717"),
+      tr("XML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TFDI), "xml", "Route/Tfdi",
+      NavApp::getCurrentSimulatorBasePath() +
+      QDir::separator() + "SimObjects" +
+      QDir::separator() + "Airplanes" +
+      QDir::separator() + "TFDi_Design_717" +
+      QDir::separator() + "Documents" +
+      QDir::separator() + "Company Routes",
+      buildDefaultFilenameShort(QString(), ".xml"),
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+
+    if(!routeFile.isEmpty())
+    {
+      Route route = routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                                    true /* remove alternates */);
+      try
+      {
+        flightplanIO->saveTfdi(route.getFlightplan(), routeFile, route.getJetAirwayFlags());
+      }
+      catch(atools::Exception& e)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleException(e);
+        return false;
+      }
+      catch(...)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+        return false;
+      }
+
+      mainWindow->setStatusMessage(tr("Flight plan saved for vPilot."));
+      return true;
     }
   }
   return false;
@@ -610,7 +656,7 @@ bool RouteExport::routeExportVfp()
         tr("VFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_VFP), "vfp", "Route/Vfp",
         documentsLocation,
         buildDefaultFilenameShort(QString(), ".vfp"),
-        false /* confirm overwrite */, true /* autonumber */);
+        false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
       if(!routeFile.isEmpty())
       {
@@ -625,27 +671,39 @@ bool RouteExport::routeExportVfp()
   return false;
 }
 
+bool RouteExport::routeExportXIvap()
+{
+  return routeExportIvapInternal(re::XIVAP);
+}
+
 bool RouteExport::routeExportIvap()
+{
+  return routeExportIvapInternal(re::IVAP);
+}
+
+bool RouteExport::routeExportIvapInternal(re::RouteExportType type)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    RouteExportData exportData = createRouteExportData(re::IVAP);
-    if(routeExportDialog(exportData, re::IVAP))
+    RouteExportData exportData = createRouteExportData(type);
+    if(routeExportDialog(exportData, type))
     {
+      QString typeStr = RouteExportDialog::getRouteTypeAsDisplayString(type);
       QString routeFile = dialog->saveFileDialog(
-        tr("Export Flight Plan as IvAp/X-IvAp FPL"),
-        tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/Ivap",
+        tr("Export Flight Plan as %1 FPL").arg(typeStr),
+        tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl",
+        "Route/" + RouteExportDialog::getRouteTypeAsString(type),
         documentsLocation,
         buildDefaultFilenameShort(QString(), ".fpl"),
-        false /* confirm overwrite */, true /* autonumber */);
+        false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
       if(!routeFile.isEmpty())
       {
-        if(exportFlighplanAsIvap(exportData, routeFile))
+        if(exportFlighplanAsIvap(exportData, routeFile, type))
         {
-          mainWindow->setStatusMessage(tr("Flight plan saved for IvAp/X-IvAp."));
+          mainWindow->setStatusMessage(tr("Flight plan saved for %1.").arg(typeStr));
           return true;
         }
       }
@@ -657,6 +715,7 @@ bool RouteExport::routeExportIvap()
 RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExportType)
 {
   RouteExportData exportData;
+
   const Route& route = NavApp::getRouteConst();
   exportData.setRoute(RouteString::createStringForRoute(route, 0.f, rs::SID_STAR));
   exportData.setDeparture(route.getFlightplan().getDepartureIdent());
@@ -664,6 +723,12 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
   exportData.setDepartureTime(QDateTime::currentDateTimeUtc().time());
   exportData.setDepartureTimeActual(QDateTime::currentDateTimeUtc().time());
   exportData.setCruiseAltitude(atools::roundToInt(route.getCruisingAltitudeFeet()));
+
+  QStringList alternates = route.getAlternateIdents();
+  if(alternates.size() > 0)
+    exportData.setAlternate(alternates.at(0));
+  if(alternates.size() > 1)
+    exportData.setAlternate2(alternates.at(1));
 
   atools::fs::pln::FlightplanType flightplanType = route.getFlightplan().getFlightplanType();
   switch(routeExportType)
@@ -679,6 +744,7 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
       break;
 
     case re::IVAP:
+    case re::XIVAP:
 
       // [FLIGHTPLAN]
       // FLIGHTTYPE=N
@@ -722,7 +788,7 @@ bool RouteExport::routeExportGpx()
       title,
       tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
       "gpx", "Route/Gpx", documentsLocation, buildDefaultFilename(QString(), ".gpx"),
-      false /* confirm overwrite */, true /* autonumber */);
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 
     if(!routeFile.isEmpty())
     {
@@ -735,6 +801,33 @@ bool RouteExport::routeExportGpx()
         return true;
       }
     }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportHtml()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString routeFile = dialog->saveFileDialog(
+    tr("Save Flight Plan as HTML Page"),
+    tr("HTML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_HTML),
+    "html", "Route/Html", documentsLocation, buildDefaultFilename(QString(), ".html"),
+    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+
+  if(!routeFile.isEmpty())
+  {
+    QFile file(routeFile);
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream(&file);
+      stream.setCodec("UTF-8");
+      stream << NavApp::getRouteController()->getFlightplanTableAsHtmlDoc(24);
+      mainWindow->setStatusMessage(tr("Flight plan saved as HTML."));
+      return true;
+    }
+    else
+      atools::gui::ErrorHandler(mainWindow).handleIOError(file);
   }
   return false;
 }
@@ -797,7 +890,7 @@ bool RouteExport::routeValidate(bool validateParking, bool validateDepartureAndD
         else if(result == QMessageBox::YesToAll)
         {
           // Zoom to airport and cancel out
-          emit showRect(NavApp::getRouteConst().first().getAirport().bounding, false);
+          emit showRect(NavApp::getRouteConst().getDepartureAirportLeg().getAirport().bounding, false);
           return false;
         }
         else if(result == QMessageBox::Save)
@@ -811,11 +904,18 @@ bool RouteExport::routeValidate(bool validateParking, bool validateDepartureAndD
   return true;
 }
 
-QString RouteExport::buildDefaultFilename(const QString& extension, const QString& suffix) const
+QString RouteExport::buildDefaultFilename(const QString& sep, const QString& suffix, const QString& extension) const
+{
+  return (OptionData::instance().getFlags2() & opts2::ROUTE_SAVE_SHORT_NAME) ?
+         buildDefaultFilenameShort(sep, suffix) : buildDefaultFilenameLong(extension, suffix);
+}
+
+QString RouteExport::buildDefaultFilenameLong(const QString& extension, const QString& suffix)
 {
   QString filename;
 
-  const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplan();
+  const Route& route = NavApp::getRouteConst();
+  const atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
 
   if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
     filename = "IFR ";
@@ -823,14 +923,14 @@ QString RouteExport::buildDefaultFilename(const QString& extension, const QStrin
     filename = "VFR ";
 
   if(flightplan.getDepartureAiportName().isEmpty())
-    filename += flightplan.getEntries().first().getIcaoIdent();
+    filename += flightplan.getEntries().at(route.getDepartureAirportLegIndex()).getIcaoIdent();
   else
     filename += flightplan.getDepartureAiportName() + " (" + flightplan.getDepartureIdent() + ")";
 
   filename += " to ";
 
   if(flightplan.getDestinationAiportName().isEmpty())
-    filename += flightplan.getEntries().last().getIcaoIdent();
+    filename += flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIcaoIdent();
   else
     filename += flightplan.getDestinationAiportName() + " (" + flightplan.getDestinationIdent() + ")";
 
@@ -842,16 +942,17 @@ QString RouteExport::buildDefaultFilename(const QString& extension, const QStrin
   return filename;
 }
 
-QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix) const
+QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix)
 {
   QString filename;
 
-  const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplan();
+  const Route& route = NavApp::getRouteConst();
+  const atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
 
-  filename += flightplan.getEntries().first().getIcaoIdent();
+  filename += flightplan.getEntries().at(route.getDepartureAirportLegIndex()).getIcaoIdent();
   filename += sep;
 
-  filename += flightplan.getEntries().last().getIcaoIdent();
+  filename += flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIcaoIdent();
   filename += suffix;
 
   // Remove characters that are note allowed in most filesystems
@@ -862,8 +963,10 @@ QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString
 bool RouteExport::exportFlighplanAsGfp(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString::createGfpStringForRoute(routeAdjustedToProcedureOptions(), false /* procedures */,
-                                                     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
+  QString gfp = RouteString::createGfpStringForRoute(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */), false /* procedures */,
+    OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -883,8 +986,10 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename)
 bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteString::createStringForRoute(routeAdjustedToProcedureOptions(),
-                                                  0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
+  QString txt = RouteString::createStringForRoute(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */),
+    0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -904,8 +1009,10 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QStringList list = RouteString::createStringForRouteList(routeAdjustedToProcedureOptions(), 0.f,
-                                                           rs::DCT | rs::START_AND_DEST);
+  QStringList list = RouteString::createStringForRouteList(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */), 0.f,
+    rs::DCT | rs::START_AND_DEST);
 
   // Remove last DCT
   if(list.size() - 2 >= 0 && list.at(list.size() - 2) == "DCT")
@@ -958,7 +1065,8 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
     // Regions are required for the export
     NavApp::getRoute().updateAirportRegions();
     atools::fs::pln::FlightplanIO().saveGarminGns(
-      routeAdjustedToProcedureOptions().getFlightplan(), filename, options);
+      routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                      true /* remove alternates */).getFlightplan(), filename, options);
   }
   catch(atools::Exception& e)
   {
@@ -976,8 +1084,10 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
 bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString::createGfpStringForRoute(routeAdjustedToProcedureOptions(), true /* procedures */,
-                                                     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
+  QString gfp = RouteString::createGfpStringForRoute(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */), true /* procedures */,
+    OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -1068,7 +1178,8 @@ bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const 
   }
 }
 
-bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename)
+bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename,
+                                        re::RouteExportType type)
 {
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -1102,31 +1213,43 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
     // RULES=I
     QTextStream stream(&file);
     stream << "[FLIGHTPLAN]" << endl;
-    stream << "CALLSIGN=" << exportData.getCallsign() << endl;
-    stream << "PIC=" << exportData.getPilotInCommand() << endl;
-    stream << "LIVERY=" << exportData.getLivery() << endl;
-    stream << "AIRLINE=" << exportData.getAirline() << endl;
-    stream << "SPEEDTYPE=N" << endl;
-    stream << "POB=" << exportData.getPassengers() << endl;
-    stream << "ENDURANCE=" << minToHourMinStr(exportData.getEnduranceMinutes()) << endl;
-    stream << "OTHER=" << exportData.getRemarks() << endl;
-    stream << "ALT2ICAO=" << exportData.getAlternate2() << endl;
-    stream << "ALTICAO=" << exportData.getAlternate() << endl;
-    stream << "EET=" << minToHourMinStr(exportData.getEnrouteMinutes()) << endl;
-    stream << "DESTICAO=" << exportData.getDestination() << endl;
-    stream << "ROUTE=" << exportData.getRoute() << endl;
-    stream << "LEVEL=" << exportData.getCruiseAltitude() / 100 << endl;
-    stream << "LEVELTYPE=F" << endl;
-    stream << "SPEED=" << exportData.getSpeed() << endl;
-    stream << "DEPTIME=" << exportData.getDepartureTime().toString("HHmm") << endl;
-    stream << "DEPICAO=" << exportData.getDeparture() << endl;
-    stream << "TRANSPONDER=" << exportData.getTransponder() << endl;
-    stream << "EQUIPMENT=" << exportData.getEquipment() << endl;
-    stream << "WAKECAT=" << exportData.getWakeCategory() << endl;
-    stream << "ACTYPE=" << exportData.getAircraftType() << endl;
-    stream << "NUMBER=1" << endl;
-    stream << "FLIGHTTYPE=" << exportData.getFlightType() << endl;
-    stream << "RULES=" << exportData.getFlightRules() << endl;
+
+    if(type == re::XIVAP)
+    {
+      stream << endl;
+      writeIvapLine(stream, "CALLSIGN", exportData.getCallsign(), type);
+      writeIvapLine(stream, "LIVERY", exportData.getLivery(), type);
+      writeIvapLine(stream, "AIRLINE", exportData.getAirline(), type);
+      writeIvapLine(stream, "PIC", exportData.getPilotInCommand(), type);
+      writeIvapLine(stream, "ALT2ICAO", exportData.getAlternate2(), type);
+      writeIvapLine(stream, "FMCROUTE", QString(), type);
+    }
+    else
+    {
+      writeIvapLine(stream, "ID", exportData.getCallsign(), type);
+      writeIvapLine(stream, "ALTICAO2", exportData.getAlternate2(), type);
+    }
+
+    writeIvapLine(stream, "SPEEDTYPE", "N", type);
+    writeIvapLine(stream, "POB", exportData.getPassengers(), type);
+    writeIvapLine(stream, "ENDURANCE", minToHourMinStr(exportData.getEnduranceMinutes()), type);
+    writeIvapLine(stream, "OTHER", exportData.getRemarks(), type);
+    writeIvapLine(stream, "ALTICAO", exportData.getAlternate(), type);
+    writeIvapLine(stream, "EET", minToHourMinStr(exportData.getEnrouteMinutes()), type);
+    writeIvapLine(stream, "DESTICAO", exportData.getDestination(), type);
+    writeIvapLine(stream, "ROUTE", exportData.getRoute(), type);
+    writeIvapLine(stream, "LEVEL", exportData.getCruiseAltitude() / 100, type);
+    writeIvapLine(stream, "LEVELTYPE", "F", type);
+    writeIvapLine(stream, "SPEED", exportData.getSpeed(), type);
+    writeIvapLine(stream, "DEPTIME", exportData.getDepartureTime().toString("HHmm"), type);
+    writeIvapLine(stream, "DEPICAO", exportData.getDeparture(), type);
+    writeIvapLine(stream, "TRANSPONDER", exportData.getTransponder(), type);
+    writeIvapLine(stream, "EQUIPMENT", exportData.getEquipment(), type);
+    writeIvapLine(stream, "WAKECAT", exportData.getWakeCategory(), type);
+    writeIvapLine(stream, "ACTYPE", exportData.getAircraftType(), type);
+    writeIvapLine(stream, "NUMBER", "1", type);
+    writeIvapLine(stream, "FLIGHTTYPE", exportData.getFlightType(), type);
+    writeIvapLine(stream, "RULES", exportData.getFlightRules(), type);
 
     file.close();
     return true;
@@ -1146,7 +1269,8 @@ bool RouteExport::exportFlighplan(const QString& filename,
 
   try
   {
-    exportFunc(routeAdjustedToProcedureOptions().getFlightplan(), filename);
+    exportFunc(routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                               true /* remove alternates */).getFlightplan(), filename);
   }
   catch(atools::Exception& e)
   {
@@ -1164,9 +1288,11 @@ bool RouteExport::exportFlighplan(const QString& filename,
 bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteString::createStringForRoute(routeAdjustedToProcedureOptions(), 0.f,
-                                                  rs::DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
-                                                  rs::RUNWAY /*| rs::APPROACH unreliable */ | rs::FLIGHTLEVEL);
+  QString txt = RouteString::createStringForRoute(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */), 0.f,
+    rs::DCT | rs::NO_FINAL_DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
+    rs::RUNWAY /*| rs::APPROACH unreliable */ | rs::FLIGHTLEVEL);
 
   const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplan();
 
@@ -1280,7 +1406,9 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
   qDebug() << Q_FUNC_INFO << "Copied" << filename << "to" << backupFile << result;
 
   // Create route string
-  QString route = RouteString::createStringForRoute(routeAdjustedToProcedureOptions(), 0.f, rs::START_AND_DEST);
+  QString route = RouteString::createStringForRoute(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */), 0.f, rs::START_AND_DEST);
   QString name = buildDefaultFilenameShort(QString(), QString());
 
   // Find a unique name between all loaded
@@ -1340,7 +1468,9 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   try
   {
     atools::fs::pln::FlightplanIO().saveGpx(
-      routeAdjustedToProcedureOptions().getFlightplan(), filename, track, timestamps,
+      routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
+                                      true /* remove alternates */).getFlightplan(),
+      filename, track, timestamps,
       static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()));
   }
   catch(atools::Exception& e)
@@ -1356,15 +1486,16 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   return true;
 }
 
-Route RouteExport::routeAdjustedToProcedureOptions()
+Route RouteExport::routeAdjustedToProcedureOptions(bool replaceCustomWp, bool removeAlternate)
 {
-  return routeAdjustedToProcedureOptions(NavApp::getRoute());
+  return routeAdjustedToProcedureOptions(NavApp::getRoute(), replaceCustomWp, removeAlternate);
 }
 
-Route RouteExport::routeAdjustedToProcedureOptions(const Route& route)
+Route RouteExport::routeAdjustedToProcedureOptions(const Route& route, bool replaceCustomWp, bool removeAlternate)
 {
   Route rt = route.adjustedToProcedureOptions(NavApp::getMainUi()->actionRouteSaveApprWaypoints->isChecked(),
-                                              NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked());
+                                              NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked(),
+                                              replaceCustomWp, removeAlternate);
 
   // Update airway structures
   rt.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
@@ -1376,4 +1507,18 @@ QString RouteExport::minToHourMinStr(int minutes)
 {
   int enrouteHours = minutes / 60;
   return QString("%1%2").arg(enrouteHours, 2, 10, QChar('0')).arg(minutes - enrouteHours * 60, 2, 10, QChar('0'));
+}
+
+void RouteExport::writeIvapLine(QTextStream& stream, const QString& key, const QString& value, re::RouteExportType type)
+{
+  stream << key << "=" << value << endl;
+  if(type == re::XIVAP)
+    stream << endl;
+}
+
+void RouteExport::writeIvapLine(QTextStream& stream, const QString& key, int value, re::RouteExportType type)
+{
+  stream << key << "=" << value << endl;
+  if(type == re::XIVAP)
+    stream << endl;
 }

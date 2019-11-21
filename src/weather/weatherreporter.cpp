@@ -24,6 +24,7 @@
 #include "fs/weather/xpweatherreader.h"
 #include "navapp.h"
 #include "fs/weather/weathernetdownload.h"
+#include "fs/weather/noaaweatherdownloader.h"
 #include "fs/sc/simconnecttypes.h"
 #include "fs/util/fsutil.h"
 #include "query/mapquery.h"
@@ -33,6 +34,7 @@
 #include "util/filesystemwatcher.h"
 #include "connect/connectclient.h"
 #include "fs/weather/metarparser.h"
+#include "gui/dialog.h"
 
 #include <QDebug>
 #include <QDir>
@@ -44,6 +46,7 @@
 #include <QTimer>
 #include <QRegularExpression>
 #include <QEventLoop>
+#include <functional>
 
 // Checks the first line of an ASN file if it has valid content
 static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
@@ -51,54 +54,63 @@ static const QRegularExpression ASN_VALIDATE_FLIGHTPLAN_REGEXP("^DepartureMETAR=
 static const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|DestinationMETAR)=([A-Z0-9]{3,4})?(.*)$");
 
 using atools::fs::FsPaths;
+using atools::fs::weather::NoaaWeatherDownloader;
 using atools::fs::weather::WeatherNetDownload;
 using atools::fs::weather::WeatherNetSingle;
 using atools::fs::weather::MetarResult;
 using atools::fs::weather::Metar;
 using atools::util::FileSystemWatcher;
+using atools::settings::Settings;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
   : QObject(parentWindow), simType(type),
   mainWindow(parentWindow)
 {
+  using namespace std::placeholders;
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
-  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
+  verbose = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
-  xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, verbose);
+  // Use a large index size so, that all METARs fit in for whole file downloads
+  int indexSize = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_INDEX_SIZE, 100000).toInt();
 
-  noaaWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
-  QString noaaUrl(OptionData::instance().getWeatherNoaaUrl());
-  noaaWeather->setRequestUrl(noaaUrl);
-  noaaWeather->setStationIndexUrl(noaaUrl.left(noaaUrl.lastIndexOf("/")) + "/", noaaIndexParser);
-  noaaWeather->setFetchAirportCoords(fetchAirportCoordinates);
+  xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, indexSize, verbose);
+
+  noaaWeather = new NoaaWeatherDownloader(parentWindow, indexSize, verbose);
+  noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
+
+  auto coordFunc = std::bind(&WeatherReporter::fetchAirportCoordinates, this, _1);
+  noaaWeather->setFetchAirportCoords(coordFunc);
 
   vatsimWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
 
-  ivaoWeather = new WeatherNetDownload(parentWindow, verbose);
+  ivaoWeather = new WeatherNetDownload(parentWindow, indexSize, verbose);
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
   // Set callback so the reader can build an index for nearest airports
-  ivaoWeather->setFetchAirportCoords(fetchAirportCoordinates);
-  if(OptionData::instance().getFlags2() & opts::WEATHER_INFO_IVAO ||
-     OptionData::instance().getFlags2() & opts::WEATHER_TOOLTIP_IVAO)
-    ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
-  else
-    ivaoWeather->setUpdatePeriod(-1);
+  ivaoWeather->setFetchAirportCoords(coordFunc);
+
+  // Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used
+  updateTimeouts();
 
   initActiveSkyNext();
 
   // Set callback so the reader can build an index for nearest airports
-  xpWeatherReader->setFetchAirportCoords(fetchAirportCoordinates);
+  xpWeatherReader->setFetchAirportCoords(coordFunc);
   initXplane();
 
   connect(xpWeatherReader, &atools::fs::weather::XpWeatherReader::weatherUpdated,
           this, &WeatherReporter::xplaneWeatherFileChanged);
 
-  // Forward signals from clients
-  connect(noaaWeather, &WeatherNetSingle::weatherUpdated, this, &WeatherReporter::weatherUpdated);
+  // Forward signals from clients for updates
+  connect(noaaWeather, &NoaaWeatherDownloader::weatherUpdated, this, &WeatherReporter::weatherUpdated);
   connect(vatsimWeather, &WeatherNetSingle::weatherUpdated, this, &WeatherReporter::weatherUpdated);
   connect(ivaoWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::weatherUpdated);
+
+  // Forward signals from clients for errors
+  connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
+  connect(vatsimWeather, &WeatherNetSingle::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
+  connect(ivaoWeather, &WeatherNetDownload::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
 }
 
 WeatherReporter::~WeatherReporter()
@@ -114,39 +126,9 @@ WeatherReporter::~WeatherReporter()
 atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airportIdent)
 {
   if(!NavApp::isLoadingDatabase())
-    return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(airportIdent);
+    return NavApp::getAirportQuerySim()->getAirportPosByIdent(airportIdent);
   else
     return atools::geo::EMPTY_POS;
-}
-
-void WeatherReporter::noaaIndexParser(QString& icao, QDateTime& lastUpdate, const QString& line)
-{
-  // Need to use hardcoded English month names since QDate uses localized names
-  static const QStringList months({"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"});
-  static const QRegularExpression INDEX_LINE_REGEXP(
-    ">([A-Z0-9]{3,4}).TXT<.*>(\\d+)-(\\S+)-(\\d+)\\s+(\\d+):(\\d+)\\s*<");
-
-  // <tr><td><a href="AGGM.TXT">AGGM.TXT</a></td><td align="right">09-Feb-2018 03:06  </td><td align="right"> 72 </td></tr>
-  // <tr><td><a href="AGTB.TXT">AGTB.TXT</a></td><td align="right">27-Feb-2009 10:31  </td><td align="right"> 88 </td></tr>
-  // <tr><td><a href="AK15.TXT">AK15.TXT</a></td><td align="right">13-Jan-2014 13:20  </td><td align="right"> 58 </td></tr>
-  // qDebug() << Q_FUNC_INFO << line;
-
-  QRegularExpressionMatch match = INDEX_LINE_REGEXP.match(line);
-  if(match.hasMatch())
-  {
-    icao = match.captured(1).toUpper();
-
-    // 09-Feb-2018 03:06
-    int day = match.captured(2).toInt();
-    int month = months.indexOf(match.captured(3)) + 1;
-    int year = match.captured(4).toInt();
-    int hour = match.captured(5).toInt();
-    int minute = match.captured(6).toInt();
-
-    lastUpdate = QDateTime(QDate(year, month, day), QTime(hour, minute));
-
-    // qDebug() << icao << lastUpdate;
-  }
 }
 
 void WeatherReporter::deleteFsWatcher()
@@ -200,7 +182,15 @@ void WeatherReporter::initXplane()
     QFileInfo base(NavApp::getCurrentSimulatorBasePath());
 
     if(base.exists() && base.isDir())
-      xpWeatherReader->readWeatherFile(NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx");
+    {
+      // Get user path
+      QString path = OptionData::instance().getWeatherXplanePath();
+      if(path.isEmpty())
+        // Use default base path
+        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
+
+      xpWeatherReader->setWeatherFile(path);
+    }
     else
     {
       qWarning() << Q_FUNC_INFO << "Base path not valid" << base.filePath();
@@ -540,6 +530,27 @@ QString WeatherReporter::getCurrentActiveSkyName() const
     return tr("Active Sky");
 }
 
+void WeatherReporter::updateAirportWeather()
+{
+  updateTimeouts();
+}
+
+void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode, QString url)
+{
+  if(!errorReported)
+  {
+    // Show an error dialog for any failed downloads but only once per session
+    errorReported = true;
+    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL,
+                                                   tr(
+                                                     "<p>Download of weather from<br/>\"%1\"<br/>failed.</p><p>Error: %2 (%3)</p>"
+                                                       "<p>Check you weather settings or disable weather downloads.</p>"
+                                                         "<p>Suppressing further messages during this session.</p>").
+                                                   arg(url).arg(error).arg(errorCode),
+                                                   tr("Do not &show this dialog again."));
+  }
+}
+
 QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 {
   if(activeSkyDepartureIdent == airportIcao)
@@ -618,8 +629,12 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   {
     // Simulator has changed - reload files
     simType = type;
+    updateTimeouts();
     initActiveSkyNext();
     initXplane();
+
+    noaaWeather->updateIndex();
+    ivaoWeather->updateIndex();
   }
 }
 
@@ -629,14 +644,33 @@ void WeatherReporter::optionsChanged()
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
 
-  if(OptionData::instance().getFlags2() & opts::WEATHER_INFO_IVAO ||
-     OptionData::instance().getFlags2() & opts::WEATHER_TOOLTIP_IVAO)
+  updateTimeouts();
+  initActiveSkyNext();
+  initXplane();
+}
+
+void WeatherReporter::updateTimeouts()
+{
+  map::MapWeatherSource airportWeatherSource = NavApp::getMapWidget() !=
+                                               nullptr ? NavApp::getAirportWeatherSource() : map::
+                                               WEATHER_SOURCE_SIMULATOR;
+
+  // Disable periodic downloads if feature is not needed
+  optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
+
+  if(flags & optsw::WEATHER_INFO_NOAA ||
+     flags & optsw::WEATHER_TOOLTIP_NOAA ||
+     airportWeatherSource == map::WEATHER_SOURCE_NOAA)
+    noaaWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
+  else
+    noaaWeather->setUpdatePeriod(-1);
+
+  if(flags & optsw::WEATHER_INFO_IVAO ||
+     flags & optsw::WEATHER_TOOLTIP_IVAO ||
+     airportWeatherSource == map::WEATHER_SOURCE_IVAO)
     ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     ivaoWeather->setUpdatePeriod(-1);
-
-  initActiveSkyNext();
-  initXplane();
 }
 
 void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)

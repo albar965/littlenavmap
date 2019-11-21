@@ -20,10 +20,12 @@
 #include "ui_parkingdialog.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
+#include "common/constants.h"
 #include "common/mapcolors.h"
 #include "atools.h"
 #include "navapp.h"
 #include "common/unit.h"
+#include "gui/widgetstate.h"
 
 #include <QPushButton>
 
@@ -38,7 +40,8 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
   // Update label with airport name/ident
   ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(map::airportText(departureAirport)));
 
-  const QList<map::MapStart> *startCache = NavApp::getAirportQuerySim()->getStartPositionsForAirport(departureAirport.id);
+  const QList<map::MapStart> *startCache =
+    NavApp::getAirportQuerySim()->getStartPositionsForAirport(departureAirport.id);
   // Create a copy from the cached start objects to allow sorting
   for(const map::MapStart& start : *startCache)
     entries.append({map::MapParking(), start});
@@ -124,10 +127,14 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
 
   connect(ui->buttonBoxSelectParking, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(ui->buttonBoxSelectParking, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+  atools::gui::WidgetState(lnm::ROUTE_PARKING_DIALOG).restore(this);
 }
 
 ParkingDialog::~ParkingDialog()
 {
+  atools::gui::WidgetState(lnm::ROUTE_PARKING_DIALOG).save(this);
+
   delete ui;
 }
 

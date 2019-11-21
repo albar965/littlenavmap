@@ -82,14 +82,19 @@ void SqlModel::filterBy(QModelIndex index, bool exclude)
 }
 
 /* Simple include/exclude filter. Updates the attached search widgets */
-void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
+void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp)
 {
   // If there is already a filter on the same column remove it
   if(whereConditionMap.contains(whereCol))
     whereConditionMap.remove(whereCol);
 
   QString whereOp;
-  if(whereValue.isNull())
+  QVariant whereValueSql = whereValueDisp;
+
+  // Replace "*" with "%" for SQL
+  buildSqlWhereValue(whereValueSql);
+
+  if(whereValueDisp.isNull())
     whereOp = exclude ? "is not null" : "is null";
   else
     whereOp = exclude ? " not like " : " like ";
@@ -97,24 +102,27 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
   const Column *colDescr = columns->getColumn(whereCol);
 
   if(QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget())
+  {
     // Set the search text into the corresponding line edit
-    edit->setText((exclude ? "-" : "") + whereValue.toString());
+    edit->setText((exclude ? "-" : "") + whereValueDisp.toString());
+
+  }
   else if(QComboBox *combo = columns->getColumn(whereCol)->getComboBoxWidget())
   {
     if(combo->isEditable())
       // Set the search text into the corresponding line edit
-      combo->setCurrentText((exclude ? "-" : "") + whereValue.toString());
+      combo->setCurrentText((exclude ? "-" : "") + whereValueDisp.toString());
   }
   else if(QCheckBox *checkBox = columns->getColumn(whereCol)->getCheckBoxWidget())
   {
     if(checkBox->isTristate())
     {
       // Update check box state for tri state boxes
-      if(whereValue.isNull())
+      if(whereValueDisp.isNull())
         checkBox->setCheckState(Qt::PartiallyChecked);
       else
       {
-        bool val = whereValue.toInt() > 0;
+        bool val = whereValueDisp.toInt() > 0;
         if(exclude)
           val = !val;
         checkBox->setCheckState(val ? Qt::Checked : Qt::Unchecked);
@@ -123,25 +131,25 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
     else
     {
       // Update check box state for normal boxes
-      bool val = whereValue.isNull() || whereValue.toInt() == 0;
+      bool val = whereValueDisp.isNull() || whereValueDisp.toInt() == 0;
       if(exclude)
         val = !val;
       checkBox->setCheckState(val ? Qt::Unchecked : Qt::Checked);
     }
   }
-  whereConditionMap.insert(whereCol, {whereOp, whereValue, whereValue, colDescr});
+  whereConditionMap.insert(whereCol, {whereOp, whereValueSql, whereValueDisp, colDescr});
 }
 
 /* Changes the whereConditionMap. Removes, replaces or adds where conditions based on input */
-void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& maxValue)
+void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVariant& maxValue)
 {
   Q_ASSERT(col != nullptr);
   QString colName = col->getColumnName();
   bool colAlreadyFiltered = whereConditionMap.contains(colName);
 
-  if((value.isNull() && !maxValue.isValid()) ||
-     (value.isNull() && maxValue.isNull()) ||
-     (value.type() == QVariant::String && value.toString().isEmpty()))
+  if((variantDisp.isNull() && !maxValue.isValid()) ||
+     (variantDisp.isNull() && maxValue.isNull()) ||
+     (variantDisp.type() == QVariant::String && variantDisp.toString().isEmpty()))
   {
     // If we get a null value or an empty string and the
     // column is already filtered remove it
@@ -150,51 +158,51 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
   }
   else
   {
-    QVariant newVariant;
+    QVariant variantSql;
     QString oper;
 
     if(col->hasMinMaxSpinbox())
     {
       // Two spinboxes giving min and max values
-      if(!value.isNull() && maxValue.isNull())
+      if(!variantDisp.isNull() && maxValue.isNull())
       {
         // Only min value set
         oper = ">";
-        newVariant = value;
+        variantSql = variantDisp;
       }
-      else if(value.isNull() && !maxValue.isNull())
+      else if(variantDisp.isNull() && !maxValue.isNull())
       {
         // Only max value set
         oper = "<";
-        newVariant = maxValue;
+        variantSql = maxValue;
       }
       else
         // Min and max values set - use range and leave newVariant invalid
-        oper = QString("between %1 and %2").arg(value.toInt()).arg(maxValue.toInt());
+        oper = QString("between %1 and %2").arg(variantDisp.toInt()).arg(maxValue.toInt());
     }
     else if(!col->getCondition().isEmpty())
     {
       // Single spinbox giving a min or max value
       oper = col->getCondition();
-      newVariant = value;
+      variantSql = variantDisp;
     }
     else if(col->hasIndexConditionMap())
       // A combo box
-      oper = col->getIndexConditionMap().at(value.toInt());
+      oper = col->getIndexConditionMap().at(variantDisp.toInt());
     else if(col->hasIncludeExcludeCond())
     {
       // A checkbox - tri state is already filtered by the caller
-      if(value.toInt() == 0)
+      if(variantDisp.toInt() == 0)
         oper = col->getExcludeCondition();
       else
         oper = col->getIncludeCondition();
     }
     else
     {
-      if(value.type() == QVariant::String)
+      if(variantDisp.type() == QVariant::String)
       {
         // Use like queries for strings so we will query case insensitive
-        QString newVal = value.toString();
+        QString newVal = variantDisp.toString();
 
         if(newVal.startsWith("-"))
         {
@@ -214,19 +222,16 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
           oper = "like";
 
         // Replace "*" with "%" for SQL
-        if(newVal.contains("*"))
-          newVal = newVal.replace("*", "%");
-        else if(!newVal.isEmpty())
-          newVal = newVal + "%";
+        buildSqlWhereValue(newVal);
 
-        newVariant = newVal;
+        variantSql = newVal;
       }
-      else if(value.type() == QVariant::Int || value.type() == QVariant::UInt ||
-              value.type() == QVariant::LongLong || value.type() == QVariant::ULongLong ||
-              value.type() == QVariant::Double)
+      else if(variantDisp.type() == QVariant::Int || variantDisp.type() == QVariant::UInt ||
+              variantDisp.type() == QVariant::LongLong || variantDisp.type() == QVariant::ULongLong ||
+              variantDisp.type() == QVariant::Double)
       {
         // Use equal for numbers
-        newVariant = value;
+        variantSql = variantDisp;
         oper = "=";
       }
     }
@@ -235,20 +240,37 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
     {
       // Replace values in existing condition
       whereConditionMap[colName].oper = oper;
-      whereConditionMap[colName].value = newVariant;
-      whereConditionMap[colName].valueRaw = value;
+      whereConditionMap[colName].valueSql = variantSql;
+      whereConditionMap[colName].valueDisplay = variantDisp;
       whereConditionMap[colName].col = col;
     }
     else
       // Insert new condition
-      whereConditionMap.insert(colName, {oper, newVariant, value, col});
+      whereConditionMap.insert(colName, {oper, variantSql, variantDisp, col});
   }
   buildQuery();
+}
+
+void SqlModel::buildSqlWhereValue(QVariant& whereValue) const
+{
+  QString val = whereValue.toString();
+  buildSqlWhereValue(val);
+  whereValue = val;
+}
+
+void SqlModel::buildSqlWhereValue(QString& whereValue) const
+{
+  // Replace "*" with "%" for SQL
+  if(whereValue.contains("*"))
+    whereValue = whereValue.replace("*", "%");
+  else if(!whereValue.isEmpty())
+    whereValue = whereValue + "%";
 }
 
 void SqlModel::setSort(const QString& colname, Qt::SortOrder order)
 {
   orderByColIndex = getSqlRecord().indexOf(colname);
+
   orderByCol = colname;
   orderByOrder = sortOrderToSql(order);
 }
@@ -493,7 +515,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
       if(cond.col->getMinOverrideLength() == -1)
       {
         // Length not given - simply check if valid
-        if(cond.value.isValid())
+        if(cond.valueSql.isValid())
         {
           whereConditions.insert(key, cond);
           overrideColumns.append(cond.col);
@@ -504,7 +526,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
       else
       {
         // Check if minimum length for overriding is satisfied
-        if(cond.valueRaw.toString().size() >= cond.col->getMinOverrideLength())
+        if(cond.valueDisplay.toString().size() >= cond.col->getMinOverrideLength())
         {
           whereConditions.insert(key, cond);
           overrideColumns.append(cond.col);
@@ -551,7 +573,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
     else
       queryWhere += cond.col->getColumnName() + " " + cond.oper + " ";
 
-    if(!cond.value.isNull())
+    if(!cond.valueSql.isNull())
       queryWhere += buildWhereValue(cond);
   }
 
@@ -597,16 +619,16 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
 QString SqlModel::buildWhereValue(const WhereCondition& cond)
 {
   QString val;
-  if(cond.value.type() == QVariant::String || cond.value.type() == QVariant::Char)
+  if(cond.valueSql.type() == QVariant::String || cond.valueSql.type() == QVariant::Char)
     // Use semicolons for string
-    val = " '" + cond.value.toString().replace("'", "''") + "'";
-  else if(cond.value.type() == QVariant::Bool ||
-          cond.value.type() == QVariant::Int ||
-          cond.value.type() == QVariant::UInt ||
-          cond.value.type() == QVariant::LongLong ||
-          cond.value.type() == QVariant::ULongLong ||
-          cond.value.type() == QVariant::Double)
-    val = " " + cond.value.toString();
+    val = " '" + cond.valueSql.toString().replace("'", "''") + "'";
+  else if(cond.valueSql.type() == QVariant::Bool ||
+          cond.valueSql.type() == QVariant::Int ||
+          cond.valueSql.type() == QVariant::UInt ||
+          cond.valueSql.type() == QVariant::LongLong ||
+          cond.valueSql.type() == QVariant::ULongLong ||
+          cond.valueSql.type() == QVariant::Double)
+    val = " " + cond.valueSql.toString();
   return val;
 }
 

@@ -19,7 +19,7 @@
 
 #include <QMainWindow>
 
-AbstractSearch::AbstractSearch(QMainWindow *parent, si::SearchTabIndex tabWidgetIndex)
+AbstractSearch::AbstractSearch(QMainWindow *parent, si::TabSearchId tabWidgetIndex)
   : QObject(parent), tabIndex(tabWidgetIndex), mainWindow(parent)
 {
 

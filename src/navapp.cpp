@@ -21,7 +21,6 @@
 #include "query/procedurequery.h"
 #include "connect/connectclient.h"
 #include "query/mapquery.h"
-#include "query/airspacequery.h"
 #include "query/airportquery.h"
 #include "db/databasemanager.h"
 #include "fs/db/databasemeta.h"
@@ -33,14 +32,20 @@
 #include "fs/common/morareader.h"
 #include "common/updatehandler.h"
 #include "userdata/userdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "online/onlinedatacontroller.h"
 #include "search/searchcontroller.h"
 #include "common/vehicleicons.h"
-#include "mapgui/aprongeometrycache.h"
 #include "gui/stylehandler.h"
 #include "weather/weatherreporter.h"
 #include "fs/weather/metar.h"
 #include "perf/aircraftperfcontroller.h"
+#include "web/webcontroller.h"
+#include "exception.h"
+#include "gui/errorhandler.h"
+#include "airspace/airspacecontroller.h"
+#include "mapgui/mapmarkhandler.h"
+#include "route/routestring.h"
 
 #include "ui_mainwindow.h"
 
@@ -52,17 +57,14 @@
 AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
 MapQuery *NavApp::mapQuery = nullptr;
-AirspaceQuery *NavApp::airspaceQuery = nullptr;
-AirspaceQuery *NavApp::airspaceQueryOnline = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
 ProcedureQuery *NavApp::procedureQuery = nullptr;
-ApronGeometryCache *NavApp::apronGeometryCache = nullptr;
 
 ConnectClient *NavApp::connectClient = nullptr;
 DatabaseManager *NavApp::databaseManager = nullptr;
 MainWindow *NavApp::mainWindow = nullptr;
 ElevationProvider *NavApp::elevationProvider = nullptr;
-atools::fs::db::DatabaseMeta *NavApp::databaseMeta = nullptr;
+atools::fs::db::DatabaseMeta *NavApp::databaseMetaSim = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMetaNav = nullptr;
 QSplashScreen *NavApp::splashScreen = nullptr;
 
@@ -70,10 +72,15 @@ atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 atools::fs::common::MoraReader *NavApp::moraReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
+MapMarkHandler *NavApp::mapMarkHandler = nullptr;
+LogdataController *NavApp::logdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
 AircraftPerfController *NavApp::aircraftPerfController = nullptr;
+AirspaceController *NavApp::airspaceController = nullptr;
 VehicleIcons *NavApp::vehicleIcons = nullptr;
 StyleHandler *NavApp::styleHandler = nullptr;
+
+WebController *NavApp::webController = nullptr;
 
 bool NavApp::shuttingDown = false;
 bool NavApp::loadingDatabase = false;
@@ -81,16 +88,20 @@ bool NavApp::loadingDatabase = false;
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
 {
-  setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
-  setApplicationName("Little Navmap");
-  setOrganizationName("ABarthel");
-  setOrganizationDomain("littlenavmap.org");
-
-  setApplicationVersion("2.3.0.develop"); // VERSION_NUMBER - Little Navmap
+  initApplication();
 }
 
 NavApp::~NavApp()
 {
+}
+
+void NavApp::initApplication()
+{
+  setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
+  setApplicationName("Little Navmap");
+  setOrganizationName("ABarthel");
+  setOrganizationDomain("littlenavmap.org");
+  setApplicationVersion("2.5.0.develop"); // VERSION_NUMBER - Little Navmap
 }
 
 NavApp *NavApp::navAppInstance()
@@ -106,12 +117,14 @@ void NavApp::init(MainWindow *mainWindowParam)
   databaseManager = new DatabaseManager(mainWindow);
   databaseManager->openAllDatabases();
   userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
+  logdataController = new LogdataController(databaseManager->getLogdataManager(), mainWindow);
+  mapMarkHandler = new MapMarkHandler(mainWindow);
 
-  databaseMeta = new atools::fs::db::DatabaseMeta(getDatabaseSim());
+  databaseMetaSim = new atools::fs::db::DatabaseMeta(getDatabaseSim());
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
 
   magDecReader = new atools::fs::common::MagDecReader();
-  magDecReader->readFromTable(*databaseManager->getDatabaseSim());
+  readMagDecFromDatabase();
 
   moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseMora());
   moraReader->readFromTable();
@@ -131,20 +144,20 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   aircraftPerfController = new AircraftPerfController(mainWindow);
 
-  mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
+  mapQuery = new MapQuery(databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
                           databaseManager->getDatabaseUser());
   mapQuery->initQueries();
 
-  airspaceQuery = new AirspaceQuery(mainWindow, databaseManager->getDatabaseNav(), false /* online database */);
-  airspaceQuery->initQueries();
+  airspaceController = new AirspaceController(mainWindow,
+                                              databaseManager->getDatabaseSimAirspace(),
+                                              databaseManager->getDatabaseNavAirspace(),
+                                              databaseManager->getDatabaseUserAirspace(),
+                                              databaseManager->getDatabaseOnline());
 
-  airspaceQueryOnline = new AirspaceQuery(mainWindow, databaseManager->getDatabaseOnline(), true /* online database */);
-  airspaceQueryOnline->initQueries();
-
-  airportQuerySim = new AirportQuery(mainWindow, databaseManager->getDatabaseSim(), false /* nav */);
+  airportQuerySim = new AirportQuery(databaseManager->getDatabaseSim(), false /* nav */);
   airportQuerySim->initQueries();
 
-  airportQueryNav = new AirportQuery(mainWindow, databaseManager->getDatabaseNav(), true /* nav */);
+  airportQueryNav = new AirportQuery(databaseManager->getDatabaseNav(), true /* nav */);
   airportQueryNav->initQueries();
 
   infoQuery = new InfoQuery(databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav());
@@ -153,15 +166,13 @@ void NavApp::init(MainWindow *mainWindowParam)
   procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
   procedureQuery->initQueries();
 
-  apronGeometryCache = new ApronGeometryCache();
-
   connectClient = new ConnectClient(mainWindow);
 
   updateHandler = new UpdateHandler(mainWindow);
 
-  styleHandler = new StyleHandler();
+  styleHandler = new StyleHandler(mainWindow);
 
-  // The check will be called on main window shown
+  webController = new WebController(mainWindow);
 }
 
 void NavApp::initElevationProvider()
@@ -173,13 +184,25 @@ void NavApp::deInit()
 {
   qDebug() << Q_FUNC_INFO;
 
-  qDebug() << Q_FUNC_INFO << "delete styleHandler ";
+  qDebug() << Q_FUNC_INFO << "delete webController";
+  delete webController;
+  webController = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete styleHandler";
   delete styleHandler;
   styleHandler = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete userdataController";
   delete userdataController;
   userdataController = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete mapMarkHandler";
+  delete mapMarkHandler;
+  mapMarkHandler = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete logdataController";
+  delete logdataController;
+  logdataController = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete onlinedataController";
   delete onlinedataController;
@@ -188,6 +211,10 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete aircraftPerfController";
   delete aircraftPerfController;
   aircraftPerfController = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete airspaceController";
+  delete airspaceController;
+  airspaceController = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete updateHandler";
   delete updateHandler;
@@ -213,14 +240,6 @@ void NavApp::deInit()
   delete mapQuery;
   mapQuery = nullptr;
 
-  qDebug() << Q_FUNC_INFO << "delete airspaceQuery";
-  delete airspaceQuery;
-  airspaceQuery = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete airspaceQueryOnline";
-  delete airspaceQueryOnline;
-  airspaceQueryOnline = nullptr;
-
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
   infoQuery = nullptr;
@@ -229,17 +248,13 @@ void NavApp::deInit()
   delete procedureQuery;
   procedureQuery = nullptr;
 
-  qDebug() << Q_FUNC_INFO << "delete apronGeometryCache";
-  delete apronGeometryCache;
-  apronGeometryCache = nullptr;
-
   qDebug() << Q_FUNC_INFO << "delete databaseManager";
   delete databaseManager;
   databaseManager = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete databaseMeta";
-  delete databaseMeta;
-  databaseMeta = nullptr;
+  delete databaseMetaSim;
+  databaseMetaSim = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete databaseMetaNav";
   delete databaseMetaNav;
@@ -281,36 +296,64 @@ void NavApp::preDatabaseLoad()
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
   mapQuery->deInitQueries();
-  airspaceQuery->deInitQueries();
-  airspaceQueryOnline->deInitQueries();
   procedureQuery->deInitQueries();
+  airspaceController->preDatabaseLoad();
 
-  apronGeometryCache->clear();
-
-  delete databaseMeta;
-  databaseMeta = nullptr;
+  delete databaseMetaSim;
+  databaseMetaSim = nullptr;
 
   delete databaseMetaNav;
   databaseMetaNav = nullptr;
+}
+
+void NavApp::readMagDecFromDatabase()
+{
+  if(hasDataInDatabase())
+  {
+    try
+    {
+      magDecReader->readFromTable(*getDatabaseSim());
+    }
+    catch(atools::Exception& e)
+    {
+      deleteSplashScreen();
+      // Show dialog if something went wrong but do not exit
+      atools::gui::ErrorHandler(mainWindow).handleException(e, tr("While reading magnetic declination from database:"));
+    }
+    catch(...)
+    {
+      deleteSplashScreen();
+      atools::gui::ErrorHandler(mainWindow).
+      handleUnknownException(tr("While reading magnetic declination from database:"));
+    }
+  }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << "Empty database falling back to WMM";
+    magDecReader->readFromWmm();
+  }
+
+  qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate()
+           << magDecReader->getWmmVersion();
 }
 
 void NavApp::postDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
 
-  databaseMeta = new atools::fs::db::DatabaseMeta(getDatabaseSim());
+  databaseMetaSim = new atools::fs::db::DatabaseMeta(getDatabaseSim());
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
 
-  magDecReader->readFromTable(*getDatabaseSim());
+  readMagDecFromDatabase();
+
   moraReader->readFromTable(*getDatabaseMora());
 
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   mapQuery->initQueries();
-  airspaceQuery->initQueries();
-  airspaceQueryOnline->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
+  airspaceController->postDatabaseLoad();
   loadingDatabase = false;
 }
 
@@ -349,6 +392,11 @@ const atools::fs::sc::SimConnectUserAircraft& NavApp::getUserAircraft()
   return mainWindow->getMapWidget()->getUserAircraft();
 }
 
+const atools::geo::Pos& NavApp::getUserAircraftPos()
+{
+  return mainWindow->getMapWidget()->getUserAircraft().getPosition();
+}
+
 const QVector<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
 {
   return mainWindow->getMapWidget()->getAiAircraft();
@@ -369,14 +417,9 @@ MapQuery *NavApp::getMapQuery()
   return mapQuery;
 }
 
-AirspaceQuery *NavApp::getAirspaceQuery()
+atools::geo::Pos NavApp::getAirportPos(const QString& ident)
 {
-  return airspaceQuery;
-}
-
-AirspaceQuery *NavApp::getAirspaceQueryOnline()
-{
-  return airspaceQueryOnline;
+  return airportQuerySim->getAirportPosByIdent(ident);
 }
 
 InfoQuery *NavApp::getInfoQuery()
@@ -399,9 +442,14 @@ Route& NavApp::getRoute()
   return mainWindow->getRouteController()->getRoute();
 }
 
-int NavApp::getRouteSize()
+QString NavApp::getRouteString()
 {
-  return mainWindow->getRouteController()->getRoute().size();
+  return RouteString::createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(), rs::DEFAULT_OPTIONS);
+}
+
+const atools::geo::Rect& NavApp::getRouteRect()
+{
+  return mainWindow->getRouteController()->getRoute().getBoundingRect();
 }
 
 const RouteAltitude& NavApp::getAltitudeLegs()
@@ -412,6 +460,16 @@ const RouteAltitude& NavApp::getAltitudeLegs()
 float NavApp::getRouteCruiseSpeedKts()
 {
   return aircraftPerfController->getRouteCruiseSpeedKts();
+}
+
+float NavApp::getRouteCruiseAltFt()
+{
+  return getRoute().getCruisingAltitudeFeet();
+}
+
+float NavApp::getRouteCruiseAltFtWidget()
+{
+  return getRouteController()->getCruiseAltitudeWidget();
 }
 
 atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()
@@ -449,19 +507,29 @@ bool NavApp::isNavdataOff()
   return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_OFF;
 }
 
+OptionsDialog *NavApp::getOptionsDialog()
+{
+  return mainWindow->getOptionsDialog();
+}
+
 QString NavApp::getCurrentSimulatorShortName()
 {
   return atools::fs::FsPaths::typeToShortName(getCurrentSimulatorDb());
 }
 
+QString NavApp::getCurrentSimulatorName()
+{
+  return atools::fs::FsPaths::typeToName(getCurrentSimulatorDb());
+}
+
 bool NavApp::hasSidStarInDatabase()
 {
-  return databaseMetaNav->hasSidStar();
+  return databaseMetaNav != nullptr ? databaseMetaNav->hasSidStar() : false;
 }
 
 bool NavApp::hasDataInDatabase()
 {
-  return databaseMeta->hasData();
+  return databaseMetaSim != nullptr ? databaseMetaSim->hasData() : false;
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabaseSim()
@@ -494,9 +562,49 @@ UserdataSearch *NavApp::getUserdataSearch()
   return mainWindow->getSearchController()->getUserdataSearch();
 }
 
+LogdataSearch *NavApp::getLogdataSearch()
+{
+  return mainWindow->getSearchController()->getLogdataSearch();
+}
+
+atools::fs::userdata::LogdataManager *NavApp::getLogdataManager()
+{
+  return databaseManager->getLogdataManager();
+}
+
 UserdataController *NavApp::getUserdataController()
 {
   return userdataController;
+}
+
+MapMarkHandler *NavApp::getMapMarkHandler()
+{
+  return mapMarkHandler;
+}
+
+void NavApp::showFlightPlan()
+{
+  mainWindow->showFlightPlan();
+}
+
+void NavApp::showAircraftPerformance()
+{
+  mainWindow->showAircraftPerformance();
+}
+
+void NavApp::showLogbookSearch()
+{
+  mainWindow->showLogbookSearch();
+}
+
+void NavApp::showUserpointSearch()
+{
+  mainWindow->showUserpointSearch();
+}
+
+LogdataController *NavApp::getLogdataController()
+{
+  return logdataController;
 }
 
 OnlinedataController *NavApp::getOnlinedataController()
@@ -509,14 +617,24 @@ AircraftPerfController *NavApp::getAircraftPerfController()
   return aircraftPerfController;
 }
 
-bool NavApp::isCollectingPerformance()
+SearchController *NavApp::getSearchController()
 {
-  return aircraftPerfController->isCollecting();
+  return mainWindow->getSearchController();
 }
 
 const atools::fs::perf::AircraftPerf& NavApp::getAircraftPerformance()
 {
   return aircraftPerfController->getAircraftPerformance();
+}
+
+AirspaceController *NavApp::getAirspaceController()
+{
+  return airspaceController;
+}
+
+bool NavApp::hasAnyAirspaces()
+{
+  return getAirspaceController()->hasAnyAirspaces();
 }
 
 atools::fs::common::MagDecReader *NavApp::getMagDecReader()
@@ -527,11 +645,6 @@ atools::fs::common::MagDecReader *NavApp::getMagDecReader()
 VehicleIcons *NavApp::getVehicleIcons()
 {
   return vehicleIcons;
-}
-
-ApronGeometryCache *NavApp::getApronGeometryCache()
-{
-  return apronGeometryCache;
 }
 
 bool NavApp::isLoadingDatabase()
@@ -564,6 +677,16 @@ atools::sql::SqlDatabase *NavApp::getDatabaseUser()
   return databaseManager->getDatabaseUser();
 }
 
+atools::sql::SqlDatabase *NavApp::getDatabaseUserAirspace()
+{
+  return databaseManager->getDatabaseUserAirspace();
+}
+
+atools::sql::SqlDatabase *NavApp::getDatabaseLogbook()
+{
+  return databaseManager->getDatabaseLogbook();
+}
+
 atools::sql::SqlDatabase *NavApp::getDatabaseOnline()
 {
   return onlinedataController->getDatabase();
@@ -576,7 +699,12 @@ ElevationProvider *NavApp::getElevationProvider()
 
 WeatherReporter *NavApp::getWeatherReporter()
 {
-  return mainWindow->getWeatherReporter();
+  return mainWindow != nullptr ? mainWindow->getWeatherReporter() : nullptr;
+}
+
+WindReporter *NavApp::getWindReporter()
+{
+  return mainWindow->getWindReporter();
 }
 
 atools::fs::weather::Metar NavApp::getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos)
@@ -625,6 +753,11 @@ MapWidget *NavApp::getMapWidget()
   return mainWindow->getMapWidget();
 }
 
+MapPaintWidget *NavApp::getMapPaintWidget()
+{
+  return mainWindow->getMapWidget();
+}
+
 map::MapWeatherSource NavApp::getMapWeatherSource()
 {
   return mainWindow->getMapWidget()->getMapWeatherSource();
@@ -640,6 +773,21 @@ RouteController *NavApp::getRouteController()
   return mainWindow->getRouteController();
 }
 
+atools::gui::TabWidgetHandler *NavApp::getRouteTabHandler()
+{
+  return getRouteController()->getTabHandler();
+}
+
+const InfoController *NavApp::getInfoController()
+{
+  return mainWindow->getInfoController();
+}
+
+QString NavApp::getMapCopyright()
+{
+  return mainWindow->getMapWidget()->getMapCopyright();
+}
+
 const QString& NavApp::getCurrentRouteFilepath()
 {
   return mainWindow->getRouteController()->getCurrentRouteFilepath();
@@ -648,6 +796,11 @@ const QString& NavApp::getCurrentRouteFilepath()
 const QString& NavApp::getCurrentAircraftPerfFilepath()
 {
   return aircraftPerfController->getCurrentFilepath();
+}
+
+WebController *NavApp::getWebController()
+{
+  return webController;
 }
 
 DatabaseManager *NavApp::getDatabaseManager()
@@ -662,17 +815,12 @@ ConnectClient *NavApp::getConnectClient()
 
 QString NavApp::getDatabaseAiracCycleSim()
 {
-  return databaseMeta->getAiracCycle();
+  return databaseMetaSim != nullptr ? databaseMetaSim->getAiracCycle() : QString();
 }
 
 QString NavApp::getDatabaseAiracCycleNav()
 {
-  return databaseMetaNav->getAiracCycle();
-}
-
-bool NavApp::hasDatabaseAirspaces()
-{
-  return databaseMetaNav->hasAirspaces();
+  return databaseMetaNav != nullptr ? databaseMetaNav->getAiracCycle() : QString();
 }
 
 bool NavApp::hasOnlineData()
@@ -692,7 +840,7 @@ bool NavApp::isOnlineNetworkActive()
 
 const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMetaSim()
 {
-  return databaseMeta;
+  return databaseMetaSim;
 }
 
 const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMetaNav()

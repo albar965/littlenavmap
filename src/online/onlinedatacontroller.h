@@ -23,6 +23,7 @@
 #include <QTimer>
 
 #include "query/querytypes.h"
+#include "fs/online/onlinetypes.h"
 
 class MapLayer;
 
@@ -82,6 +83,9 @@ public:
   /* Options dialog changed settings. Will trigger download. */
   void optionsChanged();
 
+  /* User airspaces where updated. Will trigger download to update geometry in databases. */
+  void userAirspacesUpdated();
+
   const QDateTime& getLastUpdateTime() const
   {
     return lastUpdateTime;
@@ -109,7 +113,8 @@ public:
   static void fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
 
   /* Removes the online aircraft from the result which also have a simulator shadow in the result */
-  void filterOnlineShadowAircraft(QList<atools::fs::sc::SimConnectAircraft>& onlineAircraft, const QList<atools::fs::sc::SimConnectAircraft>& simAircraft);
+  void filterOnlineShadowAircraft(QList<atools::fs::sc::SimConnectAircraft>& onlineAircraft,
+                                  const QList<atools::fs::sc::SimConnectAircraft>& simAircraft);
 
   /* Get client record with all field values */
   atools::sql::SqlRecord getClientRecordById(int clientId);
@@ -141,7 +146,7 @@ signals:
 private:
   /* HTTP download signal slots */
   void downloadFinished(const QByteArray& data, QString url);
-  void downloadFailed(const QString& error, QString url);
+  void downloadFailed(const QString& error, int errorCode, QString url);
   void statusBarMessage();
 
   void startDownloadInternal();
@@ -151,6 +156,9 @@ private:
 
   /* Show message from status.txt */
   void showMessageDialog();
+
+  /* Tries to fetch geometry for atc centers from the user geometry database from cache */
+  atools::geo::LineString *geometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type);
 
   atools::fs::online::OnlinedataManager *manager;
   atools::util::HttpDownloader *downloader;
@@ -184,7 +192,7 @@ private:
 
   QHash<QString, atools::geo::Pos> clientCallsignAndPosMap;
 
-  SimpleRectCache<atools::fs::sc::SimConnectAircraft> aircraftCache;
+  query::SimpleRectCache<atools::fs::sc::SimConnectAircraft> aircraftCache;
   atools::sql::SqlQuery *aircraftByRectQuery = nullptr;
 };
 

@@ -14,7 +14,7 @@
    width="128"
    height="128"
    id="svg1655"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="aircraftperfsave.svg">
   <metadata
      id="metadata10">
@@ -41,9 +41,9 @@
      inkscape:window-height="971"
      id="namedview8"
      showgrid="false"
-     inkscape:zoom="1.84375"
-     inkscape:cx="-96.542373"
-     inkscape:cy="64"
+     inkscape:zoom="3.6875"
+     inkscape:cx="-27.70723"
+     inkscape:cy="54.46582"
      inkscape:window-x="131"
      inkscape:window-y="24"
      inkscape:window-maximized="0"
@@ -101,7 +101,7 @@
        y2="23.891001"
        gradientUnits="userSpaceOnUse"
        x2="1.3099999"
-       gradientTransform="matrix(0,-1.7868298,-1.7798786,0,-114.27533,116.25939)"
+       gradientTransform="matrix(0,-1.7868298,-1.7798786,0,133.0467,129.81871)"
        y1="23.891001"
        x1="28.671">
       <stop
@@ -118,7 +118,7 @@
        y2="33.332001"
        gradientUnits="userSpaceOnUse"
        x2="57.410999"
-       gradientTransform="matrix(0,2.0723596,-2.0547959,0,-102.5538,24.427679)"
+       gradientTransform="matrix(0,2.0723596,-2.0547959,0,144.76823,37.987001)"
        y1="33.332001"
        x1="8.5272999">
       <stop
@@ -232,18 +232,9 @@
        id="path8101-3"
        inkscape:connector-curvature="0" />
   </g>
-  <g
-     id="g1206"
-     transform="translate(247.32203,13.559322)">
-    <path
-       inkscape:connector-curvature="0"
-       id="path4348"
-       style="fill:url(#linearGradient3712);stroke:#000000;stroke-width:5.20257473;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-       d="m -121.7147,73.426208 -35.08074,37.143812 -35.08075,-37.143812 h 16.50884 V 41.588652 h 37.14381 v 31.837556 z" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path4360"
-       style="opacity:0.35400008;fill:none;stroke:url(#linearGradient3714);stroke-width:5.20257473"
-       d="m -133.47868,78.732467 -23.31836,24.336093 -23.07161,-24.336093 h 9.80597 V 46.894911 h 26.53129 v 31.837556 z" />
-  </g>
+  <path
+     d="m 122.94514,86.02474 -35.080738,37.1438 -35.080733,-37.1438 h 16.50883 V 54.187178 H 106.43631 V 86.02474 Z"
+     style="fill:#a2e844;fill-opacity:1;stroke:#000000;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path4348-6"
+     inkscape:connector-curvature="0" />
 </svg>

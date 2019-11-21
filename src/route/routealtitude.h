@@ -23,6 +23,9 @@
 #include <QApplication>
 
 namespace atools {
+namespace grib {
+struct Wind;
+}
 namespace geo {
 class LineString;
 }
@@ -33,15 +36,25 @@ class AircraftPerf;
 }
 }
 
+namespace wind {
+struct WindAverageRoute;
+}
+
 class Route;
 
 /*
  * This class calculates altitudes for all route legs. This covers top of climb/descent
  * and sticks to all altitude restrictions of procedures while calculating.
  *
- * Also contains methods to calculate trip time and fuel consumption base on AircraftPerf information.
+ * Also contains methods to calculate trip time, wind and fuel consumption based on AircraftPerf information.
+ *
+ * Fuel units (weight or volume) are based on what is used in the given AircraftPerf object. Uses always either gallon
+ * or lbs.
  *
  * Uses the route object for calculation and caches all values.
+ *
+ * First leg is departure and has length 0. Destination leg is leg to destination airport.
+ * Order is same as in class Route.
  */
 class RouteAltitude
   : private QVector<RouteAltitudeLeg>
@@ -56,13 +69,13 @@ public:
   /* Calculate altitudes for all legs. TOD and TOC are INVALID_DISTANCE_VALUE if these could not be calculated which
    * can happen for short routes with too high cruise altitude.
    * Use perf to calculate climb and descent legs
-   */
-  void calculate();
+   * Fuel units (weight or volume) are based on what is used in the given AircraftPerf object.
+   * Calculate travelling time and fuel consumption based on given performance object and wind
+   * value in feet. */
+  void calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt);
 
-  /* Calculate travelling time and fuel consumption based on given performance object and wind */
-  void calculateTrip(const atools::fs::perf::AircraftPerf& perf, float windDir, float windSpeed);
-
-  /* Get interpolated altitude value in ft for the given distance to destination in NM */
+  /* Get interpolated altitude value in ft for the given distance to destination in NM.
+   *  Not for missed and alternate legs. */
   float getAltitudeForDistance(float distanceToDest) const;
 
   /* 0 if invalid */
@@ -87,17 +100,20 @@ public:
     return distanceTopOfDescent;
   }
 
+  /* Distance for cruise phase only in NM */
+  float getCruiseDistance() const
+  {
+    return getTotalDistance() - distanceTopOfClimb - getTopOfDescentFromDestination();
+  }
+
   /* Destination altitude. Either airport or runway if approach used. */
   float getDestinationAltitude() const;
 
   /* Distance to destination leg either airport or runway end in NM */
   float getDestinationDistance() const;
 
-  /* value in feet. Require to set before compilation. */
-  void setCruiseAltitude(float value)
-  {
-    cruiseAltitide = value;
-  }
+  /* Departure altitude. Either airport or runway. */
+  float getDepartureAltitude() const;
 
   /* Straighten out climb and descent segments which will also remove artifacts using
    * constant altitude before descending. */
@@ -121,19 +137,18 @@ public:
     calcTopOfClimb = value;
   }
 
-  /* true if the calculation result violates altitude restriction which can happen if the cruise altitude is too low */
-  bool altRestrictionsViolated() const
+  /* Returns empty object if index is invalid */
+  const RouteAltitudeLeg& value(int i) const;
+
+  int size() const
   {
-    return violatesRestrictions;
+    return QVector::size();
   }
 
-  /* Pull only the needed methods in public space to have control over it and allow only read access */
-  using QVector<RouteAltitudeLeg>::const_iterator;
-  using QVector<RouteAltitudeLeg>::begin;
-  using QVector<RouteAltitudeLeg>::end;
-  using QVector<RouteAltitudeLeg>::at;
-  using QVector<RouteAltitudeLeg>::size;
-  using QVector<RouteAltitudeLeg>::isEmpty;
+  bool isEmpty() const // OK
+  {
+    return QVector::isEmpty();
+  }
 
   /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL) */
   const QVector<map::MapIls>& getDestRunwayIls() const
@@ -165,9 +180,7 @@ public:
     return averageGroundSpeed;
   }
 
-  bool isFuelUnitVolume() const;
-
-  /* Route distance in NM */
+  /* Route distance in NM excluding alternates */
   float getTotalDistance() const;
 
   /* Trip fuel. Does not include reserve, extra, taxi and contingency fuel, Unit depends on performance settings. */
@@ -175,6 +188,21 @@ public:
   {
     return tripFuel;
   }
+
+  /* Fuel to the farthest alternate airport from the destination */
+  float getAlternateFuel() const
+  {
+    return alternateFuel;
+  }
+
+  /* Get all fuel to load for flight */
+  float getBlockFuel(const atools::fs::perf::AircraftPerf& perf) const;
+
+  /* Get fuel amount at destination */
+  float getDestinationFuel(const atools::fs::perf::AircraftPerf& perf) const;
+
+  /* Get contingency fuel amount*/
+  float getContingencyFuel(const atools::fs::perf::AircraftPerf& perf) const;
 
   /* true if there are legs where the headwind is higher than aircraft capabilities */
   bool hasUnflyableLegs() const
@@ -188,24 +216,124 @@ public:
     return cruiseAltitide;
   }
 
+  /* True if result is not valid and error messages exist */
   bool hasErrors() const;
-  QStringList getErrorStrings(QString& tooltip) const;
-
-  void setClimbRateFtPerNm(float value)
-  {
-    climbRateFtPerNm = value;
-  }
-
-  void setDesentRateFtPerNm(float value)
-  {
-    descentRateFtPerNm = value;
-  }
+  QString getErrorStrings(QString& toolTip, QString& statusTip) const;
 
   /* Get an array for all altitudes in feet. Includes procedure points. */
   QVector<float> getAltitudes() const;
 
+  /* Average wind direction for route degrees true */
+  float getWindDirection() const
+  {
+    return windDirectionAvg;
+  }
+
+  /* Average wind speed for this route in knots */
+  float getWindSpeedAverage() const
+  {
+    return windSpeedAvg;
+  }
+
+  /* Average head wind speed for this route in knots. Negative values are tailwind. */
+  float getHeadWindAverage() const
+  {
+    return windHeadAvg;
+  }
+
+  /* true if result of calculation was valid */
+  bool isValidProfile() const
+  {
+    return validProfile;
+  }
+
+  /* Average head wind for climb phase */
+  float getClimbHeadWind() const
+  {
+    return windHeadClimb;
+  }
+
+  /* Average head wind for cruise phase */
+  float getCruiseHeadWind() const
+  {
+    return windHeadCruise;
+  }
+
+  /* Average head wind for descent phase */
+  float getDescentHeadWind() const
+  {
+    return windHeadDescent;
+  }
+
+  /* Equal to GS */
+  float getClimbSpeedWindCorrected() const
+  {
+    return climbSpeedWindCorrected;
+  }
+
+  /* Equal to GS */
+  float getDescentSpeedWindCorrected() const
+  {
+    return descentSpeedWindCorrected;
+  }
+
+  /* Equal to GS */
+  float getCruiseSpeedWindCorrected() const
+  {
+    return cruiseSpeedWindCorrected;
+  }
+
+  /* Fuel consumption of climb part of the flight plan */
+  float getClimbFuel() const
+  {
+    return climbFuel;
+  }
+
+  /* Fuel consumption of cruise part of the flight plan */
+  float getCruiseFuel() const
+  {
+    return cruiseFuel;
+  }
+
+  /* Fuel consumption of descent part of the flight plan */
+  float getDescentFuel() const
+  {
+    return descentFuel;
+  }
+
+  /* Time of climb part of the flight plan */
+  float getClimbTime() const
+  {
+    return climbTime;
+  }
+
+  /* Time of cruise part of the flight plan */
+  float getCruiseTime() const
+  {
+    return cruiseTime;
+  }
+
+  /* Time of descent part of the flight plan */
+  float getDescentTime() const
+  {
+    return descentTime;
+  }
+
+  /* Calculates needed fuel to destination and TOD. Falls back to current aircraft consumption values if profile or
+   * altitude legs are not valid. distanceToDest: Aircraft position distance to destination. */
+  bool calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest, float& fuelLbsToTod, float& fuelGalToTod,
+                              float& timeToDest, float& timeToTod, float distanceToDest,
+                              const atools::fs::perf::AircraftPerf& perf, float aircraftFuelFlowLbs,
+                              float aircraftFuelFlowGal, float aircraftGroundSpeed, int activeLeg) const;
+
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
+
+  /* Calculate altitudes for all legs. Error list will be filled with altitude restriction violations. */
+  void calculate(QStringList& altRestErrors);
+
+  /* Calculate travelling time and fuel consumption based on given performance object and wind */
+  void calculateTrip(const atools::fs::perf::AircraftPerf& perf);
 
   /* Adjust the altitude to fit into the restriction. I.e. raise if it is below an at or above restriction */
   float adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const;
@@ -219,15 +347,12 @@ private:
   int findApproachFirstRestricion() const;
   int findDepartureLastRestricion() const;
 
-  /* Departure altitude. Either airport or runway. */
-  float departureAltitude() const;
-
   /* interpolate distance where the given leg intersects the given altitude */
   float distanceForAltitude(const RouteAltitudeLeg& leg, float altitude);
   float distanceForAltitude(const QPointF& leg1, const QPointF& leg2, float altitude);
 
-  /* Check if leg violates any altitude restricton */
-  bool violatesAltitudeRestriction(const RouteAltitudeLeg& leg) const;
+  /* Check if leg violates any altitude restricton. Returns true and error message if yes. */
+  bool violatesAltitudeRestriction(QString& errorMessage, int legIndex) const;
 
   /* Prefill all legs with distances and cruise altitude. Also mark the procedure flag for painting. */
   void calculateDistances();
@@ -248,13 +373,35 @@ private:
   /* Adjust range for vector size */
   int fixRange(int index) const;
 
+  /* Fill line object in leg with geometry */
+  void fillGeometry();
+
+  int indexForDistance(float distanceToDest) const;
+
+  void collectErrors(const QStringList& altRestrErrors);
+
+  float windCorrectedGroundSpeed(atools::grib::Wind& wind, float course, float speed);
+
   /* NM from start */
   float distanceTopOfClimb = map::INVALID_DISTANCE_VALUE,
         distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
 
   /* Fuel and performance calculation results */
-  float tripFuel = 0.f, travelTime = 0.f, averageGroundSpeed = 0.f;
+  float travelTime = 0.f, averageGroundSpeed = 0.f;
+
+  /* Accumulated time and fuel for each phase */
+  float climbFuel = 0.f, cruiseFuel = 0.f, descentFuel = 0.f,
+        climbTime = 0.f, cruiseTime = 0.f, descentTime = 0.f;
+
+  float tripFuel = 0.f, alternateFuel = 0.f;
   bool unflyableLegs = false;
+
+  /*  Average wind values for the whole route */
+  float windDirectionAvg = 0.f, windSpeedAvg = 0.f, windHeadAvg = 0.f,
+        windHeadClimb = 0.f, windHeadCruise = 0.f, windHeadDescent = 0.f;
+
+  /* Wind corrected climb speeds for second iteration. Ground speed. */
+  float climbSpeedWindCorrected = 0.f, cruiseSpeedWindCorrected = 0.f, descentSpeedWindCorrected = 0.f;
 
   /* index in altitude legs */
   int legIndexTopOfClimb = map::INVALID_INDEX_VALUE,
@@ -263,15 +410,19 @@ private:
   const Route *route;
 
   /* Configuration options */
-  bool simplify = true;
-  bool calcTopOfDescent = true;
-  bool calcTopOfClimb = true;
+  bool simplify = true, calcTopOfDescent = true, calcTopOfClimb = true;
+
+  /* Has TOC and TOD  */
+  bool validProfile = false;
+
+  /* From aircraft performance */
+  /* Climb and descent are corrected for tail/head wind duringfor second iteration in significant wind */
+  float climbRateWindFtPerNm = 333.f, descentRateWindFtPerNm = 333.f, cruiseAltitide = 0.f;
 
   /* Set by calculate */
-  bool violatesRestrictions = false;
-
-  float climbRateFtPerNm = 333.f, descentRateFtPerNm = 333.f;
-  float cruiseAltitide = 0.f;
+  /* Contains a list of messages if the calculation result violates altitude restrictions
+   * which can happen if the cruise altitude is too low */
+  QStringList errors;
 
   QVector<map::MapIls> destRunwayIls;
   map::MapRunwayEnd destRunwayEnd;

@@ -144,15 +144,14 @@ public:
   /* Needed for export */
   void setMagDecReader(atools::fs::common::MagDecReader *magDecReader);
 
-  void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
-  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
-                       float averageTasKts);
-
   /* Create CSV backup in the settings directory */
   void backup();
 
   /* Remove all data from the table which has the temporary flag set. */
   void clearTemporary();
+
+  /* Fill structure for user point id */
+  map::MapUserpoint getUserpointById(int id);
 
 signals:
   /* Sent after database modification to update the search result table */
@@ -176,12 +175,6 @@ private:
 
   /* Get default Garmin GTN export path */
   QString garminGtnUserWptPath();
-
-  void createTakoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff, float flownDistanceNm,
-                           float averageTasKts);
-
-  /* Remember last aircraft for fuel calculations */
-  const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
 
   /* Currently in actions selected types */
   QStringList selectedTypes;

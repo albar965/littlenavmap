@@ -43,8 +43,8 @@ class UserdataSearch :
   Q_OBJECT
 
 public:
-  UserdataSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
-  virtual ~UserdataSearch();
+  UserdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
+  virtual ~UserdataSearch() override;
 
   /* All state saving is done through the widget state */
   virtual void saveState() override;
@@ -70,7 +70,6 @@ private:
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
-  void overrideMode(const QStringList& overrideColumnTitles);
 
   /* Edit button clicked */
   void editUserpointsTriggered();

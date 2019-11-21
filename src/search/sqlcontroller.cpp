@@ -146,12 +146,12 @@ void SqlController::filterExcluding(const QModelIndex& index)
   searchParamsChanged = true;
 }
 
-atools::geo::Pos SqlController::getGeoPos(const QModelIndex& index)
+atools::geo::Pos SqlController::getGeoPos(const QModelIndex& index, const QString& lonxCol, const QString& latyCol)
 {
   if(index.isValid())
   {
-    QVariant lon = getRawData(index.row(), "lonx");
-    QVariant lat = getRawData(index.row(), "laty");
+    QVariant lon = getRawData(index.row(), lonxCol);
+    QVariant lat = getRawData(index.row(), latyCol);
 
     if(!lon.isNull() && !lat.isNull())
       return atools::geo::Pos(lon.toFloat(), lat.toFloat());

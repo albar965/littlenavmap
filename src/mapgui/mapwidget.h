@@ -94,10 +94,12 @@ public:
 
   /* If currently dragging flight plan: start, mouse and end position of the moving line. Start of end might be omitted
    * if dragging departure or destination */
-  void getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur);
+  void getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur);
 
   /* Get source and current position while dragging a userpoint */
   void getUserpointDragPoints(QPoint& cur, QPixmap& pixmap);
+
+  map::MapWeatherSource getMapWeatherSource() const;
 
   /* Update zoom */
   void jumpBackToAircraftUpdateDistance();
@@ -109,7 +111,7 @@ public:
   /* The main window show event was triggered after program startup. */
   void mainWindowShown();
 
-  /* Show home postion or last postion on map after program startup */
+  /* Show home position or last postion on map after program startup */
   void showSavedPosOnStartup();
 
   /* Show or hide all map overlays (optionally excluding scalebar) */
@@ -130,11 +132,17 @@ public:
   /* Update the shown map object types depending on action status (toolbar or menu) */
   virtual void updateMapObjectsShown() override;
 
+  /* Opens a dialog for configuration of a traffic pattern display object */
+  void addTrafficPattern(const map::MapAirport& airport);
+
   /* Remove pattern at index and update the map */
   void removeTrafficPatterm(int index);
 
-  /* Opens a dialog for configuration */
-  void addTrafficPattern(const map::MapAirport& airport);
+  /* Opens a dialog for configuration and adds a hold */
+  void addHold(const map::MapSearchResult& result, const atools::geo::Pos& position);
+
+  /* Remove hold at index and update the map */
+  void removeHold(int index);
 
   /* Jump to the search center mark using default zoom */
   void showSearchMark();
@@ -180,7 +188,14 @@ public:
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrack();
 
+  /* Clear all entries and reset current index */
+  void clearHistory();
+
 signals:
+  /* Fuel flow started or stopped */
+  void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void aircraftEngineStopped(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
   /* State isFlying between last and current aircraft has changed */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
@@ -193,6 +208,7 @@ signals:
   /* Set route departure or destination from context menu */
   void routeSetStart(map::MapAirport ap);
   void routeSetDest(map::MapAirport ap);
+  void routeAddAlternate(map::MapAirport ap);
 
   /* Add, replace or delete object from flight plan from context menu or drag and drop.
    *  index = 0: prepend to route
@@ -201,7 +217,7 @@ signals:
   void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int oldIndex);
 
   /* Show a map object in the search panel (context menu) */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
 
   /* Show information about objects from single click or context menu */
   void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
@@ -211,13 +227,34 @@ signals:
   void editUserpointFromMap(map::MapSearchResult result);
   void deleteUserpointFromMap(int id);
 
+  void editLogEntryFromMap(int id);
+
   /* Passed point with updated coordinates */
   void moveUserpointFromMap(const map::MapUserpoint& point);
 
   /* Show approaches from context menu */
-  void showApproaches(map::MapAirport airport);
+  void showProcedures(map::MapAirport airport);
+  void showProceduresCustom(map::MapAirport airport);
 
 private:
+  /* For touchscreen mode. Grid of 3x3 rectangles numbered from lef to right and top to bottom */
+  enum TouchArea
+  {
+    ZOOMIN,
+    MOVEUP,
+    ZOOMOUT,
+
+    MOVELEFT,
+    CENTER,
+    MOVERIGHT,
+
+    BACKWARD,
+    MOVEDOWN,
+    FORWARD,
+
+    NONE = 999
+  };
+
   /* Convert paint layer value to menu actions checked / not checked */
   virtual map::MapWeatherSource weatherSourceFromUi() override;
   void weatherSourceToUi(map::MapWeatherSource weatherSource);
@@ -231,6 +268,13 @@ private:
 
   /* Show information from context menu or single click */
   void handleInfoClick(QPoint pos);
+
+  /* Scroll and zoom for touchscreen area mode */
+  bool handleTouchAreaClick(QMouseEvent *event);
+  TouchArea touchAreaClick(QMouseEvent *event);
+
+  /* Touch/navigation areas are enabled and cursor is within a touch area. false for areas CENTER and NONE. */
+  bool touchAreaClicked(QMouseEvent *event);
 
   /* Cancel mouse actions */
   void cancelDragDistance();
@@ -247,12 +291,18 @@ private:
 
   /* Timer for takeoff and landing recognition fired */
   void takeoffLandingTimeout();
+  void fuelOnOffTimeout();
+
+  void simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                 const atools::fs::sc::SimConnectUserAircraft& last);
+  void simDataCalcFuelOnOff(const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                            const atools::fs::sc::SimConnectUserAircraft& last);
 
   /* Center aircraft again after scrolling or zooming */
   void jumpBackToAircraftTimeout(const QVariantList& values);
 
   /* Needed filter to avoid and/or disable some Marble pecularities */
-  bool eventFilter(QObject *obj, QEvent *e) override;
+  bool eventFilter(QObject *obj, QEvent *evt) override;
 
   /* Check for modifiers on mouse click and start actions like range rings on Ctrl+Click */
   bool mousePressCheckModifierActions(QMouseEvent *event);
@@ -306,6 +356,9 @@ private:
 
   void zoomInOut(bool directionIn, bool smooth);
 
+  /* true if point is not hidden by globe */
+  bool pointVisible(const QPoint& point);
+
   int screenSearchDistance /* Radius for click sensitivity */,
       screenSearchDistanceTooltip /* Radius for tooltip sensitivity */;
 
@@ -315,10 +368,12 @@ private:
   mw::MouseStates mouseState = mw::NONE;
   bool contextMenuActive = false;
 
-  /* Current position when dragging a flight plan point or leg */
+  /* Current moving position when dragging a flight plan point or leg */
   QPoint routeDragCur;
-  atools::geo::Pos routeDragFrom /* First fixed point of route drag */,
-                   routeDragTo /* Second fixed point of route drag */;
+
+  /* Fixed points of route drag which will not move with the mouse */
+  atools::geo::LineString routeDragFixed;
+
   int routeDragPoint = -1 /* Index of changed point */,
       routeDragLeg = -1 /* index of changed leg */;
 
@@ -330,7 +385,8 @@ private:
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipPos;
   map::MapSearchResult mapSearchResultTooltip;
-  QList<proc::MapProcedurePoint> procPointsTooltip;
+  map::MapSearchResult mapSearchResultInfoClick;
+
   MapTooltip *mapTooltip;
 
   /* Backup of distance marker for drag and drop in case the action is cancelled */
@@ -345,7 +401,7 @@ private:
   QTimer elevationDisplayTimer;
 
   /* Delay takeoff and landing messages to avoid false recognition of bumpy landings */
-  QTimer takeoffLandingTimer;
+  QTimer takeoffLandingTimer, fuelOnOffTimer;
 
   /* Simulator zulu time timestamp of takeoff event */
   qint64 takeoffTimeMs = 0L;

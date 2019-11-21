@@ -24,16 +24,60 @@
 #include "mapgui/mapwidget.h"
 #include "common/mapcolors.h"
 #include "common/maptypes.h"
+#include "mapgui/maplayer.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 
+#include <QPixmapCache>
+
 using namespace Marble;
 using namespace atools::geo;
+using atools::roundToInt;
 
 void PaintContext::szFont(float scale) const
 {
   return mapcolors::scaleFont(painter, scale, &defaultFont);
+}
+
+textflags::TextFlags PaintContext::airportTextFlags() const
+{
+  // Build and draw airport text
+  textflags::TextFlags textflags = textflags::NONE;
+
+  if(mapLayer->isAirportInfo())
+    textflags = textflags::IDENT | textflags::NAME | textflags::INFO;
+
+  if(mapLayer->isAirportIdent())
+    textflags |= textflags::IDENT;
+  else if(mapLayer->isAirportName())
+    textflags |= textflags::NAME;
+
+  if(!(flags2 & opts2::MAP_AIRPORT_TEXT_BACKGROUND))
+    textflags |= textflags::NO_BACKGROUND;
+
+  return textflags;
+}
+
+textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const
+{
+  // Show ident always on route
+  textflags::TextFlags textflags = textflags::IDENT;
+
+  if(drawAsRoute)
+    textflags |= textflags::ROUTE_TEXT;
+
+  if(drawAsLog)
+    textflags |= textflags::LOG_TEXT;
+
+  // Use more more detailed text for flight plan
+  if(mapLayer->isAirportRouteInfo())
+    textflags |= textflags::NAME | textflags::INFO;
+
+  if(!(flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
+    textflags |= textflags::NO_BACKGROUND;
+
+  return textflags;
 }
 
 // =================================================
@@ -41,8 +85,6 @@ MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale)
   : CoordinateConverter(parentMapWidget->viewport()), mapPaintWidget(parentMapWidget), scale(mapScale)
 {
   mapQuery = NavApp::getMapQuery();
-  airspaceQuery = NavApp::getAirspaceQuery();
-  airspaceQueryOnline = NavApp::getAirspaceQueryOnline();
   airportQuery = NavApp::getAirportQuerySim();
   symbolPainter = new SymbolPainter();
 }
@@ -192,6 +234,32 @@ void MapPainter::drawLine(QPainter *painter, const QLineF& line)
   }
 }
 
+void MapPainter::drawCircle(const PaintContext *context, const atools::geo::Pos& center, int radius)
+{
+  QPoint pt = wToS(center);
+  if(!pt.isNull())
+    context->painter->drawEllipse(pt, radius, radius);
+}
+
+void MapPainter::drawText(const PaintContext *context, const Pos& pos, const QString& text, bool topCorner,
+                          bool leftCorner)
+{
+  QPoint pt = wToS(pos);
+  if(!pt.isNull())
+  {
+    QFontMetrics metrics = context->painter->fontMetrics();
+    pt.setX(leftCorner ? pt.x() : pt.x() - metrics.width(text));
+    pt.setY(topCorner ? pt.y() + metrics.ascent() : pt.y() - metrics.descent());
+    context->painter->drawText(pt, text);
+  }
+}
+
+void MapPainter::drawCross(const PaintContext *context, int x, int y, int size)
+{
+  context->painter->drawLine(x, y - size, x, y + size);
+  context->painter->drawLine(x - size, y, x + size, y);
+}
+
 void MapPainter::drawLineString(const PaintContext *context, const atools::geo::LineString& linestring)
 {
   GeoDataLineString ls;
@@ -229,7 +297,8 @@ void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p
 void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float direction,
                                    float lengthNm, float minutes, bool left,
                                    const QString& text, const QString& text2,
-                                   const QColor& textColor, const QColor& textColorBackground)
+                                   const QColor& textColor, const QColor& textColorBackground,
+                                   QVector<float> inboundArrows, QVector<float> outboundArrows)
 {
   // Scale to total length given in the leg
   // length = 2 * p + 2 * PI * p / 2
@@ -248,6 +317,7 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
 
   float pixel = scale->getPixelForNm(segmentLength);
 
+  // Build the rectangles that are used to draw the arcs ====================
   QRectF arc1, arc2;
   float angle1, span1, angle2, span2;
   QPainterPath path;
@@ -276,49 +346,90 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
   path.arcTo(arc2, angle2, span2);
   path.closeSubpath();
 
+  // Draw hold ============================================================
   // translate to orgin of hold (navaid or waypoint) and rotate
   painter->translate(x, y);
   painter->rotate(direction);
 
   // Draw hold
+  painter->setBrush(Qt::transparent);
   painter->drawPath(path);
+
+  // Draw arrows if requested ==================================================
+  if(!inboundArrows.isEmpty() || !outboundArrows.isEmpty())
+  {
+    painter->save();
+    // Calculate arrow size
+    float arrowSize = static_cast<float>(painter->pen().widthF() * 2.3);
+
+    // Use a lighter brush for fill and a thinner pen for lines
+    painter->setBrush(painter->pen().color().lighter(300));
+    painter->setPen(QPen(painter->pen().color(), painter->pen().widthF() * 0.66));
+
+    if(!inboundArrows.isEmpty())
+    {
+      QPolygonF arrow = buildArrow(static_cast<float>(arrowSize));
+      QLineF inboundLeg(0., pixel, 0., 0.);
+
+      // 0,0 = origin and 0,pixel = start of inbound
+      // Drawn an arrow for each position
+      for(float pos : inboundArrows)
+        painter->drawPolygon(arrow.translated(inboundLeg.pointAt(pos)));
+    }
+
+    if(!outboundArrows.isEmpty())
+    {
+      // Mirror y axis for left turn legs - convert arrow pointing up to pointing  down
+      float leftScale = left ? -1.f : 1.f;
+      QPolygonF arrowMirror = buildArrow(arrowSize, true);
+      QLineF outboundLeg(pixel * 0.5f * leftScale, 0., pixel * 0.5f * leftScale, pixel);
+
+      // 0,0 = origin and 0,pixel = start of inbound
+      // Drawn an arrow for each position
+      for(float pos : outboundArrows)
+        painter->drawPolygon(arrowMirror.translated(outboundLeg.pointAt(pos)));
+    }
+    painter->restore();
+  }
 
   if(!text.isEmpty() || !text2.isEmpty())
   {
-    float lineWidth = painter->pen().widthF();
+    float lineWidth = static_cast<float>(painter->pen().widthF());
     // Move to first text position
     painter->translate(0, pixel / 2);
     painter->rotate(direction < 180.f ? 270. : 90.);
 
     painter->save();
     painter->setPen(textColor);
+    painter->setBrush(textColorBackground);
+    painter->setBackgroundMode(Qt::OpaqueMode);
     painter->setBackground(textColorBackground);
 
     QFontMetrics metrics = painter->fontMetrics();
     if(!text.isEmpty())
     {
       // text pointing to origin
-      QString str = metrics.elidedText(text, Qt::ElideRight, pixel);
+      QString str = metrics.elidedText(text, Qt::ElideRight, roundToInt(pixel));
       int w1 = metrics.width(str);
-      painter->drawText(-w1 / 2, -lineWidth - 3, str);
+      painter->drawText(-w1 / 2, roundToInt(-lineWidth - 3), str);
     }
 
     if(!text2.isEmpty())
     {
       // text on other side to origin
-      QString str = metrics.elidedText(text2, Qt::ElideRight, pixel);
+      QString str = metrics.elidedText(text2, Qt::ElideRight, roundToInt(pixel));
       int w2 = metrics.width(str);
 
       if(direction < 180.f)
         painter->translate(0, left ? -pixel / 2 : pixel / 2);
       else
         painter->translate(0, left ? pixel / 2 : -pixel / 2);
-      painter->drawText(-w2 / 2, -lineWidth - 3, str);
+      painter->drawText(-w2 / 2, roundToInt(-lineWidth - 3), str);
     }
     painter->restore();
   }
-
   painter->resetTransform();
+
 }
 
 void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm,
@@ -338,7 +449,7 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
 
   QLineF extension = QLineF(x, y, x + 400.f, y);
   extension.setAngle(angleToQt(course));
-  extension.setLength(scale->getPixelForNm(distanceNm, angleFromQt(extension.angle())));
+  extension.setLength(scale->getPixelForNm(distanceNm, static_cast<float>(angleFromQt(extension.angle()))));
 
   if(extensionLine != nullptr)
     // Return course
@@ -355,18 +466,18 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
 
   if(!text.isEmpty())
   {
-    float lineWidth = painter->pen().widthF();
+    float lineWidth = static_cast<float>(painter->pen().widthF());
 
     painter->save();
     painter->setPen(textColor);
     painter->setBackground(textColorBackground);
     QFontMetrics metrics = painter->fontMetrics();
-    QString str = metrics.elidedText(text, Qt::ElideRight, turnSegment.length());
+    QString str = metrics.elidedText(text, Qt::ElideRight, roundToInt(turnSegment.length()));
     int w1 = metrics.width(str);
 
     painter->translate((turnSegment.x1() + turnSegment.x2()) / 2, (turnSegment.y1() + turnSegment.y2()) / 2);
     painter->rotate(turnCourse < 180.f ? turnCourse - 90.f : turnCourse + 90.f);
-    painter->drawText(-w1 / 2, -lineWidth - 3, str);
+    painter->drawText(-w1 / 2, roundToInt(-lineWidth - 3), str);
     painter->resetTransform();
     painter->restore();
   }
@@ -397,7 +508,7 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
 
   // Calculate arrow for return segment
   QLineF arrow(returnSegment.p2(), returnSegment.p1());
-  arrow.setLength(scale->getPixelForNm(0.15f, angleFromQt(returnSegment.angle())));
+  arrow.setLength(scale->getPixelForNm(0.15f, static_cast<float>(angleFromQt(returnSegment.angle()))));
 
   QPolygonF poly;
   poly << arrow.p2() << arrow.p1();
@@ -416,12 +527,41 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
   painter->restore();
 }
 
-QPolygonF MapPainter::buildArrow(float size)
+QPolygonF MapPainter::buildArrow(float size, bool downwards)
 {
-  return QPolygonF({QPointF(0., -size),
-                    QPointF(size, size),
-                    QPointF(0., size / 2.),
-                    QPointF(-size, size)});
+  if(downwards)
+  {
+    // Pointing downwards
+    return QPolygonF({QPointF(0., size),
+                      QPointF(size, -size),
+                      QPointF(0., -size / 2.),
+                      QPointF(-size, -size)});
+  }
+  else
+  {
+    // Point up
+    return QPolygonF({QPointF(0., -size),
+                      QPointF(size, size),
+                      QPointF(0., size / 2.),
+                      QPointF(-size, size)});
+  }
+}
+
+void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow,
+                                     float pos)
+{
+  Pos arrowPos = line.interpolate(pos);
+
+  bool visible, hidden;
+  QPoint pt = wToS(arrowPos, DEFAULT_WTOS_SIZE, &visible, &hidden);
+
+  if(visible && !hidden)
+  {
+    painter->translate(pt);
+    painter->rotate(atools::geo::opposedCourseDeg(line.angleDeg()));
+    painter->drawPolygon(arrow);
+    painter->resetTransform();
+  }
 }
 
 void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos)
@@ -464,4 +604,16 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
   }
   else
     return ap1->emptyDraw(od) > ap2->emptyDraw(od);
+}
+
+void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
+{
+  QPixmap *pixmapPtr = QPixmapCache::find(resource + "_" + QString::number(size));
+  if(pixmapPtr == nullptr)
+  {
+    pixmap = QIcon(resource).pixmap(QSize(size, size));
+    QPixmapCache::insert(pixmap);
+  }
+  else
+    pixmap = *pixmapPtr;
 }

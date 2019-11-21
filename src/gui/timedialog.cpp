@@ -22,6 +22,7 @@
 #include "common/constants.h"
 #include "gui/helphandler.h"
 #include "mapgui/mapwidget.h"
+#include "gui/widgetstate.h"
 
 #include <QAbstractButton>
 #include <QPushButton>
@@ -38,10 +39,12 @@ TimeDialog::TimeDialog(QWidget *parent, const QDateTime& datetime) :
   ui->timeEdit->setTime(datetime.time());
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &TimeDialog::buttonBoxClicked);
+  atools::gui::WidgetState(lnm::TIME_DIALOG).restore(this);
 }
 
 TimeDialog::~TimeDialog()
 {
+  atools::gui::WidgetState(lnm::TIME_DIALOG).save(this);
   delete ui;
 }
 

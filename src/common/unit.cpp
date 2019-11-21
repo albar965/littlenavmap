@@ -39,6 +39,7 @@ opts::UnitSpeed Unit::unitSpeed = opts::SPEED_KTS;
 opts::UnitVertSpeed Unit::unitVertSpeed = opts::VERT_SPEED_FPM;
 opts::UnitCoords Unit::unitCoords = opts::COORDS_DMS;
 opts::UnitFuelAndWeight Unit::unitFuelWeight = opts::FUEL_WEIGHT_GAL_LBS;
+bool Unit::showOtherFuel = true;
 
 QString Unit::unitDistStr;
 QString Unit::unitShortDistStr;
@@ -51,6 +52,27 @@ QString Unit::unitWeightStr;
 
 QString Unit::unitFfVolStr;
 QString Unit::unitFfWeightStr;
+
+QString Unit::suffixDistNm;
+QString Unit::suffixDistKm;
+QString Unit::suffixDistMi;
+QString Unit::suffixDistShortFt;
+QString Unit::suffixDistShortMeter;
+QString Unit::suffixAltFt;
+QString Unit::suffixAltMeter;
+QString Unit::suffixSpeedKts;
+QString Unit::suffixSpeedKmH;
+QString Unit::suffixSpeedMph;
+QString Unit::suffixVertSpeedFpm;
+QString Unit::suffixVertSpeedMs;
+QString Unit::suffixFuelVolGal;
+QString Unit::suffixFuelWeightLbs;
+QString Unit::suffixFfWeightPpH;
+QString Unit::suffixFfGalGpH;
+QString Unit::suffixFuelVolLiter;
+QString Unit::suffixFuelWeightKg;
+QString Unit::suffixFfWeightKgH;
+QString Unit::suffixFfVolLiterH;
 
 Unit::Unit()
 {
@@ -72,15 +94,33 @@ QString Unit::replacePlaceholders(const QString& text, QString& origtext, bool f
 
 QString Unit::replacePlaceholders(const QString& text, bool fuelAsVolume)
 {
+  return replacePlaceholders(text, fuelAsVolume, unitFuelWeight);
+}
+
+QString Unit::replacePlaceholders(const QString& text, bool fuelAsVolume, opts::UnitFuelAndWeight unit)
+{
   QString retval(text);
   retval.replace("%distshort%", unitShortDistStr);
   retval.replace("%dist%", unitDistStr);
   retval.replace("%alt%", unitAltStr);
   retval.replace("%speed%", unitSpeedStr);
   retval.replace("%vspeed%", unitVertSpeedStr);
-  retval.replace("%fuel%", fuelAsVolume ? unitVolStr : unitWeightStr);
-  retval.replace("%weight%", unitWeightStr);
-  retval.replace("%volume%", unitVolStr);
+
+  switch(unit)
+  {
+    case opts::FUEL_WEIGHT_GAL_LBS:
+      retval.replace("%fuel%", fuelAsVolume ? suffixFuelVolGal : suffixFuelWeightLbs);
+      retval.replace("%weight%", suffixFuelWeightLbs);
+      retval.replace("%volume%", suffixFuelVolGal);
+      break;
+
+    case opts::FUEL_WEIGHT_LITER_KG:
+      retval.replace("%fuel%", fuelAsVolume ? suffixFuelVolLiter : suffixFuelWeightKg);
+      retval.replace("%weight%", suffixFuelWeightKg);
+      retval.replace("%volume%", suffixFuelVolLiter);
+      break;
+  }
+
   return retval;
 }
 
@@ -105,17 +145,37 @@ void Unit::deInit()
 
 void Unit::initTranslateableTexts()
 {
-  unitDistStr = Unit::tr("nm");
-  unitShortDistStr = Unit::tr("ft");
-  unitAltStr = Unit::tr("ft");
-  unitSpeedStr = Unit::tr("kts");
-  unitVertSpeedStr = Unit::tr("fpm");
+  suffixDistNm = Unit::tr("nm");
+  suffixDistKm = Unit::tr("km");
+  suffixDistMi = Unit::tr("mi");
+  suffixDistShortFt = Unit::tr("ft");
+  suffixDistShortMeter = Unit::tr("m");
+  suffixAltFt = Unit::tr("ft");
+  suffixAltMeter = Unit::tr("m");
+  suffixSpeedKts = Unit::tr("kts");
+  suffixSpeedKmH = Unit::tr("km/h");
+  suffixSpeedMph = Unit::tr("mph");
+  suffixVertSpeedFpm = Unit::tr("fpm");
+  suffixVertSpeedMs = Unit::tr("m/s");
+  suffixFuelVolGal = Unit::tr("gal");
+  suffixFuelWeightLbs = Unit::tr("lbs");
+  suffixFfWeightPpH = Unit::tr("pph");
+  suffixFfGalGpH = Unit::tr("gph");
+  suffixFuelVolLiter = Unit::tr("l");
+  suffixFuelWeightKg = Unit::tr("kg");
+  suffixFfWeightKgH = Unit::tr("kg/h");
+  suffixFfVolLiterH = Unit::tr("l/h");
 
-  unitVolStr = Unit::tr("gal");
-  unitWeightStr = Unit::tr("lbs");
-
-  unitFfVolStr = Unit::tr("gph");
-  unitFfWeightStr = Unit::tr("pph");
+  // Defaults for changeable
+  unitDistStr = suffixDistNm;
+  unitShortDistStr = suffixDistShortFt;
+  unitAltStr = suffixAltFt;
+  unitSpeedStr = suffixSpeedKts;
+  unitVertSpeedStr = suffixVertSpeedFpm;
+  unitVolStr = suffixFuelVolGal;
+  unitWeightStr = suffixFuelWeightLbs;
+  unitFfVolStr = suffixFfGalGpH;
+  unitFfWeightStr = suffixFfWeightPpH;
 }
 
 QString Unit::distMeter(float value, bool addUnit, int minValPrec, bool narrow)
@@ -191,9 +251,9 @@ float Unit::distShortFeetF(float value)
   return distShortMeterF(atools::geo::feetToMeter(value));
 }
 
-QString Unit::speedKts(float value, bool addUnit)
+QString Unit::speedKts(float value, bool addUnit, bool narrow)
 {
-  return u(speedKtsF(value), unitSpeedStr, addUnit);
+  return u(speedKtsF(value), unitSpeedStr, addUnit, narrow);
 }
 
 float Unit::speedKtsF(float value)
@@ -212,9 +272,9 @@ float Unit::speedKtsF(float value)
   return 0.f;
 }
 
-QString Unit::speedMeterPerSec(float value, bool addUnit)
+QString Unit::speedMeterPerSec(float value, bool addUnit, bool narrow)
 {
-  return u(speedMeterPerSecF(value), unitSpeedStr, addUnit);
+  return u(speedMeterPerSecF(value), unitSpeedStr, addUnit, narrow);
 }
 
 float Unit::speedMeterPerSecF(float value)
@@ -286,6 +346,11 @@ float Unit::altMeterF(float value)
 float Unit::altFeetF(float value)
 {
   return altMeterF(atools::geo::feetToMeter(value));
+}
+
+int Unit::altFeetI(int value)
+{
+  return atools::roundToInt(altMeterF(atools::geo::feetToMeter(value)));
 }
 
 QString Unit::volGallon(float value, bool addUnit)
@@ -360,6 +425,88 @@ float Unit::weightKgF(float value)
   return 0.f;
 }
 
+QString Unit::localOtherText(bool localBold, bool otherSmall)
+{
+  if(showOtherFuel)
+    return (localBold ? tr("<b>%1</b>") : tr("%1")) +
+           (otherSmall ? tr(" <span style=\"font-size: small;\">(%2)</span>") : tr(" (%2)"));
+  else
+    return localBold ? tr("<b>%1</b>") : tr("%1");
+}
+
+QString Unit::localOtherText2(bool localBold, bool otherSmall)
+{
+  if(showOtherFuel)
+    return (localBold ? tr("<b>%1, %2</b>") : tr("%1, %2")) +
+           (otherSmall ? tr(" <span style=\"font-size: small;\">(%3, %4)</span>") : tr(" (%3, %4)"));
+  else
+    return localBold ? tr("<b>%1, %2</b>") : tr("%1, %2");
+}
+
+QString Unit::weightLbsLocalOther(float valueLbs, bool localBold, bool otherSmall)
+{
+  switch(unitFuelWeight)
+  {
+    case opts::FUEL_WEIGHT_GAL_LBS:
+      if(showOtherFuel)
+        // lbs (kg)
+        return localOtherText(localBold, otherSmall).
+               arg(u(valueLbs, suffixFuelWeightLbs, true)).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
+      else
+        // lbs only
+        return localOtherText(localBold, otherSmall).
+               arg(u(valueLbs, suffixFuelWeightLbs, true));
+
+    case opts::FUEL_WEIGHT_LITER_KG:
+      if(showOtherFuel)
+        // kg (lbs)
+        return localOtherText(localBold, otherSmall).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(valueLbs, suffixFuelWeightLbs, true));
+      else
+        // kg only
+        return localOtherText(localBold, otherSmall).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
+  }
+  return QString();
+}
+
+QString Unit::fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool localBold, bool otherSmall)
+{
+  switch(unitFuelWeight)
+  {
+    case opts::FUEL_WEIGHT_GAL_LBS:
+      if(showOtherFuel)
+        // lbs, gal (kg, liter)
+        return localOtherText2(localBold, otherSmall).
+               arg(u(valueLbs, suffixFuelWeightLbs, true)).
+               arg(u(valueGal, suffixFuelVolGal, true)).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
+      else
+        // lbs, gal only
+        return localOtherText2(localBold, otherSmall).
+               arg(u(valueLbs, suffixFuelWeightLbs, true)).
+               arg(u(valueGal, suffixFuelVolGal, true));
+
+    case opts::FUEL_WEIGHT_LITER_KG:
+      if(showOtherFuel)
+        // kg, liter (lbs, gal)
+        return localOtherText2(localBold, otherSmall).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true)).
+               arg(u(valueLbs, suffixFuelWeightLbs, true)).
+               arg(u(valueGal, suffixFuelVolGal, true));
+      else
+        // kg, liter only
+        return localOtherText2(localBold, otherSmall).
+               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
+  }
+  return QString();
+}
+
 QString Unit::ffGallon(float value, bool addUnit)
 {
   return u(volGallonF(value), unitFfVolStr, addUnit);
@@ -387,7 +534,7 @@ QString Unit::ffLbsAndGal(float valueLbs, float valueGal, bool addUnit)
 
 QString Unit::fuelLbsAndGal(float valueLbs, float valueGal, bool addUnit)
 {
-  return tr("%1, %2").arg(weightLbs(valueLbs, addUnit), volGallon(valueGal, addUnit));
+  return tr("%1, %2").arg(weightLbs(valueLbs, addUnit)).arg(volGallon(valueGal, addUnit));
 }
 
 QString Unit::fuelLbsGallon(float value, bool addUnit, bool fuelAsVolume)
@@ -410,21 +557,90 @@ float Unit::ffLbsGallonF(float value, bool fuelAsVolume)
   return fuelAsVolume ? ffGallonF(value) : ffLbsF(value);
 }
 
+QString Unit::ffLiter(float value, bool addUnit)
+{
+  return u(volLiterF(value), unitFfVolStr, addUnit);
+}
+
+float Unit::ffLiterF(float value)
+{
+  return volLiterF(value);
+}
+
+QString Unit::ffKg(float value, bool addUnit)
+{
+  return u(weightKgF(value), unitFfWeightStr, addUnit);
+}
+
+float Unit::ffKgF(float value)
+{
+  return weightKgF(value);
+}
+
+QString Unit::ffKgAndLiter(float valueKg, float valueLiter, bool addUnit)
+{
+  return tr("%1, %2").arg(ffKg(valueKg, addUnit)).arg(ffLiter(valueLiter, addUnit));
+}
+
+QString Unit::fuelKgAndLiter(float valueKg, float valueLiter, bool addUnit)
+{
+  return tr("%1, %2").arg(weightKg(valueKg, addUnit), volLiter(valueLiter, addUnit));
+}
+
+QString Unit::fuelKgLiter(float value, bool addUnit, bool fuelAsVolume)
+{
+  return fuelAsVolume ? volLiter(value, addUnit) : weightKg(value, addUnit);
+}
+
+float Unit::fuelKgLiterF(float value, bool fuelAsVolume)
+{
+  return fuelAsVolume ? volLiterF(value) : weightKgF(value);
+}
+
+QString Unit::ffKgLiter(float value, bool addUnit, bool fuelAsVolume)
+{
+  return fuelAsVolume ? ffLiter(value, addUnit) : ffKg(value, addUnit);
+}
+
+float Unit::ffKgLiterF(float value, bool fuelAsVolume)
+{
+  return fuelAsVolume ? ffLiterF(value) : ffKgF(value);
+}
+
 QString Unit::coords(const atools::geo::Pos& pos)
+{
+  return coords(pos, unitCoords);
+}
+
+QString Unit::coords(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
 {
   if(!pos.isValid())
     return QObject::tr("Invalid");
 
-  return coordsLatY(pos) + " " + coordsLonX(pos);
+  if(coordUnit == opts::COORDS_LATY_LONX)
+    return tr("%1 %2").arg(QLocale().toString(pos.getLatY(), 'f', 5)).arg(QLocale().toString(pos.getLonX(), 'f', 5));
+  else if(coordUnit == opts::COORDS_LONX_LATY)
+    return tr("%1 %2").arg(QLocale().toString(pos.getLonX(), 'f', 5)).arg(QLocale().toString(pos.getLatY(), 'f', 5));
+  else
+    return tr("%1 %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
 }
 
 QString Unit::coordsLonX(const atools::geo::Pos& pos)
 {
+  return coordsLonX(pos, unitCoords);
+}
+
+QString Unit::coordsLonX(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
+{
   if(!pos.isValid())
     return QObject::tr("Invalid");
 
-  switch(unitCoords)
+  switch(coordUnit)
   {
+    case opts::COORDS_LATY_LONX:
+    case opts::COORDS_LONX_LATY:
+      return QLocale().toString(pos.getLonX(), 'f', 5);
+
     case opts::COORDS_DMS:
       return COORDS_DMS_FORMAT_LONX.
              arg(atools::absInt(pos.getLonXDeg())).
@@ -448,11 +664,20 @@ QString Unit::coordsLonX(const atools::geo::Pos& pos)
 
 QString Unit::coordsLatY(const atools::geo::Pos& pos)
 {
+  return coordsLatY(pos, unitCoords);
+}
+
+QString Unit::coordsLatY(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
+{
   if(!pos.isValid())
     return QObject::tr("Invalid");
 
-  switch(unitCoords)
+  switch(coordUnit)
   {
+    case opts::COORDS_LATY_LONX:
+    case opts::COORDS_LONX_LATY:
+      return QLocale().toString(pos.getLatY(), 'f', 5);
+
     case opts::COORDS_DMS:
       return COORDS_DMS_FORMAT_LATY.
              arg(atools::absInt(pos.getLatYDeg())).
@@ -505,77 +730,95 @@ void Unit::optionsChanged()
   unitSpeed = opts->getUnitSpeed();
   unitVertSpeed = opts->getUnitVertSpeed();
   unitCoords = opts->getUnitCoords();
-  unitFuelWeight = opts->getUnitFuelWeight();
+  unitFuelWeight = opts->getUnitFuelAndWeight();
+  showOtherFuel = opts->getFlags2() & opts2::UNIT_FUEL_SHOW_OTHER;
 
   switch(unitDist)
   {
     case opts::DIST_NM:
-      unitDistStr = Unit::tr("nm");
+      unitDistStr = suffixDistNm; // Unit::tr("nm");
       break;
     case opts::DIST_KM:
-      unitDistStr = Unit::tr("km");
+      unitDistStr = suffixDistKm; // Unit::tr("km");
       break;
     case opts::DIST_MILES:
-      unitDistStr = Unit::tr("mi");
+      unitDistStr = suffixDistMi; // Unit::tr("mi");
       break;
   }
 
   switch(unitShortDist)
   {
     case opts::DIST_SHORT_FT:
-      unitShortDistStr = Unit::tr("ft");
+      unitShortDistStr = suffixDistShortFt; // Unit::tr("ft");
       break;
     case opts::DIST_SHORT_METER:
-      unitShortDistStr = Unit::tr("m");
+      unitShortDistStr = suffixDistShortMeter; // Unit::tr("m");
       break;
   }
 
   switch(unitAlt)
   {
     case opts::ALT_FT:
-      unitAltStr = Unit::tr("ft");
+      unitAltStr = suffixAltFt; // Unit::tr("ft");
       break;
     case opts::ALT_METER:
-      unitAltStr = Unit::tr("m");
+      unitAltStr = suffixAltMeter; // Unit::tr("m");
       break;
   }
 
   switch(unitSpeed)
   {
     case opts::SPEED_KTS:
-      unitSpeedStr = Unit::tr("kts");
+      unitSpeedStr = suffixSpeedKts; // Unit::tr("kts");
       break;
     case opts::SPEED_KMH:
-      unitSpeedStr = Unit::tr("km/h");
+      unitSpeedStr = suffixSpeedKmH; // Unit::tr("km/h");
       break;
     case opts::SPEED_MPH:
-      unitSpeedStr = Unit::tr("mph");
+      unitSpeedStr = suffixSpeedMph; // Unit::tr("mph");
       break;
   }
 
   switch(unitVertSpeed)
   {
     case opts::VERT_SPEED_FPM:
-      unitVertSpeedStr = Unit::tr("fpm");
+      unitVertSpeedStr = suffixVertSpeedFpm; // Unit::tr("fpm");
       break;
     case opts::VERT_SPEED_MS:
-      unitVertSpeedStr = Unit::tr("m/s");
+      unitVertSpeedStr = suffixVertSpeedMs; // Unit::tr("m/s");
       break;
   }
 
   switch(unitFuelWeight)
   {
     case opts::FUEL_WEIGHT_GAL_LBS:
-      unitVolStr = Unit::tr("gal");
-      unitWeightStr = Unit::tr("lbs");
-      unitFfWeightStr = Unit::tr("pph");
-      unitFfVolStr = Unit::tr("gph");
+      unitVolStr = suffixFuelVolGal; // Unit::tr("gal");
+      unitWeightStr = suffixFuelWeightLbs; // Unit::tr("lbs");
+      unitFfWeightStr = suffixFfWeightPpH; // Unit::tr("pph");
+      unitFfVolStr = suffixFfGalGpH; // Unit::tr("gph");
       break;
+
     case opts::FUEL_WEIGHT_LITER_KG:
-      unitVolStr = Unit::tr("l");
-      unitWeightStr = Unit::tr("kg");
-      unitFfWeightStr = Unit::tr("kg/h");
-      unitFfVolStr = Unit::tr("l/h");
+      unitVolStr = suffixFuelVolLiter; // Unit::tr("l");
+      unitWeightStr = suffixFuelWeightKg; // Unit::tr("kg");
+      unitFfWeightStr = suffixFfWeightKgH; // Unit::tr("kg/h");
+      unitFfVolStr = suffixFfVolLiterH; // Unit::tr("l/h");
       break;
   }
+}
+
+float Unit::fromUsToMetric(float value, bool fuelAsVolume)
+{
+  return fuelAsVolume ? atools::geo::gallonToLiter(value) : atools::geo::lbsToKg(value);
+}
+
+float Unit::fromMetricToUs(float value, bool fuelAsVolume)
+{
+  return fuelAsVolume ? atools::geo::literToGallon(value) : atools::geo::kgToLbs(value);
+}
+
+float Unit::fromCopy(float value, bool fuelAsVolume)
+{
+  Q_UNUSED(fuelAsVolume);
+  return value;
 }

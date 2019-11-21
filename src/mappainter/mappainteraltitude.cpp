@@ -36,7 +36,7 @@ using namespace Marble;
 using namespace atools::geo;
 using map::MapIls;
 
-MapPainterAltitude::MapPainterAltitude(MapPaintWidget* mapWidget, MapScale *mapScale)
+MapPainterAltitude::MapPainterAltitude(MapPaintWidget *mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }
@@ -59,7 +59,11 @@ void MapPainterAltitude::render(PaintContext *context)
     {
       atools::util::PainterContextSaver paintContextSaver(context->painter);
 
-      context->painter->setPen(mapcolors::minimumAltitudeGridPen);
+      QColor gridCol = mapcolors::minimumAltitudeGridPen.color();
+      gridCol.setAlphaF(1. - context->transparencyMora);
+      QPen pen = mapcolors::minimumAltitudeGridPen;
+      pen.setColor(gridCol);
+      context->painter->setPen(pen);
 
       // Get covered one degree coordinate rectangles
       const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
@@ -132,45 +136,57 @@ void MapPainterAltitude::render(PaintContext *context)
         minWidth = std::max(minWidth * 0.6f, 25.f);
         minWidth = std::min(minWidth * 0.6f, 150.f);
 
-        context->painter->setPen(QPen(mapcolors::minimumAltitudeNumberColor, 1.f));
+        QColor textCol = mapcolors::minimumAltitudeNumberColor;
+        textCol.setAlphaF(1. - context->transparencyMora);
+        context->painter->setPen(textCol);
+
+        float fontSize = minWidth * context->textSizeMora;
         QFont font = context->painter->font();
         font.setItalic(true);
-        font.setPixelSize(atools::roundToInt(minWidth));
+        font.setPixelSize(atools::roundToInt(fontSize));
         context->painter->setFont(font);
+
         QFontMetricsF fontmetrics = context->painter->fontMetrics();
 
-        // Draw big thousands numbers ===============================
-        bool visible, hidden;
-        QVector<double> xpos;
-        for(int i = 0; i < centers.size(); i++)
+        if(fontmetrics.height() > 4)
         {
-          QString txt = QString::number(altitudes.at(i) / 10);
-          QPointF pt = wToSF(centers.at(i), DEFAULT_WTOS_SIZE, &visible, &hidden);
-
-          qreal w = fontmetrics.width(txt);
-          pt += QPointF(-w * 0.7, fontmetrics.height() / 2. - fontmetrics.descent());
-          xpos.append(pt.x() + w);
-          if(!hidden)
-            context->painter->drawText(pt, txt);
-        }
-
-        // Draw smaller hundreds numbers ==============================
-        font.setPixelSize(font.pixelSize() * 7 / 10);
-        context->painter->setFont(font);
-        fontmetrics = context->painter->fontMetrics();
-
-        for(int i = 0; i < centers.size(); i++)
-        {
-          QString txt = QString::number(altitudes.at(i) / 10);
-          QPointF pt = wToSF(centers.at(i), DEFAULT_WTOS_SIZE, &visible, &hidden);
-
-          if(!hidden)
+          // Draw big thousands numbers ===============================
+          bool visible, hidden;
+          QVector<QPointF> baseline;
+          for(int i = 0; i < centers.size(); i++)
           {
-            pt += QPointF(0., fontmetrics.height() - fontmetrics.descent());
-            pt.setX(xpos.at(i));
-            context->painter->drawText(pt, QString::number(altitudes.at(i) - (altitudes.at(i) / 10 * 10)));
+            QPointF pt = wToSF(centers.at(i), DEFAULT_WTOS_SIZE, &visible, &hidden);
+
+            if(!hidden)
+            {
+              QString numTxt = QString::number(altitudes.at(i) / 10);
+              qreal w = fontmetrics.width(numTxt);
+              pt += QPointF(-w * 0.7, fontmetrics.height() / 2. - fontmetrics.descent());
+
+              context->painter->drawText(pt, numTxt);
+              baseline.append(QPointF(pt.x() + w, pt.y()));
+            }
+            else
+              baseline.append(QPointF());
           }
-        }
+
+          // Draw smaller hundreds numbers ==============================
+          font.setPixelSize(atools::roundToInt(fontSize * .6f));
+          context->painter->setFont(font);
+          fontmetrics = context->painter->fontMetrics();
+
+          for(int i = 0; i < centers.size(); i++)
+          {
+            QPointF pt = baseline.at(i);
+            if(!pt.isNull())
+            {
+              int alt = altitudes.at(i);
+              QString smallNumTxt = QString::number(alt - (alt / 10 * 10));
+              pt.setY(pt.y() + fontmetrics.ascent() / 3.f);
+              context->painter->drawText(pt, smallNumTxt);
+            }
+          }
+        } // if(fontmetrics.height() > ...)
       } // if(!context->drawFast)
     } // if(moraReader->isDataAvailable())
   } // if(context->mapLayer->isMinimumAltitude())

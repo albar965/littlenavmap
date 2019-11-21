@@ -43,6 +43,7 @@ class RouteLeg
   Q_DECLARE_TR_FUNCTIONS(RouteLeg)
 
 public:
+  RouteLeg();
   RouteLeg(atools::fs::pln::Flightplan *parentFlightplan);
   ~RouteLeg();
 
@@ -65,7 +66,7 @@ public:
    */
   void createFromAirport(int entryIndex, const map::MapAirport& newAirport, const RouteLeg *prevLeg);
 
-  void createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg);
+  void createFromProcedureLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
@@ -80,7 +81,8 @@ public:
   void updateUserName(const QString& name);
   void updateUserPosition(const atools::geo::Pos& pos);
 
-  /* Set parking and start position. Does not modify the flight plan entry. */
+  /* Set parking and start position. Does not modify the flight plan entry.
+   * Parking clears start and vice versa. */
   void setDepartureParking(const map::MapParking& departureParking);
   void setDepartureStart(const map::MapStart& departureStart);
 
@@ -92,6 +94,7 @@ public:
 
   /* Get position of airport or navaid. Source can be flight plan entry or database. */
   const atools::geo::Pos& getPosition() const;
+  float getAltitude() const;
 
   /* Get ident of airport or navaid. Source can be flight plan entry or database. */
   QString getIdent() const;
@@ -119,11 +122,26 @@ public:
   QString getChannel() const;
   QString getFrequencyOrChannel() const;
 
-  /* Get magnetic variation. Source is always database. */
+  /* Get magnetic variation. Source is always database. Depending on settings
+   * either environment or radio navaid declination. */
   float getMagvar() const
   {
     return magvar;
   }
+
+  void setMagvar(float value)
+  {
+    magvar = value;
+  }
+
+  /* Get calculated declination from environment. */
+  float getMagvarPos() const
+  {
+    return magvarPos;
+  }
+
+  /* Gets either radio navaid declination or environment value depending on settings */
+  float getMagVarBySettings() const;
 
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
@@ -213,6 +231,12 @@ public:
   }
 
   /* @return false if this waypoint was not found in the database */
+  bool isValidWaypoint() const
+  {
+    return validWaypoint;
+  }
+
+  /* @return false if this is default constructed */
   bool isValid() const
   {
     return valid;
@@ -221,11 +245,24 @@ public:
   /* true if nav database otherwise simulator */
   bool isNavdata() const;
 
+  /* Route leg - not part of procedure and not alternate */
   bool isRoute() const
   {
-    return !isAnyProcedure();
+    return !isAnyProcedure() && !isAlternate();
   }
 
+  /* Alterante airport */
+  bool isAlternate() const
+  {
+    return alternate;
+  }
+
+  void setAlternate(bool value = true)
+  {
+    alternate = value;
+  }
+
+  /* SID, STAR or approach */
   bool isAnyProcedure() const
   {
     return type & map::PROCEDURE;
@@ -284,7 +321,7 @@ public:
   }
 
   /* true if airway given but not found in database. Also true if one-way direction is violated */
-  bool isAirwaySetAndInvalid() const;
+  bool isAirwaySetAndInvalid(float altitudeFt, QStringList *errors = nullptr) const;
 
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
 
@@ -317,14 +354,15 @@ private:
   proc::MapProcedureLeg procedureLeg;
   map::MapAirway airway;
 
-  bool valid = false;
+  bool validWaypoint = false, alternate = false, valid = false;
 
   float distanceTo = 0.f,
         distanceToRhumb = 0.f,
         courseTo = 0.f,
         courseRhumbTo = 0.f,
         groundAltitude = 0.f,
-        magvar = 0.f; /* Either taken from navaid or average across the route */
+        magvar = 0.f, /* Either taken from navaid or average across the route */
+        magvarPos = 0.f; /* Calculate environment value */
   atools::geo::LineString geometry;
 
 };

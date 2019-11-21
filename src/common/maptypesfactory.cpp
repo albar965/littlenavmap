@@ -77,6 +77,7 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
 {
   if(!overview)
   {
+    runway.id = record.valueInt("runway_id");
     runway.surface = record.valueStr("surface");
     runway.shoulder = record.valueStr("shoulder", QString()); // Optional X-Plane field
     runway.primaryName = record.valueStr("primary_name");
@@ -142,6 +143,8 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
   {
     ap.towerFrequency = record.valueInt("tower_frequency");
     ap.ident = record.valueStr("ident");
+    ap.icao = record.valueStr("icao", QString());
+    ap.iata = record.valueStr("iata", QString());
     ap.name = record.valueStr("name");
     ap.rating = record.valueInt("rating", -1);
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
@@ -157,7 +160,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
 
 map::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, bool overview)
 {
-  MapAirportFlags flags = 0;
+  MapAirportFlags flags = AP_NONE;
   flags |= airportFlag(record, "num_helipad", AP_HELIPAD);
   flags |= airportFlag(record, "has_avgas", AP_AVGAS);
   flags |= airportFlag(record, "has_jetfuel", AP_JETFUEL);
@@ -317,15 +320,59 @@ void MapTypesFactory::fillVorBase(const SqlRecord& record, map::MapVor& vor)
 
 void MapTypesFactory::fillUserdataPoint(const SqlRecord& rec, map::MapUserpoint& obj)
 {
-  obj.id = rec.valueInt("userdata_id");
-  obj.ident = rec.valueStr("ident");
-  obj.region = rec.valueStr("region");
-  obj.name = rec.valueStr("name");
-  obj.type = rec.valueStr("type");
+  if(!rec.isEmpty())
+  {
+    obj.id = rec.valueInt("userdata_id");
+    obj.ident = rec.valueStr("ident");
+    obj.region = rec.valueStr("region");
+    obj.name = rec.valueStr("name");
+    obj.type = rec.valueStr("type");
+    obj.description = rec.valueStr("description");
+    obj.tags = rec.valueStr("tags");
+    obj.temp = rec.valueBool("temp", false);
+    obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
+  }
+}
+
+void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLogbookEntry& obj)
+{
+  if(rec.isEmpty())
+    return;
+
+  obj.id = rec.valueInt("logbook_id");
+  obj.departureIdent = rec.valueStr("departure_ident").toUpper();
+  obj.departureName = rec.valueStr("departure_name");
+  obj.departureRunway = rec.valueStr("departure_runway");
+
+  obj.departurePos = atools::geo::Pos(rec.value("departure_lonx"), rec.value("departure_laty"),
+                                      rec.value("departure_alt"));
+
+  obj.destinationIdent = rec.valueStr("destination_ident").toUpper();
+  obj.destinationName = rec.valueStr("destination_name");
+  obj.destinationRunway = rec.valueStr("destination_runway");
+
+  obj.destinationPos = atools::geo::Pos(rec.value("destination_lonx"), rec.value("destination_laty"),
+                                        rec.value("destination_alt"));
+
+  obj.routeString = rec.valueStr("route_string");
+  obj.simulator = rec.valueStr("simulator");
   obj.description = rec.valueStr("description");
-  obj.tags = rec.valueStr("tags");
-  obj.temp = rec.valueBool("temp", false);
-  obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
+
+  obj.aircraftType = rec.valueStr("aircraft_type");
+  obj.aircraftRegistration = rec.valueStr("aircraft_registration");
+  obj.simulator = rec.valueStr("simulator");
+  obj.distance = rec.valueFloat("distance");
+  obj.distanceGc = atools::geo::meterToNm(obj.lineString().lengthMeter());
+
+  obj.perfFile = rec.valueStr("performance_file");
+  obj.routeFile = rec.valueStr("flightplan_file");
+
+  if(obj.departurePos.isValid() && obj.destinationPos.isValid())
+    obj.position = Line(obj.departurePos, obj.destinationPos).boundingRect().getCenter();
+  else if(obj.departurePos.isValid())
+    obj.position = obj.departurePos;
+  else if(obj.destinationPos.isValid())
+    obj.position = obj.destinationPos;
 }
 
 void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
@@ -418,13 +465,11 @@ void MapTypesFactory::fillAirway(const SqlRecord& record, map::MapAirway& airway
   airway.from = Pos(record.valueFloat("from_lonx"), record.valueFloat("from_laty"));
   airway.to = Pos(record.valueFloat("to_lonx"), record.valueFloat("to_laty"));
 
-  float north = std::max(airway.from.getLatY(), airway.to.getLatY());
-  float south = std::min(airway.from.getLatY(), airway.to.getLatY());
-  float east = std::max(airway.from.getLonX(), airway.to.getLonX());
-  float west = std::min(airway.from.getLonX(), airway.to.getLonX());
-  if(east - west > 180.f)
-    std::swap(east, west);
-  airway.bounding = Rect(west, north, east, south);
+  if(airway.from.isValid() && airway.to.isValid())
+  {
+    airway.bounding = Line(airway.from, airway.to).boundingRect();
+    airway.position = airway.bounding.getCenter();
+  }
 }
 
 void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker)
@@ -490,17 +535,17 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
 }
 
-void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, bool online)
+void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src)
 {
   if(record.contains("boundary_id"))
     airspace.id = record.valueInt("boundary_id");
   else if(record.contains("atc_id"))
     airspace.id = record.valueInt("atc_id");
 
-  airspace.online = online;
+  airspace.src = src;
 
   airspace.type = map::airspaceTypeFromDatabase(record.valueStr("type"));
-  airspace.name = record.valueStr(online ? "callsign" : "name");
+  airspace.name = record.valueStr(airspace.isOnline() ? "callsign" : "name");
   airspace.comType = record.valueStr("com_type");
 
   for(const QString& str : record.valueStr("com_frequency", QString()).split("&"))
@@ -526,4 +571,6 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   // explicit Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY);
   airspace.bounding = Rect(record.valueFloat("min_lonx"), record.valueFloat("max_laty"),
                            record.valueFloat("max_lonx"), record.valueFloat("min_laty"));
+
+  airspace.position = airspace.bounding.getCenter();
 }

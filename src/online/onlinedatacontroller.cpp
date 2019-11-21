@@ -18,6 +18,7 @@
 #include "online/onlinedatacontroller.h"
 
 #include "fs/online/onlinedatamanager.h"
+#include "airspace/airspacecontroller.h"
 #include "util/httpdownloader.h"
 #include "gui/mainwindow.h"
 #include "common/constants.h"
@@ -27,6 +28,7 @@
 #include "gui/dialog.h"
 #include "geo/calculations.h"
 #include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
 #include "mapgui/maplayer.h"
 #include "fs/sc/simconnectuseraircraft.h"
 #include "navapp.h"
@@ -50,6 +52,7 @@ static const int MIN_DISTANCE_DUPLICATE_M = atools::geo::nmToMeter(30);
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::online::OnlinedataManager;
 using atools::util::HttpDownloader;
+using atools::geo::LineString;
 using atools::geo::Pos;
 
 atools::fs::online::Format convertFormat(opts::OnlineFormat format)
@@ -83,6 +86,9 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   // Recurring downloads
   connect(&downloadTimer, &QTimer::timeout, this, &OnlinedataController::startDownloadInternal);
 
+  using namespace std::placeholders;
+  manager->setGeometryCallback(std::bind(&OnlinedataController::geometryCallback, this, _1, _2));
+
 #ifdef DEBUG_ONLINE_DOWNLOAD
   downloader->enableCache(60);
 #endif
@@ -90,6 +96,8 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 
 OnlinedataController::~OnlinedataController()
 {
+  manager->setGeometryCallback(atools::fs::online::GeoCallbackType(nullptr));
+
   deInitQueries();
 
   delete downloader;
@@ -317,9 +325,9 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
   }
 }
 
-void OnlinedataController::downloadFailed(const QString& error, QString url)
+void OnlinedataController::downloadFailed(const QString& error, int errorCode, QString url)
 {
-  qWarning() << Q_FUNC_INFO << "Failed" << error << url;
+  qWarning() << Q_FUNC_INFO << "Failed" << error << errorCode << url;
   stopAllProcesses();
 
   mainWindow->setOnlineConnectionStatusMessageText(tr("Failed"),
@@ -351,6 +359,27 @@ void OnlinedataController::showMessageDialog()
                            tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
 }
 
+LineString *OnlinedataController::geometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
+{
+  opts2::Flags2 flags2 = OptionData::instance().getFlags2();
+
+  LineString *lineString = nullptr;
+
+  // Try to get airspace boundary by name vs. callsign if set in options
+  if(flags2 & opts2::ONLINE_AIRSPACE_BY_NAME)
+    lineString = NavApp::getAirspaceController()->
+                 getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeText(type));
+
+  // Try to get airspace boundary by file name vs. callsign if set in options
+  if(flags2 & opts2::ONLINE_AIRSPACE_BY_FILE)
+  {
+    if(lineString == nullptr)
+      lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByFile(callsign);
+  }
+
+  return lineString;
+}
+
 void OnlinedataController::optionsChanged()
 {
   qDebug() << Q_FUNC_INFO;
@@ -379,6 +408,11 @@ void OnlinedataController::optionsChanged()
   startDownloadInternal();
 }
 
+void OnlinedataController::userAirspacesUpdated()
+{
+  optionsChanged();
+}
+
 bool OnlinedataController::hasData() const
 {
   return manager->hasData();
@@ -397,6 +431,9 @@ QString OnlinedataController::getNetworkTranslated() const
 
     case opts::ONLINE_IVAO:
       return tr("IVAO");
+
+    case opts::ONLINE_PILOTEDGE:
+      return tr("PilotEdge");
 
     case opts::ONLINE_CUSTOM_STATUS:
     case opts::ONLINE_CUSTOM:
@@ -418,6 +455,9 @@ QString OnlinedataController::getNetwork() const
 
     case opts::ONLINE_IVAO:
       return "IVAO";
+
+    case opts::ONLINE_PILOTEDGE:
+      return "PilotEdge";
 
     case opts::ONLINE_CUSTOM_STATUS:
     case opts::ONLINE_CUSTOM:
@@ -471,7 +511,7 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
     for(const Marble::GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindCoordinatePointInRect(r, aircraftByRectQuery);
+      query::bindRect(r, aircraftByRectQuery);
       aircraftByRectQuery->exec();
       while(aircraftByRectQuery->next())
       {

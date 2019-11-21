@@ -20,6 +20,7 @@
 
 #include "route/routecommand.h"
 #include "route/route.h"
+#include "common/tabindexes.h"
 
 #include <QIcon>
 #include <QObject>
@@ -28,6 +29,7 @@
 namespace atools {
 namespace gui {
 class ItemViewZoomHandler;
+class TabWidgetHandler;
 }
 namespace util {
 class HtmlBuilder;
@@ -71,7 +73,7 @@ class RouteController :
 
 public:
   RouteController(QMainWindow *parent, QTableView *tableView);
-  virtual ~RouteController();
+  virtual ~RouteController() override;
 
   /* Creates a new plan and emits routeChanged */
   void newFlightplan();
@@ -133,6 +135,9 @@ public:
     return route.getTotalDistance();
   }
 
+  /* get altitude in feet as set in the widget */
+  float getCruiseAltitudeWidget() const;
+
   bool  doesFilenameMatchRoute(atools::fs::pln::FileFormat format);
 
   /* Clear routing network cache and disconnect all queries */
@@ -145,6 +150,9 @@ public:
   /* Replaces destination airport or adds destination if not valid */
   void routeSetDestination(map::MapAirport airport);
 
+  /* Add an alternate airport */
+  void routeAddAlternate(map::MapAirport airport);
+
   /*
    * Adds a navaid, airport or user defined position to flight plan.
    * @param id Id of object to insert
@@ -155,7 +163,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAttachProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
+  void routeAddProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
@@ -199,8 +207,12 @@ public:
   void optionsChanged();
   void styleChanged();
 
-  /* Get the route table as a HTML document only containing the table and header */
-  QString flightplanTableAsHtml(float iconSizePixel) const;
+  /* Get the route table as a HTML snipped only containing the table and header.
+   * Uses own colors for table background. */
+  QString getFlightplanTableAsHtml(float iconSizePixel, bool print) const;
+
+  /* Same as above but full HTML document */
+  QString getFlightplanTableAsHtmlDoc(float iconSizePixel) const;
 
   /* Insert a flight plan table as QTextTable object at the cursor position */
   void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;
@@ -228,6 +240,8 @@ public:
   void shownMapFeaturesChanged(map::MapObjectTypes types);
 
   void activateLegManually(int index);
+  void resetActiveLeg();
+  void updateActiveLeg();
 
   QString procedureTypeText(const RouteLeg& leg);
 
@@ -236,9 +250,27 @@ public:
   bool hasSelection();
 
   void aircraftPerformanceChanged();
+  void windUpdated();
 
   /* Get table columns from the view */
   QStringList getRouteColumns() const;
+
+  /* Add custom procedure and probably set new destination airport */
+  void showProceduresCustom(map::MapAirport airport);
+
+  /* Name of currently loaded flight plan file */
+  const QString& getRouteFilepath() const
+  {
+    return routeFilename;
+  }
+
+  /* Update the changed file indication in the flight plan tab header */
+  void updateRouteTabChangedStatus();
+
+  atools::gui::TabWidgetHandler *getTabHandler() const
+  {
+    return tabHandlerRoute;
+  }
 
 signals:
   /* Show airport on map */
@@ -348,6 +380,7 @@ private:
 
   void showInformationMenu();
   void showProceduresMenu();
+  void showProceduresMenuCustom();
   void showOnMapMenu();
 
   void undoTriggered();
@@ -358,31 +391,36 @@ private:
   void dockVisibilityChanged(bool visible);
   void eraseAirway(int row);
 
-  QString buildFlightplanLabel(bool print = false, bool titleOnly = false) const;
+  QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr) const;
   QString buildFlightplanLabel2() const;
 
   void updateTableHeaders();
   void highlightNextWaypoint(int nearestLegIndex);
-  void highlightProcedureItems();
-  void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet);
-  void updateIcons();
+  void updateModelHighlights();
+  void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet, QStringList *procedureLoadingErrors);
+  void loadAlternateFromFlightplan(bool quiet);
+
   void beforeRouteCalc();
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
-  QIcon iconForLeg(const RouteLeg& leg, float size) const;
+  QIcon iconForLeg(const RouteLeg& leg, int size) const;
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
+  void reportProcedureErrors(const QStringList& procedureLoadingErrors);
 
   void selectAllTriggered();
 
   void activateLegTriggered();
   void fontChanged();
 
+  void visibleColumnsTriggered();
   void contextMenu(const QPoint& pos);
 
   void updateUnits();
   void updateErrorLabel();
+
+  void editUserWaypointTriggered();
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
@@ -403,7 +441,7 @@ private:
   Route route; /* real route containing all segments */
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
-  QString routeFilename, fileDeparture, fileDestination;
+  QString routeFilename, fileDepartureIdent, fileDestinationIdent;
 
   /* Current loaded or saved format since the plans in the undo stack have different values */
   atools::fs::pln::FileFormat routeFileFormat = atools::fs::pln::PLN_FSX;
@@ -421,16 +459,20 @@ private:
   /* Do not update aircraft information more than every 0.1 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;
   static Q_DECL_CONSTEXPR int ROUTE_ALT_CHANGE_DELAY_MS = 500;
+
+  bool loadingDatabaseState = false;
   qint64 lastSimUpdate = 0;
+  atools::fs::sc::SimConnectUserAircraft aircraft;
 
-  QIcon ndbIcon, waypointIcon, userpointIcon, invalidIcon, procedureIcon;
   SymbolPainter *symbolPainter = nullptr;
-  int iconSize = 20;
 
+  atools::gui::TabWidgetHandler *tabHandlerRoute = nullptr;
+
+  /* Calls RouteController::routeAltChangedDelayed */
   QTimer routeAltDelayTimer;
 
   // Route table colum headings
-  QStringList routeColumns;
+  QStringList routeColumns, routeColumnTooltips;
   UnitStringTool *units = nullptr;
 };
 

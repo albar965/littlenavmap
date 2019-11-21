@@ -22,7 +22,10 @@
 #include "common/maptools.h"
 #include "fs/common/binarygeometry.h"
 #include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
+#include "sql/sqlutil.h"
 #include "query/airportquery.h"
+#include "fs/common/binarygeometry.h"
 #include "navapp.h"
 #include "common/maptools.h"
 #include "settings/settings.h"
@@ -30,6 +33,7 @@
 #include "db/databasemanager.h"
 
 #include <QDataStream>
+#include <QFileInfo>
 #include <QRegularExpression>
 
 using namespace Marble;
@@ -40,14 +44,18 @@ static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
 int AirspaceQuery::queryMaxRows = 5000;
 
-AirspaceQuery::AirspaceQuery(QObject *parent, SqlDatabase *sqlDb, bool onlineSchema)
-  : QObject(parent), db(sqlDb), online(onlineSchema)
+AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSources src)
+  : db(sqlDb), source(src)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   airspaceLineCache.setMaxCost(settings.getAndStoreValue(
                                  lnm::SETTINGS_MAPQUERY + "AirspaceLineCache", 10000).toInt());
+  onlineCenterGeoCache.setMaxCost(settings.getAndStoreValue(
+                                    lnm::SETTINGS_MAPQUERY + "OnlineCenterGeoCache", 10000).toInt());
+  onlineCenterGeoFileCache.setMaxCost(settings.getAndStoreValue(
+                                        lnm::SETTINGS_MAPQUERY + "OnlineCenterGeoFileCache", 10000).toInt());
 
   queryRectInflationFactor = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
@@ -81,16 +89,18 @@ bool AirspaceQuery::hasAirspaceById(int airspaceId)
   return retval;
 }
 
-SqlRecord AirspaceQuery::getAirspaceRecordById(int airspaceId)
+SqlRecord AirspaceQuery::getOnlineAirspaceRecordById(int airspaceId)
 {
-  SqlQuery query(db);
-  query.prepare("select * from atc where atc_id = :id");
-  query.bindValue(":id", airspaceId);
-  query.exec();
-  if(query.next())
-    return query.record();
-  else
-    return SqlRecord();
+  if(source == map::AIRSPACE_SRC_ONLINE)
+  {
+    SqlQuery query(db);
+    query.prepare("select * from atc where atc_id = :id");
+    query.bindValue(":id", airspaceId);
+    query.exec();
+    if(query.next())
+      return query.record();
+  }
+  return SqlRecord();
 }
 
 void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
@@ -99,7 +109,7 @@ void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
   airspaceByIdQuery->exec();
   if(airspaceByIdQuery->next())
   {
-    mapTypesFactory->fillAirspace(airspaceByIdQuery->record(), airspace, online);
+    mapTypesFactory->fillAirspace(airspaceByIdQuery->record(), airspace, source);
   }
   airspaceByIdQuery->finish();
 }
@@ -187,7 +197,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
 
         for(const QString& typeStr : typeStrings)
         {
-          query::bindCoordinatePointInRect(r, query);
+          query::bindRect(r, query);
           query->bindValue(":type", typeStr);
 
           if(alt > 0)
@@ -202,17 +212,11 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
             if(ids.contains(query->valueInt("boundary_id")))
               continue;
 
-            // qreal north, qreal south, qreal east, qreal west
-            if(rect.intersects(GeoDataLatLonBox(query->valueFloat("max_laty"), query->valueFloat("min_laty"),
-                                                query->valueFloat("max_lonx"), query->valueFloat("min_lonx"),
-                                                GeoDataCoordinates::GeoDataCoordinates::Degree)))
-            {
-              map::MapAirspace airspace;
-              mapTypesFactory->fillAirspace(query->record(), airspace, online);
-              airspaceCache.list.append(airspace);
+            map::MapAirspace airspace;
+            mapTypesFactory->fillAirspace(query->record(), airspace, source);
+            airspaceCache.list.append(airspace);
 
-              ids.insert(airspace.id);
-            }
+            ids.insert(airspace.id);
           }
         }
       }
@@ -229,34 +233,134 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
   return &airspaceCache.list;
 }
 
-const LineString *AirspaceQuery::getAirspaceGeometry(int boundaryId)
+const LineString *AirspaceQuery::getAirspaceGeometryByName(int airspaceId)
 {
-  if(airspaceLineCache.contains(boundaryId))
-    return airspaceLineCache.object(boundaryId);
+  if(airspaceLineCache.contains(airspaceId))
+    return airspaceLineCache.object(airspaceId);
   else
   {
     LineString *lines = new LineString;
 
-    airspaceLinesByIdQuery->bindValue(":id", boundaryId);
+    airspaceLinesByIdQuery->bindValue(":id", airspaceId);
     airspaceLinesByIdQuery->exec();
     if(airspaceLinesByIdQuery->next())
     {
       atools::fs::common::BinaryGeometry geometry(airspaceLinesByIdQuery->value("geometry").toByteArray());
       geometry.swapGeometry(*lines);
-
-      // qDebug() << *lines;
     }
-
-    airspaceLineCache.insert(boundaryId, lines);
+    airspaceLinesByIdQuery->finish();
+    airspaceLineCache.insert(airspaceId, lines);
 
     return lines;
   }
 }
 
+LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
+{
+  if(airspaceGeoByFileQuery != nullptr)
+  {
+    if(onlineCenterGeoFileCache.contains(callsign))
+    {
+      // Return nullptr if empty - empty objects in cache indicate object not present
+      LineString *lineString = onlineCenterGeoFileCache.object(callsign);
+      if(lineString != nullptr && !lineString->isEmpty())
+        return lineString;
+    }
+    else
+    {
+      LineString *lineString = new LineString();
+      callsign = callsign.trimmed().toUpper();
+
+      // Do a pattern query and check for basename matches later
+      airspaceGeoByFileQuery->bindValue(":filepath", "%" + callsign + "%");
+      airspaceGeoByFileQuery->exec();
+
+      while(airspaceGeoByFileQuery->next())
+      {
+        QFileInfo fi(airspaceGeoByFileQuery->valueStr("filepath").trimmed());
+        QString basename = fi.baseName().toUpper().trimmed();
+
+        // Check if the basename matches the callsign
+        if(basename == callsign.toUpper())
+        {
+          atools::fs::common::BinaryGeometry geo(airspaceGeoByFileQuery->value("geometry").toByteArray());
+          geo.swapGeometry(*lineString);
+          break;
+        }
+      }
+      airspaceGeoByFileQuery->finish();
+      onlineCenterGeoFileCache.insert(callsign, lineString);
+      if(!lineString->isEmpty())
+        return lineString;
+    }
+  }
+  return nullptr;
+}
+
+LineString *AirspaceQuery::getAirspaceGeometryByName(const QString& callsign, const QString& facilityType)
+{
+  Q_UNUSED(facilityType)
+
+  if(airspaceGeoByNameQuery != nullptr)
+  {
+    if(onlineCenterGeoCache.contains(callsign))
+    {
+      // Return nullptr if empty - empty objects in cache indicate object not present
+      LineString *lineString = onlineCenterGeoCache.object(callsign);
+      if(lineString != nullptr && !lineString->isEmpty())
+        return lineString;
+    }
+    else
+    {
+      LineString *lineString = new LineString();
+
+      // Check if the airspace name matches the callsign
+      airspaceGeoByNameQuery->bindValue(":name", callsign);
+      airspaceGeoByNameQuery->bindValue(":type", "%"); // Not used yet
+      airspaceGeoByNameQuery->exec();
+
+      if(airspaceGeoByNameQuery->next())
+      {
+        atools::fs::common::BinaryGeometry geo(airspaceGeoByNameQuery->value("geometry").toByteArray());
+        geo.swapGeometry(*lineString);
+      }
+      airspaceGeoByNameQuery->finish();
+      onlineCenterGeoCache.insert(callsign, lineString);
+      if(!lineString->isEmpty())
+        return lineString;
+    }
+  }
+  return nullptr;
+}
+
+SqlRecord AirspaceQuery::getAirspaceInfoRecordById(int airspaceId)
+{
+  SqlRecord retval;
+  if(airspaceInfoQuery != nullptr)
+  {
+    airspaceInfoQuery->bindValue(":id", airspaceId);
+    airspaceInfoQuery->exec();
+    if(airspaceInfoQuery->next())
+      retval = airspaceInfoQuery->record();
+    airspaceInfoQuery->finish();
+  }
+  return retval;
+}
+
+void AirspaceQuery::updateAirspaceStatus()
+{
+  if(source & map::AIRSPACE_SRC_ONLINE)
+    hasAirspaces = SqlUtil(db).hasTableAndRows("atc");
+  else
+    hasAirspaces = SqlUtil(db).hasTableAndRows("boundary");
+}
+
 void AirspaceQuery::initQueries()
 {
+  updateAirspaceStatus();
+
   QString airspaceQueryBase, table, id;
-  if(online)
+  if(source == map::AIRSPACE_SRC_ONLINE)
   {
     // Use modified result rows from online atc table
     table = "atc";
@@ -293,6 +397,15 @@ void AirspaceQuery::initQueries()
   airspaceByIdQuery = new SqlQuery(db);
   airspaceByIdQuery->prepare("select " + airspaceQueryBase + " from " + table + " where " + id + " = :id");
 
+  if(!(source & map::AIRSPACE_SRC_ONLINE))
+  {
+    airspaceInfoQuery = new SqlQuery(db);
+    airspaceInfoQuery->prepare("select * from boundary "
+                               "join bgl_file on boundary.file_id = bgl_file.bgl_file_id "
+                               "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                               "where boundary_id = :id");
+  }
+
   // Get all that are crossing the anti meridian too and filter them out from the query result
   QString airspaceRect =
     " (not (max_lonx < :leftx or min_lonx > :rightx or "
@@ -325,6 +438,16 @@ void AirspaceQuery::initQueries()
   airspaceLinesByIdQuery = new SqlQuery(db);
   airspaceLinesByIdQuery->prepare("select geometry from " + table + " where " + id + " = :id");
 
+  // Queries for online center boundary matches
+  if(!(source & map::AIRSPACE_SRC_ONLINE))
+  {
+    airspaceGeoByNameQuery = new SqlQuery(db);
+    airspaceGeoByNameQuery->prepare("select geometry from " + table + " where name = :name and type like :type");
+
+    airspaceGeoByFileQuery = new SqlQuery(db);
+    airspaceGeoByFileQuery->prepare("select b.geometry, f.filepath from " + table +
+                                    " b join bgl_file f on b.file_id = f.bgl_file_id where f.filepath like :filepath");
+  }
 }
 
 void AirspaceQuery::deInitQueries()
@@ -342,13 +465,26 @@ void AirspaceQuery::deInitQueries()
 
   delete airspaceLinesByIdQuery;
   airspaceLinesByIdQuery = nullptr;
+
+  delete airspaceGeoByNameQuery;
+  airspaceGeoByNameQuery = nullptr;
+
+  delete airspaceGeoByFileQuery;
+  airspaceGeoByFileQuery = nullptr;
+
   delete airspaceByIdQuery;
   airspaceByIdQuery = nullptr;
 
+  delete airspaceInfoQuery;
+  airspaceInfoQuery = nullptr;
 }
 
 void AirspaceQuery::clearCache()
 {
   airspaceCache.clear();
   airspaceLineCache.clear();
+  onlineCenterGeoCache.clear();
+  onlineCenterGeoFileCache.clear();
+
+  updateAirspaceStatus();
 }

@@ -56,6 +56,8 @@ struct MapMarker;
 
 struct MapUserpoint;
 
+struct MapLogbookEntry;
+
 }
 
 /*
@@ -101,11 +103,13 @@ public:
   void fillParking(const atools::sql::SqlRecord& record, map::MapParking& parking);
   void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);
 
-  void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace, bool online);
+  void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src);
 
   void fillHelipad(const atools::sql::SqlRecord& record, map::MapHelipad& helipad);
 
   void fillUserdataPoint(const atools::sql::SqlRecord& rec, map::MapUserpoint& obj);
+
+  void fillLogbookEntry(const atools::sql::SqlRecord& rec, map::MapLogbookEntry& obj);
 
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, map::MapVor& vor);

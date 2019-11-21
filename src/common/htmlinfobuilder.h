@@ -36,39 +36,34 @@ class QFileInfo;
 
 namespace map {
 struct MapAirport;
-
 struct MapVor;
-
 struct MapNdb;
-
 struct MapWaypoint;
-
 struct MapAirway;
-
 struct MapAirspace;
-
+struct MapIls;
 struct MapMarker;
-
 struct MapAirport;
-
 struct MapParking;
-
 struct MapHelipad;
-
 struct MapStart;
-
 struct MapUserpointRoute;
-
 struct MapProcedurePoint;
-
 struct MapProcedureRef;
-
 struct MapUserpoint;
-
+struct MapLogbookEntry;
+struct MapBase;
+struct MapSearchResultIndex;
+struct Hold;
+struct TrafficPattern;
 }
 
 namespace atools {
 
+namespace grib {
+struct WindPos;
+typedef QVector<atools::grib::WindPos> WindPosVector;
+}
 namespace geo {
 class Pos;
 }
@@ -117,7 +112,7 @@ public:
    * @param formatInfo true if this should generate HTML for QTextEdits or QWebBrowser
    * (i.e. generate alternating background color for tables)
    */
-  HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo, bool formatPrint = false);
+  HtmlInfoBuilder(QWidget *parent, bool formatInfo, bool formatPrint = false);
 
   virtual ~HtmlInfoBuilder();
 
@@ -157,6 +152,10 @@ public:
    */
   void procedureText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
+  /* Get information for navaids and airports near the currently displayed airport */
+  void nearestText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+
+  /* Create HTML for decoded weather report for current airport */
   void weatherText(const map::WeatherContext& context, const map::MapAirport& airport,
                    atools::util::HtmlBuilder& html) const;
 
@@ -184,8 +183,14 @@ public:
    */
   void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
 
+  /* Get information for one ILS */
+  void ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
+
   /* Description for user defined points */
-  void userpointText(const map::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
+  bool userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
+
+  /* Description for logbook entries */
+  bool logEntryText(map::MapLogbookEntry logEntry, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description of an airway. For info this includes all waypoints.
@@ -226,13 +231,21 @@ public:
                    atools::util::HtmlBuilder& html) const;
 
   /*
+   * Creates a HTML description for a all upper layer winds at position
+   * @param html Result containing HTML snippet
+   */
+  void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html,
+                float currentAltitude, const QString& source) const;
+
+  /*
    * Creates a HTML description for a user defined flight plan point.
    * @param userpoint
    * @param html Result containing HTML snippet
    */
   void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html, const Route *route) const;
+  void procedurePointText(const proc::MapProcedurePoint& procPoint, atools::util::HtmlBuilder& html,
+                          const Route *route) const;
 
   /*
    * Creates an overview HTML description for any AI or user aircraft in the simulator.
@@ -259,6 +272,9 @@ public:
   void aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft, const atools::sql::SqlRecord& onlineRec,
                           atools::util::HtmlBuilder& html);
 
+  void holdText(const map::Hold& hold, atools::util::HtmlBuilder& html) const;
+  void trafficPatternText(const map::TrafficPattern& pattern, atools::util::HtmlBuilder& html) const;
+
   void setSymbolSize(const QSize& value)
   {
     symbolSize = value;
@@ -277,9 +293,18 @@ public:
 private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
+  bool nearestMapObjectsText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
+                             const map::MapSearchResultIndex *nearest, const QString& header, bool frequencyCol,
+                             bool airportCol,
+                             int maxRows) const;
+  void nearestMapObjectsTextRow(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const QString& type,
+                                const QString& ident, const QString& name, const QString& freq,
+                                const map::MapBase *base,
+                                float magVar, bool frequencyCol, bool airportCol) const;
+
   /* Add scenery entries and links into table */
-  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
-  void addAirportScenery(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool ils = false) const;
+  void addAirportSceneryAndLinks(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addAirportFolder(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
   /* Add coordinates into table */
@@ -300,8 +325,7 @@ private:
                   const QString& msg, bool expected = false) const;
 
   void runwayEndText(atools::util::HtmlBuilder& html, const map::MapAirport& airport, const atools::sql::SqlRecord *rec,
-                     float hdgPrim,
-                     float length) const;
+                     float hdgPrimTrue, float length) const;
 
   void rowForStr(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;
@@ -317,7 +341,8 @@ private:
 
   void dateAndTime(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
                    atools::util::HtmlBuilder& html) const;
-  void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
+  void addMetarLine(atools::util::HtmlBuilder& html, const QString& header, const map::MapAirport& airport,
+                    const QString& metar,
                     const QString& station,
                     const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const;
 
@@ -330,7 +355,8 @@ private:
   bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
-  void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach) const;
+  void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach,
+               bool standalone) const;
 
   QString filepathTextShow(const QString& filepath) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;
@@ -341,6 +367,21 @@ private:
   void addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,
                             bool mapDisplay) const;
 
+  /* Insert airport link using ident and/or name */
+  QString airportLink(const atools::util::HtmlBuilder& html, const QString& ident,
+                      const QString& name = QString()) const;
+
+  /* Adds text for preferred runways */
+  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, float windSpeed,
+                       float windDirectionDeg, int max, bool details) const;
+  void descriptionText(const QString& descriptionText, atools::util::HtmlBuilder& html) const;
+
+  /* Add morse code row2line */
+  void addMorse(atools::util::HtmlBuilder& html, const QString& name, const QString& code) const;
+
+  /* Add wind text for flight plan waypoints */
+  void routeWindText(atools::util::HtmlBuilder& html, const Route& route, int index) const;
+
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
 
@@ -350,13 +391,14 @@ private:
   /* Aircraft size */
   QSize symbolSizeVehicle = QSize(28, 28);
 
-  MainWindow *mainWindow = nullptr;
+  QWidget *parentWidget = nullptr;
   MapQuery *mapQuery;
   AirportQuery *airportQuerySim, *airportQueryNav;
   InfoQuery *infoQuery;
   atools::fs::util::MorseCode *morse;
   bool info, print;
   QLocale locale;
+
 };
 
 #endif // MAPHTMLINFOBUILDER

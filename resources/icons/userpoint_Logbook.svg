@@ -16,7 +16,7 @@
    version="1.1"
    id="svg821"
    sodipodi:docname="userpoint_Logbook.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <defs
      id="defs815">
     <inkscape:path-effect
@@ -248,7 +248,7 @@
      id="layer1"
      transform="translate(0,-263.13332)">
     <path
-       style="fill:#ffff88;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.64583302;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#ffffdf;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.64583302;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 1.6153982,264.77751 v 30.42708 H 25.324403 v -25.13542 l -4.991369,-5.29166 z"
        id="path1840"
        inkscape:connector-curvature="0" />

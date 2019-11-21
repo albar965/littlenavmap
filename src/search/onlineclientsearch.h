@@ -42,8 +42,8 @@ class OnlineClientSearch :
   Q_OBJECT
 
 public:
-  OnlineClientSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
-  virtual ~OnlineClientSearch();
+  OnlineClientSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
+  virtual ~OnlineClientSearch() override;
 
   /* All state saving is done through the widget state */
   virtual void saveState() override;

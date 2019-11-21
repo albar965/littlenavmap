@@ -26,7 +26,8 @@ class GeoDataLineString;
 
 namespace map {
 struct MapAirspace;
-
+struct MapAirway;
+struct MapLogbookEntry;
 }
 
 class MapWidget;
@@ -38,7 +39,7 @@ class MapWidget;
 class MapPainterMark :
   public MapPainter
 {
-  Q_DECLARE_TR_FUNCTIONS(MapPainter)
+  Q_DECLARE_TR_FUNCTIONS(MapPainterMark)
 
 public:
   MapPainterMark(MapPaintWidget *mapWidgetParam, MapScale *mapScale);
@@ -52,11 +53,17 @@ private:
   void paintHighlights(PaintContext *context);
   void paintRangeRings(const PaintContext *context);
   void paintDistanceMarkers(const PaintContext *context);
+
   void paintTrafficPatterns(const PaintContext *context);
+  void paintHolds(const PaintContext *context);
+
   void paintRouteDrag(const PaintContext *context);
   void paintCompassRose(const PaintContext *context);
   void paintUserpointDrag(const PaintContext *context);
-  void paintAirspace(PaintContext *context, const map::MapAirspace& airspace, int size);
+  void paintAirspace(PaintContext *context, const map::MapAirspace& airspace);
+  void paintAirwayList(PaintContext *context, const QList<map::MapAirway>& airwayList);
+  void paintAirwayTextList(PaintContext *context, const QList<map::MapAirway>& airwayList);
+  void paintLogEntries(PaintContext *context, const QList<map::MapLogbookEntry>& entries);
 
 };
 

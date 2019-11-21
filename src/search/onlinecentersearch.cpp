@@ -30,7 +30,7 @@
 #include "sql/sqlrecord.h"
 #include "common/maptypesfactory.h"
 
-OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
+OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("atc", "atc_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -248,7 +248,7 @@ void OnlineCenterSearch::getSelectedMapObjects(map::MapSearchResult& result) con
         // qDebug() << Q_FUNC_INFO << rec;
 
         map::MapAirspace obj;
-        MapTypesFactory().fillAirspace(rec, obj, true /* online */);
+        MapTypesFactory().fillAirspace(rec, obj, map::AIRSPACE_SRC_ONLINE);
         result.airspaces.append(obj);
       }
     }

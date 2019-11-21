@@ -14,7 +14,7 @@
    width="128"
    height="128"
    id="svg1655"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="aircraftperfnew.svg">
   <metadata
      id="metadata10">
@@ -41,15 +41,16 @@
      inkscape:window-height="971"
      id="namedview8"
      showgrid="false"
-     inkscape:zoom="5.2149125"
-     inkscape:cx="64.120381"
-     inkscape:cy="47.726877"
+     inkscape:zoom="2.6074563"
+     inkscape:cx="61.55762"
+     inkscape:cy="64.098536"
      inkscape:window-x="131"
      inkscape:window-y="24"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg1655"
      inkscape:snap-grids="false"
-     inkscape:snap-to-guides="false" />
+     inkscape:snap-to-guides="false"
+     inkscape:snap-global="false" />
   <defs
      id="defs1658">
     <linearGradient
@@ -156,7 +157,7 @@
        cx="69.447998"
        cy="51.695"
        r="31"
-       gradientTransform="matrix(0,1.7976855,-1.9556838,0,184.61662,-46.219168)">
+       gradientTransform="matrix(0,2.2239052,-2.4193639,0,292.5804,-81.460482)">
       <stop
          id="stop3244-5-2"
          style="stop-color:#eef87e"
@@ -292,7 +293,7 @@
   </g>
   <g
      id="g1084"
-     transform="matrix(1.0888898,0,0,1.0888898,193.20698,107.43806)">
+     transform="matrix(1.1697028,0,0,1.1697028,198.24902,106.00264)">
     <path
        inkscape:connector-curvature="0"
        d="m -126.86868,-65.136135 h 61.952793 V 15.23783 h -61.952793 z"
@@ -313,11 +314,11 @@
   <path
      inkscape:connector-curvature="0"
      id="path2262-1"
-     style="color:#000000;fill:url(#radialGradient3137-1);stroke:#010000;stroke-width:3.81048226;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-     d="M 79.926286,88.330764 V 72.782273 H 99.260397 V 88.330764 H 114.75591 V 107.66487 H 99.260397 v 15.49552 H 79.926286 V 107.66487 H 64.43077 V 88.330764 Z" />
+     style="color:#000000;fill:#7a7cfd;fill-opacity:1;stroke:#010000;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="M 72.468908,73.397851 V 50.64153 h 28.296842 v 22.756321 h 22.67878 v 28.296839 h -22.67878 v 22.67879 H 72.468908 V 101.69469 H 49.790112 V 73.397851 Z" />
   <path
      inkscape:connector-curvature="0"
      id="path2272-8"
-     style="opacity:0.4;fill:none;stroke:#ffffff;stroke-width:3.866822;stroke-opacity:1"
-     d="M 83.793108,92.197584 V 76.730298 H 95.393577 V 92.197584 H 110.9382 V 103.79805 H 95.393577 v 15.46729 H 83.793108 V 103.79805 H 68.32582 V 92.197584 Z" />
+     style="opacity:0.4;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:5.65936899;stroke-opacity:1"
+     d="M 78.128276,79.057217 V 56.419746 H 95.10638 v 22.637471 h 22.75066 V 96.035325 H 95.10638 V 118.6728 H 78.128276 V 96.035325 H 55.490793 V 79.057217 Z" />
 </svg>

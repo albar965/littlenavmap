@@ -17,7 +17,7 @@
 
 #include "db/databasemanager.h"
 
-#include "db/databaseerrordialog.h"
+#include "gui/textdialog.h"
 #include "gui/application.h"
 #include "options/optiondata.h"
 #include "common/constants.h"
@@ -28,6 +28,7 @@
 #include "fs/navdatabaseprogress.h"
 #include "common/formatter.h"
 #include "fs/fspaths.h"
+#include "fs/xp/scenerypacks.h"
 #include "gui/helphandler.h"
 #include "fs/navdatabase.h"
 #include "sql/sqlutil.h"
@@ -38,9 +39,11 @@
 #include "navapp.h"
 #include "gui/dialog.h"
 #include "fs/userdata/userdatamanager.h"
+#include "fs/userdata/logdatamanager.h"
 #include "fs/online/onlinedatamanager.h"
 #include "io/fileroller.h"
 #include "atools.h"
+#include "sql/sqlexception.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -149,7 +152,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   if(!QDir().mkpath(databaseDirectory))
     qWarning() << "Cannot create db dir" << databaseDirectory;
 
-  QString name = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
+  QString name = buildDatabaseFileName(FsPaths::NAVIGRAPH);
   if(name.isEmpty() && !QFile::exists(name))
     // Set to off if not database found
     navDatabaseStatus = dm::NAVDATABASE_OFF;
@@ -177,13 +180,13 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     connect(databaseDialog, &DatabaseDialog::simulatorChanged, this, &DatabaseManager::simulatorChangedFromComboBox);
   }
 
-  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME);
+  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_SIM);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_NAV);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_MORA);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TEMP);
 
-  databaseSim = new SqlDatabase(DATABASE_NAME);
+  databaseSim = new SqlDatabase(DATABASE_NAME_SIM);
   databaseNav = new SqlDatabase(DATABASE_NAME_NAV);
   databaseMora = new SqlDatabase(DATABASE_NAME_MORA);
 
@@ -191,11 +194,27 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   {
     // Open only for instantiation in main window and not in main function
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_LOGBOOK);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
+
+    // Airspace databases
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER_AIRSPACE);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_SIM_AIRSPACE);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_NAV_AIRSPACE);
+
+    // Variable databases (user can edit or program downloads data)
     databaseUser = new SqlDatabase(DATABASE_NAME_USER);
+    databaseLogbook = new SqlDatabase(DATABASE_NAME_LOGBOOK);
     databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
 
-    // Open user point database
+    // Airspace databases
+    databaseUserAirspace = new SqlDatabase(DATABASE_NAME_USER_AIRSPACE);
+
+    // ... as duplicate connections to sim and nav databases but independent of nav switch
+    databaseSimAirspace = new SqlDatabase(DATABASE_NAME_SIM_AIRSPACE);
+    databaseNavAirspace = new SqlDatabase(DATABASE_NAME_NAV_AIRSPACE);
+
+    // Open user point database =================================
     openWriteableDatabase(databaseUser, "userdata", "user", true /* backup */);
     userdataManager = new atools::fs::userdata::UserdataManager(databaseUser);
     if(!userdataManager->hasSchema())
@@ -203,7 +222,25 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     else
       userdataManager->updateSchema();
 
-    // Open online network database
+    // Open logbook database =================================
+    openWriteableDatabase(databaseLogbook, "logbook", "logbook", true /* backup */);
+    logdataManager = new atools::fs::userdata::LogdataManager(databaseLogbook);
+    if(!logdataManager->hasSchema())
+      logdataManager->createSchema();
+    else
+      logdataManager->updateSchema();
+
+    // Open user airspace database =================================
+    openWriteableDatabase(databaseUserAirspace, "userairspace", "userairspace", false /* backup */);
+    if(!SqlUtil(databaseUserAirspace).hasTable("boundary"))
+    {
+      SqlTransaction transaction(databaseUserAirspace);
+      // Create schema on demand
+      createEmptySchema(databaseUserAirspace, true /* boundary only */);
+      transaction.commit();
+    }
+
+    // Open online network database ==============================
     atools::settings::Settings& settings = atools::settings::Settings::instance();
     bool verbose = settings.getAndStoreValue(lnm::OPTIONS_WHAZZUP_PARSER_DEBUG, false).toBool();
 
@@ -222,24 +259,35 @@ DatabaseManager::~DatabaseManager()
   delete databaseDialog;
   delete progressDialog;
   delete userdataManager;
+  delete logdataManager;
   delete onlinedataManager;
 
-  closeDatabases();
+  closeAllDatabases();
   closeUserDatabase();
+  closeLogDatabase();
+  closeUserAirspaceDatabase();
   closeOnlineDatabase();
 
   delete databaseSim;
   delete databaseNav;
   delete databaseMora;
   delete databaseUser;
+  delete databaseLogbook;
   delete databaseOnline;
+  delete databaseUserAirspace;
+  delete databaseSimAirspace;
+  delete databaseNavAirspace;
 
-  SqlDatabase::removeDatabase(DATABASE_NAME);
+  SqlDatabase::removeDatabase(DATABASE_NAME_SIM);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
   SqlDatabase::removeDatabase(DATABASE_NAME_MORA);
   SqlDatabase::removeDatabase(DATABASE_NAME_USER);
+  SqlDatabase::removeDatabase(DATABASE_NAME_LOGBOOK);
   SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
+  SqlDatabase::removeDatabase(DATABASE_NAME_USER_AIRSPACE);
+  SqlDatabase::removeDatabase(DATABASE_NAME_SIM_AIRSPACE);
+  SqlDatabase::removeDatabase(DATABASE_NAME_NAV_AIRSPACE);
 }
 
 bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
@@ -352,7 +400,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
           {
             qWarning() << "Removing database failed" << dbfile;
             atools::gui::Dialog::warning(nullptr,
-                                         tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                                         tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
                                             "Remove the database file manually and restart the program.").arg(dbfile));
             ok = false;
           }
@@ -498,13 +546,13 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
         if(!resultRemove)
           atools::gui::Dialog::warning(nullptr,
-                                       tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                                       tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
                                           "Remove the database file manually and restart the program.").arg(settingsDb));
 
         if(!resultCopy)
           atools::gui::Dialog::warning(nullptr,
-                                       tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
-                                          "<i>%2</i><br/><br/>.").arg(appDb).arg(settingsDb));
+                                       tr("Cannot copy database<br/><br/>\"%1\"<br/><br/>to<br/><br/>"
+                                          "\"%2\"<br/><br/>.").arg(appDb).arg(settingsDb));
       }
     }
   }
@@ -581,7 +629,7 @@ void DatabaseManager::insertSimSwitchActions()
     // Noting to select if there is only one option
     actions.first()->setDisabled(true);
 
-  QString file = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
+  QString file = buildDatabaseFileName(FsPaths::NAVIGRAPH);
 
   if(!file.isEmpty())
   {
@@ -687,7 +735,7 @@ void DatabaseManager::switchNavFromMainMenu()
   // Disconnect all queries
   emit preDatabaseLoad();
 
-  closeDatabases();
+  closeAllDatabases();
 
   QString text;
   if(navDbActionAll->isChecked())
@@ -732,7 +780,7 @@ void DatabaseManager::switchSimFromMainMenu()
     // Disconnect all queries
     emit preDatabaseLoad();
 
-    closeDatabases();
+    closeAllDatabases();
 
     // Set new simulator
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
@@ -820,6 +868,16 @@ void DatabaseManager::closeUserDatabase()
   closeDatabaseFile(databaseUser);
 }
 
+void DatabaseManager::closeUserAirspaceDatabase()
+{
+  closeDatabaseFile(databaseUserAirspace);
+}
+
+void DatabaseManager::closeLogDatabase()
+{
+  closeDatabaseFile(databaseLogbook);
+}
+
 void DatabaseManager::closeOnlineDatabase()
 {
   closeDatabaseFile(databaseOnline);
@@ -828,8 +886,12 @@ void DatabaseManager::closeOnlineDatabase()
 void DatabaseManager::openAllDatabases()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
-  QString navDbFile = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
-  QString moraDbFile = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
+  QString navDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
+  QString moraDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
+
+  // Airspace databases are independent of switch
+  QString simAirspaceDbFile = simDbFile;
+  QString navAirspaceDbFile = navDbFile;
 
   if(navDatabaseStatus == dm::NAVDATABASE_ALL)
     simDbFile = navDbFile;
@@ -840,6 +902,9 @@ void DatabaseManager::openAllDatabases()
   openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
   openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
   openDatabaseFile(databaseMora, moraDbFile, true /* readonly */, true /* createSchema */);
+
+  openDatabaseFile(databaseSimAirspace, simAirspaceDbFile, true /* readonly */, true /* createSchema */);
+  openDatabaseFile(databaseNavAirspace, navAirspaceDbFile, true /* readonly */, true /* createSchema */);
 }
 
 void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
@@ -935,11 +1000,13 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
                     << DatabaseMeta::DB_VERSION_MAJOR << "." << DatabaseMeta::DB_VERSION_MINOR;
 }
 
-void DatabaseManager::closeDatabases()
+void DatabaseManager::closeAllDatabases()
 {
   closeDatabaseFile(databaseSim);
   closeDatabaseFile(databaseNav);
   closeDatabaseFile(databaseMora);
+  closeDatabaseFile(databaseSimAirspace);
+  closeDatabaseFile(databaseNavAirspace);
 }
 
 void DatabaseManager::closeDatabaseFile(atools::sql::SqlDatabase *db)
@@ -977,6 +1044,16 @@ atools::sql::SqlDatabase *DatabaseManager::getDatabaseMora()
   return databaseMora;
 }
 
+atools::sql::SqlDatabase *DatabaseManager::getDatabaseSimAirspace()
+{
+  return databaseSimAirspace;
+}
+
+atools::sql::SqlDatabase *DatabaseManager::getDatabaseNavAirspace()
+{
+  return databaseNavAirspace;
+}
+
 void DatabaseManager::run()
 {
   qDebug() << Q_FUNC_INFO;
@@ -999,87 +1076,6 @@ void DatabaseManager::run()
   insertSimSwitchActions();
 
   saveState();
-}
-
-void DatabaseManager::copyAirspaces()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  try
-  {
-    // The current database is read only so we cannot use the attach command
-    SqlUtil fromUtil(databaseSim);
-    if(fromUtil.hasTable("boundary"))
-    {
-      // We have a boundary table
-      QString targetFile = buildDatabaseFileName(atools::fs::FsPaths::XPLANE11);
-
-      if(QFile::exists(targetFile))
-      {
-        // X-Plane database file exists
-        SqlDatabase xpDb(DATABASE_NAME_TEMP);
-        xpDb.setDatabaseName(targetFile);
-        xpDb.open();
-
-        SqlUtil xpUtil(xpDb);
-
-        if(xpUtil.hasTable("boundary"))
-        {
-          // X-Plane database file has a boundary table
-          QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-          SqlTransaction transaction(xpDb);
-
-          // Delete
-          xpDb.exec("delete from boundary");
-          transaction.commit();
-
-          // Build statements
-          SqlQuery fromQuery(fromUtil.buildSelectStatement("boundary"), databaseSim);
-
-          // Use named bindings to overcome different column order
-          // Let SQLite generate the ID automatically
-          SqlQuery xpQuery(xpDb);
-          xpQuery.prepare(xpUtil.buildInsertStatement("boundary", QString(), {"boundary_id"},
-                                                      true /* named bindings */));
-
-          // Copy from one database to another
-          std::function<bool(SqlQuery&, SqlQuery&)> func =
-            [](SqlQuery&, SqlQuery& to) -> bool
-            {
-              // use an invalid value for file_id to avoid display in information window
-              to.bindValue(":file_id", 0);
-              return true;
-            };
-          int copied = SqlUtil::copyResultValues(fromQuery, xpQuery, func);
-          transaction.commit();
-
-          QGuiApplication::restoreOverrideCursor();
-          QMessageBox::information(mainWindow, QApplication::applicationName(),
-                                   tr("Copied %1 airspaces to the X-Plane scenery database.").
-                                   arg(copied));
-        }
-        else
-          atools::gui::Dialog::warning(mainWindow,
-                                       tr("X-Plane database has no airspace boundary table.").arg(targetFile));
-        xpDb.close();
-      }
-      else
-        atools::gui::Dialog::warning(mainWindow,
-                                     tr("X-Plane database \"%1\" does not exist.").arg(targetFile));
-    }
-    else
-      atools::gui::Dialog::warning(mainWindow,
-                                   tr("Airspace boundary table not found in currently selected database"));
-  }
-  catch(atools::Exception& e)
-  {
-    ATOOLS_HANDLE_EXCEPTION(e);
-  }
-  catch(...)
-  {
-    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
-  }
 }
 
 /* Shows scenery database loading dialog.
@@ -1105,88 +1101,107 @@ bool DatabaseManager::runInternal()
 
     if(retval == QDialog::Accepted)
     {
+      bool configValid = true;
       QString err;
-      if(atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err, selectedFsType))
+      if(!atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err, selectedFsType))
+      {
+        atools::gui::Dialog::warning(databaseDialog, tr("Cannot read base path \"%1\". Reason: %2.").
+                                     arg(databaseDialog->getBasePath()).arg(err));
+        configValid = false;
+      }
+
+      if(selectedFsType == atools::fs::FsPaths::XPLANE11)
+      {
+        QString filepath;
+        if(!readInactive && !atools::fs::xp::SceneryPacks::exists(databaseDialog->getBasePath(), err, filepath))
+        {
+          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read scenery configuration \"%1\". Reason: %2.\n\n"
+                                                          "Enable the option \"Read inactive or disabled Scenery Entries\" "
+                                                          "or start X-Plane once to create the file.").
+                                       arg(filepath).arg(err));
+          configValid = false;
+        }
+      }
+      else
       {
         QString sceneryCfgCodec = selectedFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
-
-        if(selectedFsType == atools::fs::FsPaths::XPLANE11 ||
-           atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
+        if(!atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
         {
-          // Compile into a temporary database file
-          QString selectedFilename = buildDatabaseFileName(selectedFsType);
-          QString tempFilename = buildCompilingDatabaseFileName();
+          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read scenery configuration \"%1\". Reason: %2.").
+                                       arg(databaseDialog->getSceneryConfigFile()).arg(err));
+          configValid = false;
+        }
+      }
 
+      if(configValid)
+      {
+        // Compile into a temporary database file
+        QString selectedFilename = buildDatabaseFileName(selectedFsType);
+        QString tempFilename = buildCompilingDatabaseFileName();
+
+        if(QFile::remove(tempFilename))
+          qInfo() << "Removed" << tempFilename;
+        else
+          qWarning() << "Removing" << tempFilename << "failed";
+
+        QFile journal(tempFilename + "-journal");
+        if(journal.exists() && journal.size() == 0)
+        {
+          if(journal.remove())
+            qInfo() << "Removed" << journal.fileName();
+          else
+            qWarning() << "Removing" << journal.fileName() << "failed";
+        }
+
+        SqlDatabase tempDb(DATABASE_NAME_TEMP);
+        openDatabaseFile(&tempDb, tempFilename, false /* readonly */, true /* createSchema */);
+
+        if(loadScenery(&tempDb))
+        {
+          // Successfully loaded
+          reopenDialog = false;
+
+          closeDatabaseFile(&tempDb);
+
+          emit preDatabaseLoad();
+          closeAllDatabases();
+
+          // Remove old database
+          if(QFile::remove(selectedFilename))
+            qInfo() << "Removed" << selectedFilename;
+          else
+            qWarning() << "Removing" << selectedFilename << "failed";
+
+          // Rename temporary file to new database
+          if(QFile::rename(tempFilename, selectedFilename))
+            qInfo() << "Renamed" << tempFilename << "to" << selectedFilename;
+          else
+            qWarning() << "Renaming" << tempFilename << "to" << selectedFilename << "failed";
+
+          // Syncronize display with loaded database
+          currentFsType = selectedFsType;
+
+          openAllDatabases();
+          emit postDatabaseLoad(currentFsType);
+        }
+        else
+        {
+          closeDatabaseFile(&tempDb);
           if(QFile::remove(tempFilename))
             qInfo() << "Removed" << tempFilename;
           else
             qWarning() << "Removing" << tempFilename << "failed";
 
-          QFile journal(tempFilename + "-journal");
-          if(journal.exists() && journal.size() == 0)
+          QFile journal2(tempFilename + "-journal");
+          if(journal2.exists() && journal2.size() == 0)
           {
-            if(journal.remove())
-              qInfo() << "Removed" << journal.fileName();
+            if(journal2.remove())
+              qInfo() << "Removed" << journal2.fileName();
             else
-              qWarning() << "Removing" << journal.fileName() << "failed";
-          }
-
-          SqlDatabase tempDb(DATABASE_NAME_TEMP);
-          openDatabaseFile(&tempDb, tempFilename, false /* readonly */, true /* createSchema */);
-
-          if(loadScenery(&tempDb))
-          {
-            // Successfully loaded
-            reopenDialog = false;
-
-            closeDatabaseFile(&tempDb);
-
-            emit preDatabaseLoad();
-            closeDatabases();
-
-            // Remove old database
-            if(QFile::remove(selectedFilename))
-              qInfo() << "Removed" << selectedFilename;
-            else
-              qWarning() << "Removing" << selectedFilename << "failed";
-
-            // Rename temporary file to new database
-            if(QFile::rename(tempFilename, selectedFilename))
-              qInfo() << "Renamed" << tempFilename << "to" << selectedFilename;
-            else
-              qWarning() << "Renaming" << tempFilename << "to" << selectedFilename << "failed";
-
-            // Syncronize display with loaded database
-            currentFsType = selectedFsType;
-
-            openAllDatabases();
-            emit postDatabaseLoad(currentFsType);
-          }
-          else
-          {
-            closeDatabaseFile(&tempDb);
-            if(QFile::remove(tempFilename))
-              qInfo() << "Removed" << tempFilename;
-            else
-              qWarning() << "Removing" << tempFilename << "failed";
-
-            QFile journal2(tempFilename + "-journal");
-            if(journal2.exists() && journal2.size() == 0)
-            {
-              if(journal2.remove())
-                qInfo() << "Removed" << journal2.fileName();
-              else
-                qWarning() << "Removing" << journal2.fileName() << "failed";
-            }
+              qWarning() << "Removing" << journal2.fileName() << "failed";
           }
         }
-        else
-          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read \"%1\". Reason: %2.").
-                                       arg(databaseDialog->getSceneryConfigFile()).arg(err));
       }
-      else
-        atools::gui::Dialog::warning(databaseDialog, tr("Cannot read \"%1\". Reason: %2.").
-                                     arg(databaseDialog->getBasePath()).arg(err));
     }
     else
       // User hit close
@@ -1365,8 +1380,10 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
       numScenery++;
     }
 
-    DatabaseErrorDialog errorDialog(progressDialog);
-    errorDialog.setErrorMessages(errorTexts);
+    TextDialog errorDialog(progressDialog,
+                           QApplication::applicationName() + tr(" - Load Scenery Library Errors"),
+                           "SCENERY.html#errors"); // anchor for future use
+    errorDialog.setHtmlMessage(errorTexts, true /* print to log */);
     errorDialog.exec();
   }
 
@@ -1532,14 +1549,19 @@ bool DatabaseManager::isDatabaseCompatible(atools::sql::SqlDatabase *db)
   }
 }
 
-/* Create an empty database schema. */
-void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *db)
+void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *db, bool boundary)
 {
   try
   {
     NavDatabaseOptions opts;
-    NavDatabase(&opts, db, nullptr, GIT_REVISION).createSchema();
-    DatabaseMeta(db).updateVersion();
+    if(boundary)
+      // Does not use a transaction
+      NavDatabase(&opts, db, nullptr, GIT_REVISION).createAirspaceSchema();
+    else
+    {
+      NavDatabase(&opts, db, nullptr, GIT_REVISION).createSchema();
+      DatabaseMeta(db).updateVersion();
+    }
   }
   catch(atools::Exception& e)
   {
@@ -1662,20 +1684,6 @@ QString DatabaseManager::buildDatabaseFileNameAppDir(atools::fs::FsPaths::Simula
          QDir::separator() + lnm::DATABASE_DIR +
          QDir::separator() + lnm::DATABASE_PREFIX +
          atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
-}
-
-/* Create database name including simulator short name */
-QString DatabaseManager::buildDatabaseFileNameAppDirOrSettings(atools::fs::FsPaths::SimulatorType type)
-{
-  QString ngDbFile = buildDatabaseFileName(type);
-  QString ngDbFileApp = buildDatabaseFileNameAppDir(type);
-
-  QString file;
-  if(QFile::exists(ngDbFile))
-    file = ngDbFile;
-  else if(QFile::exists(ngDbFileApp))
-    file = ngDbFileApp;
-  return file;
 }
 
 QString DatabaseManager::buildCompilingDatabaseFileName()

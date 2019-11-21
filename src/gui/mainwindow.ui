@@ -72,7 +72,8 @@
      <addaction name="actionRouteSaveAsLeveldRte"/>
      <addaction name="actionRouteSaveAsFeelthereFpl"/>
      <addaction name="actionRouteSaveAsQwRte"/>
-     <addaction name="actionRouteSaveAsMdx"/>
+     <addaction name="actionRouteSaveAsMdr"/>
+     <addaction name="actionRouteSaveAsTfdi"/>
     </widget>
     <widget class="QMenu" name="menuE_xport_Flight_Plan_to_other_Formats">
      <property name="title">
@@ -84,6 +85,7 @@
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsEfbr"/>
      <addaction name="separator"/>
+     <addaction name="actionRouteSaveAsHtml"/>
      <addaction name="actionRouteSaveAsGpx"/>
      <addaction name="separator"/>
      <addaction name="actionRouteShowSkyVector"/>
@@ -94,11 +96,14 @@
      </property>
      <addaction name="actionRouteSaveAsVfp"/>
      <addaction name="actionRouteSaveAsIvap"/>
+     <addaction name="actionRouteSaveAsXIvap"/>
     </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
     <addaction name="actionRouteAppend"/>
     <addaction name="menuRecentRoutes"/>
+    <addaction name="separator"/>
+    <addaction name="actionRouteResetAll"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
@@ -158,6 +163,7 @@
      <addaction name="actionShortcutAirportSearch"/>
      <addaction name="actionShortcutNavaidSearch"/>
      <addaction name="actionShortcutUserpointSearch"/>
+     <addaction name="actionShortcutLogbookSearch"/>
      <addaction name="separator"/>
      <addaction name="actionShortcutFlightPlan"/>
      <addaction name="actionShortcutAircraftPerformance"/>
@@ -205,7 +211,13 @@
     </property>
     <addaction name="actionConnectSimulator"/>
     <addaction name="separator"/>
+    <addaction name="actionRunWebserver"/>
+    <addaction name="actionOpenWebserver"/>
+    <addaction name="separator"/>
     <addaction name="actionResetMessages"/>
+    <addaction name="actionResetAllSettings"/>
+    <addaction name="actionSaveAllNow"/>
+    <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuMap">
@@ -229,6 +241,9 @@
     <property name="title">
      <string>Flight &amp;Plan</string>
     </property>
+    <addaction name="actionShortcutFlightPlan"/>
+    <addaction name="actionShortcutAircraftPerformance"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteSelectParking"/>
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
@@ -249,14 +264,15 @@
      <string>&amp;Scenery Library</string>
     </property>
     <addaction name="actionDatabaseFiles"/>
-    <addaction name="actionReloadSceneryCopyAirspaces"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoadAirspaces"/>
     <addaction name="actionReloadScenery"/>
    </widget>
    <widget class="QMenu" name="menuUserdata">
     <property name="title">
      <string>&amp;Userdata</string>
     </property>
-    <addaction name="actionUserdataShowSearch"/>
+    <addaction name="actionShortcutUserpointSearch"/>
     <addaction name="separator"/>
     <addaction name="actionUserdataImportCSV"/>
     <addaction name="actionUserdataImportUserfixDat"/>
@@ -266,8 +282,6 @@
     <addaction name="actionUserdataExportUserfixDat"/>
     <addaction name="actionUserdataExportGarminGTN"/>
     <addaction name="actionUserdataExportXmlBgl"/>
-    <addaction name="separator"/>
-    <addaction name="actionUserdataCreateLogbook"/>
     <addaction name="separator"/>
     <addaction name="actionUserdataClearDatabase"/>
    </widget>
@@ -288,7 +302,6 @@
       <string>&amp;Airspaces</string>
      </property>
      <addaction name="actionShowAirspaces"/>
-     <addaction name="actionShowAirspacesOnline"/>
     </widget>
     <widget class="QMenu" name="menuViewProjection">
      <property name="title">
@@ -349,23 +362,37 @@
      <addaction name="actionMapShowVictorAirways"/>
      <addaction name="actionMapShowJetAirways"/>
     </widget>
-    <widget class="QMenu" name="menuMapShowAirportWeatherSource">
+    <widget class="QMenu" name="menuHighAltitudeWindLevels">
      <property name="title">
-      <string>Airport Weather &amp;Source</string>
+      <string>Wind levels</string>
      </property>
-     <addaction name="actionMapShowWeatherSimulator"/>
-     <addaction name="actionMapShowWeatherActiveSky"/>
-     <addaction name="actionMapShowWeatherNoaa"/>
-     <addaction name="actionMapShowWeatherVatsim"/>
-     <addaction name="actionMapShowWeatherIvao"/>
+    </widget>
+    <widget class="QMenu" name="menuViewAirspaceSource">
+     <property name="title">
+      <string>Airspace &amp;Source</string>
+     </property>
+     <addaction name="actionViewAirspaceSrcSimulator"/>
+     <addaction name="actionViewAirspaceSrcNavigraph"/>
+     <addaction name="actionViewAirspaceSrcUser"/>
+     <addaction name="actionViewAirspaceSrcOnline"/>
+    </widget>
+    <widget class="QMenu" name="menuViewUserFeatures">
+     <property name="title">
+      <string>User &amp;Features</string>
+     </property>
     </widget>
     <addaction name="actionMapResetSettings"/>
+    <addaction name="separator"/>
     <addaction name="menuViewDetails"/>
     <addaction name="separator"/>
     <addaction name="menuViewAirport"/>
     <addaction name="menuViewNavaids"/>
     <addaction name="separator"/>
     <addaction name="menuViewAirspaces"/>
+    <addaction name="menuViewAirspaceSource"/>
+    <addaction name="separator"/>
+    <addaction name="menuViewUserFeatures"/>
+    <addaction name="separator"/>
     <addaction name="menuViewUserpoints"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowRoute"/>
@@ -383,7 +410,8 @@
     <addaction name="actionMapShowMinimumAltitude"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAirportWeather"/>
-    <addaction name="menuMapShowAirportWeatherSource"/>
+    <addaction name="separator"/>
+    <addaction name="menuHighAltitudeWindLevels"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowSunShading"/>
     <addaction name="menuSunShading"/>
@@ -409,22 +437,67 @@
     <addaction name="separator"/>
     <addaction name="actionAircraftPerformanceEdit"/>
     <addaction name="separator"/>
-    <addaction name="actionAircraftPerformanceCollect"/>
+    <addaction name="actionAircraftPerformanceLoadMerge"/>
+    <addaction name="actionAircraftPerformanceMerge"/>
+    <addaction name="actionAircraftPerformanceRestart"/>
+   </widget>
+   <widget class="QMenu" name="menuLogbook">
+    <property name="title">
+     <string>&amp;Logbook</string>
+    </property>
+    <addaction name="actionShortcutLogbookSearch"/>
+    <addaction name="separator"/>
+    <addaction name="actionLogdataShowStatistics"/>
+    <addaction name="separator"/>
+    <addaction name="actionLogdataImportCSV"/>
+    <addaction name="actionLogdataExportCSV"/>
+    <addaction name="actionLogdataImportXplane"/>
+    <addaction name="separator"/>
+    <addaction name="actionLogdataConvertUserdata"/>
+    <addaction name="separator"/>
+    <addaction name="actionLogdataCreateLogbook"/>
+   </widget>
+   <widget class="QMenu" name="menuWeather">
+    <property name="title">
+     <string>W&amp;eather</string>
+    </property>
+    <widget class="QMenu" name="menuMapShowAirportWeatherSource">
+     <property name="title">
+      <string>&amp;Airport Weather Source</string>
+     </property>
+     <addaction name="actionMapShowWeatherSimulator"/>
+     <addaction name="actionMapShowWeatherActiveSky"/>
+     <addaction name="actionMapShowWeatherNoaa"/>
+     <addaction name="actionMapShowWeatherVatsim"/>
+     <addaction name="actionMapShowWeatherIvao"/>
+    </widget>
+    <widget class="QMenu" name="menuHighAltitudeWindSource">
+     <property name="title">
+      <string>&amp;Wind source</string>
+     </property>
+     <addaction name="actionMapShowWindDisabled"/>
+     <addaction name="actionMapShowWindSimulator"/>
+     <addaction name="actionMapShowWindNOAA"/>
+    </widget>
+    <addaction name="menuMapShowAirportWeatherSource"/>
+    <addaction name="menuHighAltitudeWindSource"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRoute"/>
    <addaction name="menuMap"/>
    <addaction name="menuMapView"/>
-   <addaction name="menuDatabase"/>
+   <addaction name="menuWeather"/>
    <addaction name="menuUserdata"/>
+   <addaction name="menuLogbook"/>
    <addaction name="menuAircraftPerformance"/>
+   <addaction name="menuDatabase"/>
    <addaction name="menuTools"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="toolBarMain">
    <property name="windowTitle">
-    <string>Main Toolbar</string>
+    <string>File Toolbar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -435,6 +508,8 @@
    <addaction name="actionRouteNew"/>
    <addaction name="actionRouteOpen"/>
    <addaction name="actionRouteSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionRouteResetAll"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidgetSearch">
@@ -472,6 +547,12 @@
        </property>
        <property name="currentIndex">
         <number>0</number>
+       </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
        </property>
        <widget class="QWidget" name="tabAirportSearch">
         <attribute name="title">
@@ -2961,8 +3042,504 @@
            </property>
           </widget>
          </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabLogdataSearch">
+        <attribute name="title">
+         <string>Logbook</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search, add and edit logbook entries</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_33">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
          <item>
-          <widget class="QLabel" name="labelUserdataOverride">
+          <layout class="QHBoxLayout" name="horizontalLayoutLogdata">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditLogdataDeparture">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Departure airport ICAO code</string>
+             </property>
+             <property name="statusTip">
+              <string>Departure airport ICAO code</string>
+             </property>
+             <property name="maxLength">
+              <number>8</number>
+             </property>
+             <property name="placeholderText">
+              <string>Departure ICAO</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditLogdataDestination">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Destination airport ICAO code</string>
+             </property>
+             <property name="statusTip">
+              <string>Destination airport ICAO code</string>
+             </property>
+             <property name="placeholderText">
+              <string>Destination ICAO</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditLogdataAircraftType">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>ICAO aircraft type like B732 or C172</string>
+             </property>
+             <property name="statusTip">
+              <string>ICAO aircraft type like B732 or C172</string>
+             </property>
+             <property name="placeholderText">
+              <string>Aircraft Type</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonLogdataAdd">
+             <property name="toolTip">
+              <string>Add a new logbook entry</string>
+             </property>
+             <property name="statusTip">
+              <string>Add a new logbook entry</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/logdata_add.svg</normaloff>:/littlenavmap/resources/icons/logdata_add.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonLogdataEdit">
+             <property name="toolTip">
+              <string>Edit one or more logbook entries</string>
+             </property>
+             <property name="statusTip">
+              <string>Edit one or more logbook entries</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonLogdataDel">
+             <property name="toolTip">
+              <string>Remove one or more logbook entries</string>
+             </property>
+             <property name="statusTip">
+              <string>Remove one or more logbook entries</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/logdata_delete.svg</normaloff>:/littlenavmap/resources/icons/logdata_delete.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_5">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonLogdataReset">
+             <property name="toolTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonLogdataClearSelection">
+             <property name="toolTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonLogdataHelp">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
+&lt;p&gt;Search tips for text fields: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
+&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
+&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="statusTip">
+              <string>Show help for the logbook search tab</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="toolButtonLogdata">
+             <property name="toolTip">
+              <string>Show or hide search options</string>
+             </property>
+             <property name="statusTip">
+              <string>Show or hide search options</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
+             </property>
+             <property name="popupMode">
+              <enum>QToolButton::InstantPopup</enum>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="lineLogdataMore">
+           <property name="lineWidth">
+            <number>4</number>
+           </property>
+           <property name="midLineWidth">
+            <number>2</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutLogdataMore">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditLogdataAircraftModel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Aircraft model name</string>
+             </property>
+             <property name="statusTip">
+              <string>Aircraft model name</string>
+             </property>
+             <property name="placeholderText">
+              <string>Aircraft Model</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditLogdataAircraftRegistration">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string/>
+             </property>
+             <property name="statusTip">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>Aircraft Registration</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditLogdataSimulator">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string/>
+             </property>
+             <property name="statusTip">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>Simulator</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditLogdataDescription">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Description</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="lineLogdataMoreDist">
+           <property name="lineWidth">
+            <number>4</number>
+           </property>
+           <property name="midLineWidth">
+            <number>2</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutLogdataDist">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="labelLogdataMinDist">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Distance: &amp;Min:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxLogdataMinDist</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxLogdataMinDist">
+             <property name="toolTip">
+              <string>Minimum flight plan distance</string>
+             </property>
+             <property name="statusTip">
+              <string>Minimum flight plan distance</string>
+             </property>
+             <property name="suffix">
+              <string> %dist%</string>
+             </property>
+             <property name="maximum">
+              <number>30000</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelLogdataMaxDist">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>&amp;Max:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxLogdataMaxDist</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxLogdataMaxDist">
+             <property name="toolTip">
+              <string>Maximum flight plan distance</string>
+             </property>
+             <property name="statusTip">
+              <string>Maximum flight plan distance</string>
+             </property>
+             <property name="suffix">
+              <string> %dist%</string>
+             </property>
+             <property name="maximum">
+              <number>30000</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>30000</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTableView" name="tableViewLogdata">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="dragDropOverwriteMode">
+            <bool>false</bool>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>3</number>
+           </attribute>
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelLogdata">
            <property name="text">
             <string/>
            </property>
@@ -3570,7 +4147,7 @@
      <normaloff>:/littlenavmap/resources/icons/routedock.svg</normaloff>:/littlenavmap/resources/icons/routedock.svg</iconset>
    </property>
    <property name="windowTitle">
-    <string>Flight Plan</string>
+    <string>Flight Planning</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -3603,9 +4180,15 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
+       </property>
        <widget class="QWidget" name="tabRoutePlan">
         <attribute name="title">
-         <string>Plan</string>
+         <string>Flight Plan</string>
         </attribute>
         <attribute name="toolTip">
          <string>Flight Plan Table</string>
@@ -3658,7 +4241,7 @@
               <number>0</number>
              </property>
              <property name="maximum">
-              <number>80000</number>
+              <number>100000</number>
              </property>
              <property name="singleStep">
               <number>500</number>
@@ -3835,10 +4418,10 @@
        </widget>
        <widget class="QWidget" name="tabAircraftPerformance">
         <attribute name="title">
-         <string>Aircraft</string>
+         <string>Fuel Report</string>
         </attribute>
         <attribute name="toolTip">
-         <string>Aircraft Performance and Fuel Planning</string>
+         <string>Fuel Planning and Aircraft Performance</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_31">
          <property name="spacing">
@@ -3857,7 +4440,317 @@
           <number>2</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayoutAircraftPerformance">
+          <layout class="QVBoxLayout" name="verticalLayout_30">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayoutAircraftPerformance">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QCheckBox" name="checkBoxAircraftPerformanceWindMan">
+               <property name="toolTip">
+                <string>Use manual wind settings for fuel calculation if checked.
+This will also be reflected by the wind barbs at the flight plan waypoints and the
+wind display in the elevation profile top line.</string>
+               </property>
+               <property name="statusTip">
+                <string>Use manual wind settings for fuel calculation.</string>
+               </property>
+               <property name="text">
+                <string>&amp;Manual Wind</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Edit Aircraft Performance</string>
+               </property>
+               <property name="statusTip">
+                <string>Edit Aircraft Performance</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfedit.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfedit.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line_4">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceNew">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Add new aircraft performance data</string>
+               </property>
+               <property name="statusTip">
+                <string>Add new aircraft performance data</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceLoad">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Open Aircraft Performance File</string>
+               </property>
+               <property name="statusTip">
+                <string>Open Aircraft Performance File</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceSave">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Save Aircraft Performance File</string>
+               </property>
+               <property name="statusTip">
+                <string>Save Aircraft Performance File</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfsave.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfsave.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceSaveAs">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Save Aircraft Performance File as</string>
+               </property>
+               <property name="statusTip">
+                <string>Save Aircraft Performance File as</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfsaveas.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfsaveas.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceHelp">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Show help for aircraft performance</string>
+               </property>
+               <property name="statusTip">
+                <string>Show help for aircraft performance</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayoutManWind">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="labelAircraftPerformanceWind">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&amp;Wind:</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAircraftPerformanceWindDirection</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindDirection">
+               <property name="toolTip">
+                <string>Average true wind direction at flight plan cruise level</string>
+               </property>
+               <property name="statusTip">
+                <string>Average true wind direction at flight plan cruise level</string>
+               </property>
+               <property name="suffix">
+                <string> °T</string>
+               </property>
+               <property name="maximum">
+                <number>360</number>
+               </property>
+               <property name="singleStep">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindSpeed">
+               <property name="toolTip">
+                <string>Average wind at flight plan cruise level.
+Wind speed will be interpolated for climb and descent phases.</string>
+               </property>
+               <property name="statusTip">
+                <string>Average wind at flight plan cruise level. Wind speed will be interpolated for climb and descent phases.</string>
+               </property>
+               <property name="suffix">
+                <string> %speed%</string>
+               </property>
+               <property name="maximum">
+                <number>300</number>
+               </property>
+               <property name="singleStep">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="gridLayoutAircraftPerformance">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserAircraftPerformanceReport">
+           <property name="placeholderText">
+            <string>No aircraft performance report available.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabCurrentPerformance">
+        <attribute name="title">
+         <string>Current Performance</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Collected aircraft performance for current flight</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_32">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
            <property name="spacing">
             <number>2</number>
            </property>
@@ -3865,56 +4758,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>&amp;Wind:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxAircraftPerformanceWindSpeed</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindSpeed">
-             <property name="toolTip">
-              <string>Average wind at flight plan cruise level.
-Wind speed will be interpolated for climb and descent phases.</string>
-             </property>
-             <property name="statusTip">
-              <string>Average wind at flight plan cruise level. Wind speed will be interpolated for climb and descent phases.</string>
-             </property>
-             <property name="suffix">
-              <string> %speed%</string>
-             </property>
-             <property name="maximum">
-              <number>300</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindDirection">
-             <property name="toolTip">
-              <string>Average magnetic wind direction at flight plan cruise level</string>
-             </property>
-             <property name="statusTip">
-              <string>Average magnetic wind direction at flight plan cruise level</string>
-             </property>
-             <property name="suffix">
-              <string> °M</string>
-             </property>
-             <property name="maximum">
-              <number>360</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
+            <spacer name="horizontalSpacer_3">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -3927,7 +4771,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceEdit">
+            <widget class="QPushButton" name="pushButtonAircraftPerfCollectRestart">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -3935,128 +4779,45 @@ Wind speed will be interpolated for climb and descent phases.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Edit Aircraft Performance</string>
+              <string>Restart Aircraft Performance Collection</string>
              </property>
              <property name="statusTip">
-              <string>Edit Aircraft Performance</string>
+              <string>Restart Aircraft Performance Collection</string>
              </property>
              <property name="text">
               <string/>
              </property>
              <property name="icon">
               <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfedit.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfedit.svg</iconset>
+               <normaloff>:/littlenavmap/resources/icons/aircraftperfreset.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfreset.svg</iconset>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="Line" name="line_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+            <widget class="QPushButton" name="pushButtonAircraftPerfCollectMerge">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Merge the recorded performance into current</string>
+             </property>
+             <property name="statusTip">
+              <string>Merge the recorded performance into current</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/aircraftperfmerge.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfmerge.svg</iconset>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceNew">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Add new aircraft performance data</string>
-             </property>
-             <property name="statusTip">
-              <string>Add new aircraft performance data</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</iconset>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignRight">
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceLoad">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Open Aircraft Performance File</string>
-             </property>
-             <property name="statusTip">
-              <string>Open Aircraft Performance File</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="Line" name="line_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceSave">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Save Aircraft Performance File</string>
-             </property>
-             <property name="statusTip">
-              <string>Save Aircraft Performance File</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfsave.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfsave.svg</iconset>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignRight">
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceSaveAs">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Save Aircraft Performance File as</string>
-             </property>
-             <property name="statusTip">
-              <string>Save Aircraft Performance File as</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfsaveas.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfsaveas.svg</iconset>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignRight">
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceHelp">
+            <widget class="QPushButton" name="pushButtonAircraftPerfCollectHelp">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -4081,19 +4842,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
           </layout>
          </item>
          <item>
-          <layout class="QGridLayout" name="gridLayoutAircraftPerformance">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="spacing">
-            <number>2</number>
-           </property>
-          </layout>
-         </item>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserAircraftPerformanceReport">
+          <widget class="QTextBrowser" name="textBrowserAircraftPerformanceCurrent">
            <property name="placeholderText">
-            <string>No aircraft performance report available.</string>
+            <string>No report for current performance available.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -4158,6 +4909,18 @@ Wind speed will be interpolated for climb and descent phases.</string>
        </property>
        <property name="currentIndex">
         <number>0</number>
+       </property>
+       <property name="documentMode">
+        <bool>false</bool>
+       </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
+       </property>
+       <property name="tabBarAutoHide">
+        <bool>false</bool>
        </property>
        <widget class="QWidget" name="tabAirportInfo">
         <property name="toolTip">
@@ -4278,7 +5041,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
          <string>Procedures</string>
         </attribute>
         <attribute name="toolTip">
-         <string>Airport approach procedures</string>
+         <string>Airport procedures</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_22">
          <property name="spacing">
@@ -4307,6 +5070,42 @@ Wind speed will be interpolated for climb and descent phases.</string>
            <property name="readOnly">
             <bool>true</bool>
            </property>
+           <property name="placeholderText">
+            <string>No airport selected.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabNearest">
+        <attribute name="title">
+         <string>Nearest</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Nearest navaids and airports in
+relation to shown airport</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_35">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserNearestInfo">
            <property name="placeholderText">
             <string>No airport selected.</string>
            </property>
@@ -4357,7 +5156,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
          <string>Navaids</string>
         </attribute>
         <attribute name="toolTip">
-         <string>VOR, NDB, waypoint, airway and userpoint information</string>
+         <string>VOR, NDB, ILS, waypoint and airway information</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_14">
          <property name="spacing">
@@ -4381,7 +5180,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>No VOR, NDB, waypoint, airway or userpoint selected.</string>
+            <string>No VOR, NDB, waypoint or airway selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -4422,12 +5221,82 @@ Wind speed will be interpolated for climb and descent phases.</string>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="tabUserpointsInfo">
+        <attribute name="title">
+         <string>Userpoints</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>User defined waypoints</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_36">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserUserpointInfo">
+           <property name="placeholderText">
+            <string>No userpoint selected.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabLogbookInfo">
+        <attribute name="title">
+         <string>Logbook</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Logbook entries</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_34">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserLogbookInfo">
+           <property name="placeholderText">
+            <string>No logbook entry selected.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="tabOnlineClientInfo">
         <attribute name="title">
          <string>Online Clients</string>
         </attribute>
         <attribute name="toolTip">
-         <string>Online network client/aircraft information</string>
+         <string>Online network client/aircraft</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_27">
          <property name="spacing">
@@ -4462,7 +5331,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
          <string>Online Centers</string>
         </attribute>
         <attribute name="toolTip">
-         <string>Online network center information</string>
+         <string>Online network centers and airspaces</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_26">
          <property name="spacing">
@@ -4618,14 +5487,8 @@ Wind speed will be interpolated for climb and descent phases.</string>
      </property>
      <item>
       <widget class="QSplitter" name="splitterProfile">
-       <property name="lineWidth">
-        <number>0</number>
-       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="handleWidth">
-        <number>6</number>
        </property>
        <widget class="QWidget" name="layoutWidgetProfileDrawing">
         <layout class="QGridLayout" name="gridLayoutProfileDrawing">
@@ -4929,6 +5792,12 @@ Wind speed will be interpolated for climb and descent phases.</string>
        <property name="currentIndex">
         <number>0</number>
        </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
+       </property>
        <widget class="QWidget" name="tabAircraftInfo">
         <attribute name="title">
          <string>Aircraft</string>
@@ -5211,7 +6080,17 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <bool>false</bool>
    </attribute>
    <addaction name="actionShowAirspaces"/>
-   <addaction name="actionShowAirspacesOnline"/>
+  </widget>
+  <widget class="QToolBar" name="toolBarMapThemeProjection">
+   <property name="windowTitle">
+    <string>Map Projection and Theme Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -5621,7 +6500,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>About Little Navmap</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="actionHelpAboutQt">
@@ -5639,7 +6518,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>About Qt</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
   <action name="actionOptions">
@@ -5657,7 +6536,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Open the options dialog</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::TextHeuristicRole</enum>
+    <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
   <action name="actionAirportSearchShowAllOptions">
@@ -5887,7 +6766,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
    </property>
    <property name="text">
-    <string>Set Home</string>
+    <string>Set Home View</string>
    </property>
    <property name="toolTip">
     <string>Sets currently visible map view as home view</string>
@@ -6106,13 +6985,13 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove all Ranges, Measurements and Patterns</string>
+    <string>&amp;Remove all Ranges, Measurements, Patterns and Holdings</string>
    </property>
    <property name="toolTip">
-    <string>Remove all range rings, distance measurement lines and airport traffic patterns from map</string>
+    <string>Remove all range rings, measurements,  traffic patterns and holdings from map</string>
    </property>
    <property name="statusTip">
-    <string>Remove all range rings, distance measurement lines and airport traffic patterns from map</string>
+    <string>Remove all range rings, measurements,  traffic patterns and holdings from map</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+H</string>
@@ -6238,10 +7117,10 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>&amp;New Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Create a new flight plan</string>
+    <string>Create a new empty flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Create a new flight plan</string>
+    <string>Create a new empty flight plan</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -6355,10 +7234,10 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Set %1 as Flight Plan Destination</string>
    </property>
    <property name="toolTip">
-    <string>Set this as destionation for the flight plan</string>
+    <string>Set this as destination for the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Set this as destionation for the flight plan</string>
+    <string>Set this as destination for the flight plan</string>
    </property>
   </action>
   <action name="actionRouteAddPos">
@@ -6544,7 +7423,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
-    <string>Select a &amp;Start Position for Departure</string>
+    <string>Select a &amp;Start Position for Departure ...</string>
    </property>
    <property name="toolTip">
     <string>Select start position for flight plan departure</string>
@@ -6592,7 +7471,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>About the Marble Widget</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
   <action name="actionRouteCalcSetAlt">
@@ -7265,7 +8144,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;New Flight Plan from Route Description</string>
+    <string>&amp;New Flight Plan from Route Description ...</string>
    </property>
    <property name="toolTip">
     <string>Create a new flight plan from route description</string>
@@ -7575,6 +8454,57 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Ctrl+Shift+R</string>
    </property>
   </action>
+  <action name="actionMapShowApproachesCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add custom approach for %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+  </action>
+  <action name="actionRouteShowApproachesCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Create approach</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionSearchShowApproachesCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add custom approach for %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+C</string>
+   </property>
+  </action>
   <action name="actionInfoApproachAttach">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -7591,6 +8521,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Insert the selected procedure into the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+I</string>
    </property>
   </action>
   <action name="actionRouteActivateLeg">
@@ -7707,7 +8640,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/airspace.svg</normaloff>:/littlenavmap/resources/icons/airspace.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Airspaces</string>
+    <string>Show &amp;Airspaces</string>
    </property>
    <property name="toolTip">
     <string>Show or hide all airspaces</string>
@@ -7909,24 +8842,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
-   </property>
-  </action>
-  <action name="actionReloadSceneryCopyAirspaces">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspacecopy.svg</normaloff>:/littlenavmap/resources/icons/airspacecopy.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Copy Airspaces to X-Plane database ...</string>
-   </property>
-   <property name="iconText">
-    <string>Load Scenery Library</string>
-   </property>
-   <property name="toolTip">
-    <string>Copy airspaces from the currently selected database to the X-Plane database</string>
-   </property>
-   <property name="statusTip">
-    <string>Copy airspaces from the currently selected database to the X-Plane database</string>
    </property>
   </action>
   <action name="actionRouteSaveAsTxt">
@@ -8132,21 +9047,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show more search options</string>
    </property>
    <property name="statusTip">
-    <string>Show navaid distance search options</string>
-   </property>
-  </action>
-  <action name="actionUserdataShowSearch">
-   <property name="text">
-    <string>&amp;Show Search</string>
-   </property>
-   <property name="toolTip">
-    <string>Show Userpoint Search Tab</string>
-   </property>
-   <property name="statusTip">
-    <string>Show Userpoint Search Tab</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+U</string>
+    <string>Show more search options</string>
    </property>
   </action>
   <action name="actionUserdataImportCSV">
@@ -8376,18 +9277,21 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Save procedure waypoints instead of SID/STAR information</string>
    </property>
   </action>
-  <action name="actionUserdataCreateLogbook">
+  <action name="actionLogdataCreateLogbook">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>&amp;Create Logbook entries</string>
    </property>
    <property name="toolTip">
-    <string>Create a Userpoint of type Logbook including flight information for each takeoff and landing</string>
+    <string>Create a Logbook entry including flight information on takeoff and landing</string>
    </property>
    <property name="statusTip">
-    <string>Create a Userpoint of type Logbook including flight information for each takeoff and landing</string>
+    <string>Create a Logbook entry including flight information on takeoff and landing</string>
    </property>
   </action>
   <action name="actionSearchOnlineClientFollowSelection">
@@ -8416,30 +9320,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Centers the selected center on the map</string>
-   </property>
-  </action>
-  <action name="actionShowAirspacesOnline">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspaceonline.svg</normaloff>:/littlenavmap/resources/icons/airspaceonline.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show Online Network Airspaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Show or hide airspaces from online networks like VATSIM or IVAO</string>
-   </property>
-   <property name="statusTip">
-    <string>Show or hide airspaces from online networks like VATSIM or IVAO</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+O</string>
    </property>
   </action>
   <action name="actionRouteSaveAsIFly">
@@ -8651,7 +9531,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
   </action>
   <action name="actionMapShowSunShadingSetTime">
    <property name="text">
-    <string>&amp;Set User defined Time</string>
+    <string>&amp;Set User defined Time ...</string>
    </property>
    <property name="toolTip">
     <string>Set user defined time for sun shading</string>
@@ -8665,7 +9545,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -9052,20 +9932,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Remove all recent aircraft performance files from menu</string>
    </property>
   </action>
-  <action name="actionAircraftPerformanceCollect">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Collect Performance for Flight</string>
-   </property>
-   <property name="iconText">
-    <string>Collect Performance for Flight</string>
-   </property>
-   <property name="statusTip">
-    <string>Collect Performance for Flight</string>
-   </property>
-  </action>
   <action name="actionAircraftPerformanceSave">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -9111,7 +9977,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;New Aircraft Performance</string>
+    <string>&amp;New Aircraft Performance ...</string>
    </property>
    <property name="toolTip">
     <string>Add new aircraft performance data</string>
@@ -9339,7 +10205,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
   </action>
   <action name="actionShortcutAircraftPerformance">
    <property name="text">
-    <string>Aircraft &amp;Performance</string>
+    <string>&amp;Fuel Report</string>
    </property>
    <property name="toolTip">
     <string>Show Aircraft Performance and Fuel Planning</string>
@@ -9394,21 +10260,21 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Export Flight Plan as &amp;vPilot VFP ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as VFP file for VATSIM vPilot</string>
+    <string>Save flight plan as VFP file for VATSIM vPilot or swift</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as VFP file for VATSIM vPilot</string>
+    <string>Save flight plan as VFP file for VATSIM vPilot or swift</string>
    </property>
   </action>
   <action name="actionRouteSaveAsIvap">
    <property name="text">
-    <string>Export Flight Plan as &amp;IvAp or X-IvAp FPL ...</string>
+    <string>Export Flight Plan as &amp;IvAp FPL ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as FPL file for IvAp or X-IvAp</string>
+    <string>Save flight plan as FPL file for IvAp</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FPL file for IvAp or X-IvAp</string>
+    <string>Save flight plan as FPL file for IvAp</string>
    </property>
   </action>
   <action name="actionShortcutMap">
@@ -9504,15 +10370,570 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Save flight plan as RTE file usable by QualityWings Aircraft</string>
    </property>
   </action>
-  <action name="actionRouteSaveAsMdx">
+  <action name="actionRouteSaveAsMdr">
    <property name="text">
-    <string>Export Flight Plan as Maddog X &amp;MDX ...</string>
+    <string>Export Flight Plan as Maddog X &amp;MDR ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as MDX file usable by the Leonardo Maddog X</string>
+    <string>Save flight plan as MDR file usable by the Leonardo Maddog X</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as MDX file usable by the Leonardo Maddog X</string>
+    <string>Save flight plan as MDR file usable by the Leonardo Maddog X</string>
+   </property>
+  </action>
+  <action name="actionRunWebserver">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Run &amp;Webserver</string>
+   </property>
+  </action>
+  <action name="actionOpenWebserver">
+   <property name="text">
+    <string>Open Webserver &amp;Page in Browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Webserver Page in Browser</string>
+   </property>
+  </action>
+  <action name="actionMapShowWindSimulator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Flight Simulator (X-Plane only)</string>
+   </property>
+   <property name="toolTip">
+    <string>Use the X-Plane wind file</string>
+   </property>
+   <property name="statusTip">
+    <string>Use the X-Plane wind file</string>
+   </property>
+  </action>
+  <action name="actionMapShowWindNOAA">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;NOAA</string>
+   </property>
+   <property name="toolTip">
+    <string>Download wind files from NOAA</string>
+   </property>
+   <property name="statusTip">
+    <string>Download wind files from NOAA</string>
+   </property>
+  </action>
+  <action name="actionMapShowWindDisabled">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Disabled</string>
+   </property>
+   <property name="toolTip">
+    <string>Do not download or read wind files</string>
+   </property>
+   <property name="statusTip">
+    <string>Do not download or read wind files</string>
+   </property>
+  </action>
+  <action name="actionRouteAirportAlternate">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add %1 as Flight Plan Alternate</string>
+   </property>
+   <property name="toolTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+  </action>
+  <action name="actionAircraftPerformanceLoadMerge">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open Aircraft Performance and Merge ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Aircraft Performance File and merge into current</string>
+   </property>
+   <property name="statusTip">
+    <string>Open Aircraft Performance File and merge into current</string>
+   </property>
+  </action>
+  <action name="actionAircraftPerformanceMerge">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraftperfmerge.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfmerge.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Merge collected Aircraft Performance ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Merge the recorded performance into current</string>
+   </property>
+   <property name="statusTip">
+    <string>Merge the recorded performance into current</string>
+   </property>
+  </action>
+  <action name="actionAircraftPerformanceRestart">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraftperfreset.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfreset.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Restart Aircraft Performance Collection</string>
+   </property>
+   <property name="toolTip">
+    <string>Restart Aircraft Performance Collection</string>
+   </property>
+   <property name="statusTip">
+    <string>Restart Aircraft Performance Collection</string>
+   </property>
+  </action>
+  <action name="actionLogdataSearchShowMoreOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>More search options</string>
+   </property>
+   <property name="toolTip">
+    <string>Show more search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show more search options</string>
+   </property>
+  </action>
+  <action name="actionLogdataEdit">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Edit Logbook Entries</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit one or more logbook entries</string>
+   </property>
+   <property name="statusTip">
+    <string>Edit one or more userpoints</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
+  </action>
+  <action name="actionLogdataAdd">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/logdata_add.svg</normaloff>:/littlenavmap/resources/icons/logdata_add.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add Logbook Entry</string>
+   </property>
+   <property name="toolTip">
+    <string>Add logbook entry</string>
+   </property>
+   <property name="statusTip">
+    <string>Add Userpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Ins</string>
+   </property>
+  </action>
+  <action name="actionLogdataDelete">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/logdata_delete.svg</normaloff>:/littlenavmap/resources/icons/logdata_delete.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete Logbook Entries</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove one or more logbook entries</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove one or more userpoints</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected logbook entry on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected userpoint on the map</string>
+   </property>
+  </action>
+  <action name="actionLogdataImportCSV">
+   <property name="text">
+    <string>Import &amp;CSV ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Logbook Entries from CSV File</string>
+   </property>
+   <property name="statusTip">
+    <string>Import Logbook Entries from CSV File</string>
+   </property>
+  </action>
+  <action name="actionLogdataExportCSV">
+   <property name="text">
+    <string>Export &amp;CSV ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Logbook Entries to CSV File</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Logbook Entries to CSV File</string>
+   </property>
+  </action>
+  <action name="actionLogdataImportXplane">
+   <property name="text">
+    <string>Import &amp;X-Plane Logbook ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Logbook Entries from the X-Plane Logbook</string>
+   </property>
+   <property name="statusTip">
+    <string>Import Logbook Entries from the X-Plane Logbook</string>
+   </property>
+  </action>
+  <action name="actionShortcutLogbookSearch">
+   <property name="text">
+    <string>&amp;Logbook Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Show and activate Logbook Search Window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show and activate Logbook Search Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F6</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionLogdataRouteOpen">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/fileopen.svg</normaloff>:/littlenavmap/resources/icons/fileopen.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open Flight Plan %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Open flight plan from logbook entry</string>
+   </property>
+   <property name="statusTip">
+    <string>Open flight plan from logbook entry</string>
+   </property>
+  </action>
+  <action name="actionLogdataPerfLoad">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open Aircraft Performance %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Open aircraft performance file from logbook entry</string>
+   </property>
+   <property name="statusTip">
+    <string>Open aircraft performance file from logbook entry</string>
+   </property>
+  </action>
+  <action name="actionMapLogdataEdit">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Edit Log Entry %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Log Entry</string>
+   </property>
+   <property name="statusTip">
+    <string>Edit Log Entry</string>
+   </property>
+  </action>
+  <action name="actionLogdataShowStatistics">
+   <property name="text">
+    <string>S&amp;how Statistics</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Statistics</string>
+   </property>
+  </action>
+  <action name="actionLogdataConvertUserdata">
+   <property name="text">
+    <string>Convert Logbook Entries from &amp;Userdata</string>
+   </property>
+   <property name="toolTip">
+    <string>Convert legacy logbook entries from userdata to the new logbook</string>
+   </property>
+   <property name="statusTip">
+    <string>Convert legacy logbook entries from userdata to the new logbook</string>
+   </property>
+  </action>
+  <action name="actionViewAirspaceSrcSimulator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Simulator</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airspaces from the simulator scenery library</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airspaces from the simulator scenery library</string>
+   </property>
+  </action>
+  <action name="actionViewAirspaceSrcNavigraph">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Navigraph</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airspaces from the Navigraph database</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airspaces from the Navigraph database</string>
+   </property>
+  </action>
+  <action name="actionViewAirspaceSrcUser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;User</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airspaces from user database</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airspaces from user database</string>
+   </property>
+  </action>
+  <action name="actionViewAirspaceSrcOnline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Online</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airspaces from the online data (circles only)</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airspaces from the online data (circles only)</string>
+   </property>
+  </action>
+  <action name="actionLoadAirspaces">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/databaseairspace.svg</normaloff>:/littlenavmap/resources/icons/databaseairspace.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Load &amp;User Airspaces ...</string>
+   </property>
+   <property name="iconText">
+    <string>Load Airspaces</string>
+   </property>
+   <property name="toolTip">
+    <string>Load airspaces into user database</string>
+   </property>
+   <property name="statusTip">
+    <string>Load airspaces into user database</string>
+   </property>
+  </action>
+  <action name="actionMapHold">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Display Holding at %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Display holding at this position or navaid</string>
+   </property>
+   <property name="statusTip">
+    <string>Display holding at this position or navaid</string>
+   </property>
+  </action>
+  <action name="actionMapHideHold">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/holdoff.svg</normaloff>:/littlenavmap/resources/icons/holdoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Remove Holding</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove this holding</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove this holding</string>
+   </property>
+  </action>
+  <action name="actionLogdataSearchShowDistOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Distance search options</string>
+   </property>
+   <property name="toolTip">
+    <string>Show distance search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show distance search options</string>
+   </property>
+  </action>
+  <action name="actionSaveAllNow">
+   <property name="text">
+    <string>&amp;Save Options and State</string>
+   </property>
+   <property name="toolTip">
+    <string>Saves all options and window layout now</string>
+   </property>
+   <property name="statusTip">
+    <string>Saves all options and window layout now</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsTfdi">
+   <property name="text">
+    <string>Export Flight Plan for TFDi Design 717 ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as XML file usable by the TFDi Design 717</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as XML file usable by the TFDi Design 717</string>
+   </property>
+  </action>
+  <action name="actionRouteResetAll">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/reload.svg</normaloff>:/littlenavmap/resources/icons/reload.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset all for a new Flight ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset flight plan, aircraft trail and more for a new flight</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset flight plan, aircraft trail and more for a new flight</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionRouteEditUserWaypoint">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edit Flight Plan Position</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit name and coordinates of user defined flight plan position</string>
+   </property>
+   <property name="statusTip">
+    <string>Edit name and coordinates of user defined flight plan position</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
+  </action>
+  <action name="actionRouteVisibleColumns">
+   <property name="text">
+    <string>&amp;Select visible Columns</string>
+   </property>
+   <property name="toolTip">
+    <string>Hide or show columns in table</string>
+   </property>
+   <property name="statusTip">
+    <string>Hide or show columns in table</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsXIvap">
+   <property name="text">
+    <string>Export Flight Plan as X-IvAp FPL ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FPL file for X-IvAp</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file for X-IvAp</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsHtml">
+   <property name="text">
+    <string>Export Flight Plan as HTML Page ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export the flight plan as a HTML page</string>
+   </property>
+   <property name="statusTip">
+    <string>Export the flight plan as a HTML page</string>
+   </property>
+  </action>
+  <action name="actionResetAllSettings">
+   <property name="text">
+    <string>&amp;Reset all Settings and Restart</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset all settings and window layout back to default and restart program.</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset all settings and window layout back to default and restart program.</string>
    </property>
   </action>
  </widget>
@@ -9524,25 +10945,20 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <tabstop>pushButtonRouteClearSelection</tabstop>
   <tabstop>pushButtonRouteHelp</tabstop>
   <tabstop>tableViewRoute</tabstop>
-  <tabstop>spinBoxAircraftPerformanceWindSpeed</tabstop>
-  <tabstop>spinBoxAircraftPerformanceWindDirection</tabstop>
+  <tabstop>checkBoxAircraftPerformanceWindMan</tabstop>
   <tabstop>pushButtonAircraftPerformanceEdit</tabstop>
   <tabstop>pushButtonAircraftPerformanceNew</tabstop>
   <tabstop>pushButtonAircraftPerformanceLoad</tabstop>
   <tabstop>pushButtonAircraftPerformanceSave</tabstop>
   <tabstop>pushButtonAircraftPerformanceSaveAs</tabstop>
   <tabstop>pushButtonAircraftPerformanceHelp</tabstop>
+  <tabstop>spinBoxAircraftPerformanceWindDirection</tabstop>
+  <tabstop>spinBoxAircraftPerformanceWindSpeed</tabstop>
   <tabstop>textBrowserAircraftPerformanceReport</tabstop>
-  <tabstop>tabWidgetInformation</tabstop>
-  <tabstop>textBrowserAirportInfo</tabstop>
-  <tabstop>textBrowserRunwayInfo</tabstop>
-  <tabstop>textBrowserComInfo</tabstop>
-  <tabstop>textBrowserApproachInfo</tabstop>
-  <tabstop>textBrowserWeatherInfo</tabstop>
-  <tabstop>textBrowserNavaidInfo</tabstop>
-  <tabstop>textBrowserAirspaceInfo</tabstop>
-  <tabstop>textBrowserClientInfo</tabstop>
-  <tabstop>textBrowserCenterInfo</tabstop>
+  <tabstop>pushButtonAircraftPerfCollectRestart</tabstop>
+  <tabstop>pushButtonAircraftPerfCollectMerge</tabstop>
+  <tabstop>pushButtonAircraftPerfCollectHelp</tabstop>
+  <tabstop>textBrowserAircraftPerformanceCurrent</tabstop>
   <tabstop>tabWidgetSearch</tabstop>
   <tabstop>lineEditAirportIcaoSearch</tabstop>
   <tabstop>lineEditAirportNameSearch</tabstop>
@@ -9616,6 +11032,23 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <tabstop>lineEditUserdataTags</tabstop>
   <tabstop>lineEditUserdataFilepath</tabstop>
   <tabstop>tableViewUserdata</tabstop>
+  <tabstop>lineEditLogdataDeparture</tabstop>
+  <tabstop>lineEditLogdataDestination</tabstop>
+  <tabstop>lineEditLogdataAircraftType</tabstop>
+  <tabstop>pushButtonLogdataAdd</tabstop>
+  <tabstop>pushButtonLogdataEdit</tabstop>
+  <tabstop>pushButtonLogdataDel</tabstop>
+  <tabstop>pushButtonLogdataReset</tabstop>
+  <tabstop>pushButtonLogdataClearSelection</tabstop>
+  <tabstop>pushButtonLogdataHelp</tabstop>
+  <tabstop>toolButtonLogdata</tabstop>
+  <tabstop>lineEditLogdataAircraftModel</tabstop>
+  <tabstop>lineEditLogdataAircraftRegistration</tabstop>
+  <tabstop>lineEditLogdataSimulator</tabstop>
+  <tabstop>lineEditLogdataDescription</tabstop>
+  <tabstop>spinBoxLogdataMinDist</tabstop>
+  <tabstop>spinBoxLogdataMaxDist</tabstop>
+  <tabstop>tableViewLogdata</tabstop>
   <tabstop>lineEditOnlineClientCallsign</tabstop>
   <tabstop>lineEditOnlineClientName</tabstop>
   <tabstop>lineEditOnlineClientDeparture</tabstop>
@@ -9634,6 +11067,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <tabstop>pushButtonOnlineCenterHelpSearch</tabstop>
   <tabstop>tableViewOnlineCenterSearch</tabstop>
   <tabstop>tableViewOnlineServerSearch</tabstop>
+  <tabstop>tabWidgetLegend</tabstop>
+  <tabstop>textBrowserLegendNavInfo</tabstop>
+  <tabstop>textBrowserLegendInfo</tabstop>
   <tabstop>widgetProfileLabelLeft</tabstop>
   <tabstop>scrollAreaProfile</tabstop>
   <tabstop>pushButtonProfileExpand</tabstop>
@@ -9644,9 +11080,19 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <tabstop>textBrowserAircraftInfo</tabstop>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
   <tabstop>textBrowserAircraftAiInfo</tabstop>
-  <tabstop>tabWidgetLegend</tabstop>
-  <tabstop>textBrowserLegendNavInfo</tabstop>
-  <tabstop>textBrowserLegendInfo</tabstop>
+  <tabstop>tabWidgetInformation</tabstop>
+  <tabstop>textBrowserAirportInfo</tabstop>
+  <tabstop>textBrowserRunwayInfo</tabstop>
+  <tabstop>textBrowserComInfo</tabstop>
+  <tabstop>textBrowserApproachInfo</tabstop>
+  <tabstop>textBrowserNearestInfo</tabstop>
+  <tabstop>textBrowserWeatherInfo</tabstop>
+  <tabstop>textBrowserNavaidInfo</tabstop>
+  <tabstop>textBrowserAirspaceInfo</tabstop>
+  <tabstop>textBrowserUserpointInfo</tabstop>
+  <tabstop>textBrowserLogbookInfo</tabstop>
+  <tabstop>textBrowserClientInfo</tabstop>
+  <tabstop>textBrowserCenterInfo</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

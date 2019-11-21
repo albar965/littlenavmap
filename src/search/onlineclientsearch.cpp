@@ -31,7 +31,7 @@
 #include "sql/sqlrecord.h"
 #include "common/formatter.h"
 
-OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
+OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("client", "client_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

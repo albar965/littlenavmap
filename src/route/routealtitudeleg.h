@@ -23,16 +23,23 @@
 #include <QPolygonF>
 
 /*
- * Contains all calculated altitude information for a route leg. This includes distance from start and
- * altitudes for leg start and end.
+ * Contains all calculated altitude information for a route leg. This includes distance from start (x) and
+ * altitudes (y) for leg start and end.
+ * Alternate leg distances and times are measured from destination airport.
  *
  * Contains fuel and time information calculated from aircraft performance too.
  *
- * Geometry might contain more than two points for TOC and/or TOD legs.
+ * Geometry might contain more than two points for TOC and/or TOD legs:
+ * - Normal leg: 2 points;
+ * - TOC or TOD leg: 3 points;
+ * - TOC and TOD leg: 4 points;
+ *
  */
 class RouteAltitudeLeg
 {
 public:
+  RouteAltitudeLeg();
+
   /* Maximum altitude for this leg in feet */
   float getMaxAltitude() const;
 
@@ -72,15 +79,15 @@ public:
     return missed;
   }
 
-  float getTravelTimeHours() const
+  bool isAlternate() const
   {
-    return travelTimeHours;
+    return alternate;
   }
 
-  /* TAS */
-  float getAverageSpeedKts() const
+  /* Traveling time along this leg in hours */
+  float getTime() const
   {
-    return averageSpeedKts;
+    return climbTime + cruiseTime + descentTime;
   }
 
   /* First point is equal to last point of previous leg. Last point is position of the waypoint for this leg.
@@ -102,36 +109,90 @@ public:
     return topOfDescent;
   }
 
-  /* Mostly for  debugging purposes */
+  /* For debugging purposes and error reporting */
   const QString& getIdent() const
   {
     return ident;
   }
 
+  /* For debugging purposes and error reporting */
+  const QString& getProcedureType() const
+  {
+    return procedureType;
+  }
+
   /* Fuel consumption for this leg. Volume or weight (gal/lbs) depending on performance */
   float getFuel() const
   {
-    return fuel;
+    return climbFuel + cruiseFuel + descentFuel;
   }
+
+  /* Fuel from start of this leg to the destination or alternate */
+  float getFuelToDestination() const
+  {
+    return fuelToDest;
+  }
+
+  /* Traveling time from start of leg to destination or alternate in hours */
+  float getTimeToDest() const
+  {
+    return timeToDest;
+  }
+
+  /* First and last point of this leg. Pos 2 in the line is position of this leg waypoint.
+   * Can contain more than two points for TOC and/or TOD legs.
+   * Altitude in Pos is set */
+  const atools::geo::LineString& getLineString() const
+  {
+    return line;
+  }
+
+  float getWindSpeed() const
+  {
+    return windSpeed;
+  }
+
+  float getWindDirection() const
+  {
+    return windDirection;
+  }
+
+  /* Calculate fuel and time to destination from this leg at position distFromStart
+   * fuel in local units (gal or lbs) depending on performance and distFromStart in NM.
+   * distFromStart has to match this leg. */
+  void getFuelAndTimeFromDistToDestination(float& fuelToDist, float& timeToDist, float distFromStart) const;
 
 private:
   friend class RouteAltitude;
+  friend QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj);
 
   /* Set altitude for all geometry */
   void setAlt(float alt);
 
-  /* Waypoint of last leg */
+  /* Waypoint of last leg - altitude */
   float y1() const
   {
     return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.first().y());
   }
 
+  /* Waypoint of last leg - distance from start */
+  float x1() const
+  {
+    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.first().x());
+  }
+
   void setY1(float y);
 
-  /* Waypoint of this  leg */
+  /* Waypoint of this leg - altitude */
   float y2() const
   {
     return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.last().y());
+  }
+
+  /* Waypoint of this leg - distance from start */
+  float x2() const
+  {
+    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.last().x());
   }
 
   QPointF pt1() const
@@ -153,13 +214,35 @@ private:
   /* Length is 0 */
   bool isPoint() const;
 
-  QString ident;
+  /* Distances for each phase in this leg. Sum is equal to leg length. */
+  float climbDist() const;
+  float descentDist() const;
+  float cruiseDist() const;
+
+  /* Distance to TOC and TOD from departure or invalid value if not TOC or TOD leg */
+  float tocPos() const;
+  float todPos() const;
+
+  atools::geo::LineString line;
+  QString ident, procedureType;
   QPolygonF geometry;
   proc::MapAltRestriction restriction;
-  bool procedure = false, missed = false, topOfClimb = false, topOfDescent = false;
-  float travelTimeHours = 0.f;
-  float fuel = 0.f;
-  float averageSpeedKts = 0.f;
+  bool procedure = false, missed = false, alternate = false, topOfClimb = false, topOfDescent = false;
+
+  /* Fuel and time for all phases for this leg */
+  float climbTime = 0.f, cruiseTime = 0.f, descentTime = 0.f;
+  float climbFuel = 0.f, cruiseFuel = 0.f, descentFuel = 0.f;
+
+  /* Internal values used during calculation */
+  float climbWindSpeed = 0.f, cruiseWindSpeed = 0.f, descentWindSpeed = 0.f;
+  float climbWindDir = 0.f, cruiseWindDir = 0.f, descentWindDir = 0.f;
+  float climbWindHead = 0.f, cruiseWindHead = 0.f, descentWindHead = 0.f;
+
+  float fuelToDest = 0.f; /* Fuel from start of this leg to the destination or alternate */
+  float timeToDest = 0.f; /* Time from start of this leg to the destination or alternate */
+
+  // Wind at the waypoint (y2)
+  float windSpeed = 0.f, windDirection = 0.f;
 
 };
 

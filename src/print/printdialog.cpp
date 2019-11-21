@@ -62,6 +62,8 @@ PrintDialog::PrintDialog(QWidget *parent)
 
 PrintDialog::~PrintDialog()
 {
+  atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).save(this);
+
   delete ui;
 }
 

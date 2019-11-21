@@ -19,6 +19,7 @@
 #define LNM_AIRCRAFTPERFDIALOG_H
 
 #include <QDialog>
+#include <functional>
 
 namespace Ui {
 class AircraftPerfDialog;
@@ -45,22 +46,32 @@ class AircraftPerfDialog :
 
 public:
   /* Will create a copy of AircraftPerf for editing */
-  explicit AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance);
+  explicit AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance,
+                              const QString& modeText);
   virtual ~AircraftPerfDialog();
 
   /* Get edited performance data */
   atools::fs::perf::AircraftPerf getAircraftPerf() const;
 
 private:
+  /* comboBoxFuelUnit index */
+  enum FuelUnit
+  {
+    WEIGHT_LBS,
+    VOLUME_GAL,
+    WEIGHT_KG,
+    VOLUME_LITER
+  };
+
   /* Restore and save dialog state and size */
   void restoreState();
   void saveState();
 
   /* Copy from AircraftPerf to dialog */
-  void toDialog(const atools::fs::perf::AircraftPerf *aircraftPerf);
+  void fromPerfToDialog(const atools::fs::perf::AircraftPerf *aircraftPerf);
 
   /* Copy from dialog to AircraftPerf */
-  void fromDialog(atools::fs::perf::AircraftPerf *aircraftPerf) const;
+  void fromDialogToPerf(atools::fs::perf::AircraftPerf *aircraftPerf) const;
 
   /* Change volume/weight units */
   void fuelUnitChanged();
@@ -69,10 +80,26 @@ private:
   /* Update vertical speed descent rule */
   void vertSpeedChanged();
 
+  /* Update range label */
+  void updateRange();
+
+  /* Get conversion functions depending on fuel type combo box setting*/
+  static std::function<float(float value, bool fuelAsVolume)> fuelUnitsToDialogFunc(FuelUnit unit);
+  static std::function<float(float value, bool fuelAsVolume)> fuelUnitsFromDialogFunc(FuelUnit unit);
+
+  /* is current fuel type combo box setting metric and/or volume */
+  static bool isMetric(FuelUnit unit);
+  static bool isVol(FuelUnit unit);
+
   Ui::AircraftPerfDialog *ui;
   UnitStringTool *units = nullptr;
   atools::fs::perf::AircraftPerf *perf = nullptr, *perfBackup = nullptr;
 
+  /* All widgets that need their unit placeholders replaced on unit changes */
+  QList<QWidget *> unitWidgets;
+
+  /* Set based on the fuel unit combo box */
+  FuelUnit fuelUnit = WEIGHT_LBS;
 };
 
 #endif // LNM_AIRCRAFTPERFDIALOG_H

@@ -41,7 +41,7 @@ public:
    * @param sqlDbNav for updated navaids
    */
   InfoQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav);
-  virtual ~InfoQuery();
+  ~InfoQuery();
 
   /* Get record for joined tables airport, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getAirportInformation(int airportId);
@@ -57,9 +57,6 @@ public:
   /* Get record for joined tables ndb, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getNdbInformation(int ndbId);
 
-  /* Get record for joined tables boundary, bgl_file and scenery_area */
-  const atools::sql::SqlRecord *getAirspaceInformation(int airspaceId);
-
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
 
@@ -68,7 +65,7 @@ public:
 
   /* Get records with pairs of from/to waypoints (ident and region) for an airway.
    * The records are ordered as they appear in the airway. */
-  atools::sql::SqlRecordVector getAirwayWaypointInformation(const QString& name, int fragment);
+  const atools::sql::SqlRecordVector *getAirwayWaypointInformation(const QString& name, int fragment);
 
   /* Get record list for table runway of an airport */
   const atools::sql::SqlRecordVector *getRunwayInformation(int airportId);
@@ -81,6 +78,8 @@ public:
 
   /* Get record for table ils for an runway end */
   const atools::sql::SqlRecord *getIlsInformationSim(int runwayEndId);
+  atools::sql::SqlRecord getIlsInformationSimById(int ilsId);
+  atools::sql::SqlRecord getIlsInformationNavById(int ilsId);
 
   /* Get record for table ils for an runway end */
   const atools::sql::SqlRecord *getIlsInformationNav(int runwayEndId);
@@ -99,22 +98,15 @@ public:
   void deInitQueries();
 
 private:
-  template<typename ID>
-  static const atools::sql::SqlRecord *cachedRecord(QCache<ID,
-                                                           atools::sql::SqlRecord>& cache,
-                                                    atools::sql::SqlQuery *query,
-                                                    ID id);
-
-  template<typename ID>
-  static const atools::sql::SqlRecordVector *cachedRecordVector(QCache<ID,
-                                                                       atools::sql::SqlRecordVector>& cache,
-                                                                atools::sql::SqlQuery *query,
-                                                                ID id);
+  /* Airway name and fragment ID */
+  typedef std::pair<QString, int> AirwayKey;
+  const atools::sql::SqlRecordVector *ilsInformationSimByName(const QString& airportIdent, const QString& runway);
 
   /* Caches */
-  QCache<int, atools::sql::SqlRecord> airportCache,
-                                      vorCache, ndbCache, waypointCache, airspaceCache, airwayCache, runwayEndCache,
+  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, waypointCache, airwayCache, runwayEndCache,
                                       ilsCacheNav, ilsCacheSim;
+
+  QCache<AirwayKey, atools::sql::SqlRecordVector> airwayWaypointCache;
 
   QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache, helipadCache, startCache, approachCache,
                                             transitionCache;
@@ -122,15 +114,15 @@ private:
 
   QCache<QString, atools::sql::SqlRecordVector> airportSceneryCache;
 
-  atools::sql::SqlDatabase *db, *dbNav;
+  atools::sql::SqlDatabase *dbSim, *dbNav;
 
   /* Prepared database queries */
   atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr,
                         *vorQuery = nullptr, *ndbQuery = nullptr,
-                        *waypointQuery = nullptr, *airspaceQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
+                        *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
                         *runwayQuery = nullptr, *runwayEndQuery = nullptr, *helipadQuery = nullptr,
                         *startQuery = nullptr, *ilsQuerySim = nullptr, *ilsQueryNav = nullptr,
-                        *ilsQuerySimByName = nullptr,
+                        *ilsQuerySimByName = nullptr, *ilsQueryNavById = nullptr, *ilsQuerySimById = nullptr,
                         *airwayWaypointQuery = nullptr, *vorIdentRegionQuery = nullptr, *approachQuery = nullptr,
                         *transitionQuery = nullptr;
 

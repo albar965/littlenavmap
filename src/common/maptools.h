@@ -126,6 +126,19 @@ void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
     });
 }
 
+template<typename TYPE>
+void sortByDistance(QVector<TYPE>& list, const atools::geo::Pos& pos)
+{
+  if(list.isEmpty() || !pos.isValid())
+    return;
+
+  std::sort(list.begin(), list.end(),
+            [ = ](const TYPE& t1, const TYPE& t2) -> bool
+  {
+    return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
+  });
+}
+
 /* Functions will stop adding of number of elements exceeds this value */
 static Q_DECL_CONSTEXPR int MAX_LIST_ENTRIES = 5;
 
@@ -217,6 +230,54 @@ void removeById(QList<TYPE>& list, int id)
   if(it != list.end())
     list.erase(it, list.end());
 }
+
+// ==============================================================================
+/* Runway sorting tools. Allows to sort runways by headwind and crosswind */
+struct RwEnd
+{
+  RwEnd(const QString& name, const QString& surf, int lengthParam, float headWind, float crossWind);
+  RwEnd()
+  {
+
+  }
+
+  QStringList names;
+  bool soft;
+  int cross, head, minlength, maxlength;
+};
+
+/* List of runway ends */
+class RwVector
+  : public QVector<maptools::RwEnd>
+{
+public:
+  RwVector(float windSpeed, float windDirectionDeg)
+    : speed(windSpeed), direction(windDirectionDeg)
+  {
+
+  }
+
+  /* Add runway to the list - will be omitted if wind is too low */
+  void appendRwEnd(const QString& name, const QString& surface, int length, float heading);
+
+  /* Sort runway ends by headwind and crosswind and combine ends with the same wind. */
+  void sortRunwayEnds();
+
+  int getTotalNumber() const
+  {
+    return totalNumber;
+  }
+
+  /* All runways with a headwind below will be omitted. Default is two knots. */
+  void setMinHeadWindSpeed(float value)
+  {
+    minSpeed = value;
+  }
+
+private:
+  float speed, direction, minSpeed = 0.5f;
+  int totalNumber = 0;
+};
 
 } // namespace maptools
 

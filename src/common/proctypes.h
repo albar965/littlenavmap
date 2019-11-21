@@ -47,17 +47,27 @@ enum MapProcedureType
   PROCEDURE_STAR = 1 << 5,
   PROCEDURE_STAR_TRANSITION = 1 << 6,
 
-  /* Approach */
+  /* Approach and transition */
   PROCEDURE_ARRIVAL = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
 
+  /* SID, STAR and respective transitions */
   PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
   PROCEDURE_SID_ALL = PROCEDURE_SID | PROCEDURE_SID_TRANSITION,
 
+  /* All SID, STAR and respective transitions */
   PROCEDURE_SID_STAR_ALL = PROCEDURE_STAR_ALL | PROCEDURE_SID_ALL,
 
+  /* All leading towards destination */
   PROCEDURE_ARRIVAL_ALL = PROCEDURE_ARRIVAL | PROCEDURE_STAR_ALL,
 
+  /* All from departure */
   PROCEDURE_DEPARTURE = PROCEDURE_SID_ALL,
+
+  /* Any procedure but not transitions */
+  PROCEDURE_ANY_PROCEDURE = PROCEDURE_APPROACH | PROCEDURE_SID | PROCEDURE_STAR,
+
+  /* Any transition */
+  PROCEDURE_ANY_TRANSITION = PROCEDURE_TRANSITION | PROCEDURE_SID_TRANSITION | PROCEDURE_STAR_TRANSITION,
 
   PROCEDURE_ALL = PROCEDURE_ARRIVAL_ALL | PROCEDURE_DEPARTURE,
   PROCEDURE_ALL_BUT_MISSED = PROCEDURE_ALL & ~PROCEDURE_MISSED,
@@ -167,14 +177,19 @@ enum LegSpecialType
   FAF, /* Final approach fix. The final approach point on an instrument approach with vertical guidance is glide
         *  slope or glide path intercept at the lowest published altitude (ICAO definition). */
   FACF, /* Final approach course fix. */
-  MAP /* Miseed approach point.
-       * This is the point prescribed in each instrument approach at which a missed approach procedure shall
-       * be executed if the required visual reference does not exist.[ */
+  MAP, /* Miseed approach point.
+        * This is the point prescribed in each instrument approach at which a missed approach procedure shall
+        * be executed if the required visual reference does not exist.[ */
+  FEP /* Final endpoint fix - only needed to ignore altitude restriction */
 };
 
 /* Reduced procedure leg type for map index, tooltips and similar */
 struct MapProcedurePoint
 {
+  MapProcedurePoint()
+  {
+  }
+
   MapProcedurePoint(const MapProcedureLeg& leg, bool previewParam);
 
   float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
@@ -224,8 +239,8 @@ struct MapProcedureRef
   {
   }
 
-  int airportId /* always from navdatabase*/,
-      runwayEndId /* always from navdatabase*/,
+  int airportId /* always from navdatabase - only simdatabase if this is a custom approach */,
+      runwayEndId /* always from navdatabase - only simdatabase if this is a custom approach */,
       approachId, transitionId, legId;
   proc::MapProcedureTypes mapType;
 
@@ -268,7 +283,6 @@ struct MapProcedureRef
 
 struct MapProcedureLeg
 {
-
   QString fixType, fixIdent, fixRegion,
           recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
           turnDirection, /* Turn to this fix*/
@@ -295,10 +309,10 @@ struct MapProcedureLeg
 
   int approachId = -1, transitionId = -1, legId = -1, navId = -1, recNavId = -1;
 
-  float course,
+  float course, /* magnetic from ARINC */
         distance /* Distance from source in nm */,
         calculatedDistance /* Calculated distance closer to the real one in nm */,
-        calculatedTrueCourse /* Calculated distance closer to the real one */,
+        calculatedTrueCourse /* Calculated distance closer to the real one - great circle line */,
         time /* Only for holds in minutes */,
         theta /* magnetic course to recommended navaid */,
         rho /* distance to recommended navaid */,
@@ -392,8 +406,14 @@ struct MapProcedureLeg
     return type == proc::VECTORS;
   }
 
+  bool isManual() const
+  {
+    return type == HEADING_TO_MANUAL_TERMINATION || type == FROM_FIX_TO_MANUAL_TERMINATION;
+  }
+
   bool isFinalApproachFix() const;
   bool isFinalApproachCourseFix() const;
+  bool isFinalEndpointFix() const;
 
   bool isHold() const;
   bool isCircular() const;
@@ -436,6 +456,10 @@ struct MapProcedureLegs
         transitionDistance = 0.f,
         missedDistance = 0.f;
 
+  /* Parameters only for custom approaches.
+   * Altitude in feet above airport elevation and distance to runway threshold in NM */
+  float approachCustomAltitude = 0.f, approachCustomDistance = 0.f;
+
   bool gpsOverlay,
        hasError, /* Unusable due to missing navaid */
        circleToLand; /* Runway is not part of procedure and was added internally */
@@ -455,6 +479,11 @@ struct MapProcedureLegs
   bool isTypeLoc() const
   {
     return approachType == "LOC";
+  }
+
+  bool isCustom() const
+  {
+    return approachType == "CUSTOM";
   }
 
   void clearApproach();
@@ -511,6 +540,9 @@ struct MapProcedureLegs
   {
     return atInternal(i);
   }
+
+  /* Positions of all legs */
+  atools::geo::LineString geometry() const;
 
 private:
   MapProcedureLeg& atInternal(int i);

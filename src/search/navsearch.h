@@ -46,8 +46,8 @@ class NavSearch :
   Q_OBJECT
 
 public:
-  NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
-  virtual ~NavSearch();
+  NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
+  virtual ~NavSearch() override;
 
   /* All state saving is done through the widget state */
   virtual void saveState() override;

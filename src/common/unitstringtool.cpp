@@ -35,6 +35,11 @@ UnitStringTool::UnitStringTool()
 
 void UnitStringTool::init(const QList<QWidget *>& widgets, bool fuelAsVolume)
 {
+  init(widgets, fuelAsVolume, OptionData::instance().getUnitFuelAndWeight());
+}
+
+void UnitStringTool::init(const QList<QWidget *>& widgets, bool fuelAsVolume, opts::UnitFuelAndWeight unit)
+{
   QList<QWidget *> widgetList;
   for(QWidget *widget:widgets)
   {
@@ -54,26 +59,32 @@ void UnitStringTool::init(const QList<QWidget *>& widgets, bool fuelAsVolume)
 
   // Save text and replace placeholders
   for(WidgetData& data : widgetDataList)
-    update(data, true /* save original text */, fuelAsVolume);
+    update(data, true /* save original text */, fuelAsVolume, unit);
 }
 
 void UnitStringTool::update(bool fuelAsVolume)
 {
-  for(WidgetData& data : widgetDataList)
-    update(data, false, fuelAsVolume);
+  update(fuelAsVolume, OptionData::instance().getUnitFuelAndWeight());
 }
 
-void UnitStringTool::updateBase(WidgetData& widgetData, bool save, bool fuelAsVolume)
+void UnitStringTool::update(bool fuelAsVolume, opts::UnitFuelAndWeight unit)
+{
+  for(WidgetData& data : widgetDataList)
+    update(data, false, fuelAsVolume, unit);
+}
+
+void UnitStringTool::updateBase(WidgetData& widgetData, bool save, bool fuelAsVolume, opts::UnitFuelAndWeight unit)
 {
   if(save)
     widgetData.texts << widgetData.widget->toolTip() << widgetData.widget->statusTip();
+
   widgetData.widget->setToolTip(Unit::replacePlaceholders(
-                                  widgetData.texts.at(widgetData.texts.size() - 2), fuelAsVolume));
+                                  widgetData.texts.at(widgetData.texts.size() - 2), fuelAsVolume, unit));
   widgetData.widget->setStatusTip(Unit::replacePlaceholders(
-                                    widgetData.texts.at(widgetData.texts.size() - 1), fuelAsVolume));
+                                    widgetData.texts.at(widgetData.texts.size() - 1), fuelAsVolume, unit));
 }
 
-void UnitStringTool::update(WidgetData& widgetData, bool save, bool fuelAsVolume)
+void UnitStringTool::update(WidgetData& widgetData, bool save, bool fuelAsVolume, opts::UnitFuelAndWeight unit)
 {
   QWidget *widget = widgetData.widget;
 
@@ -82,40 +93,40 @@ void UnitStringTool::update(WidgetData& widgetData, bool save, bool fuelAsVolume
   {
     // Update all widgets in layout
     for(int i = 0; i < layout->count(); i++)
-      update(widgetData, save, fuelAsVolume);
+      update(widgetData, save, fuelAsVolume, unit);
   }
   else if(QLabel *l = dynamic_cast<QLabel *>(widget))
   {
     if(save)
       widgetData.texts << l->text();
-    l->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume));
+    l->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
   }
   else if(QLineEdit *le = dynamic_cast<QLineEdit *>(widget))
   {
     if(save)
       widgetData.texts << le->placeholderText();
-    le->setPlaceholderText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume));
+    le->setPlaceholderText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
   }
   else if(QTextEdit *te = dynamic_cast<QTextEdit *>(widget))
   {
     if(save)
       widgetData.texts << te->placeholderText();
-    te->setPlaceholderText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume));
+    te->setPlaceholderText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
   }
   else if(QSpinBox *sb = dynamic_cast<QSpinBox *>(widget))
   {
     if(save)
       widgetData.texts << sb->prefix() << sb->suffix();
 
-    sb->setPrefix(Unit::replacePlaceholders(widgetData.texts.at(0), fuelAsVolume));
-    sb->setSuffix(Unit::replacePlaceholders(widgetData.texts.at(1), fuelAsVolume));
+    sb->setPrefix(Unit::replacePlaceholders(widgetData.texts.at(0), fuelAsVolume, unit));
+    sb->setSuffix(Unit::replacePlaceholders(widgetData.texts.at(1), fuelAsVolume, unit));
   }
   else if(QDoubleSpinBox *dsb = dynamic_cast<QDoubleSpinBox *>(widget))
   {
     if(save)
       widgetData.texts << dsb->prefix() << dsb->suffix();
-    dsb->setPrefix(Unit::replacePlaceholders(widgetData.texts.at(0), fuelAsVolume));
-    dsb->setSuffix(Unit::replacePlaceholders(widgetData.texts.at(1), fuelAsVolume));
+    dsb->setPrefix(Unit::replacePlaceholders(widgetData.texts.at(0), fuelAsVolume, unit));
+    dsb->setSuffix(Unit::replacePlaceholders(widgetData.texts.at(1), fuelAsVolume, unit));
   }
   else if(QComboBox *cb = dynamic_cast<QComboBox *>(widget))
   {
@@ -123,23 +134,23 @@ void UnitStringTool::update(WidgetData& widgetData, bool save, bool fuelAsVolume
     {
       if(save)
         widgetData.texts << cb->itemText(i);
-      cb->setItemText(i, Unit::replacePlaceholders(widgetData.texts.at(i), fuelAsVolume));
+      cb->setItemText(i, Unit::replacePlaceholders(widgetData.texts.at(i), fuelAsVolume, unit));
     }
   }
   else if(QAction *a = dynamic_cast<QAction *>(widget))
   {
     if(save)
       widgetData.texts << a->text();
-    a->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume));
+    a->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
   }
   else if(QAbstractButton *b = dynamic_cast<QAbstractButton *>(widget))
   {
     if(save)
       widgetData.texts << b->text();
-    b->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume));
+    b->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
   }
   else
     qWarning() << "Found unsupported widet type in save" << widget->metaObject()->className();
 
-  updateBase(widgetData, save, fuelAsVolume);
+  updateBase(widgetData, save, fuelAsVolume, unit);
 }

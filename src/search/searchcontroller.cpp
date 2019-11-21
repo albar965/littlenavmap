@@ -25,25 +25,27 @@
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
 #include "sql/sqlrecord.h"
+#include "search/logdatasearch.h"
 #include "ui_mainwindow.h"
 #include "search/userdatasearch.h"
 #include "common/constants.h"
 #include "search/proceduresearch.h"
 #include "options/optiondata.h"
 #include "userdata/userdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "search/onlineclientsearch.h"
 #include "search/onlinecentersearch.h"
 #include "search/onlineserversearch.h"
+#include "gui/tabwidgethandler.h"
 
 #include <QTabWidget>
 #include <QUrl>
 
 using atools::gui::HelpHandler;
 
-SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearch)
-  : mapQuery(NavApp::getMapQuery()), mainWindow(parent), tabWidget(tabWidgetSearch)
+SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam)
+  : mapQuery(NavApp::getMapQuery()), mainWindow(parent), tabWidgetSearch(tabWidgetSearchParam)
 {
-  connect(tabWidget, &QTabWidget::currentChanged, this, &SearchController::tabChanged);
   connect(NavApp::getMainUi()->pushButtonAirportHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressed);
   connect(NavApp::getMainUi()->pushButtonNavHelpSearch, &QPushButton::clicked,
@@ -54,18 +56,31 @@ SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSea
   connect(NavApp::getMainUi()->pushButtonUserdataHelp, &QPushButton::clicked,
           this, &SearchController::helpPressedUserdata);
 
+  connect(NavApp::getMainUi()->pushButtonLogdataHelp, &QPushButton::clicked,
+          this, &SearchController::helpPressedLogdata);
+
   connect(NavApp::getMainUi()->pushButtonOnlineClientHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressedOnlineClient);
   connect(NavApp::getMainUi()->pushButtonOnlineCenterHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressedOnlineCenter);
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  tabHandlerSearch = new atools::gui::TabWidgetHandler(ui->tabWidgetSearch,
+                                                       QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
+                                                       tr("Open or close tabs"));
+  tabHandlerSearch->init(si::TabSearchIds, lnm::SEARCHTAB_WIDGET_TABS);
+
+  connect(tabHandlerSearch, &atools::gui::TabWidgetHandler::tabChanged, this, &SearchController::tabChanged);
 }
 
 SearchController::~SearchController()
 {
+  delete tabHandlerSearch;
   delete airportSearch;
   delete navSearch;
   delete procedureSearch;
   delete userdataSearch;
+  delete logdataSearch;
   delete onlineClientSearch;
   delete onlineCenterSearch;
   delete onlineServerSearch;
@@ -73,7 +88,9 @@ SearchController::~SearchController()
 
 void SearchController::getSelectedMapObjects(map::MapSearchResult& result) const
 {
-  allSearchTabs.at(tabWidget->currentIndex())->getSelectedMapObjects(result);
+  int id = tabHandlerSearch->getCurrentTabId();
+  if(id != -1)
+    allSearchTabs.at(id)->getSelectedMapObjects(result);
 }
 
 void SearchController::optionsChanged()
@@ -84,6 +101,7 @@ void SearchController::optionsChanged()
 
 void SearchController::styleChanged()
 {
+  tabHandlerSearch->styleChanged();
   for(AbstractSearch *search : allSearchTabs)
     search->styleChanged();
 }
@@ -104,6 +122,12 @@ void SearchController::helpPressedUserdata()
                               lnm::helpLanguageOnline());
 }
 
+void SearchController::helpPressedLogdata()
+{
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOGBOOK.html#logbook-search",
+                              lnm::helpLanguageOnline());
+}
+
 void SearchController::helpPressedOnlineClient()
 {
   HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "ONLINENETWORKS.html#search-client",
@@ -119,23 +143,30 @@ void SearchController::helpPressedOnlineCenter()
 /* Forces an emit of selection changed signal if the active tab changes */
 void SearchController::tabChanged(int index)
 {
+  if(index == -1)
+    return;
+
   for(int i = 0; i < allSearchTabs.size(); i++)
   {
     if(i != index)
       allSearchTabs.at(i)->tabDeactivated();
   }
 
-  allSearchTabs.at(index)->updateTableSelection();
+  allSearchTabs.at(index)->updateTableSelection(true /* No follow */);
 }
 
 void SearchController::saveState()
 {
   for(AbstractSearch *s : allSearchTabs)
     s->saveState();
+
+  tabHandlerSearch->saveState();
 }
 
 void SearchController::restoreState()
 {
+  tabHandlerSearch->restoreState();
+
   for(AbstractSearch *s : allSearchTabs)
     s->restoreState();
 }
@@ -164,6 +195,20 @@ void SearchController::createUserdataSearch(QTableView *tableView)
           NavApp::getUserdataController(), &UserdataController::deleteUserpoints);
   connect(userdataSearch, &UserdataSearch::addUserpoint,
           NavApp::getUserdataController(), &UserdataController::addUserpoint);
+}
+
+void SearchController::createLogdataSearch(QTableView *tableView)
+{
+  logdataSearch = new LogdataSearch(mainWindow, tableView, si::SEARCH_LOG);
+  postCreateSearch(logdataSearch);
+
+  // Get edit and delete signals from user search action and pushbuttons
+  connect(logdataSearch, &LogdataSearch::editLogEntries,
+          NavApp::getLogdataController(), &LogdataController::editLogEntries);
+  connect(logdataSearch, &LogdataSearch::deleteLogEntries,
+          NavApp::getLogdataController(), &LogdataController::deleteLogEntries);
+  connect(logdataSearch, &LogdataSearch::addLogEntry,
+          NavApp::getLogdataController(), &LogdataController::addLogEntry);
 }
 
 void SearchController::createOnlineClientSearch(QTableView *tableView)
@@ -221,6 +266,11 @@ void SearchController::refreshUserdata()
   userdataSearch->refreshData(false /* load all */, true /* keep selection */);
 }
 
+void SearchController::refreshLogdata()
+{
+  logdataSearch->refreshData(false /* load all */, true /* keep selection */);
+}
+
 void SearchController::clearSelection()
 {
   for(AbstractSearch *search : allSearchTabs)
@@ -235,9 +285,14 @@ bool SearchController::hasSelection()
   return selection;
 }
 
-void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record)
+void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select)
 {
   qDebug() << Q_FUNC_INFO << record;
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  ui->dockWidgetSearch->raise();
+  ui->dockWidgetSearch->show();
 
   switch(type)
   {
@@ -245,6 +300,9 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       // Shown in airport tab
       airportSearch->resetSearch();
       airportSearch->filterByRecord(record);
+      if(select)
+        airportSearch->selectAll();
+      tabHandlerSearch->setCurrentTab(si::SEARCH_AIRPORT);
       break;
 
     case map::NDB:
@@ -253,24 +311,45 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       // Shown in navaid tab
       navSearch->resetSearch();
       navSearch->filterByRecord(record);
+      if(select)
+        navSearch->selectAll();
+      tabHandlerSearch->setCurrentTab(si::SEARCH_NAV);
       break;
 
     case map::USERPOINT:
       // Shown in user search tab
       userdataSearch->resetSearch();
       userdataSearch->filterByRecord(record);
+      if(select)
+        userdataSearch->selectAll();
+      tabHandlerSearch->setCurrentTab(si::SEARCH_USER);
+      break;
+
+    case map::LOGBOOK:
+      // Shown in user search tab
+      logdataSearch->resetSearch();
+      logdataSearch->filterByRecord(record);
+      if(select)
+        logdataSearch->selectAll();
+      tabHandlerSearch->setCurrentTab(si::SEARCH_LOG);
       break;
 
     case map::AIRCRAFT_ONLINE:
       // Shown in user search tab
       onlineClientSearch->resetSearch();
       onlineClientSearch->filterByRecord(record);
+      if(select)
+        onlineClientSearch->selectAll();
+      tabHandlerSearch->setCurrentTab(si::SEARCH_ONLINE_CLIENT);
       break;
 
-    case map::AIRSPACE_ONLINE:
+    case map::AIRSPACE:
       // Shown in user search tab
       onlineCenterSearch->resetSearch();
       onlineCenterSearch->filterByRecord(record);
+      if(select)
+        onlineCenterSearch->selectAll();
+      tabHandlerSearch->setCurrentTab(si::SEARCH_ONLINE_CENTER);
       break;
 
     case map::ILS:
@@ -281,4 +360,19 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       qWarning() << "showInSearch invalid type" << type;
       break;
   }
+}
+
+void SearchController::setCurrentSearchTabId(si::TabSearchId tabId)
+{
+  tabHandlerSearch->setCurrentTab(tabId);
+}
+
+si::TabSearchId SearchController::getCurrentSearchTabId()
+{
+  return static_cast<si::TabSearchId>(tabHandlerSearch->getCurrentTabId());
+}
+
+void SearchController::resetWindowLayout()
+{
+  tabHandlerSearch->reset();
 }

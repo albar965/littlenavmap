@@ -40,12 +40,14 @@ class MapPainterAirspace;
 class MapPainterNav;
 class MapPainterIls;
 class MapPainterMark;
+class MapPainterTop;
 class MapPainterRoute;
 class MapPainterAircraft;
 class MapPainterShip;
 class MapPainterUser;
 class MapPainterAltitude;
 class MapPainterWeather;
+class MapPainterWind;
 class MapPaintWidget;
 
 /*
@@ -89,6 +91,12 @@ public:
   map::MapObjectTypes getShownMapObjects() const
   {
     return objectTypes;
+  }
+
+  /* Additional types like wind barbs or minimum altitude grid */
+  map::MapObjectDisplayTypes getShownMapObjectDisplayTypes() const
+  {
+    return objectDisplayTypes;
   }
 
   /* Adjusted by layer visibility */
@@ -164,10 +172,12 @@ private:
   MapPainterMark *mapPainterMark;
   MapPainterRoute *mapPainterRoute;
   MapPainterAircraft *mapPainterAircraft;
+  MapPainterTop *mapPainterTop;
   MapPainterShip *mapPainterShip;
   MapPainterUser *mapPainterUser;
   MapPainterAltitude *mapPainterAltitude;
   MapPainterWeather *mapPainterWeather;
+  MapPainterWind *mapPainterWind;
 
   /* Database source */
   MapQuery *mapQuery = nullptr;

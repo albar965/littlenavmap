@@ -145,8 +145,8 @@ public:
    * @param role Data role
    * @return a variant. Mostly string for display role.
    */
-  typedef std::function<QVariant(int colIndex, int rowIndex, const Column * col, const QVariant &roleValue,
-                                 const QVariant &displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
+  typedef std::function<QVariant(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                                 const QVariant& displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
 
   /*
    * Sets a data callback that is called for each table cell and the given item data roles.
@@ -177,8 +177,8 @@ private:
   struct WhereCondition
   {
     QString oper; /* operator (like, not like) */
-    QVariant value; /* Condition value including % or other SQL characters */
-    QVariant valueRaw; /* Raw value as entered in the search form */
+    QVariant valueSql; /* Condition value including % or other SQL characters */
+    QVariant valueDisplay; /* Raw value as entered in the search form */
     const Column *col; /* Column descriptor */
   };
 
@@ -195,6 +195,8 @@ private:
   QVariant defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                               const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   void updateTotalCount();
+  void buildSqlWhereValue(QVariant& whereValue) const;
+  void buildSqlWhereValue(QString& whereValue) const;
 
   /* Default - all conditions are combined using "and" */
   const QString WHERE_OPERATOR = "and";

@@ -25,6 +25,7 @@ class QMenu;
 class QPalette;
 class QActionGroup;
 class QAction;
+class QMainWindow;
 
 /*
  * Creates additonal GUI styles and provides function and menu items to switch between them.
@@ -37,8 +38,8 @@ class StyleHandler :
   Q_OBJECT
 
 public:
-  StyleHandler();
-  ~StyleHandler();
+  StyleHandler(QMainWindow *mainWindowParam);
+  virtual ~StyleHandler() override;
 
   /* Insert menu items for all found styles to submenu. */
   void insertMenuItems(QMenu *menu);
@@ -55,6 +56,7 @@ public:
 
 signals:
   /* Sent on change */
+  void preStyleChange(const QString& name, bool night);
   void styleChanged(const QString& name, bool night);
 
 private:
@@ -78,6 +80,7 @@ private:
   /* Menus*/
   QActionGroup *styleActionGroup = nullptr;
   QVector<QAction *> menuItems;
+  QMainWindow *mainWindow;
 };
 
 #endif // LNM_STYLEHANDLER_H

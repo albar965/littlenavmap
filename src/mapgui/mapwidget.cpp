@@ -25,10 +25,12 @@
 #include "gui/mainwindow.h"
 #include "common/maptools.h"
 #include "common/mapcolors.h"
+#include "common/tabindexes.h"
 #include "userdata/userdataicons.h"
 #include "route/routecontroller.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
+#include "query/mapquery.h"
 #include "common/symbolpainter.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/mapvisible.h"
@@ -36,9 +38,12 @@
 #include "ui_mainwindow.h"
 #include "gui/actiontextsaver.h"
 #include "mapgui/maplayersettings.h"
+#include "mapgui/mapmarkhandler.h"
+#include "fs/perf/aircraftperf.h"
 #include "gui/widgetstate.h"
 #include "sql/sqlrecord.h"
 #include "gui/trafficpatterndialog.h"
+#include "gui/holddialog.h"
 #include "gui/actionstatesaver.h"
 #include "common/jumpback.h"
 #include "route/routealtitude.h"
@@ -46,6 +51,8 @@
 #include "connect/connectclient.h"
 #include "common/unit.h"
 #include "common/aircrafttrack.h"
+#include "weather/windreporter.h"
+#include "gui/signalblocker.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -86,7 +93,9 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
 const int ALTITUDE_UPDATE_TIMEOUT = 200;
 
 // Delay recognition to avoid detection of bumps
-const int TAKEOFF_LANDING_TIMEOUT = 5000;
+const int LANDING_TIMEOUT = 4000;
+const int TAKEOFF_TIMEOUT = 2000;
+const int FUEL_ON_OFF_TIMEOUT = 1000;
 
 /* Update rate on tooltip for bearing display */
 const int MAX_SIM_UPDATE_TOOLTIP_MS = 500;
@@ -135,6 +144,9 @@ MapWidget::MapWidget(MainWindow *parent)
   takeoffLandingTimer.setSingleShot(true);
   connect(&takeoffLandingTimer, &QTimer::timeout, this, &MapWidget::takeoffLandingTimeout);
 
+  fuelOnOffTimer.setSingleShot(true);
+  connect(&fuelOnOffTimer, &QTimer::timeout, this, &MapWidget::fuelOnOffTimeout);
+
   // Fill overlay / action map ============================
   // "Compass" id "compass"
   // "License" id "license"
@@ -153,6 +165,7 @@ MapWidget::~MapWidget()
 {
   elevationDisplayTimer.stop();
   takeoffLandingTimer.stop();
+  fuelOnOffTimer.stop();
 
   qDebug() << Q_FUNC_INFO << "removeEventFilter";
   removeEventFilter(this);
@@ -173,10 +186,14 @@ void MapWidget::getUserpointDragPoints(QPoint& cur, QPixmap& pixmap)
   pixmap = userpointDragPixmap;
 }
 
-void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur)
+map::MapWeatherSource MapWidget::getMapWeatherSource() const
 {
-  from = routeDragFrom;
-  to = routeDragTo;
+  return paintLayer->getWeatherSource();
+}
+
+void MapWidget::getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur)
+{
+  fixedPos = routeDragFixed;
   cur = routeDragCur;
 }
 
@@ -216,33 +233,52 @@ void MapWidget::handleInfoClick(QPoint pos)
 {
   qDebug() << Q_FUNC_INFO << pos;
 
-  map::MapSearchResult result;
-  getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result);
+  mapSearchResultInfoClick.clear();
+  getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistance, mapSearchResultInfoClick,
+                                       map::QUERY_HOLDS | map::QUERY_PATTERNS /* For double click */);
 
   // Remove all undesired features
-  opts::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
-  if(!(opts & opts::CLICK_AIRPORT))
+  optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
+  if(!(opts & optsd::CLICK_AIRPORT))
   {
-    result.airports.clear();
-    result.airportIds.clear();
+    mapSearchResultInfoClick.airports.clear();
+    mapSearchResultInfoClick.airportIds.clear();
   }
 
-  if(!(opts & opts::CLICK_NAVAID))
+  if(!(opts & optsd::CLICK_NAVAID))
   {
-    result.vors.clear();
-    result.vorIds.clear();
-    result.ndbs.clear();
-    result.ndbIds.clear();
-    result.waypoints.clear();
-    result.waypointIds.clear();
-    result.airways.clear();
-    result.userpoints.clear();
+    mapSearchResultInfoClick.vors.clear();
+    mapSearchResultInfoClick.vorIds.clear();
+    mapSearchResultInfoClick.ndbs.clear();
+    mapSearchResultInfoClick.ndbIds.clear();
+    mapSearchResultInfoClick.waypoints.clear();
+    mapSearchResultInfoClick.waypointIds.clear();
+    mapSearchResultInfoClick.ils.clear();
+    mapSearchResultInfoClick.airways.clear();
+    mapSearchResultInfoClick.userpoints.clear();
+    mapSearchResultInfoClick.logbookEntries.clear();
   }
 
-  if(!(opts & opts::CLICK_AIRSPACE))
-    result.airspaces.clear();
+  if(!(opts & optsd::CLICK_AIRSPACE))
+    mapSearchResultInfoClick.airspaces.clear();
 
-  emit showInformation(result, map::NONE);
+  emit showInformation(mapSearchResultInfoClick, map::NONE);
+}
+
+void MapWidget::fuelOnOffTimeout()
+{
+  const atools::fs::sc::SimConnectUserAircraft aircraft = getScreenIndexConst()->getLastUserAircraft();
+
+  if(aircraft.hasFuelFlow())
+  {
+    qDebug() << Q_FUNC_INFO << "Engine start detected" << aircraft.getZuluTime();
+    emit aircraftEngineStarted(aircraft);
+  }
+  else
+  {
+    qDebug() << Q_FUNC_INFO << "Engine stop detected" << aircraft.getZuluTime();
+    emit aircraftEngineStopped(aircraft);
+  }
 }
 
 void MapWidget::takeoffLandingTimeout()
@@ -301,7 +337,7 @@ void MapWidget::jumpBackToAircraftCancel()
 void MapWidget::jumpBackToAircraftTimeout(const QVariantList& values)
 {
   if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnectedAndAircraft() &&
-     OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
+     OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE)
   {
 
     if(mouseState != mw::NONE || viewContext() == Marble::Animation || contextMenuActive)
@@ -331,22 +367,32 @@ bool MapWidget::event(QEvent *event)
 {
   if(event->type() == QEvent::ToolTip)
   {
-    QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+#ifdef DEBUG_MOVING_AIRPLANE
+    if(QGuiApplication::queryKeyboardModifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+      return QWidget::event(event);
 
-    // Load tooltip data into mapSearchResultTooltip
-    mapSearchResultTooltip = map::MapSearchResult();
-    procPointsTooltip.clear();
-    getScreenIndexConst()->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
-                                         mapSearchResultTooltip, &procPointsTooltip);
-    NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
-                                                                  mapSearchResultTooltip.aiAircraft);
+#endif
 
-    tooltipPos = helpEvent->globalPos();
+    if(mouseState == mw::NONE)
+    {
+      QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
-    // Build HTML
-    showTooltip(false /* update */);
-    event->accept();
-    return true;
+      // Load tooltip data into mapSearchResultTooltip
+      mapSearchResultTooltip = map::MapSearchResult();
+      getScreenIndexConst()->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
+                                           mapSearchResultTooltip,
+                                           map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS);
+
+      NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
+                                                                    mapSearchResultTooltip.aiAircraft);
+
+      tooltipPos = helpEvent->globalPos();
+
+      // Build HTML
+      showTooltip(false /* update */);
+      event->accept();
+      return true;
+    }
   }
 
   return QWidget::event(event);
@@ -374,8 +420,6 @@ void MapWidget::updateTooltip()
 
 void MapWidget::showTooltip(bool update)
 {
-  // qDebug() << Q_FUNC_INFO << "update" << update << "QToolTip::isVisible()" << QToolTip::isVisible();
-
   if(databaseLoadStatus)
     return;
 
@@ -384,7 +428,7 @@ void MapWidget::showTooltip(bool update)
     return;
 
   // Build a new tooltip HTML for weather changes or aircraft updates
-  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip, NavApp::getRouteConst(),
+  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, NavApp::getRouteConst(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())
@@ -450,10 +494,13 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 
     // Look for navaids or airports nearby click
     map::MapSearchResult result;
-    getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result);
+    getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result,
+                                         map::QUERY_NONE);
 
+    // Range rings =======================================================================
     if(event->modifiers() == Qt::ShiftModifier)
     {
+      NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE_RINGS);
       int index = getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
                                                                   screenSearchDistance);
       if(index != -1)
@@ -476,6 +523,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       }
       return true;
     }
+    // Edit route =======================================================================
     else if(event->modifiers() == (Qt::AltModifier | Qt::ControlModifier) ||
             event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
     {
@@ -502,6 +550,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         return true;
       }
     }
+    // Edit userpoint =======================================================================
     else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
     {
       // Add or edit userpoint
@@ -514,8 +563,10 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         emit addUserpointFromMap(result, pos);
       }
     }
+    // Measurement =======================================================================
     else if(event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::AltModifier)
     {
+      NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_MEASUREMENT);
       int index = getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
                                                                      screenSearchDistance);
       if(index != -1)
@@ -532,6 +583,10 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 
 void MapWidget::mousePressEvent(QMouseEvent *event)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
+#endif
+
 #ifdef DEBUG_MOVING_AIRPLANE
   debugMovingPlane(event);
 #endif
@@ -559,19 +614,33 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     setContextMenuPolicy(Qt::DefaultContextMenu);
   else
   {
-    // No drag and drop mode - use hand to indicate scrolling
-    if(event->button() == Qt::LeftButton && cursor().shape() != Qt::OpenHandCursor)
-      setCursor(Qt::OpenHandCursor);
+    if(touchAreaClicked(event))
+    {
+      // Touch/navigation areas are enabled and cursor is within a touch area
+      if(event->button() == Qt::LeftButton && cursor().shape() != Qt::PointingHandCursor)
+        setCursor(Qt::PointingHandCursor);
+    }
+    else if(!pointVisible(event->pos()))
+    {
+      // Position is outside visible globe
+      if(cursor().shape() != Qt::ArrowCursor)
+        setCursor(Qt::ArrowCursor);
+    }
+    else
+    {
+      // No drag and drop mode - use hand to indicate scrolling
+      if(event->button() == Qt::LeftButton && cursor().shape() != Qt::OpenHandCursor)
+        setCursor(Qt::OpenHandCursor);
+    }
+
+    setViewContext(Marble::Still);
   }
 }
 
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO
-           << "state" << mouseState
-           << "modifiers" << event->modifiers()
-           << "pos" << event->pos();
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
 #endif
 
   // Take actions (add/remove range rings, measurement)
@@ -582,6 +651,11 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   hideTooltip();
 
   jumpBackToAircraftStart(true /* save distance too */);
+
+  // Check if mouse was move for dragging before switching to drag and drop
+  int mouseMoveTolerance = 4;
+  bool mouseMove = (event->pos() - mouseMoved).manhattanLength() >= mouseMoveTolerance;
+  bool touchArea = touchAreaClicked(event);
 
   if(mouseState & mw::DRAG_ROUTE_POINT || mouseState & mw::DRAG_ROUTE_LEG)
   {
@@ -651,13 +725,14 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     mouseState = mw::NONE;
     setViewContext(Marble::Still);
     update();
-
   }
-  else if(event->button() == Qt::LeftButton && (event->pos() - mouseMoved).manhattanLength() < 4)
+  else if(touchArea && !mouseMove)
+    // Touch/navigation areas are enabled and cursor is within a touch area - scroll, zoom, etc.
+    handleTouchAreaClick(event);
+  else if(event->button() == Qt::LeftButton && !mouseMove)
   {
-    // Start all dragging if left button was clicked and mouse was not moved
-    currentDistanceMarkerIndex = getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(),
-                                                                                    event->pos().y(),
+    // Start all dragging if left button was clicked and mouse was not moved ==========================
+    currentDistanceMarkerIndex = getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
                                                                                     screenSearchDistance);
     if(currentDistanceMarkerIndex != -1)
     {
@@ -680,6 +755,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
                                                              screenSearchDistance * 4 / 3);
           if(routePoint != -1)
           {
+            // Drag a waypoint ==============================================
             routeDragPoint = routePoint;
             qDebug() << "route point" << routePoint;
 
@@ -687,20 +763,37 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             mouseState = mw::DRAG_ROUTE_POINT;
 
             routeDragCur = QPoint(event->pos().x(), event->pos().y());
+            routeDragFixed.clear();
 
-            if(routePoint > 0)
-              routeDragFrom = route.at(routePoint - 1).getPosition();
+            if(routePoint > 0 && route.value(routePoint).isAlternate())
+            {
+              // Alternate airports are treated as endpoints
+              routeDragFixed.append(route.getDestinationAirportLeg().getPosition());
+            }
+            else if(routePoint == route.getDestinationAirportLegIndex() && route.hasAlternates())
+            {
+              // Add all lines to alternates as fixed lines if moving destination with alternates
+              if(routePoint > 0)
+                routeDragFixed.append(route.value(routePoint - 1).getPosition());
+              for(int i = route.getAlternateLegsOffset(); i < route.size(); i++)
+                routeDragFixed.append(route.value(i).getPosition());
+            }
             else
-              routeDragFrom = atools::geo::EMPTY_POS;
+            {
+              if(routePoint > 0)
+                // First point of route
+                routeDragFixed.append(route.value(routePoint - 1).getPosition());
 
-            if(routePoint < route.size() - 1)
-              routeDragTo = route.at(routePoint + 1).getPosition();
-            else
-              routeDragTo = atools::geo::EMPTY_POS;
+              if(routePoint < route.size() - 1)
+                // Last point of plan
+                routeDragFixed.append(route.value(routePoint + 1).getPosition());
+            }
+
             setContextMenuPolicy(Qt::PreventContextMenu);
           }
           else
           {
+            // Drag a route leg ===================================================
             int routeLeg = getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(),
                                                                           event->pos().y(), screenSearchDistance);
             if(routeLeg != -1)
@@ -712,8 +805,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
               routeDragCur = QPoint(event->pos().x(), event->pos().y());
 
-              routeDragFrom = route.at(routeLeg).getPosition();
-              routeDragTo = route.at(routeLeg + 1).getPosition();
+              routeDragFixed.clear();
+              routeDragFixed.append(route.value(routeLeg).getPosition());
+              routeDragFixed.append(route.value(routeLeg + 1).getPosition());
               setContextMenuPolicy(Qt::PreventContextMenu);
             }
           }
@@ -725,14 +819,32 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         if(cursor().shape() != Qt::ArrowCursor)
           setCursor(Qt::ArrowCursor);
         handleInfoClick(event->pos());
+
+        if(OptionData::instance().getMapNavigation() == opts::MAP_NAV_CLICK_CENTER)
+        {
+          // Center map on click
+          qreal lon, lat;
+          bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+          if(visible)
+            showPos(Pos(lon, lat), map::INVALID_DISTANCE_VALUE, true);
+        }
       }
     }
-  }
+  } // else if(event->button() == Qt::LeftButton && mouseMove)
   else
   {
-    // No drag and drop mode - switch back to arrow after scrolling
-    if(cursor().shape() != Qt::ArrowCursor)
-      setCursor(Qt::ArrowCursor);
+    if(touchArea)
+    {
+      // Touch/navigation areas are enabled and cursor is within a touch area
+      if(cursor().shape() != Qt::PointingHandCursor)
+        setCursor(Qt::PointingHandCursor);
+    }
+    else
+    {
+      // No drag and drop mode - switch back to arrow after scrolling
+      if(cursor().shape() != Qt::ArrowCursor)
+        setCursor(Qt::ArrowCursor);
+    }
   }
 
   mouseMoved = QPoint();
@@ -741,7 +853,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-  qDebug() << Q_FUNC_INFO;
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
+#endif
 
   // Show pos and show rect already call this
   // jumpBackToAircraftStart();
@@ -749,10 +863,28 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   if(mouseState != mw::NONE)
     return;
 
+  if(touchAreaClicked(event))
+  {
+    // Touch/navigation areas are enabled and cursor is within a touch area - scroll, zoom, etc.
+    handleTouchAreaClick(event);
+    return;
+  }
+
   hideTooltip();
 
   map::MapSearchResult mapSearchResult;
-  getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
+
+  if(OptionData::instance().getMapNavigation() == opts::MAP_NAV_CLICK_CENTER &&
+     !mapSearchResultInfoClick.isEmpty(map::AIRPORT | map::AIRCRAFT_ALL | map::NAV_ALL | map::USERPOINT |
+                                       map::USERPOINTROUTE))
+  {
+    // Do info click and use previous result from single click event if the double click was on a map object
+    mapSearchResult = mapSearchResultInfoClick;
+    mapSearchResultInfoClick.clear();
+  }
+  else
+    getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult,
+                                         map::QUERY_HOLDS | map::QUERY_PATTERNS);
 
   if(mapSearchResult.userAircraft.isValid())
   {
@@ -782,11 +914,17 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.ndbs.first().position, 0.f, true);
     else if(!mapSearchResult.waypoints.isEmpty())
       showPos(mapSearchResult.waypoints.first().position, 0.f, true);
+    else if(!mapSearchResult.ils.isEmpty())
+      showRect(mapSearchResult.ils.first().bounding, true);
     else if(!mapSearchResult.userPointsRoute.isEmpty())
       showPos(mapSearchResult.userPointsRoute.first().position, 0.f, true);
     else if(!mapSearchResult.userpoints.isEmpty())
       showPos(mapSearchResult.userpoints.first().position, 0.f, true);
-    mainWindow->setStatusMessage(QString(tr("Showing navaid or userpoint on map.")));
+    else if(!mapSearchResult.trafficPatterns.isEmpty())
+      showPos(mapSearchResult.trafficPatterns.first().position, 0.f, true);
+    else if(!mapSearchResult.holds.isEmpty())
+      showPos(mapSearchResult.holds.first().position, 0.f, true);
+    mainWindow->setStatusMessage(QString(tr("Showing on map.")));
   }
 }
 
@@ -829,10 +967,121 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       qreal lon2, lat2;
       geoCoordinates(event->pos().x(), event->pos().y(), lon2, lat2, Marble::GeoDataCoordinates::Degree);
 
-      // Correct position and move center back to mouse cursor position
-      centerOn(centerLon + (lon - lon2), centerLat + (lat - lat2));
+      opts::MapNavigation nav = OptionData::instance().getMapNavigation();
+      if(nav == opts::MAP_NAV_CLICK_DRAG_MOVE || nav == opts::MAP_NAV_TOUCHSCREEN)
+        // Correct position and move center back to mouse cursor position
+        centerOn(centerLon + (lon - lon2), centerLat + (lat - lat2));
     }
   }
+}
+
+bool MapWidget::touchAreaClicked(QMouseEvent *event)
+{
+  TouchArea click = touchAreaClick(event);
+  return click != CENTER && click != NONE;
+}
+
+MapWidget::TouchArea MapWidget::touchAreaClick(QMouseEvent *event)
+{
+  if((event->button() != Qt::LeftButton && event->button() != Qt::NoButton) ||
+     OptionData::instance().getMapNavigation() != opts::MAP_NAV_TOUCHSCREEN)
+    return NONE;
+  else
+  {
+    int areaSize = OptionData::instance().getMapNavTouchArea();
+    int w = width() * areaSize / 100;
+    int h = height() * areaSize / 100;
+
+    // 3 x 3 grid
+    int col, row, x = event->x(), y = event->y();
+    if(x < w)
+      col = 0;
+    else if(x < width() - w)
+      col = 1;
+    else
+      col = 2;
+
+    if(y < h)
+      row = 0;
+    else if(y < height() - h)
+      row = 1;
+    else
+      row = 2;
+
+    return static_cast<TouchArea>(col + row * 3);
+  }
+}
+
+bool MapWidget::handleTouchAreaClick(QMouseEvent *event)
+{
+  // Other should not proceed if true
+  bool eventConsumed = false;
+
+  if(OptionData::instance().getMapNavigation() != opts::MAP_NAV_TOUCHSCREEN)
+    // Areas not enabled
+    return eventConsumed;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
+#endif
+
+  switch(touchAreaClick(event))
+  {
+
+    case ZOOMIN:
+      eventConsumed = true;
+      zoomIn();
+      break;
+
+    case MOVEUP:
+      eventConsumed = true;
+      moveUp();
+      break;
+
+    case ZOOMOUT:
+      eventConsumed = true;
+      zoomOut();
+      break;
+
+    case MOVELEFT:
+      eventConsumed = true;
+      moveLeft();
+      break;
+
+    case NONE:
+    case CENTER:
+      // No-op
+      break;
+
+    case MOVERIGHT:
+      eventConsumed = true;
+      moveRight();
+      break;
+
+    case MapWidget::BACKWARD:
+      eventConsumed = true;
+      historyBack();
+      break;
+
+    case MOVEDOWN:
+      eventConsumed = true;
+      moveDown();
+      break;
+
+    case MapWidget::FORWARD:
+      eventConsumed = true;
+      historyNext();
+      break;
+  }
+
+  if(eventConsumed)
+  {
+    // Restore cursor
+    if(cursor().shape() != Qt::PointingHandCursor)
+      setCursor(Qt::PointingHandCursor);
+  }
+
+  return eventConsumed;
 }
 
 void MapWidget::elevationDisplayTimerTimeout()
@@ -849,6 +1098,12 @@ void MapWidget::elevationDisplayTimerTimeout()
       mainWindow->updateMapPosLabel(pos, point.x(), point.y());
     }
   }
+}
+
+bool MapWidget::pointVisible(const QPoint& point)
+{
+  qreal lon, lat;
+  return geoCoordinates(point.x(), point.y(), lon, lat);
 }
 
 bool MapWidget::eventFilter(QObject *obj, QEvent *e)
@@ -908,6 +1163,19 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     if(!jumpBackWasActive && !isCenterLegAndAircraftActive())
       // Remember and update zoom factor if jump was not active
       jumpBackToAircraftUpdateDistance();
+  }
+
+  QMouseEvent *mEvent = dynamic_cast<QMouseEvent *>(e);
+  if(mEvent != nullptr)
+  {
+    // Filter any obscure Marble actions around the visible globe
+
+    if(!pointVisible(mEvent->pos()))
+    {
+      e->accept(); // Do not propagate further
+      event(e); // Call own event handler
+      return true; // Do not process further
+    }
   }
 
   if(e->type() == QEvent::MouseButtonDblClick)
@@ -1012,8 +1280,7 @@ void MapWidget::cancelDragRoute()
       setCursor(Qt::ArrowCursor);
 
     routeDragCur = QPoint();
-    routeDragFrom = atools::geo::EMPTY_POS;
-    routeDragTo = atools::geo::EMPTY_POS;
+    routeDragFixed.clear();
     routeDragPoint = -1;
     routeDragLeg = -1;
   }
@@ -1045,6 +1312,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
   qreal lon = 0., lat = 0.;
   bool visible = false;
+  // Change cursor and keep aircraft from centering if moving in any drag and drop mode ================
   if(mouseState & mw::DRAG_ALL)
   {
     jumpBackToAircraftStart(true /* save distance too */);
@@ -1058,6 +1326,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
   if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
   {
+    // Changing or adding distance measurment line ==========================================
     // Position is valid update the distance mark continuously
     if(visible && !getScreenIndexConst()->getDistanceMarks().isEmpty())
       getScreenIndex()->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
@@ -1065,56 +1334,83 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   }
   else if(mouseState & mw::DRAG_ROUTE_LEG || mouseState & mw::DRAG_ROUTE_POINT)
   {
+    // Dragging route leg or waypoint ==========================================
     if(visible)
       // Update current point
       routeDragCur = QPoint(event->pos().x(), event->pos().y());
   }
   else if(mouseState & mw::DRAG_USER_POINT)
   {
+    // Moving userpoint ==========================================
     if(visible)
       // Update current point
       userpointDragCur = QPoint(event->pos().x(), event->pos().y());
   }
   else if(mouseState == mw::NONE)
   {
+    // No drag mode - just mouse movement - change cursor =================================
+
     if(event->buttons() == Qt::NoButton)
     {
-      // No dragging going on now - update cursor over flight plan legs or markers
-      const Route& route = NavApp::getRouteConst();
+      TouchArea touchClick = touchAreaClick(event);
+      if(touchClick != NONE && touchClick != CENTER)
+      {
+        // Touchscreen mode and mouse over one area =====================================
+        if(cursor().shape() != Qt::PointingHandCursor)
+          setCursor(Qt::PointingHandCursor);
+      }
+      else if(!pointVisible(event->pos()))
+      {
+        // Position is outside visible globe
+        if(cursor().shape() != Qt::ArrowCursor)
+          setCursor(Qt::ArrowCursor);
+      }
+      else
+      {
+        // Normal mode change cursor over route waypoints or legs and others  =====================================
 
-      Qt::CursorShape cursorShape = Qt::ArrowCursor;
-      bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
+        // No dragging going on now - update cursor over flight plan legs or markers
+        const Route& route = NavApp::getRouteConst();
 
-      // Make distance a bit larger to prefer points
-      if(routeEditMode &&
-         getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                          screenSearchDistance * 4 / 3) != -1 &&
-         route.size() > 1)
-        // Change cursor at one route point
-        cursorShape = Qt::SizeAllCursor;
-      else if(routeEditMode &&
-              getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(), event->pos().y(),
-                                                             screenSearchDistance) != -1 &&
-              route.size() > 1)
-        // Change cursor above a route line
-        cursorShape = Qt::CrossCursor;
-      else if(getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
-                                                                 screenSearchDistance) != -1)
-        // Change cursor at the end of an marker
-        cursorShape = Qt::CrossCursor;
-      else if(getScreenIndexConst()->getNearestTrafficPatternIndex(event->pos().x(), event->pos().y(),
+        Qt::CursorShape cursorShape = Qt::ArrowCursor;
+        bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
+
+        // Make distance a bit larger to prefer points
+        if(routeEditMode &&
+           getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
+                                                            screenSearchDistance * 4 / 3) != -1 &&
+           route.size() > 1)
+          // Change cursor at one route point
+          cursorShape = Qt::SizeAllCursor;
+        else if(routeEditMode &&
+                getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(), event->pos().y(),
+                                                               screenSearchDistance) != -1 &&
+                route.size() > 1)
+          // Change cursor above a route line
+          cursorShape = Qt::CrossCursor;
+        else if(getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
                                                                    screenSearchDistance) != -1)
-        // Change cursor at the end of an marker
-        cursorShape = Qt::PointingHandCursor;
-      else if(getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
-                                                              screenSearchDistance) != -1)
-        // Change cursor at the end of an marker
-        cursorShape = Qt::PointingHandCursor;
+          // Change cursor at the end of an marker
+          cursorShape = Qt::CrossCursor;
+        else if(getScreenIndexConst()->getNearestTrafficPatternIndex(event->pos().x(), event->pos().y(),
+                                                                     screenSearchDistance) != -1)
+          // Change cursor at the active position
+          cursorShape = Qt::PointingHandCursor;
+        else if(getScreenIndexConst()->getNearestHoldIndex(event->pos().x(), event->pos().y(),
+                                                           screenSearchDistance) != -1)
+          // Change cursor at the active position
+          cursorShape = Qt::PointingHandCursor;
+        else if(getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
+                                                                screenSearchDistance) != -1)
+          // Change cursor at the end of an marker
+          cursorShape = Qt::PointingHandCursor;
 
-      if(cursor().shape() != cursorShape)
-        setCursor(cursorShape);
-    }
+        if(cursor().shape() != cursorShape)
+          setCursor(cursorShape);
+      }
+    } // if(event->buttons() == Qt::NoButton)
     else
+      // A mouse button is pressed
       jumpBackToAircraftStart(true /* save distance too */);
   }
 
@@ -1237,31 +1533,34 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
                                           ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
-                                          ui->actionMapShowInformation, ui->actionMapShowApproaches,
+                                          ui->actionMapShowInformation,
+                                          ui->actionMapShowApproaches, ui->actionMapShowApproachesCustom,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
-                                          ui->actionRouteAirportDest,
+                                          ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
                                           ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                           ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
-                                          ui->actionMapUserdataMove, ui->actionMapTrafficPattern});
-  Q_UNUSED(textSaver);
+                                          ui->actionMapUserdataMove, ui->actionMapLogdataEdit,
+                                          ui->actionMapTrafficPattern, ui->actionMapHold});
 
   // Re-enable actions on exit to allow keystrokes
   atools::gui::ActionStateSaver stateSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                             ui->actionMapRangeRings, ui->actionMapNavaidRange,
                                             ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
-                                            ui->actionMapShowInformation, ui->actionMapShowApproaches,
+                                            ui->actionMapShowInformation,
+                                            ui->actionMapShowApproaches, ui->actionMapShowApproachesCustom,
                                             ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
-                                            ui->actionRouteAirportDest,
+                                            ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
                                             ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                             ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
-                                            ui->actionMapUserdataMove, ui->actionMapTrafficPattern});
-  Q_UNUSED(textSaver);
+                                            ui->actionMapUserdataMove, ui->actionMapLogdataEdit,
+                                            ui->actionMapTrafficPattern, ui->actionMapHold});
 
   // ===================================================================================
   // Build menu - add actions
   QMenu menu;
   menu.addAction(ui->actionMapShowInformation);
   menu.addAction(ui->actionMapShowApproaches);
+  menu.addAction(ui->actionMapShowApproachesCustom);
   menu.addSeparator();
 
   menu.addAction(ui->actionMapMeasureDistance);
@@ -1276,10 +1575,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   menu.addAction(ui->actionMapTrafficPattern);
   menu.addAction(ui->actionMapHideTrafficPattern);
+  menu.addAction(ui->actionMapHold);
+  menu.addAction(ui->actionMapHideHold);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteAirportStart);
   menu.addAction(ui->actionRouteAirportDest);
+  menu.addAction(ui->actionRouteAirportAlternate);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteAddPos);
@@ -1294,6 +1596,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionMapUserdataDelete);
   menu.addSeparator();
 
+  menu.addAction(ui->actionMapLogdataEdit);
+  menu.addSeparator();
+
   menu.addAction(ui->actionShowInSearch);
   menu.addSeparator();
 
@@ -1302,6 +1607,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   int distMarkerIndex = -1;
   int trafficPatternIndex = -1;
+  int holdIndex = -1;
   int rangeMarkerIndex = -1;
   bool visibleOnMap = false;
   Pos pos;
@@ -1319,41 +1625,50 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       rangeMarkerIndex = getScreenIndexConst()->getNearestRangeMarkIndex(point.x(), point.y(), screenSearchDistance);
       trafficPatternIndex = getScreenIndexConst()->getNearestTrafficPatternIndex(point.x(),
                                                                                  point.y(), screenSearchDistance);
+      holdIndex = getScreenIndexConst()->getNearestHoldIndex(point.x(), point.y(), screenSearchDistance);
     }
   }
 
   // Disable all menu items that depend on position
   ui->actionMapSetMark->setEnabled(visibleOnMap);
   ui->actionMapSetHome->setEnabled(visibleOnMap);
-  ui->actionMapMeasureDistance->setEnabled(visibleOnMap);
-  ui->actionMapMeasureRhumbDistance->setEnabled(visibleOnMap);
-  ui->actionMapRangeRings->setEnabled(visibleOnMap);
+  ui->actionMapMeasureDistance->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT));
+  ui->actionMapMeasureRhumbDistance->setEnabled(visibleOnMap &&
+                                                NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT));
+  ui->actionMapRangeRings->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS));
 
   ui->actionMapUserdataAdd->setEnabled(visibleOnMap);
   ui->actionMapUserdataEdit->setEnabled(false);
   ui->actionMapUserdataDelete->setEnabled(false);
   ui->actionMapUserdataMove->setEnabled(false);
 
+  ui->actionMapLogdataEdit->setEnabled(false);
+
   ui->actionMapHideOneRangeRing->setEnabled(visibleOnMap && rangeMarkerIndex != -1);
   ui->actionMapHideDistanceMarker->setEnabled(visibleOnMap && distMarkerIndex != -1);
   ui->actionMapHideTrafficPattern->setEnabled(visibleOnMap && trafficPatternIndex != -1);
+  ui->actionMapHideHold->setEnabled(visibleOnMap && holdIndex != -1);
 
   ui->actionMapShowInformation->setEnabled(false);
   ui->actionMapShowApproaches->setEnabled(false);
+  ui->actionMapShowApproachesCustom->setEnabled(false);
   ui->actionMapTrafficPattern->setEnabled(false);
+  ui->actionMapHold->setEnabled(false);
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
   ui->actionRouteAddPos->setEnabled(visibleOnMap);
   ui->actionRouteAppendPos->setEnabled(visibleOnMap);
   ui->actionRouteAirportStart->setEnabled(false);
   ui->actionRouteAirportDest->setEnabled(false);
+  ui->actionRouteAirportAlternate->setEnabled(false);
   ui->actionRouteDeleteWaypoint->setEnabled(false);
 
   ui->actionMapEditUserWaypoint->setEnabled(false);
 
   // Get objects near position =============================================================
   map::MapSearchResult result;
-  getScreenIndexConst()->getAllNearest(point.x(), point.y(), screenSearchDistance, result);
+  getScreenIndexConst()->getAllNearest(point.x(), point.y(), screenSearchDistance, result, map::QUERY_NONE);
+  result.moveOnlineAirspacesToFront();
 
   map::MapAirport *airport = nullptr;
   SimConnectAircraft *aiAircraft = nullptr;
@@ -1362,12 +1677,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapVor *vor = nullptr;
   map::MapNdb *ndb = nullptr;
   map::MapWaypoint *waypoint = nullptr;
+  map::MapIls *ils = nullptr;
   map::MapUserpointRoute *userpointRoute = nullptr;
   map::MapAirway *airway = nullptr;
   map::MapParking *parking = nullptr;
   map::MapHelipad *helipad = nullptr;
   map::MapAirspace *airspace = nullptr, *onlineCenter = nullptr;
   map::MapUserpoint *userpoint = nullptr;
+  map::MapLogbookEntry *logEntry = nullptr;
 
   bool airportDestination = false, airportDeparture = false, routeVisible = getShownMapFeatures() & map::FLIGHTPLAN;
   // ===================================================================================
@@ -1409,34 +1726,41 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!result.waypoints.isEmpty())
     waypoint = &result.waypoints.first();
 
+  if(!result.ils.isEmpty())
+    ils = &result.ils.first();
+
   if(!result.userPointsRoute.isEmpty())
     userpointRoute = &result.userPointsRoute.first();
 
   if(!result.userpoints.isEmpty())
     userpoint = &result.userpoints.first();
 
+  if(!result.logbookEntries.isEmpty())
+    logEntry = &result.logbookEntries.first();
+
   if(!result.airways.isEmpty())
     airway = &result.airways.first();
 
-  if(!result.airspaces.isEmpty())
-    airspace = &result.airspaces.first();
+  airspace = result.firstSimNavUserAirspace();
+  onlineCenter = result.firstOnlineAirspace();
 
   // ===================================================================================
   // Collect information from the search result - build text only for one object for several menu items
+  // Order is important - first items have lowest priority
   bool isAircraft = false;
   QString informationText, procedureText, measureText, rangeRingText, departureText, departureParkingText,
-          destinationText, addRouteText, searchText, editUserpointText, patternText;
+          destinationText, addRouteText, searchText, editUserpointText, patternText, holdText;
 
-  if(airspace != nullptr)
+  if(onlineCenter != nullptr)
   {
-    if(airspace->online)
-    {
-      onlineCenter = airspace;
-      searchText = informationText = tr("Online Center %1").arg(onlineCenter->name);
-    }
-    else
-      informationText = result.airspaces.size() > 1 ? tr("Airspaces") : tr("Airspace");
+    informationText = result.numOnlineAirspaces() > 1 ? tr("Online Centers") : tr("Online Center");
+    searchText = tr("Online Center %1").arg(onlineCenter->name);
   }
+  else if(airspace != nullptr)
+    informationText = result.numSimNavUserAirspaces() > 1 ? tr("Airspaces") : tr("Airspace");
+
+  if(ils != nullptr)
+    informationText = map::ilsTextShort(*ils);
 
   // Fill texts in reverse order of priority
   if(airway != nullptr)
@@ -1447,27 +1771,30 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     informationText.clear();
 
   if(waypoint != nullptr)
-    informationText = measureText = addRouteText = searchText = map::waypointText(*waypoint);
+    informationText = measureText = addRouteText = searchText = holdText = map::waypointText(*waypoint);
 
   if(ndb != nullptr)
-    informationText = measureText = rangeRingText = addRouteText = searchText = map::ndbText(*ndb);
+    informationText = measureText = rangeRingText = addRouteText = searchText = holdText = map::ndbText(*ndb);
 
   if(vor != nullptr)
-    informationText = measureText = rangeRingText = addRouteText = searchText = map::vorText(*vor);
+    informationText = measureText = rangeRingText = addRouteText = searchText = holdText = map::vorText(*vor);
 
   if(airport != nullptr)
     procedureText = informationText =
-                      measureText = departureText =
-                                      destinationText = addRouteText =
-                                                          searchText = patternText = map::airportText(*airport);
+      measureText = departureText =
+        destinationText = addRouteText =
+          searchText = patternText = holdText = map::airportText(*airport, 20);
 
   // Userpoints are drawn on top of all features
   if(userpoint != nullptr)
     editUserpointText = informationText = addRouteText = searchText = map::userpointText(*userpoint);
 
+  if(logEntry != nullptr)
+    informationText = searchText = map::logEntryText(*logEntry);
+
   // Override airport if part of route and visible
   if((airportDeparture || airportDestination) && airport != nullptr && routeVisible)
-    informationText = addRouteText = map::airportText(*airport);
+    informationText = addRouteText = map::airportText(*airport, 20);
 
   int departureParkingAirportId = -1;
   // Parking or helipad only if no airport at cursor
@@ -1536,7 +1863,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   QString routeText;
   if(airport != nullptr && airport->routeIndex != -1)
   {
-    routeText = map::airportText(*airport);
+    routeText = map::airportText(*airport, 20);
     routeIndex = airport->routeIndex;
     deleteType = map::AIRPORT;
   }
@@ -1576,7 +1903,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       // Get airport for parking
       map::MapAirport parkAp;
       NavApp::getAirportQuerySim()->getAirportById(parkAp, departureParkingAirportId);
-      airportText = map::airportText(parkAp) + " / ";
+      airportText = map::airportText(parkAp, 20) + " / ";
     }
 
     ui->actionRouteAirportStart->setEnabled(true);
@@ -1589,18 +1916,27 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     }
     else
       ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
+
+    if(airport != nullptr && NavApp::getRouteConst().getSizeWithoutAlternates() > 0)
+    {
+      ui->actionRouteAirportAlternate->setEnabled(true);
+      ui->actionRouteAirportAlternate->setText(ui->actionRouteAirportAlternate->text().arg(destinationText));
+    }
+    else
+      ui->actionRouteAirportAlternate->setText(ui->actionRouteAirportAlternate->text().arg(QString()));
   }
   else
   {
     // No airport or selected parking position
     ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(QString()));
     ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
+    ui->actionRouteAirportAlternate->setText(ui->actionRouteAirportAlternate->text().arg(QString()));
   }
 
   // ===================================================================================
   // Update "show information" for airports, navaids, airways and airspaces
-  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
-     airway != nullptr || airspace != nullptr || userpoint != nullptr)
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || ils != nullptr || airport != nullptr ||
+     airway != nullptr || airspace != nullptr || onlineCenter != nullptr || userpoint != nullptr || logEntry != nullptr)
   {
     ui->actionMapShowInformation->setEnabled(true);
     ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(informationText));
@@ -1639,6 +1975,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapUserdataMove->setText(ui->actionMapUserdataMove->text().arg(QString()));
   }
 
+  if(logEntry != nullptr)
+  {
+    ui->actionMapLogdataEdit->setEnabled(true);
+    ui->actionMapLogdataEdit->setText(ui->actionMapLogdataEdit->text().arg(map::logEntryText(*logEntry)));
+  }
+  else
+    ui->actionMapLogdataEdit->setText(ui->actionMapLogdataEdit->text().arg(QString()));
+
   // ===================================================================================
   // Update "show in search" and "add to route" only for airports an navaids
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
@@ -1656,7 +2000,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
-     userpoint != nullptr || onlineAircraft != nullptr || onlineCenter != nullptr)
+     userpoint != nullptr || logEntry != nullptr || onlineAircraft != nullptr || onlineCenter != nullptr)
   {
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
@@ -1666,8 +2010,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(airport != nullptr)
   {
-    bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airport->ident);
-    bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(airport->ident);
+    bool hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(*airport);
+    bool hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(*airport);
 
     if(hasAnyArrival || hasDeparture)
     {
@@ -1702,19 +2046,37 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else
       ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport->ident));
 
+    ui->actionMapShowApproachesCustom->setEnabled(true);
+    if(airportDestination)
+      ui->actionMapShowApproachesCustom->setText(tr("Create Approach to %1 and insert into Flight Plan").
+                                                 arg(procedureText));
+    else
+      ui->actionMapShowApproachesCustom->setText(tr("Create Approach and use %1 as Destination").
+                                                 arg(procedureText));
   }
   else
   {
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()).arg(QString()));
+    ui->actionMapShowApproachesCustom->setText(ui->actionMapShowApproachesCustom->text().arg(QString()));
   }
 
-  if(airport != nullptr && !airport->noRunways())
+  // Traffic pattern ========================================
+  if(airport != nullptr && !airport->noRunways() && NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
   {
     ui->actionMapTrafficPattern->setEnabled(true);
     ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(patternText));
   }
   else
     ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(QString()));
+
+  // Hold ========================================
+  if(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
+  {
+    ui->actionMapHold->setEnabled(true);
+    ui->actionMapHold->setText(ui->actionMapHold->text().arg(holdText.isEmpty() ? tr("Position") : holdText));
+  }
+  else
+    ui->actionMapHold->setText(ui->actionMapHold->text().arg(QString()));
 
   // Update "delete in route"
   if(routeIndex != -1 && NavApp::getRouteConst().canEditPoint(routeIndex))
@@ -1735,7 +2097,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(tr("Position")));
 
   // Update "show range rings for Navaid"
-  if(vor != nullptr || ndb != nullptr)
+  if((vor != nullptr || ndb != nullptr) && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
   {
     ui->actionMapNavaidRange->setEnabled(true);
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(rangeRingText));
@@ -1743,7 +2105,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
 
-  if(parking == nullptr && helipad == nullptr && !measureText.isEmpty())
+  if(parking == nullptr && helipad == nullptr && !measureText.isEmpty() &&
+     NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT))
   {
     // Set text to measure "from airport" etc.
     ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(measureText));
@@ -1756,11 +2119,29 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(tr("here")));
   }
 
+  // Update texts to give user a hint for hidden user features in the disabled menu items =====================
+  QString notShown(tr(" (hidden on map)"));
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT))
+  {
+    ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text() + notShown);
+    ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text() + notShown);
+  }
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
+  {
+    ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + notShown);
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text() + notShown);
+  }
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
+    ui->actionMapHold->setText(ui->actionMapHold->text() + notShown);
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
+    ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text() + notShown);
+
   qDebug() << "departureParkingAirportId " << departureParkingAirportId;
   qDebug() << "airport " << airport;
   qDebug() << "vor " << vor;
   qDebug() << "ndb " << ndb;
   qDebug() << "waypoint " << waypoint;
+  qDebug() << "ils " << ils;
   qDebug() << "parking " << parking;
   qDebug() << "helipad " << helipad;
   qDebug() << "routeIndex " << routeIndex;
@@ -1772,6 +2153,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   qDebug() << "destinationText" << destinationText;
   qDebug() << "addRouteText" << addRouteText;
   qDebug() << "searchText" << searchText;
+  qDebug() << "patternText" << patternText;
+  qDebug() << "holdText" << holdText;
 
   // Show the menu ------------------------------------------------
   QAction *action = menu.exec(menuPos);
@@ -1792,11 +2175,18 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     {
       // Create records and send show in search signal
       // This works only with line edit fields
-      ui->dockWidgetSearch->raise();
-      ui->dockWidgetSearch->show();
-      if(userpoint != nullptr && !isAircraft)
+      if(logEntry != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(3);
+        emit showInSearch(map::LOGBOOK, SqlRecord().
+                          appendFieldAndValue("departure_ident", logEntry->departureIdent).
+                          appendFieldAndValue("destination_ident", logEntry->destinationIdent).
+                          appendFieldAndValue("simulator", logEntry->simulator).
+                          appendFieldAndValue("aircraft_type", logEntry->aircraftType).
+                          appendFieldAndValue("aircraft_registration", logEntry->aircraftRegistration),
+                          true /* select */);
+      }
+      else if(userpoint != nullptr && !isAircraft)
+      {
         SqlRecord rec;
         if(!userpoint->ident.isEmpty())
           rec.appendFieldAndValue("ident", userpoint->ident);
@@ -1809,59 +2199,44 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         if(!userpoint->tags.isEmpty())
           rec.appendFieldAndValue("tags", userpoint->tags);
 
-        emit showInSearch(map::USERPOINT, rec);
+        emit showInSearch(map::USERPOINT, rec, true /* select */);
       }
       else if(airport != nullptr && !isAircraft)
-      {
-        ui->tabWidgetSearch->setCurrentIndex(0);
-        emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airport->ident));
-      }
+        emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airport->ident), true /* select */);
       else if(vor != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(1);
         SqlRecord rec;
         rec.appendFieldAndValue("ident", vor->ident);
         if(!vor->region.isEmpty())
           rec.appendFieldAndValue("region", vor->region);
 
-        emit showInSearch(map::VOR, rec);
+        emit showInSearch(map::VOR, rec, true /* select */);
       }
       else if(ndb != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(1);
         SqlRecord rec;
         rec.appendFieldAndValue("ident", ndb->ident);
         if(!ndb->region.isEmpty())
           rec.appendFieldAndValue("region", ndb->region);
 
-        emit showInSearch(map::NDB, rec);
+        emit showInSearch(map::NDB, rec, true /* select */);
       }
       else if(waypoint != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(1);
         SqlRecord rec;
         rec.appendFieldAndValue("ident", waypoint->ident);
         if(!waypoint->region.isEmpty())
           rec.appendFieldAndValue("region", waypoint->region);
 
-        emit showInSearch(map::WAYPOINT, rec);
+        emit showInSearch(map::WAYPOINT, rec, true /* select */);
       }
       else if(onlineAircraft != nullptr)
-      {
-        ui->tabWidgetSearch->setCurrentIndex(4);
-        SqlRecord rec;
-        rec.appendFieldAndValue("callsign", onlineAircraft->getAirplaneRegistration());
-
-        emit showInSearch(map::AIRCRAFT_ONLINE, rec);
-      }
+        emit showInSearch(map::AIRCRAFT_ONLINE,
+                          SqlRecord().appendFieldAndValue("callsign", onlineAircraft->getAirplaneRegistration()),
+                          true /* select */);
       else if(onlineCenter != nullptr)
-      {
-        ui->tabWidgetSearch->setCurrentIndex(5);
-        SqlRecord rec;
-        rec.appendFieldAndValue("callsign", onlineCenter->name);
-
-        emit showInSearch(map::AIRSPACE_ONLINE, rec);
-      }
+        emit showInSearch(map::AIRSPACE,
+                          SqlRecord().appendFieldAndValue("callsign", onlineCenter->name), true /* select */);
     }
     else if(action == ui->actionMapNavaidRange)
     {
@@ -1880,6 +2255,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       removeDistanceMarker(distMarkerIndex);
     else if(action == ui->actionMapHideTrafficPattern)
       removeTrafficPatterm(trafficPatternIndex);
+    else if(action == ui->actionMapHideHold)
+      removeHold(holdIndex);
     else if(action == ui->actionMapMeasureDistance || action == ui->actionMapMeasureRhumbDistance)
       addMeasurement(pos, action == ui->actionMapMeasureRhumbDistance, airport, vor, ndb, waypoint);
     else if(action == ui->actionRouteDeleteWaypoint)
@@ -1887,14 +2264,19 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapEditUserWaypoint)
       NavApp::getRouteController()->editUserWaypointName(routeIndex);
     else if(action == ui->actionRouteAddPos || action == ui->actionRouteAppendPos ||
-            action == ui->actionRouteAirportStart ||
-            action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
+            action == ui->actionRouteAirportStart || action == ui->actionRouteAirportDest ||
+            action == ui->actionRouteAirportAlternate || action == ui->actionMapShowInformation)
     {
       Pos position = pos;
       map::MapObjectTypes type = map::NONE;
 
       int id = -1;
-      if(userpoint != nullptr)
+      if(logEntry != nullptr)
+      {
+        id = logEntry->id;
+        type = map::LOGBOOK;
+      }
+      else if(userpoint != nullptr)
       {
         id = userpoint->id;
         type = map::USERPOINT;
@@ -1944,15 +2326,20 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         id = airway->id;
         type = map::AIRWAY;
       }
-      else if(airspace != nullptr)
+      else if(ils != nullptr)
       {
-        id = airspace->id;
-        type = map::AIRSPACE;
+        id = ils->id;
+        type = map::ILS;
       }
       else if(onlineCenter != nullptr)
       {
         id = onlineCenter->id;
-        type = map::AIRSPACE_ONLINE;
+        type = map::AIRSPACE;
+      }
+      else if(airspace != nullptr)
+      {
+        id = airspace->id;
+        type = map::AIRSPACE;
       }
       else
       {
@@ -1991,6 +2378,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         emit routeSetStart(*airport);
       else if(action == ui->actionRouteAirportDest)
         emit routeSetDest(*airport);
+      else if(action == ui->actionRouteAirportAlternate)
+        emit routeAddAlternate(*airport);
       else if(action == ui->actionMapShowInformation)
       {
         if(isAircraft)
@@ -2021,7 +2410,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           }
         }
         else
-          // Display only one map object as shown in the menu item
+          // Display only one map object as shown in the menu item except airspaces
           result.clearAllButFirst(static_cast<map::MapObjectTypes>(~map::AIRSPACE));
 
         emit showInformation(result, type);
@@ -2029,8 +2418,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     }
     else if(action == ui->actionMapTrafficPattern)
       addTrafficPattern(*airport);
+    else if(action == ui->actionMapHold)
+      addHold(result, pos);
     else if(action == ui->actionMapShowApproaches)
-      emit showApproaches(*airport);
+      emit showProcedures(*airport);
+    else if(action == ui->actionMapShowApproachesCustom)
+      emit showProceduresCustom(*airport);
     else if(action == ui->actionMapUserdataAdd)
     {
       if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
@@ -2054,6 +2447,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         setContextMenuPolicy(Qt::PreventContextMenu);
       }
     }
+    else if(action == ui->actionMapLogdataEdit)
+      emit editLogEntryFromMap(logEntry->id);
   }
 }
 
@@ -2063,7 +2458,14 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
 
   // Get all objects where the mouse button was released
   map::MapSearchResult result;
-  getScreenIndexConst()->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result);
+  getScreenIndexConst()->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result, map::QUERY_NONE);
+
+  // Allow only aiports for alterates
+  if(point >= 0)
+  {
+    if(NavApp::getRouteConst().value(point).isAlternate())
+      result.clear(map::MapObjectType(~map::AIRPORT));
+  }
 
   // Count number of all objects
   int totalSize = result.getTotalSize(map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);
@@ -2134,7 +2536,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, con
   for(const map::MapAirport& obj : result.airports)
   {
     QAction *action = new QAction(symbolPainter.createAirportIcon(obj, ICON_SIZE),
-                                  menuText.arg(map::airportText(obj)), this);
+                                  menuText.arg(map::airportText(obj, 20)), this);
     action->setData(QVariantList({obj.id, map::AIRPORT}));
     menu.addAction(action);
   }
@@ -2215,19 +2617,24 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, con
   return false;
 }
 
-void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
+void MapWidget::simDataCalcFuelOnOff(const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                     const atools::fs::sc::SimConnectUserAircraft& last)
 {
-  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
-  if(databaseLoadStatus || !aircraft.isValid())
-    return;
+  // Engine start and shutdown events ===================================
+  if(last.isValid() && aircraft.isValid() &&
+     !aircraft.isSimPaused() && !aircraft.isSimReplay() &&
+     !last.isSimPaused() && !last.isSimReplay())
+  {
+    // start timer to emit takeoff/landing signal
+    if(last.hasFuelFlow() != aircraft.hasFuelFlow())
+      fuelOnOffTimer.start(FUEL_ON_OFF_TIMEOUT);
+  }
+}
 
-  if(NavApp::getMainUi()->actionMapShowSunShadingSimulatorTime->isChecked())
-    // Update sun shade on globe with simulator time
-    setSunShadingDateTime(aircraft.getZuluTime());
-
-  getScreenIndex()->updateSimData(simulatorData);
-  const atools::fs::sc::SimConnectUserAircraft& last = getScreenIndexConst()->getLastUserAircraft();
-
+void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                          const atools::fs::sc::SimConnectUserAircraft& last)
+{
+  // ========================================================
   // Calculate travel distance since last takeoff event ===================================
   if(!takeoffLandingLastAircraft.isValid())
     // Set for the first time
@@ -2272,8 +2679,25 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   {
     // start timer to emit takeoff/landing signal
     if(last.isFlying() != aircraft.isFlying())
-      takeoffLandingTimer.start(TAKEOFF_LANDING_TIMEOUT);
+      takeoffLandingTimer.start(aircraft.isFlying() ? TAKEOFF_TIMEOUT : LANDING_TIMEOUT);
   }
+}
+
+void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
+{
+  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+  if(databaseLoadStatus || !aircraft.isValid())
+    return;
+
+  if(NavApp::getMainUi()->actionMapShowSunShadingSimulatorTime->isChecked())
+    // Update sun shade on globe with simulator time
+    setSunShadingDateTime(aircraft.getZuluTime());
+
+  getScreenIndex()->updateSimData(simulatorData);
+  const atools::fs::sc::SimConnectUserAircraft& last = getScreenIndexConst()->getLastUserAircraft();
+
+  simDataCalcTakeoffLanding(aircraft, last);
+  simDataCalcFuelOnOff(aircraft, last);
 
   // map::MapRunwayEnd runwayEnd;
   // map::MapAirport airport;
@@ -2311,9 +2735,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   if(now - lastSimUpdateTooltipMs > MAX_SIM_UPDATE_TOOLTIP_MS)
   {
     lastSimUpdateTooltipMs = now;
+
+    // Update tooltip if it has bearing/distance fields
     if((mapSearchResultTooltip.hasAirports() || mapSearchResultTooltip.hasVor() || mapSearchResultTooltip.hasNdb() ||
-        mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasUserpoints()) &&
-       NavApp::isConnectedAndAircraft())
+        mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasIls() ||
+        mapSearchResultTooltip.hasUserpoints()) && NavApp::isConnectedAndAircraft())
     {
       updateTooltip();
     }
@@ -2567,6 +2993,11 @@ void MapWidget::showSavedPosOnStartup()
   history.activate();
 }
 
+void MapWidget::clearHistory()
+{
+  history.clear();
+}
+
 void MapWidget::showOverlays(bool show, bool showScalebar)
 {
   for(const QString& name : mapOverlays.keys())
@@ -2664,7 +3095,7 @@ void MapWidget::connectOverlayMenus()
 bool MapWidget::isCenterLegAndAircraftActive()
 {
   const Route& route = NavApp::getRouteConst();
-  return OptionData::instance().getFlags2() & opts::ROUTE_AUTOZOOM && // Waypoint and aircraft center enabled
+  return OptionData::instance().getFlags2() & opts2::ROUTE_AUTOZOOM && // Waypoint and aircraft center enabled
          !route.isEmpty() && // Have a route
          route.getActiveLegIndex() < map::INVALID_INDEX_VALUE && // Active leg present - special case 0 for one waypoint only
          getScreenIndexConst()->getUserAircraft().isFlying() && // Aircraft in air
@@ -2871,66 +3302,63 @@ void MapWidget::resetSettingActionsToDefault()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  ui->actionMapShowAirports->blockSignals(true);
-  ui->actionMapShowAirports->setChecked(true);
-  ui->actionMapShowAirports->blockSignals(false);
-  ui->actionMapShowSoftAirports->blockSignals(true);
-  ui->actionMapShowSoftAirports->setChecked(true);
-  ui->actionMapShowSoftAirports->blockSignals(false);
-  ui->actionMapShowEmptyAirports->blockSignals(true);
-  ui->actionMapShowEmptyAirports->setChecked(true);
-  ui->actionMapShowEmptyAirports->blockSignals(false);
-  ui->actionMapShowAddonAirports->blockSignals(true);
-  ui->actionMapShowAddonAirports->setChecked(true);
-  ui->actionMapShowAddonAirports->blockSignals(false);
-  ui->actionMapShowVor->blockSignals(true);
-  ui->actionMapShowVor->setChecked(true);
-  ui->actionMapShowVor->blockSignals(false);
-  ui->actionMapShowNdb->blockSignals(true);
-  ui->actionMapShowNdb->setChecked(true);
-  ui->actionMapShowNdb->blockSignals(false);
-  ui->actionMapShowWp->blockSignals(true);
-  ui->actionMapShowWp->setChecked(true);
-  ui->actionMapShowWp->blockSignals(false);
-  ui->actionMapShowIls->blockSignals(true);
-  ui->actionMapShowIls->setChecked(true);
-  ui->actionMapShowIls->blockSignals(false);
-  ui->actionMapShowVictorAirways->blockSignals(true);
-  ui->actionMapShowVictorAirways->setChecked(false);
-  ui->actionMapShowVictorAirways->blockSignals(false);
-  ui->actionMapShowJetAirways->blockSignals(true);
-  ui->actionMapShowJetAirways->setChecked(false);
-  ui->actionMapShowJetAirways->blockSignals(false);
-  ui->actionShowAirspaces->blockSignals(true);
-  ui->actionShowAirspaces->setChecked(true);
-  ui->actionShowAirspaces->blockSignals(false);
-  ui->actionShowAirspacesOnline->blockSignals(true);
-  ui->actionShowAirspacesOnline->setChecked(true);
-  ui->actionShowAirspacesOnline->blockSignals(false);
-  ui->actionMapShowRoute->blockSignals(true);
-  ui->actionMapShowRoute->setChecked(true);
-  ui->actionMapShowRoute->blockSignals(false);
-  ui->actionMapShowAircraft->blockSignals(true);
-  ui->actionMapShowAircraft->setChecked(true);
-  ui->actionMapShowAircraft->blockSignals(false);
-  ui->actionMapShowCompassRose->blockSignals(true);
-  ui->actionMapShowCompassRose->setChecked(false);
-  ui->actionMapShowCompassRose->blockSignals(false);
-  ui->actionMapAircraftCenter->blockSignals(true);
+  atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
+                                      ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports,
+                                      ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
+                                      ui->actionMapShowIls, ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+                                      ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowAircraft,
+                                      ui->actionMapShowCompassRose, ui->actionMapAircraftCenter,
+                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
+                                      ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
+                                      ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
+                                      ui->actionMapShowMinimumAltitude,
+                                      ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
+
+  // Menu map =====================================
   ui->actionMapAircraftCenter->setChecked(true);
-  ui->actionMapAircraftCenter->blockSignals(false);
-  ui->actionMapShowAircraftAi->blockSignals(true);
-  ui->actionMapShowAircraftAi->setChecked(true);
-  ui->actionMapShowAircraftAi->blockSignals(false);
-  ui->actionMapShowAircraftAiBoat->blockSignals(true);
-  ui->actionMapShowAircraftAiBoat->setChecked(false);
-  ui->actionMapShowAircraftAiBoat->blockSignals(false);
-  ui->actionMapShowAircraftTrack->blockSignals(true);
-  ui->actionMapShowAircraftTrack->setChecked(true);
-  ui->actionMapShowAircraftTrack->blockSignals(false);
-  ui->actionInfoApproachShowMissedAppr->blockSignals(true);
+
+  // Menu view =====================================
+  // Submenu airports
+  ui->actionMapShowAirports->setChecked(true);
+  ui->actionMapShowSoftAirports->setChecked(true);
+  ui->actionMapShowEmptyAirports->setChecked(true);
+  ui->actionMapShowAddonAirports->setChecked(true);
+
+  // Submenu navaids
+  ui->actionMapShowVor->setChecked(true);
+  ui->actionMapShowNdb->setChecked(true);
+  ui->actionMapShowWp->setChecked(true);
+  ui->actionMapShowIls->setChecked(true);
+  ui->actionMapShowVictorAirways->setChecked(false);
+  ui->actionMapShowJetAirways->setChecked(false);
+
+  // Submenu airspaces
+  ui->actionShowAirspaces->setChecked(true);
+
+  // -----------------
+  ui->actionMapShowRoute->setChecked(true);
   ui->actionInfoApproachShowMissedAppr->setChecked(true);
-  ui->actionInfoApproachShowMissedAppr->blockSignals(false);
+  ui->actionMapShowAircraft->setChecked(true);
+  ui->actionMapShowAircraftTrack->setChecked(true);
+  ui->actionMapShowCompassRose->setChecked(false);
+
+  // -----------------
+  ui->actionMapShowAircraftAi->setChecked(true);
+  ui->actionMapShowAircraftAiBoat->setChecked(false);
+
+  // -----------------
+  ui->actionMapShowGrid->setChecked(true);
+  ui->actionMapShowCities->setChecked(true);
+  ui->actionMapShowHillshading->setChecked(true);
+  ui->actionMapShowMinimumAltitude->setChecked(true);
+
+  // -----------------
+  ui->actionMapShowAirportWeather->setChecked(true);
+  // Weather sources unmodified
+
+  // -----------------
+  ui->actionMapShowSunShading->setChecked(false);
+  // Sun shading data unmodified
 }
 
 void MapWidget::updateThemeUi(int index)
@@ -3028,11 +3456,13 @@ void MapWidget::updateMapObjectsShown()
                   || currentThemeIndex == map::ATLAS));
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
-  setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
-                   (currentThemeIndex == map::OPENSTREETMAP ||
-                    currentThemeIndex == map::CARTODARK ||
-                    currentThemeIndex == map::CARTOLIGHT ||
-                    currentThemeIndex >= map::CUSTOM));
+  // Need to keep track of hillshading separately since Marble has not getter
+  hillshading = ui->actionMapShowHillshading->isChecked() &&
+                (currentThemeIndex == map::OPENSTREETMAP ||
+                 currentThemeIndex == map::CARTODARK ||
+                 currentThemeIndex == map::CARTOLIGHT ||
+                 currentThemeIndex >= map::CUSTOM);
+  setPropertyValue("hillshading", hillshading);
 
   setShowMapFeatures(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
 
@@ -3041,8 +3471,6 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeatures(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
                      ui->actionShowAirspaces->isChecked());
-  setShowMapFeatures(map::AIRSPACE_ONLINE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
-                     ui->actionShowAirspacesOnline->isChecked());
 
   setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
@@ -3057,6 +3485,8 @@ void MapWidget::updateMapObjectsShown()
   // Display types which are not used in structs
   setShowMapFeaturesDisplay(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
   setShowMapFeaturesDisplay(map::MINIMUM_ALTITUDE, ui->actionMapShowMinimumAltitude->isChecked());
+  setShowMapFeaturesDisplay(map::WIND_BARBS, NavApp::getWindReporter()->isWindShown());
+  setShowMapFeaturesDisplay(map::WIND_BARBS_ROUTE, NavApp::getWindReporter()->isRouteWindShown());
 
   // Force addon airport independent of other settings or not
   setShowMapFeatures(map::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());
@@ -3117,10 +3547,42 @@ void MapWidget::addTrafficPattern(const map::MapAirport& airport)
 
 void MapWidget::removeTrafficPatterm(int index)
 {
+  qDebug() << Q_FUNC_INFO;
+
   getScreenIndex()->getTrafficPatterns().removeAt(index);
   mainWindow->updateMarkActionStates();
   update();
   mainWindow->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
+}
+
+void MapWidget::addHold(const map::MapSearchResult& result, const atools::geo::Pos& position)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Order of preference (same as in map context menu): airport, vor, ndb, waypoint, pos
+  HoldDialog dialog(mainWindow, result, position);
+  if(dialog.exec() == QDialog::Accepted)
+  {
+    map::Hold hold;
+    dialog.fillHold(hold);
+
+    getHolds().append(hold);
+
+    mainWindow->updateMarkActionStates();
+
+    update();
+    mainWindow->setStatusMessage(tr("Added hold."));
+  }
+}
+
+void MapWidget::removeHold(int index)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  getScreenIndex()->getHolds().removeAt(index);
+  mainWindow->updateMarkActionStates();
+  update();
+  mainWindow->setStatusMessage(QString(tr("Holding removed from map.")));
 }
 
 void MapWidget::resetSettingsToDefault()
@@ -3203,6 +3665,7 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes
   ring.ranges.append(range);
   getScreenIndex()->getRangeMarks().append(ring);
   qDebug() << "navaid range" << ring.center;
+
   update();
   mainWindow->updateMarkActionStates();
   mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(ident));
@@ -3334,6 +3797,7 @@ void MapWidget::clearRangeRingsAndDistanceMarkers()
   getScreenIndex()->getRangeMarks().clear();
   getScreenIndex()->getDistanceMarks().clear();
   getScreenIndex()->getTrafficPatterns().clear();
+  getScreenIndex()->getHolds().clear();
   currentDistanceMarkerIndex = -1;
 
   update();
@@ -3355,11 +3819,13 @@ void MapWidget::setDetailLevel(int factor)
   updateMapVisibleUi();
   getScreenIndex()->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
   getScreenIndex()->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
+  getScreenIndex()->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
 #ifdef DEBUG_MOVING_AIRPLANE
 void MapWidget::debugMovingPlane(QMouseEvent *event)
 {
+  using atools::fs::sc::SimConnectData;
   static int packetId = 0;
   static Pos lastPos;
   static QPoint lastPoint;
@@ -3370,22 +3836,84 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
     {
       qreal lon, lat;
       geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+      Pos pos(lon, lat);
 
-      float projectionDistance = NavApp::getRouteConst().getProjectionDistance();
+      const Route& route = NavApp::getRouteConst();
+      float projectionDistance = route.getProjectionDistance();
 
-      double alt = 100.f;
+      if(!(projectionDistance < map::INVALID_DISTANCE_VALUE))
+        projectionDistance = route.getDistanceFromStart(pos);
+
+      float alt = 0.f;
       if(projectionDistance < map::INVALID_DISTANCE_VALUE)
-        alt = static_cast<double>(NavApp::getAltitudeLegs().getAltitudeForDistance(
-                                    NavApp::getRoute().getTotalDistance() - projectionDistance));
-      Pos pos(lon, lat, alt);
+        alt = NavApp::getAltitudeLegs().getAltitudeForDistance(route.getTotalDistance() - projectionDistance);
 
-      if(pos.getAltitude() < 100.f)
-        pos.setAltitude(100.f);
+      const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
+      bool ground = false;
+      float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f, totalFuel = 1000.f;
 
-      if(!(pos.getAltitude() < map::INVALID_ALTITUDE_VALUE))
-        pos.setAltitude(100.f);
+      if(route.size() <= 2)
+      {
+        alt = NavApp::getRouteController()->getCruiseAltitudeWidget();
+        tas = perf.getCruiseSpeed();
+        fuelflow = perf.getCruiseFuelFlowLbs();
+      }
+      else
+      {
+        float distanceFromStart = route.getDistanceFromStart(pos);
+        ground = distanceFromStart<0.5f || distanceFromStart> route.getTotalDistance() - 0.5f;
 
-      atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos);
+        if(route.isActiveAlternate() || route.isActiveMissed())
+          ground = false;
+
+        if(!ground)
+        {
+          if(route.isActiveAlternate() || route.isActiveMissed())
+          {
+            tas = perf.getAlternateSpeed();
+            fuelflow = perf.getAlternateFuelFlowLbs();
+            alt = NavApp::getRouteController()->getCruiseAltitudeWidget() / 2.f;
+          }
+          else
+          {
+            float tocDist = route.getTopOfClimbDistance();
+            float todDist = route.getTopOfDescentDistance();
+
+            tas = perf.getCruiseSpeed();
+            fuelflow = perf.getCruiseFuelFlowLbs();
+
+            if(projectionDistance < tocDist)
+            {
+              vertSpeed = perf.getClimbVertSpeed();
+              tas = perf.getClimbSpeed();
+              fuelflow = perf.getClimbFuelFlowLbs();
+            }
+            if(projectionDistance > todDist)
+            {
+              vertSpeed = -perf.getDescentVertSpeed();
+              tas = perf.getDescentSpeed();
+              fuelflow = perf.getDescentFuelFlowLbs();
+            }
+          }
+        }
+        else
+        {
+          tas = 20.f;
+          fuelflow = 20.f;
+          if(distanceFromStart < 0.2f || distanceFromStart > route.getTotalDistance() - 0.2f)
+            fuelflow = 0.f;
+        }
+      }
+
+      if(atools::almostEqual(fuelflow, 0.f) && !ground)
+        fuelflow = 100.f;
+
+      if(!(alt < map::INVALID_ALTITUDE_VALUE))
+        alt = route.getCruisingAltitudeFeet();
+
+      pos.setAltitude(alt);
+      SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow,
+                                                                  totalFuel, 10.f);
       data.setPacketId(packetId++);
 
       emit NavApp::getConnectClient()->dataPacketReceived(data);

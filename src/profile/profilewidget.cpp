@@ -27,9 +27,11 @@
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
 #include "route/routecontroller.h"
+#include "perf/aircraftperfcontroller.h"
 #include "route/routealtitude.h"
 #include "common/aircrafttrack.h"
 #include "common/unit.h"
+#include "common/formatter.h"
 #include "settings/settings.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
@@ -37,6 +39,8 @@
 #include "common/vehicleicons.h"
 #include "util/paintercontextsaver.h"
 #include "common/jumpback.h"
+#include "weather/windreporter.h"
+#include "grib/windquery.h"
 
 #include <QPainter>
 #include <QTimer>
@@ -132,16 +136,14 @@ void ProfileWidget::aircraftTrackPruned()
 
 void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  if(!widgetVisible || databaseLoadStatus || !simulatorData.getUserAircraftConst().getPosition().isValid())
+  if(databaseLoadStatus || !simulatorData.getUserAircraftConst().getPosition().isValid())
     return;
 
   bool updateWidget = false;
-  bool updateLabelWidget = false;
   const Route& route = routeController->getRoute();
 
   if(!NavApp::getRouteConst().isFlightplanEmpty())
   {
-
     if((showAircraft || showAircraftTrack))
     {
       simData = simulatorData;
@@ -153,7 +155,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
       // Update if new or last distance is/was invalid
       updateWidget = (aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) !=
-                     (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE);
+                     (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) && widgetVisible;
 
       if(aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
       {
@@ -182,40 +184,42 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           }
         }
 
-        const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
-
-        using atools::almostNotEqual;
-        // Get point (NM/ft) from last update
-        QPointF lastPoint;
-        if(lastPos.isValid())
-          lastPoint = QPointF(lastAircraftDistanceFromStart, lastPos.getAltitude());
-
-        // Update widget if delta value between last and current update is large enough
-        if(!lastPos.isValid() || // No last position
-           (toScreen(lastPoint) - toScreen(currentPoint)).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
-           almostNotEqual(lastPos.getAltitude(), simPos.getAltitude(),
-                          deltas.altitudeDelta) // Altitude change
-           )
+        if(widgetVisible)
         {
-          // Aircraft position has changed enough
-          updateLabelWidget = true;
+          const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
 
-          movingBackwards = (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) &&
-                            (lastAircraftDistanceFromStart > aircraftDistanceFromStart);
+          using atools::almostNotEqual;
+          // Get point (NM/ft) from last update
+          QPointF lastPoint;
+          if(lastPos.isValid())
+            lastPoint = QPointF(lastAircraftDistanceFromStart, lastPos.getAltitude());
 
-          lastSimData = simData;
-          lastAircraftDistanceFromStart = aircraftDistanceFromStart;
+          // Update widget if delta value between last and current update is large enough
+          if(!lastPos.isValid() || // No last position
+             (toScreen(lastPoint) - toScreen(currentPoint)).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
+             almostNotEqual(lastPos.getAltitude(), simPos.getAltitude(),
+                            deltas.altitudeDelta) // Altitude change
+             )
+          {
+            movingBackwards = (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) &&
+                              (lastAircraftDistanceFromStart > aircraftDistanceFromStart);
 
-          if(simPos.getAltitude() > maxWindowAlt)
-            // Scale up to keep the aircraft visible
-            updateScreenCoords();
+            lastSimData = simData;
+            lastAircraftDistanceFromStart = aircraftDistanceFromStart;
 
-          // Probably center aircraft on scroll area
-          if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && !jumpBack->isActive())
-            scrollArea->centerAircraft(toScreen(currentPoint));
+            if(simPos.getAltitude() > maxWindowAlt)
+              // Scale up to keep the aircraft visible
+              updateScreenCoords();
 
-          updateWidget = true;
-        }
+            // Probably center aircraft on scroll area
+            if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && !jumpBack->isActive())
+              scrollArea->centerAircraft(toScreen(currentPoint),
+                                         simData.getUserAircraftConst().getVerticalSpeedFeetPerMin());
+
+            // Aircraft position has changed enough
+            updateWidget = true;
+          }
+        } // if(widgetVisible)
       } // if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
     } // if((showAircraft || showAircraftTrack))
     else
@@ -227,10 +231,11 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
         updateWidget = true;
     }
   }
+
   if(updateWidget)
     update();
 
-  if(updateLabelWidget)
+  if(widgetVisible)
     updateLabel();
 }
 
@@ -360,7 +365,8 @@ int ProfileWidget::getFlightplanAltY() const
 
 bool ProfileWidget::hasValidRouteForDisplay(const Route& route) const
 {
-  return widgetVisible && !legList.elevationLegs.isEmpty() && route.size() >= 2 && route.getAltitudeLegs().size() >= 2;
+  return widgetVisible && !legList.elevationLegs.isEmpty() && route.getSizeWithoutAlternates() >= 2 &&
+         route.getAltitudeLegs().size() >= 2;
 }
 
 int ProfileWidget::altitudeY(float altitudeFt) const
@@ -463,7 +469,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 
         // Calculate text ==================
         painter.setPen(mapcolors::ilsTextColor);
-        if(OptionData::instance().getFlags2() & opts::MAP_NAVAID_TEXT_BACKGROUND)
+        if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {
           painter.setBackground(Qt::white);
           painter.setBackgroundMode(Qt::OpaqueMode);
@@ -562,7 +568,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
         painter.drawLine(center);
 
         painter.setPen(Qt::black);
-        if(OptionData::instance().getFlags2() & opts::MAP_NAVAID_TEXT_BACKGROUND)
+        if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {
           painter.setBackground(Qt::white);
           painter.setBackgroundMode(Qt::OpaqueMode);
@@ -596,23 +602,31 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   Route route = NavApp::getRoute();
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
 
+  // Keep margin to left, right and top
+  int w = rect().width() - X0 * 2, h = rect().height() - Y0;
+
+  // Nothing to show label =========================
+  SymbolPainter symPainter;
+  QPainter painter(this);
+  if(route.isEmpty())
+  {
+    symPainter.textBox(&painter, {tr("No Flight Plan loaded.")}, QApplication::palette().color(QPalette::Text),
+                       X0 + w / 2, Y0 + h / 2, textatt::BOLD | textatt::CENTER, 0);
+    scrollArea->updateLabelWidget();
+    return;
+  }
+  else if(!hasValidRouteForDisplay(route))
+  {
+    symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QApplication::palette().color(QPalette::Text),
+                       X0 + w / 2, Y0 + h / 2, textatt::BOLD | textatt::CENTER, 0);
+    scrollArea->updateLabelWidget();
+    return;
+  }
+
   if(legList.route.size() != route.size() ||
      atools::almostNotEqual(legList.route.getTotalDistance(), route.getTotalDistance()))
     // Do not draw if route is updated to avoid invalid indexes
     return;
-
-  // Keep margin to left, right and top
-  int w = rect().width() - X0 * 2, h = rect().height() - Y0;
-
-  SymbolPainter symPainter;
-  QPainter painter(this);
-  if(!hasValidRouteForDisplay(route))
-  {
-    // Nothing to show label =========================
-    symPainter.textBox(&painter, {tr("No Flight Plan loaded.")}, QApplication::palette().color(QPalette::Text),
-                       X0 + w / 2, Y0 + h / 2, textatt::BOLD | textatt::CENTER, 0);
-    return;
-  }
 
   if(altitudeLegs.size() != route.size())
   {
@@ -676,8 +690,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Calculate line y positions ======================================================
   bool showTodToc = OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD;
   QVector<QPolygon> altLegs; /* Flight plan waypoint screen coordinates. x = distance and y = altitude */
-  for(const RouteAltitudeLeg& routeAlt : altitudeLegs)
+
+  for(int i = 0; i < altitudeLegs.size(); i++)
   {
+    const RouteAltitudeLeg& routeAlt = altitudeLegs.value(i);
+    if(routeAlt.isMissed() || routeAlt.isAlternate())
+      break;
+
     QPolygonF geo = routeAlt.getGeometry();
     if(!showTodToc)
     {
@@ -690,15 +709,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Collect indexes in reverse (painting) order without missed ================
   QVector<int> indexes;
-  for(int i = 0; i < route.size(); i++)
+  for(int i = 0; i <= route.getDestinationLegIndex(); i++)
   {
-    if(route.at(i).getProcedureLeg().isMissed())
+    if(route.value(i).getProcedureLeg().isMissed() || route.value(i).isAlternate())
       break;
-    else
-      indexes.prepend(i);
+    indexes.prepend(i);
   }
 
-  // Make default font 20 percent smaller and set to bold =======================================
+  // Set default font to bold =======================================
   QFont defaultFont = painter.font();
   defaultFont.setBold(true);
   painter.setFont(defaultFont);
@@ -714,10 +732,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     for(int routeIndex : indexes)
     {
-      if(route.at(routeIndex).isAnyProcedure() && route.at(routeIndex).getRunwayEnd().isValid())
+      if(route.value(routeIndex).isAnyProcedure() && route.value(routeIndex).getRunwayEnd().isValid())
         continue;
 
-      const proc::MapAltRestriction& restriction = altitudeLegs.at(routeIndex).getRestriction();
+      const proc::MapAltRestriction& restriction = altitudeLegs.value(routeIndex).getRestriction();
 
       if(restriction.isValid() && restriction.descriptor != proc::MapAltRestriction::ILS_AT &&
          restriction.descriptor != proc::MapAltRestriction::ILS_AT_OR_ABOVE)
@@ -782,7 +800,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
   }
 
-  // Draw ILS or VASI guidane ============================
+  // Draw ILS or VASI guidance ============================
   if(NavApp::getMainUi()->actionProfileShowIls->isChecked())
     paintIls(painter, route);
 
@@ -794,11 +812,20 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   const OptionData& optData = OptionData::instance();
 
-  // Get active route leg
+  // Get active route leg but ignore alternate legs
   bool activeValid = route.isActiveValid();
+
   // Active normally start at 1 - this will consider all legs as not passed
-  int activeRouteLeg = activeValid ? route.getActiveLegIndex() : 0;
-  int passedRouteLeg = optData.getFlags2() & opts::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
+  int activeRouteLeg = activeValid ? std::min(route.getActiveLegIndex(), waypointX.size() - 1) : 0;
+  int passedRouteLeg = optData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
+
+  if(route.isActiveAlternate())
+  {
+    // Disable active leg and show all legs as passed if an alternate is enabled
+    activeRouteLeg = 0;
+    passedRouteLeg = optData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ?
+                     std::min(passedRouteLeg + 1, waypointX.size()) : 0;
+  }
 
   if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
   {
@@ -809,8 +836,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                         Qt::RoundJoin));
     for(int i = passedRouteLeg; i < waypointX.size(); i++)
     {
-      if(i > 0 && !route.at(i).getProcedureLeg().isCircleToLand() &&
-         !route.at(i).getProcedureLeg().isStraightIn() /*&& !route.at(i).getProcedureLeg().isVectors()*/)
+      const proc::MapProcedureLeg& leg = route.value(i).getProcedureLeg();
+      if(i > 0 && !leg.isCircleToLand() && !leg.isStraightIn() && !leg.isVectors() && !leg.isManual())
         painter.drawPolyline(altLegs.at(i));
     }
 
@@ -839,12 +866,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     {
       for(int i = passedRouteLeg + 1; i < waypointX.size(); i++)
       {
-        painter.setPen(altitudeLegs.at(i).isAnyProcedure() ? procedurePen : flightplanPen);
-
-        if(route.at(i).getProcedureLeg().isCircleToLand() || route.at(i).getProcedureLeg().isStraightIn())
+        painter.setPen(altitudeLegs.value(i).isAnyProcedure() ? procedurePen : flightplanPen);
+        const proc::MapProcedureLeg& leg = route.value(i).getProcedureLeg();
+        if(leg.isCircleToLand() || leg.isStraightIn())
           mapcolors::adjustPenForCircleToLand(&painter);
-        // else if(route.at(i).getProcedureLeg().isVectors())
-        // mapcolors::adjustPenForVectors(&painter);
+        else if(leg.isVectors())
+          mapcolors::adjustPenForVectors(&painter);
+        else if(leg.isManual())
+          mapcolors::adjustPenForManual(&painter);
 
         painter.drawPolyline(altLegs.at(i));
       }
@@ -858,11 +887,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.setPen(QPen(optData.getFlightplanActiveSegmentColor(), flightplanWidth,
                           Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-      if(route.at(activeRouteLeg).getProcedureLeg().isCircleToLand() ||
-         route.at(activeRouteLeg).getProcedureLeg().isStraightIn())
+      const proc::MapProcedureLeg& actProcLeg = route.value(activeRouteLeg).getProcedureLeg();
+      if(actProcLeg.isCircleToLand() || actProcLeg.isStraightIn())
         mapcolors::adjustPenForCircleToLand(&painter);
-      // else if(route.at(activeRouteLeg).getProcedureLeg().isVectors())
-      // mapcolors::adjustPenForVectors(&painter);
+      else if(actProcLeg.isVectors())
+        mapcolors::adjustPenForVectors(&painter);
+      else if(actProcLeg.isManual())
+        mapcolors::adjustPenForManual(&painter);
 
       painter.drawPolyline(altLegs.at(activeRouteLeg));
     }
@@ -885,7 +916,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
-      const RouteLeg& leg = route.at(routeIndex);
+      const RouteLeg& leg = route.value(routeIndex);
+
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
@@ -924,6 +956,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         else if(type == map::INVALID)
           symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
                              symPt.x() - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+        else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
+          // Custom approach
+          symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().fixIdent, 6)},
+                             mapcolors::routeUserPointColor,
+                             symPt.x() - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
       }
     }
 
@@ -931,7 +968,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
-      const RouteLeg& leg = route.at(routeIndex);
+      const RouteLeg& leg = route.value(routeIndex);
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
@@ -968,14 +1005,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
-      const RouteLeg& leg = route.at(routeIndex);
+      const RouteLeg& leg = route.value(routeIndex);
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
       QPoint symPt(altLegs.at(waypointIndex).last());
 
       // Draw all airport except destination and departure
-      if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.size() - 1)
+      if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.getDestinationAirportLegIndex())
       {
         symPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, false, false);
 
@@ -991,7 +1028,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(!route.isEmpty())
     {
       // Draw departure always on the left also if there are departure procedures
-      const RouteLeg& departureLeg = route.first();
+      const RouteLeg& departureLeg = route.getDepartureAirportLeg();
       if(departureLeg.getMapObjectType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().width(departureLeg.getIdent());
@@ -1001,7 +1038,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       }
 
       // Draw destination always on the right also if there are approach procedures
-      const RouteLeg& destinationLeg = route.last();
+      const RouteLeg& destinationLeg = route.getDestinationAirportLeg();
       if(destinationLeg.getMapObjectType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().width(destinationLeg.getIdent());
@@ -1027,7 +1064,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
         int activeLegIndex = route.getActiveLegIndex();
 
-        if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+        if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
            activeLegIndex == map::INVALID_INDEX_VALUE || route.getTopOfClimbLegIndex() > activeLegIndex - 1)
         {
           if(tocDist > 0.2f)
@@ -1049,7 +1086,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           }
         }
 
-        if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+        if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
            activeLegIndex == map::INVALID_INDEX_VALUE || route.getTopOfDescentLegIndex() > activeLegIndex - 1)
         {
           if(todDist < route.getTotalDistance() - 0.2f)
@@ -1075,7 +1112,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     // Departure altitude label =========================================================
     QColor labelColor = mapcolors::profileLabelColor;
-    float departureAlt = legList.route.first().getPosition().getAltitude();
+    float departureAlt = legList.route.getDepartureAirportLeg().getPosition().getAltitude();
     int departureAltTextY = Y0 + atools::roundToInt(h - departureAlt * verticalScale);
     departureAltTextY = std::min(departureAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
     QString startAltStr = Unit::altFeet(departureAlt);
@@ -1083,7 +1120,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                        textatt::BOLD | textatt::RIGHT, 255);
 
     // Destination altitude label =========================================================
-    float destAlt = route.last().getPosition().getAltitude();
+    float destAlt = route.getDestinationAirportLeg().getPosition().getAltitude();
     int destinationAltTextY = Y0 + static_cast<int>(h - destAlt * verticalScale);
     destinationAltTextY = std::min(destinationAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
     QString destAltStr = Unit::altFeet(destAlt);
@@ -1147,9 +1184,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     att |= textatt::ROUTE_BG_COLOR;
 
-    if(texty + rect.bottom() > Y0 + h)
-      // Move text down when approaching top boundary
-      texty -= rect.bottom() + 20.f;
+    if(acy - rect.height() > scrollArea->getOffset().y() + Y0)
+      texty -= rect.bottom() + 20.f; // Text at top
 
     symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
   }
@@ -1175,7 +1211,7 @@ void ProfileWidget::elevationUpdateAvailable()
 
 void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
 {
-  Q_UNUSED(altitudeFeet);
+  Q_UNUSED(altitudeFeet)
 
   if(!widgetVisible || databaseLoadStatus)
     return;
@@ -1327,18 +1363,22 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
   legs.maxElevationFt = 0.f;
   legs.elevationLegs.clear();
 
+  if(legs.route.getSizeWithoutAlternates() <= 1)
+    // Return empty result
+    return ElevationLegList();
+
   // Loop over all route legs
-  for(int i = 1; i < legs.route.size(); i++)
+  for(int i = 1; i <= legs.route.getDestinationLegIndex(); i++)
   {
     if(terminateThreadSignal)
       // Return empty result
       return ElevationLegList();
 
-    const RouteLeg& routeLeg = legs.route.at(i);
-    if(routeLeg.getProcedureLeg().isMissed())
+    const RouteLeg& routeLeg = legs.route.value(i);
+    if(routeLeg.getProcedureLeg().isMissed() || routeLeg.isAlternate())
       break;
 
-    const RouteLeg& lastLeg = legs.route.at(i - 1);
+    const RouteLeg& lastLeg = legs.route.value(i - 1);
     ElevationLeg leg;
 
     // Skip for too long segments when using the marble online provider
@@ -1517,8 +1557,8 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   calculateDistancesAndPos(x, pos, index, distance, distanceToGo, groundElevation, maxElev);
 
   // Get from/to text
-  QString from = atools::elideTextShort(legList.route.at(index).getIdent(), 20);
-  QString to = atools::elideTextShort(legList.route.at(index + 1).getIdent(), 20);
+  QString from = atools::elideTextShort(legList.route.value(index).getIdent(), 20);
+  QString to = atools::elideTextShort(legList.route.value(index + 1).getIdent(), 20);
 
   float altitude = NavApp::getRoute().getAltitudeForDistance(distanceToGo);
   float aboveGround = map::INVALID_ALTITUDE_VALUE;
@@ -1538,8 +1578,60 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
     (maxElev < map::INVALID_ALTITUDE_VALUE ?
      tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev) : QString());
 
+  // Show wind at altitude===============================================
+  const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.value(index + 1) : nullptr;
+  WindReporter *windReporter = NavApp::getWindReporter();
+  if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
+  {
+    atools::grib::Wind wind = windReporter->getWindForPosRoute(pos.alt(altitude));
+    if(wind.isValid() && !wind.isNull())
+    {
+      float headWind = 0.f, crossWind = 0.f;
+      atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseToTrue());
+
+      float magVar = NavApp::getMagVar(pos);
+
+      variableLabelText.append(tr(", %1Wind %2°M, %3").
+                               arg(windReporter->isWindManual() ? tr("Manual ") : QString()).
+                               arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
+                               arg(Unit::speedKts(wind.speed)));
+
+      if(std::abs(headWind) >= 1.f)
+      {
+        QString windPtr;
+        if(headWind >= 1.f)
+          windPtr = tr("◄");
+        else if(headWind <= -1.f)
+          windPtr = tr("►");
+        variableLabelText.append(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
+      }
+    }
+  }
+
 #ifdef DEBUG_INFORMATION
-  variableLabelText.append(QString(" [%1]").arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)));
+  float fuelLbs = 0.f, fuelGal = 0.f, fuelLbsTod = 0.f, fuelGalTod = 0.f, timeToDest = 0.f, timeToTod = 0.f;
+  NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(fuelLbs, fuelGal,
+                                                              fuelLbsTod, fuelGalTod,
+                                                              timeToDest, timeToTod,
+                                                              distanceToGo,
+                                                              index + 1);
+
+  variableLabelText.append(QString("<br/><code>[alt %1,idx %2, crs %3, "
+                                     "fuel dest %4/%5, fuel TOD %6/%7, "
+                                     "time dest %8 (%9), time TOD %10 (%11)]</code>").
+                           arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)).
+                           arg(index).
+                           arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-").
+                           arg(fuelLbs, 0, 'f', 2).
+                           arg(fuelGal, 0, 'f', 2).
+                           arg(fuelLbsTod < map::INVALID_WEIGHT_VALUE ? fuelLbsTod : -1., 0, 'f', 2).
+                           arg(fuelGalTod < map::INVALID_VOLUME_VALUE ? fuelGalTod : -1., 0, 'f', 2).
+                           arg(timeToDest, 0, 'f', 2).
+                           arg(formatter::formatMinutesHours(timeToDest)).
+                           arg(timeToTod < map::INVALID_TIME_VALUE ? timeToTod : -1., 0, 'f', 2).
+                           arg(timeToTod < map::INVALID_TIME_VALUE ?
+                               formatter::formatMinutesHours(timeToTod) : "-1")
+                           );
 #endif
 
   // Allow event to propagate to scroll widget
@@ -1614,6 +1706,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addAction(ui->actionProfileShowZoom);
   menu.addAction(ui->actionProfileShowLabels);
   menu.addAction(ui->actionProfileShowScrollbars);
+
   QAction *action = menu.exec(menuPos);
 
   if(action == ui->actionProfileShowOnMap)
@@ -1641,26 +1734,32 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
 
 void ProfileWidget::updateLabel()
 {
-  float distFromStartNm = 0.f, distToDestNm = 0.f;
+  float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f;
 
   if(simData.getUserAircraftConst().getPosition().isValid())
   {
-    if(routeController->getRoute().getRouteDistances(&distFromStartNm, &distToDestNm))
+    if(routeController->getRoute().getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance))
     {
       if(routeController->getRoute().isActiveMissed())
         distToDestNm = 0.f;
 
-      if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
-         routeController->getRoute().getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
-      {
-        float toTod = routeController->getRoute().getTopOfDescentDistance() - distFromStartNm;
-
-        fixedLabelText = tr("<b>To Destination: %1, to Top of Descent: %2.</b>&nbsp;&nbsp;").
-                         arg(Unit::distNm(distToDestNm)).
-                         arg(toTod > 0 ? Unit::distNm(toTod) : tr("Passed"));
-      }
+      if(routeController->getRoute().isActiveAlternate())
+        // Use distance to alternate instead of destination
+        fixedLabelText = tr("<b>To Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
       else
-        fixedLabelText = tr("<b>To Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
+      {
+        if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
+           routeController->getRoute().getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
+        {
+          float toTod = routeController->getRoute().getTopOfDescentDistance() - distFromStartNm;
+
+          fixedLabelText = tr("<b>To Destination: %1, to Top of Descent: %2.</b>&nbsp;&nbsp;").
+                           arg(Unit::distNm(distToDestNm)).
+                           arg(toTod > 0.f ? Unit::distNm(toTod) : tr("Passed"));
+        }
+        else
+          fixedLabelText = tr("<b>To Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
+      }
     }
   }
   else
@@ -1811,7 +1910,7 @@ void ProfileWidget::jumpBackToAircraftCancel()
 void ProfileWidget::jumpBackToAircraftTimeout()
 {
   if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && NavApp::isConnectedAndAircraft() &&
-     OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE &&
+     OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE &&
      aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
   {
     if(QApplication::mouseButtons() & Qt::LeftButton || contextMenuActive)
@@ -1820,8 +1919,9 @@ void ProfileWidget::jumpBackToAircraftTimeout()
     else
     {
       jumpBack->cancel();
-      bool centered = scrollArea->centerAircraft(toScreen(QPointF(aircraftDistanceFromStart,
-                                                                  simData.getUserAircraft().getPosition().getAltitude())));
+
+      QPoint pt = toScreen(QPointF(aircraftDistanceFromStart, simData.getUserAircraft().getPosition().getAltitude()));
+      bool centered = scrollArea->centerAircraft(pt, simData.getUserAircraft().getVerticalSpeedFeetPerMin());
 
       if(centered)
         NavApp::setStatusMessage(tr("Jumped back to aircraft."));

@@ -68,6 +68,11 @@ bool MapLayer::hasSameQueryParametersWaypoint(const MapLayer *other) const
   return layerWaypoint == other->layerWaypoint;
 }
 
+bool MapLayer::hasSameQueryParametersWind(const MapLayer *other) const
+{
+  return layerWindBarbs == other->layerWindBarbs;
+}
+
 bool MapLayer::hasSameQueryParametersMarker(const MapLayer *other) const
 {
   return layerMarker == other->layerMarker;
@@ -440,6 +445,18 @@ MapLayer& MapLayer::airportMaxTextLength(int size)
 MapLayer& MapLayer::airportWeather(bool value)
 {
   layerAirportWeather = value;
+  return *this;
+}
+
+MapLayer& MapLayer::windBarbs(bool value)
+{
+  layerWindBarbs = value;
+  return *this;
+}
+
+MapLayer& MapLayer::windBarbsSymbolSize(int size)
+{
+  layerWindBarbsSymbolSize = size;
   return *this;
 }
 

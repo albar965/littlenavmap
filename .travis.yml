@@ -1,7 +1,7 @@
 language: cpp
 os: linux
 compiler: gcc
-dist: trusty
+dist: xenial
 
 addons:
   apt:
@@ -14,45 +14,105 @@ addons:
 
 before_install:
     # Add repository for Qt
-    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.10.1-trusty
+    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.12.2-xenial
     - sudo apt-get -qq update
-    
+
+    # Decrypt auth token for deployment
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || openssl aes-256-cbc -K $encrypted_98e6e310ff7a_key -iv $encrypted_98e6e310ff7a_iv -in deployment/.dropbox_uploader.enc -out ~/.dropbox_uploader -d'
+
 install:
     # Install needed Qt modules
-    - sudo apt-get --yes install qt510base qt510svg qt510script qt510declarative
-    
+    - sudo apt-get --yes install libgl1-mesa-dev qt512base qt512svg qt512script qt512declarative
+
     # Set Qt variables
-    - QTDIR="/opt/qt510"
+    - QTDIR="/opt/qt512"
     - PATH="$QTDIR/bin:$PATH"
-    - source /opt/qt510/bin/qt510-env.sh
-    
+    - source /opt/qt512/bin/qt512-env.sh
+
     # Set used gcc version
     - sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
     - sudo ln -s /usr/bin/g++-7 /usr/local/bin/g++
     - export CC=gcc-7
     - export CXX=g++-7
-    
-    # Build & install custom marble
+
+    # Set environment variables for marble
+    - export MARBLE_BASE=/home/travis/Programs/Marble
+    - export MARBLE_INC_PATH=$MARBLE_BASE/include
+    - export MARBLE_LIB_PATH=$MARBLE_BASE/lib
+
+    # Get marble source files, which are needed for the install process
     - git clone --branch=lnm/1.1 https://github.com/albar965/marble.git ../marble
-    - mkdir ../build-marble-release
+
+    # Build custom marble if auth token for dropbox is not available
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || mkdir ../build-marble-release'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || cd ../build-marble-release'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC_BUILD=TRUE -DQTONLY=TRUE -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_INHIBIT_SCREENSAVER_PLUGIN=NO -DBUILD_MARBLE_APPS=NO -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_MARBLE_TESTS=NO -DBUILD_MARBLE_TOOLS=NO -DBUILD_TESTING=NO -DBUILD_WITH_DBUS=NO -DMARBLE_EMPTY_MAPTHEME=YES -DMOBILE=NO -DWITH_DESIGNER_PLUGIN=NO -DWITH_Phonon=NO -DWITH_Qt5Location=NO -DWITH_Qt5Positioning=NO -DWITH_Qt5SerialPort=NO -DWITH_ZLIB=NO -DWITH_libgps=NO -DWITH_libshp=NO -DWITH_libwlocate=NO -DCMAKE_INSTALL_PREFIX=$MARBLE_BASE -DEXEC_INSTALL_PREFIX=$MARBLE_BASE -DCMAKE_PREFIX_PATH=$QTDIR/ ../marble/'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || make -j2'
+
+    # Get marble if auth token for dropbox is available
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/marble-release.tar.gz ../marble-release.tar.gz'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../marble-release.tar.gz -C ../'
+
+    # Install marble
     - cd ../build-marble-release
-    - cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC_BUILD=TRUE -DQTONLY=TRUE -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_INHIBIT_SCREENSAVER_PLUGIN=NO -DBUILD_MARBLE_APPS=NO -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_MARBLE_TESTS=NO -DBUILD_MARBLE_TOOLS=NO -DBUILD_TESTING=NO -DBUILD_WITH_DBUS=NO -DMARBLE_EMPTY_MAPTHEME=YES -DMOBILE=NO -DWITH_DESIGNER_PLUGIN=NO -DWITH_Phonon=NO -DWITH_Qt5Location=NO -DWITH_Qt5Positioning=NO -DWITH_Qt5SerialPort=NO -DWITH_ZLIB=NO -DWITH_libgps=NO -DWITH_libshp=NO -DWITH_libwlocate=NO -DCMAKE_INSTALL_PREFIX=/home/alex/Programme/Marble-release -DEXEC_INSTALL_PREFIX=/home/alex/Programme/Marble-release -DCMAKE_PREFIX_PATH=$QTDIR/ ../marble/
-    - make -j2
+    - sudo make install/fast
+
+    # Install patchelf (needed for 'make deploy')
+    - cd ../
+    - wget http://nixos.org/releases/patchelf/patchelf-0.10/patchelf-0.10.tar.bz2
+    - tar xf patchelf-0.10.tar.bz2
+    - cd patchelf-0.10/
+    - ./configure --prefix="$HOME/.local"
     - sudo make install
-    
-before_script:    
-    # Clone atools
+
+before_script:
+    # Clone atools VERSION_NUMBER - atools
     - git clone --branch=master https://github.com/albar965/atools.git ../atools
-    
+
+    # Clone littenavconnect (for deployment) VERSION_NUMBER - littenavconnect
+    - git clone --branch=master https://github.com/albar965/littlenavconnect.git ../littlenavconnect
+
+    # Clone littexpconnect (for deployment) VERSION_NUMBER - littexpconnect
+    - git clone --branch=master https://github.com/albar965/littlexpconnect.git ../littlexpconnect
+
+    # Get X-Plane SDK (for deployment)
+    - wget -P '../' "http://developer.x-plane.com/wp-content/plugins/code-sample-generation/sample_templates/XPSDK301.zip"
+    - unzip ../XPSDK301.zip -d '../XPSDK'
+    - mv '../XPSDK/SDK' '../X-Plane SDK'
+
+    # Get atools if auth token for dropbox is available
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/atools-release.tar.gz ../atools-release.tar.gz'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../atools-release.tar.gz -C ../'
+
+    # Get littlenavconnect and littlexpconnect for deployment
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/littlenavconnect-release.tar.gz ../littlenavconnect-release.tar.gz'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../littlenavconnect-release.tar.gz -C ../'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/littlexpconnect-release.tar.gz ../littlexpconnect-release.tar.gz'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../littlexpconnect-release.tar.gz -C ../'
+
 script:
-    # Build atools
-    - mkdir ../build-atools-release
-    - cd ../build-atools-release
-    - qmake ../atools/atools.pro CONFIG+=release
-    - make
-    
+    # Build atools if auth token for dropbox is not available
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || mkdir ../build-atools-release'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || cd ../build-atools-release'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || qmake ../atools/atools.pro CONFIG+=release'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || make -j2'
+
     # Build littlenavmap
     - mkdir ../build-littlenavmap-release
     - cd ../build-littlenavmap-release
     - qmake ../littlenavmap/littlenavmap.pro CONFIG+=release
-    - make
+    - make -j2
+
+after_success:
+    # Call 'make deploy' for all necessary projects
+    - '[ -f ~/.dropbox_uploader ] && mkdir ../deploy'
+    - '[ -f ~/.dropbox_uploader ] && make deploy'
+    - '[ -f ~/.dropbox_uploader ] && cd ../build-littlenavconnect-release'
+    - '[ -f ~/.dropbox_uploader ] && make deploy'
+    - '[ -f ~/.dropbox_uploader ] && cd ../build-littlexpconnect-release'
+    - '[ -f ~/.dropbox_uploader ] && make deploy'
+
+    # Deploy artefacts to dropbox
+    - '[ -f ~/.dropbox_uploader ] && tar -cvzf ../littlenavmap-release-${TRAVIS_COMMIT}.tar.gz ../deploy/'
+    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh mkdir linux'
+    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh upload ../littlenavmap-release-${TRAVIS_COMMIT}.tar.gz linux'

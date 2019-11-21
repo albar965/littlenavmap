@@ -72,6 +72,8 @@ ImageExportDialog::ImageExportDialog(QWidget *parent, const QString& titleParam,
 
 ImageExportDialog::~ImageExportDialog()
 {
+  atools::gui::WidgetState(optionPrefix).save(this);
+
   delete ui;
 }
 
@@ -92,6 +94,11 @@ QSize ImageExportDialog::getSize() const
 bool ImageExportDialog::isCurrentView() const
 {
   return ui->comboBoxResolution->currentIndex() == CURRENT_MAP_VIEW;
+}
+
+bool ImageExportDialog::isAvoidBlurredMap() const
+{
+  return ui->checkBoxAvoidBlurred->isChecked();
 }
 
 void ImageExportDialog::buttonBoxClicked(QAbstractButton *button)
@@ -115,9 +122,9 @@ void ImageExportDialog::saveState()
     this,
     ui->comboBoxResolution,
     ui->spinBoxWidth,
-    ui->spinBoxHeight
+    ui->spinBoxHeight,
+    ui->checkBoxAvoidBlurred
   });
-
 }
 
 void ImageExportDialog::restoreState()
@@ -127,7 +134,8 @@ void ImageExportDialog::restoreState()
     this,
     ui->comboBoxResolution,
     ui->spinBoxWidth,
-    ui->spinBoxHeight
+    ui->spinBoxHeight,
+    ui->checkBoxAvoidBlurred
   });
   currentResolutionIndexChanged();
 }

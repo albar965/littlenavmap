@@ -35,11 +35,16 @@ class RangeRingValidator;
 class QTreeWidgetItem;
 class QSpinBox;
 class UnitStringTool;
+class QListWidgetItem;
+class QListWidget;
 
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
  * OptionData will be populated by the OptionsDialog which loads widget data from the settings
- * and transfers this data into the OptionData class. */
+ * and transfers this data into the OptionData class.
+ *
+ * Dialog is kept alive during the whole program lifespan.
+ */
 class OptionsDialog :
   public QDialog
 {
@@ -56,34 +61,49 @@ public:
   void restoreState();
 
   /* Show the dialog */
-  virtual int exec() override;
+  virtual void open() override;
 
   static bool isOverrideLanguage();
   static bool isOverrideLocale();
+
+  QString selectCacheUserAirspace();
 
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();
 
 private:
+  /* Catch close button too since dialog is kept alive */
+  virtual void reject() override;
+
+  void updateWidgetStates();
+
   void buttonBoxClicked(QAbstractButton *button);
   void widgetsToOptionData();
-  void optionDataToWidgets();
+  void optionDataToWidgets(const OptionData& data);
 
   void toFlags(QCheckBox *checkBox, opts::Flags flag);
   void toFlags(QRadioButton *radioButton, opts::Flags flag);
-  void fromFlags(QCheckBox *checkBox, opts::Flags flag);
-  void fromFlags(QRadioButton *radioButton, opts::Flags flag);
-  void toFlags2(QCheckBox *checkBox, opts::Flags2 flag);
-  void toFlags2(QRadioButton *radioButton, opts::Flags2 flag);
-  void fromFlags2(QCheckBox *checkBox, opts::Flags2 flag);
-  void fromFlags2(QRadioButton *radioButton, opts::Flags2 flag);
+  void fromFlags(const OptionData& data, QCheckBox *checkBox, opts::Flags flag);
+  void fromFlags(const OptionData& data, QRadioButton *radioButton, opts::Flags flag);
+
+  void toFlags2(QCheckBox *checkBox, opts2::Flags2 flag);
+  void toFlags2(QRadioButton *radioButton, opts2::Flags2 flag);
+  void fromFlags2(const OptionData& data, QCheckBox *checkBox, opts2::Flags2 flag);
+  void fromFlags2(const OptionData& data, QRadioButton *radioButton, opts2::Flags2 flag);
+
+  void toFlagsWeather(QCheckBox *checkBox, optsw::FlagsWeather flag);
+  void fromFlagsWeather(const OptionData& data, QCheckBox *checkBox, optsw::FlagsWeather flag);
 
   void selectActiveSkyPathClicked();
+  void selectXplanePathClicked();
+  void weatherXplaneWindPathSelectClicked();
   void clearMemCachedClicked();
   void clearDiskCachedClicked();
   void updateWeatherButtonState();
   void updateActiveSkyPathStatus();
+  void updateXplanePathStatus();
+  void updateXplaneWindStatus();
 
   void addDatabaseExcludeDirClicked();
   void addDatabaseExcludeFileClicked();
@@ -99,6 +119,7 @@ private:
   void testWeatherNoaaUrlClicked();
   void testWeatherVatsimUrlClicked();
   void testWeatherIvaoUrlClicked();
+  void testWeatherNoaaWindUrlClicked();
   void testWeatherUrl(const QString& url);
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);
@@ -108,6 +129,7 @@ private:
   void flightplanProcedureColorClicked();
   void trailColorClicked();
   void onlineDisplayRangeClicked();
+  void eastWestRuleClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
   QTreeWidgetItem *addTopItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip);
@@ -131,7 +153,9 @@ private:
 
   void updateButtonColors();
   void updateCacheElevationStates();
+  void updateCacheUserAirspaceStates();
   void offlineDataSelectClicked();
+  void userAirspacePathSelectClicked();
   void checkUpdateClicked();
   void mapEmptyAirportsClicked(bool state);
   void updateOnlineWidgetStatus();
@@ -140,8 +164,27 @@ private:
   void onlineTestUrl(const QString& url, bool statusFile);
   int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);
   void displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value);
+  void updateNavOptions();
 
   QVector<int> ringStrToVector(const QString& string) const;
+
+  QListWidgetItem *pageListItem(QListWidget *parent, const QString& text, const QString& tooltip = QString(),
+                                const QString& iconPath = QString());
+  void changePage(QListWidgetItem *current, QListWidgetItem *previous);
+
+  /* Update label for docroot path */
+  void updateWebDocrootStatus();
+  void selectWebDocrootClicked();
+
+  /* Show listening address(es)*/
+  void updateWebServerStatus();
+  void startStopWebServerClicked();
+
+  /* copy values from widgets to server for instant check of parameters */
+  void updateWebOptionsFromGui();
+
+  /* Update web server with saved parameters */
+  void updateWebOptionsFromData();
 
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
@@ -153,11 +196,12 @@ private:
   RangeRingValidator *rangeRingValidator;
 
   // Maps options flags to items in the tree widget
-  QHash<opts::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
-  QHash<opts::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
+  QHash<optsd::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
+  QHash<optsd::DisplayOptionsNavAid, QTreeWidgetItem *> displayOptItemIndexNavAid;
+  QHash<optsd::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
+  QHash<optsd::DisplayOptionsRoute, QTreeWidgetItem *> displayOptItemIndexRoute;
 
   UnitStringTool *units = nullptr;
-
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

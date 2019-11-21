@@ -41,7 +41,6 @@ class GeoPainter;
 class SymbolPainter;
 class MapLayer;
 class MapQuery;
-class AirspaceQuery;
 class AirportQuery;
 class MapScale;
 class MapWidget;
@@ -49,6 +48,7 @@ class MapPaintWidget;
 
 namespace map {
 struct MapAirport;
+struct MapObjectRef;
 
 }
 
@@ -76,11 +76,16 @@ struct PaintContext
               userPointTypesAll; /* All available tyes */
   bool userPointTypeUnknown; /* Show unknown types */
 
-  opts::DisplayOptions dispOpts;
-  opts::DisplayOptionsRose dispOptsRose;
+  // All waypoints from the route and add them to the map to avoid duplicate drawing
+  QSet<map::MapObjectRef> routeIdMap;
+
+  optsd::DisplayOptions dispOpts;
+  optsd::DisplayOptionsRose dispOptsRose;
+  optsd::DisplayOptionsRoute dispOptsRoute;
   opts::Flags flags;
-  opts::Flags2 flags2;
+  opts2::Flags2 flags2;
   map::MapWeatherSource weatherSource;
+  bool visibleWidget;
 
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
@@ -89,6 +94,8 @@ struct PaintContext
   float textSizeCompassRose = 1.f;
   float textSizeRangeDistance = 1.f;
   float symbolSizeAirport = 1.f;
+  float symbolSizeAirportWeather = 1.f;
+  float symbolSizeWindBarbs = 1.f;
   float symbolSizeAircraftAi = 1.f;
   float textSizeFlightplan = 1.f;
   float textSizeAircraftUser = 1.f;
@@ -97,9 +104,11 @@ struct PaintContext
   float thicknessTrail = 1.f;
   float thicknessRangeDistance = 1.f;
   float thicknessCompassRose = 1.f;
+  float textSizeMora = 1.f;
+  float transparencyMora = 1.f;
 
   // Needs to be larger than number of highest level airports
-  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 4000;
+  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 8000;
   int objectCount = 0;
 
   /* Increase drawn object count and return true if exceeded */
@@ -114,14 +123,19 @@ struct PaintContext
     return objectCount > MAX_OBJECT_COUNT;
   }
 
-  bool  dOpt(const opts::DisplayOptions& opts) const
+  bool  dOpt(const optsd::DisplayOptions& opts) const
   {
     return dispOpts & opts;
   }
 
-  bool  dOptRose(const opts::DisplayOptionsRose& opts) const
+  bool  dOptRose(const optsd::DisplayOptionsRose& opts) const
   {
     return dispOptsRose & opts;
+  }
+
+  bool  dOptRoute(const optsd::DisplayOptionsRoute& opts) const
+  {
+    return dispOptsRoute & opts;
   }
 
   /* Calculate real symbol size */
@@ -158,6 +172,10 @@ struct PaintContext
   /* Calculate and set font based on scale */
   void szFont(float scale) const;
 
+  /* Calculate label text flags for route waypoints */
+  textflags::TextFlags airportTextFlags() const;
+  textflags::TextFlags airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const;
+
 };
 
 struct PaintAirportType
@@ -186,9 +204,17 @@ protected:
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,
                    float radiusNm, bool fast, int& xtext, int& ytext);
 
+  /* Drawing functions for simple geometry */
   void drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring);
   void drawLineString(const PaintContext *context, const atools::geo::LineString& linestring);
   void drawLine(const PaintContext *context, const atools::geo::Line& line);
+  void drawCircle(const PaintContext *context, const atools::geo::Pos& center, int radius);
+
+  /* Draw simple text with current settings. Corners are the text corners pointing to the position */
+  void drawText(const PaintContext *context, const atools::geo::Pos& pos, const QString& text, bool topCorner,
+                bool leftCorner);
+
+  void drawCross(const PaintContext *context, int x, int y, int size);
 
   /* No GC and no rhumb */
   void drawLineStraight(const PaintContext *context, const atools::geo::Line& line);
@@ -215,19 +241,25 @@ protected:
 
   void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, float minutes, bool left,
                          const QString& text, const QString& text2,
-                         const QColor& textColor, const QColor& textColorBackground);
+                         const QColor& textColor, const QColor& textColorBackground,
+                         QVector<float> inboundArrows = QVector<float>(),
+                         QVector<float> outboundArrows = QVector<float>());
 
   void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
                                   QLineF *extensionLine, const QString& text, const QColor& textColor,
                                   const QColor& textColorBackground);
 
-  /* Arrow pointing upwards */
-  QPolygonF buildArrow(float size);
+  /* Arrow pointing upwards or downwards */
+  QPolygonF buildArrow(float size, bool downwards = false);
 
-  /* Draw arrow at line postion. pos = 0 is beginning and pos = 1 is end of line */
+  /* Draw arrow at line position. pos = 0 is beginning and pos = 1 is end of line */
   void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);
+  void paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos = 0.5f);
 
   static bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
+
+  /* Interface method to QPixmapCache*/
+  void getPixmap(QPixmap& pixmap, const QString& resource, int size);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;
@@ -237,7 +269,6 @@ protected:
   SymbolPainter *symbolPainter;
   MapPaintWidget *mapPaintWidget;
   MapQuery *mapQuery;
-  AirspaceQuery *airspaceQuery, *airspaceQueryOnline;
   AirportQuery *airportQuery;
   MapScale *scale;
 

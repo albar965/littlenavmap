@@ -163,7 +163,7 @@ void ElevationProvider::updateReader()
     {
       NavApp::deleteSplashScreen();
       atools::gui::Dialog::warning(NavApp::getQMainWidget(),
-                                   tr("GLOBE elevation data directory is not valid:<br/><i>%1</i>").arg(path));
+                                   tr("GLOBE elevation data directory is not valid:<br/>\"%1\"").arg(path));
     }
     else
     {
@@ -176,7 +176,7 @@ void ElevationProvider::updateReader()
         {
           NavApp::deleteSplashScreen();
           atools::gui::Dialog::warning(NavApp::getQMainWidget(),
-                                       tr("Cannot open GLOBE data in directory<br/><i>%1</i>").arg(path));
+                                       tr("Cannot open GLOBE data in directory<br/>\"%1\"").arg(path));
           qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
         }
       }

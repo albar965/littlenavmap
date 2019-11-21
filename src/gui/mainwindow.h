@@ -36,6 +36,7 @@ class QToolButton;
 class SearchBaseTable;
 class DatabaseManager;
 class WeatherReporter;
+class WindReporter;
 class ConnectClient;
 class ProfileWidget;
 class InfoController;
@@ -44,7 +45,6 @@ class QActionGroup;
 class PrintSupport;
 class ProcedureSearch;
 class Route;
-class AirspaceToolBarHandler;
 class RouteExport;
 
 namespace Marble {
@@ -66,6 +66,7 @@ class Dialog;
 class ErrorHandler;
 class HelpHandler;
 class FileHistoryHandler;
+class DockWidgetHandler;
 }
 
 }
@@ -101,7 +102,7 @@ class MainWindow :
 
 public:
   MainWindow();
-  virtual ~MainWindow();
+  virtual ~MainWindow() override;
 
   MapWidget *getMapWidget() const
   {
@@ -126,6 +127,11 @@ public:
   WeatherReporter *getWeatherReporter() const
   {
     return weatherReporter;
+  }
+
+  WindReporter *getWindReporter() const
+  {
+    return windReporter;
   }
 
   /* Update the window title after switching simulators, flight plan name or change status. */
@@ -171,6 +177,22 @@ public:
 
   map::MapThemeComboIndex getMapThemeIndex() const;
 
+  const InfoController *getInfoController() const
+  {
+    return infoController;
+  }
+
+  OptionsDialog *getOptionsDialog() const
+  {
+    return optionsDialog;
+  }
+
+  /* Show and raise windows after loading or creating new files */
+  void showFlightPlan();
+  void showAircraftPerformance();
+  void showLogbookSearch();
+  void showUserpointSearch();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -187,7 +209,6 @@ private:
   void connectAllSlots();
   void mainWindowShown();
   void raiseFloatingWindows();
-  void raiseFloatingWindow(QDockWidget *dockWidget);
 
   void saveStateMain();
   void saveActionStates();
@@ -196,6 +217,7 @@ private:
 
   void restoreStateMain();
   void updateActionStates();
+
   void updateOnlineActionStates();
 
   /* Update status bar section for online status */
@@ -203,7 +225,6 @@ private:
 
   void setupUi();
 
-  void options();
   void preDatabaseLoad();
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
@@ -242,6 +263,7 @@ private:
   bool routeCheckForChanges();
   void showMapLegend();
   void resetMessages();
+  void resetAllSettings();
   void showDatabaseFiles();
 
   /* Save map as images */
@@ -275,6 +297,7 @@ private:
   void showNavmapLegend();
   void loadNavmapLegend();
   bool openInSkyVector();
+  void clearProcedureCache();
 
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
@@ -287,7 +310,7 @@ private:
   bool routeSaveCheckFMS11Warnings();
 
   /* Question dialog and then delete map and profile trail */
-  void deleteAircraftTrack();
+  void deleteAircraftTrack(bool quiet = false);
 
   void checkForUpdates();
   void updateClock() const;
@@ -298,12 +321,19 @@ private:
   /* Set user defined time for sun shading */
   void sunShadingTimeSet();
 
+  /* From menu action - remove all measurment lines, patterns, holds, etc. */
+  void clearRangeRingsAndDistanceMarkers();
+
+  /* Reset flight plan and other for new flight */
+  void routeResetAll();
+
   /* Action from shortcut menu triggered */
   void actionShortcutMapTriggered();
   void actionShortcutProfileTriggered();
   void actionShortcutAirportSearchTriggered();
   void actionShortcutNavaidSearchTriggered();
   void actionShortcutUserpointSearchTriggered();
+  void actionShortcutLogbookSearchTriggered();
   void actionShortcutFlightPlanTriggered();
   void actionShortcutAircraftPerformanceTriggered();
   void actionShortcutAirportInformationTriggered();
@@ -311,8 +341,16 @@ private:
   void actionShortcutNavaidInformationTriggered();
   void actionShortcutAircraftProgressTriggered();
 
+  /* Internal web server actions */
+  void toggleWebserver(bool checked);
+  void webserverStatusChanged(bool running);
+  void openWebserver();
+  void saveStateNow();
+
 #ifdef DEBUG_INFORMATION
-  void debugActionTriggered();
+  void debugActionTriggered1();
+  void debugActionTriggered2();
+  void debugActionTriggered3();
 
 #endif
 
@@ -352,19 +390,20 @@ private:
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
+  atools::gui::DockWidgetHandler *dockHandler = nullptr;
 
   /* Map theme submenu actions */
   QList<QAction *> customMapThemeMenuActions;
 
   /* Managment and controller classes */
   WeatherReporter *weatherReporter = nullptr;
+  WindReporter *windReporter = nullptr;
   InfoController *infoController = nullptr;
-  AirspaceToolBarHandler *airspaceHandler = nullptr;
   RouteExport *routeExport = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr, *actionGroupMapSunShading = nullptr,
-               *actionGroupMapWeatherSource = nullptr;
+               *actionGroupMapWeatherSource = nullptr, *actionGroupMapWeatherWindSource = nullptr;
 
   QTimer weatherUpdateTimer;
 

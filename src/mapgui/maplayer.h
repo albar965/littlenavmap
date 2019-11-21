@@ -66,6 +66,7 @@ public:
   bool hasSameQueryParametersVor(const MapLayer *other) const;
   bool hasSameQueryParametersNdb(const MapLayer *other) const;
   bool hasSameQueryParametersWaypoint(const MapLayer *other) const;
+  bool hasSameQueryParametersWind(const MapLayer *other) const;
   bool hasSameQueryParametersMarker(const MapLayer *other) const;
   bool hasSameQueryParametersIls(const MapLayer *other) const;
 
@@ -185,6 +186,10 @@ public:
 
   /* minimum off route altitude */
   MapLayer& minimumAltitude(bool value = true);
+
+  MapLayer& windBarbs(bool value = true);
+
+  MapLayer& windBarbsSymbolSize(int size);
 
   bool operator<(const MapLayer& other) const;
 
@@ -545,6 +550,16 @@ public:
     return layerRouteTextAndDetail;
   }
 
+  bool isWindBarbs() const
+  {
+    return layerWindBarbs;
+  }
+
+  int getWindBarbsSymbolSize() const
+  {
+    return layerWindBarbsSymbolSize;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -561,6 +576,9 @@ private:
   bool layerAirportWeather = false, layerAirportWeatherDetails = false;
 
   int layerAirportSymbolSize = 5, layerMinRunwayLength = 0;
+
+  bool layerWindBarbs = false;
+  int layerWindBarbsSymbolSize = 5;
 
   bool layerWaypoint = false, layerWaypointName = false,
        layerVor = false, layerVorIdent = false, layerVorInfo = false, layerVorLarge = false,

@@ -26,7 +26,6 @@ OptionData *OptionData::optionData = nullptr;
 /* Default values for well known networks */
 
 OptionData::OptionData()
-  : flightplanColor(Qt::yellow), flightplanActiveColor(Qt::magenta), trailColor(Qt::black)
 {
 
 }
@@ -50,6 +49,9 @@ opts::OnlineFormat OptionData::getOnlineFormat() const
 
     case opts::ONLINE_IVAO:
       return opts::ONLINE_FORMAT_IVAO;
+
+    case opts::ONLINE_PILOTEDGE:
+      return opts::ONLINE_FORMAT_VATSIM;
   }
   return opts::ONLINE_FORMAT_VATSIM;
 }
@@ -67,6 +69,9 @@ QString OptionData::getOnlineStatusUrl() const
 
     case opts::ONLINE_IVAO:
       return onlineIvaoStatusUrl;
+
+    case opts::ONLINE_PILOTEDGE:
+      return onlinePilotEdgeStatusUrl;
 
     case opts::ONLINE_CUSTOM_STATUS:
       return onlineStatusUrl;
@@ -86,6 +91,7 @@ QString OptionData::getOnlineWhazzupUrl() const
 
     case opts::ONLINE_VATSIM:
     case opts::ONLINE_IVAO:
+    case opts::ONLINE_PILOTEDGE:
     case opts::ONLINE_CUSTOM_STATUS:
       return QString();
   }
@@ -99,7 +105,7 @@ const OptionData& OptionData::instance()
   if(!optData.valid)
   {
     qCritical() << "OptionData not initialized yet";
-    throw new atools::Exception("OptionData not initialized yet");
+    throw atools::Exception("OptionData not initialized yet");
   }
 
   return optData;

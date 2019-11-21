@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_MAPFLAGS_H
 #define LITTLENAVMAP_MAPFLAGS_H
 
+#include <QVector>
 #include <QObject>
 
 /*
@@ -40,6 +41,12 @@ Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max(
 Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
 
 Q_DECL_CONSTEXPR static float DEFAULT_ILS_WIDTH = 4.f;
+
+/* minimum ground speed for fuel flow calculations and other */
+Q_DECL_CONSTEXPR static float MIN_GROUND_SPEED = 30.f;
+
+/* Do not draw barbs below this altitude */
+Q_DECL_CONSTEXPR static float MIN_WIND_BARB_ALTITUDE = 4000.f;
 
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapObjectType
@@ -74,8 +81,10 @@ enum MapObjectType
   COMPASS_ROSE = 1 << 26, /* Compass rose */
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
 
-  AIRSPACE_ONLINE = 1 << 28, /* Online network center */
+  // AIRSPACE_ONLINE = 1 << 28, /* Online network center - not used in display map flags */
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
+
+  LOGBOOK = 1 << 30, /* Logbook entry */
 
   /* All online, AI and multiplayer aircraft */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
@@ -101,12 +110,28 @@ enum MapObjectDisplayType
 {
   DISPLAY_TYPE_NONE = 0,
   AIRPORT_WEATHER = 1 << 0, /* Airport weather icons */
-  MINIMUM_ALTITUDE = 1 << 1 /* MORA (minimum off route altitude) */
+  MINIMUM_ALTITUDE = 1 << 1, /* MORA (minimum off route altitude) */
+  WIND_BARBS = 1 << 2, /* Wind barbs grid */
+  WIND_BARBS_ROUTE = 1 << 3 /* Wind barbs at flight plan waypoints */
 };
 
 Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectDisplayTypes);
 
+/* Query type for all getNearest and other functions. Covers all what is not included in MapObjectTypes */
+enum MapObjectQueryType
+{
+  QUERY_NONE = 0,
+  QUERY_PROC_POINTS = 1 << 0, /* Procedure points */
+  QUERY_HOLDS = 1 << 1, /* Holds */
+  QUERY_PATTERNS = 1 << 2, /* Traffic patterns */
+  QUERY_PROCEDURES = 1 << 3, /* Procedures when querying route */
+};
+
+Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes);
+
+/* ================================================================================== */
 /* Covers all airspace types */
 enum MapAirspaceType
 {
@@ -163,6 +188,29 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
 
 Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 27;
 
+/* Source database for airspace */
+enum MapAirspaceSource
+{
+  AIRSPACE_SRC_NONE = 0,
+  AIRSPACE_SRC_SIM = 1 << 0,
+  AIRSPACE_SRC_NAV = 1 << 1,
+  AIRSPACE_SRC_ONLINE = 1 << 2,
+  AIRSPACE_SRC_USER = 1 << 3,
+
+  AIRSPACE_SRC_ALL = 0xff,
+
+  AIRSPACE_SRC_NOT_ONLINE = AIRSPACE_SRC_SIM | AIRSPACE_SRC_NAV | AIRSPACE_SRC_USER
+};
+
+Q_DECLARE_FLAGS(MapAirspaceSources, MapAirspaceSource);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources);
+
+static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES =
+{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_ONLINE, AIRSPACE_SRC_USER};
+
+static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES =
+{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER};
+
 /* Airspace filter flags */
 enum MapAirspaceFlag
 {
@@ -196,6 +244,39 @@ struct MapAirspaceFilter
 QDataStream& operator>>(QDataStream& dataStream, map::MapAirspaceFilter& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::MapAirspaceFilter& obj);
 
+/* Combines id and source database (online, user, etc.) */
+struct MapAirspaceId
+{
+  int id;
+  MapAirspaceSources src;
+};
+
+inline uint qHash(const map::MapAirspaceId& id)
+{
+  return static_cast<unsigned int>(id.id) ^ id.src;
+}
+
+inline bool operator==(const map::MapAirspaceId& id1, const map::MapAirspaceId& id2)
+{
+  return id1.id == id2.id && id1.src == id2.src;
+}
+
+/* ================================================================================== */
+/* Visible user features. */
+enum MapMarkType
+{
+  MARK_NONE = 0,
+  MARK_RANGE_RINGS = 1 << 0, /* All range rings */
+  MARK_MEASUREMENT = 1 << 1, /* All measurement lines */
+  MARK_HOLDS = 1 << 2, /* Holdings */
+  MARK_PATTERNS = 1 << 3, /* Traffic patterns */
+  MARK_ALL = MARK_RANGE_RINGS | MARK_MEASUREMENT | MARK_HOLDS | MARK_PATTERNS
+};
+
+Q_DECLARE_FLAGS(MapMarkTypes, MapMarkType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapMarkTypes);
+
+/* ================================================================================== */
 /* Airport flags coverting most airport attributes and facilities. */
 enum MapAirportFlag
 {
@@ -268,7 +349,51 @@ QString mapWeatherSourceString(map::MapWeatherSource source);
 
 } // namespace map
 
+namespace textflags {
+/* Flags that determine what information is added to an icon */
+enum TextFlag
+{
+  NONE = 0x0000,
+  IDENT = 0x0001, /* Draw airport or navaid ICAO ident */
+  TYPE = 0x0002, /* Draw navaid type (HIGH, MEDIUM, TERMINAL, HH, H, etc.) */
+  FREQ = 0x0004, /* Draw navaid frequency */
+  NAME = 0x0008,
+  MORSE = 0x0010, /* Draw navaid morse code */
+  INFO = 0x0020, /* Additional airport information like tower frequency, etc. */
+  ROUTE_TEXT = 0x0040, /* Object is part of route */
+  ABS_POS = 0x0080, /* Use absolute text positioning */
+  NO_BACKGROUND = 0x0100, /* No background */
+  LOG_TEXT = 0x0200 /* Object is part of log entry - only for airports */
+};
+
+Q_DECLARE_FLAGS(TextFlags, TextFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags);
+}
+
+namespace textatt {
+/* Low level text attributes for custom text boxes */
+enum TextAttribute
+{
+  NONE = 0x0000,
+  BOLD = 0x0001,
+  ITALIC = 0x0002,
+  UNDERLINE = 0x0004,
+  OVERLINE = 0x0008,
+  RIGHT = 0x0010, /* Reference point is at the right of the text (left-aligned) */
+  LEFT = 0x0020,
+  CENTER = 0x0040,
+  ROUTE_BG_COLOR = 0x0080, /* Use light yellow background for route objects */
+  LOG_BG_COLOR = 0x0100 /* Use light blue text background for log */
+};
+
+Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
+Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
+}
+
 Q_DECLARE_TYPEINFO(map::MapAirspaceFilter, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapAirspaceFilter);
+
+Q_DECLARE_TYPEINFO(map::MapAirspaceId, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(map::MapAirspaceId);
 
 #endif // LITTLENAVMAP_MAPFLAGS_H

@@ -29,6 +29,7 @@ class GeoDataLineString;
 class MapWidget;
 class RouteController;
 class Route;
+class RouteLeg;
 
 namespace proc {
 struct MapProcedureLegs;
@@ -89,7 +90,7 @@ private:
                     const QStringList *additionalText = nullptr);
   void paintAirportText(const PaintContext *context, int x, int y, bool drawAsRoute, const map::MapAirport& obj);
   void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts,
-                 bool drawAsRoute);
+                 bool drawAsRoute, textatt::TextAttributes atts = textatt::NONE);
   void paintUserpoint(const PaintContext *context, int x, int y, bool preview);
   void paintProcedurePoint(const PaintContext *context, int x, int y, bool preview);
 
@@ -118,6 +119,14 @@ private:
   void paintProcedureUnderlay(const PaintContext *context, const proc::MapProcedureLeg& leg, int x, int y, int size);
 
   void drawStartParking(const PaintContext *context);
+  void drawWindBarbs(const PaintContext *context, const QBitArray& visibleStartPoints,
+                     const QList<QPointF>& startPoints);
+  void drawWindBarbAtWaypoint(const PaintContext *context, float windSpeed, float windDir, float x, float y);
+  void drawRouteInternal(const PaintContext *context, QStringList routeTexts, QVector<atools::geo::Line> lines,
+                         int passedRouteLeg);
+  QString buildLegText(const PaintContext *context, const RouteLeg& leg);
+  QString buildLegText(const PaintContext *context, float dist, float courseRhumbMag, float courseRhumbTrue,
+                       float courseGcMag, float courseGcTrue);
 
   const Route *route;
 };

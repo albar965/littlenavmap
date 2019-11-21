@@ -23,6 +23,7 @@
 #include "gui/dialog.h"
 #include "sql/sqlexport.h"
 #include "search/sqlcontroller.h"
+#include "options/optiondata.h"
 
 #include "sql/sqlrecord.h"
 
@@ -51,7 +52,9 @@ QString CsvExporter::saveCsvFileDialog()
 {
   return dialog->saveFileDialog(tr("Export CSV Document"),
                                 tr("CSV Documents (*.csv);;All Files (*)"),
-                                "csv", lnm::EXPORT_FILEDIALOG);
+                                "csv", lnm::EXPORT_FILEDIALOG,
+                                QString(), QString(), false,
+                                OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 }
 
 #ifdef ENABLE_CSV_EXPORT
@@ -174,17 +177,7 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QStrin
       QTextStream stream(&result, QIODevice::WriteOnly);
       QHeaderView *headerView = view->horizontalHeader();
       if(header)
-      {
-        // Build CSV header
-        QStringList headers;
-        for(int i = 0; i < model->columnCount(); i++)
-          if(!view->isColumnHidden(i))
-            headers.append(model->headerData(headerView->logicalIndex(i), Qt::Horizontal).
-                           toString().replace("-\n", "").replace("\n", " "));
-
-        stream << exporter.getResultSetHeader(headers) +
-        (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalHeader.join(";")) << endl;
-      }
+        stream << buildHeader(view, exporter, additionalHeader, additionalFields) << endl;
 
       for(QItemSelectionRange rng : selection->selection())
       {
@@ -217,4 +210,53 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QStrin
     }
   }
   return exported;
+}
+
+int CsvExporter::tableAsCsv(QTableView *view, bool header, QString& result,
+                            const QStringList& additionalHeader,
+                            std::function<QStringList(int index)> additionalFields)
+{
+  int exported = 0;
+  atools::sql::SqlExport exporter;
+  exporter.setSeparatorChar(';');
+  exporter.setEndline(false);
+
+  QAbstractItemModel *model = view->model();
+
+  // Copy full rows
+  QTextStream stream(&result, QIODevice::WriteOnly);
+  QHeaderView *headerView = view->horizontalHeader();
+  if(header)
+    stream << buildHeader(view, exporter, additionalHeader, additionalFields) << endl;
+
+  for(int row = 0; row < model->rowCount(); row++)
+  {
+    QVariantList vars;
+    for(int i = 0; i < model->columnCount(); i++)
+      if(!view->isColumnHidden(i))
+        vars.append(model->data(model->index(row, headerView->logicalIndex(i))));
+    stream << exporter.getResultSetRow(vars) +
+    (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << endl;
+
+    exported++;
+  }
+  stream.flush();
+  return exported;
+}
+
+QString CsvExporter::buildHeader(QTableView *view, atools::sql::SqlExport& exporter,
+                                 const QStringList& additionalHeader,
+                                 std::function<QStringList(int index)> additionalFields)
+{
+  QHeaderView *headerView = view->horizontalHeader();
+  QAbstractItemModel *model = view->model();
+  QStringList headers;
+  for(int i = 0; i < model->columnCount(); i++)
+    if(!view->isColumnHidden(i))
+      headers.append(model->headerData(headerView->logicalIndex(i), Qt::Horizontal).
+                     toString().replace("-\n", "").replace("\n", " "));
+
+  return exporter.getResultSetHeader(headers) +
+         (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalHeader.join(";"));
+
 }

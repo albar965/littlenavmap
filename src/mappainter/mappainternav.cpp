@@ -36,7 +36,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterNav::MapPainterNav(MapPaintWidget* mapWidget, MapScale *mapScale)
+MapPainterNav::MapPainterNav(MapPaintWidget *mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }
@@ -50,7 +50,6 @@ void MapPainterNav::render(PaintContext *context)
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
 
   // Airways -------------------------------------------------
   bool drawAirway = context->mapLayer->isAirway() &&
@@ -62,8 +61,7 @@ void MapPainterNav::render(PaintContext *context)
   if(drawAirway && !context->isOverflow())
   {
     // Draw airway lines
-    const QList<MapAirway> *airways = mapQuery->getAirways(curBox, context->mapLayer,
-                                                           context->viewContext == Marble::Animation);
+    const QList<MapAirway> *airways = mapQuery->getAirways(curBox, context->mapLayer, context->lazyUpdate);
     if(airways != nullptr)
       paintAirways(context, airways, context->drawFast);
   }
@@ -134,6 +132,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
   QHash<QString, int> lines;
   // Contains combined text for overlapping airway lines and points to index or airway in airway list
   QVector<Place> textlist;
+  QPolygonF arrow = buildArrow(static_cast<float>(mapcolors::airwayBothPen.widthF() * 2.5));
 
   for(int i = 0; i < airways->size(); i++)
   {
@@ -144,12 +143,8 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     if(airway.type == map::VICTOR && !context->objectTypes.testFlag(map::AIRWAYV))
       continue;
 
-    if(airway.type == map::VICTOR)
-      context->painter->setPen(mapcolors::airwayVictorPen);
-    else if(airway.type == map::JET)
-      context->painter->setPen(mapcolors::airwayJetPen);
-    else if(airway.type == map::BOTH)
-      context->painter->setPen(mapcolors::airwayBothPen);
+    context->painter->setPen(mapcolors::penForAirway(airway));
+    context->painter->setBrush(context->painter->pen().color());
 
     // Get start and end point of airway segment in screen coordinates
     int x1, y1, x2, y2;
@@ -175,6 +170,13 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
 
       if(!fast)
       {
+        if(airway.direction != map::DIR_BOTH && !context->mapLayer->isAirwayIdent())
+        {
+          Line arrLine = airway.direction != map::DIR_FORWARD ?
+                         Line(airway.from, airway.to) : Line(airway.to, airway.from);
+          paintArrowAlongLine(context->painter, arrLine, arrow, 0.5f);
+        }
+
         // Build text index
         QString text;
         if(context->mapLayer->isAirwayIdent())
@@ -279,12 +281,15 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
   bool drawAirwayV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
   bool drawAirwayJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
 
-  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+  bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
   for(const MapWaypoint& waypoint : *waypoints)
   {
     // If waypoints are off, airways are on and waypoint has no airways skip it
     if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways)))
+      continue;
+
+    if(context->routeIdMap.contains(waypoint.getRef()))
       continue;
 
     int x, y;
@@ -309,10 +314,13 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
 
 void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, bool drawFast)
 {
-  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+  bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
   for(const MapVor& vor : *vors)
   {
+    if(context->routeIdMap.contains(vor.getRef()))
+      continue;
+
     int x, y;
     bool visible = wToS(vor.position, x, y);
 
@@ -340,10 +348,13 @@ void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, 
 
 void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, bool drawFast)
 {
-  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+  bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
   for(const MapNdb& ndb : *ndbs)
   {
+    if(context->routeIdMap.contains(ndb.getRef()))
+      continue;
+
     int x, y;
     bool visible = wToS(ndb.position, x, y);
 
@@ -369,7 +380,7 @@ void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, 
 
 void MapPainterNav::paintMarkers(PaintContext *context, const QList<MapMarker> *markers, bool drawFast)
 {
-  int transparency = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
+  int transparency = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
 
   for(const MapMarker& marker : *markers)
   {

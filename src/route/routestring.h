@@ -32,6 +32,10 @@ class FlightplanEntry;
 }
 }
 
+namespace proc {
+struct MapProcedureLegs;
+}
+
 class MapQuery;
 class AirportQuery;
 class ProcedureQuery;
@@ -44,6 +48,8 @@ namespace rs {
 enum RouteStringOption
 {
   NONE = 0,
+
+  /* Writing options when converting flight plan to string ====================== */
   DCT = 1 << 0, /* Add DCT */
   START_AND_DEST = 1 << 1, /* Add departure and/or destination ident */
   ALT_AND_SPEED = 1 << 2, /* Add altitude and speed restriction */
@@ -60,8 +66,14 @@ enum RouteStringOption
   GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
   USR_WPT = 1 << 12, /* User waypoints for all navaids to avoid locked waypoints from Garmin */
   SKYVECTOR_COORDS = 1 << 13, /* Skyvector coordinate format */
+  NO_FINAL_DCT = 1 << 14, /* omit last DCT for Flight Factor export */
 
-  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR
+  ALTERNATES = 1 << 15, /* treat last airport as alternate */
+
+  /* Reading options when converting string to flight plan ====================== */
+  READ_ALTERNATES = 1 << 16, /* Read any consecutive list of airports at the end of the string as alternates */
+
+  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES
 };
 
 Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);
@@ -83,9 +95,10 @@ public:
 
   /* Create a flight plan for the given route string and include speed and altitude if given.
    *  Get error messages with getMessages() */
-  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                             float& speedKts, bool& altIncluded);
+                             rs::RouteStringOptions options);
+  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
+                             float& speedKts, bool& altIncluded, rs::RouteStringOptions options);
 
   /*
    * Create a route string like
@@ -156,7 +169,10 @@ private:
   void filterAirways(QList<ParseEntry>& resultList, int i);
   QStringList cleanItemList(const QStringList& items, float& speedKnots, float& altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);
-  bool addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems);
+
+  bool addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems, rs::RouteStringOptions options);
+  void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs,
+                           const QStringList& cleanItems, int index);
 
   /* Remove time and runways from ident and return airport ident only. Also add warning messages */
   QString extractAirportIdent(QString ident);
@@ -167,7 +183,6 @@ private:
   FlightplanEntryBuilder *entryBuilder = nullptr;
   QStringList messages;
   bool plaintextMessages = false;
-
 };
 
 #endif // LITTLENAVMAP_ROUTESTRING_H

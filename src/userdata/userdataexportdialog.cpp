@@ -38,6 +38,8 @@ UserdataExportDialog::UserdataExportDialog(QWidget *parent, bool disableExportSe
 
 UserdataExportDialog::~UserdataExportDialog()
 {
+  atools::gui::WidgetState(lnm::USERDATA_EXPORT_DIALOG).save(this);
+
   delete ui;
 }
 

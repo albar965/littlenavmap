@@ -27,6 +27,12 @@ class QWidget;
 class QTextStream;
 class QTableView;
 
+namespace atools {
+namespace sql {
+class SqlExport;
+}
+}
+
 /*
  * Allows to export the table content or the selected table content from the
  * given controller into CSV files.
@@ -60,11 +66,20 @@ public:
 
 #endif
 
+  /* Copies selection in table as CSV. */
   static int selectionAsCsv(QTableView *view, bool header, bool rows, QString& result,
                             const QStringList& additionalHeader = QStringList(),
                             std::function<QStringList(int)> additionalFields = nullptr);
 
+  /* Copies full table content as CSV. */
+  static int tableAsCsv(QTableView *view, bool header, QString& result,
+                        const QStringList& additionalHeader = QStringList(),
+                        std::function<QStringList(int)> additionalFields = nullptr);
+
 private:
+  static QString buildHeader(QTableView *view, atools::sql::SqlExport& exporter,
+                             const QStringList& additionalHeader, std::function<QStringList(int)> additionalFields);
+
   /* Get file from save dialog */
   QString saveCsvFileDialog();
 

@@ -41,6 +41,7 @@ class Metar;
 class WeatherNetSingle;
 class WeatherNetDownload;
 class XpWeatherReader;
+class NoaaWeatherDownloader;
 }
 }
 }
@@ -155,11 +156,16 @@ public:
     return activeSkyDestinationIdent;
   }
 
+  /* Map weather source has changed */
+  void updateAirportWeather();
+
 signals:
   /* Emitted when Active Sky or X-Plane weather file changes or a request to weather was fullfilled */
   void weatherUpdated();
 
 private:
+  void weatherDownloadFailed(const QString& error, int errorCode, QString url);
+
   void activeSkyWeatherFileChanged(const QString& path);
   void xplaneWeatherFileChanged();
 
@@ -174,10 +180,12 @@ private:
   void createFsWatcher();
   void initXplane();
 
-  static void noaaIndexParser(QString& icao, QDateTime& lastUpdate, const QString& line);
-  static atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
+  atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
-  atools::fs::weather::WeatherNetSingle *noaaWeather = nullptr;
+  /* Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used */
+  void updateTimeouts();
+
+  atools::fs::weather::NoaaWeatherDownloader *noaaWeather = nullptr;
   atools::fs::weather::WeatherNetSingle *vatsimWeather = nullptr;
   atools::fs::weather::WeatherNetDownload *ivaoWeather = nullptr;
 
@@ -199,6 +207,8 @@ private:
 
   /* Update online reports if older than 10 minutes */
   int onlineWeatherTimeoutSecs = 600;
+
+  bool errorReported = false;
 
   bool verbose = false;
 };

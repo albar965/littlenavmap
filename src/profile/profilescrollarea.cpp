@@ -54,6 +54,11 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
 
   // Disallow collapsing of the profile view
   ui->splitterProfile->setCollapsible(0, false);
+  if(ui->splitterProfile->handle(1) != nullptr)
+  {
+    ui->splitterProfile->handle(1)->setToolTip(tr("Show, hide or resize zoom button area."));
+    ui->splitterProfile->handle(1)->setStatusTip(ui->splitterProfile->handle(1)->toolTip());
+  }
 
   // Connect zoom sliders
   connect(ui->horizontalSliderProfileZoom, &QSlider::valueChanged,
@@ -116,8 +121,8 @@ void ProfileScrollArea::expandWidget()
 
 void ProfileScrollArea::splitterMoved(int pos, int index)
 {
-  Q_UNUSED(pos);
-  Q_UNUSED(index);
+  Q_UNUSED(pos)
+  Q_UNUSED(index)
 
   // Uncheck menu action if the split containing the zoom sliders is collapsed
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -220,7 +225,7 @@ void ProfileScrollArea::routeAltitudeChanged()
 void ProfileScrollArea::updateWidgets()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  bool routeEmpty = NavApp::getRoute().size() < 2;
+  bool routeEmpty = NavApp::getRoute().getSizeWithoutAlternates() < 2;
 
   if(routeEmpty)
   {
@@ -278,7 +283,7 @@ bool ProfileScrollArea::eventFilter(QObject *object, QEvent *event)
 
 bool ProfileScrollArea::keyEvent(QKeyEvent *event)
 {
-  if(NavApp::getRoute().size() < 2)
+  if(NavApp::getRoute().getSizeWithoutAlternates() < 2)
     return false;
 
   bool consumed = false;
@@ -352,7 +357,7 @@ bool ProfileScrollArea::mouseDoubleClickEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
 {
-  if(NavApp::getRoute().size() < 2)
+  if(NavApp::getRoute().getSizeWithoutAlternates() < 2)
     return false;
 
   if(!startDragPos.isNull())
@@ -374,7 +379,7 @@ bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::mousePressEvent(QMouseEvent *event)
 {
-  if(NavApp::getRoute().size() < 2 || event->button() != Qt::LeftButton)
+  if(NavApp::getRoute().getSizeWithoutAlternates() < 2 || event->button() != Qt::LeftButton)
     return false;
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -391,7 +396,7 @@ bool ProfileScrollArea::mousePressEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::mouseReleaseEvent(QMouseEvent *event)
 {
-  if(NavApp::getRoute().size() < 2 || event->button() != Qt::LeftButton)
+  if(NavApp::getRoute().getSizeWithoutAlternates() < 2 || event->button() != Qt::LeftButton)
     return false;
 
   // End mouse dragging
@@ -406,7 +411,7 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
     // Ignore wheel events that appear outside of the view and on the scrollbars
     return false;
 
-  if(NavApp::getRoute().size() > 1)
+  if(NavApp::getRoute().getSizeWithoutAlternates() > 1)
   {
     emit hideRubberBand();
 
@@ -496,7 +501,7 @@ void ProfileScrollArea::scaleViewAll()
 
 void ProfileScrollArea::scaleView(QScrollBar *scrollBar)
 {
-  QSize size(horizScaleFactor *scrollArea->viewport()->width(), vertScaleFactor *scrollArea->viewport()->height());
+  QSize size(horizScaleFactor * scrollArea->viewport()->width(), vertScaleFactor *scrollArea->viewport()->height());
 
   // Do not update the last scroll position values by vertScrollBarChanged or horizScrollBarChanged
   noLastScrollPosUpdate = true;
@@ -603,15 +608,38 @@ void ProfileScrollArea::restoreState()
     ui->actionProfileShowIls,
     ui->actionProfileShowVasi
   });
+  ui->splitterProfile->setHandleWidth(6);
 }
 
-bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
+bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint, float verticalSpeed)
 {
   // Use rectangle on the left side of the view
-  int xmarginLeft = viewport->width() / 10;
-  int ymarginTop = viewport->height() / 4;
-  int xmarginRight = viewport->width() * 2 / 3;
-  int ymarginBottom = viewport->height() / 4;
+  int xmarginLeft = viewport->width() / 20;
+  int xmarginRight = viewport->width() * 8 / 10;
+
+  int ymarginTop, ymarginBottom, vertPos;
+  if(verticalSpeed > 250)
+  {
+    // Climb - keep aircraft in the bottom left corner
+    ymarginTop = viewport->height() * 8 / 10;
+    ymarginBottom = viewport->height() / 10;
+    vertPos = viewport->height() - ymarginBottom;
+  }
+  else if(verticalSpeed < -250)
+  {
+    // Descent - keep aircraft in the top left corner
+    ymarginTop = viewport->height() / 10;
+    ymarginBottom = viewport->height() * 8 / 10;
+    vertPos = ymarginTop;
+  }
+  else
+  {
+    // Keep aircraft in the center left corner
+    ymarginTop = viewport->height() / 4;
+    ymarginBottom = viewport->height() / 4;
+    vertPos = viewport->height() / 2;
+  }
+
   int x = screenPoint.x();
   int y = screenPoint.y();
 
@@ -626,8 +654,7 @@ bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
   if(y - ymarginTop < vertScrollBar->value() || y > vertScrollBar->value() + viewport->height() - ymarginBottom)
   {
     centered = true;
-    vertScrollBar->setValue(std::min(std::max(vertScrollBar->minimum(), y - viewport->height() / 2),
-                                     vertScrollBar->maximum()));
+    vertScrollBar->setValue(std::min(std::max(vertScrollBar->minimum(), y - vertPos), vertScrollBar->maximum()));
   }
   centeringAircraft = false;
   return centered;
@@ -639,7 +666,8 @@ void ProfileScrollArea::styleChanged()
   NavApp::getMainUi()->splitterProfile->setStyleSheet(
     QString("QSplitter::handle { "
             "background: %1;"
-            "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png); }").
+            "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png);"
+            " }").
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 }
 

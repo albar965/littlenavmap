@@ -20,6 +20,8 @@
 
 #include <QHash>
 
+#include "options/optiondata.h"
+
 class QWidget;
 class QString;
 
@@ -33,9 +35,11 @@ public:
 
   /* Collect widgets, create text backups and replace unit placeholders */
   void init(const QList<QWidget *>& widgets, bool fuelAsVolume = false);
+  void init(const QList<QWidget *>& widgets, bool fuelAsVolume, opts::UnitFuelAndWeight unit);
 
   /* Replace unit placeholders from backup texts. */
   void update(bool fuelAsVolume = false);
+  void update(bool fuelAsVolume, opts::UnitFuelAndWeight unit);
 
 private:
   struct WidgetData
@@ -50,10 +54,10 @@ private:
   };
 
   QList<WidgetData> widgetDataList;
-  void update(WidgetData& widgetData, bool save, bool fuelAsVolume);
+  void update(WidgetData& widgetData, bool save, bool fuelAsVolume, opts::UnitFuelAndWeight unit);
 
   /* Replace tooltip and status texts */
-  void updateBase(WidgetData& widgetData, bool save, bool fuelAsVolume);
+  void updateBase(WidgetData& widgetData, bool save, bool fuelAsVolume, opts::UnitFuelAndWeight unit);
 
 };
 
