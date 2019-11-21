@@ -249,7 +249,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="694"/>
         <source>, </source>
-        <translation>，</translation>
+        <translation>， </translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="699"/>
@@ -475,7 +475,7 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="191"/>
         <source> percent</source>
-        <translation>%</translation>
+        <translation> %</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="204"/>
@@ -969,7 +969,7 @@ Runway Surface</source>
     <message>
         <location filename="src/connect/connectclient.cpp" line="426"/>
         <source>Autoconnect switched off.</source>
-        <translation>自动连接已关闭</translation>
+        <translation>自动连接已关闭。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="461"/>
@@ -1011,7 +1011,8 @@ Runway Surface</source>
         <location filename="src/connect/connectclient.cpp" line="524"/>
         <source>
 Will retry to connect.</source>
-        <translation>将会尝试连接。</translation>
+        <translation>
+将会尝试连接。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="560"/>
@@ -1116,7 +1117,7 @@ Little Navmap 从飞行模拟器获取数据使用此时间间隔。
         <location filename="src/connect/connectdialog.ui" line="115"/>
         <location filename="src/connect/connectdialog.ui" line="244"/>
         <source> ms</source>
-        <translation>毫秒</translation>
+        <translation> 毫秒</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="134"/>
@@ -1267,7 +1268,7 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
     <message>
         <location filename="src/db/databasedialog.ui" line="113"/>
         <source>Choose the simulator which scenery library you want to load.</source>
-        <translation>选择要载入地景目录的模拟器：</translation>
+        <translation>选择要载入地景目录的模拟器。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="120"/>
@@ -1448,7 +1449,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/db/databasemanager.cpp" line="613"/>
         <source>Use only navaids, airways, airspaces and procedures from %1 database</source>
-        <translation>只为数据库 %1 启用导航点、航路、空域和程序。</translation>
+        <translation>只使用从数据库 %1 获取的导航点、航路、空域和程序</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="618"/>
@@ -9890,7 +9891,7 @@ Only JPG and PNG are allowed.</source>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="77"/>
         <source> soft runways (S)</source>
-        <translation>软道面跑道（S）</translation>
+        <translation> 软道面跑道（S）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="78"/>
@@ -9900,7 +9901,7 @@ Only JPG and PNG are allowed.</source>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="82"/>
         <source> hard runways (H)</source>
-        <translation>硬道面跑道（H）</translation>
+        <translation> 硬道面跑道（H）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="83"/>
@@ -9910,7 +9911,7 @@ Only JPG and PNG are allowed.</source>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="87"/>
         <source> all runway types (H,S)</source>
-        <translation>所有跑道类型（H，S）</translation>
+        <translation> 所有跑道类型（H、S）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="88"/>
@@ -10117,7 +10118,7 @@ Only JPG and PNG are allowed.</source>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="263"/>
         <source>Online Centers: </source>
-        <translation>在线中心</translation>
+        <translation>在线中心：</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="264"/>
@@ -10152,7 +10153,7 @@ Only JPG and PNG are allowed.</source>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="301"/>
         <source> on ground</source>
-        <translation>在地面</translation>
+        <translation> 在地面</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="311"/>
@@ -10329,7 +10330,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2353"/>
         <source>all </source>
-        <translation>全部</translation>
+        <translation>全部 </translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2357"/>
@@ -10514,7 +10515,7 @@ Decl.°</translation>
     <message>
         <location filename="src/search/navsearch.cpp" line="155"/>
         <source>File</source>
-        <translation> 文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
         <location filename="src/search/navsearch.cpp" line="194"/>
@@ -12536,7 +12537,7 @@ Changes only settings that can be done with this dialog.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="147"/>
         <source>Top of Map</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="147"/>
@@ -12963,12 +12964,12 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/route/parkingdialog.ui" line="33"/>
         <source>Choose a start position for the departure airport.</source>
-        <translation>选择在离场机场的起始位置</translation>
+        <translation>选择在离场机场的起始位置。</translation>
     </message>
     <message>
         <location filename="src/route/parkingdialog.cpp" line="84"/>
         <source>No start positions found.</source>
-        <translation>找不到起始位置</translation>
+        <translation>找不到起始位置。</translation>
     </message>
     <message>
         <location filename="src/route/parkingdialog.cpp" line="102"/>
@@ -13063,7 +13064,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/print/printdialog.ui" line="223"/>
         <source>Select Flight Plan &amp;Columns to Print:</source>
-        <translation>选择要打印的飞行计划列(&amp;C)</translation>
+        <translation>选择要打印的飞行计划列(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="233"/>
@@ -13467,7 +13468,7 @@ Really use it?</source>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1111"/>
         <source>Approach </source>
-        <translation>进近</translation>
+        <translation>进近 </translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1114"/>
@@ -13520,7 +13521,7 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="612"/>
         <source>No Flight Plan loaded.</source>
-        <translation>没有载入飞行计划</translation>
+        <translation>没有载入飞行计划。</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1042"/>
@@ -13559,17 +13560,17 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1535"/>
         <source> Ground Elevation </source>
-        <translation>地面标高</translation>
+        <translation> 地面标高 </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1537"/>
         <source> Above Ground Altitude </source>
-        <translation>距地面高度</translation>
+        <translation> 距地面高度（AGL） </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1539"/>
         <source> Leg Safe Altitude </source>
-        <translation>航段安全高度</translation>
+        <translation> 航段安全高度 </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1658"/>
@@ -13589,7 +13590,7 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1827"/>
         <source>Jumped back to aircraft.</source>
-        <translation>跳回到航空器</translation>
+        <translation>跳回到航空器。</translation>
     </message>
 </context>
 <context>
@@ -16887,7 +16888,7 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="241"/>
         <source> ft</source>
-        <translation>英尺</translation>
+        <translation> 英尺</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="260"/>
@@ -16907,7 +16908,7 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="316"/>
         <source> kts</source>
-        <translation>节</translation>
+        <translation> 节</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="329"/>
@@ -16948,13 +16949,13 @@ Try another routing type or create the flight plan manually.</source>
         <location filename="src/route/routeexportdialog.ui" line="439"/>
         <location filename="src/route/routeexportdialog.ui" line="485"/>
         <source> h</source>
-        <translation>时</translation>
+        <translation> 小时</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="452"/>
         <location filename="src/route/routeexportdialog.ui" line="498"/>
         <source> min</source>
-        <translation>分</translation>
+        <translation> 分钟</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="464"/>
@@ -17279,7 +17280,7 @@ ENROUTE 是一系列用空格分开的航路点、航路或用户定义的航路
     <message>
         <location filename="src/search/searchbasetable.cpp" line="901"/>
         <source>Departure </source>
-        <translation>离场</translation>
+        <translation>离场 </translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="904"/>
@@ -17289,7 +17290,7 @@ ENROUTE 是一系列用空格分开的航路点、航路或用户定义的航路
     <message>
         <location filename="src/search/searchbasetable.cpp" line="911"/>
         <source>Arrival </source>
-        <translation>到达</translation>
+        <translation>到达 </translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="914"/>
@@ -17299,7 +17300,7 @@ ENROUTE 是一系列用空格分开的航路点、航路或用户定义的航路
     <message>
         <location filename="src/search/searchbasetable.cpp" line="919"/>
         <source>all </source>
-        <translation>全部</translation>
+        <translation>全部 </translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="923"/>
@@ -17802,7 +17803,7 @@ ENROUTE 是一系列用空格分开的航路点、航路或用户定义的航路
     <message>
         <location filename="src/common/updatehandler.cpp" line="209"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation>不要再显示此对话框(&amp;s)</translation>
+        <translation>不要再显示此对话框(&amp;s)。</translation>
     </message>
 </context>
 <context>
@@ -17815,7 +17816,7 @@ ENROUTE 是一系列用空格分开的航路点、航路或用户定义的航路
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="20"/>
         <source>&amp;Latitude and Longitude:</source>
-        <translation>经度和纬度(&amp;L)</translation>
+        <translation>经度和纬度(&amp;L)：</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="33"/>
@@ -17853,7 +17854,7 @@ Formats above have to be given exactly as shown in the examples.</source>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="54"/>
         <source>&amp;Name of Position:</source>
-        <translation>位置名称(&amp;N)</translation>
+        <translation>位置名称(&amp;N)：</translation>
     </message>
 </context>
 <context>
@@ -17907,7 +17908,7 @@ Formats above have to be given exactly as shown in the examples.</source>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="350"/>
         <source>Arrival</source>
-        <translation>到达 </translation>
+        <translation>到达</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="351"/>
@@ -18197,7 +18198,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="87"/>
         <source>&amp;Latitude and Longitude:</source>
-        <translation>纬度和经度(&amp;L)</translation>
+        <translation>纬度和经度(&amp;L)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="97"/>
@@ -18265,7 +18266,7 @@ Formats above have to be given exactly as shown in the examples.</source>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="198"/>
         <source>&amp;Elevation or altitude:</source>
-        <translation>标高或高度(&amp;E)</translation>
+        <translation>标高或高度(&amp;E)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="208"/>
@@ -18315,12 +18316,12 @@ Formats above have to be given exactly as shown in the examples.</source>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="333"/>
         <source>&amp;Tags:</source>
-        <translation>标签(&amp;T)</translation>
+        <translation>标签(&amp;T)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="343"/>
         <source>List of tags. Simple textfield for various purposes.</source>
-        <translation>标签列表，可用于多种目的的简单的文本域</translation>
+        <translation>标签列表，可用于多种目的的简单的文本域。</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="353"/>
