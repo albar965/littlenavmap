@@ -12537,271 +12537,271 @@ Changes only settings that can be done with this dialog.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="147"/>
         <source>Top of Map</source>
-        <translation></translation>
+        <translation>地图之上</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="147"/>
         <source>Select information that is displayed on top of the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择要显示在地图上的信息。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="148"/>
         <source>Wind Direction and Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>风向和风速</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="148"/>
         <source>Show wind direction and speed on the top center of the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图中心显示风向和风速。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="149"/>
         <source>Wind Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>风向标</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="149"/>
         <source>Show wind direction pointer on the top center of the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图中心显示风向标。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="151"/>
         <source>Airport</source>
-        <translation type="unfinished"></translation>
+        <translation>机场</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="151"/>
         <source>Select airport labels to display on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择要显示在地图上的机场标签。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="152"/>
         <source>Name (Ident)</source>
-        <translation type="unfinished"></translation>
+        <translation>名字（标识符）</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="153"/>
         <source>Tower Frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>塔台频率</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="154"/>
         <source>ATIS / ASOS / AWOS Frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>ATIS / ASOS / AWOS 频率</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="155"/>
         <source>Runway Information</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道信息</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="155"/>
         <source>Show runway length, width and light inidcator text.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示跑道长度、宽度和灯光信号的文字。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="158"/>
         <source>User Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>用户航空器</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="158"/>
         <source>Select text labels and other options for the user aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>为用户航空器选择文字标签和其他选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="159"/>
         <source>Registration</source>
-        <translation type="unfinished"></translation>
+        <translation>注册号</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="160"/>
         <location filename="src/options/optionsdialog.cpp" line="172"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>类型</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="160"/>
         <source>Show the aircraft type, like B738, B350 or M20T.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示航空器类型，例如 B738、B350 或者 M20T。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="161"/>
         <location filename="src/options/optionsdialog.cpp" line="173"/>
         <source>Airline</source>
-        <translation type="unfinished"></translation>
+        <translation>航空公司</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="162"/>
         <location filename="src/options/optionsdialog.cpp" line="174"/>
         <source>Flight Number</source>
-        <translation type="unfinished"></translation>
+        <translation>航班号</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="163"/>
         <location filename="src/options/optionsdialog.cpp" line="175"/>
         <source>Indicated Airspeed</source>
-        <translation type="unfinished"></translation>
+        <translation>指示空速</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="164"/>
         <location filename="src/options/optionsdialog.cpp" line="176"/>
         <source>Ground Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>地速</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="165"/>
         <location filename="src/options/optionsdialog.cpp" line="177"/>
         <source>Climb- and Sinkrate</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升和下降</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="166"/>
         <location filename="src/options/optionsdialog.cpp" line="178"/>
         <source>Heading</source>
-        <translation type="unfinished"></translation>
+        <translation>航向</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="167"/>
         <location filename="src/options/optionsdialog.cpp" line="179"/>
         <source>Altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>高度</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="168"/>
         <location filename="src/options/optionsdialog.cpp" line="188"/>
         <source>Track Line</source>
-        <translation type="unfinished"></translation>
+        <translation>航迹线</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="168"/>
         <source>Show the aircraft track as a black needle protruding from the aircraft nose.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示航空器的航迹线为从航空器外圈发散出的黑色箭头。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="170"/>
         <source>AI, Multiplayer and Online Client Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>AI、多人游戏和在线客户端航空器</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="170"/>
         <source>Select text labels for the AI, multiplayer and online client aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>为 AI、多人游戏和在线客户端航空器选择文字标签。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="171"/>
         <source>Registration, Number or Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>注册号、航班号或呼号</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="180"/>
         <source>Departure and Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>离场和到达</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="182"/>
         <source>Compass Rose</source>
-        <translation type="unfinished"></translation>
+        <translation>罗盘刻度</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="182"/>
         <source>Select display options for the compass rose.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择显示罗盘刻度的选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="183"/>
         <source>Direction Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>方向标签</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="183"/>
         <source>Show N, S, E and W labels.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示东、南、西和北的标签。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="184"/>
         <source>Degree Tick Marks</source>
-        <translation type="unfinished"></translation>
+        <translation>刻度线</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="184"/>
         <source>Show tick marks for degrees on ring.</source>
-        <translation type="unfinished"></translation>
+        <translation>在圆圈上显示刻度线。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="185"/>
         <source>Degree Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>度数标签</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="185"/>
         <source>Show degree labels on ring.</source>
-        <translation type="unfinished"></translation>
+        <translation>在圆圈上显示度数标签。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="186"/>
         <source>Range Rings</source>
-        <translation type="unfinished"></translation>
+        <translation>范围圆环</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="186"/>
         <source>Show range rings and distance labels inside.</source>
-        <translation type="unfinished"></translation>
+        <translation>在里侧显示范围圆环和距离标签。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="187"/>
         <source>Heading Line</source>
-        <translation type="unfinished"></translation>
+        <translation>航向线</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="187"/>
         <source>Show the dashed heading line for user aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>为用户航空器显示虚线的航向线。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="188"/>
         <source>Show the solid track line for user aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>为用户航空器显示实线的航向线。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="189"/>
         <source>Track Label</source>
-        <translation type="unfinished"></translation>
+        <translation>航迹标签</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="189"/>
         <source>Show track label for user aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>为用户航空器显示航迹标签。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="190"/>
         <source>Crab Angle Indicator</source>
-        <translation type="unfinished"></translation>
+        <translation>修正角指示器</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="190"/>
         <source>Show the crab angle for the user aircraft as a small magenta circle.</source>
-        <translation type="unfinished"></translation>
+        <translation>为用户航空器显示修正角为一个小品红圆圈。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="191"/>
         <source>Course to Next Waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>下一航点的航迹</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="191"/>
         <source>Show the course to next waypoint for the user aircraft as a small magenta line.</source>
-        <translation type="unfinished"></translation>
+        <translation>为用户显示前往下一航点的航迹为一条细品红线。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="528"/>
         <source>&lt;p&gt;Success. First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;成功。文件里的第一行是：&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="531"/>
         <source>&lt;p&gt;Downloaded successfully but the file does not look like a whazzup.txt file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;One of the sections &lt;i&gt;!GENERAL&lt;/i&gt; and/or &lt;i&gt;!CLIENTS&lt;/i&gt; is missing.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;下载成功但是文件不像是 whazzup.txt 文件。&lt;/p&gt;&lt;p&gt;&lt;b&gt;缺少 &lt;i&gt;!GENERAL&lt;/i&gt; 或 &lt;i&gt;!CLIENTS&lt;/i&gt; 部分代码。&lt;/b&gt;&lt;/p&gt;&lt;p&gt;文件第一行是：&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="537"/>
@@ -12809,22 +12809,23 @@ Changes only settings that can be done with this dialog.</source>
         <location filename="src/options/optionsdialog.cpp" line="907"/>
         <source>Failed. Reason:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>失败。原因是：
+%1</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="624"/>
         <source>Reset all options to default?</source>
-        <translation type="unfinished"></translation>
+        <translation>重置所有选项到默认？</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="893"/>
         <source>&lt;p&gt;Success. First METARs in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;成功。文件中第一行 METAR 文本是：&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="904"/>
         <source>&lt;p&gt;Success. Result:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;成功。结果是：&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="916"/>
