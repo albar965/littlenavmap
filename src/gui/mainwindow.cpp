@@ -3323,6 +3323,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsEfbr->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsQwRte->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsMdr->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsTfdi->setEnabled(hasFlightplan);
 
   ui->actionRouteSaveAsVfp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsIvap->setEnabled(hasFlightplan);
