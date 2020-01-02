@@ -463,9 +463,13 @@ void RouteController::flightplanHeader(atools::util::HtmlBuilder& html, bool tit
 
 QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
 {
+  QString filename = RouteExport::buildDefaultFilenameLong(QString(), QString());
   atools::util::HtmlBuilder html(true);
-  html.doc(tr("%1 - %2").arg(QApplication::applicationName()).
-           arg(RouteExport::buildDefaultFilenameLong(QString(), QString())));
+  html.doc(tr("%1 - %2").arg(QApplication::applicationName()).arg(filename),
+           QString(),
+           QString(),
+           {"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />",
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />"});
   html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, false),
             atools::util::html::NO_ENTITIES);
   html.docEnd();
