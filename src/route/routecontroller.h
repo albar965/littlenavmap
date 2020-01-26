@@ -27,6 +27,10 @@
 #include <QTimer>
 
 namespace atools {
+namespace routing {
+class RouteFinder;
+class RouteNetwork;
+}
 namespace gui {
 class ItemViewZoomHandler;
 class TabWidgetHandler;
@@ -51,8 +55,6 @@ class QMainWindow;
 class QTableView;
 class QStandardItemModel;
 class QItemSelection;
-class RouteNetwork;
-class RouteFinder;
 class FlightplanEntryBuilder;
 class SymbolPainter;
 class AirportQuery;
@@ -360,7 +362,7 @@ private:
 
   void clearRoute();
 
-  bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
+  bool calculateRouteInternal(atools::routing::RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
                               bool fetchAirways, bool useSetAltitude, int fromIndex, int toIndex);
 
@@ -435,7 +437,7 @@ private:
   int undoIndexClean = 0;
 
   /* Network cache for flight plan calculation */
-  RouteNetwork *routeNetworkRadio = nullptr, *routeNetworkAirway = nullptr;
+  atools::routing::RouteNetwork *routeNetworkRadio = nullptr, *routeNetworkAirway = nullptr;
 
   /* Flightplan and route objects */
   Route route; /* real route containing all segments */

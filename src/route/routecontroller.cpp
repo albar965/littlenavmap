@@ -41,11 +41,12 @@
 #include "query/airportquery.h"
 #include "mapgui/mapwidget.h"
 #include "parkingdialog.h"
-#include "route/routefinder.h"
-#include "route/routenetworkairway.h"
-#include "route/routenetworkradio.h"
+#include "routing/routefinder.h"
+#include "routing/routenetworkairway.h"
+#include "routing/routenetworkradio.h"
 #include "route/customproceduredialog.h"
 #include "settings/settings.h"
+#include "routeextractor.h"
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
 #include "route/routealtitude.h"
@@ -196,8 +197,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
   // Create flight plan calculation caches
-  routeNetworkRadio = new RouteNetworkRadio(NavApp::getDatabaseNav());
-  routeNetworkAirway = new RouteNetworkAirway(NavApp::getDatabaseNav());
+  routeNetworkRadio = new atools::routing::RouteNetworkRadio(NavApp::getDatabaseNav());
+  routeNetworkAirway = new atools::routing::RouteNetworkAirway(NavApp::getDatabaseNav());
 
   // Set up undo/redo framework
   undoStack = new QUndoStack(mainWindow);
@@ -1445,9 +1446,9 @@ void RouteController::calculateRadionav(int fromIndex, int toIndex)
 {
   qDebug() << Q_FUNC_INFO;
   // Changing mode might need a clear
-  routeNetworkRadio->setMode(nw::ROUTE_RADIONAV);
+  routeNetworkRadio->setMode(atools::routing::ROUTE_RADIONAV);
 
-  RouteFinder routeFinder(routeNetworkRadio);
+  atools::routing::RouteFinder routeFinder(routeNetworkRadio);
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, tr("Radionnav Flight Plan Calculation"),
                             false /* fetch airways */, false /* Use altitude */,
@@ -1465,9 +1466,9 @@ void RouteController::calculateRadionav()
 void RouteController::calculateHighAlt(int fromIndex, int toIndex)
 {
   qDebug() << Q_FUNC_INFO;
-  routeNetworkAirway->setMode(nw::ROUTE_JET);
+  routeNetworkAirway->setMode(atools::routing::ROUTE_JET);
 
-  RouteFinder routeFinder(routeNetworkAirway);
+  atools::routing::RouteFinder routeFinder(routeNetworkAirway);
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALTITUDE,
                             tr("High altitude Flight Plan Calculation"),
@@ -1486,9 +1487,9 @@ void RouteController::calculateHighAlt()
 void RouteController::calculateLowAlt(int fromIndex, int toIndex)
 {
   qDebug() << Q_FUNC_INFO;
-  routeNetworkAirway->setMode(nw::ROUTE_VICTOR);
+  routeNetworkAirway->setMode(atools::routing::ROUTE_VICTOR);
 
-  RouteFinder routeFinder(routeNetworkAirway);
+  atools::routing::RouteFinder routeFinder(routeNetworkAirway);
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALTITUDE,
                             tr("Low altitude Flight Plan Calculation"),
@@ -1507,9 +1508,9 @@ void RouteController::calculateLowAlt()
 void RouteController::calculateSetAlt(int fromIndex, int toIndex)
 {
   qDebug() << Q_FUNC_INFO;
-  routeNetworkAirway->setMode(nw::ROUTE_VICTOR | nw::ROUTE_JET);
+  routeNetworkAirway->setMode(atools::routing::ROUTE_VICTOR | atools::routing::ROUTE_JET);
 
-  RouteFinder routeFinder(routeNetworkAirway);
+  atools::routing::RouteFinder routeFinder(routeNetworkAirway);
 
   // Just decide by given altiude if this is a high or low plan
   atools::fs::pln::RouteType type;
@@ -1532,7 +1533,7 @@ void RouteController::calculateSetAlt()
 }
 
 /* Calculate a flight plan to all types */
-bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
+bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                                              const QString& commandName, bool fetchAirways,
                                              bool useSetAltitude, int fromIndex, int toIndex)
 {
@@ -1575,10 +1576,11 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   {
     // A route was found
     float distance = 0.f;
-    QVector<rf::RouteEntry> calculatedRoute;
+    QVector<RouteEntry> calculatedRoute;
 
     // Fetch waypoints
-    routeFinder->extractRoute(calculatedRoute, distance);
+    RouteExtractor extractor(routeFinder);
+    extractor.extractRoute(calculatedRoute, distance);
 
     // Compare to direct connection and check if route is too long
     float directDistance = departurePos.distanceMeterTo(destinationPos);
@@ -1603,7 +1605,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
       int idx = 1;
       // Create flight plan entries - will be copied later to the route map objects
-      for(const rf::RouteEntry& routeEntry : calculatedRoute)
+      for(const RouteEntry& routeEntry : calculatedRoute)
       {
         FlightplanEntry flightplanEntry;
         entryBuilder->buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.type,

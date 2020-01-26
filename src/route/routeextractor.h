@@ -15,25 +15,38 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_ROUTENETWORKRADIO_H
-#define LITTLENAVMAP_ROUTENETWORKRADIO_H
+#ifndef LNM_ROUTEEXTRACTOR_H
+#define LNM_ROUTEEXTRACTOR_H
 
-#include "route/routenetwork.h"
+#include "common/maptypes.h"
+#include "routing/routenetwork.h"
 
-namespace  atools {
-namespace sql {
-class SqlDatabase;
+namespace atools {
+namespace routing {
+class RouteFinder;
 }
 }
 
-/* Creates a route network that uses the radio navaid routing tables */
-class RouteNetworkRadio :
-  public RouteNetwork
+/* Used when fetching the route points after calculation. Adds airway id to node */
+struct RouteEntry
 {
-public:
-  RouteNetworkRadio(atools::sql::SqlDatabase *sqlDb);
-  virtual ~RouteNetworkRadio();
-
+  map::MapObjectRef ref;
+  int airwayId;
 };
 
-#endif // LITTLENAVMAP_ROUTENETWORKRADIO_H
+class RouteExtractor
+{
+public:
+  RouteExtractor(atools::routing::RouteFinder *routeFinderParam);
+
+  /* Extract route points and total distance if calculateRoute was successfull.
+   * From and to are not included in the list */
+  void extractRoute(QVector<RouteEntry>& route, float& distanceMeter);
+
+private:
+  map::MapObjectTypes toMapObjectType(atools::routing::NodeType type);
+
+  atools::routing::RouteFinder *routeFinder;
+};
+
+#endif // LNM_ROUTEEXTRACTOR_H

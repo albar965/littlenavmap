@@ -313,11 +313,8 @@ SOURCES += \
   src/route/routeexport.cpp \
   src/route/routeexportdata.cpp \
   src/route/routeexportdialog.cpp \
-  src/route/routefinder.cpp \
+  src/route/routeextractor.cpp \
   src/route/routeleg.cpp \
-  src/route/routenetwork.cpp \
-  src/route/routenetworkairway.cpp \
-  src/route/routenetworkradio.cpp \
   src/route/routestring.cpp \
   src/route/routestringdialog.cpp \
   src/route/userwaypointdialog.cpp \
@@ -459,11 +456,8 @@ HEADERS  += \
   src/route/routeexport.h \
   src/route/routeexportdata.h \
   src/route/routeexportdialog.h \
-  src/route/routefinder.h \
+  src/route/routeextractor.h \
   src/route/routeleg.h \
-  src/route/routenetwork.h \
-  src/route/routenetworkairway.h \
-  src/route/routenetworkradio.h \
   src/route/routestring.h \
   src/route/routestringdialog.h \
   src/route/userwaypointdialog.h \
