@@ -103,30 +103,30 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   // Build SQL query conditions
   QStringList typeCondMap;
   typeCondMap << QString()
-              << "type = 'VH'"
-              << "type = 'VL'"
-              << "type = 'VT'"
-              << "type = 'NHH'"
-              << "type = 'NH'"
-              << "type = 'NMH'"
-              << "type = 'NCP'"
-              << "type = 'WN'"
-              << "type = 'WU'"
-              << "type = 'V'"
-              << "type = 'N'";
+              << "type = 'VH'"  // VOR/VORTAC - High
+              << "type = 'VL'"  // VOR/VORTAC - Low
+              << "type = 'VT'"  // VOR/VORTAC - Terminal
+              << "type = 'NHH'" // NDB - HH
+              << "type = 'NH'"  // NDB - H
+              << "type = 'NMH'" // NDB - MH
+              << "type = 'NCP'" // NDB - Compass Locator
+              << "type = 'WN'"  // Waypoint - Named
+              << "type = 'WU'"  // Waypoint - Unnamed
+              << "type = 'V'"   // Waypoint - VOR
+              << "type = 'N'";  // Waypoint - NDB
 
   QStringList navTypeCondMap;
   navTypeCondMap << QString()
-                 << "(nav_type like ('V%') or nav_type in ('D', 'TC'))"
-                 << "(nav_type like ('V%') or nav_type in ('D', 'TC', 'N'))"
-                 << "nav_type in ('VD')"
-                 << "nav_type in ('V')"
-                 << "nav_type in ('D')"
-                 << "nav_type in ('VT')"
-                 << "nav_type in ('TC', 'TCD')"
-                 << "nav_type = 'N'"
-                 << "nav_type = 'W'"
-                 << "nav_type = 'W' and "
+                 << "(nav_type like ('V%') or nav_type in ('D', 'TC'))"      // All VOR/VORTAC/TACAN
+                 << "(nav_type like ('V%') or nav_type in ('D', 'TC', 'N'))" // All VOR/VORTAC/TACAN/NDB
+                 << "nav_type in ('VD')"                                     // Only VOR-DME
+                 << "nav_type in ('V')"                                      // Only VOR
+                 << "nav_type in ('D')"                                      // Only DME
+                 << "nav_type in ('VT')"                                     // Only VORTAC
+                 << "nav_type in ('TC', 'TCD')"                              // Only TACAN
+                 << "nav_type = 'N'"                                         // All NDB
+                 << "nav_type = 'W'"                                         // All Waypoints
+                 << "nav_type = 'W' and "                                    // All Waypoints on Airways
      "(waypoint_num_victor_airway > 0 or waypoint_num_jet_airway > 0)";
 
   // Default view column descriptors
@@ -320,7 +320,7 @@ void NavSearch::restoreViewState(bool distSearchActive)
 QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                                      const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(roleValue);
+  Q_UNUSED(roleValue)
 
   switch(role)
   {

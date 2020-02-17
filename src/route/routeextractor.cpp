@@ -18,16 +18,15 @@
 #include "route/routeextractor.h"
 #include "routing/routefinder.h"
 
-RouteExtractor::RouteExtractor(atools::routing::RouteFinder *routeFinderParam)
+RouteExtractor::RouteExtractor(const atools::routing::RouteFinder *routeFinderParam)
   : routeFinder(routeFinderParam)
 {
 
 }
 
-void RouteExtractor::extractRoute(QVector<RouteEntry>& route, float& distanceMeter)
+void RouteExtractor::extractRoute(QVector<RouteEntry>& route, float& distanceMeter) const
 {
   distanceMeter = 0.f;
-  route.reserve(500);
 
   QVector<atools::routing::RouteLeg> routeLegs;
   routeFinder->extractLegs(routeLegs, distanceMeter);
@@ -43,17 +42,20 @@ void RouteExtractor::extractRoute(QVector<RouteEntry>& route, float& distanceMet
 }
 
 /* Convert internal network type to MapObjectTypes for extract route */
-map::MapObjectTypes RouteExtractor::toMapObjectType(atools::routing::NodeType type)
+map::MapObjectTypes RouteExtractor::toMapObjectType(atools::routing::NodeType type) const
 {
   switch(type)
   {
     case atools::routing::WAYPOINT_JET:
     case atools::routing::WAYPOINT_VICTOR:
     case atools::routing::WAYPOINT_BOTH:
+    case atools::routing::WAYPOINT_NAMED:
+    case atools::routing::WAYPOINT_UNNAMED:
       return map::WAYPOINT;
 
     case atools::routing::VOR:
     case atools::routing::VORDME:
+    case atools::routing::DME:
       return map::VOR;
 
     case atools::routing::NDB:

@@ -27,26 +27,26 @@ class RouteFinder;
 }
 }
 
-/* Used when fetching the route points after calculation. Adds airway id to node */
 struct RouteEntry
 {
   map::MapObjectRef ref;
   int airwayId;
 };
 
+/* Fetches the route points after calculation. Adds airway id to node and determines map object type. */
 class RouteExtractor
 {
 public:
-  RouteExtractor(atools::routing::RouteFinder *routeFinderParam);
+  RouteExtractor(const atools::routing::RouteFinder *routeFinderParam);
 
   /* Extract route points and total distance if calculateRoute was successfull.
    * From and to are not included in the list */
-  void extractRoute(QVector<RouteEntry>& route, float& distanceMeter);
+  void extractRoute(QVector<RouteEntry>& route, float& distanceMeter) const;
 
 private:
-  map::MapObjectTypes toMapObjectType(atools::routing::NodeType type);
+  map::MapObjectTypes toMapObjectType(atools::routing::NodeType type) const;
 
-  atools::routing::RouteFinder *routeFinder;
+  const atools::routing::RouteFinder *routeFinder;
 };
 
 #endif // LNM_ROUTEEXTRACTOR_H

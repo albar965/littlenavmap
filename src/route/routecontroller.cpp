@@ -20,6 +20,7 @@
 #include "route/routestringdialog.h"
 
 #include "navapp.h"
+#include "atools.h"
 #include "options/optiondata.h"
 #include "gui/helphandler.h"
 #include "query/procedurequery.h"
@@ -42,8 +43,7 @@
 #include "mapgui/mapwidget.h"
 #include "parkingdialog.h"
 #include "routing/routefinder.h"
-#include "routing/routenetworkairway.h"
-#include "routing/routenetworkradio.h"
+#include "routing/routenetwork.h"
 #include "route/customproceduredialog.h"
 #include "settings/settings.h"
 #include "routeextractor.h"
@@ -65,6 +65,7 @@
 #include "fs/sc/simconnectdata.h"
 #include "gui/tabwidgethandler.h"
 #include "gui/choicedialog.h"
+#include "geo/calculations.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -72,6 +73,7 @@
 #include <QInputDialog>
 #include <QFileInfo>
 #include <QTextTable>
+#include <QProgressDialog>
 
 namespace rc {
 // Route table column indexes
@@ -197,8 +199,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
   // Create flight plan calculation caches
-  routeNetworkRadio = new atools::routing::RouteNetworkRadio(NavApp::getDatabaseNav());
-  routeNetworkAirway = new atools::routing::RouteNetworkAirway(NavApp::getDatabaseNav());
+  routeNetworkRadio = new atools::routing::RouteNetwork(NavApp::getDatabaseNav(), atools::routing::SOURCE_RADIO);
+  routeNetworkAirway = new atools::routing::RouteNetwork(NavApp::getDatabaseNav(), atools::routing::SOURCE_AIRWAY);
 
   // Set up undo/redo framework
   undoStack = new QUndoStack(mainWindow);
@@ -1445,14 +1447,12 @@ void RouteController::beforeRouteCalc()
 void RouteController::calculateRadionav(int fromIndex, int toIndex)
 {
   qDebug() << Q_FUNC_INFO;
-  // Changing mode might need a clear
-  routeNetworkRadio->setMode(atools::routing::ROUTE_RADIONAV);
 
   atools::routing::RouteFinder routeFinder(routeNetworkRadio);
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, tr("Radionnav Flight Plan Calculation"),
                             false /* fetch airways */, false /* Use altitude */,
-                            fromIndex, toIndex))
+                            fromIndex, toIndex, atools::routing::MODE_RADIONAV))
     NavApp::setStatusMessage(tr("Calculated radio navaid flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
@@ -1466,14 +1466,12 @@ void RouteController::calculateRadionav()
 void RouteController::calculateHighAlt(int fromIndex, int toIndex)
 {
   qDebug() << Q_FUNC_INFO;
-  routeNetworkAirway->setMode(atools::routing::ROUTE_JET);
-
   atools::routing::RouteFinder routeFinder(routeNetworkAirway);
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALTITUDE,
                             tr("High altitude Flight Plan Calculation"),
                             true /* fetch airways */, false /* Use altitude */,
-                            fromIndex, toIndex))
+                            fromIndex, toIndex, atools::routing::MODE_JET))
     NavApp::setStatusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
@@ -1487,14 +1485,12 @@ void RouteController::calculateHighAlt()
 void RouteController::calculateLowAlt(int fromIndex, int toIndex)
 {
   qDebug() << Q_FUNC_INFO;
-  routeNetworkAirway->setMode(atools::routing::ROUTE_VICTOR);
-
   atools::routing::RouteFinder routeFinder(routeNetworkAirway);
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALTITUDE,
                             tr("Low altitude Flight Plan Calculation"),
                             true /* fetch airways */, false /* Use altitude */,
-                            fromIndex, toIndex))
+                            fromIndex, toIndex, atools::routing::MODE_VICTOR))
     NavApp::setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
@@ -1508,7 +1504,6 @@ void RouteController::calculateLowAlt()
 void RouteController::calculateSetAlt(int fromIndex, int toIndex)
 {
   qDebug() << Q_FUNC_INFO;
-  routeNetworkAirway->setMode(atools::routing::ROUTE_VICTOR | atools::routing::ROUTE_JET);
 
   atools::routing::RouteFinder routeFinder(routeNetworkAirway);
 
@@ -1521,7 +1516,7 @@ void RouteController::calculateSetAlt(int fromIndex, int toIndex)
 
   if(calculateRouteInternal(&routeFinder, type, tr("Low altitude flight plan"),
                             true /* fetch airways */, true /* Use altitude */,
-                            fromIndex, toIndex))
+                            fromIndex, toIndex, atools::routing::MODE_ALL_AIRWAY))
     NavApp::setStatusMessage(tr("Calculated high/low flight plan for given altitude."));
   else
     NavApp::setStatusMessage(tr("No route found."));
@@ -1535,12 +1530,10 @@ void RouteController::calculateSetAlt()
 /* Calculate a flight plan to all types */
 bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                                              const QString& commandName, bool fetchAirways,
-                                             bool useSetAltitude, int fromIndex, int toIndex)
+                                             bool useSetAltitude, int fromIndex, int toIndex,
+                                             atools::routing::Modes mode)
 {
   bool calcRange = fromIndex != -1 && toIndex != -1;
-
-  // Create wait cursor if calculation takes too long
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
   // Stop any background tasks
   beforeRouteCalc();
@@ -1549,6 +1542,10 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
   int cruiseFt = atools::roundToInt(Unit::rev(flightplan.getCruisingAltitude(), Unit::altFeetF));
   int altitude = useSetAltitude ? cruiseFt : 0;
+
+  // Load network from database if not already done
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+  routeFinder->ensureNetworkLoaded();
 
   routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
   routeFinder->setPreferNdbToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_NDB);
@@ -1569,10 +1566,43 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
     destinationPos = route.getDestinationBeforeProcedure().getPosition();
   }
 
-  // Calculate the route
-  bool found = routeFinder->calculateRoute(departurePos, destinationPos, altitude);
+  // ===================================================================
+  // Set up a progress dialog which shows for all calculations taking more than half a second
+  QProgressDialog progress(tr("Calculating Flight Plan ..."), tr("Cancel"), 0, 0, mainWindow);
+  progress.setWindowTitle(tr("Little Navmap - Calculating Flight Plan"));
+  progress.setWindowFlags(progress.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  progress.setWindowModality(Qt::ApplicationModal);
+  progress.setMinimumDuration(500);
 
-  if(found)
+  bool dialogShown = false, canceled = true;
+  routeFinder->setProgressCallback([&progress, &canceled, &dialogShown](int distToDest, int currentDistToDest) -> bool {
+    progress.setMaximum(distToDest);
+    progress.setValue(distToDest - currentDistToDest);
+    canceled = progress.wasCanceled();
+
+    if(progress.isVisible())
+    {
+      // Dialog is shown remove wait cursor
+      dialogShown = true;
+      QGuiApplication::restoreOverrideCursor();
+    }
+
+    return !canceled;
+  });
+
+  // Calculate the route - calls above lambda ================================================
+  bool found = routeFinder->calculateRoute(departurePos, destinationPos, altitude, mode);
+
+  if(!dialogShown)
+    QGuiApplication::restoreOverrideCursor();
+
+  // Hide dialog
+  progress.reset();
+
+  // Create wait cursor if calculation takes too long
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+  if(found && !canceled)
   {
     // A route was found
     float distance = 0.f;
@@ -1662,7 +1692,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   }
 
   QGuiApplication::restoreOverrideCursor();
-  if(!found)
+  if(!found && !canceled)
     atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_ERROR,
                                                    tr("Cannot find a route.\n"
                                                       "Try another routing type or create the flight plan manually."),
@@ -1758,8 +1788,8 @@ void RouteController::reverseRoute()
 void RouteController::preDatabaseLoad()
 {
   loadingDatabaseState = true;
-  routeNetworkRadio->deInitQueries();
-  routeNetworkAirway->deInitQueries();
+  routeNetworkRadio->deInit();
+  routeNetworkAirway->deInit();
   routeAltDelayTimer.stop();
 
   // Reset active to avoid crash when indexes change
@@ -1769,8 +1799,8 @@ void RouteController::preDatabaseLoad()
 
 void RouteController::postDatabaseLoad()
 {
-  routeNetworkRadio->initQueries();
-  routeNetworkAirway->initQueries();
+  routeNetworkRadio->init();
+  routeNetworkAirway->init();
 
   // Remove the legs but keep the properties
   route.clearProcedures(proc::PROCEDURE_ALL);

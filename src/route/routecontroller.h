@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_ROUTECONTROLLER_H
 
 #include "route/routecommand.h"
+#include "routing/routenetworktypes.h"
 #include "route/route.h"
 #include "common/tabindexes.h"
 
@@ -364,7 +365,8 @@ private:
 
   bool calculateRouteInternal(atools::routing::RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
-                              bool fetchAirways, bool useSetAltitude, int fromIndex, int toIndex);
+                              bool fetchAirways, bool useSetAltitude, int fromIndex, int toIndex,
+                              atools::routing::Modes mode);
 
   void updateModelRouteTimeFuel();
 
