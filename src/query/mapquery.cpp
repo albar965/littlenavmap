@@ -1171,9 +1171,13 @@ void MapQuery::initQueries()
   QStringList const airportQueryBase = AirportQuery::airportColumns(dbSim);
   QStringList const airportQueryBaseOverview = AirportQuery::airportOverviewColumns(dbSim);
 
-  static const QString airwayQueryBase(
+  QString airwayQueryBase(
     "airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
     "direction, minimum_altitude, maximum_altitude, from_lonx, from_laty, to_lonx, to_laty ");
+
+  SqlRecord aprec = dbNav->record("airway");
+  if(aprec.contains("route_type"))
+    airwayQueryBase.append(", route_type");
 
   static const QString waypointQueryBase(
     "waypoint_id, ident, region, type, num_victor_airway, num_jet_airway, "
