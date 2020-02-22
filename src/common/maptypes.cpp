@@ -1019,6 +1019,57 @@ MapAirwayType airwayTypeFromString(const QString& typeStr)
     return map::NO_AIRWAY;
 }
 
+QString airwayRouteTypeToString(map::MapAirwayRouteType type)
+{
+  switch(type)
+  {
+    case map::RT_NONE:
+      break;
+
+    case map::RT_AIRLINE:
+      return QObject::tr("Airline");
+
+    case map::RT_CONTROL:
+      return QObject::tr("Control");
+
+    case map::RT_DIRECT:
+      return QObject::tr("Direct");
+
+    case map::RT_HELICOPTER:
+      return QObject::tr("Helicopter");
+
+    case map::RT_OFFICIAL:
+      return QObject::tr("Official");
+
+    case map::RT_RNAV:
+      return QObject::tr("RNAV");
+
+    case map::RT_UNDESIGNATED:
+      return QObject::tr("Undesignated");
+  }
+  return QString();
+}
+
+MapAirwayRouteType airwayRouteTypeFromString(const QString& typeStr)
+{
+  if(typeStr == "A")
+    return RT_AIRLINE; /* A Airline Airway (Tailored Data) */
+  else if(typeStr == "C")
+    return RT_CONTROL; /* C Control */
+  else if(typeStr == "D")
+    return RT_DIRECT; /* D Direct Route */
+  else if(typeStr == "H")
+    return RT_HELICOPTER; /* H Helicopter Airways */
+  else if(typeStr == "O")
+    return RT_OFFICIAL; /* O Officially Designated Airways, except RNAV, Helicopter Airways */
+  else if(typeStr == "R")
+    return RT_RNAV; /* R RNAV Airways */
+  else if(typeStr == "S")
+    return RT_UNDESIGNATED; /* S Undesignated ATS Route */
+  else
+    return RT_NONE;
+}
+
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj)
 {
   qint32 types;

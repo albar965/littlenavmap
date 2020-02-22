@@ -440,6 +440,7 @@ void MapTypesFactory::fillAirway(const SqlRecord& record, map::MapAirway& airway
 {
   airway.id = record.valueInt("airway_id");
   airway.type = airwayTypeFromString(record.valueStr("airway_type"));
+  airway.routeType = airwayRouteTypeFromString(record.valueStr("route_type", QString()));
   airway.name = record.valueStr("airway_name");
   airway.minAltitude = record.valueInt("minimum_altitude");
 

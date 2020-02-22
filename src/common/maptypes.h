@@ -542,6 +542,18 @@ enum MapAirwayDirection
   DIR_BACKWARD = 2
 };
 
+enum MapAirwayRouteType
+{
+  RT_NONE,
+  RT_AIRLINE, /* A Airline Airway (Tailored Data) */
+  RT_CONTROL, /* C Control (appears in DFD) */
+  RT_DIRECT, /* D Direct Route */
+  RT_HELICOPTER, /* H Helicopter Airways */
+  RT_OFFICIAL, /* O Officially Designated Airways, except RNAV, Helicopter Airways (appears in DFD) */
+  RT_RNAV, /* R RNAV Airways (appears in DFD) */
+  RT_UNDESIGNATED /* S Undesignated ATS Route */
+};
+
 /* Airway segment */
 struct MapAirway
   : public MapBase
@@ -552,6 +564,7 @@ struct MapAirway
 
   QString name;
   map::MapAirwayType type;
+  map::MapAirwayRouteType routeType;
   int fromWaypointId, toWaypointId /* all database ids */;
   MapAirwayDirection direction;
   int minAltitude, maxAltitude /* feet */,
@@ -1026,7 +1039,9 @@ const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);
 
 QString airwayTypeToShortString(map::MapAirwayType type);
 QString airwayTypeToString(map::MapAirwayType type);
-MapAirwayType  airwayTypeFromString(const QString& typeStr);
+QString airwayRouteTypeToString(map::MapAirwayRouteType type);
+map::MapAirwayType  airwayTypeFromString(const QString& typeStr);
+map::MapAirwayRouteType  airwayRouteTypeFromString(const QString& typeStr);
 QString comTypeName(const QString& type);
 
 QString airportText(const map::MapAirport& airport, int elideName = 1000);

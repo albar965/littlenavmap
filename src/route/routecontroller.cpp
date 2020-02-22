@@ -1471,7 +1471,7 @@ void RouteController::calculateHighAlt(int fromIndex, int toIndex)
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALTITUDE,
                             tr("High altitude Flight Plan Calculation"),
                             true /* fetch airways */, false /* Use altitude */,
-                            fromIndex, toIndex, atools::routing::MODE_JET))
+                            fromIndex, toIndex, atools::routing::MODE_JET_AND_WAYPOINT))
     NavApp::setStatusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
@@ -1490,7 +1490,7 @@ void RouteController::calculateLowAlt(int fromIndex, int toIndex)
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALTITUDE,
                             tr("Low altitude Flight Plan Calculation"),
                             true /* fetch airways */, false /* Use altitude */,
-                            fromIndex, toIndex, atools::routing::MODE_VICTOR))
+                            fromIndex, toIndex, atools::routing::MODE_VICTOR_AND_WAYPOINT))
     NavApp::setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
@@ -1516,7 +1516,7 @@ void RouteController::calculateSetAlt(int fromIndex, int toIndex)
 
   if(calculateRouteInternal(&routeFinder, type, tr("Low altitude flight plan"),
                             true /* fetch airways */, true /* Use altitude */,
-                            fromIndex, toIndex, atools::routing::MODE_ALL_AIRWAY))
+                            fromIndex, toIndex, atools::routing::MODE_AIRWAY_AND_WAYPOINT))
     NavApp::setStatusMessage(tr("Calculated high/low flight plan for given altitude."));
   else
     NavApp::setStatusMessage(tr("No route found."));

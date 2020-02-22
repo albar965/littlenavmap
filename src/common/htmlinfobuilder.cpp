@@ -2630,7 +2630,10 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   }
 
   html.table();
-  html.row2(tr("Segment type:"), map::airwayTypeToString(airway.type));
+  html.row2If(tr("Segment type:"), map::airwayTypeToString(airway.type));
+
+  if(info)
+    html.row2If(tr("Route type:"), map::airwayRouteTypeToString(airway.routeType));
 
   map::MapWaypoint from = mapQuery->getWaypointById(airway.fromWaypointId);
   map::MapWaypoint to = mapQuery->getWaypointById(airway.toWaypointId);
