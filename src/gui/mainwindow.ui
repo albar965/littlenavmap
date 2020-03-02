@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>966</height>
+    <height>1308</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -166,6 +166,7 @@
      <addaction name="actionShortcutLogbookSearch"/>
      <addaction name="separator"/>
      <addaction name="actionShortcutFlightPlan"/>
+     <addaction name="actionShortcutRouteCalc"/>
      <addaction name="actionShortcutAircraftPerformance"/>
      <addaction name="separator"/>
      <addaction name="actionShortcutAirportInformation"/>
@@ -251,12 +252,9 @@
     <addaction name="actionRouteCopyString"/>
     <addaction name="separator"/>
     <addaction name="actionRouteCalcDirect"/>
-    <addaction name="actionRouteCalcRadionav"/>
-    <addaction name="actionRouteCalcLowAlt"/>
-    <addaction name="actionRouteCalcHighAlt"/>
-    <addaction name="actionRouteCalcSetAlt"/>
-    <addaction name="separator"/>
     <addaction name="actionRouteReverse"/>
+    <addaction name="actionRouteCalc"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteAdjustAltitude"/>
    </widget>
    <widget class="QMenu" name="menuDatabase">
@@ -5446,11 +5444,8 @@ relation to shown airport</string>
    <addaction name="actionRouteNewFromString"/>
    <addaction name="separator"/>
    <addaction name="actionRouteCalcDirect"/>
-   <addaction name="actionRouteCalcRadionav"/>
-   <addaction name="actionRouteCalcLowAlt"/>
-   <addaction name="actionRouteCalcHighAlt"/>
-   <addaction name="actionRouteCalcSetAlt"/>
    <addaction name="actionRouteReverse"/>
+   <addaction name="actionRouteCalc"/>
    <addaction name="separator"/>
    <addaction name="actionRouteAdjustAltitude"/>
   </widget>
@@ -6091,6 +6086,397 @@ relation to shown airport</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetRouteCalc">
+   <property name="windowIcon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routecalcdock.svg</normaloff>:/littlenavmap/resources/icons/routecalcdock.svg</iconset>
+   </property>
+   <property name="floating">
+    <bool>true</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::NoDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Flight Plan Calculation</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetRouteCalcContents">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="15" column="0" colspan="3">
+      <widget class="Line" name="line_10">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="3">
+      <widget class="Line" name="line_9">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QSpinBox" name="spinBoxRouteCalcCruiseAltitude">
+       <property name="toolTip">
+        <string>Cruise altitude that is used to select airways</string>
+       </property>
+       <property name="statusTip">
+        <string>Cruise altitude that is used to select airways</string>
+       </property>
+       <property name="suffix">
+        <string> %alt%</string>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="singleStep">
+        <number>500</number>
+       </property>
+       <property name="value">
+        <number>10000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1" colspan="2">
+      <widget class="QRadioButton" name="radioButtonRouteCalcAirwayVictor">
+       <property name="toolTip">
+        <string>Limit route to Victor airways</string>
+       </property>
+       <property name="statusTip">
+        <string>Limit route to Victor airways</string>
+       </property>
+       <property name="text">
+        <string>&amp;Victor airways (low altitude)</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">buttonGroupRouteCalcAirway</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="3">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="labelRouteCalcHeader">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="margin">
+          <number>5</number>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonRouteCalcHelp">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
+&lt;p&gt;Search tips for text fields: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
+&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
+&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Check boxes: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Gray means: Condition is ignored.&lt;/li&gt;
+&lt;li&gt;Checked means: Condition must match.&lt;/li&gt;
+&lt;li&gt;Unchecked means: Condition must not match.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="statusTip">
+          <string>Show help for the airport search tab</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../littlenavmap.qrc">
+           <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="14" column="1" colspan="2">
+      <widget class="QCheckBox" name="checkBoxRouteCalcRadioNdb">
+       <property name="toolTip">
+        <string>Include NDB stations in plan</string>
+       </property>
+       <property name="statusTip">
+        <string>Include NDB stations in plan</string>
+       </property>
+       <property name="text">
+        <string>Use &amp;NDB</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QPushButton" name="pushButtonRouteCalcAdjustAltitude">
+       <property name="toolTip">
+        <string>Adjust flight plan altitude using simplified east/west and IFR/VFR rules</string>
+       </property>
+       <property name="statusTip">
+        <string>Adjust flight plan altitude using simplified east/west and IFR/VFR rules</string>
+       </property>
+       <property name="text">
+        <string>A&amp;djust</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1" colspan="2">
+      <widget class="QRadioButton" name="radioButtonRouteCalcAirwayJet">
+       <property name="toolTip">
+        <string>Limit route to Jet airways</string>
+       </property>
+       <property name="statusTip">
+        <string>Limit route to Jet airways</string>
+       </property>
+       <property name="text">
+        <string>&amp;Jet airways (high altitude)</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">buttonGroupRouteCalcAirway</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="8" column="1" colspan="2">
+      <widget class="QRadioButton" name="radioButtonRouteCalcAirwayAll">
+       <property name="toolTip">
+        <string>Use both Victor and Jet airways for route</string>
+       </property>
+       <property name="statusTip">
+        <string>Use both Victor and Jet airways for route</string>
+       </property>
+       <property name="text">
+        <string>&amp;All airways</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">buttonGroupRouteCalcAirway</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="14" column="0">
+      <widget class="QRadioButton" name="radioButtonRouteCalcRadio">
+       <property name="toolTip">
+        <string>Calculate a flight plan using radio navaids like VOR and NDB</string>
+       </property>
+       <property name="statusTip">
+        <string>Calculate a flight plan using radio navaids like VOR and NDB</string>
+       </property>
+       <property name="text">
+        <string>&amp;Radio Navaids:</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">buttonGroupRouteCalc</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="13" column="0" colspan="3">
+      <widget class="Line" name="line_6">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="3">
+      <widget class="QComboBox" name="comboBoxRouteCalcMode">
+       <item>
+        <property name="text">
+         <string>Calculate from departure to destination</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Calculate for selection in flight plan table</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="17" column="2">
+      <widget class="QPushButton" name="pushButtonRouteCalc">
+       <property name="text">
+        <string>&amp;Calculate</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="1" colspan="2">
+      <widget class="QGroupBox" name="groupBoxRouteCalcAirwayPrefer">
+       <property name="title">
+        <string>Prefer:</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelRouteCalcAirwayPreferAirway">
+          <property name="text">
+           <string>Airways</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelRouteCalcAirwayPreferWaypoint">
+          <property name="text">
+           <string>Both</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="labelRouteCalcAirwayPreferWaypoint_2">
+          <property name="text">
+           <string>Direct</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="3">
+         <widget class="QSlider" name="horizontalSliderRouteCalcAirwayPreference">
+          <property name="toolTip">
+           <string>Move the slider left to use airways only. Move the slider to the right to use direct waypoint connections only.
+Every position in between uses airways and waypoints more or less and 
+allows to find a flight plan that can cross areas without an airway network.</string>
+          </property>
+          <property name="maximum">
+           <number>6</number>
+          </property>
+          <property name="pageStep">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="tracking">
+           <bool>true</bool>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="invertedAppearance">
+           <bool>false</bool>
+          </property>
+          <property name="invertedControls">
+           <bool>false</bool>
+          </property>
+          <property name="tickPosition">
+           <enum>QSlider::TicksBothSides</enum>
+          </property>
+          <property name="tickInterval">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="labelRouteCalcCruiseAltitude">
+       <property name="text">
+        <string>&amp;Cruise Altitude:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxRouteCalcCruiseAltitude</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QRadioButton" name="radioButtonRouteCalcAirway">
+       <property name="toolTip">
+        <string>Calculate a flight plan using airways and waypoints</string>
+       </property>
+       <property name="statusTip">
+        <string>Calculate a flight plan using airways and waypoints</string>
+       </property>
+       <property name="text">
+        <string>&amp;Airways:</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">buttonGroupRouteCalc</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="11" column="1" colspan="2">
+      <widget class="QCheckBox" name="checkBoxRouteCalcAirwayNoRnav">
+       <property name="toolTip">
+        <string>Do not use RNAV airways</string>
+       </property>
+       <property name="statusTip">
+        <string>Do not use RNAV airways</string>
+       </property>
+       <property name="text">
+        <string>Avoid &amp;RNAV airways</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" colspan="3">
+      <widget class="Line" name="line_7">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -7324,51 +7710,6 @@ relation to shown airport</string>
     <string>Delete this airport, navaid or map position from flight plan</string>
    </property>
   </action>
-  <action name="actionRouteCalcHighAlt">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routehigh.svg</normaloff>:/littlenavmap/resources/icons/routehigh.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Calculate &amp;high Altitude</string>
-   </property>
-   <property name="toolTip">
-    <string>Calculate a high altitude (Jet airways) flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Calculate a high altitude (Jet airways) flight plan</string>
-   </property>
-  </action>
-  <action name="actionRouteCalcLowAlt">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routelow.svg</normaloff>:/littlenavmap/resources/icons/routelow.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Calculate &amp;low Altitude</string>
-   </property>
-   <property name="toolTip">
-    <string>Calculate a low altitude (Victor airways) flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Calculate a low altitude (Victor airways) flight plan</string>
-   </property>
-  </action>
-  <action name="actionRouteCalcRadionav">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeradio.svg</normaloff>:/littlenavmap/resources/icons/routeradio.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Calculate Radio&amp;nav</string>
-   </property>
-   <property name="toolTip">
-    <string>Calculate a radio navaid (VOR and NDB) flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Calculate a radio navaid (VOR and NDB) flight plan</string>
-   </property>
-  </action>
   <action name="actionRouteCalcDirect">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -7472,21 +7813,6 @@ relation to shown airport</string>
    </property>
    <property name="menuRole">
     <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
-  </action>
-  <action name="actionRouteCalcSetAlt">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routealt.svg</normaloff>:/littlenavmap/resources/icons/routealt.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Calculate based on given &amp;Altitude</string>
-   </property>
-   <property name="toolTip">
-    <string>Calculate flight plan based on given altitude using Victor or Jet airways</string>
-   </property>
-   <property name="statusTip">
-    <string>Calculate flight plan based on given altitude using Victor or Jet airways</string>
    </property>
   </action>
   <action name="actionMapShowAddonAirports">
@@ -8726,66 +9052,6 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Reset the window layout and all dock windows back to default</string>
-   </property>
-  </action>
-  <action name="actionRouteCalcHighAltSelected">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routehigh.svg</normaloff>:/littlenavmap/resources/icons/routehigh.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Calculate &amp;high Altitude</string>
-   </property>
-   <property name="toolTip">
-    <string>Calculate a high altitude (Jet airways) between selected legs</string>
-   </property>
-   <property name="statusTip">
-    <string>Calculate a high altitude (Jet airways) between selected legs</string>
-   </property>
-  </action>
-  <action name="actionRouteCalcLowAltSelected">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routelow.svg</normaloff>:/littlenavmap/resources/icons/routelow.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Calculate &amp;low Altitude</string>
-   </property>
-   <property name="toolTip">
-    <string>Calculate a low altitude (Victor airways) flight plan between selected legs</string>
-   </property>
-   <property name="statusTip">
-    <string>Calculate a low altitude (Victor airways) flight plan between selected legs</string>
-   </property>
-  </action>
-  <action name="actionRouteCalcRadionavSelected">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeradio.svg</normaloff>:/littlenavmap/resources/icons/routeradio.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Calculate Radio&amp;nav</string>
-   </property>
-   <property name="toolTip">
-    <string>Calculate a radio navaid (VOR and NDB) flight plan between selected legs</string>
-   </property>
-   <property name="statusTip">
-    <string>Calculate a radio navaid (VOR and NDB) flight plan between selected legs</string>
-   </property>
-  </action>
-  <action name="actionRouteCalcSetAltSelected">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routealt.svg</normaloff>:/littlenavmap/resources/icons/routealt.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Calculate based on given &amp;Altitude</string>
-   </property>
-   <property name="toolTip">
-    <string>Calculate flight plan based on given altitude using Victor or Jet airways between selected legs</string>
-   </property>
-   <property name="statusTip">
-    <string>Calculate flight plan based on given altitude using Victor or Jet airways between selected legs</string>
    </property>
   </action>
   <action name="actionHelpTutorials">
@@ -10936,6 +11202,56 @@ relation to shown airport</string>
     <string>Reset all settings and window layout back to default and restart program.</string>
    </property>
   </action>
+  <action name="actionRouteCalc">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Calculate Flight Plan</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate a flight plan between departure and destination</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a flight plan between departure and destination</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+F</string>
+   </property>
+  </action>
+  <action name="actionRouteCalcSelected">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Calculate Flight Plan between legs</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate flight plan between selected legs</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate flight plan between selected legs</string>
+   </property>
+  </action>
+  <action name="actionShortcutRouteCalc">
+   <property name="text">
+    <string>&amp;Flight Plan Calculation</string>
+   </property>
+   <property name="toolTip">
+    <string>Show flight plan calculation window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show flight plan calculation window</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F7</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11098,4 +11414,8 @@ relation to shown airport</string>
   <include location="../../littlenavmap.qrc"/>
  </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
+ </buttongroups>
 </ui>

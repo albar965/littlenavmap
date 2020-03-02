@@ -587,6 +587,11 @@ void NavApp::showFlightPlan()
   mainWindow->showFlightPlan();
 }
 
+void NavApp::showRouteCalc()
+{
+  mainWindow->showRouteCalc();
+}
+
 void NavApp::showAircraftPerformance()
 {
   mainWindow->showAircraftPerformance();

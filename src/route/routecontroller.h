@@ -61,6 +61,7 @@ class SymbolPainter;
 class AirportQuery;
 class UnitStringTool;
 class QTextCursor;
+class RouteCalcWindow;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -186,22 +187,9 @@ public:
   /* "Calculate" a direct flight plan that has no waypoints. */
   void calculateDirect();
 
-  /* Calculate a flight plan from radio navaid to radio navaid */
-  void calculateRadionav(int fromIndex, int toIndex);
-  void calculateRadionav();
-
-  /* Calculate a flight plan along high altitude (Jet) airways */
-  void calculateHighAlt(int fromIndex, int toIndex);
-  void calculateHighAlt();
-
-  /* Calculate a flight plan along low altitude (Victor) airways */
-  void calculateLowAlt(int fromIndex, int toIndex);
-  void calculateLowAlt();
-
-  /* Calculate a flight plan along low and high altitude airways that have the given altitude from
-   *  the spin box as minimum altitude */
-  void calculateSetAlt(int fromIndex, int toIndex);
-  void calculateSetAlt();
+  /* Open flight plan calculation window. */
+  void calculateRouteWindowFull();
+  void calculateRouteWindowSelection();
 
   /* Reverse order of all waypoints, swap departure and destination and automatically
    * select a new start position (best runway) */
@@ -342,9 +330,9 @@ private:
   void moveSelectedLegsUp();
   void moveSelectedLegsInternal(MoveDirection direction);
   void deleteSelectedLegs();
-  void selectedRows(QList<int>& rows, bool reverseRoute);
+  void getSelectedRows(QList<int>& selectedRows, bool reverseRoute);
 
-  void selectList(const QList<int>& rows, int offset);
+  void selectList(const QList<int>& selectedRows, int offset);
   void selectRange(int from, int to);
 
   void updateMoveAndDeleteActions();
@@ -363,9 +351,11 @@ private:
 
   void clearRoute();
 
+  /* Calculate flight plan pressed in dock window */
+  void calculateRoute();
   bool calculateRouteInternal(atools::routing::RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
-                              bool fetchAirways, bool useSetAltitude, int fromIndex, int toIndex,
+                              bool fetchAirways, float altitudeFt, int fromIndex, int toIndex,
                               atools::routing::Modes mode);
 
   void updateModelRouteTimeFuel();
@@ -426,8 +416,13 @@ private:
 
   void editUserWaypointTriggered();
 
+  bool canCalcSelection();
+
+  /* Selected rows in table. Updated on selection change. */
+  QList<int> selectedRows;
+
   /* If route distance / direct distance if bigger than this value fail routing */
-  static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
+  static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 2.0f;
 
   static Q_DECL_CONSTEXPR int ROUTE_UNDO_LIMIT = 50;
 
@@ -459,6 +454,9 @@ private:
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
   atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
+
+  /* Route calculation dock window controller */
+  RouteCalcWindow *routeWindow = nullptr;
 
   /* Do not update aircraft information more than every 0.1 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;

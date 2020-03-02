@@ -164,6 +164,7 @@ const QLatin1Literal TRAFFIC_PATTERN_DIALOG_COLOR("Route/TrafficPatternDialogCol
 const QLatin1Literal HOLD_DIALOG("Route/HoldDialog");
 const QLatin1Literal HOLD_DIALOG_COLOR("Route/HoldDialogColor");
 const QLatin1Literal CUSTOM_PROCEDURE_DIALOG("Route/CustomProcedureDialog");
+const QLatin1Literal ROUTE_CALC_DIALOG("Route/RouteCalcDialog");
 const QLatin1Literal SEARCHTAB_AIRPORT_WIDGET("SearchPaneAirport/Widget");
 const QLatin1Literal SEARCHTAB_WIDGET_TABS("SearchPaneAirport/WidgetTabs");
 const QLatin1Literal SEARCHTAB_NAV_WIDGET("SearchPaneNav/Widget");

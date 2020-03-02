@@ -1979,10 +1979,10 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteT
     if(OptionData::instance().getFlags() & opts::ROUTE_ALTITUDE_RULE)
     {
       // Apply simplified east/west or other rule - always rounds up =============================
-      int adjusted = adjustAltitude(cruisingAltitude);
+      int adjusted = getAdjustedAltitude(cruisingAltitude);
 
       if(adjusted > maxAltitude)
-        adjusted = adjustAltitude(cruisingAltitude - 1000);
+        adjusted = getAdjustedAltitude(cruisingAltitude - 1000);
       cruisingAltitude = adjusted;
     }
 
@@ -2009,7 +2009,7 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteT
 }
 
 /* Apply simplified east/west or north/south rule */
-int Route::adjustAltitude(int newAltitude) const
+int Route::getAdjustedAltitude(int newAltitude) const
 {
   if(getSizeWithoutAlternates() > 1)
   {

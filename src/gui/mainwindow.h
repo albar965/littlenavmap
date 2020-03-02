@@ -192,6 +192,7 @@ public:
   void showAircraftPerformance();
   void showLogbookSearch();
   void showUserpointSearch();
+  void showRouteCalc();
 
 signals:
   /* Emitted when window is shown the first time */
@@ -335,6 +336,7 @@ private:
   void actionShortcutUserpointSearchTriggered();
   void actionShortcutLogbookSearchTriggered();
   void actionShortcutFlightPlanTriggered();
+  void actionShortcutCalcRouteTriggered();
   void actionShortcutAircraftPerformanceTriggered();
   void actionShortcutAirportInformationTriggered();
   void actionShortcutAirportWeatherTriggered();

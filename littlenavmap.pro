@@ -308,6 +308,7 @@ SOURCES += \
   src/route/route.cpp \
   src/route/routealtitude.cpp \
   src/route/routealtitudeleg.cpp \
+  src/route/routecalcwindow.cpp \
   src/route/routecommand.cpp \
   src/route/routecontroller.cpp \
   src/route/routeexport.cpp \
@@ -451,6 +452,7 @@ HEADERS  += \
   src/route/route.h \
   src/route/routealtitude.h \
   src/route/routealtitudeleg.h \
+  src/route/routecalcwindow.h \
   src/route/routecommand.h \
   src/route/routecontroller.h \
   src/route/routeexport.h \

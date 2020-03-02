@@ -164,7 +164,8 @@ MainWindow::MainWindow()
     helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
     dockHandler = new atools::gui::DockWidgetHandler(this, {ui->dockWidgetLegend, ui->dockWidgetAircraft,
                                                             ui->dockWidgetSearch, ui->dockWidgetProfile,
-                                                            ui->dockWidgetInformation, ui->dockWidgetRoute});
+                                                            ui->dockWidgetInformation, ui->dockWidgetRoute,
+                                                            ui->dockWidgetRouteCalc});
 
     marbleAbout = new Marble::MarbleAboutDialog(this);
     marbleAbout->setApplicationTitle(QApplication::applicationName());
@@ -727,27 +728,35 @@ void MainWindow::setupUi()
                                                       arg(ui->dockWidgetRoute->windowTitle()));
   ui->dockWidgetRoute->toggleViewAction()->setStatusTip(ui->dockWidgetRoute->toggleViewAction()->toolTip());
 
+  ui->dockWidgetRouteCalc->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/routecalcdock.svg"));
+  ui->dockWidgetRouteCalc->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+3")));
+  ui->dockWidgetRouteCalc->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                          arg(ui->dockWidgetRouteCalc->windowTitle()));
+  ui->dockWidgetRouteCalc->toggleViewAction()->setStatusTip(ui->dockWidgetRouteCalc->toggleViewAction()->toolTip());
+  ui->dockWidgetRouteCalc->setAllowedAreas(Qt::NoDockWidgetArea);
+  ui->dockWidgetRouteCalc->setFloating(false);
+
   ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
-  ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+3")));
+  ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
   ui->dockWidgetInformation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                             arg(ui->dockWidgetInformation->windowTitle().
                                                                 toLower()));
   ui->dockWidgetInformation->toggleViewAction()->setStatusTip(ui->dockWidgetInformation->toggleViewAction()->toolTip());
 
   ui->dockWidgetProfile->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
-  ui->dockWidgetProfile->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
+  ui->dockWidgetProfile->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
   ui->dockWidgetProfile->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                         arg(ui->dockWidgetProfile->windowTitle()));
   ui->dockWidgetProfile->toggleViewAction()->setStatusTip(ui->dockWidgetProfile->toggleViewAction()->toolTip());
 
   ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
-  ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
+  ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+6")));
   ui->dockWidgetAircraft->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                          arg(ui->dockWidgetAircraft->windowTitle()));
   ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(ui->dockWidgetAircraft->toggleViewAction()->toolTip());
 
   ui->dockWidgetLegend->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/legenddock.svg"));
-  ui->dockWidgetLegend->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+6")));
+  ui->dockWidgetLegend->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+7")));
   ui->dockWidgetLegend->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                        arg(ui->dockWidgetLegend->windowTitle()));
   ui->dockWidgetLegend->toggleViewAction()->setStatusTip(ui->dockWidgetLegend->toggleViewAction()->toolTip());
@@ -759,6 +768,7 @@ void MainWindow::setupUi()
   ui->menuView->insertActions(ui->actionShowStatusbar,
                               {ui->dockWidgetSearch->toggleViewAction(),
                                ui->dockWidgetRoute->toggleViewAction(),
+                               ui->dockWidgetRouteCalc->toggleViewAction(),
                                ui->dockWidgetInformation->toggleViewAction(),
                                ui->dockWidgetProfile->toggleViewAction(),
                                ui->dockWidgetAircraft->toggleViewAction(),
@@ -780,6 +790,7 @@ void MainWindow::setupUi()
   // Add toobar actions to toolbar
   ui->toolBarView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetRoute->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetRouteCalc->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetProfile->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
@@ -1192,14 +1203,7 @@ void MainWindow::connectAllSlots()
   // Flight plan calculation
   connect(ui->actionRouteCalcDirect, &QAction::triggered, routeController, &RouteController::calculateDirect);
 
-  connect(ui->actionRouteCalcRadionav, &QAction::triggered,
-          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateRadionav));
-  connect(ui->actionRouteCalcHighAlt, &QAction::triggered,
-          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateHighAlt));
-  connect(ui->actionRouteCalcLowAlt, &QAction::triggered,
-          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateLowAlt));
-  connect(ui->actionRouteCalcSetAlt, &QAction::triggered,
-          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateSetAlt));
+  connect(ui->actionRouteCalc, &QAction::triggered, routeController, &RouteController::calculateRouteWindowFull);
   connect(ui->actionRouteReverse, &QAction::triggered, routeController, &RouteController::reverseRoute);
 
   connect(ui->actionRouteCopyString, &QAction::triggered, routeController, &RouteController::routeStringToClipboard);
@@ -1495,6 +1499,8 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::actionShortcutLogbookSearchTriggered);
   connect(ui->actionShortcutFlightPlan, &QAction::triggered,
           this, &MainWindow::actionShortcutFlightPlanTriggered);
+  connect(ui->actionShortcutRouteCalc, &QAction::triggered,
+          this, &MainWindow::actionShortcutCalcRouteTriggered);
   connect(ui->actionShortcutAircraftPerformance, &QAction::triggered,
           this, &MainWindow::actionShortcutAircraftPerformanceTriggered);
   connect(ui->actionShortcutAirportInformation, &QAction::triggered,
@@ -1566,6 +1572,12 @@ void MainWindow::actionShortcutFlightPlanTriggered()
   dockHandler->activateWindow(ui->dockWidgetRoute);
   NavApp::getRouteTabHandler()->setCurrentTab(rc::ROUTE);
   ui->tableViewRoute->setFocus();
+}
+
+void MainWindow::actionShortcutCalcRouteTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->activateWindow(ui->dockWidgetRouteCalc);
 }
 
 void MainWindow::actionShortcutAircraftPerformanceTriggered()
@@ -3390,10 +3402,7 @@ void MainWindow::updateActionStates()
 
   bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
   ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
-  ui->actionRouteCalcRadionav->setEnabled(canCalcRoute);
-  ui->actionRouteCalcHighAlt->setEnabled(canCalcRoute);
-  ui->actionRouteCalcLowAlt->setEnabled(canCalcRoute);
-  ui->actionRouteCalcSetAlt->setEnabled(canCalcRoute && ui->spinBoxRouteAlt->value() > 0);
+  // ui->actionRouteCalc->setEnabled(canCalcRoute);
   ui->actionRouteReverse->setEnabled(canCalcRoute);
 
   ui->actionMapShowHome->setEnabled(mapWidget->getHomePos().isValid());
@@ -4207,6 +4216,11 @@ void MainWindow::showUserpointSearch()
 {
   if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutUserpointSearchTriggered();
+}
+
+void MainWindow::showRouteCalc()
+{
+  actionShortcutCalcRouteTriggered();
 }
 
 void MainWindow::webserverStatusChanged(bool running)
