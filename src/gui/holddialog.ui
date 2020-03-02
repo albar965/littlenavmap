@@ -14,37 +14,39 @@
    <string>Little Navmap - Holding</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QLabel" name="labelHoldTurnDirection">
-     <property name="text">
-      <string>&amp;Turn direction:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxHoldTurnDirection</cstring>
+   <item row="6" column="0" colspan="2">
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="labelHoldNavaid">
-     <property name="text">
-      <string/>
+   <item row="2" column="1">
+    <widget class="QSpinBox" name="spinBoxHoldCourse">
+     <property name="toolTip">
+      <string>Magnetic heading of inbound course to fix</string>
      </property>
-     <property name="textInteractionFlags">
-      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     <property name="showGroupSeparator" stdset="0">
+      <bool>true</bool>
+     </property>
+     <property name="suffix">
+      <string> °M</string>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>360</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>0</number>
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="labelHoldAltitude">
-     <property name="text">
-      <string>&amp;Altitude Label:</string>
-     </property>
-     <property name="buddy">
-      <cstring>spinBoxHoldAltitude</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="0" colspan="2">
+   <item row="10" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBoxHold">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -54,24 +56,80 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="comboBoxHoldTurnDirection">
+     <property name="toolTip">
+      <string>Turn direction at the holding fix</string>
      </property>
+     <item>
+      <property name="text">
+       <string>Right</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Left</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="4" column="0">
-    <widget class="QLabel" name="labelHoldSpeed">
+    <widget class="QLabel" name="labelHoldTime">
      <property name="text">
-      <string>&amp;Speed:</string>
+      <string>&amp;Time:</string>
      </property>
      <property name="buddy">
-      <cstring>spinBoxHoldSpeed</cstring>
+      <cstring>doubleSpinBoxHoldTime</cstring>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="5" column="0" colspan="2">
+    <widget class="QLabel" name="labelHoldLength">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QPushButton" name="pushButtonHoldColor">
+     <property name="text">
+      <string>&amp;Line Color</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="labelHoldNavaid">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="labelHoldAltitude">
+     <property name="text">
+      <string>&amp;Altitude Label:</string>
+     </property>
+     <property name="buddy">
+      <cstring>spinBoxHoldAltitude</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
     <widget class="QDoubleSpinBox" name="doubleSpinBoxHoldTime">
      <property name="toolTip">
       <string>Time to fly the straight legs of the holding</string>
@@ -99,24 +157,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QComboBox" name="comboBoxHoldTurnDirection">
-     <property name="toolTip">
-      <string>Turn direction at the holding fix</string>
-     </property>
-     <item>
-      <property name="text">
-       <string>Right</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Left</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="8" column="1">
+   <item row="7" column="1">
     <widget class="QSpinBox" name="spinBoxHoldAltitude">
      <property name="toolTip">
       <string>Altitude to display at label</string>
@@ -141,17 +182,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="QLabel" name="labelHoldLength">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0">
+   <item row="9" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -164,7 +195,27 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="1">
+   <item row="3" column="0">
+    <widget class="QLabel" name="labelHoldSpeed">
+     <property name="text">
+      <string>&amp;Speed:</string>
+     </property>
+     <property name="buddy">
+      <cstring>spinBoxHoldSpeed</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="labelHoldTurnDirection">
+     <property name="text">
+      <string>&amp;Turn direction:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxHoldTurnDirection</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
     <widget class="QSpinBox" name="spinBoxHoldSpeed">
      <property name="toolTip">
       <string>Aircraft speed in the holding</string>
@@ -189,62 +240,13 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
-    <widget class="QPushButton" name="pushButtonHoldColor">
-     <property name="text">
-      <string>&amp;Line Color</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="labelHoldCourse">
      <property name="text">
       <string>&amp;Course:</string>
      </property>
      <property name="buddy">
       <cstring>spinBoxHoldCourse</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="labelHoldTime">
-     <property name="text">
-      <string>&amp;Time:</string>
-     </property>
-     <property name="buddy">
-      <cstring>doubleSpinBoxHoldTime</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QSpinBox" name="spinBoxHoldCourse">
-     <property name="toolTip">
-      <string>Magnetic heading of inbound course to fix</string>
-     </property>
-     <property name="showGroupSeparator" stdset="0">
-      <bool>true</bool>
-     </property>
-     <property name="suffix">
-      <string> °M</string>
-     </property>
-     <property name="minimum">
-      <number>0</number>
-     </property>
-     <property name="maximum">
-      <number>360</number>
-     </property>
-     <property name="singleStep">
-      <number>1</number>
-     </property>
-     <property name="value">
-      <number>0</number>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0" colspan="2">
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>

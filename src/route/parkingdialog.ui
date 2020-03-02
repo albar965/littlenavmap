@@ -16,11 +16,20 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="labelSelectParking">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
      <property name="text">
       <string>&amp;Select a start position for departure&lt;br/&gt;%1:</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
      </property>
      <property name="buddy">
       <cstring>listWidgetSelectParking</cstring>
