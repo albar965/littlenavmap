@@ -1745,7 +1745,8 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   if(!found && !canceled)
     atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_ERROR,
                                                    tr("Cannot calculate a flight plan.\n"
-                                                      "Try another calculation type or create the flight plan manually."),
+                                                      "Try another calculation type, change the cruise altitude or\n"
+                                                      "create the flight plan manually."),
                                                    tr("Do not &show this dialog again."));
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << route;
