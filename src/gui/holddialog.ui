@@ -111,6 +111,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
      <property name="margin">
       <number>5</number>
      </property>
