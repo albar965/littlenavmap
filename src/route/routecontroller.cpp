@@ -1560,8 +1560,15 @@ void RouteController::calculateRoute()
   atools::routing::RouteFinder routeFinder(net);
   routeFinder.setCostFactorForceAirways(directCostFactor);
 
+  int fromIdx = -1, toIdx = -1;
+  if(routeWindow->isCalculateSelection())
+  {
+    fromIdx = routeWindow->getRouteRangeFromIndex();
+    toIdx = routeWindow->getRouteRangeToIndex();
+  }
+
   if(calculateRouteInternal(&routeFinder, type, command, fetchAirways, routeWindow->getCruisingAltitudeFt(),
-                            routeWindow->getRouteRangeFromIndex(), routeWindow->getRouteRangeToIndex(), mode))
+                            fromIdx, toIdx, mode))
     NavApp::setStatusMessage(tr("Calculated flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
