@@ -195,6 +195,7 @@ public:
   static QString getCurrentSimulatorShortName();
   static QString getCurrentSimulatorName();
   static bool hasSidStarInDatabase();
+  static bool hasRouteTypeInDatabase();
   static bool hasDataInDatabase();
 
   /* Simulator scenery data */

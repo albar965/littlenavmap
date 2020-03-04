@@ -1040,6 +1040,7 @@ const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);
 QString airwayTypeToShortString(map::MapAirwayType type);
 QString airwayTypeToString(map::MapAirwayType type);
 QString airwayRouteTypeToString(map::MapAirwayRouteType type);
+QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type);
 map::MapAirwayType  airwayTypeFromString(const QString& typeStr);
 map::MapAirwayRouteType  airwayRouteTypeFromString(const QString& typeStr);
 QString comTypeName(const QString& type);

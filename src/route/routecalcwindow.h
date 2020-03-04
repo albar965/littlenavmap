@@ -86,6 +86,10 @@ public:
   void restoreState();
   void saveState();
 
+  /* Clear routing network cache and disconnect all queries */
+  void preDatabaseLoad();
+  void postDatabaseLoad();
+
   /* Airway or radionav */
   rd::RoutingType getRoutingType() const;
 

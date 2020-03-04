@@ -527,6 +527,11 @@ bool NavApp::hasSidStarInDatabase()
   return databaseMetaNav != nullptr ? databaseMetaNav->hasSidStar() : false;
 }
 
+bool NavApp::hasRouteTypeInDatabase()
+{
+  return databaseMetaNav != nullptr ? databaseMetaNav->hasRouteType() : false;
+}
+
 bool NavApp::hasDataInDatabase()
 {
   return databaseMetaSim != nullptr ? databaseMetaSim->hasData() : false;

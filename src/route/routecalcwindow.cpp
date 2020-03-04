@@ -102,7 +102,7 @@ void RouteCalcWindow::updateWidgets()
   ui->radioButtonRouteCalcAirwayAll->setEnabled(airway);
   ui->radioButtonRouteCalcAirwayJet->setEnabled(airway);
   ui->radioButtonRouteCalcAirwayVictor->setEnabled(airway);
-  ui->checkBoxRouteCalcAirwayNoRnav->setEnabled(airway);
+  ui->checkBoxRouteCalcAirwayNoRnav->setEnabled(airway && NavApp::hasRouteTypeInDatabase());
   ui->horizontalSliderRouteCalcAirwayPreference->setEnabled(airway);
   ui->groupBoxRouteCalcAirwayPrefer->setEnabled(airway);
   ui->labelRouteCalcAirwayPreferAirway->setEnabled(airway);
@@ -206,10 +206,19 @@ void RouteCalcWindow::saveState()
   });
 }
 
+void RouteCalcWindow::preDatabaseLoad()
+{
+
+}
+
+void RouteCalcWindow::postDatabaseLoad()
+{
+  NavApp::getMainUi()->checkBoxRouteCalcAirwayNoRnav->setEnabled(NavApp::hasRouteTypeInDatabase());
+}
+
 rd::RoutingType RouteCalcWindow::getRoutingType() const
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  return ui->radioButtonRouteCalcAirway->isChecked() ? rd::AIRWAY : rd::RADIONNAV;
+  return NavApp::getMainUi()->radioButtonRouteCalcAirway->isChecked() ? rd::AIRWAY : rd::RADIONNAV;
 }
 
 rd::AirwayRoutingType RouteCalcWindow::getAirwayRoutingType() const

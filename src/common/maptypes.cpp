@@ -1050,6 +1050,37 @@ QString airwayRouteTypeToString(map::MapAirwayRouteType type)
   return QString();
 }
 
+QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type)
+{
+  switch(type)
+  {
+    case map::RT_NONE:
+      break;
+
+    case map::RT_AIRLINE:
+      return QObject::tr("A");
+
+    case map::RT_CONTROL:
+      return QObject::tr("C");
+
+    case map::RT_DIRECT:
+      return QObject::tr("D");
+
+    case map::RT_HELICOPTER:
+      return QObject::tr("H");
+
+    case map::RT_OFFICIAL:
+      return QObject::tr("O");
+
+    case map::RT_RNAV:
+      return QObject::tr("R");
+
+    case map::RT_UNDESIGNATED:
+      return QObject::tr("S");
+  }
+  return QString();
+}
+
 MapAirwayRouteType airwayRouteTypeFromString(const QString& typeStr)
 {
   if(typeStr == "A")

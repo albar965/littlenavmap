@@ -6318,7 +6318,8 @@ relation to shown airport</string>
      <item row="10" column="1" colspan="2">
       <widget class="QCheckBox" name="checkBoxRouteCalcAirwayNoRnav">
        <property name="toolTip">
-        <string>Do not use RNAV airways</string>
+        <string>Do not use RNAV airways.
+Disabled if a navdatabase does not allow it.</string>
        </property>
        <property name="statusTip">
         <string>Do not use RNAV airways</string>
@@ -6431,9 +6432,11 @@ relation to shown airport</string>
         <item row="0" column="0" colspan="3">
          <widget class="QSlider" name="horizontalSliderRouteCalcAirwayPreference">
           <property name="toolTip">
-           <string>Move the slider left to use airways only. Move the slider to the right to use direct waypoint connections only.
+           <string>Move the slider left to use airways only. This is the fastest calculation method.
+Move the slider to the right to use direct waypoint connections only.
 Every position in between uses airways and waypoints more or less and 
-allows to find a flight plan that can cross areas without an airway network.</string>
+allows to find a flight plan that can cross areas without an airway network or 
+unusable airways (e.g. due to altitude restrictions).</string>
           </property>
           <property name="maximum">
            <number>6</number>

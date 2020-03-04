@@ -1853,6 +1853,8 @@ void RouteController::preDatabaseLoad()
   // Reset active to avoid crash when indexes change
   route.resetActive();
   highlightNextWaypoint(route.getActiveLegIndex());
+
+  routeWindow->preDatabaseLoad();
 }
 
 void RouteController::postDatabaseLoad()
@@ -1884,6 +1886,8 @@ void RouteController::postDatabaseLoad()
   updateTableModel();
   updateErrorLabel();
   routeAltChangedDelayed();
+
+  routeWindow->postDatabaseLoad();
 
   NavApp::updateWindowTitle();
   loadingDatabaseState = false;
@@ -3684,7 +3688,11 @@ void RouteController::updateTableModel()
     if(leg.isRoute())
     {
       // Airway ========================
-      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(leg.getAirwayName());
+      QString awname = leg.getAirwayName();
+#ifdef DEBUG_INFORMATION
+      awname += " [" + map::airwayRouteTypeToStringShort(leg.getAirway().routeType) + "]";
+#endif
+      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname);
       const map::MapAirway& airway = leg.getAirway();
       if(airway.isValid())
         itemRow[rc::RESTRICTION] =
