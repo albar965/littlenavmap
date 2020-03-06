@@ -629,7 +629,7 @@ bool MapProcedureLeg::noDistanceDisplay() const
 
 proc::LegSpecialType specialType(const QString& arincDescrCode)
 {
-  QChar idx3(atools::strAt(arincDescrCode, 3));
+  QChar idx3(atools::charAt(arincDescrCode, 3));
   if(idx3 == 'A' /* IAF */ || idx3 == 'C' /* IAF and hold */ || idx3 == 'D' /* IAF with final approach course fix */)
     return proc::IAF;
 
