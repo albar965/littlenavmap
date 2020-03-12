@@ -34,6 +34,8 @@ RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
   connect(ui->pushButtonRouteCalc, &QPushButton::clicked, this, &RouteCalcWindow::calculateClicked);
+  connect(ui->pushButtonRouteCalcDirect, &QPushButton::clicked, this, &RouteCalcWindow::calculateDirectClicked);
+  connect(ui->pushButtonRouteCalcReverse, &QPushButton::clicked, this, &RouteCalcWindow::calculateReverseClicked);
   connect(ui->pushButtonRouteCalcHelp, &QPushButton::clicked, this, &RouteCalcWindow::helpClicked);
   connect(ui->pushButtonRouteCalcAdjustAltitude, &QPushButton::clicked, this, &RouteCalcWindow::adjustAltitudePressed);
   connect(ui->radioButtonRouteCalcAirway, &QRadioButton::clicked, this, &RouteCalcWindow::updateWidgets);
@@ -111,6 +113,10 @@ void RouteCalcWindow::updateWidgets()
   bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
   ui->pushButtonRouteCalcAdjustAltitude->setEnabled(canCalcRoute);
   ui->pushButtonRouteCalc->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
+
+  ui->pushButtonRouteCalcDirect->setEnabled(!isCalculateSelection() && canCalcRoute &&
+                                            NavApp::getRouteConst().hasEntries());
+  ui->pushButtonRouteCalcReverse->setEnabled(!isCalculateSelection() && canCalcRoute);
 
   updateHeader();
 }

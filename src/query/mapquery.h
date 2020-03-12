@@ -105,6 +105,7 @@ public:
                                const map::MapAirport& airport, bool navData);
 
   map::MapWaypoint getWaypointById(int id);
+  void getWaypointNearest(map::MapWaypoint& waypoint, const atools::geo::Pos& pos);
 
   /*
    * Get a map object by type, ident and region
@@ -271,7 +272,7 @@ private:
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
                         *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
                         *ilsByIdQuery = nullptr, *ilsQuerySimByName = nullptr, *vorNearestQuery = nullptr,
-                        *ndbNearestQuery = nullptr, *userdataPointByIdQuery = nullptr;
+                        *ndbNearestQuery = nullptr, *waypointNearestQuery = nullptr, *userdataPointByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
                         *airwayByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr,

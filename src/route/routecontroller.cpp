@@ -16,8 +16,9 @@
 *****************************************************************************/
 
 #include "routecontroller.h"
-#include "route/routestring.h"
-#include "route/routestringdialog.h"
+#include "routestring/routestringwriter.h"
+#include "routestring/routestringreader.h"
+#include "routestring/routestringdialog.h"
 
 #include "navapp.h"
 #include "atools.h"
@@ -54,7 +55,7 @@
 #include "route/userwaypointdialog.h"
 #include "route/flightplanentrybuilder.h"
 #include "fs/pln/flightplanio.h"
-#include "route/routestringdialog.h"
+#include "routestring/routestringdialog.h"
 #include "util/htmlbuilder.h"
 #include "mapgui/mapmarkhandler.h"
 #include "common/symbolpainter.h"
@@ -299,6 +300,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   connect(this, &RouteController::routeChanged, routeWindow, &RouteCalcWindow::updateWidgets);
   connect(routeWindow, &RouteCalcWindow::calculateClicked, this, &RouteController::calculateRoute);
+  connect(routeWindow, &RouteCalcWindow::calculateDirectClicked, this, &RouteController::calculateDirect);
+  connect(routeWindow, &RouteCalcWindow::calculateReverseClicked, this, &RouteController::reverseRoute);
 }
 
 RouteController::~RouteController()
@@ -569,9 +572,9 @@ void RouteController::routeStringToClipboard() const
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString str = RouteString::createStringForRoute(route,
-                                                  NavApp::getRouteCruiseSpeedKts(),
-                                                  RouteStringDialog::getOptionsFromSettings());
+  QString str = RouteStringWriter().createStringForRoute(route,
+                                                         NavApp::getRouteCruiseSpeedKts(),
+                                                         RouteStringDialog::getOptionsFromSettings());
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
@@ -851,7 +854,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
     flightplan.getEntries().clear();
 
     // Use route string to overwrite the current incomplete flight plan object
-    RouteString rs(entryBuilder);
+    RouteStringReader rs(entryBuilder);
     rs.setPlaintextMessages(true);
     bool ok = rs.createRouteFromString(routeString.join(" "), flightplan, rs::NONE);
     qInfo() << "createRouteFromString messages" << rs.getMessages();

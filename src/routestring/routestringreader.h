@@ -15,9 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_ROUTESTRING_H
-#define LITTLENAVMAP_ROUTESTRING_H
+#ifndef LITTLENAVMAP_ROUTESTRINGREADER_H
+#define LITTLENAVMAP_ROUTESTRINGREADER_H
 
+#include "routestring/routestringtypes.h"
 #include "common/maptypes.h"
 
 #include <QStringList>
@@ -42,56 +43,19 @@ class ProcedureQuery;
 class FlightplanEntryBuilder;
 class Route;
 
-namespace rs {
-
-/* Do not change order since it is used to save to options */
-enum RouteStringOption
-{
-  NONE = 0,
-
-  /* Writing options when converting flight plan to string ====================== */
-  DCT = 1 << 0, /* Add DCT */
-  START_AND_DEST = 1 << 1, /* Add departure and/or destination ident */
-  ALT_AND_SPEED = 1 << 2, /* Add altitude and speed restriction */
-  SID_STAR = 1 << 3, /* Add sid, star and transition names if selected */
-  SID_STAR_GENERIC = 1 << 4, /* Always add SID and STAR keyword */
-  GFP = 1 << 5, /* Produce Garmin flight plan format using special coordinate format */
-  NO_AIRWAYS = 1 << 6, /* Add all waypoints instead of from/airway/to triplet */
-
-  SID_STAR_SPACE = 1 << 7, /* Separate SID/STAR and transition with space. Not ATS compliant. */
-  RUNWAY = 1 << 8, /* Add departure runway if available. Not ATS compliant. */
-  APPROACH = 1 << 9, /* Add approach ARINC name and transition after destination. Not ATS compliant. */
-  FLIGHTLEVEL = 1 << 10, /* Append flight level at end of string. Not ATS compliant. */
-
-  GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
-  USR_WPT = 1 << 12, /* User waypoints for all navaids to avoid locked waypoints from Garmin */
-  SKYVECTOR_COORDS = 1 << 13, /* Skyvector coordinate format */
-  NO_FINAL_DCT = 1 << 14, /* omit last DCT for Flight Factor export */
-
-  ALTERNATES = 1 << 15, /* treat last airport as alternate */
-
-  /* Reading options when converting string to flight plan ====================== */
-  READ_ALTERNATES = 1 << 16, /* Read any consecutive list of airports at the end of the string as alternates */
-
-  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES
-};
-
-Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions);
-}
-
 /*
- * This class implementes the conversion from ATS route descriptions to flight plans and vice versa.
- * Additional functionality is available to generate route strings for various export formats.
+ * This class implementes the conversion from ATS route descriptions to flight plans, i.e. it reads the strings
+ * and constructs a flight plan.
+ *
  * Error and warning messages are collected while parsing and can be extracted afterwards.
  */
-class RouteString
+class RouteStringReader
 {
   Q_DECLARE_TR_FUNCTIONS(RouteString)
 
 public:
-  RouteString(FlightplanEntryBuilder *flightplanEntryBuilder = nullptr);
-  virtual ~RouteString();
+  RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder = nullptr);
+  virtual ~RouteStringReader();
 
   /* Create a flight plan for the given route string and include speed and altitude if given.
    *  Get error messages with getMessages() */
@@ -100,30 +64,13 @@ public:
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
                              float& speedKts, bool& altIncluded, rs::RouteStringOptions options);
 
-  /*
-   * Create a route string like
-   * LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS
-   * UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
-   */
-  static QString createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options);
-  static QStringList createStringForRouteList(const Route& route, float speed, rs::RouteStringOptions options);
-
-  /*
-   * Create a route string in garming flight plan format (GFP):
-   * FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
-   *
-   * If procedures is true SIDs, STARs and approaches will be included according to Garmin spec.
-   */
-  static QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption);
-
+  /* Get error and warning messages */
   const QStringList& getMessages() const
   {
     return messages;
   }
 
-  /* Remove all invalid characters and simplify string */
-  static QStringList cleanRouteString(const QString& string);
-
+  /* Set to true to generate non HTML messages */
   void setPlaintextMessages(bool value)
   {
     plaintextMessages = value;
@@ -148,14 +95,6 @@ private:
   void extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int startIndex, int endIndex,
                         QList<map::MapWaypoint>& airwayWaypoints);
 
-  static QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options);
-
-  /* Garming GFP format */
-  static QString createGfpStringForRouteInternal(const Route& route, bool userWaypointOption);
-
-  /* Garming GFP format with procedures */
-  static QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption);
-
   void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapSearchResult& result,
                            const atools::geo::Pos& nearestPos);
 
@@ -163,7 +102,11 @@ private:
   void resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
                          const atools::geo::Pos& nearestPos, map::MapObjectTypes types);
 
-  void findWaypoints(map::MapSearchResult& result, const QString& item);
+  /* Get airport or any navaid for item. Also resolves coordinate formats. */
+  void findWaypoints(map::MapSearchResult& result, const QString& item, bool matchWaypoints);
+
+  /* Get nearest waypoint for given position probably removing ones which are too far away. Changes given result.
+   * Also checks airways and connections if lastResult is given. */
   void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, const map::MapSearchResult *lastResult,
                        float maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);
@@ -177,6 +120,9 @@ private:
   /* Remove time and runways from ident and return airport ident only. Also add warning messages */
   QString extractAirportIdent(QString ident);
 
+  /* Extract the first coordinate for the list if no airports are used */
+  atools::geo::Pos findFirstCoordinate(const QStringList& cleanItems);
+
   MapQuery *mapQuery = nullptr;
   AirportQuery *airportQuerySim = nullptr;
   ProcedureQuery *procQuery = nullptr;
@@ -185,4 +131,4 @@ private:
   bool plaintextMessages = false;
 };
 
-#endif // LITTLENAVMAP_ROUTESTRING_H
+#endif // LITTLENAVMAP_ROUTESTRINGREADER_H

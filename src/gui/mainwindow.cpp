@@ -56,7 +56,8 @@
 #include "options/optionsdialog.h"
 #include "print/printsupport.h"
 #include "exception.h"
-#include "route/routestringdialog.h"
+#include "routestring/routestringdialog.h"
+#include "routestring/routestringwriter.h"
 #include "common/unit.h"
 #include "fs/pln/flightplanio.h"
 #include "query/procedurequery.h"
@@ -2573,9 +2574,9 @@ bool MainWindow::openInSkyVector()
   // https://skyvector.com/?fpl=%20EDDH%20AMLU7C%20AMLUH%20M852%20POVEL%20GALMA%20UM736%20DOSEL%20DETSA%20NIKMA%20T369%20RITEB%20RITE4B%20LIRF
 
   QString route =
-    RouteString::createStringForRoute(NavApp::getRoute(),
-                                      NavApp::getRouteCruiseSpeedKts(),
-                                      rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
+    RouteStringWriter().createStringForRoute(NavApp::getRoute(),
+                                             NavApp::getRouteCruiseSpeedKts(),
+                                             rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
 
   HelpHandler::openUrlWeb(this, "https://skyvector.com/?fpl=" + route);
   return true;

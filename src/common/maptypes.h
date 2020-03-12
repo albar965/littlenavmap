@@ -779,14 +779,19 @@ struct MapSearchResult
   QList<proc::MapProcedurePoint> procPoints;
 
   /* true if none of the types exists in this result */
-  bool isEmpty(const map::MapObjectTypes& types = map::ALL) const;
+  bool isEmpty(const map::MapObjectTypes& types = map::ALL) const
+  {
+    return size(types) == 0;
+  }
 
   /* Number of map objects for the given types */
-  int getTotalSize(const map::MapObjectTypes& types = map::ALL) const;
+  int size(const map::MapObjectTypes& types = map::ALL) const;
 
   /* Get id and type from the result. Vector of types defines priority. true if something was found.
    * id is set to -1 if nothing was found. */
-  bool getIdAndType(int& id, MapObjectTypes& type, const QVector<MapObjectTypes>& types) const;
+  bool getIdAndType(int& id, MapObjectTypes& type, const std::initializer_list<MapObjectTypes>& types) const;
+  QString getIdent(const std::initializer_list<MapObjectTypes>& types) const;
+  const atools::geo::Pos& getPosition(const std::initializer_list<MapObjectTypes>& types) const;
 
   /* Remove the given types only */
   void clear(const MapObjectTypes& types = map::ALL);
@@ -856,6 +861,7 @@ struct MapSearchResult
 
   QList<MapAirspace> getOnlineAirspaces() const;
 
+public:
 private:
   template<typename T>
   void clearAllButFirst(QList<T>& list);

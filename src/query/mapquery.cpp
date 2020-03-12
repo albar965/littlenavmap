@@ -636,6 +636,16 @@ map::MapWaypoint MapQuery::getWaypointById(int id)
   return wp;
 }
 
+void MapQuery::getWaypointNearest(map::MapWaypoint& waypoint, const Pos& pos)
+{
+  waypointNearestQuery->bindValue(":lonx", pos.getLonX());
+  waypointNearestQuery->bindValue(":laty", pos.getLatY());
+  waypointNearestQuery->exec();
+  if(waypointNearestQuery->next())
+    mapTypesFactory->fillWaypoint(waypointNearestQuery->record(), waypoint);
+  waypointNearestQuery->finish();
+}
+
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
                                        bool airportDiagram, map::MapObjectTypes types,
                                        int xs, int ys, int screenDistance,
@@ -1229,6 +1239,11 @@ void MapQuery::initQueries()
                                 " from ndb where ndb_id in "
                                 "(select nav_id from waypoint w where w.waypoint_id = :id)");
 
+  // Get nearest Waypoint
+  waypointNearestQuery = new SqlQuery(dbNav);
+  waypointNearestQuery->prepare(
+    "select " + waypointQueryBase + " from waypoint order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
+
   // Get nearest VOR
   vorNearestQuery = new SqlQuery(dbNav);
   vorNearestQuery->prepare(
@@ -1402,6 +1417,8 @@ void MapQuery::deInitQueries()
   delete ndbByWaypointIdQuery;
   ndbByWaypointIdQuery = nullptr;
 
+  delete waypointNearestQuery;
+  waypointNearestQuery = nullptr;
   delete vorNearestQuery;
   vorNearestQuery = nullptr;
   delete ndbNearestQuery;

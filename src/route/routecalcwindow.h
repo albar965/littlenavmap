@@ -123,6 +123,8 @@ public:
 signals:
   /* Use clicked calculate flight plan button */
   void calculateClicked();
+  void calculateDirectClicked();
+  void calculateReverseClicked();
 
 private:
   /* Fill header message with departure, destination or error messages. */

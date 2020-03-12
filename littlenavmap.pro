@@ -316,9 +316,11 @@ SOURCES += \
   src/route/routeexportdialog.cpp \
   src/route/routeextractor.cpp \
   src/route/routeleg.cpp \
-  src/route/routestring.cpp \
-  src/route/routestringdialog.cpp \
   src/route/userwaypointdialog.cpp \
+  src/routestring/routestringdialog.cpp \
+  src/routestring/routestringreader.cpp \
+  src/routestring/routestringtypes.cpp \
+  src/routestring/routestringwriter.cpp \
   src/search/abstractsearch.cpp \
   src/search/airporticondelegate.cpp \
   src/search/airportsearch.cpp \
@@ -460,9 +462,11 @@ HEADERS  += \
   src/route/routeexportdialog.h \
   src/route/routeextractor.h \
   src/route/routeleg.h \
-  src/route/routestring.h \
-  src/route/routestringdialog.h \
   src/route/userwaypointdialog.h \
+  src/routestring/routestringdialog.h \
+  src/routestring/routestringreader.h \
+  src/routestring/routestringtypes.h \
+  src/routestring/routestringwriter.h \
   src/search/abstractsearch.h \
   src/search/airporticondelegate.h \
   src/search/airportsearch.h \
@@ -515,8 +519,8 @@ FORMS += \
   src/route/customproceduredialog.ui \
   src/route/parkingdialog.ui \
   src/route/routeexportdialog.ui \
-  src/route/routestringdialog.ui \
   src/route/userwaypointdialog.ui \
+  src/routestring/routestringdialog.ui \
   src/userdata/userdatadialog.ui \
   src/userdata/userdataexportdialog.ui
 

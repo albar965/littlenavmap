@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_ROUTESTRINGDIALOG_H
 #define LITTLENAVMAP_ROUTESTRINGDIALOG_H
 
-#include "route/routestring.h"
+#include "routestring/routestringtypes.h"
 
 #include <QDialog>
 
@@ -37,7 +37,8 @@ class Flightplan;
 class MapQuery;
 class QAbstractButton;
 class RouteController;
-class RouteString;
+class RouteStringWriter;
+class RouteStringReader;
 
 class RouteStringDialog :
   public QDialog
@@ -81,7 +82,8 @@ private:
   atools::fs::pln::Flightplan *flightplan = nullptr;
   MapQuery *mapQuery = nullptr;
   RouteController *controller = nullptr;
-  RouteString *routeString;
+  RouteStringWriter *routeStringWriter;
+  RouteStringReader *routeStringReader;
   float speedKts = 0.f;
   bool altitudeIncluded = false;
   rs::RouteStringOptions options = rs::DEFAULT_OPTIONS;

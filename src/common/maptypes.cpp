@@ -1677,26 +1677,82 @@ void MapSearchResult::clearOnlineAirspaces()
     airspaces.erase(it, airspaces.end());
 }
 
-bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
+const atools::geo::Pos& MapSearchResult::getPosition(const std::initializer_list<MapObjectTypes>& types) const
 {
-  bool filled = false;
-  filled |= types & map::AIRPORT && !airports.isEmpty();
-  filled |= types & map::WAYPOINT && !waypoints.isEmpty();
-  filled |= types & map::VOR && !vors.isEmpty();
-  filled |= types & map::NDB && !ndbs.isEmpty();
-  filled |= types & map::AIRWAY && !airways.isEmpty();
-  filled |= types & map::RUNWAYEND && !runwayEnds.isEmpty();
-  filled |= types & map::ILS && !ils.isEmpty();
-  filled |= types & map::AIRSPACE && !airspaces.isEmpty();
-  filled |= types & map::USERPOINTROUTE && !userPointsRoute.isEmpty();
-  filled |= types & map::USERPOINT && !userpoints.isEmpty();
-  filled |= types & map::LOGBOOK && !logbookEntries.isEmpty();
-  filled |= types & map::AIRCRAFT_AI && !aiAircraft.isEmpty();
-  filled |= types & map::AIRCRAFT_ONLINE && !onlineAircraft.isEmpty();
-  return !filled;
+  for(const MapObjectTypes& t : types)
+  {
+    if(!isEmpty(t))
+    {
+      if(t == map::AIRPORT)
+        return airports.first().getPosition();
+      else if(t == map::WAYPOINT)
+        return waypoints.first().getPosition();
+      else if(t == map::VOR)
+        return vors.first().getPosition();
+      else if(t == map::NDB)
+        return ndbs.first().getPosition();
+      else if(t == map::AIRWAY)
+        return airways.first().getPosition();
+      else if(t == map::RUNWAYEND)
+        return runwayEnds.first().getPosition();
+      else if(t == map::ILS)
+        return ils.first().getPosition();
+      else if(t == map::AIRSPACE)
+        return airspaces.first().getPosition();
+      else if(t == map::USERPOINTROUTE)
+        return userPointsRoute.first().getPosition();
+      else if(t == map::USERPOINT)
+        return userpoints.first().getPosition();
+      else if(t == map::LOGBOOK)
+        return logbookEntries.first().getPosition();
+      else if(t == map::AIRCRAFT_AI)
+        return aiAircraft.first().getPosition();
+      else if(t == map::AIRCRAFT_ONLINE)
+        return onlineAircraft.first().getPosition();
+    }
+  }
+  return atools::geo::EMPTY_POS;
 }
 
-bool MapSearchResult::getIdAndType(int& id, MapObjectTypes& type, const QVector<MapObjectTypes>& types) const
+QString MapSearchResult::getIdent(const std::initializer_list<MapObjectTypes>& types) const
+{
+  for(const MapObjectTypes& t : types)
+  {
+    if(!isEmpty(t))
+    {
+      if(t == map::AIRPORT)
+        return airports.first().ident;
+      else if(t == map::WAYPOINT)
+        return waypoints.first().ident;
+      else if(t == map::VOR)
+        return vors.first().ident;
+      else if(t == map::NDB)
+        return ndbs.first().ident;
+      else if(t == map::AIRWAY)
+        return airways.first().name;
+      else if(t == map::RUNWAYEND)
+        return runwayEnds.first().name;
+      else if(t == map::ILS)
+        return ils.first().ident;
+      else if(t == map::AIRSPACE)
+        return airspaces.first().name;
+      else if(t == map::USERPOINTROUTE)
+        return userPointsRoute.first().name;
+      else if(t == map::USERPOINT)
+        return userpoints.first().ident;
+      else if(t == map::LOGBOOK)
+        return logbookEntries.first().departureIdent;
+      else if(t == map::AIRCRAFT_AI)
+        return aiAircraft.first().getAirplaneRegistration();
+      else if(t == map::AIRCRAFT_ONLINE)
+        return onlineAircraft.first().getAirplaneRegistration();
+    }
+  }
+  return QString();
+}
+
+bool MapSearchResult::getIdAndType(int& id, MapObjectTypes& type,
+                                   const std::initializer_list<MapObjectTypes>& types) const
 {
   id = -1;
   type = NONE;
@@ -1788,7 +1844,7 @@ bool MapSearchResult::getIdAndType(int& id, MapObjectTypes& type, const QVector<
   return id != -1;
 }
 
-int MapSearchResult::getTotalSize(const MapObjectTypes& types) const
+int MapSearchResult::size(const MapObjectTypes& types) const
 {
   int totalSize = 0;
   totalSize += types & map::AIRPORT ? airports.size() : 0;

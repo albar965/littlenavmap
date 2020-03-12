@@ -30,7 +30,7 @@
 #include "fs/pln/flightplanio.h"
 #include "navapp.h"
 #include "atools.h"
-#include "route/routestring.h"
+#include "routestring/routestringwriter.h"
 #include "gui/errorhandler.h"
 #include "options/optiondata.h"
 #include "gui/dialog.h"
@@ -533,7 +533,7 @@ bool RouteExport::routeExportEfbr()
 
     if(!routeFile.isEmpty())
     {
-      QString route = RouteString::createStringForRoute(NavApp::getRouteConst(), 0.f, rs::NONE);
+      QString route = RouteStringWriter().createStringForRoute(NavApp::getRouteConst(), 0.f, rs::NONE);
       QString cycle = NavApp::getDatabaseAiracCycleNav();
       using namespace std::placeholders;
       if(exportFlighplan(routeFile,
@@ -717,7 +717,7 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
   RouteExportData exportData;
 
   const Route& route = NavApp::getRouteConst();
-  exportData.setRoute(RouteString::createStringForRoute(route, 0.f, rs::SID_STAR));
+  exportData.setRoute(RouteStringWriter().createStringForRoute(route, 0.f, rs::SID_STAR));
   exportData.setDeparture(route.getFlightplan().getDepartureIdent());
   exportData.setDestination(route.getFlightplan().getDestinationIdent());
   exportData.setDepartureTime(QDateTime::currentDateTimeUtc().time());
@@ -963,7 +963,7 @@ QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString
 bool RouteExport::exportFlighplanAsGfp(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString::createGfpStringForRoute(
+  QString gfp = RouteStringWriter().createGfpStringForRoute(
     routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
                                     true /* remove alternates */), false /* procedures */,
     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
@@ -986,7 +986,7 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename)
 bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteString::createStringForRoute(
+  QString txt = RouteStringWriter().createStringForRoute(
     routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
                                     true /* remove alternates */),
     0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
@@ -1009,7 +1009,7 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QStringList list = RouteString::createStringForRouteList(
+  QStringList list = RouteStringWriter().createStringForRouteList(
     routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
                                     true /* remove alternates */), 0.f,
     rs::DCT | rs::START_AND_DEST);
@@ -1084,7 +1084,7 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
 bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString::createGfpStringForRoute(
+  QString gfp = RouteStringWriter().createGfpStringForRoute(
     routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
                                     true /* remove alternates */), true /* procedures */,
     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
@@ -1288,7 +1288,7 @@ bool RouteExport::exportFlighplan(const QString& filename,
 bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteString::createStringForRoute(
+  QString txt = RouteStringWriter().createStringForRoute(
     routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
                                     true /* remove alternates */), 0.f,
     rs::DCT | rs::NO_FINAL_DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
@@ -1406,7 +1406,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
   qDebug() << Q_FUNC_INFO << "Copied" << filename << "to" << backupFile << result;
 
   // Create route string
-  QString route = RouteString::createStringForRoute(
+  QString route = RouteStringWriter().createStringForRoute(
     routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
                                     true /* remove alternates */), 0.f, rs::START_AND_DEST);
   QString name = buildDefaultFilenameShort(QString(), QString());

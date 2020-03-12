@@ -15,13 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "route/routestring.h"
+#include "routestring/routestringreader.h"
 
 #include "navapp.h"
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
 #include "query/procedurequery.h"
-#include "route/route.h"
+#include "fs/pln/flightplan.h"
 #include "util/htmlbuilder.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
@@ -55,7 +55,12 @@ const static map::MapObjectTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYP
 
 const static map::MapObjectTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
 
-RouteString::RouteString(FlightplanEntryBuilder *flightplanEntryBuilder)
+// No airports
+const static map::MapObjectTypes ROUTE_TYPES_NAVAIDS(map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
+const static std::initializer_list<map::MapObjectTypes> ROUTE_TYPES_NAVAIDS_LIST =
+{map::WAYPOINT, map::VOR, map::NDB, map::USERPOINTROUTE};
+
+RouteStringReader::RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder)
   : entryBuilder(flightplanEntryBuilder)
 {
   mapQuery = NavApp::getMapQuery();
@@ -63,418 +68,24 @@ RouteString::RouteString(FlightplanEntryBuilder *flightplanEntryBuilder)
   procQuery = NavApp::getProcedureQuery();
 }
 
-RouteString::~RouteString()
+RouteStringReader::~RouteStringReader()
 {
 }
 
-QString RouteString::createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options)
-{
-  if(route.isEmpty())
-    return QString();
-
-#ifdef DEBUG_INFORMATION_ROUTE_STRING
-
-  return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper() + "\n\n" +
-         "GTN:\n" + createGfpStringForRouteInternalProc(route, false) + "\n" +
-         "GTN UWP:\n" + createGfpStringForRouteInternalProc(route, true) + "\n\n" +
-         "GFP:\n" + createGfpStringForRouteInternal(route, false) + "\n" +
-         "GFP UWP:\n" + createGfpStringForRouteInternal(route, true);
-
-#else
-  return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper();
-
-#endif
-}
-
-QStringList RouteString::createStringForRouteList(const Route& route, float speed, rs::RouteStringOptions options)
-{
-  if(route.isEmpty())
-    return QStringList();
-
-#ifdef DEBUG_INFORMATION_ROUTE_STRING
-
-  return createStringForRouteInternal(route, speed, options) + "\n\n" +
-         "GTN:\n" + createGfpStringForRouteInternalProc(route, false) + "\n" +
-         "GTN UWP:\n" + createGfpStringForRouteInternalProc(route, true) + "\n\n" +
-         "GFP:\n" + createGfpStringForRouteInternal(route, false) + "\n" +
-         "GFP UWP:\n" + createGfpStringForRouteInternal(route, true);
-
-#else
-  return createStringForRouteInternal(route, speed, options);
-
-#endif
-}
-
-QString RouteString::createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption)
-{
-  if(route.isEmpty())
-    return QString();
-
-  return procedures ?
-         createGfpStringForRouteInternalProc(route, userWaypointOption) :
-         createGfpStringForRouteInternal(route, userWaypointOption);
-}
-
-/*
- * Used for Reality XP GTN export
- *
- * Flight plan to depart from KPDX airport and arrive in KHIO through
- * Airway 448 and 204 using Runway 13 for final RNAV approach:
- * FPN/RI:DA:KPDX:D:LAVAA5.YKM:R:10R:F:YKM.V448.GEG.V204.HQM:F:SEA,N47261W 122186:AA:KHIO:A:HELNS5.SEA(13O):AP:R13
- *
- * Flight plan from KSLE to two user waypoints and then returning for the ILS approach to runway 31 via JAIME:
- * FPN/RI:F:KSLE:F:N45223W121419:F:N42568W122067:AA:KSLE:AP:I31.JAIME
- */
-QString RouteString::createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption)
-{
-  QString retval;
-
-  rs::RouteStringOptions opts = rs::NONE;
-  if(userWaypointOption)
-    opts = rs::GFP | rs::GFP_COORDS | rs::DCT | rs::USR_WPT | rs::NO_AIRWAYS;
-  else
-    opts = rs::GFP | rs::GFP_COORDS | rs::DCT;
-
-  // Get string without start and destination
-  QStringList string = createStringForRouteInternal(route, 0, opts);
-
-  qDebug() << Q_FUNC_INFO << string;
-
-  // Remove any useless DCTs
-  if(!string.isEmpty() && string.last() == "DCT")
-    string.removeLast();
-  if(!string.isEmpty() && string.first() == "DCT")
-    string.removeFirst();
-
-  if(!string.isEmpty())
-  {
-    // Loop through waypoints and airways
-    if(string.size() > 2)
-    {
-      for(int i = 0; i < string.size() - 1; i++)
-      {
-        const QString& str = string.at(i);
-        if((i % 2) == 0)
-          // Is a waypoint
-          retval += str;
-        else
-        {
-          // Is a airway or direct
-          if(str == "DCT")
-            retval += ":F:";
-          else
-            retval += "." + str + ".";
-        }
-      }
-    }
-    else
-      retval += ":F:";
-
-    retval += string.last();
-  }
-
-  // Add procedures and airports
-  QString sid, sidTrans, star, starTrans, departureRw, approachRwDummy, starRw;
-  route.getSidStarNames(sid, sidTrans, star, starTrans);
-  route.getRunwayNames(departureRw, approachRwDummy);
-  starRw = route.getStarRunwayName();
-
-  // Departure ===============================
-  if(!retval.isEmpty() && !retval.startsWith(":F:"))
-    retval.prepend(":F:");
-
-  if(route.hasAnySidProcedure() && !userWaypointOption)
-  {
-    if(!departureRw.isEmpty() && !(departureRw.endsWith("L") || departureRw.endsWith("C") || departureRw.endsWith("R")))
-      departureRw.append("O");
-
-    // Add SID and departure airport
-    retval.prepend("FPN/RI:DA:" + route.getDepartureAirportLeg().getIdent() +
-                   ":D:" + sid + (sidTrans.isEmpty() ? QString() : "." + sidTrans) +
-                   (departureRw.isEmpty() ? QString() : ":R:" + departureRw));
-  }
-  else
-  {
-    // Add departure airport only - no coordinates since these are not accurate
-    retval.prepend("FPN/RI:F:" + route.getDepartureAirportLeg().getIdent());
-  }
-
-  if((route.hasAnyArrivalProcedure() || route.hasAnyStarProcedure()) && !userWaypointOption)
-  {
-    // Arrival airport - no coordinates
-    retval.append(":AA:" + route.getDestinationAirportLeg().getIdent());
-
-    // STAR ===============================
-    if(route.hasAnyStarProcedure())
-    {
-      if(!starRw.isEmpty() && !(starRw.endsWith("L") || starRw.endsWith("C") || starRw.endsWith("R")))
-        starRw.append("O");
-      retval.append(":A:" + star + (starTrans.isEmpty() ? QString() : "." + starTrans) +
-                    (starRw.isEmpty() ? QString() : "(" + starRw + ")"));
-    }
-
-    // Approach ===============================
-    if(route.hasAnyArrivalProcedure())
-    {
-      QString apprArinc, apprTrans;
-      route.getArrivalNames(apprArinc, apprTrans);
-      retval.append(":AP:" + apprArinc + (apprTrans.isEmpty() ? QString() : "." + apprTrans));
-    }
-  }
-  else
-  {
-    if(!retval.endsWith(":F:"))
-      retval.append(":F:");
-    // Arrival airport only - no coordinates since these are not accurate
-    retval.append(route.getDestinationAirportLeg().getIdent());
-  }
-
-  qDebug() << Q_FUNC_INFO << retval;
-  return retval.toUpper();
-}
-
-/*
- * Used for Flight1 GTN export
- *
- *  Flight Plan File Guidelines
- *
- * Garmin uses a text based flight plan format that is derived from the IMI/IEI
- * messages format specified in ARINC 702A-3. But that’s just a side note.
- * Let’s take a look at the syntax of a usual Garmin flight plan:
- * FPN/RI:F:AIRPORT:F:WAYPOINT:F:WAYPOINT.AIRWAY.WAYPOINT:F:AIRPORT
- * Every flight plan always starts with the “FPN/RI” identifier. The “:F:” specifies
- * the different flight plan segments. A flight plan segment can be the departure or arrival
- * airport, a waypoint or a number of waypoints that are connected via airways.
- *
- * The entry and exit waypoint of an airway are connected to the airway via a dot “.”.
- * The flight plan must be contained in the first line of the file. Anything after the first
- * line will be discarded and may result i
- * n importing failures. Flight plans can only contain
- * upper case letters, numbers, colons, parenthesis, commas and periods. Spaces or any other
- * special characters are not allowed. When saved the flight plan name must have a “.gfp” extension.
- *
- * Here's an example, it's basically a .txt file with the extension .gfp
- *
- * FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
- *
- * FPN/RI:F:KTEB:F:LGA:F:JFK:F:HOFFI:F:HTO:F:MONTT:F:OFTUR:F:KMVY
- */
-QString RouteString::createGfpStringForRouteInternal(const Route& route, bool userWaypointOption)
-{
-  QString retval;
-
-  rs::RouteStringOptions opts = rs::NONE;
-  if(userWaypointOption)
-    opts = rs::GFP | rs::START_AND_DEST | rs::DCT | rs::USR_WPT | rs::NO_AIRWAYS;
-  else
-    opts = rs::GFP | rs::START_AND_DEST | rs::DCT;
-
-  // Get string including start and destination
-  QStringList string = createStringForRouteInternal(route, 0, opts);
-
-  if(!string.isEmpty())
-  {
-    retval += "FPN/RI:F:" + string.first();
-
-    if(string.size() > 2)
-    {
-      for(int i = 1; i < string.size() - 1; i++)
-      {
-        const QString& str = string.at(i);
-        if((i % 2) == 0)
-          // Is a waypoint
-          retval += str;
-        else
-          // Is a airway or direct
-          retval += str == "DCT" ? ":F:" : "." + str + ".";
-      }
-    }
-    else
-      retval += ":F:";
-
-    retval += string.last();
-  }
-  qDebug() << Q_FUNC_INFO << retval;
-  return retval.toUpper();
-}
-
-QStringList RouteString::createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options)
-{
-  QStringList retval;
-  QString sid, sidTrans, star, starTrans, depRwy, destRwy, arrivalName, arrivalTransition;
-  route.getSidStarNames(sid, sidTrans, star, starTrans);
-  route.getRunwayNames(depRwy, destRwy);
-  route.getArrivalNames(arrivalName, arrivalTransition);
-  if(route.hasAnyArrivalProcedure() && !route.getApproachLegs().approachType.isEmpty())
-  {
-    // Flight factor specialities - there are probably more to guess
-    if(route.getApproachLegs().approachType == "RNAV")
-      arrivalName = "RNV" + destRwy;
-    else
-      arrivalName = route.getApproachLegs().approachType + destRwy;
-  }
-
-  if(route.getSizeWithoutAlternates() == 0)
-    return retval;
-
-  bool hasSid = ((options& rs::SID_STAR) && !sid.isEmpty()) || (options & rs::SID_STAR_GENERIC);
-  bool hasStar = ((options& rs::SID_STAR) && !star.isEmpty()) || (options & rs::SID_STAR_GENERIC);
-  bool gfpCoords = options.testFlag(rs::GFP_COORDS);
-  bool userWpt = options.testFlag(rs::USR_WPT);
-  bool firstDct = true;
-
-  QString lastAirway, lastId;
-  Pos lastPos;
-  map::MapObjectTypes lastType = map::NONE;
-  int lastIndex = 0;
-  for(int i = 0; i <= route.getDestinationAirportLegIndex(); i++)
-  {
-    const RouteLeg& leg = route.value(i);
-    if(leg.isAnyProcedure())
-      continue;
-
-    // Ignore departure airport depending on options
-    if(i == 0 && leg.getMapObjectType() == map::AIRPORT && !(options & rs::START_AND_DEST))
-      // Options is off
-      continue;
-
-    const QString& airway = leg.getAirwayName();
-    QString ident = leg.getIdent();
-
-    if(leg.getMapObjectType() == map::USERPOINTROUTE)
-    {
-      // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
-      if(options & rs::GFP)
-        ident = coords::toGfpFormat(leg.getPosition());
-      else if(options & rs::SKYVECTOR_COORDS)
-        ident = coords::toDegMinSecFormat(leg.getPosition());
-      else
-        ident = coords::toDegMinFormat(leg.getPosition());
-    }
-
-    if(airway.isEmpty() || leg.isAirwaySetAndInvalid(map::INVALID_ALTITUDE_VALUE) || options & rs::NO_AIRWAYS)
-    {
-      // Do not use  airway string if not found in database
-      if(!lastId.isEmpty())
-      {
-        if(userWpt && lastIndex > 0)
-          retval.append(coords::toGfpFormat(lastPos));
-        else
-          retval.append(lastId +
-                        (gfpCoords &&
-                         lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
-
-        if(lastIndex == 0 && options & rs::RUNWAY && !depRwy.isEmpty())
-          // Add runway after departure
-          retval.append(depRwy);
-      }
-
-      if(i > 0 && (options & rs::DCT))
-      {
-        if(!(firstDct && hasSid))
-          // Add direct if not start airport - do not add where a SID is inserted
-          retval.append("DCT");
-        firstDct = false;
-      }
-    }
-    else
-    {
-      if(airway != lastAirway)
-      {
-        // Airways change add last ident of the last airway
-        if(userWpt && lastIndex > 0)
-          retval.append(coords::toGfpFormat(lastPos));
-        else
-          retval.append(lastId +
-                        (gfpCoords &&
-                         lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
-
-        retval.append(airway);
-      }
-      // else Airway is the same skip waypoint
-    }
-
-    lastId = ident;
-    lastPos = leg.getPosition();
-    lastType = leg.getMapObjectType();
-    lastAirway = airway;
-    lastIndex = i;
-  }
-
-  // Append if departure airport present
-  int insertPosition = (route.hasValidDeparture() && options & rs::START_AND_DEST) ? 1 : 0;
-  if(!retval.isEmpty())
-  {
-    if(hasStar && retval.last() == "DCT")
-      // Remove last DCT so it does not collide with the STAR - destination airport not inserted yet
-      retval.removeLast();
-
-    if(options & rs::APPROACH && retval.last() == "DCT")
-      // Remove last DCT if approach information is desired
-      retval.removeLast();
-
-    if(options & rs::RUNWAY && !depRwy.isEmpty())
-      insertPosition++;
-  }
-
-  QString transSeparator = options & rs::SID_STAR_SPACE ? " " : ".";
-
-  // Add SID
-  if((options& rs::SID_STAR) && !sid.isEmpty())
-    retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : transSeparator + sidTrans));
-  else if(options & rs::SID_STAR_GENERIC)
-    retval.insert(insertPosition, "SID");
-
-  // Add speed and altitude
-  if(!retval.isEmpty() && options & rs::ALT_AND_SPEED)
-    retval.insert(insertPosition, atools::fs::util::createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
-
-  // Add STAR
-  if((options& rs::SID_STAR) && !star.isEmpty())
-    retval.append(star + (starTrans.isEmpty() ? QString() : transSeparator + starTrans));
-  else if(options & rs::SID_STAR_GENERIC)
-    retval.append("STAR");
-
-  // Remove last DCT for flight factor export
-  if(options & rs::NO_FINAL_DCT && retval.last() == "DCT")
-    retval.removeLast();
-
-  // Add destination airport
-  if(options & rs::START_AND_DEST)
-    retval.append(lastId + (gfpCoords ? "," + coords::toGfpFormat(lastPos) : QString()));
-
-  if(options & rs::APPROACH && !arrivalName.isEmpty())
-  {
-    retval.append(arrivalName);
-    if(!arrivalTransition.isEmpty())
-      retval.append(arrivalTransition);
-  }
-
-  if(options & rs::ALTERNATES)
-    retval.append(route.getAlternateIdents());
-
-  if(options & rs::FLIGHTLEVEL)
-    retval.append(QString("FL%1").arg(static_cast<int>(route.getCruisingAltitudeFeet()) / 100));
-
-  qDebug() << Q_FUNC_INFO << retval;
-
-  return retval;
-}
-
-bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                                        rs::RouteStringOptions options)
+bool RouteStringReader::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
+                                              rs::RouteStringOptions options)
 {
   float speeddummy;
   bool altdummy;
   return createRouteFromString(routeString, flightplan, speeddummy, altdummy, options);
 }
 
-bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                                        float& speedKts, bool& altIncluded, rs::RouteStringOptions options)
+bool RouteStringReader::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
+                                              float& speedKts, bool& altIncluded, rs::RouteStringOptions options)
 {
   qDebug() << Q_FUNC_INFO;
   messages.clear();
-  QStringList items = cleanRouteString(routeString);
+  QStringList items = rs::cleanRouteString(routeString);
 
   qDebug() << "items" << items;
 
@@ -499,11 +110,25 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     return false;
   }
 
-  if(!addDeparture(flightplan, cleanItems))
-    return false;
+  bool readNoAirports = options & rs::READ_NO_AIRPORTS;
+  Pos lastPos;
 
-  if(!addDestination(flightplan, cleanItems, options))
-    return false;
+  if(!readNoAirports)
+  {
+    // Get airports ============================================
+    // Insert first as departure
+    if(!addDeparture(flightplan, cleanItems))
+      return false;
+
+    // Append last as destination
+    if(!addDestination(flightplan, cleanItems, options))
+      return false;
+
+    lastPos = flightplan.getDeparturePosition();
+  }
+  else
+    // Try to get first position by various queries if no airports are given
+    lastPos = findFirstCoordinate(cleanItems);
 
   if(altitude > 0.f)
     appendMessage(tr("Using cruise altitude <b>%1</b> for flight plan.").arg(Unit::altFeet(altitude)));
@@ -522,14 +147,19 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   // Do not get any navaids that are too far away
   float maxDistance = atools::geo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM, flightplan.getDistanceNm() * 2.0f));
 
-  // Collect all navaids, airports and coordinates
-  Pos lastPos(flightplan.getDeparturePosition());
+  if(!lastPos.isValid())
+  {
+    appendError(tr("Could not determine starting position for first item %1.").arg(cleanItems.first()));
+    return false;
+  }
+
+  // Collect all navaids, airports and coordinates into MapSearchResults =============================
   QList<ParseEntry> resultList;
   for(const QString& item : cleanItems)
   {
     // Simply fetch all possible waypoints
     MapSearchResult result;
-    findWaypoints(result, item);
+    findWaypoints(result, item, options & rs::READ_MATCH_WAYPOINTS);
 
     // Get last result so we can check for airway/waypoint matches when selecting the last position
     // The nearest is used if no airway matches
@@ -547,7 +177,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   // Create airways - will fill the waypoint list in result with airway points
   // if airway is invalid it will be erased in result
   // Will erase NDB, VOR and adapt waypoint list in result if an airway/waypoint match was found
-  for(int i = 1; i < resultList.size() - 1; i++)
+  for(int i = readNoAirports ? 0 : 1; i < resultList.size() - 1; i++)
     filterAirways(resultList, i);
 
 #ifdef DEBUG_INFORMATION
@@ -560,8 +190,13 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   // Remove now unneeded results after airway evaluation
   removeEmptyResults(resultList);
 
-  // Now build the flight plan
+  // Now build the flight plan =================================================================
   lastPos = flightplan.getDeparturePosition();
+
+  // Either append (if no airports) or append before destination
+  int insertOffset = readNoAirports ? 0 : 1;
+
+  atools::fs::pln::FlightplanEntryListType& entries = flightplan.getEntries();
   for(int i = 0; i < resultList.size(); i++)
   {
     const QString& item = resultList.at(i).item;
@@ -573,7 +208,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
         appendWarning(tr("Found airway %1 instead of waypoint as first entry in enroute list. Ignoring.").arg(item));
       else
       {
-        // Add all airway waypoints if any were found
+        // Add all airway waypoints if any were found =================================
         for(const map::MapWaypoint& wp : result.waypoints)
         {
           // Reset but keep the last one
@@ -586,7 +221,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
           if(entry.getPosition().isValid())
           {
             entry.setAirway(item);
-            flightplan.getEntries().insert(flightplan.getEntries().size() - 1, entry);
+            entries.insert(entries.size() - insertOffset, entry);
             // qDebug() << entry.getIcaoIdent() << entry.getAirway();
           }
           else
@@ -596,7 +231,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     }
     else
     {
-      // Add a single waypoint from direct
+      // Add a single waypoint from direct =======================================
       FlightplanEntry entry;
       if(!result.userPointsRoute.isEmpty())
       {
@@ -615,7 +250,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
       {
         // Assign airway if  this is the end point of an airway
         entry.setAirway(resultList.at(i).airway);
-        flightplan.getEntries().insert(flightplan.getEntries().size() - 1, entry);
+        entries.insert(entries.size() - insertOffset, entry);
       }
       else
         appendWarning(tr("No navaid found for %1. Ignoring.").arg(item));
@@ -623,25 +258,38 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     }
 
     // Remember position for distance calculation
-    lastPos = flightplan.getEntries().at(flightplan.getEntries().size() - 2).getPosition();
+    lastPos = entries.at(entries.size() - 1 - insertOffset).getPosition();
+  }
+
+  // Update departure and destination if no airports are used ==============================
+  if(readNoAirports && !entries.isEmpty())
+  {
+    flightplan.setDepartureAiportName(entries.first().getIcaoIdent());
+    flightplan.setDepartureIdent(entries.first().getIcaoIdent());
+    flightplan.setDeparturePosition(entries.first().getPosition());
+
+    flightplan.setDestinationAiportName(entries.last().getIcaoIdent());
+    flightplan.setDestinationIdent(entries.last().getIcaoIdent());
+    flightplan.setDestinationPosition(entries.last().getPosition());
   }
 
 #ifdef DEBUG_INFORMATION
   qDebug() << flightplan;
 #endif
+
   return true;
 }
 
-void RouteString::buildEntryForResult(FlightplanEntry& entry, const MapSearchResult& result,
-                                      const atools::geo::Pos& nearestPos)
+void RouteStringReader::buildEntryForResult(FlightplanEntry& entry, const MapSearchResult& result,
+                                            const atools::geo::Pos& nearestPos)
 {
   MapSearchResult newResult;
   resultWithClosest(newResult, result, nearestPos, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT);
   entryBuilder->buildFlightplanEntry(newResult, entry, true);
 }
 
-void RouteString::resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
-                                    const atools::geo::Pos& nearestPos, map::MapObjectTypes types)
+void RouteStringReader::resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
+                                          const atools::geo::Pos& nearestPos, map::MapObjectTypes types)
 {
   struct DistData
   {
@@ -703,23 +351,13 @@ void RouteString::resultWithClosest(map::MapSearchResult& resultWithClosest, con
   }
 }
 
-QStringList RouteString::cleanRouteString(const QString& string)
-{
-  QString cleanstr = string.toUpper();
-  cleanstr.replace(QRegularExpression("[^A-Z0-9/\\.]"), " ");
-
-  QStringList list = cleanstr.simplified().split(" ");
-  list.removeAll(QString());
-  return list;
-}
-
-void RouteString::appendMessage(const QString& message)
+void RouteStringReader::appendMessage(const QString& message)
 {
   messages.append(message);
   qInfo() << "Message:" << message;
 }
 
-void RouteString::appendWarning(const QString& message)
+void RouteStringReader::appendWarning(const QString& message)
 {
   if(plaintextMessages)
     messages.append(message);
@@ -728,7 +366,7 @@ void RouteString::appendWarning(const QString& message)
   qWarning() << "Warning:" << message;
 }
 
-void RouteString::appendError(const QString& message)
+void RouteStringReader::appendError(const QString& message)
 {
   if(plaintextMessages)
     messages.append(message);
@@ -737,7 +375,7 @@ void RouteString::appendError(const QString& message)
   qWarning() << "Error:" << message;
 }
 
-QString RouteString::extractAirportIdent(QString ident)
+QString RouteStringReader::extractAirportIdent(QString ident)
 {
   QRegularExpressionMatch match = AIRPORT_TIME_RUNWAY.match(ident);
   if(match.hasMatch())
@@ -752,7 +390,7 @@ QString RouteString::extractAirportIdent(QString ident)
   return ident;
 }
 
-bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems)
+bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems)
 {
   QString ident = extractAirportIdent(cleanItems.takeFirst());
 
@@ -831,8 +469,8 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
   }
 }
 
-bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems,
-                                 rs::RouteStringOptions options)
+bool RouteStringReader::addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems,
+                                       rs::RouteStringOptions options)
 {
   if(options & rs::READ_ALTERNATES)
   {
@@ -964,8 +602,8 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
   return true;
 }
 
-void RouteString::destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs,
-                                      const QStringList& cleanItems, int index)
+void RouteStringReader::destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs,
+                                            const QStringList& cleanItems, int index)
 {
   airportQuerySim->getAirportByIdent(destination, extractAirportIdent(cleanItems.at(index)));
   if(destination.isValid())
@@ -1017,9 +655,59 @@ void RouteString::destinationInternal(map::MapAirport& destination, proc::MapPro
   }
 }
 
-void RouteString::findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
-                                      int lastId, int nextId, int& startIndex, int& endIndex,
-                                      const QString& airway)
+atools::geo::Pos RouteStringReader::findFirstCoordinate(const QStringList& cleanItems)
+{
+  Pos lastPos;
+  // Get coordinate of the first and last navaid ============================================
+  MapSearchResult result;
+  findWaypoints(result, cleanItems.first(), false);
+
+  if(result.isEmpty(ROUTE_TYPES_NAVAIDS))
+    // No navaid found ===============================================
+    appendError(tr("First item %1 not found as waypoint, VOR or NDB.").arg(cleanItems.first()));
+  else
+  {
+    if(result.size(ROUTE_TYPES_NAVAIDS) == 1)
+      // Found exactly one navaid ===============================================
+      lastPos = result.getPosition(ROUTE_TYPES_NAVAIDS_LIST);
+    else
+    {
+      // More than one waypoint check waypoint airway combination ===============================================
+      if(result.size(map::WAYPOINT) > 1)
+      {
+        if(cleanItems.size() > 1)
+        {
+          const QString& secondItem = cleanItems.at(1);
+          for(const map::MapWaypoint& w : result.waypoints)
+          {
+            QList<map::MapWaypoint> waypoints;
+            mapQuery->getWaypointsForAirway(waypoints, secondItem, w.ident);
+            if(!waypoints.isEmpty())
+              lastPos = w.getPosition();
+          }
+        }
+      }
+
+      if(!lastPos.isValid())
+      {
+        // Fetch all navaids until we find a unique one and use this as start position
+        for(const QString& item : cleanItems)
+        {
+          result.clear();
+          findWaypoints(result, item, false);
+
+          if(result.size(ROUTE_TYPES_NAVAIDS) == 1)
+            lastPos = result.getPosition(ROUTE_TYPES_NAVAIDS_LIST);
+        }
+      }
+    }
+  }
+  return lastPos;
+}
+
+void RouteStringReader::findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
+                                            int lastId, int nextId, int& startIndex, int& endIndex,
+                                            const QString& airway)
 {
   int startFragment = -1, endFragment = -1;
   // TODO handle fragments properly
@@ -1059,9 +747,9 @@ void RouteString::findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAi
 }
 
 /* Always excludes the first waypoint */
-void RouteString::extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
-                                   int startIndex, int endIndex,
-                                   QList<map::MapWaypoint>& airwayWaypoints)
+void RouteStringReader::extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
+                                         int startIndex, int endIndex,
+                                         QList<map::MapWaypoint>& airwayWaypoints)
 {
   if(startIndex < endIndex)
   {
@@ -1082,23 +770,27 @@ void RouteString::extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwa
   }
 }
 
-void RouteString::filterWaypoints(MapSearchResult& result, atools::geo::Pos& lastPos, const MapSearchResult *lastResult,
-                                  float maxDistance)
+void RouteStringReader::filterWaypoints(MapSearchResult& result, atools::geo::Pos& lastPos,
+                                        const MapSearchResult *lastResult,
+                                        float maxDistance)
 {
-  maptools::sortByDistance(result.airports, lastPos);
-  // maptools::removeByDistance(result.airports, lastPos, maxDistance);
+  if(lastPos.isValid())
+  {
+    maptools::sortByDistance(result.airports, lastPos);
+    // maptools::removeByDistance(result.airports, lastPos, maxDistance);
 
-  maptools::sortByDistance(result.waypoints, lastPos);
-  maptools::removeByDistance(result.waypoints, lastPos, maxDistance);
+    maptools::sortByDistance(result.waypoints, lastPos);
+    maptools::removeByDistance(result.waypoints, lastPos, maxDistance);
 
-  maptools::sortByDistance(result.vors, lastPos);
-  maptools::removeByDistance(result.vors, lastPos, maxDistance);
+    maptools::sortByDistance(result.vors, lastPos);
+    maptools::removeByDistance(result.vors, lastPos, maxDistance);
 
-  maptools::sortByDistance(result.ndbs, lastPos);
-  maptools::removeByDistance(result.ndbs, lastPos, maxDistance);
+    maptools::sortByDistance(result.ndbs, lastPos);
+    maptools::removeByDistance(result.ndbs, lastPos, maxDistance);
 
-  maptools::sortByDistance(result.userPointsRoute, lastPos);
-  maptools::removeByDistance(result.userPointsRoute, lastPos, maxDistance);
+    maptools::sortByDistance(result.userPointsRoute, lastPos);
+    maptools::removeByDistance(result.userPointsRoute, lastPos, maxDistance);
+  }
 
   if(!result.userPointsRoute.isEmpty())
     // User points have preference since they can be clearly identified
@@ -1141,7 +833,7 @@ void RouteString::filterWaypoints(MapSearchResult& result, atools::geo::Pos& las
     }
 
     // Get the nearest position only if there is no match with an airway
-    if(updateNearestPos)
+    if(updateNearestPos && lastPos.isValid())
     {
       struct ObjectDist
       {
@@ -1202,7 +894,7 @@ void RouteString::filterWaypoints(MapSearchResult& result, atools::geo::Pos& las
   }
 }
 
-void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
+void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
 {
   if(i == 0 || i > resultList.size() - 1)
     return;
@@ -1271,7 +963,7 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
         // qDebug() << "startidx" << startIndex << "endidx" << endIndex;
         if(startIndex != -1 && endIndex != -1)
         {
-          // Get the list of waypoints from start to end index
+          //
           result.waypoints.clear();
 
           // Override airway for the next
@@ -1321,29 +1013,47 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
   }
 }
 
-void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
+void RouteStringReader::findWaypoints(MapSearchResult& result, const QString& item, bool matchWaypoints)
 {
+  bool searchCoords = false;
   if(item.length() > 5)
-  {
-    // User defined waypoint
-    Pos pos = coords::fromAnyWaypointFormat(item);
-    if(pos.isValid())
-    {
-      map::MapUserpointRoute user;
-      user.position = pos;
-      result.userPointsRoute.append(user);
-    }
-  }
+    // User coordinates for sure
+    searchCoords = true;
   else
   {
     mapQuery->getMapObjectByIdent(result, ROUTE_TYPES_AND_AIRWAY, item);
 
     if(item.length() == 5 && result.waypoints.isEmpty())
+      // Nothing found - try NAT waypoint (a few of these are also in the database)
+      searchCoords = true;
+  }
+
+  if(searchCoords)
+  {
+    // Try user defined waypoint coordinates =================
+    Pos pos = coords::fromAnyWaypointFormat(item);
+    if(pos.isValid())
     {
-      // Try NAT waypoint (a few of these are also in the database)
-      Pos pos = coords::fromAnyWaypointFormat(item);
-      if(pos.isValid())
+      if(matchWaypoints)
       {
+        // Try to find a waypoint at the given position =================
+        map::MapWaypoint waypoint;
+        mapQuery->getWaypointNearest(waypoint, pos);
+
+        if(waypoint.getPosition().distanceMeterTo(pos) < 50)
+          // Use real waypoint at same position =================
+          result.waypoints.append(waypoint);
+        else
+        {
+          // No waypoint at position - create user waypoint =================
+          map::MapUserpointRoute user;
+          user.position = pos;
+          result.userPointsRoute.append(user);
+        }
+      }
+      else
+      {
+        // No matching wanted - create user waypoint =================
         map::MapUserpointRoute user;
         user.position = pos;
         result.userPointsRoute.append(user);
@@ -1352,7 +1062,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
   }
 }
 
-QStringList RouteString::cleanItemList(const QStringList& items, float& speedKnots, float& altFeet)
+QStringList RouteStringReader::cleanItemList(const QStringList& items, float& speedKnots, float& altFeet)
 {
   speedKnots = 0.f;
   altFeet = 0.f;
@@ -1408,7 +1118,7 @@ QStringList RouteString::cleanItemList(const QStringList& items, float& speedKno
   return cleanItems;
 }
 
-void RouteString::removeEmptyResults(QList<ParseEntry>& resultList)
+void RouteStringReader::removeEmptyResults(QList<ParseEntry>& resultList)
 {
   auto it = std::remove_if(resultList.begin(), resultList.end(),
                            [](const ParseEntry& type) -> bool

@@ -45,7 +45,7 @@
 #include "gui/errorhandler.h"
 #include "airspace/airspacecontroller.h"
 #include "mapgui/mapmarkhandler.h"
-#include "route/routestring.h"
+#include "routestring/routestringwriter.h"
 
 #include "ui_mainwindow.h"
 
@@ -444,7 +444,8 @@ Route& NavApp::getRoute()
 
 QString NavApp::getRouteString()
 {
-  return RouteString::createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(), rs::DEFAULT_OPTIONS);
+  return RouteStringWriter().createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
+                                                  rs::DEFAULT_OPTIONS);
 }
 
 const atools::geo::Rect& NavApp::getRouteRect()
