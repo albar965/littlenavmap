@@ -17,6 +17,7 @@
 
 #include "route/routeleg.h"
 #include "query/mapquery.h"
+#include "query/airwayquery.h"
 #include "query/airportquery.h"
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"
@@ -128,6 +129,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
   atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[index];
   MapQuery *mapQuery = NavApp::getMapQuery();
+  AirwayQuery *airwayQuery = NavApp::getAirwayQuery();
   AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
   QString region = flightplanEntry->getIcaoRegion();
@@ -156,8 +158,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
         else if(prevLeg != nullptr && !flightplanEntry->getAirway().isEmpty())
         {
           // Look for navaid at an airway
-          mapQuery->getWaypointsForAirway(mapobjectResult.waypoints,
-                                          flightplanEntry->getAirway(), flightplanEntry->getIcaoIdent());
+          airwayQuery->getWaypointsForAirway(mapobjectResult.waypoints,
+                                             flightplanEntry->getAirway(), flightplanEntry->getIcaoIdent());
           maptools::sortByDistance(mapobjectResult.waypoints, prevLeg->getPosition());
           if(mapobjectResult.hasWaypoints())
           {

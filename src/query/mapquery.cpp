@@ -21,22 +21,15 @@
 #include "common/maptypesfactory.h"
 #include "common/maptools.h"
 #include "common/proctypes.h"
-#include "fs/common/binarygeometry.h"
 #include "online/onlinedatacontroller.h"
 #include "airspace/airspacecontroller.h"
 #include "logbook/logdatacontroller.h"
 #include "userdata/userdatacontroller.h"
-#include "sql/sqlquery.h"
-#include "sql/sqlrecord.h"
 #include "query/airportquery.h"
+#include "query/airwayquery.h"
 #include "navapp.h"
-#include "common/maptools.h"
 #include "settings/settings.h"
-#include "fs/common/xpgeometry.h"
 #include "db/databasemanager.h"
-
-#include <QDataStream>
-#include <QRegularExpression>
 
 using namespace Marble;
 using namespace atools::sql;
@@ -50,11 +43,6 @@ using map::MapIls;
 using map::MapParking;
 using map::MapHelipad;
 using map::MapUserpoint;
-
-inline uint qHash(const MapQuery::NearestCacheKeyNavaid& key)
-{
-  return qHash(key.pos) ^ qHash(key.type) ^ qHash(key.distanceNm);
-}
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
@@ -184,7 +172,7 @@ map::MapSearchResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float dis
 map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapObjectTypes type,
                                                             int maxIls, float maxIlsDist)
 {
-  NearestCacheKeyNavaid key = {pos, distanceNm, type};
+  query::NearestCacheKeyNavaid key = {pos, distanceNm, type};
 
   map::MapSearchResultIndex *result = nearestNavaidCache.object(key);
 
@@ -248,128 +236,6 @@ map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, floa
     nearestNavaidCache.insert(key, result);
   }
   return result;
-}
-
-void MapQuery::getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId)
-{
-  airwayByWaypointIdQuery->bindValue(":id", waypointId);
-  airwayByWaypointIdQuery->exec();
-  while(airwayByWaypointIdQuery->next())
-  {
-    map::MapAirway airway;
-    mapTypesFactory->fillAirway(airwayByWaypointIdQuery->record(), airway);
-    airways.append(airway);
-  }
-}
-
-void MapQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
-                                     const QString& waypointIdent)
-{
-  airwayWaypointByIdentQuery->bindValue(":waypoint", waypointIdent.isEmpty() ? "%" : waypointIdent);
-  airwayWaypointByIdentQuery->bindValue(":airway", airwayName.isEmpty() ? "%" : airwayName);
-  airwayWaypointByIdentQuery->exec();
-  while(airwayWaypointByIdentQuery->next())
-  {
-    map::MapWaypoint waypoint;
-    mapTypesFactory->fillWaypoint(airwayWaypointByIdentQuery->record(), waypoint);
-    waypoints.append(waypoint);
-  }
-}
-
-void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName)
-{
-  airwayWaypointsQuery->bindValue(":name", airwayName);
-  airwayWaypointsQuery->exec();
-
-  // Collect records first
-  SqlRecordVector records;
-  while(airwayWaypointsQuery->next())
-    records.append(airwayWaypointsQuery->record());
-
-  for(int i = 0; i < records.size(); i++)
-  {
-    const SqlRecord& rec = records.at(i);
-
-    int fragment = rec.valueInt("airway_fragment_no");
-    // Check if the next fragment is different
-    int nextFragment = i < records.size() - 1 ?
-                       records.at(i + 1).valueInt("airway_fragment_no") : -1;
-
-    map::MapAirwayWaypoint aw;
-    aw.airwayFragmentId = fragment;
-    aw.seqNum = rec.valueInt("sequence_no");
-    aw.airwayId = rec.valueInt("airway_id");
-
-    // Add from waypoint
-    map::MapSearchResult result;
-    int fromId = rec.valueInt("from_waypoint_id");
-    getMapObjectById(result, map::WAYPOINT, map::AIRSPACE_SRC_NONE, fromId, false /* airport from nav database */);
-    if(!result.waypoints.isEmpty())
-      aw.waypoint = result.waypoints.first();
-    else
-      qWarning() << "getWaypointListForAirwayName: no waypoint for" << airwayName << "wp id" << fromId;
-    waypoints.append(aw);
-
-    if(i == records.size() - 1 || fragment != nextFragment)
-    {
-      // Add to waypoint if this is the last one or if the fragment is about to change
-      result.waypoints.clear();
-      int toId = rec.valueInt("to_waypoint_id");
-      getMapObjectById(result, map::WAYPOINT, map::AIRSPACE_SRC_NONE, toId, false /* airport from nav database */);
-      if(!result.waypoints.isEmpty())
-        aw.waypoint = result.waypoints.first();
-      else
-        qWarning() << "getWaypointListForAirwayName: no waypoint for" << airwayName << "wp id" << toId;
-      waypoints.append(aw);
-    }
-  }
-}
-
-void MapQuery::getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding, const QString& airwayName,
-                             int fragment)
-{
-  airwayFullQuery->bindValue(":name", airwayName);
-  airwayFullQuery->bindValue(":fragment", fragment);
-  airwayFullQuery->exec();
-  while(airwayFullQuery->next())
-  {
-    map::MapAirway airway;
-    mapTypesFactory->fillAirway(airwayFullQuery->record(), airway);
-    bounding.extend(airway.bounding);
-    airways.append(airway);
-  }
-}
-
-map::MapAirway MapQuery::getAirwayById(int airwayId)
-{
-  map::MapAirway airway;
-  getAirwayById(airway, airwayId);
-  return airway;
-}
-
-void MapQuery::getAirwayById(map::MapAirway& airway, int airwayId)
-{
-  airwayByIdQuery->bindValue(":id", airwayId);
-  airwayByIdQuery->exec();
-  if(airwayByIdQuery->next())
-    mapTypesFactory->fillAirway(airwayByIdQuery->record(), airway);
-  airwayByIdQuery->finish();
-
-}
-
-void MapQuery::getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName, const QString& waypoint1,
-                                          const QString& waypoint2)
-{
-  if(airwayName.isEmpty() || waypoint1.isEmpty() || waypoint2.isEmpty())
-    return;
-
-  airwayByNameAndWaypointQuery->bindValue(":airway", airwayName);
-  airwayByNameAndWaypointQuery->bindValue(":ident1", waypoint1);
-  airwayByNameAndWaypointQuery->bindValue(":ident2", waypoint2);
-  airwayByNameAndWaypointQuery->exec();
-  if(airwayByNameAndWaypointQuery->next())
-    mapTypesFactory->fillAirway(airwayByNameAndWaypointQuery->record(), airway);
-  airwayByNameAndWaypointQuery->finish();
 }
 
 void MapQuery::getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
@@ -477,16 +343,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
   }
 
   if(type & map::AIRWAY)
-  {
-    airwayByNameQuery->bindValue(":name", ident);
-    airwayByNameQuery->exec();
-    while(airwayByNameQuery->next())
-    {
-      map::MapAirway airway;
-      mapTypesFactory->fillAirway(airwayByNameQuery->record(), airway);
-      result.airways.append(airway);
-    }
-  }
+    NavApp::getAirwayQuery()->getAirwaysByName(result.airways, ident);
 }
 
 void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, map::MapAirspaceSources src,
@@ -559,7 +416,7 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
   }
   else if(type == map::AIRWAY)
   {
-    map::MapAirway airway = getAirwayById(id);
+    map::MapAirway airway = NavApp::getAirwayQuery()->getAirwayById(id);
     if(airway.isValid())
       result.airways.append(airway);
   }
@@ -1021,38 +878,6 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
   return &ilsCache.list;
 }
 
-const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
-{
-  airwayCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                          [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
-  {
-    return curLayer->hasSameQueryParametersAirway(newLayer);
-  });
-
-  if(airwayCache.list.isEmpty() && !lazy)
-  {
-    QSet<int> ids;
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
-    {
-      query::bindRect(r, airwayByRectQuery);
-      airwayByRectQuery->exec();
-      while(airwayByRectQuery->next())
-      {
-        if(ids.contains(airwayByRectQuery->valueInt("airway_id")))
-          continue;
-
-        map::MapAirway airway;
-        mapTypesFactory->fillAirway(airwayByRectQuery->record(), airway);
-        airwayCache.list.append(airway);
-        ids.insert(airway.id);
-      }
-    }
-  }
-  airwayCache.validate(queryMaxRows);
-  return &airwayCache.list;
-}
-
 /*
  * Get airport cache
  * @param reverse reverse order of airports to have unimportant small ones below in painting order
@@ -1181,14 +1006,6 @@ void MapQuery::initQueries()
   QStringList const airportQueryBase = AirportQuery::airportColumns(dbSim);
   QStringList const airportQueryBaseOverview = AirportQuery::airportOverviewColumns(dbSim);
 
-  QString airwayQueryBase(
-    "airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
-    "direction, minimum_altitude, maximum_altitude, from_lonx, from_laty, to_lonx, to_laty ");
-
-  SqlRecord aprec = dbNav->record("airway");
-  if(aprec.contains("route_type"))
-    airwayQueryBase.append(", route_type");
-
   static const QString waypointQueryBase(
     "waypoint_id, ident, region, type, num_victor_airway, num_jet_airway, "
     "mag_var, lonx, laty ");
@@ -1307,51 +1124,6 @@ void MapQuery::initQueries()
 
   ilsByRectQuery = new SqlQuery(dbSim);
   ilsByRectQuery->prepare("select " + ilsQueryBase + " from ils where " + whereRect + " " + whereLimit);
-
-  // Get all that are crossing the anti meridian too and filter them out from the query result
-  airwayByRectQuery = new SqlQuery(dbNav);
-  airwayByRectQuery->prepare(
-    "select " + airwayQueryBase + ", right_lonx, left_lonx, bottom_laty, top_laty from airway where " +
-    "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) "
-    "or right_lonx < left_lonx");
-
-  airwayByWaypointIdQuery = new SqlQuery(dbNav);
-  airwayByWaypointIdQuery->prepare(
-    "select " + airwayQueryBase + " from airway where from_waypoint_id = :id or to_waypoint_id = :id");
-
-  airwayByNameAndWaypointQuery = new SqlQuery(dbNav);
-  airwayByNameAndWaypointQuery->prepare(
-    "select " + airwayQueryBase +
-    " from airway a join waypoint wf on a.from_waypoint_id = wf.waypoint_id "
-    "join waypoint wt on a.to_waypoint_id = wt.waypoint_id "
-    "where a.airway_name = :airway and ((wf.ident = :ident1 and wt.ident = :ident2) or "
-    " (wt.ident = :ident1 and wf.ident = :ident2))");
-
-  airwayByIdQuery = new SqlQuery(dbNav);
-  airwayByIdQuery->prepare("select " + airwayQueryBase + " from airway where airway_id = :id");
-
-  airwayWaypointByIdentQuery = new SqlQuery(dbNav);
-  airwayWaypointByIdentQuery->prepare("select " + waypointQueryBase +
-                                      " from waypoint w "
-                                      " join airway a on w.waypoint_id = a.from_waypoint_id "
-                                      "where w.ident = :waypoint and a.airway_name = :airway"
-                                      " union "
-                                      "select " + waypointQueryBase +
-                                      " from waypoint w "
-                                      " join airway a on w.waypoint_id = a.to_waypoint_id "
-                                      "where w.ident = :waypoint and a.airway_name = :airway");
-
-  airwayByNameQuery = new SqlQuery(dbNav);
-  airwayByNameQuery->prepare("select " + airwayQueryBase + " from airway where airway_name = :name");
-
-  airwayWaypointsQuery = new SqlQuery(dbNav);
-  airwayWaypointsQuery->prepare("select " + airwayQueryBase + " from airway where airway_name = :name "
-                                                              " order by airway_fragment_no, sequence_no");
-
-  airwayFullQuery = new SqlQuery(dbNav);
-  airwayFullQuery->prepare("select " + airwayQueryBase +
-                           " from airway where airway_fragment_no = :fragment and airway_name = :name");
-
 }
 
 void MapQuery::deInitQueries()
@@ -1362,7 +1134,6 @@ void MapQuery::deInitQueries()
   ndbCache.clear();
   markerCache.clear();
   ilsCache.clear();
-  airwayCache.clear();
   runwayOverwiewCache.clear();
 
   delete airportByRectQuery;
@@ -1385,18 +1156,9 @@ void MapQuery::deInitQueries()
   markersByRectQuery = nullptr;
   delete ilsByRectQuery;
   ilsByRectQuery = nullptr;
-  delete airwayByRectQuery;
-  airwayByRectQuery = nullptr;
 
   delete userdataPointByRectQuery;
   userdataPointByRectQuery = nullptr;
-
-  delete airwayByWaypointIdQuery;
-  airwayByWaypointIdQuery = nullptr;
-  delete airwayByNameAndWaypointQuery;
-  airwayByNameAndWaypointQuery = nullptr;
-  delete airwayByIdQuery;
-  airwayByIdQuery = nullptr;
 
   delete vorByIdentQuery;
   vorByIdentQuery = nullptr;
@@ -1432,16 +1194,4 @@ void MapQuery::deInitQueries()
 
   delete ilsQuerySimByName;
   ilsQuerySimByName = nullptr;
-
-  delete airwayWaypointByIdentQuery;
-  airwayWaypointByIdentQuery = nullptr;
-
-  delete airwayByNameQuery;
-  airwayByNameQuery = nullptr;
-
-  delete airwayWaypointsQuery;
-  airwayWaypointsQuery = nullptr;
-
-  delete airwayFullQuery;
-  airwayFullQuery = nullptr;
 }

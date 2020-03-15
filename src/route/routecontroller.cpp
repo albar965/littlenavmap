@@ -40,6 +40,7 @@
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "query/mapquery.h"
+#include "query/airwayquery.h"
 #include "query/airportquery.h"
 #include "mapgui/mapwidget.h"
 #include "parkingdialog.h"
@@ -3525,7 +3526,7 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
 void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry& entry)
 {
   map::MapAirway airway;
-  mapQuery->getAirwayById(airway, airwayId);
+  airwayQuery->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
 }
 

@@ -21,6 +21,7 @@
 #include "query/procedurequery.h"
 #include "connect/connectclient.h"
 #include "query/mapquery.h"
+#include "query/airwayquery.h"
 #include "query/airportquery.h"
 #include "db/databasemanager.h"
 #include "fs/db/databasemeta.h"
@@ -57,6 +58,7 @@
 AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
 MapQuery *NavApp::mapQuery = nullptr;
+AirwayQuery *NavApp::airwayQuery = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
 ProcedureQuery *NavApp::procedureQuery = nullptr;
 
@@ -147,6 +149,9 @@ void NavApp::init(MainWindow *mainWindowParam)
   mapQuery = new MapQuery(databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
                           databaseManager->getDatabaseUser());
   mapQuery->initQueries();
+
+  airwayQuery = new AirwayQuery(databaseManager->getDatabaseNav());
+  airwayQuery->initQueries();
 
   airspaceController = new AirspaceController(mainWindow,
                                               databaseManager->getDatabaseSimAirspace(),
@@ -240,6 +245,10 @@ void NavApp::deInit()
   delete mapQuery;
   mapQuery = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete airwayQuery";
+  delete airwayQuery;
+  airwayQuery = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
   infoQuery = nullptr;
@@ -296,6 +305,7 @@ void NavApp::preDatabaseLoad()
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
   mapQuery->deInitQueries();
+  airwayQuery->deInitQueries();
   procedureQuery->deInitQueries();
   airspaceController->preDatabaseLoad();
 
@@ -351,6 +361,7 @@ void NavApp::postDatabaseLoad()
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   mapQuery->initQueries();
+  airwayQuery->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
   airspaceController->postDatabaseLoad();
@@ -415,6 +426,11 @@ AirportQuery *NavApp::getAirportQueryNav()
 MapQuery *NavApp::getMapQuery()
 {
   return mapQuery;
+}
+
+AirwayQuery *NavApp::getAirwayQuery()
+{
+  return airwayQuery;
 }
 
 atools::geo::Pos NavApp::getAirportPos(const QString& ident)

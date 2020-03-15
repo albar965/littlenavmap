@@ -24,6 +24,7 @@
 #include "fs/pln/flightplan.h"
 #include "util/htmlbuilder.h"
 #include "query/mapquery.h"
+#include "query/airwayquery.h"
 #include "query/airportquery.h"
 #include "route/flightplanentrybuilder.h"
 #include "common/maptools.h"
@@ -681,7 +682,7 @@ atools::geo::Pos RouteStringReader::findFirstCoordinate(const QStringList& clean
           for(const map::MapWaypoint& w : result.waypoints)
           {
             QList<map::MapWaypoint> waypoints;
-            mapQuery->getWaypointsForAirway(waypoints, secondItem, w.ident);
+            airwayQuery->getWaypointsForAirway(waypoints, secondItem, w.ident);
             if(!waypoints.isEmpty())
               lastPos = w.getPosition();
           }
@@ -818,7 +819,7 @@ void RouteStringReader::filterWaypoints(MapSearchResult& result, atools::geo::Po
         {
           QList<map::MapWaypoint> waypoints;
           // Get all waypoints for first
-          mapQuery->getWaypointsForAirway(waypoints, airwayName, waypointIdent);
+          airwayQuery->getWaypointsForAirway(waypoints, airwayName, waypointIdent);
 
           if(!waypoints.isEmpty())
           {
@@ -928,14 +929,14 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
     }
 
     // Get all waypoints for first
-    mapQuery->getWaypointsForAirway(waypoints, airwayName, waypointNameStart);
+    airwayQuery->getWaypointsForAirway(waypoints, airwayName, waypointNameStart);
 
     if(!waypoints.isEmpty())
     {
       QList<map::MapAirwayWaypoint> allAirwayWaypoints;
 
       // Get all waypoints for the airway sorted by fragment and sequence
-      mapQuery->getWaypointListForAirwayName(allAirwayWaypoints, airwayName);
+      airwayQuery->getWaypointListForAirwayName(allAirwayWaypoints, airwayName);
 
 #ifdef DEBUG_INFORMATION
       for(const map::MapAirwayWaypoint& w : allAirwayWaypoints)

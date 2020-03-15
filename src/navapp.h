@@ -26,6 +26,7 @@
 class AircraftPerfController;
 class AircraftTrack;
 class AirportQuery;
+class AirwayQuery;
 class AirspaceController;
 class AirspaceQuery;
 class ConnectClient;
@@ -157,6 +158,7 @@ public:
   static AirportQuery *getAirportQuerySim();
   static AirportQuery *getAirportQueryNav();
   static MapQuery *getMapQuery();
+  static AirwayQuery *getAirwayQuery();
 
   static atools::geo::Pos getAirportPos(const QString& ident);
 
@@ -321,6 +323,7 @@ private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
   static MapQuery *mapQuery;
+  static AirwayQuery *airwayQuery;
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;

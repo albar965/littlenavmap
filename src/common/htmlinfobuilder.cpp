@@ -31,6 +31,7 @@
 #include "geo/calculations.h"
 #include "query/infoquery.h"
 #include "query/mapquery.h"
+#include "query/airwayquery.h"
 #include "query/airportquery.h"
 #include "route/route.h"
 #include "sql/sqlrecord.h"
@@ -2370,7 +2371,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   html.tableEnd();
 
   QList<MapAirway> airways;
-  mapQuery->getAirwaysForWaypoint(airways, waypoint.id);
+  NavApp::getAirwayQuery()->getAirwaysForWaypoint(airways, waypoint.id);
 
   if(!airways.isEmpty())
   {

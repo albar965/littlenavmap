@@ -59,6 +59,7 @@ class QItemSelection;
 class FlightplanEntryBuilder;
 class SymbolPainter;
 class AirportQuery;
+class AirwayQuery;
 class UnitStringTool;
 class QTextCursor;
 class RouteCalcWindow;
@@ -449,6 +450,7 @@ private:
   QMainWindow *mainWindow;
   QTableView *view;
   MapQuery *mapQuery;
+  AirwayQuery *airwayQuery;
   AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;

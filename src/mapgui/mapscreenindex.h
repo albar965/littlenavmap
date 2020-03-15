@@ -32,6 +32,7 @@ class GeoDataLatLonBox;
 }
 
 class MapPaintWidget;
+class AirwayQuery;
 class AirportQuery;
 class MapPaintLayer;
 
@@ -269,6 +270,7 @@ private:
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapPaintWidget *mapPaintWidget;
   MapQuery *mapQuery;
+  AirwayQuery *airwayQuery;
   AirportQuery *airportQuery;
   MapPaintLayer *paintLayer;
 

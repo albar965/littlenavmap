@@ -32,6 +32,7 @@
 #include "mapgui/mapmarkhandler.h"
 #include "common/maptools.h"
 #include "query/mapquery.h"
+#include "query/airwayquery.h"
 #include "query/airportquery.h"
 #include "common/coordinateconverter.h"
 #include "common/constants.h"
@@ -53,6 +54,7 @@ MapScreenIndex::MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLaye
   : mapPaintWidget(mapPaintWidgetParam), paintLayer(mapPaintLayer)
 {
   mapQuery = NavApp::getMapQuery();
+  airwayQuery = NavApp::getAirwayQuery();
   airportQuery = NavApp::getAirportQuerySim();
 }
 
@@ -299,7 +301,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
       if(paintLayer->getMapLayer()->isAirway() && (showJet || showVictor))
       {
         // Airways are visible on map - get them from the cache/database
-        const QList<MapAirway> *airways = mapQuery->getAirways(curBox, paintLayer->getMapLayer(), false);
+        const QList<MapAirway> *airways = airwayQuery->getAirways(curBox, paintLayer->getMapLayer(), false);
 
         for(int i = 0; i < airways->size(); i++)
         {
@@ -823,7 +825,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapSear
 void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
 {
   for(int id : nearestLineIds(airwayLines, xs, ys, maxDistance, true /* lineDistanceOnly */))
-    result.airways.append(mapQuery->getAirwayById(id));
+    result.airways.append(airwayQuery->getAirwayById(id));
 }
 
 int MapScreenIndex::getNearestRouteLegIndex(int xs, int ys, int maxDistance) const

@@ -298,6 +298,7 @@ SOURCES += \
   src/profile/profilewidget.cpp \
   src/query/airportquery.cpp \
   src/query/airspacequery.cpp \
+  src/query/airwayquery.cpp \
   src/query/infoquery.cpp \
   src/query/mapquery.cpp \
   src/query/procedurequery.cpp \
@@ -444,6 +445,7 @@ HEADERS  += \
   src/profile/profilewidget.h \
   src/query/airportquery.h \
   src/query/airspacequery.h \
+  src/query/airwayquery.h \
   src/query/infoquery.h \
   src/query/mapquery.h \
   src/query/procedurequery.h \

@@ -25,6 +25,7 @@
 #include "util/paintercontextsaver.h"
 #include "mapgui/maplayer.h"
 #include "query/mapquery.h"
+#include "query/airwayquery.h"
 
 #include <QElapsedTimer>
 
@@ -61,7 +62,7 @@ void MapPainterNav::render(PaintContext *context)
   if(drawAirway && !context->isOverflow())
   {
     // Draw airway lines
-    const QList<MapAirway> *airways = mapQuery->getAirways(curBox, context->mapLayer, context->lazyUpdate);
+    const QList<MapAirway> *airways = airwayQuery->getAirways(curBox, context->mapLayer, context->lazyUpdate);
     if(airways != nullptr)
       paintAirways(context, airways, context->drawFast);
   }

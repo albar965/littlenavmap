@@ -38,6 +38,7 @@ struct MapProcedureLegs;
 }
 
 class MapQuery;
+class AirwayQuery;
 class AirportQuery;
 class ProcedureQuery;
 class FlightplanEntryBuilder;
@@ -124,6 +125,7 @@ private:
   atools::geo::Pos findFirstCoordinate(const QStringList& cleanItems);
 
   MapQuery *mapQuery = nullptr;
+  AirwayQuery *airwayQuery = nullptr;
   AirportQuery *airportQuerySim = nullptr;
   ProcedureQuery *procQuery = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;

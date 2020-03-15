@@ -20,6 +20,7 @@
 #include "geo/calculations.h"
 #include "common/maptools.h"
 #include "query/mapquery.h"
+#include "query/airwayquery.h"
 #include "common/unit.h"
 #include "common/constants.h"
 #include "route/flightplanentrybuilder.h"
@@ -1939,8 +1940,8 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteT
     if(!routeLeg.getAirwayName().isEmpty())
     {
       map::MapAirway airway;
-      NavApp::getMapQuery()->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(),
-                                                        routeLeg.getIdent());
+      NavApp::getAirwayQuery()->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(),
+                                                           routeLeg.getIdent());
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);
       if(airway.maxAltitude > 0)

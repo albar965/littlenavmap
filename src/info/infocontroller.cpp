@@ -32,6 +32,7 @@
 #include "gui/widgetstate.h"
 #include "gui/dialog.h"
 #include "query/mapquery.h"
+#include "query/airwayquery.h"
 #include "query/airportquery.h"
 #include "route/route.h"
 #include "common/mapcolors.h"
@@ -293,12 +294,12 @@ void InfoController::anchorClicked(const QUrl& url)
         else if(type == map::AIRWAY)
         {
           // Show full airways by id ================================================
-          map::MapAirway airway = mapQuery->getAirwayById(id);
+          map::MapAirway airway = NavApp::getAirwayQuery()->getAirwayById(id);
 
           // Get all airway segments and the bounding rectangle
           atools::geo::Rect bounding;
           QList<map::MapAirway> airways;
-          mapQuery->getAirwayFull(airways, bounding, airway.name, airway.fragment);
+          NavApp::getAirwayQuery()->getAirwayFull(airways, bounding, airway.name, airway.fragment);
 
           QList<QList<map::MapAirway> > airwayHighlights = mapWidget->getAirwayHighlights();
           airwayHighlights.append(airways);
