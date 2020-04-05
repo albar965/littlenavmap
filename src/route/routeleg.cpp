@@ -17,7 +17,7 @@
 
 #include "route/routeleg.h"
 #include "query/mapquery.h"
-#include "query/airwayquery.h"
+#include "query/airwaytrackquery.h"
 #include "query/airportquery.h"
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"
@@ -129,7 +129,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
   atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[index];
   MapQuery *mapQuery = NavApp::getMapQuery();
-  AirwayQuery *airwayQuery = NavApp::getAirwayQuery();
+  AirwayTrackQuery *airwayQuery = NavApp::getAirwayTrackQuery();
   AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
   QString region = flightplanEntry->getIcaoRegion();

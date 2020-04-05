@@ -21,7 +21,7 @@
 #include "query/procedurequery.h"
 #include "connect/connectclient.h"
 #include "query/mapquery.h"
-#include "query/airwayquery.h"
+#include "query/waypointtrackquery.h"
 #include "query/airportquery.h"
 #include "db/databasemanager.h"
 #include "fs/db/databasemeta.h"
@@ -47,7 +47,9 @@
 #include "airspace/airspacecontroller.h"
 #include "mapgui/mapmarkhandler.h"
 #include "routestring/routestringwriter.h"
+#include "track/trackcontroller.h"
 
+#include "query/waypointquery.h"
 #include "ui_mainwindow.h"
 
 #include <marble/MarbleModel.h>
@@ -58,7 +60,6 @@
 AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
 MapQuery *NavApp::mapQuery = nullptr;
-AirwayQuery *NavApp::airwayQuery = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
 ProcedureQuery *NavApp::procedureQuery = nullptr;
 
@@ -77,6 +78,7 @@ UserdataController *NavApp::userdataController = nullptr;
 MapMarkHandler *NavApp::mapMarkHandler = nullptr;
 LogdataController *NavApp::logdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
+TrackController *NavApp::trackController = nullptr;
 AircraftPerfController *NavApp::aircraftPerfController = nullptr;
 AirspaceController *NavApp::airspaceController = nullptr;
 VehicleIcons *NavApp::vehicleIcons = nullptr;
@@ -117,7 +119,8 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   NavApp::mainWindow = mainWindowParam;
   databaseManager = new DatabaseManager(mainWindow);
-  databaseManager->openAllDatabases();
+  databaseManager->openAllDatabases(); // Only readonly databases
+
   userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
   logdataController = new LogdataController(databaseManager->getLogdataManager(), mainWindow);
   mapMarkHandler = new MapMarkHandler(mainWindow);
@@ -144,14 +147,13 @@ void NavApp::init(MainWindow *mainWindowParam)
   onlinedataController = new OnlinedataController(databaseManager->getOnlinedataManager(), mainWindow);
   onlinedataController->initQueries();
 
+  trackController = new TrackController(databaseManager->getTrackManager(), mainWindow);
+
   aircraftPerfController = new AircraftPerfController(mainWindow);
 
   mapQuery = new MapQuery(databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
                           databaseManager->getDatabaseUser());
   mapQuery->initQueries();
-
-  airwayQuery = new AirwayQuery(databaseManager->getDatabaseNav());
-  airwayQuery->initQueries();
 
   airspaceController = new AirspaceController(mainWindow,
                                               databaseManager->getDatabaseSimAirspace(),
@@ -213,6 +215,10 @@ void NavApp::deInit()
   delete onlinedataController;
   onlinedataController = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete airwayController";
+  delete trackController;
+  trackController = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete aircraftPerfController";
   delete aircraftPerfController;
   aircraftPerfController = nullptr;
@@ -244,10 +250,6 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete mapQuery";
   delete mapQuery;
   mapQuery = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete airwayQuery";
-  delete airwayQuery;
-  airwayQuery = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
@@ -305,9 +307,9 @@ void NavApp::preDatabaseLoad()
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
   mapQuery->deInitQueries();
-  airwayQuery->deInitQueries();
   procedureQuery->deInitQueries();
   airspaceController->preDatabaseLoad();
+  trackController->preDatabaseLoad();
 
   delete databaseMetaSim;
   databaseMetaSim = nullptr;
@@ -361,10 +363,10 @@ void NavApp::postDatabaseLoad()
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   mapQuery->initQueries();
-  airwayQuery->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
   airspaceController->postDatabaseLoad();
+  trackController->postDatabaseLoad();
   loadingDatabase = false;
 }
 
@@ -428,9 +430,14 @@ MapQuery *NavApp::getMapQuery()
   return mapQuery;
 }
 
-AirwayQuery *NavApp::getAirwayQuery()
+AirwayTrackQuery *NavApp::getAirwayTrackQuery()
 {
-  return airwayQuery;
+  return trackController->getAirwayTrackQuery();
+}
+
+WaypointTrackQuery *NavApp::getWaypointTrackQuery()
+{
+  return trackController->getWaypointTrackQuery();
 }
 
 atools::geo::Pos NavApp::getAirportPos(const QString& ident)
@@ -584,9 +591,19 @@ UserdataSearch *NavApp::getUserdataSearch()
   return mainWindow->getSearchController()->getUserdataSearch();
 }
 
+TrackManager *NavApp::getTrackManager()
+{
+  return databaseManager->getTrackManager();
+}
+
 LogdataSearch *NavApp::getLogdataSearch()
 {
   return mainWindow->getSearchController()->getLogdataSearch();
+}
+
+atools::sql::SqlDatabase *NavApp::getDatabaseTrack()
+{
+  return getDatabaseManager()->getDatabaseTrack();
 }
 
 atools::fs::userdata::LogdataManager *NavApp::getLogdataManager()
@@ -637,6 +654,11 @@ LogdataController *NavApp::getLogdataController()
 OnlinedataController *NavApp::getOnlinedataController()
 {
   return onlinedataController;
+}
+
+TrackController *NavApp::getTrackController()
+{
+  return trackController;
 }
 
 AircraftPerfController *NavApp::getAircraftPerfController()

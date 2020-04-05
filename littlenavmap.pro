@@ -209,6 +209,8 @@ message(-----------------------------------)
 SOURCES += \
   src/airspace/airspacecontroller.cpp \
   src/airspace/airspacetoolbarhandler.cpp \
+  src/track/trackcontroller.cpp \
+  src/track/trackmanager.cpp \
   src/common/aircrafttrack.cpp \
   src/common/airportfiles.cpp \
   src/common/constants.cpp \
@@ -299,10 +301,13 @@ SOURCES += \
   src/query/airportquery.cpp \
   src/query/airspacequery.cpp \
   src/query/airwayquery.cpp \
+  src/query/airwaytrackquery.cpp \
   src/query/infoquery.cpp \
   src/query/mapquery.cpp \
   src/query/procedurequery.cpp \
   src/query/querytypes.cpp \
+  src/query/waypointquery.cpp \
+  src/query/waypointtrackquery.cpp \
   src/route/customproceduredialog.cpp \
   src/route/flightplanentrybuilder.cpp \
   src/route/parkingdialog.cpp \
@@ -357,6 +362,8 @@ SOURCES += \
 HEADERS  += \
   src/airspace/airspacecontroller.h \
   src/airspace/airspacetoolbarhandler.h \
+  src/track/trackcontroller.h \
+  src/track/trackmanager.h \
   src/common/aircrafttrack.h \
   src/common/airportfiles.h \
   src/common/constants.h \
@@ -446,10 +453,13 @@ HEADERS  += \
   src/query/airportquery.h \
   src/query/airspacequery.h \
   src/query/airwayquery.h \
+  src/query/airwaytrackquery.h \
   src/query/infoquery.h \
   src/query/mapquery.h \
   src/query/procedurequery.h \
   src/query/querytypes.h \
+  src/query/waypointquery.h \
+  src/query/waypointtrackquery.h \
   src/route/customproceduredialog.h \
   src/route/flightplanentrybuilder.h \
   src/route/parkingdialog.h \

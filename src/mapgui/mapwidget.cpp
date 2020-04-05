@@ -916,8 +916,8 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.waypoints.first().position, 0.f, true);
     else if(!mapSearchResult.ils.isEmpty())
       showRect(mapSearchResult.ils.first().bounding, true);
-    else if(!mapSearchResult.userPointsRoute.isEmpty())
-      showPos(mapSearchResult.userPointsRoute.first().position, 0.f, true);
+    else if(!mapSearchResult.userpointsRoute.isEmpty())
+      showPos(mapSearchResult.userpointsRoute.first().position, 0.f, true);
     else if(!mapSearchResult.userpoints.isEmpty())
       showPos(mapSearchResult.userpoints.first().position, 0.f, true);
     else if(!mapSearchResult.trafficPatterns.isEmpty())
@@ -1729,8 +1729,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!result.ils.isEmpty())
     ils = &result.ils.first();
 
-  if(!result.userPointsRoute.isEmpty())
-    userpointRoute = &result.userPointsRoute.first();
+  if(!result.userpointsRoute.isEmpty())
+    userpointRoute = &result.userpointsRoute.first();
 
   if(!result.userpoints.isEmpty())
     userpoint = &result.userpoints.first();
@@ -3306,13 +3306,14 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports,
                                       ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                                       ui->actionMapShowIls, ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                                      ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowAircraft,
-                                      ui->actionMapShowCompassRose, ui->actionMapAircraftCenter,
-                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                                      ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
-                                      ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
-                                      ui->actionMapShowMinimumAltitude,
-                                      ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
+                                      ui->actionMapShowTracks, ui->actionShowAirspaces, ui->actionMapShowRoute,
+                                      ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
+                                      ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi,
+                                      ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
+                                      ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,
+                                      ui->actionMapShowCities, ui->actionMapShowHillshading,
+                                      ui->actionMapShowMinimumAltitude, ui->actionMapShowAirportWeather,
+                                      ui->actionMapShowSunShading});
 
   // Menu map =====================================
   ui->actionMapAircraftCenter->setChecked(true);
@@ -3331,6 +3332,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowIls->setChecked(true);
   ui->actionMapShowVictorAirways->setChecked(false);
   ui->actionMapShowJetAirways->setChecked(false);
+  ui->actionMapShowTracks->setChecked(false);
 
   // Submenu airspaces
   ui->actionShowAirspaces->setChecked(true);
@@ -3468,6 +3470,7 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
+  setShowMapFeatures(map::TRACK, ui->actionMapShowTracks->isChecked());
 
   setShowMapFeatures(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
                      ui->actionShowAirspaces->isChecked());

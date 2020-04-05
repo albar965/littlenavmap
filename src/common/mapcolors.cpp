@@ -59,6 +59,7 @@ QColor waypointSymbolColor(200, 0, 200);
 QPen airwayVictorPen(QColor("#969696"), 1.);
 QPen airwayJetPen(QColor("#000080"), 1.);
 QPen airwayBothPen(QColor("#646464"), 1.);
+QPen airwayTrackPen(QColor("#101010"), 1.5);
 QColor airwayTextColor(80, 80, 80);
 
 QColor distanceRhumbColor(80, 80, 80);
@@ -474,7 +475,7 @@ const QPen& penForAirspace(const map::MapAirspace& airspace)
   return airspacePens[airspace.type];
 }
 
-const QPen& penForAirway(const map::MapAirway& airway)
+const QPen& penForAirwayTrack(const map::MapAirway& airway)
 {
   static QPen EMPTY_PEN;
 
@@ -483,13 +484,18 @@ const QPen& penForAirway(const map::MapAirway& airway)
     case map::NO_AIRWAY:
       break;
 
-    case map::VICTOR:
+    case map::TRACK_NAT:
+    case map::TRACK_PACOTS:
+    case map::TRACK_AUSOTS:
+      return airwayTrackPen;
+
+    case map::AIRWAY_VICTOR:
       return airwayVictorPen;
 
-    case map::JET:
+    case map::AIRWAY_JET:
       return airwayJetPen;
 
-    case map::BOTH:
+    case map::AIRWAY_BOTH:
       return airwayBothPen;
   }
   return EMPTY_PEN;
@@ -586,6 +592,7 @@ void syncColors()
   syncPen(colorSettings, "VictorPen", airwayVictorPen);
   syncPen(colorSettings, "JetPen", airwayJetPen);
   syncPen(colorSettings, "BothPen", airwayBothPen);
+  syncPen(colorSettings, "TrackPen", airwayTrackPen);
   syncColor(colorSettings, "TextColor", airwayTextColor);
   colorSettings.endGroup();
 

@@ -93,10 +93,10 @@ public:
 
   void fillNdb(const atools::sql::SqlRecord& record, map::MapNdb& ndb);
 
-  void fillWaypoint(const atools::sql::SqlRecord& record, map::MapWaypoint& waypoint);
+  void fillWaypoint(const atools::sql::SqlRecord& record, map::MapWaypoint& waypoint, bool track);
   void fillWaypointFromNav(const atools::sql::SqlRecord& record, map::MapWaypoint& waypoint);
 
-  void fillAirway(const atools::sql::SqlRecord& record, map::MapAirway& airway);
+  void fillAirwayOrTrack(const atools::sql::SqlRecord& record, map::MapAirway& airway, bool track);
   void fillMarker(const atools::sql::SqlRecord& record, map::MapMarker& marker);
   void fillIls(const atools::sql::SqlRecord& record, map::MapIls& ils);
 
@@ -119,6 +119,8 @@ private:
   map::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
                                    map::MapAirportFlags airportFlag);
   map::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
+
+  void altitudeLevels(QVector<int>& levels, QByteArray bytes);
 
 };
 

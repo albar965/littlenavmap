@@ -13,7 +13,7 @@
    width="300"
    height="300"
    id="svg2"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="airwayvictor.svg">
   <metadata
      id="metadata17">
@@ -41,7 +41,7 @@
      id="namedview15"
      showgrid="true"
      inkscape:zoom="1.5733333"
-     inkscape:cx="-48.305098"
+     inkscape:cx="-54.978827"
      inkscape:cy="86.764814"
      inkscape:window-x="44"
      inkscape:window-y="24"
@@ -62,13 +62,6 @@
   </sodipodi:namedview>
   <defs
      id="defs4" />
-  <rect
-     style="opacity:1;fill:#dedebc;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:53.04660416;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     id="rect843"
-     width="183.81357"
-     height="176.35593"
-     x="10.908354"
-     y="1.2992951" />
   <path
      style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="m 23.747336,148.71455 180.000004,60 70,-70"
@@ -76,19 +69,29 @@
      inkscape:connector-curvature="0" />
   <path
      style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 23.747336,18.714553 180.000004,189.999997 80,-189.999997"
+     d="M 23.747336,18.714553 203.74734,208.71455 287.5609,12.358621"
      id="path12691"
-     inkscape:connector-curvature="0" />
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
   <path
      style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 253.74734,278.71455 -50,-70 -180.000004,70"
+     d="M 286.16259,286.34167 203.74734,208.71455 11.035471,283.1637"
      id="path12693"
-     inkscape:connector-curvature="0" />
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
   <path
      style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 203.74734,208.71455 -180.000004,20"
+     d="M 203.74734,208.71455 7.2219119,222.35862"
      id="path12695"
-     inkscape:connector-curvature="0" />
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc" />
+  <rect
+     style="opacity:1;fill:#dedebc;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:53.04660416;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect843"
+     width="183.81357"
+     height="176.35593"
+     x="10.908354"
+     y="1.2992951" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"

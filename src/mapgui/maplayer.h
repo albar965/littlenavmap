@@ -62,7 +62,7 @@ public:
   /* @return true if a query for this layer will give the same result set */
   bool hasSameQueryParametersAirport(const MapLayer *other) const;
   bool hasSameQueryParametersAirspace(const MapLayer *other) const;
-  bool hasSameQueryParametersAirway(const MapLayer *other) const;
+  bool hasSameQueryParametersAirwayTrack(const MapLayer *other) const;
   bool hasSameQueryParametersVor(const MapLayer *other) const;
   bool hasSameQueryParametersNdb(const MapLayer *other) const;
   bool hasSameQueryParametersWaypoint(const MapLayer *other) const;
@@ -161,6 +161,11 @@ public:
   MapLayer& airwayWaypoint(bool value = true);
   MapLayer& airwayIdent(bool value = true);
   MapLayer& airwayInfo(bool value = true);
+
+  MapLayer& track(bool value = true);
+  MapLayer& trackWaypoint(bool value = true);
+  MapLayer& trackIdent(bool value = true);
+  MapLayer& trackInfo(bool value = true);
 
   // MapLayer& airspace(bool value = true);
   MapLayer& airspaceCenter(bool value = true);
@@ -418,6 +423,26 @@ public:
     return layerAirwayInfo;
   }
 
+  bool isTrack() const
+  {
+    return layerTrack;
+  }
+
+  bool isTrackWaypoint() const
+  {
+    return layerTrackWaypoint;
+  }
+
+  bool isTrackIdent() const
+  {
+    return layerTrackIdent;
+  }
+
+  bool isTrackInfo() const
+  {
+    return layerTrackInfo;
+  }
+
   int getWaypointSymbolSize() const
   {
     return layerWaypointSymbolSize;
@@ -586,6 +611,7 @@ private:
        layerMarker = false, layerMarkerInfo = false, layerUserpointInfo = false,
        layerIls = false, layerIlsIdent = false, layerIlsInfo = false,
        layerAirway = false, layerAirwayWaypoint = false, layerAirwayIdent = false, layerAirwayInfo = false,
+       layerTrack = false, layerTrackWaypoint = false, layerTrackIdent = false, layerTrackInfo = false,
        layerMinimumAltitude = false;
 
   bool layerAirportRouteInfo = false;

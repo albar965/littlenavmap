@@ -40,7 +40,7 @@
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "query/mapquery.h"
-#include "query/airwayquery.h"
+#include "query/airwaytrackquery.h"
 #include "query/airportquery.h"
 #include "mapgui/mapwidget.h"
 #include "parkingdialog.h"
@@ -119,6 +119,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 {
   mapQuery = NavApp::getMapQuery();
   airportQuery = NavApp::getAirportQuerySim();
+  airwayQuery = NavApp::getAirwayTrackQuery();
 
   routeColumns = QList<QString>({QObject::tr("Ident"),
                                  QObject::tr("Region"),
@@ -857,7 +858,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
     // Use route string to overwrite the current incomplete flight plan object
     RouteStringReader rs(entryBuilder);
     rs.setPlaintextMessages(true);
-    bool ok = rs.createRouteFromString(routeString.join(" "), flightplan, rs::NONE);
+    bool ok = rs.createRouteFromString(routeString.join(" "), rs::NONE, &flightplan);
     qInfo() << "createRouteFromString messages" << rs.getMessages();
 
     if(!ok)
@@ -1580,6 +1581,11 @@ void RouteController::calculateRoute()
   routeWindow->updateWidgets();
 }
 
+void RouteController::clearAirwayNetworkCache()
+{
+  routeNetworkAirway->deInit();
+}
+
 /* Calculate a flight plan to all types */
 bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                                              const QString& commandName, bool fetchAirways,
@@ -1689,7 +1695,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       for(const RouteEntry& routeEntry : calculatedRoute)
       {
         FlightplanEntry flightplanEntry;
-        entryBuilder->buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.type,
+        entryBuilder->buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.objType,
                                            flightplanEntry, fetchAirways);
         if(fetchAirways && routeEntry.airwayId != -1)
           // Get airway by id - needed to fetch the name first

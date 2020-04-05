@@ -15,12 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_AIRWAYQUERY_H
-#define LITTLENAVMAP_AIRWAYQUERY_H
+#ifndef LITTLENAVMAP_AIRWAYTRACKQUERY_H
+#define LITTLENAVMAP_AIRWAYTRACKQUERY_H
 
 #include "query/querytypes.h"
-
-#include <QCache>
 
 namespace atools {
 namespace geo {
@@ -28,30 +26,43 @@ class Rect;
 }
 namespace sql {
 class SqlDatabase;
-class SqlQuery;
 }
 }
 
-class CoordinateConverter;
-class MapTypesFactory;
 class MapLayer;
+class AirwayQuery;
 
 /*
- * Provides map related database queries for airways.
- * Only to be used through the delegate AirwayTrackQuery.
+ * Provides map related database queries for airways and tracks (NAT, PACOTS, ...).
+ * Simple delegate combining the track and airway queries.
  *
- * Queries can use track database or normal nav database.
+ * All queries check the track database first and the nav database second.
  *
- * All ids are database ids.
+ * All ids are database ids. Some ids in the track database are for generated waypoints and use an offset.
  */
-class AirwayQuery
+class AirwayTrackQuery
 {
 public:
   /*
    * @param sqlDbNav for updated navaids
+   * @param sqlDbTrack for tracks. May be null.
    */
-  AirwayQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
-  ~AirwayQuery();
+  AirwayTrackQuery(AirwayQuery *airwayQueryParam, AirwayQuery *trackQueryParam);
+  ~AirwayTrackQuery();
+
+  AirwayTrackQuery(const AirwayTrackQuery& other)
+  {
+    this->operator=(other);
+  }
+
+  /* Does a shallow copy. Query classes are not owned by this */
+  AirwayTrackQuery& operator=(const AirwayTrackQuery& other)
+  {
+    airwayQuery = other.airwayQuery;
+    trackQuery = other.trackQuery;
+    useTracks = other.useTracks;
+    return *this;
+  }
 
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId);
@@ -62,18 +73,19 @@ public:
 
   /* Get all waypoints of an airway */
   void getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
-                             const QString& waypointIdent);
+                             const QString& waypointIdent = QString());
   void getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName, const QString& waypoint1,
                                   const QString& waypoint2);
 
   /* Get all airway segments by name */
   void getAirwaysByName(QList<map::MapAirway>& airways, const QString& name);
 
-  /* Get all waypoints or and airways ordered by fragment and sequence number */
+  /* Get all waypoints for and airway ordered by fragment and sequence number. Fragment is ignored if -1. */
   void getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName,
-                                    int airwayFragment);
+                                    int airwayFragment = -1);
 
   /* Get all airway segments for name and fragment - not cached */
+  void getAirwayFull(QList<map::MapAirway>& airways, const QString& airwayName, int fragment);
   void getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding, const QString& airwayName,
                      int fragment);
 
@@ -83,7 +95,10 @@ public:
   /* Fill objects of the maptypes namespace and maintains a cache.
    * Objects from methods returning a pointer to a list might be deleted from the cache and should be copied
    * if they have to be kept between event loop calls. */
-  const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+  void getAirways(QList<map::MapAirway>& airways, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                  bool lazy);
+  void getTracks(QList<map::MapAirway>& airways, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                 bool lazy);
 
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
@@ -91,34 +106,26 @@ public:
   /* Create and prepare all queries */
   void deInitQueries();
 
-  void clearCache();
+  /* Tracks loaded - clear caches */
+  void postTrackLoad();
+
+  /* Set to false to ignore track database. Create a copy of this before using this method. */
+  void setUseTracks(bool value)
+  {
+    useTracks = value;
+  }
+
+  bool isUseTracks() const
+  {
+    return useTracks;
+  }
+
+  /* Delete the query classes. This is not done in the destructor. */
+  void deleteChildren();
 
 private:
-  map::MapWaypoint waypointById(int id);
-
-  MapTypesFactory *mapTypesFactory;
-  atools::sql::SqlDatabase *dbNav;
-
-  /* Simple bounding rectangle caches */
-  query::SimpleRectCache<map::MapAirway> airwayCache;
-
-  /* ID/object caches */
-  QCache<query::NearestCacheKeyNavaid, map::MapSearchResultIndex> nearestNavaidCache;
-
-  /* true if this uses the track database (PACOTS, NAT, etc.) */
-  bool trackDatabase;
-
-  static int queryMaxRows;
-
-  /* Database queries */
-  atools::sql::SqlQuery *airwayByRectQuery = nullptr;
-
-  atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
-                        *airwayByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr, *waypointByIdQuery = nullptr,
-                        *airwayWaypointsQuery = nullptr, *airwayByNameQuery = nullptr, *airwayFullQuery = nullptr;
-
-  /* Table and id column names depending on database type */
-  QString airwayIdCol, airwayNameCol, airwayTable, waypointIdCol, waypointTable, prefix;
+  AirwayQuery *airwayQuery = nullptr, *trackQuery = nullptr;
+  bool useTracks = true;
 };
 
-#endif // LITTLENAVMAP_AIRWAYQUERY_H
+#endif // LITTLENAVMAP_AIRWAYTRACKQUERY_H

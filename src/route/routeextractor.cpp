@@ -36,13 +36,13 @@ void RouteExtractor::extractRoute(QVector<RouteEntry>& route, float& distanceMet
     RouteEntry entry;
     entry.ref.id = leg.navId;
     entry.airwayId = leg.airwayId;
-    entry.ref.type = toMapObjectType(leg.type);
+    entry.ref.objType = toMapObjectType(leg.type);
     route.append(entry);
   }
 }
 
 /* Convert internal network type to MapObjectTypes for extract route */
-map::MapObjectTypes RouteExtractor::toMapObjectType(atools::routing::NodeType type) const
+map::MapObjectType RouteExtractor::toMapObjectType(atools::routing::NodeType type) const
 {
   switch(type)
   {

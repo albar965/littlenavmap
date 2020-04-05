@@ -44,7 +44,7 @@ public:
   void extractRoute(QVector<RouteEntry>& route, float& distanceMeter) const;
 
 private:
-  map::MapObjectTypes toMapObjectType(atools::routing::NodeType type) const;
+  map::MapObjectType toMapObjectType(atools::routing::NodeType type) const;
 
   const atools::routing::RouteFinder *routeFinder;
 };

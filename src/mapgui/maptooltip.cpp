@@ -321,7 +321,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
 
   if(opts & optsd::TOOLTIP_NAVAID)
   {
-    for(const MapUserpointRoute& up : mapSearchResult.userPointsRoute)
+    for(const MapUserpointRoute& up : mapSearchResult.userpointsRoute)
     {
       if(checkText(html))
         return html.getHtml();

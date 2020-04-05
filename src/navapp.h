@@ -26,7 +26,9 @@
 class AircraftPerfController;
 class AircraftTrack;
 class AirportQuery;
-class AirwayQuery;
+class AirwayTrackQuery;
+class WaypointTrackQuery;
+class TrackController;
 class AirspaceController;
 class AirspaceQuery;
 class ConnectClient;
@@ -59,6 +61,7 @@ class WeatherReporter;
 class WebController;
 class WindReporter;
 class MapMarkHandler;
+class TrackManager;
 
 namespace atools {
 namespace gui {
@@ -158,7 +161,8 @@ public:
   static AirportQuery *getAirportQuerySim();
   static AirportQuery *getAirportQueryNav();
   static MapQuery *getMapQuery();
-  static AirwayQuery *getAirwayQuery();
+  static AirwayTrackQuery *getAirwayTrackQuery();
+  static WaypointTrackQuery *getWaypointTrackQuery();
 
   static atools::geo::Pos getAirportPos(const QString& ident);
 
@@ -213,8 +217,12 @@ public:
   static UserdataIcons *getUserdataIcons();
   static UserdataSearch *getUserdataSearch();
 
+  static TrackManager *getTrackManager();
+
   static atools::fs::userdata::LogdataManager *getLogdataManager();
   static LogdataSearch *getLogdataSearch();
+
+  static atools::sql::SqlDatabase *getDatabaseTrack();
 
   static atools::sql::SqlDatabase *getDatabaseUser();
   static atools::sql::SqlDatabase *getDatabaseUserAirspace();
@@ -279,6 +287,7 @@ public:
   static UserdataController *getUserdataController();
   static LogdataController *getLogdataController();
   static OnlinedataController *getOnlinedataController();
+  static TrackController *getTrackController();
   static AircraftPerfController *getAircraftPerfController();
   static SearchController *getSearchController();
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
@@ -323,7 +332,6 @@ private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
   static MapQuery *mapQuery;
-  static AirwayQuery *airwayQuery;
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;
@@ -339,6 +347,7 @@ private:
   static MapMarkHandler *mapMarkHandler;
   static LogdataController *logdataController;
   static OnlinedataController *onlinedataController;
+  static TrackController *trackController;
   static AircraftPerfController *aircraftPerfController;
   static AirspaceController *airspaceController;
 

@@ -38,14 +38,15 @@ class GeoDataLineString;
 class GeoPainter;
 }
 
-class SymbolPainter;
-class MapLayer;
-class MapQuery;
-class AirwayQuery;
 class AirportQuery;
+class AirwayTrackQuery;
+class MapLayer;
+class MapPaintWidget;
+class MapQuery;
 class MapScale;
 class MapWidget;
-class MapPaintWidget;
+class SymbolPainter;
+class WaypointTrackQuery;
 
 namespace map {
 struct MapAirport;
@@ -270,7 +271,8 @@ protected:
   SymbolPainter *symbolPainter;
   MapPaintWidget *mapPaintWidget;
   MapQuery *mapQuery;
-  AirwayQuery *airwayQuery;
+  AirwayTrackQuery *airwayQuery;
+  WaypointTrackQuery *waypointQuery;
   AirportQuery *airportQuery;
   MapScale *scale;
 

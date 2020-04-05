@@ -87,6 +87,7 @@ const QLatin1Literal ACTIONS_SHOW_DELETE_MARKS("Actions/DeleteMarks");
 const QLatin1Literal ACTIONS_SHOW_RESET_PERF("Actions/ResetPerformanceColl");
 const QLatin1Literal ACTIONS_SHOW_SEARCH_CENTER_NULL("Actions/SearchCenterNull");
 const QLatin1Literal ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL("Actions/DownloadFailed");
+const QLatin1Literal ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL("Actions/TrackDownloadFailed");
 const QLatin1Literal ACTIONS_SHOW_LOGBOOK_CONVERSION("Actions/LogbookConversion");
 const QLatin1Literal ACTIONS_SHOW_USER_AIRSPACE_NOTE("Actions/UserAirspaceNote");
 
@@ -256,6 +257,7 @@ const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1Literal OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_WEATHER_DEBUG("Options/WeatherDebug");
+const QLatin1Literal OPTIONS_TRACK_DEBUG("Options/TrackDebug");
 const QLatin1Literal OPTIONS_WEATHER_LEVELS("Options/WeatherLevels");
 const QLatin1Literal OPTIONS_WEATHER_INDEX_SIZE("Options/WeatherIndexSize");
 const QLatin1Literal OPTIONS_WIND_DEBUG("Options/WindDebug");

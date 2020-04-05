@@ -189,7 +189,7 @@ void MapPaintLayer::initMapLayerSettings()
 
                       minimumAltitude().
 
-                      vor().ndb().waypoint().marker().ils().airway().
+                      vor().ndb().waypoint().marker().ils().airway().track().
 
                       userpoint().userpointInfo().
 
@@ -216,6 +216,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(28).userpointMaxTextLength(30).
          markerSymbolSize(24).markerInfo().
          airportMaxTextLength(30)).
@@ -228,6 +229,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(28).userpointMaxTextLength(30).
          markerSymbolSize(24).markerInfo().
          airportMaxTextLength(30)).
@@ -242,6 +244,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(28).userpointMaxTextLength(30).
          markerSymbolSize(24).markerInfo().
          airportMaxTextLength(30)).
@@ -255,6 +258,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(26).userpointMaxTextLength(20).
          markerSymbolSize(24).markerInfo().
          airportMaxTextLength(30)).
@@ -268,6 +272,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(26).userpointMaxTextLength(20).
          markerSymbolSize(24).
          airportMaxTextLength(20)).
@@ -281,6 +286,7 @@ void MapPaintLayer::initMapLayerSettings()
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(24).userpointMaxTextLength(20).
          markerSymbolSize(24).
          airportMaxTextLength(20)).
@@ -293,6 +299,7 @@ void MapPaintLayer::initMapLayerSettings()
          vorSymbolSize(20).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(20).ndbIdent().ndbInfo().
          airwayIdent().airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(24).userpointMaxTextLength(10).
          marker(false).
          airportMaxTextLength(16)).
@@ -305,6 +312,7 @@ void MapPaintLayer::initMapLayerSettings()
          vorSymbolSize(16).vorIdent().
          ndbSymbolSize(16).ndbIdent().
          airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(24).userpointMaxTextLength(10).
          marker(false).
          airportMaxTextLength(16)).
@@ -319,6 +327,7 @@ void MapPaintLayer::initMapLayerSettings()
          vorSymbolSize(12).
          ndbSymbolSize(12).
          airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(22).userpointMaxTextLength(8).
          marker(false).ils(false).
          airportMaxTextLength(16)).
@@ -331,6 +340,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraftText(false).
          airwayWaypoint().
+         trackIdent().trackInfo().trackWaypoint().
          vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false).
          userpoint().userpointInfo().userpoinSymbolSize(16).userpointMaxTextLength(8).
          airportMaxTextLength(16)).
@@ -343,7 +353,9 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGround(false).aiAircraftSmall(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraftText(false).
+         trackIdent().trackInfo(false).trackWaypoint().
          ndb(false).waypoint(false).marker(false).ils(false).
+         trackIdent().trackInfo(false).trackWaypoint().
          airportRouteInfo(false).waypointRouteName(false).
          userpoint().userpointInfo(false).userpoinSymbolSize(16).
          airportMaxTextLength(16)).
@@ -359,6 +371,7 @@ void MapPaintLayer::initMapLayerSettings()
          onlineAircraftText(false).
          airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         trackIdent().trackInfo(false).trackWaypoint().
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
          userpoint().userpointInfo(false).userpoinSymbolSize(12).
          airportMaxTextLength(16)).
@@ -375,6 +388,7 @@ void MapPaintLayer::initMapLayerSettings()
          airspaceFir(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         trackIdent().trackInfo(false).trackWaypoint(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
          userpoint().userpointInfo(false).userpoinSymbolSize(12).
          airportMaxTextLength(16)).
@@ -394,6 +408,7 @@ void MapPaintLayer::initMapLayerSettings()
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         trackIdent().trackInfo(false).trackWaypoint(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
          userpoint().userpointInfo(false).userpoinSymbolSize(12).
          airportMaxTextLength(16)).
@@ -411,6 +426,7 @@ void MapPaintLayer::initMapLayerSettings()
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         trackIdent().trackInfo(false).trackWaypoint(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
          userpoint().userpointInfo(false).userpoinSymbolSize(12).
          airportMaxTextLength(16)).
@@ -428,7 +444,7 @@ void MapPaintLayer::initMapLayerSettings()
          onlineAircraft(false).onlineAircraftText(false).
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
-         airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).track(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
          userpoint(false).userpointInfo(false).userpoinSymbolSize(12).
          airportMaxTextLength(16));
@@ -544,7 +560,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           const RouteLeg& routeLeg = route.value(i);
           map::MapObjectTypes type = routeLeg.getMapObjectType();
           if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
-            context.routeIdMap.insert({routeLeg.getId(), routeLeg.getMapObjectType()});
+            context.routeIdMap.insert(map::MapObjectRef(routeLeg.getId(), routeLeg.getMapObjectType()));
           else if(type == map::PROCEDURE)
           {
             if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)

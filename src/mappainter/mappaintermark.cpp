@@ -453,8 +453,17 @@ void MapPainterMark::paintAirwayList(PaintContext *context, const QList<map::Map
   ls.setTessellate(true);
   for(int i = 1; i < linestring.size(); i++)
   {
-    ls << GeoDataCoordinates(linestring.at(i - 1).getLonX(), linestring.at(i - 1).getLatY(), 0, DEG)
-       << GeoDataCoordinates(linestring.at(i).getLonX(), linestring.at(i).getLatY(), 0, DEG);
+    qreal laty1 = linestring.at(i - 1).getLatY();
+    qreal laty2 = linestring.at(i).getLatY();
+    if(atools::almostEqual(laty1, laty2))
+    {
+      // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
+      laty1 -= 0.000001;
+      laty2 += 0.000001;
+    }
+
+    ls << GeoDataCoordinates(linestring.at(i - 1).getLonX(), laty1, 0, DEG)
+       << GeoDataCoordinates(linestring.at(i).getLonX(), laty2, 0, DEG);
   }
 
   // Outline =================
@@ -509,7 +518,7 @@ void MapPainterMark::paintAirwayTextList(PaintContext *context, const QList<map:
   {
     if(airway.isValid())
     {
-      QPen innerPen = mapcolors::penForAirway(airway);
+      QPen innerPen = mapcolors::penForAirwayTrack(airway);
 
       // Draw text  at center position of a line
       int x, y;
@@ -524,9 +533,7 @@ void MapPainterMark::paintAirwayTextList(PaintContext *context, const QList<map:
         if(wToS(center, x, y))
         {
           if(!hidden1 && !hidden2)
-            symbolPainter->textBoxF(context->painter,
-                                    {tr("%1 / %2").arg(airway.name).arg(map::airwayTypeToShortString(airway.type))},
-                                    innerPen, x, y, textatt::CENTER);
+            symbolPainter->textBoxF(context->painter, {airway.name}, innerPen, x, y, textatt::CENTER);
         }
       }
     }

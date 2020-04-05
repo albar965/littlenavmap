@@ -201,6 +201,11 @@ void MapVisible::updateVisibleObjectsStatusBar()
         navaidLabel.append(tr("JA"));
         navaidsTooltip.append(tr("Jet Airways (JA)"));
       }
+      if(layer->isTrack() && shown & map::TRACK)
+      {
+        navaidLabel.append(tr("T"));
+        navaidsTooltip.append(tr("Tracks (T)"));
+      }
       if(layer->isAirway() && shown & map::AIRWAYV)
       {
         navaidLabel.append(tr("VA"));

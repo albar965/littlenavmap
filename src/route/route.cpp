@@ -20,7 +20,7 @@
 #include "geo/calculations.h"
 #include "common/maptools.h"
 #include "query/mapquery.h"
-#include "query/airwayquery.h"
+#include "query/airwaytrackquery.h"
 #include "common/unit.h"
 #include "common/constants.h"
 #include "route/flightplanentrybuilder.h"
@@ -845,7 +845,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         up.name = leg.getIdent() + " (not found)";
         up.position = leg.getPosition();
         up.magvar = NavApp::getMagVar(leg.getPosition());
-        mapobjects.userPointsRoute.append(up);
+        mapobjects.userpointsRoute.append(up);
       }
 
       if(leg.getMapObjectType() == map::USERPOINTROUTE)
@@ -856,7 +856,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         up.name = leg.getIdent();
         up.position = leg.getPosition();
         up.magvar = NavApp::getMagVar(leg.getPosition());
-        mapobjects.userPointsRoute.append(up);
+        mapobjects.userpointsRoute.append(up);
       }
 
       if(types & map::QUERY_PROC_POINTS && leg.isAnyProcedure())
@@ -1058,7 +1058,7 @@ QBitArray Route::getJetAirwayFlags() const
   for(int i = 0; i < size(); i++)
   {
     const map::MapAirway& airway = value(i).getAirway();
-    flags.setBit(i, airway.isValid() && (airway.type == map::JET || airway.type == map::BOTH));
+    flags.setBit(i, airway.isValid() && (airway.type == map::AIRWAY_JET || airway.type == map::AIRWAY_BOTH));
   }
   return flags;
 }
@@ -1940,7 +1940,7 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteT
     if(!routeLeg.getAirwayName().isEmpty())
     {
       map::MapAirway airway;
-      NavApp::getAirwayQuery()->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(),
+      NavApp::getAirwayTrackQuery()->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(),
                                                            routeLeg.getIdent());
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);

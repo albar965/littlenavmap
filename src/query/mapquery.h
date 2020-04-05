@@ -83,9 +83,6 @@ public:
   void getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
                                const map::MapAirport& airport, bool navData);
 
-  map::MapWaypoint getWaypointById(int id);
-  void getWaypointNearest(map::MapWaypoint& waypoint, const atools::geo::Pos& pos);
-
   /*
    * Get a map object by type, ident and region
    * @param result will receive objects based on type
@@ -147,10 +144,6 @@ public:
   const QList<map::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                              bool lazy);
-
-  /* Similar to getAirports */
   const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
@@ -201,7 +194,6 @@ private:
 
   /* Simple bounding rectangle caches */
   query::SimpleRectCache<map::MapAirport> airportCache;
-  query::SimpleRectCache<map::MapWaypoint> waypointCache;
   query::SimpleRectCache<map::MapUserpoint> userpointCache;
   query::SimpleRectCache<map::MapVor> vorCache;
   query::SimpleRectCache<map::MapNdb> ndbCache;
@@ -219,17 +211,15 @@ private:
                         *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
                         *airportLargeByRectQuery = nullptr;
 
-  atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
-                        *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
-                        *userdataPointByRectQuery = nullptr;
+  atools::sql::SqlQuery *vorsByRectQuery = nullptr, *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr,
+                        *ilsByRectQuery = nullptr, *userdataPointByRectQuery = nullptr;
 
-  atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr,
-                        *ilsByIdentQuery = nullptr;
+  atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
 
-  atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
-                        *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
-                        *ilsByIdQuery = nullptr, *ilsQuerySimByName = nullptr, *vorNearestQuery = nullptr,
-                        *ndbNearestQuery = nullptr, *waypointNearestQuery = nullptr, *userdataPointByIdQuery = nullptr;
+  atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *vorByWaypointIdQuery = nullptr,
+                        *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *ilsQuerySimByName = nullptr,
+                        *vorNearestQuery = nullptr,
+                        *ndbNearestQuery = nullptr, *userdataPointByIdQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

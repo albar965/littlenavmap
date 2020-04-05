@@ -38,7 +38,8 @@ struct MapProcedureLegs;
 }
 
 class MapQuery;
-class AirwayQuery;
+class AirwayTrackQuery;
+class WaypointTrackQuery;
 class AirportQuery;
 class ProcedureQuery;
 class FlightplanEntryBuilder;
@@ -55,15 +56,16 @@ class RouteStringReader
   Q_DECLARE_TR_FUNCTIONS(RouteString)
 
 public:
-  RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder = nullptr);
+  RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder, bool verboseParam = false);
   virtual ~RouteStringReader();
 
-  /* Create a flight plan for the given route string and include speed and altitude if given.
-   *  Get error messages with getMessages() */
-  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                             rs::RouteStringOptions options);
-  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                             float& speedKts, bool& altIncluded, rs::RouteStringOptions options);
+  /* Create a flight plan for the given route string and include speed and altitude if given (pointers != null).
+   * Fills either flightplan and/or mapObjectRefs if not null.
+   * Get error, warning and information messages with getMessages() */
+  bool createRouteFromString(const QString& routeString, rs::RouteStringOptions options,
+                             atools::fs::pln::Flightplan *flightplan,
+                             map::MapObjectRefExtVector *mapObjectRefs = nullptr,
+                             float *speedKts = nullptr, bool *altIncluded = nullptr);
 
   /* Get error and warning messages */
   const QStringList& getMessages() const
@@ -79,23 +81,22 @@ public:
 
 private:
   /* Internal parsing structure which holds all found potential candidates from a search */
-  struct ParseEntry
-  {
-    QString item, airway;
-    map::MapSearchResult result;
-  };
+  struct ParseEntry;
 
   /* Add messages to log */
   void appendMessage(const QString& message);
   void appendWarning(const QString& message);
   void appendError(const QString& message);
 
-  bool addDeparture(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems);
+  /* Get the start and end index for the given waypoint ids*/
   void findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int lastId,
                            int nextId, int& startIndex, int& endIndex, const QString& airway);
+
+  /* get waypoints by start and end index */
   void extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int startIndex, int endIndex,
                         QList<map::MapWaypoint>& airwayWaypoints);
 
+  /* Build flight plan entry for the given search result. */
   void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapSearchResult& result,
                            const atools::geo::Pos& nearestPos);
 
@@ -103,7 +104,8 @@ private:
   void resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
                          const atools::geo::Pos& nearestPos, map::MapObjectTypes types);
 
-  /* Get airport or any navaid for item. Also resolves coordinate formats. */
+  /* Get airport or any navaid for item. Also resolves coordinate formats. Optionally tries to match position
+   * to waypoints like oceaninc or confluence points.*/
   void findWaypoints(map::MapSearchResult& result, const QString& item, bool matchWaypoints);
 
   /* Get nearest waypoint for given position probably removing ones which are too far away. Changes given result.
@@ -111,10 +113,16 @@ private:
   void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, const map::MapSearchResult *lastResult,
                        float maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);
-  QStringList cleanItemList(const QStringList& items, float& speedKnots, float& altFeet);
+  QStringList cleanItemList(const QStringList& items, float *speedKnots, float *altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);
 
-  bool addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems, rs::RouteStringOptions options);
+  /* Fetch departure airport as well as SID */
+  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs,
+                    QStringList& cleanItems);
+
+  /* Fetch destination airport as well as STAR */
+  bool addDestination(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs,
+                      QStringList& cleanItems, rs::RouteStringOptions options);
   void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs,
                            const QStringList& cleanItems, int index);
 
@@ -124,8 +132,18 @@ private:
   /* Extract the first coordinate for the list if no airports are used */
   atools::geo::Pos findFirstCoordinate(const QStringList& cleanItems);
 
+  /* Create reference struct from given entry and map search result */
+  map::MapObjectRefExt mapObjectRefFromEntry(const atools::fs::pln::FlightplanEntry& entry,
+                                             const map::MapSearchResult& result, const QString& name);
+
+  /* Get airway segments with given name between  waypoints */
+  map::MapAirway extractAirway(const QList<map::MapAirway>& airways, int waypointId1, int waypointId2,
+                               const QString& airwayName);
+
+  bool verbose = false;
   MapQuery *mapQuery = nullptr;
-  AirwayQuery *airwayQuery = nullptr;
+  AirwayTrackQuery *airwayQuery = nullptr;
+  WaypointTrackQuery *waypointQuery = nullptr;
   AirportQuery *airportQuerySim = nullptr;
   ProcedureQuery *procQuery = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;

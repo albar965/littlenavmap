@@ -298,7 +298,7 @@ void MapPaintWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
 {
   paintLayer->setShowMapObjects(type, show);
 
-  if(type & map::AIRWAYV || type & map::AIRWAYJ)
+  if(type & map::AIRWAYV || type & map::AIRWAYJ || type & map::TRACK)
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
   if(type & map::AIRSPACE)

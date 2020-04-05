@@ -100,8 +100,11 @@ bool SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox& rect, co
   // Store bounding rectangle and inflate it
   Marble::GeoDataLatLonBox cur(curRect);
   query::inflateQueryRect(cur, factor, increment);
-
+#ifndef DEBUG_DISABLE_RECT_CACHE
   if(curRect.isEmpty() || !cur.contains(rect) || !funcSameLayer(curMapLayer, mapLayer))
+#else
+  Q_UNUSED(funcSameLayer)
+#endif
   {
     // Rectangle not covered by loaded data or new layer selected
     list.clear();

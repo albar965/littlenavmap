@@ -26,7 +26,8 @@
 #include "logbook/logdatacontroller.h"
 #include "userdata/userdatacontroller.h"
 #include "query/airportquery.h"
-#include "query/airwayquery.h"
+#include "query/airwaytrackquery.h"
+#include "query/waypointtrackquery.h"
 #include "navapp.h"
 #include "settings/settings.h"
 #include "db/databasemanager.h"
@@ -203,11 +204,22 @@ map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, floa
 
     if(type & map::WAYPOINT)
     {
-      query::fetchObjectsForRect(rect, waypointsByRectQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQuery()->getWaypointsByRectQueryTrack(),
+                                 [ =, &res](atools::sql::SqlQuery *query) -> void {
         map::MapWaypoint obj;
-        mapTypesFactory->fillWaypoint(query->record(), obj);
+        mapTypesFactory->fillWaypoint(query->record(), obj, true /* track database */);
         res.waypoints.append(obj);
       });
+
+      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQuery()->getWaypointsByRectQuery(),
+                                 [ =, &res](atools::sql::SqlQuery *query) -> void {
+        map::MapWaypoint obj;
+        mapTypesFactory->fillWaypoint(query->record(), obj, false /* track database */);
+
+        if(!res.waypoints.contains(obj))
+          res.waypoints.append(obj);
+      });
+      maptools::removeDuplicatesById(res.waypoints);
     }
 
     if(type & map::ILS)
@@ -306,15 +318,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
 
   if(type & map::WAYPOINT)
   {
-    waypointByIdentQuery->bindValue(":ident", ident);
-    waypointByIdentQuery->bindValue(":region", region.isEmpty() ? "%" : region);
-    waypointByIdentQuery->exec();
-    while(waypointByIdentQuery->next())
-    {
-      map::MapWaypoint wp;
-      mapTypesFactory->fillWaypoint(waypointByIdentQuery->record(), wp);
-      result.waypoints.append(wp);
-    }
+    NavApp::getWaypointTrackQuery()->getWaypointByIdent(result.waypoints, ident, region);
     maptools::sortByDistance(result.waypoints, sortByDistancePos);
     maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistance);
   }
@@ -343,7 +347,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
   }
 
   if(type & map::AIRWAY)
-    NavApp::getAirwayQuery()->getAirwaysByName(result.airways, ident);
+    NavApp::getAirwayTrackQuery()->getAirwaysByName(result.airways, ident);
 }
 
 void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, map::MapAirspaceSources src,
@@ -371,7 +375,7 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
   }
   else if(type == map::WAYPOINT)
   {
-    map::MapWaypoint waypoint = getWaypointById(id);
+    map::MapWaypoint waypoint = NavApp::getWaypointTrackQuery()->getWaypointById(id);
     if(waypoint.isValid())
       result.waypoints.append(waypoint);
   }
@@ -416,7 +420,7 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
   }
   else if(type == map::AIRWAY)
   {
-    map::MapAirway airway = NavApp::getAirwayQuery()->getAirwayById(id);
+    map::MapAirway airway = NavApp::getAirwayTrackQuery()->getAirwayById(id);
     if(airway.isValid())
       result.airways.append(airway);
   }
@@ -482,27 +486,6 @@ QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent
   return ilsList;
 }
 
-map::MapWaypoint MapQuery::getWaypointById(int id)
-{
-  map::MapWaypoint wp;
-  waypointByIdQuery->bindValue(":id", id);
-  waypointByIdQuery->exec();
-  if(waypointByIdQuery->next())
-    mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
-  waypointByIdQuery->finish();
-  return wp;
-}
-
-void MapQuery::getWaypointNearest(map::MapWaypoint& waypoint, const Pos& pos)
-{
-  waypointNearestQuery->bindValue(":lonx", pos.getLonX());
-  waypointNearestQuery->bindValue(":laty", pos.getLatY());
-  waypointNearestQuery->exec();
-  if(waypointNearestQuery->next())
-    mapTypesFactory->fillWaypoint(waypointNearestQuery->record(), waypoint);
-  waypointNearestQuery->finish();
-}
-
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
                                        bool airportDiagram, map::MapObjectTypes types,
                                        int xs, int ys, int screenDistance,
@@ -557,17 +540,6 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     }
   }
 
-  if(mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT))
-  {
-    for(int i = waypointCache.list.size() - 1; i >= 0; i--)
-    {
-      const MapWaypoint& wp = waypointCache.list.at(i);
-      if(conv.wToS(wp.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
-    }
-  }
-
   // No flag since visibility is defined by type
   if(mapLayer->isUserpoint())
   {
@@ -581,18 +553,10 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   }
 
   // Add waypoints that displayed together with airways =================================
-  if(mapLayer->isAirwayWaypoint() && (types.testFlag(map::AIRWAYV) || types.testFlag(map::AIRWAYJ)))
-  {
-    for(int i = waypointCache.list.size() - 1; i >= 0; i--)
-    {
-      const MapWaypoint& wp = waypointCache.list.at(i);
-      if((wp.hasVictorAirways && types.testFlag(map::AIRWAYV)) ||
-         (wp.hasJetAirways && types.testFlag(map::AIRWAYJ)))
-        if(conv.wToS(wp.position, x, y))
-          if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-            insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
-    }
-  }
+  if((mapLayer->isAirwayWaypoint() && (types.testFlag(map::AIRWAYV) || types.testFlag(map::AIRWAYJ))) ||
+     (mapLayer->isTrackWaypoint() && types.testFlag(map::TRACK)) ||
+     (mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT)))
+    NavApp::getWaypointTrackQuery()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
 
   if(mapLayer->isMarker() && types.testFlag(map::MARKER))
   {
@@ -674,34 +638,6 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
 
   }
   return nullptr;
-}
-
-const QList<map::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect,
-                                                      const MapLayer *mapLayer, bool lazy)
-{
-  waypointCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
-  {
-    return curLayer->hasSameQueryParametersWaypoint(newLayer);
-  });
-
-  if(waypointCache.list.isEmpty() && !lazy)
-  {
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
-    {
-      query::bindRect(r, waypointsByRectQuery);
-      waypointsByRectQuery->exec();
-      while(waypointsByRectQuery->next())
-      {
-        map::MapWaypoint wp;
-        mapTypesFactory->fillWaypoint(waypointsByRectQuery->record(), wp);
-        waypointCache.list.append(wp);
-      }
-    }
-  }
-  waypointCache.validate(queryMaxRows);
-  return &waypointCache.list;
 }
 
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
@@ -1006,10 +942,6 @@ void MapQuery::initQueries()
   QStringList const airportQueryBase = AirportQuery::airportColumns(dbSim);
   QStringList const airportQueryBaseOverview = AirportQuery::airportOverviewColumns(dbSim);
 
-  static const QString waypointQueryBase(
-    "waypoint_id, ident, region, type, num_victor_airway, num_jet_airway, "
-    "mag_var, lonx, laty ");
-
   static const QString vorQueryBase(
     "vor_id, ident, name, region, type, name, frequency, channel, range, dme_only, dme_altitude, "
     "mag_var, altitude, lonx, laty ");
@@ -1030,9 +962,6 @@ void MapQuery::initQueries()
 
   ndbByIdentQuery = new SqlQuery(dbNav);
   ndbByIdentQuery->prepare("select " + ndbQueryBase + " from ndb where " + whereIdentRegion);
-
-  waypointByIdentQuery = new SqlQuery(dbNav);
-  waypointByIdentQuery->prepare("select " + waypointQueryBase + " from waypoint where " + whereIdentRegion);
 
   ilsByIdentQuery = new SqlQuery(dbSim);
   ilsByIdentQuery->prepare("select " + ilsQueryBase +
@@ -1056,11 +985,6 @@ void MapQuery::initQueries()
                                 " from ndb where ndb_id in "
                                 "(select nav_id from waypoint w where w.waypoint_id = :id)");
 
-  // Get nearest Waypoint
-  waypointNearestQuery = new SqlQuery(dbNav);
-  waypointNearestQuery->prepare(
-    "select " + waypointQueryBase + " from waypoint order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
-
   // Get nearest VOR
   vorNearestQuery = new SqlQuery(dbNav);
   vorNearestQuery->prepare(
@@ -1070,9 +994,6 @@ void MapQuery::initQueries()
   ndbNearestQuery = new SqlQuery(dbNav);
   ndbNearestQuery->prepare(
     "select " + ndbQueryBase + " from ndb order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
-
-  waypointByIdQuery = new SqlQuery(dbNav);
-  waypointByIdQuery->prepare("select " + waypointQueryBase + " from waypoint where waypoint_id = :id");
 
   ilsByIdQuery = new SqlQuery(dbSim);
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
@@ -1101,10 +1022,6 @@ void MapQuery::initQueries()
     "select length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
     "from runway where airport_id = :airportId and length > 4000 " + whereLimit);
 
-  waypointsByRectQuery = new SqlQuery(dbNav);
-  waypointsByRectQuery->prepare(
-    "select " + waypointQueryBase + " from waypoint where " + whereRect + " " + whereLimit);
-
   vorsByRectQuery = new SqlQuery(dbNav);
   vorsByRectQuery->prepare("select " + vorQueryBase + " from vor where " + whereRect + " " + whereLimit);
 
@@ -1129,7 +1046,6 @@ void MapQuery::initQueries()
 void MapQuery::deInitQueries()
 {
   airportCache.clear();
-  waypointCache.clear();
   vorCache.clear();
   ndbCache.clear();
   markerCache.clear();
@@ -1146,8 +1062,6 @@ void MapQuery::deInitQueries()
   delete runwayOverviewQuery;
   runwayOverviewQuery = nullptr;
 
-  delete waypointsByRectQuery;
-  waypointsByRectQuery = nullptr;
   delete vorsByRectQuery;
   vorsByRectQuery = nullptr;
   delete ndbsByRectQuery;
@@ -1164,8 +1078,6 @@ void MapQuery::deInitQueries()
   vorByIdentQuery = nullptr;
   delete ndbByIdentQuery;
   ndbByIdentQuery = nullptr;
-  delete waypointByIdentQuery;
-  waypointByIdentQuery = nullptr;
   delete ilsByIdentQuery;
   ilsByIdentQuery = nullptr;
 
@@ -1179,15 +1091,10 @@ void MapQuery::deInitQueries()
   delete ndbByWaypointIdQuery;
   ndbByWaypointIdQuery = nullptr;
 
-  delete waypointNearestQuery;
-  waypointNearestQuery = nullptr;
   delete vorNearestQuery;
   vorNearestQuery = nullptr;
   delete ndbNearestQuery;
   ndbNearestQuery = nullptr;
-
-  delete waypointByIdQuery;
-  waypointByIdQuery = nullptr;
 
   delete ilsByIdQuery;
   ilsByIdQuery = nullptr;

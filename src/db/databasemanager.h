@@ -47,6 +47,7 @@ class DatabaseDialog;
 class MainWindow;
 class QSplashScreen;
 class QMessageBox;
+class TrackManager;
 
 namespace dm {
 enum NavdatabaseStatus
@@ -99,6 +100,7 @@ public:
                              bool backup);
   void closeLogDatabase();
   void closeUserDatabase();
+  void closeTrackDatabase();
   void closeUserAirspaceDatabase();
   void closeOnlineDatabase();
 
@@ -160,6 +162,11 @@ public:
     return userdataManager;
   }
 
+  TrackManager *getTrackManager() const
+  {
+    return trackManager;
+  }
+
   atools::fs::userdata::LogdataManager *getLogdataManager() const
   {
     return logdataManager;
@@ -173,6 +180,11 @@ public:
   atools::sql::SqlDatabase *getDatabaseUser() const
   {
     return databaseUser;
+  }
+
+  atools::sql::SqlDatabase *getDatabaseTrack() const
+  {
+    return databaseTrack;
   }
 
   atools::sql::SqlDatabase *getDatabaseLogbook() const
@@ -263,6 +275,9 @@ private:
   /* Userpoint database */
   const QString DATABASE_NAME_USER = "LNMDBUSER";
 
+  /* NAT, PACOTS, AUSOTS */
+  const QString DATABASE_NAME_TRACK = "LNMDBTRACK";
+
   /* Logbook database */
   const QString DATABASE_NAME_LOGBOOK = "LNMDBLOG";
 
@@ -288,6 +303,7 @@ private:
   *databaseNav = nullptr /* Database for third party navigation data */,
   *databaseMora = nullptr /* Database for MORA data - always nav */,
   *databaseUser = nullptr /* Database for user data */,
+  *databaseTrack = nullptr /* Database for tracks like NAT, PACOTS and AUSOTS */,
   *databaseLogbook = nullptr /* Database for logbook */,
   *databaseUserAirspace = nullptr /* Database for user airspaces */,
   *databaseSimAirspace = nullptr /* Airspace database from simulator independent from nav switch */,
@@ -323,6 +339,7 @@ private:
           databaseTimeText;
 
   /* Also keep the database-close manager classes here */
+  TrackManager *trackManager = nullptr;
   atools::fs::userdata::UserdataManager *userdataManager = nullptr;
   atools::fs::userdata::LogdataManager *logdataManager = nullptr;
   atools::fs::online::OnlinedataManager *onlinedataManager = nullptr;

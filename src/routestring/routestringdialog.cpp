@@ -220,7 +220,7 @@ void RouteStringDialog::readButtonClicked()
   flightplan->getProperties().clear();
 
   bool success = routeStringReader->createRouteFromString(
-    ui->plainTextEditRouteString->toPlainText(), *flightplan, speedKts, altitudeIncluded, options);
+    ui->plainTextEditRouteString->toPlainText(), options, flightplan, nullptr, &speedKts, &altitudeIncluded);
 
   ui->textEditRouteStringErrors->clear();
 

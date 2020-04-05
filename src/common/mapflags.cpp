@@ -58,6 +58,8 @@ QDebug operator<<(QDebug out, const map::MapObjectTypes& type)
       flags.append("AIRWAYV");
     if(type & AIRWAYJ)
       flags.append("AIRWAYJ");
+    if(type & TRACK)
+      flags.append("TRACK");
     if(type & FLIGHTPLAN)
       flags.append("ROUTE");
     if(type & AIRCRAFT)

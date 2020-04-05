@@ -48,9 +48,9 @@ bool MapLayer::hasSameQueryParametersAirspace(const MapLayer *other) const
          layerAirspaceOther == other->layerAirspaceOther;
 }
 
-bool MapLayer::hasSameQueryParametersAirway(const MapLayer *other) const
+bool MapLayer::hasSameQueryParametersAirwayTrack(const MapLayer *other) const
 {
-  return layerAirway == other->layerAirway;
+  return layerAirway == other->layerAirway && layerTrack == other->layerTrack;
 }
 
 bool MapLayer::hasSameQueryParametersVor(const MapLayer *other) const
@@ -337,6 +337,30 @@ MapLayer& MapLayer::airwayIdent(bool value)
 MapLayer& MapLayer::airwayInfo(bool value)
 {
   layerAirwayInfo = value;
+  return *this;
+}
+
+MapLayer& MapLayer::track(bool value)
+{
+  layerTrack = value;
+  return *this;
+}
+
+MapLayer& MapLayer::trackWaypoint(bool value)
+{
+  layerTrackWaypoint = value;
+  return *this;
+}
+
+MapLayer& MapLayer::trackIdent(bool value)
+{
+  layerTrackIdent = value;
+  return *this;
+}
+
+MapLayer& MapLayer::trackInfo(bool value)
+{
+  layerTrackInfo = value;
   return *this;
 }
 

@@ -32,7 +32,7 @@
 #include "gui/widgetstate.h"
 #include "gui/dialog.h"
 #include "query/mapquery.h"
-#include "query/airwayquery.h"
+#include "query/airwaytrackquery.h"
 #include "query/airportquery.h"
 #include "route/route.h"
 #include "common/mapcolors.h"
@@ -294,12 +294,12 @@ void InfoController::anchorClicked(const QUrl& url)
         else if(type == map::AIRWAY)
         {
           // Show full airways by id ================================================
-          map::MapAirway airway = NavApp::getAirwayQuery()->getAirwayById(id);
+          map::MapAirway airway = NavApp::getAirwayTrackQuery()->getAirwayById(id);
 
           // Get all airway segments and the bounding rectangle
           atools::geo::Rect bounding;
           QList<map::MapAirway> airways;
-          NavApp::getAirwayQuery()->getAirwayFull(airways, bounding, airway.name, airway.fragment);
+          NavApp::getAirwayTrackQuery()->getAirwayFull(airways, bounding, airway.name, airway.fragment);
 
           QList<QList<map::MapAirway> > airwayHighlights = mapWidget->getAirwayHighlights();
           airwayHighlights.append(airways);
@@ -335,7 +335,7 @@ void InfoController::saveState()
   atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save(ui->tabWidgetLegend);
 
   // Store currently shown map objects in a string list containing id and type
-  map::MapObjectRefList refs;
+  map::MapObjectRefVector refs;
   for(const map::MapAirport& airport  : currentSearchResult.airports)
     refs.append({airport.id, map::AIRPORT});
 
@@ -364,7 +364,7 @@ void InfoController::saveState()
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QStringList refList;
   for(const map::MapObjectRef& ref : refs)
-    refList.append(QString("%1;%2").arg(ref.id).arg(ref.type));
+    refList.append(QString("%1;%2").arg(ref.id).arg(ref.objType));
   settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
 
   // Save airspaces =====================================================
@@ -927,7 +927,7 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
   html.tdAtts({
     {"align", "right"}, {"valign", "top"}
   });
-  html.b().a(tr("Remove Airway Highlights"), QString("lnm://do?hideairways"),
+  html.b().a(tr("Remove Airway and Track Highlights"), QString("lnm://do?hideairways"),
              ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
   for(const map::MapVor& vor : result.vors)

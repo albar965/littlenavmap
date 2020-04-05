@@ -81,6 +81,7 @@
 #include "mapgui/mapmarkhandler.h"
 #include "gui/choicedialog.h"
 #include "gui/dockwidgethandler.h"
+#include "track/trackcontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -1293,6 +1294,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowTracks, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapHideRangeRings, &QAction::triggered, this, &MainWindow::clearRangeRingsAndDistanceMarkers);
 
@@ -1335,14 +1337,21 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
 
-  // Weather source
+  // Airway/tracks =======================================================
+  TrackController *trackController = NavApp::getTrackController();
+  connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::updateAllInformation);
+  connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
+  connect(trackController, &TrackController::postTrackLoad,
+          routeController, &RouteController::clearAirwayNetworkCache);
+
+  // Weather source =======================================================
   connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
-  // Update map weather source hightlights
+  // Update map weather source hightlights =======================================================
   connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
   connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
   connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
@@ -1358,7 +1367,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
 
-  // Sun shading
+  // Sun shading =======================================================
   connect(ui->actionMapShowSunShading, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowSunShadingSimulatorTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
   connect(ui->actionMapShowSunShadingRealTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
@@ -3073,6 +3082,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
   s.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
   s.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
+  s.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);
   s.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
   s.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
 
@@ -3211,6 +3221,7 @@ void MainWindow::mainWindowShown()
   // If enabled connect to simulator without showing dialog
   NavApp::getConnectClient()->tryConnectOnStartup();
 
+  // Start weather downloads
   weatherUpdateTimeout();
 
   // Update the weather every 15 seconds if connected
@@ -3220,7 +3231,13 @@ void MainWindow::mainWindowShown()
   // Check for updates once main window is visible
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
 
+  // Start regular download of online network files
   NavApp::getOnlinedataController()->startProcessing();
+
+  // Start download of track systems
+  NavApp::getTrackController()->startDownload();
+
+  // Start webserver
   if(ui->actionRunWebserver->isChecked())
     NavApp::getWebController()->startServer();
   webserverStatusChanged(NavApp::getWebController()->isRunning());
@@ -3579,7 +3596,7 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowAddonAirports,
                          ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                          ui->actionMapShowIls,
-                         ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+                         ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
                          ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                          ui->actionMapAircraftCenter,
@@ -3635,7 +3652,7 @@ void MainWindow::saveStateMain()
   qDebug() << "===============================================================================";
   #endif
 
-#ifdef DEBUG_DUMP_SORTCUTS
+#ifdef DEBUG_DUMP_SHORTCUTS
   // Print all main menu and sub menu shortcuts ==============================================
   qDebug() << "===============================================================================";
   QList<const QAction *> actions;
@@ -3808,7 +3825,7 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
                     ui->actionMapShowAddonAirports,
                     ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
-                    ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+                    ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
                     ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                     ui->actionMapAircraftCenter,

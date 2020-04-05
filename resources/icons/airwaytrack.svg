@@ -14,7 +14,7 @@
    height="300"
    id="svg2"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="airwayjet.svg">
+   sodipodi:docname="airwaytrack.svg">
   <metadata
      id="metadata17">
     <rdf:RDF>
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,7 +41,7 @@
      id="namedview15"
      showgrid="true"
      inkscape:zoom="1.5733333"
-     inkscape:cx="-54.978827"
+     inkscape:cx="-28.890957"
      inkscape:cy="102.05082"
      inkscape:window-x="44"
      inkscape:window-y="24"
@@ -62,30 +62,6 @@
   </sodipodi:namedview>
   <defs
      id="defs4" />
-  <path
-     style="fill:none;fill-rule:evenodd;stroke:#000082;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 21.077845,150.1976 180.000005,60 86.52542,-83.98305"
-     id="path12697"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccc" />
-  <path
-     style="fill:none;fill-rule:evenodd;stroke:#000082;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 21.077845,20.1976 180.000005,190 81.90678,-198.898305"
-     id="path12691"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccc" />
-  <path
-     style="fill:none;fill-rule:evenodd;stroke:#000082;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="M 286.67107,289.09591 201.07785,210.1976 10.908353,287.18913"
-     id="path12693"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccc" />
-  <path
-     style="fill:none;fill-rule:evenodd;stroke:#000082;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="M 201.07785,210.1976 10.27276,232.73997"
-     id="path12695"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="cc" />
   <rect
      style="opacity:1;fill:#dedede;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:53.04660416;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect843"
@@ -93,6 +69,12 @@
      height="176.35593"
      x="2.1795259"
      y="5.1128588" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:22.56000073;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 276.61623,20.902264 230.70204,191.77524 134.18403,251.53717 14.981649,271.96011"
+     id="path12693"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccc" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:244.27645874px;line-height:125%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -102,5 +84,5 @@
        sodipodi:role="line"
        id="tspan17215"
        x="10.105979"
-       y="167.96716">J</tspan></text>
+       y="167.96716">T</tspan></text>
 </svg>

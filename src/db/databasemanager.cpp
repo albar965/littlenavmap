@@ -44,6 +44,7 @@
 #include "io/fileroller.h"
 #include "atools.h"
 #include "sql/sqlexception.h"
+#include "track/trackmanager.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -194,6 +195,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   {
     // Open only for instantiation in main window and not in main function
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TRACK);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_LOGBOOK);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
 
@@ -204,6 +206,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
     // Variable databases (user can edit or program downloads data)
     databaseUser = new SqlDatabase(DATABASE_NAME_USER);
+    databaseTrack = new SqlDatabase(DATABASE_NAME_TRACK);
     databaseLogbook = new SqlDatabase(DATABASE_NAME_LOGBOOK);
     databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
 
@@ -240,6 +243,14 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
       transaction.commit();
     }
 
+    // Open track database =================================
+    openWriteableDatabase(databaseTrack, "track", "track", false /* backup */);
+    trackManager = new TrackManager(databaseTrack, databaseNav);
+    if(!trackManager->hasSchema())
+      trackManager->createSchema();
+    else
+      trackManager->updateSchema();
+
     // Open online network database ==============================
     atools::settings::Settings& settings = atools::settings::Settings::instance();
     bool verbose = settings.getAndStoreValue(lnm::OPTIONS_WHAZZUP_PARSER_DEBUG, false).toBool();
@@ -259,11 +270,13 @@ DatabaseManager::~DatabaseManager()
   delete databaseDialog;
   delete progressDialog;
   delete userdataManager;
+  delete trackManager;
   delete logdataManager;
   delete onlinedataManager;
 
   closeAllDatabases();
   closeUserDatabase();
+  closeTrackDatabase();
   closeLogDatabase();
   closeUserAirspaceDatabase();
   closeOnlineDatabase();
@@ -272,6 +285,7 @@ DatabaseManager::~DatabaseManager()
   delete databaseNav;
   delete databaseMora;
   delete databaseUser;
+  delete databaseTrack;
   delete databaseLogbook;
   delete databaseOnline;
   delete databaseUserAirspace;
@@ -282,6 +296,7 @@ DatabaseManager::~DatabaseManager()
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
   SqlDatabase::removeDatabase(DATABASE_NAME_MORA);
   SqlDatabase::removeDatabase(DATABASE_NAME_USER);
+  SqlDatabase::removeDatabase(DATABASE_NAME_TRACK);
   SqlDatabase::removeDatabase(DATABASE_NAME_LOGBOOK);
   SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
@@ -699,7 +714,7 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
   if(type == currentFsType)
   {
     QSignalBlocker blocker(action);
-    Q_UNUSED(blocker);
+    Q_UNUSED(blocker)
     action->setChecked(true);
   }
 
@@ -800,7 +815,7 @@ void DatabaseManager::switchSimFromMainMenu()
   for(QAction *act : actions)
   {
     QSignalBlocker blocker(act);
-    Q_UNUSED(blocker);
+    Q_UNUSED(blocker)
     act->setChecked(act->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
   }
 }
@@ -866,6 +881,11 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
 void DatabaseManager::closeUserDatabase()
 {
   closeDatabaseFile(databaseUser);
+}
+
+void DatabaseManager::closeTrackDatabase()
+{
+  closeDatabaseFile(databaseTrack);
 }
 
 void DatabaseManager::closeUserAirspaceDatabase()

@@ -359,6 +359,7 @@
      <addaction name="separator"/>
      <addaction name="actionMapShowVictorAirways"/>
      <addaction name="actionMapShowJetAirways"/>
+     <addaction name="actionMapShowTracks"/>
     </widget>
     <widget class="QMenu" name="menuHighAltitudeWindLevels">
      <property name="title">
@@ -5410,6 +5411,7 @@ relation to shown airport</string>
    <addaction name="actionMapShowIls"/>
    <addaction name="actionMapShowVictorAirways"/>
    <addaction name="actionMapShowJetAirways"/>
+   <addaction name="actionMapShowTracks"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowRoute"/>
    <addaction name="actionInfoApproachShowMissedAppr"/>
@@ -6250,8 +6252,8 @@ Disabled if a navdatabase does not allow it.</string>
           <property name="toolTip">
            <string>Move the slider left to use airways only. This is the fastest calculation method.
 Move the slider to the right to use direct waypoint connections only.
-Every position in between uses airways and waypoints more or less and 
-allows to find a flight plan that can cross areas without an airway network or 
+Every position in between uses airways and waypoints more or less and
+allows to find a flight plan that can cross areas without an airway network or
 unusable airways (e.g. due to altitude restrictions).</string>
           </property>
           <property name="maximum">
@@ -11317,6 +11319,24 @@ unusable airways (e.g. due to altitude restrictions).</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionMapShowTracks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airwaytrack.svg</normaloff>:/littlenavmap/resources/icons/airwaytrack.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Tracks</string>
+   </property>
+   <property name="toolTip">
+    <string>Show tracks on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show tracks on the map</string>
    </property>
   </action>
  </widget>

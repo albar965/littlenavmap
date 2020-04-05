@@ -54,6 +54,9 @@ enum RouteStringOption
   READ_NO_AIRPORTS = 1 << 17, /* Do not look for first and last entry as airport. */
   READ_MATCH_WAYPOINTS = 1 << 18, /* Match coordinate formats to nearby waypoints. */
 
+  /* Writing options when converting flight plan to string ====================== */
+  NO_TRACKS = 1 << 19, /* Do not use NAT, PACOTS or AUSOTS. */
+
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES
 };
 

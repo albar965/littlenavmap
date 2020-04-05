@@ -85,7 +85,8 @@ MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale)
   : CoordinateConverter(parentMapWidget->viewport()), mapPaintWidget(parentMapWidget), scale(mapScale)
 {
   mapQuery = NavApp::getMapQuery();
-  airwayQuery = NavApp::getAirwayQuery();
+  airwayQuery = NavApp::getAirwayTrackQuery();
+  waypointQuery = NavApp::getWaypointTrackQuery();
   airportQuery = NavApp::getAirportQuerySim();
   symbolPainter = new SymbolPainter();
 }
@@ -278,10 +279,15 @@ void MapPainter::drawLine(const PaintContext *context, const atools::geo::Line& 
 {
   if(line.isValid())
   {
+    // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
+    qreal correction = 0.;
+    if(atools::almostEqual(line.getPos1().getLatY(), line.getPos2().getLatY()))
+      correction = 0.000001;
+
     GeoDataLineString ls;
     ls.setTessellate(true);
-    ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY(), 0, DEG)
-       << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY(), 0, DEG);
+    ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY() - correction, 0, DEG)
+       << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY() + correction, 0, DEG);
     context->painter->drawPolyline(ls);
   }
 }

@@ -59,7 +59,7 @@ class QItemSelection;
 class FlightplanEntryBuilder;
 class SymbolPainter;
 class AirportQuery;
-class AirwayQuery;
+class AirwayTrackQuery;
 class UnitStringTool;
 class QTextCursor;
 class RouteCalcWindow;
@@ -264,6 +264,9 @@ public:
     return tabHandlerRoute;
   }
 
+  /* Clear network, so it will be reloaded before next flight plan calculation. */
+  void clearAirwayNetworkCache();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -450,7 +453,7 @@ private:
   QMainWindow *mainWindow;
   QTableView *view;
   MapQuery *mapQuery;
-  AirwayQuery *airwayQuery;
+  AirwayTrackQuery *airwayQuery;
   AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
