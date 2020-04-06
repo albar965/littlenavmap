@@ -37,6 +37,12 @@
      </item>
      <item row="16" column="0" colspan="4">
       <widget class="QRadioButton" name="radioButtonConnectRemote">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="toolTip">
         <string>Connect to FSX, Prepar3D or X-Plane on a remote computer running the Little Navconnect program.</string>
        </property>
@@ -67,6 +73,12 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
      </item>
      <item row="6" column="0" colspan="4">
       <widget class="QRadioButton" name="radioButtonConnectDirectFsx">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="toolTip">
         <string>Connect directly to a FSX or a Prepar3D flight simulator on the same computer using SimConnect.</string>
        </property>
@@ -147,6 +159,12 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
      </item>
      <item row="11" column="0" colspan="4">
       <widget class="QRadioButton" name="radioButtonConnectDirectXp">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="toolTip">
         <string>Connect directly to X-Plane on the same computer using the Little Xpconnect plugin.</string>
        </property>
