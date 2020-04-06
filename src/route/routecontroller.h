@@ -196,7 +196,13 @@ public:
    * select a new start position (best runway) */
   void reverseRoute();
 
+  /* Change in options dialog */
   void optionsChanged();
+
+  /* Tracks downloaded or deleted */
+  void tracksChanged();
+
+  /* UI style changed */
   void styleChanged();
 
   /* Get the route table as a HTML snipped only containing the table and header.

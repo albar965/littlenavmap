@@ -105,6 +105,7 @@ void RouteCalcWindow::updateWidgets()
   ui->radioButtonRouteCalcAirwayJet->setEnabled(airway);
   ui->radioButtonRouteCalcAirwayVictor->setEnabled(airway);
   ui->checkBoxRouteCalcAirwayNoRnav->setEnabled(airway && NavApp::hasRouteTypeInDatabase());
+  ui->checkBoxRouteCalcAirwayTrack->setEnabled(airway && NavApp::hasTracks());
   ui->horizontalSliderRouteCalcAirwayPreference->setEnabled(airway);
   ui->groupBoxRouteCalcAirwayPrefer->setEnabled(airway);
   ui->labelRouteCalcAirwayPreferAirway->setEnabled(airway);

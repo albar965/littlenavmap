@@ -47,9 +47,14 @@ public:
   /* Start download from all three sources and load the tracks into the database once done.
    * The raw data is kept so it can be loaded into the database again when switching simulators.*/
   void startDownload();
+  void deleteTracks();
+  void downloadToggled(bool checked);
 
   /* Stop download and clear internal track list. */
   void cancelDownload();
+
+  /* True if there are tracks in the database */
+  bool hasTracks() const;
 
   AirwayTrackQuery *getAirwayTrackQuery() const
   {

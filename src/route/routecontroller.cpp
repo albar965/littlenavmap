@@ -2618,6 +2618,11 @@ void RouteController::optionsChanged()
   view->update();
 }
 
+void RouteController::tracksChanged()
+{
+  routeWindow->updateWidgets();
+}
+
 void RouteController::updateUnits()
 {
   units->update();

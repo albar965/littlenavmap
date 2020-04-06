@@ -1068,6 +1068,9 @@ QString airwayRouteTypeToString(map::MapAirwayRouteType type)
 
     case map::RT_UNDESIGNATED:
       return QObject::tr("Undesignated");
+
+    case map::RT_TRACK:
+      return QObject::tr("Track");
   }
   return QString();
 }
@@ -1099,6 +1102,9 @@ QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type)
 
     case map::RT_UNDESIGNATED:
       return QObject::tr("S");
+
+    case map::RT_TRACK:
+      return QObject::tr("T");
   }
   return QString();
 }

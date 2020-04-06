@@ -56,9 +56,11 @@ public:
     return messages;
   }
 
+  /* Clear track database */
+  void clearTracks();
+
 private:
   /* Clears track tables in database. */
-  void clearTracks();
 
   /* Convert altitude levels into binary format. */
   QByteArray altitudeLevels(const QVector<short>& levels);

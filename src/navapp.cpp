@@ -661,6 +661,11 @@ TrackController *NavApp::getTrackController()
   return trackController;
 }
 
+bool NavApp::hasTracks()
+{
+  return trackController->hasTracks();
+}
+
 AircraftPerfController *NavApp::getAircraftPerfController()
 {
   return aircraftPerfController;

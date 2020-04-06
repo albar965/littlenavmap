@@ -161,8 +161,6 @@ public:
   static AirportQuery *getAirportQuerySim();
   static AirportQuery *getAirportQueryNav();
   static MapQuery *getMapQuery();
-  static AirwayTrackQuery *getAirwayTrackQuery();
-  static WaypointTrackQuery *getWaypointTrackQuery();
 
   static atools::geo::Pos getAirportPos(const QString& ident);
 
@@ -216,8 +214,6 @@ public:
   static atools::fs::userdata::UserdataManager *getUserdataManager();
   static UserdataIcons *getUserdataIcons();
   static UserdataSearch *getUserdataSearch();
-
-  static TrackManager *getTrackManager();
 
   static atools::fs::userdata::LogdataManager *getLogdataManager();
   static LogdataSearch *getLogdataSearch();
@@ -287,10 +283,15 @@ public:
   static UserdataController *getUserdataController();
   static LogdataController *getLogdataController();
   static OnlinedataController *getOnlinedataController();
-  static TrackController *getTrackController();
   static AircraftPerfController *getAircraftPerfController();
   static SearchController *getSearchController();
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
+
+  static TrackController *getTrackController();
+  static bool hasTracks();
+  static TrackManager *getTrackManager();
+  static AirwayTrackQuery *getAirwayTrackQuery();
+  static WaypointTrackQuery *getWaypointTrackQuery();
 
   static AirspaceController *getAirspaceController();
   static bool hasAnyAirspaces();

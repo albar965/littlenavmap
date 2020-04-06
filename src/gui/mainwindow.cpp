@@ -1339,10 +1339,14 @@ void MainWindow::connectAllSlots()
 
   // Airway/tracks =======================================================
   TrackController *trackController = NavApp::getTrackController();
+  connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::clearAirwayNetworkCache);
   connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::updateAllInformation);
   connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
-  connect(trackController, &TrackController::postTrackLoad,
-          routeController, &RouteController::clearAirwayNetworkCache);
+  connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
+
+  connect(ui->actionRouteDownloadTracks, &QAction::toggled, trackController, &TrackController::downloadToggled);
+  connect(ui->actionRouteDownloadTracksNow, &QAction::triggered, trackController, &TrackController::startDownload);
+  connect(ui->actionRouteDeleteTracks, &QAction::triggered, trackController, &TrackController::deleteTracks);
 
   // Weather source =======================================================
   connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -3234,8 +3238,9 @@ void MainWindow::mainWindowShown()
   // Start regular download of online network files
   NavApp::getOnlinedataController()->startProcessing();
 
-  // Start download of track systems
-  NavApp::getTrackController()->startDownload();
+  // Start download of track systems if requested
+  if(ui->actionRouteDownloadTracks->isChecked())
+    NavApp::getTrackController()->startDownload();
 
   // Start webserver
   if(ui->actionRunWebserver->isChecked())
@@ -3368,6 +3373,10 @@ void MainWindow::updateActionStates()
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
   ui->actionRouteCopyString->setEnabled(hasFlightplan);
   ui->actionRouteAdjustAltitude->setEnabled(hasFlightplan);
+
+  bool hasTracks = NavApp::hasTracks();
+  ui->actionRouteDeleteTracks->setEnabled(hasTracks);
+  ui->actionMapShowTracks->setEnabled(hasTracks);
 
   // Remove or add empty airport action from menu and toolbar depending on option
   if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)

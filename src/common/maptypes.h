@@ -666,7 +666,8 @@ enum MapAirwayRouteType
   RT_HELICOPTER, /* H Helicopter Airways */
   RT_OFFICIAL, /* O Officially Designated Airways, except RNAV, Helicopter Airways (appears in DFD) */
   RT_RNAV, /* R RNAV Airways (appears in DFD) */
-  RT_UNDESIGNATED /* S Undesignated ATS Route */
+  RT_UNDESIGNATED, /* S Undesignated ATS Route */
+  RT_TRACK /* S Undesignated ATS Route */
 };
 
 /* Airway segment or part of NAT, PACOTS or AUSOTS track */
@@ -677,14 +678,14 @@ struct MapAirway
   {
   }
 
-  bool isAirway() const
-  {
-    return type == AIRWAY_VICTOR || type == AIRWAY_JET || type == AIRWAY_BOTH;
-  }
-
   bool isTrack() const
   {
-    return type == TRACK_NAT || type == TRACK_AUSOTS || type == TRACK_PACOTS;
+    return routeType == RT_TRACK;
+  }
+
+  bool isAirway() const
+  {
+    return !isTrack();
   }
 
   QString name;

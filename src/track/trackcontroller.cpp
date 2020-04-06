@@ -28,6 +28,7 @@
 #include "query/airwayquery.h"
 #include "query/waypointtrackquery.h"
 #include "query/waypointquery.h"
+#include "ui_mainwindow.h"
 
 #include <QDebug>
 
@@ -51,6 +52,11 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   downloader = new TrackDownloader(this, verbose);
   connect(downloader, &TrackDownloader::downloadFinished, this, &TrackController::downloadFinished);
   connect(downloader, &TrackDownloader::downloadFailed, this, &TrackController::downloadFailed);
+
+  connect(this, &TrackController::postTrackLoad, [ = ](void) -> void {
+    waypointTrackQuery->postTrackLoad();
+    airwayTrackQuery->postTrackLoad();
+  });
 
 #ifdef DEBUG_TRACK_TEST
   downloader->setUrl(atools::track::NAT, "/home/alex/Temp/tracks/NAT.html");
@@ -98,7 +104,9 @@ void TrackController::postDatabaseLoad()
 
   // Reload track into database to catch changed waypoint ids
   trackManager->setVerbose(verbose);
+  emit preTrackLoad();
   trackManager->loadTracks(trackVector);
+  emit postTrackLoad();
 }
 
 void TrackController::startDownload()
@@ -110,12 +118,39 @@ void TrackController::startDownload()
   downloader->startAllDownloads();
 }
 
+void TrackController::deleteTracks()
+{
+  cancelDownload();
+  downloadQueue.clear();
+  trackVector.clear();
+
+  emit preTrackLoad();
+  trackManager->clearTracks();
+  emit postTrackLoad();
+
+  NavApp::setStatusMessage(tr("Tracks deleted."));
+}
+
+void TrackController::downloadToggled(bool checked)
+{
+  if(checked)
+  {
+    if(!hasTracks())
+      startDownload();
+  }
+}
+
 void TrackController::cancelDownload()
 {
   qDebug() << Q_FUNC_INFO;
   downloader->cancelAllDownloads();
   downloadQueue.clear();
   trackVector.clear();
+}
+
+bool TrackController::hasTracks() const
+{
+  return trackManager->hasData();
 }
 
 void TrackController::downloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type)
@@ -137,11 +172,9 @@ void TrackController::downloadFinished(const atools::track::TrackVectorType& tra
     // Load tracks but keep raw data in vector
     trackManager->setVerbose(verbose);
     trackManager->loadTracks(trackVector);
-
-    // Update queries - clear cache
-    airwayTrackQuery->postTrackLoad();
-    waypointTrackQuery->postTrackLoad();
     emit postTrackLoad();
+
+    NavApp::setStatusMessage(tr("Track download finished."));
   }
 }
 
@@ -170,8 +203,8 @@ void TrackController::downloadFailed(const QString& error, int errorCode, QStrin
   if(downloadQueue.isEmpty())
   {
     qDebug() << Q_FUNC_INFO << "Download queue empty";
-    airwayTrackQuery->postTrackLoad();
-    waypointTrackQuery->postTrackLoad();
     emit postTrackLoad();
+
+    NavApp::setStatusMessage(tr("Track download failed."));
   }
 }

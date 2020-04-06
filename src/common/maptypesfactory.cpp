@@ -468,6 +468,8 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
     else
       qWarning() << Q_FUNC_INFO << "Invalid track type" << record.valueStr("track_type");
 
+    airway.routeType = map::RT_TRACK;
+
     // All points are plotted in direction
     airway.direction = map::DIR_FORWARD;
 
