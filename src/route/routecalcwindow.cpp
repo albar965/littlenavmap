@@ -241,12 +241,29 @@ rd::AirwayRoutingType RouteCalcWindow::getAirwayRoutingType() const
 
 bool RouteCalcWindow::isAirwayNoRnav() const
 {
-  return NavApp::getMainUi()->checkBoxRouteCalcAirwayNoRnav->isChecked();
+  return NavApp::getMainUi()->checkBoxRouteCalcAirwayNoRnav->isEnabled() &&
+         NavApp::getMainUi()->checkBoxRouteCalcAirwayNoRnav->isChecked();
 }
 
-rd::AirwayWaypointPreference RouteCalcWindow::getAirwayWaypointPreference() const
+bool RouteCalcWindow::isUseTracks() const
 {
-  return static_cast<rd::AirwayWaypointPreference>(NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->value());
+  return NavApp::getMainUi()->checkBoxRouteCalcAirwayTrack->isEnabled() &&
+         NavApp::getMainUi()->checkBoxRouteCalcAirwayTrack->isChecked();
+}
+
+int RouteCalcWindow::getAirwayWaypointPreference() const
+{
+  return NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->value();
+}
+
+int RouteCalcWindow::getAirwayWaypointPreferenceMin() const
+{
+  return NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->minimum();
+}
+
+int RouteCalcWindow::getAirwayWaypointPreferenceMax() const
+{
+  return NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->maximum();
 }
 
 bool RouteCalcWindow::isRadionavNdb() const

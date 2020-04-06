@@ -1486,80 +1486,69 @@ void RouteController::calculateRoute()
   float directCostFactor = 1.3f;
 
   // Build configuration for route finder =======================================
-  switch(routeWindow->getRoutingType())
+  if(routeWindow->getRoutingType() == rd::AIRWAY)
   {
-    case rd::AIRWAY:
-      net = routeNetworkAirway;
-      fetchAirways = true;
+    net = routeNetworkAirway;
+    fetchAirways = true;
 
-      // Airway preference =======================================
-      switch(routeWindow->getAirwayRoutingType())
-      {
-        case rd::BOTH:
-          command = tr("Airway Flight Plan Calculation");
-          mode = atools::routing::MODE_AIRWAY_AND_WAYPOINT;
-          if(route.getFlightplan().getCruisingAltitude() >= Unit::altFeetF(20000.f))
-            type = atools::fs::pln::HIGH_ALTITUDE;
-          else
-            type = atools::fs::pln::LOW_ALTITUDE;
-          break;
-
-        case rd::VICTOR:
-          command = tr("Low altitude airway Flight Plan Calculation");
-          type = atools::fs::pln::LOW_ALTITUDE;
-          mode = atools::routing::MODE_VICTOR_AND_WAYPOINT;
-          break;
-
-        case rd::JET:
-          command = tr("High altitude airway Flight Plan Calculation");
+    // Airway preference =======================================
+    switch(routeWindow->getAirwayRoutingType())
+    {
+      case rd::BOTH:
+        command = tr("Airway Flight Plan Calculation");
+        mode = atools::routing::MODE_AIRWAY_AND_WAYPOINT;
+        if(route.getFlightplan().getCruisingAltitude() >= Unit::altFeetF(20000.f))
           type = atools::fs::pln::HIGH_ALTITUDE;
-          mode = atools::routing::MODE_JET_AND_WAYPOINT;
-          break;
-      }
+        else
+          type = atools::fs::pln::LOW_ALTITUDE;
+        break;
 
-      // Airway/waypoint preference =======================================
-      switch(routeWindow->getAirwayWaypointPreference())
-      {
-        case rd::PREF_AIRWAY:
-          mode &= ~atools::routing::MODE_WAYPOINT;
-          directCostFactor = 3.f;
-          break;
-        case rd::PREF_AIRWAY_HIGH:
-          directCostFactor = 3.f;
-          break;
-        case rd::PREF_AIRWAY_LOW:
-          directCostFactor = 1.5f;
-          break;
-        case rd::PREF_BOTH:
-          directCostFactor = 1.3f;
-          break;
-        case rd::PREF_WP_LOW:
-          directCostFactor = 1.2f;
-          break;
-        case rd::PREF_WP_HIGH:
-          directCostFactor = 1.1f;
-          break;
-        case rd::PREF_WP:
-          mode &= ~atools::routing::MODE_AIRWAY;
-          directCostFactor = 1.0f;
-          break;
-      }
+      case rd::VICTOR:
+        command = tr("Low altitude airway Flight Plan Calculation");
+        type = atools::fs::pln::LOW_ALTITUDE;
+        mode = atools::routing::MODE_VICTOR_AND_WAYPOINT;
+        break;
 
-      // RNAV setting
-      if(routeWindow->isAirwayNoRnav())
-        mode |= atools::routing::MODE_NO_RNAV;
-      break;
+      case rd::JET:
+        command = tr("High altitude airway Flight Plan Calculation");
+        type = atools::fs::pln::HIGH_ALTITUDE;
+        mode = atools::routing::MODE_JET_AND_WAYPOINT;
+        break;
+    }
 
-    case rd::RADIONNAV:
-      // Radionav settings ========================================
-      command = tr("Radionnav Flight Plan Calculation");
-      fetchAirways = false;
-      net = routeNetworkRadio;
-      type = atools::fs::pln::VOR;
-      mode = atools::routing::MODE_RADIONAV_VOR;
-      if(routeWindow->isRadionavNdb())
-        mode |= atools::routing::MODE_RADIONAV_NDB;
-      break;
+    // Airway/waypoint preference =======================================
+    int pref = routeWindow->getAirwayWaypointPreference();
+
+    if(pref == routeWindow->getAirwayWaypointPreferenceMin())
+    {
+      mode &= ~atools::routing::MODE_WAYPOINT;
+      directCostFactor = 3.f;
+    }
+    else if(pref == routeWindow->getAirwayWaypointPreferenceMax())
+    {
+      mode &= ~atools::routing::MODE_AIRWAY;
+      directCostFactor = 1.0f;
+    }
+    else
+      // 1 to 2 in 0.1 steps
+      directCostFactor = 1.f + (routeWindow->getAirwayWaypointPreferenceMax() - pref) * 0.1f;
+
+    // RNAV setting
+    if(routeWindow->isAirwayNoRnav())
+      mode |= atools::routing::MODE_NO_RNAV;
+    if(routeWindow->isUseTracks())
+      mode |= atools::routing::MODE_TRACKS;
+  }
+  else if(routeWindow->getRoutingType() == rd::RADIONNAV)
+  {
+    // Radionav settings ========================================
+    command = tr("Radionnav Flight Plan Calculation");
+    fetchAirways = false;
+    net = routeNetworkRadio;
+    type = atools::fs::pln::VOR;
+    mode = atools::routing::MODE_RADIONAV_VOR;
+    if(routeWindow->isRadionavNdb())
+      mode |= atools::routing::MODE_RADIONAV_NDB;
   }
 
   atools::routing::RouteFinder routeFinder(net);

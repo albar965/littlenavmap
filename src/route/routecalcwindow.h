@@ -40,18 +40,6 @@ enum AirwayRoutingType
   JET
 };
 
-/* Preference of airway/waypoints as selected in the slider. */
-enum AirwayWaypointPreference
-{
-  PREF_AIRWAY = 0, /* Only airways */
-  PREF_AIRWAY_HIGH = 1,
-  PREF_AIRWAY_LOW = 2,
-  PREF_BOTH = 3,
-  PREF_WP_LOW = 4,
-  PREF_WP_HIGH = 5,
-  PREF_WP = 6 /* Only direct waypoint connections */
-};
-
 }
 
 /*
@@ -99,8 +87,10 @@ public:
   /* true if RNAV airways should be avoided */
   bool isAirwayNoRnav() const;
 
-  /* 0= waypoints only, 6 = airways only */
-  rd::AirwayWaypointPreference getAirwayWaypointPreference() const;
+  /* 0= waypoints only, 10 = airways only */
+  int getAirwayWaypointPreference() const;
+  int getAirwayWaypointPreferenceMin() const;
+  int getAirwayWaypointPreferenceMax() const;
 
   /* true if NDB should be included in radionav calculation */
   bool isRadionavNdb() const;
