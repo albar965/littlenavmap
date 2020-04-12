@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS version="2.1" language="zh">
 <context>
     <name>AircraftPerfController</name>
     <message>
@@ -11,7 +11,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="122"/>
         <source>Aircraft performance created.</source>
-        <translation>航空器</translation>
+        <translation>航空器性能已创建</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="146"/>
@@ -541,7 +541,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1033"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1048"/>
         <source>%1 at %2, %3° Flight Path Angle</source>
-        <translation type="unfinished">%1 在 %2, %3°航迹角</translation>
+        <translation>%1 速度 %2, %3°航迹角</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1039"/>
@@ -584,40 +584,43 @@
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="24"/>
         <source>Aircraft</source>
-        <translation type="unfinished">航空器</translation>
+        <translation>航空器</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="32"/>
         <source>Required runway &amp;type:</source>
-        <translation type="unfinished"></translation>
+        <translation>要求的跑道种类（&amp;T）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="42"/>
         <source>Name of aircraft.
 This is for informational purposes only.</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器名称
+只为内部用途。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="50"/>
         <source>&amp;Required runway:</source>
-        <translation type="unfinished"></translation>
+        <translation>要求的跑道长度（&amp;T）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="60"/>
         <source>Minimum required runway length for takeoff or landing.
 Use an approximate value for max takeoff weight.
 This is for informational purposes only.</source>
-        <translation type="unfinished"></translation>
+        <translation>起降所需要的最短跑道长度。
+使用最大起飞重量下的近似值
+只供信息用途。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="65"/>
         <source> %distshort%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="78"/>
         <source>&amp;Aircraft model:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">未知航空器</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="94"/>
@@ -3689,7 +3692,7 @@ Sim. Time UTC</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="424"/>
         <source>&amp;Aircraft</source>
-        <translation>未知航空器</translation>
+        <translation>未知航空器（&amp;A）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="428"/>
@@ -4450,17 +4453,17 @@ Sim. Time UTC</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2055"/>
         <source>NDB - HH</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2060"/>
         <source>NDB - H</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2065"/>
         <source>NDB - MH</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2070"/>
@@ -5012,19 +5015,19 @@ Sim. Time UTC</source>
         <source>Use manual wind settings for fuel calculation if checked.
 This will also be reflected by the wind barbs at the flight plan waypoints and the
 wind display in the elevation profile top line.</source>
-        <translation type="unfinished">Use manual wind settings for fuel calculation if checked.
-This will also be reflected by the wind barbs at the flight plan waypoints and the
-wind display in the elevation profile top line.</translation>
+        <translation>如选中，使用人工风况设置以计算燃油。
+这也将反映显示在飞行计划航路点和
+立面轮廓顶线上的风勾。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4466"/>
         <source>Use manual wind settings for fuel calculation.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用人工风况设置以计算燃油。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4469"/>
         <source>&amp;Manual Wind</source>
-        <translation type="unfinished"></translation>
+        <translation>人工风况(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4498"/>
@@ -5032,7 +5035,7 @@ wind display in the elevation profile top line.</translation>
         <location filename="src/gui/mainwindow.ui" line="9915"/>
         <location filename="src/gui/mainwindow.ui" line="9918"/>
         <source>Edit Aircraft Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑航空器性能</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4528"/>
@@ -5040,7 +5043,7 @@ wind display in the elevation profile top line.</translation>
         <location filename="src/gui/mainwindow.ui" line="9983"/>
         <location filename="src/gui/mainwindow.ui" line="9986"/>
         <source>Add new aircraft performance data</source>
-        <translation type="unfinished"></translation>
+        <translation>添加新航空器性能数据</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4551"/>
@@ -5048,7 +5051,7 @@ wind display in the elevation profile top line.</translation>
         <location filename="src/gui/mainwindow.ui" line="9900"/>
         <location filename="src/gui/mainwindow.ui" line="9903"/>
         <source>Open Aircraft Performance File</source>
-        <translation type="unfinished"></translation>
+        <translation>打开航空器性能文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4581"/>
@@ -5056,7 +5059,7 @@ wind display in the elevation profile top line.</translation>
         <location filename="src/gui/mainwindow.ui" line="9947"/>
         <location filename="src/gui/mainwindow.ui" line="9950"/>
         <source>Save Aircraft Performance File</source>
-        <translation type="unfinished"></translation>
+        <translation>保存航空器性能文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4604"/>
@@ -5064,7 +5067,7 @@ wind display in the elevation profile top line.</translation>
         <location filename="src/gui/mainwindow.ui" line="9968"/>
         <location filename="src/gui/mainwindow.ui" line="9971"/>
         <source>Save Aircraft Performance File as</source>
-        <translation type="unfinished"></translation>
+        <translation>另存航空器性能文件为</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4627"/>
@@ -5072,54 +5075,55 @@ wind display in the elevation profile top line.</translation>
         <location filename="src/gui/mainwindow.ui" line="4828"/>
         <location filename="src/gui/mainwindow.ui" line="4831"/>
         <source>Show help for aircraft performance</source>
-        <translation type="unfinished"></translation>
+        <translation>显示航空器性能的帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4657"/>
         <source>&amp;Wind:</source>
-        <translation type="unfinished"></translation>
+        <translation>风况(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4667"/>
         <location filename="src/gui/mainwindow.ui" line="4670"/>
         <source>Average true wind direction at flight plan cruise level</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划巡航高度的平均真风向</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4673"/>
         <source> °T</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4686"/>
         <source>Average wind at flight plan cruise level.
 Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划巡航高度的平均风速。
+风速将会被差值用于爬升和降落阶段。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4690"/>
         <source>Average wind at flight plan cruise level. Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划巡航高度的平均风速。风速将会被差值用于爬升和降落阶段。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4693"/>
         <source> %speed%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4720"/>
         <source>No aircraft performance report available.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有可用的航空器性能报告。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4731"/>
         <source>Current Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>当前性能</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4734"/>
         <source>Collected aircraft performance for current flight</source>
-        <translation type="unfinished"></translation>
+        <translation>当前飞行中收集到的航空器性能</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4782"/>
@@ -5127,7 +5131,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/gui/mainwindow.ui" line="10499"/>
         <location filename="src/gui/mainwindow.ui" line="10502"/>
         <source>Restart Aircraft Performance Collection</source>
-        <translation type="unfinished"></translation>
+        <translation>重新开始收集航空器性能</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4805"/>
@@ -5135,22 +5139,22 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/gui/mainwindow.ui" line="10484"/>
         <location filename="src/gui/mainwindow.ui" line="10487"/>
         <source>Merge the recorded performance into current</source>
-        <translation type="unfinished"></translation>
+        <translation>合并记录中性能到当前</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4847"/>
         <source>No report for current performance available.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有可用的当前性能报告。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4883"/>
         <source>Information</source>
-        <translation type="unfinished"></translation>
+        <translation>信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4930"/>
         <source>Airport</source>
-        <translation type="unfinished"></translation>
+        <translation>机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4954"/>
@@ -5160,43 +5164,44 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/gui/mainwindow.ui" line="5110"/>
         <location filename="src/gui/mainwindow.ui" line="5145"/>
         <source>No airport selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选择机场。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4965"/>
         <source>Runways</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4968"/>
         <source>Runway and helipad information</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道及直升机坪信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5003"/>
         <source>Com</source>
-        <translation type="unfinished"></translation>
+        <translation>通信</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5006"/>
         <source>Airport communication frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>机场通信频率</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5044"/>
         <source>Airport procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>机场程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5085"/>
         <source>Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>最近的</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5088"/>
         <source>Nearest navaids and airports in
 relation to shown airport</source>
-        <translation type="unfinished"></translation>
+        <translation>离所示机场最近的
+助航设备和机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5121"/>
