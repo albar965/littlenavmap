@@ -5206,7 +5206,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5121"/>
         <source>Weather</source>
-        <translation type="unfinished"></translation>
+        <translation>天气</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5124"/>
