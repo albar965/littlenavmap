@@ -11,7 +11,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="122"/>
         <source>Aircraft performance created.</source>
-        <translation>航空器性能已创建</translation>
+        <translation>航空器性能已创建。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="146"/>
@@ -55,7 +55,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="230"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation>不要再显示这个窗口。(&amp;S)</translation>
+        <translation>不要再显示这个对话框(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="281"/>
@@ -620,53 +620,54 @@ This is for informational purposes only.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="78"/>
         <source>&amp;Aircraft model:</source>
-        <translation type="unfinished">未知航空器</translation>
+        <translation>航空器型号（&amp;A）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="94"/>
         <source>Aircraft &amp;type:</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器种类（&amp;T）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="104"/>
         <source>ICAO aircraft type like B732 or C172. 
 The fuel report will show a warning if this does not match the simulator aircraft type.</source>
-        <translation type="unfinished"></translation>
+        <translation>ICAO航空器型号代码例如 B732或C172. 
+如同模拟器中的航空器型号不匹配，燃油报告会显示警告。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="112"/>
         <source>This is for informational purposes only.</source>
-        <translation type="unfinished"></translation>
+        <translation>这只是为了信息用途。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="116"/>
         <source>Hard and Soft</source>
-        <translation type="unfinished"></translation>
+        <translation>硬和软道面</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="121"/>
         <source>Hard</source>
-        <translation type="unfinished"></translation>
+        <translation>硬质道面</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="126"/>
         <source>Water</source>
-        <translation type="unfinished"></translation>
+        <translation>水面</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="131"/>
         <source>Amphibian</source>
-        <translation type="unfinished"></translation>
+        <translation>两栖</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="162"/>
         <source>Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>性能</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="186"/>
         <source>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>计算燃油和高程图所必须的数值标签是 &lt;b&gt;黑体&lt;/b&gt;的。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="199"/>
@@ -676,7 +677,7 @@ The fuel report will show a warning if this does not match the simulator aircraf
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="220"/>
         <source>Fuel used prior to takeoff by APU, engine start and taxi</source>
-        <translation type="unfinished"></translation>
+        <translation>起飞前APU、开车和滑行所用的燃油</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="226"/>
@@ -684,113 +685,116 @@ The fuel report will show a warning if this does not match the simulator aircraf
         <location filename="src/perf/aircraftperfdialog.ui" line="294"/>
         <location filename="src/perf/aircraftperfdialog.ui" line="358"/>
         <source> %fuel%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="239"/>
         <source>&amp;Extra fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>额外燃油（&amp;E）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="249"/>
         <source>Minimum fuel required to fly for 30 minutes at 1,500 feet
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
-        <translation type="unfinished"></translation>
+        <translation>在备降场上空以1500英尺高度飞行30分钟，如不要求备降场，在目的地以
+等待速度飞行30分钟所需要的燃油</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="267"/>
         <source>Estimated range considering reserve fuel.
 Based on cruise speed and fuel flow.</source>
-        <translation type="unfinished"></translation>
+        <translation>包含备用燃油的预计航程。
+基于巡航速度和油耗。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="287"/>
         <source>Fuel added at the discretion of the
 captain or the dispatcher</source>
-        <translation type="unfinished"></translation>
+        <translation>由机长或签派酌情决定额外添加的燃油</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="307"/>
         <source>&amp;Reserve fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>保留燃油（&amp;R）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="317"/>
         <source>&amp;Contingency fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>应急燃油（&amp;C）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="327"/>
         <source>&amp;Usable fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>可用燃油（&amp;U）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="337"/>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <translation type="unfinished"></translation>
+        <translation>这是考虑到途中由于风况或路线变化引起的额外油耗。
+这将使旅程燃油增加给定的百分比。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="342"/>
         <source> percent</source>
-        <translation type="unfinished"></translation>
+        <translation> %</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="355"/>
         <source>Usable fuel in tanks</source>
-        <translation type="unfinished"></translation>
+        <translation>燃料箱中的可用燃油</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="371"/>
         <source>&amp;Taxi fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>滑行用油（&amp;T）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="389"/>
         <source>&amp;Fuel units:</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油单位(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="400"/>
         <source>Weight (lbs)</source>
-        <translation type="unfinished"></translation>
+        <translation>重量（磅-lbs）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="405"/>
         <source>Volume (gal)</source>
-        <translation type="unfinished"></translation>
+        <translation>体积（加仑-gal）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="410"/>
         <source>Weight (kg)</source>
-        <translation type="unfinished"></translation>
+        <translation>重量（公斤-kg）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="415"/>
         <source>Volume (liter)</source>
-        <translation type="unfinished"></translation>
+        <translation>体积（升-liter）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="423"/>
         <source>&amp;Fuel type:</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油种类(&amp;F)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="433"/>
         <source>Used to convert from weight to volume units.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于将重量转换到体积。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="437"/>
         <source>Avgas</source>
-        <translation type="unfinished"></translation>
+        <translation>航空汽油（Avgas）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="442"/>
         <source>Jetfuel</source>
-        <translation type="unfinished"></translation>
+        <translation>航空煤油（Jetfuel）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="455"/>
@@ -800,7 +804,7 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="476"/>
         <source>Average climb speed to typical cruise altitude.</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升到典型巡航高度的平均速度。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="482"/>
@@ -808,27 +812,27 @@ This will increase the trip fuel by the given percentage.</source>
         <location filename="src/perf/aircraftperfdialog.ui" line="749"/>
         <location filename="src/perf/aircraftperfdialog.ui" line="918"/>
         <source> %speed% true airspeed</source>
-        <translation type="unfinished"></translation>
+        <translation> %speed% 真空速</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="507"/>
         <source>Average &amp;climb speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均爬升速度（&amp;C）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="523"/>
         <source>Average vertical &amp;climb speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均垂直爬升速度（&amp;C）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="539"/>
         <source>Average fuel flow for &amp;climb:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均爬升油耗（&amp;C）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="549"/>
         <source>Fuel flow in climb to typical cruise altitude.</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升到典型巡航高度的平均油耗。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="555"/>
@@ -836,17 +840,17 @@ This will increase the trip fuel by the given percentage.</source>
         <location filename="src/perf/aircraftperfdialog.ui" line="787"/>
         <location filename="src/perf/aircraftperfdialog.ui" line="877"/>
         <source> %fuel% per hour</source>
-        <translation type="unfinished"></translation>
+        <translation> %fuel%  每小时</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="568"/>
         <source>Average vertical climb speed to typical cruise altitude.</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升到典型巡航高度的平均垂直速度。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="574"/>
         <source> %vspeed% ▲</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="599"/>
@@ -856,12 +860,12 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="626"/>
         <source>C&amp;ruise speed at typical cruise altitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>典型巡航高度的巡航速度（&amp;C）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="664"/>
         <source>Fuel flow in c&amp;ruise:</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航油耗（&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="693"/>
@@ -871,50 +875,53 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="720"/>
         <source>Average vertical &amp;descent speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均垂直下降速度（&amp;D）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="736"/>
         <source>Average &amp;descent speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均下降速度（&amp;D）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="774"/>
         <source>Average fuel flow for &amp;descent:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均下降油耗（&amp;D）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="803"/>
         <source> %vspeed% ▼</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="825"/>
         <source>Equivalent rule of thumb for
 the given descent speeds</source>
-        <translation type="unfinished"></translation>
+        <translation>给定的下降速度下的等效下降法则</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="848"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>备降</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="869"/>
         <source>Fuel flow  when flying to an alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 The default is the cruise fuel flow.</source>
-        <translation type="unfinished"></translation>
+        <translation>通常是低空飞行到某个备降场所需要的油耗。
+使用最远的备降场来计算油耗。
+默认是巡航油耗。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="890"/>
         <source>Average speed for &amp;alternate:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均备降速度（&amp;A）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="900"/>
         <source>Average fuel flow for &amp;alternate:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均备降油耗（&amp;A
+）:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="910"/>
@@ -1244,7 +1251,7 @@ Runway Surface</source>
     <message>
         <location filename="src/airspace/airspacecontroller.cpp" line="330"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation>不要再显示这个窗口。(&amp;S)</translation>
+        <translation>不要再显示这个对话框(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/airspace/airspacecontroller.cpp" line="372"/>
@@ -1433,7 +1440,7 @@ Runway Surface</source>
     <message>
         <location filename="src/connect/connectclient.cpp" line="517"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation>不要再显示这个窗口。(&amp;S)</translation>
+        <translation>不要再显示这个对话框(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="521"/>
@@ -3692,7 +3699,7 @@ Sim. Time UTC</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="424"/>
         <source>&amp;Aircraft</source>
-        <translation>未知航空器（&amp;A）</translation>
+        <translation>航空器(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="428"/>
@@ -4792,12 +4799,12 @@ Sim. Time UTC</source>
         <location filename="src/gui/mainwindow.ui" line="3319"/>
         <location filename="src/gui/mainwindow.ui" line="3322"/>
         <source>Aircraft model name</source>
-        <translation>航空器模型名称</translation>
+        <translation>航空器型号名称</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3325"/>
         <source>Aircraft Model</source>
-        <translation>航空器模型</translation>
+        <translation>航空器型号</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3347"/>
@@ -6601,7 +6608,7 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="7712"/>
         <location filename="src/gui/mainwindow.ui" line="7715"/>
         <source>Reset all messages that were disabled with the &quot;do not show again&quot; button</source>
-        <translation>重置所有通过“不要再提示我”禁用的信息窗口</translation>
+        <translation>重置所有通过“不要再提示我”禁用的对话框</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7720"/>
@@ -6889,7 +6896,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8117"/>
         <source>Save Map as &amp;Image ...</source>
-        <translation>保存地图为图像(&amp;I) ...</translation>
+        <translation>另存地图为图像(&amp;I) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8120"/>
@@ -7234,7 +7241,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8622"/>
         <source>Save Flight Plan as &amp;FLP ...</source>
-        <translation>保存飞行计划为&amp;FLP ...</translation>
+        <translation>另存飞行计划为&amp;FLP ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8625"/>
@@ -8377,7 +8384,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10246"/>
         <source>Save Flight Plan as Flight&amp;Gear FGFP ...</source>
-        <translation>保存飞行计划为Flight&amp;Gear FGFP ...</translation>
+        <translation>另存飞行计划为Flight&amp;Gear FGFP ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10249"/>
@@ -8410,7 +8417,7 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="10274"/>
         <location filename="src/gui/mainwindow.ui" line="10277"/>
         <source>Save flight plan as FPL file for IvAp</source>
-        <translation>保存飞行计划为FPL文件以供IvAp使用</translation>
+        <translation>另存飞行计划为FPL文件以供IvAp使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10285"/>
@@ -8442,7 +8449,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10320"/>
         <source>Save Map as &amp;Image for AviTab ...</source>
-        <translation>保存地图为图像以供AviTab使用(&amp;I) ...</translation>
+        <translation>另存地图为图像以供AviTab使用(&amp;I) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10323"/>
@@ -8459,7 +8466,7 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="10334"/>
         <location filename="src/gui/mainwindow.ui" line="10337"/>
         <source>Save flight plan as RTE file usable by Level-D aircraft</source>
-        <translation>保存飞行计划为RTE文件以供Level-D航空器使用</translation>
+        <translation>另存飞行计划为RTE文件以供Level-D航空器使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10342"/>
@@ -8503,7 +8510,7 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="10378"/>
         <location filename="src/gui/mainwindow.ui" line="10381"/>
         <source>Save flight plan as MDR file usable by the Leonardo Maddog X</source>
-        <translation>保存飞行计划为 Leonardo Maddog X可以使用的MDR文件</translation>
+        <translation>另存飞行计划为 Leonardo Maddog X可以使用的MDR文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10389"/>
@@ -8811,7 +8818,7 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="10853"/>
         <location filename="src/gui/mainwindow.ui" line="10856"/>
         <source>Save flight plan as XML file usable by the TFDi Design 717</source>
-        <translation>保存飞行计划为TFDi Design 717可以使用的XM文件</translation>
+        <translation>另存飞行计划为TFDi Design 717可以使用的XM文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10865"/>
@@ -8854,7 +8861,7 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="10911"/>
         <location filename="src/gui/mainwindow.ui" line="10914"/>
         <source>Save flight plan as FPL file for X-IvAp</source>
-        <translation>保存飞行计划为FPL文件以供 X-IvAp使用</translation>
+        <translation>另存飞行计划为FPL文件以供 X-IvAp使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10919"/>
@@ -9193,7 +9200,7 @@ Online Network:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1886"/>
         <source>Do not &amp;show this dialog again and save in the future.</source>
-        <translation>不要再显示这个窗口并在将来保存(&amp;S)。</translation>
+        <translation>不要再显示这个对话框并在将来保存(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1902"/>
@@ -9242,7 +9249,7 @@ Simulator might not be able to load the flight plan.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1946"/>
         <source>Do not show this dialog again and overwrite the Flight Plan in the future.</source>
-        <translation>不要再显示这个窗口并在将来覆盖。</translation>
+        <translation>不要再显示这个对话框并在将来覆盖。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1951"/>
@@ -9260,12 +9267,12 @@ Simulator might not be able to load the flight plan.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1957"/>
         <source>&lt;p&gt;The old X-Plane FMS format version 3 does not allow saving of:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procedures&lt;/li&gt;&lt;li&gt;Airways&lt;/li&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;li&gt;Alternate destination airports&lt;/li&gt;&lt;li&gt;User defined/custom approaches&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;This information or parts of it can be lost when reloading the file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Save an additional copy using the default PLN format to keep all information.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Really save as FMS file?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;旧的X-Plane FMS  格式版本3不允许保存：&lt;/p&gt;&lt;ul&gt;&lt;li&gt;程序&lt;/li&gt;&lt;li&gt;航路&lt;/li&gt;&lt;li&gt;低速&lt;/li&gt;&lt;li&gt;出发地停机位&lt;/li&gt;&lt;li&gt;种类 (IFR/VFR, 低空/高考)&lt;/li&gt;&lt;li&gt;备降机场&lt;/li&gt;&lt;li&gt;用户定义的/自定义 程序&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;这些信息或者其部分将会在再次载入此文件是丢失。&lt;/p&gt;&lt;p&gt;&lt;b&gt;另存为默认的PLN格式可以保存所有信息&lt;/b&gt;&lt;/p&gt;&lt;p&gt;真的要保存为FMS文件吗？&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;旧的X-Plane FMS  格式版本3不允许保存：&lt;/p&gt;&lt;ul&gt;&lt;li&gt;程序&lt;/li&gt;&lt;li&gt;航路&lt;/li&gt;&lt;li&gt;地速&lt;/li&gt;&lt;li&gt;出发地停机位&lt;/li&gt;&lt;li&gt;种类 (IFR/VFR, 低空/高空)&lt;/li&gt;&lt;li&gt;备降机场&lt;/li&gt;&lt;li&gt;用户定义的/自定义 程序&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;这些信息或者其部分将会在再次载入此文件是丢失。&lt;/p&gt;&lt;p&gt;&lt;b&gt;另存为默认的PLN格式可以保存所有信息&lt;/b&gt;&lt;/p&gt;&lt;p&gt;真的要保存为FMS文件吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1971"/>
         <source>Do not show this dialog again and save the Flight Plan in the future as FMS 3.</source>
-        <translation>不要再显示这个窗口并在将来保存为旧的FMS 3格式。</translation>
+        <translation>不要再显示这个对话框并在将来保存飞行计划为FMS 3。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1976"/>
@@ -9275,106 +9282,106 @@ Simulator might not be able to load the flight plan.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1982"/>
         <source>&lt;p&gt;This format can only be loaded from X-Plane 11.10 and above.&lt;br/&gt;It does not allow saving of:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;li&gt;Alternate destination airports&lt;/li&gt;&lt;li&gt;User defined/custom approaches&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;This information or parts of it can be lost when reloading the file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Save an additional copy using the default PLN format to keep all information.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Really save as FMS file?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;这个格式只能被 X-Plane 11.10 及以上版本载入。&lt;br/&gt;不允许保存：&lt;/p&gt;&lt;ul&gt;&lt;li&gt;地速&lt;/li&gt;&lt;li&gt;出发地停机位&lt;/li&gt;&lt;li&gt;种类 (IFR/VFR, 低空/高空)&lt;/li&gt;&lt;li&gt;备降机场&lt;/li&gt;&lt;li&gt;用户定义的/自定义 程序&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;这些信息或者其部分将会在再次载入此文件时丢失。&lt;/p&gt;&lt;p&gt;&lt;b&gt;另存为默认的PLN格式可以保存所有信息&lt;/b&gt;&lt;/p&gt;&lt;p&gt;真的要保存为FMS文件吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1996"/>
         <source>Do not show this dialog again and save the Flight Plan in the future as FMS 11.</source>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示这个对话框并在将来保存飞行计划为FMS 11。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2001"/>
         <source> &amp;FLP</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2007"/>
         <source>&lt;p&gt;The FLP format does not allow saving of:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procedures (limited, can result in mismatches)&lt;/li&gt;&lt;li&gt;Position names&lt;/li&gt;&lt;li&gt;Cruise Altitude&lt;/li&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;li&gt;Alternate destination airports&lt;/li&gt;&lt;li&gt;User defined/custom approaches&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;This information or parts of it can be lost when reloading the file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Save an additional copy using the default PLN format to keep all information.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Really save as FLP file?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;FLP格式不允许保存：&lt;/p&gt;&lt;ul&gt;&lt;li&gt;程序（有限制，可能导致不匹配）&lt;/li&gt;&lt;li&gt;位置名称&lt;/li&gt;&lt;li&gt;巡航高度&lt;/li&gt;&lt;li&gt;地速&lt;/li&gt;&lt;li&gt;出发地停机位&lt;/li&gt;&lt;li&gt;种类 (IFR/VFR, 低空/高空)&lt;/li&gt;&lt;li&gt;备降机场&lt;/li&gt;&lt;li&gt;用户定义的/自定义 程序&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;这些信息或者其部分将会在再次载入此文件是丢失。&lt;/p&gt;&lt;p&gt;&lt;b&gt;另存为默认的PLN格式可以保存所有信息&lt;/b&gt;&lt;/p&gt;&lt;p&gt;真的要保存为FLP文件吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2022"/>
         <source>Do not show this dialog again and save the Flight Plan in the future as FLP.</source>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示这个对话框并在将来保存飞行计划为FLP。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2027"/>
         <source> &amp;FGFP</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2033"/>
         <source>&lt;p&gt;The FlightGear format does not allow saving of:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procedures (only SID, STAR and the respective transitions)&lt;/li&gt;&lt;li&gt;Position names&lt;/li&gt;&lt;li&gt;Cruise Altitude&lt;/li&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;li&gt;Alternate destination airports&lt;/li&gt;&lt;li&gt;User defined/custom approaches&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;This information or parts of it can be lost when reloading the file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Save an additional copy using the default PLN format to keep all information.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Really save as FGFP file?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;FlightGear格式不允许保存：&lt;/p&gt;&lt;ul&gt;&lt;li&gt;程序（只有SDI STAR和相应的过渡）&lt;/li&gt;&lt;li&gt;位置名称&lt;/li&gt;&lt;li&gt;巡航高度&lt;/li&gt;&lt;li&gt;地速&lt;/li&gt;&lt;li&gt;出发地停机位&lt;/li&gt;&lt;li&gt;种类 (IFR/VFR, 低空/高空)&lt;/li&gt;&lt;li&gt;备降机场&lt;/li&gt;&lt;li&gt;用户定义的/自定义 程序&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;这些信息或者其部分将会在再次载入此文件是丢失。&lt;/p&gt;&lt;p&gt;&lt;b&gt;另存为默认的PLN格式可以保存所有信息&lt;/b&gt;&lt;/p&gt;&lt;p&gt;真的要保存为FGFP文件吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2048"/>
         <source>Do not show this dialog again and save the Flight Plan in the future as FGFP.</source>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示这个对话框并在将来保存飞行计划为FGFP。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2081"/>
         <source> / </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2099"/>
         <source>No position</source>
-        <translation type="unfinished"></translation>
+        <translation>没有位置</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2132"/>
         <location filename="src/gui/mainwindow.cpp" line="2139"/>
         <source> *</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2134"/>
         <location filename="src/gui/mainwindow.cpp" line="2141"/>
         <source> - *</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2156"/>
         <source>Delete aircraft trail?</source>
-        <translation type="unfinished"></translation>
+        <translation>删除航空器尾迹？</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2157"/>
         <location filename="src/gui/mainwindow.cpp" line="2577"/>
         <location filename="src/gui/mainwindow.cpp" line="3850"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示这个对话框(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2166"/>
         <source>Aircraft track removed from map.</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器尾迹已从地图上移除。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2179"/>
         <source>Flight Plan has been changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已更改。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2180"/>
         <source>Save changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>保存更改？</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2222"/>
         <source>Created new flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>创建新飞行计划。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2239"/>
         <source>Created new empty flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>创建新的空飞行计划。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2255"/>
         <source>Open Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>打开飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2256"/>
@@ -9383,307 +9390,311 @@ Simulator might not be able to load the flight plan.</source>
         <location filename="src/gui/mainwindow.cpp" line="2404"/>
         <location filename="src/gui/mainwindow.cpp" line="2542"/>
         <source>Flight Plan Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2268"/>
         <location filename="src/gui/mainwindow.cpp" line="2333"/>
         <source>Flight plan opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已打开。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2279"/>
         <source>Append Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>附加飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2293"/>
         <source>Flight plan appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已附加。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2303"/>
         <source>Insert info Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>插入飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2315"/>
         <source>Flight plan inserted.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已插入。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2341"/>
         <source>File &quot;%1&quot; does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>文件 &quot;%1&quot; 不存在</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2387"/>
         <location filename="src/gui/mainwindow.cpp" line="2415"/>
         <source>Flight plan saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已保存。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2403"/>
         <source>Save Flight Plan as PLN Format</source>
-        <translation type="unfinished"></translation>
+        <translation>另存飞行计划为PLN格式</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2435"/>
         <source>Save Flight Plan as FLP Format</source>
-        <translation type="unfinished"></translation>
+        <translation>另存飞行计划为FLP格式</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2436"/>
         <source>FLP Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>文件 %1;;全部文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2447"/>
         <source>Flight plan saved as FLP.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已另存为FLP。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2465"/>
         <source>Save Flight Plan as FlightGear Format</source>
-        <translation type="unfinished"></translation>
+        <translation>另存飞行计划为FlightGear格式</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2466"/>
         <source>FlightGear Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>FlightGear文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2477"/>
         <source>Flight plan saved for FlightGear.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已另存为FlightGear。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2516"/>
         <source>Save Flight Plan as X-Plane FMS Format</source>
-        <translation type="unfinished"></translation>
+        <translation>另存飞行计划为X-Plane FMS格式</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2517"/>
         <source>FMS Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>FMS 文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2527"/>
         <source>Flight plan saved as FMS.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已另存为FMS。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2541"/>
         <source>Save Clean Flight Plan without Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>保存不包含注释的简单飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2544"/>
         <source> Clean</source>
-        <translation type="unfinished"></translation>
+        <translation> 简单</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2551"/>
         <source>Flight plan exported.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已导出。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2576"/>
         <source>Delete all range rings, measurement lines, traffic patterns and holds from map?</source>
-        <translation type="unfinished"></translation>
+        <translation>从地图上移除所有的距离环、测量、模式和等待？</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2590"/>
         <source>Google Earth KML files removed from map.</source>
-        <translation type="unfinished"></translation>
+        <translation>Google Earth KML文件已从地图上移除。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2597"/>
         <source>Google Earth KML</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2598"/>
         <source>Google Earth KML %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Google Earth KML  %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2607"/>
         <location filename="src/gui/mainwindow.cpp" line="2621"/>
         <source>Google Earth KML file opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>已打开Google Earth KML文件。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2610"/>
         <location filename="src/gui/mainwindow.cpp" line="2626"/>
         <source>Opening Google Earth KML file failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>打开Google Earth KML文件失败。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2669"/>
         <source>Waiting up to %1 seconds for map download ...
 </source>
-        <translation type="unfinished"></translation>
+        <translation>等待地图下载，至多 %1秒 ...
+</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2670"/>
         <source>&amp;Ignore Downloads and Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略下载并继续(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2681"/>
         <source>%1 downloads active and %2 downloads queued.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 个下载进行中，%2 个下载队列中。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2719"/>
         <source> - Save Map as Image</source>
-        <translation type="unfinished"></translation>
+        <translation> - 另存地图为图像</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2722"/>
         <source>Save Map as Image</source>
-        <translation type="unfinished"></translation>
+        <translation>另存地图为图像</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2722"/>
         <source>Image Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>图像文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2724"/>
         <source>Little Navmap Map %1.jpg</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2730"/>
         <source>Error saving image.
 Only JPG, PNG and BMP are allowed.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存图片失败。
+只允许  JPG, PNG 和 BMP。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2732"/>
         <location filename="src/gui/mainwindow.cpp" line="2776"/>
         <source>Map image saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图图像已保存。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2743"/>
         <source> - Save Map as Image for AviTab</source>
-        <translation type="unfinished"></translation>
+        <translation> - 另存地图为图像以供AviTab使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2750"/>
         <source>LittleNavmap_%1.png</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2755"/>
         <source>Save Map as Image for AviTab</source>
-        <translation type="unfinished"></translation>
+        <translation>另存地图为图像以供AviTab使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2756"/>
         <source>AviTab Image Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>AviTab图像文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2767"/>
         <source>Error saving image.
 Only JPG and PNG are allowed.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存图片失败。
+只允许  JPG 和 PNG。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2779"/>
         <source>Error saving JSON.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存JSON失败。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2785"/>
         <source>Map does not cover window.
 Ensure that the map fills the window completely.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图没有覆盖窗口
+确保地图完全充满窗口。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2791"/>
         <source>You have to switch to the Mercator map projection before saving the image.</source>
-        <translation type="unfinished"></translation>
+        <translation>在保存图像前你必须切换到墨卡托地图推测。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2797"/>
         <source> - Copy Map Image to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation> - 复制地图图像到剪贴板</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2803"/>
         <source>Map image copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>已复制地图图像到剪贴板。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2848"/>
         <source>%1 of %2 %3 selected, %4 visible.%5</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 共 %2 %3 已选中。 %4 可见。%5</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2870"/>
         <source>Logbook Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>记录本条目</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2876"/>
         <source>Clients</source>
-        <translation type="unfinished"></translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2877"/>
         <location filename="src/gui/mainwindow.cpp" line="2886"/>
         <source> Last Update: %1</source>
-        <translation type="unfinished"></translation>
+        <translation> 最后更新：%1</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2885"/>
         <source>Centers</source>
-        <translation type="unfinished"></translation>
+        <translation>管制中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3002"/>
         <source>Map settings reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图设置已重置。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3066"/>
         <source>All message dialogs reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>所有信息对话框已重置。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3161"/>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>在这台电脑上找不到&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition 或&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt; 也没有找到地景文件数据库。&lt;br/&gt;&lt;br/&gt;您可以从其他电脑上拷贝Little Navmap地景数据库.&lt;br/&gt;点击帮助按钮以获取更多关于此的信息。&lt;br/&gt;&lt;br/&gt;如果你安装了X-Plane 11，你可以先点击下方的X-Plane按钮来打开载入地景对话框&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3173"/>
         <source>X-Plane</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3221"/>
         <source>Ready.</source>
-        <translation type="unfinished"></translation>
+        <translation>已就绪。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3409"/>
         <source>Reset all Settings </source>
-        <translation type="unfinished"></translation>
+        <translation>重置所有设置 </translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3410"/>
         <source>&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;User features like range rings or patterns as well as scenery, logbook and userpoint databases are not affected.&lt;br/&gt;&lt;br/&gt;A copy of the settings file&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;which allows you to undo this change.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;b&gt;这将会重置所有选项、窗口布局、对话框布局、航空器尾迹、地图位置历史和文件历史到默认值并重新开启。 &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;用户特性例如距离环或者User features like range rings or patterns as well as scenery, logbook and userpoint databases are not affected.&lt;br/&gt;&lt;br/&gt;A copy of the settings file&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;which allows you to undo this change.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3849"/>
         <source>Really Quit?</source>
-        <translation type="unfinished"></translation>
+        <translation>真的要退出吗？</translation>
     </message>
 </context>
 <context>
