@@ -199,7 +199,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="732"/>
         <source>True Airspeed:</source>
-        <translation>真空速</translation>
+        <translation>真空速：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="714"/>
@@ -237,7 +237,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="751"/>
         <source>Performance File</source>
-        <translation>性能文件：</translation>
+        <translation>性能文件</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="766"/>
@@ -754,7 +754,7 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="389"/>
         <source>&amp;Fuel units:</source>
-        <translation>燃油单位(&amp;F)</translation>
+        <translation>燃油单位(&amp;F)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="400"/>
@@ -928,42 +928,44 @@ The default is the cruise fuel flow.</source>
         <source>Average true airspeed when flying to alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 Default is cruise speed.</source>
-        <translation type="unfinished"></translation>
+        <translation>通常是低空飞行到某个备降场所需要的油耗。
+使用最远的备降场来计算油耗。
+默认是巡航油耗。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="941"/>
         <source>Description or Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>描述或评论</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="214"/>
         <source>Usable fuel not set.</source>
-        <translation type="unfinished"></translation>
+        <translation>可用燃油未设置。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="216"/>
         <source>Usable fuel smaller than reserve.</source>
-        <translation type="unfinished"></translation>
+        <translation>可用燃油少于备用油量。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="218"/>
         <source>Cruise speed not set.</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航速度未设置。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="220"/>
         <source>Cruise fuel flow not set.</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航油耗未设置。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="231"/>
         <source>Estimated range with reserve %1, %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>含备用燃油的预计航程 %1, %2。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="245"/>
         <source>Descent Rule of Thumb: %1 per %2 %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>下降法则： 每%2下降%1 %3。</translation>
     </message>
 </context>
 <context>
@@ -972,7 +974,7 @@ Default is cruise speed.</source>
         <location filename="src/common/airportfiles.cpp" line="48"/>
         <source> Files</source>
         <extracomment>Important path parts &quot;Files/Airports&quot; to airport and files (&quot;.../Documents/Litte Navmap Files/Airports&quot;). * Do not change after initial translation to avoid breaking the file lookup.</extracomment>
-        <translation>文件</translation>
+        <translation> 文件</translation>
     </message>
     <message>
         <location filename="src/common/airportfiles.cpp" line="50"/>
@@ -1502,45 +1504,46 @@ Will retry.</source>
     <message>
         <location filename="src/connect/connectdialog.ui" line="14"/>
         <source>Little Navmap - Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 连接</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="28"/>
         <location filename="src/connect/connectdialog.ui" line="226"/>
         <source>Deselect to disable fetching and transmission of AI or multiplayer aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>取消选中以禁止获取及传输AI或多人游戏航空器</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="31"/>
         <location filename="src/connect/connectdialog.ui" line="229"/>
         <source>Fetch AI or multiplayer &amp;aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>获取AI或多人游戏航空器（&amp;M）</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="41"/>
         <source>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>输入运行 Little Navconnect的&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;主机名&lt;/span&gt; 或者 &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP地址&lt;/span&gt; 。
+如您使用Little Xpconnect X-Plane 插件，使用运行 X-Plane的电脑主机名。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="61"/>
         <source>Connect directly to a FSX or a Prepar3D flight simulator on the same computer using SimConnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用SimConnect直接连接到同一台电脑上运行的FSX或Prepar3D模拟器。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="64"/>
         <source>Connect directly to a &amp;local FSX or Prepar3D flight simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>直接连接到本地FSX或Prepar3D飞行模拟器（&amp;L）</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="77"/>
         <source>&amp;Port:</source>
-        <translation type="unfinished"></translation>
+        <translation>端口(&amp;P)：</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="96"/>
         <source>Delete the current hostname or IP address from the list.</source>
-        <translation type="unfinished"></translation>
+        <translation>从列表中删除当前主机名或IP地址。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="110"/>
@@ -1548,98 +1551,104 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
         <source>Allowed range is 50 milliseconds up to 1 second.
 Little Navmap fetches data from the flight simulator using this time interval.
 Lower values will result in a more fluid aircraft movement but can potentially induce stutters.</source>
-        <translation type="unfinished"></translation>
+        <translation>允许的范围是50毫秒到1秒。
+Little Navmap 每隔相应的时间会向模拟器获取数据。
+更低的值可以让航空器移动更平滑，但有可能导致运行困难。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="115"/>
         <location filename="src/connect/connectdialog.ui" line="244"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> 毫秒</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="134"/>
         <source>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>输入运行 Little Navconnect的&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;端口&lt;/span&gt; 。
+如您使用Little Xpconnect X-Plane 插件，使用运行 X-Plane的电脑主机名。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="151"/>
         <location filename="src/connect/connectdialog.ui" line="184"/>
         <source>&amp;Update time interval:</source>
-        <translation type="unfinished"></translation>
+        <translation>更新时间间隔（&amp;U）：</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="164"/>
         <source>&amp;Hostname or IP address:</source>
-        <translation type="unfinished"></translation>
+        <translation>主机名或IP地址（&amp;H）：</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="197"/>
         <source>Deselect to disable fetching and transmission of AI or multiplayer ships</source>
-        <translation type="unfinished"></translation>
+        <translation>取消选中以禁止获取及传输AI或多人游戏船舶</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="200"/>
         <source>Fetch AI or multiplayer &amp;ships</source>
-        <translation type="unfinished"></translation>
+        <translation>获取AI或多人游戏船舶（&amp;S）</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="210"/>
         <source>Connect directly to X-Plane on the same computer using the Little Xpconnect plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用Little Xpconnect插件直接连接到同一台电脑上运行的 X-Plane模拟器。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="213"/>
         <source>Connect directly to a local &amp;X-Plane simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>直接连接到本地X-Plane飞行模拟器（&amp;X）</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="270"/>
         <source>Connect to FSX, Prepar3D or X-Plane on a remote computer running the Little Navconnect program.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用SimConnect程序直接连接到远程电脑上的 FSX, Prepar3D 或者 X-Plane。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="273"/>
         <source>Connect to a &amp;remote flight simulator via Little Navconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>使用Little Navconnect连接到远程飞行模拟器（&amp;R）</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="292"/>
         <source>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
 Unchecking this will stop all automatic connection attempts immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>自动连接到指定的远程模拟器地址和端口或者本地飞飞行模拟器。
+您必须点击“连接”以开始持续性的连接检查。
+取消选中将会立刻停止所有的自动连接尝试。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="297"/>
         <source>Connect &amp;automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>自动连接（&amp;C）</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="57"/>
         <source>&amp;Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>连接(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="59"/>
         <source>Connect to a local or remote simulator.
 Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
-        <translation type="unfinished"></translation>
+        <translation>连接到本地或远程模拟器。
+如果勾选了“自动连接”，将会自动尝试重连。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="63"/>
         <source>&amp;Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>断开连接(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="65"/>
         <source>Disconnect from a local or remote simulator and stop all reconnect attempts.</source>
-        <translation type="unfinished"></translation>
+        <translation>从本地或远程模拟器断开连接并停止所有的重连尝试。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="68"/>
         <source>Close the dialog without changing the current connection status.</source>
-        <translation type="unfinished"></translation>
+        <translation>在不改变连接状态的情况下关闭此对话框。</translation>
     </message>
 </context>
 <context>
@@ -1647,12 +1656,12 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
     <message>
         <location filename="src/export/csvexporter.cpp" line="53"/>
         <source>Export CSV Document</source>
-        <translation type="unfinished"></translation>
+        <translation>导出CSV格式</translation>
     </message>
     <message>
         <location filename="src/export/csvexporter.cpp" line="54"/>
         <source>CSV Documents (*.csv);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV文件 (*.csv);所有文件 (*)</translation>
     </message>
 </context>
 <context>
@@ -1660,47 +1669,47 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="14"/>
         <source>Little Navmap - Create Approach</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 创建进近</translation>
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="109"/>
         <source>Distance from the initial fix to the runway threshold.</source>
-        <translation type="unfinished"></translation>
+        <translation>初始切入点到跑到入口的距离。</translation>
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="115"/>
         <source> %dist%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="137"/>
         <source>&amp;Runways:</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="147"/>
         <source>Altitude at the initial fix</source>
-        <translation type="unfinished"></translation>
+        <translation>初始点高度</translation>
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="153"/>
         <source> %alt%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="172"/>
         <source>Entry &amp;altitude above runway:</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道上的切入高度（&amp;A）：</translation>
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="182"/>
         <source>&amp;Entry distance to runway threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>到跑到入口的切入距离（&amp;E）：</translation>
     </message>
     <message>
         <location filename="src/route/customproceduredialog.cpp" line="132"/>
         <source>Approach slope %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>进近梯度 %1°</translation>
     </message>
 </context>
 <context>
@@ -1708,110 +1717,110 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
     <message>
         <location filename="src/db/databasedialog.ui" line="14"/>
         <source>Little Navmap - Load Scenery Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 载入地景库</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="53"/>
         <source>Enter the filename of the scenery.cfg file. This is &lt;b&gt;not&lt;/b&gt; the one in the base directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>输入scenery.cfg的文件名。 这 &lt;b&gt;不是&lt;/b&gt;在根目录的那个。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="63"/>
         <source>&amp;Flight Simulator Base Path:</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行模拟器根目录(&amp;F)：</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="73"/>
         <source>Scenery &amp;Configuration File:</source>
-        <translation type="unfinished"></translation>
+        <translation>地景配置文件(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="83"/>
         <source>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</source>
-        <translation type="unfinished"></translation>
+        <translation>输入模拟器根目录的路径。&lt;br/&gt;这是包含&quot;scenery&quot;及fsx.exe 或 p3d.exe的目录&lt;br/&gt;对于X-Plane这是包含X-Plane.exe的路径。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="93"/>
         <source>Select the scenery.cfg file for the given simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择该模拟器的scenery.cfg文件。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="96"/>
         <location filename="src/db/databasedialog.ui" line="106"/>
         <source>S&amp;elect ...</source>
-        <translation type="unfinished"></translation>
+        <translation>选择(&amp;E)...</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="103"/>
         <source>Select the base path for the given simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择该模拟器的根目录。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="113"/>
         <source>Choose the simulator which scenery library you want to load.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择你想要载入地景库的模拟器。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="120"/>
         <source>Reset paths to the default values for the given flight simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>重置该飞行模拟器的路径为默认值。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="123"/>
         <source>&amp;Reset Paths</source>
-        <translation type="unfinished"></translation>
+        <translation>重置路径(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="130"/>
         <source>&amp;Simulator:</source>
-        <translation type="unfinished"></translation>
+        <translation>模拟器（&amp;S）：</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="147"/>
         <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <translation type="unfinished">
-</translation>
+        <translation>如选择将同时读取未激活或禁用的地景条目
+如您使用工具在每次飞行时禁用或启用特定的地景这将有用。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="151"/>
         <source>Read &amp;inactive or disabled Scenery Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>读取未激活或禁用的地景条目（&amp;I）</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="158"/>
         <source>Read add-on.xml scenery packages of Prepar3D v3 and v4.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取 Prepar3D v3 和 v4的add-on.xml地景包。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="161"/>
         <source>Read Prepar3D add-on.xml packages</source>
-        <translation type="unfinished"></translation>
+        <translation>读取 Prepar3D 的add-on.xml地景包</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="43"/>
         <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
+        <translation>载入(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="63"/>
         <source>&lt;b&gt;No Simulator Found and no database found.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;没有找到模拟器及数据库&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="124"/>
         <source>Select Flight Simulator Basepath</source>
-        <translation type="unfinished"></translation>
+        <translation>选择飞行模拟器根目录</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="136"/>
         <source>Open Scenery Configuration File</source>
-        <translation type="unfinished"></translation>
+        <translation>打开地景配置文件</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="137"/>
         <source>Scenery Configuration Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>地景配置文件 %1;;所有文件 (*)</translation>
     </message>
 </context>
 <context>
@@ -1849,7 +1858,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/db/databasemanager.cpp" line="378"/>
         <source>Deleting ...</source>
-        <translation type="unfinished"></translation>
+        <translation>删除中 ...</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="383"/>
@@ -1902,7 +1911,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <location filename="src/db/databasemanager.cpp" line="641"/>
         <location filename="src/db/databasemanager.cpp" line="690"/>
         <source> - AIRAC Cycle %1</source>
-        <translation type="unfinished"></translation>
+        <translation> - AIRAC 周期 %1</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="651"/>
@@ -1995,7 +2004,7 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/db/databasemanager.cpp" line="1272"/>
         <source>%1 - Loading %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - 载入中 %2</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1320"/>
@@ -2008,42 +2017,42 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/db/databasemanager.cpp" line="1337"/>
         <source>&lt;h3&gt;Found %1 errors in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;在载入地景数据库时，在%2个地景条目中发现了%1个错误&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1340"/>
         <source>&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;如您希望报告这个错误，在报告后附加日志及配置文件，并添加所有其他可用信息，发送到以下任意一个联系地址。&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1348"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;hr/&gt;部分文件或地景目录不可读。&lt;br/&gt;您应当检查受影响的机场地景是否正确显示以及信息是否正确。&lt;hr/&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1357"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;更多地景条目 ...&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1362"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;地景标题： %1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1371"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;更多文件 ...&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1376"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Error:&lt;/b&gt; %2&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;文件：&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;错误：&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1384"/>
         <source> - Load Scenery Library Errors</source>
-        <translation type="unfinished"></translation>
+        <translation> - 载入地景库出错</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1394"/>
@@ -2053,7 +2062,7 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/db/databasemanager.cpp" line="1479"/>
         <source>&lt;big&gt;Done.&lt;/big&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;big&gt;完成。&lt;/big&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1627"/>
@@ -2065,7 +2074,7 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/db/databasemanager.cpp" line="1666"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;big&gt;正在载入：&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -3976,7 +3985,7 @@ Sim. Time UTC</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="928"/>
         <source>IL&amp;S</source>
-        <translation>有盲降系统(IL&amp;S)的</translation>
+        <translation>有盲降(IL&amp;S)的</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="938"/>
@@ -5087,7 +5096,7 @@ wind display in the elevation profile top line.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4657"/>
         <source>&amp;Wind:</source>
-        <translation>风况(&amp;W)</translation>
+        <translation>风况(&amp;W)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4667"/>
@@ -5105,7 +5114,7 @@ wind display in the elevation profile top line.</source>
         <source>Average wind at flight plan cruise level.
 Wind speed will be interpolated for climb and descent phases.</source>
         <translation>飞行计划巡航高度的平均风速。
-风速将会被差值用于爬升和降落阶段。</translation>
+风速将会被插值用于爬升和降落阶段。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4690"/>
@@ -5381,7 +5390,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5943"/>
         <source>Legend</source>
-        <translation>图标</translation>
+        <translation>图例</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5972"/>
@@ -5900,7 +5909,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6751"/>
         <source>Goto Center for &amp;Distance Search</source>
-        <translation>到距离搜索的中心</translation>
+        <translation>到距离搜索的中心（&amp;D）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6754"/>
@@ -6806,13 +6815,13 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8001"/>
         <source>&amp;Atlas (Offline)</source>
-        <translation>地图集（离线）（&amp;P）</translation>
+        <translation>地形图（离线）（&amp;P）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8004"/>
         <location filename="src/gui/mainwindow.ui" line="8007"/>
         <source>Atlas offline map theme</source>
-        <translation>地图集离线地图风格</translation>
+        <translation>地形图离线地图风格</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8015"/>
@@ -8977,7 +8986,7 @@ Local: %2</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="639"/>
         <source>Atlas (Offline)</source>
-        <translation>地图集（离线）</translation>
+        <translation>地形图（离线）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="698"/>
@@ -9689,7 +9698,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3410"/>
         <source>&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;User features like range rings or patterns as well as scenery, logbook and userpoint databases are not affected.&lt;br/&gt;&lt;br/&gt;A copy of the settings file&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;which allows you to undo this change.</source>
-        <translation type="unfinished">&lt;b&gt;这将会重置所有选项、窗口布局、对话框布局、航空器尾迹、地图位置历史和文件历史到默认值并重新开启。 &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;用户特性例如距离环或者User features like range rings or patterns as well as scenery, logbook and userpoint databases are not affected.&lt;br/&gt;&lt;br/&gt;A copy of the settings file&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;which allows you to undo this change.</translation>
+        <translation>&lt;b&gt;这将会重置所有选项、窗口布局、对话框布局、航空器尾迹、地图位置历史和文件历史到默认值并重新开启。 &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;用户特性例如距离环或者模式以及地景件不会受影响。&lt;br/&gt;&lt;br/&gt;一个设置文件的拷贝&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;将会在此文件夹中创建&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;这将是你可以在将来撤销这个更改。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3849"/>
