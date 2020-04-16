@@ -1983,7 +1983,7 @@ void HtmlInfoBuilder::holdText(const Hold& hold, HtmlBuilder& html) const
   else if(hold.navType == map::VOR)
     navType = map::vorType(hold.vorDmeOnly, hold.vorHasDme, hold.vorTacan, hold.vorVortac);
   else if(hold.navType == map::NDB)
-    navType = tr("NBD");
+    navType = tr("NDB");
   else if(hold.navType == map::WAYPOINT)
     navType = tr("Waypoint");
 

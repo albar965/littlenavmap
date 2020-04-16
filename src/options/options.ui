@@ -2351,7 +2351,7 @@ logbook entries:</string>
            <item row="6" column="3">
             <widget class="QSpinBox" name="spinBoxOptionsDisplayTransparencyMora">
              <property name="toolTip">
-              <string>Text size of the MORA text and grid.
+              <string>Transparency of the MORA text and grid.
 Value 0 is opaque and 90 is most transparent.</string>
              </property>
              <property name="suffix">
@@ -3022,7 +3022,7 @@ Also affects labels at holds and traffic patterns.</string>
           </item>
           <item>
            <property name="text">
-            <string>Statue Miles per Hour (mph)</string>
+            <string>Statute Miles per Hour (mph)</string>
            </property>
           </item>
          </widget>
@@ -3065,7 +3065,7 @@ Also affects labels at holds and traffic patterns.</string>
           </item>
           <item>
            <property name="text">
-            <string>Statue Miles (mi)</string>
+            <string>Statute Miles (mi)</string>
            </property>
           </item>
          </widget>
@@ -3143,7 +3143,7 @@ This setting is also used in the elevation profile.</string>
              <property name="toolTip">
               <string>The map will stop following the aircraft for the given time if the user does any interaction with the map like scrolling or zooming.
 This setting is also used in the elevation profile.
-See notes in the manual for details of this setting and how to move around in the map,</string>
+See notes in the manual for details of this setting and how to move around in the map.</string>
              </property>
              <property name="text">
               <string>&amp;Allow scrolling and zooming in the map</string>
@@ -3255,7 +3255,7 @@ See notes in the manual for details of this setting and how to move around in th
             <widget class="QCheckBox" name="checkBoxOptionsSimUpdatesConstant">
              <property name="toolTip">
               <string>Map will follow the aircraft constantly when checked.
-This is als used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</string>
+This is also used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</string>
              </property>
              <property name="text">
               <string>&amp;Do not use box mode for following the aircraft. Move the map constantly.</string>
