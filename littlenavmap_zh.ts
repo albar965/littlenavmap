@@ -7071,7 +7071,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8277"/>
         <source>&amp;Contents (Offline, PDF)</source>
-        <translation>帮助内容（离线&amp;C）</translation>
+        <translation>帮助内容（离线PDF&amp;C）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8280"/>
