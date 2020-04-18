@@ -115,15 +115,15 @@ int main(int argc, char *argv[])
     // QT_OPENGL does not work - so do this ourselves
     if(renderOpt == "desktop")
     {
-      QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, false);
+      QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
       QApplication::setAttribute(Qt::AA_UseOpenGLES, false);
-      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
+      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, false);
     }
     else if(renderOpt == "angle")
     {
       QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, false);
-      QApplication::setAttribute(Qt::AA_UseOpenGLES, false);
-      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
+      QApplication::setAttribute(Qt::AA_UseOpenGLES, true);
+      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, false);
     }
     else if(renderOpt == "software")
     {
