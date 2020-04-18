@@ -182,7 +182,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="705"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1006"/>
         <source>Taxi Fuel:</source>
-        <translation>滑行油耗：</translation>
+        <translation>滑行燃油：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="711"/>
@@ -327,7 +327,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="863"/>
         <source>Block fuel exceeds usable of %1.</source>
-        <translation>%1的油耗超过可用燃油。</translation>
+        <translation>航程油耗超过可用燃油 %1。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="868"/>
@@ -484,7 +484,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="993"/>
         <source>Block Fuel:</source>
-        <translation>不可用燃油：</translation>
+        <translation>航程油耗：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="993"/>
@@ -3403,7 +3403,7 @@ Does not update distance and cruise altitude when changed.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="895"/>
         <source>&amp;Block fuel:</source>
-        <translation>不可用燃油（&amp;B）：</translation>
+        <translation>航程油耗（&amp;B）：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="905"/>
@@ -4669,7 +4669,7 @@ Sim. Time UTC</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2526"/>
         <source>Arrival Procedures</source>
-        <translation>到达程序</translation>
+        <translation>进场程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2531"/>
@@ -11543,7 +11543,7 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2265"/>
         <source>Block from plan:</source>
-        <translation>计划不可用燃油：</translation>
+        <translation>计划航程油耗：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2266"/>
@@ -13488,7 +13488,7 @@ MHz/kHz</translation>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2038"/>
         <source>Show procedures (%1 has no arrival procedure)</source>
-        <translation>显示程序 （%1 没有到达程序）</translation>
+        <translation>显示程序 （%1 没有进场程序）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2043"/>
@@ -17331,7 +17331,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/print/printdialog.ui" line="41"/>
         <source>Include estimated fuel consumption, trip and block fuel if aircraft performance is loaded.</source>
-        <translation>如已载入航空器性能，包含预计油耗，航程燃油及不可用燃油。</translation>
+        <translation>如已载入航空器性能，包含预计油耗，航段及航程油耗。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="44"/>
@@ -18188,7 +18188,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="71"/>
         <source>Concrete</source>
-        <translation>混泥土</translation>
+        <translation>混凝土</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="72"/>
@@ -20897,7 +20897,7 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2085"/>
         <source>Show procedures (airport has no arrival procedure)</source>
-        <translation>显示程序 （机场没有到达程序）</translation>
+        <translation>显示程序 （机场没有进场程序）</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2090"/>
@@ -21164,7 +21164,7 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4179"/>
         <source>Arrive via STAR</source>
-        <translation>经标准到达程序（STAR）到达</translation>
+        <translation>经标准进场程序（STAR）到达</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4191"/>
@@ -21225,7 +21225,7 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4259"/>
         <source>Runway mismatch: STAR &quot;%1&quot; ≠ Approach &quot;%2&quot;.</source>
-        <translation>跑道不匹配：标准到达程序（STAR）&quot;%1&quot; ≠ 进近 &quot;%2&quot;。</translation>
+        <translation>跑道不匹配：标准进场程序（STAR）&quot;%1&quot; ≠ 进近 &quot;%2&quot;。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4277"/>
@@ -22336,7 +22336,7 @@ Right-click into the map and select
     <message>
         <location filename="src/search/searchbasetable.cpp" line="964"/>
         <source>Show procedures (airport has no arrival procedure)</source>
-        <translation>显示程序 （机场没有到达程序）</translation>
+        <translation>显示程序 （机场没有进场程序）</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="969"/>
