@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>966</height>
+    <height>1347</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1236,7 +1236,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&amp;Max:</string>
+                <string comment="Max runway length">&amp;Max:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1375,7 +1375,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&amp;Max:</string>
+                <string comment="Max elevation">&amp;Max:</string>
                </property>
                <property name="buddy">
                 <cstring>spinBoxAirportAltitudeMaxSearch</cstring>
@@ -1508,7 +1508,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Ma&amp;x:</string>
+                <string comment="Max distance">Ma&amp;x:</string>
                </property>
                <property name="buddy">
                 <cstring>spinBoxAirportDistMaxSearch</cstring>
@@ -3637,7 +3637,7 @@
               <string>Departure airport ICAO code</string>
              </property>
              <property name="placeholderText">
-              <string>Departure</string>
+              <string comment="Online Client Departure">Departure</string>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>
@@ -3943,7 +3943,7 @@
              </item>
              <item>
               <property name="text">
-               <string>Departure</string>
+               <string comment="Facility Type">Departure</string>
               </property>
              </item>
             </widget>
