@@ -667,7 +667,7 @@ The fuel report will show a warning if this does not match the simulator aircraf
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="186"/>
         <source>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.</source>
-        <translation>计算燃油和高程图所必须的数值标签是 &lt;b&gt;黑体&lt;/b&gt;的。</translation>
+        <translation>计算燃油和立面图所必须的数值标签是 &lt;b&gt;黑体&lt;/b&gt;的。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="199"/>
@@ -920,8 +920,7 @@ The default is the cruise fuel flow.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="900"/>
         <source>Average fuel flow for &amp;alternate:</source>
-        <translation>平均备降油耗（&amp;A
-）:</translation>
+        <translation>平均备降油耗（&amp;A）:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="910"/>
@@ -2467,7 +2466,7 @@ This will change the shown map region and might change details.</source>
     <message>
         <location filename="src/info/infocontroller.cpp" line="1147"/>
         <source>No AI or multiplayer aircraft selected.&lt;br/&gt;Found %1 AI or multiplayer aircraft.</source>
-        <translation>没有AI或多人游戏航空器被选中。&lt;br/&gt;找到 %1 AI或多人游戏航空器。</translation>
+        <translation>没有AI或多人游戏航空器被选中。&lt;br/&gt; %1 AI或多人游戏航空器已获取。</translation>
     </message>
     <message>
         <location filename="src/info/infocontroller.cpp" line="1149"/>
@@ -12180,7 +12179,7 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3241"/>
         <source>Top of Descent%1</source>
-        <translation>下降顶点（TOD） %1</translation>
+        <translation>下降顶（TOD） %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3241"/>
@@ -12841,12 +12840,12 @@ MHz/kHz</translation>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="418"/>
         <source>TOC</source>
-        <translation>爬升顶点（TOC）</translation>
+        <translation>爬升顶（TOC）</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="442"/>
         <source>TOD</source>
-        <translation>下降顶点（TOD）</translation>
+        <translation>下降顶（TOD）</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="856"/>
@@ -14872,12 +14871,12 @@ Afftects map and elevation profile.</source>
     <message>
         <location filename="src/options/options.ui" line="1885"/>
         <source>Enable this option to show the top of descent and top of climb points on the map and in the elevation profile.</source>
-        <translation>激活这个选项以在地图和立面图上显示爬升顶点和下降顶点。</translation>
+        <translation>激活这个选项以在地图和立面图上显示爬升顶（TOC）和下降顶（TOD）。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1888"/>
         <source>Draw &amp;top of descent and top of climb</source>
-        <translation>绘制下降顶点（TOD）及爬升顶点（TOC）（&amp;T）</translation>
+        <translation>绘制下降顶（TOD）及爬升顶（TOC）（&amp;T）</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1923"/>
@@ -17889,12 +17888,12 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1079"/>
         <source>TOC</source>
-        <translation>爬升顶点（TOC）</translation>
+        <translation>爬升顶（TOC）</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1101"/>
         <source>TOD</source>
-        <translation>下降顶点（TOD）</translation>
+        <translation>下降顶（TOD）</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1167"/>
@@ -17968,7 +17967,7 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1756"/>
         <source>&lt;b&gt;To Destination: %1, to Top of Descent: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
-        <translation>&lt;b&gt;距目的地： %1，距下降顶点（TOD）： %2。&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
+        <translation>&lt;b&gt;距目的地： %1，距下降顶（TOD）： %2。&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1758"/>
