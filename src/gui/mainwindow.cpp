@@ -1340,7 +1340,7 @@ void MainWindow::connectAllSlots()
   // Airway/tracks =======================================================
   TrackController *trackController = NavApp::getTrackController();
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::clearAirwayNetworkCache);
-  connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::updateAllInformation);
+  connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::tracksChanged);
   connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
 

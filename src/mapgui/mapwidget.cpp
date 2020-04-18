@@ -229,12 +229,19 @@ void MapWidget::historyBack()
   }
 }
 
-void MapWidget::handleInfoClick(QPoint pos)
+void MapWidget::handleInfoClick(QPoint point)
 {
-  qDebug() << Q_FUNC_INFO << pos;
+  qDebug() << Q_FUNC_INFO << point;
+
+#ifdef DEBUG_INFORMATION
+  qreal lon, lat;
+  bool visible = geoCoordinates(point.x(), point.y(), lon, lat);
+  if(visible)
+    NavApp::getRouteController()->debugNetworkClick(Pos(lon, lat));
+#endif
 
   mapSearchResultInfoClick.clear();
-  getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistance, mapSearchResultInfoClick,
+  getScreenIndexConst()->getAllNearest(point.x(), point.y(), screenSearchDistance, mapSearchResultInfoClick,
                                        map::QUERY_HOLDS | map::QUERY_PATTERNS /* For double click */);
 
   // Remove all undesired features

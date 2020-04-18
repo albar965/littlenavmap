@@ -2624,6 +2624,10 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) const
 {
   bool isAirway = airway.isAirway();
+
+  if(!isAirway && !NavApp::hasTracks())
+    return;
+
   if(isAirway)
     navaidTitle(html, tr("Airway: ") + airway.name);
   else
@@ -2687,20 +2691,34 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
     QStringList altLevels;
     for(int level : airway.altitudeLevelsEast)
       altLevels.append(QString("%1").arg(level));
-    html.row2If(tr("Altitude levels East:"), altLevels.join(tr(", ")));
+    html.row2If(tr("Track levels East:"), altLevels.join(tr(", ")));
   }
   if(!airway.altitudeLevelsWest.isEmpty())
   {
     QStringList altLevels;
     for(int level : airway.altitudeLevelsWest)
       altLevels.append(QString("%1").arg(level));
-    html.row2If(tr("Altitude levels West:"), altLevels.join(tr(", ")));
+    html.row2If(tr("Track levels West:"), altLevels.join(tr(", ")));
   }
 
   html.row2(tr("Segment length:"), Unit::distMeter(airway.from.distanceMeterTo(airway.to)));
 
   if(infoQuery != nullptr && info)
   {
+    atools::sql::SqlRecord trackMeta;
+    if(!isAirway)
+    {
+      trackMeta = infoQuery->getTrackMetadata(airway.id);
+      if(!trackMeta.isEmpty())
+      {
+        html.row2(tr("Track valid:"), tr("%1 to\n%2").
+                  arg(locale.toString(trackMeta.valueDateTime("valid_from"), QLocale::ShortFormat)).
+                  arg(locale.toString(trackMeta.valueDateTime("valid_to"), QLocale::ShortFormat)));
+        html.row2(tr("Track downloaded:"),
+                  locale.toString(trackMeta.valueDateTime("download_timestamp"), QLocale::ShortFormat));
+      }
+    }
+
     // Show list of waypoints =================================================================
     QList<map::MapAirwayWaypoint> waypointList;
     NavApp::getAirwayTrackQuery()->getWaypointListForAirwayName(waypointList, airway.name, airway.fragment);
@@ -2719,6 +2737,8 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
       }
 
       html.row2(tr("Waypoints Ident/Region:"), tempLinkHtml.getHtml(), ahtml::NO_ENTITIES);
+      // if(!trackMeta.isEmpty())
+      // html.row2If(tr("Track route:"), trackMeta.valueStr("route"));
     }
   }
   html.tableEnd();

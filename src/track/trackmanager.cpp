@@ -26,6 +26,7 @@
 #include "geo/rect.h"
 #include "sql/sqltransaction.h"
 #include "sql/sqlutil.h"
+#include "io/binaryutil.h"
 
 #include <QDataStream>
 #include <QElapsedTimer>
@@ -105,7 +106,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
   timer.start();
 
   // Generated ids with offset to distinguis from read airways and waypoints
-  int waypointId = 10000000, trackId = 10000000, trackmetaId = 0;
+  int trackpointId = atools::track::TRACKPOINT_ID_OFFSET, trackId = atools::track::TRACK_ID_OFFSET, trackmetaId = 1;
 
   FlightplanEntryBuilder builder;
   RouteStringReader reader(&builder, verbose);
@@ -118,7 +119,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
   QHash<std::pair<TrackType, QString>, SqlRecord> trackmeta;
 
   // Maps name to a fragment number for airway compatibility which needs name and fragment as a key
-  QHash<QString, int> nameFragment;
+  QHash<QString, int> nameFragmentHash;
 
   // Read each track into the database ==================================================
   for(const Track& track : tracks)
@@ -127,10 +128,10 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
       qDebug() << Q_FUNC_INFO << track;
 
     // Add or increment fragment number for a new name
-    if(nameFragment.contains(track.name))
-      nameFragment[track.name]++;
+    if(nameFragmentHash.contains(track.name))
+      nameFragmentHash[track.name]++;
     else
-      nameFragment.insert(track.name, 1);
+      nameFragmentHash.insert(track.name, 1);
 
     // Read string into a list of references ====================================
     map::MapObjectRefExtVector refs;
@@ -141,13 +142,11 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
       if(verbose)
         qDebug() << Q_FUNC_INFO << refs;
 
-      // Add to trackmeta table if a new track was found
-      addTrackmeta(trackmeta, track, trackmetaId);
-
       // Empty records
       SqlRecord rec = getEmptyRecord(); // track table
       SqlRecord trackpointRec = db->record("trackpoint");
 
+      int startPointId = -1, endPointId = -1;
       // Write all waypoints to the database ===========================================
       for(int i = 1; i < refs.size(); i++)
       {
@@ -165,12 +164,12 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
         rec.setValue("track_name", track.name);
         rec.setValue("track_type", atools::charToStr(track.type));
         rec.setValue("sequence_no", i);
-        rec.setValue("track_fragment_no", nameFragment.value(track.name));
+        rec.setValue("track_fragment_no", nameFragmentHash.value(track.name));
 
         if(!track.eastLevels.isEmpty())
-          rec.setValue("altitude_levels_east", altitudeLevels(track.eastLevels));
+          rec.setValue("altitude_levels_east", atools::io::writeVector<quint16, quint16>(track.eastLevels));
         if(!track.westLevels.isEmpty())
-          rec.setValue("altitude_levels_west", altitudeLevels(track.westLevels));
+          rec.setValue("altitude_levels_west", atools::io::writeVector<quint16, quint16>(track.westLevels));
 
         int airwayId = -1;
         map::MapObjectRefExt fromRef, toRef;
@@ -203,11 +202,17 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
         }
 
         // Add trackpoint/waypoint to hash and return id which can be generated or original waypoint id
-        int fromId = addTrackpoint(trackpoints, trackpointRec, fromRef, waypointId);
+        int fromId = addTrackpoint(trackpoints, trackpointRec, fromRef, trackpointId);
 
         // New generated id for waypoint in case it is needed
-        waypointId++;
-        int toId = addTrackpoint(trackpoints, trackpointRec, toRef, waypointId);
+        trackpointId++;
+        int toId = addTrackpoint(trackpoints, trackpointRec, toRef, trackpointId);
+
+        // Remember start and end id (real or generated) for metadata
+        if(i == 1)
+          startPointId = fromId;
+        if(i == refs.size() - 1)
+          endPointId = toId;
 
         rec.setValue("from_waypoint_id", fromId);
         rec.setValue("from_waypoint_name", fromRef.name);
@@ -231,6 +236,11 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
         // Set all to null
         rec.clearValues();
       }
+
+      // Add to trackmeta table if a new track was found
+      if(addTrackmeta(trackmeta, track, trackmetaId, startPointId, endPointId))
+        trackmetaId++;
+
     }
     else
     {
@@ -372,23 +382,27 @@ int TrackManager::addTrackpoint(QHash<int, SqlRecord>& trackpoints, atools::sql:
   return returnId;
 }
 
-void TrackManager::addTrackmeta(QHash<std::pair<TrackType, QString>, SqlRecord>& records, const Track& track,
-                                int& metaId)
+bool TrackManager::addTrackmeta(QHash<std::pair<TrackType, QString>, SqlRecord>& records, const Track& track,
+                                int metaId, int startPointId, int endPointId)
 {
   auto key = std::make_pair(track.type, track.name);
   if(!records.contains(key))
   {
     SqlRecord rec = db->record("trackmeta");
 
-    rec.setValue("trackmeta_id", ++metaId);
+    rec.setValue("trackmeta_id", metaId);
     rec.setValue("track_name", track.name);
     rec.setValue("track_type", atools::charToStr(track.type));
     rec.setValue("route", track.route.join(" "));
+    rec.setValue("startpoint_id", startPointId);
+    rec.setValue("endpoint_id", endPointId);
     rec.setValue("valid_from", track.validFrom.toString(Qt::ISODate));
     rec.setValue("valid_to", track.validTo.toString(Qt::ISODate));
     rec.setValue("download_timestamp", QDateTime::currentDateTime().toString(Qt::ISODate));
     records.insert(key, rec);
+    return true;
   }
+  return false;
 }
 
 void TrackManager::clearTracks()
@@ -396,17 +410,4 @@ void TrackManager::clearTracks()
   removeRows();
   removeRows("trackpoint");
   removeRows("trackmeta");
-}
-
-QByteArray TrackManager::altitudeLevels(const QVector<short>& levels)
-{
-  QByteArray bytes;
-  QDataStream out(&bytes, QIODevice::WriteOnly);
-  out.setVersion(QDataStream::Qt_5_5);
-  out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-
-  out << static_cast<quint16>(levels.size());
-  for(short level : levels)
-    out << static_cast<quint16>(level);
-  return bytes;
 }

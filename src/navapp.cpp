@@ -167,7 +167,9 @@ void NavApp::init(MainWindow *mainWindowParam)
   airportQueryNav = new AirportQuery(databaseManager->getDatabaseNav(), true /* nav */);
   airportQueryNav->initQueries();
 
-  infoQuery = new InfoQuery(databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav());
+  infoQuery = new InfoQuery(databaseManager->getDatabaseSim(),
+                            databaseManager->getDatabaseNav(),
+                            databaseManager->getDatabaseTrack());
   infoQuery->initQueries();
 
   procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());

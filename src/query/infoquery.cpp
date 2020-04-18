@@ -30,8 +30,8 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
 
-InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav)
-  : dbSim(sqlDb), dbNav(sqlDbNav)
+InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack)
+  : dbSim(sqlDb), dbNav(sqlDbNav), dbTrack(sqlDbTrack)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   airportCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportCache", 100).toInt());
@@ -206,6 +206,18 @@ const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
 {
   ndbQuery->bindValue(":id", ndbId);
   return query::cachedRecord(ndbCache, ndbQuery, ndbId);
+}
+
+atools::sql::SqlRecord InfoQuery::getTrackMetadata(int trackId)
+{
+  SqlQuery query(dbTrack);
+  query.prepare("select m.* from track t join trackmeta m on t.trackmeta_id = m.trackmeta_id where track_id = :id");
+  query.bindValue(":id", trackId);
+  query.exec();
+  if(query.next())
+    return query.record();
+  else
+    return SqlRecord();
 }
 
 void InfoQuery::initQueries()

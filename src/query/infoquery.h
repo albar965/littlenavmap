@@ -40,7 +40,7 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  InfoQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav);
+  InfoQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack);
   ~InfoQuery();
 
   /* Get record for joined tables airport, bgl_file and scenery_area */
@@ -81,6 +81,9 @@ public:
   /* Get record for table transition */
   const atools::sql::SqlRecordVector *getTransitionInformation(int approachId);
 
+  /* Get a record from table trackmeta for given track id */
+  atools::sql::SqlRecord getTrackMetadata(int trackId);
+
   /* Create all queries */
   void initQueries();
 
@@ -100,7 +103,7 @@ private:
 
   QCache<QString, atools::sql::SqlRecordVector> airportSceneryCache;
 
-  atools::sql::SqlDatabase *dbSim, *dbNav;
+  atools::sql::SqlDatabase *dbSim, *dbNav, *dbTrack;
 
   /* Prepared database queries */
   atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr, *vorQuery = nullptr,

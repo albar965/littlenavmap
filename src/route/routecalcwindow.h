@@ -89,8 +89,6 @@ public:
 
   /* 0= waypoints only, 10 = airways only */
   int getAirwayWaypointPreference() const;
-  int getAirwayWaypointPreferenceMin() const;
-  int getAirwayWaypointPreferenceMax() const;
 
   /* true if NDB should be included in radionav calculation */
   bool isRadionavNdb() const;
@@ -113,6 +111,11 @@ public:
     return toIndex;
   }
 
+  float getAirwayPreferenceCostFactor() const;
+
+  static constexpr int AIRWAY_WAYPOINT_PREF_MIN = 0;
+  static constexpr int AIRWAY_WAYPOINT_PREF_MAX = 10;
+
 signals:
   /* Use clicked calculate flight plan button */
   void calculateClicked();
@@ -122,6 +125,7 @@ signals:
 private:
   /* Fill header message with departure, destination or error messages. */
   void updateHeader();
+  void updatePreferenceLabel();
 
   /* Adjust flight plan altitude spin box */
   void adjustAltitudePressed();
@@ -133,6 +137,8 @@ private:
   bool canCalculateSelection = false;
   UnitStringTool *units = nullptr;
 
+  QList<QObject *> widgets;
+  QStringList preferenceTexts;
 };
 
 #endif // LNM_ROUTECALCWIN_H

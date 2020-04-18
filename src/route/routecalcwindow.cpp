@@ -27,12 +27,34 @@
 #include "util/htmlbuilder.h"
 #include "ui_mainwindow.h"
 
+// Factor to put on costs for direct connections. Airways <-> Waypoints
+static const float DIRECT_COST_FACTORS[11] = {10.f, 8.f, 6.f, 4.f, 3.f, 2.f, 1.5f, 1.25f, 1.2f, 1.1f, 1.f};
+
 using atools::util::HtmlBuilder;
 
 RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
   QObject(parent)
 {
+  preferenceTexts = QStringList({
+    tr("Airways and tracks only."),
+    tr("More airways and less direct."),
+    tr("More airways and less direct."),
+    tr("More airways and less direct."),
+    tr("More airways and direct."),
+    tr("Airways and direct connections."),
+    tr("More direct and airways."),
+    tr("More direct and less airways."),
+    tr("More direct and less airways."),
+    tr("More direct and less airways."),
+    tr("Direct connections only.")
+  });
+
   Ui::MainWindow *ui = NavApp::getMainUi();
+  widgets = {ui->horizontalSliderRouteCalcAirwayPreference, ui->labelRouteCalcAirwayPreferWaypoint,
+             ui->radioButtonRouteCalcAirwayJet, ui->spinBoxRouteCalcCruiseAltitude, ui->radioButtonRouteCalcAirwayAll,
+             ui->checkBoxRouteCalcAirwayNoRnav, ui->checkBoxRouteCalcAirwayTrack, ui->radioButtonRouteCalcRadio,
+             ui->radioButtonRouteCalcAirwayVictor, ui->radioButtonRouteCalcAirway, ui->checkBoxRouteCalcRadioNdb};
+
   connect(ui->pushButtonRouteCalc, &QPushButton::clicked, this, &RouteCalcWindow::calculateClicked);
   connect(ui->pushButtonRouteCalcDirect, &QPushButton::clicked, this, &RouteCalcWindow::calculateDirectClicked);
   connect(ui->pushButtonRouteCalcReverse, &QPushButton::clicked, this, &RouteCalcWindow::calculateReverseClicked);
@@ -42,9 +64,14 @@ RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
   connect(ui->radioButtonRouteCalcRadio, &QRadioButton::clicked, this, &RouteCalcWindow::updateWidgets);
   connect(ui->comboBoxRouteCalcMode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &RouteCalcWindow::updateWidgets);
+  connect(ui->horizontalSliderRouteCalcAirwayPreference, &QSlider::valueChanged,
+          this, &RouteCalcWindow::updatePreferenceLabel);
 
   units = new UnitStringTool();
   units->init({ui->spinBoxRouteCalcCruiseAltitude});
+
+  Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->minimum() == AIRWAY_WAYPOINT_PREF_MIN);
+  Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->maximum() == AIRWAY_WAYPOINT_PREF_MAX);
 }
 
 RouteCalcWindow::~RouteCalcWindow()
@@ -120,6 +147,13 @@ void RouteCalcWindow::updateWidgets()
   ui->pushButtonRouteCalcReverse->setEnabled(!isCalculateSelection() && canCalcRoute);
 
   updateHeader();
+  updatePreferenceLabel();
+}
+
+void RouteCalcWindow::updatePreferenceLabel()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->labelRouteCalcPreference->setText(preferenceTexts.at(ui->horizontalSliderRouteCalcAirwayPreference->value()));
 }
 
 void RouteCalcWindow::updateHeader()
@@ -190,27 +224,12 @@ void RouteCalcWindow::updateHeader()
 
 void RouteCalcWindow::restoreState()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::WidgetState(lnm::ROUTE_CALC_DIALOG).restore(
-  {
-    ui->horizontalSliderRouteCalcAirwayPreference, ui->labelRouteCalcAirwayPreferWaypoint,
-    ui->radioButtonRouteCalcAirwayJet, ui->spinBoxRouteCalcCruiseAltitude, ui->radioButtonRouteCalcAirwayAll,
-    ui->checkBoxRouteCalcAirwayNoRnav, ui->radioButtonRouteCalcRadio, ui->radioButtonRouteCalcAirwayVictor,
-    ui->radioButtonRouteCalcAirway, ui->checkBoxRouteCalcRadioNdb
-  });
+  atools::gui::WidgetState(lnm::ROUTE_CALC_DIALOG).restore(widgets);
 }
 
 void RouteCalcWindow::saveState()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
-  atools::gui::WidgetState(lnm::ROUTE_CALC_DIALOG).save(
-  {
-    ui->horizontalSliderRouteCalcAirwayPreference, ui->labelRouteCalcAirwayPreferWaypoint,
-    ui->radioButtonRouteCalcAirwayJet, ui->spinBoxRouteCalcCruiseAltitude, ui->radioButtonRouteCalcAirwayAll,
-    ui->checkBoxRouteCalcAirwayNoRnav, ui->radioButtonRouteCalcRadio, ui->radioButtonRouteCalcAirwayVictor,
-    ui->radioButtonRouteCalcAirway, ui->checkBoxRouteCalcRadioNdb
-  });
+  atools::gui::WidgetState(lnm::ROUTE_CALC_DIALOG).save(widgets);
 }
 
 void RouteCalcWindow::preDatabaseLoad()
@@ -220,7 +239,7 @@ void RouteCalcWindow::preDatabaseLoad()
 
 void RouteCalcWindow::postDatabaseLoad()
 {
-  NavApp::getMainUi()->checkBoxRouteCalcAirwayNoRnav->setEnabled(NavApp::hasRouteTypeInDatabase());
+  updateWidgets();
 }
 
 rd::RoutingType RouteCalcWindow::getRoutingType() const
@@ -256,16 +275,6 @@ int RouteCalcWindow::getAirwayWaypointPreference() const
   return NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->value();
 }
 
-int RouteCalcWindow::getAirwayWaypointPreferenceMin() const
-{
-  return NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->minimum();
-}
-
-int RouteCalcWindow::getAirwayWaypointPreferenceMax() const
-{
-  return NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->maximum();
-}
-
 bool RouteCalcWindow::isRadionavNdb() const
 {
   return NavApp::getMainUi()->checkBoxRouteCalcRadioNdb->isChecked();
@@ -274,6 +283,11 @@ bool RouteCalcWindow::isRadionavNdb() const
 bool RouteCalcWindow::isCalculateSelection() const
 {
   return NavApp::getMainUi()->comboBoxRouteCalcMode->currentIndex() == 1 && fromIndex != -1 && toIndex != -1;
+}
+
+float RouteCalcWindow::getAirwayPreferenceCostFactor() const
+{
+  return DIRECT_COST_FACTORS[NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->value()];
 }
 
 void RouteCalcWindow::adjustAltitudePressed()

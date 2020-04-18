@@ -46,26 +46,22 @@ map::MapObjectType RouteExtractor::toMapObjectType(atools::routing::NodeType typ
 {
   switch(type)
   {
-    case atools::routing::WAYPOINT_JET:
-    case atools::routing::WAYPOINT_VICTOR:
-    case atools::routing::WAYPOINT_BOTH:
-    case atools::routing::WAYPOINT_NAMED:
-    case atools::routing::WAYPOINT_UNNAMED:
+    case atools::routing::NODE_WAYPOINT:
       return map::WAYPOINT;
 
-    case atools::routing::VOR:
-    case atools::routing::VORDME:
-    case atools::routing::DME:
+    case atools::routing::NODE_VOR:
+    case atools::routing::NODE_VORDME:
+    case atools::routing::NODE_DME:
       return map::VOR;
 
-    case atools::routing::NDB:
+    case atools::routing::NODE_NDB:
       return map::NDB;
 
-    case atools::routing::DEPARTURE:
-    case atools::routing::DESTINATION:
+    case atools::routing::NODE_DEPARTURE:
+    case atools::routing::NODE_DESTINATION:
       return map::USERPOINTROUTE;
 
-    case atools::routing::NONE:
+    case atools::routing::NODE_NONE:
       break;
   }
   return map::NONE;

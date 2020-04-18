@@ -69,6 +69,7 @@
 #include "gui/tabwidgethandler.h"
 #include "gui/choicedialog.h"
 #include "geo/calculations.h"
+#include "routing/routenetworkloader.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -203,8 +204,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
   // Create flight plan calculation caches
-  routeNetworkRadio = new atools::routing::RouteNetwork(NavApp::getDatabaseNav(), atools::routing::SOURCE_RADIO);
-  routeNetworkAirway = new atools::routing::RouteNetwork(NavApp::getDatabaseNav(), atools::routing::SOURCE_AIRWAY);
+  routeNetworkRadio = new atools::routing::RouteNetwork(atools::routing::SOURCE_RADIO);
+  routeNetworkAirway = new atools::routing::RouteNetwork(atools::routing::SOURCE_AIRWAY);
 
   routeWindow = new RouteCalcWindow(mainWindow);
 
@@ -1483,7 +1484,6 @@ void RouteController::calculateRoute()
   QString command;
   atools::routing::Modes mode = atools::routing::MODE_NONE;
   bool fetchAirways = false;
-  float directCostFactor = 1.3f;
 
   // Build configuration for route finder =======================================
   if(routeWindow->getRoutingType() == rd::AIRWAY)
@@ -1496,7 +1496,7 @@ void RouteController::calculateRoute()
     {
       case rd::BOTH:
         command = tr("Airway Flight Plan Calculation");
-        mode = atools::routing::MODE_AIRWAY_AND_WAYPOINT;
+        mode = atools::routing::MODE_AIRWAY_WAYPOINT;
         if(route.getFlightplan().getCruisingAltitude() >= Unit::altFeetF(20000.f))
           type = atools::fs::pln::HIGH_ALTITUDE;
         else
@@ -1506,38 +1506,30 @@ void RouteController::calculateRoute()
       case rd::VICTOR:
         command = tr("Low altitude airway Flight Plan Calculation");
         type = atools::fs::pln::LOW_ALTITUDE;
-        mode = atools::routing::MODE_VICTOR_AND_WAYPOINT;
+        mode = atools::routing::MODE_VICTOR_WAYPOINT;
         break;
 
       case rd::JET:
         command = tr("High altitude airway Flight Plan Calculation");
         type = atools::fs::pln::HIGH_ALTITUDE;
-        mode = atools::routing::MODE_JET_AND_WAYPOINT;
+        mode = atools::routing::MODE_JET_WAYPOINT;
         break;
     }
 
     // Airway/waypoint preference =======================================
     int pref = routeWindow->getAirwayWaypointPreference();
-
-    if(pref == routeWindow->getAirwayWaypointPreferenceMin())
-    {
+    if(pref == RouteCalcWindow::AIRWAY_WAYPOINT_PREF_MIN)
       mode &= ~atools::routing::MODE_WAYPOINT;
-      directCostFactor = 3.f;
-    }
-    else if(pref == routeWindow->getAirwayWaypointPreferenceMax())
-    {
+    else if(pref == RouteCalcWindow::AIRWAY_WAYPOINT_PREF_MAX)
       mode &= ~atools::routing::MODE_AIRWAY;
-      directCostFactor = 1.0f;
-    }
-    else
-      // 1 to 2 in 0.1 steps
-      directCostFactor = 1.f + (routeWindow->getAirwayWaypointPreferenceMax() - pref) * 0.1f;
 
     // RNAV setting
     if(routeWindow->isAirwayNoRnav())
       mode |= atools::routing::MODE_NO_RNAV;
+
+    // Use tracks like NAT or PACOTS
     if(routeWindow->isUseTracks())
-      mode |= atools::routing::MODE_TRACKS;
+      mode |= atools::routing::MODE_TRACK;
   }
   else if(routeWindow->getRoutingType() == rd::RADIONNAV)
   {
@@ -1551,8 +1543,14 @@ void RouteController::calculateRoute()
       mode |= atools::routing::MODE_RADIONAV_NDB;
   }
 
+  if(!net->isLoaded())
+  {
+    atools::routing::RouteNetworkLoader loader(NavApp::getDatabaseNav(), NavApp::getDatabaseTrack());
+    loader.load(net);
+  }
+
   atools::routing::RouteFinder routeFinder(net);
-  routeFinder.setCostFactorForceAirways(directCostFactor);
+  routeFinder.setCostFactorForceAirways(routeWindow->getAirwayPreferenceCostFactor());
 
   int fromIdx = -1, toIdx = -1;
   if(routeWindow->isCalculateSelection())
@@ -1572,7 +1570,7 @@ void RouteController::calculateRoute()
 
 void RouteController::clearAirwayNetworkCache()
 {
-  routeNetworkAirway->deInit();
+  routeNetworkAirway->clear();
 }
 
 /* Calculate a flight plan to all types */
@@ -1591,7 +1589,6 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
   // Load network from database if not already done
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  routeFinder->ensureNetworkLoaded();
 
   routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
   routeFinder->setPreferNdbToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_NDB);
@@ -1845,8 +1842,6 @@ void RouteController::reverseRoute()
 void RouteController::preDatabaseLoad()
 {
   loadingDatabaseState = true;
-  routeNetworkRadio->deInit();
-  routeNetworkAirway->deInit();
   routeAltDelayTimer.stop();
 
   // Reset active to avoid crash when indexes change
@@ -1858,8 +1853,8 @@ void RouteController::preDatabaseLoad()
 
 void RouteController::postDatabaseLoad()
 {
-  routeNetworkRadio->init();
-  routeNetworkAirway->init();
+  routeNetworkRadio->clear();
+  routeNetworkAirway->clear();
 
   // Remove the legs but keep the properties
   route.clearProcedures(proc::PROCEDURE_ALL);
@@ -2609,7 +2604,7 @@ void RouteController::optionsChanged()
 
 void RouteController::tracksChanged()
 {
-  routeWindow->updateWidgets();
+  postDatabaseLoad();
 }
 
 void RouteController::updateUnits()
@@ -3692,15 +3687,22 @@ void RouteController::updateTableModel()
     if(leg.isRoute())
     {
       // Airway ========================
-      QString awname = leg.getAirwayName();
-#ifdef DEBUG_INFORMATION
-      awname += " [" + map::airwayRouteTypeToStringShort(leg.getAirway().routeType) + "]";
-#endif
-      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname);
       const map::MapAirway& airway = leg.getAirway();
+
+      QString awname = airway.isValid() && airway.isTrack() ?
+                       tr("Track %1").arg(leg.getAirwayName()) : leg.getAirwayName();
+
       if(airway.isValid())
+      {
+#ifdef DEBUG_INFORMATION
+        awname += " [" + map::airwayRouteTypeToStringShort(airway.routeType) +
+                  "," + map::airwayTrackTypeToShortString(airway.type) + "]";
+#endif
         itemRow[rc::RESTRICTION] =
           new QStandardItem(map::airwayAltTextShort(airway, false /* addUnit */, false /* narrow */));
+      }
+
+      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname);
       // highlightProcedureItems() does error checking
     }
     else
@@ -4585,3 +4587,35 @@ QStringList RouteController::getRouteColumns() const
 
   return colums;
 }
+
+#ifdef DEBUG_INFORMATION
+
+void RouteController::debugNetworkClick(const atools::geo::Pos& pos)
+{
+  if(pos.isValid())
+  {
+    qDebug() << Q_FUNC_INFO << pos;
+
+    atools::routing::RouteNetworkLoader loader(NavApp::getDatabaseNav(), NavApp::getDatabaseTrack());
+    if(!routeNetworkAirway->isLoaded())
+      loader.load(routeNetworkAirway);
+    if(!routeNetworkRadio->isLoaded())
+      loader.load(routeNetworkRadio);
+
+    atools::routing::Node node = routeNetworkAirway->getNearestNode(pos);
+    if(node.isValid())
+    {
+      qDebug() << "Airway node" << node;
+      qDebug() << "Airway edges" << node.edges;
+    }
+
+    node = routeNetworkRadio->getNearestNode(pos);
+    if(node.isValid())
+    {
+      qDebug() << "Radio node" << node;
+      qDebug() << "Radio edges" << node.edges;
+    }
+  }
+}
+
+#endif

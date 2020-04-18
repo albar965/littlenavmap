@@ -172,7 +172,8 @@ void InfoController::currentInfoTabChanged(int id)
       break;
 
     case ic::INFO_NAVAID:
-      updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
+      updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */,
+                           false /* force update */);
       break;
 
     case ic::INFO_USERPOINT:
@@ -776,8 +777,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   }
 
   // Navaids ================================================================
-  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.ils.isEmpty() ||
-     !result.airways.isEmpty())
+  if(result.hasVor() || result.hasNdb() || result.hasWaypoints() || result.hasIls() || result.hasAirways())
     // if any navaids are to be shown clear search result before
     currentSearchResult.clear(map::NAV_ALL | map::ILS | map::AIRWAY | map::RUNWAYEND);
 
@@ -785,7 +785,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // if any userpoints are to be shown clear search result before
     currentSearchResult.clear(map::USERPOINT);
 
-  foundNavaid = updateNavaidInternal(result, false /* bearing changed */, scrollToTop);
+  foundNavaid = updateNavaidInternal(result, false /* bearing changed */, scrollToTop, forceUpdate);
   foundUserpoint = updateUserpointInternal(result, false /* bearing changed */, scrollToTop);
 
   // Show dock windows if needed
@@ -914,7 +914,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   }
 }
 
-bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop)
+bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop,
+                                          bool forceUpdate)
 {
   HtmlBuilder html(true);
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -995,7 +996,7 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
     foundNavaid = true;
   }
 
-  if(foundNavaid)
+  if(foundNavaid || forceUpdate)
     atools::gui::util::updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml(),
                                       scrollToTop, !scrollToTop /* keep selection */);
 
@@ -1047,6 +1048,21 @@ void InfoController::styleChanged()
 {
   tabHandlerInfo->styleChanged();
   tabHandlerAircraft->styleChanged();
+  showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */,
+                          true /* forceUpdate */);
+}
+
+void InfoController::tracksChanged()
+{
+  // Remove tracks from current result since the ids might change
+  currentSearchResult.airways.erase(std::remove_if(currentSearchResult.airways.begin(),
+                                                   currentSearchResult.airways.end(),
+                                                   [ = ](const map::MapAirway& airway) -> bool
+  {
+    return airway.isTrack();
+  }), currentSearchResult.airways.end());
+
+  // Update all tabs and force update
   showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */,
                           true /* forceUpdate */);
 }
@@ -1199,7 +1215,8 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
                               false /* force weather update */);
 
       if(tabHandlerInfo->getCurrentTabId() == ic::INFO_NAVAID)
-        updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
+        updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */,
+                             false /* force update */);
 
       if(tabHandlerInfo->getCurrentTabId() == ic::INFO_USERPOINT)
         updateUserpointInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);

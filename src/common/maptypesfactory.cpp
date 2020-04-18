@@ -17,11 +17,11 @@
 
 #include "common/maptypesfactory.h"
 
-#include <QDataStream>
 #include <cmath>
 #include "sql/sqlrecord.h"
 #include "geo/calculations.h"
 #include "common/maptypes.h"
+#include "io/binaryutil.h"
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;
@@ -479,8 +479,10 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
     else
       airway.maxAltitude = 99999;
 
-    altitudeLevels(airway.altitudeLevelsEast, record.value("altitude_levels_east").toByteArray());
-    altitudeLevels(airway.altitudeLevelsWest, record.value("altitude_levels_west").toByteArray());
+    airway.altitudeLevelsEast =
+      atools::io::readVector<quint16, quint16>(record.value("altitude_levels_east").toByteArray());
+    airway.altitudeLevelsWest =
+      atools::io::readVector<quint16, quint16>(record.value("altitude_levels_west").toByteArray());
 
     // from_waypoint_name varchar(15),      -- Original name - also for coordinate formats
     // to_waypoint_name varchar(15),        -- "
@@ -513,24 +515,6 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
 
     airway.fragment = record.valueInt("airway_fragment_no");
   }
-}
-
-void MapTypesFactory::altitudeLevels(QVector<int>& levels, QByteArray bytes)
-{
-  QDataStream out(&bytes, QIODevice::ReadOnly);
-  out.setVersion(QDataStream::Qt_5_5);
-  out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-
-  quint16 num;
-  out >> num;
-
-  for(quint16 i = 0; i < num; i++)
-  {
-    quint16 level;
-    out >> level;
-    levels.append(level);
-  }
-  std::sort(levels.begin(), levels.end());
 }
 
 void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker)

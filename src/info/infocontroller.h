@@ -85,6 +85,7 @@ public:
   void postDatabaseLoad();
 
   void styleChanged();
+  void tracksChanged();
 
   /* Update aircraft and aircraft progress tab */
   void simDataChanged(atools::fs::sc::SimConnectData data);
@@ -116,7 +117,7 @@ private:
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_BEARING_TIME_MS = 1000;
 
   void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop, bool forceWeatherUpdate);
-  bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
+  bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate);
   bool updateUserpointInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();

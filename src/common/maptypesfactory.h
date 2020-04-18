@@ -120,8 +120,6 @@ private:
                                    map::MapAirportFlags airportFlag);
   map::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
 
-  void altitudeLevels(QVector<int>& levels, QByteArray bytes);
-
 };
 
 #endif // LITTLENAVMAP_MAPTYPESFACTORY_H

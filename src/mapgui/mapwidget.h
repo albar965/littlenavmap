@@ -267,7 +267,7 @@ private:
   void connectOverlayMenus();
 
   /* Show information from context menu or single click */
-  void handleInfoClick(QPoint pos);
+  void handleInfoClick(QPoint point);
 
   /* Scroll and zoom for touchscreen area mode */
   bool handleTouchAreaClick(QMouseEvent *event);

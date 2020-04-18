@@ -62,17 +62,14 @@ public:
 private:
   /* Clears track tables in database. */
 
-  /* Convert altitude levels into binary format. */
-  QByteArray altitudeLevels(const QVector<short>& levels);
-
   /* Add waypoint/trackpoint to hash returning waypoint id or new generated trackpoint id.
    * rec is an empty record for trackpoint table. */
   int addTrackpoint(QHash<int, atools::sql::SqlRecord>& trackpoints, atools::sql::SqlRecord rec,
                     map::MapObjectRefExt ref, int trackpointId);
 
   /* Add track metadata to records if not already present. metaId is incremented if inserted. */
-  void addTrackmeta(QHash<std::pair<atools::track::TrackType, QString>, atools::sql::SqlRecord>& records,
-                    const atools::track::Track& track, int& metaId);
+  bool addTrackmeta(QHash<std::pair<atools::track::TrackType, QString>, atools::sql::SqlRecord>& records,
+                    const atools::track::Track& track, int metaId, int startPointId, int endPointId);
 
   /* Queries are initialized and closed when entering and leaving loadTracks(). */
   void initQueries();

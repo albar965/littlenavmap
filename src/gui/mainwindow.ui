@@ -6136,6 +6136,16 @@ relation to shown airport</string>
         <property name="spacing">
          <number>2</number>
         </property>
+        <item row="1" column="2">
+         <widget class="QLabel" name="labelRouteCalcAirwayPreferWaypoint_2">
+          <property name="text">
+           <string>Direct</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="labelRouteCalcAirwayPreferAirway">
           <property name="text">
@@ -6153,16 +6163,6 @@ relation to shown airport</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QLabel" name="labelRouteCalcAirwayPreferWaypoint_2">
-          <property name="text">
-           <string>Direct</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -6201,6 +6201,13 @@ unusable airways (e.g. due to altitude restrictions).</string>
           </property>
           <property name="tickInterval">
            <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="3">
+         <widget class="QLabel" name="labelRouteCalcPreference">
+          <property name="text">
+           <string/>
           </property>
          </widget>
         </item>

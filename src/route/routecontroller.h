@@ -273,6 +273,11 @@ public:
   /* Clear network, so it will be reloaded before next flight plan calculation. */
   void clearAirwayNetworkCache();
 
+#ifdef DEBUG_INFORMATION
+  void debugNetworkClick(const atools::geo::Pos& pos);
+
+#endif
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

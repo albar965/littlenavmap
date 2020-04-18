@@ -258,6 +258,18 @@ struct MapBase
     return !operator==(other);
   }
 
+  /* Set type using QFlags wrapper */
+  void setType(map::MapObjectTypes type)
+  {
+    objType = static_cast<map::MapObjectType>(type.operator unsigned int());
+  }
+
+  /* Get type using QFlags wrapper */
+  map::MapObjectTypes getType() const
+  {
+    return objType;
+  }
+
 };
 
 QDebug operator<<(QDebug out, const map::MapBase& obj);
@@ -697,7 +709,7 @@ struct MapAirway
   int minAltitude, maxAltitude /* feet */,
       sequence /* segment sequence in airway */,
       fragment /* fragment number of disconnected airways with the same name */;
-  QVector<int> altitudeLevelsEast, altitudeLevelsWest;
+  QVector<quint16> altitudeLevelsEast, altitudeLevelsWest;
   atools::geo::Pos from, to;
   atools::geo::Rect bounding; /* pre calculated using from and to */
 
