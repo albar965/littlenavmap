@@ -60,21 +60,33 @@ void MapPainterWeather::render(PaintContext *context)
   if(airportCache == nullptr)
     return;
 
-  bool limitWeatherUpdates = NavApp::isConnectedNetwork() || NavApp::isSimConnect();
-
   // Collect all airports that are visible
   QList<PaintAirportType> visibleAirportWeather;
   for(const MapAirport& airport : *airportCache)
   {
-    if(!limitWeatherUpdates || airport.longestRunwayLength >= 7000)
-    {
-      float x, y;
-      bool hidden;
-      bool visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
+    float x, y;
+    bool hidden;
+    bool visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
 
-      if(!hidden && visibleOnMap)
-        visibleAirportWeather.append({&airport, QPointF(x, y)});
-    }
+    if(!hidden && visibleOnMap)
+      visibleAirportWeather.append({&airport, QPointF(x, y)});
+  }
+
+  // ================================
+  // Limit weather display to the 10 most important/biggest airports if connected via network or SimConnect
+  if(NavApp::isConnectedNetwork() || NavApp::isSimConnect())
+  {
+    visibleAirportWeather.erase(std::remove_if(visibleAirportWeather.begin(), visibleAirportWeather.end(),
+                                               [](const PaintAirportType& ap) -> bool
+    {
+      return ap.airport->empty() || !ap.airport->hard() || ap.airport->closed();
+    }), visibleAirportWeather.end());
+
+    std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(),
+              [](const PaintAirportType& ap1, const PaintAirportType& ap2) {
+      return ap1.airport->longestRunwayLength > ap2.airport->longestRunwayLength;
+    });
+    visibleAirportWeather = visibleAirportWeather.mid(0, 10);
   }
 
   // Sort by airport display order
