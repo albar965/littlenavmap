@@ -562,7 +562,7 @@ TRANSLATIONS = littlenavmap_fr.ts \
                littlenavmap_nl.ts \
                littlenavmap_de.ts \
                littlenavmap_es.ts \
-               littlenavmap_cn.ts \
+               littlenavmap_zh.ts \
                littlenavmap_pt_BR.ts
 
 OTHER_FILES += \
