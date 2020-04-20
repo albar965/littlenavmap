@@ -219,7 +219,8 @@ void DatabaseDialog::updateWidgets()
   ui->lineEditDatabaseBasePath->blockSignals(false);
 
   ui->checkBoxReadAddOnXml->setEnabled(currentFsType == atools::fs::FsPaths::P3D_V3 ||
-                                       currentFsType == atools::fs::FsPaths::P3D_V4);
+                                       currentFsType == atools::fs::FsPaths::P3D_V4 ||
+                                       currentFsType == atools::fs::FsPaths::P3D_V5);
 
   // Disable everything if no installed simulators are found
   // (normally not needed since the action is already disabled)

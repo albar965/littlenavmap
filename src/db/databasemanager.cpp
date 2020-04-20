@@ -1124,7 +1124,8 @@ bool DatabaseManager::runInternal()
       }
       else
       {
-        QString sceneryCfgCodec = selectedFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
+        QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
+                                   selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
         if(!atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
         {
           atools::gui::Dialog::warning(databaseDialog, tr("Cannot read scenery configuration \"%1\". Reason: %2.").
@@ -1310,7 +1311,8 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   try
   {
     atools::fs::NavDatabase nd(&navDatabaseOpts, db, &errors, GIT_REVISION);
-    QString sceneryCfgCodec = selectedFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
+    QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
+                               selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
     nd.create(sceneryCfgCodec);
   }
   catch(atools::Exception& e)

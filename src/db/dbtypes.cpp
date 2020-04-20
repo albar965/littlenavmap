@@ -32,7 +32,9 @@ void SimulatorTypeMap::fillDefault()
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
 {
 #if defined(Q_OS_WIN32)
-  if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).hasDatabase)
+  if(contains(atools::fs::FsPaths::P3D_V5) && value(atools::fs::FsPaths::P3D_V5).hasDatabase)
+    return atools::fs::FsPaths::P3D_V5;
+  else if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).hasDatabase)
     return atools::fs::FsPaths::P3D_V4;
   else if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).hasDatabase)
     return atools::fs::FsPaths::P3D_V3;
@@ -54,7 +56,9 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled()
 {
 #if defined(Q_OS_WIN32)
-  if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).isInstalled)
+  if(contains(atools::fs::FsPaths::P3D_V5) && value(atools::fs::FsPaths::P3D_V5).isInstalled)
+    return atools::fs::FsPaths::P3D_V5;
+  else if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).isInstalled)
     return atools::fs::FsPaths::P3D_V4;
   else if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).isInstalled)
     return atools::fs::FsPaths::P3D_V3;

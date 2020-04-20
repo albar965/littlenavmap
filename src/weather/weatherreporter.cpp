@@ -220,6 +220,7 @@ void WeatherReporter::initActiveSkyNext()
     QString asnSnapshotPath, asnFlightplanSnapshotPath;
     QString as16SnapshotPath, as16FlightplanSnapshotPath;
     QString asp4SnapshotPath, asp4FlightplanSnapshotPath;
+    QString asp5SnapshotPath, asp5FlightplanSnapshotPath;
     QString asXplSnapshotPath, aspXplFlightplanSnapshotPath;
 
     findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QString());
@@ -228,12 +229,18 @@ void WeatherReporter::initActiveSkyNext()
     findActiveSkyFiles(as16SnapshotPath, as16FlightplanSnapshotPath, "AS16_", QString());
     qInfo() << "AS16 snapshot" << as16SnapshotPath << "flight plan weather" << as16FlightplanSnapshotPath;
 
-    if(simType == atools::fs::FsPaths::P3D_V4)
+    if(simType == atools::fs::FsPaths::P3D_V4 || simType == atools::fs::FsPaths::P3D_V5)
     {
       // C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv4
       findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv4");
       qInfo() << "ASP4 snapshot" << asp4SnapshotPath << "flight plan weather" << asp4FlightplanSnapshotPath;
     }
+    // else if(simType == atools::fs::FsPaths::P3D_V5)
+    // {
+    //// C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv5
+    // findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv5");
+    // qInfo() << "ASP5 snapshot" << asp5SnapshotPath << "flight plan weather" << asp5FlightplanSnapshotPath;
+    // }
     else if(simType == atools::fs::FsPaths::XPLANE11)
     {
       // C:\Users\USER\AppData\Roaming\Hifi\AS_XPL
@@ -469,6 +476,8 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
     else if(simType == atools::fs::FsPaths::P3D_V3)
       simPathComponent = activeSkyPrefix + "P3D";
     else if(simType == atools::fs::FsPaths::P3D_V4)
+      simPathComponent = activeSkyPrefix + "P3D";
+    else if(simType == atools::fs::FsPaths::P3D_V5)
       simPathComponent = activeSkyPrefix + "P3D";
     else if(simType == atools::fs::FsPaths::XPLANE11)
       simPathComponent = activeSkyPrefix + "XP";
