@@ -1310,33 +1310,36 @@ void InfoController::setTextEditFontSize(QTextEdit *textEdit, float origSize, in
 
 QStringList InfoController::getAirportTextFull(const QString& ident) const
 {
-  QStringList retval;
   map::MapAirport airport;
   airportQuery->getAirportByIdent(airport, ident);
 
-  map::WeatherContext weatherContext;
-  mainWindow->buildWeatherContext(weatherContext, airport);
+  QStringList retval;
+  if(airport.isValid())
+  {
+    map::WeatherContext weatherContext;
+    mainWindow->buildWeatherContext(weatherContext, airport);
 
-  atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
-  HtmlInfoBuilder builder(mainWindow, true /*info*/, true /*print*/);
-  builder.airportText(airport, weatherContext, html, nullptr);
-  retval.append(html.getHtml());
+    atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
+    HtmlInfoBuilder builder(mainWindow, true /*info*/, true /*print*/);
+    builder.airportText(airport, weatherContext, html, nullptr);
+    retval.append(html.getHtml());
 
-  html.clear();
-  builder.runwayText(airport, html);
-  retval.append(html.getHtml());
+    html.clear();
+    builder.runwayText(airport, html);
+    retval.append(html.getHtml());
 
-  html.clear();
-  builder.comText(airport, html);
-  retval.append(html.getHtml());
+    html.clear();
+    builder.comText(airport, html);
+    retval.append(html.getHtml());
 
-  html.clear();
-  builder.procedureText(airport, html);
-  retval.append(html.getHtml());
+    html.clear();
+    builder.procedureText(airport, html);
+    retval.append(html.getHtml());
 
-  html.clear();
-  builder.weatherText(weatherContext, airport, html);
-  retval.append(html.getHtml());
+    html.clear();
+    builder.weatherText(weatherContext, airport, html);
+    retval.append(html.getHtml());
+  }
 
   return retval;
 }
