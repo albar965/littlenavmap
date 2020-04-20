@@ -495,22 +495,22 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
     airway.name = record.valueStr("airway_name");
 
     airway.minAltitude = record.valueInt("minimum_altitude");
-    if(record.contains("maximum_altitude"))
+    if(record.contains("maximum_altitude") && record.valueInt("maximum_altitude") > 0)
       airway.maxAltitude = record.valueInt("maximum_altitude");
     else
       airway.maxAltitude = 99999;
 
     if(record.contains("direction"))
     {
-      QString dir = record.valueStr("direction");
-      if(dir == "F")
+      char dir = atools::strToChar(record.valueStr("direction"));
+      if(dir == 'F')
         airway.direction = map::DIR_FORWARD;
-      else if(dir == "B")
+      else if(dir == 'B')
         airway.direction = map::DIR_BACKWARD;
-      else if(dir == "N")
+      else // if(dir == 'N')
         airway.direction = map::DIR_BOTH;
-      else
-        qWarning() << Q_FUNC_INFO << "Invalid airway directions" << dir;
+      // else
+      // qWarning() << Q_FUNC_INFO << "Invalid airway directions" << dir;
     }
 
     airway.fragment = record.valueInt("airway_fragment_no");

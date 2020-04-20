@@ -260,14 +260,20 @@ rd::AirwayRoutingType RouteCalcWindow::getAirwayRoutingType() const
 
 bool RouteCalcWindow::isAirwayNoRnav() const
 {
-  return NavApp::getMainUi()->checkBoxRouteCalcAirwayNoRnav->isEnabled() &&
-         NavApp::getMainUi()->checkBoxRouteCalcAirwayNoRnav->isChecked();
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(ui->checkBoxRouteCalcAirwayNoRnav->isEnabled())
+    return ui->checkBoxRouteCalcAirwayNoRnav->isChecked();
+  else
+    return false;
 }
 
 bool RouteCalcWindow::isUseTracks() const
 {
-  return NavApp::getMainUi()->checkBoxRouteCalcAirwayTrack->isEnabled() &&
-         NavApp::getMainUi()->checkBoxRouteCalcAirwayTrack->isChecked();
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(ui->checkBoxRouteCalcAirwayTrack->isEnabled())
+    return ui->checkBoxRouteCalcAirwayTrack->isChecked();
+  else
+    return false;
 }
 
 int RouteCalcWindow::getAirwayWaypointPreference() const

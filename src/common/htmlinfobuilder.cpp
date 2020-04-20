@@ -2703,9 +2703,9 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 
   html.row2(tr("Segment length:"), Unit::distMeter(airway.from.distanceMeterTo(airway.to)));
 
+  atools::sql::SqlRecord trackMeta;
   if(infoQuery != nullptr && info)
   {
-    atools::sql::SqlRecord trackMeta;
     if(!isAirway)
     {
       trackMeta = infoQuery->getTrackMetadata(airway.id);
@@ -2737,13 +2737,13 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
       }
 
       html.row2(tr("Waypoints Ident/Region:"), tempLinkHtml.getHtml(), ahtml::NO_ENTITIES);
-      // if(!trackMeta.isEmpty())
-      // html.row2If(tr("Track route:"), trackMeta.valueStr("route"));
     }
   }
   html.tableEnd();
 
 #ifdef DEBUG_INFORMATION
+  if(!trackMeta.isEmpty())
+    html.small(trackMeta.valueStr("route")).br();
   html.small(QString("Database: airway_id = %1").arg(airway.getId())).br();
 #endif
 
