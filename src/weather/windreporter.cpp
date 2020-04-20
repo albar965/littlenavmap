@@ -128,6 +128,7 @@ void WindReporter::updateDataSource()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   actionToValues();
+  downloadErrorReported = false;
 
   if(ui->actionMapShowWindSimulator->isChecked() && simType == atools::fs::FsPaths::XPLANE11)
   {
@@ -163,10 +164,14 @@ void WindReporter::windDownloadFailed(const QString& error, int errorCode)
 {
   qDebug() << Q_FUNC_INFO << error << errorCode;
 
-  // Get rid of splash in case this happens on startup
-  NavApp::deleteSplashScreen();
-  QMessageBox::warning(NavApp::getQMainWidget(), QApplication::applicationName(),
-                       tr("Error downloading wind data: %1 (%2").arg(error).arg(errorCode));
+  if(!downloadErrorReported)
+  {
+    // Get rid of splash in case this happens on startup
+    NavApp::deleteSplashScreen();
+    QMessageBox::warning(NavApp::getQMainWidget(), QApplication::applicationName(),
+                         tr("Error downloading or reading wind data: %1 (%2)").arg(error).arg(errorCode));
+    downloadErrorReported = true;
+  }
   updateToolButtonState();
 }
 
