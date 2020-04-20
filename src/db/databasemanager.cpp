@@ -616,7 +616,9 @@ void DatabaseManager::insertSimSwitchActions()
   // Sort keys to avoid random order
   QList<FsPaths::SimulatorType> keys = simulators.keys();
   QList<FsPaths::SimulatorType> sims;
-  std::sort(keys.begin(), keys.end());
+  std::sort(keys.begin(), keys.end(), [](FsPaths::SimulatorType t1, FsPaths::SimulatorType t2) {
+    return FsPaths::typeToShortName(t1) < FsPaths::typeToShortName(t2);
+  });
 
   // Add real simulators first
   for(atools::fs::FsPaths::SimulatorType type : keys)

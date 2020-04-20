@@ -49,7 +49,9 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   if(!keys.contains(FsPaths::XPLANE11))
     keys.append(FsPaths::XPLANE11);
 
-  std::sort(keys.begin(), keys.end());
+  std::sort(keys.begin(), keys.end(), [](FsPaths::SimulatorType t1, FsPaths::SimulatorType t2) {
+    return FsPaths::typeToShortName(t1) < FsPaths::typeToShortName(t2);
+  });
 
   // Add an item to the combo box for each installed simulator
   for(atools::fs::FsPaths::SimulatorType type : keys)
