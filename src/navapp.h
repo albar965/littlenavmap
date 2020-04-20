@@ -143,6 +143,8 @@ public:
   static bool isFetchAiAircraft();
   static bool isFetchAiShip();
   static bool isConnected();
+  static bool isConnectedNetwork();
+  static bool isSimConnect();
   static bool isConnectedAndAircraft();
   static bool isUserAircraftValid();
 

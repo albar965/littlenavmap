@@ -491,6 +491,11 @@ bool ConnectClient::isConnected() const
     return socket != nullptr && socket->isOpen();
 }
 
+bool ConnectClient::isSimConnect() const
+{
+  return dataReader != nullptr && dataReader->isFsxHandler();
+}
+
 bool ConnectClient::isConnectedNetwork() const
 {
   return socket != nullptr && socket->isOpen();

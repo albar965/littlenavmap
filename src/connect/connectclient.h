@@ -67,6 +67,9 @@ public:
   /* true if connected to Little Navconnect or the simulator */
   bool isConnected() const;
 
+  /* true if connection is using SimConnect for FSX/P3D */
+  bool isSimConnect() const;
+
   /* Connected to Little Navconnect */
   bool isConnectedNetwork() const;
 
