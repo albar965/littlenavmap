@@ -214,6 +214,8 @@ private:
   /* Wind positions as a result of querying the rectangle for caching */
   query::SimpleRectCache<atools::grib::WindPos> windPosCache;
   int cachedLevel = wind::NONE;
+
+  bool downloadErrorReported = false;
 };
 
 #endif // LNM_WINDREPORTER_H
