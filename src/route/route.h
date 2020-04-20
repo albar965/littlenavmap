@@ -526,6 +526,7 @@ public:
   QString getProcedureLegText(proc::MapProcedureTypes mapType) const;
 
   /* Assign index and pointer to flight plan for all objects */
+  void updateIndices();
   void updateIndicesAndOffsets();
   void updateAlternateIndicesAndOffsets();
 

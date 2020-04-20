@@ -1105,6 +1105,8 @@ int Route::legIndexForPositions(const LineString& line, bool reverse)
 
 void Route::cleanupFlightPlanForProcedures()
 {
+  updateIndices();
+
   // like removeDuplicateRouteLegs
   int fromIdx = -1, toIdx = -1;
   if(!sidLegs.isEmpty())
@@ -1296,8 +1298,18 @@ int Route::adjustedActiveLeg() const
   return retval;
 }
 
+void Route::updateIndices()
+{
+  // Update internal indices pointing to flight plan legs
+  for(int i = 0; i < size(); i++)
+    (*this)[i].setFlightplanEntryIndex(i);
+}
+
 void Route::updateIndicesAndOffsets()
 {
+  updateIndices();
+
+  // Update offsets
   activeLegIndex = adjustedActiveLeg();
   sidLegsOffset = map::INVALID_INDEX_VALUE;
   starLegsOffset = map::INVALID_INDEX_VALUE;
@@ -1307,7 +1319,6 @@ void Route::updateIndicesAndOffsets()
   for(int i = 0; i < size(); i++)
   {
     RouteLeg& leg = (*this)[i];
-    leg.setFlightplanEntryIndex(i);
 
     if(leg.getProcedureLeg().isAnyDeparture() && sidLegsOffset == map::INVALID_INDEX_VALUE)
       sidLegsOffset = i;
@@ -1941,7 +1952,7 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteT
     {
       map::MapAirway airway;
       NavApp::getAirwayTrackQuery()->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(),
-                                                           routeLeg.getIdent());
+                                                                routeLeg.getIdent());
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);
       if(airway.maxAltitude > 0)
