@@ -51,7 +51,7 @@ void MapPainterWeather::render(PaintContext *context)
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
+  Q_UNUSED(saver)
 
   // Get airports from cache/database for the bounding rectangle and add them to the map
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
@@ -60,29 +60,39 @@ void MapPainterWeather::render(PaintContext *context)
   if(airportCache == nullptr)
     return;
 
+  bool limitWeatherUpdates = NavApp::isConnectedNetwork() || NavApp::isSimConnect();
+
   // Collect all airports that are visible
   QList<PaintAirportType> visibleAirportWeather;
   for(const MapAirport& airport : *airportCache)
   {
-    float x, y;
-    bool hidden;
-    bool visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
+    if(!limitWeatherUpdates || airport.longestRunwayLength >= 7000)
+    {
+      float x, y;
+      bool hidden;
+      bool visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
 
-    if(!hidden && visibleOnMap)
-      visibleAirportWeather.append({&airport, QPointF(x, y)});
+      if(!hidden && visibleOnMap)
+        visibleAirportWeather.append({&airport, QPointF(x, y)});
+    }
   }
 
   // Sort by airport display order
   std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(), sortAirportFunction);
 
+  WeatherReporter *reporter = NavApp::getWeatherReporter();
   for(const PaintAirportType& airportWeather: visibleAirportWeather)
   {
-    float x = static_cast<float>(airportWeather.point.x());
-    float y = static_cast<float>(airportWeather.point.y());
-    drawAirportWeather(context,
-                       NavApp::getWeatherReporter()->getAirportWeather(airportWeather.airport->ident,
-                                                                       airportWeather.airport->position,
-                                                                       context->weatherSource), x, y);
+    atools::fs::weather::Metar metar =
+      reporter->getAirportWeather(airportWeather.airport->ident,
+                                  airportWeather.airport->position, context->weatherSource);
+
+    if(metar.isValid())
+    {
+      float x = static_cast<float>(airportWeather.point.x());
+      float y = static_cast<float>(airportWeather.point.y());
+      drawAirportWeather(context, metar, x, y);
+    }
   }
 }
 
