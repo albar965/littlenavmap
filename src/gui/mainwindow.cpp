@@ -144,7 +144,7 @@ MainWindow::MainWindow()
                     "</a>."
                   "</p>"
                   "<p>"
-                    "<b>Copyright 2015-2019 Alexander Barthel"
+                    "<b>Copyright 2015-2020 Alexander Barthel"
                     "</b>"
                   "</p>").arg(lnm::helpDonateUrl);
 
