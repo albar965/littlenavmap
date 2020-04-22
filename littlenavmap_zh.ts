@@ -176,7 +176,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="704"/>
         <source>Total Fuel Consumed:</source>
-        <translation>总油耗：</translation>
+        <translation>消耗的总油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="705"/>
@@ -217,7 +217,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="725"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="736"/>
         <source>Fuel Flow:</source>
-        <translation>油耗：</translation>
+        <translation>油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="722"/>
@@ -292,27 +292,27 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="845"/>
         <source>reserve fuel</source>
-        <translation>保留燃油</translation>
+        <translation>保留油量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="847"/>
         <source>climb fuel flow</source>
-        <translation>爬升油耗</translation>
+        <translation>爬升油量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="849"/>
         <source>cruise fuel flow</source>
-        <translation>巡航油耗</translation>
+        <translation>巡航油量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="851"/>
         <source>descent fuel flow</source>
-        <translation>下降油耗</translation>
+        <translation>下降油量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="853"/>
         <source>alternate fuel flow</source>
-        <translation>备降油耗</translation>
+        <translation>备降油量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="856"/>
@@ -327,12 +327,12 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="863"/>
         <source>Block fuel exceeds usable of %1.</source>
-        <translation>航程油耗超过可用燃油 %1。</translation>
+        <translation>轮挡油量超过可用油量 %1。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="868"/>
         <source>Reserve fuel bigger than usable.</source>
-        <translation>备用燃油超过可用油量。</translation>
+        <translation>备用油量超过可用油量。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="871"/>
@@ -352,12 +352,12 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="887"/>
         <source>Estimated range with reserve:</source>
-        <translation>含备用燃油的预计航程：</translation>
+        <translation>含备用油量的预计航程：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="892"/>
         <source>Usable Fuel:</source>
-        <translation>可用燃油：</translation>
+        <translation>可用油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="899"/>
@@ -368,7 +368,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="904"/>
         <source>Cruise fuel flow not set</source>
-        <translation>巡航油耗未设置</translation>
+        <translation>巡航油量未设置</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="907"/>
@@ -474,17 +474,17 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="987"/>
         <source>Trip Fuel:</source>
-        <translation>航程燃油：</translation>
+        <translation>航段油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="991"/>
         <source>&lt;br/&gt;%1 % of usable Fuel</source>
-        <translation>&lt;br/&gt;可用燃油中的%1 %</translation>
+        <translation>&lt;br/&gt;可用油量中的%1 %</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="993"/>
         <source>Block Fuel:</source>
-        <translation>航程油耗：</translation>
+        <translation>轮挡油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="993"/>
@@ -494,28 +494,28 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="996"/>
         <source>Fuel at Destination:</source>
-        <translation>到达目的地时剩余燃油：</translation>
+        <translation>到达时余油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="999"/>
         <source>Alternate Fuel:</source>
-        <translation>备降燃油：</translation>
+        <translation>备降油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1003"/>
         <source>Reserve Fuel:</source>
-        <translation>保留燃油：</translation>
+        <translation>保留油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1009"/>
         <source>Extra Fuel:</source>
-        <translation>额外燃油：</translation>
+        <translation>额外油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1014"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1018"/>
         <source>Contingency Fuel:</source>
-        <translation>应急燃油：</translation>
+        <translation>应急油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1014"/>
@@ -677,7 +677,7 @@ The fuel report will show a warning if this does not match the simulator aircraf
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="220"/>
         <source>Fuel used prior to takeoff by APU, engine start and taxi</source>
-        <translation>起飞前APU、开车和滑行所用的燃油</translation>
+        <translation>起飞前APU、开车和滑行所用的油量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="226"/>
@@ -690,7 +690,7 @@ The fuel report will show a warning if this does not match the simulator aircraf
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="239"/>
         <source>&amp;Extra fuel:</source>
-        <translation>额外燃油（&amp;E）：</translation>
+        <translation>额外油量（&amp;E）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="249"/>
@@ -698,43 +698,43 @@ The fuel report will show a warning if this does not match the simulator aircraf
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
         <translation>在备降场上空以1500英尺高度飞行30分钟，如不要求备降场，在目的地以
-等待速度飞行30分钟所需要的燃油</translation>
+等待速度飞行30分钟所需要的油量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="267"/>
         <source>Estimated range considering reserve fuel.
 Based on cruise speed and fuel flow.</source>
-        <translation>包含备用燃油的预计航程。
-基于巡航速度和油耗。</translation>
+        <translation>包含备用燃油量预计航程。
+基于巡航速度和油量。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="287"/>
         <source>Fuel added at the discretion of the
 captain or the dispatcher</source>
-        <translation>由机长或签派酌情决定额外添加的燃油</translation>
+        <translation>由机长或签派酌情决定额外添加的油量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="307"/>
         <source>&amp;Reserve fuel:</source>
-        <translation>保留燃油（&amp;R）：</translation>
+        <translation>保留油量（&amp;R）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="317"/>
         <source>&amp;Contingency fuel:</source>
-        <translation>应急燃油（&amp;C）：</translation>
+        <translation>应急油量（&amp;C）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="327"/>
         <source>&amp;Usable fuel:</source>
-        <translation>可用燃油（&amp;U）：</translation>
+        <translation>可用油量（&amp;U）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="337"/>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <translation>这是考虑到途中由于风况或路线变化引起的额外油耗。
-这将使旅程燃油增加给定的百分比。</translation>
+        <translation>这是考虑到途中由于风况或路线变化引起的额外油量。
+这将使航程油量增加给定的百分比。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="342"/>
@@ -744,12 +744,12 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="355"/>
         <source>Usable fuel in tanks</source>
-        <translation>燃料箱中的可用燃油</translation>
+        <translation>燃料箱中的可用油量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="371"/>
         <source>&amp;Taxi fuel:</source>
-        <translation>滑行用油（&amp;T）：</translation>
+        <translation>滑行油量（&amp;T）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="389"/>
@@ -827,12 +827,12 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="539"/>
         <source>Average fuel flow for &amp;climb:</source>
-        <translation>平均爬升油耗（&amp;C）：</translation>
+        <translation>平均爬升油量（&amp;C）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="549"/>
         <source>Fuel flow in climb to typical cruise altitude.</source>
-        <translation>爬升到典型巡航高度的平均油耗。</translation>
+        <translation>爬升到典型巡航高度的平均油量。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="555"/>
@@ -865,7 +865,7 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="664"/>
         <source>Fuel flow in c&amp;ruise:</source>
-        <translation>巡航油耗（&amp;C)：</translation>
+        <translation>巡航油量（&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="693"/>
@@ -885,7 +885,7 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="774"/>
         <source>Average fuel flow for &amp;descent:</source>
-        <translation>平均下降油耗（&amp;D）：</translation>
+        <translation>平均下降油量（&amp;D）：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="803"/>
@@ -908,9 +908,9 @@ the given descent speeds</source>
         <source>Fuel flow  when flying to an alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 The default is the cruise fuel flow.</source>
-        <translation>通常是低空飞行到某个备降场所需要的油耗。
-使用最远的备降场来计算油耗。
-默认是巡航油耗。</translation>
+        <translation>通常是低空飞行到某个备降场所需要的油量。
+使用最远的备降场来计算油量。
+默认是巡航油量。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="890"/>
@@ -920,16 +920,16 @@ The default is the cruise fuel flow.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="900"/>
         <source>Average fuel flow for &amp;alternate:</source>
-        <translation>平均备降油耗（&amp;A）:</translation>
+        <translation>平均备降油量（&amp;A）:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="910"/>
         <source>Average true airspeed when flying to alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 Default is cruise speed.</source>
-        <translation>通常是低空飞行到某个备降场所需要的油耗。
-使用最远的备降场来计算油耗。
-默认是巡航油耗。</translation>
+        <translation>通常是低空飞行到某个备降场所需要的油量。
+使用最远的备降场来计算油量。
+默认是巡航油量。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="941"/>
@@ -944,7 +944,7 @@ Default is cruise speed.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="216"/>
         <source>Usable fuel smaller than reserve.</source>
-        <translation>可用燃油少于备用油量。</translation>
+        <translation>可用油量少于备用油量。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="218"/>
@@ -954,12 +954,12 @@ Default is cruise speed.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="220"/>
         <source>Cruise fuel flow not set.</source>
-        <translation>巡航油耗未设置。</translation>
+        <translation>巡航油量未设置。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="231"/>
         <source>Estimated range with reserve %1, %2.</source>
-        <translation>含备用燃油的预计航程 %1, %2。</translation>
+        <translation>含备用油量的预计航程 %1, %2。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="245"/>
@@ -3351,7 +3351,7 @@ Does not update distance and cruise altitude when changed.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="771"/>
         <source>Fuel to be loaded into aircraft as calculated by aircraft performance</source>
-        <translation>由航空器性能计算的加入航空器的燃油</translation>
+        <translation>由航空器性能计算的将要加入航空器的油量</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="777"/>
@@ -3383,27 +3383,27 @@ Does not update distance and cruise altitude when changed.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="830"/>
         <source>Actual used fuel from takeoff to touchdown</source>
-        <translation>起飞到降落的实际油耗</translation>
+        <translation>起飞到降落的实际油量</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="849"/>
         <source>&amp;Used fuel:</source>
-        <translation>油耗（&amp;U）：</translation>
+        <translation>使用的油量（&amp;U）：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="859"/>
         <source>Fuel needed for trip without reserves as calculated by aircraft performance</source>
-        <translation>由航空器性能计算的除保留燃油外的航程燃油</translation>
+        <translation>由航空器性能计算的除保留油量外的航程油量</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="878"/>
         <source>&amp;Trip fuel:</source>
-        <translation>航程燃油（&amp;T）：</translation>
+        <translation>航程油量（&amp;T）：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="895"/>
         <source>&amp;Block fuel:</source>
-        <translation>航程油耗（&amp;B）：</translation>
+        <translation>轮挡油量（&amp;B）：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="905"/>
@@ -4197,25 +4197,25 @@ Sim. Time UTC</source>
         <location filename="src/gui/mainwindow.ui" line="1239"/>
         <source>&amp;Max:</source>
         <comment>Max runway length</comment>
-        <translation type="unfinished">最长/高(&amp;M)：</translation>
+        <translation>最长(&amp;M)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1378"/>
         <source>&amp;Max:</source>
         <comment>Max elevation</comment>
-        <translation type="unfinished">最长/高(&amp;M)：</translation>
+        <translation>最高(&amp;M)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1511"/>
         <source>Ma&amp;x:</source>
         <comment>Max distance</comment>
-        <translation type="unfinished">最大(&amp;X)：</translation>
+        <translation>最远(&amp;X)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2258"/>
         <location filename="src/gui/mainwindow.ui" line="3459"/>
         <source>&amp;Max:</source>
-        <translation>最长/高(&amp;M)：</translation>
+        <translation>最大(&amp;M)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1252"/>
@@ -4302,7 +4302,7 @@ Sim. Time UTC</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1467"/>
         <source>M&amp;in:</source>
-        <translation>最小(&amp;I)：</translation>
+        <translation>最近(&amp;I)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1483"/>
@@ -4937,7 +4937,7 @@ Sim. Time UTC</source>
         <location filename="src/gui/mainwindow.ui" line="3640"/>
         <source>Departure</source>
         <comment>Online Client Departure</comment>
-        <translation type="unfinished"></translation>
+        <translation>出发地</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3662"/>
@@ -5018,13 +5018,13 @@ Sim. Time UTC</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3941"/>
         <source>ACC</source>
-        <translation>区域中心（ACC）</translation>
+        <translation>区管（ACC）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3946"/>
         <source>Departure</source>
         <comment>Facility Type</comment>
-        <translation type="unfinished"></translation>
+        <translation>离场(Dep)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4071"/>
@@ -6594,19 +6594,19 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7609"/>
         <source>Show Aircraft &amp;Trail</source>
-        <translation>显示航空器尾迹（&amp;T）</translation>
+        <translation>显示航空器航迹（&amp;T）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7612"/>
         <location filename="src/gui/mainwindow.ui" line="7615"/>
         <source>Show simulator aircraft trail on map</source>
-        <translation>在地图上显示模拟器中航空器的尾迹</translation>
+        <translation>在地图上显示模拟器中航空器航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7627"/>
         <location filename="src/gui/mainwindow.ui" line="10064"/>
         <source>Delete Aircraft &amp;Trail</source>
-        <translation>移除航空器尾迹（&amp;T）</translation>
+        <translation>移除航空器航迹（&amp;T）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7630"/>
@@ -6795,7 +6795,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7886"/>
         <source>&amp;Mercator</source>
-        <translation>墨卡托投影（&amp;M）</translation>
+        <translation>平面（&amp;M）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7889"/>
@@ -8296,7 +8296,7 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="10067"/>
         <location filename="src/gui/mainwindow.ui" line="10070"/>
         <source>Delete simulator aircraft trail from elevation profile</source>
-        <translation>从立面图上移除模拟器航空器尾迹</translation>
+        <translation>从立面图上移除模拟器航空器航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10075"/>
@@ -8796,13 +8796,13 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10729"/>
         <source>&amp;Navigraph</source>
-        <translation>航图(&amp;N)</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10732"/>
         <location filename="src/gui/mainwindow.ui" line="10735"/>
         <source>Show airspaces from the Navigraph database</source>
-        <translation>从航图数据库显示空域</translation>
+        <translation>从Navigraph数据库显示空域</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10746"/>
@@ -8906,7 +8906,7 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="10868"/>
         <location filename="src/gui/mainwindow.ui" line="10871"/>
         <source>Reset flight plan, aircraft trail and more for a new flight</source>
-        <translation>重置飞行计划、航空器尾迹及其他以开始新飞行</translation>
+        <translation>重置飞行计划、航空器航迹及其他以开始新飞行</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10874"/>
@@ -9004,7 +9004,7 @@ Local: %2</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="616"/>
         <source>Mercator</source>
-        <translation>墨卡托</translation>
+        <translation>平面</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="617"/>
@@ -9232,7 +9232,7 @@ Online Network:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1829"/>
         <source>&amp;Delete aircaft trail</source>
-        <translation>删除航空器尾迹（&amp;D）</translation>
+        <translation>删除航空器航迹（&amp;D）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1831"/>
@@ -9421,7 +9421,7 @@ Simulator might not be able to load the flight plan.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2156"/>
         <source>Delete aircraft trail?</source>
-        <translation>删除航空器尾迹？</translation>
+        <translation>删除航空器航迹？</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2157"/>
@@ -9433,7 +9433,7 @@ Simulator might not be able to load the flight plan.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2166"/>
         <source>Aircraft track removed from map.</source>
-        <translation>航空器尾迹已从地图上移除。</translation>
+        <translation>航空器航迹已从地图上移除。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2179"/>
@@ -9695,7 +9695,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2791"/>
         <source>You have to switch to the Mercator map projection before saving the image.</source>
-        <translation>在保存图像前你必须切换到墨卡托地图推测。</translation>
+        <translation>在保存图像前你必须切换到墨卡托（平面）地图推测。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2797"/>
@@ -9766,7 +9766,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3410"/>
         <source>&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;User features like range rings or patterns as well as scenery, logbook and userpoint databases are not affected.&lt;br/&gt;&lt;br/&gt;A copy of the settings file&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;which allows you to undo this change.</source>
-        <translation>&lt;b&gt;这将会重置所有选项、窗口布局、对话框布局、航空器尾迹、地图位置历史和文件历史到默认值并重新开启。 &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;用户特性例如距离环或者模式以及地景件不会受影响。&lt;br/&gt;&lt;br/&gt;一个设置文件的副本&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;将会在此文件夹中创建&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;这将是你可以在将来撤销这个更改。</translation>
+        <translation>&lt;b&gt;这将会重置所有选项、窗口布局、对话框布局、航空器航迹、地图位置历史和文件历史到默认值并重新开启。 &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;用户特性例如距离环或者模式以及地景件不会受影响。&lt;br/&gt;&lt;br/&gt;一个设置文件的副本&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;将会在此文件夹中创建&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;这将是你可以在将来撤销这个更改。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3849"/>
@@ -10245,7 +10245,6 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="445"/>
         <source>Military Combat:</source>
-        <translatorcomment>可能是机坪，待查</translatorcomment>
         <translation>军用战斗：</translation>
     </message>
     <message>
@@ -10738,18 +10737,17 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1114"/>
         <source>Has Backcourse</source>
-        <translatorcomment>待查</translatorcomment>
-        <translation>有背道（Backcourse）的</translation>
+        <translation>有反向航道（Backcourse）的</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1121"/>
         <source>Localizer Heading:</source>
-        <translation>信标朝向：</translation>
+        <translation>航向台朝向：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1123"/>
         <source>Localizer Heading and Width:</source>
-        <translation>信标朝向及宽：</translation>
+        <translation>航向台朝向及宽：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1124"/>
@@ -10760,7 +10758,7 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1144"/>
         <source>Offset localizer.</source>
-        <translation>偏移信标。</translation>
+        <translation>偏移航向台。</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1145"/>
@@ -11044,7 +11042,7 @@ MHz/kHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="1569"/>
         <source>%2Interpolated Weather - %1</source>
         <translatorcomment>待查</translatorcomment>
-        <translation>%2差值的气象 - %1</translation>
+        <translation>%2插值的气象 - %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1574"/>
@@ -11506,7 +11504,7 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2189"/>
         <source>Average fuel flow:</source>
-        <translation>平均油耗：</translation>
+        <translation>平均油量：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2198"/>
@@ -11558,17 +11556,17 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2264"/>
         <source>Trip from plan:</source>
-        <translation>计划航程油耗：</translation>
+        <translation>计划航程油量：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2265"/>
         <source>Block from plan:</source>
-        <translation>计划航程油耗：</translation>
+        <translation>计划轮挡油量：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2266"/>
         <source>Used from takeoff to landing:</source>
-        <translation>自起飞到降落的油耗：</translation>
+        <translation>自起飞到降落的油量：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2273"/>
@@ -12029,7 +12027,6 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2977"/>
         <source>Is Prefile</source>
-        <translatorcomment>待查</translatorcomment>
         <translation>是预先填报的</translation>
     </message>
     <message>
@@ -12352,7 +12349,7 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3497"/>
         <source>Fuel Flow:</source>
-        <translation>油耗：</translation>
+        <translation>油量：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3505"/>
@@ -12574,7 +12571,7 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3834"/>
         <source>Navigraph</source>
-        <translation>航图</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3834"/>
@@ -14197,12 +14194,12 @@ Retrying again in three minutes.</source>
     <message>
         <location filename="src/options/options.ui" line="259"/>
         <source>Load the last flight trail flown</source>
-        <translation>载入上次的飞行尾迹</translation>
+        <translation>载入上次的飞行航迹</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="262"/>
         <source>Restore aircraft &amp;trail</source>
-        <translation>恢复航空器尾迹（&amp;T）</translation>
+        <translation>恢复航空器航迹（&amp;T）</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="272"/>
@@ -14408,7 +14405,7 @@ opening files, modifying the flight plan and other operations.</source>
     <message>
         <location filename="src/options/options.ui" line="755"/>
         <source>Show tooltips for airports, parking, towers and helipads when hovering the cursor over the map</source>
-        <translation>当鼠标在地图上悬停时显示机场、停机位、铁塔和直升机坪的工具提示</translation>
+        <translation>当鼠标在地图上悬停时显示机场、停机位、塔台和直升机坪的工具提示</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="758"/>
@@ -14700,7 +14697,7 @@ Smaller values will zoom in closer to an airport or navaid.
 This works best with the Mercator projection and online maps.
 Map views might be shown with a larger zoom distance than expected if this option is selected.</source>
         <translation>在例如居中飞行计划或者双击之类的操作后，将地图缩小一档以获得更清晰的地图显示。
-在墨卡托投影和在线地图下工作最佳。
+在墨卡托（平面）投影和在线地图下工作最佳。
 选择此选项后地图可能会显示在比预期更大的比例尺下。</translation>
     </message>
     <message>
@@ -14849,7 +14846,7 @@ Enable &quot;Dim passed Legs&quot; to see his color.</source>
     <message>
         <location filename="src/options/options.ui" line="1750"/>
         <source>Set color for aircraft trail.</source>
-        <translation>设置航空器尾迹颜色。</translation>
+        <translation>设置航空器航迹颜色。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1785"/>
@@ -14923,7 +14920,7 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
     <message>
         <location filename="src/options/options.ui" line="1972"/>
         <source>User aircraft &amp;trail:</source>
-        <translation>显示航空器尾迹（&amp;T）：</translation>
+        <translation>显示航空器航迹（&amp;T）：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2014"/>
@@ -15023,7 +15020,7 @@ logbook entries:</source>
 Value 0 is opaque and 90 is most transparent.</source>
         <oldsource>Text size of the MORA text and grid.
 Value 0 is opaque and 90 is most transparent.</oldsource>
-        <translation type="unfinished">最低偏航高度（MORA）的文字和网格的文字透明度
+        <translation>最低偏航高度（MORA）的文字和网格的文字透明度
 0是不透明的，90是最透明的。</translation>
     </message>
     <message>
@@ -15272,7 +15269,7 @@ Also affects labels at holds and traffic patterns.</source>
         <location filename="src/options/options.ui" line="3025"/>
         <source>Statute Miles per Hour (mph)</source>
         <oldsource>Statue Miles per Hour (mph)</oldsource>
-        <translation type="unfinished">法定英里每小时 (mph)</translation>
+        <translation>法定英里每小时 (mph)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3033"/>
@@ -15293,7 +15290,7 @@ Also affects labels at holds and traffic patterns.</source>
         <location filename="src/options/options.ui" line="3068"/>
         <source>Statute Miles (mi)</source>
         <oldsource>Statue Miles (mi)</oldsource>
-        <translation type="unfinished">法定英里 (mi)</translation>
+        <translation>法定英里 (mi)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3080"/>
@@ -15326,7 +15323,7 @@ See notes in the manual for details of this setting and how to move around in th
         <oldsource>The map will stop following the aircraft for the given time if the user does any interaction with the map like scrolling or zooming.
 This setting is also used in the elevation profile.
 See notes in the manual for details of this setting and how to move around in the map,</oldsource>
-        <translation type="unfinished">在地图交互操作例如滚动或缩放后，在地图会指定的时间内停止航空器跟随。
+        <translation>在地图交互操作例如滚动或缩放后，在地图会指定的时间内停止航空器跟随。
 这个设置同样会在立面图中使用。
 查看手册里的注意事项以获取更多详情并了解如何在地图中移动。</translation>
     </message>
@@ -15376,7 +15373,7 @@ See notes in the manual for details of this setting and how to move around in th
 This is also used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</source>
         <oldsource>Map will follow the aircraft constantly when checked.
 This is als used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</oldsource>
-        <translation type="unfinished">如选中地图将持续跟随航空器。
+        <translation>如选中地图将持续跟随航空器。
 这也用于“将航空器和下个飞行计划航路点在地图上居中”。</translation>
     </message>
     <message>
@@ -15411,17 +15408,17 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
     <message>
         <location filename="src/options/options.ui" line="3331"/>
         <source>Aircraft Trail</source>
-        <translation>航空器尾迹</translation>
+        <translation>航空器航迹</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3352"/>
         <source>Maximum number of aircraft &amp;trail points:</source>
-        <translation>航空器尾迹点最大数量（&amp;T）：</translation>
+        <translation>航空器航迹点最大数量（&amp;T）：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3362"/>
         <source>The user aircraft trail will be pruned if it contains more than this number of points. Lower this value to avoid too long tracks and save performance.</source>
-        <translation>如包含超过这个数量的点，用户航空器尾迹将被精简。调低这个值以避免太长的轨迹并保护性能。</translation>
+        <translation>如包含超过这个数量的点，用户航空器航迹将被精简。调低这个值以避免太长的轨迹并保护性能。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3368"/>
@@ -16334,7 +16331,7 @@ and other user interface behavior.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="150"/>
         <source>Map Display Online</source>
-        <translation>在线地图显示</translation>
+        <translation>管制中心地图</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="150"/>
@@ -16361,7 +16358,7 @@ options for course and heading display.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="152"/>
         <source>Update and movement options for the user aircraft and trail.</source>
-        <translation>用户航空器及尾迹的更新及移动选项。</translation>
+        <translation>用户航空器及航迹的更新及移动选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="153"/>
@@ -17232,12 +17229,12 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="420"/>
         <source>Fuel flow in c&amp;ruise:</source>
-        <translation>巡航油耗（&amp;C)：</translation>
+        <translation>巡航油量（&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="443"/>
         <source>&amp;Reserve fuel:</source>
-        <translation>保留燃油（&amp;R）：</translation>
+        <translation>保留油量（&amp;R）：</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="479"/>
@@ -17247,7 +17244,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="521"/>
         <source>Average fuel flow for &amp;climb:</source>
-        <translation>平均爬升油耗（&amp;C）：</translation>
+        <translation>平均爬升油量（&amp;C）：</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="537"/>
@@ -17257,12 +17254,12 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="572"/>
         <source>Average fuel flow for &amp;alternate:</source>
-        <translation>平均备降油耗（&amp;A）:</translation>
+        <translation>平均备降油量（&amp;A）:</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="648"/>
         <source>Average fuel flow for &amp;descent:</source>
-        <translation>平均下降油耗（&amp;D）：</translation>
+        <translation>平均下降油量（&amp;D）：</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="658"/>
@@ -17360,7 +17357,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/print/printdialog.ui" line="41"/>
         <source>Include estimated fuel consumption, trip and block fuel if aircraft performance is loaded.</source>
-        <translation>如已载入航空器性能，包含预计油耗，航段及航程油耗。</translation>
+        <translation>如已载入航空器性能，包含预计油量，航段及轮挡油量。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="44"/>
@@ -19814,7 +19811,7 @@ Really use it?</source>
         <location filename="src/common/proctypes.cpp" line="66"/>
         <location filename="src/common/proctypes.cpp" line="82"/>
         <source>Localizer</source>
-        <translation></translation>
+        <translation>航向台</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="69"/>
@@ -19859,7 +19856,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="88"/>
         <source>Localizer Backcourse</source>
-        <translation>航标背道</translation>
+        <translation>航向台反向航道</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="91"/>
@@ -19924,12 +19921,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="110"/>
         <source>Direct to fix</source>
-        <translation>直接到切入点</translation>
+        <translation>直飞到切入点</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="111"/>
         <source>Fix to altitude</source>
-        <translation>切入点到海拔</translation>
+        <translation>切入点到高度</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="112"/>
@@ -20230,7 +20227,7 @@ Really use it?</source>
         <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2020 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2020 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
         <translatorcomment>添加了翻译者姓名、许可证及网站。Added translator name license and website.</translatorcomment>
-        <translation type="unfinished">&lt;p&gt;是一个适用于X-Plane 11, Flight Simulator X 和 Prepar3D的免费的开源飞行计划器，导航工具，动态地图，机场搜索和机场信息系统&lt;/p&gt;&lt;p&gt;&lt;b&gt;如您愿意您可以在&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;这里&lt;/a&gt;捐助.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此软件许可证适用于&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本&lt;/p&gt;&lt;p&gt;此软件的源代码在 &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;。&lt;/p&gt;&lt;p&gt;关于我的更多项目&lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;版权所有 2015-2020 Alexander Barthel&lt;/b&gt;&lt;b&gt;中文翻译由&lt;a href=&quot;https://johnliu.info&quot;&gt;John Liu&lt;/a&gt;提供，适用同样的&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本的许可证。&lt;/b&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;是一个适用于X-Plane 11, Flight Simulator X 和 Prepar3D的免费的开源飞行计划器，导航工具，动态地图，机场搜索和机场信息系统&lt;/p&gt;&lt;p&gt;&lt;b&gt;如您愿意您可以在&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;这里&lt;/a&gt;捐助.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此软件许可证适用于&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本&lt;/p&gt;&lt;p&gt;此软件的源代码在 &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;。&lt;/p&gt;&lt;p&gt;关于我的更多项目&lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;版权所有 2015-2020 Alexander Barthel&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此版本中文翻译由&lt;a href=&quot;https://github.com/J0hnLiu&quot;&gt;John Liu&lt;/a&gt;提供，适用同样的&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本的许可证。因水平有限，翻译可能存在一些不足，如有发现请&lt;a href=&quot;https://johnliu.info/lnm&quot;&gt;向我指出&lt;/a&gt;。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3108"/>
@@ -20486,14 +20483,14 @@ hh:mm</source>
         <source>Type of a radio navaid. Shows ILS or LOC for
 localizer approaches on the last runway leg.</source>
         <translation>无线电助航设备的种类。最后一个
-跑道航段的信标将显示为ILS或LOC。</translation>
+跑道航段的航向台将显示为ILS或LOC。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="150"/>
         <source>Frequency or channel of a radio navaid.
 Also shows ILS or localizer frequency for corresponding approaches on the last runway leg.</source>
         <translation>无线电助航设备的频率或频道。也会显示
-最后一个跑道航段的ILS或LOC的频率。</translation>
+最后一个跑道航段的航向台ILS或LOC的频率。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="152"/>
@@ -20624,7 +20621,7 @@ Click or reload to continue.</source>
     <message>
         <location filename="src/route/route.cpp" line="2141"/>
         <source>Missed</source>
-        <translation>错失的</translation>
+        <translation>错失的（复飞）</translation>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="2141"/>
@@ -21656,12 +21653,12 @@ to select departure and destination.</source>
     <message>
         <location filename="src/route/routeexport.cpp" line="877"/>
         <source>Show &amp;Departure on Map</source>
-        <translation>在地图上显示到达地（&amp;D）</translation>
+        <translation>在地图上显示出发地（&amp;D）</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="883"/>
         <source>The start airport has parking spots but no parking was selected for this Flight Plan</source>
-        <translation>出发机场有停机位，但是在飞行计划中没有选择停机位</translation>
+        <translation>起始机场有停机位，但是在飞行计划中没有选择停机位</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="981"/>
@@ -23853,7 +23850,7 @@ from File</source>
     <message>
         <location filename="src/weather/windreporter.cpp" line="172"/>
         <source>Error downloading or reading wind data: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>下载 %1 (%2) 风况数据时出错</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="186"/>
