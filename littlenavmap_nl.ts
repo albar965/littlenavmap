@@ -8531,13 +8531,15 @@ Windsnelheid wordt geinterpoleerd uit de klim-en daalfases.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10260"/>
-        <source>Export Flight Plan as &amp;vPilot VFP ...</source>
-        <translation>Exporteer Vluchtplan als &amp;vPilot.VFP ...</translation>
+        <source>Export Flight Plan for &amp;vPilot or SWIFT ...</source>
+        <oldsource>Export Flight Plan as &amp;vPilot VFP and SWIFT ...</oldsource>
+        <translation type="unfinished">Exporteer Vluchtplan als &amp;vPilot.VFP ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10263"/>
         <location filename="src/gui/mainwindow.ui" line="10266"/>
-        <source>Save flight plan as VFP file for VATSIM vPilot or swift</source>
+        <source>Save flight plan as VFP file for VATSIM vPilot or SWIFT</source>
+        <oldsource>Save flight plan as VFP file for VATSIM vPilot or swift</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>

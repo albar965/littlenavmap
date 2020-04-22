@@ -6566,14 +6566,16 @@ exibição de vento na linha superior do perfil de elevação.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10260"/>
-        <source>Export Flight Plan as &amp;vPilot VFP ...</source>
-        <translation>Exportar Plano de Voo em &amp;vPilot VFP ...</translation>
+        <source>Export Flight Plan for &amp;vPilot or SWIFT ...</source>
+        <oldsource>Export Flight Plan as &amp;vPilot VFP and SWIFT ...</oldsource>
+        <translation type="unfinished">Exportar Plano de Voo em &amp;vPilot VFP ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10263"/>
         <location filename="src/gui/mainwindow.ui" line="10266"/>
-        <source>Save flight plan as VFP file for VATSIM vPilot or swift</source>
-        <translation>Salvar plano de voo como arquivo VFP para VATSMIM vPilot ou swift</translation>
+        <source>Save flight plan as VFP file for VATSIM vPilot or SWIFT</source>
+        <oldsource>Save flight plan as VFP file for VATSIM vPilot or swift</oldsource>
+        <translation type="unfinished">Salvar plano de voo como arquivo VFP para VATSMIM vPilot ou swift</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10375"/>

@@ -10257,13 +10257,13 @@ relation to shown airport</string>
   </action>
   <action name="actionRouteSaveAsVfp">
    <property name="text">
-    <string>Export Flight Plan as &amp;vPilot VFP ...</string>
+    <string>Export Flight Plan for &amp;vPilot or SWIFT ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as VFP file for VATSIM vPilot or swift</string>
+    <string>Save flight plan as VFP file for VATSIM vPilot or SWIFT</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as VFP file for VATSIM vPilot or swift</string>
+    <string>Save flight plan as VFP file for VATSIM vPilot or SWIFT</string>
    </property>
   </action>
   <action name="actionRouteSaveAsIvap">
