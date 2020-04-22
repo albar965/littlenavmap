@@ -7203,14 +7203,16 @@ Die Windgeschwindigkeit wird für Steig- und Sinkflug interpoliert.</translation
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10260"/>
-        <source>Export Flight Plan as &amp;vPilot VFP ...</source>
-        <translation>Exportiere Flugplan als vPilot &amp;VFP ...</translation>
+        <source>Export Flight Plan for &amp;vPilot or SWIFT ...</source>
+        <oldsource>Export Flight Plan as &amp;vPilot VFP and SWIFT ...</oldsource>
+        <translation>Exportiere Flugplan für &amp;vPilot oder SWIFT ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10263"/>
         <location filename="src/gui/mainwindow.ui" line="10266"/>
-        <source>Save flight plan as VFP file for VATSIM vPilot or swift</source>
-        <translation>Flugplan als VFP für VATSIM vPilot oder swift speichern</translation>
+        <source>Save flight plan as VFP file for VATSIM vPilot or SWIFT</source>
+        <oldsource>Save flight plan as VFP file for VATSIM vPilot or swift</oldsource>
+        <translation>Flugplan als VFP für VATSIM vPilot oder SWIFT speichern</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10375"/>

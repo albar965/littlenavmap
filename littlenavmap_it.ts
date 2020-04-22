@@ -6494,8 +6494,9 @@ Orario Sim. UTC</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10260"/>
-        <source>Export Flight Plan as &amp;vPilot VFP ...</source>
-        <translation>Esporta Piano di Volo come &amp;vPilot VFP ...</translation>
+        <source>Export Flight Plan for &amp;vPilot or SWIFT ...</source>
+        <oldsource>Export Flight Plan as &amp;vPilot VFP and SWIFT ...</oldsource>
+        <translation type="unfinished">Esporta Piano di Volo come &amp;vPilot VFP ...</translation>
     </message>
     <message>
         <source>Save flight plan as VFP file for VATSIM vPilot</source>
@@ -7544,8 +7545,9 @@ in relazione all&apos;aeroporto indicato</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10263"/>
         <location filename="src/gui/mainwindow.ui" line="10266"/>
-        <source>Save flight plan as VFP file for VATSIM vPilot or swift</source>
-        <translation>Salva piano di volo come VFP per VATSIM vPilot o swift</translation>
+        <source>Save flight plan as VFP file for VATSIM vPilot or SWIFT</source>
+        <oldsource>Save flight plan as VFP file for VATSIM vPilot or swift</oldsource>
+        <translation type="unfinished">Salva piano di volo come VFP per VATSIM vPilot o swift</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10271"/>
