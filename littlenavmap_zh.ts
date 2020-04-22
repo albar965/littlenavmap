@@ -909,7 +909,7 @@ the given descent speeds</source>
 The farthest alternate is used to calculate the fuel requirement.
 The default is the cruise fuel flow.</source>
         <translation>通常是低空飞行到某个备降场所需要的油量。
-使用最远的备降场来计算油量。
+使用最远的备降场来计算需要的油量。
 默认是巡航油量。</translation>
     </message>
     <message>
@@ -928,7 +928,7 @@ The default is the cruise fuel flow.</source>
 The farthest alternate is used to calculate the fuel requirement.
 Default is cruise speed.</source>
         <translation>通常是低空飞行到某个备降场的平均真空速。
-使用最远的备降场来计算油量。
+使用最远的备降场来计算需要的油量。
 默认是巡航速度。</translation>
     </message>
     <message>
