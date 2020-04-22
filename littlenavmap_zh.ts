@@ -733,8 +733,8 @@ captain or the dispatcher</source>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <translation>这是考虑到途中由于风况或路线变化引起的额外油量。
-这将使航程油量增加给定的百分比。</translation>
+        <translation>这是考虑到途中由于风况或路线变化的额外油量。
+这将使航段油量增加给定的百分比。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="342"/>
@@ -927,9 +927,9 @@ The default is the cruise fuel flow.</source>
         <source>Average true airspeed when flying to alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 Default is cruise speed.</source>
-        <translation>通常是低空飞行到某个备降场所需要的油量。
+        <translation>通常是低空飞行到某个备降场的平均真空速。
 使用最远的备降场来计算油量。
-默认是巡航油量。</translation>
+默认是巡航速度。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="941"/>
@@ -3393,12 +3393,12 @@ Does not update distance and cruise altitude when changed.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="859"/>
         <source>Fuel needed for trip without reserves as calculated by aircraft performance</source>
-        <translation>由航空器性能计算的除保留油量外的航程油量</translation>
+        <translation>由航空器性能计算的除保留油量外的航段油量</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="878"/>
         <source>&amp;Trip fuel:</source>
-        <translation>航程油量（&amp;T）：</translation>
+        <translation>航段油量（&amp;T）：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="895"/>
@@ -11556,7 +11556,7 @@ MHz/kHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2264"/>
         <source>Trip from plan:</source>
-        <translation>计划航程油量：</translation>
+        <translation>计划航段油量：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2265"/>
@@ -23850,7 +23850,7 @@ from File</source>
     <message>
         <location filename="src/weather/windreporter.cpp" line="172"/>
         <source>Error downloading or reading wind data: %1 (%2)</source>
-        <translation>下载 %1 (%2) 风况数据时出错</translation>
+        <translation>下载或读取 %1 (%2) 风况数据时出错</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="186"/>
