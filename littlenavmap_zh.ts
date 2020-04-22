@@ -8478,14 +8478,14 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="10260"/>
         <source>Export Flight Plan for &amp;vPilot or SWIFT ...</source>
         <oldsource>Export Flight Plan as &amp;vPilot VFP and SWIFT ...</oldsource>
-        <translation type="unfinished">导出飞行计划到 &amp;vPilot VFP格式 ...</translation>
+        <translation>导出飞行计划到以供 &amp;vPilot 或 SWIFT ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10263"/>
         <location filename="src/gui/mainwindow.ui" line="10266"/>
         <source>Save flight plan as VFP file for VATSIM vPilot or SWIFT</source>
         <oldsource>Save flight plan as VFP file for VATSIM vPilot or swift</oldsource>
-        <translation type="unfinished">导出飞行计划到VFP文件以供VATSIM vPilot 或 swift使用</translation>
+        <translation>导出飞行计划到VFP文件以供VATSIM vPilot 或 SWIFT使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10271"/>
