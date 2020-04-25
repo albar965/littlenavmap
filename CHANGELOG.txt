@@ -1,7 +1,7 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
-Version 2.4.5.rc1
+Version 2.4.5
 
 P3D v5: #512
 * Added P3D v5 for simulator detection.
@@ -31,8 +31,9 @@ User Interface:
 
 Build:
 * Added option to include common "../build_options.pro" file with defines for qmake.
+  File is included automatically if it exists.
 
-related from atools version 3.4.6.rc1
+related from atools version 3.4.6
 * Fixed error reporting in wind download and decoding. #480
 * Added option to include common "../build_options.pro" file with defines for qmake.
 * Chinese translation by John Liu.
