@@ -5,6 +5,7 @@
 /deploy/
 /*.pro.user
 /*.log
+*.orig
 *.a
 *.o
 *.d

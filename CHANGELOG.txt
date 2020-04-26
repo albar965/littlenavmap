@@ -1,6 +1,45 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.4.5
+
+P3D v5: #512
+* Added P3D v5 for simulator detection.
+* Adapted loading of BGL files to P3D v5 structure changes and added new records as well as new COM
+  and other types.
+* Enabled loading of add-on packages from `%USERPROFILE%\Documents\Prepar3D v5 Add-ons`.
+
+Fixed crashes and other errors:
+* Fixed crash to desktop when adding an approach after a list of user defined waypoints. #500
+* Fixed error reporting in wind download and decoding. Program does not crash to desktop if wind
+  download has errors. #480
+* Now limiting weather display to the 10 most important/biggest airports if connected via network
+  or SimConnect to P3D/FSX. This helps to minimize map stutters when scrolling or zooming. #497
+  Disable display of airport weather symbols if this still appears:
+  - Menu `Weather` -> `Airport Weather Source`: Select anything but `Simulator`.
+  - Or menu `View`: Disable `Show Airport Weather`.
+* Fixed crash when entering an invalid ICAO in web interface for airport information. #491
+* Fixed wrong handling of `Options/RenderOpt` setting in `little_navmap.ini`.
+* Corrected encoding when exporting flightplan as HTML page.
+
+User Interface:
+* Fixed spelling and typos in user interface.
+* Small UI changes in connection dialog for more clarity.
+* Added word wrap to avoid dialogs growing too large in user interface.
+* Better display on mobile devices for webserver.
+* Updated German legend.
+
+Build:
+* Added option to include common "../build_options.pro" file with defines for qmake.
+  File is included automatically if it exists.
+
+related from atools version 3.4.6
+* Fixed error reporting in wind download and decoding. #480
+* Added option to include common "../build_options.pro" file with defines for qmake.
+* Chinese translation by John Liu.
+
+===============================================================================
+
 Version 2.4.4
 
 * Fixed airport file links to use both English and translated path names.
