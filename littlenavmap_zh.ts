@@ -10711,7 +10711,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="2143"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2437"/>
         <source>%1, %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1, %2</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1102"/>
@@ -11181,12 +11181,16 @@ kHz/MHz</translation>
         <translation>气压：</translation>
     </message>
     <message>
+        <source> hPa</source>
+        <translation type="vanished"> 百帕(hPa)</translation>
+    </message>
+    <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1754"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2582"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2951"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3671"/>
-        <source> hPa</source>
-        <translation> 百帕(hPa)</translation>
+        <source> hPa, </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1755"/>
@@ -12748,7 +12752,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappainterairport.cpp" line="756"/>
         <source>T</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">终</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterairport.cpp" line="789"/>
@@ -13170,7 +13174,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="186"/>
         <source>N</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">北</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="187"/>
@@ -13190,7 +13194,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="196"/>
         <source>W</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">西</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="197"/>
@@ -20112,7 +20116,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="786"/>
         <source> min</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> 分</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="814"/>
@@ -22838,7 +22842,7 @@ Right-click into the map and select
         <location filename="src/common/unit.cpp" line="582"/>
         <location filename="src/common/unit.cpp" line="587"/>
         <source>%1, %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1, %2</translation>
     </message>
     <message>
         <location filename="src/common/unit.cpp" line="441"/>
@@ -22916,7 +22920,7 @@ Right-click into the map and select
     <message>
         <location filename="src/common/updatehandler.cpp" line="145"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1, %2 {1:?}</translation>
     </message>
     <message>
         <location filename="src/common/updatehandler.cpp" line="148"/>
