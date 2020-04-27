@@ -107,6 +107,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   waypointQuery->setUseTracks(false);
 
   messages.clear();
+  hasWarnings = hasErrors = false;
   QStringList items = rs::cleanRouteString(routeString);
 
   // Create a pointer to temporary plan or passed pointer to plan
@@ -279,6 +280,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
           if(entry.getPosition().isValid())
           {
             entry.setAirway(item);
+            entry.setFlag(atools::fs::pln::entry::TRACK, result.airways.first().isTrack());
             entries.insert(entries.size() - insertOffset, entry);
 
             // Build reference list if required
@@ -355,8 +357,12 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 
       if(entry.getPosition().isValid())
       {
+        const ParseEntry& parseEntry = resultList.at(i);
         // Assign airway if  this is the end point of an airway
-        entry.setAirway(resultList.at(i).airway);
+        entry.setAirway(parseEntry.airway);
+
+        if(parseEntry.result.hasAirways())
+          entry.setFlag(atools::fs::pln::entry::TRACK, parseEntry.result.airways.first().isTrack());
         entries.insert(entries.size() - insertOffset, entry);
       }
       else
@@ -499,6 +505,7 @@ void RouteStringReader::appendMessage(const QString& message)
 
 void RouteStringReader::appendWarning(const QString& message)
 {
+  hasWarnings = true;
   if(plaintextMessages)
     messages.append(message);
   else
@@ -508,6 +515,7 @@ void RouteStringReader::appendWarning(const QString& message)
 
 void RouteStringReader::appendError(const QString& message)
 {
+  hasErrors = true;
   if(plaintextMessages)
     messages.append(message);
   else
@@ -845,7 +853,10 @@ atools::geo::Pos RouteStringReader::findFirstCoordinate(const QStringList& clean
           findWaypoints(result, item, false);
 
           if(result.size(ROUTE_TYPES_NAVAIDS) == 1)
+          {
             lastPos = result.getPosition(ROUTE_TYPES_NAVAIDS_LIST);
+            break;
+          }
         }
       }
     }

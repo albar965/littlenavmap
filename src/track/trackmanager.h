@@ -51,11 +51,6 @@ public:
     verbose = value;
   }
 
-  const QStringList& getMessages() const
-  {
-    return messages;
-  }
-
   /* Clear track database */
   void clearTracks();
 
@@ -79,7 +74,6 @@ private:
                         *ndbQuery = nullptr, *vorQuery = nullptr, *airwayQuery = nullptr;
 
   bool verbose = false;
-  QStringList messages;
 
   /* Database for querying navaids. */
   atools::sql::SqlDatabase *dbNav = nullptr;

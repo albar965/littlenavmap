@@ -323,6 +323,8 @@ public:
   /* true if airway given but not found in database. Also true if one-way direction is violated */
   bool isAirwaySetAndInvalid(float altitudeFt, QStringList *errors = nullptr) const;
 
+  bool isTrack() const;
+
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
 
 private:

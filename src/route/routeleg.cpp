@@ -744,6 +744,11 @@ bool RouteLeg::isApproachPoint() const
           procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
+bool RouteLeg::isTrack() const
+{
+  return airway.isValid() && airway.isTrack();
+}
+
 bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors) const
 {
   bool invalid = true;

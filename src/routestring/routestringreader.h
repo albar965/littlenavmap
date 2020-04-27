@@ -79,6 +79,16 @@ public:
     plaintextMessages = value;
   }
 
+  bool hasWarningMessages() const
+  {
+    return hasWarnings;
+  }
+
+  bool hasErrorMessages() const
+  {
+    return hasErrors;
+  }
+
 private:
   /* Internal parsing structure which holds all found potential candidates from a search */
   struct ParseEntry;
@@ -148,7 +158,7 @@ private:
   ProcedureQuery *procQuery = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
   QStringList messages;
-  bool plaintextMessages = false;
+  bool plaintextMessages = false, hasWarnings = false, hasErrors = false;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGREADER_H

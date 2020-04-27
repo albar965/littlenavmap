@@ -97,7 +97,6 @@ void TrackManager::deInitQueries()
 void TrackManager::loadTracks(const TrackVectorType& tracks)
 {
   clearTracks();
-  messages.clear();
 
   SqlTransaction transaction(db);
   initQueries();
@@ -135,12 +134,18 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
 
     // Read string into a list of references ====================================
     map::MapObjectRefExtVector refs;
-    if(reader.createRouteFromString(track.route.join(" "),
-                                    rs::READ_NO_AIRPORTS | rs::READ_MATCH_WAYPOINTS | rs::NO_TRACKS,
+    QString routeStr = track.route.join(" ");
+    if(reader.createRouteFromString(routeStr, rs::READ_NO_AIRPORTS | rs::READ_MATCH_WAYPOINTS | rs::NO_TRACKS,
                                     nullptr, &refs))
     {
       if(verbose)
         qDebug() << Q_FUNC_INFO << refs;
+
+      if(reader.hasWarningMessages() || reader.hasErrorMessages())
+      {
+        qWarning() << Q_FUNC_INFO << routeStr;
+        qWarning() << Q_FUNC_INFO << reader.getMessages();
+      }
 
       // Empty records
       SqlRecord rec = getEmptyRecord(); // track table
@@ -244,9 +249,9 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
     }
     else
     {
-      messages.append(tr("Error when parsing track %1 (%2) with route %3.").
-                      arg(track.name).arg(track.typeString()).arg(track.route.join(" ")));
-      messages.append(reader.getMessages());
+      qWarning() << QString("Error when parsing track %1 (%2) with route %3.").
+        arg(track.name).arg(track.typeString()).arg(track.route.join(" "));
+      qWarning() << reader.getMessages();
     }
   }
 

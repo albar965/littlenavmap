@@ -1263,7 +1263,7 @@ bool RouteController::saveFlighplanAs(const QString& filename, pln::FileFormat t
 /* Save flight plan using the same format indicated in the flight plan object */
 bool RouteController::saveFlightplan(bool cleanExport)
 {
-  bool replaceCustomWp = false, removeAlternates = false;
+  bool replaceCustomWp = false, removeAlternates = false, removeTracks = false;
 
   if(cleanExport)
   {
@@ -1276,9 +1276,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
     switch(route.getFlightplan().getFileFormat())
     {
       case atools::fs::pln::PLN_FSX:
-        // Not clean FSX allows custom approaches
-        replaceCustomWp = false;
-        removeAlternates = false;
+        // Do not clean FSX allows custom approaches
         break;
 
       case atools::fs::pln::NONE:
@@ -1291,13 +1289,14 @@ bool RouteController::saveFlightplan(bool cleanExport)
         // Replace waypoints and do not insert approach information
         replaceCustomWp = true;
         removeAlternates = true;
+        removeTracks = true;
         break;
     }
   }
 
   // Get a copy that has procedures replaced with waypoints depending on settings
   // Also fills altitude in flight plan entry position
-  Route saveRoute = RouteExport::routeAdjustedToProcedureOptions(route, replaceCustomWp, removeAlternates);
+  Route saveRoute = RouteExport::buildAdjustedRoute(route, replaceCustomWp, removeAlternates, removeTracks);
   Flightplan flightplan = saveRoute.getFlightplan();
   qDebug() << Q_FUNC_INFO << "flightplan.getFileFormat()" << flightplan.getFileFormat()
            << "routeFileFormat" << routeFileFormat;
@@ -2742,7 +2741,10 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 void RouteController::eraseAirway(int row)
 {
   if(0 <= row && row < route.getFlightplan().getEntries().size())
+  {
     route.getFlightplan()[row].setAirway(QString());
+    route.getFlightplan()[row].setFlag(atools::fs::pln::entry::TRACK, false);
+  }
 }
 
 /* Called by action */
@@ -3523,6 +3525,7 @@ void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry&
   map::MapAirway airway;
   airwayQuery->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
+  entry.setFlag(atools::fs::pln::entry::TRACK, airway.isTrack());
 }
 
 /* Copy all data from route map objects and widgets to the flight plan */

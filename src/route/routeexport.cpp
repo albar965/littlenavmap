@@ -619,8 +619,9 @@ bool RouteExport::routeExportTfdi()
 
     if(!routeFile.isEmpty())
     {
-      Route route = routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                                    true /* remove alternates */);
+      Route route = buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                                    true /* remove alternates */,
+                                                    true /* remove tracks */);
       try
       {
         flightplanIO->saveTfdi(route.getFlightplan(), routeFile, route.getJetAirwayFlags());
@@ -964,8 +965,9 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString gfp = RouteStringWriter().createGfpStringForRoute(
-    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                    true /* remove alternates */), false /* procedures */,
+    buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */,
+                                    true /* remove tracks */), false /* procedures */,
     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
@@ -987,8 +989,9 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString txt = RouteStringWriter().createStringForRoute(
-    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                    true /* remove alternates */),
+    buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */,
+                                    true /* remove tracks */),
     0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
 
   QFile file(filename);
@@ -1010,8 +1013,9 @@ bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QStringList list = RouteStringWriter().createStringForRouteList(
-    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                    true /* remove alternates */), 0.f,
+    buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */,
+                                    true /* remove tracks */), 0.f,
     rs::DCT | rs::START_AND_DEST);
 
   // Remove last DCT
@@ -1065,8 +1069,9 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
     // Regions are required for the export
     NavApp::getRoute().updateAirportRegions();
     atools::fs::pln::FlightplanIO().saveGarminGns(
-      routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                      true /* remove alternates */).getFlightplan(), filename, options);
+      buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                      true /* remove alternates */,
+                                      true /* remove tracks */).getFlightplan(), filename, options);
   }
   catch(atools::Exception& e)
   {
@@ -1085,8 +1090,9 @@ bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString gfp = RouteStringWriter().createGfpStringForRoute(
-    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                    true /* remove alternates */), true /* procedures */,
+    buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */,
+                                    true /* remove tracks */), true /* procedures */,
     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
@@ -1269,8 +1275,9 @@ bool RouteExport::exportFlighplan(const QString& filename,
 
   try
   {
-    exportFunc(routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                               true /* remove alternates */).getFlightplan(), filename);
+    exportFunc(buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                               true /* remove alternates */,
+                                               true /* remove tracks */).getFlightplan(), filename);
   }
   catch(atools::Exception& e)
   {
@@ -1289,8 +1296,9 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString txt = RouteStringWriter().createStringForRoute(
-    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                    true /* remove alternates */), 0.f,
+    buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */,
+                                    true /* remove tracks */), 0.f,
     rs::DCT | rs::NO_FINAL_DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
     rs::RUNWAY /*| rs::APPROACH unreliable */ | rs::FLIGHTLEVEL);
 
@@ -1407,8 +1415,9 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
 
   // Create route string
   QString route = RouteStringWriter().createStringForRoute(
-    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                    true /* remove alternates */), 0.f, rs::START_AND_DEST);
+    buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                    true /* remove alternates */,
+                                    true /* remove tracks */), 0.f, rs::START_AND_DEST);
   QString name = buildDefaultFilenameShort(QString(), QString());
 
   // Find a unique name between all loaded
@@ -1468,8 +1477,9 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   try
   {
     atools::fs::pln::FlightplanIO().saveGpx(
-      routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/,
-                                      true /* remove alternates */).getFlightplan(),
+      buildAdjustedRoute(true /* replace custom procedure waypoints*/,
+                                      true /* remove alternates */,
+                                      true /* remove tracks */).getFlightplan(),
       filename, track, timestamps,
       static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()));
   }
@@ -1486,16 +1496,17 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   return true;
 }
 
-Route RouteExport::routeAdjustedToProcedureOptions(bool replaceCustomWp, bool removeAlternate)
+Route RouteExport::buildAdjustedRoute(bool replaceCustomWp, bool removeAlternate, bool removeTracks)
 {
-  return routeAdjustedToProcedureOptions(NavApp::getRoute(), replaceCustomWp, removeAlternate);
+  return buildAdjustedRoute(NavApp::getRoute(), replaceCustomWp, removeAlternate, removeTracks);
 }
 
-Route RouteExport::routeAdjustedToProcedureOptions(const Route& route, bool replaceCustomWp, bool removeAlternate)
+Route RouteExport::buildAdjustedRoute(const Route& route, bool replaceCustomWp, bool removeAlternate,
+                                                   bool removeTracks)
 {
   Route rt = route.adjustedToProcedureOptions(NavApp::getMainUi()->actionRouteSaveApprWaypoints->isChecked(),
                                               NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked(),
-                                              replaceCustomWp, removeAlternate);
+                                              replaceCustomWp, removeAlternate, removeTracks);
 
   // Update airway structures
   rt.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);

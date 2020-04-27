@@ -483,7 +483,7 @@ public:
   /* Removes approaches and SID/STAR depending on save options, deletes duplicates and returns a copy.
    *  All procedure legs are converted to normal flight plan (user) legs.  */
   Route adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp, bool replaceCustomWp,
-                                   bool removeAlternate) const;
+                                   bool removeAlternate, bool removeTracks) const;
 
   /* Update user defined waypoint */
   void changeUserAndPosition(int index, const QString& name, const atools::geo::Pos& pos);

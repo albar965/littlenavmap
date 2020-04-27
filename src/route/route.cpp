@@ -1491,6 +1491,9 @@ void Route::updateMagvar()
 
 void Route::updateLegAltitudes()
 {
+  if(isEmpty())
+    return;
+
   // Uses default values if invalid values or collecting data
   altitude->setSimplify(atools::settings::Settings::instance().
                         getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
@@ -1783,7 +1786,7 @@ void Route::createRouteLegsFromFlightplan()
 }
 
 Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp, bool replaceCustomWp,
-                                        bool removeAlternate) const
+                                        bool removeAlternate, bool removeTracks) const
 {
   qDebug() << Q_FUNC_INFO << "saveApproachWp" << saveApproachWp << "saveSidStarWp" << saveSidStarWp
            << "replaceCustomWp" << replaceCustomWp;
@@ -1817,11 +1820,20 @@ Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp,
     route.clearFlightplanProcedureProperties(proc::PROCEDURE_SID_STAR_ALL);
   }
 
+  atools::fs::pln::FlightplanEntryListType& entries = route.getFlightplan().getEntries();
+
+  if(removeTracks)
+  {
+    // Remore track names from airway field but keep waypoints
+    for(int i = 0; i < entries.size(); i++)
+    {
+      if(route.value(i).isTrack())
+        entries[i].setAirway(QString());
+    }
+  }
+
   if(saveApproachWp || saveSidStarWp)
   {
-    Flightplan& fp = route.getFlightplan();
-    auto& entries = fp.getEntries();
-
     // Now replace all entries with either valid waypoints or user defined waypoints
     for(int i = 0; i < entries.size(); i++)
     {
@@ -1837,6 +1849,7 @@ Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp,
         entry.setCoords(leg.getPosition());
         entry.setAirway(QString());
         entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+        entry.setFlag(atools::fs::pln::entry::TRACK, false);
 
         if(leg.getWaypoint().isValid())
         {
