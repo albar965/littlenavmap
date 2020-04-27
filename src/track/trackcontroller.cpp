@@ -29,6 +29,7 @@
 #include "query/waypointtrackquery.h"
 #include "query/waypointquery.h"
 #include "ui_mainwindow.h"
+#include "gui/widgetstate.h"
 
 #include <QDebug>
 
@@ -58,6 +59,8 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
     airwayTrackQuery->postTrackLoad();
   });
 
+  connect(this, &TrackController::postTrackLoad, this, &TrackController::tracksLoaded);
+
 #ifdef DEBUG_TRACK_TEST
   downloader->setUrl(atools::track::NAT, "/home/alex/Temp/tracks/NAT.html");
   downloader->setUrl(atools::track::PACOTS, "/home/alex/Temp/tracks/PACOTS.html");
@@ -77,12 +80,13 @@ TrackController::~TrackController()
 
 void TrackController::restoreState()
 {
-
+  atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS, false /* visibility */, true /* block signals */);
+  state.restore(NavApp::getMainUi()->actionRouteDownloadTracks);
 }
 
 void TrackController::saveState()
 {
-
+  atools::gui::WidgetState(lnm::AIRSPACE_CONTROLLER_WIDGETS).save(NavApp::getMainUi()->actionRouteDownloadTracks);
 }
 
 void TrackController::optionsChanged()
@@ -134,10 +138,7 @@ void TrackController::deleteTracks()
 void TrackController::downloadToggled(bool checked)
 {
   if(checked)
-  {
-    if(!hasTracks())
-      startDownload();
-  }
+    startDownload();
 }
 
 void TrackController::cancelDownload()
@@ -207,4 +208,11 @@ void TrackController::downloadFailed(const QString& error, int errorCode, QStrin
 
     NavApp::setStatusMessage(tr("Track download failed."));
   }
+}
+
+void TrackController::tracksLoaded()
+{
+  atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS,
+                                                 tr("Track download successfull."),
+                                                 tr("Do not &show this dialog again."));
 }

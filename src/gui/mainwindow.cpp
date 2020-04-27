@@ -897,6 +897,8 @@ void MainWindow::connectAllSlots()
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
+          NavApp::getTrackController(), &TrackController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::saveStateNow);
 
   // Updated manually in dialog
@@ -3087,6 +3089,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
   s.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
   s.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);
+  s.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, true);
   s.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
   s.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
 
@@ -3238,7 +3241,6 @@ void MainWindow::mainWindowShown()
   // Start regular download of online network files
   NavApp::getOnlinedataController()->startProcessing();
 
-  // Start download of track systems if requested
   if(ui->actionRouteDownloadTracks->isChecked())
     NavApp::getTrackController()->startDownload();
 
@@ -3590,6 +3592,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "connectClient";
   NavApp::getConnectClient()->restoreState();
 
+  qDebug() << "trackController";
+  NavApp::getTrackController()->restoreState();
+
   qDebug() << "infoController";
   infoController->restoreState();
 
@@ -3757,6 +3762,10 @@ void MainWindow::saveStateMain()
   qDebug() << "connectClient";
   if(NavApp::getConnectClient() != nullptr)
     NavApp::getConnectClient()->saveState();
+
+  qDebug() << "trackController";
+  if(NavApp::getTrackController() != nullptr)
+    NavApp::getTrackController()->saveState();
 
   qDebug() << "infoController";
   if(infoController != nullptr)
