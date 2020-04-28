@@ -96,9 +96,9 @@ void TrackManager::deInitQueries()
 
 void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
 {
+  SqlTransaction transaction(db);
   clearTracks();
 
-  SqlTransaction transaction(db);
   initQueries();
 
   QElapsedTimer timer;
@@ -419,4 +419,25 @@ void TrackManager::clearTracks()
   removeRows();
   removeRows("trackpoint");
   removeRows("trackmeta");
+}
+
+QMap<atools::track::TrackType, int> TrackManager::getNumTracks()
+{
+  SqlQuery query("select track_type, count(1) as cnt "
+                 "from trackmeta group by track_type", getDatabase());
+
+  QMap<atools::track::TrackType, int> retval;
+  query.exec();
+  while(query.next())
+    retval.insert(static_cast<atools::track::TrackType>(atools::strToChar(query.valueStr(0))), query.valueInt(1));
+
+  // Insert missing values
+  if(!retval.contains(atools::track::AUSOTS))
+    retval.insert(atools::track::AUSOTS, 0);
+  if(!retval.contains(atools::track::PACOTS))
+    retval.insert(atools::track::PACOTS, 0);
+  if(!retval.contains(atools::track::NAT))
+    retval.insert(atools::track::NAT, 0);
+
+  return retval;
 }

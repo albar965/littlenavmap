@@ -55,6 +55,9 @@ public:
   /* Clear track database */
   void clearTracks();
 
+  /* Get number of tracks for each type */
+  QMap<atools::track::TrackType, int> getNumTracks();
+
 private:
   /* Clears track tables in database. */
 

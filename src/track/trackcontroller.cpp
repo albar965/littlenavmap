@@ -88,8 +88,6 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
     airwayTrackQuery->postTrackLoad();
   });
 
-  connect(this, &TrackController::postTrackLoad, this, &TrackController::tracksLoaded);
-
 }
 
 TrackController::~TrackController()
@@ -140,9 +138,13 @@ void TrackController::startDownload()
 {
   qDebug() << Q_FUNC_INFO;
 
+  cancelDownload();
+
   // Append all to queue and start
   downloadQueue.append(atools::track::ALL_TRACK_TYPES);
   downloader->startAllDownloads();
+
+  NavApp::setStatusMessage(tr("Track download started."));
 }
 
 void TrackController::deleteTracks()
@@ -195,6 +197,7 @@ void TrackController::downloadFinished(const atools::track::TrackVectorType& tra
 
     // Load tracks but keep raw data in vector
     trackManager->loadTracks(trackVector, downloadOnlyValid);
+    tracksLoaded();
     emit postTrackLoad();
 
     NavApp::setStatusMessage(tr("Track download finished."));
@@ -234,7 +237,21 @@ void TrackController::downloadFailed(const QString& error, int errorCode, QStrin
 
 void TrackController::tracksLoaded()
 {
+  NavApp::setStatusMessage(tr("Track download finished."));
+
+  QMap<atools::track::TrackType, int> numTracks = trackManager->getNumTracks();
+
+  QStringList str;
+  for(atools::track::TrackType type : numTracks.keys())
+  {
+    int num = numTracks.value(type);
+    str.append(tr("<li>%1: %2 tracks.</li>").
+               arg(atools::track::typeToString(type)).
+               arg(num == 0 ? tr("No") : QString::number(num)));
+
+  }
+
   atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS,
-                                                 tr("Track download successfull."),
+                                                 tr("<p>Track download successfull.</p><ul>%1</ul>").arg(str.join("")),
                                                  tr("Do not &show this dialog again."));
 }
