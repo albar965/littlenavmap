@@ -2168,6 +2168,10 @@ void MainWindow::updateWindowTitle()
   else if(NavApp::getAircraftPerfController()->hasChanged())
     newTitle += tr(" - *");
 
+#ifndef QT_NO_DEBUG
+    newTitle += " - DEBUG";
+#endif
+
   // Add a star to the flight plan tab if changed
   routeController->updateRouteTabChangedStatus();
 
