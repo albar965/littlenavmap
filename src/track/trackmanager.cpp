@@ -94,7 +94,7 @@ void TrackManager::deInitQueries()
   airwayQuery = nullptr;
 }
 
-void TrackManager::loadTracks(const TrackVectorType& tracks)
+void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
 {
   clearTracks();
 
@@ -120,11 +120,15 @@ void TrackManager::loadTracks(const TrackVectorType& tracks)
   // Maps name to a fragment number for airway compatibility which needs name and fragment as a key
   QHash<QString, int> nameFragmentHash;
 
+  QDateTime now = QDateTime::currentDateTimeUtc();
   // Read each track into the database ==================================================
   for(const Track& track : tracks)
   {
     if(verbose)
       qDebug() << Q_FUNC_INFO << track;
+
+    if(onlyValid && (now < track.validFrom || now > track.validTo))
+      continue;
 
     // Add or increment fragment number for a new name
     if(nameFragmentHash.contains(track.name))

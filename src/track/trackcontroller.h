@@ -66,6 +66,12 @@ public:
     return waypointTrackQuery;
   }
 
+  /* If true: Do not load tracks that are currently not valid. */
+  void setDownloadOnlyValid(bool value)
+  {
+    downloadOnlyValid = value;
+  }
+
 signals:
   /* Signals sent before and after loading tracks into database */
   void preTrackLoad();
@@ -94,6 +100,9 @@ private:
 
   /* Saved raw track data */
   atools::track::TrackVectorType trackVector;
+
+  /* Do not load tracks that are currently not valid. */
+  bool downloadOnlyValid = false;
 };
 
 #endif // LNM_AIRWAYCONTROLLER_H

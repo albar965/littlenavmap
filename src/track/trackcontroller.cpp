@@ -30,15 +30,18 @@
 #include "query/waypointquery.h"
 #include "ui_mainwindow.h"
 #include "gui/widgetstate.h"
+#include "settings/settings.h"
 
 #include <QDebug>
 
 using atools::track::TrackDownloader;
+using atools::settings::Settings;
 
 TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *mainWindowParam) :
   QObject(mainWindowParam), mainWindow(mainWindowParam), trackManager(trackManagerParam)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_TRACK_DEBUG, false).toBool();
+  trackManager->setVerbose(verbose);
 
   // Set up airway queries =====================
   airwayTrackQuery = new AirwayTrackQuery(new AirwayQuery(NavApp::getDatabaseNav(), false),
@@ -51,6 +54,32 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   waypointTrackQuery->initQueries();
 
   downloader = new TrackDownloader(this, verbose);
+#ifdef DEBUG_TRACK_TEST
+  downloader->setUrl(atools::track::NAT, "/home/alex/Temp/tracks/NAT.html");
+  downloader->setUrl(atools::track::PACOTS, "/home/alex/Temp/tracks/PACOTS.html");
+  downloader->setUrl(atools::track::AUSOTS, "/home/alex/Temp/tracks/AUSOTS.html");
+#else
+  namespace t = atools::track;
+  atools::settings::Settings& settings = Settings::instance();
+  downloader->setUrl(t::NAT,
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_NAT_URL,
+                                               TrackDownloader::URL.value(t::NAT)).toString(),
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_NAT_PARAM,
+                                               TrackDownloader::PARAM.value(t::NAT)).toStringList());
+
+  downloader->setUrl(t::PACOTS,
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_URL,
+                                               TrackDownloader::URL.value(t::PACOTS)).toString(),
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_PARAM,
+                                               TrackDownloader::PARAM.value(t::PACOTS)).toStringList());
+
+  downloader->setUrl(t::AUSOTS,
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_URL,
+                                               TrackDownloader::URL.value(t::AUSOTS)).toString(),
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_PARAM,
+                                               TrackDownloader::PARAM.value(t::AUSOTS)).toStringList());
+#endif
+
   connect(downloader, &TrackDownloader::downloadFinished, this, &TrackController::downloadFinished);
   connect(downloader, &TrackDownloader::downloadFailed, this, &TrackController::downloadFailed);
 
@@ -61,11 +90,6 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
 
   connect(this, &TrackController::postTrackLoad, this, &TrackController::tracksLoaded);
 
-#ifdef DEBUG_TRACK_TEST
-  downloader->setUrl(atools::track::NAT, "/home/alex/Temp/tracks/NAT.html");
-  downloader->setUrl(atools::track::PACOTS, "/home/alex/Temp/tracks/PACOTS.html");
-  downloader->setUrl(atools::track::AUSOTS, "/home/alex/Temp/tracks/AUSOTS.html");
-#endif
 }
 
 TrackController::~TrackController()
@@ -107,9 +131,8 @@ void TrackController::postDatabaseLoad()
   waypointTrackQuery->initQueries();
 
   // Reload track into database to catch changed waypoint ids
-  trackManager->setVerbose(verbose);
   emit preTrackLoad();
-  trackManager->loadTracks(trackVector);
+  trackManager->loadTracks(trackVector, downloadOnlyValid);
   emit postTrackLoad();
 }
 
@@ -171,8 +194,7 @@ void TrackController::downloadFinished(const atools::track::TrackVectorType& tra
     emit preTrackLoad();
 
     // Load tracks but keep raw data in vector
-    trackManager->setVerbose(verbose);
-    trackManager->loadTracks(trackVector);
+    trackManager->loadTracks(trackVector, downloadOnlyValid);
     emit postTrackLoad();
 
     NavApp::setStatusMessage(tr("Track download finished."));

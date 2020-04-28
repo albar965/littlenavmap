@@ -42,8 +42,9 @@ public:
   explicit TrackManager(atools::sql::SqlDatabase *trackDatabase, atools::sql::SqlDatabase *navDatabase);
   ~TrackManager();
 
-  /* Clears database and loads the given tracks. */
-  void loadTracks(const atools::track::TrackVectorType& tracks);
+  /* Clears database and loads the given tracks.
+   * onlyValid: Do not load tracks that are currently not valid. */
+  void loadTracks(const atools::track::TrackVectorType& tracks, bool onlyValid);
 
   /* More log messages if true */
   void setVerbose(bool value)

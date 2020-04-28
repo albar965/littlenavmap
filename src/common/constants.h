@@ -268,6 +268,14 @@ const QLatin1Literal OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
 const QLatin1Literal OPTIONS_WEATHER_UPDATE("Options/WeatherUpdate");
 const QLatin1Literal OPTIONS_PROFILE_SIMPLYFY("Options/SimplifyProfile");
 
+/* Track download URLs */
+const QLatin1Literal OPTIONS_TRACK_NAT_URL("Track/NatUrl");
+const QLatin1Literal OPTIONS_TRACK_NAT_PARAM("Track/NatUrlParam");
+const QLatin1Literal OPTIONS_TRACK_PACOTS_URL("Track/PacotsUrl");
+const QLatin1Literal OPTIONS_TRACK_PACOTS_PARAM("Track/PacotsUrlParam");
+const QLatin1Literal OPTIONS_TRACK_AUSOTS_URL("Track/AusotsUrl");
+const QLatin1Literal OPTIONS_TRACK_AUSOTS_PARAM("Track/AusotsUrlParam");
+
 /* Used to override  default URL */
 const QLatin1Literal OPTIONS_UPDATE_URL("Update/Url");
 

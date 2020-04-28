@@ -2711,9 +2711,15 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
       trackMeta = infoQuery->getTrackMetadata(airway.id);
       if(!trackMeta.isEmpty())
       {
-        html.row2(tr("Track valid:"), tr("%1 to\n%2").
-                  arg(locale.toString(trackMeta.valueDateTime("valid_from"), QLocale::ShortFormat)).
-                  arg(locale.toString(trackMeta.valueDateTime("valid_to"), QLocale::ShortFormat)));
+        QDateTime from = trackMeta.valueDateTime("valid_from");
+        QDateTime to = trackMeta.valueDateTime("valid_to");
+        QDateTime now = QDateTime::currentDateTimeUtc();
+
+        html.row2(tr("Track valid:"), tr("%1 UTC to<br/>%2 UTC%3").
+                  arg(locale.toString(from, QLocale::ShortFormat)).
+                  arg(locale.toString(to, QLocale::ShortFormat)).
+                  arg(now >= from && now <= to ? tr("<br/><b>Track is now valid.</b>") : QString()),
+                  atools::util::html::NO_ENTITIES);
         html.row2(tr("Track downloaded:"),
                   locale.toString(trackMeta.valueDateTime("download_timestamp"), QLocale::ShortFormat));
       }
