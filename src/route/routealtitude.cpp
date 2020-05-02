@@ -933,6 +933,7 @@ void RouteAltitude::calculateDistances()
 {
   float distanceToLeg = 0.f;
   int destinationLegIdx = route->getDestinationLegIndex();
+  int destinationAirportLegIdx = route->getDestinationAirportLegIndex();
   const RouteLeg& destinationAirportLeg = route->getDestinationAirportLeg();
 
   if(destinationLegIdx == map::INVALID_INDEX_VALUE)
@@ -951,7 +952,7 @@ void RouteAltitude::calculateDistances()
     alt.ident = leg.getIdent();
     alt.procedureType = proc::procedureTypeText(leg.getProcedureType());
 
-    if(i <= destinationLegIdx)
+    if(i <= destinationLegIdx || i == destinationAirportLegIdx)
     {
       // Not a dummy (missed)
       alt.restriction = leg.getProcedureLegAltRestr();
