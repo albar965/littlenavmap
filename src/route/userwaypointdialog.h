@@ -27,10 +27,17 @@ class UserWaypointDialog;
 }
 
 namespace atools {
+namespace fs {
+namespace pln {
+class FlightplanEntry;
+}
+}
 namespace geo {
 class Pos;
 }
 }
+
+class QAbstractButton;
 
 /*
  * Edit coordinates or the name of a user defined flight plan position.
@@ -41,18 +48,20 @@ class UserWaypointDialog :
   Q_OBJECT
 
 public:
-  UserWaypointDialog(QWidget *parent, const QString& name, const atools::geo::Pos& pos);
+  UserWaypointDialog(QWidget *parent, const atools::fs::pln::FlightplanEntry& entryParam);
   virtual ~UserWaypointDialog();
 
-  QString getName() const;
-  atools::geo::Pos getPos() const;
+  const atools::fs::pln::FlightplanEntry& getEntry() const
+  {
+    return *entry;
+  }
 
 private:
   void coordsEdited(const QString& text);
-  void helpClicked();
+  void buttonBoxClicked(QAbstractButton *button);
 
   Ui::UserWaypointDialog *ui;
-
+  atools::fs::pln::FlightplanEntry *entry;
 };
 
 #endif // LITTLENAVMAP_USERWAYPOINTDIALOG_H

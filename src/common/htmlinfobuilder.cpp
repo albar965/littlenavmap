@@ -2804,10 +2804,25 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
 
 void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
 {
-  head(html, tr("Position: ") + userpoint.name);
+  QIcon icon = SymbolPainter().createUserpointIcon(symbolSizeTitle.height());
+  html.img(icon, QString(), QString(), symbolSizeTitle);
+  html.nbsp().nbsp();
+
+  navaidTitle(html, tr("Position: ") + userpoint.ident);
+
   if(!info && userpoint.routeIndex >= 0)
   {
-    html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
+    if(!userpoint.name.isEmpty() || !userpoint.comment.isEmpty() || !userpoint.region.isEmpty())
+    {
+      html.table();
+      html.row2If(tr("Flight Plan position:"), QString::number(userpoint.routeIndex + 1));
+      html.row2If(tr("Region:"), userpoint.region);
+      html.row2If(tr("Name:"), userpoint.name);
+      html.row2If(tr("Comment:"), userpoint.comment);
+      html.tableEnd();
+    }
+    else
+      html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
     routeWindText(html, NavApp::getRouteConst(), userpoint.routeIndex);
   }
 }

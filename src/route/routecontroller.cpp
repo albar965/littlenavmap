@@ -2332,20 +2332,27 @@ void RouteController::editUserWaypointName(int index)
 
   if(index > 0 && route.value(index).getMapObjectType() == map::USERPOINTROUTE)
   {
-    UserWaypointDialog dialog(mainWindow, route.value(index).getIdent(), route.value(index).getPosition());
-    if(dialog.exec() == QDialog::Accepted && !dialog.getName().isEmpty())
+    UserWaypointDialog dialog(mainWindow, route.value(index).getFlightplanEntry());
+    if(dialog.exec() == QDialog::Accepted)
     {
       RouteCommand *undoCommand = nullptr;
 
       // if(route.getFlightplan().canSaveUserWaypointName())
-      undoCommand = preChange(tr("Waypoint Name Change"));
+      undoCommand = preChange(tr("Waypoint Change"));
 
-      route.changeUserAndPosition(index, dialog.getName(), dialog.getPos());
+      route.getFlightplan().getEntries()[index] = dialog.getEntry();
 
-      model->item(index, rc::IDENT)->setText(dialog.getName());
+      route.updateAll();
+      route.updateLegAltitudes();
+
+      updateActiveLeg();
+      updateTableModel();
+
       postChange(undoCommand);
-
+      updateErrorLabel();
+      NavApp::updateWindowTitle();
       emit routeChanged(true);
+      NavApp::setStatusMessage(tr("Changed waypoint in flight plan."));
     }
   }
 }
