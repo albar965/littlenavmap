@@ -1848,7 +1848,22 @@ Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
     for(int i = 0; i < entries.size(); i++)
     {
       if(route.value(i).isTrack())
+      {
+        route[i].clearAirwayOrTrack();
         entries[i].setAirway(QString());
+      }
+    }
+  }
+
+  if(options.testFlag(rf::SAVE_AIRWAY_WP))
+  {
+    for(int i = 0; i < entries.size(); i++)
+    {
+      if(route.value(i).isAirway())
+      {
+        route[i].clearAirwayOrTrack();
+        entries[i].setAirway(QString());
+      }
     }
   }
 

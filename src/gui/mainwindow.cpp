@@ -2223,7 +2223,7 @@ bool MainWindow::routeSaveLnm()
     }
   }
 
-  if(routeController->getCurrentRouteFilepath().isEmpty() || !routeController->doesFilenameMatchRoute() ||
+  if(routeController->getCurrentRouteFilepath().isEmpty() || !routeController->doesLnmFilenameMatchRoute() ||
      !routeController->isLnmFormatFlightplan())
     // No filename or plan has changed - save as ================================
     return routeSaveAsLnm();
@@ -3283,29 +3283,23 @@ void MainWindow::restoreStateMain()
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
     // Restore map settings if desired by the user
-    widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
-                         ui->actionMapShowEmptyAirports,
-                         ui->actionMapShowAddonAirports,
-                         ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
-                         ui->actionMapShowIls,
-                         ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
-                         ui->actionShowAirspaces,
+    widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
+                         ui->actionMapShowAddonAirports, ui->actionMapShowVor, ui->actionMapShowNdb,
+                         ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowVictorAirways,
+                         ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
-                         ui->actionMapAircraftCenter,
-                         ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                         ui->actionMapShowAircraftTrack,
-                         ui->actionInfoApproachShowMissedAppr});
+                         ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
+                         ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr});
   }
   else
     mapWidget->resetSettingActionsToDefault();
 
   // Map settings that are always loaded
-  widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
-                       ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionRouteEditMode,
-                       ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                       ui->actionLogdataCreateLogbook,
-                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
-                       ui->actionRunWebserver});
+  widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid, ui->actionMapShowCities,
+                       ui->actionMapShowHillshading, ui->actionRouteEditMode, ui->actionWorkOffline,
+                       ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
+                       ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionMapShowSunShading,
+                       ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRunWebserver});
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -3517,23 +3511,17 @@ void MainWindow::saveActionStates()
   qDebug() << Q_FUNC_INFO;
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save({mapProjectionComboBox, mapThemeComboBox,
-                    ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
-                    ui->actionMapShowAddonAirports,
-                    ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
-                    ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
-                    ui->actionShowAirspaces,
+  widgetState.save({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
+                    ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports, ui->actionMapShowVor,
+                    ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowVictorAirways,
+                    ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
-                    ui->actionMapAircraftCenter,
-                    ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                    ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
-                    ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowSunShading,
-                    ui->actionMapShowHillshading, ui->actionMapShowAirportWeather,
-                    ui->actionMapShowMinimumAltitude,
-                    ui->actionRouteEditMode,
-                    ui->actionWorkOffline,
-                    ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                    ui->actionLogdataCreateLogbook, ui->actionRunWebserver});
+                    ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
+                    ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,
+                    ui->actionMapShowCities, ui->actionMapShowSunShading, ui->actionMapShowHillshading,
+                    ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode,
+                    ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
+                    ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionRunWebserver});
   Settings::instance().syncSettings();
 }
 

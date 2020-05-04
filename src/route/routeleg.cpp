@@ -745,11 +745,6 @@ bool RouteLeg::isApproachPoint() const
           procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
-bool RouteLeg::isTrack() const
-{
-  return airway.isValid() && airway.isTrack();
-}
-
 bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors) const
 {
   bool invalid = true;
@@ -806,6 +801,11 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors) cons
   }
 
   return !getAirwayName().isEmpty() && !airway.isValid();
+}
+
+void RouteLeg::clearAirwayOrTrack()
+{
+  airway = map::MapAirway();
 }
 
 // TODO assign functions are duplicatd in FlightplanEntryBuilder

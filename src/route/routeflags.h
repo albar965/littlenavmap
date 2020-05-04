@@ -28,11 +28,12 @@ enum RouteAdjustOption
   NONE = 0,
   SAVE_APPROACH_WP = 1 << 0, /* Save approach as waypoints and remove approach information. */
   SAVE_SIDSTAR_WP = 1 << 1, /* Save SID and STAR as waypoints and remove approach information. */
-  REPLACE_CUSTOM_WP = 1 << 2, /* Replace custom approach with user defined waypoints */
-  REMOVE_ALTERNATE = 1 << 3, /* Remove all alternate legs. */
-  REMOVE_TRACKS = 1 << 4, /* Empty track name to force direct */
-  FIX_AIRPORT_IDENT = 1 << 5, /* Replace X-Plane dummy airport idents with real ICAO ident if available. */
-  FIX_CIRCLETOLAND = 1 << 6, /* Add a dummy best guess runway for circle-to-land approaches for X-Plane */
+  SAVE_AIRWAY_WP = 1 << 2, /* Save SID and STAR as waypoints and remove approach information. */
+  REPLACE_CUSTOM_WP = 1 << 3, /* Replace custom approach with user defined waypoints */
+  REMOVE_ALTERNATE = 1 << 4, /* Remove all alternate legs. */
+  REMOVE_TRACKS = 1 << 5, /* Empty track name to force direct */
+  FIX_AIRPORT_IDENT = 1 << 6, /* Replace X-Plane dummy airport idents with real ICAO ident if available. */
+  FIX_CIRCLETOLAND = 1 << 7, /* Add a dummy best guess runway for circle-to-land approaches for X-Plane */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS,

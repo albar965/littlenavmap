@@ -101,6 +101,14 @@
      <addaction name="actionRouteSaveAsIvap"/>
      <addaction name="actionRouteSaveAsXIvap"/>
     </widget>
+    <widget class="QMenu" name="menuExportOptions">
+     <property name="title">
+      <string>Export &amp;Options</string>
+     </property>
+     <addaction name="actionRouteSaveApprWaypoints"/>
+     <addaction name="actionRouteSaveSidStarWaypoints"/>
+     <addaction name="actionRouteSaveAirwayWaypoints"/>
+    </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
     <addaction name="actionRouteAppend"/>
@@ -114,13 +122,13 @@
     <addaction name="actionRouteSaveAsPln"/>
     <addaction name="actionRouteSaveAsFms11"/>
     <addaction name="actionRouteSaveAsFlightGear"/>
+    <addaction name="separator"/>
     <addaction name="menuE_xport_Flight_Plan_to_Aircraft_Formats"/>
     <addaction name="menuEXport"/>
     <addaction name="menuExportFlightplanToOnlineFormats"/>
     <addaction name="menuExportFlightplanToOtherFormats"/>
     <addaction name="separator"/>
-    <addaction name="actionRouteSaveApprWaypoints"/>
-    <addaction name="actionRouteSaveSidStarWaypoints"/>
+    <addaction name="menuExportOptions"/>
     <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
@@ -9609,13 +9617,13 @@ Best track will be selected automatically.</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Save Waypoints for &amp;Approaches</string>
+    <string>Export Waypoints for &amp;Approaches</string>
    </property>
    <property name="toolTip">
-    <string>Save procedure waypoints instead of approach information</string>
+    <string>Export procedure waypoints instead of approach information</string>
    </property>
    <property name="statusTip">
-    <string>Save procedure waypoints instead of approach information</string>
+    <string>Export procedure waypoints instead of approach information</string>
    </property>
   </action>
   <action name="actionRouteSaveSidStarWaypoints">
@@ -9623,13 +9631,13 @@ Best track will be selected automatically.</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Save Waypoints for &amp;SID and STAR</string>
+    <string>Export Waypoints for &amp;SID and STAR</string>
    </property>
    <property name="toolTip">
-    <string>Save procedure waypoints instead of SID/STAR information</string>
+    <string>Export procedure waypoints instead of SID/STAR information</string>
    </property>
    <property name="statusTip">
-    <string>Save procedure waypoints instead of SID/STAR information</string>
+    <string>Export procedure waypoints instead of SID/STAR information</string>
    </property>
   </action>
   <action name="actionLogdataCreateLogbook">
@@ -11422,6 +11430,20 @@ Best track will be selected automatically.</string>
    </property>
    <property name="statusTip">
     <string>Export Flight Plan as annotated PLN for older Little Navmap versions</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAirwayWaypoints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Export Waypoints for &amp;Airways</string>
+   </property>
+   <property name="toolTip">
+    <string>Export waypoints instead of airway information</string>
+   </property>
+   <property name="statusTip">
+    <string>Export waypoints instead of airway information</string>
    </property>
   </action>
  </widget>

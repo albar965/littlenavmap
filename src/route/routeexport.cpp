@@ -1635,6 +1635,8 @@ Route RouteExport::buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions
     options |= rf::SAVE_APPROACH_WP;
   if(NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked())
     options |= rf::SAVE_SIDSTAR_WP;
+  if(NavApp::getMainUi()->actionRouteSaveAirwayWaypoints->isChecked())
+    options |= rf::SAVE_AIRWAY_WP;
   Route rt = route.adjustedToOptions(options);
 
   // Update airway structures
