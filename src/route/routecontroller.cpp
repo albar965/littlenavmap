@@ -52,7 +52,7 @@
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
 #include "route/routealtitude.h"
-#include "route/routeexport.h"
+#include "routeexport/routeexport.h"
 #include "route/userwaypointdialog.h"
 #include "route/flightplanentrybuilder.h"
 #include "fs/pln/flightplanio.h"

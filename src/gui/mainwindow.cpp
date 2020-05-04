@@ -67,7 +67,7 @@
 #include "search/onlineclientsearch.h"
 #include "search/onlinecentersearch.h"
 #include "search/onlineserversearch.h"
-#include "route/routeexport.h"
+#include "routeexport/routeexport.h"
 #include "gui/timedialog.h"
 #include "util/version.h"
 #include "perf/aircraftperfcontroller.h"
