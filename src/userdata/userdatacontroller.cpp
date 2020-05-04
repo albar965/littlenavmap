@@ -718,7 +718,7 @@ QString UserdataController::garminGtnUserWptPath()
 #elif DEBUG_INFORMATION
   path = atools::buildPath({atools::documentsDir(), "Garmin", "Trainers", "GTN"});
 #else
-  path = atools::getDocumentsDir();
+  path = atools::documentsDir();
 #endif
   return path;
 }
