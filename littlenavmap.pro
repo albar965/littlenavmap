@@ -225,9 +225,6 @@ message(-----------------------------------)
 SOURCES += \
   src/airspace/airspacecontroller.cpp \
   src/airspace/airspacetoolbarhandler.cpp \
-  src/route/routeflags.cpp \
-  src/track/trackcontroller.cpp \
-  src/track/trackmanager.cpp \
   src/common/aircrafttrack.cpp \
   src/common/airportfiles.cpp \
   src/common/constants.cpp \
@@ -274,7 +271,7 @@ SOURCES += \
   src/logbook/logdataconverter.cpp \
   src/logbook/logdatadialog.cpp \
   src/logbook/logstatisticsdialog.cpp \
-  src/main.cpp\
+  src/main.cpp \
   src/mapgui/aprongeometrycache.cpp \
   src/mapgui/imageexportdialog.cpp \
   src/mapgui/mapfunctions.cpp \
@@ -334,12 +331,13 @@ SOURCES += \
   src/route/routecalcwindow.cpp \
   src/route/routecommand.cpp \
   src/route/routecontroller.cpp \
-  src/route/routeexport.cpp \
-  src/route/routeexportdata.cpp \
-  src/route/routeexportdialog.cpp \
   src/route/routeextractor.cpp \
+  src/route/routeflags.cpp \
   src/route/routeleg.cpp \
   src/route/userwaypointdialog.cpp \
+  src/routeexport/routeexport.cpp \
+  src/routeexport/routeexportdata.cpp \
+  src/routeexport/routeexportdialog.cpp \
   src/routestring/routestringdialog.cpp \
   src/routestring/routestringreader.cpp \
   src/routestring/routestringtypes.cpp \
@@ -363,25 +361,24 @@ SOURCES += \
   src/search/sqlproxymodel.cpp \
   src/search/userdatasearch.cpp \
   src/search/usericondelegate.cpp \
+  src/track/trackcontroller.cpp \
+  src/track/trackmanager.cpp \
   src/userdata/userdatacontroller.cpp \
   src/userdata/userdatadialog.cpp \
   src/userdata/userdataexportdialog.cpp \
   src/userdata/userdataicons.cpp \
   src/weather/weatherreporter.cpp \
   src/weather/windreporter.cpp \
-  src/web/webcontroller.cpp \
   src/web/requesthandler.cpp \
+  src/web/webapp.cpp \
+  src/web/webcontroller.cpp \
+  src/web/webflags.cpp \
   src/web/webmapcontroller.cpp \
-    src/web/webtools.cpp \
-    src/web/webflags.cpp \
-    src/web/webapp.cpp
+  src/web/webtools.cpp
 
 HEADERS  += \
   src/airspace/airspacecontroller.h \
   src/airspace/airspacetoolbarhandler.h \
-  src/route/routeflags.h \
-  src/track/trackcontroller.h \
-  src/track/trackmanager.h \
   src/common/aircrafttrack.h \
   src/common/airportfiles.h \
   src/common/constants.h \
@@ -487,12 +484,13 @@ HEADERS  += \
   src/route/routecalcwindow.h \
   src/route/routecommand.h \
   src/route/routecontroller.h \
-  src/route/routeexport.h \
-  src/route/routeexportdata.h \
-  src/route/routeexportdialog.h \
   src/route/routeextractor.h \
+  src/route/routeflags.h \
   src/route/routeleg.h \
   src/route/userwaypointdialog.h \
+  src/routeexport/routeexport.h \
+  src/routeexport/routeexportdata.h \
+  src/routeexport/routeexportdialog.h \
   src/routestring/routestringdialog.h \
   src/routestring/routestringreader.h \
   src/routestring/routestringtypes.h \
@@ -516,18 +514,20 @@ HEADERS  += \
   src/search/sqlproxymodel.h \
   src/search/userdatasearch.h \
   src/search/usericondelegate.h \
+  src/track/trackcontroller.h \
+  src/track/trackmanager.h \
   src/userdata/userdatacontroller.h \
   src/userdata/userdatadialog.h \
   src/userdata/userdataexportdialog.h \
   src/userdata/userdataicons.h \
   src/weather/weatherreporter.h \
   src/weather/windreporter.h \
-  src/web/webcontroller.h \
   src/web/requesthandler.h \
+  src/web/webapp.h \
+  src/web/webcontroller.h \
+  src/web/webflags.h \
   src/web/webmapcontroller.h \
-    src/web/webtools.h \
-    src/web/webflags.h \
-    src/web/webapp.h
+  src/web/webtools.h
 
 FORMS += \
   src/connect/connectdialog.ui \
@@ -548,8 +548,8 @@ FORMS += \
   src/print/printdialog.ui \
   src/route/customproceduredialog.ui \
   src/route/parkingdialog.ui \
-  src/route/routeexportdialog.ui \
   src/route/userwaypointdialog.ui \
+  src/routeexport/routeexportdialog.ui \
   src/routestring/routestringdialog.ui \
   src/userdata/userdatadialog.ui \
   src/userdata/userdataexportdialog.ui

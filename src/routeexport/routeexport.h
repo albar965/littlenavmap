@@ -18,7 +18,7 @@
 #ifndef LNM_ROUTEEXPORT_H
 #define LNM_ROUTEEXPORT_H
 
-#include "route/routeexportdialog.h"
+#include "routeexport/routeexportdialog.h"
 #include "route/routeflags.h"
 
 #include <QObject>

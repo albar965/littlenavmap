@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "route/routeexport.h"
+#include "routeexport/routeexport.h"
 
 #include "gui/mainwindow.h"
 #include "common/constants.h"
@@ -34,7 +34,7 @@
 #include "gui/errorhandler.h"
 #include "options/optiondata.h"
 #include "gui/dialog.h"
-#include "route/routeexportdata.h"
+#include "routeexport/routeexportdata.h"
 #include "route/routealtitude.h"
 #include "ui_mainwindow.h"
 #include "fs/pln/flightplanio.h"
