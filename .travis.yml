@@ -81,8 +81,8 @@ before_script:
     - mv '../XPSDK/SDK' '../X-Plane SDK'
 
     # Get atools if auth token for dropbox is available
-    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/atools-release.tar.gz ../atools-release.tar.gz'
-    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../atools-release.tar.gz -C ../'
+    #- '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/atools-release.tar.gz ../atools-release.tar.gz'
+    #- '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../atools-release.tar.gz -C ../'
 
     # Get littlenavconnect and littlexpconnect for deployment
     - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/littlenavconnect-release.tar.gz ../littlenavconnect-release.tar.gz'
@@ -92,10 +92,16 @@ before_script:
 
 script:
     # Build atools if auth token for dropbox is not available
-    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || mkdir ../build-atools-release'
-    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || cd ../build-atools-release'
-    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || qmake ../atools/atools.pro CONFIG+=release'
-    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || make -j2'
+    # - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || mkdir ../build-atools-release'
+    # - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || cd ../build-atools-release'
+    # - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || qmake ../atools/atools.pro CONFIG+=release'
+    # - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || make -j2'
+
+    # Build atools
+    - mkdir ../build-atools-release
+    - cd ../build-atools-release
+    - qmake ../atools/atools.pro CONFIG+=release
+    - make -j2
 
     # Build littlenavmap
     - mkdir ../build-littlenavmap-release
