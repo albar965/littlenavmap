@@ -24,6 +24,8 @@ namespace Ui {
 class UserdataExportDialog;
 }
 
+class QAbstractButton;
+
 /* Simple dialog asking for export options before exporting userdata to the various formats */
 class UserdataExportDialog :
   public QDialog
@@ -41,6 +43,8 @@ public:
   void restoreState();
 
 private:
+  void buttonBoxClicked(QAbstractButton *button);
+
   Ui::UserdataExportDialog *ui;
 };
 

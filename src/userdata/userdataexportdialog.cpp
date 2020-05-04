@@ -20,8 +20,10 @@
 
 #include "common/constants.h"
 #include "gui/widgetstate.h"
+#include "gui/helphandler.h"
 
 #include <QCheckBox>
+#include <QPushButton>
 
 UserdataExportDialog::UserdataExportDialog(QWidget *parent, bool disableExportSelected, bool disableAppend) :
   QDialog(parent),
@@ -34,6 +36,7 @@ UserdataExportDialog::UserdataExportDialog(QWidget *parent, bool disableExportSe
 
   ui->checkBoxUserpointExportAppend->setDisabled(disableAppend);
   ui->checkBoxUserpointExportSelected->setDisabled(disableExportSelected);
+  connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &UserdataExportDialog::buttonBoxClicked);
 }
 
 UserdataExportDialog::~UserdataExportDialog()
@@ -41,6 +44,17 @@ UserdataExportDialog::~UserdataExportDialog()
   atools::gui::WidgetState(lnm::USERDATA_EXPORT_DIALOG).save(this);
 
   delete ui;
+}
+
+void UserdataExportDialog::buttonBoxClicked(QAbstractButton *button)
+{
+  if(button == ui->buttonBox->button(QDialogButtonBox::Ok))
+    QDialog::accept();
+  else if(button == ui->buttonBox->button(QDialogButtonBox::Help))
+    atools::gui::HelpHandler::openHelpUrlWeb(
+      parentWidget(), lnm::helpOnlineUrl + "USERPOINT.html", lnm::helpLanguageOnline());
+  else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
+    QDialog::reject();
 }
 
 bool UserdataExportDialog::isAppendToFile() const

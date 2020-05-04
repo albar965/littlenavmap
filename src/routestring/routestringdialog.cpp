@@ -307,7 +307,7 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "ROUTEDESCR.html", lnm::helpLanguageOnline());
-  else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Cancel))
+  else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Close))
     QDialog::reject();
 }
 
