@@ -1302,7 +1302,7 @@ QString logEntryText(const MapLogbookEntry& logEntry)
 
 QString userpointRouteText(const MapUserpointRoute& userpoint)
 {
-  return QObject::tr("Position %1").arg(userpoint.name);
+  return QObject::tr("Position %1").arg(userpoint.ident);
 }
 
 QString airwayText(const MapAirway& airway)
@@ -1755,7 +1755,7 @@ QString MapSearchResult::getIdent(const std::initializer_list<MapObjectTypes>& t
       else if(t == map::AIRSPACE)
         return airspaces.first().name;
       else if(t == map::USERPOINTROUTE)
-        return userpointsRoute.first().name;
+        return userpointsRoute.first().ident;
       else if(t == map::USERPOINT)
         return userpoints.first().ident;
       else if(t == map::LOGBOOK)
@@ -2290,7 +2290,7 @@ QDebug operator<<(QDebug out, const map::MapSearchResult& record)
   {
     out << "UserpointRoute";
     for(const map::MapUserpointRoute& obj :  record.userpointsRoute)
-      out << obj.id << obj.name << ",";
+      out << obj.id << obj.ident << ",";
   }
   if(!record.userpoints.isEmpty())
   {

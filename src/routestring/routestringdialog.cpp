@@ -246,7 +246,7 @@ void RouteStringDialog::readButtonClicked()
 
     QStringList idents;
     for(apln::FlightplanEntry& entry : flightplan->getEntries())
-      idents.append(entry.getIcaoIdent());
+      idents.append(entry.getIdent());
 
     if(!idents.isEmpty())
       msg.append(tr("Found %1 %2: <b>%3</b>.<br/>").
@@ -295,29 +295,6 @@ void RouteStringDialog::updateFlightplan()
     flightplan->setFlightplanType(apln::IFR);
   else
     flightplan->setFlightplanType(apln::VFR);
-
-  if(flightplan->getEntries().size() == 2)
-    flightplan->setRouteType(apln::DIRECT);
-  else if(flightplan->getEntries().size() > 2)
-  {
-    // Check if this is a VOR / NDB only route
-    bool foundOtherThanVorOrNdb = false;
-
-    for(int i = 1; i < flightplan->getEntries().size() - 1; i++)
-    {
-      const apln::FlightplanEntry& entry = flightplan->getEntries().at(i);
-      if(!entry.getAirway().isEmpty() ||
-         (entry.getWaypointType() != apln::entry::VOR &&
-          entry.getWaypointType() != apln::entry::NDB))
-      {
-        foundOtherThanVorOrNdb = true;
-        break;
-      }
-    }
-
-    if(!foundOtherThanVorOrNdb)
-      flightplan->setRouteType(apln::VOR);
-  }
 }
 
 /* A button box button was clicked */

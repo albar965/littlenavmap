@@ -103,7 +103,7 @@ void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry
 {
   map::MapSearchResult mapobjectResult;
   NavApp::getMapQuery()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
-                                             flightplanEntry->getIcaoIdent(), flightplanEntry->getIcaoRegion(),
+                                             flightplanEntry->getIdent(), flightplanEntry->getRegion(),
                                              QString(), last, maxDistance);
 
   if(mapobjectResult.hasVor())
@@ -132,7 +132,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
   AirwayTrackQuery *airwayQuery = NavApp::getAirwayTrackQuery();
   AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
-  QString region = flightplanEntry->getIcaoRegion();
+  QString region = flightplanEntry->getRegion();
 
   if(region == "KK" || region == "ZZ") // Invalid route finder region
     region.clear();
@@ -159,7 +159,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
         {
           // Look for navaid at an airway
           airwayQuery->getWaypointsForAirway(mapobjectResult.waypoints,
-                                             flightplanEntry->getAirway(), flightplanEntry->getIcaoIdent());
+                                             flightplanEntry->getAirway(), flightplanEntry->getIdent());
           maptools::sortByDistance(mapobjectResult.waypoints, prevLeg->getPosition());
           if(mapobjectResult.hasWaypoints())
           {
@@ -171,17 +171,17 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           {
             // Not found at airway search for any navaid with the given name nearby
             assignAnyNavaid(flightplanEntry, last, maxDistance);
-            qWarning() << "No waypoints for" << flightplanEntry->getIcaoIdent() << flightplanEntry->getAirway();
+            qWarning() << "No waypoints for" << flightplanEntry->getIdent() << flightplanEntry->getAirway();
           }
         }
         else
-          qWarning() << "Cannot resolve unknwon flight plan entry" << flightplanEntry->getIcaoIdent();
+          qWarning() << "Cannot resolve unknwon flight plan entry" << flightplanEntry->getIdent();
       }
       break;
 
     // ====================== Create for airport and assign parking position
     case atools::fs::pln::entry::AIRPORT:
-      mapQuery->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIcaoIdent());
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIdent());
       if(!mapobjectResult.airports.isEmpty())
       {
         assignAirport(mapobjectResult, flightplanEntry);
@@ -267,9 +267,9 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       break;
 
     // =============================== Navaid waypoint
-    case atools::fs::pln::entry::INTERSECTION:
+    case atools::fs::pln::entry::WAYPOINT:
       mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::AIRPORT,
-                                    flightplanEntry->getIcaoIdent(), region, /* region is ignored for airports */
+                                    flightplanEntry->getIdent(), region, /* region is ignored for airports */
                                     QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
       if(!mapobjectResult.waypoints.isEmpty())
       {
@@ -282,10 +282,10 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
         assignAirport(mapobjectResult, flightplanEntry);
         validWaypoint = true;
       }
-      else if(!atools::fs::util::isValidIdent(flightplanEntry->getIcaoIdent()))
+      else if(!atools::fs::util::isValidIdent(flightplanEntry->getIdent()))
       {
-        // Name contains funny characters - must me a user fix from FSC
-        flightplanEntry->setWaypointId(flightplanEntry->getIcaoIdent());
+        // Name contains funny characters or is too long - must me a user fix from FSC
+        // flightplanEntry->setWaypointId(flightplanEntry->getIdent());
         assignUser(flightplanEntry);
         validWaypoint = true;
       }
@@ -293,7 +293,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
     // =============================== Navaid VOR
     case atools::fs::pln::entry::VOR:
-      mapQuery->getMapObjectByIdent(mapobjectResult, map::VOR, flightplanEntry->getIcaoIdent(), region,
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::VOR, flightplanEntry->getIdent(), region,
                                     QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
       if(!mapobjectResult.vors.isEmpty())
       {
@@ -304,7 +304,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
     // =============================== Navaid NDB
     case atools::fs::pln::entry::NDB:
-      mapQuery->getMapObjectByIdent(mapobjectResult, map::NDB, flightplanEntry->getIcaoIdent(), region,
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::NDB, flightplanEntry->getIdent(), region,
                                     QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
       if(!mapobjectResult.ndbs.isEmpty())
       {
@@ -428,23 +428,6 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
     courseRhumbTo = 0.f;
     geometry = LineString({getPosition()});
   }
-}
-
-void RouteLeg::updateUserName(const QString& name)
-{
-  if(index >= 0)
-    flightplan->getEntries()[index].setWaypointId(name);
-  else
-    qWarning() << Q_FUNC_INFO << "invalid index" << index;
-}
-
-void RouteLeg::updateUserPosition(const Pos& pos)
-{
-  if(index >= 0)
-    // Use setCoords to keep altitude
-    flightplan->getEntries()[index].setCoords(pos);
-  else
-    qWarning() << Q_FUNC_INFO << "invalid index" << index;
 }
 
 int RouteLeg::getId() const
@@ -613,13 +596,18 @@ QString RouteLeg::getIdent() const
   else if(!procedureLeg.displayText.isEmpty())
     return procedureLeg.displayText.first();
   else if(type == map::INVALID)
-    return getFlightplanEntry().getIcaoIdent();
+    return getFlightplanEntry().getIdent();
   else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
-    return getFlightplanEntry().getWaypointId();
+    return getFlightplanEntry().getIdent();
   else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
     return EMPTY_STRING;
   else
     return EMPTY_STRING;
+}
+
+QString RouteLeg::getComment() const
+{
+  return getFlightplanEntry().getComment();
 }
 
 bool RouteLeg::isNavdata() const
@@ -646,6 +634,11 @@ bool RouteLeg::isNavdata() const
   return true;
 }
 
+bool RouteLeg::isUser() const
+{
+  return getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER;
+}
+
 QString RouteLeg::getRegion() const
 {
   if(airport.isValid())
@@ -656,6 +649,10 @@ QString RouteLeg::getRegion() const
     return ndb.region;
   else if(waypoint.isValid())
     return waypoint.region;
+  else if(type == map::INVALID)
+    return getFlightplanEntry().getRegion();
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
+    return getFlightplanEntry().getRegion();
 
   return EMPTY_STRING;
 }
@@ -673,6 +670,10 @@ QString RouteLeg::getName() const
     return ndb.name;
   else if(ils.isValid())
     return ils.name;
+  else if(type == map::INVALID)
+    return getFlightplanEntry().getName();
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
+    return getFlightplanEntry().getName();
   else
     return EMPTY_STRING;
 }
@@ -812,8 +813,9 @@ void RouteLeg::assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::USERPOINTROUTE;
   flightplanEntry->setWaypointType(atools::fs::pln::entry::USER);
-  flightplanEntry->setIcaoIdent(QString());
-  flightplanEntry->setIcaoRegion(QString());
+  flightplanEntry->setIdent(getIdent());
+  flightplanEntry->setName(getName());
+  flightplanEntry->setRegion(getRegion());
   flightplanEntry->setMagvar(NavApp::getMagVar(flightplanEntry->getPosition()));
 }
 
@@ -828,6 +830,7 @@ void RouteLeg::assignAirport(const map::MapSearchResult& mapobjectResult,
     flightplanEntry->setPosition(airport.position);
 
   // values which are not saved in PLN but other formats
+  flightplanEntry->setIdent(airport.ident);
   flightplanEntry->setName(airport.name);
   flightplanEntry->setMagvar(airport.magvar);
 }
@@ -839,10 +842,10 @@ void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
   waypoint = mapobjectResult.waypoints.first();
 
   // Update all fields in entry if found - otherwise leave as is
-  flightplanEntry->setIcaoRegion(waypoint.region);
-  flightplanEntry->setIcaoIdent(waypoint.ident);
+  flightplanEntry->setRegion(waypoint.region);
+  flightplanEntry->setIdent(waypoint.ident);
   flightplanEntry->setCoords(waypoint.position); // Use setCoords to keep altitude
-  flightplanEntry->setWaypointType(atools::fs::pln::entry::INTERSECTION);
+  flightplanEntry->setWaypointType(atools::fs::pln::entry::WAYPOINT);
   flightplanEntry->setMagvar(waypoint.magvar);
 }
 
@@ -852,8 +855,8 @@ void RouteLeg::assignVor(const map::MapSearchResult& mapobjectResult, atools::fs
   vor = mapobjectResult.vors.first();
 
   // Update all fields in entry if found - otherwise leave as is
-  flightplanEntry->setIcaoRegion(vor.region);
-  flightplanEntry->setIcaoIdent(vor.ident);
+  flightplanEntry->setRegion(vor.region);
+  flightplanEntry->setIdent(vor.ident);
   flightplanEntry->setCoords(vor.position); // Use setCoords to keep altitude
   flightplanEntry->setWaypointType(atools::fs::pln::entry::VOR);
   flightplanEntry->setName(vor.name);
@@ -867,8 +870,8 @@ void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs
   ndb = mapobjectResult.ndbs.first();
 
   // Update all fields in entry if found - otherwise leave as is
-  flightplanEntry->setIcaoRegion(ndb.region);
-  flightplanEntry->setIcaoIdent(ndb.ident);
+  flightplanEntry->setRegion(ndb.region);
+  flightplanEntry->setIdent(ndb.ident);
   flightplanEntry->setCoords(ndb.position); // Use setCoords to keep altitude
   flightplanEntry->setWaypointType(atools::fs::pln::entry::NDB);
   flightplanEntry->setName(ndb.name);

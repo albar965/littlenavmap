@@ -225,6 +225,7 @@ message(-----------------------------------)
 SOURCES += \
   src/airspace/airspacecontroller.cpp \
   src/airspace/airspacetoolbarhandler.cpp \
+  src/route/routeflags.cpp \
   src/track/trackcontroller.cpp \
   src/track/trackmanager.cpp \
   src/common/aircrafttrack.cpp \
@@ -378,6 +379,7 @@ SOURCES += \
 HEADERS  += \
   src/airspace/airspacecontroller.h \
   src/airspace/airspacetoolbarhandler.h \
+  src/route/routeflags.h \
   src/track/trackcontroller.h \
   src/track/trackmanager.h \
   src/common/aircrafttrack.h \

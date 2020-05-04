@@ -76,7 +76,8 @@ public:
   void buildFlightplanEntry(const proc::MapProcedureLeg& leg,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
-  void entryFromUserPos(const atools::geo::Pos& userPos, atools::fs::pln::FlightplanEntry& entry);
+  void entryFromUserPos(const atools::geo::Pos& userPos, atools::fs::pln::FlightplanEntry& entry, const QString& ident,
+                        const QString& region, const QString& name);
 
   void entryFromNdb(const map::MapNdb& ndb, atools::fs::pln::FlightplanEntry& entry) const;
 

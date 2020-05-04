@@ -30,6 +30,7 @@
 #include "settings/settings.h"
 #include "fs/common/xpgeometry.h"
 #include "navapp.h"
+#include "sql/sqlutil.h"
 
 #include <QDataStream>
 #include <QRegularExpression>
@@ -65,6 +66,7 @@ AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav)
   helipadCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "HelipadCache", 1000).toInt());
   airportIdCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportIdCache", 1000).toInt());
   airportIdentCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportIdentCache", 1000).toInt());
+  airportIcaoCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportIcaoCache", 1000).toInt());
 }
 
 AirportQuery::~AirportQuery()
@@ -144,20 +146,53 @@ void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& id
   }
 }
 
-void AirportQuery::getAirportFuzzy(map::MapAirport& airport, map::MapAirport airportFrom)
+map::MapAirport AirportQuery::getAirportByIcao(const QString& icao)
+{
+  map::MapAirport airport;
+  getAirportByIcao(airport, icao);
+  return airport;
+}
+
+void AirportQuery::getAirportByIcao(map::MapAirport& airport, const QString& icao)
+{
+  if(airportByIcaoQuery != nullptr)
+  {
+    map::MapAirport *ap = airportIcaoCache.object(icao);
+
+    if(ap != nullptr)
+      airport = *ap;
+    else
+    {
+      ap = new map::MapAirport;
+
+      airportByIcaoQuery->bindValue(":icao", icao);
+      airportByIcaoQuery->exec();
+      if(airportByIcaoQuery->next())
+        mapTypesFactory->fillAirport(airportByIcaoQuery->record(), *ap, true, navdata,
+                                     NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+      airportByIcaoQuery->finish();
+
+      airport = *ap;
+      airportIcaoCache.insert(icao, ap);
+    }
+  }
+}
+
+void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const QString& ident, const QString& icao,
+                                   const atools::geo::Pos& pos)
 {
   // airportFrom has to be copied to avoid overwriting
   // Try ident first
-  getAirportByIdent(airport, airportFrom.ident);
+  getAirportByIdent(airport, ident);
 
   // Try ICAO code if given as second attempt
-  if(!airport.isValid() && !airportFrom.icao.isEmpty() && airportFrom.icao != airportFrom.ident)
-    getAirportByIdent(airport, airportFrom.icao);
+  if(!airport.isValid() && !icao.isEmpty() && icao != ident)
+    getAirportByIdent(airport, icao);
 
-  if(!airport.isValid())
+  if(!airport.isValid() && pos.isValid())
   {
     // Fall back to coordinate based search and look for centers withing 0.2 NM
-    ageo::Rect rect(airportFrom.position, ageo::nmToMeter(10.f));
+    ageo::Rect rect(pos, ageo::nmToMeter(10.f));
     QList<map::MapAirport> airports;
 
     bool xplane = NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11;
@@ -165,13 +200,13 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, map::MapAirport air
       map::MapAirport obj;
       mapTypesFactory->fillAirport(query->record(), obj, true, navdata, xplane);
 
-      if(obj.position.distanceMeterTo(airportFrom.position) < atools::geo::nmToMeter(0.2f))
+      if(obj.position.distanceMeterTo(pos) < atools::geo::nmToMeter(0.2f))
         airports.append(obj);
     });
 
     if(!airports.isEmpty())
     {
-      maptools::sortByDistance(airports, airportFrom.position);
+      maptools::sortByDistance(airports, pos);
       airport = airports.first();
     }
   }
@@ -926,6 +961,12 @@ void AirportQuery::initQueries()
   airportByIdentQuery = new SqlQuery(db);
   airportByIdentQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where ident = :ident ");
 
+  if(SqlUtil(db).hasTableAndColumn("airport", "icao"))
+  {
+    airportByIcaoQuery = new SqlQuery(db);
+    airportByIcaoQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where icao = :icao ");
+  }
+
   airportByPosQuery = new SqlQuery(db);
   airportByPosQuery->prepare("select " + airportQueryBase.join(", ") +
                              " from airport "
@@ -1075,6 +1116,9 @@ void AirportQuery::deInitQueries()
 
   delete airportByIdentQuery;
   airportByIdentQuery = nullptr;
+
+  delete airportByIcaoQuery;
+  airportByIcaoQuery = nullptr;
 
   delete airportByPosQuery;
   airportByPosQuery = nullptr;

@@ -86,7 +86,7 @@ public:
   /* Loads flight plan from FSX PLN file, checks for proper start position (shows notification dialog)
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
-  void loadFlightplan(atools::fs::pln::Flightplan flightplan,
+  void loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
                       const QString& filename, bool quiet, bool changed, bool adjustAltitude);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
@@ -95,12 +95,8 @@ public:
   bool insertFlightplan(const QString& filename, int insertBefore);
 
   /* Saves flight plan using the given name and file format and uses file name as new current name */
-  bool saveFlighplanAs(const QString& filename, atools::fs::pln::FileFormat targetFileFormat);
-
-  /* Saves flight plan using current name and current format */
-  bool saveFlightplan(bool cleanExport);
-
-  bool exportFlighplanAsClean(const QString& filename);
+  bool saveFlightplanLnm();
+  bool saveFlightplanLnmAs(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -143,7 +139,7 @@ public:
   /* get altitude in feet as set in the widget */
   float getCruiseAltitudeWidget() const;
 
-  bool  doesFilenameMatchRoute(atools::fs::pln::FileFormat format);
+  bool  doesLnmFilenameMatchRoute();
 
   /* Clear routing network cache and disconnect all queries */
   void preDatabaseLoad();
@@ -278,6 +274,9 @@ public:
 
 #endif
 
+  /* true if flight plan was loaded in LNMPLN format. Otherwise imported from PLN, FMS, etc. */
+  bool isLnmFormatFlightplan();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -318,6 +317,9 @@ private:
     MOVE_DOWN = 1,
     MOVE_UP = -1
   };
+
+  /* Saves flight plan using LNM format */
+  bool saveFlightplanLnmInternal();
 
   /* Called by route command */
   void changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan);
@@ -368,7 +370,7 @@ private:
 
   /* Calculate flight plan pressed in dock window */
   void calculateRoute();
-  bool calculateRouteInternal(atools::routing::RouteFinder *routeFinder, atools::fs::pln::RouteType type,
+  bool calculateRouteInternal(atools::routing::RouteFinder *routeFinder,
                               const QString& commandName,
                               bool fetchAirways, float altitudeFt, int fromIndex, int toIndex,
                               atools::routing::Modes mode);
@@ -380,7 +382,7 @@ private:
   void updateFlightplanFromWidgets();
 
   /* Insert properties for aircraft performance */
-  void assignAircraftPerformance(atools::fs::pln::Flightplan& flightplan);
+  void assignFlightplanPerfProperties(atools::fs::pln::Flightplan& flightplan);
 
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
@@ -458,7 +460,6 @@ private:
   QString routeFilename, fileDepartureIdent, fileDestinationIdent;
 
   /* Current loaded or saved format since the plans in the undo stack have different values */
-  atools::fs::pln::FileFormat routeFileFormat = atools::fs::pln::PLN_FSX;
   atools::fs::pln::FlightplanType fileIfrVfr;
 
   QMainWindow *mainWindow;

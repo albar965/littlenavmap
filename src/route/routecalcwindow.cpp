@@ -169,12 +169,12 @@ void RouteCalcWindow::updateHeader()
     if(canCalculateSelection)
     {
       departure = tr("%1 (%2)").
-                  arg(flightplan.getEntries().at(fromIndex).getIcaoIdent()).
-                  arg(flightplan.getEntries().at(fromIndex).getWaypointTypeAsString());
+                  arg(flightplan.getEntries().at(fromIndex).getIdent()).
+                  arg(flightplan.getEntries().at(fromIndex).getWaypointTypeAsFsxString());
 
       destination = tr("%1 (%2)").
-                    arg(flightplan.getEntries().at(toIndex).getIcaoIdent()).
-                    arg(flightplan.getEntries().at(toIndex).getWaypointTypeAsString());
+                    arg(flightplan.getEntries().at(toIndex).getIdent()).
+                    arg(flightplan.getEntries().at(toIndex).getWaypointTypeAsFsxString());
 
       title = tr("<b>Calculate flight plan between legs<br/>%1 and %2.</b>").arg(departure).arg(destination);
     }
@@ -196,15 +196,15 @@ void RouteCalcWindow::updateHeader()
         departure = tr("%1 (%2)").arg(flightplan.getDepartureAiportName()).arg(flightplan.getDepartureIdent());
       else
         departure = tr("%1 (%2)").
-                    arg(flightplan.getEntries().first().getIcaoIdent()).
-                    arg(flightplan.getEntries().first().getWaypointTypeAsString());
+                    arg(flightplan.getEntries().first().getIdent()).
+                    arg(flightplan.getEntries().first().getWaypointTypeAsFsxString());
 
       if(route.hasValidDestination())
         destination = tr("%1 (%2)").arg(flightplan.getDestinationAiportName()).arg(flightplan.getDestinationIdent());
       else
         destination = tr("%1 (%2)").
-                      arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIcaoIdent()).
-                      arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getWaypointTypeAsString());
+                      arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent()).
+                      arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getWaypointTypeAsFsxString());
 
       title = tr("<b>From %1 to %2.</b>").arg(departure).arg(destination);
 

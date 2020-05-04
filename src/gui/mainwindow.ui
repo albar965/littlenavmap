@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>1347</height>
+    <height>1362</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,7 +60,7 @@
      <property name="title">
       <string>E&amp;xport Flight Plan to Aircraft Formats</string>
      </property>
-     <addaction name="actionRouteSaveAsFms3"/>
+     <addaction name="actionRouteSaveAsFlp"/>
      <addaction name="actionRouteSaveAsRte"/>
      <addaction name="actionRouteSaveAsTxt"/>
      <addaction name="actionRouteSaveAsFpr"/>
@@ -75,7 +75,7 @@
      <addaction name="actionRouteSaveAsMdr"/>
      <addaction name="actionRouteSaveAsTfdi"/>
     </widget>
-    <widget class="QMenu" name="menuE_xport_Flight_Plan_to_other_Formats">
+    <widget class="QMenu" name="menuExportFlightplanToOtherFormats">
      <property name="title">
       <string>E&amp;xport Flight Plan to other Formats</string>
      </property>
@@ -85,12 +85,15 @@
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsEfbr"/>
      <addaction name="separator"/>
+     <addaction name="actionRouteSaveAsFms3"/>
+     <addaction name="actionRouteSaveAsPlnAnnotated"/>
+     <addaction name="separator"/>
      <addaction name="actionRouteSaveAsHtml"/>
      <addaction name="actionRouteSaveAsGpx"/>
      <addaction name="separator"/>
      <addaction name="actionRouteShowSkyVector"/>
     </widget>
-    <widget class="QMenu" name="menuE_xport_Flight_Plan_to_Online_Formats">
+    <widget class="QMenu" name="menuExportFlightplanToOnlineFormats">
      <property name="title">
       <string>E&amp;xport Flight Plan to Online Formats</string>
      </property>
@@ -103,19 +106,18 @@
     <addaction name="actionRouteAppend"/>
     <addaction name="menuRecentRoutes"/>
     <addaction name="separator"/>
-    <addaction name="actionRouteResetAll"/>
-    <addaction name="separator"/>
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionRouteResetAll"/>
+    <addaction name="separator"/>
+    <addaction name="actionRouteSaveAsPln"/>
     <addaction name="actionRouteSaveAsFms11"/>
     <addaction name="actionRouteSaveAsFlightGear"/>
-    <addaction name="actionRouteSaveAsFlp"/>
-    <addaction name="separator"/>
-    <addaction name="actionRouteSaveAsClean"/>
     <addaction name="menuE_xport_Flight_Plan_to_Aircraft_Formats"/>
     <addaction name="menuEXport"/>
-    <addaction name="menuE_xport_Flight_Plan_to_Online_Formats"/>
-    <addaction name="menuE_xport_Flight_Plan_to_other_Formats"/>
+    <addaction name="menuExportFlightplanToOnlineFormats"/>
+    <addaction name="menuExportFlightplanToOtherFormats"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSaveApprWaypoints"/>
     <addaction name="actionRouteSaveSidStarWaypoints"/>
@@ -549,7 +551,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>5</number>
+        <number>0</number>
        </property>
        <property name="tabsClosable">
         <bool>true</bool>
@@ -7588,7 +7590,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Flight Plan &amp;as PLN ...</string>
+    <string>Save Flight Plan &amp;as LNMPLN ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as</string>
@@ -7879,7 +7881,7 @@ Best track will be selected automatically.</string>
     <string>Select start position for flight plan departure</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+P</string>
+    <string>Ctrl+Shift+D</string>
    </property>
   </action>
   <action name="actionMapShowHillshading">
@@ -9046,18 +9048,14 @@ Best track will be selected automatically.</string>
    </property>
   </action>
   <action name="actionRouteSaveAsFlp">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/saveasflp.svg</normaloff>:/littlenavmap/resources/icons/saveasflp.svg</iconset>
-   </property>
    <property name="text">
-    <string>Save Flight Plan as &amp;FLP ...</string>
+    <string>Export Flight Plan as &amp;FLP ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as FLP file usable by the Aerosoft Airbus and other add-on aircraft</string>
+    <string>Export flight plan as FLP file usable by the Aerosoft Airbus and other add-on aircraft</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FLP file usable by the Aerosoft Airbus and other add-on aircraft</string>
+    <string>Export flight plan as FLP file usable by the Aerosoft Airbus and other add-on aircraft</string>
    </property>
   </action>
   <action name="actionShowAirspaces">
@@ -9100,21 +9098,6 @@ Best track will be selected automatically.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+R</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsClean">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/filesaveclean.svg</normaloff>:/littlenavmap/resources/icons/filesaveclean.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Export Flight Plan as &amp;clean PLN ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as PLN without any additional annotations</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as PLN without any additional annotations</string>
    </property>
   </action>
   <action name="actionMapShowAircraftAiBoat">
@@ -9244,13 +9227,13 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Flight &amp;Plan as X-Plane FMS 11 ...</string>
+    <string>Export Flight &amp;Plan as X-Plane FMS 11 ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
+    <string>Export flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
+    <string>Export flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+X</string>
@@ -10615,13 +10598,13 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/saveasfg.svg</normaloff>:/littlenavmap/resources/icons/saveasfg.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Flight Plan as Flight&amp;Gear FGFP ...</string>
+    <string>Export Flight Plan as Flight&amp;Gear FGFP ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as FGFP file for the FlightGear simulator</string>
+    <string>Export flight plan as FGFP file for the FlightGear simulator</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FGFP file for the FlightGear simulator</string>
+    <string>Export flight plan as FGFP file for the FlightGear simulator</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+G</string>
@@ -11412,6 +11395,35 @@ Best track will be selected automatically.</string>
     <string>Download NAT, PACOTS and AUSOTS tracks now</string>
    </property>
   </action>
+  <action name="actionRouteSaveAsPln">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export Flight Plan &amp;as P3D or FSX  PLN ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Flight Plan as PLN for P3D or FSX</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Flight Plan as PLN for P3D or FSX</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsPlnAnnotated">
+   <property name="text">
+    <string>Export Flight Plan &amp;as annotated PLN ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Flight Plan as annotated PLN for older Little Navmap versions</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Flight Plan as annotated PLN for older Little Navmap versions</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11575,7 +11587,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

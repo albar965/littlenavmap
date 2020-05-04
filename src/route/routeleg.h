@@ -77,10 +77,6 @@ public:
   /* Get magvar from all known objects */
   void updateMagvar();
 
-  /* Change user defined waypoint name and position */
-  void updateUserName(const QString& name);
-  void updateUserPosition(const atools::geo::Pos& pos);
-
   /* Set parking and start position. Does not modify the flight plan entry.
    * Parking clears start and vice versa. */
   void setDepartureParking(const map::MapParking& departureParking);
@@ -98,6 +94,9 @@ public:
 
   /* Get ident of airport or navaid. Source can be flight plan entry or database. */
   QString getIdent() const;
+
+  /* Comment section from flight plan entry */
+  QString getComment() const;
 
   QString getRegion() const;
 
@@ -267,6 +266,9 @@ public:
   {
     return type & map::PROCEDURE;
   }
+
+  /* User defined waypoint */
+  bool isUser() const;
 
   float getGroundAltitude() const
   {

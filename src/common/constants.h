@@ -95,11 +95,7 @@ const QLatin1Literal ACTIONS_SHOW_USER_AIRSPACE_NOTE("Actions/UserAirspaceNote")
 const QLatin1Literal ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");
 const QLatin1Literal ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarning");
 
-const QLatin1Literal ACTIONS_SHOW_FS9_FSC_WARNING("Actions/ShowFs9Warning");
-const QLatin1Literal ACTIONS_SHOW_FLP_WARNING("Actions/ShowFlpWarning");
-const QLatin1Literal ACTIONS_SHOW_FMS3_WARNING("Actions/ShowFms3Warning");
-const QLatin1Literal ACTIONS_SHOW_FMS11_WARNING("Actions/ShowFms11Warning");
-const QLatin1Literal ACTIONS_SHOW_FLIGHTGEAR_WARNING("Actions/ShowFlightGearWarning");
+const QLatin1Literal ACTIONS_SHOW_SAVE_WARNING("Actions/ShowSaveWarning");
 
 /* Other setting key names */
 const QLatin1Literal DATABASE_BASEPATH("Database/BasePath");
@@ -293,8 +289,9 @@ const QLatin1Literal OPTIONS_GUI_OVERRIDE_LOCALE("OptionsDialog/Widget_checkBoxO
 /* File dialog patterns */
 #if defined(Q_OS_WIN32)
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg)");
-const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.pln *.flp *.fms *.fgfp)");
-const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_SAVE("(*.pln)");
+const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.lnmpln *.pln *.flp *.fms *.fgfp)");
+const QLatin1Literal FILE_PATTERN_LNMPLN("(*.lnmpln)");
+const QLatin1Literal FILE_PATTERN_PLN("(*.pln)");
 const QLatin1Literal FILE_PATTERN_GFP("(*.gfp)");
 const QLatin1Literal FILE_PATTERN_TXT("(*.txt)");
 const QLatin1Literal FILE_PATTERN_RTE("(*.rte)");
@@ -327,8 +324,9 @@ const QLatin1Literal FILE_PATTERN_GRIB("(*.grib)");
 /* Use more or less case insensitive patterns for Linux */
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
 const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD(
-  "(*.pln *.Pln *.PLN *.flp *.Flp *.FLP *.fms *.Fms *.FMS *.fgfp *.Fgfp *.FGFP)");
-const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_SAVE("(*.pln *.Pln *.PLN)");
+  "(*.lnmpln *.LNMPLN *.Lnmpln *.LNMpln *.pln *.Pln *.PLN *.flp *.Flp *.FLP *.fms *.Fms *.FMS *.fgfp *.Fgfp *.FGFP)");
+const QLatin1Literal FILE_PATTERN_LNMPLN("(*.lnmpln *.LNMPLN *.Lnmpln *.LNMpln)");
+const QLatin1Literal FILE_PATTERN_PLN("(*.pln *.Pln *.PLN)");
 const QLatin1Literal FILE_PATTERN_GFP("(*.gfp *.Gfp *.GFP)");
 const QLatin1Literal FILE_PATTERN_TXT("(*.txt *.Txt *.TXT)");
 const QLatin1Literal FILE_PATTERN_RTE("(*.rte *.Rte *.RTE)");

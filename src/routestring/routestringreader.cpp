@@ -327,7 +327,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
         }
 
         // Use the original string as name but limit it for fs
-        entry.setWaypointId(item);
+        entry.setIdent(item);
       }
       else
       {
@@ -382,12 +382,12 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   // Update departure and destination if no airports are used ==============================
   if(readNoAirports && !entries.isEmpty())
   {
-    fp->setDepartureAiportName(entries.first().getIcaoIdent());
-    fp->setDepartureIdent(entries.first().getIcaoIdent());
+    fp->setDepartureAiportName(entries.first().getIdent());
+    fp->setDepartureIdent(entries.first().getIdent());
     fp->setDeparturePosition(entries.first().getPosition());
 
-    fp->setDestinationAiportName(entries.last().getIcaoIdent());
-    fp->setDestinationIdent(entries.last().getIcaoIdent());
+    fp->setDestinationAiportName(entries.last().getIdent());
+    fp->setDestinationIdent(entries.last().getIdent());
     fp->setDestinationPosition(entries.last().getPosition());
   }
 
@@ -414,7 +414,7 @@ map::MapObjectRefExt RouteStringReader::mapObjectRefFromEntry(const FlightplanEn
   // Look at the entry types to use the same preference as the FlightplanEntryBuilder
   if(type == atools::fs::pln::entry::AIRPORT && result.hasAirports())
     return result.airports.first().getRefExt(name);
-  else if(type == atools::fs::pln::entry::INTERSECTION && result.hasWaypoints())
+  else if(type == atools::fs::pln::entry::WAYPOINT && result.hasWaypoints())
     return result.waypoints.first().getRefExt(name);
   else if(type == atools::fs::pln::entry::VOR && result.hasVor())
     return result.vors.first().getRefExt(name);

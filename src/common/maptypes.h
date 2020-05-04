@@ -586,7 +586,7 @@ struct MapUserpointRoute
   {
   }
 
-  QString name;
+  QString ident, region, name, comment;
   float magvar;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
 };

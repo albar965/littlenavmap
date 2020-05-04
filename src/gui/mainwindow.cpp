@@ -161,6 +161,10 @@ MainWindow::MainWindow()
     ui->setupUi(this);
     setAcceptDrops(true);
 
+    // #ifdef QT_NO_DEBUG
+    // ui->menuExportFlightplanToOtherFormats->removeAction(ui->actionRouteSaveAsPlnAnnotated);
+    // #endif
+
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
     helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
@@ -1151,15 +1155,17 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteTableAppend, &QAction::triggered, this, &MainWindow::routeAppend);
-  connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
-  connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsPln);
-  connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
-  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, this, &MainWindow::routeSaveAsFlightGear);
-  connect(ui->actionRouteSaveAsFms3, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
-  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, &MainWindow::routeSaveAsFms11);
-  connect(ui->actionRouteSaveAsClean, &QAction::triggered, this, &MainWindow::routeExportClean);
+  connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSaveLnm);
+  connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsLnm);
 
   // Flight plan export actions =====================================================================
+  connect(ui->actionRouteSaveAsFlp, &QAction::triggered, routeExport, &RouteExport::routeExportFlp);
+  connect(ui->actionRouteSaveAsPln, &QAction::triggered, routeExport, &RouteExport::routeExportPln);
+  connect(ui->actionRouteSaveAsPlnAnnotated, &QAction::triggered, routeExport, &RouteExport::routeExportPlnAnnotated);
+  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, routeExport, &RouteExport::routeExportFms11);
+  connect(ui->actionRouteSaveAsFms3, &QAction::triggered, routeExport, &RouteExport::routeExportFms3);
+  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, routeExport, &RouteExport::routeExportFlightgear);
+
   connect(ui->actionRouteSaveAsGfp, &QAction::triggered, routeExport, &RouteExport::routeExportGfp);
   connect(ui->actionRouteSaveAsTxt, &QAction::triggered, routeExport, &RouteExport::routeExportTxt);
   connect(ui->actionRouteSaveAsRte, &QAction::triggered, routeExport, &RouteExport::routeExportRte);
@@ -1900,202 +1906,6 @@ void MainWindow::routeCenter()
   }
 }
 
-bool MainWindow::routeSaveCheckFMS11Warnings()
-{
-  if(NavApp::getDatabaseAiracCycleNav().isEmpty() &&
-     NavApp::getRouteConst().getFlightplan().getFileFormat() == atools::fs::pln::FMS11)
-  {
-    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING,
-                                            tr(
-                                              "Database contains no AIRAC cycle information which is "
-                                              "required for the X-Plane FSM 11 flight plan format.<br/><br/>"
-                                              "This can happen if you save a flight plan based on FSX or Prepar3D scenery.<br/><br/>"
-                                              "Really continue?"),
-                                            tr("Do not &show this dialog again and save in the future."),
-                                            QMessageBox::Yes | QMessageBox::No,
-                                            QMessageBox::No, QMessageBox::Yes);
-
-    if(result == QMessageBox::No)
-      return false;
-  }
-  return true;
-}
-
-/* Display warning dialogs depending on format to save and allow to cancel out or save as */
-bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat)
-{
-  // Show a simple warning for the rare case that altitude is null
-  if(atools::almostEqual(NavApp::getRoute().getCruisingAltitudeFeet(), 0.f, 1.f))
-  {
-    QString message = tr("Flight plan cruise altitude is zero.\nSimulator might not be able to load the flight plan.");
-
-    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, message,
-                                                QObject::tr("Do not &show this dialog again."));
-  }
-
-  // Use a button box including a save as button
-  atools::gui::DialogButtonList buttonList =
-  {
-    {QString(), QMessageBox::Cancel},
-    // {tr("Save &as PLN instead ..."), QMessageBox::SaveAll},
-    // {QString(), QMessageBox::Save},
-    {QString(), QMessageBox::Help}
-  };
-
-  bool airways = routeController->getRoute().hasAirways();
-  bool userWaypoints = routeController->getRoute().hasUserWaypoints();
-  bool procedures = routeController->getRoute().hasAnyProcedure();
-  bool parking = routeController->getRoute().hasDepartureParking();
-  QString routeFilename = routeController->getCurrentRouteFilepath();
-  int result = QMessageBox::Save;
-
-  // Build button text depending if this is a "save as" or plain save
-  QString saveAsButtonText = tr("Save%1%3%2").
-                             arg(saveAs ? tr(" as") : QString()).
-                             arg(saveAs ? tr(" ...") : QString());
-
-  if(QFileInfo::exists(routeFilename) &&
-     (fileFormat == atools::fs::pln::PLN_FS9 || fileFormat == atools::fs::pln::PLN_FSC))
-  {
-    // Warn before overwriting FS9 with FSX format
-    buttonList.append({saveAsButtonText.arg(tr(" &FSX/P3D PLN")), QMessageBox::Save});
-
-    QString fmt;
-    if(fileFormat == atools::fs::pln::PLN_FS9)
-      fmt = tr("FS9");
-    else if(fileFormat == atools::fs::pln::PLN_FSC)
-      fmt = tr("FSC");
-
-    // We can load FS9 but saving does not make sense anymore
-    // Ask before overwriting file
-    result = atools::gui::Dialog(this).
-             showQuestionMsgBox(lnm::ACTIONS_SHOW_FS9_FSC_WARNING,
-                                tr("Overwrite %1 flight plan with the FSX/P3D PLN flight plan format?\n").arg(fmt),
-                                tr("Do not show this dialog again and overwrite the Flight Plan in the future."),
-                                buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-  else if(fileFormat == atools::fs::pln::FMS3 && (airways || procedures || parking))
-  {
-    buttonList.append({saveAsButtonText.arg(tr(" &FMS 3")), QMessageBox::Save});
-    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
-
-    // Ask before saving file
-    result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS3_WARNING,
-                                 tr("<p>The old X-Plane FMS format version 3 does not allow saving of:</p>"
-                                      "<ul>"
-                                        "<li>Procedures</li>"
-                                          "<li>Airways</li>"
-                                            "<li>Ground Speed</li>"
-                                              "<li>Departure parking position</li>"
-                                                "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                  "<li>Alternate destination airports</li>"
-                                                    "<li>User defined/custom approaches</li>"
-                                                    "</ul>"
-                                                    "<p>This information or parts of it can be lost when reloading the file.</p>"
-                                                      "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
-                                                        "<p>Really save as FMS file?</p>"
-                                    ),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future as FMS 3."),
-                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-  else if(fileFormat == atools::fs::pln::FMS11 /* && parking*/) // Always warn
-  {
-    buttonList.append({saveAsButtonText.arg(tr(" &FMS 11")), QMessageBox::Save});
-    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
-
-    // Ask before saving file
-    result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS11_WARNING,
-                                 tr("<p>This format can only be loaded from "
-                                      "X-Plane 11.10 and above.<br/>"
-                                      "It does not allow saving of:</p>"
-                                      "<ul>"
-                                        "<li>Ground Speed</li>"
-                                          "<li>Departure parking position</li>"
-                                            "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                              "<li>Alternate destination airports</li>"
-                                                "<li>User defined/custom approaches</li>"
-                                                "</ul>"
-                                                "<p>This information or parts of it can be lost when reloading the file.</p>"
-                                                  "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
-                                                    "<p>Really save as FMS file?</p>"
-                                    ),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future as FMS 11."),
-                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-  else if(fileFormat == atools::fs::pln::FLP && (procedures || userWaypoints || parking))
-  {
-    buttonList.append({saveAsButtonText.arg(tr(" &FLP")), QMessageBox::Save});
-    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
-
-    // Ask before saving file
-    result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLP_WARNING,
-                                 tr("<p>The FLP format does not allow saving of:</p>"
-                                      "<ul>"
-                                        "<li>Procedures (limited, can result in mismatches)</li>"
-                                          "<li>Position names</li>"
-                                            "<li>Cruise Altitude</li>"
-                                              "<li>Ground Speed</li>"
-                                                "<li>Departure parking position</li>"
-                                                  "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                    "<li>Alternate destination airports</li>"
-                                                      "<li>User defined/custom approaches</li>"
-                                                      "</ul>"
-                                                      "<p>This information or parts of it can be lost when reloading the file.</p>"
-                                                        "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
-                                                          "<p>Really save as FLP file?</p>"
-                                    ),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future as FLP."),
-                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-  else if(fileFormat == atools::fs::pln::FLIGHTGEAR && (procedures || userWaypoints || parking))
-  {
-    buttonList.append({saveAsButtonText.arg(tr(" &FGFP")), QMessageBox::Save});
-    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
-
-    // Ask before saving file
-    result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLIGHTGEAR_WARNING,
-                                 tr("<p>The FlightGear format does not allow saving of:</p>"
-                                      "<ul>"
-                                        "<li>Procedures (only SID, STAR and the respective transitions)</li>"
-                                          "<li>Position names</li>"
-                                            "<li>Cruise Altitude</li>"
-                                              "<li>Ground Speed</li>"
-                                                "<li>Departure parking position</li>"
-                                                  "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                    "<li>Alternate destination airports</li>"
-                                                      "<li>User defined/custom approaches</li>"
-                                                      "</ul>"
-                                                      "<p>This information or parts of it can be lost when reloading the file.</p>"
-                                                        "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
-                                                          "<p>Really save as FGFP file?</p>"
-                                    ),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future as FGFP."),
-                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-
-  if(result == QMessageBox::SaveAll)
-  {
-    saveAs = true;
-    return true;
-  }
-  else if(result == QMessageBox::Save)
-  {
-    saveAs = false;
-    return true;
-  }
-  else if(result == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "FLIGHTPLANFMT.html",
-                                             lnm::helpLanguageOnline());
-  // else cancel
-
-  saveAs = false;
-  return false;
-}
-
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 {
   Q_UNUSED(x)
@@ -2169,7 +1979,7 @@ void MainWindow::updateWindowTitle()
     newTitle += tr(" - *");
 
 #ifndef QT_NO_DEBUG
-    newTitle += " - DEBUG";
+  newTitle += " - DEBUG";
 #endif
 
   // Add a star to the flight plan tab if changed
@@ -2218,9 +2028,9 @@ bool MainWindow::routeCheckForChanges()
   {
     case QMessageBox::Save:
       if(routeController->getCurrentRouteFilepath().isEmpty())
-        return routeSaveAsPln();
+        return routeSaveAsLnm();
       else
-        return routeSave();
+        return routeSaveLnm();
 
     case QMessageBox::No:
       // ok to erase flight plan
@@ -2245,7 +2055,7 @@ void MainWindow::routeNewFromString()
     {
       if(routeCheckForChanges())
       {
-        routeController->loadFlightplan(routeStringDialog.getFlightplan(), QString(),
+        routeController->loadFlightplan(routeStringDialog.getFlightplan(), atools::fs::pln::LNM_PLN, QString(),
                                         true /*quiet*/, true /*changed*/,
                                         !routeStringDialog.isAltitudeIncluded() /*adjust alt*/);
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
@@ -2286,8 +2096,7 @@ void MainWindow::routeOpenFile(QString filepath)
       filepath = dialog->openFileDialog(
         tr("Open Flight Plan"),
         tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-        "Route/" + NavApp::getCurrentSimulatorShortName(),
-        NavApp::getCurrentSimulatorFilesPath());
+        "Route/LnmPln", atools::documentsDir());
 
     if(!filepath.isEmpty())
     {
@@ -2310,8 +2119,7 @@ void MainWindow::routeAppend()
   QString routeFile = dialog->openFileDialog(
     tr("Append Flight Plan"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/" + NavApp::getCurrentSimulatorShortName(),
-    NavApp::getCurrentSimulatorFilesPath());
+    "Route/LnmPln", atools::documentsDir());
 
   if(!routeFile.isEmpty())
   {
@@ -2334,8 +2142,7 @@ void MainWindow::routeInsert(int insertBefore)
   QString routeFile = dialog->openFileDialog(
     tr("Insert info Flight Plan"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/" + NavApp::getCurrentSimulatorShortName(),
-    NavApp::getCurrentSimulatorFilesPath());
+    "Route/LnmPln", atools::documentsDir());
 
   if(!routeFile.isEmpty())
   {
@@ -2378,211 +2185,81 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
 }
 
 /* Called from menu or toolbar by action */
-bool MainWindow::routeSave()
+bool MainWindow::routeSaveLnm()
 {
-  atools::fs::pln::FileFormat format = NavApp::getRouteConst().getFlightplan().getFileFormat();
+  // Show a simple warning for the rare case that altitude is null ===============
+  if(atools::almostEqual(NavApp::getRoute().getCruisingAltitudeFeet(), 0.f, 10.f))
+    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING,
+                                                tr("Flight plan cruise altitude is zero.\n"
+                                                   "A simulator might not be able to load the flight plan."),
+                                                QObject::tr("Do not &show this dialog again."));
 
-  if(!routeSaveCheckFMS11Warnings())
-    return false;
-
-  if(routeController->getCurrentRouteFilepath().isEmpty() || !routeController->doesFilenameMatchRoute(format))
+  if(!routeController->isLnmFormatFlightplan())
   {
-    // No filename or plan has changed - save as
-    if(format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11)
-      return routeSaveAsFms(format);
-    else if(format == atools::fs::pln::FLP)
-      return routeSaveAsFlp();
-    else if(format == atools::fs::pln::FLIGHTGEAR)
-      return routeSaveAsFlightGear();
-    else
-      return routeSaveAsPln();
+    // Forbid saving of other formats than LNMPLN directly =========================================
+    atools::gui::DialogButtonList buttonList = {
+      {QString(), QMessageBox::Cancel},
+      {tr("Save &as LNMPLN ..."), QMessageBox::Save},
+      {QString(), QMessageBox::Help}
+    };
+
+    // Ask before saving file
+    int result =
+      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_WARNING,
+                                 tr("<p><b>You cannot save this file directly.<br/>"
+                                    "Information might be lost.<br/>"
+                                    "Use the export function instead.</b></p>"
+                                    "<p><b>Save using the new LNMPLN format?</b></p>"),
+                                 tr("Do not show this dialog again."),
+                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
+
+    if(result == QMessageBox::Cancel)
+      return false;
+    else if(result == QMessageBox::Help)
+    {
+      atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "FLIGHTPLANFMT.html",
+                                               lnm::helpLanguageOnline());
+      return false;
+    }
   }
+
+  if(routeController->getCurrentRouteFilepath().isEmpty() || !routeController->doesFilenameMatchRoute() ||
+     !routeController->isLnmFormatFlightplan())
+    // No filename or plan has changed - save as ================================
+    return routeSaveAsLnm();
   else
   {
-    bool saveAs = false;
-    bool save = routeSaveCheckWarnings(saveAs, routeController->getRoute().getFlightplan().getFileFormat());
-
-    if(saveAs)
-      return routeSaveAsPln();
-    else if(save)
+    // Save as LNMPLN =====================================================
+    if(routeController->saveFlightplanLnm())
     {
-
-      bool validate = format == atools::fs::pln::PLN_FSX || format == atools::fs::pln::PLN_FS9 ||
-                      format == atools::fs::pln::PLN_FSC;
-      if(routeExport->routeValidate(validate /* validate parking */, validate /* validate departure and destination */))
-      {
-        // Save in loaded format PLN, FLP or FMS
-        if(routeController->saveFlightplan(false /* clean */))
-        {
-          routeFileHistory->addFile(routeController->getCurrentRouteFilepath());
-          updateActionStates();
-          setStatusMessage(tr("Flight plan saved."));
-          saveFileHistoryStates();
-          return true;
-        }
-      }
+      routeFileHistory->addFile(routeController->getCurrentRouteFilepath());
+      updateActionStates();
+      setStatusMessage(tr("Flight plan saved."));
+      saveFileHistoryStates();
+      return true;
     }
   }
   return false;
 }
 
 /* Called from menu or toolbar by action */
-bool MainWindow::routeSaveAsPln()
+bool MainWindow::routeSaveAsLnm()
 {
-  if(routeExport->routeValidate(true /* validate parking */, true /* validate departure and destination */))
+  QString routeFile = dialog->saveFileDialog(
+    tr("Save Flight Plan as LNMPLN Format"),
+    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
+    "lnmpln", "Route/LnmPln", atools::documentsDir(), routeExport->buildDefaultFilename(),
+    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+
+  if(!routeFile.isEmpty())
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as PLN Format"),
-      tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
-      "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
-      NavApp::getCurrentSimulatorFilesPath(), routeExport->buildDefaultFilename(),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
+    if(routeController->saveFlightplanLnmAs(routeFile))
     {
-      if(routeController->saveFlighplanAs(routeFile, atools::fs::pln::PLN_FSX))
-      {
-        routeFileHistory->addFile(routeFile);
-        updateActionStates();
-        setStatusMessage(tr("Flight plan saved."));
-        saveFileHistoryStates();
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeSaveAsFlp()
-{
-  // <Documents>/Aerosoft/Airbus/Flightplans.
-  bool saveAs = true;
-  bool save = routeSaveCheckWarnings(saveAs, atools::fs::pln::FLP);
-
-  if(saveAs)
-    return routeSaveAsPln();
-  else if(save)
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as FLP Format"),
-      tr("FLP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLP),
-      "flp", "Route/Flp", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      routeExport->buildDefaultFilenameShort(QString(), ".flp"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->saveFlighplanAs(routeFile, atools::fs::pln::FLP))
-      {
-        routeFileHistory->addFile(routeFile);
-        updateActionStates();
-        setStatusMessage(tr("Flight plan saved as FLP."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeSaveAsFlightGear()
-{
-  bool saveAs = true;
-  bool save = routeSaveCheckWarnings(saveAs, atools::fs::pln::FLIGHTGEAR);
-
-  if(saveAs)
-    return routeSaveAsPln();
-  else if(save)
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as FlightGear Format"),
-      tr("FlightGear Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTGEAR),
-      "fgfp", "Route/FlightGear", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      routeExport->buildDefaultFilename("_", ".fgfp"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->saveFlighplanAs(routeFile, atools::fs::pln::FLIGHTGEAR))
-      {
-        routeFileHistory->addFile(routeFile);
-        updateActionStates();
-        setStatusMessage(tr("Flight plan saved for FlightGear."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeSaveAsFms3()
-{
-  return routeSaveAsFms(atools::fs::pln::FMS3);
-}
-
-bool MainWindow::routeSaveAsFms11()
-{
-  return routeSaveAsFms(atools::fs::pln::FMS11);
-}
-
-bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
-{
-  bool saveAs = true;
-
-  if(!routeSaveCheckFMS11Warnings())
-    return false;
-
-  bool save = routeSaveCheckWarnings(saveAs, format);
-
-  if(saveAs)
-    return routeSaveAsPln();
-  else if(save)
-  {
-    // Try to get X-Plane default output directory for flight plans
-    QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
-    if(xpBasePath.isEmpty())
-      xpBasePath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
-    else
-      xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
-
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as X-Plane FMS Format"),
-      tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
-      "fms", "Route/Fms", xpBasePath, routeExport->buildDefaultFilenameShort(QString(), ".fms"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->saveFlighplanAs(routeFile, format))
-      {
-        routeFileHistory->addFile(routeFile);
-        updateActionStates();
-        setStatusMessage(tr("Flight plan saved as FMS."));
-        saveFileHistoryStates();
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeExportClean()
-{
-  if(routeExport->routeValidate(true /* validate parking */, true /* validate departure and destination */))
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Clean Flight Plan without Annotations"),
-      tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
-      "pln", "Route/Clean" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
-      routeExport->buildDefaultFilename("_", ".pln", tr(" Clean")),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlighplanAsClean(routeFile))
-      {
-        setStatusMessage(tr("Flight plan exported."));
-        return true;
-      }
+      routeFileHistory->addFile(routeFile);
+      updateActionStates();
+      setStatusMessage(tr("Flight plan saved."));
+      saveFileHistoryStates();
+      return true;
     }
   }
   return false;
@@ -3074,11 +2751,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
 
   s.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
-  s.setValue(lnm::ACTIONS_SHOW_FS9_FSC_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_FLP_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_FMS3_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_FMS11_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_FLIGHTGEAR_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOW_SAVE_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
   s.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
   s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
@@ -3348,11 +3021,12 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsCorteIn->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms3->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms11->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsPln->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsPlnAnnotated->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsRxpGtn->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsRxpGns->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsHtml->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsClean->setEnabled(hasFlightplan);
 
   ui->actionRouteSaveAsIFly->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsXFmc->setEnabled(hasFlightplan);

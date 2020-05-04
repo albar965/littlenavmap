@@ -19,6 +19,7 @@
 #define LNM_ROUTEEXPORT_H
 
 #include "route/routeexportdialog.h"
+#include "route/routeflags.h"
 
 #include <QObject>
 #include <functional>
@@ -57,6 +58,24 @@ class RouteExport :
 public:
   explicit RouteExport(MainWindow *parent = nullptr);
   virtual ~RouteExport();
+
+  /* FSX/P3D XML PLN format */
+  bool routeExportPln();
+
+  /* Save as above but with annotations for proceduresas used by LNM before 2.4.5 */
+  bool routeExportPlnAnnotated();
+
+  /* Old X-Plane FMS 3 */
+  bool routeExportFms3();
+
+  /* New X-Plane FMS 11 */
+  bool routeExportFms11();
+
+  /* Aerosoft airbus FLP */
+  bool routeExportFlp();
+
+  /* FlightGear XML */
+  bool routeExportFlightgear();
 
   /* Flight plan export functions */
   bool routeExportGfp();
@@ -135,17 +154,17 @@ public:
   /* Build short or long filename depending on settings.
    * Short schema is ICAO{sep}ICAO{extension}{suffix}
    *  Long schema is ICAO (NAME) ICAO (NAME){extension}{suffix}*/
-  QString buildDefaultFilename(const QString& sep = "_", const QString& suffix = ".pln",
+  QString buildDefaultFilename(const QString& sep = "_", const QString& suffix = ".lnmpln",
                                const QString& extension = QString()) const;
 
   /* Create a default filename based on departure and destination names. Suffix includes dot. */
-  static QString buildDefaultFilenameLong(const QString& extension = QString(), const QString& suffix = ".pln");
+  static QString buildDefaultFilenameLong(const QString& extension = QString(), const QString& suffix = ".lnmpln");
   static QString buildDefaultFilenameShort(const QString& sep, const QString& suffix);
 
   /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.
    *  Also sets altitude into FlightplanEntry position. */
-  static Route buildAdjustedRoute(const Route& route, bool replaceCustomWp, bool removeAlternate, bool removeTracks);
-  Route buildAdjustedRoute(bool replaceCustomWp, bool removeAlternate, bool removeTracks);
+  static Route buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions options);
+  Route buildAdjustedRoute(rf::RouteAdjustOptions options);
 
 signals:
   /* Show airport on map to allow parking selection */
@@ -155,6 +174,8 @@ signals:
   void  selectDepartureParking();
 
 private:
+  bool routeExportInternalPln(bool annotated);
+
   bool exportFlighplanAsGfp(const QString& filename);
   bool exportFlighplanAsTxt(const QString& filename);
   bool exportFlighplanAsCorteIn(const QString& filename);
@@ -166,9 +187,8 @@ private:
   bool exportFlighplanAsRxpGns(const QString& filename);
   bool exportFlighplanAsRxpGtn(const QString& filename);
 
-  bool exportFlighplan(const QString& filename, std::function<void(const atools::fs::pln::Flightplan&,
-                                                                   const QString&)> exportFunc);
-
+  bool exportFlighplan(const QString& filename, rf::RouteAdjustOptions options,
+                       std::function<void(const atools::fs::pln::Flightplan&, const QString&)> exportFunc);
   bool routeExportIvapInternal(re::RouteExportType type);
 
   /* Show online network dialog which allows the user to enter needed data */
@@ -186,6 +206,8 @@ private:
 
   void writeIvapLine(QTextStream& stream, const QString& key, const QString& value, re::RouteExportType type);
   void writeIvapLine(QTextStream& stream, const QString& key, int value, re::RouteExportType type);
+
+  bool routeSaveCheckFMS11Warnings();
 
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;

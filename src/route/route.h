@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_ROUTE_H
 
 #include "route/routeleg.h"
+#include "route/routeflags.h"
 
 #include "fs/pln/flightplan.h"
 
@@ -481,12 +482,9 @@ public:
   void clearAll();
 
   /* Removes approaches and SID/STAR depending on save options, deletes duplicates and returns a copy.
-   *  All procedure legs are converted to normal flight plan (user) legs.  */
-  Route adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp, bool replaceCustomWp,
-                                   bool removeAlternate, bool removeTracks) const;
-
-  /* Update user defined waypoint */
-  void changeUserAndPosition(int index, const QString& name, const atools::geo::Pos& pos);
+   * All procedure legs are converted to normal flight plan (user) legs if requested.
+   * Used for flight plan export. */
+  Route adjustedToOptions(rf::RouteAdjustOptions options) const;
 
   /* Loads navaids from database and create all route map objects from flight plan.
    * Flight plan will be corrected if needed. */
@@ -496,7 +494,7 @@ public:
    *  has parking or helipad as start position */
   bool hasValidParking() const;
 
-  void updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteType);
+  void updateAirwaysAndAltitude(bool adjustRouteAltitude);
   int getAdjustedAltitude(int newAltitude) const;
 
   /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
@@ -549,6 +547,10 @@ public:
   /* Reload procedures from the database after deleting a transition.
    * This is needed since attached transitions can change procedures. */
   void reloadProcedures(proc::MapProcedureTypes procs);
+
+  /* Copy flight plan profile altitudes into entries for FMS and other formats
+   *  All following functions have to use setCoords instead of setPosition to avoid overwriting*/
+  void assignAltitudes();
 
 private:
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains

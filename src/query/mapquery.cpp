@@ -94,7 +94,7 @@ map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport)
   if(airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.position);
     return retval;
   }
   return airport;
@@ -105,7 +105,7 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
   if(!airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.position);
     return retval;
   }
   return airport;
@@ -114,13 +114,13 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
 void MapQuery::getAirportSimReplace(map::MapAirport& airport)
 {
   if(airport.navdata)
-    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.position);
 }
 
 void MapQuery::getAirportNavReplace(map::MapAirport& airport)
 {
   if(!airport.navdata)
-    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.position);
 }
 
 void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)
@@ -277,6 +277,15 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
       NavApp::getAirportQueryNav()->getAirportByIdent(ap, ident);
     else
       NavApp::getAirportQuerySim()->getAirportByIdent(ap, ident);
+
+    if(!ap.isValid())
+    {
+      // Try to query using the real ICAO ident vs. X-Plane artifical ids
+      if(airportFromNavDatabase)
+        NavApp::getAirportQueryNav()->getAirportByIcao(ap, ident);
+      else
+        NavApp::getAirportQuerySim()->getAirportByIcao(ap, ident);
+    }
 
     if(ap.isValid())
     {
