@@ -342,15 +342,15 @@ MainWindow::MainWindow()
 
 #ifdef DEBUG_INFORMATION
 
-  QAction *debugAction1 = new QAction("Debug Action");
+  QAction *debugAction1 = new QAction("DEBUG - Dump Route");
   debugAction1->setShortcut(QKeySequence("Ctrl+F1"));
   debugAction1->setShortcutContext(Qt::ApplicationShortcut);
   this->addAction(debugAction1);
 
-  QAction *debugAction2 = new QAction("Debug Action 2");
+  QAction *debugAction2 = new QAction("DEBUG - Dump Flightplan");
   this->addAction(debugAction2);
 
-  QAction *debugAction3 = new QAction("Debug Action 3");
+  QAction *debugAction3 = new QAction("DEBUG - Force Check updates");
   this->addAction(debugAction3);
 
   ui->menuHelp->addSeparator();
@@ -464,16 +464,18 @@ void MainWindow::debugActionTriggered1()
 
 void MainWindow::debugActionTriggered2()
 {
+  qDebug() << "======================================================================================";
   qDebug() << Q_FUNC_INFO;
-
-  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_LAST_CHECKED);
-  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
-
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
+  qDebug() << NavApp::getRouteConst().getFlightplan();
+  qDebug() << "======================================================================================";
 }
 
 void MainWindow::debugActionTriggered3()
 {
+  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_LAST_CHECKED);
+  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
+
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
 }
 
 #endif
