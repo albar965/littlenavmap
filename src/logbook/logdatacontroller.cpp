@@ -374,7 +374,7 @@ void LogdataController::importXplane()
   {
     QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
     if(xpBasePath.isEmpty())
-      xpBasePath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+      xpBasePath = atools::documentsDir();
     else
       xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "logbooks"});
 
