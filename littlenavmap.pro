@@ -338,6 +338,8 @@ SOURCES += \
   src/routeexport/routeexport.cpp \
   src/routeexport/routeexportdata.cpp \
   src/routeexport/routeexportdialog.cpp \
+  src/routeexport/routeexportformat.cpp \
+  src/routeexport/routemultiexportdialog.cpp \
   src/routestring/routestringdialog.cpp \
   src/routestring/routestringreader.cpp \
   src/routestring/routestringtypes.cpp \
@@ -491,6 +493,8 @@ HEADERS  += \
   src/routeexport/routeexport.h \
   src/routeexport/routeexportdata.h \
   src/routeexport/routeexportdialog.h \
+  src/routeexport/routeexportformat.h \
+  src/routeexport/routemultiexportdialog.h \
   src/routestring/routestringdialog.h \
   src/routestring/routestringreader.h \
   src/routestring/routestringtypes.h \
@@ -550,6 +554,7 @@ FORMS += \
   src/route/parkingdialog.ui \
   src/route/userwaypointdialog.ui \
   src/routeexport/routeexportdialog.ui \
+  src/routeexport/routemultiexportdialog.ui \
   src/routestring/routestringdialog.ui \
   src/userdata/userdatadialog.ui \
   src/userdata/userdataexportdialog.ui

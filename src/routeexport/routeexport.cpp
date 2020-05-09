@@ -17,32 +17,27 @@
 
 #include "routeexport/routeexport.h"
 
-#include "gui/mainwindow.h"
-#include "common/constants.h"
-#include "common/aircrafttrack.h"
-#include "fs/perf/aircraftperf.h"
-#include "route/route.h"
-#include "route/routecontroller.h"
-#include "io/fileroller.h"
-#include "options/optiondata.h"
-#include "gui/dialog.h"
-#include "ui_mainwindow.h"
-#include "fs/pln/flightplanio.h"
-#include "navapp.h"
 #include "atools.h"
-#include "routestring/routestringwriter.h"
-#include "gui/errorhandler.h"
-#include "options/optiondata.h"
-#include "gui/dialog.h"
-#include "routeexport/routeexportdata.h"
-#include "route/routealtitude.h"
-#include "ui_mainwindow.h"
-#include "fs/pln/flightplanio.h"
+#include "common/aircrafttrack.h"
+#include "common/constants.h"
 #include "exception.h"
+#include "fs/perf/aircraftperf.h"
+#include "fs/pln/flightplanio.h"
+#include "gui/dialog.h"
+#include "gui/errorhandler.h"
+#include "gui/mainwindow.h"
+#include "io/fileroller.h"
+#include "navapp.h"
+#include "options/optiondata.h"
+#include "route/routealtitude.h"
+#include "route/routecontroller.h"
+#include "routeexport/routeexportdata.h"
+#include "routeexport/routemultiexportdialog.h"
+#include "routestring/routestringwriter.h"
+#include "ui_mainwindow.h"
 
 #include <QBitArray>
 #include <QDir>
-#include <QMessageBox>
 #include <QXmlStreamReader>
 
 using atools::fs::pln::FlightplanIO;
@@ -50,44 +45,184 @@ using atools::fs::pln::FlightplanIO;
 RouteExport::RouteExport(MainWindow *parent)
   : mainWindow(parent)
 {
-  documentsLocation = atools::documentsDir();
-  dialog = new atools::gui::Dialog(mainWindow);
+  exportFormatMap = new RouteExportFormatMap;
   flightplanIO = new FlightplanIO;
+  dialog = new atools::gui::Dialog(mainWindow);
+  exportAllDialog = new RouteMultiExportDialog(mainWindow, exportFormatMap);
+
+  // Save now button in list
+  connect(exportAllDialog, &RouteMultiExportDialog::saveNowButtonClicked, this, &RouteExport::exportType);
 }
 
 RouteExport::~RouteExport()
 {
+  delete exportAllDialog;
   delete dialog;
   delete flightplanIO;
+  delete exportFormatMap;
 }
 
-bool RouteExport::routeExportPln()
+void RouteExport::saveState()
 {
-  return routeExportInternalPln(false);
+  exportAllDialog->saveState();
+  exportFormatMap->saveState();
 }
 
-bool RouteExport::routeExportPlnAnnotated()
+void RouteExport::restoreState()
 {
-  return routeExportInternalPln(true);
+  exportFormatMap->restoreState();
+  exportFormatMap->initCallbacks(this);
+  exportAllDialog->restoreState();
+  selected = exportFormatMap->hasSelected();
 }
 
-bool RouteExport::routeExportInternalPln(bool annotated)
+void RouteExport::postDatabaseLoad()
+{
+  exportFormatMap->updateDefaultPaths();
+  selected = exportFormatMap->hasSelected();
+}
+
+void RouteExport::exportType(RouteExportFormat format)
+{
+  // Export only selected type with file dialog - triggered from multiexport dialog
+  if(format.copyForManualSaveFileDialog().callExport())
+    mainWindow->setStatusMessage(tr("Exported flight plan."));
+}
+
+void RouteExport::routeExportAll()
+{
+  // Export all button or menu item
+  int numExported = 0;
+  for(const RouteExportFormat& fmt : exportFormatMap->getSelected())
+  {
+    if(fmt.isSelected() && fmt.isPathValid())
+      numExported += fmt.callExport();
+  }
+  mainWindow->setStatusMessage(tr("Exported %1 flight plans.").arg(numExported));
+}
+
+void RouteExport::routeMulitExportOptions()
+{
+  int result = exportAllDialog->exec();
+
+  if(result == QDialog::Accepted)
+  {
+    selected = exportFormatMap->hasSelected();
+    emit optionsUpdated();
+  }
+}
+
+QString RouteExport::exportFile(const RouteExportFormat& format, const QString& settingsPrefix,
+                                const QString& path, const QString& filename, bool dontComfirmOverwrite)
+{
+  QString routeFile;
+  bool autoNumberFilename = OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME;
+
+  if(format.isManual())
+    // Called from menu actions ======================================
+    routeFile = dialog->saveFileDialog(tr("Export for %1").arg(format.getComment()),
+                                       tr("%1 Files %2").arg(format.getFormat().toUpper()).arg(format.getFilter()),
+                                       format.getFormat(),
+                                       settingsPrefix, path, filename, dontComfirmOverwrite, autoNumberFilename);
+  else
+  {
+    // Called from multiexport action or multiexport dialog ======================================
+    if(format.isFile())
+    {
+      // Append to file
+      dontComfirmOverwrite = true;
+      autoNumberFilename = false;
+    }
+
+    // Build filename
+    QString name;
+    if(format.isFile())
+      name = format.getPathOrDefault();
+    else
+      name = format.getPathOrDefault() + QDir::separator() + filename;
+
+    RouteMultiExportDialog::ExportOptions opts = exportAllDialog->getExportOptions();
+
+    // Force open of file dialog since this was called from multiexport dialog
+    if(format.isFileDialog())
+      opts = RouteMultiExportDialog::FILEDIALOG;
+
+    switch(opts)
+    {
+      // Show file dialog for all formats selected
+      case RouteMultiExportDialog::FILEDIALOG:
+        routeFile = dialog->saveFileDialog(
+          tr("Export for %1").arg(format.getComment()),
+          tr("%1 Files %2").arg(format.getFormat().toUpper()).arg(format.getFilter()),
+          format.getFormat(),
+          QString() /* settingsPrefix */,
+          format.getPathOrDefault(), filename, dontComfirmOverwrite, autoNumberFilename);
+        break;
+
+      case RouteMultiExportDialog::RENAME_EXISTING:
+        // Rotate for new files - otherwise keep it since appending is desired
+        if(!format.isFile())
+          rotateFile(name);
+        routeFile = name;
+        break;
+
+      case RouteMultiExportDialog::OVERWRITE:
+        routeFile = name;
+        break;
+    }
+  }
+  return routeFile;
+}
+
+QString RouteExport::exportFileMulti(const RouteExportFormat& format, const QString& filename)
+{
+  return exportFile(format, QString() /* settingsPrefix */, QString() /* path */, filename, format.isFile());
+}
+
+void RouteExport::rotateFile(const QString& filename)
+{
+  if(!QFile::exists(filename))
+    return;
+  else
+  {
+    QString separator = QFileInfo(filename).completeBaseName().contains(" ") ? " " : "_";
+    atools::io::FileRoller(4, "${base}" + separator + "${num}.${ext}").rollFile(filename);
+  }
+}
+
+bool RouteExport::routeExportPlnMan()
+{
+  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN));
+}
+
+bool RouteExport::routeExportPln(const RouteExportFormat& format)
+{
+  return routeExportInternalPln(false, format);
+}
+
+bool RouteExport::routeExportPlnAnnotatedMulti(const RouteExportFormat& format)
+{
+  return routeExportInternalPln(true, format);
+}
+
+bool RouteExport::routeExportInternalPln(bool annotated, const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidate(true /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as %1PLN Format").arg(annotated ? tr("annotated ") : QString()),
-      tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_PLN),
-      "pln", "Route/Pln" + NavApp::getCurrentSimulatorShortName(),
-      NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+    QString routeFile = exportFile(format, "Route/Pln" + NavApp::getCurrentSimulatorShortName(),
+                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename("_", ".pln"),
+                                   false /* confirm overwrite */);
 
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2)))
+      auto func = annotated ?
+                  std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2) :
+                  std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2);
+
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, func))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").arg(annotated ? tr("annotated ") : QString()));
         return true;
@@ -97,39 +232,29 @@ bool RouteExport::routeExportInternalPln(bool annotated)
   return false;
 }
 
-bool RouteExport::routeExportFms3()
+bool RouteExport::routeExportFms3Multi(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    // Try to get X-Plane default output directory for flight plans
-    QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
-    if(xpBasePath.isEmpty())
-      xpBasePath = atools::documentsDir();
-    else
-      xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
-
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as old X-Plane FMS 3 Format"),
-      tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
-      "fms", "Route/Fms3", xpBasePath, buildDefaultFilenameShort(QString(), ".fms"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fms"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS3, std::bind(&FlightplanIO::saveFms3, flightplanIO, _1, _2)))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FMS."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportFms11()
+bool RouteExport::routeExportFms11Man()
+{
+  return routeExportFms11(exportFormatMap->getForManualSave(rexp::FMS11));
+}
+
+bool RouteExport::routeExportFms11(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -145,11 +270,8 @@ bool RouteExport::routeExportFms11()
     else
       xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
 
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as X-Plane FMS Format"),
-      tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
-      "fms", "Route/Fms11", xpBasePath, buildDefaultFilenameShort(QString(), ".fms"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+    QString routeFile = exportFile(format, "Route/Fms11", xpBasePath, buildDefaultFilenameShort(QString(), ".fms"),
+                                   false /* confirm overwrite */);
 
     if(!routeFile.isEmpty())
     {
@@ -164,53 +286,43 @@ bool RouteExport::routeExportFms11()
   return false;
 }
 
-bool RouteExport::routeExportFlp()
+bool RouteExport::routeExportFlpMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   // <Documents>/Aerosoft/Airbus/Flightplans.
-  QString routeFile = dialog->saveFileDialog(
-    tr("Save Flight Plan as FLP Format"),
-    tr("FLP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLP),
-    "flp", "Route/Flp", atools::documentsDir(),
-    buildDefaultFilenameShort(QString(), ".flp"),
-    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+  QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".flp"));
   if(!routeFile.isEmpty())
   {
     using namespace std::placeholders;
     if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFlp, flightplanIO, _1, _2)))
-    {
-      mainWindow->setStatusMessage(tr("Flight plan saved as FLP."));
       return true;
-    }
   }
   return false;
 }
 
-bool RouteExport::routeExportFlightgear()
+bool RouteExport::routeExportFlightgearMan()
+{
+  return routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR));
+}
+
+bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
-  QString routeFile = dialog->saveFileDialog(
-    tr("Save Flight Plan as FlightGear Format"),
-    tr("FlightGear Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTGEAR),
-    "fgfp", "Route/FlightGear", atools::documentsDir(),
-    buildDefaultFilename("_", ".fgfp"),
-    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+  QString routeFile = exportFile(format, "Route/FlightGear", atools::documentsDir(),
+                                 buildDefaultFilename("_", ".fgfp"),
+                                 false /* confirm overwrite */);
 
   if(!routeFile.isEmpty())
   {
     using namespace std::placeholders;
     if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFlightGear, flightplanIO, _1, _2)))
-    {
-      mainWindow->setStatusMessage(tr("Flight plan saved as FGFP."));
       return true;
-    }
   }
   return false;
 }
 
 /* Called from menu or toolbar by action */
-bool RouteExport::routeExportRxpGns()
+bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -223,7 +335,7 @@ bool RouteExport::routeExportRxpGns()
     QString gnsPath(qgetenv("GNSAPPDATA"));
     path = gnsPath.isEmpty() ? "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL" : gnsPath + "\\FPL";
 #elif DEBUG_INFORMATION
-    path = atools::buildPath({documentsLocation, "Garmin", "GNS Trainer Data", "GNS", "FPL"});
+    path = atools::buildPath({atools::documentsDir(), "Garmin", "GNS Trainer Data", "GNS", "FPL"});
 #else
     path = documentsLocation;
 #endif
@@ -231,26 +343,18 @@ bool RouteExport::routeExportRxpGns()
     bool mkdir = QDir(path).mkpath(path);
     qInfo() << "mkdir" << path << "result" << mkdir;
 
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as FPL for Reality XP GNS"),
-      tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
-      "fpl", "Route/RxpGns", path, buildDefaultFilenameShort("", ".fpl"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("", ".fpl"));
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsRxpGns(routeFile))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FPL."));
         return true;
-      }
     }
   }
   return false;
 }
 
 /* Called from menu or toolbar by action */
-bool RouteExport::routeExportRxpGtn()
+bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -264,114 +368,77 @@ bool RouteExport::routeExportRxpGtn()
     QString gtnPath(qgetenv("GTNSIMDATA"));
     path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN" : gtnPath + "\\Databases\\FPLN";
 #elif DEBUG_INFORMATION
-    path = atools::buildPath({documentsLocation, "Garmin", "Trainers", "GTN", "FPLN"});
+    path = atools::buildPath({atools::documentsDir(), "Garmin", "Trainers", "GTN", "FPLN"});
 #else
-    path = documentsLocation;
+    path = atools::documentsDir();
 #endif
 
     bool mkdir = QDir(path).mkpath(path);
     qInfo() << "mkdir" << path << "result" << mkdir;
 
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as GFP for Reality XP GTN"),
-      tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
-      "gfp", "Route/RxpGfp", path,
-      buildDefaultFilenameShort("_", ".gfp"), false, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".gfp"));
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsRxpGtn(routeFile))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as GFP."));
         return true;
-      }
     }
   }
   return false;
 }
 
 /* Called from menu or toolbar by action */
-bool RouteExport::routeExportGfp()
+bool RouteExport::routeExportGfpMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
   // <FSX/P3D>/F1GTN/FPL.
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as Garmin GFP Format"),
-      tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
-      "gfp", "Route/Gfp",
-      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
-      buildDefaultFilenameShort("-", ".gfp"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("-", ".gfp"));
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsGfp(routeFile))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as GFP."));
         return true;
-      }
     }
   }
   return false;
 }
 
 /* Called from menu or toolbar by action */
-bool RouteExport::routeExportTxt()
+bool RouteExport::routeExportTxtMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as TXT Format"),
-      tr("Text Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TXT), "txt", "Route/Txt",
-      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft",
-      buildDefaultFilenameShort(QString(), ".txt"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".txt"));
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsTxt(routeFile))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as TXT."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportRte()
+bool RouteExport::routeExportRteMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as PMDG RTE Format"),
-      tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
-      "rte", "Route/Rte",
-      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
-      buildDefaultFilenameShort(QString(), ".rte"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".rte"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveRte, flightplanIO, _1, _2)))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as RTE."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportFpr()
+bool RouteExport::routeExportFprMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -379,89 +446,52 @@ bool RouteExport::routeExportFpr()
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as Majestic Dash FPR"),
-      tr("FPR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPR),
-      "fpr", "Route/Fpr",
-      NavApp::getCurrentSimulatorBasePath() +
-      QDir::separator() + "SimObjects" +
-      QDir::separator() + "Airplanes" +
-      QDir::separator() + "mjc8q400" +
-      QDir::separator() + "nav" +
-      QDir::separator() + "routes",
-      buildDefaultFilenameShort(QString(), ".fpr"));
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpr"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFpr, flightplanIO, _1, _2)))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FPR."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportFpl()
+bool RouteExport::routeExportFplMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
   // \X-Plane 11\Aircraft\X-Aviation\IXEG 737 Classic\coroutes
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as IXEG FPL Format"),
-      tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
-      "fpl", "Route/Fpl",
-      NavApp::getCurrentSimulatorBasePath() +
-      QDir::separator() + "Aircraft" +
-      QDir::separator() + "X-Aviation" +
-      QDir::separator() + "IXEG 737 Classic" +
-      QDir::separator() + "coroutes",
-      buildDefaultFilenameShort(QString(), ".fpl"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
     if(!routeFile.isEmpty())
     {
       // Same format as txt
       if(exportFlighplanAsTxt(routeFile))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FPL."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportCorteIn()
+bool RouteExport::routeExportCorteInMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan to corte.in for Flight Factor Airbus"),
-      tr("corte.in Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CORTEIN),
-      ".in", "Route/CorteIn",
-      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft", "corte.in",
-      true /* dont confirm overwrite */);
-
+    QString routeFile = exportFileMulti(format, "corte.in");
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsCorteIn(routeFile))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan added to corte.in."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportFltplan()
+bool RouteExport::routeExportFltplanMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   // Default directory for the iFly stored Flight plans is Prepar3D/iFly/737NG/navdata/FLTPLAN
@@ -470,31 +500,18 @@ bool RouteExport::routeExportFltplan()
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as FLTPLAN for iFly"),
-      tr("iFly FLTPLAN Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLTPLAN), "fltplan", "Route/Fltplan",
-      NavApp::getCurrentSimulatorBasePath() +
-      QDir::separator() + "iFly" +
-      QDir::separator() + "737NG" +
-      QDir::separator() + "navdata" +
-      QDir::separator() + "FLTPLAN",
-      buildDefaultFilenameShort(QString(), ".fltplan"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fltplan"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFltplan, flightplanIO, _1, _2)))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FLTPLAN for iFly."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportXFmc()
+bool RouteExport::routeExportXFmcMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   // The plans have an extension of *.FPL and are saved in for following Folder : -
@@ -504,81 +521,50 @@ bool RouteExport::routeExportXFmc()
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as FPL for X-FMC"),
-      tr("X-FMC Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/XFmc",
-      NavApp::getCurrentSimulatorBasePath() +
-      QDir::separator() + "Resources" +
-      QDir::separator() + "plugins" +
-      QDir::separator() + "XFMC" +
-      QDir::separator() + "FlightPlans",
-      buildDefaultFilenameShort(QString(), ".fpl"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsTxt(routeFile))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FPL for X-FMC."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportUFmc()
+bool RouteExport::routeExportUFmcMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   // EDDHLIRF.ufmc
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan for UFMC"),
-      tr("UFMC Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_UFMC), "ufmc", "Route/UFmc",
-      NavApp::getCurrentSimulatorBasePath(),
-      buildDefaultFilenameShort(QString(), ".ufmc"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".ufmc"));
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsUFmc(routeFile))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved for UFMC."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportProSim()
+bool RouteExport::routeExportProSimMulti(const RouteExportFormat& format)
 {
   // companyroutes.xml
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan to companyroutes.xml for ProSim"),
-      tr("companyroutes.xml Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_COMPANYROUTES_XML),
-      ".xml", "Route/CompanyRoutesXml",
-      documentsLocation, "companyroutes.xml",
-      true /* dont confirm overwrite */);
-
+    QString routeFile = exportFileMulti(format, "companyroutes.xml");
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsProSim(routeFile))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan added to companyroutes.xml."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportBbs()
+bool RouteExport::routeExportBbsMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   // P3D Root Folder \BlackBox Simulation\Airbus A330
@@ -587,40 +573,23 @@ bool RouteExport::routeExportBbs()
 
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan for BBS Airbus"),
-      tr("PLN Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_BBS_PLN), "pln", "Route/BbsPln",
-      NavApp::getCurrentSimulatorBasePath() +
-      QDir::separator() + "Blackbox Simulation" +
-      QDir::separator() + "Company Routes",
-      buildDefaultFilenameShort(QString(), ".pln"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".pln"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveBbsPln, flightplanIO, _1, _2)))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved for BBS."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportFeelthereFpl()
+bool RouteExport::routeExportFeelthereFplMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan for FeelThere Aircraft"),
-      tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/FeelThereFpl",
-      NavApp::getCurrentSimulatorBasePath(),
-      buildDefaultFilenameShort("_", ".fpl"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".fpl"));
     if(!routeFile.isEmpty())
     {
       int groundSpeed = atools::roundToInt(NavApp::getAltitudeLegs().getAverageGroundSpeed());
@@ -630,55 +599,34 @@ bool RouteExport::routeExportFeelthereFpl()
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS,
                          std::bind(&FlightplanIO::saveFeelthereFpl, flightplanIO, _1, _2, groundSpeed)))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved for FeelThere."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportLeveldRte()
+bool RouteExport::routeExportLeveldRteMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan for Level-D Aircraft"),
-      tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE), "rte", "Route/LeveldRte",
-      NavApp::getCurrentSimulatorBasePath() +
-      QDir::separator() + "Level-D Simulations" +
-      QDir::separator() + "navdata" +
-      QDir::separator() + "Flightplans",
-      buildDefaultFilenameShort("_", ".rte"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".rte"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveLeveldRte, flightplanIO, _1, _2)))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved for Level-D."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportEfbr()
+bool RouteExport::routeExportEfbrMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan for the AivlaSoft EFB"),
-      tr("EFBR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_EFBR), "efbr", "Route/Efb",
-      documentsLocation,
-      buildDefaultFilenameShort("_", ".efbr"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".efbr"));
     if(!routeFile.isEmpty())
     {
       QString route = RouteStringWriter().createStringForRoute(NavApp::getRouteConst(), 0.f, rs::NONE);
@@ -686,84 +634,52 @@ bool RouteExport::routeExportEfbr()
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS,
                          std::bind(&FlightplanIO::saveEfbr, flightplanIO, _1, _2, route, cycle, QString(), QString())))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved for EFB."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportQwRte()
+bool RouteExport::routeExportQwRteMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan for QualityWings Aircraft"),
-      tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE), "rte", "Route/QwRte",
-      NavApp::getCurrentSimulatorBasePath(),
-      buildDefaultFilenameShort(QString(), ".rte"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".rte"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveQwRte, flightplanIO, _1, _2)))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved for QualityWings."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportMdr()
+bool RouteExport::routeExportMdrMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan for Maddog X Aircraft"),
-      tr("MDR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_MDR), "mdr", "Route/Mdx",
-      NavApp::getCurrentSimulatorBasePath(),
-      buildDefaultFilenameShort(QString(), ".mdr"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".mdr"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveMdr, flightplanIO, _1, _2)))
-      {
-        mainWindow->setStatusMessage(tr("Flight plan saved for Maddog X."));
         return true;
-      }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportTfdi()
+bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
 {
   // {Simulator}\SimObjects\Airplanes\TFDi_Design_717\Documents\Company Routes/
 
   qDebug() << Q_FUNC_INFO;
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan for TFDi Design 717"),
-      tr("XML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TFDI), "xml", "Route/Tfdi",
-      NavApp::getCurrentSimulatorBasePath() +
-      QDir::separator() + "SimObjects" +
-      QDir::separator() + "Airplanes" +
-      QDir::separator() + "TFDi_Design_717" +
-      QDir::separator() + "Documents" +
-      QDir::separator() + "Company Routes",
-      buildDefaultFilenameShort(QString(), ".xml"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".xml"));
     if(!routeFile.isEmpty())
     {
       try
@@ -782,14 +698,18 @@ bool RouteExport::routeExportTfdi()
         return false;
       }
 
-      mainWindow->setStatusMessage(tr("Flight plan saved for vPilot."));
       return true;
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportVfp()
+bool RouteExport::routeExportVfpMan()
+{
+  return routeExportVfp(exportFormatMap->getForManualSave(rexp::VFP));
+}
+
+bool RouteExport::routeExportVfp(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
@@ -797,37 +717,39 @@ bool RouteExport::routeExportVfp()
     RouteExportData exportData = createRouteExportData(re::VFP);
     if(routeExportDialog(exportData, re::VFP))
     {
-      QString routeFile = dialog->saveFileDialog(
-        tr("Export Flight Plan as vPilot VFP"),
-        tr("VFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_VFP), "vfp", "Route/Vfp",
-        documentsLocation,
-        buildDefaultFilenameShort(QString(), ".vfp"),
-        false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+      QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".vfp"));
 
       if(!routeFile.isEmpty())
       {
         if(exportFlighplanAsVfp(exportData, routeFile))
-        {
-          mainWindow->setStatusMessage(tr("Flight plan saved for vPilot."));
           return true;
-        }
       }
     }
   }
   return false;
 }
 
-bool RouteExport::routeExportXIvap()
+bool RouteExport::routeExportXIvapMan()
 {
-  return routeExportIvapInternal(re::XIVAP);
+  return routeExportXIvap(exportFormatMap->getForManualSave(rexp::XIVAP));
 }
 
-bool RouteExport::routeExportIvap()
+bool RouteExport::routeExportXIvap(const RouteExportFormat& format)
 {
-  return routeExportIvapInternal(re::IVAP);
+  return routeExportIvapInternal(re::XIVAP, format);
 }
 
-bool RouteExport::routeExportIvapInternal(re::RouteExportType type)
+bool RouteExport::routeExportIvapMan()
+{
+  return routeExportIvap(exportFormatMap->getForManualSave(rexp::IVAP));
+}
+
+bool RouteExport::routeExportIvap(const RouteExportFormat& format)
+{
+  return routeExportIvapInternal(re::IVAP, format);
+}
+
+bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -837,21 +759,11 @@ bool RouteExport::routeExportIvapInternal(re::RouteExportType type)
     if(routeExportDialog(exportData, type))
     {
       QString typeStr = RouteExportDialog::getRouteTypeAsDisplayString(type);
-      QString routeFile = dialog->saveFileDialog(
-        tr("Export Flight Plan as %1 FPL").arg(typeStr),
-        tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl",
-        "Route/" + RouteExportDialog::getRouteTypeAsString(type),
-        documentsLocation,
-        buildDefaultFilenameShort(QString(), ".fpl"),
-        false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
+      QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
       if(!routeFile.isEmpty())
       {
         if(exportFlighplanAsIvap(exportData, routeFile, type))
-        {
-          mainWindow->setStatusMessage(tr("Flight plan saved for %1.").arg(typeStr));
           return true;
-        }
       }
     }
   }
@@ -921,20 +833,20 @@ bool RouteExport::routeExportDialog(RouteExportData& exportData, re::RouteExport
   return false;
 }
 
-bool RouteExport::routeExportGpx()
+bool RouteExport::routeExportGpxMan()
+{
+  return routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX));
+}
+
+bool RouteExport::routeExportGpx(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidate(false /* validate parking */, false /* validate departure and destination */))
   {
-    QString title = NavApp::getAircraftTrack().isEmpty() ?
-                    tr("Save Flight Plan as GPX Format") : tr("Save Flightplan and Track as GPX Format");
-
-    QString routeFile = dialog->saveFileDialog(
-      title,
-      tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
-      "gpx", "Route/Gpx", documentsLocation, buildDefaultFilename(QString(), ".gpx"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+    QString routeFile = exportFile(format, "Route/Gpx", atools::documentsDir(),
+                                   buildDefaultFilename(QString(), ".gpx"),
+                                   false /* confirm overwrite */);
 
     if(!routeFile.isEmpty())
     {
@@ -951,15 +863,18 @@ bool RouteExport::routeExportGpx()
   return false;
 }
 
-bool RouteExport::routeExportHtml()
+bool RouteExport::routeExportHtmlMan()
+{
+  return routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML));
+}
+
+bool RouteExport::routeExportHtml(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString routeFile = dialog->saveFileDialog(
-    tr("Save Flight Plan as HTML Page"),
-    tr("HTML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_HTML),
-    "html", "Route/Html", documentsLocation, buildDefaultFilename(QString(), ".html"),
-    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+  QString routeFile = exportFile(format, "Route/Html", atools::documentsDir(),
+                                 buildDefaultFilename(QString(), ".html"),
+                                 false /* confirm overwrite */);
 
   if(!routeFile.isEmpty())
   {
@@ -968,7 +883,7 @@ bool RouteExport::routeExportHtml()
     {
       QTextStream stream(&file);
       stream.setCodec("UTF-8");
-      stream << NavApp::getRouteController()->getFlightplanTableAsHtmlDoc(24);
+      stream << NavApp::getRouteController()->getFlightplanTableAsHtmlDoc(24 /* iconSizePixel */);
       mainWindow->setStatusMessage(tr("Flight plan saved as HTML."));
       return true;
     }
@@ -1670,11 +1585,11 @@ bool RouteExport::routeSaveCheckFMS11Warnings()
   if(NavApp::getDatabaseAiracCycleNav().isEmpty())
   {
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING,
-                                            tr(
-                                              "Database contains no AIRAC cycle information which is "
-                                              "required for the X-Plane FSM 11 flight plan format.<br/><br/>"
-                                              "This can happen if you save a flight plan based on FSX or Prepar3D scenery.<br/><br/>"
-                                              "Really continue?"),
+                                            tr("Database contains no AIRAC cycle information which is "
+                                               "required for the X-Plane FSM 11 flight plan format.<br/><br/>"
+                                               "This can happen if you save a flight plan based on "
+                                               "FSX or Prepar3D scenery.<br/><br/>"
+                                               "Really continue?"),
                                             tr("Do not &show this dialog again and save in the future."),
                                             QMessageBox::Yes | QMessageBox::No,
                                             QMessageBox::No, QMessageBox::Yes);

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>1362</height>
+    <height>1365</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,55 +48,13 @@
      </property>
      <addaction name="actionClearKmlMenu"/>
     </widget>
-    <widget class="QMenu" name="menuEXport">
+    <widget class="QMenu" name="menuExportFlightplanToOnlineFormats">
      <property name="title">
-      <string>E&amp;xport Flight Plan to Garmin Formats</string>
+      <string>E&amp;xport Flight Plan to Other Formats</string>
      </property>
-     <addaction name="actionRouteSaveAsGfp"/>
-     <addaction name="actionRouteSaveAsRxpGtn"/>
-     <addaction name="actionRouteSaveAsRxpGns"/>
-    </widget>
-    <widget class="QMenu" name="menuE_xport_Flight_Plan_to_Aircraft_Formats">
-     <property name="title">
-      <string>E&amp;xport Flight Plan to Aircraft Formats</string>
-     </property>
-     <addaction name="actionRouteSaveAsFlp"/>
-     <addaction name="actionRouteSaveAsRte"/>
-     <addaction name="actionRouteSaveAsTxt"/>
-     <addaction name="actionRouteSaveAsFpr"/>
-     <addaction name="actionRouteSaveAsFpl"/>
-     <addaction name="actionRouteSaveAsCorteIn"/>
-     <addaction name="actionRouteSaveAsIFly"/>
-     <addaction name="actionRouteSaveAsProSim"/>
-     <addaction name="actionRouteSaveAsBbsAirbus"/>
-     <addaction name="actionRouteSaveAsLeveldRte"/>
-     <addaction name="actionRouteSaveAsFeelthereFpl"/>
-     <addaction name="actionRouteSaveAsQwRte"/>
-     <addaction name="actionRouteSaveAsMdr"/>
-     <addaction name="actionRouteSaveAsTfdi"/>
-    </widget>
-    <widget class="QMenu" name="menuExportFlightplanToOtherFormats">
-     <property name="title">
-      <string>E&amp;xport Flight Plan to other Formats</string>
-     </property>
-     <addaction name="separator"/>
-     <addaction name="actionRouteSaveAsUfmc"/>
-     <addaction name="actionRouteSaveAsXFmc"/>
-     <addaction name="separator"/>
-     <addaction name="actionRouteSaveAsEfbr"/>
-     <addaction name="separator"/>
-     <addaction name="actionRouteSaveAsFms3"/>
-     <addaction name="actionRouteSaveAsPlnAnnotated"/>
-     <addaction name="separator"/>
      <addaction name="actionRouteSaveAsHtml"/>
      <addaction name="actionRouteSaveAsGpx"/>
      <addaction name="separator"/>
-     <addaction name="actionRouteShowSkyVector"/>
-    </widget>
-    <widget class="QMenu" name="menuExportFlightplanToOnlineFormats">
-     <property name="title">
-      <string>E&amp;xport Flight Plan to Online Formats</string>
-     </property>
      <addaction name="actionRouteSaveAsVfp"/>
      <addaction name="actionRouteSaveAsIvap"/>
      <addaction name="actionRouteSaveAsXIvap"/>
@@ -123,12 +81,13 @@
     <addaction name="actionRouteSaveAsFms11"/>
     <addaction name="actionRouteSaveAsFlightGear"/>
     <addaction name="separator"/>
-    <addaction name="menuE_xport_Flight_Plan_to_Aircraft_Formats"/>
-    <addaction name="menuEXport"/>
+    <addaction name="actionRouteShowSkyVector"/>
     <addaction name="menuExportFlightplanToOnlineFormats"/>
-    <addaction name="menuExportFlightplanToOtherFormats"/>
     <addaction name="separator"/>
     <addaction name="menuExportOptions"/>
+    <addaction name="separator"/>
+    <addaction name="actionRouteSaveAll"/>
+    <addaction name="actionRouteSaveAllOptions"/>
     <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
@@ -521,6 +480,7 @@
    <addaction name="actionRouteNew"/>
    <addaction name="actionRouteOpen"/>
    <addaction name="actionRouteSave"/>
+   <addaction name="actionRouteSaveAll"/>
    <addaction name="separator"/>
    <addaction name="actionRouteResetAll"/>
   </widget>
@@ -8598,17 +8558,6 @@ Best track will be selected automatically.</string>
     <string>Ctrl+Shift+N</string>
    </property>
   </action>
-  <action name="actionRouteSaveAsGfp">
-   <property name="text">
-    <string>Export Flight Plan as &amp;Garmin GTN GFP ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as Garmin Flight Plan format usable by the Flight1 GTN 650/750</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as Garmin Flight Plan format usable by the Flight1 GTN 650/750</string>
-   </property>
-  </action>
   <action name="actionRouteAdjustAltitude">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -8723,17 +8672,6 @@ Best track will be selected automatically.</string>
    </property>
    <property name="statusTip">
     <string>Show the offline help also including the legend in a PDF viewer</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsRte">
-   <property name="text">
-    <string>Export Flight Plan as PMDG &amp;RTE ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as RTE file usable by PMDG aircraft</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as RTE file usable by PMDG aircraft</string>
    </property>
   </action>
   <action name="actionInfoApproachExpandAll">
@@ -9055,17 +8993,6 @@ Best track will be selected automatically.</string>
     <string>Ctrl+Shift+A</string>
    </property>
   </action>
-  <action name="actionRouteSaveAsFlp">
-   <property name="text">
-    <string>Export Flight Plan as &amp;FLP ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Export flight plan as FLP file usable by the Aerosoft Airbus and other add-on aircraft</string>
-   </property>
-   <property name="statusTip">
-    <string>Export flight plan as FLP file usable by the Aerosoft Airbus and other add-on aircraft</string>
-   </property>
-  </action>
   <action name="actionShowAirspaces">
    <property name="checkable">
     <bool>true</bool>
@@ -9207,28 +9134,6 @@ Best track will be selected automatically.</string>
     <enum>QAction::NoRole</enum>
    </property>
   </action>
-  <action name="actionRouteSaveAsTxt">
-   <property name="text">
-    <string>Export Flight Plan as &amp;TXT ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as Text File usable by JARDesign or Rotate Simulations aircraft</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as Text File usable by JARDesign or Rotate Simulations aircraft</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsFms3">
-   <property name="text">
-    <string>Export Flight Plan as X-Plane FMS &amp;3 ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as FMS 3 file usable by all X-Plane versions</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as FMS 3 file usable by all X-Plane versions</string>
-   </property>
-  </action>
   <action name="actionRouteSaveAsFms11">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -9245,61 +9150,6 @@ Best track will be selected automatically.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+X</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsFpr">
-   <property name="text">
-    <string>Export Flight Plan as &amp;Majestic Dash FPR ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as FPR file usable Majestic Software MJC8 Q400</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as FPR file usable Majestic Software MJC8 Q400</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsFpl">
-   <property name="text">
-    <string>Export Flight Plan as IXEG &amp;FPL ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as FPL file usable by the IXEG Boeing</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as FPL file usable by the IXEG Boeing</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsCorteIn">
-   <property name="text">
-    <string>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
-   </property>
-   <property name="statusTip">
-    <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsRxpGtn">
-   <property name="text">
-    <string>Export Flight Plan as &amp;GFP for Reality XP GTN ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as GFP file usable by the Reality XP GTN 750/650 Touch</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as GFP file usable by the Reality XP GTN 750/650 Touch</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsRxpGns">
-   <property name="text">
-    <string>Export Flight Plan to &amp;FPL for the Reality XP GNS ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
    </property>
   </action>
   <action name="actionMapShowCompassRose">
@@ -9683,61 +9533,6 @@ Best track will be selected automatically.</string>
    </property>
    <property name="statusTip">
     <string>Centers the selected center on the map</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsIFly">
-   <property name="text">
-    <string>Export Flight Plan as &amp;FLTPLAN for iFly ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsXFmc">
-   <property name="text">
-    <string>Export Flight Plan for &amp;X-FMC ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as FPL file usable by X-FMC</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as FPL file usable by X-FMC</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsUfmc">
-   <property name="text">
-    <string>Export Flight Plan for &amp;UFMC ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as UFMC file</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as UFMC file</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsProSim">
-   <property name="text">
-    <string>Export Flight Plan for &amp;ProSim ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Append flight plan to the companyroutes.xml file for ProSim</string>
-   </property>
-   <property name="statusTip">
-    <string>Append flight plan to the companyroutes.xml file for ProSim</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsBbsAirbus">
-   <property name="text">
-    <string>Export Flight Plan as PLN for &amp;BBS Airbus ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
    </property>
   </action>
   <action name="actionRouteShowSkyVector">
@@ -10689,61 +10484,6 @@ Best track will be selected automatically.</string>
     <string>Save current map view as an image for AviTab</string>
    </property>
   </action>
-  <action name="actionRouteSaveAsLeveldRte">
-   <property name="text">
-    <string>Export Flight Plan as Level-D &amp;RTE ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as RTE file usable by Level-D aircraft</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as RTE file usable by Level-D aircraft</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsFeelthereFpl">
-   <property name="text">
-    <string>Export Flight Plan as FeelThere &amp;FPL ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as FPL file usable by FeelThere aircraft</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as FPL file usable by FeelThere aircraft</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsEfbr">
-   <property name="text">
-    <string>Export Flight Plan as &amp;EFBR ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as EFBR file usable by the AivlaSoft EFB</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as EFBR file usable by the AivlaSoft EFB</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsQwRte">
-   <property name="text">
-    <string>Export Flight Plan as QualityWings &amp;RTE ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as RTE file usable by QualityWings Aircraft</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as RTE file usable by QualityWings Aircraft</string>
-   </property>
-  </action>
-  <action name="actionRouteSaveAsMdr">
-   <property name="text">
-    <string>Export Flight Plan as Maddog X &amp;MDR ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as MDR file usable by the Leonardo Maddog X</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as MDR file usable by the Leonardo Maddog X</string>
-   </property>
-  </action>
   <action name="actionRunWebserver">
    <property name="checkable">
     <bool>true</bool>
@@ -11208,17 +10948,6 @@ Best track will be selected automatically.</string>
     <string>Saves all options and window layout now</string>
    </property>
   </action>
-  <action name="actionRouteSaveAsTfdi">
-   <property name="text">
-    <string>Export Flight Plan for TFDi Design 717 ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Save flight plan as XML file usable by the TFDi Design 717</string>
-   </property>
-   <property name="statusTip">
-    <string>Save flight plan as XML file usable by the TFDi Design 717</string>
-   </property>
-  </action>
   <action name="actionRouteResetAll">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -11421,17 +11150,6 @@ Best track will be selected automatically.</string>
     <string>Ctrl+Shift+P</string>
    </property>
   </action>
-  <action name="actionRouteSaveAsPlnAnnotated">
-   <property name="text">
-    <string>Export Flight Plan &amp;as annotated PLN ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Export Flight Plan as annotated PLN for older Little Navmap versions</string>
-   </property>
-   <property name="statusTip">
-    <string>Export Flight Plan as annotated PLN for older Little Navmap versions</string>
-   </property>
-  </action>
   <action name="actionRouteSaveAirwayWaypoints">
    <property name="checkable">
     <bool>true</bool>
@@ -11444,6 +11162,39 @@ Best track will be selected automatically.</string>
    </property>
    <property name="statusTip">
     <string>Export waypoints instead of airway information</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAll">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filesaveall.svg</normaloff>:/littlenavmap/resources/icons/filesaveall.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Multiexport Flight Plan</string>
+   </property>
+   <property name="toolTip">
+    <string>Multiexport Flight Plan into several formats</string>
+   </property>
+   <property name="statusTip">
+    <string>Multiexport Flight Plan into several formats</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+M</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAllOptions">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filesaveallopts.svg</normaloff>:/littlenavmap/resources/icons/filesaveallopts.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Multiexport Flight Plan &amp;Options ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Configure the Export for Flight Plans into several formats</string>
+   </property>
+   <property name="statusTip">
+    <string>Configure the Export for Flight Plans into several formats</string>
    </property>
   </action>
  </widget>

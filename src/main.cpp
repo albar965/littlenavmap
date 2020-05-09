@@ -40,6 +40,7 @@
 #include "common/unit.h"
 #include "fs/weather/metarparser.h"
 #include "userdata/userdataicons.h"
+#include "routeexport/routeexportformat.h"
 
 #include <QCommandLineParser>
 #include <QDebug>
@@ -94,6 +95,9 @@ int main(int argc, char *argv[])
 
   qRegisterMetaTypeStreamOperators<at::AircraftTrackPos>();
   qRegisterMetaTypeStreamOperators<QList<at::AircraftTrackPos> >();
+
+  qRegisterMetaTypeStreamOperators<RouteExportFormat>();
+  qRegisterMetaTypeStreamOperators<RouteExportFormatMap>();
 
   qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
 

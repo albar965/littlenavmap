@@ -942,6 +942,7 @@ void MainWindow::connectAllSlots()
           perfController, &AircraftPerfController::routeAltitudeChanged);
 
   // Route export signals =======================================================
+  connect(routeExport, &RouteExport::optionsUpdated, this, &MainWindow::updateActionStates);
   connect(routeExport, &RouteExport::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(routeExport, &RouteExport::selectDepartureParking, routeController, &RouteController::selectDepartureParking);
 
@@ -1161,42 +1162,23 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsLnm);
 
   // Flight plan export actions =====================================================================
-  connect(ui->actionRouteSaveAsFlp, &QAction::triggered, routeExport, &RouteExport::routeExportFlp);
-  connect(ui->actionRouteSaveAsPln, &QAction::triggered, routeExport, &RouteExport::routeExportPln);
-  connect(ui->actionRouteSaveAsPlnAnnotated, &QAction::triggered, routeExport, &RouteExport::routeExportPlnAnnotated);
-  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, routeExport, &RouteExport::routeExportFms11);
-  connect(ui->actionRouteSaveAsFms3, &QAction::triggered, routeExport, &RouteExport::routeExportFms3);
-  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, routeExport, &RouteExport::routeExportFlightgear);
+  /* *INDENT-OFF* */
+  connect(ui->actionRouteSaveAsPln, &QAction::triggered, [ = ]() { routeExport->routeExportPlnMan(); });
+  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, [ = ]() { routeExport->routeExportFms11Man(); });
+  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, [ = ]() { routeExport->routeExportFlightgearMan(); });
+  connect(ui->actionRouteSaveAll, &QAction::triggered, [ = ]() { routeExport->routeExportAll(); });
+  connect(ui->actionRouteSaveAllOptions, &QAction::triggered, [ = ]() { routeExport->routeMulitExportOptions(); });
 
-  connect(ui->actionRouteSaveAsGfp, &QAction::triggered, routeExport, &RouteExport::routeExportGfp);
-  connect(ui->actionRouteSaveAsTxt, &QAction::triggered, routeExport, &RouteExport::routeExportTxt);
-  connect(ui->actionRouteSaveAsRte, &QAction::triggered, routeExport, &RouteExport::routeExportRte);
-  connect(ui->actionRouteSaveAsFpr, &QAction::triggered, routeExport, &RouteExport::routeExportFpr);
-  connect(ui->actionRouteSaveAsFpl, &QAction::triggered, routeExport, &RouteExport::routeExportFpl);
-  connect(ui->actionRouteSaveAsCorteIn, &QAction::triggered, routeExport, &RouteExport::routeExportCorteIn);
-  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, routeExport, &RouteExport::routeExportGpx);
-  connect(ui->actionRouteSaveAsHtml, &QAction::triggered, routeExport, &RouteExport::routeExportHtml);
-  connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
-
-  connect(ui->actionRouteSaveAsRxpGns, &QAction::triggered, routeExport, &RouteExport::routeExportRxpGns);
-  connect(ui->actionRouteSaveAsRxpGtn, &QAction::triggered, routeExport, &RouteExport::routeExportRxpGtn);
-
-  connect(ui->actionRouteSaveAsIFly, &QAction::triggered, routeExport, &RouteExport::routeExportFltplan);
-  connect(ui->actionRouteSaveAsXFmc, &QAction::triggered, routeExport, &RouteExport::routeExportXFmc);
-  connect(ui->actionRouteSaveAsUfmc, &QAction::triggered, routeExport, &RouteExport::routeExportUFmc);
-  connect(ui->actionRouteSaveAsProSim, &QAction::triggered, routeExport, &RouteExport::routeExportProSim);
-  connect(ui->actionRouteSaveAsBbsAirbus, &QAction::triggered, routeExport, &RouteExport::routeExportBbs);
-  connect(ui->actionRouteSaveAsLeveldRte, &QAction::triggered, routeExport, &RouteExport::routeExportLeveldRte);
-  connect(ui->actionRouteSaveAsFeelthereFpl, &QAction::triggered, routeExport, &RouteExport::routeExportFeelthereFpl);
-  connect(ui->actionRouteSaveAsEfbr, &QAction::triggered, routeExport, &RouteExport::routeExportEfbr);
-  connect(ui->actionRouteSaveAsQwRte, &QAction::triggered, routeExport, &RouteExport::routeExportQwRte);
-  connect(ui->actionRouteSaveAsMdr, &QAction::triggered, routeExport, &RouteExport::routeExportMdr);
-  connect(ui->actionRouteSaveAsTfdi, &QAction::triggered, routeExport, &RouteExport::routeExportTfdi);
+  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, [ = ]() { routeExport->routeExportGpxMan(); });
+  connect(ui->actionRouteSaveAsHtml, &QAction::triggered, [ = ]() { routeExport->routeExportHtmlMan(); });
 
   // Online export options
-  connect(ui->actionRouteSaveAsVfp, &QAction::triggered, routeExport, &RouteExport::routeExportVfp);
-  connect(ui->actionRouteSaveAsIvap, &QAction::triggered, routeExport, &RouteExport::routeExportIvap);
-  connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, routeExport, &RouteExport::routeExportXIvap);
+  connect(ui->actionRouteSaveAsVfp, &QAction::triggered, [ = ]() { routeExport->routeExportVfpMan(); });
+  connect(ui->actionRouteSaveAsIvap, &QAction::triggered, [ = ]() { routeExport->routeExportIvapMan(); });
+  connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, [ = ]() { routeExport->routeExportXIvapMan(); });
+  /* *INDENT-ON* */
+
+  connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
 
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
@@ -2936,6 +2918,8 @@ void MainWindow::mainWindowShown()
 
   setStatusMessage(tr("Ready."));
 
+  // routeExport->routeExportAllOptions();
+
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
@@ -3013,34 +2997,12 @@ void MainWindow::updateActionStates()
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan /* && routeController->hasChanged()*/);
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsGfp->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsTxt->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsRte->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFlp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFlightGear->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFpr->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFpl->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsCorteIn->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFms3->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms11->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsPln->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsPlnAnnotated->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsRxpGtn->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsRxpGns->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsHtml->setEnabled(hasFlightplan);
-
-  ui->actionRouteSaveAsIFly->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsXFmc->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsUfmc->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsProSim->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsBbsAirbus->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFeelthereFpl->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsLeveldRte->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsEfbr->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsQwRte->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsMdr->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsTfdi->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAll->setEnabled(hasFlightplan && routeExport->hasSelected());
 
   ui->actionRouteSaveAsVfp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsIvap->setEnabled(hasFlightplan);
@@ -3281,6 +3243,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "printSupport";
   printSupport->restoreState();
 
+  qDebug() << "routeExport";
+  routeExport->restoreState();
+
   widgetState.setBlockSignals(true);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
@@ -3451,6 +3416,10 @@ void MainWindow::saveStateMain()
   if(printSupport != nullptr)
     printSupport->saveState();
 
+  qDebug() << "routeExport";
+  if(routeExport != nullptr)
+    routeExport->saveState();
+
   qDebug() << "optionsDialog";
   if(optionsDialog != nullptr)
     optionsDialog->saveState();
@@ -3620,6 +3589,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     infoController->postDatabaseLoad();
     weatherReporter->postDatabaseLoad(type);
     windReporter->postDatabaseLoad(type);
+    routeExport->postDatabaseLoad();
 
     // U actions for flight simulator database switch in main menu
     NavApp::getDatabaseManager()->insertSimSwitchActions();

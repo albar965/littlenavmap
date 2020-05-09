@@ -162,6 +162,9 @@ p, li { white-space: pre-wrap; }
  </widget>
  <tabstops>
   <tabstop>lineEditRouteUserWaypointIdent</tabstop>
+  <tabstop>lineEditRouteUserWaypointRegion</tabstop>
+  <tabstop>lineEditRouteUserWaypointName</tabstop>
+  <tabstop>textEditRouteUserWaypointComment</tabstop>
   <tabstop>lineEditRouteUserWaypointLatLon</tabstop>
  </tabstops>
  <resources/>
