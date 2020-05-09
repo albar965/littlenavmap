@@ -337,7 +337,7 @@ bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
 #elif DEBUG_INFORMATION
     path = atools::buildPath({atools::documentsDir(), "Garmin", "GNS Trainer Data", "GNS", "FPL"});
 #else
-    path = documentsLocation;
+    path = atools::documentsDir();
 #endif
 
     bool mkdir = QDir(path).mkpath(path);
