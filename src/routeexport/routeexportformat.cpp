@@ -184,7 +184,7 @@ void RouteExportFormatMap::updateDefaultPaths()
 #elif DEBUG_INFORMATION
   gns = atools::buildPath({documents, "Garmin", "GNS Trainer Data", "GNS", "FPL"});
 #else
-  gns = documentsDir;
+  gns = documents;
 #endif
 
   // GTN path ===========================
@@ -196,7 +196,7 @@ void RouteExportFormatMap::updateDefaultPaths()
 #elif DEBUG_INFORMATION
   gtn = atools::buildPath({documents, "Garmin", "Trainers", "GTN", "FPLN"});
 #else
-  gtn = documentsDir;
+  gtn = documents;
 #endif
 
   using namespace rexp;
