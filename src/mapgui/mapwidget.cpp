@@ -444,7 +444,7 @@ void MapWidget::showTooltip(bool update)
     hideTooltip();
 }
 
-/* Stop all line drag and drop if the map looses focus */
+/* Stop all line drag and drop if the map loses focus */
 void MapWidget::focusOutEvent(QFocusEvent *)
 {
   hideTooltip();
