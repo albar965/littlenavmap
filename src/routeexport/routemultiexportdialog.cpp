@@ -98,7 +98,8 @@ RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportForma
   ui->tableViewRouteExport->horizontalHeader()->setFirstSectionMovable(false);
 
   // Resize widget to get rid of the too large default margins
-  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewRouteExport);
+  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewRouteExport, 1.);
+  zoomHandler->zoomPercent(100);
 
   connect(ui->buttonBoxRouteExport, &QDialogButtonBox::clicked, this, &RouteMultiExportDialog::buttonBoxClicked);
 

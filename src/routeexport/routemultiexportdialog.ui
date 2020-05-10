@@ -107,7 +107,7 @@
         <bool>false</bool>
        </property>
        <attribute name="horizontalHeaderMinimumSectionSize">
-        <number>20</number>
+        <number>3</number>
        </attribute>
        <attribute name="horizontalHeaderStretchLastSection">
         <bool>true</bool>
@@ -117,6 +117,9 @@
        </attribute>
        <attribute name="verticalHeaderCascadingSectionResizes">
         <bool>true</bool>
+       </attribute>
+       <attribute name="verticalHeaderMinimumSectionSize">
+        <number>23</number>
        </attribute>
       </widget>
      </item>
