@@ -812,6 +812,9 @@ void RouteController::newFlightplan()
   qDebug() << "newFlightplan";
   clearRoute();
 
+  // Avoid warning when saving
+  route.getFlightplan().setLnmFormat(true);
+
   // Copy current alt and type from widgets to flightplan
   updateFlightplanFromWidgets();
 
