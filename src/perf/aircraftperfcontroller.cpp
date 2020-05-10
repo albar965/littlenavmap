@@ -226,7 +226,7 @@ void AircraftPerfController::restartCollection(bool quiet)
   if(!quiet)
     result = atools::gui::Dialog(mainWindow).
              showQuestionMsgBox(lnm::ACTIONS_SHOW_RESET_PERF,
-                                tr("Reset performance collection and loose all current values?"),
+                                tr("Reset performance collection and lose all current values?"),
                                 tr("Do not &show this dialog again."),
                                 QMessageBox::Yes | QMessageBox::No,
                                 QMessageBox::No, QMessageBox::Yes);

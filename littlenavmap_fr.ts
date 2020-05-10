@@ -196,7 +196,7 @@
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="229"/>
-        <source>Reset performance collection and loose all current values?</source>
+        <source>Reset performance collection and lose all current values?</source>
         <translation type="unfinished">Réinitialiser la collecte des performances et perdre toutes les valeurs actuelles ?</translation>
     </message>
     <message>
