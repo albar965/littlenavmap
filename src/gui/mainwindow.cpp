@@ -1166,7 +1166,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsPln, &QAction::triggered, [ = ]() { routeExport->routeExportPlnMan(); });
   connect(ui->actionRouteSaveAsFms11, &QAction::triggered, [ = ]() { routeExport->routeExportFms11Man(); });
   connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, [ = ]() { routeExport->routeExportFlightgearMan(); });
-  connect(ui->actionRouteSaveAll, &QAction::triggered, [ = ]() { routeExport->routeExportAll(); });
+  connect(ui->actionRouteSaveAll, &QAction::triggered, [ = ]() { routeExport->routeMultiExport(); });
   connect(ui->actionRouteSaveAllOptions, &QAction::triggered, [ = ]() { routeExport->routeMulitExportOptions(); });
 
   connect(ui->actionRouteSaveAsGpx, &QAction::triggered, [ = ]() { routeExport->routeExportGpxMan(); });
@@ -2918,7 +2918,7 @@ void MainWindow::mainWindowShown()
 
   setStatusMessage(tr("Ready."));
 
-  // routeExport->routeExportAllOptions();
+  // routeExport->routeMulitExportOptions();
 
   qDebug() << Q_FUNC_INFO << "leave";
 }

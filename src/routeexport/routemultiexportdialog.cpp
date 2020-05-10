@@ -30,17 +30,20 @@
 #include <QSortFilterProxyModel>
 #include <QPushButton>
 #include <QFile>
+#include <QCheckBox>
 
 using atools::settings::Settings;
+
+const static char FORMAT_PROP_NAME[] = "format";
+const static char ROW_PROP_NAME[] = "row";
 
 enum Columns
 {
   FIRST_COL,
-  CHECKBOX = FIRST_COL,
+  BUTTONS = FIRST_COL,
   CATEGORY,
   DESCRIPTION,
   EXTENSION,
-  PATH_BUTTONS,
   PATH,
   LAST_COL = PATH
 };
@@ -52,7 +55,8 @@ class TableSortProxyModel
   : public QSortFilterProxyModel
 {
 public:
-  explicit TableSortProxyModel(QObject *parent) : QSortFilterProxyModel(parent)
+  explicit TableSortProxyModel(QTableView *tableView)
+    : QSortFilterProxyModel(tableView)
   {
 
   }
@@ -64,24 +68,13 @@ private:
 
 bool TableSortProxyModel::lessThan(const QModelIndex& leftIndex, const QModelIndex& rightIndex) const
 {
-  QModelIndex left(leftIndex), right(rightIndex);
-
-  if(leftIndex.column() == CHECKBOX && rightIndex.column() == CHECKBOX)
-  {
-    // Sort by check state role
-    return sourceModel()->data(left, Qt::CheckStateRole).toInt() >
-           sourceModel()->data(right, Qt::CheckStateRole).toInt();
-  }
+  if(leftIndex.column() == BUTTONS && rightIndex.column() == BUTTONS)
+    // Button column uses user role data for checkbox status
+    return sourceModel()->data(leftIndex, Qt::UserRole).toBool() <
+           sourceModel()->data(rightIndex, Qt::UserRole).toBool();
   else
-  {
-    if(leftIndex.column() == PATH_BUTTONS && rightIndex.column() == PATH_BUTTONS)
-    {
-      // Sort by path when clicking button header
-      left = sourceModel()->index(left.row(), PATH);
-      right = sourceModel()->index(right.row(), PATH);
-    }
-    return QString::localeAwareCompare(sourceModel()->data(left).toString(), sourceModel()->data(right).toString()) < 0;
-  }
+    return QString::localeAwareCompare(sourceModel()->data(leftIndex).toString(),
+                                       sourceModel()->data(rightIndex).toString()) < 0;
 }
 
 // RouteMultiExportDialog methods ==============================================================================
@@ -100,10 +93,16 @@ RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportForma
   proxy->setSourceModel(itemModel);
   ui->tableViewRouteExport->setModel(proxy);
 
+  // Allow moving of section except the first BUTTON section
+  ui->tableViewRouteExport->horizontalHeader()->setSectionsMovable(true);
+  ui->tableViewRouteExport->horizontalHeader()->setFirstSectionMovable(false);
+
   // Resize widget to get rid of the too large default margins
   zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewRouteExport);
 
   connect(ui->buttonBoxRouteExport, &QDialogButtonBox::clicked, this, &RouteMultiExportDialog::buttonBoxClicked);
+
+  // Detect inline edit by double click
   connect(itemModel, &QStandardItemModel::itemChanged, this, &RouteMultiExportDialog::itemChanged);
 }
 
@@ -155,6 +154,9 @@ void RouteMultiExportDialog::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
   widgetState.restore({this, ui->tableViewRouteExport, ui->comboBoxRouteExportOptions});
+
+  // Check if there is no save widget state - fix sorting if not
+  firstStart = !widgetState.contains(ui->tableViewRouteExport);
 }
 
 void RouteMultiExportDialog::saveDialogState()
@@ -175,7 +177,7 @@ void RouteMultiExportDialog::updateTableColors()
   for(int row = 0; row < itemModel->rowCount(); row++)
   {
     RouteExportFormat fmt =
-      formatMap->value(static_cast<rexp::RouteExportFormatType>(itemModel->item(row, FIRST_COL)->data().toInt()));
+      formatMap->value(static_cast<rexp::RouteExportFormatType>(itemModel->item(row, CATEGORY)->data().toInt()));
 
     for(int col = FIRST_COL; col <= LAST_COL; col++)
     {
@@ -240,11 +242,10 @@ void RouteMultiExportDialog::updateModel()
   itemModel->setColumnCount(LAST_COL + 1);
 
   // Set header ============================================
-  itemModel->setHeaderData(CHECKBOX, Qt::Horizontal, tr("Export"));
+  itemModel->setHeaderData(BUTTONS, Qt::Horizontal, tr("Select/Path/\nReset/Save"));
   itemModel->setHeaderData(CATEGORY, Qt::Horizontal, tr("Category"));
   itemModel->setHeaderData(DESCRIPTION, Qt::Horizontal, tr("Usage"));
   itemModel->setHeaderData(EXTENSION, Qt::Horizontal, tr("Extension\nor Filename"));
-  itemModel->setHeaderData(PATH_BUTTONS, Qt::Horizontal, tr("Select Path/\nReset/Save"));
   itemModel->setHeaderData(PATH, Qt::Horizontal,
                            tr("Default Export Path - can depend on currently selected Simulator"));
 
@@ -255,16 +256,59 @@ void RouteMultiExportDialog::updateModel()
     // Userdata needed in callbacks
     int userdata = format.getTypeAsInt();
 
-    // Active/inactive checkbox =============================================================
-    QStandardItem *item = new QStandardItem();
-    item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    item->setCheckState(format.isSelected() ? Qt::Checked : Qt::Unchecked);
-    item->setData(userdata);
-    item->setToolTip(tr("Check to include in export"));
-    itemModel->setItem(row, CHECKBOX, item);
+    // Reset and select buttons =============================================================
+    // Top level dummy widget
+    QWidget *cellWidget = new QWidget();
+    cellWidget->setAutoFillBackground(true);
+
+    QCheckBox *checkBox = new QCheckBox(cellWidget);
+    checkBox->setToolTip(tr("Format will be exported with multiexport if checked."));
+    checkBox->setProperty(FORMAT_PROP_NAME, userdata);
+    checkBox->setProperty(ROW_PROP_NAME, row);
+    checkBox->setAutoFillBackground(true);
+    checkBox->setCheckState(format.isSelected() ? Qt::Checked : Qt::Unchecked);
+    connect(checkBox, &QCheckBox::toggled, this, &RouteMultiExportDialog::selectToggled);
+
+    QPushButton *selectButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/fileopen.svg"),
+                                                QString(), cellWidget);
+    selectButton->setToolTip(tr("Select a path or file that will be used for saving the files.\n"
+                                "This path applies to all simulators once chosen."));
+    selectButton->setProperty(FORMAT_PROP_NAME, userdata);
+    selectButton->setProperty(ROW_PROP_NAME, row);
+    selectButton->setAutoFillBackground(true);
+    connect(selectButton, &QPushButton::clicked, this, &RouteMultiExportDialog::selectPathClicked);
+
+    QPushButton *resetButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/reset.svg"),
+                                               QString(), cellWidget);
+    resetButton->setToolTip(tr("Reset path back to default."));
+    resetButton->setProperty(FORMAT_PROP_NAME, userdata);
+    resetButton->setProperty(ROW_PROP_NAME, row);
+    resetButton->setAutoFillBackground(true);
+    connect(resetButton, &QPushButton::clicked, this, &RouteMultiExportDialog::resetPathClicked);
+
+    QPushButton *saveButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/filesaveas.svg"),
+                                              QString(), cellWidget);
+    saveButton->setToolTip(tr("Save now."));
+    saveButton->setProperty(FORMAT_PROP_NAME, userdata);
+    saveButton->setProperty(ROW_PROP_NAME, row);
+    saveButton->setAutoFillBackground(true);
+    connect(saveButton, &QPushButton::clicked, this, &RouteMultiExportDialog::saveNowClicked);
+
+    // Layout =========
+    QLayout *layout = new QHBoxLayout(cellWidget);
+    layout->addWidget(checkBox);
+    layout->addWidget(selectButton);
+    layout->addWidget(resetButton);
+    layout->addWidget(saveButton);
+    layout->setAlignment(Qt::AlignCenter);
+    layout->setContentsMargins(5, 0, 5, 0);
+    layout->setSpacing(5);
+    ui->tableViewRouteExport->setIndexWidget(proxy->mapFromSource(itemModel->index(row, BUTTONS)), cellWidget);
+    // Update user role which is used for sorting
+    itemModel->setData(itemModel->index(row, BUTTONS), format.isSelected(), Qt::UserRole);
 
     // Category =============================================================
-    item = new QStandardItem(format.getCategory());
+    QStandardItem *item = new QStandardItem(format.getCategory());
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     item->setData(userdata);
     itemModel->setItem(row, CATEGORY, item);
@@ -282,41 +326,6 @@ void RouteMultiExportDialog::updateModel()
     item->setToolTip(tr("File extension or filename"));
     itemModel->setItem(row, EXTENSION, item);
 
-    // Reset and select buttons =============================================================
-    QPushButton *selectButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/fileopen.svg"), QString());
-    selectButton->setToolTip(tr("Select a path or file that will be used for saving the files.\n"
-                                "This path applies to all simulators once chosen."));
-    selectButton->setProperty("format", userdata);
-    selectButton->setProperty("row", row);
-    selectButton->setAutoFillBackground(true);
-    connect(selectButton, &QPushButton::clicked, this, &RouteMultiExportDialog::selectPathClicked);
-
-    QPushButton *resetButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/reset.svg"), QString());
-    resetButton->setToolTip(tr("Reset path back to default."));
-    resetButton->setProperty("format", userdata);
-    resetButton->setProperty("row", row);
-    resetButton->setAutoFillBackground(true);
-    connect(resetButton, &QPushButton::clicked, this, &RouteMultiExportDialog::resetPathClicked);
-
-    QPushButton *saveButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/filesaveas.svg"), QString());
-    saveButton->setToolTip(tr("Save now."));
-    saveButton->setProperty("format", userdata);
-    saveButton->setProperty("row", row);
-    saveButton->setAutoFillBackground(true);
-    connect(saveButton, &QPushButton::clicked, this, &RouteMultiExportDialog::saveNowClicked);
-
-    // Top level widget and layout =========
-    QWidget *cellWidget = new QWidget();
-    cellWidget->setAutoFillBackground(true);
-    QLayout *layout = new QHBoxLayout(cellWidget);
-    layout->addWidget(selectButton);
-    layout->addWidget(resetButton);
-    layout->addWidget(saveButton);
-    layout->setAlignment(Qt::AlignLeft);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-    ui->tableViewRouteExport->setIndexWidget(proxy->mapFromSource(itemModel->index(row, PATH_BUTTONS)), cellWidget);
-
     // Path =============================================================
     item = new QStandardItem(format.getPathOrDefault());
     item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -327,6 +336,16 @@ void RouteMultiExportDialog::updateModel()
     row++;
   }
   ui->tableViewRouteExport->horizontalHeader()->restoreState(state);
+
+  // No moving of first columns
+  ui->tableViewRouteExport->horizontalHeader()->setSectionResizeMode(BUTTONS, QHeaderView::ResizeToContents);
+
+  if(firstStart)
+  {
+    // Avoid activation of sorting for first column if there is not widget state saved
+    ui->tableViewRouteExport->horizontalHeader()->setSortIndicator(CATEGORY, Qt::AscendingOrder);
+    firstStart = false;
+  }
   changingTable = false;
 
   updateTableColors();
@@ -342,30 +361,21 @@ void RouteMultiExportDialog::setExportOptions(RouteMultiExportDialog::ExportOpti
   ui->comboBoxRouteExportOptions->setCurrentIndex(options);
 }
 
-void RouteMultiExportDialog::saveNowClicked()
+void RouteMultiExportDialog::selectToggled()
 {
-  QPushButton *button = dynamic_cast<QPushButton *>(sender());
-  if(button != nullptr)
+  QCheckBox *checkBox = dynamic_cast<QCheckBox *>(sender());
+  if(checkBox != nullptr)
   {
-    rexp::RouteExportFormatType type = static_cast<rexp::RouteExportFormatType>(button->property("format").toInt());
-    qDebug() << Q_FUNC_INFO << type;
-    emit saveNowButtonClicked(formatMap->value(type));
-  }
-}
-
-void RouteMultiExportDialog::resetPathClicked()
-{
-  QPushButton *button = dynamic_cast<QPushButton *>(sender());
-  if(button != nullptr)
-  {
-    rexp::RouteExportFormatType type = static_cast<rexp::RouteExportFormatType>(button->property("format").toInt());
+    // Select checkbox clicked ============================
+    rexp::RouteExportFormatType type =
+      static_cast<rexp::RouteExportFormatType>(checkBox->property(FORMAT_PROP_NAME).toInt());
     qDebug() << Q_FUNC_INFO << type;
 
-    // Set custom path to empty
-    formatMap->updatePath(type, QString());
-
-    // Update table item
-    itemModel->item(button->property("row").toInt(), PATH)->setText(formatMap->value(type).getDefaultPath());
+    // Checkbox clicked - update format in map and colors
+    // Update user role for sorting
+    itemModel->setData(itemModel->index(checkBox->property(ROW_PROP_NAME).toInt(), BUTTONS), checkBox->isChecked(),
+                       Qt::UserRole);
+    formatMap->setSelected(type, checkBox->checkState() == Qt::Checked);
     updateTableColors();
   }
 }
@@ -375,7 +385,9 @@ void RouteMultiExportDialog::selectPathClicked()
   QPushButton *button = dynamic_cast<QPushButton *>(sender());
   if(button != nullptr)
   {
-    rexp::RouteExportFormatType type = static_cast<rexp::RouteExportFormatType>(button->property("format").toInt());
+    // Choose path button clicked ============================
+    rexp::RouteExportFormatType type =
+      static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt());
     qDebug() << Q_FUNC_INFO << type;
 
     const RouteExportFormat fmt = formatMap->value(type);
@@ -398,14 +410,10 @@ void RouteMultiExportDialog::selectPathClicked()
 
     if(!filepath.isEmpty())
     {
-      QStandardItem *item = itemModel->item(button->property("row").toInt(), PATH);
+      QStandardItem *item = itemModel->item(button->property(ROW_PROP_NAME).toInt(), PATH);
 
-      if(item->text() == formatMap->value(type).getDefaultPath())
-        // Path is the same as default - clear custom path
-        formatMap->updatePath(type, QString());
-      else
-        // Update custom path
-        formatMap->updatePath(type, item->text());
+      // Update custom path
+      formatMap->updatePath(type, item->text());
 
       // Update table item
       item->setText(filepath);
@@ -414,27 +422,51 @@ void RouteMultiExportDialog::selectPathClicked()
   }
 }
 
+void RouteMultiExportDialog::resetPathClicked()
+{
+  QPushButton *button = dynamic_cast<QPushButton *>(sender());
+  if(button != nullptr)
+  {
+    // Reset path button clicked ============================
+    rexp::RouteExportFormatType type =
+      static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt());
+    qDebug() << Q_FUNC_INFO << type;
+
+    // Set custom path to empty
+    formatMap->clearPath(type);
+
+    // Update table item
+    itemModel->item(button->property(ROW_PROP_NAME).toInt(), PATH)->setText(formatMap->value(type).getDefaultPath());
+    updateTableColors();
+  }
+}
+
+void RouteMultiExportDialog::saveNowClicked()
+{
+  QPushButton *button = dynamic_cast<QPushButton *>(sender());
+  if(button != nullptr)
+  {
+    // Save button clicked ============================
+    rexp::RouteExportFormatType type =
+      static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt());
+    qDebug() << Q_FUNC_INFO << type;
+    emit saveNowButtonClicked(formatMap->value(type));
+  }
+}
+
 void RouteMultiExportDialog::itemChanged(QStandardItem *item)
 {
   if(!changingTable)
   {
-    qDebug() << Q_FUNC_INFO << item->column() << item->row() << item->text();
-    rexp::RouteExportFormatType type = static_cast<rexp::RouteExportFormatType>(item->data().toInt());
-    if(item->column() == CHECKBOX)
+    if(item->column() == PATH)
     {
-      // Checkbox clicked - update format in map and colors
-      formatMap->setSelected(type, item->checkState() == Qt::Checked);
-      updateTableColors();
-    }
-    else if(item->column() == PATH)
-    {
+      // Double click on path for editing ====================================
+      qDebug() << Q_FUNC_INFO << item->column() << item->row() << item->text();
+      rexp::RouteExportFormatType type = static_cast<rexp::RouteExportFormatType>(item->data().toInt());
 
-      if(item->text() == formatMap->value(type).getDefaultPath())
-        // Path is the same as default - clear custom path
-        formatMap->updatePath(type, QString());
-      else
-        // Update custom path
-        formatMap->updatePath(type, item->text());
+      // Update custom path
+      formatMap->updatePath(type, item->text());
+
       updateTableColors();
     }
   }

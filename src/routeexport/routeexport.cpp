@@ -89,7 +89,7 @@ void RouteExport::exportType(RouteExportFormat format)
     mainWindow->setStatusMessage(tr("Exported flight plan."));
 }
 
-void RouteExport::routeExportAll()
+void RouteExport::routeMultiExport()
 {
   // Export all button or menu item
   int numExported = 0;

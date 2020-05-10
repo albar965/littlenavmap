@@ -254,10 +254,19 @@ public:
   /* Get all formats that are selected for multiexport */
   QVector<RouteExportFormat> getSelected() const;
 
-  /* Update user selected path which overrides the default */
+  /* Clear user selected path and use default again */
+  void clearPath(rexp::RouteExportFormatType type)
+  {
+    (*this)[type].path.clear();
+  }
+
   void updatePath(rexp::RouteExportFormatType type, const QString& path)
   {
-    (*this)[type].path = path;
+    if(value(type).defaultPath == path)
+      // Path is the same as default - clear custom path
+      clearPath(type);
+    else
+      (*this)[type].path = path;
   }
 
   /* Enable or disable for multiexport */

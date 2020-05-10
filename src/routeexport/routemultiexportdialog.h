@@ -82,7 +82,7 @@ private:
   /* Save now in list clicked */
   void saveNowClicked();
 
-  /* Update objects in format map on edit or checkbox change */
+  /* Update objects in format map on edit on double click */
   void itemChanged(QStandardItem *item);
 
   /* Update table colors for state */
@@ -96,6 +96,9 @@ private:
 
   /* Update table - clear and fill again */
   void updateModel();
+
+  /* Checkbox toggled */
+  void selectToggled();
 
   /* Item model for unsorted entries */
   QStandardItemModel *itemModel = nullptr;
@@ -111,6 +114,9 @@ private:
 
   /* Avoid updates when filling table */
   bool changingTable = false;
+
+  /* Avoid sorting of the first column on first startup */
+  bool firstStart = false;
 
   /* Combox box status */
   ExportOptions exportOptions = FILEDIALOG;

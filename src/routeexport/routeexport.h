@@ -70,7 +70,7 @@ public:
   void postDatabaseLoad();
 
   /* Run export to all selected formats. */
-  void routeExportAll();
+  void routeMultiExport();
 
   /* Open multiexport dialog */
   void routeMulitExportOptions();
