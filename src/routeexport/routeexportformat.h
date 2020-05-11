@@ -186,11 +186,7 @@ public:
   }
 
   /* Assign data from an incomplete format object which was loaded from settings. */
-  void copyLoadedData(RouteExportFormat& other) const
-  {
-    other.path = path;
-    other.flags.setFlag(rexp::SELECTED, flags.testFlag(rexp::SELECTED));
-  }
+  void copyLoadedData(RouteExportFormat& other) const;
 
   /* Create a clone with manual flag to indicate call from menu items */
   RouteExportFormat copyForManualSave() const
@@ -260,14 +256,7 @@ public:
     (*this)[type].path.clear();
   }
 
-  void updatePath(rexp::RouteExportFormatType type, const QString& path)
-  {
-    if(value(type).defaultPath == path)
-      // Path is the same as default - clear custom path
-      clearPath(type);
-    else
-      (*this)[type].path = path;
-  }
+  void updatePath(rexp::RouteExportFormatType type, const QString& path);
 
   /* Enable or disable for multiexport */
   void setSelected(rexp::RouteExportFormatType type, bool selected)

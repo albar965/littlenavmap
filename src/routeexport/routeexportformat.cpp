@@ -37,6 +37,11 @@ QVector<RouteExportFormat> RouteExportFormatMap::getSelected() const
   return retval;
 }
 
+void RouteExportFormatMap::updatePath(rexp::RouteExportFormatType type, const QString& path)
+{
+  (*this)[type].path = QDir::toNativeSeparators(path);
+}
+
 void RouteExportFormatMap::saveState()
 {
   atools::settings::Settings& settings = Settings::instance();
@@ -234,6 +239,9 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[MDR         ].defaultPath = base;
   (*this)[TFDI        ].defaultPath = base + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "TFDi_Design_717" + SEP + "Documents" + SEP + "Company Routes";
   /* *INDENT-ON* */
+
+  for(RouteExportFormat& format : values())
+    format.defaultPath = QDir::toNativeSeparators(format.defaultPath);
 }
 
 bool RouteExportFormat::isPathValid() const
@@ -268,6 +276,12 @@ QString RouteExportFormat::getFilter() const
     return "(*." + formats.join(" ") + ")";
 
 #endif
+}
+
+void RouteExportFormat::copyLoadedData(RouteExportFormat& other) const
+{
+  other.path = QDir::toNativeSeparators(path);
+  other.flags.setFlag(rexp::SELECTED, flags.testFlag(rexp::SELECTED));
 }
 
 QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj)
