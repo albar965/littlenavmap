@@ -32,6 +32,7 @@
 #include <QFile>
 #include <QCheckBox>
 #include <QMenu>
+#include <QDir>
 
 using atools::settings::Settings;
 
@@ -436,8 +437,10 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
   {
     QStandardItem *item = itemModel->item(row, PATH);
 
+    filepath = QDir::toNativeSeparators(filepath);
+
     // Update custom path
-    formatMap->updatePath(type, item->text());
+    formatMap->updatePath(type, filepath);
 
     // Update table item
     item->setText(filepath);
@@ -510,6 +513,8 @@ void RouteMultiExportDialog::itemChanged(QStandardItem *item)
 
       // Update custom path
       formatMap->updatePath(static_cast<rexp::RouteExportFormatType>(item->data().toInt()), item->text());
+      item->setText(QDir::toNativeSeparators(item->text()));
+
       updateTableColors();
     }
   }
