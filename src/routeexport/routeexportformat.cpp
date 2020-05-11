@@ -240,8 +240,8 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[TFDI        ].defaultPath = base + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "TFDi_Design_717" + SEP + "Documents" + SEP + "Company Routes";
   /* *INDENT-ON* */
 
-  for(RouteExportFormat& format : values())
-    format.defaultPath = QDir::toNativeSeparators(format.defaultPath);
+  for(RouteExportFormatType type: keys())
+    (*this)[type].defaultPath = QDir::toNativeSeparators(value(type).defaultPath);
 }
 
 bool RouteExportFormat::isPathValid() const
