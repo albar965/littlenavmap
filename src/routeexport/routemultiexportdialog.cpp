@@ -31,6 +31,7 @@
 #include <QPushButton>
 #include <QFile>
 #include <QCheckBox>
+#include <QMenu>
 
 using atools::settings::Settings;
 
@@ -89,22 +90,43 @@ RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportForma
 
   // Create model and sort proxy
   itemModel = new QStandardItemModel(this);
-  proxy = new TableSortProxyModel(ui->tableViewRouteExport);
-  proxy->setSourceModel(itemModel);
-  ui->tableViewRouteExport->setModel(proxy);
+  proxyModel = new TableSortProxyModel(ui->tableViewRouteExport);
+  proxyModel->setSourceModel(itemModel);
+  ui->tableViewRouteExport->setModel(proxyModel);
 
   // Allow moving of section except the first BUTTON section
   ui->tableViewRouteExport->horizontalHeader()->setSectionsMovable(true);
   ui->tableViewRouteExport->horizontalHeader()->setFirstSectionMovable(false);
 
-  // Resize widget to get rid of the too large default margins
-  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewRouteExport, 1.);
-  zoomHandler->zoomPercent(100);
+  // Resize widget to get rid of the too large default margins and allow to change size from context menu
+  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewRouteExport, ui->actionIncreaseTextSize,
+                                                     ui->actionDecreaseTextSize, ui->actionDefaultTextSize,
+                                                     lnm::ROUTE_EXPORT_DIALOG_ZOOM, 1.);
 
   connect(ui->buttonBoxRouteExport, &QDialogButtonBox::clicked, this, &RouteMultiExportDialog::buttonBoxClicked);
 
   // Detect inline edit by double click
   connect(itemModel, &QStandardItemModel::itemChanged, this, &RouteMultiExportDialog::itemChanged);
+
+  // Set up context menu for table ==================================================
+  ui->tableViewRouteExport->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(ui->tableViewRouteExport, &QTableView::customContextMenuRequested, this,
+          &RouteMultiExportDialog::tableContextMenu);
+
+  // Action shortcuts only for table
+  ui->actionSelectExportPath->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionResetExportPath->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionExportFileNow->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionEditPath->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionResetView->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionResetPathsAndSelection->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionIncreaseTextSize->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionDefaultTextSize->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionDecreaseTextSize->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->tableViewRouteExport->addActions({ui->actionSelectExportPath, ui->actionResetExportPath, ui->actionExportFileNow,
+                                        ui->actionEditPath, ui->actionResetView, ui->actionResetPathsAndSelection,
+                                        ui->actionIncreaseTextSize, ui->actionDefaultTextSize,
+                                        ui->actionDecreaseTextSize});
 }
 
 RouteMultiExportDialog::~RouteMultiExportDialog()
@@ -114,7 +136,7 @@ RouteMultiExportDialog::~RouteMultiExportDialog()
   delete zoomHandler;
   delete ui;
   delete itemModel;
-  delete proxy;
+  delete proxyModel;
 }
 
 int RouteMultiExportDialog::exec()
@@ -236,7 +258,7 @@ void RouteMultiExportDialog::updateModel()
   itemModel->clear();
 
   // Reset sorting
-  proxy->invalidate();
+  proxyModel->invalidate();
 
   // Fill table dimensions
   itemModel->setRowCount(formatMap->size());
@@ -263,7 +285,7 @@ void RouteMultiExportDialog::updateModel()
     cellWidget->setAutoFillBackground(true);
 
     QCheckBox *checkBox = new QCheckBox(cellWidget);
-    checkBox->setToolTip(tr("Format will be exported with multiexport if checked."));
+    checkBox->setToolTip(tr("Format will be exported with multiexport if checked"));
     checkBox->setProperty(FORMAT_PROP_NAME, userdata);
     checkBox->setProperty(ROW_PROP_NAME, row);
     checkBox->setAutoFillBackground(true);
@@ -281,7 +303,7 @@ void RouteMultiExportDialog::updateModel()
 
     QPushButton *resetButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/reset.svg"),
                                                QString(), cellWidget);
-    resetButton->setToolTip(tr("Reset path back to default."));
+    resetButton->setToolTip(tr("Reset path back to default"));
     resetButton->setProperty(FORMAT_PROP_NAME, userdata);
     resetButton->setProperty(ROW_PROP_NAME, row);
     resetButton->setAutoFillBackground(true);
@@ -289,7 +311,7 @@ void RouteMultiExportDialog::updateModel()
 
     QPushButton *saveButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/filesaveas.svg"),
                                               QString(), cellWidget);
-    saveButton->setToolTip(tr("Save now."));
+    saveButton->setToolTip(tr("Save file now"));
     saveButton->setProperty(FORMAT_PROP_NAME, userdata);
     saveButton->setProperty(ROW_PROP_NAME, row);
     saveButton->setAutoFillBackground(true);
@@ -304,7 +326,7 @@ void RouteMultiExportDialog::updateModel()
     layout->setAlignment(Qt::AlignCenter);
     layout->setContentsMargins(5, 0, 5, 0);
     layout->setSpacing(5);
-    ui->tableViewRouteExport->setIndexWidget(proxy->mapFromSource(itemModel->index(row, BUTTONS)), cellWidget);
+    ui->tableViewRouteExport->setIndexWidget(proxyModel->mapFromSource(itemModel->index(row, BUTTONS)), cellWidget);
     // Update user role which is used for sorting
     itemModel->setData(itemModel->index(row, BUTTONS), format.isSelected(), Qt::UserRole);
 
@@ -385,41 +407,63 @@ void RouteMultiExportDialog::selectPathClicked()
 {
   QPushButton *button = dynamic_cast<QPushButton *>(sender());
   if(button != nullptr)
-  {
     // Choose path button clicked ============================
-    rexp::RouteExportFormatType type =
-      static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt());
-    qDebug() << Q_FUNC_INFO << type;
+    selectPath(static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt()),
+               button->property(ROW_PROP_NAME).toInt());
+}
 
-    const RouteExportFormat fmt = formatMap->value(type);
-    QString filepath;
+void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int row)
+{
+  const RouteExportFormat fmt = formatMap->value(type);
+  QString filepath;
 
-    if(fmt.isFile())
+  if(fmt.isFile())
+  {
+    // Format use a file to append plan
+    filepath = atools::gui::Dialog(this).openFileDialog(tr("Select Export File for %1").arg(fmt.getComment()),
+                                                        tr("Flight Plan Files %1;;All Files (*)").
+                                                        arg(fmt.getFilter()), QString(), fmt.getPathOrDefault());
+  }
+  else
+  {
+    // Format uses a directory to save a file
+    filepath = atools::gui::Dialog(this).
+               openDirectoryDialog(tr("Select Export Directory for %1").
+                                   arg(fmt.getComment()), QString(), fmt.getPathOrDefault());
+  }
+
+  if(!filepath.isEmpty())
+  {
+    QStandardItem *item = itemModel->item(row, PATH);
+
+    // Update custom path
+    formatMap->updatePath(type, item->text());
+
+    // Update table item
+    item->setText(filepath);
+    updateTableColors();
+  }
+}
+
+void RouteMultiExportDialog::resetPathsAndSelection()
+{
+  // Ask before resetting user data ==============
+  QMessageBox msgBox;
+  msgBox.setWindowTitle(QApplication::applicationName());
+  msgBox.setText(tr("Reset selection and paths back to default?"));
+  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+
+  if(msgBox.exec() == QMessageBox::Yes)
+  {
+    // Reset values in map ========================================
+    for(rexp::RouteExportFormatType type: formatMap->keys())
     {
-      // Format use a file to append plan
-      filepath = atools::gui::Dialog(this).openFileDialog(tr("Select Export File for %1").arg(fmt.getComment()),
-                                                          tr("Flight Plan Files %1;;All Files (*)").
-                                                          arg(fmt.getFilter()), QString(), fmt.getPathOrDefault());
-    }
-    else
-    {
-      // Format uses a directory to save a file
-      filepath = atools::gui::Dialog(this).
-                 openDirectoryDialog(tr("Select Export Directory for %1").
-                                     arg(fmt.getComment()), QString(), fmt.getPathOrDefault());
+      formatMap->clearPath(type);
+      formatMap->setSelected(type, false);
     }
 
-    if(!filepath.isEmpty())
-    {
-      QStandardItem *item = itemModel->item(button->property(ROW_PROP_NAME).toInt(), PATH);
-
-      // Update custom path
-      formatMap->updatePath(type, item->text());
-
-      // Update table item
-      item->setText(filepath);
-      updateTableColors();
-    }
+    // Fill model/view again from table
+    updateModel();
   }
 }
 
@@ -427,19 +471,19 @@ void RouteMultiExportDialog::resetPathClicked()
 {
   QPushButton *button = dynamic_cast<QPushButton *>(sender());
   if(button != nullptr)
-  {
     // Reset path button clicked ============================
-    rexp::RouteExportFormatType type =
-      static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt());
-    qDebug() << Q_FUNC_INFO << type;
+    resetPath(static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt()),
+              button->property(ROW_PROP_NAME).toInt());
+}
 
-    // Set custom path to empty
-    formatMap->clearPath(type);
+void RouteMultiExportDialog::resetPath(rexp::RouteExportFormatType type, int row)
+{
+  // Set custom path to empty
+  formatMap->clearPath(type);
 
-    // Update table item
-    itemModel->item(button->property(ROW_PROP_NAME).toInt(), PATH)->setText(formatMap->value(type).getDefaultPath());
-    updateTableColors();
-  }
+  // Update table item
+  itemModel->item(row, PATH)->setText(formatMap->value(type).getDefaultPath());
+  updateTableColors();
 }
 
 void RouteMultiExportDialog::saveNowClicked()
@@ -463,12 +507,103 @@ void RouteMultiExportDialog::itemChanged(QStandardItem *item)
     {
       // Double click on path for editing ====================================
       qDebug() << Q_FUNC_INFO << item->column() << item->row() << item->text();
-      rexp::RouteExportFormatType type = static_cast<rexp::RouteExportFormatType>(item->data().toInt());
 
       // Update custom path
-      formatMap->updatePath(type, item->text());
-
+      formatMap->updatePath(static_cast<rexp::RouteExportFormatType>(item->data().toInt()), item->text());
       updateTableColors();
     }
+  }
+}
+
+void RouteMultiExportDialog::tableContextMenu(const QPoint& pos)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QPoint menuPos = QCursor::pos();
+
+  // Use widget center if position is not inside widget
+  if(!ui->tableViewRouteExport->rect().contains(ui->tableViewRouteExport->mapFromGlobal(QCursor::pos())))
+    menuPos = ui->tableViewRouteExport->mapToGlobal(ui->tableViewRouteExport->rect().center());
+
+  // Move menu position off the cursor to avoid accidental selection on touchpads
+  menuPos += QPoint(3, 3);
+
+  // Get row below cursor ==================================
+  QModelIndex index = ui->tableViewRouteExport->indexAt(pos);
+  if(index.isValid())
+    index = proxyModel->mapToSource(index);
+  int row = -1;
+  if(index.isValid())
+    row = index.row();
+  else
+  {
+    // Otherwise simply use selected row
+    QModelIndexList indexes = ui->tableViewRouteExport->selectionModel()->selectedRows();
+    if(!indexes.isEmpty())
+      row = indexes.first().row();
+  }
+
+  // Disable actions if no row found =============
+  ui->actionSelectExportPath->setEnabled(row != -1);
+  ui->actionResetExportPath->setEnabled(row != -1);
+  ui->actionExportFileNow->setEnabled(row != -1);
+  ui->actionEditPath->setEnabled(row != -1);
+
+  // Build menu ===================================================
+  QMenu menu;
+  menu.addAction(ui->actionSelectExportPath);
+  menu.addAction(ui->actionResetExportPath);
+  menu.addAction(ui->actionExportFileNow);
+  menu.addSeparator();
+  menu.addAction(ui->actionEditPath);
+  menu.addSeparator();
+  menu.addAction(ui->actionResetPathsAndSelection);
+  menu.addAction(ui->actionResetView);
+  menu.addSeparator();
+  menu.addAction(ui->actionIncreaseTextSize);
+  menu.addAction(ui->actionDefaultTextSize);
+  menu.addAction(ui->actionDecreaseTextSize);
+
+  QAction *action = menu.exec(menuPos);
+
+  QStandardItem *item = nullptr;
+  rexp::RouteExportFormatType type;
+  if(row != -1)
+  {
+    item = itemModel->item(row, PATH);
+    type = static_cast<rexp::RouteExportFormatType>(item->data().toInt());
+  }
+
+  if(action == ui->actionSelectExportPath)
+    selectPath(type, row);
+  else if(action == ui->actionResetExportPath)
+    resetPath(type, row);
+  else if(action == ui->actionExportFileNow)
+    emit saveNowButtonClicked(formatMap->value(type));
+  else if(action == ui->actionEditPath)
+  {
+    // Trigger path editing mode
+    QModelIndex idx = proxyModel->mapFromSource(itemModel->index(row, PATH));
+    ui->tableViewRouteExport->setCurrentIndex(idx);
+    ui->tableViewRouteExport->edit(idx);
+  }
+  else if(action == ui->actionResetPathsAndSelection)
+    resetPathsAndSelection();
+  else if(action == ui->actionResetView)
+  {
+    // Reorder columns to match model order
+    QHeaderView *header = ui->tableViewRouteExport->horizontalHeader();
+    for(int i = 0; i < header->count(); i++)
+      header->moveSection(header->visualIndex(i), i);
+
+    // Reset font and cell size
+    zoomHandler->zoomDefault();
+
+    // Reset column widths
+    ui->tableViewRouteExport->resizeColumnsToContents();
+
+    // Reset sorting back to category
+    proxyModel->invalidate();
+    ui->tableViewRouteExport->horizontalHeader()->setSortIndicator(CATEGORY, Qt::AscendingOrder);
   }
 }

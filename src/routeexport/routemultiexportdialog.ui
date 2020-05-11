@@ -136,11 +136,83 @@
     </widget>
    </item>
   </layout>
+  <action name="actionSelectExportPath">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/fileopen.svg</normaloff>:/littlenavmap/resources/icons/fileopen.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Select Export Path ...</string>
+   </property>
+  </action>
+  <action name="actionResetExportPath">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/reset.svg</normaloff>:/littlenavmap/resources/icons/reset.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset Export Path</string>
+   </property>
+  </action>
+  <action name="actionExportFileNow">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Export File Now ...</string>
+   </property>
+  </action>
+  <action name="actionResetView">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/cleartable.svg</normaloff>:/littlenavmap/resources/icons/cleartable.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reset &amp;View</string>
+   </property>
+  </action>
+  <action name="actionIncreaseTextSize">
+   <property name="text">
+    <string>&amp;Increase Text Size</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
+  </action>
+  <action name="actionDecreaseTextSize">
+   <property name="text">
+    <string>&amp;Decrease Text Size</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionEditPath">
+   <property name="text">
+    <string>&amp;EditPath</string>
+   </property>
+  </action>
+  <action name="actionDefaultTextSize">
+   <property name="text">
+    <string>Default Text &amp;Size</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+0</string>
+   </property>
+  </action>
+  <action name="actionResetPathsAndSelection">
+   <property name="text">
+    <string>Reset &amp;Paths and Selection</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>tableViewRouteExport</tabstop>
   <tabstop>comboBoxRouteExportOptions</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../littlenavmap.qrc"/>
+ </resources>
  <connections/>
 </ui>

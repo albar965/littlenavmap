@@ -75,9 +75,11 @@ private:
 
   /* Select path in list clicked */
   void selectPathClicked();
+  void selectPath(rexp::RouteExportFormatType type, int row);
 
   /* Reset path back to default in list clicked */
   void resetPathClicked();
+  void resetPath(rexp::RouteExportFormatType type, int row);
 
   /* Save now in list clicked */
   void saveNowClicked();
@@ -100,11 +102,15 @@ private:
   /* Checkbox toggled */
   void selectToggled();
 
+  void tableContextMenu(const QPoint& pos);
+
+  void resetPathsAndSelection();
+
   /* Item model for unsorted entries */
   QStandardItemModel *itemModel = nullptr;
 
   /* Proxy model for sorting (also checkbox state) */
-  TableSortProxyModel *proxy = nullptr;
+  TableSortProxyModel *proxyModel = nullptr;
 
   /* Used to fix excessive default margins in table */
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
@@ -122,6 +128,7 @@ private:
   ExportOptions exportOptions = FILEDIALOG;
 
   Ui::RouteMultiExportDialog *ui;
+
 };
 
 #endif // LNM_ROUTEEXPORTALLDIALOG_H

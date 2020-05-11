@@ -161,6 +161,7 @@ const QLatin1Literal TRAFFIC_PATTERN_DIALOG("Route/TrafficPatternDialog");
 const QLatin1Literal TRAFFIC_PATTERN_DIALOG_COLOR("Route/TrafficPatternDialogColor");
 const QLatin1Literal HOLD_DIALOG("Route/HoldDialog");
 const QLatin1Literal ROUTE_EXPORT_DIALOG("RouteExport/RouteExportDialog");
+const QLatin1Literal ROUTE_EXPORT_DIALOG_ZOOM("RouteExport/RouteExportDialogZoom");
 const QLatin1Literal ROUTE_EXPORT_FORMATS("RouteExport/RouteExportFormats");
 const QLatin1Literal HOLD_DIALOG_COLOR("Route/HoldDialogColor");
 const QLatin1Literal CUSTOM_PROCEDURE_DIALOG("Route/CustomProcedureDialog");
