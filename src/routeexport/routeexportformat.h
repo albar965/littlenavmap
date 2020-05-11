@@ -170,6 +170,7 @@ public:
     return flags.testFlag(rexp::SELECTED);
   }
 
+  /* Format is cloned and selected for manual export from file menu */
   bool isManual() const
   {
     return flags.testFlag(rexp::MANUAL);
@@ -180,9 +181,16 @@ public:
     return flags.testFlag(rexp::FILE);
   }
 
+  /* Format is cloned and selected for manual export from file dialog. Forces file dialog to be shown. */
   bool isFileDialog() const
   {
     return flags.testFlag(rexp::FILEDIALOG);
+  }
+
+  /* Export in bulk/multi mode */
+  bool isMulti() const
+  {
+    return !isFileDialog() && !isManual();
   }
 
   /* Assign data from an incomplete format object which was loaded from settings. */

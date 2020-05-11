@@ -72,6 +72,7 @@ const QLatin1Literal ACTIONS_SHOW_INVALID_PROC_WARNING("Actions/ShowInvalidProce
 const QLatin1Literal ACTIONS_SHOW_RESET_VIEW("Actions/ShowResetView");
 const QLatin1Literal ACTIONS_SHOWROUTE_PARKING_WARNING("Actions/ShowRouteParkingWarning");
 const QLatin1Literal ACTIONS_SHOWROUTE_WARNING("Actions/ShowRouteWarning");
+const QLatin1Literal ACTIONS_SHOWROUTE_WARNING_MULTI("Actions/ShowRouteWarningMulti");
 const QLatin1Literal ACTIONS_SHOWROUTE_NO_CYCLE_WARNING("Actions/ShowRouteNoCycleWarning");
 const QLatin1Literal ACTIONS_SHOWROUTE_ERROR("Actions/ShowRouteError");
 const QLatin1Literal ACTIONS_SHOWROUTE_PROC_ERROR("Actions/ShowRouteProcedureError");

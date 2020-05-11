@@ -2728,6 +2728,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_RESET_VIEW, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_PARKING_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTE_WARNING_MULTI, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_ERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_PROC_ERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_ALTERNATE_ERROR, true);
