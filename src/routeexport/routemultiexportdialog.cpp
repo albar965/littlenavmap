@@ -607,6 +607,9 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint& pos)
     // Reset column widths
     ui->tableViewRouteExport->resizeColumnsToContents();
 
+    // Workaround for Qt but which results in huge colum width for the last one
+    ui->tableViewRouteExport->setColumnWidth(PATH, 100);
+
     // Reset sorting back to category
     proxyModel->invalidate();
     ui->tableViewRouteExport->horizontalHeader()->setSortIndicator(CATEGORY, Qt::AscendingOrder);
