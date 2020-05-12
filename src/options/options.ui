@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>785</width>
+    <width>791</width>
     <height>565</height>
    </rect>
   </property>
@@ -51,7 +51,117 @@
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QGridLayout" name="gridLayout">
-        <item row="8" column="0" colspan="2">
+        <item row="10" column="0">
+         <spacer name="verticalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox_9">
+          <property name="title">
+           <string>Startup</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_17">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadTrail">
+             <property name="toolTip">
+              <string>Load the last flight trail flown</string>
+             </property>
+             <property name="text">
+              <string>Restore aircraft &amp;trail</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadKml">
+             <property name="text">
+              <string>Load all last used Google Earth &amp;KML files</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
+             <property name="text">
+              <string>Load last used &amp;flight plan</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
+             <property name="toolTip">
+              <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
+             </property>
+             <property name="text">
+              <string>Load the &amp;map display saved settings</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadInfoContent">
+             <property name="toolTip">
+              <string>Restore all information window tabs with airport, navaid and other information</string>
+             </property>
+             <property name="text">
+              <string>Restore &amp;information window content</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadSearch">
+             <property name="toolTip">
+              <string>Restore the search settings in airport, navaid, procedure, userpoint,
+logbook and other search tabs</string>
+             </property>
+             <property name="text">
+              <string>Restore &amp;search parameters</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="8" column="0">
          <widget class="QGroupBox" name="groupBoxOptionsStartupShowMap">
           <property name="title">
            <string>On startup show on map:</string>
@@ -108,7 +218,7 @@
           </layout>
          </widget>
         </item>
-        <item row="9" column="0" colspan="2">
+        <item row="9" column="0">
          <widget class="QGroupBox" name="groupBoxOptionsUpdate">
           <property name="title">
            <string>Updates</string>
@@ -219,8 +329,12 @@
           </layout>
          </widget>
         </item>
-        <item row="10" column="0">
-         <spacer name="verticalSpacer_6">
+       </layout>
+      </widget>
+      <widget class="QWidget" name="stackedWidgetOptionsUserInterface">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="11" column="0">
+         <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -232,113 +346,12 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox_9">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox_7">
           <property name="title">
-           <string>Startup</string>
+           <string>Display</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_17">
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadTrail">
-             <property name="toolTip">
-              <string>Load the last flight trail flown</string>
-             </property>
-             <property name="text">
-              <string>Restore aircraft &amp;trail</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadKml">
-             <property name="text">
-              <string>Load all last used Google Earth &amp;KML files</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
-             <property name="text">
-              <string>Load last used &amp;flight plan</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
-             <property name="toolTip">
-              <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
-             </property>
-             <property name="text">
-              <string>Load the &amp;map display saved settings</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadInfoContent">
-             <property name="toolTip">
-              <string>Restore all information window tabs with airport, navaid and other information</string>
-             </property>
-             <property name="text">
-              <string>Restore &amp;information window content</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QCheckBox" name="checkBoxOptionsStartupLoadSearch">
-             <property name="toolTip">
-              <string>Restore the search settings in airport, navaid, procedure, userpoint,
-logbook and other search tabs</string>
-             </property>
-             <property name="text">
-              <string>Restore &amp;search parameters</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsUserInterface">
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="9" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox_13">
-          <property name="title">
-           <string>Files</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_11">
+          <layout class="QVBoxLayout" name="verticalLayout_10">
            <property name="spacing">
             <number>2</number>
            </property>
@@ -355,27 +368,13 @@ logbook and other search tabs</string>
             <number>2</number>
            </property>
            <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
+            <widget class="QCheckBox" name="checkBoxOptionsGuiHighDpi">
              <property name="toolTip">
-              <string>This this option is checked: Little Navmap will suggest a new name
-on all &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
-New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
+              <string>Enable this if you use scaled fonts in you system settings and/or a monitor with high resolution.
+This will scale the Little Navmap map graphics and icons for better visibility if checked.</string>
              </property>
              <property name="text">
-              <string>&amp;Propose new name if  file already exists on &quot;Save as&quot; or &quot;Export&quot;</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
-             <property name="toolTip">
-              <string>Does not apply to the KML files loaded after startup.</string>
-             </property>
-             <property name="text">
-              <string>Center Google Earth &amp;KML after loading</string>
+              <string>Enable high &amp;DPI monitor support (restart required after change)</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -385,7 +384,7 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
           </layout>
          </widget>
         </item>
-        <item row="6" column="0" colspan="2">
+        <item row="6" column="0">
          <widget class="QGroupBox" name="groupBox_8">
           <property name="title">
            <string>Text Size</string>
@@ -588,7 +587,7 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
           </layout>
          </widget>
         </item>
-        <item row="7" column="0" colspan="2">
+        <item row="7" column="0">
          <widget class="QGroupBox" name="groupBox_6">
           <property name="title">
            <string>Language (restart required after change)</string>
@@ -635,12 +634,12 @@ A restart is required for the settings to take effect.</string>
           </layout>
          </widget>
         </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox_7">
+        <item row="9" column="0">
+         <widget class="QGroupBox" name="groupBox_13">
           <property name="title">
-           <string>Display</string>
+           <string>Files</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
+          <layout class="QVBoxLayout" name="verticalLayout_11">
            <property name="spacing">
             <number>2</number>
            </property>
@@ -657,13 +656,27 @@ A restart is required for the settings to take effect.</string>
             <number>2</number>
            </property>
            <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiHighDpi">
+            <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
              <property name="toolTip">
-              <string>Enable this if you use scaled fonts in you system settings and/or a monitor with high resolution.
-This will scale the Little Navmap map graphics and icons for better visibility if checked.</string>
+              <string>This this option is checked: Little Navmap will suggest a new name
+on all &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
+New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
              </property>
              <property name="text">
-              <string>Enable high &amp;DPI monitor support (restart required after change)</string>
+              <string>&amp;Propose new name if  file already exists on &quot;Save as&quot; or &quot;Export&quot;</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
+             <property name="toolTip">
+              <string>Does not apply to the KML files loaded after startup.</string>
+             </property>
+             <property name="text">
+              <string>Center Google Earth &amp;KML after loading</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -673,20 +686,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
           </layout>
          </widget>
         </item>
-        <item row="11" column="0">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="10" column="0" colspan="2">
+        <item row="10" column="0">
          <widget class="QGroupBox" name="groupBox_17">
           <property name="title">
            <string>Windows</string>
@@ -904,33 +904,10 @@ A range ring will be added for each radius value.</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="labelOptionsMapScrollDetails">
-             <property name="text">
-              <string>Details while scrolling (click and drag, zoom in and out):</string>
-             </property>
-            </widget>
-           </item>
            <item row="4" column="0" colspan="2">
             <widget class="Line" name="line_6">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsMapUndock">
-             <property name="toolTip">
-              <string>Allows to undock and put the map window into a floating state.
-This can cause several unwanted effects when arranging dock windows.
-Uncheck this if you do experience strange effects when resizing dock windows.
-Restart the program after changing this option. You might also need to reset the window layout.</string>
-             </property>
-             <property name="text">
-              <string>Allow to &amp;undock  the map window (restart required after change)</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -968,21 +945,6 @@ Restart the program after changing this option. You might also need to reset the
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
-             <property name="toolTip">
-              <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
-These are displayed underneath all other airports, use a gray symbol and
-provide a toolbar button for disabling them if this checkbox is enabled.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Treat empty airports special</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="6" column="1">
             <spacer name="horizontalSpacer_9">
              <property name="orientation">
@@ -1009,7 +971,14 @@ provide a toolbar button for disabling them if this checkbox is enabled.</string
              </property>
             </spacer>
            </item>
-           <item row="8" column="0">
+           <item row="1" column="0" colspan="2">
+            <widget class="Line" name="line_11">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0" colspan="2">
             <widget class="QLabel" name="labelOptionsMapRangeRings">
              <property name="toolTip">
               <string/>
@@ -1022,14 +991,45 @@ provide a toolbar button for disabling them if this checkbox is enabled.</string
              </property>
             </widget>
            </item>
-           <item row="1" column="0" colspan="2">
-            <widget class="Line" name="line_11">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="5" column="0" colspan="2">
+            <widget class="QLabel" name="labelOptionsMapScrollDetails">
+             <property name="text">
+              <string>Details while scrolling (click and drag, zoom in and out):</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="0" column="0" colspan="2">
+            <widget class="QCheckBox" name="checkBoxOptionsMapUndock">
+             <property name="toolTip">
+              <string>Allows to undock and put the map window into a floating state.
+This can cause several unwanted effects when arranging dock windows.
+Uncheck this if you do experience strange effects when resizing dock windows.
+Restart the program after changing this option. You might also need to reset the window layout.</string>
+             </property>
+             <property name="text">
+              <string>Allow to &amp;undock  the map window (restart required after change)</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
+             <property name="toolTip">
+              <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
+These are displayed underneath all other airports, use a gray symbol and
+provide a toolbar button for disabling them if this checkbox is enabled.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Treat empty airports special</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2">
             <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
              <property name="toolTip">
               <string>All X-Plane airports which are not 3D and not add-on
@@ -1052,94 +1052,6 @@ together with &quot;Treat empty airports special&quot;.</string>
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsMapNav">
        <layout class="QGridLayout" name="gridLayout_34">
-        <item row="0" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBoxOptionsMapZoomClick_2">
-          <property name="title">
-           <string>Navigation</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_33">
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <item row="2" column="0" colspan="2">
-            <widget class="QRadioButton" name="radioButtonOptionsMapNavTouchscreen">
-             <property name="toolTip">
-              <string>You can still use the default click and drag method to scroll and the mousewheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display 2&quot; to display hints on the map.</string>
-             </property>
-             <property name="text">
-              <string>Use map &amp;areas for navigation. Useful when using touchscreens.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="labelOptionsMapNavTouchscreenArea">
-             <property name="text">
-              <string>Screen click area size:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsMapNavTouchArea</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" colspan="2">
-            <widget class="QRadioButton" name="radioButtonOptionsMapNavClickCenter">
-             <property name="toolTip">
-              <string>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Display 2&quot; to display a screen center hint.</string>
-             </property>
-             <property name="text">
-              <string>Click &amp;map to center position. Mouse wheel zooms to the map center position.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0" colspan="2">
-            <widget class="QRadioButton" name="radioButtonOptionsMapNavDragMove">
-             <property name="text">
-              <string>&amp;Click and drag map to move. Mouse wheel zooms to cursor position.</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QSpinBox" name="spinBoxOptionsMapNavTouchArea">
-             <property name="toolTip">
-              <string>Size of a screen area (virtual button) in percent of screen size.</string>
-             </property>
-             <property name="suffix">
-              <string> %</string>
-             </property>
-             <property name="minimum">
-              <number>5</number>
-             </property>
-             <property name="maximum">
-              <number>35</number>
-             </property>
-             <property name="singleStep">
-              <number>5</number>
-             </property>
-             <property name="value">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
         <item row="1" column="1">
          <widget class="QGroupBox" name="groupBoxMapClickSensitivity">
           <property name="title">
@@ -1358,6 +1270,94 @@ to next best step</string>
               </size>
              </property>
             </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBoxOptionsMapZoomClick_2">
+          <property name="title">
+           <string>Navigation</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_33">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item row="2" column="0" colspan="2">
+            <widget class="QRadioButton" name="radioButtonOptionsMapNavTouchscreen">
+             <property name="toolTip">
+              <string>You can still use the default click and drag method to scroll and the mousewheel to zoom in this mode.
+Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display 2&quot; to display hints on the map.</string>
+             </property>
+             <property name="text">
+              <string>Use map &amp;areas for navigation. Useful when using touchscreens.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="labelOptionsMapNavTouchscreenArea">
+             <property name="text">
+              <string>Screen click area size:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsMapNavTouchArea</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QRadioButton" name="radioButtonOptionsMapNavClickCenter">
+             <property name="toolTip">
+              <string>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
+options page &quot;Map Display 2&quot; to display a screen center hint.</string>
+             </property>
+             <property name="text">
+              <string>Click &amp;map to center position. Mouse wheel zooms to the map center position.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="2">
+            <widget class="QRadioButton" name="radioButtonOptionsMapNavDragMove">
+             <property name="text">
+              <string>&amp;Click and drag map to move. Mouse wheel zooms to cursor position.</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QSpinBox" name="spinBoxOptionsMapNavTouchArea">
+             <property name="toolTip">
+              <string>Size of a screen area (virtual button) in percent of screen size.</string>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="minimum">
+              <number>5</number>
+             </property>
+             <property name="maximum">
+              <number>35</number>
+             </property>
+             <property name="singleStep">
+              <number>5</number>
+             </property>
+             <property name="value">
+              <number>10</number>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -2936,22 +2936,6 @@ also define the order when reading coordinates in the user interface if enabled.
           </property>
          </widget>
         </item>
-        <item row="9" column="0" colspan="3">
-         <widget class="QCheckBox" name="checkBoxOptionsUnitTrueCourse">
-          <property name="toolTip">
-           <string>Shows true course or heading values as small text besides magnetic course
-in information displays and tooltips .
-Only magnetic course is shown if both values are equal.
-Also affects labels at holds and traffic patterns.</string>
-          </property>
-          <property name="text">
-           <string>Show &amp;true course and heading besides magnetic course in information displays</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="0">
          <widget class="QLabel" name="labelOptionsUnitAlt">
           <property name="text">
@@ -3070,6 +3054,22 @@ Also affects labels at holds and traffic patterns.</string>
           </item>
          </widget>
         </item>
+        <item row="9" column="0" colspan="3">
+         <widget class="QCheckBox" name="checkBoxOptionsUnitTrueCourse">
+          <property name="toolTip">
+           <string>Shows true course or heading values as small text besides magnetic course
+in information displays and tooltips .
+Only magnetic course is shown if both values are equal.
+Also affects labels at holds and traffic patterns.</string>
+          </property>
+          <property name="text">
+           <string>Show &amp;true course and heading besides magnetic course in information displays</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsSimAircraft">
@@ -3138,7 +3138,20 @@ This setting is also used in the elevation profile.</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="0" column="0" colspan="3">
+            <widget class="QCheckBox" name="checkBoxOptionsSimCenterLegTable">
+             <property name="toolTip">
+              <string>The active (magenta) leg will be shown on top of the flight plan table when a new leg is activated</string>
+             </property>
+             <property name="text">
+              <string>&amp;Keep active leg on top of flight plan table</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="3">
             <widget class="QCheckBox" name="checkBoxOptionsSimDoNotFollowOnScroll">
              <property name="toolTip">
               <string>The map will stop following the aircraft for the given time if the user does any interaction with the map like scrolling or zooming.
@@ -3147,19 +3160,6 @@ See notes in the manual for details of this setting and how to move around in th
              </property>
              <property name="text">
               <string>&amp;Allow scrolling and zooming in the map</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsSimCenterLegTable">
-             <property name="toolTip">
-              <string>The active (magenta) leg will be shown on top of the flight plan table when a new leg is activated</string>
-             </property>
-             <property name="text">
-              <string>&amp;Keep active leg on top of flight plan table</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -3251,30 +3251,6 @@ See notes in the manual for details of this setting and how to move around in th
            <property name="spacing">
             <number>2</number>
            </property>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsSimUpdatesConstant">
-             <property name="toolTip">
-              <string>Map will follow the aircraft constantly when checked.
-This is also used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Do not use box mode for following the aircraft. Move the map constantly.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsSimCenterLeg">
-             <property name="toolTip">
-              <string>Keeps the aircraft and the next flight plan waypoint visible on the map instead of simply centering the aircraft</string>
-             </property>
-             <property name="text">
-              <string>&amp;Center map on aircraft and next flight plan waypoint</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="0">
             <widget class="QLabel" name="labelOptionsSimUpdateBox">
              <property name="text">
@@ -3321,6 +3297,30 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
               </size>
              </property>
             </spacer>
+           </item>
+           <item row="0" column="0" colspan="3">
+            <widget class="QCheckBox" name="checkBoxOptionsSimCenterLeg">
+             <property name="toolTip">
+              <string>Keeps the aircraft and the next flight plan waypoint visible on the map instead of simply centering the aircraft</string>
+             </property>
+             <property name="text">
+              <string>&amp;Center map on aircraft and next flight plan waypoint</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="3">
+            <widget class="QCheckBox" name="checkBoxOptionsSimUpdatesConstant">
+             <property name="toolTip">
+              <string>Map will follow the aircraft constantly when checked.
+This is also used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Do not use box mode for following the aircraft. Move the map constantly.</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -3445,13 +3445,6 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
              </property>
             </widget>
            </item>
-           <item row="2" column="0" colspan="3">
-            <widget class="Line" name="line_9">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
            <item row="4" column="0">
             <widget class="QComboBox" name="comboBoxOptionsRouteAltitudeRuleType">
              <property name="toolTip">
@@ -3490,13 +3483,6 @@ when transitioning from airport to airway.</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="0" colspan="3">
-            <widget class="Line" name="line_7">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0">
             <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
              <property name="toolTip">
@@ -3531,6 +3517,20 @@ Note that this value does not affect flight plan calculation or saving of flight
              </property>
              <property name="value">
               <number>1000</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="Line" name="line_9">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="Line" name="line_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -4710,13 +4710,6 @@ Little Navmap GIT repository.
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
-             <property name="text">
-              <string>Items in the disk cache expire after two weeks.</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="2">
             <widget class="QPushButton" name="pushButtonOptionsCacheClearDisk">
              <property name="toolTip">
@@ -4769,6 +4762,13 @@ Little Navmap GIT repository.
              </property>
             </widget>
            </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
+             <property name="text">
+              <string>Items in the disk cache expire after two weeks.</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -4810,21 +4810,6 @@ Little Navmap GIT repository.
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QRadioButton" name="radioButtonCacheUseOnlineElevation">
-             <property name="toolTip">
-              <string>Use online elevation data to display ground in flight plan elevation profile.
-Has a higher resolution than the offline data source but updates are slow.
-Source data has many errors.</string>
-             </property>
-             <property name="text">
-              <string>Use Online Elevation Data</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0">
             <widget class="QRadioButton" name="radioButtonCacheUseOffineElevation">
              <property name="toolTip">
@@ -4838,20 +4823,41 @@ Has a 30 arc second grid (approximately 900 meter near the equator).</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLabel" name="labelCacheGlobePathState">
-             <property name="text">
-              <string>Valid</string>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="0" colspan="3">
             <widget class="QLabel" name="labelCacheGlobePathDownload">
              <property name="text">
               <string>&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;Get the free GLOBE elevation data here.&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
 Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; and extract the archive to an arbitrary place.</string>
              </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
              <property name="openExternalLinks">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" colspan="2">
+            <widget class="QLabel" name="labelCacheGlobePathState">
+             <property name="text">
+              <string>Valid</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="3">
+            <widget class="QRadioButton" name="radioButtonCacheUseOnlineElevation">
+             <property name="toolTip">
+              <string>Use online elevation data to display ground in flight plan elevation profile.
+Has a higher resolution than the offline data source but updates are slow.
+Source data has many errors.</string>
+             </property>
+             <property name="text">
+              <string>Use Online Elevation Data</string>
+             </property>
+             <property name="checked">
               <bool>true</bool>
              </property>
             </widget>
@@ -4897,13 +4903,6 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="labelCacheUserAirspacePathStatus">
-             <property name="text">
-              <string>Valid</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="1">
             <widget class="QLineEdit" name="lineEditCacheUserAirspacePath">
              <property name="toolTip">
@@ -4939,6 +4938,16 @@ Currently only OpenAir is supported (*.txt). </string>
              </property>
              <property name="buddy">
               <cstring>lineEditCacheUserAirspaceExtensions</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" colspan="2">
+            <widget class="QLabel" name="labelCacheUserAirspacePathStatus">
+             <property name="text">
+              <string>Valid</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
