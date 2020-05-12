@@ -253,7 +253,6 @@ void RouteMultiExportDialog::updateTableColors()
 void RouteMultiExportDialog::updateModel()
 {
   changingTable = true;
-  QByteArray state = ui->tableViewRouteExport->horizontalHeader()->saveState();
 
   // Remove items
   itemModel->clear();
@@ -359,7 +358,9 @@ void RouteMultiExportDialog::updateModel()
 
     row++;
   }
-  ui->tableViewRouteExport->horizontalHeader()->restoreState(state);
+
+  // Reload layout
+  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
 
   // No moving of first columns
   ui->tableViewRouteExport->horizontalHeader()->setSectionResizeMode(BUTTONS, QHeaderView::ResizeToContents);
