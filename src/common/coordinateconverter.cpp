@@ -221,6 +221,17 @@ QPointF CoordinateConverter::wToSF(const GeoDataCoordinates& coords, const QSize
   }
 }
 
+bool CoordinateConverter::sToW(int x, int y, atools::geo::Pos& pos) const
+{
+  qreal lon, lat;
+
+  bool visible = viewport->geoCoordinates(x, y, lon, lat, DEG);
+
+  pos.setLonX(lon);
+  pos.setLatY(lat);
+  return visible;
+}
+
 bool CoordinateConverter::sToW(int x, int y, Marble::GeoDataCoordinates& coords) const
 {
   qreal lon, lat;

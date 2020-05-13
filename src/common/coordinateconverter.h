@@ -71,7 +71,7 @@ public:
   QPoint wToS(const Marble::GeoDataCoordinates& coords,
               const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr, bool *isHidden = nullptr) const;
   QPointF wToSF(const Marble::GeoDataCoordinates& coords,
-              const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr, bool *isHidden = nullptr) const;
+                const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr, bool *isHidden = nullptr) const;
 
   /*
    * Convert world to screen coordinates for GeoDataCoordinates
@@ -105,6 +105,7 @@ public:
   bool wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size = DEFAULT_WTOS_SIZE,
             bool *isHidden = nullptr) const;
 
+  bool sToW(int x, int y, atools::geo::Pos& pos) const;
   bool sToW(int x, int y, Marble::GeoDataCoordinates& coords) const;
 
   /* Converte screen to world coordinates */

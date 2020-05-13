@@ -90,7 +90,6 @@ void MapPainterAltitude::render(PaintContext *context)
       QVector<GeoDataCoordinates> centers;
 
       // Draw rectangles and collect other values for text placement ================================
-      Marble::GeoDataLineString line(Marble::Tessellate | Marble::RespectLatitudeCircle);
       for(int laty = south; laty <= north + 1; laty++)
       {
         // Iterate over anti-meridian split
@@ -103,13 +102,12 @@ void MapPainterAltitude::render(PaintContext *context)
                moraFt100 != MoraReader::ERROR)
             {
               // Build rectangle
-              line.clear();
-              line.append(GeoDataCoordinates(lonx, laty, 0, DEG));
-              line.append(GeoDataCoordinates(lonx + 1, laty, 0, DEG));
-              line.append(GeoDataCoordinates(lonx + 1, laty - 1, 0, DEG));
-              line.append(GeoDataCoordinates(lonx, laty - 1, 0, DEG));
-              line.append(GeoDataCoordinates(lonx, laty, 0, DEG));
-              context->painter->drawPolyline(line);
+              float lonxF = static_cast<float>(lonx);
+              float latyF = static_cast<float>(laty);
+              drawLine(context, Line(lonxF, latyF, lonxF + 1.f, latyF));
+              drawLine(context, Line(lonxF + 1.f, latyF, lonxF + 1, latyF - 1.f));
+              drawLine(context, Line(lonxF + 1.f, latyF - 1, lonxF, latyF - 1.f));
+              drawLine(context, Line(lonxF, latyF - 1.f, lonxF, latyF));
 
               if(!context->drawFast)
               {

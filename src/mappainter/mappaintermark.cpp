@@ -449,8 +449,7 @@ void MapPainterMark::paintAirwayList(PaintContext *context, const QList<map::Map
   }
 
   // Build and draw marble line string ====================================================
-  GeoDataLineString ls;
-  ls.setTessellate(true);
+  LineString ls;
   for(int i = 1; i < linestring.size(); i++)
   {
     qreal laty1 = linestring.at(i - 1).getLatY();
@@ -462,22 +461,22 @@ void MapPainterMark::paintAirwayList(PaintContext *context, const QList<map::Map
       laty2 += 0.000001;
     }
 
-    ls << GeoDataCoordinates(linestring.at(i - 1).getLonX(), laty1, 0, DEG)
-       << GeoDataCoordinates(linestring.at(i).getLonX(), laty2, 0, DEG);
+    ls.append(Pos(static_cast<double>(linestring.at(i - 1).getLonX()), laty1));
+    ls.append(Pos(static_cast<double>(linestring.at(i).getLonX()), laty2));
   }
 
   // Outline =================
   float lineWidth = context->szF(context->thicknessRangeDistance, 7);
   QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::RoundCap);
   painter->setPen(outerPen);
-  context->painter->drawPolyline(ls);
+  drawLineString(context, ls);
 
   // Inner line ================
   QPen innerPen = mapcolors::airwayVictorPen;
   innerPen.setWidthF(lineWidth * 0.5);
   innerPen.setColor(innerPen.color().lighter(150));
   painter->setPen(innerPen);
-  context->painter->drawPolyline(ls);
+  drawLineString(context, ls);
 
   // Arrows ================
   QPolygonF arrow = buildArrow(static_cast<float>(mapcolors::airwayBothPen.widthF() * 6.));
@@ -977,24 +976,19 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
     painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
     if(!m.isRhumbLine)
     {
-      // Draw great circle line
+      // Draw great circle line ========================================================
       float distanceMeter = m.from.distanceMeterTo(m.to);
 
-      GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, DEG);
-      GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, DEG);
-
       // Draw line
-      GeoDataLineString line;
-      line.append(from);
-      line.append(to);
-      line.setTessellate(true);
-      painter->drawPolyline(line);
+      drawLine(context, Line(m.from, m.to));
 
       // Build and draw text
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
 
+      GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, DEG);
+      GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, DEG);
       double init = normalizeCourse(from.bearing(to, DEG, INITBRG));
       double final = normalizeCourse(from.bearing(to, DEG, FINALBRG));
 
@@ -1042,19 +1036,13 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       for(float d = 0.f; d < distanceMeter; d += distanceMeter / numPoints)
       {
         p2 = m.from.endpointRhumb(d, bearing);
-        GeoDataLineString line;
-        line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, DEG));
-        line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, DEG));
-        painter->drawPolyline(line);
+        drawLine(context, Line(p1, p2));
         p1 = p2;
       }
 
       // Draw rest
       p2 = m.from.endpointRhumb(distanceMeter, bearing);
-      GeoDataLineString line;
-      line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, DEG));
-      line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, DEG));
-      painter->drawPolyline(line);
+      drawLine(context, Line(p1, p2));
 
       // Build and draw text
       QStringList texts;
@@ -1365,22 +1353,14 @@ void MapPainterMark::paintRouteDrag(const PaintContext *context)
 
   if(!cur.isNull())
   {
-    GeoDataCoordinates curGeo;
+    Pos curGeo;
     if(sToW(cur.x(), cur.y(), curGeo))
     {
       context->painter->setPen(QPen(mapcolors::mapDragColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-      GeoDataLineString linestring;
-      linestring.setTessellate(true);
-
       // Draw lines from current mouse position to all fixed points which can be waypoints or several alternates
       for(const Pos& pos : fixed)
-      {
-        linestring.clear();
-        linestring.append(GeoDataCoordinates(curGeo));
-        linestring.append(GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
-        context->painter->drawPolyline(linestring);
-      }
+        drawLine(context, Line(curGeo, pos));
     }
   }
 }

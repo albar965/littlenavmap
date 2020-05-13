@@ -197,18 +197,6 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   }
 }
 
-void MapPainter::drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring)
-{
-  GeoDataLineString ls;
-  ls.setTessellate(true);
-  for(int i = 1; i < linestring.size(); i++)
-  {
-    ls.clear();
-    ls << linestring.at(i - 1) << linestring.at(i);
-    context->painter->drawPolyline(ls);
-  }
-}
-
 void MapPainter::drawLineStraight(const PaintContext *context, const atools::geo::Line& line)
 {
   double x1, y1, x2, y2;
@@ -264,15 +252,8 @@ void MapPainter::drawCross(const PaintContext *context, int x, int y, int size)
 
 void MapPainter::drawLineString(const PaintContext *context, const atools::geo::LineString& linestring)
 {
-  GeoDataLineString ls;
-  ls.setTessellate(true);
   for(int i = 1; i < linestring.size(); i++)
-  {
-    ls.clear();
-    ls << GeoDataCoordinates(linestring.at(i - 1).getLonX(), linestring.at(i - 1).getLatY(), 0, DEG)
-       << GeoDataCoordinates(linestring.at(i).getLonX(), linestring.at(i).getLatY(), 0, DEG);
-    context->painter->drawPolyline(ls);
-  }
+    drawLine(context, Line(linestring.at(i - 1), linestring.at(i)));
 }
 
 void MapPainter::drawLine(const PaintContext *context, const atools::geo::Line& line)
@@ -288,7 +269,9 @@ void MapPainter::drawLine(const PaintContext *context, const atools::geo::Line& 
     ls.setTessellate(true);
     ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY() - correction, 0, DEG)
        << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY() + correction, 0, DEG);
-    context->painter->drawPolyline(ls);
+
+    for(GeoDataLineString *corrected : ls.toDateLineCorrected())
+      context->painter->drawPolyline(*corrected);
   }
 }
 

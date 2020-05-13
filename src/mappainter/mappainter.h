@@ -207,7 +207,6 @@ protected:
                    float radiusNm, bool fast, int& xtext, int& ytext);
 
   /* Drawing functions for simple geometry */
-  void drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring);
   void drawLineString(const PaintContext *context, const atools::geo::LineString& linestring);
   void drawLine(const PaintContext *context, const atools::geo::Line& line);
   void drawCircle(const PaintContext *context, const atools::geo::Pos& center, int radius);
