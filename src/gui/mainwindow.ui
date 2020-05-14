@@ -11149,6 +11149,36 @@ Best track will be selected automatically.</string>
     <string>Configure the Export for Flight Plans into several formats</string>
    </property>
   </action>
+  <action name="actionSearchShowInformationAirport">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Information for Airport</string>
+   </property>
+   <property name="toolTip">
+    <string>Show information about the airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Show information about the airport</string>
+   </property>
+  </action>
+  <action name="actionSearchShowOnMapAirport">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Airport on Map</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the airport on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the airport on the map</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

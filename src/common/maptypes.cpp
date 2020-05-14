@@ -1345,7 +1345,12 @@ QString airwayAltTextShort(const MapAirway& airway, bool addUnit, bool narrow)
 
 QString airportText(const MapAirport& airport, int elideName)
 {
-  return QObject::tr("Airport %1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.ident);
+  if(!airport.isValid())
+    return QObject::tr("Airport");
+  else if(airport.name.isEmpty())
+    return QObject::tr("Airport %1").arg(airport.ident);
+  else
+    return QObject::tr("Airport %1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.ident);
 }
 
 QString airportTextShort(const MapAirport& airport)

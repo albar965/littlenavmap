@@ -72,8 +72,8 @@ public:
   map::MapAirport getAirportByIcao(const QString& icao);
 
   /* Try to get airport by ident, icao or position as a fallback if pos is valid */
-  void getAirportFuzzy(map::MapAirport& airport, const QString& ident, const QString& icao,
-                       const atools::geo::Pos& pos);
+  void getAirportFuzzy(map::MapAirport& airport, const QString& ident, const QString& icao = QString(),
+                       const atools::geo::Pos& pos = atools::geo::EMPTY_POS);
 
   atools::geo::Pos getAirportPosByIdent(const QString& ident);
 
