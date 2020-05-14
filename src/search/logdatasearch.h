@@ -80,6 +80,9 @@ private:
   /* Add button */
   void addLogEntryTriggered();
 
+  /* Callback function which creates a where clause using destination and departure ident. */
+  QString airportQueryBuilderFunc(const QVector<QWidget *> widgets);
+
   /* All layouts, lines and drop down menu items */
   QList<QObject *> logdataSearchWidgets;
 

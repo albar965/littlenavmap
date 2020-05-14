@@ -40,7 +40,7 @@ Column& Column::filter(bool b)
   return *this;
 }
 
-Column& Column::override(bool b)
+Column& Column::override (bool b)
 {
   colCanOverride = b;
   return *this;

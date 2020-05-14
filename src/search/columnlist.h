@@ -18,10 +18,9 @@
 #ifndef LITTLENAVMAP_COLUMNLIST_H
 #define LITTLENAVMAP_COLUMNLIST_H
 
+#include "search/querybuilder.h"
+
 #include <QHash>
-#include <QObject>
-#include <QVector>
-#include <QStringList>
 
 class QWidget;
 class Column;
@@ -106,7 +105,18 @@ public:
 
   void updateUnits();
 
+  /* Set a callback object which can build a where clause for more than one column.
+   *  Only one per search can be used. */
+  void setQueryBuilder(const QueryBuilder& builder);
+
+  const QueryBuilder& getQueryBuilder() const
+  {
+    return queryBuilder;
+  }
+
 private:
+  QueryBuilder queryBuilder;
+
   QSpinBox *minDistanceWidget = nullptr, *maxDistanceWidget = nullptr;
   QString minDistanceWidgetSuffix, maxDistanceWidgetSuffix;
   QCheckBox *distanceCheckBox = nullptr;

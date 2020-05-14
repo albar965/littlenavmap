@@ -132,6 +132,14 @@ bool SqlController::hasColumn(const QString& colName) const
   return columns->hasColumn(colName);
 }
 
+void SqlController::filterByBuilder(const QueryBuilder& builder)
+{
+  qDebug() << Q_FUNC_INFO;
+  view->clearSelection();
+  model->filterByBuilder(builder);
+  searchParamsChanged = true;
+}
+
 void SqlController::filterIncluding(const QModelIndex& index)
 {
   view->clearSelection();

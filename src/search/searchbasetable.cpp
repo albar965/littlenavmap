@@ -316,7 +316,27 @@ void SearchBaseTable::connectSearchWidgets()
   void (QComboBox::*curIndexChangedPtr)(int) = &QComboBox::currentIndexChanged;
   void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
 
-  // Connect all column assigned widgets to lambda
+  // Connect query builder callback to lambda ======================================
+  if(columns->getQueryBuilder().isValid())
+  {
+    for(QWidget *widget : columns->getQueryBuilder().getWidgets())
+    {
+      QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
+
+      if(lineEdit != nullptr)
+      {
+        connect(lineEdit, &QLineEdit::textChanged, [ = ](const QString& text)
+        {
+          Q_UNUSED(text)
+          controller->filterByBuilder(columns->getQueryBuilder());
+          updateButtonMenu();
+          editStartTimer();
+        });
+      }
+    }
+  }
+
+  // Connect all column assigned widgets to lambda ======================================
   for(const Column *col : columns->getColumns())
   {
     if(col->getLineEditWidget() != nullptr)
@@ -1059,6 +1079,11 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   }
   else if(tabIndex == si::SEARCH_LOG)
   {
+    // show info
+    // show map
+    // set departure
+    // set dest
+
     if(selectedRows > 1)
     {
       ui->actionLogdataEdit->setText(tr("&Edit Logbook Entries"));

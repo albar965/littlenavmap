@@ -41,7 +41,7 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   logdataSearchWidgets =
   {
     ui->horizontalLayoutLogdata,
-    ui->horizontalLayoutLogdataMore,
+    ui->verticalLayoutLogdataMore,
     ui->horizontalLayoutLogdataDist,
     ui->lineLogdataMore,
     ui->lineLogdataMoreDist,
@@ -85,6 +85,11 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("destination_laty").hidden()).
   append(Column("destination_alt").hidden());
 
+  // Assign the callback which builds the where clause for the airport search ======================
+  using namespace std::placeholders;
+  columns->setQueryBuilder(QueryBuilder(std::bind(&LogdataSearch::airportQueryBuilderFunc, this, _1),
+                                        {ui->lineEditLogdataAirport}, {"departure_ident", "destination_ident"}));
+
   SearchBaseTable::initViewAndController(NavApp::getDatabaseLogbook());
 
   // Add model data handler and model format handler as callbacks
@@ -93,6 +98,39 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
 LogdataSearch::~LogdataSearch()
 {
+}
+
+QString LogdataSearch::airportQueryBuilderFunc(const QVector<QWidget *> widgets)
+{
+  if(!widgets.isEmpty())
+  {
+    // Widget list is always one line edit
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widgets.first());
+    if(lineEdit != nullptr)
+    {
+      QString text = lineEdit->text().simplified();
+
+      // Adjust the query string to SQL
+      // Replace "*" with "%" for SQL
+      if(text.contains("*"))
+        text = text.replace("*", "%");
+      else if(!text.isEmpty())
+        text = text + "%";
+
+      // Exclude if prefixed with "-"
+      bool exclude = false;
+      if(text.startsWith('-'))
+      {
+        text = text.mid(1);
+        exclude = true;
+      }
+
+      if(!text.isEmpty())
+        return QString("(departure_ident %2like '%1' or destination_ident %2like '%1')").
+               arg(text).arg(exclude ? "not " : QString());
+    }
+  }
+  return QString();
 }
 
 void LogdataSearch::connectSearchSlots()
@@ -107,6 +145,7 @@ void LogdataSearch::connectSearchSlots()
   connect(ui->pushButtonLogdataReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
   // Install filter for cursor down action
+  installEventFilterForWidget(ui->lineEditLogdataAirport);
   installEventFilterForWidget(ui->lineEditLogdataDeparture);
   installEventFilterForWidget(ui->lineEditLogdataDestination);
   installEventFilterForWidget(ui->lineEditLogdataAircraftType);
@@ -124,7 +163,7 @@ void LogdataSearch::connectSearchSlots()
   // Drop down menu actions
   connect(ui->actionLogdataSearchShowMoreOptions, &QAction::toggled, [ = ](bool state)
   {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutLogdataMore}, state, {ui->lineLogdataMore});
+    atools::gui::util::showHideLayoutElements({ui->verticalLayoutLogdataMore}, state, {ui->lineLogdataMore});
     updateButtonMenu();
   });
 
@@ -171,7 +210,7 @@ void LogdataSearch::saveState()
   widgetState.save(logdataSearchWidgets);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.save({ui->horizontalLayoutLogdata, ui->horizontalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
+  widgetState.save({ui->horizontalLayoutLogdata, ui->verticalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
                     ui->actionSearchLogdataFollowSelection});
 }
 
@@ -187,7 +226,7 @@ void LogdataSearch::restoreState()
 
     // Need to block signals here to avoid unwanted behavior
     widgetState.setBlockSignals(true);
-    widgetState.restore({ui->horizontalLayoutLogdata, ui->horizontalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
+    widgetState.restore({ui->horizontalLayoutLogdata, ui->verticalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
                          ui->actionSearchLogdataFollowSelection});
   }
   else
@@ -336,7 +375,7 @@ void LogdataSearch::updateButtonMenu()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   atools::gui::util::changeStarIndication(ui->actionLogdataSearchShowMoreOptions,
-                                          atools::gui::util::anyWidgetChanged({ui->horizontalLayoutLogdataMore}));
+                                          atools::gui::util::anyWidgetChanged({ui->verticalLayoutLogdataMore}));
   atools::gui::util::changeStarIndication(ui->actionLogdataSearchShowDistOptions,
                                           atools::gui::util::anyWidgetChanged({ui->horizontalLayoutLogdataDist}));
 }

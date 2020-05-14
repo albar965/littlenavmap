@@ -19,11 +19,11 @@
 
 #include "gui/application.h"
 #include "gui/errorhandler.h"
-#include "search/columnlist.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "exception.h"
 #include "search/column.h"
+#include "search/columnlist.h"
 #include "sql/sqlrecord.h"
 
 #include <QLineEdit>
@@ -48,6 +48,13 @@ SqlModel::SqlModel(QWidget *parent, SqlDatabase *sqlDb, const ColumnList *column
 
 SqlModel::~SqlModel()
 {
+}
+
+void SqlModel::filterByBuilder(const QueryBuilder& builder)
+{
+  qDebug() << Q_FUNC_INFO;
+  queryBuilder = builder;
+  buildQuery();
 }
 
 void SqlModel::filterIncluding(QModelIndex index)
@@ -575,6 +582,19 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
 
     if(!cond.valueSql.isNull())
       queryWhere += buildWhereValue(cond);
+  }
+
+  // Add where clause from callback ======================
+  if(queryBuilder.isValid())
+  {
+    QString sql = queryBuilder.build();
+    if(!sql.isEmpty())
+    {
+      if(numCond > 0)
+        queryWhere += " " + WHERE_OPERATOR + " ";
+      queryWhere += queryBuilder.build();
+      numCond++;
+    }
   }
 
   if(boundingRect.isValid() && !overrideModeActive)

@@ -356,6 +356,7 @@ SOURCES += \
   src/search/onlineclientsearch.cpp \
   src/search/onlineserversearch.cpp \
   src/search/proceduresearch.cpp \
+  src/search/querybuilder.cpp \
   src/search/searchbasetable.cpp \
   src/search/searchcontroller.cpp \
   src/search/sqlcontroller.cpp \
@@ -511,6 +512,7 @@ HEADERS  += \
   src/search/onlineclientsearch.h \
   src/search/onlineserversearch.h \
   src/search/proceduresearch.h \
+  src/search/querybuilder.h \
   src/search/searchbasetable.h \
   src/search/searchcontroller.h \
   src/search/sqlcontroller.h \

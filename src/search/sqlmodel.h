@@ -20,7 +20,7 @@
 
 #include "geo/rect.h"
 
-#include <functional>
+#include "search/querybuilder.h"
 
 #include <QSqlQueryModel>
 
@@ -51,6 +51,9 @@ public:
    */
   SqlModel(QWidget *parent, atools::sql::SqlDatabase *sqlDb, const ColumnList *columnList);
   virtual ~SqlModel();
+
+  /* Filter by using query builder callback */
+  void filterByBuilder(const QueryBuilder& builder);
 
   /* Creates an include filer for value at index in the table */
   void filterIncluding(QModelIndex index);
@@ -213,6 +216,8 @@ private:
 
   /* A bounding rectangle query is used if this is valid */
   atools::geo::Rect boundingRect;
+
+  QueryBuilder queryBuilder;
 
   /* Maps column name to where condition struct */
   QHash<QString, WhereCondition> whereConditionMap;

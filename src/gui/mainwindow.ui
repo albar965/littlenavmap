@@ -2959,7 +2959,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLineEdit" name="lineEditLogdataDeparture">
+            <widget class="QLineEdit" name="lineEditLogdataAirport">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>1</horstretch>
@@ -2967,38 +2967,17 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Departure airport ICAO code</string>
+              <string>Departure or destination airport ICAO code.
+Will match any visited airport.</string>
              </property>
              <property name="statusTip">
-              <string>Departure airport ICAO code</string>
+              <string>Departure or destination airport ICAO code. </string>
              </property>
              <property name="maxLength">
               <number>8</number>
              </property>
              <property name="placeholderText">
-              <string>Departure ICAO</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditLogdataDestination">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Destination airport ICAO code</string>
-             </property>
-             <property name="statusTip">
-              <string>Destination airport ICAO code</string>
-             </property>
-             <property name="placeholderText">
-              <string>Destination ICAO</string>
+              <string>Airport ICAO</string>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>
@@ -3183,7 +3162,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayoutLogdataMore">
+          <layout class="QVBoxLayout" name="verticalLayoutLogdataMore">
            <property name="spacing">
             <number>2</number>
            </property>
@@ -3191,86 +3170,153 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLineEdit" name="lineEditLogdataAircraftModel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <property name="spacing">
+              <number>2</number>
              </property>
-             <property name="toolTip">
-              <string>Aircraft model name</string>
+             <property name="topMargin">
+              <number>0</number>
              </property>
-             <property name="statusTip">
-              <string>Aircraft model name</string>
-             </property>
-             <property name="placeholderText">
-              <string>Aircraft Model</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
+             <item>
+              <widget class="QLineEdit" name="lineEditLogdataDeparture">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Departure airport ICAO code</string>
+               </property>
+               <property name="statusTip">
+                <string>Departure airport ICAO code</string>
+               </property>
+               <property name="maxLength">
+                <number>8</number>
+               </property>
+               <property name="placeholderText">
+                <string>Departure ICAO</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditLogdataDestination">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Destination airport ICAO code</string>
+               </property>
+               <property name="statusTip">
+                <string>Destination airport ICAO code</string>
+               </property>
+               <property name="placeholderText">
+                <string>Destination ICAO</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEditLogdataAircraftRegistration">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <property name="spacing">
+              <number>2</number>
              </property>
-             <property name="toolTip">
-              <string/>
+             <property name="topMargin">
+              <number>0</number>
              </property>
-             <property name="statusTip">
-              <string/>
-             </property>
-             <property name="placeholderText">
-              <string>Aircraft Registration</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditLogdataSimulator">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string/>
-             </property>
-             <property name="statusTip">
-              <string/>
-             </property>
-             <property name="placeholderText">
-              <string>Simulator</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditLogdataDescription">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>2</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>Description</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
+             <item>
+              <widget class="QLineEdit" name="lineEditLogdataAircraftModel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Aircraft model name</string>
+               </property>
+               <property name="statusTip">
+                <string>Aircraft model name</string>
+               </property>
+               <property name="placeholderText">
+                <string>Aircraft Model</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditLogdataAircraftRegistration">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string/>
+               </property>
+               <property name="statusTip">
+                <string/>
+               </property>
+               <property name="placeholderText">
+                <string>Aircraft Registration</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditLogdataSimulator">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string/>
+               </property>
+               <property name="statusTip">
+                <string/>
+               </property>
+               <property name="placeholderText">
+                <string>Simulator</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditLogdataDescription">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="placeholderText">
+                <string>Description</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -6146,6 +6192,9 @@ unusable airways (e.g. due to altitude restrictions).</string>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
+         <property name="buddy">
+          <cstring>pushButtonRouteCalcHelp</cstring>
          </property>
         </widget>
        </item>
@@ -11191,8 +11240,6 @@ Best track will be selected automatically.</string>
   <tabstop>lineEditUserdataTags</tabstop>
   <tabstop>lineEditUserdataFilepath</tabstop>
   <tabstop>tableViewUserdata</tabstop>
-  <tabstop>lineEditLogdataDeparture</tabstop>
-  <tabstop>lineEditLogdataDestination</tabstop>
   <tabstop>lineEditLogdataAircraftType</tabstop>
   <tabstop>pushButtonLogdataAdd</tabstop>
   <tabstop>pushButtonLogdataEdit</tabstop>
@@ -11201,10 +11248,6 @@ Best track will be selected automatically.</string>
   <tabstop>pushButtonLogdataClearSelection</tabstop>
   <tabstop>pushButtonLogdataHelp</tabstop>
   <tabstop>toolButtonLogdata</tabstop>
-  <tabstop>lineEditLogdataAircraftModel</tabstop>
-  <tabstop>lineEditLogdataAircraftRegistration</tabstop>
-  <tabstop>lineEditLogdataSimulator</tabstop>
-  <tabstop>lineEditLogdataDescription</tabstop>
   <tabstop>spinBoxLogdataMinDist</tabstop>
   <tabstop>spinBoxLogdataMaxDist</tabstop>
   <tabstop>tableViewLogdata</tabstop>
@@ -11258,7 +11301,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

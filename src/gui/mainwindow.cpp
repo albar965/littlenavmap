@@ -1569,7 +1569,7 @@ void MainWindow::actionShortcutLogbookSearchTriggered()
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_LOG);
-  ui->lineEditLogdataDeparture->setFocus();
+  ui->lineEditLogdataAirport->setFocus();
 }
 
 void MainWindow::actionShortcutFlightPlanTriggered()

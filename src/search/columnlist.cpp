@@ -236,3 +236,8 @@ void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
   if(distanceDirectionWidget != nullptr)
     distanceDirectionWidget->setEnabled(enabled);
 }
+
+void ColumnList::setQueryBuilder(const QueryBuilder& builder)
+{
+  queryBuilder = builder;
+}
