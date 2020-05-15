@@ -320,7 +320,7 @@ bool AircraftPerfController::save()
     bool retval = true;
     try
     {
-      perf->save(currentFilepath);
+      perf->saveXml(currentFilepath);
       fileHistory->addFile(currentFilepath);
       changed = false;
       NavApp::setStatusMessage(tr("Aircraft performance saved."));
@@ -361,7 +361,7 @@ bool AircraftPerfController::saveAs()
     if(!perfFile.isEmpty())
     {
       currentFilepath = perfFile;
-      perf->save(perfFile);
+      perf->saveXml(perfFile);
       changed = false;
       retval = true;
       fileHistory->addFile(perfFile);
@@ -769,8 +769,7 @@ void AircraftPerfController::fuelReportFilepath(atools::util::HtmlBuilder& html,
 
 bool AircraftPerfController::isPerformanceFile(const QString& file)
 {
-  QStringList lines = atools::probeFile(file, 30);
-  return lines.contains("[options]") && lines.contains("[perf]");
+  return atools::fs::perf::AircraftPerf::detectFormat(file) != atools::fs::perf::FORMAT_NONE;
 }
 
 float AircraftPerfController::getFuelReserveAtDestinationLbs() const
