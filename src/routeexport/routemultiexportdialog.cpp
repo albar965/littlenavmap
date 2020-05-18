@@ -36,8 +36,14 @@
 
 using atools::settings::Settings;
 
+// Properties set to buttons for RouteExportFormatType and table row
 const static char FORMAT_PROP_NAME[] = "format";
 const static char ROW_PROP_NAME[] = "row";
+
+// Data role for checkbox status set in model for first BUTTONS column
+static int CHECK_STATE_ROLE = Qt::UserRole;
+// Data role for RouteExportFormatType set in model for all columns
+static int FORMAT_TYPE_ROLE = Qt::UserRole + 1;
 
 enum Columns
 {
@@ -71,9 +77,25 @@ private:
 bool TableSortProxyModel::lessThan(const QModelIndex& leftIndex, const QModelIndex& rightIndex) const
 {
   if(leftIndex.column() == BUTTONS && rightIndex.column() == BUTTONS)
+  {
     // Button column uses user role data for checkbox status
-    return sourceModel()->data(leftIndex, Qt::UserRole).toBool() <
-           sourceModel()->data(rightIndex, Qt::UserRole).toBool();
+    bool leftData = sourceModel()->data(leftIndex, CHECK_STATE_ROLE).toBool();
+    bool rightData = sourceModel()->data(rightIndex, CHECK_STATE_ROLE).toBool();
+
+    // Workaround a bug in older Qt versions where rows jump after changing
+#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
+    if(leftData == rightData)
+    {
+      QString leftData = sourceModel()->data(sourceModel()->index(leftIndex.row(), DESCRIPTION)).toString();
+      QString rightData = sourceModel()->data(sourceModel()->index(rightIndex.row(), DESCRIPTION)).toString();
+      return QString::localeAwareCompare(leftData, rightData) < 0;
+    }
+    else
+      return leftData > rightData;
+
+#endif
+    return leftData < rightData;
+  }
   else
     return QString::localeAwareCompare(sourceModel()->data(leftIndex).toString(),
                                        sourceModel()->data(rightIndex).toString()) < 0;
@@ -203,7 +225,8 @@ void RouteMultiExportDialog::updateTableColors()
   for(int row = 0; row < itemModel->rowCount(); row++)
   {
     RouteExportFormat fmt =
-      formatMap->value(static_cast<rexp::RouteExportFormatType>(itemModel->item(row, CATEGORY)->data().toInt()));
+      formatMap->value(
+        static_cast<rexp::RouteExportFormatType>(itemModel->item(row, CATEGORY)->data(FORMAT_TYPE_ROLE).toInt()));
 
     for(int col = FIRST_COL; col <= LAST_COL; col++)
     {
@@ -274,9 +297,16 @@ void RouteMultiExportDialog::updateModel()
   itemModel->setHeaderData(PATH, Qt::Horizontal,
                            tr("Default Export Path - can depend on currently selected Simulator"));
 
+  QList<RouteExportFormat> values = formatMap->values();
+
+  std::sort(values.begin(), values.end(), [](const RouteExportFormat& f1, const RouteExportFormat& f2) -> bool
+  {
+    return QString::localeAwareCompare(f1.getComment(), f2.getComment()) < 0;
+  });
+
   // Fill model ============================================
   int row = 0;
-  for(const RouteExportFormat& format : *formatMap)
+  for(const RouteExportFormat& format : values)
   {
     // Userdata needed in callbacks
     int userdata = format.getTypeAsInt();
@@ -285,7 +315,6 @@ void RouteMultiExportDialog::updateModel()
     // Top level dummy widget
     QWidget *cellWidget = new QWidget();
     cellWidget->setAutoFillBackground(true);
-
 
 #ifdef Q_OS_MACOS
     QCheckBox *checkBox = new QCheckBox("   ", cellWidget);
@@ -336,31 +365,31 @@ void RouteMultiExportDialog::updateModel()
     layout->setSpacing(5);
     ui->tableViewRouteExport->setIndexWidget(proxyModel->mapFromSource(itemModel->index(row, BUTTONS)), cellWidget);
     // Update user role which is used for sorting
-    itemModel->setData(itemModel->index(row, BUTTONS), format.isSelected(), Qt::UserRole);
+    itemModel->setData(itemModel->index(row, BUTTONS), format.isSelected(), CHECK_STATE_ROLE);
 
     // Category =============================================================
     QStandardItem *item = new QStandardItem(format.getCategory());
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    item->setData(userdata);
+    item->setData(userdata, FORMAT_TYPE_ROLE);
     itemModel->setItem(row, CATEGORY, item);
 
     // Description =============================================================
     item = new QStandardItem(format.getComment());
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    item->setData(userdata);
+    item->setData(userdata, FORMAT_TYPE_ROLE);
     itemModel->setItem(row, DESCRIPTION, item);
 
     // File extension =============================================================
     item = new QStandardItem(format.getFormat());
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    item->setData(userdata);
+    item->setData(userdata, FORMAT_TYPE_ROLE);
     item->setToolTip(tr("File extension or filename"));
     itemModel->setItem(row, EXTENSION, item);
 
     // Path =============================================================
     item = new QStandardItem(format.getPathOrDefault());
     item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    item->setData(userdata);
+    item->setData(userdata, FORMAT_TYPE_ROLE);
     item->setToolTip(tr("Double click to edit"));
     itemModel->setItem(row, PATH, item);
 
@@ -407,7 +436,7 @@ void RouteMultiExportDialog::selectToggled()
     // Checkbox clicked - update format in map and colors
     // Update user role for sorting
     itemModel->setData(itemModel->index(checkBox->property(ROW_PROP_NAME).toInt(), BUTTONS), checkBox->isChecked(),
-                       Qt::UserRole);
+                       CHECK_STATE_ROLE);
     formatMap->setSelected(type, checkBox->checkState() == Qt::Checked);
     updateTableColors();
   }
@@ -521,7 +550,8 @@ void RouteMultiExportDialog::itemChanged(QStandardItem *item)
       qDebug() << Q_FUNC_INFO << item->column() << item->row() << item->text();
 
       // Update custom path
-      formatMap->updatePath(static_cast<rexp::RouteExportFormatType>(item->data().toInt()), item->text());
+      formatMap->updatePath(static_cast<rexp::RouteExportFormatType>(item->data(FORMAT_TYPE_ROLE).toInt()),
+                            item->text());
       item->setText(QDir::toNativeSeparators(item->text()));
 
       updateTableColors();
@@ -585,7 +615,7 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint& pos)
   if(row != -1)
   {
     item = itemModel->item(row, PATH);
-    type = static_cast<rexp::RouteExportFormatType>(item->data().toInt());
+    type = static_cast<rexp::RouteExportFormatType>(item->data(FORMAT_TYPE_ROLE).toInt());
   }
 
   if(action == ui->actionSelectExportPath)
