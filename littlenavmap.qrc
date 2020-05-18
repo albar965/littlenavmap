@@ -257,5 +257,6 @@
         <file>resources/icons/airwaytrack.svg</file>
         <file>resources/icons/filesaveall.svg</file>
         <file>resources/icons/filesaveallopts.svg</file>
+        <file>resources/icons/weatherurl.svg</file>
     </qresource>
 </RCC>

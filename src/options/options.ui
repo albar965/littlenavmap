@@ -3063,7 +3063,8 @@ Only magnetic course is shown if both values are equal.
 Also affects labels at holds and traffic patterns.</string>
           </property>
           <property name="text">
-           <string>Show &amp;true course and heading besides magnetic course in information displays</string>
+           <string>Show &amp;true course and heading besides magnetic course
+in information displays</string>
           </property>
           <property name="checked">
            <bool>false</bool>
@@ -3677,8 +3678,179 @@ Check this if you rely on GPS when flying.</string>
        </layout>
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsWeather">
-       <layout class="QGridLayout" name="gridLayout_6">
-        <item row="6" column="1" colspan="2">
+       <layout class="QVBoxLayout" name="verticalLayout_19">
+        <item>
+         <widget class="QGroupBox" name="groupBoxOptionsWeatherInfo">
+          <property name="toolTip">
+           <string>Define which weather service METARs are to be shown in the information dock window for an airport.</string>
+          </property>
+          <property name="title">
+           <string>Weather Display in Information Panels</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_16">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoFs">
+             <property name="toolTip">
+              <string>Display current weather from the flight simulator when connected. </string>
+             </property>
+             <property name="text">
+              <string>&amp;Flight Simulator</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoAsn">
+             <property name="text">
+              <string>&amp;Active Sky</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoNoaa">
+             <property name="text">
+              <string>&amp;NOAA</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoVatsim">
+             <property name="text">
+              <string>&amp;VATSIM</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoIvao">
+             <property name="text">
+              <string>&amp;IVAO</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBoxOptionsWeatherTooltip">
+          <property name="toolTip">
+           <string>Define which weather service METARs are to be shown in the map tooltip of an airport.</string>
+          </property>
+          <property name="title">
+           <string>Weather Display in Tooltip</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_17">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipFs">
+             <property name="toolTip">
+              <string>Display current weather from the flight simulator when connected. </string>
+             </property>
+             <property name="text">
+              <string>&amp;Flight Simulator</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipAsn">
+             <property name="text">
+              <string>&amp;Active Sky</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipNoaa">
+             <property name="text">
+              <string>&amp;NOAA</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipVatsim">
+             <property name="text">
+              <string>&amp;VATSIM</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipIvao">
+             <property name="text">
+              <string>&amp;IVAO</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="stackedWidgetOptionsWeatherUrls">
+       <layout class="QVBoxLayout" name="verticalLayout_18">
+        <item>
          <widget class="QGroupBox" name="groupBox_10">
           <property name="title">
            <string>Files and Web Addresses for Airport Weather</string>
@@ -3933,90 +4105,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
           </layout>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QGroupBox" name="groupBoxOptionsWeatherInfo">
-          <property name="toolTip">
-           <string>Define which weather service METARs are to be shown in the information dock window for an airport.</string>
-          </property>
-          <property name="title">
-           <string>Weather Display in Information Panels</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_8">
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <property name="horizontalSpacing">
-            <number>2</number>
-           </property>
-           <property name="verticalSpacing">
-            <number>1</number>
-           </property>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoAsn">
-             <property name="text">
-              <string>&amp;Active Sky</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoNoaa">
-             <property name="text">
-              <string>&amp;NOAA</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoVatsim">
-             <property name="text">
-              <string>&amp;VATSIM</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoFs">
-             <property name="toolTip">
-              <string>Display current weather from the flight simulator when connected. </string>
-             </property>
-             <property name="text">
-              <string>&amp;Flight Simulator</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoIvao">
-             <property name="text">
-              <string>&amp;IVAO</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="7" column="1" colspan="2">
+        <item>
          <widget class="QGroupBox" name="groupBox_14">
           <property name="title">
            <string>Files and Web Addresses for Wind Reports</string>
@@ -4144,89 +4233,6 @@ Entering a wrong value will cause errors when downloading wind reports.</string>
              </property>
              <property name="margin">
               <number>2</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QGroupBox" name="groupBoxOptionsWeatherTooltip">
-          <property name="toolTip">
-           <string>Define which weather service METARs are to be shown in the map tooltip of an airport.</string>
-          </property>
-          <property name="title">
-           <string>Weather Display in Tooltip</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_7">
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <property name="horizontalSpacing">
-            <number>2</number>
-           </property>
-           <property name="verticalSpacing">
-            <number>1</number>
-           </property>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipAsn">
-             <property name="text">
-              <string>&amp;Active Sky</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipNoaa">
-             <property name="text">
-              <string>&amp;NOAA</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipVatsim">
-             <property name="text">
-              <string>&amp;VATSIM</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipFs">
-             <property name="toolTip">
-              <string>Display current weather from the flight simulator when connected. </string>
-             </property>
-             <property name="text">
-              <string>&amp;Flight Simulator</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipIvao">
-             <property name="text">
-              <string>&amp;IVAO</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -4497,6 +4503,9 @@ Use lower values only for private networks.&lt;/b&gt;</string>
           <property name="text">
            <string>Server is running.</string>
           </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
           <property name="openExternalLinks">
            <bool>true</bool>
           </property>
@@ -4522,16 +4531,6 @@ Use lower values only for private networks.&lt;/b&gt;</string>
           </property>
           <property name="buddy">
            <cstring>spinBoxOptionsWebPort</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLabel" name="labelOptionWebDocrootStatus">
-          <property name="text">
-           <string>Valid</string>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
           </property>
          </widget>
         </item>
@@ -4630,6 +4629,19 @@ Little Navmap GIT repository.
           </property>
           <property name="text">
            <string>&amp;Use encrypted connection (HTTPS / SSL)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" colspan="2">
+         <widget class="QLabel" name="labelOptionWebDocrootStatus">
+          <property name="text">
+           <string>Valid</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
           </property>
          </widget>
         </item>
@@ -5263,20 +5275,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsWeatherTooltipNoaa</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipVatsim</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipIvao</tabstop>
-  <tabstop>lineEditOptionsWeatherXplanePath</tabstop>
-  <tabstop>pushButtonOptionsWeatherXplanePathSelect</tabstop>
-  <tabstop>lineEditOptionsWeatherAsnPath</tabstop>
-  <tabstop>pushButtonOptionsWeatherAsnPathSelect</tabstop>
-  <tabstop>lineEditOptionsWeatherNoaaStationsUrl</tabstop>
-  <tabstop>pushButtonOptionsWeatherNoaaTest</tabstop>
-  <tabstop>lineEditOptionsWeatherVatsimUrl</tabstop>
-  <tabstop>pushButtonOptionsWeatherVatsimTest</tabstop>
-  <tabstop>lineEditOptionsWeatherIvaoUrl</tabstop>
-  <tabstop>pushButtonOptionsWeatherIvaoTest</tabstop>
-  <tabstop>lineEditOptionsWeatherXplaneWind</tabstop>
-  <tabstop>pushButtonOptionsWeatherXplaneWindPathSelect</tabstop>
-  <tabstop>lineEditOptionsWeatherNoaaWindUrl</tabstop>
-  <tabstop>pushButtonOptionsWeatherNoaaWindTest</tabstop>
   <tabstop>radioButtonOptionsOnlineNone</tabstop>
   <tabstop>radioButtonOptionsOnlineVatsim</tabstop>
   <tabstop>radioButtonOptionsOnlineIvao</tabstop>

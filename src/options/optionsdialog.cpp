@@ -139,6 +139,23 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->splitterOptions->handle(1)->setStatusTip(ui->splitterOptions->handle(1)->toolTip());
   }
 
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsStartup);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsUserInterface);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsMapGeneral);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsMapNav);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsMapDisplay);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsMapDisplay2);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsMapDisplayOnline);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsUnits);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsSimAircraft);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsFlightPlan);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsWeather);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsWeatherUrls);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsOnline);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsWebServer);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsCacheFiles);
+  // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsScenery);
+
   /* *INDENT-OFF* */
   QListWidget*list = ui->listWidgetOptionPages;
   list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and\nchange update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));
@@ -151,7 +168,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordindate units as well as\noptions for course and heading display."), ":/littlenavmap/resources/icons/units.svg"));
   list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft and trail."), ":/littlenavmap/resources/icons/aircraft.svg"));
   list->addItem(pageListItem(list, tr("Flight Plan"), tr("Options for flight plan calculation, saving and loading."), ":/littlenavmap/resources/icons/route.svg"));
-  list->addItem(pageListItem(list, tr("Weather"), tr("Define paths as well weather sources for information and tooltips."), ":/littlenavmap/resources/icons/weather.svg"));
+  list->addItem(pageListItem(list, tr("Weather"), tr("Change weather sources for information and tooltips."), ":/littlenavmap/resources/icons/weather.svg"));
+  list->addItem(pageListItem(list, tr("Weather URLs"), tr("Change web download addresses of weather sources."), ":/littlenavmap/resources/icons/weatherurl.svg"));
   list->addItem(pageListItem(list, tr("Online Flying"), tr("Select online flying services like VATSIM, IVAO or custom."), ":/littlenavmap/resources/icons/aircraft_online.svg"));
   list->addItem(pageListItem(list, tr("Web Server"), tr("Change settings for the internal web server."), ":/littlenavmap/resources/icons/web.svg"));
   list->addItem(pageListItem(list, tr("Cache and Files"), tr("Change map cache, select elevation data source and the path for user airspaces."), ":/littlenavmap/resources/icons/filesave.svg"));
