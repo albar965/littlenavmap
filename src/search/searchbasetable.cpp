@@ -1210,12 +1210,18 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   if(atools::contains(tabIndex, {si::SEARCH_LOG}))
   {
-    menu.addAction(ui->actionSearchShowInformationAirport);
-    menu.addAction(ui->actionSearchShowOnMapAirport);
+    // menu takes ownership
+    QMenu *sub = menu.addMenu(tr("Airport"));
+    sub->addAction(ui->actionSearchShowInformationAirport);
+    sub->addAction(ui->actionSearchShowOnMapAirport);
+    sub->addSeparator();
+    sub->addAction(ui->actionRouteAirportStart);
+    sub->addAction(ui->actionRouteAirportDest);
+    sub->addAction(ui->actionRouteAirportAlternate);
     menu.addSeparator();
   }
 
-  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_LOG}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT}))
   {
     menu.addAction(ui->actionRouteAirportStart);
     menu.addAction(ui->actionRouteAirportDest);
