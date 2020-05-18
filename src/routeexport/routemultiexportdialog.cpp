@@ -97,7 +97,9 @@ RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportForma
 
   // Allow moving of section except the first BUTTON section
   ui->tableViewRouteExport->horizontalHeader()->setSectionsMovable(true);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   ui->tableViewRouteExport->horizontalHeader()->setFirstSectionMovable(false);
+#endif
 
   // Resize widget to get rid of the too large default margins and allow to change size from context menu
   zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewRouteExport, ui->actionIncreaseTextSize,
@@ -284,7 +286,13 @@ void RouteMultiExportDialog::updateModel()
     QWidget *cellWidget = new QWidget();
     cellWidget->setAutoFillBackground(true);
 
+
+#ifdef Q_OS_MACOS
+    QCheckBox *checkBox = new QCheckBox("   ", cellWidget);
+#else
     QCheckBox *checkBox = new QCheckBox(cellWidget);
+#endif
+
     checkBox->setToolTip(tr("Format will be exported with multiexport if checked"));
     checkBox->setProperty(FORMAT_PROP_NAME, userdata);
     checkBox->setProperty(ROW_PROP_NAME, row);
