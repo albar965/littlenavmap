@@ -93,8 +93,9 @@ bool TableSortProxyModel::lessThan(const QModelIndex& leftIndex, const QModelInd
     else
       return leftData > rightData;
 
-#endif
+#else
     return leftData < rightData;
+#endif
   }
   else
     return QString::localeAwareCompare(sourceModel()->data(leftIndex).toString(),

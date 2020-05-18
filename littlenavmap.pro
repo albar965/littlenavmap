@@ -368,7 +368,6 @@ SOURCES += \
   src/track/trackmanager.cpp \
   src/userdata/userdatacontroller.cpp \
   src/userdata/userdatadialog.cpp \
-  src/userdata/userdataexportdialog.cpp \
   src/userdata/userdataicons.cpp \
   src/weather/weatherreporter.cpp \
   src/weather/windreporter.cpp \
@@ -524,7 +523,6 @@ HEADERS  += \
   src/track/trackmanager.h \
   src/userdata/userdatacontroller.h \
   src/userdata/userdatadialog.h \
-  src/userdata/userdataexportdialog.h \
   src/userdata/userdataicons.h \
   src/weather/weatherreporter.h \
   src/weather/windreporter.h \
@@ -558,8 +556,7 @@ FORMS += \
   src/routeexport/routeexportdialog.ui \
   src/routeexport/routemultiexportdialog.ui \
   src/routestring/routestringdialog.ui \
-  src/userdata/userdatadialog.ui \
-  src/userdata/userdataexportdialog.ui
+  src/userdata/userdatadialog.ui
 
 RESOURCES += \
   littlenavmap.qrc

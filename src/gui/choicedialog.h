@@ -19,6 +19,7 @@
 #define LNM_CHOICEDIALOG_H
 
 #include <QDialog>
+#include <QSet>
 
 namespace Ui {
 class ChoiceDialog;
@@ -36,20 +37,18 @@ class ChoiceDialog :
 public:
   /* settingsPrefixParam is used to save the dialog and checkbox state.
    * helpBaseUrlParam is the base URL of the help system. Help button will be hidden if empty.*/
-  ChoiceDialog(QWidget *parent, const QString& title, const QString& header, const QString& settingsPrefixParam,
-               const QString& helpBaseUrlParam);
+  ChoiceDialog(QWidget *parent, const QString& title, const QString& description,
+               const QString& header, const QString& settingsPrefixParam, const QString& helpBaseUrlParam);
   virtual ~ChoiceDialog() override;
 
   /* Add a checkbox with the given id, text and tooltip */
-  void add(int id, const QString& text, const QString& tooltip = QString(), bool checked = false);
+  void add(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
+           bool disabled = false);
 
   /* Call after adding all buttons to restore button state */
   void restoreState();
 
-  /* Get the ids of the checked checkboxes after calling exec */
-  QVector<int> getCheckedIds() const;
-
-  /* true if box for id is checked */
+  /* true if box for id is checked and enabled */
   bool isChecked(int id) const;
 
 private:

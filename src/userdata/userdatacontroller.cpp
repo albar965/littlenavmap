@@ -31,11 +31,11 @@
 #include "settings/settings.h"
 #include "search/userdatasearch.h"
 #include "sql/sqltransaction.h"
-#include "userdata/userdataexportdialog.h"
 #include "gui/errorhandler.h"
 #include "exception.h"
 #include "common/unit.h"
 #include "common/maptypesfactory.h"
+#include "gui/choicedialog.h"
 
 #include <QDebug>
 #include <QStandardPaths>
@@ -731,17 +731,23 @@ bool UserdataController::exportSelectedQuestion(bool& exportSelected, bool& appe
     // nothing select and not append option - do not show dialog
     return true;
 
-  UserdataExportDialog exportDialog(mainWindow,
-                                    numSelected == 0 /* disable export selected */,
-                                    false /* disable append */);
-  exportDialog.restoreState();
-  int retval = exportDialog.exec();
-
-  if(retval == QDialog::Accepted)
+  enum
   {
-    exportSelected = exportDialog.isExportSelected() && numSelected > 0;
-    append = exportDialog.isAppendToFile();
-    exportDialog.saveState();
+    SELECTED, APPEND
+  };
+
+  ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
+                            QString(), tr("Select export options"),
+                            lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
+
+  choiceDialog.add(SELECTED, tr("Export &selected entries only"), QString(), true, numSelected == 0 /* disabled */);
+  choiceDialog.add(APPEND, tr("&Append to an already present file"), QString(), false);
+  choiceDialog.restoreState();
+
+  if(choiceDialog.exec() == QDialog::Accepted)
+  {
+    exportSelected = choiceDialog.isChecked(SELECTED); // Only true if enabled too
+    append = choiceDialog.isChecked(APPEND);
     return true;
   }
   else

@@ -33,7 +33,7 @@
 
 const static char ID_PROPERTY[] = "checkboxid";
 
-ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString& header,
+ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString& description, const QString& header,
                            const QString& settingsPrefixParam,
                            const QString& helpBaseUrlParam)
   : QDialog(parent), ui(new Ui::ChoiceDialog), helpBaseUrl(helpBaseUrlParam), settingsPrefix(settingsPrefixParam)
@@ -42,13 +42,16 @@ ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString&
   setWindowTitle(title);
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
-  ui->groupBox->setTitle(header);
+  ui->groupBoxChoice->setTitle(header);
+
+  ui->labelChoiceDescription->setVisible(!description.isEmpty());
+  ui->labelChoiceDescription->setText(description);
 
   if(helpBaseUrl.isEmpty())
     // Remove help button if not requested
-    ui->buttonBox->removeButton(ui->buttonBox->button(QDialogButtonBox::Help));
+    ui->buttonBoxChoice->removeButton(ui->buttonBoxChoice->button(QDialogButtonBox::Help));
 
-  connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &ChoiceDialog::buttonBoxClicked);
+  connect(ui->buttonBoxChoice, &QDialogButtonBox::clicked, this, &ChoiceDialog::buttonBoxClicked);
 }
 
 ChoiceDialog::~ChoiceDialog()
@@ -59,13 +62,14 @@ ChoiceDialog::~ChoiceDialog()
   delete ui;
 }
 
-void ChoiceDialog::add(int id, const QString& text, const QString& tooltip, bool checked)
+void ChoiceDialog::add(int id, const QString& text, const QString& tooltip, bool checked, bool disabled)
 {
   QCheckBox *checkBox = new QCheckBox(text, this);
   checkBox->setToolTip(tooltip);
   checkBox->setStatusTip(tooltip);
   checkBox->setProperty(ID_PROPERTY, id);
   checkBox->setChecked(checked);
+  checkBox->setDisabled(disabled);
   index.insert(id, checkBox);
 
   // Add widget before the button box
@@ -83,25 +87,14 @@ QVector<std::pair<int, bool> > ChoiceDialog::getCheckState() const
   return ids;
 }
 
-QVector<int> ChoiceDialog::getCheckedIds() const
-{
-  QVector<int> ids;
-  for(int id : index.keys())
-  {
-    if(index.value(id)->isChecked())
-      ids.append(id);
-  }
-  return ids;
-}
-
 bool ChoiceDialog::isChecked(int id) const
 {
-  return index.value(id)->isChecked();
+  return index.value(id)->isChecked() && index.value(id)->isEnabled();
 }
 
 void ChoiceDialog::buttonBoxClicked(QAbstractButton *button)
 {
-  QDialogButtonBox::StandardButton buttonType = ui->buttonBox->standardButton(button);
+  QDialogButtonBox::StandardButton buttonType = ui->buttonBoxChoice->standardButton(button);
 
   if(buttonType == QDialogButtonBox::Ok)
   {

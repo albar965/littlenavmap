@@ -1842,7 +1842,7 @@ void MainWindow::routeResetAll()
   qDebug() << Q_FUNC_INFO;
 
   // Create a dialog with four checkboxes
-  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"),
+  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"), QString(),
                             tr("Select items to reset for a new flight"),
                             lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
 
@@ -1859,27 +1859,16 @@ void MainWindow::routeResetAll()
 
   if(choiceDialog.exec() == QDialog::Accepted)
   {
-    for(int choice :  choiceDialog.getCheckedIds())
-    {
-      switch(static_cast<Choice>(choice))
-      {
-        case EMPTY_FLIGHT_PLAN:
-          routeNew();
-          break;
-        case DELETE_TRAIL:
-          deleteAircraftTrack(true /* do not ask questions */);
-          break;
-        case DELETE_ACTIVE_LEG:
-          NavApp::getRouteController()->resetActiveLeg();
-          break;
-        case RESTART_PERF:
-          NavApp::getAircraftPerfController()->restartCollection(true /* do not ask questions */);
-          break;
-        case RESTART_LOGBOOK:
-          NavApp::getLogdataController()->resetTakeoffLandingDetection();
-          break;
-      }
-    }
+    if(choiceDialog.isChecked(EMPTY_FLIGHT_PLAN))
+      routeNew();
+    if(choiceDialog.isChecked(DELETE_TRAIL))
+      deleteAircraftTrack(true /* do not ask questions */);
+    if(choiceDialog.isChecked(DELETE_ACTIVE_LEG))
+      NavApp::getRouteController()->resetActiveLeg();
+    if(choiceDialog.isChecked(RESTART_PERF))
+      NavApp::getAircraftPerfController()->restartCollection(true /* do not ask questions */);
+    if(choiceDialog.isChecked(RESTART_LOGBOOK))
+      NavApp::getLogdataController()->resetTakeoffLandingDetection();
   }
 }
 
