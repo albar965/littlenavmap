@@ -30,6 +30,7 @@
 #include "gui/textdialog.h"
 #include "search/searchcontroller.h"
 #include "logbook/logdataconverter.h"
+#include "common/aircrafttrack.h"
 #include "logbook/logdatadialog.h"
 #include "logbook/logstatisticsdialog.h"
 #include "navapp.h"
@@ -43,6 +44,9 @@
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
 #include "options/optiondata.h"
+#include "fs/pln/flightplanio.h"
+#include "fs/perf/aircraftperf.h"
+#include "gui/choicedialog.h"
 
 #include <QDebug>
 #include <QStandardPaths>
@@ -50,6 +54,7 @@
 using atools::sql::SqlTransaction;
 using atools::sql::SqlRecord;
 using atools::geo::Pos;
+using atools::fs::pln::FlightplanIO;
 
 LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logdataManager, MainWindow *parent)
   : manager(logdataManager), mainWindow(parent)
@@ -206,6 +211,9 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("simulator", NavApp::getCurrentSimulatorName()); // varchar(50),
       record.setValue("route_string", NavApp::getRouteString()); // varchar(1024),
 
+      // Record flight plan and aircraft performance =========================
+      recordFlightplanAndPerf(record);
+
       // Determine fuel type =========================
       float weightVolRatio = 0.f;
       bool jetfuel = aircraft.isJetfuel(weightVolRatio);
@@ -241,14 +249,23 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("destination_time", QDateTime::currentDateTime()); // varchar(100),
       record.setValue("destination_time_sim", aircraft.getZuluTime()); // varchar(100),
 
+      // Update flight plan and aircraft performance =========================
+      recordFlightplanAndPerf(record);
+
+      // Save GPX with simplified flight plan and trail =========================
+      atools::geo::LineString track;
+      QVector<quint32> timestamps;
+      NavApp::getAircraftTrack().convertForExport(track, timestamps);
+      record.setValue("aircraft_trail",
+                      FlightplanIO().saveGpxGz(NavApp::getRoute().adjustedToOptions(rf::DEFAULT_OPTS_GPX).getFlightplan(),
+                                               track, timestamps,
+                                               static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
+
       // Determine fuel type again =========================
       float weightVolRatio = 0.f;
       bool jetfuel = aircraft.isJetfuel(weightVolRatio);
       if(weightVolRatio > 0.f)
         record.setValue("is_jetfuel", jetfuel); // integer,
-
-      // record.setValue("plan_geometry", dummy); // blob,
-      // record.setValue("trail_geometry", dummy); // blob
 
       SqlTransaction transaction(manager->getDatabase());
       manager->updateByRecord(record, {logEntryId});
@@ -271,6 +288,13 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
   if(takeoff)
     aircraftAtTakeoff = new atools::fs::sc::SimConnectUserAircraft(aircraft);
+}
+
+void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
+{
+  const atools::fs::pln::Flightplan& fp = NavApp::getRoute().getFlightplan();
+  record.setValue("flightplan", FlightplanIO().saveLnmGz(fp)); // blob
+  record.setValue("aircraft_perf", NavApp::getAircraftPerformance().saveXmlGz()); // blob
 }
 
 void LogdataController::resetTakeoffLandingDetection()
@@ -443,18 +467,43 @@ void LogdataController::exportCsv()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    QString file = dialog->saveFileDialog(
-      tr("Export Logbook Entry CSV File"),
-      tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
-      ".csv",
-      "Logdata/Csv",
-      QString(), QString(), false, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!file.isEmpty())
+    enum
     {
-      int numExported = manager->exportCsv(file);
-      mainWindow->setStatusMessage(tr("%1 logbook %2 exported.").
-                                   arg(numExported).arg(numExported == 1 ? tr("entry") : tr("entries")));
+      EXPORTPLAN, EXPORTPERF, EXPORTGPX, HEADER
+    };
+
+    ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Logbook Export"),
+                              tr("File content in XML format will be added to the exported CSV if selected. "
+                                 "Note that not all programs will be able to read this additional content. "
+                                 "Disabled columns will be empty on export."),
+                              tr("Select items to include in export"),
+                              lnm::LOGDATA_EXPORT_CSV, "LOGBOOK.html#import-and-export");
+
+    choiceDialog.add(EXPORTPLAN, tr("&Flight plan in LNMPLN format"), QString(), false);
+    choiceDialog.add(EXPORTPERF, tr("&Aircraft performance"), QString(), false);
+    choiceDialog.add(EXPORTGPX, tr("&GPX file containing flight plan points and trail"), QString(), false);
+    choiceDialog.add(HEADER, tr("Add a &header to the first line"), QString(), false);
+    choiceDialog.restoreState();
+
+    if(choiceDialog.exec() == QDialog::Accepted)
+    {
+      QString file = dialog->saveFileDialog(
+        tr("Export Logbook Entry CSV File"),
+        tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
+        ".csv",
+        "Logdata/Csv",
+        QString(), QString(), false, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+
+      if(!file.isEmpty())
+      {
+        int numExported = manager->exportCsv(file,
+                                             choiceDialog.isChecked(EXPORTPLAN),
+                                             choiceDialog.isChecked(EXPORTPERF),
+                                             choiceDialog.isChecked(EXPORTGPX),
+                                             choiceDialog.isChecked(HEADER));
+        mainWindow->setStatusMessage(tr("%1 logbook %2 exported.").
+                                     arg(numExported).arg(numExported == 1 ? tr("entry") : tr("entries")));
+      }
     }
   }
   catch(atools::Exception& e)

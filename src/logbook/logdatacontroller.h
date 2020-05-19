@@ -154,6 +154,9 @@ private:
   /* Callback function for X-Plane import */
   static void fetchAirportCoordinates(atools::geo::Pos& pos, QString& name, const QString& airportIdent);
 
+  /* Attach the current flight plan and performance file to the record as Gzipped XML files */
+  void recordFlightplanAndPerf(atools::sql::SqlRecord& record);
+
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
   int logEntryId = -1;

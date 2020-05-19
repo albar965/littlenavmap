@@ -1004,58 +1004,12 @@ QString RouteExport::buildDefaultFilename(const QString& sep, const QString& suf
 
 QString RouteExport::buildDefaultFilenameLong(const QString& extension, const QString& suffix)
 {
-  QString filename;
-
-  const Route& route = NavApp::getRouteConst();
-  if(route.isEmpty())
-    return tr("Empty Flightplan") + suffix;
-
-  const atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
-
-  if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
-    filename = "IFR ";
-  else if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
-    filename = "VFR ";
-
-  if(flightplan.getDepartureAiportName().isEmpty())
-    filename += flightplan.getEntries().at(route.getDepartureAirportLegIndex()).getIdent();
-  else
-    filename += flightplan.getDepartureAiportName() + " (" + flightplan.getDepartureIdent() + ")";
-
-  filename += " to ";
-
-  if(flightplan.getDestinationAiportName().isEmpty())
-    filename += flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent();
-  else
-    filename += flightplan.getDestinationAiportName() + " (" + flightplan.getDestinationIdent() + ")";
-
-  filename += extension;
-  filename += suffix;
-
-  // Remove characters that are note allowed in most filesystems
-  filename = atools::cleanFilename(filename);
-  return filename;
+  return NavApp::getRouteConst().getFlightplan().getFilenameLong(extension, suffix);
 }
 
 QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix)
 {
-  QString filename;
-
-  const Route& route = NavApp::getRouteConst();
-  if(route.isEmpty())
-    return tr("Empty Flightplan") + suffix;
-
-  const atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
-
-  filename += flightplan.getEntries().at(route.getDepartureAirportLegIndex()).getIdent();
-  filename += sep;
-
-  filename += flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent();
-  filename += suffix;
-
-  // Remove characters that are note allowed in most filesystems
-  filename = atools::cleanFilename(filename);
-  return filename;
+  return NavApp::getRouteConst().getFlightplan().getFilenameShort(sep, suffix);
 }
 
 bool RouteExport::exportFlighplanAsGfp(const QString& filename)
@@ -1542,18 +1496,11 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
-  const AircraftTrack& aircraftTrack = NavApp::getAircraftTrack();
-  atools::geo::LineString track;
-  QVector<quint32> timestamps;
-
-  for(const at::AircraftTrackPos& pos : aircraftTrack)
-  {
-    track.append(pos.pos);
-    timestamps.append(pos.timestamp);
-  }
-
   try
   {
+    atools::geo::LineString track;
+    QVector<quint32> timestamps;
+    NavApp::getAircraftTrack().convertForExport(track, timestamps);
     FlightplanIO().saveGpx(buildAdjustedRoute(rf::DEFAULT_OPTS).getFlightplan(), filename, track, timestamps,
                            static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()));
   }

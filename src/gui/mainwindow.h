@@ -194,6 +194,15 @@ public:
   void showUserpointSearch();
   void showRouteCalc();
 
+  /* Load a flight plan in LNMPLN format from a string */
+  void routeOpenFileLnmStr(const QString& string);
+
+  /* Open file dialog for saving a LNMPLN flight plan. Filename will be built if empty. */
+  QString routeSaveFileDialogLnm(const QString& filename = QString());
+
+  /* Show file dialog for opening a flight plan with all supported formats */
+  QString routeOpenFileDialog();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

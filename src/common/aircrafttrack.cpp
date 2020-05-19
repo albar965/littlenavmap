@@ -20,6 +20,7 @@
 #include "settings/settings.h"
 #include "atools.h"
 #include "geo/calculations.h"
+#include "geo/linestring.h"
 
 #include <QDataStream>
 #include <QDateTime>
@@ -116,6 +117,15 @@ bool AircraftTrack::readFromStream(QDataStream& in)
     qWarning() << "Cannot read track. Invalid magic number:" << magic;
 
   return retval;
+}
+
+void AircraftTrack::convertForExport(atools::geo::LineString& track, QVector<quint32>& timestamps) const
+{
+  for(const at::AircraftTrackPos& pos : (*this))
+  {
+    track.append(pos.pos);
+    timestamps.append(pos.timestamp);
+  }
 }
 
 bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime& timestamp, bool onGround)

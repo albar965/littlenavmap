@@ -114,6 +114,16 @@ private:
   void flightplanFileClicked();
   void perfFileClicked();
 
+  /* File attachements - push buttons */
+  void planOpenClicked(); /* Open as current */
+  void planAddClicked(); /* Attach new plan to logbook entry */
+  void planSaveAsClicked(); /* Save attached LNMPLN plan to file */
+  void gpxAddClicked(); /* Attach new GPX to logbook entry */
+  void gpxSaveAsClicked(); /* Save attached GPX plan to file */
+  void perfOpenClicked(); /* Open as current */
+  void perfAddClicked(); /* Attach new performance to logbook entry */
+  void perfSaveAsClicked(); /* Save attached performance to file */
+
   /* Fuel units in combo box changed - update widgets */
   void fuelUnitsChanged();
 
@@ -122,6 +132,8 @@ private:
 
   /* Remove airport including ident */
   void removeAirport(const QString& prefix);
+
+  void updateAttachementWidgets();
 
   /* Remember fuel unit to detect changes in widget */
   bool volumeCurrent = false;

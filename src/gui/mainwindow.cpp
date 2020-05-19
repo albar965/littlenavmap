@@ -2064,15 +2064,21 @@ void MainWindow::routeOpen()
   routeOpenFile(QString());
 }
 
+QString MainWindow::routeOpenFileDialog()
+{
+  return dialog->openFileDialog(
+    tr("Open Flight Plan"),
+    tr("Flight Plan Files %1;;All Files (*)").
+    arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+    "Route/LnmPln", atools::documentsDir());
+}
+
 void MainWindow::routeOpenFile(QString filepath)
 {
   if(routeCheckForChanges())
   {
     if(filepath.isEmpty())
-      filepath = dialog->openFileDialog(
-        tr("Open Flight Plan"),
-        tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-        "Route/LnmPln", atools::documentsDir());
+      filepath = routeOpenFileDialog();
 
     if(!filepath.isEmpty())
     {
@@ -2087,6 +2093,20 @@ void MainWindow::routeOpenFile(QString filepath)
     }
   }
   saveFileHistoryStates();
+}
+
+void MainWindow::routeOpenFileLnmStr(const QString& string)
+{
+  if(routeCheckForChanges())
+  {
+    if(routeController->loadFlightplanLnmStr(string))
+    {
+      if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+        routeCenter();
+      showFlightPlan();
+      setStatusMessage(tr("Flight plan opened."));
+    }
+  }
 }
 
 /* Called from menu or toolbar by action - append flight plan to current one */
@@ -2218,14 +2238,19 @@ bool MainWindow::routeSaveLnm()
   return false;
 }
 
-/* Called from menu or toolbar by action */
-bool MainWindow::routeSaveAsLnm()
+QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
 {
-  QString routeFile = dialog->saveFileDialog(
+  return dialog->saveFileDialog(
     tr("Save Flight Plan as LNMPLN Format"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
-    "lnmpln", "Route/LnmPln", atools::documentsDir(), routeExport->buildDefaultFilename(),
+    "lnmpln", "Route/LnmPln", atools::documentsDir(),
+    filename.isEmpty() ? routeExport->buildDefaultFilename() : filename,
     false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+}
+
+bool MainWindow::routeSaveAsLnm()
+{
+  QString routeFile = routeSaveFileDialogLnm();
 
   if(!routeFile.isEmpty())
   {

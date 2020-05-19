@@ -89,6 +89,9 @@ public:
   void loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
                       const QString& filename, bool quiet, bool changed, bool adjustAltitude);
 
+  /* Load the plan from a string in LNMPLN format */
+  bool loadFlightplanLnmStr(const QString& string);
+
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
    * Use -1 for insertBefore to append.
    * Emits routeChanged. */

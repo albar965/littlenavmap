@@ -1281,14 +1281,14 @@ void Route::updateAll()
   {
     // Correct departure and destination values if missing - can happen after import of FLP or FMS plans
     flightplan.setDepartureIdent(getDepartureAirportLeg().getIdent());
-    if(flightplan.getDepartureAiportName().isEmpty())
-      flightplan.setDepartureAiportName(getDepartureAirportLeg().getName());
+    if(flightplan.getDepartureName().isEmpty())
+      flightplan.setDepartureName(getDepartureAirportLeg().getName());
     if(!flightplan.getDeparturePosition().isValid())
       flightplan.setDeparturePosition(first().getPosition());
 
     flightplan.setDestinationIdent(getDestinationAirportLeg().getIdent());
-    if(flightplan.getDestinationAiportName().isEmpty())
-      flightplan.setDestinationAiportName(getDestinationAirportLeg().getName());
+    if(flightplan.getDestinationName().isEmpty())
+      flightplan.setDestinationName(getDestinationAirportLeg().getName());
     if(!flightplan.getDestinationPosition().isValid())
       flightplan.setDestinationPosition(first().getPosition());
   }

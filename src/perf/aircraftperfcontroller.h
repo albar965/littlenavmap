@@ -58,8 +58,19 @@ public:
   explicit AircraftPerfController(MainWindow *parent);
   virtual ~AircraftPerfController() override;
 
-  /* Load a new performance file from file history after asking to save currently unchanged */
+  /* Load a new performance file after asking to save currently unchanged */
   void loadFile(const QString& perfFile);
+
+  /* Load into current from an XML string */
+  void loadStr(const QString& string);
+
+  /* Opens save as dialog to save the content in the string into a performance file
+   * Does not affect current */
+  bool saveAsStr(const QString& string);
+
+  /* Default file dialogs for opening and saving */
+  QString saveAsFileDialog() const;
+  QString openFileDialog() const;
 
   /* Ask user if data can be deleted when quitting.
    * @return true continue with new, exit, etc. */

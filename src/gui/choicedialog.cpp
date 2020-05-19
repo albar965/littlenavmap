@@ -62,7 +62,17 @@ ChoiceDialog::~ChoiceDialog()
   delete ui;
 }
 
-void ChoiceDialog::add(int id, const QString& text, const QString& tooltip, bool checked, bool disabled)
+void ChoiceDialog::addHidden(int id, const QString& text, const QString& tooltip)
+{
+  add(id, text, tooltip, false /* checked*/, true /* disabled */, true /* hidden */);
+}
+
+void ChoiceDialog::addDisabled(int id, const QString& text, const QString& tooltip, bool checked)
+{
+  add(id, text, tooltip, checked, true /* disabled */, false /* hidden */);
+}
+
+void ChoiceDialog::add(int id, const QString& text, const QString& tooltip, bool checked, bool disabled, bool hidden)
 {
   QCheckBox *checkBox = new QCheckBox(text, this);
   checkBox->setToolTip(tooltip);
@@ -70,6 +80,7 @@ void ChoiceDialog::add(int id, const QString& text, const QString& tooltip, bool
   checkBox->setProperty(ID_PROPERTY, id);
   checkBox->setChecked(checked);
   checkBox->setDisabled(disabled);
+  checkBox->setHidden(hidden);
   index.insert(id, checkBox);
 
   // Add widget before the button box

@@ -209,7 +209,7 @@ const QLatin1Literal APPROACHTREE_AIRPORT("ApproachTree/Airport");
 const QLatin1Literal APPROACHTREE_SELECTED_APPR("ApproachTree/SeletedApproach");
 
 /* Export settings dialog */
-const QLatin1Literal USERDATA_EXPORT_DIALOG("UserdataExport/Widget");
+const QLatin1Literal USERDATA_EXPORT_CHOICE_DIALOG("UserdataExport/ChoiceDialog");
 /* Edit dialog */
 const QLatin1Literal USERDATA_EDIT_ADD_DIALOG("UserdataDialog/Widget");
 
@@ -223,6 +223,8 @@ const QLatin1Literal ROUTE_PARKING_DIALOG("Route/ParkingDialog");
 
 const QLatin1Literal LOGDATA_EDIT_ADD_DIALOG("LogdataDialog/Widget");
 const QLatin1Literal LOGDATA_STATS_DIALOG("LogdataStatsDialog/Widget");
+
+const QLatin1Literal LOGDATA_EXPORT_CSV("Logdata/CsvExport");
 
 /* Options dialog */
 const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
@@ -296,6 +298,7 @@ const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg)");
 const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.lnmpln *.pln *.flp *.fms *.fgfp)");
 const QLatin1Literal FILE_PATTERN_LNMPLN("(*.lnmpln)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
+const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 
 const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv)");
 const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
@@ -310,6 +313,7 @@ const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD(
   "(*.lnmpln *.LNMPLN *.Lnmpln *.LNMpln *.pln *.Pln *.PLN *.flp *.Flp *.FLP *.fms *.Fms *.FMS *.fgfp *.Fgfp *.FGFP)");
 const QLatin1Literal FILE_PATTERN_LNMPLN("(*.lnmpln *.LNMPLN *.Lnmpln *.LNMpln)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");
+const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.GPX *.Gpx)");
 
 const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv *.Csv *.CSV)");
 const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");

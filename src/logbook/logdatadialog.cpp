@@ -22,6 +22,7 @@
 #include "common/dialogrecordhelper.h"
 #include "geo/calculations.h"
 #include "gui/helphandler.h"
+#include "zip/gzip.h"
 #include "common/unitstringtool.h"
 #include "sql/sqlrecord.h"
 #include "query/airportquery.h"
@@ -32,7 +33,12 @@
 #include "gui/dialog.h"
 #include "perf/aircraftperfcontroller.h"
 #include "common/unit.h"
+#include "gui/mainwindow.h"
 #include "gui/signalblocker.h"
+#include "gui/errorhandler.h"
+#include "fs/pln/flightplan.h"
+#include "fs/perf/aircraftperf.h"
+#include "exception.h"
 
 #include <QFileInfo>
 
@@ -94,6 +100,20 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
     ui->labelFuelUsed->setVisible(false);
     ui->labelFuelUnits->setVisible(false);
     ui->labelFuelGrossweight->setVisible(false);
+
+    ui->labelAttachedPlan->setVisible(false);
+    ui->pushButtonAttachedPlanOpen->setVisible(false);
+    ui->pushButtonAttachedPlanAdd->setVisible(false);
+    ui->pushButtonAttachedPlanSaveAs->setVisible(false);
+
+    ui->labelAttachedGpx->setVisible(false);
+    ui->pushButtonAttachedGpxAdd->setVisible(false);
+    ui->pushButtonAttachedGpxSaveAs->setVisible(false);
+
+    ui->labelAttachedPerf->setVisible(false);
+    ui->pushButtonAttachedPerfOpen->setVisible(false);
+    ui->pushButtonAttachedPerfAdd->setVisible(false);
+    ui->pushButtonAttachedPerfSaveAs->setVisible(false);
   }
 
   // Update units in widgets
@@ -153,6 +173,16 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
 
   connect(ui->comboBoxFuelUnits, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &LogdataDialog::fuelUnitsChanged);
+
+  connect(ui->pushButtonAttachedPlanOpen, &QPushButton::clicked, this, &LogdataDialog::planOpenClicked);
+  connect(ui->pushButtonAttachedPlanAdd, &QPushButton::clicked, this, &LogdataDialog::planAddClicked);
+  connect(ui->pushButtonAttachedPlanSaveAs, &QPushButton::clicked, this, &LogdataDialog::planSaveAsClicked);
+  connect(ui->pushButtonAttachedGpxAdd, &QPushButton::clicked, this, &LogdataDialog::gpxAddClicked);
+  connect(ui->pushButtonAttachedGpxSaveAs, &QPushButton::clicked, this, &LogdataDialog::gpxSaveAsClicked);
+  connect(ui->pushButtonAttachedPerfOpen, &QPushButton::clicked, this, &LogdataDialog::perfOpenClicked);
+  connect(ui->pushButtonAttachedPerfAdd, &QPushButton::clicked, this, &LogdataDialog::perfAddClicked);
+  connect(ui->pushButtonAttachedPerfSaveAs, &QPushButton::clicked, this, &LogdataDialog::perfSaveAsClicked);
+
 }
 
 LogdataDialog::~LogdataDialog()
@@ -329,39 +359,252 @@ void LogdataDialog::perfFileClicked()
   }
 }
 
+void LogdataDialog::planOpenClicked()
+{
+  try
+  {
+    qDebug() << Q_FUNC_INFO;
+    // Open flight plan in table replacing the current plan - attachement is always LNMPLN
+    NavApp::getMainWindow()->routeOpenFileLnmStr(
+      QString(atools::zip::gzipDecompress(record->value("flightplan").toByteArray())));
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
+  }
+}
+
+void LogdataDialog::planAddClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    // Store a new flight plan as logbook entry attachement - loaded plan can be any supported format
+    // Plan is always attached in LNMPLN format
+    QString filename = NavApp::getMainWindow()->routeOpenFileDialog();
+    if(!filename.isEmpty())
+    {
+      atools::fs::pln::Flightplan flightplan;
+      atools::fs::pln::FlightplanIO().load(flightplan, filename);
+      record->setValue("flightplan", atools::fs::pln::FlightplanIO().saveLnmGz(flightplan));
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
+  }
+}
+
+void LogdataDialog::planSaveAsClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    // Load LNMPLN into flight plan
+    atools::fs::pln::Flightplan flightplan;
+    atools::fs::pln::FlightplanIO().loadLnmGz(flightplan, record->value("flightplan").toByteArray());
+
+    QString defFilename = (OptionData::instance().getFlags2() & opts2::ROUTE_SAVE_SHORT_NAME) ?
+                          flightplan.getFilenameShort() : flightplan.getFilenameLong();
+
+    QString filename = NavApp::getMainWindow()->routeSaveFileDialogLnm(defFilename);
+    if(!filename.isEmpty())
+      atools::fs::pln::FlightplanIO().saveLnm(flightplan, filename);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
+  }
+}
+
+void LogdataDialog::gpxAddClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    QString filename = atools::gui::Dialog(this).openFileDialog(
+      tr("Open GPX"),
+      tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
+      "Route/Gpx", atools::documentsDir());
+
+    if(!filename.isEmpty())
+    {
+      QFile file(filename);
+      if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+      {
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+        record->setValue("aircraft_trail", atools::zip::gzipCompress(stream.readAll().toUtf8()));
+        file.close();
+      }
+      else
+        atools::gui::ErrorHandler(this).handleIOError(file, tr("Cannot load file."));
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
+  }
+}
+
+void LogdataDialog::gpxSaveAsClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    QString gpx = QString(atools::zip::gzipDecompress(record->value("aircraft_trail").toByteArray()));
+
+    QString plan = QString(atools::zip::gzipDecompress(record->value("flightplan").toByteArray()));
+    atools::fs::pln::Flightplan flightplan;
+    atools::fs::pln::FlightplanIO().loadLnmStr(flightplan, plan);
+
+    QString defFilename = (OptionData::instance().getFlags2() & opts2::ROUTE_SAVE_SHORT_NAME) ?
+                          flightplan.getFilenameShort(QString(), ".gpx") :
+                          flightplan.getFilenameLong(QString(), ".gpx");
+
+    QString filename = atools::gui::Dialog(this).saveFileDialog(
+      tr("Save GPX"),
+      tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
+      "lnmpln", "Route/Gpx", atools::documentsDir(),
+      defFilename,
+      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+
+    if(!filename.isEmpty())
+    {
+      QFile file(filename);
+      if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+      {
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+        stream << gpx.toUtf8();
+        file.close();
+      }
+      else
+        atools::gui::ErrorHandler(this).handleIOError(file, tr("Cannot save file."));
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
+  }
+}
+
+void LogdataDialog::perfOpenClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  try
+  {
+    NavApp::getAircraftPerfController()->loadStr(
+      QString(atools::zip::gzipDecompress(record->value("aircraft_perf").toByteArray())));
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
+  }
+}
+
+void LogdataDialog::perfAddClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    QString filename = NavApp::getAircraftPerfController()->openFileDialog();
+
+    if(!filename.isEmpty())
+    {
+      atools::fs::perf::AircraftPerf perf;
+      perf.load(filename);
+      record->setValue("aircraft_perf", perf.saveXmlGz());
+    }
+
+    QByteArray bytes = record->value("aircraft_perf").toByteArray();
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
+  }
+}
+
+void LogdataDialog::perfSaveAsClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  NavApp::getAircraftPerfController()->saveAsStr(
+    QString(atools::zip::gzipDecompress(record->value("aircraft_perf").toByteArray())));
+}
+
 void LogdataDialog::fileUpdated(QLineEdit *lineEdit, QLabel *label, bool perf)
 {
-  QString filepath = lineEdit->text();
-
-  if(filepath.isEmpty())
-    label->setText(tr("No file selected."));
-  else
+  try
   {
-    QFileInfo fi(filepath);
-    if(fi.exists())
+    QString filepath = lineEdit->text();
+
+    if(filepath.isEmpty())
+      label->setText(tr("No file selected."));
+    else
     {
-      if(fi.isDir())
-        label->setText(atools::util::HtmlBuilder::errorMessage(tr("File or directory.")));
-      else
+      QFileInfo fi(filepath);
+      if(fi.exists())
       {
-        if(perf)
-        {
-          if(AircraftPerfController::isPerformanceFile(filepath))
-            label->setText(tr("Valid aircraft performance file."));
-          else
-            label->setText(tr("File is not an aircraft performance file."));
-        }
+        if(fi.isDir())
+          label->setText(atools::util::HtmlBuilder::errorMessage(tr("File or directory.")));
         else
         {
-          if(atools::fs::pln::FlightplanIO::detectFormat(filepath) != atools::fs::pln::NONE)
-            label->setText(tr("Valid flight plan file."));
+          if(perf)
+          {
+            if(AircraftPerfController::isPerformanceFile(filepath))
+              label->setText(tr("Valid aircraft performance file."));
+            else
+              label->setText(tr("File is not an aircraft performance file."));
+          }
           else
-            label->setText(tr("File is not a supported flight plan."));
+          {
+            if(atools::fs::pln::FlightplanIO::detectFormat(filepath) != atools::fs::pln::NONE)
+              label->setText(tr("Valid flight plan file."));
+            else
+              label->setText(tr("File is not a supported flight plan."));
+          }
         }
       }
+      else
+        label->setText(atools::util::HtmlBuilder::errorMessage(tr("File not found.")));
     }
-    else
-      label->setText(atools::util::HtmlBuilder::errorMessage(tr("File not found.")));
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
   }
 }
 
@@ -601,10 +844,28 @@ void LogdataDialog::updateWidgets()
     ui->buttonBoxLogdata->button(QDialogButtonBox::Ok)->setEnabled(enable);
   }
 
+  updateAttachementWidgets();
   departureAirportUpdated();
   destAirportUpdated();
   flightplanFileUpdated();
   perfFileUpdated();
+}
+
+void LogdataDialog::updateAttachementWidgets()
+{
+  if(editMode != ld::EDIT_MULTIPLE)
+  {
+    bool hasPln = !record->isNull("flightplan");
+    ui->pushButtonAttachedPlanOpen->setEnabled(hasPln);
+    ui->pushButtonAttachedPlanSaveAs->setEnabled(hasPln);
+
+    bool hasTrail = !record->isNull("aircraft_trail");
+    ui->pushButtonAttachedGpxSaveAs->setEnabled(hasTrail);
+
+    bool hasPerf = !record->isNull("aircraft_perf");
+    ui->pushButtonAttachedPerfOpen->setEnabled(hasPerf);
+    ui->pushButtonAttachedPerfSaveAs->setEnabled(hasPerf);
+  }
 }
 
 void LogdataDialog::saveState()

@@ -230,14 +230,14 @@ void RouteStringDialog::readButtonClicked()
 
   if(success)
   {
-    QString from = (!flightplan->getDepartureAiportName().isEmpty() &&
-                    flightplan->getDepartureAiportName() != flightplan->getDepartureIdent()) ?
-                   tr("%1 (%2)").arg(flightplan->getDepartureAiportName()).arg(flightplan->getDepartureIdent()) :
+    QString from = (!flightplan->getDepartureName().isEmpty() &&
+                    flightplan->getDepartureName() != flightplan->getDepartureIdent()) ?
+                   tr("%1 (%2)").arg(flightplan->getDepartureName()).arg(flightplan->getDepartureIdent()) :
                    tr("%1").arg(flightplan->getDepartureIdent());
 
-    QString to = (!flightplan->getDestinationAiportName().isEmpty() &&
-                  flightplan->getDestinationAiportName() != flightplan->getDestinationIdent()) ?
-                 tr("%1 (%2)").arg(flightplan->getDestinationAiportName()).arg(flightplan->getDestinationIdent()) :
+    QString to = (!flightplan->getDestinationName().isEmpty() &&
+                  flightplan->getDestinationName() != flightplan->getDestinationIdent()) ?
+                 tr("%1 (%2)").arg(flightplan->getDestinationName()).arg(flightplan->getDestinationIdent()) :
                  tr("%1").arg(flightplan->getDestinationIdent());
 
     msg = tr("Flight plan from <b>%1</b> to <b>%2</b>.<br/>").arg(from).arg(to);

@@ -382,11 +382,11 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   // Update departure and destination if no airports are used ==============================
   if(readNoAirports && !entries.isEmpty())
   {
-    fp->setDepartureAiportName(entries.first().getIdent());
+    fp->setDepartureName(entries.first().getIdent());
     fp->setDepartureIdent(entries.first().getIdent());
     fp->setDeparturePosition(entries.first().getPosition());
 
-    fp->setDestinationAiportName(entries.last().getIdent());
+    fp->setDestinationName(entries.last().getIdent());
     fp->setDestinationIdent(entries.last().getIdent());
     fp->setDestinationPosition(entries.last().getPosition());
   }
@@ -549,7 +549,7 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
   {
     // qDebug() << "found" << departure.ident << "id" << departure.id;
 
-    flightplan->setDepartureAiportName(departure.name);
+    flightplan->setDepartureName(departure.name);
     flightplan->setDepartureIdent(departure.ident);
     flightplan->setDeparturePosition(departure.position);
 
@@ -672,7 +672,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan,
       map::MapAirport dest = airports.takeLast();
       proc::MapProcedureLegs star = stars.takeLast();
 
-      flightplan->setDestinationAiportName(dest.name);
+      flightplan->setDestinationName(dest.name);
       flightplan->setDestinationIdent(dest.ident);
       flightplan->setDestinationPosition(dest.getPosition());
 
@@ -723,7 +723,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan,
 
     if(dest.isValid())
     {
-      flightplan->setDestinationAiportName(dest.name);
+      flightplan->setDestinationName(dest.name);
       flightplan->setDestinationIdent(dest.ident);
       flightplan->setDestinationPosition(dest.getPosition());
 

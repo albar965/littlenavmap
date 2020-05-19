@@ -43,7 +43,14 @@ public:
 
   /* Add a checkbox with the given id, text and tooltip */
   void add(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
-           bool disabled = false);
+           bool disabled = false, bool hidden = false);
+
+  /* Shortcut to add a disabled widget */
+  void addDisabled(int id, const QString& text, const QString& tooltip, bool checked);
+
+  /* Shortcut to add a hidden, disabled and unchecked widget.
+   * Useful if different configurations are saved in the same setting variable. */
+  void addHidden(int id, const QString& text, const QString& tooltip);
 
   /* Call after adding all buttons to restore button state */
   void restoreState();

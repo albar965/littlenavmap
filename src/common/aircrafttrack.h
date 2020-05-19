@@ -20,6 +20,12 @@
 
 #include "geo/pos.h"
 
+namespace atools {
+namespace geo {
+class LineString;
+}
+}
+
 namespace at {
 /* Track position. Can be converted to QVariant and thus be saved to settings */
 struct AircraftTrackPos
@@ -84,6 +90,9 @@ public:
   void saveToStream(QDataStream& out);
 
   bool readFromStream(QDataStream & in);
+
+  /* Convert to linestring and timestamp values for export functions like GPX */
+  void convertForExport(atools::geo::LineString& track, QVector<quint32>& timestamps) const;
 
 private:
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */

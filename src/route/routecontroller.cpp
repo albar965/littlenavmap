@@ -1048,8 +1048,39 @@ void RouteController::reportProcedureErrors(const QStringList& procedureLoadingE
   }
 }
 
+bool RouteController::loadFlightplanLnmStr(const QString& string)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  Flightplan fp;
+  try
+  {
+    // Will throw an exception if something goes wrong
+    flightplanIO->loadLnmStr(fp, string);
+
+    // Convert altitude to local unit
+    fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
+
+    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /*quiet*/, false /*changed*/, false /*adjust alt*/);
+  }
+  catch(atools::Exception& e)
+  {
+    NavApp::deleteSplashScreen();
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    NavApp::deleteSplashScreen();
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
+}
+
 bool RouteController::loadFlightplan(const QString& filename)
 {
+  qDebug() << Q_FUNC_INFO << filename;
   Flightplan fp;
   try
   {
@@ -1067,10 +1098,11 @@ bool RouteController::loadFlightplan(const QString& filename)
                                                         "Can therefore not determine the cruising altitude.<br/>"
                                                         "Adjust it manually."),
                                                      tr("Do not &show this dialog again."));
+      fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(10000.f)));
     }
-
-    // Convert altitude to local unit
-    fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
+    else
+      // Convert altitude to local unit
+      fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
 
     loadFlightplan(fp, format, filename, false /*quiet*/, false /*changed*/, false /*adjust alt*/);
   }
@@ -1128,7 +1160,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         route.getFlightplan().getEntries().append(entry);
 
       // Appended after destination airport
-      route.getFlightplan().setDestinationAiportName(flightplan.getDestinationAiportName());
+      route.getFlightplan().setDestinationName(flightplan.getDestinationName());
       route.getFlightplan().setDestinationIdent(flightplan.getDestinationIdent());
       route.getFlightplan().setDestinationPosition(flightplan.getDestinationPosition());
 
@@ -1154,7 +1186,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
         // Added before departure airport
-        route.getFlightplan().setDepartureAiportName(flightplan.getDepartureAiportName());
+        route.getFlightplan().setDepartureName(flightplan.getDepartureName());
         route.getFlightplan().setDepartureIdent(flightplan.getDepartureIdent());
         route.getFlightplan().setDeparturePosition(flightplan.getDeparturePosition(),
                                                    flightplan.getEntries().first().getPosition().getAltitude());
@@ -1679,12 +1711,12 @@ void RouteController::reverseRoute()
   auto& entries = route.getFlightplan().getEntries();
   std::reverse(entries.begin(), entries.end());
 
-  QString depName = flightplan.getDepartureAiportName();
+  QString depName = flightplan.getDepartureName();
   QString depIdent = flightplan.getDepartureIdent();
-  flightplan.setDepartureAiportName(flightplan.getDestinationAiportName());
+  flightplan.setDepartureName(flightplan.getDestinationName());
   flightplan.setDepartureIdent(flightplan.getDestinationIdent());
 
-  flightplan.setDestinationAiportName(depName);
+  flightplan.setDestinationName(depName);
   flightplan.setDestinationIdent(depIdent);
 
   // Overwrite parking position with airport position
@@ -1902,7 +1934,7 @@ void RouteController::visibleColumnsTriggered()
 {
   qDebug() << Q_FUNC_INFO;
 
-  ChoiceDialog dialog(mainWindow, QApplication::applicationName() + tr(" - Flight Plan Table"),
+  ChoiceDialog dialog(mainWindow, QApplication::applicationName() + tr(" - Flight Plan Table"), QString(),
                       tr("Select columns to show in flight plan table"),
                       lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns");
 
@@ -3433,7 +3465,7 @@ void RouteController::routeToFlightPlan()
     if(firstLeg.getMapObjectType() == map::AIRPORT)
     {
       departureIcao = firstLeg.getAirport().ident;
-      flightplan.setDepartureAiportName(firstLeg.getAirport().name);
+      flightplan.setDepartureName(firstLeg.getAirport().name);
       flightplan.setDepartureIdent(departureIcao);
 
       if(route.hasDepartureParking())
@@ -3454,7 +3486,7 @@ void RouteController::routeToFlightPlan()
     else
     {
       // Invalid departure
-      flightplan.setDepartureAiportName(QString());
+      flightplan.setDepartureName(QString());
       flightplan.setDepartureIdent(QString());
       flightplan.setDepartureParkingName(QString());
       flightplan.setDeparturePosition(Pos(), 0.f);
@@ -3464,14 +3496,14 @@ void RouteController::routeToFlightPlan()
     if(lastLeg.getMapObjectType() == map::AIRPORT)
     {
       destinationIcao = lastLeg.getAirport().ident;
-      flightplan.setDestinationAiportName(lastLeg.getAirport().name);
+      flightplan.setDestinationName(lastLeg.getAirport().name);
       flightplan.setDestinationIdent(destinationIcao);
       flightplan.setDestinationPosition(lastLeg.getPosition());
     }
     else
     {
       // Invalid destination
-      flightplan.setDestinationAiportName(QString());
+      flightplan.setDestinationName(QString());
       flightplan.setDestinationIdent(QString());
       flightplan.setDestinationPosition(Pos());
     }
@@ -4081,7 +4113,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
     // Add departure to text ==============================================================
     if(route.hasValidDeparture())
     {
-      departure = tr("%1 (%2)").arg(flightplan.getDepartureAiportName()).arg(flightplan.getDepartureIdent());
+      departure = tr("%1 (%2)").arg(flightplan.getDepartureName()).arg(flightplan.getDepartureIdent());
 
       if(route.getDepartureAirportLeg().getDepartureParking().isValid())
         departure += " " + map::parkingNameNumberType(route.getDepartureAirportLeg().getDepartureParking());
@@ -4103,7 +4135,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
 
     // Add destination to text ==============================================================
     if(route.hasValidDestination())
-      destination = tr("%1 (%2)").arg(flightplan.getDestinationAiportName()).arg(flightplan.getDestinationIdent());
+      destination = tr("%1 (%2)").arg(flightplan.getDestinationName()).arg(flightplan.getDestinationIdent());
     else
       destination = tr("%1 (%2)").
                     arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent()).

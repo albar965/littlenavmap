@@ -193,14 +193,14 @@ void RouteCalcWindow::updateHeader()
     if(route.canCalcRoute())
     {
       if(route.hasValidDeparture())
-        departure = tr("%1 (%2)").arg(flightplan.getDepartureAiportName()).arg(flightplan.getDepartureIdent());
+        departure = tr("%1 (%2)").arg(flightplan.getDepartureName()).arg(flightplan.getDepartureIdent());
       else
         departure = tr("%1 (%2)").
                     arg(flightplan.getEntries().first().getIdent()).
                     arg(flightplan.getEntries().first().getWaypointTypeAsFsxString());
 
       if(route.hasValidDestination())
-        destination = tr("%1 (%2)").arg(flightplan.getDestinationAiportName()).arg(flightplan.getDestinationIdent());
+        destination = tr("%1 (%2)").arg(flightplan.getDestinationName()).arg(flightplan.getDestinationIdent());
       else
         destination = tr("%1 (%2)").
                       arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent()).
