@@ -542,8 +542,8 @@ void UserdataController::exportCsv()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool exportSelected, append;
-    if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
+    bool selected, append, header;
+    if(exportSelectedQuestion(selected, append, header, true /* append allowed */, true /* header allowed */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export Userpoint CSV File"),
@@ -553,11 +553,14 @@ void UserdataController::exportCsv()
 
       if(!file.isEmpty())
       {
+        atools::fs::userdata::Flags flags = atools::fs::userdata::NONE;
+        flags.setFlag(atools::fs::userdata::APPEND, append);
+        flags.setFlag(atools::fs::userdata::CSV_HEADER, header);
+
         QVector<int> ids;
-        if(exportSelected)
+        if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
-        int numExported =
-          manager->exportCsv(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
+        int numExported = manager->exportCsv(file, ids, flags);
         mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
       }
     }
@@ -577,8 +580,8 @@ void UserdataController::exportXplaneUserFixDat()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool exportSelected, append;
-    if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
+    bool selected, append, header;
+    if(exportSelectedQuestion(selected, append, header, true /* append allowed */, false /* header allowed */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export X-Plane user_fix.dat File"),
@@ -590,7 +593,7 @@ void UserdataController::exportXplaneUserFixDat()
       if(!file.isEmpty())
       {
         QVector<int> ids;
-        if(exportSelected)
+        if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
         int numExported =
           manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
@@ -613,8 +616,8 @@ void UserdataController::exportGarmin()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool exportSelected, append;
-    if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
+    bool selected, append, header;
+    if(exportSelectedQuestion(selected, append, header, true /* append allowed */, false /* header allowed */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export Garmin User Waypoint File"),
@@ -626,7 +629,7 @@ void UserdataController::exportGarmin()
       if(!file.isEmpty())
       {
         QVector<int> ids;
-        if(exportSelected)
+        if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
         int numExported =
           manager->exportGarmin(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
@@ -649,8 +652,8 @@ void UserdataController::exportBglXml()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool exportSelected, append;
-    if(exportSelectedQuestion(exportSelected, append, false /* append allowed */))
+    bool selected, append, header;
+    if(exportSelectedQuestion(selected, append, header, false /* append allowed */, false /* header allowed */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export XML File for FSX/P3D BGL Compiler"),
@@ -661,7 +664,7 @@ void UserdataController::exportBglXml()
       if(!file.isEmpty())
       {
         QVector<int> ids;
-        if(exportSelected)
+        if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
         int numExported =
           manager->exportBgl(file, ids);
@@ -723,7 +726,8 @@ QString UserdataController::garminGtnUserWptPath()
   return path;
 }
 
-bool UserdataController::exportSelectedQuestion(bool& exportSelected, bool& append, bool appendAllowed)
+bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bool& header, bool appendAllowed,
+                                                bool headerAllowed)
 {
   int numSelected = NavApp::getUserdataSearch()->getSelectedRowCount();
 
@@ -733,21 +737,33 @@ bool UserdataController::exportSelectedQuestion(bool& exportSelected, bool& appe
 
   enum
   {
-    SELECTED, APPEND
+    SELECTED, APPEND, HEADER
   };
 
   ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
                             QString(), tr("Select export options"),
                             lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
 
+  if(appendAllowed)
+    choiceDialog.add(APPEND, tr("&Append to an already present file"), QString(), false);
+  else
+    // Add a hidden dummy which still allows to save the settings to the same key/variable
+    choiceDialog.addHidden(APPEND, tr("&Append to an already present file"), QString());
+
   choiceDialog.add(SELECTED, tr("Export &selected entries only"), QString(), true, numSelected == 0 /* disabled */);
-  choiceDialog.add(APPEND, tr("&Append to an already present file"), QString(), false);
+
+  if(headerAllowed)
+    choiceDialog.add(HEADER, tr("Add a &header to the first line"), QString(), false);
+  else
+    choiceDialog.addHidden(HEADER, tr("&Add a header to the first line"), QString());
+
   choiceDialog.restoreState();
 
   if(choiceDialog.exec() == QDialog::Accepted)
   {
-    exportSelected = choiceDialog.isChecked(SELECTED); // Only true if enabled too
+    selected = choiceDialog.isChecked(SELECTED); // Only true if enabled too
     append = choiceDialog.isChecked(APPEND);
+    header = choiceDialog.isChecked(HEADER);
     return true;
   }
   else
