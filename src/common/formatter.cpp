@@ -159,19 +159,23 @@ QString capNavString(const QString& str)
   return atools::fs::util::capNavString(str);
 }
 
-bool checkCoordinates(QString& message, const QString& text)
+bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
 {
   Q_UNUSED(text);
 
-  atools::geo::Pos pos = atools::fs::util::fromAnyFormat(text);
+  atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text);
 
-  if(pos.isValid())
+  if(pos != nullptr)
+    *pos = readPos;
+
+  if(readPos.isValid())
   {
-    QString coords = Unit::coords(pos);
+    QString coords = Unit::coords(readPos);
     if(coords != text)
     {
       if(Unit::getUnitCoords() == opts::COORDS_LATY_LONX || Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-        message = QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(pos, opts::COORDS_DMS));
+        message =
+          QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(readPos, opts::COORDS_DMS));
       else
         message = QObject::tr("Coordinates are valid: %1").arg(coords);
     }

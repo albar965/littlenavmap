@@ -2066,6 +2066,8 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
 
     if(info)
     {
+      html.row2(tr("Magnetic declination:"), map::magvarText(NavApp::getMagVar(userpoint.position)));
+
       if(!rec.isNull("visible_from"))
         html.row2If(tr("Visible from:"), Unit::distNm(rec.valueFloat("visible_from")));
 
@@ -4007,7 +4009,7 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
 
   if(QFileInfo::exists(filepath))
     link.text(prefix, ahtml::SMALL).
-        a(filepath, QString("lnm://show?filepath=%1").arg( filepath), ahtml::LINK_NO_UL | ahtml::SMALL);
+    a(filepath, QString("lnm://show?filepath=%1").arg(filepath), ahtml::LINK_NO_UL | ahtml::SMALL);
   else
     link.text(prefix + filepath, ahtml::SMALL);
   return link.getHtml();

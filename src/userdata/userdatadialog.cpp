@@ -31,6 +31,8 @@
 #include "userdata/userdataicons.h"
 #include "gui/widgetstate.h"
 #include "common/unitstringtool.h"
+#include "common/maptypes.h"
+#include "navapp.h"
 
 #include <QPushButton>
 #include <QDateTime>
@@ -91,6 +93,7 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   ui->labelUserdataLatLon->setVisible(showLatLon);
   ui->lineEditUserdataLatLon->setVisible(showLatLon);
   ui->labelUserdataCoordStatus->setVisible(showLatLon);
+  ui->labelUserdataMagVar->setVisible(showLatLon);
 
   bool hideMeta = editMode != ud::ADD && editMode != ud::EDIT_MULTIPLE;
   ui->labelUserdataLastChange->setVisible(hideMeta);
@@ -140,9 +143,13 @@ void UserdataDialog::coordsEdited(const QString& text)
   Q_UNUSED(text)
 
   QString message;
-  bool valid = formatter::checkCoordinates(message, ui->lineEditUserdataLatLon->text());
+  atools::geo::Pos pos;
+  bool valid = formatter::checkCoordinates(message, ui->lineEditUserdataLatLon->text(), &pos);
   ui->buttonBoxUserdata->button(QDialogButtonBox::Ok)->setEnabled(valid);
   ui->labelUserdataCoordStatus->setText(message);
+
+  if(pos.isValid())
+    ui->labelUserdataMagVar->setText(tr("Magnetic declination: %1").arg(map::magvarText(NavApp::getMagVar(pos))));
 }
 
 void UserdataDialog::helpClicked()

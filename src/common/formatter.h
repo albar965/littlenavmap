@@ -20,6 +20,12 @@
 
 #include <QString>
 
+namespace atools {
+namespace geo {
+class Pos;
+}
+}
+
 class QDateTime;
 
 class QElapsedTimer;
@@ -31,8 +37,9 @@ void initTranslateableTexts();
 /* try to read a date time string using local and English locale and yyyy/yy variants */
 QDateTime readDateTime(QString str);
 
-/* Checks if the lat long coordinate string is valid and returns an error message or a message for validity checking*/
-bool checkCoordinates(QString& message, const QString& text);
+/* Checks if the lat long coordinate string is valid and returns an error message or a message for validity checking
+ * Position is returned in pos if not null. */
+bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos = nullptr);
 
 /* Capitalize the string using exceptions for any aviation acronyms */
 QString capNavString(const QString& str);
