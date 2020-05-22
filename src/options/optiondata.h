@@ -479,7 +479,8 @@ enum DisplayClickOption
   CLICK_NONE = 0,
   CLICK_AIRPORT = 1 << 1,
   CLICK_NAVAID = 1 << 2,
-  CLICK_AIRSPACE = 1 << 3
+  CLICK_AIRSPACE = 1 << 3,
+  CLICK_AIRPORT_PROC = 1 << 4
 };
 
 Q_DECLARE_FLAGS(DisplayClickOptions, DisplayClickOption);
@@ -1258,7 +1259,8 @@ private:
 
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
                                                        optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND;
-  optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRPORT | optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
+  optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRPORT | optsd::CLICK_AIRPORT_PROC |
+                                                   optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
 
   opts::UpdateRate updateRate = opts::DAILY;
   opts::UpdateChannels updateChannels = opts::STABLE;

@@ -186,6 +186,8 @@ private:
   /* Update web server with saved parameters */
   void updateWebOptionsFromData();
 
+  void mapClickAirportProcsToggled();
+
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
   Ui::Options *ui;

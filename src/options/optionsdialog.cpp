@@ -264,6 +264,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapTooltipAirspace,
      ui->checkBoxOptionsMapTooltipWind,
      ui->checkBoxOptionsMapClickAirport,
+     ui->checkBoxOptionsMapClickAirportProcs,
      ui->checkBoxOptionsMapClickNavaid,
      ui->checkBoxOptionsMapClickAirspace,
      ui->checkBoxOptionsMapUndock,
@@ -476,6 +477,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::weatherXplaneWindPathSelectClicked);
 
   // ===========================================================================
+  // Map
+  connect(ui->checkBoxOptionsMapClickAirport, &QCheckBox::toggled, this, &OptionsDialog::mapClickAirportProcsToggled);
+
   // Map navigation
   connect(ui->radioButtonOptionsMapNavDragMove, &QRadioButton::clicked, this, &OptionsDialog::updateNavOptions);
   connect(ui->radioButtonOptionsMapNavClickCenter, &QRadioButton::clicked, this, &OptionsDialog::updateNavOptions);
@@ -620,6 +624,7 @@ void OptionsDialog::open()
   updateWebServerStatus();
   eastWestRuleClicked();
   updateWidgetUnits();
+  mapClickAirportProcsToggled();
 
   QDialog::open();
 }
@@ -1370,6 +1375,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_WIND, ui->checkBoxOptionsMapTooltipWind->isChecked());
 
   data.displayClickOptions.setFlag(optsd::CLICK_AIRPORT, ui->checkBoxOptionsMapClickAirport->isChecked());
+  data.displayClickOptions.setFlag(optsd::CLICK_AIRPORT_PROC, ui->checkBoxOptionsMapClickAirportProcs->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_NAVAID, ui->checkBoxOptionsMapClickNavaid->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_AIRSPACE, ui->checkBoxOptionsMapClickAirspace->isChecked());
 
@@ -1603,6 +1609,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->checkBoxOptionsMapTooltipWind->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_WIND));
 
   ui->checkBoxOptionsMapClickAirport->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRPORT));
+  ui->checkBoxOptionsMapClickAirportProcs->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRPORT_PROC));
   ui->checkBoxOptionsMapClickNavaid->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_NAVAID));
   ui->checkBoxOptionsMapClickAirspace->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRSPACE));
 
@@ -2255,4 +2262,9 @@ void OptionsDialog::updateWebOptionsFromGui()
     webController->setEncrypted(ui->checkBoxOptionsWebEncrypted->isChecked());
     webController->restartServer(true /* force */);
   }
+}
+
+void OptionsDialog::mapClickAirportProcsToggled()
+{
+  ui->checkBoxOptionsMapClickAirportProcs->setEnabled(ui->checkBoxOptionsMapClickAirport->isChecked());
 }

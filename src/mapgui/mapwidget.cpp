@@ -270,6 +270,9 @@ void MapWidget::handleInfoClick(QPoint point)
   if(!(opts & optsd::CLICK_AIRSPACE))
     mapSearchResultInfoClick.airspaces.clear();
 
+  if(opts & optsd::CLICK_AIRPORT && opts & optsd::CLICK_AIRPORT_PROC && mapSearchResultInfoClick.hasAirports())
+    emit showProcedures(mapSearchResultInfoClick.airports.first());
+
   emit showInformation(mapSearchResultInfoClick, map::NONE);
 }
 

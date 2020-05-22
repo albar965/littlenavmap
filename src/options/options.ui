@@ -840,6 +840,29 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             </widget>
            </item>
            <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <property name="leftMargin">
+              <number>22</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QCheckBox" name="checkBoxOptionsMapClickAirportProcs">
+               <property name="toolTip">
+                <string>Show procedures in procedure search tab on airport click</string>
+               </property>
+               <property name="text">
+                <string>Update &amp;procedures on airport click</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <widget class="QCheckBox" name="checkBoxOptionsMapClickNavaid">
              <property name="toolTip">
               <string>Show information for waypoints, VOR, NDB, airways,
