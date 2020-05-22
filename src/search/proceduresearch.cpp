@@ -688,7 +688,7 @@ void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
         emit procedureLegSelected(proc::MapProcedureRef());
 
       if(ref.hasApproachAndTransitionIds())
-        updateApproachItem(parentApproachItem(item), ref.transitionId);
+        updateApproachItem(item, ref.transitionId);
     }
   }
 
@@ -855,8 +855,6 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   ui->actionInfoApproachAttach->setDisabled(item == nullptr);
 
-  QString text, showText;
-
   ProcData procData;
   MapProcedureRef ref;
   const proc::MapProcedureLegs *procedureLegs = fetchProcData(procData, ref, item);
@@ -865,11 +863,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   {
     if(procedureLegs != nullptr && !procedureLegs->isEmpty())
     {
-      QTreeWidgetItem *parentAppr = parentApproachItem(item);
-      QTreeWidgetItem *parentTrans = parentTransitionItem(item);
-
-      if(ref.hasApproachOrTransitionIds())
-        text = approachAndTransitionText(parentTrans == item ? parentAppr : parentTrans);
+      QString showText, text = approachAndTransitionText(item);
 
       if(!text.isEmpty())
         ui->actionInfoApproachShow->setEnabled(true);
@@ -1027,12 +1021,8 @@ const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(ProcData& procData,
   {
     procData = itemIndex.at(item->type());
     if(procData.procedureRef.isLeg())
-    {
       // Get parent approach data if approach is a leg
-      QTreeWidgetItem *parentAppr = parentApproachItem(item);
-      QTreeWidgetItem *parentTrans = parentTransitionItem(item);
-      procData = itemIndex.at(parentTrans == item ? parentAppr->type() : parentTrans->type());
-    }
+      procData = itemIndex.at(item->type());
 
     ref = procData.procedureRef;
     // Get transition id too if SID with only transition legs is selected
@@ -1467,34 +1457,6 @@ void ProcedureSearch::createFonts()
 
   invalidLegFont = legFont;
   invalidLegFont.setBold(true);
-}
-
-QTreeWidgetItem *ProcedureSearch::parentApproachItem(QTreeWidgetItem *item) const
-{
-  QTreeWidgetItem *current = item, *root = treeWidget->invisibleRootItem();
-  while(current != nullptr && current != root)
-  {
-    const MapProcedureRef& ref = itemIndex.at(current->type()).procedureRef;
-    if(ref.hasApproachOnlyIds() && !ref.isLeg())
-      return current;
-
-    current = current->parent();
-  }
-  return current != nullptr ? current : item;
-}
-
-QTreeWidgetItem *ProcedureSearch::parentTransitionItem(QTreeWidgetItem *item) const
-{
-  QTreeWidgetItem *current = item, *root = treeWidget->invisibleRootItem();
-  while(current != nullptr && current != root)
-  {
-    const MapProcedureRef& ref = itemIndex.at(current->type()).procedureRef;
-    if(ref.hasApproachAndTransitionIds() && !ref.isLeg())
-      return current;
-
-    current = current->parent();
-  }
-  return current != nullptr ? current : item;
 }
 
 void ProcedureSearch::getSelectedMapObjects(map::MapSearchResult& result) const

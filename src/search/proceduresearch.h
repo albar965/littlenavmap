@@ -178,10 +178,6 @@ private:
   void updateTreeHeader();
   void createFonts();
 
-  /* Get parent items of a leg item or current */
-  QTreeWidgetItem *parentApproachItem(QTreeWidgetItem *item) const;
-  QTreeWidgetItem *parentTransitionItem(QTreeWidgetItem *item) const;
-
   void updateHeaderLabel();
   void filterIndexChanged(int index);
   void filterIndexRunwayChanged(int index);
