@@ -29,6 +29,7 @@
 #include "userdata/userdataicons.h"
 #include "route/routecontroller.h"
 #include "online/onlinedatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "common/symbolpainter.h"
@@ -2055,10 +2056,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
     ui->actionMapShowApproachesCustom->setEnabled(true);
     if(airportDestination)
-      ui->actionMapShowApproachesCustom->setText(tr("Create Approach to %1 and insert into Flight Plan").
+      ui->actionMapShowApproachesCustom->setText(tr("Create &Approach to %1 and insert into Flight Plan").
                                                  arg(procedureText));
     else
-      ui->actionMapShowApproachesCustom->setText(tr("Create Approach and use %1 as Destination").
+      ui->actionMapShowApproachesCustom->setText(tr("Create &Approach and use %1 as Destination").
                                                  arg(procedureText));
   }
   else
@@ -3497,6 +3498,10 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeaturesDisplay(map::MINIMUM_ALTITUDE, ui->actionMapShowMinimumAltitude->isChecked());
   setShowMapFeaturesDisplay(map::WIND_BARBS, NavApp::getWindReporter()->isWindShown());
   setShowMapFeaturesDisplay(map::WIND_BARBS_ROUTE, NavApp::getWindReporter()->isRouteWindShown());
+
+  setShowMapFeaturesDisplay(map::LOGBOOK_DIRECT, NavApp::getLogdataController()->isDirectPreviewShown());
+  setShowMapFeaturesDisplay(map::LOGBOOK_ROUTE, NavApp::getLogdataController()->isRoutePreviewShown());
+  setShowMapFeaturesDisplay(map::LOGBOOK_TRACK, NavApp::getLogdataController()->isTrackPreviewShown());
 
   // Force addon airport independent of other settings or not
   setShowMapFeatures(map::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());

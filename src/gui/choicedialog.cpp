@@ -62,9 +62,9 @@ ChoiceDialog::~ChoiceDialog()
   delete ui;
 }
 
-void ChoiceDialog::addHidden(int id, const QString& text, const QString& tooltip)
+void ChoiceDialog::addHidden(int id)
 {
-  add(id, text, tooltip, false /* checked*/, true /* disabled */, true /* hidden */);
+  add(id, QString(), QString(), false /* checked*/, true /* disabled */, true /* hidden */);
 }
 
 void ChoiceDialog::addDisabled(int id, const QString& text, const QString& tooltip, bool checked)

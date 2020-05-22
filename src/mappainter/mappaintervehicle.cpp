@@ -149,77 +149,14 @@ float MapPainterVehicle::calcRotation(const PaintContext *context, const SimConn
   return scale->getScreenRotation(rotate, aircraft.getPosition(), context->zoomDistanceMeter);
 }
 
-void MapPainterVehicle::paintTrack(const PaintContext *context)
+void MapPainterVehicle::paintAircraftTrack(const PaintContext *context)
 {
   const AircraftTrack& aircraftTrack = mapPaintWidget->getAircraftTrack();
 
   if(!aircraftTrack.isEmpty())
   {
-    QPolygon polyline;
-
-    GeoPainter *painter = context->painter;
-
-    float size = context->sz(context->thicknessTrail, 2);
-    painter->setPen(mapcolors::aircraftTrailPen(size));
-    bool visible1 = false;
-
-    int x1, y1;
-    int x2 = -1, y2 = -1;
-    bool hidden1, hidden2;
-    QRect vpRect(painter->viewport());
-    wToS(aircraftTrack.first().pos, x1, y1, DEFAULT_WTOS_SIZE, &hidden1);
-
-    for(int i = 1; i < aircraftTrack.size(); i++)
-    {
-      const Pos& trackPos = aircraftTrack.at(i).pos;
-      wToS(trackPos, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
-
-      QRect rect(QPoint(x1, y1), QPoint(x2, y2));
-      rect = rect.normalized();
-      rect.adjust(-1, -1, 1, 1);
-
-      // Current line is visible (most likely) - not if one of the points is hidden behind the globe
-      bool visible2 = false;
-      if(!hidden1 && !hidden2)
-        visible2 = rect.intersects(vpRect);
-
-      if(visible2 && context->viewport->projection() == Marble::Mercator)
-        // Workaround to detect jumping between sides in Mercator projection - do not draw lines from far edges
-        visible2 = QLineF(QPoint(x1, y1), QPoint(x2, y2)).length() < scale->getPixelForNm(1000.f);
-
-      if(visible1 || visible2)
-      {
-        if(!polyline.isEmpty())
-        {
-          const QPoint& lastPt = polyline.last();
-          // Last line or this one are visible add coords
-          if(atools::geo::manhattanDistance(lastPt.x(), lastPt.y(), x2, y2) > AIRCRAFT_TRACK_MIN_LINE_LENGTH)
-            polyline.append(QPoint(x1, y1));
-        }
-        else
-          // Always add first visible point
-          polyline.append(QPoint(x1, y1));
-      }
-
-      if(visible1 && !visible2)
-      {
-        // Not visible anymore draw previous line segment
-        painter->drawPolyline(polyline);
-        polyline.clear();
-      }
-
-      visible1 = visible2;
-      x1 = x2;
-      y1 = y2;
-      hidden1 = hidden2;
-    }
-
-    // Draw rest
-    if(!polyline.isEmpty())
-    {
-      polyline.append(QPoint(x2, y2));
-      painter->drawPolyline(polyline);
-    }
+    context->painter->setPen(mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2)));
+    paintTrack(context, aircraftTrack);
   }
 }
 

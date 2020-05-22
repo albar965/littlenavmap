@@ -119,12 +119,14 @@ bool AircraftTrack::readFromStream(QDataStream& in)
   return retval;
 }
 
-void AircraftTrack::convertForExport(atools::geo::LineString& track, QVector<quint32>& timestamps) const
+void AircraftTrack::convert(atools::geo::LineString *track, QVector<quint32> *timestamps) const
 {
   for(const at::AircraftTrackPos& pos : (*this))
   {
-    track.append(pos.pos);
-    timestamps.append(pos.timestamp);
+    if(track != nullptr)
+      track->append(pos.pos);
+    if(timestamps != nullptr)
+      timestamps->append(pos.timestamp);
   }
 }
 

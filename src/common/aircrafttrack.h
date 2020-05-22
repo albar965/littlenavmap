@@ -92,7 +92,7 @@ public:
   bool readFromStream(QDataStream & in);
 
   /* Convert to linestring and timestamp values for export functions like GPX */
-  void convertForExport(atools::geo::LineString& track, QVector<quint32>& timestamps) const;
+  void convert(atools::geo::LineString *track, QVector<quint32> *timestamps) const;
 
 private:
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */

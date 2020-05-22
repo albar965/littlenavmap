@@ -83,11 +83,32 @@ public:
   void saveState();
   void restoreState();
 
+signals:
+  /* File attachements - push buttons redirected */
+  void planOpen(atools::sql::SqlRecord *record, QWidget *parent); /* Open as current */
+  void planAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new plan to logbook entry */
+  void planSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached LNMPLN plan to file */
+  void gpxAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new GPX to logbook entry */
+  void gpxSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached GPX plan to file */
+  void perfOpen(atools::sql::SqlRecord *record, QWidget *parent); /* Open as current */
+  void perfAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new performance to logbook entry */
+  void perfSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached performance to file */
+
 private:
   /* Button box click handlers */
   void acceptClicked();
   void helpClicked();
   void resetClicked();
+
+  /* Buttons clicked */
+  void planOpenClicked(); /* Open as current */
+  void planAddClicked(); /* Attach new plan to logbook entry */
+  void planSaveAsClicked(); /* Save attached LNMPLN plan to file */
+  void gpxAddClicked(); /* Attach new GPX to logbook entry */
+  void gpxSaveAsClicked(); /* Save attached GPX plan to file */
+  void perfOpenClicked(); /* Open as current */
+  void perfAddClicked(); /* Attach new performance to logbook entry */
+  void perfSaveAsClicked(); /* Save attached performance to file */
 
   /* Update status for all widgets */
   void updateWidgets();
@@ -113,16 +134,6 @@ private:
   /* Load files from logbook entry */
   void flightplanFileClicked();
   void perfFileClicked();
-
-  /* File attachements - push buttons */
-  void planOpenClicked(); /* Open as current */
-  void planAddClicked(); /* Attach new plan to logbook entry */
-  void planSaveAsClicked(); /* Save attached LNMPLN plan to file */
-  void gpxAddClicked(); /* Attach new GPX to logbook entry */
-  void gpxSaveAsClicked(); /* Save attached GPX plan to file */
-  void perfOpenClicked(); /* Open as current */
-  void perfAddClicked(); /* Attach new performance to logbook entry */
-  void perfSaveAsClicked(); /* Save attached performance to file */
 
   /* Fuel units in combo box changed - update widgets */
   void fuelUnitsChanged();

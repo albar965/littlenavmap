@@ -259,11 +259,25 @@ void MapScreenIndex::updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox
 
   if(scale->isValid())
   {
+    bool routePreview = NavApp::getLogdataController()->isRoutePreviewShown();
     CoordinateConverter conv(mapPaintWidget->viewport());
     for(map::MapLogbookEntry& entry : searchHighlights.logbookEntries)
     {
       if(entry.isValid())
-        updateLineScreenGeometry(logEntryLines, entry.id, entry.lineString(), curBox, conv);
+      {
+        updateLineScreenGeometry(logEntryLines, entry.id, entry.line(), curBox, conv);
+
+        if(routePreview)
+        {
+          // Get geometry for flight plan if preview is enabled
+          const atools::geo::LineString *geo = NavApp::getLogdataController()->getRouteGeometry(entry.id);
+          if(geo != nullptr)
+          {
+            for(int i = 0; i < geo->size() - 1; i++)
+              updateLineScreenGeometry(logEntryLines, entry.id, Line(geo->at(i), geo->at(i + 1)), curBox, conv);
+          }
+        }
+      }
     }
   }
 }
@@ -315,7 +329,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
             // Not visible by map setting
             continue;
 
-          updateLineScreenGeometry(airwayLines, airway.id, LineString(airway.from, airway.to), curBox, conv);
+          updateLineScreenGeometry(airwayLines, airway.id, Line(airway.from, airway.to), curBox, conv);
           ids.insert(airway.id);
         }
       }
@@ -337,7 +351,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
             // Not visible by map setting
             continue;
 
-          updateLineScreenGeometry(airwayLines, track.id, LineString(track.from, track.to), curBox, conv);
+          updateLineScreenGeometry(airwayLines, track.id, Line(track.from, track.to), curBox, conv);
           ids.insert(track.id);
         }
       }
@@ -351,7 +365,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
         {
           if(ids.contains(airway.id))
             continue;
-          updateLineScreenGeometry(airwayLines, airway.id, LineString(airway.from, airway.to), curBox, conv);
+          updateLineScreenGeometry(airwayLines, airway.id, Line(airway.from, airway.to), curBox, conv);
           ids.insert(airway.id);
         }
       }
@@ -360,7 +374,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
 }
 
 void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& index,
-                                              int id, const atools::geo::LineString& line,
+                                              int id, const atools::geo::Line& line,
                                               const Marble::GeoDataLatLonBox& curBox,
                                               const CoordinateConverter& conv)
 {

@@ -312,6 +312,7 @@ void NavApp::preDatabaseLoad()
   procedureQuery->deInitQueries();
   airspaceController->preDatabaseLoad();
   trackController->preDatabaseLoad();
+  logdataController->preDatabaseLoad();
 
   delete databaseMetaSim;
   databaseMetaSim = nullptr;
@@ -369,6 +370,7 @@ void NavApp::postDatabaseLoad()
   procedureQuery->initQueries();
   airspaceController->postDatabaseLoad();
   trackController->postDatabaseLoad();
+  logdataController->postDatabaseLoad();
   loadingDatabase = false;
 }
 

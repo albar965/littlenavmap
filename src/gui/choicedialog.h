@@ -50,7 +50,7 @@ public:
 
   /* Shortcut to add a hidden, disabled and unchecked widget.
    * Useful if different configurations are saved in the same setting variable. */
-  void addHidden(int id, const QString& text, const QString& tooltip);
+  void addHidden(int id);
 
   /* Call after adding all buttons to restore button state */
   void restoreState();

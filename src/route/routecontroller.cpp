@@ -2103,14 +2103,14 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
       ui->actionRouteShowApproachesCustom->setEnabled(true);
       if(airportDestination)
-        ui->actionRouteShowApproachesCustom->setText(tr("Create Approach to Airport and insert into Flight Plan"));
+        ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to Airport and insert into Flight Plan"));
       else
-        ui->actionRouteShowApproachesCustom->setText(tr("Create Approach and use Airport as Destination"));
+        ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach and use Airport as Destination"));
     }
     else
     {
-      ui->actionRouteShowApproaches->setText(tr("Show procedures"));
-      ui->actionRouteShowApproachesCustom->setText(tr("Create approach"));
+      ui->actionRouteShowApproaches->setText(tr("Show &procedures"));
+      ui->actionRouteShowApproachesCustom->setText(tr("Create &approach"));
     }
 
     ui->actionRouteShowOnMap->setEnabled(true);
@@ -2153,10 +2153,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapTrafficPattern->setEnabled(true);
   else
     ui->actionMapTrafficPattern->setEnabled(false);
-  ui->actionMapTrafficPattern->setText(tr("Display Airport Traffic Pattern"));
+  ui->actionMapTrafficPattern->setText(tr("Display Airport &Traffic Pattern"));
 
   ui->actionMapHold->setEnabled(routeLeg != nullptr);
-  ui->actionMapHold->setText(tr("Display Holding"));
+  ui->actionMapHold->setText(tr("Display &Holding"));
 
   ui->actionRouteCalcSelected->setEnabled(canCalcSelection());
 
@@ -2166,7 +2166,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection());
   ui->actionRouteTableSelectAll->setEnabled(!route.isEmpty());
 
-  ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
+  ui->actionMapNavaidRange->setText(tr("Show &Navaid Range"));
 
   ui->actionRouteEditUserWaypoint->setEnabled(routeLeg != nullptr &&
                                               routeLeg->getMapObjectType() == map::USERPOINTROUTE);

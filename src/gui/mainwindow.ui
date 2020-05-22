@@ -6976,7 +6976,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
    </property>
    <property name="text">
-    <string>Set Center for Distance Search</string>
+    <string>Set Center for &amp;Distance Search</string>
    </property>
    <property name="toolTip">
     <string>Set center mark for distance search</string>
@@ -6991,7 +6991,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
    </property>
    <property name="text">
-    <string>Set Center for Distance Search</string>
+    <string>Set Center for &amp;Distance Search</string>
    </property>
    <property name="toolTip">
     <string>Set center mark for distance search</string>
@@ -7180,7 +7180,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
    </property>
    <property name="text">
-    <string>Set Home View</string>
+    <string>Set Home &amp;View</string>
    </property>
    <property name="toolTip">
     <string>Sets currently visible map view as home view</string>
@@ -7354,7 +7354,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</iconset>
    </property>
    <property name="text">
-    <string>Measure GC Distance from %1</string>
+    <string>Measure &amp;GC Distance from %1</string>
    </property>
    <property name="toolTip">
     <string>Measure great circle distance on map</string>
@@ -7369,7 +7369,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/rangerings.svg</normaloff>:/littlenavmap/resources/icons/rangerings.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Range Rings</string>
+    <string>Show Range &amp;Rings</string>
    </property>
    <property name="toolTip">
     <string>Show range rings on map</string>
@@ -7384,7 +7384,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/navrange.svg</normaloff>:/littlenavmap/resources/icons/navrange.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Navaid Range for %1</string>
+    <string>Show &amp;Navaid Range for %1</string>
    </property>
    <property name="toolTip">
     <string>Show range for navaid on map</string>
@@ -7417,7 +7417,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/distancemeasurerhumb.svg</normaloff>:/littlenavmap/resources/icons/distancemeasurerhumb.svg</iconset>
    </property>
    <property name="text">
-    <string>Measure Rhumb Distance from %1</string>
+    <string>Measure &amp;Rhumb Distance from %1</string>
    </property>
    <property name="toolTip">
     <string>Measure rhumb line distance on map</string>
@@ -7480,7 +7480,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/rangeringoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Remove Range Ring</string>
+    <string>&amp;Remove Range Ring</string>
    </property>
    <property name="toolTip">
     <string>Remove this range ring</string>
@@ -7630,7 +7630,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as Flight Plan Departure</string>
+    <string>Set %1 as &amp;Flight Plan Departure</string>
    </property>
    <property name="toolTip">
     <string>Set this as departure for the flight plan</string>
@@ -7645,7 +7645,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as Flight Plan Destination</string>
+    <string>Set %1 as Flight Plan &amp;Destination</string>
    </property>
    <property name="toolTip">
     <string>Set this as destination for the flight plan</string>
@@ -7675,7 +7675,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
    </property>
    <property name="text">
-    <string>Delete selected Legs or Procedure</string>
+    <string>&amp;Delete selected Legs or Procedure</string>
    </property>
    <property name="toolTip">
     <string>Delete all selected flight plan legs</string>
@@ -7693,7 +7693,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routelegup.svg</normaloff>:/littlenavmap/resources/icons/routelegup.svg</iconset>
    </property>
    <property name="text">
-    <string>Move selected Legs Up</string>
+    <string>Move selected Legs &amp;Up</string>
    </property>
    <property name="toolTip">
     <string>Move selected flight plan legs up</string>
@@ -7711,7 +7711,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routelegdown.svg</normaloff>:/littlenavmap/resources/icons/routelegdown.svg</iconset>
    </property>
    <property name="text">
-    <string>Move selected Legs Down</string>
+    <string>Move selected Legs &amp;Down</string>
    </property>
    <property name="toolTip">
     <string>Move selected flight plan legs down</string>
@@ -7774,7 +7774,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as Flight Plan Departure</string>
+    <string>Set %1 as &amp;Flight Plan Departure</string>
    </property>
    <property name="iconText">
     <string>Set as Flight Plan Departure</string>
@@ -7996,7 +7996,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Information for %1</string>
+    <string>Show &amp;Information for %1</string>
    </property>
    <property name="toolTip">
     <string>Show Information for airport or navaid</string>
@@ -8163,7 +8163,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show on Map</string>
+    <string>Show on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the airport or navaid on the map</string>
@@ -8181,7 +8181,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Information</string>
+    <string>Show &amp;Information</string>
    </property>
    <property name="toolTip">
     <string>Show information about the airport or navaid</string>
@@ -8199,7 +8199,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Information</string>
+    <string>Show &amp;Information</string>
    </property>
    <property name="toolTip">
     <string>Show information about the selected entry</string>
@@ -8217,7 +8217,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show on Map</string>
+    <string>Show on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the selected entry on the map</string>
@@ -8483,7 +8483,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
    </property>
    <property name="text">
-    <string>Copy Flight Plan Route Description to the Clipboard</string>
+    <string>&amp;Copy Flight Plan Route Description to the Clipboard</string>
    </property>
    <property name="toolTip">
     <string>Copy flight plan route description to the clipboard</string>
@@ -8864,7 +8864,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</iconset>
    </property>
    <property name="text">
-    <string>Activate Flight Plan Leg</string>
+    <string>&amp;Activate Flight Plan Leg</string>
    </property>
    <property name="toolTip">
     <string>Activate Flight Plan Leg</string>
@@ -9533,7 +9533,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
    </property>
    <property name="text">
-    <string>Set Center for Distance Search</string>
+    <string>Set Center for &amp;Distance Search</string>
    </property>
    <property name="toolTip">
     <string>Set center mark for distance search</string>
@@ -9771,7 +9771,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</iconset>
    </property>
    <property name="text">
-    <string>Display Airport Traffic Pattern at %1</string>
+    <string>Display Airport &amp;Traffic Pattern at %1</string>
    </property>
    <property name="toolTip">
     <string>Show Airport traffic pattern for a runway at this airport</string>
@@ -9786,7 +9786,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Remove Airport Traffic Pattern</string>
+    <string>Remove Airport &amp;Traffic Pattern</string>
    </property>
    <property name="toolTip">
     <string>Remove this airport traffic pattern</string>
@@ -10117,7 +10117,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Information for %1</string>
+    <string>Show &amp;Information for %1</string>
    </property>
    <property name="toolTip">
     <string>Show Information for airport</string>
@@ -10135,7 +10135,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/search.svg</normaloff>:/littlenavmap/resources/icons/search.svg</iconset>
    </property>
    <property name="text">
-    <string>Show %1 in Search</string>
+    <string>Show %1 in &amp;Search</string>
    </property>
    <property name="toolTip">
     <string>Show airport in search window</string>
@@ -10150,7 +10150,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show %1 on Map</string>
+    <string>Show %1 on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the airport on the map</string>
@@ -10848,7 +10848,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
    </property>
    <property name="text">
-    <string>Display Holding at %1</string>
+    <string>Display &amp;Holding at %1</string>
    </property>
    <property name="toolTip">
     <string>Display holding at this position or navaid</string>
@@ -10863,7 +10863,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/holdoff.svg</normaloff>:/littlenavmap/resources/icons/holdoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Remove Holding</string>
+    <string>&amp;Remove Holding</string>
    </property>
    <property name="toolTip">
     <string>Remove this holding</string>
@@ -10880,7 +10880,7 @@ Best track will be selected automatically.</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Distance search options</string>
+    <string>&amp;Distance search options</string>
    </property>
    <property name="toolTip">
     <string>Show distance search options</string>
@@ -10924,7 +10924,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
    </property>
    <property name="text">
-    <string>Edit Flight Plan Position</string>
+    <string>Edit Flight Plan &amp;Position</string>
    </property>
    <property name="toolTip">
     <string>Edit name and coordinates of user defined flight plan position</string>
@@ -10949,7 +10949,7 @@ Best track will be selected automatically.</string>
   </action>
   <action name="actionRouteSaveAsXIvap">
    <property name="text">
-    <string>Export Flight Plan as X-IvAp FPL ...</string>
+    <string>Export Flight Plan as &amp;X-IvAp FPL ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FPL file for X-IvAp</string>
@@ -10960,7 +10960,7 @@ Best track will be selected automatically.</string>
   </action>
   <action name="actionRouteSaveAsHtml">
    <property name="text">
-    <string>Export Flight Plan as HTML Page ...</string>
+    <string>Export Flight Plan as &amp;HTML Page ...</string>
    </property>
    <property name="toolTip">
     <string>Export the flight plan as a HTML page</string>
@@ -10986,7 +10986,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate Flight Plan</string>
+    <string>&amp;Calculate Flight Plan</string>
    </property>
    <property name="toolTip">
     <string>Calculate a flight plan between departure and destination</string>
@@ -11004,7 +11004,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate Flight Plan between legs</string>
+    <string>&amp;Calculate Flight Plan between legs</string>
    </property>
    <property name="toolTip">
     <string>Calculate flight plan between selected legs</string>
@@ -11155,7 +11155,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Information for Airport</string>
+    <string>Show &amp;Information for Airport</string>
    </property>
    <property name="toolTip">
     <string>Show information about the airport</string>
@@ -11170,13 +11170,113 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Airport on Map</string>
+    <string>Show Airport on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the airport on the map</string>
    </property>
    <property name="statusTip">
     <string>Show the airport on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataShowDirect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show &amp;direct connection</string>
+   </property>
+   <property name="toolTip">
+    <string>Show a direct line connecting departure and destination of selected entries on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show a direct line connecting departure and destination of selected entries on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataShowRoute">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show &amp;flight plan</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the flight plan legs of the selected entries on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the flight plan legs of the selected entries on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataShowTrack">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show aircraft &amp;trail</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the aircraft trail of selected entries on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the aircraft trail of selected entries on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataSavePlanAs">
+   <property name="text">
+    <string>&amp;Save Flight Plan as ...</string>
+   </property>
+   <property name="iconText">
+    <string>Save flight plan as a new file</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as a new file</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataOpenPlan">
+   <property name="text">
+    <string>&amp;Open Flight Plan</string>
+   </property>
+   <property name="iconText">
+    <string>Open flight plan as current</string>
+   </property>
+   <property name="toolTip">
+    <string>Open flight plan as current</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataSavePerfAs">
+   <property name="text">
+    <string>Save Aircraft &amp;Perfomance as ...</string>
+   </property>
+   <property name="iconText">
+    <string>Save aircraft perfomance as a new file</string>
+   </property>
+   <property name="toolTip">
+    <string>Save aircraft perfomance as a new file</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataOpenPerf">
+   <property name="text">
+    <string>Open &amp;Aircraft Performance</string>
+   </property>
+   <property name="iconText">
+    <string>Open aircraft performance as current</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Aircraft Performance as current</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataSaveGpxAs">
+   <property name="text">
+    <string>Save &amp;GPX Trail as ...</string>
+   </property>
+   <property name="iconText">
+    <string>Save aircraft trail into GPX file</string>
+   </property>
+   <property name="toolTip">
+    <string>Save aircraft trail into GPX file</string>
    </property>
   </action>
  </widget>

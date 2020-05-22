@@ -80,7 +80,7 @@ enum MapObjectType
   HELIPAD = 1 << 25, /* Helipads on airports */
   COMPASS_ROSE = 1 << 26, /* Compass rose */
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
-  TRACK = 1 << 28,  /* NAT, PACOTS or AUSOTS track */
+  TRACK = 1 << 28, /* NAT, PACOTS or AUSOTS track */
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
 
   LOGBOOK = 1 << 30, /* Logbook entry */
@@ -110,8 +110,13 @@ enum MapObjectDisplayType
   DISPLAY_TYPE_NONE = 0,
   AIRPORT_WEATHER = 1 << 0, /* Airport weather icons */
   MINIMUM_ALTITUDE = 1 << 1, /* MORA (minimum off route altitude) */
+
   WIND_BARBS = 1 << 2, /* Wind barbs grid */
-  WIND_BARBS_ROUTE = 1 << 3 /* Wind barbs at flight plan waypoints */
+  WIND_BARBS_ROUTE = 1 << 3, /* Wind barbs at flight plan waypoints */
+
+  LOGBOOK_DIRECT = 1 << 4, /* GC direct line in logbook entry highlight */
+  LOGBOOK_ROUTE = 1 << 5, /* Route in logbook entry highlight */
+  LOGBOOK_TRACK = 1 << 6 /* Track in logbook entry highlight */
 };
 
 Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);

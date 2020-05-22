@@ -58,8 +58,8 @@ struct MapLogbookEntry;
 
 class MainWindow;
 class LogStatisticsDialog;
+class LogdataDialog;
 class QAction;
-
 /*
  * Methods to edit, add, delete, import and export logbook entries. Also creates entries for flight events.
  */
@@ -136,6 +136,36 @@ public:
   /* Resets detection of flight */
   void resetTakeoffLandingDetection();
 
+  const atools::geo::LineString *getTrackGeometry(int id);
+  const atools::geo::LineString *getRouteGeometry(int id);
+
+  /* Clear caches */
+  void preDatabaseLoad();
+  void postDatabaseLoad();
+
+  /* Show flight plan, trail and direct options changed */
+  void displayOptionsChanged();
+
+  /* true if the respective action is enabled in the context menu */
+  bool isDirectPreviewShown();
+  bool isRoutePreviewShown();
+  bool isTrackPreviewShown();
+
+  /* true if the files are attached and length is > 0 */
+  bool hasRouteAttached(int id);
+  bool hasPerfAttached(int id);
+  bool hasTrackAttached(int id);
+
+  /* File attachements - push buttons or context menu actions from search */
+  void planOpen(atools::sql::SqlRecord *record, QWidget *parent); /* Open as current */
+  void planAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new plan to logbook entry */
+  void planSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached LNMPLN plan to file */
+  void gpxAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new GPX to logbook entry */
+  void gpxSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached GPX plan to file */
+  void perfOpen(atools::sql::SqlRecord *record, QWidget *parent); /* Open as current */
+  void perfAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new performance to logbook entry */
+  void perfSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached performance to file */
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshLogSearch(bool loadAll, bool keepSelection);
@@ -157,6 +187,9 @@ private:
   /* Attach the current flight plan and performance file to the record as Gzipped XML files */
   void recordFlightplanAndPerf(atools::sql::SqlRecord& record);
 
+  /* Connect buttons in dialog with above */
+  void connectDialogSignals(LogdataDialog *dialog);
+
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
   int logEntryId = -1;
@@ -166,7 +199,6 @@ private:
   atools::fs::userdata::LogdataManager *manager;
   atools::gui::Dialog *dialog;
   MainWindow *mainWindow;
-
 };
 
 #endif // LNM_LOGDATACONTROLLER_H

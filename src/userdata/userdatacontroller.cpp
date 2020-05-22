@@ -748,14 +748,14 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     choiceDialog.add(APPEND, tr("&Append to an already present file"), QString(), false);
   else
     // Add a hidden dummy which still allows to save the settings to the same key/variable
-    choiceDialog.addHidden(APPEND, tr("&Append to an already present file"), QString());
+    choiceDialog.addHidden(APPEND);
 
   choiceDialog.add(SELECTED, tr("Export &selected entries only"), QString(), true, numSelected == 0 /* disabled */);
 
   if(headerAllowed)
     choiceDialog.add(HEADER, tr("Add a &header to the first line"), QString(), false);
   else
-    choiceDialog.addHidden(HEADER, tr("&Add a header to the first line"), QString());
+    choiceDialog.addHidden(HEADER);
 
   choiceDialog.restoreState();
 

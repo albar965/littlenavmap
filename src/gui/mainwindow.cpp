@@ -1293,6 +1293,17 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapHideRangeRings, &QAction::triggered, this, &MainWindow::clearRangeRingsAndDistanceMarkers);
 
+  connect(ui->actionSearchLogdataShowDirect, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionSearchLogdataShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionSearchLogdataShowTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+
+  connect(ui->actionSearchLogdataShowDirect, &QAction::toggled,
+          logdataController, &LogdataController::displayOptionsChanged);
+  connect(ui->actionSearchLogdataShowRoute, &QAction::toggled,
+          logdataController, &LogdataController::displayOptionsChanged);
+  connect(ui->actionSearchLogdataShowTrack, &QAction::toggled,
+          logdataController, &LogdataController::displayOptionsChanged);
+
   connect(ui->actionMapShowAirportWeather, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
 
   // Clear selection and highlights
@@ -3274,7 +3285,9 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                          ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                         ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr});
+                         ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
+                         ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
+                         ui->actionSearchLogdataShowTrack});
   }
   else
     mapWidget->resetSettingActionsToDefault();
@@ -3510,7 +3523,9 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowCities, ui->actionMapShowSunShading, ui->actionMapShowHillshading,
                     ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode,
                     ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                    ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionRunWebserver});
+                    ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionRunWebserver,
+                    ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack
+                   });
   Settings::instance().syncSettings();
 }
 

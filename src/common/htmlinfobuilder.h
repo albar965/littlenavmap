@@ -359,7 +359,7 @@ private:
   void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach,
                bool standalone) const;
 
-  QString filepathTextShow(const QString& filepath) const;
+  QString filepathTextShow(const QString& filepath, const QString& prefix = QString()) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;
 
   QString airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const;

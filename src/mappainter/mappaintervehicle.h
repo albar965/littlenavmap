@@ -48,13 +48,13 @@ class MapPainterVehicle :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterVehicle(MapPaintWidget* mapPaintWidget, MapScale *mapScale);
+  MapPainterVehicle(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
   virtual ~MapPainterVehicle();
 
   virtual void render(PaintContext *context) = 0;
 
 protected:
-  void paintTrack(const PaintContext *context);
+  void paintAircraftTrack(const PaintContext *context);
 
   void paintUserAircraft(const PaintContext *context,
                          const atools::fs::sc::SimConnectUserAircraft& userAircraft, float x, float y);
@@ -79,9 +79,6 @@ protected:
 
   /* Calculate rotation for aircraft icon */
   float calcRotation(const PaintContext *context, const atools::fs::sc::SimConnectAircraft& aircraft);
-
-  /* Minimum length in pixel of a track segment to be drawn */
-  static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
 
   static Q_DECL_CONSTEXPR int WIND_POINTER_SIZE = 40;
 

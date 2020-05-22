@@ -34,7 +34,7 @@ const int NUM_CLOSEST_AI_LABELS = 5;
 const float DIST_METER_CLOSEST_AI_LABELS = atools::geo::nmToMeter(20);
 const float DIST_FT_CLOSEST_AI_LABELS = 5000;
 
-MapPainterAircraft::MapPainterAircraft(MapPaintWidget* mapWidget, MapScale *mapScale)
+MapPainterAircraft::MapPainterAircraft(MapPaintWidget *mapWidget, MapScale *mapScale)
   : MapPainterVehicle(mapWidget, mapScale)
 {
 
@@ -55,7 +55,7 @@ void MapPainterAircraft::render(PaintContext *context)
   Q_UNUSED(saver)
 
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
-    paintTrack(context);
+    paintAircraftTrack(context);
 
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
   const atools::geo::Pos& pos = userAircraft.getPosition();

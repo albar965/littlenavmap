@@ -257,7 +257,7 @@ private:
                                             const Marble::GeoDataLatLonBox& curBox, bool highlights);
   void updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight);
 
-  void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::LineString& line,
+  void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
                                 const Marble::GeoDataLatLonBox& curBox,
                                 const CoordinateConverter& conv);
 
