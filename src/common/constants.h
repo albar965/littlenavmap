@@ -97,6 +97,7 @@ const QLatin1Literal ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");
 const QLatin1Literal ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarning");
 
 const QLatin1Literal ACTIONS_SHOW_SAVE_WARNING("Actions/ShowSaveWarning");
+const QLatin1Literal ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
 
 /* Other setting key names */
 const QLatin1Literal DATABASE_BASEPATH("Database/BasePath");

@@ -54,6 +54,7 @@
 #include "common/aircrafttrack.h"
 #include "weather/windreporter.h"
 #include "gui/signalblocker.h"
+#include "gui/dialog.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -3249,6 +3250,22 @@ void MapWidget::sunShadingToUi(map::MapSunShading sunShading)
       ui->actionMapShowSunShadingUserTime->setChecked(true);
       break;
   }
+}
+
+bool MapWidget::checkPos(const atools::geo::Pos& pos)
+{
+  if(isVisibleWidget() && projection() == Marble::Mercator && pos.isPole(5.f /* epsilon */))
+  {
+    atools::gui::Dialog(this).showWarnMsgBox(lnm::ACTIONS_SHOW_ZOOM_WARNING,
+                                             tr("<p>Cannot zoom to a position nearby the "
+                                                  "poles in Mercator projection.<br/>"
+                                                  "Use Spherical instead.</p>"),
+                                             tr("Do not show this dialog again."));
+    return false;
+  }
+
+  // Keep zooming
+  return true;
 }
 
 map::MapSunShading MapWidget::sunShadingFromUi()

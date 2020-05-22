@@ -330,6 +330,12 @@ void MapPaintWidget::updateMapObjectsShown()
   // No-op
 }
 
+bool MapPaintWidget::checkPos(const atools::geo::Pos&)
+{
+  return true;
+  // No-op
+}
+
 map::MapObjectTypes MapPaintWidget::getShownMapFeatures() const
 {
   return paintLayer->getShownMapObjects();
@@ -626,12 +632,14 @@ void MapPaintWidget::setDistanceToMap(double distanceKm, bool allowAdjust)
 
 void MapPaintWidget::showPosNotAdjusted(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
 {
-  showPosInternal(pos, distanceKm, doubleClick, false /* allow adjust */);
+  if(checkPos(pos))
+    showPosInternal(pos, distanceKm, doubleClick, false /* allow adjust */);
 }
 
 void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
 {
-  showPosInternal(pos, distanceKm, doubleClick, true /* allow adjust */);
+  if(checkPos(pos))
+    showPosInternal(pos, distanceKm, doubleClick, true /* allow adjust */);
 }
 
 void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distanceKm, bool doubleClick, bool allowAdjust)
@@ -639,6 +647,7 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
 #if DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << pos << distanceKm << doubleClick;
 #endif
+
   if(!pos.isValid())
   {
     qWarning() << Q_FUNC_INFO << "Invalid position";
@@ -665,6 +674,9 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
 #if DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << rect << doubleClick;
 #endif
+
+  if(!checkPos(rect.getCenter()))
+    return;
 
   hideTooltip();
   showAircraft(false);

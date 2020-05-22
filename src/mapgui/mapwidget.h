@@ -263,6 +263,8 @@ private:
   virtual map::MapSunShading sunShadingFromUi() override;
   void sunShadingToUi(map::MapSunShading sunShading);
 
+  virtual bool checkPos(const atools::geo::Pos& pos) override;
+
   /* Connect menu actions to overlays */
   void connectOverlayMenus();
 
