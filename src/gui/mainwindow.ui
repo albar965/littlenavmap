@@ -7402,10 +7402,10 @@ Best track will be selected automatically.</string>
     <string>&amp;Remove all Ranges, Measurements, Patterns and Holdings</string>
    </property>
    <property name="toolTip">
-    <string>Remove all range rings, measurements,  traffic patterns and holdings from map</string>
+    <string>Remove all range rings, measurements, traffic patterns and holdings from map</string>
    </property>
    <property name="statusTip">
-    <string>Remove all range rings, measurements,  traffic patterns and holdings from map</string>
+    <string>Remove all range rings, measurements, traffic patterns and holdings from map</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+H</string>

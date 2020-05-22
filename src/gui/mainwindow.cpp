@@ -1847,7 +1847,8 @@ void MainWindow::routeResetAll()
     DELETE_TRAIL,
     DELETE_ACTIVE_LEG,
     RESTART_PERF,
-    RESTART_LOGBOOK
+    RESTART_LOGBOOK,
+    REMOVE_MARKS
   };
 
   qDebug() << Q_FUNC_INFO;
@@ -1866,6 +1867,9 @@ void MainWindow::routeResetAll()
                    tr("Restarts the background aircraft performance collection"), true);
   choiceDialog.add(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
                    tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
+  choiceDialog.add(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns and Holdings"),
+                   tr("Remove all range rings, measurements, traffic patterns and holdings from map"), false);
+
   choiceDialog.restoreState();
 
   if(choiceDialog.exec() == QDialog::Accepted)
@@ -1880,6 +1884,8 @@ void MainWindow::routeResetAll()
       NavApp::getAircraftPerfController()->restartCollection(true /* do not ask questions */);
     if(choiceDialog.isChecked(RESTART_LOGBOOK))
       NavApp::getLogdataController()->resetTakeoffLandingDetection();
+    if(choiceDialog.isChecked(REMOVE_MARKS))
+      clearRangeRingsAndDistanceMarkers(true /* quiet */);
   }
 }
 
@@ -2290,16 +2296,22 @@ bool MainWindow::openInSkyVector()
   return true;
 }
 
-void MainWindow::clearRangeRingsAndDistanceMarkers()
+void MainWindow::clearRangeRingsAndDistanceMarkers(bool quiet)
 {
-  int result = atools::gui::Dialog(this).
-               showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS,
-                                  tr("Delete all range rings, measurement lines, traffic patterns and holds from map?"),
-                                  tr("Do not &show this dialog again."),
-                                  QMessageBox::Yes | QMessageBox::No,
-                                  QMessageBox::No, QMessageBox::Yes);
+  if(!quiet)
+  {
+    int result = atools::gui::Dialog(this).
+                 showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS,
+                                    tr(
+                                      "Delete all range rings, measurement lines, traffic patterns and holds from map?"),
+                                    tr("Do not &show this dialog again."),
+                                    QMessageBox::Yes | QMessageBox::No,
+                                    QMessageBox::No, QMessageBox::Yes);
 
-  if(result == QMessageBox::Yes)
+    if(result == QMessageBox::Yes)
+      mapWidget->clearRangeRingsAndDistanceMarkers();
+  }
+  else
     mapWidget->clearRangeRingsAndDistanceMarkers();
 }
 

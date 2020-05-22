@@ -323,7 +323,7 @@ private:
   void sunShadingTimeSet();
 
   /* From menu action - remove all measurment lines, patterns, holds, etc. */
-  void clearRangeRingsAndDistanceMarkers();
+  void clearRangeRingsAndDistanceMarkers(bool quiet = false);
 
   /* Reset flight plan and other for new flight */
   void routeResetAll();
