@@ -545,15 +545,17 @@ void LogdataController::exportCsv()
     };
 
     ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Logbook Export"),
-                              tr("Content of attached files will be added to the exported CSV if selected. "
-                                 "Note that not all programs will be able to read this. "
-                                 "Columns will be empty on export if disabled."),
-                              tr("Select items to include in export"),
+                              QString(),
+                              tr("Select export options for logbook"),
                               lnm::LOGDATA_EXPORT_CSV, "LOGBOOK.html#import-and-export");
 
-    choiceDialog.add(EXPORTPLAN, tr("&Flight plan in LNMPLN format"), QString(), false);
-    choiceDialog.add(EXPORTPERF, tr("&Aircraft performance"), QString(), false);
-    choiceDialog.add(EXPORTGPX, tr("&GPX file containing flight plan points and trail"), QString(), false);
+    QString attachmentToolTip = tr("Content of attached file will be added to the exported CSV if selected.\n"
+                                   "Note that not all programs will be able to read this.\n"
+                                   "Columns will be empty on export if disabled.");
+
+    choiceDialog.add(EXPORTPLAN, tr("&Flight plan in LNMPLN format"), attachmentToolTip, false);
+    choiceDialog.add(EXPORTPERF, tr("&Aircraft performance"), attachmentToolTip, false);
+    choiceDialog.add(EXPORTGPX, tr("&GPX file containing flight plan points and trail"), attachmentToolTip, false);
     choiceDialog.add(HEADER, tr("Add a &header to the first line"), QString(), false);
     choiceDialog.restoreState();
 
