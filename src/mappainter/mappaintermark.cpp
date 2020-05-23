@@ -341,13 +341,6 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   painter->setBackground(mapcolors::routeOutlineColor);
   painter->setBrush(Qt::NoBrush);
 
-  float outerlinewidth = context->sz(context->thicknessRangeDistance, 7) * 0.6f;
-  float innerlinewidth = context->sz(context->thicknessRangeDistance, 4) * 0.6f;
-  QPen directPen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-  QPen directOutlinePen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap,
-                        Qt::RoundJoin);
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
-
   // Draw connecting lines ==========================================================================
   QVector<const MapLogbookEntry *> visibleLogEntries;
   for(const MapLogbookEntry& entry : entries)
@@ -360,6 +353,9 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   atools::fs::userdata::LogdataManager *logdataManager = NavApp::getLogdataManager();
   if(context->objectDisplayTypes & map::LOGBOOK_ROUTE)
   {
+    float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
+    float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
+
     painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap,
                          Qt::RoundJoin));
 
@@ -372,7 +368,7 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
 
     // Use a lighter pen for the flight plan legs ======================================
     QPen routePen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    routePen.setColor(directPen.color().lighter(130));
+    routePen.setColor(mapcolors::routeLogEntryColor.lighter(130));
     painter->setPen(routePen);
     for(const MapLogbookEntry *entry : visibleLogEntries)
     {
@@ -385,9 +381,9 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   // Draw track ==========================================================================
   if(context->objectDisplayTypes & map::LOGBOOK_TRACK)
   {
-    // Use a darker pen for the trail ======================================
+    // Use a darker pen for the trail but same style as normal trail ======================================
     QPen trackPen = mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2));
-    trackPen.setColor(directPen.color().darker(200));
+    trackPen.setColor(mapcolors::routeLogEntryColor.darker(200));
     painter->setPen(trackPen);
 
     for(const MapLogbookEntry *entry : visibleLogEntries)
@@ -398,8 +394,17 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
     }
   }
 
+  // Draw direct connection ==========================================================================
   if(context->objectDisplayTypes & map::LOGBOOK_DIRECT)
   {
+    // Use smaller measurment line thickness for this direct connection
+    float outerlinewidth = context->sz(context->thicknessRangeDistance, 7) * 0.6f;
+    float innerlinewidth = context->sz(context->thicknessRangeDistance, 4) * 0.6f;
+    QPen directPen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen directOutlinePen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap,
+                          Qt::RoundJoin);
+    int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
+
     QVector<LineString> geo;
     for(const MapLogbookEntry *entry : visibleLogEntries)
       geo.append(entry->lineString());
@@ -456,6 +461,8 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   // Draw airport symbols and text ==========================================================================
   float x, y;
   textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
+  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
+  context->szFont(context->textSizeFlightplan);
 
   QSet<int> airportIds;
   for(const MapLogbookEntry *entry : visibleLogEntries)
