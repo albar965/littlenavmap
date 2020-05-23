@@ -50,6 +50,7 @@ class RouteExport;
 namespace Marble {
 class LegendWidget;
 class MarbleAboutDialog;
+class RenderState;
 class ElevationModel;
 }
 
@@ -154,9 +155,16 @@ public:
   void buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
   void buildWeatherContextForTooltip(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
 
-  /* Render status from marble widget */
-  void renderStatusChanged(Marble::RenderStatus status);
+  /* Render state from marble widget. Get the more detailed state since it updates more often */
+  void renderStatusChanged(const Marble::RenderState& state);
 
+  /* Clear render status if no updates appear */
+  void renderStatusReset();
+
+  /* Update label */
+  void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
+
+  /* Show "Too many objects" label if number of map features was truncated */
   void resultTruncated(int truncatedTo);
 
   void setDatabaseErased(bool value)
@@ -420,7 +428,8 @@ private:
   bool databasesErased = false;
 
   QString aboutMessage;
-  QTimer clockTimer;
+  QTimer clockTimer, renderStatusTimer;
+  Marble::RenderStatus lastRenderStatus = Marble::Incomplete;
 
 };
 

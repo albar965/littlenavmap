@@ -324,9 +324,15 @@ MainWindow::MainWindow()
     updateLegend();
     updateWindowTitle();
 
+    // Update clock every second =====================
     clockTimer.setInterval(1000);
     connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);
     clockTimer.start();
+
+    // Reset render status - change to done after ten seconds =====================
+    renderStatusTimer.setInterval(5000);
+    renderStatusTimer.setSingleShot(true);
+    connect(&renderStatusTimer, &QTimer::timeout, this, &MainWindow::renderStatusReset);
 
     qDebug() << Q_FUNC_INFO << "Constructor done";
   }
@@ -1222,7 +1228,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
   // Connect the map widget to the position label.
   connect(mapWidget, &MapPaintWidget::distanceChanged, this, &MainWindow::distanceChanged);
-  connect(mapWidget, &MapPaintWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
+  connect(mapWidget, &MapPaintWidget::renderStateChanged, this, &MainWindow::renderStatusChanged);
   connect(mapWidget, &MapPaintWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
   connect(mapWidget, &MapWidget::showProcedures,
@@ -1817,26 +1823,49 @@ void MainWindow::distanceChanged()
   mapDistanceLabel->setText(text);
 }
 
-void MainWindow::renderStatusChanged(RenderStatus status)
+void MainWindow::renderStatusReset()
 {
-  QString prefix =
-    mapWidget->model()->workOffline() ? atools::util::HtmlBuilder::errorMessage(tr("Offline.")) : QString();
+  // Force reset to complete to avoid forever "Waiting"
+  renderStatusUpdateLabel(Marble::Complete, false /* forceUpdate */);
+}
 
-  switch(status)
+void MainWindow::renderStatusUpdateLabel(RenderStatus status, bool forceUpdate)
+{
+  if(status != lastRenderStatus || forceUpdate)
   {
-    case Marble::Complete:
-      renderStatusLabel->setText(prefix + tr("Done."));
-      break;
-    case Marble::WaitingForUpdate:
-      renderStatusLabel->setText(prefix + tr("Waiting for Update ..."));
-      break;
-    case Marble::WaitingForData:
-      renderStatusLabel->setText(prefix + tr("Waiting for Data ..."));
-      break;
-    case Marble::Incomplete:
-      renderStatusLabel->setText(prefix + tr("Incomplete."));
-      break;
+    QString suffix = mapWidget->model()->workOffline() ?
+                     tr(" ") + atools::util::HtmlBuilder::errorMessage(tr("Offline")) :
+                     QString();
+
+    switch(status)
+    {
+      case Marble::Complete:
+        renderStatusLabel->setText(tr("Done") + suffix);
+        break;
+      case Marble::WaitingForUpdate:
+        renderStatusLabel->setText(tr("Updating") + suffix);
+        break;
+      case Marble::WaitingForData:
+        renderStatusLabel->setText(tr("Loading") + suffix);
+        break;
+      case Marble::Incomplete:
+        renderStatusLabel->setText(tr("Incomplete") + suffix);
+        break;
+    }
+    lastRenderStatus = status;
   }
+}
+
+void MainWindow::renderStatusChanged(const RenderState& state)
+{
+  RenderStatus status = state.status();
+  renderStatusUpdateLabel(status, false /* forceUpdate */);
+
+  if(status == Marble::WaitingForUpdate || status == Marble::WaitingForData)
+    // Reset forever lasting waiting status if Marble cannot fetch tiles
+    renderStatusTimer.start();
+  else if(status == Marble::Complete || status == Marble::Incomplete)
+    renderStatusTimer.stop();
 }
 
 void MainWindow::routeResetAll()
@@ -2959,6 +2988,7 @@ void MainWindow::mainWindowShown()
   // QTimer::singleShot(20, this, &MainWindow::adjustProfileDockHeight);
 
   setStatusMessage(tr("Ready."));
+  renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
 
   // routeExport->routeMulitExportOptions();
 
@@ -3307,11 +3337,14 @@ void MainWindow::restoreStateMain()
 
   // Map settings that are always loaded
   widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid, ui->actionMapShowCities,
-                       ui->actionMapShowHillshading, ui->actionRouteEditMode, ui->actionWorkOffline,
+                       ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                        ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionMapShowSunShading,
                        ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRunWebserver});
   widgetState.setBlockSignals(false);
+
+  // Load status and allow to send signals
+  widgetState.restore(ui->actionWorkOffline);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 

@@ -3729,10 +3729,13 @@ void MapWidget::workOffline(bool offline)
   qDebug() << "Work offline" << offline;
   model()->setWorkOffline(offline);
 
-  mainWindow->renderStatusChanged(Marble::RenderStatus::Complete);
+  mainWindow->renderStatusUpdateLabel(Marble::RenderStatus::Complete, true /* forceUpdate */);
 
   if(!offline)
+  {
+    reloadMap();
     update();
+  }
 }
 
 void MapWidget::zoomInOut(bool directionIn, bool smooth)
