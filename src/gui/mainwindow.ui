@@ -7411,21 +7411,6 @@ Best track will be selected automatically.</string>
     <string>Alt+Shift+H</string>
    </property>
   </action>
-  <action name="actionMapMeasureRhumbDistance">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/distancemeasurerhumb.svg</normaloff>:/littlenavmap/resources/icons/distancemeasurerhumb.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Measure &amp;Rhumb Distance from %1</string>
-   </property>
-   <property name="toolTip">
-    <string>Measure rhumb line distance on map</string>
-   </property>
-   <property name="statusTip">
-    <string>Measure rhumb line distance on map</string>
-   </property>
-  </action>
   <action name="actionMapShowSoftAirports">
    <property name="checkable">
     <bool>true</bool>
@@ -11431,7 +11416,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

@@ -586,7 +586,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         removeDistanceMarker(index);
       else
         // Add measurement line for Ctrl+Click or Alt+Click into center
-        addMeasurement(pos, event->modifiers() == Qt::ControlModifier, result);
+        addMeasurement(pos, result);
       return true;
     }
   }
@@ -1338,7 +1338,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
   if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
   {
-    // Changing or adding distance measurment line ==========================================
+    // Changing or adding distance measurement line ==========================================
     // Position is valid update the distance mark continuously
     if(visible && !getScreenIndexConst()->getDistanceMarks().isEmpty())
       getScreenIndex()->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
@@ -1434,21 +1434,19 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   }
 }
 
-void MapWidget::addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapSearchResult& result)
+void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapSearchResult& result)
 {
-  addMeasurement(pos, rhumb,
-                 atools::firstOrNull(result.airports),
+  addMeasurement(pos, atools::firstOrNull(result.airports),
                  atools::firstOrNull(result.vors),
                  atools::firstOrNull(result.ndbs),
                  atools::firstOrNull(result.waypoints));
 }
 
-void MapWidget::addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapAirport *airport,
+void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirport *airport,
                                const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint)
 {
   // Distance line
   map::DistanceMarker dm;
-  dm.isRhumbLine = rhumb;
   dm.to = pos;
 
   // Build distance line depending on selected airport or navaid (color, magvar, etc.)
@@ -1487,7 +1485,7 @@ void MapWidget::addMeasurement(const atools::geo::Pos& pos, bool rhumb, const ma
   {
     dm.magvar = NavApp::getMagVar(pos, 0.f);
     dm.from = pos;
-    dm.color = dm.isRhumbLine ? mapcolors::distanceRhumbColor : mapcolors::distanceColor;
+    dm.color = mapcolors::distanceColor;
   }
 
   getScreenIndex()->getDistanceMarks().append(dm);
@@ -1542,10 +1540,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // ===================================================================================
   // Texts with % will be replaced save them and let the ActionTextSaver restore them on return
-  atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
-                                          ui->actionMapRangeRings, ui->actionMapNavaidRange,
-                                          ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
-                                          ui->actionMapShowInformation,
+  atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapRangeRings,
+                                          ui->actionMapNavaidRange, ui->actionShowInSearch, ui->actionRouteAddPos,
+                                          ui->actionRouteAppendPos, ui->actionMapShowInformation,
                                           ui->actionMapShowApproaches, ui->actionMapShowApproachesCustom,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
                                           ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
@@ -1555,10 +1552,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionMapTrafficPattern, ui->actionMapHold});
 
   // Re-enable actions on exit to allow keystrokes
-  atools::gui::ActionStateSaver stateSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
-                                            ui->actionMapRangeRings, ui->actionMapNavaidRange,
-                                            ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
-                                            ui->actionMapShowInformation,
+  atools::gui::ActionStateSaver stateSaver({ui->actionMapMeasureDistance, ui->actionMapRangeRings,
+                                            ui->actionMapNavaidRange, ui->actionShowInSearch, ui->actionRouteAddPos,
+                                            ui->actionRouteAppendPos, ui->actionMapShowInformation,
                                             ui->actionMapShowApproaches, ui->actionMapShowApproachesCustom,
                                             ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
                                             ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
@@ -1576,7 +1572,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addSeparator();
 
   menu.addAction(ui->actionMapMeasureDistance);
-  menu.addAction(ui->actionMapMeasureRhumbDistance);
   menu.addAction(ui->actionMapHideDistanceMarker);
   menu.addSeparator();
 
@@ -1645,8 +1640,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapSetMark->setEnabled(visibleOnMap);
   ui->actionMapSetHome->setEnabled(visibleOnMap);
   ui->actionMapMeasureDistance->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT));
-  ui->actionMapMeasureRhumbDistance->setEnabled(visibleOnMap &&
-                                                NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT));
   ui->actionMapRangeRings->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS));
 
   ui->actionMapUserdataAdd->setEnabled(visibleOnMap);
@@ -2122,13 +2115,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   {
     // Set text to measure "from airport" etc.
     ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(measureText));
-    ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(measureText));
   }
   else
   {
     // Noting found at cursor - use "measure from here"
     ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(tr("here")));
-    ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(tr("here")));
   }
 
   // Update texts to give user a hint for hidden user features in the disabled menu items =====================
@@ -2136,7 +2127,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT))
   {
     ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text() + notShown);
-    ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text() + notShown);
   }
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
   {
@@ -2269,8 +2259,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       removeTrafficPatterm(trafficPatternIndex);
     else if(action == ui->actionMapHideHold)
       removeHold(holdIndex);
-    else if(action == ui->actionMapMeasureDistance || action == ui->actionMapMeasureRhumbDistance)
-      addMeasurement(pos, action == ui->actionMapMeasureRhumbDistance, airport, vor, ndb, waypoint);
+    else if(action == ui->actionMapMeasureDistance)
+      addMeasurement(pos, airport, vor, ndb, waypoint);
     else if(action == ui->actionRouteDeleteWaypoint)
       NavApp::getRouteController()->routeDelete(routeIndex);
     else if(action == ui->actionMapEditUserWaypoint)

@@ -125,7 +125,7 @@ private:
   void drawRouteInternal(const PaintContext *context, QStringList routeTexts, QVector<atools::geo::Line> lines,
                          int passedRouteLeg);
   QString buildLegText(const PaintContext *context, const RouteLeg& leg);
-  QString buildLegText(const PaintContext *context, float dist, float courseRhumbMag, float courseRhumbTrue,
+  QString buildLegText(const PaintContext *context, float dist,
                        float courseGcMag, float courseGcTrue);
 
   const Route *route;

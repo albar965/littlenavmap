@@ -330,7 +330,7 @@ private:
   /* Set user defined time for sun shading */
   void sunShadingTimeSet();
 
-  /* From menu action - remove all measurment lines, patterns, holds, etc. */
+  /* From menu action - remove all measurement lines, patterns, holds, etc. */
   void clearRangeRingsAndDistanceMarkers(bool quiet = false);
 
   /* Reset flight plan and other for new flight */

@@ -389,7 +389,6 @@ enum DisplayOption
   ITEM_AIRPORT_TOWER = 1 << 2,
   ITEM_AIRPORT_ATIS = 1 << 3,
   ITEM_AIRPORT_RUNWAY = 1 << 4,
-  // ITEM_AIRPORT_WIND_POINTER = 1 << 5,
 
   ITEM_USER_AIRCRAFT_REGISTRATION = 1 << 8,
   ITEM_USER_AIRCRAFT_TYPE = 1 << 9,
@@ -432,6 +431,19 @@ enum DisplayOptionNavAid
 Q_DECLARE_FLAGS(DisplayOptionsNavAid, DisplayOptionNavAid);
 Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsNavAid);
 
+/* Measurement lines */
+enum DisplayOptionMeasurement
+{
+  MEASUREMNENT_NONE = 0,
+  MEASUREMNENT_TRUE = 1 << 0,
+  MEASUREMNENT_MAG = 1 << 1,
+  MEASUREMNENT_DIST = 1 << 2,
+  MEASUREMNENT_LABEL = 1 << 3
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsMeasurement, DisplayOptionMeasurement);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsMeasurement);
+
 enum DisplayOptionRose
 {
   ROSE_NONE = 0,
@@ -453,8 +465,6 @@ enum DisplayOptionRoute
 {
   ROUTE_NONE = 0,
   ROUTE_DISTANCE = 1 << 0,
-  ROUTE_MAG_COURSE_RHUMB = 1 << 1,
-  ROUTE_TRUE_COURSE_RHUMB = 1 << 2,
   ROUTE_MAG_COURSE_GC = 1 << 3,
   ROUTE_TRUE_COURSE_GC = 1 << 4
 };
@@ -805,6 +815,11 @@ public:
   const optsd::DisplayOptionsRose& getDisplayOptionsRose() const
   {
     return displayOptionsRose;
+  }
+
+  const optsd::DisplayOptionsMeasurement& getDisplayOptionsMeasurement() const
+  {
+    return displayOptionsMeasurement;
   }
 
   const optsd::DisplayOptionsNavAid& getDisplayOptionsNavAid() const
@@ -1253,9 +1268,12 @@ private:
     optsd::ROSE_TRACK_LINE | optsd::ROSE_TRACK_LABEL | optsd::ROSE_CRAB_ANGLE | optsd::ROSE_NEXT_WAYPOINT |
     optsd::ROSE_DIR_LABLES;
 
+  optsd::DisplayOptionsMeasurement displayOptionsMeasurement = optsd::MEASUREMNENT_MAG | optsd::MEASUREMNENT_TRUE |
+                                                               optsd::MEASUREMNENT_DIST | optsd::MEASUREMNENT_LABEL;
+
   optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
 
-  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE_RHUMB;
+  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE_GC;
 
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
                                                        optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND;

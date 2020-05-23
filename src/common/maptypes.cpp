@@ -1146,14 +1146,14 @@ QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj)
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
 {
   bool dummy = true; // Value was removed
-  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> obj.isRhumbLine >> dummy;
+  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> dummy >> dummy;
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 {
-  bool dummyMagvar = true; // Value was removed
-  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << obj.isRhumbLine << dummyMagvar;
+  bool dummy = false; // Value was removed
+  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << dummy << dummy;
   return dataStream;
 }
 

@@ -84,6 +84,7 @@ struct PaintContext
 
   optsd::DisplayOptions dispOpts;
   optsd::DisplayOptionsRose dispOptsRose;
+  optsd::DisplayOptionsMeasurement dispOptsMeasurement;
   optsd::DisplayOptionsRoute dispOptsRoute;
   opts::Flags flags;
   opts2::Flags2 flags2;
@@ -134,6 +135,11 @@ struct PaintContext
   bool  dOptRose(const optsd::DisplayOptionsRose& opts) const
   {
     return dispOptsRose & opts;
+  }
+
+  bool  dOptMeasurement(const optsd::DisplayOptionsMeasurement& opts) const
+  {
+    return dispOptsMeasurement & opts;
   }
 
   bool  dOptRoute(const optsd::DisplayOptionsRoute& opts) const

@@ -205,28 +205,13 @@ public:
     return distanceTo;
   }
 
-  /* Rhumb line distance to this route map object from the predecessor in nautical miles or 0 if first in route */
-  float getDistanceToRhumb() const
-  {
-    return distanceToRhumb;
-  }
-
   /* Great circle start magnetic course to this route map object from the predecessor in degrees or 0 if first in route */
   float getCourseToMag() const;
-
-  /* Rhumb line magnetic  course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseToRhumbMag() const;
 
   /* Great circle start true course to this route map object from the predecessor in degrees or 0 if first in route */
   float getCourseToTrue() const
   {
     return courseTo;
-  }
-
-  /* Rhumb line true course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseToRhumbTrue() const
-  {
-    return courseRhumbTo;
   }
 
   /* @return false if this waypoint was not found in the database */
@@ -371,9 +356,7 @@ private:
   bool validWaypoint = false, alternate = false, valid = false;
 
   float distanceTo = 0.f,
-        distanceToRhumb = 0.f,
         courseTo = 0.f,
-        courseRhumbTo = 0.f,
         groundAltitude = 0.f,
         magvar = 0.f, /* Either taken from navaid or average across the route */
         magvarPos = 0.f; /* Calculate environment value */

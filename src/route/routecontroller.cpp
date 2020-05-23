@@ -94,9 +94,7 @@ enum RouteColumns
   FREQ,
   RANGE,
   COURSE,
-  DIRECT,
   COURSETRUE,
-  DIRECTTRUE,
   DIST,
   REMAINING_DISTANCE,
   LEG_TIME,
@@ -132,9 +130,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("Freq.\nMHz/kHz/Cha."),
                                  QObject::tr("Range\n%dist%"),
                                  QObject::tr("Course\n°M"),
-                                 QObject::tr("Direct\n°M"),
                                  QObject::tr("Course\n°T"),
-                                 QObject::tr("Direct\n°T"),
                                  QObject::tr("Distance\n%dist%"),
                                  QObject::tr("Remaining\n%dist%"),
                                  QObject::tr("Leg Time\nhh:mm"),
@@ -159,9 +155,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                 "Also shows ILS or localizer frequency for corresponding approaches on the last runway leg."),
     QObject::tr("Range of a radio navaid if available."),
     QObject::tr("Magnetic start course of the great circle route connecting the two waypoints of the leg."),
-    QObject::tr("Magnetic constant course of the rhumb line connecting two waypoints of a leg."),
     QObject::tr("True start course of the great circle route connecting the two waypoints of the leg."),
-    QObject::tr("True constant course of the rhumb line connecting two waypoints of a leg."),
     QObject::tr("Distance of the flight plan leg."),
     QObject::tr("Remaining distance to destination airport or procedure end point."),
     QObject::tr("Flying time for this leg.\nCalculated based on the selected aircraft performance profile."),
@@ -3697,12 +3691,8 @@ void RouteController::updateTableModel()
     {
       if(leg.getCourseToMag() < map::INVALID_COURSE_VALUE)
         itemRow[rc::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0));
-      if(leg.getCourseToRhumbMag() < map::INVALID_COURSE_VALUE)
-        itemRow[rc::DIRECT] = new QStandardItem(QLocale().toString(leg.getCourseToRhumbMag(), 'f', 0));
       if(leg.getCourseToTrue() < map::INVALID_COURSE_VALUE)
         itemRow[rc::COURSETRUE] = new QStandardItem(QLocale().toString(leg.getCourseToTrue(), 'f', 0));
-      if(leg.getCourseToRhumbTrue() < map::INVALID_COURSE_VALUE)
-        itemRow[rc::DIRECTTRUE] = new QStandardItem(QLocale().toString(leg.getCourseToRhumbTrue(), 'f', 0));
     }
 
     if(!afterArrivalAirport)
@@ -3744,9 +3734,7 @@ void RouteController::updateTableModel()
     itemRow[rc::REMAINING_DISTANCE]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::DIST]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::COURSE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rc::DIRECT]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::COURSETRUE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rc::DIRECTTRUE]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::RANGE]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::FREQ]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::RESTRICTION]->setTextAlignment(Qt::AlignRight);

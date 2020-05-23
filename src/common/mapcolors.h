@@ -64,7 +64,6 @@ extern QPen airwayJetPen;
 extern QPen airwayBothPen;
 extern QPen airwayTrackPen;
 extern QColor airwayTextColor;
-extern QColor distanceRhumbColor;
 extern QColor rangeRingColor;
 extern QColor rangeRingTextColor;
 extern QColor compassRoseColor;

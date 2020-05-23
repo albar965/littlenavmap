@@ -62,7 +62,6 @@ QPen airwayBothPen(QColor("#646464"), 1.);
 QPen airwayTrackPen(QColor("#101010"), 1.5);
 QColor airwayTextColor(80, 80, 80);
 
-QColor distanceRhumbColor(80, 80, 80);
 QColor rangeRingColor(Qt::red);
 QColor rangeRingTextColor(Qt::black);
 QColor distanceColor(Qt::black);
@@ -597,7 +596,6 @@ void syncColors()
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Marker");
-  syncColor(colorSettings, "DistanceRhumbColor", distanceRhumbColor);
   syncColor(colorSettings, "DistanceGreatCircleColor", distanceColor);
   syncColor(colorSettings, "RangeRingColor", rangeRingColor);
   syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);

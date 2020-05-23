@@ -1096,8 +1096,6 @@ struct DistanceMarker
   atools::geo::Pos from, to;
   float magvar;
 
-  bool isRhumbLine;
-
   bool isValid() const
   {
     return from.isValid();

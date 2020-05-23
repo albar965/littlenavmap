@@ -383,17 +383,13 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
 
         // Use course and distance from last route leg to get to this point legs
         courseTo = normalizeCourse(prevPos.angleDegTo(procedureLeg.line.getPos1()));
-        courseRhumbTo = normalizeCourse(prevPos.angleDegToRhumb(procedureLeg.line.getPos1()));
         distanceTo = meterToNm(procedureLeg.line.getPos1().distanceMeterTo(prevPos));
-        distanceToRhumb = meterToNm(procedureLeg.line.getPos1().distanceMeterToRhumb(prevPos));
       }
       else
       {
         // Use course and distance from last procedure leg
         courseTo = procedureLeg.calculatedTrueCourse;
-        courseRhumbTo = procedureLeg.calculatedTrueCourse;
         distanceTo = procedureLeg.calculatedDistance;
-        distanceToRhumb = procedureLeg.calculatedDistance;
       }
       geometry = procedureLeg.geometry;
     }
@@ -403,18 +399,14 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
       {
         // Collapse any overlapping waypoints to avoid course display
         distanceTo = 0.f;
-        distanceToRhumb = 0.f;
         courseTo = map::INVALID_COURSE_VALUE;
-        courseRhumbTo = map::INVALID_COURSE_VALUE;
         geometry = LineString({getPosition()});
       }
       else
       {
         // Calculate for normal or alternate leg - prev is destination airport for alternate legs
         distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
-        distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
         courseTo = normalizeCourse(prevLeg->getPosition().angleDegTo(getPosition()));
-        courseRhumbTo = normalizeCourse(prevLeg->getPosition().angleDegToRhumb(getPosition()));
         geometry = LineString({prevPos, getPosition()});
       }
     }
@@ -423,9 +415,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
   {
     // No predecessor - this one is the first in the list
     distanceTo = 0.f;
-    distanceToRhumb = 0.f;
     courseTo = 0.f;
-    courseRhumbTo = 0.f;
     geometry = LineString({getPosition()});
   }
 }
@@ -506,14 +496,6 @@ float RouteLeg::getCourseToMag() const
     return courseTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseTo - magvarPos) : courseTo;
   else
     return courseTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseTo - magvar) : courseTo;
-}
-
-float RouteLeg::getCourseToRhumbMag() const
-{
-  if(OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION)
-    return courseRhumbTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseRhumbTo - magvarPos) : courseTo;
-  else
-    return courseRhumbTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseRhumbTo - magvar) : courseTo;
 }
 
 float RouteLeg::getMagVarBySettings() const

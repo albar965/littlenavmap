@@ -397,7 +397,7 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   // Draw direct connection ==========================================================================
   if(context->objectDisplayTypes & map::LOGBOOK_DIRECT)
   {
-    // Use smaller measurment line thickness for this direct connection
+    // Use smaller measurement line thickness for this direct connection
     float outerlinewidth = context->sz(context->thicknessRangeDistance, 7) * 0.6f;
     float innerlinewidth = context->sz(context->thicknessRangeDistance, 4) * 0.6f;
     QPen directPen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
@@ -1011,7 +1011,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
   for(const map::DistanceMarker& m : distanceMarkers)
   {
     // Get color from marker
-    painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+    painter->setPen(QPen(m.color, lineWidth * 0.5, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 
     const int SYMBOL_SIZE = 5;
     int x, y;
@@ -1027,29 +1027,56 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
     }
 
     painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
-    if(!m.isRhumbLine)
+    // Draw great circle line ========================================================
+    float distanceMeter = m.from.distanceMeterTo(m.to);
+
+    // Draw line
+    drawLine(context, Line(m.from, m.to));
+
+    // Build and draw text
+    QStringList texts;
+
+    if(context->dOptMeasurement(optsd::MEASUREMNENT_LABEL) && !m.text.isEmpty())
+      texts.append(m.text);
+
+    GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, DEG);
+    GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, DEG);
+    double initTrue = normalizeCourse(from.bearing(to, DEG, INITBRG));
+    double finalTrue = normalizeCourse(from.bearing(to, DEG, FINALBRG));
+    QString initTrueText = QString::number(initTrue, 'f', 0);
+    QString finalTrueText = QString::number(finalTrue, 'f', 0);
+    QString initMagText = QString::number(atools::geo::normalizeCourse(initTrue - m.magvar), 'f', 0);
+    QString finalMagText = QString::number(atools::geo::normalizeCourse(finalTrue - m.magvar), 'f', 0);
+
+    if(context->dOptMeasurement(optsd::MEASUREMNENT_TRUE) && context->dOptMeasurement(optsd::MEASUREMNENT_MAG) &&
+       initTrueText == initMagText && finalTrueText == finalMagText)
     {
-      // Draw great circle line ========================================================
-      float distanceMeter = m.from.distanceMeterTo(m.to);
-
-      // Draw line
-      drawLine(context, Line(m.from, m.to));
-
-      // Build and draw text
-      QStringList texts;
-      if(!m.text.isEmpty())
-        texts.append(m.text);
-
-      GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, DEG);
-      GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, DEG);
-      double init = normalizeCourse(from.bearing(to, DEG, INITBRG));
-      double final = normalizeCourse(from.bearing(to, DEG, FINALBRG));
-
-      if(atools::almostEqual(init, final, 1.))
-        texts.append(QString::number(init, 'f', 0) + tr("°T"));
+      if(initTrueText == finalTrueText)
+        texts.append(initTrueText + tr("°M/T"));
       else
-        texts.append(QString::number(init, 'f', 0) + tr("°T ► ") + QString::number(final, 'f', 0) + tr("°T"));
+        texts.append(initTrueText + tr("°M/T ► ") + finalTrueText + tr("°M/T"));
+    }
+    else
+    {
+      if(context->dOptMeasurement(optsd::MEASUREMNENT_MAG))
+      {
+        if(initMagText == finalMagText)
+          texts.append(initMagText + tr("°M"));
+        else
+          texts.append(initMagText + tr("°M ► ") + finalMagText + tr("°M"));
+      }
 
+      if(context->dOptMeasurement(optsd::MEASUREMNENT_TRUE))
+      {
+        if(initTrueText == finalTrueText)
+          texts.append(initTrueText + tr("°T"));
+        else
+          texts.append(initTrueText + tr("°T ► ") + finalTrueText + tr("°T"));
+      }
+    }
+
+    if(context->dOptMeasurement(optsd::MEASUREMNENT_DIST))
+    {
       if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&
          distanceMeter < 6000)
         texts.append(QString::number(distanceMeter, 'f', 0) + Unit::getUnitShortDistStr());
@@ -1060,73 +1087,14 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
           // Add feet to text for short distances
           texts.append(Unit::distShortMeter(distanceMeter));
       }
-
-      if(m.from != m.to)
-      {
-        int xt = -1, yt = -1;
-        if(textPlacement.findTextPos(m.from, m.to, distanceMeter, metrics.width(texts.at(0)),
-                                     metrics.height() * 2, xt, yt, nullptr))
-          symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
-      }
     }
-    else
+
+    if(m.from != m.to)
     {
-      // Draw a rhumb line with constant course
-      float bearing = m.from.angleDegToRhumb(m.to);
-      float magBearing = bearing - m.magvar;
-      magBearing = normalizeCourse(magBearing);
-      bearing = normalizeCourse(bearing);
-
-      float distanceMeter = m.from.distanceMeterToRhumb(m.to);
-
-      // Approximate the needed number of line segments
-      int pixel = scale->getPixelIntForMeter(distanceMeter);
-      int numPoints = std::min(std::max(pixel / (context->drawFast ? 200 : 20), 4), 72);
-
-      Pos p1 = m.from, p2;
-
-      // Draw line segments
-      for(float d = 0.f; d < distanceMeter; d += distanceMeter / numPoints)
-      {
-        p2 = m.from.endpointRhumb(d, bearing);
-        drawLine(context, Line(p1, p2));
-        p1 = p2;
-      }
-
-      // Draw rest
-      p2 = m.from.endpointRhumb(distanceMeter, bearing);
-      drawLine(context, Line(p1, p2));
-
-      // Build and draw text
-      QStringList texts;
-      if(!m.text.isEmpty())
-        texts.append(m.text);
-
-      QString bearingText = QString::number(bearing, 'f', 0);
-      QString magBearingText = QString::number(magBearing, 'f', 0);
-      if(bearingText == magBearingText)
-        texts.append(bearingText + tr("°M/T"));
-      else
-        texts.append(magBearingText + tr("°M") + "/" + bearingText + tr("°T"));
-
-      if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&
-         distanceMeter < 6000)
-        texts.append(QString::number(distanceMeter, 'f', 0) + Unit::getUnitShortDistStr());
-      else
-      {
-        texts.append(Unit::distMeter(distanceMeter));
-        if(distanceMeter < 6000)
-          texts.append(Unit::distShortMeter(distanceMeter));
-      }
-
-      if(m.from != m.to)
-      {
-        int xt = -1, yt = -1;
-        if(textPlacement.findTextPosRhumb(m.from, m.to, distanceMeter, metrics.width(texts.at(0)),
-                                          metrics.height() * 2, xt, yt))
-          symbolPainter->textBox(painter, texts,
-                                 painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);
-      }
+      int xt = -1, yt = -1;
+      if(textPlacement.findTextPos(m.from, m.to, distanceMeter, metrics.width(texts.at(0)),
+                                   metrics.height() * 2, xt, yt, nullptr))
+        symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
     }
   }
 }
