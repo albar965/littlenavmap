@@ -1837,20 +1837,25 @@ void MainWindow::renderStatusUpdateLabel(RenderStatus status, bool forceUpdate)
                      tr(" ") + atools::util::HtmlBuilder::errorMessage(tr("Offline")) :
                      QString();
 
-    switch(status)
+    if(mapWidget->getCurrentThemeIndex() >= map::CUSTOM)
+      renderStatusLabel->setText(suffix);
+    else
     {
-      case Marble::Complete:
-        renderStatusLabel->setText(tr("Done") + suffix);
-        break;
-      case Marble::WaitingForUpdate:
-        renderStatusLabel->setText(tr("Updating") + suffix);
-        break;
-      case Marble::WaitingForData:
-        renderStatusLabel->setText(tr("Loading") + suffix);
-        break;
-      case Marble::Incomplete:
-        renderStatusLabel->setText(tr("Incomplete") + suffix);
-        break;
+      switch(status)
+      {
+        case Marble::Complete:
+          renderStatusLabel->setText(tr("Done") + suffix);
+          break;
+        case Marble::WaitingForUpdate:
+          renderStatusLabel->setText(tr("Updating") + suffix);
+          break;
+        case Marble::WaitingForData:
+          renderStatusLabel->setText(tr("Loading") + suffix);
+          break;
+        case Marble::Incomplete:
+          renderStatusLabel->setText(tr("Incomplete") + suffix);
+          break;
+      }
     }
     lastRenderStatus = status;
   }
