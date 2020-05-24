@@ -253,8 +253,21 @@ void MapPainter::drawCross(const PaintContext *context, int x, int y, int size)
 
 void MapPainter::drawLineString(const PaintContext *context, const atools::geo::LineString& linestring)
 {
+  GeoDataLineString ls;
+  ls.setTessellate(true);
   for(int i = 1; i < linestring.size(); i++)
-    drawLine(context, Line(linestring.at(i - 1), linestring.at(i)));
+  {
+    // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
+    qreal correction = 0.;
+    if(atools::almostEqual(linestring.at(i - 1).getLatY(), linestring.at(i).getLatY()))
+      correction = 0.000001;
+
+    ls << GeoDataCoordinates(linestring.at(i - 1).getLonX(), linestring.at(i - 1).getLatY() - correction, 0, DEG)
+       << GeoDataCoordinates(linestring.at(i).getLonX(), linestring.at(i).getLatY() + correction, 0, DEG);
+  }
+
+  for(GeoDataLineString *corrected : ls.toDateLineCorrected())
+    context->painter->drawPolyline(*corrected);
 }
 
 void MapPainter::drawLine(const PaintContext *context, const atools::geo::Line& line)
