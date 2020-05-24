@@ -1111,7 +1111,7 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
 
     // Regions are required for the export
     NavApp::getRoute().updateAirportRegions();
-    FlightplanIO().saveGarminGns(buildAdjustedRoute(rf::DEFAULT_OPTS).getFlightplan(), filename, options);
+    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS).getFlightplan(), filename, options);
   }
   catch(atools::Exception& e)
   {

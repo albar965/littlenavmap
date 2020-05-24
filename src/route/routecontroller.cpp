@@ -874,7 +874,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
     adjustAltitude = true; // Change altitude based on airways later
   }
   else if(format == atools::fs::pln::FMS11 || format == atools::fs::pln::FMS3 || format == atools::fs::pln::FSC_PLN ||
-          format == atools::fs::pln::FLIGHTGEAR)
+          format == atools::fs::pln::FLIGHTGEAR || format == atools::fs::pln::GARMIN_FPL)
   {
     // Save altitude
     int cruiseAlt = flightplan.getCruisingAltitude();
