@@ -511,7 +511,7 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
                                                bool frequencyCol, bool airportCol) const
 {
   float distance = airport.position.distanceMeterTo(base->position);
-  float bearingTrue = normalizeCourse(airport.position.angleDegToRhumb(base->position));
+  float bearingTrue = normalizeCourse(airport.position.angleDegTo(base->position));
 
   QString url;
   if(base->objType == map::AIRPORT)
@@ -2833,7 +2833,7 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
       html.row2If(tr("Flight Plan position:"), QString::number(userpoint.routeIndex + 1));
       html.row2If(tr("Region:"), userpoint.region);
       html.row2If(tr("Name:"), userpoint.name);
-      html.row2If(tr("Comment:"), userpoint.comment);
+      html.row2If(tr("Remarks:"), userpoint.comment);
       html.tableEnd();
     }
     else
@@ -4008,10 +4008,10 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
     return QString();
 
   if(QFileInfo::exists(filepath))
-    link.text(prefix, ahtml::SMALL).
-    a(filepath, QString("lnm://show?filepath=%1").arg(filepath), ahtml::LINK_NO_UL | ahtml::SMALL);
+    link.small(prefix).a(filepath, QString("lnm://show?filepath=%1").arg(filepath), ahtml::LINK_NO_UL | ahtml::SMALL);
   else
-    link.text(prefix + filepath, ahtml::SMALL);
+    link.small(prefix).small(filepath).
+    text(tr(" (File not found)"), ahtml::SMALL | ahtml::BOLD);
   return link.getHtml();
 }
 

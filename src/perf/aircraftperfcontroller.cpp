@@ -689,7 +689,7 @@ void AircraftPerfController::updateReport()
     // Description and file =======================================================
     if(!perf->getDescription().isEmpty())
     {
-      html.p().b(tr("Performance File Description")).pEnd();
+      html.p().b(tr("Remarks")).pEnd();
       html.table(1, 2, 0, 100, html.getRowBackColor());
       html.tr().td(perf->getDescription(), atools::util::html::AUTOLINK).trEnd();
       html.tableEnd();
@@ -1141,7 +1141,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
   if(print && !perf->getDescription().isEmpty())
   {
-    html.p().b(tr("Performance File Description")).pEnd();
+    html.p().b(tr("Remarks")).pEnd();
     html.table(1).row2(QString(), perf->getDescription()).tableEnd();
   }
 }

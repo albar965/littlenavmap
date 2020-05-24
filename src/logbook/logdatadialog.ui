@@ -1304,7 +1304,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
      </widget>
      <widget class="QWidget" name="tabDescription">
       <attribute name="title">
-       <string>Description or Comments</string>
+       <string>Remarks</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="leftMargin">

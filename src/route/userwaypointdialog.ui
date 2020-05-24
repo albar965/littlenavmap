@@ -40,7 +40,7 @@
    <item row="1" column="2">
     <widget class="QLineEdit" name="lineEditRouteUserWaypointIdent">
      <property name="toolTip">
-      <string>Required ident of the waypoint. 
+      <string>Required ident of the waypoint.
 A short all upper case ident without spaces is recommended.</string>
      </property>
     </widget>
@@ -75,7 +75,7 @@ A short all upper case ident without spaces is recommended.</string>
    <item row="4" column="0">
     <widget class="QLabel" name="labelRouteUserWaypointComment">
      <property name="text">
-      <string>&amp;Comment:</string>
+      <string>&amp;Remarks:</string>
      </property>
      <property name="buddy">
       <cstring>textEditRouteUserWaypointComment</cstring>

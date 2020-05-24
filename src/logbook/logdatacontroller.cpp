@@ -603,7 +603,7 @@ void LogdataController::convertUserdata()
                                                "Note that not all fields can be converted automatically.<br/><br/>"
                                                "The created log entries can be found by searching"
                                                "for<br/><code>*Converted from userdata*</code><br/>"
-                                               "in the description field.<br/><br/>"
+                                               "in the field &quot;Remarks&quot;.<br/><br/>"
                                                "Continue?"),
                                           tr("Do not &show this dialog again and run the conversion in the future."),
                                           QMessageBox::Yes | QMessageBox::No | QMessageBox::Help,

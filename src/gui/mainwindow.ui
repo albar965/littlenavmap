@@ -3309,7 +3309,7 @@ Will match any visited airport.</string>
                 </sizepolicy>
                </property>
                <property name="placeholderText">
-                <string>Description</string>
+                <string>Remarks</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -7354,7 +7354,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</iconset>
    </property>
    <property name="text">
-    <string>Measure &amp;GC Distance from %1</string>
+    <string>Measure &amp;Distance from %1</string>
    </property>
    <property name="toolTip">
     <string>Measure great circle distance on map</string>
@@ -11175,10 +11175,10 @@ Best track will be selected automatically.</string>
     <string>Show &amp;direct connection</string>
    </property>
    <property name="toolTip">
-    <string>Show a direct line connecting departure and destination of selected entries on the map</string>
+    <string>Show a line between departure and destination for selected entries on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show a direct line connecting departure and destination of selected entries on the map</string>
+    <string>Show a line between departure and destination for selected entries on the map</string>
    </property>
   </action>
   <action name="actionSearchLogdataShowRoute">
@@ -11186,13 +11186,13 @@ Best track will be selected automatically.</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show &amp;flight plan</string>
+    <string>Show &amp;flight plan preview</string>
    </property>
    <property name="toolTip">
-    <string>Show the flight plan legs of the selected entries on the map</string>
+    <string>Show the flight plan shape of the selected entries on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show the flight plan legs of the selected entries on the map</string>
+    <string>Show the flight plan shape of the selected entries on the map</string>
    </property>
   </action>
   <action name="actionSearchLogdataShowTrack">
@@ -11416,7 +11416,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

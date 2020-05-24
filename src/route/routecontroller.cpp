@@ -3712,11 +3712,14 @@ void RouteController::updateTableModel()
       }
     }
 
+    QString remarks;
     if(leg.isAnyProcedure())
-      itemRow[rc::REMARKS] = new QStandardItem(
-        atools::elideTextShort(proc::procedureLegRemark(leg.getProcedureLeg()), 80));
+      remarks = proc::procedureLegRemark(leg.getProcedureLeg());
     else if(leg.isUser())
-      itemRow[rc::REMARKS] = new QStandardItem(atools::elideTextShort(leg.getFlightplanEntry().getComment(), 80));
+      remarks = leg.getFlightplanEntry().getComment();
+
+    itemRow[rc::REMARKS] = new QStandardItem(atools::elideTextShort(remarks, 80));
+    itemRow[rc::REMARKS]->setToolTip(remarks);
 
     // Travel time, remaining fuel and ETA are updated in updateModelRouteTime
 

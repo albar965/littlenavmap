@@ -1597,10 +1597,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionMapEditUserWaypoint);
   menu.addSeparator();
 
-  menu.addAction(ui->actionMapUserdataAdd);
-  menu.addAction(ui->actionMapUserdataEdit);
-  menu.addAction(ui->actionMapUserdataMove);
-  menu.addAction(ui->actionMapUserdataDelete);
+  QMenu *sub = menu.addMenu(tr("&Userdata"));
+  sub->addAction(ui->actionMapUserdataAdd);
+  sub->addAction(ui->actionMapUserdataEdit);
+  sub->addAction(ui->actionMapUserdataMove);
+  sub->addAction(ui->actionMapUserdataDelete);
   menu.addSeparator();
 
   menu.addAction(ui->actionMapLogdataEdit);
