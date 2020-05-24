@@ -266,8 +266,10 @@ void MapPainter::drawLineString(const PaintContext *context, const atools::geo::
        << GeoDataCoordinates(linestring.at(i).getLonX(), linestring.at(i).getLatY() + correction, 0, DEG);
   }
 
-  for(GeoDataLineString *corrected : ls.toDateLineCorrected())
+  QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
+  for(GeoDataLineString *corrected : dateLineCorrected)
     context->painter->drawPolyline(*corrected);
+  qDeleteAll(dateLineCorrected);
 }
 
 void MapPainter::drawLine(const PaintContext *context, const atools::geo::Line& line)
@@ -284,8 +286,10 @@ void MapPainter::drawLine(const PaintContext *context, const atools::geo::Line& 
     ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY() - correction, 0, DEG)
        << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY() + correction, 0, DEG);
 
-    for(GeoDataLineString *corrected : ls.toDateLineCorrected())
+    QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
+    for(GeoDataLineString *corrected : dateLineCorrected)
       context->painter->drawPolyline(*corrected);
+    qDeleteAll(dateLineCorrected);
   }
 }
 
