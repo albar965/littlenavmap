@@ -78,15 +78,6 @@ public:
   bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
                    float distanceMeter, int textWidth, int textHeight, int& x, int& y, float *bearing);
 
-  /* Find text position along a rhumb line route
-   *  @param x,y resulting text position
-   *  @param pos1,pos2 start and end coordinates of the line
-   *  @param distanceMeter distance between points
-   */
-  bool findTextPosRhumb(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
-                        float distanceMeter, int textWidth, int textHeight,
-                        int& x, int& y);
-
   /* Bit array indicating which start point is visible or not.  Filled by calculateTextAlongLines */
   const QBitArray& getVisibleStartPoints() const
   {

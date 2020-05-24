@@ -1995,8 +1995,8 @@ int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QStri
 void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
                                           const map::MapRunwayEnd& runwayEndSim, float distance, float altitude)
 {
-  Pos initialFixPos = runwayEndSim.position.endpointRhumb(ageo::nmToMeter(distance),
-                                                          ageo::opposedCourseDeg(runwayEndSim.heading));
+  Pos initialFixPos = runwayEndSim.position.endpoint(ageo::nmToMeter(distance),
+                                                     ageo::opposedCourseDeg(runwayEndSim.heading));
 
   // Create procedure ========================================
   procedure.ref.runwayEndId = runwayEndSim.id;

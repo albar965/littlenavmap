@@ -251,37 +251,6 @@ bool TextPlacement::findTextPos(const Pos& pos1, const Pos& pos2, float distance
   return false;
 }
 
-bool TextPlacement::findTextPosRhumb(const Pos& pos1, const Pos& pos2,
-                                     float distanceMeter, int textWidth, int textHeight, int& x, int& y)
-{
-  if(!pos1.isValid() || !pos2.isValid())
-    return false;
-
-  Pos center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5);
-  bool visible = converter->wToS(center, x, y);
-  if(visible && painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))
-    return true;
-  else
-  {
-    // Check for 50 positions along the line starting below and above the center position
-    for(float i = 0.; i <= 0.5; i += FIND_TEXT_POS_STEP)
-    {
-      center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5f - i);
-      visible = converter->wToS(center, x, y);
-      if(visible &&
-         painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))
-        return true;
-
-      center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5f + i);
-      visible = converter->wToS(center, x, y);
-      if(visible &&
-         painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))
-        return true;
-    }
-  }
-  return false;
-}
-
 void TextPlacement::clearLineTextData()
 {
   textCoords.clear();

@@ -558,7 +558,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
             if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
             {
               if(context->dOptRoute(optsd::ROUTE_MAG_COURSE_GC))
-                // Use same values for rhumb and mag - does not make a difference at the small values in procedures
+                // Use same values for mag - does not make a difference at the small values in procedures
                 courseMag = atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar);
             }
 
@@ -934,7 +934,7 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
   }
 
   // Calculate distance to control points
-  float dist = prevPos.distanceMeterToRhumb(nextPos);
+  float dist = prevPos.distanceMeterTo(nextPos);
 
   if(dist < ageo::Pos::INVALID_VALUE)
   {
