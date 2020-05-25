@@ -333,7 +333,8 @@ void MapPainterVehicle::paintWindPointer(const PaintContext *context,
 {
   if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
   {
-    symbolPainter->drawWindPointer(context->painter, x, y, WIND_POINTER_SIZE, aircraft.getWindDirectionDegT());
+    if(aircraft.getWindSpeedKts() >= 1.f)
+      symbolPainter->drawWindPointer(context->painter, x, y, WIND_POINTER_SIZE, aircraft.getWindDirectionDegT());
     context->szFont(1.f);
     paintTextLabelWind(context, x, y, WIND_POINTER_SIZE, aircraft);
   }
@@ -344,21 +345,33 @@ void MapPainterVehicle::paintTextLabelWind(const PaintContext *context, int x, i
 {
   if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
   {
+    int xs, ys;
     QStringList texts;
 
-    if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND))
+    if(aircraft.getWindSpeedKts() >= 1.f)
     {
-      texts.append(tr("%1 °M").arg(QString::number(atools::geo::normalizeCourse(
-                                                     aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
-                                                   'f', 0)));
+      if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND))
+      {
+        texts.append(tr("%1 °M").arg(QString::number(atools::geo::normalizeCourse(
+                                                       aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
+                                                     'f', 0)));
 
-      texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
+        texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
+      }
+      xs = x + size / 2;
+      ys = y + size / 2;
+    }
+    else
+    {
+      texts.append(tr("No wind"));
+      xs = x;
+      ys = y + size / 2;
     }
 
     textatt::TextAttributes atts(textatt::BOLD);
     atts |= textatt::ROUTE_BG_COLOR;
 
     // Draw text label
-    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
+    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), xs, ys, atts, 255);
   }
 }
