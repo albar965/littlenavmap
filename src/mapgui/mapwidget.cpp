@@ -3191,6 +3191,10 @@ void MapWidget::restoreState()
   // Sun shading settings ========================================
   map::MapSunShading sunShading =
     static_cast<map::MapSunShading>(s.valueInt(lnm::MAP_SUN_SHADING_TIME_OPTION, map::SUN_SHADING_SIMULATOR_TIME));
+
+  if(sunShading == map::SUN_SHADING_USER_TIME)
+    sunShading = map::SUN_SHADING_SIMULATOR_TIME;
+
   sunShadingToUi(sunShading);
   paintLayer->setSunShading(sunShading);
 
