@@ -960,29 +960,44 @@ void MapWidget::wheelEvent(QWheelEvent *event)
   // Sum up wheel events
   lastWheelPos += event->angleDelta().y();
 
-  // Check for threshold
-  if(std::abs(lastWheelPos) >= 120)
+  if(event->modifiers() == Qt::ControlModifier)
   {
-    bool directionIn = lastWheelPos > 0;
-    lastWheelPos = 0;
-
-    qreal lon, lat;
-    if(geoCoordinates(event->pos().x(), event->pos().y(), lon, lat, Marble::GeoDataCoordinates::Degree))
+    // Adjust map detail ===================================================================
+    if(std::abs(lastWheelPos) >= 50)
     {
-      // Position is visible
-      qreal centerLat = centerLatitude();
-      qreal centerLon = centerLongitude();
+      if(event->angleDelta().y() > 0)
+        increaseMapDetail();
+      else if(event->angleDelta().y() < 0)
+        decreaseMapDetail();
+    }
+  }
+  else
+  {
+    // Zoom in/out ========================================================================
+    // Check for threshold
+    if(std::abs(lastWheelPos) >= 120)
+    {
+      bool directionIn = lastWheelPos > 0;
+      lastWheelPos = 0;
 
-      zoomInOut(directionIn, event->modifiers() == Qt::ShiftModifier /* smooth */);
+      qreal lon, lat;
+      if(geoCoordinates(event->pos().x(), event->pos().y(), lon, lat, Marble::GeoDataCoordinates::Degree))
+      {
+        // Position is visible
+        qreal centerLat = centerLatitude();
+        qreal centerLon = centerLongitude();
 
-      // Get global coordinates of cursor in new zoom level
-      qreal lon2, lat2;
-      geoCoordinates(event->pos().x(), event->pos().y(), lon2, lat2, Marble::GeoDataCoordinates::Degree);
+        zoomInOut(directionIn, event->modifiers() == Qt::ShiftModifier /* smooth */);
 
-      opts::MapNavigation nav = OptionData::instance().getMapNavigation();
-      if(nav == opts::MAP_NAV_CLICK_DRAG_MOVE || nav == opts::MAP_NAV_TOUCHSCREEN)
-        // Correct position and move center back to mouse cursor position
-        centerOn(centerLon + (lon - lon2), centerLat + (lat - lat2));
+        // Get global coordinates of cursor in new zoom level
+        qreal lon2, lat2;
+        geoCoordinates(event->pos().x(), event->pos().y(), lon2, lat2, Marble::GeoDataCoordinates::Degree);
+
+        opts::MapNavigation nav = OptionData::instance().getMapNavigation();
+        if(nav == opts::MAP_NAV_CLICK_DRAG_MOVE || nav == opts::MAP_NAV_TOUCHSCREEN)
+          // Correct position and move center back to mouse cursor position
+          centerOn(centerLon + (lon - lon2), centerLat + (lat - lat2));
+      }
     }
   }
 }
