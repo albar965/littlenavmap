@@ -176,8 +176,10 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
                   context->dOpt(optsd::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER));
 
     if(aircraft.getGroundSpeedKts() > 30)
-      appendSpeedText(texts, aircraft, context->dOpt(optsd::ITEM_AI_AIRCRAFT_IAS),
-                      context->dOpt(optsd::ITEM_AI_AIRCRAFT_GS));
+      appendSpeedText(texts, aircraft,
+                      context->dOpt(optsd::ITEM_AI_AIRCRAFT_IAS),
+                      context->dOpt(optsd::ITEM_AI_AIRCRAFT_GS),
+                      context->dOpt(optsd::ITEM_AI_AIRCRAFT_TAS));
 
     if(context->dOpt(optsd::ITEM_AI_AIRCRAFT_DEP_DEST) &&
        (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()))
@@ -232,8 +234,10 @@ void MapPainterVehicle::paintTextLabelUser(const PaintContext *context, float x,
 
   if(aircraft.getGroundSpeedKts() > 30)
   {
-    appendSpeedText(texts, aircraft, context->dOpt(optsd::ITEM_USER_AIRCRAFT_IAS),
-                    context->dOpt(optsd::ITEM_USER_AIRCRAFT_GS));
+    appendSpeedText(texts, aircraft,
+                    context->dOpt(optsd::ITEM_USER_AIRCRAFT_IAS),
+                    context->dOpt(optsd::ITEM_USER_AIRCRAFT_GS),
+                    context->dOpt(optsd::ITEM_USER_AIRCRAFT_TAS));
   }
 
   if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_HEADING) && aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
@@ -314,7 +318,7 @@ void MapPainterVehicle::appendAtcText(QStringList& texts, const SimConnectAircra
 }
 
 void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAircraft& aircraft,
-                                        bool ias, bool gs)
+                                        bool ias, bool gs, bool tas)
 {
   QStringList line;
   if(ias && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
@@ -322,6 +326,9 @@ void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAirc
 
   if(gs && aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
     line.append(tr("GS %2").arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
+
+  if(tas && aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+    line.append(tr("TAS %1").arg(Unit::speedKts(aircraft.getTrueAirspeedKts())));
 
   if(!line.isEmpty())
     texts.append(line.join(tr(", ")));

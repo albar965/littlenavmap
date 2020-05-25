@@ -69,7 +69,7 @@ protected:
   void appendAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
                      bool registration, bool type, bool airline, bool flightnumber);
   void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
-                       bool ias, bool gs);
+                       bool ias, bool gs, bool tas);
   void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft);
 
   void paintWindPointer(const PaintContext *context, const atools::fs::sc::SimConnectUserAircraft& aircraft,
