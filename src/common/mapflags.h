@@ -78,7 +78,6 @@ enum MapObjectType
   PROCEDURE = 1 << 23, /* General procedure leg */
   AIRSPACE = 1 << 24, /* General airspace boundary */
   HELIPAD = 1 << 25, /* Helipads on airports */
-  COMPASS_ROSE = 1 << 26, /* Compass rose */
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
   TRACK = 1 << 28, /* NAT, PACOTS or AUSOTS track */
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
@@ -116,7 +115,10 @@ enum MapObjectDisplayType
 
   LOGBOOK_DIRECT = 1 << 4, /* GC direct line in logbook entry highlight */
   LOGBOOK_ROUTE = 1 << 5, /* Route in logbook entry highlight */
-  LOGBOOK_TRACK = 1 << 6 /* Track in logbook entry highlight */
+  LOGBOOK_TRACK = 1 << 6, /* Track in logbook entry highlight */
+
+  COMPASS_ROSE = 1 << 7, /* Compass rose */
+  COMPASS_ROSE_ATTACH = 1 << 8, /* Attach to user aircraft */
 };
 
 Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);

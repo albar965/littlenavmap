@@ -258,5 +258,6 @@
         <file>resources/icons/filesaveall.svg</file>
         <file>resources/icons/filesaveallopts.svg</file>
         <file>resources/icons/weatherurl.svg</file>
+        <file>resources/icons/compassroseattach.svg</file>
     </qresource>
 </RCC>

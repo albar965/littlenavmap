@@ -731,7 +731,7 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
 /* Draw a compass rose for the user aircraft with tick marks. */
 void MapPainterMark::paintCompassRose(const PaintContext *context)
 {
-  if(context->objectTypes & map::COMPASS_ROSE && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
+  if(context->objectDisplayTypes & map::COMPASS_ROSE && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
   {
     atools::util::PainterContextSaver saver(context->painter);
     Q_UNUSED(saver);
@@ -742,7 +742,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 
     // Use either aircraft position or viewport center
     QRect viewport = painter->viewport();
-    bool hasAircraft = pos.isValid();
+    bool hasAircraft = pos.isValid() && context->objectDisplayTypes & map::COMPASS_ROSE_ATTACH;
     if(!hasAircraft)
       pos = sToW(viewport.center());
 

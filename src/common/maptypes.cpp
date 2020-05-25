@@ -2004,8 +2004,6 @@ QString mapObjectTypeToString(MapObjectTypes type)
       str += QObject::tr("Airspace");
     if(type & HELIPAD)
       str += QObject::tr("Helipad");
-    if(type & COMPASS_ROSE)
-      str += QObject::tr("CompassRose");
     if(type & USERPOINT)
       str += QObject::tr("Userpoint");
     if(type & AIRCRAFT_ONLINE)

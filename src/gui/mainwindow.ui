@@ -371,7 +371,9 @@
     <addaction name="actionInfoApproachShowMissedAppr"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="separator"/>
     <addaction name="actionMapShowCompassRose"/>
+    <addaction name="actionMapShowCompassRoseAttach"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAircraftAi"/>
     <addaction name="actionMapShowAircraftAiBoat"/>
@@ -11262,6 +11264,25 @@ Best track will be selected automatically.</string>
    </property>
    <property name="toolTip">
     <string>Save aircraft trail into GPX file</string>
+  <action name="actionMapShowCompassRoseAttach">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/compassroseattach.svg</normaloff>:/littlenavmap/resources/icons/compassroseattach.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Attach Compass Rose to Aircraft</string>
+   </property>
+   <property name="toolTip">
+    <string>Compass rose follows user aircraft if checked</string>
+   </property>
+   <property name="statusTip">
+    <string>Compass rose follows user aircraft if checked</string>
    </property>
   </action>
  </widget>

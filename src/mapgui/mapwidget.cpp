@@ -3327,6 +3327,7 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionMapShowIls, ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                                       ui->actionMapShowTracks, ui->actionShowAirspaces, ui->actionMapShowRoute,
                                       ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
+                                      ui->actionMapShowCompassRoseAttach,
                                       ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi,
                                       ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
                                       ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,
@@ -3362,6 +3363,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowAircraft->setChecked(true);
   ui->actionMapShowAircraftTrack->setChecked(true);
   ui->actionMapShowCompassRose->setChecked(false);
+  ui->actionMapShowCompassRoseAttach->setChecked(true);
 
   // -----------------
   ui->actionMapShowAircraftAi->setChecked(true);
@@ -3495,7 +3497,8 @@ void MapWidget::updateMapObjectsShown()
                      ui->actionShowAirspaces->isChecked());
 
   setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
-  setShowMapFeatures(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
+  setShowMapFeaturesDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
+  setShowMapFeaturesDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapFeatures(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapFeatures(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
