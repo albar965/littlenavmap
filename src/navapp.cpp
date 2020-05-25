@@ -88,6 +88,7 @@ WebController *NavApp::webController = nullptr;
 
 bool NavApp::shuttingDown = false;
 bool NavApp::loadingDatabase = false;
+bool NavApp::mainWindowVisible = false;
 
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
@@ -352,6 +353,12 @@ void NavApp::readMagDecFromDatabase()
            << magDecReader->getWmmVersion();
 }
 
+void NavApp::setMainWindowVisible()
+{
+  qDebug() << Q_FUNC_INFO;
+  mainWindowVisible = true;
+}
+
 void NavApp::postDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
@@ -369,14 +376,19 @@ void NavApp::postDatabaseLoad()
   infoQuery->initQueries();
   procedureQuery->initQueries();
   airspaceController->postDatabaseLoad();
-  trackController->postDatabaseLoad();
   logdataController->postDatabaseLoad();
+  trackController->postDatabaseLoad();
   loadingDatabase = false;
 }
 
 Ui::MainWindow *NavApp::getMainUi()
 {
   return mainWindow->getUi();
+}
+
+bool NavApp::isMainWindowVisible()
+{
+  return mainWindowVisible;
 }
 
 bool NavApp::isFetchAiAircraft()

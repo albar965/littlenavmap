@@ -748,7 +748,8 @@ void MainWindow::setupUi()
                                                           arg(ui->dockWidgetRouteCalc->windowTitle()));
   ui->dockWidgetRouteCalc->toggleViewAction()->setStatusTip(ui->dockWidgetRouteCalc->toggleViewAction()->toolTip());
   ui->dockWidgetRouteCalc->setAllowedAreas(Qt::NoDockWidgetArea);
-  ui->dockWidgetRouteCalc->setFloating(false);
+  ui->dockWidgetRouteCalc->setFloating(true);
+  ui->dockWidgetRouteCalc->setVisible(false); // Hide on first start - is superseded by restore state later
 
   ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
   ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
@@ -1354,8 +1355,8 @@ void MainWindow::connectAllSlots()
   TrackController *trackController = NavApp::getTrackController();
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::clearAirwayNetworkCache);
   connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::tracksChanged);
-  connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
   connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
+  connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
 
   connect(ui->actionRouteDownloadTracks, &QAction::toggled, trackController, &TrackController::downloadToggled);
   connect(ui->actionRouteDownloadTracksNow, &QAction::triggered, trackController, &TrackController::startDownload);
@@ -2996,8 +2997,8 @@ void MainWindow::mainWindowShown()
   setStatusMessage(tr("Ready."));
   renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
 
-  // routeExport->routeMulitExportOptions();
-
+  // Make sure that window visible is only set after visibility is ensured
+  QTimer::singleShot(100, NavApp::setMainWindowVisible);
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
@@ -3956,31 +3957,32 @@ map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
 
 void MainWindow::showFlightPlan()
 {
-  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutFlightPlanTriggered();
 }
 
 void MainWindow::showAircraftPerformance()
 {
-  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutAircraftPerformanceTriggered();
 }
 
 void MainWindow::showLogbookSearch()
 {
-  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutLogbookSearchTriggered();
 }
 
 void MainWindow::showUserpointSearch()
 {
-  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutUserpointSearchTriggered();
 }
 
 void MainWindow::showRouteCalc()
 {
-  actionShortcutCalcRouteTriggered();
+  if(NavApp::isMainWindowVisible())
+    actionShortcutCalcRouteTriggered();
 }
 
 void MainWindow::webserverStatusChanged(bool running)

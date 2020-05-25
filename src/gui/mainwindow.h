@@ -430,7 +430,6 @@ private:
   QString aboutMessage;
   QTimer clockTimer, renderStatusTimer;
   Marble::RenderStatus lastRenderStatus = Marble::Incomplete;
-
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

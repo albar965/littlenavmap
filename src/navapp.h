@@ -144,6 +144,10 @@ public:
 
   static Ui::MainWindow *getMainUi();
 
+  /* true if startup is completed and main window is visible */
+  static bool isMainWindowVisible();
+  static void setMainWindowVisible();
+
   static bool isFetchAiAircraft();
   static bool isFetchAiShip();
   static bool isConnected();
@@ -369,6 +373,7 @@ private:
 
   static bool loadingDatabase;
   static bool shuttingDown;
+  static bool mainWindowVisible;
 };
 
 #endif // NAVAPPLICATION_H
