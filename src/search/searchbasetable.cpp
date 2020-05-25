@@ -1147,7 +1147,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addAction(ui->actionUserdataEdit);
     menu.addAction(ui->actionUserdataDelete);
     menu.addSeparator();
-  }
+  } // if(tabIndex == si::SEARCH_USER)
 
   if(tabIndex == si::SEARCH_LOG)
   {
@@ -1167,6 +1167,32 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addAction(ui->actionLogdataDelete);
     menu.addSeparator();
 
+    // Logbook open or save attached files sub menu =====================================
+    bool route = NavApp::getLogdataController()->hasRouteAttached(logEntry.id);
+    ui->actionSearchLogdataOpenPlan->setEnabled(route);
+    ui->actionSearchLogdataSavePlanAs->setEnabled(route);
+
+    if(!route)
+    {
+      ui->actionSearchLogdataOpenPlan->setText(ui->actionSearchLogdataOpenPlan->text() + tr(" (no attachment)"));
+      ui->actionSearchLogdataSavePlanAs->setText(ui->actionSearchLogdataSavePlanAs->text() + tr(" (no attachment)"));
+    }
+
+    bool perf = NavApp::getLogdataController()->hasPerfAttached(logEntry.id);
+    ui->actionSearchLogdataOpenPerf->setEnabled(perf);
+    ui->actionSearchLogdataSavePerfAs->setEnabled(perf);
+
+    if(!perf)
+    {
+      ui->actionSearchLogdataOpenPerf->setText(ui->actionSearchLogdataOpenPerf->text() + tr(" (no attachment)"));
+      ui->actionSearchLogdataSavePerfAs->setText(ui->actionSearchLogdataSavePerfAs->text() + tr(" (no attachment)"));
+    }
+
+    bool gpx = NavApp::getLogdataController()->hasTrackAttached(logEntry.id);
+    ui->actionSearchLogdataSaveGpxAs->setEnabled(gpx);
+    if(!gpx)
+      ui->actionSearchLogdataSaveGpxAs->setText(ui->actionSearchLogdataSaveGpxAs->text() + tr(" (no attachment)"));
+
     // Logbook open referenced files menu =======================
     ui->actionLogdataRouteOpen->setEnabled(false);
     if(!logEntry.routeFile.isEmpty())
@@ -1182,7 +1208,6 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     }
     else
       ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(QString()));
-    menu.addAction(ui->actionLogdataRouteOpen);
 
     ui->actionLogdataPerfLoad->setEnabled(false);
     if(!logEntry.perfFile.isEmpty())
@@ -1198,22 +1223,12 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     }
     else
       ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(QString()));
-    menu.addAction(ui->actionLogdataPerfLoad);
-    menu.addSeparator();
-
-    // Logbook open or save attached files menu =======================
-    bool route = NavApp::getLogdataController()->hasRouteAttached(logEntry.id);
-    ui->actionSearchLogdataOpenPlan->setEnabled(route);
-    ui->actionSearchLogdataSavePlanAs->setEnabled(route);
-
-    bool perf = NavApp::getLogdataController()->hasPerfAttached(logEntry.id);
-    ui->actionSearchLogdataOpenPerf->setEnabled(perf);
-    ui->actionSearchLogdataSavePerfAs->setEnabled(perf);
-
-    ui->actionSearchLogdataSaveGpxAs->setEnabled(NavApp::getLogdataController()->hasTrackAttached(logEntry.id));
 
     // menu takes ownership of sub
-    QMenu *sub = menu.addMenu(tr("&Attached Files"));
+    QMenu *sub = menu.addMenu(tr("&Files"));
+    sub->addAction(ui->actionLogdataRouteOpen);
+    sub->addAction(ui->actionLogdataPerfLoad);
+    sub->addSeparator();
     sub->addAction(ui->actionSearchLogdataOpenPlan);
     sub->addAction(ui->actionSearchLogdataSavePlanAs);
     sub->addSeparator();
@@ -1222,7 +1237,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     sub->addSeparator();
     sub->addAction(ui->actionSearchLogdataSaveGpxAs);
     menu.addSeparator();
-  }
+  } // if(tabIndex == si::SEARCH_LOG)
 
   if(atools::contains(tabIndex,
                       {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,

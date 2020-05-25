@@ -269,7 +269,7 @@ void UserdataDialog::recordToDialog()
     // temp point
     if(editMode == ud::ADD)
       // Checkbox in add mode if set in record
-      ui->checkBoxUserdataTemp->setChecked(record->valueBool("temp"));
+      ui->checkBoxUserdataTemp->setChecked(false);
     else if(editMode == ud::EDIT_ONE)
       // Add label in edit mode
       ui->labelUserdataTemp->setText(tr("Temporary userpoint - will be deleted on next startup"));

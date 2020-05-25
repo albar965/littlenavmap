@@ -8112,10 +8112,6 @@ Best track will be selected automatically.</string>
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/offline.svg</normaloff>:/littlenavmap/resources/icons/offline.svg</iconset>
-   </property>
    <property name="text">
     <string>&amp;Work Offline</string>
    </property>
@@ -11213,57 +11209,74 @@ Best track will be selected automatically.</string>
   </action>
   <action name="actionSearchLogdataSavePlanAs">
    <property name="text">
-    <string>&amp;Save Flight Plan as ...</string>
+    <string>&amp;Save attached Flight Plan as ...</string>
    </property>
    <property name="iconText">
     <string>Save flight plan as a new file</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as a new file</string>
+    <string>Save attached flight plan as a new file</string>
+   </property>
+   <property name="statusTip">
+    <string>Save attached flight plan as a new file</string>
    </property>
   </action>
   <action name="actionSearchLogdataOpenPlan">
    <property name="text">
-    <string>&amp;Open Flight Plan</string>
+    <string>&amp;Open attached Flight Plan</string>
    </property>
    <property name="iconText">
     <string>Open flight plan as current</string>
    </property>
    <property name="toolTip">
-    <string>Open flight plan as current</string>
+    <string>Open attached flight plan as current</string>
+   </property>
+   <property name="statusTip">
+    <string>Open attached flight plan as current</string>
    </property>
   </action>
   <action name="actionSearchLogdataSavePerfAs">
    <property name="text">
-    <string>Save Aircraft &amp;Perfomance as ...</string>
+    <string>Save attached Aircraft &amp;Perfomance as ...</string>
    </property>
    <property name="iconText">
     <string>Save aircraft perfomance as a new file</string>
    </property>
    <property name="toolTip">
-    <string>Save aircraft perfomance as a new file</string>
+    <string>Save attached aircraft perfomance as a new file</string>
+   </property>
+   <property name="statusTip">
+    <string>Save attached aircraft perfomance as a new file</string>
    </property>
   </action>
   <action name="actionSearchLogdataOpenPerf">
    <property name="text">
-    <string>Open &amp;Aircraft Performance</string>
+    <string>Open attached &amp;Aircraft Performance</string>
    </property>
    <property name="iconText">
     <string>Open aircraft performance as current</string>
    </property>
    <property name="toolTip">
-    <string>Open Aircraft Performance as current</string>
+    <string>Open attached Aircraft Performance as current</string>
+   </property>
+   <property name="statusTip">
+    <string>Open attached Aircraft Performance as current</string>
    </property>
   </action>
   <action name="actionSearchLogdataSaveGpxAs">
    <property name="text">
-    <string>Save &amp;GPX Trail as ...</string>
+    <string>Save attached &amp;GPX Trail as ...</string>
    </property>
    <property name="iconText">
     <string>Save aircraft trail into GPX file</string>
    </property>
    <property name="toolTip">
-    <string>Save aircraft trail into GPX file</string>
+    <string>Save attached aircraft trail into GPX file</string>
+   </property>
+   <property name="statusTip">
+    <string>Save attached aircraft trail into GPX file</string>
+   </property>
+  </action>
   <action name="actionMapShowCompassRoseAttach">
    <property name="checkable">
     <bool>true</bool>

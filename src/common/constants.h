@@ -295,9 +295,8 @@ const QLatin1Literal OPTIONS_GUI_OVERRIDE_LANGUAGE("OptionsDialog/Widget_checkBo
 const QLatin1Literal OPTIONS_GUI_OVERRIDE_LOCALE("OptionsDialog/Widget_checkBoxOptionsGuiOverrideLocale");
 
 /* File dialog patterns */
-#if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg)");
-const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.lnmpln *.pln *.flp *.fms *.fgfp)");
+const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.lnmpln *.pln *.flp *.fms *.fgfp *.fpl)");
 const QLatin1Literal FILE_PATTERN_LNMPLN("(*.lnmpln)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
@@ -308,22 +307,6 @@ const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
 const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml)");
 const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf)");
 const QLatin1Literal FILE_PATTERN_GRIB("(*.grib)");
-#else
-/* Use more or less case insensitive patterns for Linux */
-const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
-const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD(
-  "(*.lnmpln *.LNMPLN *.Lnmpln *.LNMpln *.pln *.Pln *.PLN *.flp *.Flp *.FLP *.fms *.Fms *.FMS *.fgfp *.Fgfp *.FGFP)");
-const QLatin1Literal FILE_PATTERN_LNMPLN("(*.lnmpln *.LNMPLN *.Lnmpln *.LNMpln)");
-const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");
-const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.GPX *.Gpx)");
-
-const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv *.Csv *.CSV)");
-const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
-const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
-const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml *.Xml *.XML)");
-const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf *.LNMPERF *.Lnmperf *.LNMperf)");
-const QLatin1Literal FILE_PATTERN_GRIB("(*.grib *.GRIB *.Grib)");
-#endif
 
 const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 const QString FILE_PATTERN_XPLANE_METAR("(METAR.rwx)");
