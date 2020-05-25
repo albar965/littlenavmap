@@ -1546,16 +1546,21 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   // Create wait cursor if calculation takes too long
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
+  float distance = 0.f;
+  QVector<RouteEntry> calculatedRoute;
+
   if(found && !canceled)
   {
     // A route was found
-    float distance = 0.f;
-    QVector<RouteEntry> calculatedRoute;
 
     // Fetch waypoints
     RouteExtractor extractor(routeFinder);
     extractor.extractRoute(calculatedRoute, distance);
+    found = calculatedRoute.size() > 0;
+  }
 
+  if(found && !canceled)
+  {
     // Compare to direct connection and check if route is too long
     float directDistance = departurePos.distanceMeterTo(destinationPos);
     float ratio = distance / directDistance;
@@ -1645,8 +1650,9 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   QGuiApplication::restoreOverrideCursor();
   if(!found && !canceled)
     atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_ERROR,
-                                                   tr("Cannot calculate a flight plan.\n"
-                                                      "Try another calculation type, change the cruise altitude or\n"
+                                                   tr("Cannot calculate flight plan.\n\n"
+                                                      "Try another calculation type,\n"
+                                                      "change the cruise altitude or\n"
                                                       "create the flight plan manually."),
                                                    tr("Do not &show this dialog again."));
 #ifdef DEBUG_INFORMATION
