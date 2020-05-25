@@ -3909,14 +3909,18 @@ QString HtmlInfoBuilder::airplaneType(const atools::fs::sc::SimConnectAircraft& 
 
 void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool ils) const
 {
-  if(rec != nullptr && rec->contains("title") && rec->contains("filepath"))
+  if(ils)
   {
     head(html, tr("Scenery"));
     html.table();
-    if(ils)
-      html.row2(NavApp::isNavdataAll() ? tr("Navigraph") : tr("Simulator"));
-    else
-      html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")), ahtml::NO_ENTITIES);
+    html.row2(NavApp::isNavdataAll() ? tr("Navigraph") : tr("Simulator"));
+    html.tableEnd();
+  }
+  else if(rec != nullptr && rec->contains("title") && rec->contains("filepath"))
+  {
+    head(html, tr("Scenery"));
+    html.table();
+    html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")), ahtml::NO_ENTITIES);
     html.tableEnd();
   }
 }
