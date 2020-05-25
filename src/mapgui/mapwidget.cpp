@@ -1770,7 +1770,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Order is important - first items have lowest priority
   bool isAircraft = false;
   QString informationText, procedureText, measureText, rangeRingText, departureText, departureParkingText,
-          destinationText, addRouteText, searchText, editUserpointText, patternText, holdText;
+          destinationText, addRouteText, searchText, editUserpointText, patternText, holdText, userpointAddText;
 
   if(onlineCenter != nullptr)
   {
@@ -1792,16 +1792,19 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     informationText.clear();
 
   if(waypoint != nullptr)
-    informationText = measureText = addRouteText = searchText = holdText = map::waypointText(*waypoint);
+    userpointAddText = informationText = measureText = addRouteText = searchText = holdText =
+      map::waypointText(*waypoint);
 
   if(ndb != nullptr)
-    informationText = measureText = rangeRingText = addRouteText = searchText = holdText = map::ndbText(*ndb);
+    userpointAddText = informationText = measureText = rangeRingText = addRouteText = searchText = holdText =
+      map::ndbText(*ndb);
 
   if(vor != nullptr)
-    informationText = measureText = rangeRingText = addRouteText = searchText = holdText = map::vorText(*vor);
+    userpointAddText = informationText = measureText = rangeRingText = addRouteText = searchText = holdText =
+      map::vorText(*vor);
 
   if(airport != nullptr)
-    procedureText = informationText =
+    userpointAddText = procedureText = informationText =
       measureText = departureText =
         destinationText = addRouteText =
           searchText = patternText = holdText = map::airportText(*airport, 20);
@@ -1976,7 +1979,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // ===================================================================================
   // Update "edit userpoint" and "add userpoint"
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr)
-    ui->actionMapUserdataAdd->setText(ui->actionMapUserdataAdd->text().arg(informationText));
+    ui->actionMapUserdataAdd->setText(ui->actionMapUserdataAdd->text().arg(userpointAddText));
   else
     ui->actionMapUserdataAdd->setText(ui->actionMapUserdataAdd->text().arg(QString()));
 
