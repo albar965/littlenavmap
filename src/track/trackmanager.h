@@ -52,14 +52,21 @@ public:
     verbose = value;
   }
 
-  /* Clear track database */
+  /* Clears track tables in database. */
   void clearTracks();
 
   /* Get number of tracks for each type */
   QMap<atools::track::TrackType, int> getNumTracks();
 
+  const QStringList& getErrorMessages() const
+  {
+    return errorMessages;
+  }
+
 private:
-  /* Clears track tables in database. */
+  /* Queries are initialized and closed when entering and leaving loadTracks(). */
+  void initQueries();
+  void deInitQueries();
 
   /* Add waypoint/trackpoint to hash returning waypoint id or new generated trackpoint id.
    * rec is an empty record for trackpoint table. */
@@ -70,10 +77,6 @@ private:
   bool addTrackmeta(QHash<std::pair<atools::track::TrackType, QString>, atools::sql::SqlRecord>& records,
                     const atools::track::Track& track, int metaId, int startPointId, int endPointId);
 
-  /* Queries are initialized and closed when entering and leaving loadTracks(). */
-  void initQueries();
-  void deInitQueries();
-
   atools::sql::SqlQuery *waypointQuery = nullptr, *waypointNavQuery = nullptr,
                         *ndbQuery = nullptr, *vorQuery = nullptr, *airwayQuery = nullptr;
 
@@ -81,6 +84,7 @@ private:
 
   /* Database for querying navaids. */
   atools::sql::SqlDatabase *dbNav = nullptr;
+  QStringList errorMessages;
 };
 
 #endif // ATOOLS_TRACKMANAGER_H

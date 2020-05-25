@@ -96,6 +96,7 @@ void TrackManager::deInitQueries()
 
 void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
 {
+  errorMessages.clear();
   SqlTransaction transaction(db);
   clearTracks();
 
@@ -253,11 +254,15 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
     }
     else
     {
-      qWarning() << QString("Error when parsing track %1 (%2) with route %3.").
-        arg(track.name).arg(track.typeString()).arg(track.route.join(" "));
-      qWarning() << reader.getMessages();
+      QString err = tr("Error when parsing track %1 (%2) with route %3.").
+                    arg(track.name).
+                    arg(track.typeString()).arg(atools::elideTextShortMiddle(track.route.join(" "), 40));
+      errorMessages.append(err);
+      errorMessages.append(reader.getMessages());
     }
   }
+
+  qWarning() << errorMessages;
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << "after loading tracks" << timer.restart();

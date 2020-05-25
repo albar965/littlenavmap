@@ -246,10 +246,8 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     // Open track database =================================
     openWriteableDatabase(databaseTrack, "track", "track", false /* backup */);
     trackManager = new TrackManager(databaseTrack, databaseNav);
-    if(!trackManager->hasSchema())
-      trackManager->createSchema();
-    else
-      trackManager->updateSchema();
+    trackManager->createSchema();
+    // trackManager->initQueries();
 
     // Open online network database ==============================
     atools::settings::Settings& settings = atools::settings::Settings::instance();

@@ -1354,8 +1354,8 @@ void MainWindow::connectAllSlots()
   TrackController *trackController = NavApp::getTrackController();
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::clearAirwayNetworkCache);
   connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::tracksChanged);
-  connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
+  connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
 
   connect(ui->actionRouteDownloadTracks, &QAction::toggled, trackController, &TrackController::downloadToggled);
   connect(ui->actionRouteDownloadTracksNow, &QAction::triggered, trackController, &TrackController::startDownload);

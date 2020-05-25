@@ -125,10 +125,10 @@ void TrackController::preDatabaseLoad()
 
 void TrackController::postDatabaseLoad()
 {
+  // Reload track into database to catch changed waypoint ids
   airwayTrackQuery->initQueries();
   waypointTrackQuery->initQueries();
 
-  // Reload track into database to catch changed waypoint ids
   emit preTrackLoad();
   trackManager->loadTracks(trackVector, downloadOnlyValid);
   emit postTrackLoad();
@@ -251,7 +251,25 @@ void TrackController::tracksLoaded()
 
   }
 
-  atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS,
-                                                 tr("<p>Track download successfull.</p><ul>%1</ul>").arg(str.join("")),
-                                                 tr("Do not &show this dialog again."));
+  QString err;
+  const QStringList& errorMessages = trackManager->getErrorMessages();
+  if(!errorMessages.isEmpty())
+  {
+    err += tr("<p>Errors reading tracks.<br/>Make sure to use the latest navdata.</p><ul><li>");
+    err += errorMessages.mid(0, 5).join("</li><li>");
+
+    if(errorMessages.size() > 5)
+      err += tr("</li><li>More ...");
+
+    err += tr("</li></ul>");
+  }
+
+  QString boxMessage = tr("<p>Tracks downloaded.</p><ul>%1</ul>%2").arg(str.join("")).arg(err);
+
+  if(!errorMessages.isEmpty())
+    // Force display of dialog in case of errors
+    QMessageBox::warning(mainWindow, QApplication::applicationName(), boxMessage);
+  else
+    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, boxMessage,
+                                                   tr("Do not &show this dialog again."));
 }
