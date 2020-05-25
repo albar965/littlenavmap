@@ -942,6 +942,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   updateTableModel();
   updateErrorLabel();
   NavApp::updateWindowTitle();
+  routeWindow->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << route;
@@ -2504,6 +2505,7 @@ void RouteController::styleChanged()
 void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  routeWindow->optionsChanged();
 
   updateTableHeaders();
   updateTableModel();

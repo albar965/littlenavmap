@@ -78,6 +78,8 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  void optionsChanged();
+
   /* Airway or radionav */
   rd::RoutingType getRoutingType() const;
 
@@ -131,6 +133,8 @@ private:
   void adjustAltitudePressed();
 
   void helpClicked();
+
+  void dockVisibilityChanged(bool visible);
 
   /* Range/selection */
   int fromIndex = -1, toIndex = -1;
