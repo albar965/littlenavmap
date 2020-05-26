@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>554</width>
-    <height>519</height>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,6 +59,9 @@
        <property name="text">
         <string/>
        </property>
+       <property name="margin">
+        <number>5</number>
+       </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
        </property>
@@ -108,6 +111,9 @@
        <property name="text">
         <string/>
        </property>
+       <property name="margin">
+        <number>5</number>
+       </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
        </property>
@@ -127,6 +133,9 @@
       <widget class="QLabel" name="labelUserdataFilepath">
        <property name="text">
         <string/>
+       </property>
+       <property name="margin">
+        <number>5</number>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -431,6 +440,9 @@ Formats above have to be given exactly as shown in the examples.</string>
       <widget class="QLabel" name="labelUserdataMagVar">
        <property name="text">
         <string/>
+       </property>
+       <property name="margin">
+        <number>5</number>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>

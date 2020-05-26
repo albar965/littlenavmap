@@ -270,6 +270,6 @@ void TrackController::tracksLoaded()
     // Force display of dialog in case of errors
     QMessageBox::warning(mainWindow, QApplication::applicationName(), boxMessage);
   else
-    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, boxMessage,
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, boxMessage,
                                                    tr("Do not &show this dialog again."));
 }

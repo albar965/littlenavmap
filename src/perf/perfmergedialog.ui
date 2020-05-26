@@ -6,171 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>507</width>
-    <height>611</height>
+    <width>484</width>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Little Navmap - Merge Aircraft Performance</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="spacing">
+   <property name="horizontalSpacing">
+    <number>9</number>
+   </property>
+   <property name="verticalSpacing">
     <number>2</number>
    </property>
-   <item row="27" column="1">
-    <widget class="QLabel" name="labelAlternateSpeedValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="20" column="1">
-    <widget class="QLabel" name="labelCruiseSpeedValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="18" column="1">
-    <widget class="QLabel" name="labelClimbFuelFlowValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="0">
-    <widget class="QLabel" name="labelContingencyFuel">
-     <property name="text">
-      <string>&amp;Contingency fuel:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxContingencyFuel</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="21" column="2">
-    <widget class="QLabel" name="labelCruiseFuelFlowValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="3">
-    <widget class="QComboBox" name="comboBoxType">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="23" column="1">
-    <widget class="QLabel" name="labelDescentSpeedValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="25" column="1">
-    <widget class="QLabel" name="labelDescentFuelFlowValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="24" column="0">
-    <widget class="QLabel" name="labelDescentVertSpeed">
-     <property name="text">
-      <string>Average vertical &amp;descent speed:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxDescentVertSpeed</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="4">
-    <widget class="Line" name="lineFuel">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="20" column="0">
-    <widget class="QLabel" name="labelCruiseSpeed">
-     <property name="text">
-      <string>C&amp;ruise speed at typical cruise altitude:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxCruiseSpeed</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="16" column="1">
-    <widget class="QLabel" name="labelClimbSpeedValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="0">
-    <widget class="QLabel" name="labelExtraFuel">
-     <property name="text">
-      <string>&amp;Extra fuel:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxExtraFuel</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="21" column="3">
-    <widget class="QComboBox" name="comboBoxCruiseFuelFlow">
+   <item row="20" column="4">
+    <widget class="QComboBox" name="comboBoxCruiseSpeed">
      <item>
       <property name="text">
        <string>Copy</string>
@@ -188,7 +39,214 @@
      </item>
     </widget>
    </item>
-   <item row="27" column="3">
+   <item row="23" column="4">
+    <widget class="QComboBox" name="comboBoxDescentSpeed">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="6" column="2">
+    <widget class="QLabel" name="labelTypeIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="24" column="4">
+    <widget class="QComboBox" name="comboBoxDescentVertSpeed">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="23" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelDescentSpeedValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelExtraFuelValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="5">
+    <widget class="Line" name="lineFuel_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="20" column="2">
+    <widget class="QLabel" name="labelCruiseSpeedIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="22" column="0" colspan="5">
+    <widget class="Line" name="lineDescent">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLabel" name="labelNameValueLegendIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelTaxiFuelValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="labelType">
+     <property name="text">
+      <string>Aircraft &amp;type:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxType</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="20" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelCruiseSpeedValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="18" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelClimbFuelFlowValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="25" column="0">
+    <widget class="QLabel" name="labelDescentFuelFlow">
+     <property name="text">
+      <string>Average fuel flow for &amp;descent:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxDescentFuelFlow</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelContingencyFuelValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="27" column="4">
     <widget class="QComboBox" name="comboBoxAlternateSpeed">
      <item>
       <property name="text">
@@ -207,96 +265,7 @@
      </item>
     </widget>
    </item>
-   <item row="25" column="2">
-    <widget class="QLabel" name="labelDescentFuelFlowValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="17" column="3">
-    <widget class="QComboBox" name="comboBoxClimbVertSpeed">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="29" column="0" colspan="4">
-    <widget class="Line" name="lineSetAll">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0" colspan="4">
-    <widget class="Line" name="lineFuel2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="27" column="2">
-    <widget class="QLabel" name="labelAlternateSpeedValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="32" column="0" colspan="4">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="26" column="0" colspan="4">
-    <widget class="Line" name="lineAlternate">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="1">
-    <widget class="QLabel" name="labelReserveFuelValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="30" column="1" colspan="3">
+   <item row="30" column="0" colspan="5">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="leftMargin">
       <number>2</number>
@@ -310,6 +279,13 @@
      <property name="bottomMargin">
       <number>2</number>
      </property>
+     <item>
+      <widget class="QLabel" name="labelAllValues">
+       <property name="text">
+        <string>Set all operations to:</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="pushButtonCopy">
        <property name="text">
@@ -333,46 +309,52 @@
      </item>
     </layout>
    </item>
-   <item row="5" column="1">
-    <widget class="QLabel" name="labelNameValue">
+   <item row="5" column="2">
+    <widget class="QLabel" name="labelNameIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string/>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
      </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
+     <property name="margin">
+      <number>0</number>
      </property>
     </widget>
    </item>
-   <item row="13" column="1">
-    <widget class="QLabel" name="labelExtraFuelValue">
+   <item row="15" column="0" colspan="5">
+    <widget class="Line" name="lineClimb">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="23" column="2">
+    <widget class="QLabel" name="labelDescentSpeedIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string/>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
      </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="18" column="2">
-    <widget class="QLabel" name="labelClimbFuelFlowValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
+     <property name="margin">
+      <number>0</number>
      </property>
     </widget>
    </item>
-   <item row="9" column="3">
+   <item row="9" column="4">
     <widget class="QComboBox" name="comboBoxUsableFuel">
      <item>
       <property name="text">
@@ -391,49 +373,10 @@
      </item>
     </widget>
    </item>
-   <item row="23" column="0">
-    <widget class="QLabel" name="labelDescentSpeed">
-     <property name="text">
-      <string>Average &amp;descent speed:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxDescentSpeed</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="2">
-    <widget class="QLabel" name="labelUsableFuelValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="21" column="0">
-    <widget class="QLabel" name="labelCruiseFuelFlow">
-     <property name="text">
-      <string>Fuel flow in c&amp;ruise:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxCruiseFuelFlow</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="16" column="2">
-    <widget class="QLabel" name="labelClimbSpeedValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
+   <item row="3" column="0" colspan="5">
+    <widget class="Line" name="lineFuel">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
@@ -447,43 +390,21 @@
      </property>
     </widget>
    </item>
-   <item row="20" column="2">
-    <widget class="QLabel" name="labelCruiseSpeedValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
+   <item row="6" column="4">
+    <widget class="QComboBox" name="comboBoxType">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
     </widget>
    </item>
-   <item row="23" column="2">
-    <widget class="QLabel" name="labelDescentSpeedValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="labelUsableFuel">
-     <property name="text">
-      <string>&amp;Usable fuel:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxUsableFuel</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="3">
+   <item row="10" column="4">
     <widget class="QComboBox" name="comboBoxReserveFuel">
      <item>
       <property name="text">
@@ -502,16 +423,120 @@
      </item>
     </widget>
    </item>
-   <item row="0" column="0" colspan="4">
+   <item row="26" column="0" colspan="5">
+    <widget class="Line" name="lineAlternate">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelClimbSpeedValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelUsableFuelValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelUsableFuelValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="5">
     <widget class="QLabel" name="labelAircraft">
      <property name="text">
       <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
      <property name="margin">
       <number>5</number>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="25" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelDescentFuelFlowValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="28" column="4">
+    <widget class="QComboBox" name="comboBoxAlternateFuelFlow">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="21" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelCruiseFuelFlowValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="labelUsableFuel">
+     <property name="text">
+      <string>&amp;Usable fuel:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxUsableFuel</cstring>
      </property>
     </widget>
    </item>
@@ -525,8 +550,292 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QLabel" name="labelNameValueLegend_2">
+   <item row="24" column="2">
+    <widget class="QLabel" name="labelDescentVertSpeedIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="5">
+    <widget class="Line" name="lineFuel2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="17" column="2">
+    <widget class="QLabel" name="labelClimbVertSpeedIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="23" column="0">
+    <widget class="QLabel" name="labelDescentSpeed">
+     <property name="text">
+      <string>Average &amp;descent speed:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxDescentSpeed</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelClimbSpeedValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelNameValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="4">
+    <widget class="QComboBox" name="comboBoxClimbSpeed">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="13" column="2">
+    <widget class="QLabel" name="labelExtraFuelIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="24" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelDescentVertSpeedValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="2">
+    <widget class="QLabel" name="labelContingencyFuelIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="25" column="2">
+    <widget class="QLabel" name="labelDescentFuelFlowIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="27" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelAlternateSpeedValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelNameValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="27" column="2">
+    <widget class="QLabel" name="labelAlternateSpeedIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="28" column="2">
+    <widget class="QLabel" name="labelAlternateFuelFlowIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="4">
+    <widget class="QComboBox" name="comboBoxName">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="24" column="0">
+    <widget class="QLabel" name="labelDescentVertSpeed">
+     <property name="text">
+      <string>Average vertical &amp;descent speed:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxDescentVertSpeed</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="19" column="0" colspan="5">
+    <widget class="Line" name="lineCruise">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="24" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelDescentVertSpeedValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3" colspan="2" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelNameValueLegend2">
      <property name="font">
       <font>
        <weight>75</weight>
@@ -547,414 +856,7 @@
      </property>
     </widget>
    </item>
-   <item row="16" column="3">
-    <widget class="QComboBox" name="comboBoxClimbSpeed">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="28" column="0">
-    <widget class="QLabel" name="labelAlternateFuelFlow">
-     <property name="text">
-      <string>Average fuel flow for &amp;alternate:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxAlternateFuelFlow</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QLabel" name="labelTypeValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="22" column="0" colspan="4">
-    <widget class="Line" name="lineDescent">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="21" column="1">
-    <widget class="QLabel" name="labelCruiseFuelFlowValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QLabel" name="labelNameValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="15" column="0" colspan="4">
-    <widget class="Line" name="lineClimb">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="2">
-    <widget class="QLabel" name="labelReserveFuelValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="25" column="0">
-    <widget class="QLabel" name="labelDescentFuelFlow">
-     <property name="text">
-      <string>Average fuel flow for &amp;descent:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxDescentFuelFlow</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="27" column="0">
-    <widget class="QLabel" name="labelAlternateSpeed">
-     <property name="text">
-      <string>&amp;Alternate speed:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxAlternateSpeed</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="30" column="0">
-    <widget class="QLabel" name="labelAllValues">
-     <property name="text">
-      <string>Set all operations to:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="3">
-    <widget class="QComboBox" name="comboBoxContingencyFuel">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="14" column="1">
-    <widget class="QLabel" name="labelContingencyFuelValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="28" column="1">
-    <widget class="QLabel" name="labelAlternateFuelFlowValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="2">
-    <widget class="QLabel" name="labelTypeValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="25" column="3">
-    <widget class="QComboBox" name="comboBoxDescentFuelFlow">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="16" column="0">
-    <widget class="QLabel" name="labelClimbSpeed">
-     <property name="text">
-      <string>Average &amp;climb speed:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxClimbSpeed</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="20" column="3">
-    <widget class="QComboBox" name="comboBoxCruiseSpeed">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="19" column="0" colspan="4">
-    <widget class="Line" name="lineCruise">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="3">
-    <widget class="QComboBox" name="comboBoxName">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="17" column="2">
-    <widget class="QLabel" name="labelClimbVertSpeedValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="2">
-    <widget class="QLabel" name="labelTaxiFuelValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="31" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="14" column="2">
-    <widget class="QLabel" name="labelContingencyFuelValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="23" column="3">
-    <widget class="QComboBox" name="comboBoxDescentSpeed">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="24" column="2">
-    <widget class="QLabel" name="labelDescentVertSpeedValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="24" column="1">
-    <widget class="QLabel" name="labelDescentVertSpeedValue">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="2">
-    <widget class="QLabel" name="labelExtraFuelValue2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="labelNameValueLegend">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>New Value ►</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="labelName">
-     <property name="text">
-      <string>Aircraft &amp;model:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxName</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="3">
-    <widget class="QComboBox" name="comboBoxTaxiFuel">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="11" column="1">
+   <item row="11" column="1" alignment="Qt::AlignRight">
     <widget class="QLabel" name="labelTaxiFuelValue">
      <property name="text">
       <string/>
@@ -967,65 +869,98 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="labelType">
+   <item row="13" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelExtraFuelValue2">
      <property name="text">
-      <string>Aircraft &amp;type:</string>
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelTypeValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="20" column="0">
+    <widget class="QLabel" name="labelCruiseSpeed">
+     <property name="text">
+      <string>C&amp;ruise speed at typical cruise altitude:</string>
      </property>
      <property name="buddy">
-      <cstring>comboBoxType</cstring>
+      <cstring>comboBoxCruiseSpeed</cstring>
      </property>
     </widget>
    </item>
-   <item row="18" column="3">
-    <widget class="QComboBox" name="comboBoxClimbFuelFlow">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="24" column="3">
-    <widget class="QComboBox" name="comboBoxDescentVertSpeed">
-     <item>
-      <property name="text">
-       <string>Copy</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merge</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="17" column="0">
-    <widget class="QLabel" name="labelClimbVertSpeed">
+   <item row="11" column="2">
+    <widget class="QLabel" name="labelTaxiFuelIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
-      <string>Average vertical &amp;climb speed:</string>
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="0">
+    <widget class="QLabel" name="labelClimbSpeed">
+     <property name="text">
+      <string>Average &amp;climb speed:</string>
      </property>
      <property name="buddy">
-      <cstring>comboBoxClimbVertSpeed</cstring>
+      <cstring>comboBoxClimbSpeed</cstring>
      </property>
     </widget>
    </item>
-   <item row="28" column="2">
+   <item row="32" column="0" colspan="5">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="17" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelClimbVertSpeedValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="28" column="3" alignment="Qt::AlignLeft">
     <widget class="QLabel" name="labelAlternateFuelFlowValue2">
      <property name="text">
       <string/>
@@ -1038,8 +973,8 @@
      </property>
     </widget>
    </item>
-   <item row="17" column="1">
-    <widget class="QLabel" name="labelClimbVertSpeedValue">
+   <item row="28" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelAlternateFuelFlowValue">
      <property name="text">
       <string/>
      </property>
@@ -1051,7 +986,26 @@
      </property>
     </widget>
    </item>
-   <item row="13" column="3">
+   <item row="21" column="4">
+    <widget class="QComboBox" name="comboBoxCruiseFuelFlow">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="13" column="4">
     <widget class="QComboBox" name="comboBoxExtraFuel">
      <item>
       <property name="text">
@@ -1070,8 +1024,8 @@
      </item>
     </widget>
    </item>
-   <item row="28" column="3">
-    <widget class="QComboBox" name="comboBoxAlternateFuelFlow">
+   <item row="17" column="4">
+    <widget class="QComboBox" name="comboBoxClimbVertSpeed">
      <item>
       <property name="text">
        <string>Copy</string>
@@ -1089,18 +1043,41 @@
      </item>
     </widget>
    </item>
-   <item row="11" column="0">
-    <widget class="QLabel" name="labelTaxiFuel">
+   <item row="5" column="0">
+    <widget class="QLabel" name="labelName">
      <property name="text">
-      <string>&amp;Taxi fuel:</string>
+      <string>Aircraft &amp;model:</string>
      </property>
      <property name="buddy">
-      <cstring>comboBoxTaxiFuel</cstring>
+      <cstring>comboBoxName</cstring>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
-    <widget class="QLabel" name="labelUsableFuelValue">
+   <item row="10" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelReserveFuelValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="27" column="0">
+    <widget class="QLabel" name="labelAlternateSpeed">
+     <property name="text">
+      <string>&amp;Alternate speed:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxAlternateSpeed</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelReserveFuelValue">
      <property name="text">
       <string/>
      </property>
@@ -1112,12 +1089,398 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="4">
-    <widget class="Line" name="lineFuel_2">
+   <item row="10" column="2">
+    <widget class="QLabel" name="labelReserveFuelIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2">
+    <widget class="QLabel" name="labelUsableFuelIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="25" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelDescentFuelFlowValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="4">
+    <widget class="QComboBox" name="comboBoxTaxiFuel">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="21" column="0">
+    <widget class="QLabel" name="labelCruiseFuelFlow">
+     <property name="text">
+      <string>Fuel flow in c&amp;ruise:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxCruiseFuelFlow</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="18" column="2">
+    <widget class="QLabel" name="labelClimbFuelFlowIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="23" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelDescentSpeedValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="29" column="0" colspan="5">
+    <widget class="Line" name="lineSetAll">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
+   </item>
+   <item row="18" column="4">
+    <widget class="QComboBox" name="comboBoxClimbFuelFlow">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="21" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelCruiseFuelFlowValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="17" column="0">
+    <widget class="QLabel" name="labelClimbVertSpeed">
+     <property name="text">
+      <string>Average vertical &amp;climb speed:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxClimbVertSpeed</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="18" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelClimbFuelFlowValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="27" column="3" alignment="Qt::AlignLeft">
+    <widget class="QLabel" name="labelAlternateSpeedValue2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0">
+    <widget class="QLabel" name="labelContingencyFuel">
+     <property name="text">
+      <string>&amp;Contingency fuel:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxContingencyFuel</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="2">
+    <widget class="QLabel" name="labelClimbSpeedIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="28" column="0">
+    <widget class="QLabel" name="labelAlternateFuelFlow">
+     <property name="text">
+      <string>Average fuel flow for &amp;alternate:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxAlternateFuelFlow</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="2">
+    <widget class="QLabel" name="labelCruiseFuelFlowIcon">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/arrowrightsmall.svg</pixmap>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="20" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelCruiseSpeedValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelTypeValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelNameValueLegend">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>New Value</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="labelExtraFuel">
+     <property name="text">
+      <string>&amp;Extra fuel:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxExtraFuel</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="25" column="4">
+    <widget class="QComboBox" name="comboBoxDescentFuelFlow">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="14" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelContingencyFuelValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="4">
+    <widget class="QComboBox" name="comboBoxContingencyFuel">
+     <item>
+      <property name="text">
+       <string>Copy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="17" column="1" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="labelClimbVertSpeedValue">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="labelTaxiFuel">
+     <property name="text">
+      <string>&amp;Taxi fuel:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxTaxiFuel</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="31" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -1142,5 +1505,8 @@
   <tabstop>pushButtonCopy</tabstop>
   <tabstop>pushButtonMerge</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../littlenavmap.qrc"/>
+ </resources>
+ <connections/>
 </ui>

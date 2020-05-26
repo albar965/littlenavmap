@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>791</width>
-    <height>565</height>
+    <width>783</width>
+    <height>536</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -4121,7 +4121,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
               <bool>true</bool>
              </property>
              <property name="margin">
-              <number>2</number>
+              <number>5</number>
              </property>
             </widget>
            </item>
@@ -4255,7 +4255,7 @@ Entering a wrong value will cause errors when downloading wind reports.</string>
               <bool>true</bool>
              </property>
              <property name="margin">
-              <number>2</number>
+              <number>5</number>
              </property>
             </widget>
            </item>
@@ -4663,6 +4663,9 @@ Little Navmap GIT repository.
           <property name="wordWrap">
            <bool>true</bool>
           </property>
+          <property name="margin">
+           <number>5</number>
+          </property>
           <property name="textInteractionFlags">
            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
           </property>
@@ -4880,6 +4883,9 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
              <property name="wordWrap">
               <bool>true</bool>
              </property>
+             <property name="margin">
+              <number>5</number>
+             </property>
             </widget>
            </item>
            <item row="0" column="0" colspan="3">
@@ -4983,6 +4989,9 @@ Currently only OpenAir is supported (*.txt). </string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>5</number>
              </property>
             </widget>
            </item>

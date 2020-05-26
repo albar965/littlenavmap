@@ -223,19 +223,6 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="3">
-           <widget class="QLabel" name="labelDepartureStatus">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="margin">
-             <number>5</number>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="4">
            <widget class="QLabel" name="labelDepartureRunway">
             <property name="text">
@@ -312,6 +299,22 @@
             </property>
             <property name="buddy">
              <cstring>dateTimeEditDepartureDateTimeReal</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="5">
+           <widget class="QLabel" name="labelDepartureStatus">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="margin">
+             <number>5</number>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>
@@ -392,16 +395,6 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="3">
-           <widget class="QLabel" name="labelDestinationStatus">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="margin">
-             <number>5</number>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="labelDestinationDateTimeSim">
             <property name="minimumSize">
@@ -451,6 +444,19 @@
             </property>
             <property name="timeSpec">
              <enum>Qt::LocalTime</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="5">
+           <widget class="QLabel" name="labelDestinationStatus">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="margin">
+             <number>5</number>
             </property>
            </widget>
           </item>
@@ -837,6 +843,9 @@ This is only a file path reference and does not attach the file to the logbook e
             <property name="text">
              <string/>
             </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
             <property name="margin">
              <number>5</number>
             </property>
@@ -1024,6 +1033,9 @@ This updates only the path and does not attach the file to the logbook entry.</s
            <widget class="QLabel" name="labelFlightPerfFileStatus">
             <property name="text">
              <string/>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
             <property name="margin">
              <number>5</number>

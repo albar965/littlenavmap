@@ -180,7 +180,10 @@ The fuel report will show a warning if this does not match the simulator aircraf
        <item>
         <widget class="QLabel" name="label">
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
          </property>
          <property name="text">
           <string>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.</string>
