@@ -47,7 +47,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>0</number>
+       <number>9</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QGridLayout" name="gridLayout">
@@ -3446,30 +3446,7 @@ This is also used for &quot;Center map on aircraft and next flight plan waypoint
            <property name="spacing">
             <number>2</number>
            </property>
-           <item row="6" column="0">
-            <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
-             <property name="text">
-              <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
-             <property name="toolTip">
-              <string>Rounds up flight plan cruise altitude according to selected rule.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Use simplified rule to determine cruise altitude</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
+           <item row="1" column="0">
             <widget class="QComboBox" name="comboBoxOptionsRouteAltitudeRuleType">
              <property name="toolTip">
               <string>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
@@ -3493,35 +3470,7 @@ South / North: Same as North / South but reverses odd and even.</string>
              </item>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
-             <property name="toolTip">
-              <string>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
-when transitioning from airport to airway.</string>
-             </property>
-             <property name="text">
-              <string>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
-             <property name="toolTip">
-              <string>Prefer nearest NDB that is part of an airway instead the nearest waypoint
-when transitioning from airport to airway.</string>
-             </property>
-             <property name="text">
-              <string>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
+           <item row="4" column="0">
             <widget class="QSpinBox" name="spinBoxOptionsRouteGroundBuffer">
              <property name="toolTip">
               <string>The red line value is always rounded up to the next 500 ft.
@@ -3544,14 +3493,30 @@ Note that this value does not affect flight plan calculation or saving of flight
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="Line" name="line_9">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
+             <property name="toolTip">
+              <string>Rounds up flight plan cruise altitude according to selected rule.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Use simplified rule to determine cruise altitude</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="5" column="0">
+           <item row="3" column="0">
+            <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
+             <property name="text">
+              <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
             <widget class="Line" name="line_7">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -5287,8 +5252,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsSimDoNotFollowOnScroll</tabstop>
   <tabstop>spinBoxSimDoNotFollowOnScrollTime</tabstop>
   <tabstop>spinBoxSimMaxTrackPoints</tabstop>
-  <tabstop>checkBoxOptionsRoutePreferVor</tabstop>
-  <tabstop>checkBoxOptionsRoutePreferNdb</tabstop>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
   <tabstop>comboBoxOptionsRouteAltitudeRuleType</tabstop>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>

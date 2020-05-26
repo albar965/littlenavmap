@@ -278,8 +278,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsRouteDeclination,
      ui->checkBoxOptionsRouteEastWestRule,
      ui->comboBoxOptionsRouteAltitudeRuleType,
-     ui->checkBoxOptionsRoutePreferNdb,
-     ui->checkBoxOptionsRoutePreferVor,
      ui->checkBoxOptionsRouteExportUserWpt,
      ui->checkBoxOptionsStartupLoadKml,
      ui->checkBoxOptionsStartupLoadMapSettings,
@@ -1334,8 +1332,6 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
   toFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
   toFlags(ui->checkBoxOptionsRouteDeclination, opts::ROUTE_IGNORE_VOR_DECLINATION);
-  toFlags(ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);
-  toFlags(ui->checkBoxOptionsRoutePreferVor, opts::ROUTE_PREFER_VOR);
   toFlags(ui->checkBoxOptionsRouteExportUserWpt, opts::ROUTE_GARMIN_USER_WPT);
   toFlagsWeather(ui->checkBoxOptionsWeatherInfoAsn, optsw::WEATHER_INFO_ACTIVESKY);
   toFlagsWeather(ui->checkBoxOptionsWeatherInfoNoaa, optsw::WEATHER_INFO_NOAA);
@@ -1569,8 +1565,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data, ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
   fromFlags(data, ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
   fromFlags(data, ui->checkBoxOptionsRouteDeclination, opts::ROUTE_IGNORE_VOR_DECLINATION);
-  fromFlags(data, ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);
-  fromFlags(data, ui->checkBoxOptionsRoutePreferVor, opts::ROUTE_PREFER_VOR);
   fromFlags(data, ui->checkBoxOptionsRouteExportUserWpt, opts::ROUTE_GARMIN_USER_WPT);
   fromFlagsWeather(data, ui->checkBoxOptionsWeatherInfoAsn, optsw::WEATHER_INFO_ACTIVESKY);
   fromFlagsWeather(data, ui->checkBoxOptionsWeatherInfoNoaa, optsw::WEATHER_INFO_NOAA);

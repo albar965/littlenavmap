@@ -1481,6 +1481,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
                                              bool fetchAirways, float altitudeFt, int fromIndex, int toIndex,
                                              atools::routing::Modes mode)
 {
+  qDebug() << Q_FUNC_INFO;
   bool calcRange = fromIndex != -1 && toIndex != -1;
   int oldRouteSize = route.size();
 
@@ -1491,9 +1492,6 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
   // Load network from database if not already done
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-  routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
-  routeFinder->setPreferNdbToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_NDB);
 
   Pos departurePos, destinationPos;
 
@@ -1541,6 +1539,8 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   if(!dialogShown)
     QGuiApplication::restoreOverrideCursor();
 
+  qDebug() << Q_FUNC_INFO << "found" << found << "canceled" << canceled;
+
   // Hide dialog
   progress.reset();
 
@@ -1557,6 +1557,8 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
     // Fetch waypoints
     RouteExtractor extractor(routeFinder);
     extractor.extractRoute(calculatedRoute, distance);
+    qDebug() << Q_FUNC_INFO << "Extracted size" << calculatedRoute.size();
+
     found = calculatedRoute.size() > 0;
   }
 

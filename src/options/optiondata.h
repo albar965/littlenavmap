@@ -67,13 +67,7 @@ enum Flag
    * ui->checkBoxOptionsRouteEastWestRule */
   ROUTE_ALTITUDE_RULE = 1 << 9,
 
-  /* Start airway route at NDB.
-   * ui->checkBoxOptionsRoutePreferNdb */
-  ROUTE_PREFER_NDB = 1 << 10,
-
-  /* Start airway route at VOR.
-   * ui->checkBoxOptionsRoutePreferVor */
-  ROUTE_PREFER_VOR = 1 << 11,
+  // Old options removed
 
   /* No box mode when moving map.
    * ui->checkBoxOptionsSimUpdatesConstant */
