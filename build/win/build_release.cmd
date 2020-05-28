@@ -15,7 +15,7 @@ rem
 rem See the *.pro project files for more information.
 rem
 rem Example:
-rem set PATH_SHARED=C:\Qt\5.12.5\mingw73_32\bin;C:\Qt\Tools\mingw730_32\bin
+rem set PATH_SHARED=C:\Qt\5.12.8\mingw73_32\bin;C:\Qt\Tools\mingw730_32\bin
 rem set PATH_STATIC=C:\msys64\mingw64\bin;C:\msys64\mingw64\bin
 rem set MARBLE_LIB_PATH=C:\Users\YOURNAME\Programme\Marble-debug\lib
 rem set MARBLE_INC_PATH=C:\Users\YOURNAME\Programme\Marble-debug\include
@@ -41,7 +41,7 @@ rem if defined ATOOLS_SIMCONNECT_PATH ( echo ATOOLS_SIMCONNECT_PATH ) else ( set
 rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
 
 rem Defines the used Qt for all builds
-if defined PATH_SHARED ( echo %PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\5.12.5\mingw73_32\bin;C:\Qt\Tools\mingw730_32\bin)
+if defined PATH_SHARED ( echo %PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\5.12.8\mingw73_32\bin;C:\Qt\Tools\mingw730_32\bin)
 
 rem Defines the used Qt for Xpconnect
 if defined PATH_STATIC ( echo %PATH_STATIC% ) else ( set PATH_STATIC=C:\msys64\mingw64\qt5-static\bin;C:\msys64\mingw64\bin)

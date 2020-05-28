@@ -33,10 +33,10 @@ export DATABASE_BASE=${DATABASE_BASE:-"${APROJECTS}/little_navmap_db"}
 export HELP_BASE=${HELP_BASE:-"${APROJECTS}/little_navmap_help"}
 
 # Defines the used Qt for all builds
-export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/5.12.5/gcc_64/bin/qmake"}
+export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/5.12.8/gcc_64/bin/qmake"}
 
 # Defines the used Qt for Xpconnect (/mnt/disk/build-qt-5.12.5-release/bin/qmake)
-export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/build-qt-5.12.4-release/bin/qmake"}
+export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/build-qt-5.12.8-release/bin/qmake"}
 
 # Do not change the DEPLOY_BASE since some scripts depend on it
 export DEPLOY_BASE="${APROJECTS}/deploy"
