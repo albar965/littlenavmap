@@ -454,6 +454,8 @@ private:
   virtual void paintEvent(QPaintEvent *paintEvent) override;
   virtual void resizeEvent(QResizeEvent *event) override;
 
+  void unitsUpdated();
+
   /* Keeps geographical objects as index in screen coordinates */
   MapScreenIndex *screenIndex = nullptr;
 

@@ -56,8 +56,7 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   setMapQualityForViewContext(LowQuality, Animation);
   setAnimationsEnabled(false);
 
-  // All nautical miles and feet internally
-  MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
+  unitsUpdated();
 
   paintLayer = new MapPaintLayer(this, NavApp::getMapQuery());
   addLayer(paintLayer);
@@ -213,8 +212,26 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
   overlayStateFromMenu();
 }
 
+void MapPaintWidget::unitsUpdated()
+{
+  switch(OptionData::instance().getUnitDist())
+  {
+    case opts::DIST_NM:
+      MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
+      break;
+    case opts::DIST_KM:
+      MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::MetricSystem);
+      break;
+    case opts::DIST_MILES:
+      MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::ImperialSystem);
+      break;
+  }
+}
+
 void MapPaintWidget::optionsChanged()
 {
+  unitsUpdated();
+
   // Updated sun shadow and force a tile refresh by changing the show status again
   setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
   setShowSunShading(showSunShading());
