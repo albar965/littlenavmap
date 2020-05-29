@@ -242,14 +242,6 @@ int main(int argc, char *argv[])
 
     Settings& settings = Settings::instance();
 
-    // Forcing the English locale if the user has chosen it this way
-    if(OptionsDialog::isOverrideLocale())
-    {
-      qInfo() << "Overriding locale";
-      QLocale::setDefault(QLocale("en"));
-    }
-
-    // Load local and Qt system translations from various places
     int pixmapCache = settings.valueInt(lnm::OPTIONS_PIXMAP_CACHE, -1);
     qInfo() << "QPixmapCache cacheLimit" << QPixmapCache::cacheLimit() << "KB";
     if(pixmapCache != -1)
@@ -296,6 +288,13 @@ int main(int argc, char *argv[])
 
     qInfo() << "Loading translations for" << lang;
     Translator::load(lang);
+
+    // Forcing the English locale if the user has chosen it this way
+    if(OptionsDialog::isOverrideLocale())
+    {
+      qInfo() << "Overriding locale";
+      QLocale::setDefault(QLocale("en"));
+    }
 
     // Add paths here to allow translation
     Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
