@@ -21,6 +21,7 @@
 #include "options/optiondata.h"
 
 #include <QDialog>
+#include <QLocale>
 
 namespace Ui {
 class Options;
@@ -63,8 +64,11 @@ public:
   /* Show the dialog */
   virtual void open() override;
 
-  static bool isOverrideLanguage();
-  static bool isOverrideLocale();
+  /* Get override region settings options directly from settings file*/
+  static bool isOverrideRegion();
+
+  /* Get locale name like "en_US" or "de" directly from settings file */
+  static QString getLocale();
 
   QString selectCacheUserAirspace();
 
@@ -188,6 +192,10 @@ private:
 
   void mapClickAirportProcsToggled();
 
+  void udpdateLanguageComboBox(const QString& language);
+  void languageChanged(int);
+
+  QString language;
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
   Ui::Options *ui;

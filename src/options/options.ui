@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>783</width>
-    <height>536</height>
+    <width>781</width>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,7 +47,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>9</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QGridLayout" name="gridLayout">
@@ -374,10 +374,23 @@ logbook and other search tabs</string>
 This will scale the Little Navmap map graphics and icons for better visibility if checked.</string>
              </property>
              <property name="text">
-              <string>Enable high &amp;DPI monitor support (restart required after change)</string>
+              <string>Enable high &amp;DPI monitor support</string>
              </property>
              <property name="checked">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>5</number>
              </property>
             </widget>
            </item>
@@ -590,12 +603,9 @@ This will scale the Little Navmap map graphics and icons for better visibility i
         <item row="7" column="0">
          <widget class="QGroupBox" name="groupBox_6">
           <property name="title">
-           <string>Language (restart required after change)</string>
+           <string>Language</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <property name="spacing">
-            <number>2</number>
-           </property>
+          <layout class="QGridLayout" name="gridLayout_6">
            <property name="leftMargin">
             <number>2</number>
            </property>
@@ -608,18 +618,37 @@ This will scale the Little Navmap map graphics and icons for better visibility i
            <property name="bottomMargin">
             <number>2</number>
            </property>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiOverrideLanguage">
-             <property name="toolTip">
-              <string>Overrides any available translations and forces Little Navmap to use the English language for all windows and dialogs.
-A restart is required for the settings to take effect.</string>
-             </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_8">
              <property name="text">
-              <string>Use &amp;English as user interface language independent of operating system language</string>
+              <string>&amp;User interface language:</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="buddy">
+              <cstring>comboBoxOptionsGuiLanguage</cstring>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="comboBoxOptionsGuiLanguage"/>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>&lt;b&gt;A restart is required after changing language or format settings.&lt;/b&gt;&lt;br/&gt;
+Note that some translations might be incomplete.</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>5</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
             <widget class="QCheckBox" name="checkBoxOptionsGuiOverrideLocale">
              <property name="toolTip">
               <string>Overrides local settings like number and date formats and forces English formats
@@ -627,7 +656,8 @@ which implies &quot;.&quot; as decimal separator, &quot;,&quot; as thousands sep
 A restart is required for the settings to take effect.</string>
              </property>
              <property name="text">
-              <string>Use English &amp;number and date formats independent of current computer settings</string>
+              <string>Use English &amp;number and date formats
+independent of current computer settings and language selection</string>
              </property>
             </widget>
            </item>
@@ -714,7 +744,8 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
 opening files, modifying the flight plan and other operations.</string>
              </property>
              <property name="text">
-              <string>Raise related windows on actions (.e.g. show flight plan after opening file)</string>
+              <string>Raise related windows on actions
+Show flight plan after opening file, for example.</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -2907,7 +2938,13 @@ also define the order when reading coordinates in the user interface if enabled.
            </font>
           </property>
           <property name="text">
-           <string>A restart is recommended after changing units.</string>
+           <string>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="margin">
+           <number>5</number>
           </property>
          </widget>
         </item>
@@ -4967,39 +5004,40 @@ Currently only OpenAir is supported (*.txt). </string>
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsScenery">
        <layout class="QGridLayout" name="gridLayout_9">
-        <item row="3" column="3">
-         <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase_2">
-          <property name="leftMargin">
-           <number>0</number>
+        <item row="1" column="2">
+         <widget class="QListWidget" name="listWidgetOptionsDatabaseExclude">
+          <property name="toolTip">
+           <string>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
+You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
+These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
+You have to reload the scenery library so that the changes take effect.</string>
           </property>
-          <item alignment="Qt::AlignTop">
-           <widget class="QPushButton" name="pushButtonOptionsDatabaseAddAddon">
-            <property name="text">
-             <string>A&amp;dd ...</string>
-            </property>
-           </widget>
-          </item>
-          <item alignment="Qt::AlignTop">
-           <widget class="QPushButton" name="pushButtonOptionsDatabaseRemoveAddon">
-            <property name="text">
-             <string>R&amp;emove</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacerOptionsDatabaseAddon">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2" colspan="2">
+         <widget class="QLabel" name="labelOptionsDatabaseAddon">
+          <property name="text">
+           <string>Select &amp;paths to exclude from add-on recognition:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="buddy">
+           <cstring>listWidgetOptionsDatabaseAddon</cstring>
+          </property>
+         </widget>
         </item>
         <item row="1" column="3">
          <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase">
@@ -5042,24 +5080,55 @@ Currently only OpenAir is supported (*.txt). </string>
           </item>
          </layout>
         </item>
-        <item row="1" column="2">
-         <widget class="QListWidget" name="listWidgetOptionsDatabaseExclude">
-          <property name="toolTip">
-           <string>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
-You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
-These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
-You have to reload the scenery library so that the changes take effect.</string>
+        <item row="0" column="2" colspan="2">
+         <widget class="QLabel" name="labelOptionsDatabaseExclude">
+          <property name="text">
+           <string>&amp;Select paths to exclude from loading:</string>
           </property>
-          <property name="editTriggers">
-           <set>QAbstractItemView::NoEditTriggers</set>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
-          <property name="alternatingRowColors">
+          <property name="wordWrap">
            <bool>true</bool>
           </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::ExtendedSelection</enum>
+          <property name="buddy">
+           <cstring>listWidgetOptionsDatabaseExclude</cstring>
           </property>
          </widget>
+        </item>
+        <item row="3" column="3">
+         <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase_2">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <item alignment="Qt::AlignTop">
+           <widget class="QPushButton" name="pushButtonOptionsDatabaseAddAddon">
+            <property name="text">
+             <string>A&amp;dd ...</string>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignTop">
+           <widget class="QPushButton" name="pushButtonOptionsDatabaseRemoveAddon">
+            <property name="text">
+             <string>R&amp;emove</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacerOptionsDatabaseAddon">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
         <item row="3" column="2">
          <widget class="QListWidget" name="listWidgetOptionsDatabaseAddon">
@@ -5081,35 +5150,16 @@ You have to reload the scenery library so that the changes take effect.</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="2" colspan="2">
-         <widget class="QLabel" name="labelOptionsDatabaseExclude">
+        <item row="4" column="2" colspan="2">
+         <widget class="QLabel" name="label_7">
           <property name="text">
-           <string>&amp;Select paths to exclude from loading:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           <string>&lt;b&gt;You have to re-import the scenery library for the changes to take effect.&lt;/b&gt;</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
           </property>
-          <property name="buddy">
-           <cstring>listWidgetOptionsDatabaseExclude</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2" colspan="2">
-         <widget class="QLabel" name="labelOptionsDatabaseAddon">
-          <property name="text">
-           <string>Select &amp;paths to exclude from add-on recognition:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-          <property name="buddy">
-           <cstring>listWidgetOptionsDatabaseAddon</cstring>
+          <property name="margin">
+           <number>5</number>
           </property>
          </widget>
         </item>
@@ -5154,8 +5204,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsGuiSearchText</tabstop>
   <tabstop>spinBoxOptionsGuiInfoText</tabstop>
   <tabstop>spinBoxOptionsGuiSimInfoText</tabstop>
-  <tabstop>checkBoxOptionsGuiOverrideLanguage</tabstop>
-  <tabstop>checkBoxOptionsGuiOverrideLocale</tabstop>
   <tabstop>checkBoxOptionsGuiProposeFilename</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
   <tabstop>checkBoxOptionsGuiRaiseWindows</tabstop>

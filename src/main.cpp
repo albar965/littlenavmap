@@ -277,26 +277,19 @@ int main(int argc, char *argv[])
       qInfo() << "Set font size" << fontSize;
     }
 
-    // Load local and Qt system translations from various places
-    QString lang = settings.valueStr(lnm::OPTIONS_LANGUAGE, QString());
-    if(lang.isEmpty())
-    {
-      qInfo() << "Overriding language";
-      // Checkbox in options dialog
-      lang = OptionsDialog::isOverrideLanguage() ? "en" : lang;
-    }
+    // Load available translations ============================================
+    qInfo() << "Loading translations for" << OptionsDialog::getLocale();
+    Translator::load(OptionsDialog::getLocale());
 
-    qInfo() << "Loading translations for" << lang;
-    Translator::load(lang);
-
+    // Load region override ============================================
     // Forcing the English locale if the user has chosen it this way
-    if(OptionsDialog::isOverrideLocale())
+    if(OptionsDialog::isOverrideRegion())
     {
-      qInfo() << "Overriding locale";
+      qInfo() << "Overriding region settings";
       QLocale::setDefault(QLocale("en"));
     }
 
-    // Add paths here to allow translation
+    // Add paths here to allow translation =================================
     Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
 
     Application::addReportPath(QObject::tr("Database directory:"),
@@ -304,10 +297,10 @@ int main(int argc, char *argv[])
     Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
     Application::setEmailAddresses({"alex@littlenavmap.org"});
 
-    // Load help URLs from urls.cfg
+    // Load help URLs from urls.cfg =================================
     lnm::loadHelpUrls();
 
-    /* Avoid static translations and load these dynamically now */
+    // Avoid static translations and load these dynamically now  =================================
     Unit::initTranslateableTexts();
     UserdataIcons::initTranslateableTexts();
     map::initTranslateableTexts();

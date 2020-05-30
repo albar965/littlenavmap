@@ -252,7 +252,7 @@ const QLatin1Literal OPTIONS_DIALOG_WARN_STYLE("OptionsDialog/StyleWarning");
 const QLatin1Literal OPTIONS_DIALOG_WEB_DOCROOT_DLG("OptionsDialog/WebDocroot");
 
 /* Other options that are only accessible in the configuration file */
-const QLatin1Literal OPTIONS_LANGUAGE("Options/Language");
+const QLatin1Literal OPTIONS_DIALOG_LANGUAGE("OptionsDialog/Language");
 const QLatin1Literal OPTIONS_PIXMAP_CACHE("Options/PixmapCache");
 const QLatin1Literal OPTIONS_FONT_FAMILY("Options/GuiFontFamily");
 const QLatin1Literal OPTIONS_FONT_PIXEL_SIZE("Options/GuiFontPixelSize");
@@ -291,7 +291,6 @@ const QLatin1Literal OPTIONS_UPDATE_CHANNELS("OptionsDialog/Widget_comboBoxOptio
 const QLatin1Literal OPTIONS_UPDATE_RATE("OptionsDialog/Widget_comboBoxOptionsStartupUpdateRate");
 
 /* These have to be loaded before the options dialog instantiation */
-const QLatin1Literal OPTIONS_GUI_OVERRIDE_LANGUAGE("OptionsDialog/Widget_checkBoxOptionsGuiOverrideLanguage");
 const QLatin1Literal OPTIONS_GUI_OVERRIDE_LOCALE("OptionsDialog/Widget_checkBoxOptionsGuiOverrideLocale");
 
 /* File dialog patterns */
@@ -346,6 +345,8 @@ extern const QSize DEFAULT_MAINWINDOW_SIZE;
  * Falls back to English if indicator file is missing.
  *
  * This will consider region fallbacks in both directions like pt_BR -> pt or pt -> pt_BR
+ *
+ * Not thread safe.
  */
 const QString helpLanguageOnline();
 

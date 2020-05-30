@@ -35,6 +35,7 @@
 #include "util/updatecheck.h"
 #include "util/htmlbuilder.h"
 #include "common/unitstringtool.h"
+#include "gui/translator.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -250,6 +251,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   rangeRingValidator = new RangeRingValidator;
 
   // Create widget list for state saver
+  // This will take over the actual saving of the settings
   widgets.append(
     {ui->listWidgetOptionPages,
      ui->splitterOptions,
@@ -258,9 +260,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiRaiseWindows,
      ui->checkBoxOptionsGuiCenterRoute,
      ui->checkBoxOptionsGuiAvoidOverwrite,
-     ui->checkBoxOptionsGuiOverrideLanguage,
      ui->checkBoxOptionsGuiOverrideLocale,
      ui->checkBoxOptionsGuiHighDpi,
+     // ui->comboBoxOptionsGuiLanguage, saved directly
+
      ui->checkBoxDisplayOnlineNameLookup,
      ui->checkBoxDisplayOnlineFileLookup,
      ui->checkBoxOptionsMapEmptyAirports,
@@ -433,6 +436,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->listWidgetOptionPages, &QListWidget::currentItemChanged, this, &OptionsDialog::changePage);
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
+
+  // ===========================================================================
+  // GUI language options
+  connect(ui->comboBoxOptionsGuiLanguage, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+          this, &OptionsDialog::languageChanged);
 
   // ===========================================================================
   // Weather widgets - ASN
@@ -618,7 +626,6 @@ void OptionsDialog::open()
 {
   qDebug() << Q_FUNC_INFO;
   optionDataToWidgets(OptionData::instanceInternal());
-
   updateCacheElevationStates();
   updateCacheUserAirspaceStates();
   updateDatabaseButtonState();
@@ -762,14 +769,14 @@ void OptionsDialog::updateWidgetUnits()
     units->update();
 }
 
-bool OptionsDialog::isOverrideLanguage()
-{
-  return Settings::instance().valueBool(lnm::OPTIONS_GUI_OVERRIDE_LANGUAGE, false);
-}
-
-bool OptionsDialog::isOverrideLocale()
+bool OptionsDialog::isOverrideRegion()
 {
   return Settings::instance().valueBool(lnm::OPTIONS_GUI_OVERRIDE_LOCALE, false);
+}
+
+QString OptionsDialog::getLocale()
+{
+  return Settings::instance().valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale::system().name());
 }
 
 QString OptionsDialog::selectCacheUserAirspace()
@@ -861,6 +868,8 @@ void OptionsDialog::saveState()
 
   Settings& settings = Settings::instance();
 
+  settings.setValue(lnm::OPTIONS_DIALOG_LANGUAGE, language);
+
   // Save the path lists
   QStringList paths;
   for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
@@ -892,6 +901,7 @@ void OptionsDialog::restoreState()
 
   QSettings networkSettings(networksPath, QSettings::IniFormat);
   OptionData& od = OptionData::instanceInternal();
+
   od.onlineVatsimStatusUrl = networkSettings.value("vatsim/statusurl").toString();
   od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();
   od.onlinePilotEdgeStatusUrl = networkSettings.value("pilotedge/statusurl").toString();
@@ -937,6 +947,8 @@ void OptionsDialog::restoreState()
   trailColor =
     settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
+  language = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale::system().name());
+
   widgetsToOptionData();
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
@@ -954,6 +966,72 @@ void OptionsDialog::restoreState()
                                                         QItemSelectionModel::ClearAndSelect);
 
   ui->stackedWidgetOptions->setCurrentIndex(ui->listWidgetOptionPages->currentRow());
+}
+
+void OptionsDialog::languageChanged(int)
+{
+  language = ui->comboBoxOptionsGuiLanguage->currentData().value<QLocale>().name();
+  qDebug() << Q_FUNC_INFO << language;
+}
+
+void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
+{
+  if(ui->comboBoxOptionsGuiLanguage->count() == 0)
+  {
+    // Fill combo box with all available locale =========================
+    QVector<QLocale> locales = atools::gui::Translator::findTranslationFiles("translations");
+    ui->comboBoxOptionsGuiLanguage->clear();
+    for(int i = 0; i < locales.size(); i++)
+    {
+      // Usedata for item is locale object
+      const QLocale& locale = locales.at(i);
+      ui->comboBoxOptionsGuiLanguage->addItem(tr("%1, %2").
+                                              arg(locale.nativeLanguageName()).
+                                              arg(locale.nativeCountryName()), locale);
+    }
+  }
+
+  // Now try to find the best entry for the given language ==============================
+  QLocale system = lang.isEmpty() ? QLocale::system() : QLocale(lang);
+  int currentIndexLang = -1, currentIndexLangCountry = -1, englishLocale = -1;
+  for(int i = 0; i < ui->comboBoxOptionsGuiLanguage->count(); i++)
+  {
+    const QLocale& locale = ui->comboBoxOptionsGuiLanguage->itemData(i).value<QLocale>();
+
+    // Check if language and country match - this is the most precise match
+    if(system.language() == locale.language() && system.country() == locale.country())
+      currentIndexLangCountry = i;
+
+    // Check if language matches
+    if(system.language() == locale.language())
+      currentIndexLang = i;
+
+    // Get index for default English
+    if(locale.language() == QLocale::English)
+      englishLocale = i;
+  }
+  qDebug() << Q_FUNC_INFO << "currentIndexLangCountry" << currentIndexLangCountry
+           << "currentIndexLang" << currentIndexLang;
+
+  // Use the best match to change the current combo box entry
+  if(currentIndexLangCountry != -1)
+  {
+    // Language and country like "pt_BR"
+    ui->comboBoxOptionsGuiLanguage->setCurrentIndex(currentIndexLangCountry);
+    language = ui->comboBoxOptionsGuiLanguage->itemData(currentIndexLangCountry).value<QLocale>().name();
+  }
+  else if(currentIndexLang != -1)
+  {
+    // Language only like "de"
+    ui->comboBoxOptionsGuiLanguage->setCurrentIndex(currentIndexLang);
+    language = ui->comboBoxOptionsGuiLanguage->itemData(currentIndexLang).value<QLocale>().name();
+  }
+  else if(englishLocale != -1)
+  {
+    // English as fallback
+    ui->comboBoxOptionsGuiLanguage->setCurrentIndex(englishLocale);
+    language = ui->comboBoxOptionsGuiLanguage->itemData(englishLocale).value<QLocale>().name();
+  }
 }
 
 void OptionsDialog::updateButtonColors()
@@ -1293,6 +1371,8 @@ void OptionsDialog::widgetsToOptionData()
 {
   OptionData& data = OptionData::instanceInternal();
 
+  data.language = language;
+
   data.flightplanColor = flightplanColor;
   data.flightplanProcedureColor = flightplanProcedureColor;
   data.flightplanActiveColor = flightplanActiveColor;
@@ -1327,7 +1407,6 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
   toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   toFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
-  toFlags(ui->checkBoxOptionsGuiOverrideLanguage, opts::GUI_OVERRIDE_LANGUAGE);
   toFlags(ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
   toFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
   toFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
@@ -1533,6 +1612,9 @@ void OptionsDialog::displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *che
 /* Copy OptionData object to widget */
 void OptionsDialog::optionDataToWidgets(const OptionData& data)
 {
+  language = data.language;
+  udpdateLanguageComboBox(data.language);
+
   flightplanColor = data.flightplanColor;
   flightplanProcedureColor = data.flightplanProcedureColor;
   flightplanActiveColor = data.flightplanActiveColor;
@@ -1560,7 +1642,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
   fromFlags(data, ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   fromFlags(data, ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
-  fromFlags(data, ui->checkBoxOptionsGuiOverrideLanguage, opts::GUI_OVERRIDE_LANGUAGE);
   fromFlags(data, ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
   fromFlags(data, ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
   fromFlags(data, ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);

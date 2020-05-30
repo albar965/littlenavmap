@@ -521,8 +521,7 @@ void MainWindow::loadNavmapLegend()
 {
   qDebug() << Q_FUNC_INFO;
 
-  legendFile = HelpHandler::getHelpFile(lnm::helpLegendLocalFile,
-                                        OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE);
+  legendFile = HelpHandler::getHelpFile(lnm::helpLegendLocalFile, OptionData::instance().getLanguage());
   qDebug() << "legendUrl" << legendFile;
 
   QFile legend(legendFile);
@@ -577,9 +576,7 @@ void MainWindow::showFaqPage()
 
 void MainWindow::showOfflineHelp()
 {
-  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::helpOfflineFile,
-                                                       OptionData::instance().getFlags() &
-                                                       opts::GUI_OVERRIDE_LANGUAGE));
+  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::instance().getLanguage()));
 }
 
 /* Show marble legend */

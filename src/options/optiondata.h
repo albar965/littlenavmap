@@ -95,9 +95,6 @@ enum Flag
   /* checkBoxOptionsStartupLoadTrail */
   STARTUP_LOAD_TRAIL = 1 << 19,
 
-  /* checkBoxOptionsGuiOverrideLanguage */
-  GUI_OVERRIDE_LANGUAGE = 1 << 20,
-
   /* checkBoxOptionsGuiOverrideLocale */
   GUI_OVERRIDE_LOCALE = 1 << 21,
 
@@ -521,6 +518,18 @@ public:
   opts2::Flags2 getFlags2() const
   {
     return flags2;
+  }
+
+  /* Get locale name like "en_US" or "de" for user interface language */
+  const QString& getLanguage() const
+  {
+    return language;
+  }
+
+  /* Get short user interface language code name like "en" or "de" suitable for help URLs */
+  QString getLanguageShort() const
+  {
+    return language.section('_', 0, 0).section('-', 0, 0);
   }
 
   opts::UnitDist getUnitDist() const
@@ -1123,6 +1132,8 @@ private:
 
   // ui->spinBoxOptionsRouteGroundBuffer
   int routeGroundBuffer = 1000;
+
+  QString language;
 
   // comboBoxOptionsUnitDistance
   opts::UnitDist unitDist = opts::DIST_NM;
