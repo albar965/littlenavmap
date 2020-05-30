@@ -207,7 +207,7 @@ void initTranslateableTexts()
 
   // System locale ==================================
   // This is independent from locale overridden in the options dialog
-  QLocale locale = QLocale::system();
+  QLocale locale;
   dateTimeFormats.clear();
   dateTimeFormats.append(locale.dateTimeFormat(QLocale::ShortFormat));
   dateTimeFormats.append(locale.dateTimeFormat(QLocale::LongFormat));
@@ -249,7 +249,7 @@ QDateTime readDateTime(QString str)
   QDateTime retval;
 
   // This is independent from locale overridden in the options dialog
-  QLocale locale = QLocale::system();
+  QLocale locale;
 
   // if(str.endsWith("UTC"))
   // str.chop(3);

@@ -776,7 +776,7 @@ bool OptionsDialog::isOverrideRegion()
 
 QString OptionsDialog::getLocale()
 {
-  return Settings::instance().valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale::system().name());
+  return Settings::instance().valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
 }
 
 QString OptionsDialog::selectCacheUserAirspace()
@@ -947,7 +947,7 @@ void OptionsDialog::restoreState()
   trailColor =
     settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
-  language = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale::system().name());
+  language = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
 
   widgetsToOptionData();
   updateWidgetUnits();
@@ -992,7 +992,7 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
   }
 
   // Now try to find the best entry for the given language ==============================
-  QLocale system = lang.isEmpty() ? QLocale::system() : QLocale(lang);
+  QLocale system = lang.isEmpty() ? QLocale() : QLocale(lang);
   int currentIndexLang = -1, currentIndexLangCountry = -1, englishLocale = -1;
   for(int i = 0; i < ui->comboBoxOptionsGuiLanguage->count(); i++)
   {

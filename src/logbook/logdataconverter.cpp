@@ -45,7 +45,7 @@ LogdataConverter::LogdataConverter(atools::sql::SqlDatabase *userDbParam,
   : userDb(userDbParam), logManager(logManagerParam), airportQuery(airportQueryParam)
 {
   localeEn = QLocale::English;
-  locale = QLocale::system();
+  locale = QLocale();
 
   qDebug() << Q_FUNC_INFO;
   qDebug() << "locale" << locale << "localeEn" << localeEn;
