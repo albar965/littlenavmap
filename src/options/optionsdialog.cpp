@@ -979,7 +979,7 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
   if(ui->comboBoxOptionsGuiLanguage->count() == 0)
   {
     // Fill combo box with all available locale =========================
-    QVector<QLocale> locales = atools::gui::Translator::findTranslationFiles("translations");
+    QVector<QLocale> locales = atools::gui::Translator::findTranslationFiles();
     ui->comboBoxOptionsGuiLanguage->clear();
     for(int i = 0; i < locales.size(); i++)
     {
