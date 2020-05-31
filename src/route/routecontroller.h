@@ -438,6 +438,9 @@ private:
 
   bool canCalcSelection();
 
+  /* Update navdata properties in flightplan properties for export and save */
+  void updateRouteCycleMetadata();
+
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
 

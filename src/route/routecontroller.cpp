@@ -815,6 +815,7 @@ void RouteController::newFlightplan()
   route.createRouteLegsFromFlightplan();
   route.updateAll();
   route.updateLegAltitudes();
+  updateRouteCycleMetadata();
 
   updateTableModel();
   NavApp::updateWindowTitle();
@@ -915,6 +916,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   fileIfrVfr = route.getFlightplan().getFlightplanType();
 
   route.updateLegAltitudes();
+  updateRouteCycleMetadata();
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -1290,6 +1292,8 @@ bool RouteController::saveFlightplanLnmInternal()
 {
   try
   {
+    updateRouteCycleMetadata();
+
     // Copy altitudes to flight plan entries
     route.assignAltitudes();
 
@@ -1305,16 +1309,8 @@ bool RouteController::saveFlightplanLnmInternal()
     flightplan.setCruisingAltitude(
       atools::roundToInt(Unit::rev(static_cast<float>(flightplan.getCruisingAltitude()), Unit::altFeetF)));
 
-    QHash<QString, QString>& properties = flightplan.getProperties();
-
     // Add performance file type and name ===============
     assignFlightplanPerfProperties(flightplan);
-
-    // Add metadata for navdata reference =========================
-    properties.insert(pln::SIMDATA, NavApp::getDatabaseMetaSim()->getDataSource());
-    properties.insert(pln::SIMDATACYCLE, NavApp::getDatabaseAiracCycleSim());
-    properties.insert(pln::NAVDATA, NavApp::getDatabaseMetaNav()->getDataSource());
-    properties.insert(pln::NAVDATACYCLE, NavApp::getDatabaseAiracCycleNav());
 
     // Save LNMPLN - Will throw an exception if something goes wrong
     flightplanIO->saveLnm(flightplan, routeFilename);
@@ -1339,6 +1335,16 @@ bool RouteController::saveFlightplanLnmInternal()
     return false;
   }
   return true;
+}
+
+void RouteController::updateRouteCycleMetadata()
+{
+  QHash<QString, QString>& properties = route.getFlightplan().getProperties();
+  // Add metadata for navdata reference =========================
+  properties.insert(pln::SIMDATA, NavApp::getDatabaseMetaSim()->getDataSource());
+  properties.insert(pln::SIMDATACYCLE, NavApp::getDatabaseAiracCycleSim());
+  properties.insert(pln::NAVDATA, NavApp::getDatabaseMetaNav()->getDataSource());
+  properties.insert(pln::NAVDATACYCLE, NavApp::getDatabaseAiracCycleNav());
 }
 
 void RouteController::calculateDirect()
@@ -1787,6 +1793,7 @@ void RouteController::postDatabaseLoad()
   updateTableModel();
   updateErrorLabel();
   routeAltChangedDelayed();
+  updateRouteCycleMetadata();
 
   routeWindow->postDatabaseLoad();
 
