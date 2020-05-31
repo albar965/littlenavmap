@@ -532,6 +532,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
 
   map::MapObjectTypes shown = paintLayer->getShownMapObjects();
+  map::MapObjectDisplayTypes shownDisplay = paintLayer->getShownMapObjectDisplayTypes();
 
   // Check for user aircraft
   result.userAircraft = atools::fs::sc::SimConnectUserAircraft();
@@ -611,7 +612,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   getNearestAirspaces(xs, ys, result);
   getNearestIls(xs, ys, maxDistance, result);
 
-  if(shown.testFlag(map::FLIGHTPLAN))
+  if(shownDisplay.testFlag(map::FLIGHTPLAN))
   {
     // Get copies from flight plan if visible
     NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result,
@@ -768,7 +769,7 @@ int MapScreenIndex::getNearestIndex(int xs, int ys, int maxDistance, const QList
 
 int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance) const
 {
-  if(!paintLayer->getShownMapObjects().testFlag(map::FLIGHTPLAN))
+  if(!paintLayer->getShownMapObjectDisplayTypes().testFlag(map::FLIGHTPLAN))
     return -1;
 
   int minIndex = -1;
@@ -868,7 +869,7 @@ void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::Map
 
 int MapScreenIndex::getNearestRouteLegIndex(int xs, int ys, int maxDistance) const
 {
-  if(!paintLayer->getShownMapObjects().testFlag(map::FLIGHTPLAN))
+  if(!paintLayer->getShownMapObjectDisplayTypes().testFlag(map::FLIGHTPLAN))
     return -1;
 
   int minIndex = -1;

@@ -553,7 +553,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       // ====================================
       // Get all waypoints from the route and add them to the map to avoid duplicate drawing
-      if(context.objectTypes.testFlag(map::FLIGHTPLAN))
+      if(context.objectDisplayTypes.testFlag(map::FLIGHTPLAN))
       {
         const Route& route = NavApp::getRouteConst();
         for(int i = 0; i < route.size(); i++)

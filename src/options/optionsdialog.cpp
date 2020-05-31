@@ -381,7 +381,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->comboBoxOptionsUnitCoords,
      ui->comboBoxOptionsUnitFuelWeight,
 
-     ui->checkBoxOptionsShowTod,
      ui->checkBoxOptionsMapZoomAvoidBlurred,
 
      ui->checkBoxOptionsMapAirportText,
@@ -1423,7 +1422,6 @@ void OptionsDialog::widgetsToOptionData()
   toFlagsWeather(ui->checkBoxOptionsWeatherTooltipIvao, optsw::WEATHER_TOOLTIP_IVAO);
   toFlagsWeather(ui->checkBoxOptionsWeatherTooltipFs, optsw::WEATHER_TOOLTIP_FS);
   toFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
-  toFlags(ui->checkBoxOptionsShowTod, opts::FLIGHT_PLAN_SHOW_TOD);
 
   toFlags2(ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   toFlags2(ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
@@ -1658,7 +1656,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlagsWeather(data, ui->checkBoxOptionsWeatherTooltipIvao, optsw::WEATHER_TOOLTIP_IVAO);
   fromFlagsWeather(data, ui->checkBoxOptionsWeatherTooltipFs, optsw::WEATHER_TOOLTIP_FS);
   fromFlags(data, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
-  fromFlags(data, ui->checkBoxOptionsShowTod, opts::FLIGHT_PLAN_SHOW_TOD);
 
   fromFlags2(data, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   fromFlags2(data, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);

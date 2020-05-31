@@ -1295,6 +1295,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowTracks, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowTocTod, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapHideRangeRings, &QAction::triggered, this, &MainWindow::clearRangeRingsAndDistanceMarkers);
 
   connect(ui->actionSearchLogdataShowDirect, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -3088,6 +3089,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(NavApp::getRouteConst().hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
+  ui->actionMapShowTocTod->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
   ui->actionInfoApproachShowMissedAppr->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
@@ -3330,9 +3332,9 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowAddonAirports, ui->actionMapShowVor, ui->actionMapShowNdb,
                          ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowVictorAirways,
                          ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
-                         ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
-                         ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi,
-                         ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
+                         ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
+                         ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,
+                         ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
                          ui->actionInfoApproachShowMissedAppr, ui->actionSearchLogdataShowDirect,
                          ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack});
   }
@@ -3567,9 +3569,9 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports, ui->actionMapShowVor,
                     ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowVictorAirways,
                     ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
-                    ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
-                    ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi,
-                    ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
+                    ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
+                    ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,
+                    ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
                     ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid, ui->actionMapShowCities,
                     ui->actionMapShowSunShading, ui->actionMapShowHillshading, ui->actionMapShowAirportWeather,
                     ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionWorkOffline,

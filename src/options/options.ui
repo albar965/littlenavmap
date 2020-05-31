@@ -1933,19 +1933,6 @@ Afftects map and elevation profile.</string>
              </property>
             </widget>
            </item>
-           <item row="14" column="0" colspan="2">
-            <widget class="QCheckBox" name="checkBoxOptionsShowTod">
-             <property name="toolTip">
-              <string>Enable this option to show the top of descent and top of climb points on the map and in the elevation profile.</string>
-             </property>
-             <property name="text">
-              <string>Draw &amp;top of descent and top of climb</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="1">
             <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAirport">
              <property name="toolTip">
@@ -5244,7 +5231,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsDisplayTextSizeAircraftAi</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
-  <tabstop>checkBoxOptionsShowTod</tabstop>
   <tabstop>checkBoxOptionsMapFlightplanText</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanActiveColor</tabstop>

@@ -368,7 +368,9 @@
     <addaction name="menuViewUserpoints"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowRoute"/>
+    <addaction name="actionMapShowTocTod"/>
     <addaction name="actionInfoApproachShowMissedAppr"/>
+    <addaction name="separator"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
     <addaction name="separator"/>
@@ -11296,6 +11298,27 @@ Best track will be selected automatically.</string>
    </property>
    <property name="statusTip">
     <string>Compass rose follows user aircraft if checked</string>
+   </property>
+  </action>
+  <action name="actionMapShowTocTod">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routetoctod.svg</normaloff>:/littlenavmap/resources/icons/routetoctod.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Top of Climb and Top of Descent</string>
+   </property>
+   <property name="toolTip">
+    <string>Show top of descent and top of climb points on the map and in the elevation profile</string>
+   </property>
+   <property name="statusTip">
+    <string>Show top of descent and top of climb points on the map and in the elevation profile</string>
    </property>
   </action>
  </widget>

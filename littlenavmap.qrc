@@ -260,5 +260,6 @@
         <file>resources/icons/weatherurl.svg</file>
         <file>resources/icons/compassroseattach.svg</file>
         <file>resources/icons/arrowrightsmall.svg</file>
+        <file>resources/icons/routetoctod.svg</file>
     </qresource>
 </RCC>

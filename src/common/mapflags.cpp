@@ -32,52 +32,105 @@ QDebug operator<<(QDebug out, const map::MapObjectTypes& type)
     flags.append("NONE");
   else
   {
-    if(type & AIRPORT)
+    if(type.testFlag(AIRPORT))
       flags.append("AIRPORT");
-    if(type & AIRPORT_HARD)
+    if(type.testFlag(AIRPORT_HARD))
       flags.append("AIRPORT_HARD");
-    if(type & AIRPORT_SOFT)
+    if(type.testFlag(AIRPORT_SOFT))
       flags.append("AIRPORT_SOFT");
-    if(type & AIRPORT_EMPTY)
+    if(type.testFlag(AIRPORT_EMPTY))
       flags.append("AIRPORT_EMPTY");
-    if(type & AIRPORT_ADDON)
+    if(type.testFlag(AIRPORT_ADDON))
       flags.append("AIRPORT_ADDON");
-    if(type & VOR)
+    if(type.testFlag(VOR))
       flags.append("VOR");
-    if(type & NDB)
+    if(type.testFlag(NDB))
       flags.append("NDB");
-    if(type & ILS)
+    if(type.testFlag(ILS))
       flags.append("ILS");
-    if(type & MARKER)
+    if(type.testFlag(MARKER))
       flags.append("MARKER");
-    if(type & WAYPOINT)
+    if(type.testFlag(WAYPOINT))
       flags.append("WAYPOINT");
-    if(type & AIRWAY)
+    if(type.testFlag(AIRWAY))
       flags.append("AIRWAY");
-    if(type & AIRWAYV)
+    if(type.testFlag(AIRWAYV))
       flags.append("AIRWAYV");
-    if(type & AIRWAYJ)
+    if(type.testFlag(AIRWAYJ))
       flags.append("AIRWAYJ");
-    if(type & TRACK)
-      flags.append("TRACK");
-    if(type & FLIGHTPLAN)
-      flags.append("ROUTE");
-    if(type & AIRCRAFT)
+    if(type.testFlag(AIRCRAFT))
       flags.append("AIRCRAFT");
-    if(type & AIRCRAFT_AI)
+    if(type.testFlag(AIRCRAFT_AI))
       flags.append("AIRCRAFT_AI");
-    if(type & AIRCRAFT_AI_SHIP)
-      flags.append("AIRCRAFT_AI_BOAT");
-    if(type & AIRCRAFT_TRACK)
+    if(type.testFlag(AIRCRAFT_AI_SHIP))
+      flags.append("AIRCRAFT_AI_SHIP");
+    if(type.testFlag(AIRCRAFT_TRACK))
       flags.append("AIRCRAFT_TRACK");
-    if(type & USERPOINTROUTE)
-      flags.append("USER");
-    if(type & PARKING)
+    if(type.testFlag(USERPOINTROUTE))
+      flags.append("USERPOINTROUTE");
+    if(type.testFlag(PARKING))
       flags.append("PARKING");
-    if(type & RUNWAYEND)
+    if(type.testFlag(RUNWAYEND))
       flags.append("RUNWAYEND");
-    if(type & INVALID)
+    if(type.testFlag(INVALID))
       flags.append("INVALID");
+    if(type.testFlag(MISSED_APPROACH))
+      flags.append("MISSED_APPROACH");
+    if(type.testFlag(PROCEDURE))
+      flags.append("PROCEDURE");
+    if(type.testFlag(AIRSPACE))
+      flags.append("AIRSPACE");
+    if(type.testFlag(HELIPAD))
+      flags.append("HELIPAD");
+    if(type.testFlag(USERPOINT))
+      flags.append("USERPOINT");
+    if(type.testFlag(TRACK))
+      flags.append("TRACK");
+    if(type.testFlag(AIRCRAFT_ONLINE))
+      flags.append("AIRCRAFT_ONLINE");
+    if(type.testFlag(LOGBOOK))
+      flags.append("LOGBOOK");
+  }
+
+  out.nospace().noquote() << flags.join("|");
+
+  return out;
+}
+
+QDebug operator<<(QDebug out, const map::MapObjectDisplayTypes& type)
+{
+  QDebugStateSaver saver(out);
+  Q_UNUSED(saver);
+
+  QStringList flags;
+  if(type == NONE)
+    flags.append("NONE");
+  else
+  {
+    if(type.testFlag(DISPLAY_TYPE_NONE))
+      flags.append("DISPLAY_TYPE_NONE");
+    if(type.testFlag(AIRPORT_WEATHER))
+      flags.append("AIRPORT_WEATHER");
+    if(type.testFlag(MINIMUM_ALTITUDE))
+      flags.append("MINIMUM_ALTITUDE");
+    if(type.testFlag(WIND_BARBS))
+      flags.append("WIND_BARBS");
+    if(type.testFlag(WIND_BARBS_ROUTE))
+      flags.append("WIND_BARBS_ROUTE");
+    if(type.testFlag(LOGBOOK_DIRECT))
+      flags.append("LOGBOOK_DIRECT");
+    if(type.testFlag(LOGBOOK_ROUTE))
+      flags.append("LOGBOOK_ROUTE");
+    if(type.testFlag(LOGBOOK_TRACK))
+      flags.append("LOGBOOK_TRACK");
+    if(type.testFlag(COMPASS_ROSE))
+      flags.append("COMPASS_ROSE");
+    if(type.testFlag(COMPASS_ROSE_ATTACH))
+      flags.append("COMPASS_ROSE_ATTACH");
+    if(type.testFlag(FLIGHTPLAN))
+      flags.append("FLIGHTPLAN");
+    if(type.testFlag(FLIGHTPLAN_TOC_TOD))
+      flags.append("FLIGHTPLAN_TOC_TOD");
   }
 
   out.nospace().noquote() << flags.join("|");

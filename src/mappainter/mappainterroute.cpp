@@ -57,7 +57,7 @@ MapPainterRoute::~MapPainterRoute()
 void MapPainterRoute::render(PaintContext *context)
 {
   // Draw route including approaches
-  if(context->objectTypes.testFlag(map::FLIGHTPLAN))
+  if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
     paintRoute(context);
 
   // Draw the approach preview if any selected in the search tab
@@ -67,7 +67,8 @@ void MapPainterRoute::render(PaintContext *context)
                    mapPaintWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
                    true /* preview */);
 
-  if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
+  if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN) &&
+     context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) &&
      context->mapLayer->isRouteTextAndDetail())
     paintTopOfDescentAndClimb(context);
 }

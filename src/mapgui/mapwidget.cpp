@@ -1707,7 +1707,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapUserpoint *userpoint = nullptr;
   map::MapLogbookEntry *logEntry = nullptr;
 
-  bool airportDestination = false, airportDeparture = false, routeVisible = getShownMapFeatures() & map::FLIGHTPLAN;
+  bool airportDestination = false, airportDeparture = false,
+       routeVisible = getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN);
   // ===================================================================================
   // Get only one object of each type
   if(result.userAircraft.isValid())
@@ -3348,12 +3349,11 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                                       ui->actionMapShowIls, ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                                       ui->actionMapShowTracks, ui->actionShowAirspaces, ui->actionMapShowRoute,
-                                      ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
-                                      ui->actionMapShowCompassRoseAttach,
-                                      ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi,
-                                      ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
-                                      ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,
-                                      ui->actionMapShowCities, ui->actionMapShowHillshading,
+                                      ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
+                                      ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,
+                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
+                                      ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
+                                      ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
                                       ui->actionMapShowMinimumAltitude, ui->actionMapShowAirportWeather,
                                       ui->actionMapShowSunShading});
 
@@ -3381,6 +3381,7 @@ void MapWidget::resetSettingActionsToDefault()
 
   // -----------------
   ui->actionMapShowRoute->setChecked(true);
+  ui->actionMapShowTocTod->setChecked(true);
   ui->actionInfoApproachShowMissedAppr->setChecked(true);
   ui->actionMapShowAircraft->setChecked(true);
   ui->actionMapShowAircraftTrack->setChecked(true);
@@ -3509,8 +3510,6 @@ void MapWidget::updateMapObjectsShown()
                  currentThemeIndex >= map::CUSTOM);
   setPropertyValue("hillshading", hillshading);
 
-  setShowMapFeatures(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
-
   setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
   setShowMapFeatures(map::TRACK, ui->actionMapShowTracks->isChecked());
@@ -3518,7 +3517,10 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
                      ui->actionShowAirspaces->isChecked());
 
-  setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
+  setShowMapFeaturesDisplay(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
+  setShowMapFeaturesDisplay(map::FLIGHTPLAN_TOC_TOD, ui->actionMapShowTocTod->isChecked());
+  setShowMapFeatures(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
+
   setShowMapFeaturesDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
   setShowMapFeaturesDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());

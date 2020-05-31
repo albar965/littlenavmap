@@ -688,7 +688,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Get TOD position from active route  ======================================================
 
   // Calculate line y positions ======================================================
-  bool showTodToc = OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD;
+  bool showTodToc = NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD);
   QVector<QPolygon> altLegs; /* Flight plan waypoint screen coordinates. x = distance and y = altitude */
 
   for(int i = 0; i < altitudeLegs.size(); i++)
@@ -721,7 +721,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   defaultFont.setBold(true);
   painter.setFont(defaultFont);
 
-  if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
+  if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
   {
     // Draw altitude restriction bars ============================
     painter.setBackground(mapcolors::profileAltRestrictionFill);
@@ -827,7 +827,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                      std::min(passedRouteLeg + 1, waypointX.size()) : 0;
   }
 
-  if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
+  if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
   {
     // Draw background line ======================================================
     float flightplanOutlineWidth = (optData.getDisplayThicknessFlightplan() / 100.f) * 7;
@@ -1051,7 +1051,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     if(!route.isFlightplanEmpty())
     {
-      if(optData.getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
+      if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD))
       {
         float tocDist = altitudeLegs.getTopOfClimbDistance();
         float todDist = altitudeLegs.getTopOfDescentDistance();
@@ -1700,6 +1700,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addSeparator();
   menu.addAction(ui->actionProfileShowVasi);
   menu.addAction(ui->actionProfileShowIls);
+  menu.addAction(ui->actionMapShowTocTod);
   menu.addSeparator();
   menu.addAction(ui->actionProfileFollow);
   menu.addSeparator();
@@ -1717,7 +1718,8 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   }
   else if(action == ui->actionProfileCenterAircraft || action == ui->actionProfileFollow)
     scrollArea->update();
-  else if(action == ui->actionProfileShowIls || action == ui->actionProfileShowVasi)
+  else if(action == ui->actionProfileShowIls || action == ui->actionProfileShowVasi ||
+          action == ui->actionMapShowTocTod)
     update();
   else if(action == ui->actionProfileDeleteAircraftTrack)
     deleteAircraftTrack();
@@ -1748,7 +1750,7 @@ void ProfileWidget::updateLabel()
         fixedLabelText = tr("<b>To Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
       else
       {
-        if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
+        if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
            routeController->getRoute().getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
         {
           float toTod = routeController->getRoute().getTopOfDescentDistance() - distFromStartNm;

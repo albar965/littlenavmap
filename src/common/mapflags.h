@@ -65,7 +65,7 @@ enum MapObjectType
   AIRWAY = 1 << 10,
   AIRWAYV = 1 << 11,
   AIRWAYJ = 1 << 12,
-  FLIGHTPLAN = 1 << 13, /* Flight plan */
+  // 13
   AIRCRAFT = 1 << 14, /* Simulator aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
@@ -78,6 +78,7 @@ enum MapObjectType
   PROCEDURE = 1 << 23, /* General procedure leg */
   AIRSPACE = 1 << 24, /* General airspace boundary */
   HELIPAD = 1 << 25, /* Helipads on airports */
+  // 26
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
   TRACK = 1 << 28, /* NAT, PACOTS or AUSOTS track */
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
@@ -119,10 +120,15 @@ enum MapObjectDisplayType
 
   COMPASS_ROSE = 1 << 7, /* Compass rose */
   COMPASS_ROSE_ATTACH = 1 << 8, /* Attach to user aircraft */
+
+  FLIGHTPLAN = 1 << 9, /* Flight plan */
+  FLIGHTPLAN_TOC_TOD = 1 << 10 /* Top of climb and top of descent */
 };
 
 Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectDisplayTypes);
+
+QDebug operator<<(QDebug out, const map::MapObjectDisplayTypes& type);
 
 /* Query type for all getNearest and other functions. Covers all what is not included in MapObjectTypes */
 enum MapObjectQueryType

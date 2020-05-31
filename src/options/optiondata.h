@@ -83,9 +83,6 @@ enum Flag
   /* radioButtonCacheUseOnlineElevation */
   CACHE_USE_OFFLINE_ELEVATION = 1 << 15,
 
-  /* checkBoxOptionsShowTod*/
-  FLIGHT_PLAN_SHOW_TOD = 1 << 16,
-
   /* checkBoxOptionsStartupLoadInfoContent */
   STARTUP_LOAD_INFO = 1 << 17,
 
@@ -1041,7 +1038,7 @@ private:
   opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE |
                       opts::STARTUP_SHOW_LAST | opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE |
                       opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
-                      opts::FLIGHT_PLAN_SHOW_TOD | opts::CACHE_USE_ONLINE_ELEVATION |
+                      opts::CACHE_USE_ONLINE_ELEVATION |
                       opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL;
 
   // Defines the defaults used for reset
