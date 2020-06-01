@@ -272,7 +272,7 @@ public:
   /* Clear network, so it will be reloaded before next flight plan calculation. */
   void clearAirwayNetworkCache();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_NETWORK_INFORMATION
   void debugNetworkClick(const atools::geo::Pos& pos);
 
 #endif

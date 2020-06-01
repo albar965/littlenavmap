@@ -287,6 +287,11 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(airport.fence())
     facilities.append(tr("Boundary Fence"));
 
+  if(airport.flatten == 1)
+    facilities.append(tr("Flatten"));
+  if(airport.flatten == 0)
+    facilities.append(tr("No Flatten"));
+
   if(facilities.isEmpty())
     facilities.append(tr("None"));
 
@@ -787,7 +792,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
                   tr(" x ") +
                   Unit::distShortFeet(rec.valueFloat("width")));
 
-        html.row2(tr("Surface:"), map::surfaceName(rec.valueStr("surface")));
+        html.row2(tr("Surface:"), atools::strJoin({map::surfaceName(rec.valueStr("surface")),
+                                                   map::smoothnessName(rec.valueFloat("smoothness", -1.f))}, tr(", ")));
 
         if(rec.valueFloat("pattern_altitude") > 0)
           html.row2(tr("Pattern Altitude:"), Unit::altFeet(rec.valueFloat("pattern_altitude")));

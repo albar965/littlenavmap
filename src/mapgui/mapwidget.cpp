@@ -235,7 +235,7 @@ void MapWidget::handleInfoClick(QPoint point)
 {
   qDebug() << Q_FUNC_INFO << point;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_NETWORK_INFORMATION
   qreal lon, lat;
   bool visible = geoCoordinates(point.x(), point.y(), lon, lat);
   if(visible)

@@ -4490,7 +4490,7 @@ QStringList RouteController::getRouteColumns() const
   return colums;
 }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_NETWORK_INFORMATION
 
 void RouteController::debugNetworkClick(const atools::geo::Pos& pos)
 {
