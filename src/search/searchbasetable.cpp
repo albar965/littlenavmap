@@ -1067,8 +1067,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ui->actionRouteAirportAlternate->setText(tr("Add %1 as Flight Plan &Alternate").arg(airportText));
   }
 
-  ui->actionMapTrafficPattern->setText(tr("Display Airport &Traffic Pattern"));
-  ui->actionMapHold->setText(tr("Display &Holding"));
+  ui->actionMapTrafficPattern->setText(tr("Display Airport &Traffic Pattern ..."));
+  ui->actionMapHold->setText(tr("Display &Holding ..."));
 
   ui->actionSearchTableCopy->setEnabled(index.isValid());
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
@@ -1134,12 +1134,12 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   {
     if(selectedRows > 1)
     {
-      ui->actionUserdataEdit->setText(tr("&Edit Userpoints"));
+      ui->actionUserdataEdit->setText(tr("&Edit Userpoints ..."));
       ui->actionUserdataDelete->setText(tr("&Delete Userpoints"));
     }
     else
     {
-      ui->actionUserdataEdit->setText(tr("&Edit Userpoint"));
+      ui->actionUserdataEdit->setText(tr("&Edit Userpoint ..."));
       ui->actionUserdataDelete->setText(tr("&Delete Userpoint"));
     }
 
@@ -1153,12 +1153,12 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   {
     if(selectedRows > 1)
     {
-      ui->actionLogdataEdit->setText(tr("&Edit Logbook Entries"));
+      ui->actionLogdataEdit->setText(tr("&Edit Logbook Entries ..."));
       ui->actionLogdataDelete->setText(tr("&Delete Logbook Entries"));
     }
     else
     {
-      ui->actionLogdataEdit->setText(tr("&Edit Logbook Entry"));
+      ui->actionLogdataEdit->setText(tr("&Edit Logbook Entry ..."));
       ui->actionLogdataDelete->setText(tr("&Delete Logbook Entry"));
     }
 

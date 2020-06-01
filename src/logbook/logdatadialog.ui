@@ -1332,7 +1332,11 @@ This updates only the path and does not attach the file to the logbook entry.</s
         <number>2</number>
        </property>
        <item>
-        <widget class="QPlainTextEdit" name="plainTextEditDescription"/>
+        <widget class="QPlainTextEdit" name="plainTextEditDescription">
+         <property name="tabChangesFocus">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBoxAircraftDescription">

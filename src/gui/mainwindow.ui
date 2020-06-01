@@ -4370,6 +4370,9 @@ Will match any visited airport.</string>
            <property name="toolTip">
             <string/>
            </property>
+           <property name="tabChangesFocus">
+            <bool>true</bool>
+           </property>
            <property name="placeholderText">
             <string>Remarks for the flight plan</string>
            </property>
@@ -9329,7 +9332,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Edit Userpoint(s)</string>
+    <string>&amp;Edit Userpoint(s) ...</string>
    </property>
    <property name="toolTip">
     <string>Edit one or more userpoints</string>
@@ -9347,7 +9350,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/userdata_add.svg</normaloff>:/littlenavmap/resources/icons/userdata_add.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Add Userpoint</string>
+    <string>&amp;Add Userpoint ...</string>
    </property>
    <property name="statusTip">
     <string>Add Userpoint</string>
@@ -9380,7 +9383,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/userdata_add.svg</normaloff>:/littlenavmap/resources/icons/userdata_add.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Add Userpoint %1</string>
+    <string>&amp;Add Userpoint %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Add Userpoint</string>
@@ -9395,7 +9398,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Edit Userpoint %1</string>
+    <string>&amp;Edit Userpoint %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Edit Userpoint</string>
@@ -9791,7 +9794,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</iconset>
    </property>
    <property name="text">
-    <string>Display Airport &amp;Traffic Pattern at %1</string>
+    <string>Display Airport &amp;Traffic Pattern at %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Show Airport traffic pattern for a runway at this airport</string>
@@ -10618,7 +10621,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/logdata_add.svg</normaloff>:/littlenavmap/resources/icons/logdata_add.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Add Logbook Entry</string>
+    <string>&amp;Add Logbook Entry ...</string>
    </property>
    <property name="toolTip">
     <string>Add logbook entry</string>
@@ -10748,7 +10751,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Edit Log Entry %1</string>
+    <string>&amp;Edit Log Entry %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Edit Log Entry</string>
@@ -10868,7 +10871,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
    </property>
    <property name="text">
-    <string>Display &amp;Holding at %1</string>
+    <string>Display &amp;Holding at %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Display holding at this position or navaid</string>
@@ -10958,7 +10961,7 @@ Best track will be selected automatically.</string>
   </action>
   <action name="actionRouteVisibleColumns">
    <property name="text">
-    <string>&amp;Select visible Columns</string>
+    <string>&amp;Select visible Columns ...</string>
    </property>
    <property name="toolTip">
     <string>Hide or show columns in table</string>

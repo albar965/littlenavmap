@@ -50,6 +50,9 @@ ALTERNATES is a list of alternate airports.
 ETD and ETA are ignored.
 </string>
          </property>
+         <property name="tabChangesFocus">
+          <bool>true</bool>
+         </property>
          <property name="plainText">
           <string/>
          </property>
@@ -170,8 +173,14 @@ ETD and ETA are ignored.
       <layout class="QVBoxLayout" name="verticalLayoutRouteStringBottom">
        <item>
         <widget class="QTextEdit" name="textEditRouteStringErrors">
+         <property name="acceptDrops">
+          <bool>false</bool>
+         </property>
          <property name="toolTip">
           <string>Display messages, warnings or errors when reading the route description.</string>
+         </property>
+         <property name="tabChangesFocus">
+          <bool>true</bool>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -210,4 +219,5 @@ ETD and ETA are ignored.
  <resources>
   <include location="../../littlenavmap.qrc"/>
  </resources>
+ <connections/>
 </ui>

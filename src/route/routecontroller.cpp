@@ -2169,10 +2169,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapTrafficPattern->setEnabled(true);
   else
     ui->actionMapTrafficPattern->setEnabled(false);
-  ui->actionMapTrafficPattern->setText(tr("Display Airport &Traffic Pattern"));
+  ui->actionMapTrafficPattern->setText(tr("Display Airport &Traffic Pattern ..."));
 
   ui->actionMapHold->setEnabled(routeLeg != nullptr);
-  ui->actionMapHold->setText(tr("Display &Holding"));
+  ui->actionMapHold->setText(tr("Display &Holding ..."));
 
   ui->actionRouteCalcSelected->setEnabled(canCalcSelection());
 

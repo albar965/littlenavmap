@@ -38,7 +38,8 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
   ui->setupUi(this);
 
   // Update label with airport name/ident
-  ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(map::airportText(departureAirport)));
+  ui->labelSelectParking->setText(tr("<b>&Select a start position for departure at<br/>%1:</b>").
+                                  arg(map::airportText(departureAirport)));
 
   const QList<map::MapStart> *startCache =
     NavApp::getAirportQuerySim()->getStartPositionsForAirport(departureAirport.id);
