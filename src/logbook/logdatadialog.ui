@@ -1332,14 +1332,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
         <number>2</number>
        </property>
        <item>
-        <widget class="QTextEdit" name="textEditDescription">
-         <property name="tabChangesFocus">
-          <bool>true</bool>
-         </property>
-         <property name="acceptRichText">
-          <bool>false</bool>
-         </property>
-        </widget>
+        <widget class="QPlainTextEdit" name="plainTextEditDescription"/>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBoxAircraftDescription">
@@ -1415,7 +1408,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>spinBoxFuelBlock</tabstop>
   <tabstop>spinBoxFuelUsed</tabstop>
   <tabstop>spinBoxFuelGrossweight</tabstop>
-  <tabstop>textEditDescription</tabstop>
+  <tabstop>plainTextEditDescription</tabstop>
   <tabstop>checkBoxAircraftDescription</tabstop>
   <tabstop>tabWidgetLogbook</tabstop>
  </tabstops>

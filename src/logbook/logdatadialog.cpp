@@ -444,7 +444,7 @@ void LogdataDialog::recordToDialog()
   ui->labelDestinationStatus->setText(record->valueStr("destination_name")); // varchar(200) collate nocase
   ui->lineEditDestinationRunway->setText(record->valueStr("destination_runway")); // varchar(10) collate nocase
 
-  ui->textEditDescription->setText(record->valueStr("description")); // varchar(2048) collate nocase
+  ui->plainTextEditDescription->setPlainText(record->valueStr("description")); // varchar(2048) collate nocase
   ui->lineEditFlightSimulator->setText(record->valueStr("simulator")); // varchar(2048) collate nocase
   ui->lineEditRouteString->setText(record->valueStr("route_string")); // varchar(2048) collate nocase
 
@@ -476,7 +476,7 @@ void LogdataDialog::dialogToRecord()
   helper.dialogToRecordStr(ui->lineEditAircraftRegistration, "aircraft_registration", ui->checkBoxAircraftRegistration);
   helper.dialogToRecordStr(ui->lineEditAircraftType, "aircraft_type", ui->checkBoxAircraftType);
 
-  helper.dialogToRecordStr(ui->textEditDescription, "description", ui->checkBoxAircraftDescription);
+  helper.dialogToRecordStr(ui->plainTextEditDescription, "description", ui->checkBoxAircraftDescription);
   helper.dialogToRecordStr(ui->lineEditFlightSimulator, "simulator", ui->checkBoxFlightSimulator);
   helper.dialogToRecordStr(ui->lineEditRouteString, "route_string", ui->checkBoxRouteString);
 
@@ -587,7 +587,7 @@ void LogdataDialog::clearWidgets()
   ui->lineEditAircraftName->clear();
   ui->lineEditAircraftRegistration->clear();
   ui->lineEditAircraftType->clear();
-  ui->textEditDescription->clear();
+  ui->plainTextEditDescription->clear();
   ui->lineEditFlightSimulator->clear();
   ui->lineEditRouteString->clear();
   ui->lineEditDeparture->clear();
@@ -619,7 +619,7 @@ void LogdataDialog::updateWidgets()
     ui->lineEditAircraftName->setEnabled(ui->checkBoxAircraftName->isChecked());
     ui->lineEditAircraftRegistration->setEnabled(ui->checkBoxAircraftRegistration->isChecked());
     ui->lineEditAircraftType->setEnabled(ui->checkBoxAircraftType->isChecked());
-    ui->textEditDescription->setEnabled(ui->checkBoxAircraftDescription->isChecked());
+    ui->plainTextEditDescription->setEnabled(ui->checkBoxAircraftDescription->isChecked());
     ui->lineEditFlightSimulator->setEnabled(ui->checkBoxFlightSimulator->isChecked());
     ui->lineEditRouteString->setEnabled(ui->checkBoxRouteString->isChecked());
     ui->lineEditDestination->setEnabled(ui->checkBoxDestination->isChecked());

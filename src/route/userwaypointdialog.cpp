@@ -44,7 +44,7 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const atools::fs::pln::F
   ui->lineEditRouteUserWaypointIdent->setText(entry->getIdent());
   ui->lineEditRouteUserWaypointRegion->setText(entry->getRegion());
   ui->lineEditRouteUserWaypointName->setText(entry->getName());
-  ui->textEditRouteUserWaypointComment->setText(entry->getComment());
+  ui->plainTextEditRouteUserWaypointComment->setPlainText(entry->getComment());
   ui->lineEditRouteUserWaypointLatLon->setText(Unit::coords(entry->getPosition()));
 
   coordsEdited(QString());
@@ -70,7 +70,7 @@ void UserWaypointDialog::buttonBoxClicked(QAbstractButton *button)
     entry->setIdent(ui->lineEditRouteUserWaypointIdent->text());
     entry->setRegion(ui->lineEditRouteUserWaypointRegion->text());
     entry->setName(ui->lineEditRouteUserWaypointName->text());
-    entry->setComment(ui->textEditRouteUserWaypointComment->toPlainText());
+    entry->setComment(ui->plainTextEditRouteUserWaypointComment->toPlainText());
 
     atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
     if(OptionData::instance().getUnitCoords() == opts::COORDS_LONX_LATY)

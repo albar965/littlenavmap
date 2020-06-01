@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>368</width>
-    <height>237</height>
+    <height>247</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -84,7 +84,7 @@ A short all upper case ident without spaces is recommended.</string>
       <string>&amp;Remarks:</string>
      </property>
      <property name="buddy">
-      <cstring>textEditRouteUserWaypointComment</cstring>
+      <cstring>plainTextEditRouteUserWaypointComment</cstring>
      </property>
     </widget>
    </item>
@@ -151,18 +151,7 @@ Formats above have to be given exactly as shown in the examples.</string>
     </widget>
    </item>
    <item row="4" column="2">
-    <widget class="QTextEdit" name="textEditRouteUserWaypointComment">
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="acceptRichText">
-      <bool>false</bool>
-     </property>
-    </widget>
+    <widget class="QPlainTextEdit" name="plainTextEditRouteUserWaypointComment"/>
    </item>
   </layout>
  </widget>
@@ -170,7 +159,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>lineEditRouteUserWaypointIdent</tabstop>
   <tabstop>lineEditRouteUserWaypointRegion</tabstop>
   <tabstop>lineEditRouteUserWaypointName</tabstop>
-  <tabstop>textEditRouteUserWaypointComment</tabstop>
+  <tabstop>plainTextEditRouteUserWaypointComment</tabstop>
   <tabstop>lineEditRouteUserWaypointLatLon</tabstop>
  </tabstops>
  <resources/>

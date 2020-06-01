@@ -30,7 +30,7 @@ class QLineEdit;
 class QSpinBox;
 class QComboBox;
 class QDateTimeEdit;
-class QTextEdit;
+class QPlainTextEdit;
 class QCheckBox;
 class QString;
 
@@ -54,7 +54,7 @@ public:
 
   void dialogToRecordInt(QComboBox *widget, const QString& name, QCheckBox *checkBox);
 
-  void dialogToRecordStr(QTextEdit *widget, const QString& name, QCheckBox *checkBox);
+  void dialogToRecordStr(QPlainTextEdit* widget, const QString& name, QCheckBox *checkBox);
   void dialogToRecordDateTime(QDateTimeEdit *widget, const QString& name, QCheckBox *checkBox = nullptr);
 
 private:

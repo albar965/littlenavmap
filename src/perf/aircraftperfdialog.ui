@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>490</width>
-    <height>730</height>
+    <height>732</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -960,23 +960,7 @@ Default is cruise speed.</string>
         <number>2</number>
        </property>
        <item>
-        <widget class="QTextBrowser" name="textBrowserDescription">
-         <property name="readOnly">
-          <bool>false</bool>
-         </property>
-         <property name="acceptRichText">
-          <bool>false</bool>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::TextEditorInteraction</set>
-         </property>
-         <property name="placeholderText">
-          <string/>
-         </property>
-         <property name="openExternalLinks">
-          <bool>true</bool>
-         </property>
-        </widget>
+        <widget class="QPlainTextEdit" name="plainTextEditDescription"/>
        </item>
       </layout>
      </widget>
@@ -1030,7 +1014,7 @@ Default is cruise speed.</string>
   <tabstop>spinBoxAlternateSpeed</tabstop>
   <tabstop>spinBoxAlternateFuelFlow</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>textBrowserDescription</tabstop>
+  <tabstop>plainTextEditDescription</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -24,8 +24,8 @@
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QComboBox>
-#include <QTextEdit>
 #include <QDateTimeEdit>
+#include <QPlainTextEdit>
 
 DialogRecordHelper::DialogRecordHelper(atools::sql::SqlRecord *recordParam, bool multiEditParam)
   : record(recordParam), multiEdit(multiEditParam)
@@ -61,7 +61,7 @@ void DialogRecordHelper::dialogToRecordStr(QLineEdit *widget, const QString& nam
     record->remove(name);
 }
 
-void DialogRecordHelper::dialogToRecordStr(QTextEdit *widget, const QString& name, QCheckBox *checkBox)
+void DialogRecordHelper::dialogToRecordStr(QPlainTextEdit *widget, const QString& name, QCheckBox *checkBox)
 {
   if(isSetValue(checkBox))
     record->setValue(name, widget->toPlainText());

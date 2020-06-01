@@ -189,7 +189,7 @@ void UserdataDialog::resetClicked()
     ui->lineEditUserdataTags->clear();
     ui->spinBoxUserdataAltitude->setValue(0.);
     ui->spinBoxUserdataVisible->setValue(250);
-    ui->textEditUserdataDescription->clear();
+    ui->plainTextEditUserdataDescription->clear();
     ui->checkBoxUserdataTemp->setChecked(false);
   }
   else if(editMode == ud::EDIT_MULTIPLE || editMode == ud::EDIT_ONE)
@@ -231,7 +231,7 @@ void UserdataDialog::updateWidgets()
   {
     // Enable or disable edit widgets depending in check box status
     ui->spinBoxUserdataAltitude->setEnabled(ui->checkBoxUserdataAltitude->isChecked());
-    ui->textEditUserdataDescription->setEnabled(ui->checkBoxUserdataDescription->isChecked());
+    ui->plainTextEditUserdataDescription->setEnabled(ui->checkBoxUserdataDescription->isChecked());
     ui->lineEditUserdataIdent->setEnabled(ui->checkBoxUserdataIdent->isChecked());
     ui->lineEditUserdataRegion->setEnabled(ui->checkBoxUserdataRegion->isChecked());
     ui->lineEditUserdataName->setEnabled(ui->checkBoxUserdataName->isChecked());
@@ -261,7 +261,7 @@ void UserdataDialog::recordToDialog()
   ui->lineEditUserdataName->setText(record->valueStr("name"));
   ui->lineEditUserdataIdent->setText(record->valueStr("ident"));
   ui->lineEditUserdataRegion->setText(record->valueStr("region"));
-  ui->textEditUserdataDescription->setText(record->valueStr("description"));
+  ui->plainTextEditUserdataDescription->setPlainText(record->valueStr("description"));
   ui->lineEditUserdataTags->setText(record->valueStr("tags"));
 
   if(record->contains("temp") && record->valueBool("temp"))
@@ -346,7 +346,7 @@ void UserdataDialog::dialogToRecord()
   helper.dialogToRecordStr(ui->lineEditUserdataName, "name", ui->checkBoxUserdataName);
   helper.dialogToRecordStr(ui->lineEditUserdataIdent, "ident", ui->checkBoxUserdataIdent);
   helper.dialogToRecordStr(ui->lineEditUserdataRegion, "region", ui->checkBoxUserdataRegion);
-  helper.dialogToRecordStr(ui->textEditUserdataDescription, "description", ui->checkBoxUserdataDescription);
+  helper.dialogToRecordStr(ui->plainTextEditUserdataDescription, "description", ui->checkBoxUserdataDescription);
   helper.dialogToRecordStr(ui->lineEditUserdataTags, "tags", ui->checkBoxUserdataTags);
 
   record->setValue("last_edit_timestamp", QDateTime::currentDateTime());
