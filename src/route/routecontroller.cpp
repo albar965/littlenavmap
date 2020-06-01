@@ -77,9 +77,10 @@
 #include <QInputDialog>
 #include <QFileInfo>
 #include <QTextTable>
+#include <QPlainTextEdit>
 #include <QProgressDialog>
 
-namespace rc {
+namespace rcol {
 // Route table column indexes
 enum RouteColumns
 {
@@ -231,6 +232,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   connect(view, &QTableView::doubleClicked, this, &RouteController::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &RouteController::tableContextMenu);
+  connect(this, &RouteController::routeChanged, this, &RouteController::updateRemarkWidget);
+  connect(ui->plainTextEditRouteRemarks, &QPlainTextEdit::textChanged, this, &RouteController::remarksTextChanged);
 
   connect(&routeAltDelayTimer, &QTimer::timeout, this, &RouteController::routeAltChangedDelayed);
   routeAltDelayTimer.setSingleShot(true);
@@ -433,8 +436,8 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
           textFormat.setForeground(leg.getProcedureLeg().isMissed() ?
                                    mapcolors::routeProcedureMissedTableColor :
                                    mapcolors::routeProcedureTableColor);
-        else if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
+        else if((col == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
+                (col == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
                  leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
           textFormat.setForeground(Qt::red);
         else
@@ -545,8 +548,8 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
             color = leg.getProcedureLeg().isMissed() ?
                     mapcolors::routeProcedureMissedTableColor :
                     mapcolors::routeProcedureTableColor;
-          else if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                  (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
+          else if((col == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
+                  (col == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
                    leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
             color = Qt::red;
 
@@ -820,6 +823,8 @@ void RouteController::newFlightplan()
   updateTableModel();
   NavApp::updateWindowTitle();
   updateErrorLabel();
+  remarksFlightPlanToWidget();
+
   emit routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
 
@@ -941,6 +946,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
     }
   }
 
+  remarksFlightPlanToWidget();
   updateTableModel();
   updateErrorLabel();
   NavApp::updateWindowTitle();
@@ -1949,14 +1955,14 @@ void RouteController::visibleColumnsTriggered()
                       lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns");
 
   QHeaderView *header = view->horizontalHeader();
-  for(int col = rc::FIRST_COLUMN; col <= rc::LAST_COLUMN; col++)
+  for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
     dialog.add(col, Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " "),
                routeColumnTooltips.at(col),
                !header->isSectionHidden(col));
 
   if(dialog.exec() == QDialog::Accepted)
   {
-    for(int col = rc::LAST_COLUMN; col >= rc::FIRST_COLUMN; col--)
+    for(int col = rcol::LAST_COLUMN; col >= rcol::FIRST_COLUMN; col--)
       header->setSectionHidden(col, !dialog.isChecked(col));
     updateModelRouteTimeFuel();
   }
@@ -2266,7 +2272,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   {
     if(action == ui->actionRouteResetView)
     {
-      for(int col = rc::FIRST_COLUMN; col <= rc::LAST_COLUMN; col++)
+      for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
         view->showColumn(col);
 
       // Reorder columns to match model order
@@ -2496,6 +2502,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
+  remarksFlightPlanToWidget();
 
   updateTableModel();
   NavApp::updateWindowTitle();
@@ -2785,8 +2792,8 @@ void RouteController::selectList(const QList<int>& rows, int offset)
 
   for(int row : rows)
     // Need to select all columns
-    newSel.append(QItemSelectionRange(model->index(row + offset, rc::FIRST_COLUMN),
-                                      model->index(row + offset, rc::LAST_COLUMN)));
+    newSel.append(QItemSelectionRange(model->index(row + offset, rcol::FIRST_COLUMN),
+                                      model->index(row + offset, rcol::LAST_COLUMN)));
 
   view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
@@ -2803,8 +2810,8 @@ void RouteController::selectRange(int from, int to)
   from = std::min(std::max(from, 0), maxRows);
   to = std::min(std::max(to, 0), maxRows);
 
-  newSel.append(QItemSelectionRange(model->index(from, rc::FIRST_COLUMN),
-                                    model->index(to, rc::LAST_COLUMN)));
+  newSel.append(QItemSelectionRange(model->index(from, rcol::FIRST_COLUMN),
+                                    model->index(to, rcol::LAST_COLUMN)));
 
   view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
@@ -3116,16 +3123,31 @@ void RouteController::showProceduresCustom(map::MapAirport airport)
 void RouteController::updateRouteTabChangedStatus()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  int idx = NavApp::getRouteTabHandler()->getIndexForId(rc::ROUTE);
-  if(idx != -1)
+
+  // Update status in flight plan table
+  int idxRoute = NavApp::getRouteTabHandler()->getIndexForId(rc::ROUTE);
+  if(idxRoute != -1)
   {
     if(hasChanged())
     {
-      if(!ui->tabWidgetRoute->tabText(idx).endsWith(tr(" *")))
-        ui->tabWidgetRoute->setTabText(idx, ui->tabWidgetRoute->tabText(idx) + tr(" *"));
+      if(!ui->tabWidgetRoute->tabText(idxRoute).endsWith(tr(" *")))
+        ui->tabWidgetRoute->setTabText(idxRoute, ui->tabWidgetRoute->tabText(idxRoute) + tr(" *"));
     }
     else
-      ui->tabWidgetRoute->setTabText(idx, ui->tabWidgetRoute->tabText(idx).replace(tr(" *"), QString()));
+      ui->tabWidgetRoute->setTabText(idxRoute, ui->tabWidgetRoute->tabText(idxRoute).replace(tr(" *"), QString()));
+  }
+
+  // Update status in remarks tab
+  int idxRemark = NavApp::getRouteTabHandler()->getIndexForId(rc::REMARKS);
+  if(idxRemark != -1)
+  {
+    if(hasChanged())
+    {
+      if(!ui->tabWidgetRoute->tabText(idxRemark).endsWith(tr(" *")))
+        ui->tabWidgetRoute->setTabText(idxRemark, ui->tabWidgetRoute->tabText(idxRemark) + tr(" *"));
+    }
+    else
+      ui->tabWidgetRoute->setTabText(idxRemark, ui->tabWidgetRoute->tabText(idxRemark).replace(tr(" *"), QString()));
   }
 }
 
@@ -3579,7 +3601,7 @@ void RouteController::updateTableModel()
   float cumulatedDistance = 0.f;
 
   QList<QStandardItem *> itemRow;
-  for(int i = rc::FIRST_COLUMN; i <= rc::LAST_COLUMN; i++)
+  for(int i = rcol::FIRST_COLUMN; i <= rcol::LAST_COLUMN; i++)
     itemRow.append(nullptr);
 
   for(int i = 0; i < route.size(); i++)
@@ -3601,17 +3623,17 @@ void RouteController::updateTableModel()
     ident->setFont(f);
     ident->setTextAlignment(Qt::AlignRight);
 
-    itemRow[rc::IDENT] = ident;
+    itemRow[rcol::IDENT] = ident;
     // highlightProcedureItems() does error checking for IDENT
 
     // Region, navaid name, procedure type ===========================================
-    itemRow[rc::REGION] = new QStandardItem(leg.getRegion());
-    itemRow[rc::NAME] = new QStandardItem(leg.getName());
+    itemRow[rcol::REGION] = new QStandardItem(leg.getRegion());
+    itemRow[rcol::NAME] = new QStandardItem(leg.getName());
 
     if(leg.isAlternate())
-      itemRow[rc::PROCEDURE] = new QStandardItem(tr("Alternate"));
+      itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
     else
-      itemRow[rc::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType()));
+      itemRow[rcol::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType()));
 
     // Airway or leg type and restriction ===========================================
     if(leg.isRoute())
@@ -3628,17 +3650,17 @@ void RouteController::updateTableModel()
         awname += " [" + map::airwayRouteTypeToStringShort(airway.routeType) +
                   "," + map::airwayTrackTypeToShortString(airway.type) + "]";
 #endif
-        itemRow[rc::RESTRICTION] =
+        itemRow[rcol::RESTRICTION] =
           new QStandardItem(map::airwayAltTextShort(airway, false /* addUnit */, false /* narrow */));
       }
 
-      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname);
+      itemRow[rcol::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname);
       // highlightProcedureItems() does error checking
     }
     else
     {
       // Procedure ========================
-      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(proc::procedureLegTypeStr(leg.getProcedureLegType()));
+      itemRow[rcol::AIRWAY_OR_LEGTYPE] = new QStandardItem(proc::procedureLegTypeStr(leg.getProcedureLegType()));
 
       QString restrictions;
       if(leg.getProcedureLegAltRestr().isValid())
@@ -3646,7 +3668,7 @@ void RouteController::updateTableModel()
       if(leg.getProcedureLeg().speedRestriction.isValid())
         restrictions.append(tr("/") + proc::speedRestrictionTextShort(leg.getProcedureLeg().speedRestriction));
 
-      itemRow[rc::RESTRICTION] = new QStandardItem(restrictions);
+      itemRow[rcol::RESTRICTION] = new QStandardItem(restrictions);
     }
 
     // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
@@ -3657,9 +3679,9 @@ void RouteController::updateTableModel()
 
     // VOR/NDB type ===========================
     if(leg.getVor().isValid())
-      itemRow[rc::TYPE] = new QStandardItem(map::vorFullShortText(leg.getVor()));
+      itemRow[rcol::TYPE] = new QStandardItem(map::vorFullShortText(leg.getVor()));
     else if(leg.getNdb().isValid())
-      itemRow[rc::TYPE] = new QStandardItem(map::ndbFullShortText(leg.getNdb()));
+      itemRow[rcol::TYPE] = new QStandardItem(map::ndbFullShortText(leg.getNdb()));
     else if(leg.isAnyProcedure() && !(leg.getProcedureLeg().isMissed()) &&
             leg.getRunwayEnd().isValid())
     {
@@ -3673,19 +3695,19 @@ void RouteController::updateTableModel()
         texts.insert(txt.join("/"));
       }
 
-      itemRow[rc::TYPE] = new QStandardItem(texts.toList().join(","));
+      itemRow[rcol::TYPE] = new QStandardItem(texts.toList().join(","));
     }
 
     // VOR/NDB frequency =====================
     if(leg.getVor().isValid())
     {
       if(leg.getVor().tacan)
-        itemRow[rc::FREQ] = new QStandardItem(leg.getVor().channel);
+        itemRow[rcol::FREQ] = new QStandardItem(leg.getVor().channel);
       else
-        itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 1000.f, 'f', 2));
+        itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 1000.f, 'f', 2));
     }
     else if(leg.getNdb().isValid())
-      itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
+      itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
     else if(leg.isAnyProcedure() && !(leg.getProcedureLeg().isMissed()) &&
             leg.getRunwayEnd().isValid())
     {
@@ -3694,12 +3716,12 @@ void RouteController::updateTableModel()
       for(const map::MapIls& ils : ilsByAirportAndRunway)
         texts.insert(QLocale().toString(ils.frequency / 1000.f, 'f', 2));
 
-      itemRow[rc::FREQ] = new QStandardItem(texts.toList().join(","));
+      itemRow[rcol::FREQ] = new QStandardItem(texts.toList().join(","));
     }
 
     // VOR/NDB range =====================
     if(leg.getRange() > 0 && (leg.getVor().isValid() || leg.getNdb().isValid()))
-      itemRow[rc::RANGE] = new QStandardItem(Unit::distNm(leg.getRange(), false));
+      itemRow[rcol::RANGE] = new QStandardItem(Unit::distNm(leg.getRange(), false));
 
     // Course =====================
     bool afterArrivalAirport = route.isAirportAfterArrival(i);
@@ -3707,9 +3729,9 @@ void RouteController::updateTableModel()
        leg.getDistanceTo() > 0.f)
     {
       if(leg.getCourseToMag() < map::INVALID_COURSE_VALUE)
-        itemRow[rc::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0));
+        itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0));
       if(leg.getCourseToTrue() < map::INVALID_COURSE_VALUE)
-        itemRow[rc::COURSETRUE] = new QStandardItem(QLocale().toString(leg.getCourseToTrue(), 'f', 0));
+        itemRow[rcol::COURSETRUE] = new QStandardItem(QLocale().toString(leg.getCourseToTrue(), 'f', 0));
     }
 
     if(!afterArrivalAirport)
@@ -3717,14 +3739,14 @@ void RouteController::updateTableModel()
       if(leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE) // Distance =====================
       {
         cumulatedDistance += leg.getDistanceTo();
-        itemRow[rc::DIST] = new QStandardItem(Unit::distNm(leg.getDistanceTo(), false));
+        itemRow[rcol::DIST] = new QStandardItem(Unit::distNm(leg.getDistanceTo(), false));
 
         if(!leg.getProcedureLeg().isMissed() && !leg.isAlternate())
         {
           float remaining = totalDistance - cumulatedDistance;
           if(remaining < 0.f)
             remaining = 0.f; // Catch the -0 case due to rounding errors
-          itemRow[rc::REMAINING_DISTANCE] = new QStandardItem(Unit::distNm(remaining, false));
+          itemRow[rcol::REMAINING_DISTANCE] = new QStandardItem(Unit::distNm(remaining, false));
         }
       }
     }
@@ -3735,13 +3757,13 @@ void RouteController::updateTableModel()
     else if(leg.isUser())
       remarks = leg.getFlightplanEntry().getComment();
 
-    itemRow[rc::REMARKS] = new QStandardItem(atools::elideTextShort(remarks, 80));
-    itemRow[rc::REMARKS]->setToolTip(remarks);
+    itemRow[rcol::REMARKS] = new QStandardItem(atools::elideTextShort(remarks, 80));
+    itemRow[rcol::REMARKS]->setToolTip(remarks);
 
     // Travel time, remaining fuel and ETA are updated in updateModelRouteTime
 
     // Create empty items for missing fields
-    for(int col = rc::FIRST_COLUMN; col <= rc::LAST_COLUMN; col++)
+    for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
     {
       if(itemRow[col] == nullptr)
         itemRow[col] = new QStandardItem();
@@ -3750,18 +3772,18 @@ void RouteController::updateTableModel()
     }
 
     // Align cells to the right - rest is aligned in updateModelRouteTimeFuel
-    itemRow[rc::REGION]->setTextAlignment(Qt::AlignRight);
-    itemRow[rc::REMAINING_DISTANCE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rc::DIST]->setTextAlignment(Qt::AlignRight);
-    itemRow[rc::COURSE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rc::COURSETRUE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rc::RANGE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rc::FREQ]->setTextAlignment(Qt::AlignRight);
-    itemRow[rc::RESTRICTION]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::REGION]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::REMAINING_DISTANCE]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::DIST]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::COURSE]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::COURSETRUE]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::RANGE]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::FREQ]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::RESTRICTION]->setTextAlignment(Qt::AlignRight);
 
     model->appendRow(itemRow);
 
-    for(int col = rc::FIRST_COLUMN; col <= rc::LAST_COLUMN; col++)
+    for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
       itemRow[col] = nullptr;
     row++;
   }
@@ -3815,20 +3837,20 @@ void RouteController::updateModelRouteTimeFuel()
 
   // Remember colum widths
   QHeaderView *header = view->horizontalHeader();
-  int widthLegTime = header->isSectionHidden(rc::LEG_TIME) ? -1 : view->columnWidth(rc::LEG_TIME);
-  int widthEta = header->isSectionHidden(rc::ETA) ? -1 : view->columnWidth(rc::ETA);
-  int widthFuelWeight = header->isSectionHidden(rc::FUEL_WEIGHT) ? -1 : view->columnWidth(rc::FUEL_WEIGHT);
-  int widthFuelVol = header->isSectionHidden(rc::FUEL_VOLUME) ? -1 : view->columnWidth(rc::FUEL_VOLUME);
+  int widthLegTime = header->isSectionHidden(rcol::LEG_TIME) ? -1 : view->columnWidth(rcol::LEG_TIME);
+  int widthEta = header->isSectionHidden(rcol::ETA) ? -1 : view->columnWidth(rcol::ETA);
+  int widthFuelWeight = header->isSectionHidden(rcol::FUEL_WEIGHT) ? -1 : view->columnWidth(rcol::FUEL_WEIGHT);
+  int widthFuelVol = header->isSectionHidden(rcol::FUEL_VOLUME) ? -1 : view->columnWidth(rcol::FUEL_VOLUME);
 
   for(int i = 0; i < route.size(); i++)
   {
     if(!setValues)
     {
       // Do not fill if collecting performance or route altitude is invalid
-      model->setItem(row, rc::LEG_TIME, new QStandardItem());
-      model->setItem(row, rc::ETA, new QStandardItem());
-      model->setItem(row, rc::FUEL_WEIGHT, new QStandardItem());
-      model->setItem(row, rc::FUEL_VOLUME, new QStandardItem());
+      model->setItem(row, rcol::LEG_TIME, new QStandardItem());
+      model->setItem(row, rcol::ETA, new QStandardItem());
+      model->setItem(row, rcol::FUEL_WEIGHT, new QStandardItem());
+      model->setItem(row, rcol::FUEL_VOLUME, new QStandardItem());
     }
     else if(!route.isAirportAfterArrival(row)) // Avoid airport after last procedure leg
     {
@@ -3837,7 +3859,7 @@ void RouteController::updateModelRouteTimeFuel()
       // Leg time =====================================================================
       float travelTime = altitudeLegs.value(i).getTime();
       if(row == 0 || !(travelTime < map::INVALID_TIME_VALUE) || leg.getProcedureLeg().isMissed())
-        model->setItem(row, rc::LEG_TIME, new QStandardItem());
+        model->setItem(row, rcol::LEG_TIME, new QStandardItem());
       else
       {
         QString txt = formatter::formatMinutesHours(travelTime);
@@ -3846,7 +3868,7 @@ void RouteController::updateModelRouteTimeFuel()
 #endif
         QStandardItem *item = new QStandardItem(txt);
         item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rc::LEG_TIME, item);
+        model->setItem(row, rcol::LEG_TIME, item);
       }
 
       if(!leg.getProcedureLeg().isMissed())
@@ -3863,7 +3885,7 @@ void RouteController::updateModelRouteTimeFuel()
 #endif
         QStandardItem *item = new QStandardItem(txt);
         item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rc::ETA, item);
+        model->setItem(row, rcol::ETA, item);
 
         // Fuel at leg =====================================================================
         if(!leg.isAlternate())
@@ -3895,12 +3917,12 @@ void RouteController::updateModelRouteTimeFuel()
         txt = perf.isFuelFlowValid() ? Unit::weightLbs(weight, false /* no unit */) : QString();
         item = new QStandardItem(txt);
         item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rc::FUEL_WEIGHT, item);
+        model->setItem(row, rcol::FUEL_WEIGHT, item);
 
         txt = perf.isFuelFlowValid() ? Unit::volGallon(vol, false /* no unit */) : QString();
         item = new QStandardItem(txt);
         item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rc::FUEL_VOLUME, item);
+        model->setItem(row, rcol::FUEL_VOLUME, item);
       }
     } // else if(!route.isAirportAfterArrival(row))
     row++;
@@ -3908,21 +3930,21 @@ void RouteController::updateModelRouteTimeFuel()
 
   // Set back column widths if visible - widget changes widths on setItem
   if(widthLegTime > 0)
-    view->setColumnWidth(rc::LEG_TIME, widthLegTime);
+    view->setColumnWidth(rcol::LEG_TIME, widthLegTime);
   else
-    header->hideSection(rc::LEG_TIME);
+    header->hideSection(rcol::LEG_TIME);
   if(widthEta > 0)
-    view->setColumnWidth(rc::ETA, widthEta);
+    view->setColumnWidth(rcol::ETA, widthEta);
   else
-    header->hideSection(rc::ETA);
+    header->hideSection(rcol::ETA);
   if(widthFuelWeight > 0)
-    view->setColumnWidth(rc::FUEL_WEIGHT, widthFuelWeight);
+    view->setColumnWidth(rcol::FUEL_WEIGHT, widthFuelWeight);
   else
-    header->hideSection(rc::FUEL_WEIGHT);
+    header->hideSection(rcol::FUEL_WEIGHT);
   if(widthFuelVol > 0)
-    view->setColumnWidth(rc::FUEL_VOLUME, widthFuelVol);
+    view->setColumnWidth(rcol::FUEL_VOLUME, widthFuelVol);
   else
-    header->hideSection(rc::FUEL_VOLUME);
+    header->hideSection(rcol::FUEL_VOLUME);
 }
 
 void RouteController::disconnectedFromSimulator()
@@ -3974,7 +3996,7 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
 {
   for(int row = 0; row < model->rowCount(); ++row)
   {
-    for(int col = rc::FIRST_COLUMN; col <= rc::LAST_COLUMN; ++col)
+    for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; ++col)
     {
       QStandardItem *item = model->item(row, col);
       if(item != nullptr)
@@ -3998,7 +4020,7 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
       QColor color = NavApp::isCurrentGuiStyleNight() ?
                      mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
 
-      for(int col = rc::FIRST_COLUMN; col <= rc::LAST_COLUMN; ++col)
+      for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; ++col)
       {
         QStandardItem *item = model->item(nearestLegIndex, col);
         if(item != nullptr)
@@ -4054,7 +4076,7 @@ void RouteController::updateModelHighlights()
         }
 
         // Ident colum ==========================================
-        if(col == rc::IDENT)
+        if(col == rcol::IDENT)
         {
           if(leg.getMapObjectType() == map::INVALID)
           {
@@ -4066,7 +4088,7 @@ void RouteController::updateModelHighlights()
         }
 
         // Airway colum ==========================================
-        if(col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute())
+        if(col == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute())
         {
           QStringList errors;
           if(leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet(), &errors))
@@ -4470,6 +4492,41 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
     types |= proc::PROCEDURE_STAR_ALL;
 
   return types;
+}
+
+void RouteController::remarksFlightPlanToWidget()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  // Block signals to avoid recursion
+  ui->plainTextEditRouteRemarks->blockSignals(true);
+  ui->plainTextEditRouteRemarks->setPlainText(route.getFlightplan().getComment());
+  ui->plainTextEditRouteRemarks->blockSignals(false);
+}
+
+void RouteController::remarksTextChanged()
+{
+  if(route.isEmpty())
+    return;
+
+  QString editText = NavApp::getMainUi()->plainTextEditRouteRemarks->toPlainText();
+  pln::Flightplan& flightplan = route.getFlightplan();
+
+  if(flightplan.getComment() != editText)
+  {
+    // Text is different add with undo
+    RouteCommand *undoCommand = preChange(tr("Remarks changed"), rctype::REMARKS);
+    flightplan.setComment(editText);
+    postChange(undoCommand);
+
+    // Update title and tab with "*" for changed
+    NavApp::updateWindowTitle();
+  }
+}
+
+void RouteController::updateRemarkWidget()
+{
+  NavApp::getMainUi()->plainTextEditRouteRemarks->setDisabled(route.isEmpty());
 }
 
 void RouteController::updateErrorLabel()

@@ -4342,6 +4342,41 @@ Will match any visited airport.</string>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="tabRouteRemarks">
+        <attribute name="title">
+         <string>Remarks</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Remarks for the flight plan</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_37">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QPlainTextEdit" name="plainTextEditRouteRemarks">
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="placeholderText">
+            <string>Remarks for the flight plan</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="tabAircraftPerformance">
         <attribute name="title">
          <string>Fuel Report</string>
@@ -11473,7 +11508,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

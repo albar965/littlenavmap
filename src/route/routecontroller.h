@@ -23,8 +23,6 @@
 #include "route/route.h"
 #include "common/tabindexes.h"
 
-#include <QIcon>
-#include <QObject>
 #include <QTimer>
 
 namespace atools {
@@ -396,6 +394,14 @@ private:
   void showProceduresMenu();
   void showProceduresMenuCustom();
   void showOnMapMenu();
+
+  /* Enable or disable remarks widget */
+  void updateRemarkWidget();
+
+  /* Remarks changed */
+  void remarksTextChanged();
+
+  void remarksFlightPlanToWidget();
 
   void undoTriggered();
   void redoTriggered();

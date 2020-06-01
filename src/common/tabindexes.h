@@ -25,11 +25,12 @@ namespace rc {
 enum TabRouteId
 {
   ROUTE = 0,
-  AIRCRAFT = 1,
-  COLLECTION = 2
+  REMARKS = 1,
+  AIRCRAFT = 2,
+  COLLECTION = 3
 };
 
-const QVector<int> TabRouteIds = {ROUTE, AIRCRAFT, COLLECTION};
+const QVector<int> TabRouteIds = {ROUTE, REMARKS, AIRCRAFT, COLLECTION};
 
 }
 
