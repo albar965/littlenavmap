@@ -127,12 +127,15 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
+  // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
+#ifndef Q_OS_LINUX
   ui->splitterOptions->setStyleSheet(
     QString("QSplitter::handle { "
             "background: %1;"
             "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png);"
             " }").
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+#endif
 
   if(ui->splitterOptions->handle(1) != nullptr)
   {

@@ -46,12 +46,15 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
 
   ui->setupUi(this);
 
+  // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
+#ifndef Q_OS_LINUX
   // Make the splitter handle better visible
   ui->splitterRouteString->setStyleSheet(QString("QSplitter::handle { "
                                                  "background: %1;"
                                                  "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); "
                                                  "}").
                                          arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+#endif
 
   // Disallow collapsing of the upper view
   ui->splitterRouteString->setCollapsible(0, false);
