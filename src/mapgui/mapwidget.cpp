@@ -1683,7 +1683,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionRouteAirportDest->setEnabled(false);
   ui->actionRouteAirportAlternate->setEnabled(false);
   ui->actionRouteDeleteWaypoint->setEnabled(false);
-
   ui->actionMapEditUserWaypoint->setEnabled(false);
 
   // Get objects near position =============================================================
@@ -2112,16 +2111,29 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(tr("Position")));
 
-  // Update "name user waypoint"
-  if(routeIndex != -1 && userpointRoute != nullptr)
+  // Edit route position ==============================
+  ui->actionMapEditUserWaypoint->setText(tr("Edit Flight Plan &Position or Remarks..."));
+  if(routeIndex != -1)
   {
-    ui->actionMapEditUserWaypoint->setEnabled(true);
-    ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(routeText));
+    if(userpointRoute != nullptr)
+    {
+      // Edit user waypoint ================
+      ui->actionMapEditUserWaypoint->setEnabled(true);
+      ui->actionMapEditUserWaypoint->setText(tr("Edit Flight Plan &Position %1 ...").arg(routeText));
+      ui->actionMapEditUserWaypoint->setToolTip(tr("Edit name and coordinates of user defined flight plan position"));
+      ui->actionMapEditUserWaypoint->setStatusTip(ui->actionMapEditUserWaypoint->toolTip());
+    }
+    else if(NavApp::getRouteConst().canEditComment(routeIndex))
+    {
+      // Edit remarks only ================
+      ui->actionMapEditUserWaypoint->setEnabled(true);
+      ui->actionMapEditUserWaypoint->setText(tr("Edit Flight Plan &Position Remarks for %1 ...").arg(routeText));
+      ui->actionMapEditUserWaypoint->setToolTip(tr("Edit remarks for selected flight plan leg"));
+      ui->actionMapEditUserWaypoint->setStatusTip(ui->actionMapEditUserWaypoint->toolTip());
+    }
   }
-  else
-    ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(tr("Position")));
 
-  // Update "show range rings for Navaid"
+  // Update "show range rings for Navaid" =====================
   if((vor != nullptr || ndb != nullptr) && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
   {
     ui->actionMapNavaidRange->setEnabled(true);

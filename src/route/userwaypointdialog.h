@@ -41,6 +41,7 @@ class QAbstractButton;
 
 /*
  * Edit coordinates or the name of a user defined flight plan position.
+ * Also used to edit remarks for a flight plan waypoint.
  */
 class UserWaypointDialog :
   public QDialog
@@ -51,6 +52,7 @@ public:
   UserWaypointDialog(QWidget *parent, const atools::fs::pln::FlightplanEntry& entryParam);
   virtual ~UserWaypointDialog();
 
+  /* Entry is copyied. Get changed copy here */
   const atools::fs::pln::FlightplanEntry& getEntry() const
   {
     return *entry;

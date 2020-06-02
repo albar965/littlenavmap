@@ -276,8 +276,11 @@ public:
   /* Index from 0 (departure) to size() -1 */
   bool canEditLeg(int index) const;
 
-  /* Index from 0 (departure) to size() -1 */
+  /* Index from 0 (departure) to size() -1. true if point can be moved around or deleted in the flight plan */
   bool canEditPoint(int index) const;
+
+  /* Index from 0 (departure) to size() -1. true if a comment can be attached to the waypoint of the leg */
+  bool canEditComment(int index) const;
 
   bool hasAnyProcedure() const
   {

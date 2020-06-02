@@ -4344,7 +4344,7 @@ Will match any visited airport.</string>
        </widget>
        <widget class="QWidget" name="tabRouteRemarks">
         <attribute name="title">
-         <string>Remarks</string>
+         <string>Flight Plan Remarks</string>
         </attribute>
         <attribute name="toolTip">
          <string>Remarks for the flight plan</string>
@@ -11511,7 +11511,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

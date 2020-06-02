@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>368</width>
-    <height>247</height>
+    <height>303</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,33 +17,7 @@
    <property name="spacing">
     <number>2</number>
    </property>
-   <item row="6" column="2">
-    <widget class="QLabel" name="labelRouteUserWaypointCoordStatus">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="margin">
-      <number>5</number>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="labelRouteUserWaypointRegion">
-     <property name="text">
-      <string>&amp;Region:</string>
-     </property>
-     <property name="buddy">
-      <cstring>lineEditRouteUserWaypointRegion</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
+   <item row="3" column="2">
     <widget class="QLineEdit" name="lineEditRouteUserWaypointIdent">
      <property name="toolTip">
       <string>Required ident of the waypoint.
@@ -51,44 +25,7 @@ A short all upper case ident without spaces is recommended.</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="labelRouteUserWaypointLatLon">
-     <property name="text">
-      <string>&amp;Latitude and Longitude:</string>
-     </property>
-     <property name="buddy">
-      <cstring>lineEditRouteUserWaypointLatLon</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QLineEdit" name="lineEditRouteUserWaypointRegion">
-     <property name="toolTip">
-      <string>Optional two letter ICAO region of the waypoint.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="labelRouteUserWaypointIdent">
-     <property name="text">
-      <string>&amp;Ident:</string>
-     </property>
-     <property name="buddy">
-      <cstring>lineEditRouteUserWaypointIdent</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="labelRouteUserWaypointComment">
-     <property name="text">
-      <string>&amp;Remarks:</string>
-     </property>
-     <property name="buddy">
-      <cstring>plainTextEditRouteUserWaypointComment</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
+   <item row="7" column="2">
     <widget class="QLineEdit" name="lineEditRouteUserWaypointLatLon">
      <property name="toolTip">
       <string>Recognized coordinate formats:
@@ -110,17 +47,27 @@ Formats above have to be given exactly as shown in the examples.</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="labelRouteUserWaypointName">
+   <item row="6" column="0">
+    <widget class="QLabel" name="labelRouteUserWaypointComment">
      <property name="text">
-      <string>&amp;Name</string>
+      <string>&amp;Remarks:</string>
      </property>
      <property name="buddy">
-      <cstring>lineEditRouteUserWaypointName</cstring>
+      <cstring>plainTextEditRouteUserWaypointComment</cstring>
      </property>
     </widget>
    </item>
-   <item row="8" column="0" colspan="3">
+   <item row="4" column="0">
+    <widget class="QLabel" name="labelRouteUserWaypointRegion">
+     <property name="text">
+      <string>&amp;Region:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditRouteUserWaypointRegion</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="3">
     <widget class="QDialogButtonBox" name="buttonBoxRouteUserWaypoint">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -130,28 +77,104 @@ Formats above have to be given exactly as shown in the examples.</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="5" column="0">
+    <widget class="QLabel" name="labelRouteUserWaypointName">
+     <property name="text">
+      <string>&amp;Name</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
+     <property name="buddy">
+      <cstring>lineEditRouteUserWaypointName</cstring>
      </property>
-    </spacer>
+    </widget>
    </item>
-   <item row="3" column="2">
+   <item row="4" column="2">
+    <widget class="QLineEdit" name="lineEditRouteUserWaypointRegion">
+     <property name="toolTip">
+      <string>Optional two letter ICAO region of the waypoint.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2">
+    <widget class="QPlainTextEdit" name="plainTextEditRouteUserWaypointComment">
+     <property name="tabChangesFocus">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
+    <widget class="QLabel" name="labelRouteUserWaypointCoordStatus">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="labelRouteUserWaypointLatLon">
+     <property name="text">
+      <string>&amp;Latitude and Longitude:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditRouteUserWaypointLatLon</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
     <widget class="QLineEdit" name="lineEditRouteUserWaypointName">
      <property name="toolTip">
       <string>Waypoint name</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="2">
-    <widget class="QPlainTextEdit" name="plainTextEditRouteUserWaypointComment"/>
+   <item row="3" column="0">
+    <widget class="QLabel" name="labelRouteUserWaypointIdent">
+     <property name="text">
+      <string>&amp;Ident:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditRouteUserWaypointIdent</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QLabel" name="labelRouteUserWaypointHeader">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLabel" name="labelRouteUserWaypointHeader2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

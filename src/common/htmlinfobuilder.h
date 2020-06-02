@@ -385,6 +385,9 @@ private:
 
   QString identRegionText(const QString& ident, const QString& region) const;
 
+  /* Add remarks from a routeleg at the given index to a table */
+  void flightplanWaypointRemarks(atools::util::HtmlBuilder& html, int index) const;
+
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
 

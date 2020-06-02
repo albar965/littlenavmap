@@ -166,6 +166,11 @@ bool Route::canEditLeg(int index) const
   return true;
 }
 
+bool Route::canEditComment(int index) const
+{
+  return value(index).isRoute() && !value(index).isAlternate();
+}
+
 bool Route::canEditPoint(int index) const
 {
   return value(index).isRoute() || value(index).isAlternate();

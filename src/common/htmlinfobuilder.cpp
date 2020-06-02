@@ -153,6 +153,13 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
   }
 }
 
+void HtmlInfoBuilder::flightplanWaypointRemarks(HtmlBuilder& html, int index) const
+{
+  if(index >= 0)
+    html.row2If(tr("Flight Plan Pos. Remarks:"),
+                atools::elideTextLinesShort(NavApp::getRouteConst().getFlightplan().at(index).getComment(), 5, 40));
+}
+
 void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherContext& weatherContext,
                                   HtmlBuilder& html, const Route *route) const
 {
@@ -175,7 +182,8 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     else if(airport.routeIndex >= route->getAlternateLegsOffset())
       html.row2(tr("Alternate Airport"), QString());
     else
-      html.row2(tr("Flight Plan position:"), locale.toString(airport.routeIndex + 1));
+      html.row2(tr("Flight Plan Position:"), locale.toString(airport.routeIndex + 1));
+    flightplanWaypointRemarks(html, airport.routeIndex);
     routeWindText(html, *route, airport.routeIndex);
   }
 
@@ -1873,7 +1881,8 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   html.table();
   if(!info && vor.routeIndex >= 0)
   {
-    html.row2(tr("Flight Plan position:"), locale.toString(vor.routeIndex + 1));
+    html.row2(tr("Flight Plan Position:"), locale.toString(vor.routeIndex + 1));
+    flightplanWaypointRemarks(html, vor.routeIndex);
     routeWindText(html, NavApp::getRouteConst(), vor.routeIndex);
   }
 
@@ -1947,7 +1956,8 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   html.table();
   if(!info && ndb.routeIndex >= 0)
   {
-    html.row2(tr("Flight Plan position "), locale.toString(ndb.routeIndex + 1));
+    html.row2(tr("Flight Plan Position "), locale.toString(ndb.routeIndex + 1));
+    flightplanWaypointRemarks(html, ndb.routeIndex);
     routeWindText(html, NavApp::getRouteConst(), ndb.routeIndex);
   }
 
@@ -2374,7 +2384,8 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   html.table();
   if(!info && waypoint.routeIndex >= 0)
   {
-    html.row2(tr("Flight Plan position:"), locale.toString(waypoint.routeIndex + 1));
+    html.row2(tr("Flight Plan Position:"), locale.toString(waypoint.routeIndex + 1));
+    flightplanWaypointRemarks(html, waypoint.routeIndex);
     routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
   }
 
@@ -2836,14 +2847,14 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
     if(!userpoint.name.isEmpty() || !userpoint.comment.isEmpty() || !userpoint.region.isEmpty())
     {
       html.table();
-      html.row2If(tr("Flight Plan position:"), QString::number(userpoint.routeIndex + 1));
+      html.row2If(tr("Flight Plan Position:"), QString::number(userpoint.routeIndex + 1));
       html.row2If(tr("Region:"), userpoint.region);
       html.row2If(tr("Name:"), userpoint.name);
-      html.row2If(tr("Remarks:"), userpoint.comment);
+      html.row2If(tr("Remarks:"), atools::elideTextLinesShort(userpoint.comment, 20, 80));
       html.tableEnd();
     }
     else
-      html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
+      html.p().b(tr("Flight Plan Position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
     routeWindText(html, NavApp::getRouteConst(), userpoint.routeIndex);
   }
 }

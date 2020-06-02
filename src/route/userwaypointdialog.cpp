@@ -41,13 +41,43 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const atools::fs::pln::F
 
   ui->setupUi(this);
 
-  ui->lineEditRouteUserWaypointIdent->setText(entry->getIdent());
-  ui->lineEditRouteUserWaypointRegion->setText(entry->getRegion());
-  ui->lineEditRouteUserWaypointName->setText(entry->getName());
-  ui->plainTextEditRouteUserWaypointComment->setPlainText(entry->getComment());
-  ui->lineEditRouteUserWaypointLatLon->setText(Unit::coords(entry->getPosition()));
+  bool waypointEdit = entry->getWaypointType() != atools::fs::pln::entry::USER;
+  ui->lineEditRouteUserWaypointIdent->setHidden(waypointEdit);
+  ui->labelRouteUserWaypointIdent->setHidden(waypointEdit);
+  ui->lineEditRouteUserWaypointRegion->setHidden(waypointEdit);
+  ui->labelRouteUserWaypointRegion->setHidden(waypointEdit);
+  ui->lineEditRouteUserWaypointName->setHidden(waypointEdit);
+  ui->labelRouteUserWaypointName->setHidden(waypointEdit);
+  ui->lineEditRouteUserWaypointLatLon->setHidden(waypointEdit);
+  ui->labelRouteUserWaypointLatLon->setHidden(waypointEdit);
+  ui->labelRouteUserWaypointCoordStatus->setHidden(waypointEdit);
+  ui->labelRouteUserWaypointHeader->setHidden(!waypointEdit);
+  ui->labelRouteUserWaypointHeader2->setHidden(true /*!waypointEdit*/);
 
-  coordsEdited(QString());
+  if(waypointEdit)
+  {
+    setWindowTitle(QApplication::applicationName() + tr(" - Edit Flight Plan Position Remarks"));
+    ui->labelRouteUserWaypointHeader->setText(tr("<b>%1 %2 region %3</b>").
+                                              arg(entry->getWaypointTypeAsDisplayString()).
+                                              arg(entry->getIdent()).
+                                              arg(entry->getRegion()));
+
+    // ui->labelRouteUserWaypointHeader2->setText(tr("Note that remarks are a part of the flight plan and are "
+    // "removed when calculating "
+    // "flight plans or deleting waypoints."));
+  }
+  else
+    setWindowTitle(QApplication::applicationName() + tr(" - Edit Flight Plan Position"));
+
+  ui->plainTextEditRouteUserWaypointComment->setPlainText(entry->getComment());
+  if(!waypointEdit)
+  {
+    ui->lineEditRouteUserWaypointIdent->setText(entry->getIdent());
+    ui->lineEditRouteUserWaypointRegion->setText(entry->getRegion());
+    ui->lineEditRouteUserWaypointName->setText(entry->getName());
+    ui->lineEditRouteUserWaypointLatLon->setText(Unit::coords(entry->getPosition()));
+    coordsEdited(QString());
+  }
 
   connect(ui->lineEditRouteUserWaypointLatLon, &QLineEdit::textChanged, this, &UserWaypointDialog::coordsEdited);
   connect(ui->buttonBoxRouteUserWaypoint, &QDialogButtonBox::clicked, this, &UserWaypointDialog::buttonBoxClicked);
@@ -67,24 +97,33 @@ void UserWaypointDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxRouteUserWaypoint->button(QDialogButtonBox::Ok))
   {
-    entry->setIdent(ui->lineEditRouteUserWaypointIdent->text());
-    entry->setRegion(ui->lineEditRouteUserWaypointRegion->text());
-    entry->setName(ui->lineEditRouteUserWaypointName->text());
+    if(entry->getWaypointType() == atools::fs::pln::entry::USER)
+    {
+      entry->setIdent(ui->lineEditRouteUserWaypointIdent->text());
+      entry->setRegion(ui->lineEditRouteUserWaypointRegion->text());
+      entry->setName(ui->lineEditRouteUserWaypointName->text());
+
+      atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
+      if(OptionData::instance().getUnitCoords() == opts::COORDS_LONX_LATY)
+        // Parsing uses lat/lon - swap for lon/lat
+        pos.swapLonXLatY();
+
+      if(pos.isValid())
+        entry->setPosition(pos);
+    }
     entry->setComment(ui->plainTextEditRouteUserWaypointComment->toPlainText());
-
-    atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
-    if(OptionData::instance().getUnitCoords() == opts::COORDS_LONX_LATY)
-      // Parsing uses lat/lon - swap for lon/lat
-      pos.swapLonXLatY();
-
-    if(pos.isValid())
-      entry->setPosition(pos);
 
     QDialog::accept();
   }
   else if(button == ui->buttonBoxRouteUserWaypoint->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(
-      parentWidget(), lnm::helpOnlineUrl + "EDITFPPOSITION.html", lnm::helpLanguageOnline());
+  {
+    if(entry->getWaypointType() == atools::fs::pln::entry::USER)
+      atools::gui::HelpHandler::openHelpUrlWeb(
+        parentWidget(), lnm::helpOnlineUrl + "EDITFPPOSITION.html", lnm::helpLanguageOnline());
+    else
+      atools::gui::HelpHandler::openHelpUrlWeb(
+        parentWidget(), lnm::helpOnlineUrl + "EDITFPREMARKS.html", lnm::helpLanguageOnline());
+  }
   else if(button == ui->buttonBoxRouteUserWaypoint->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }

@@ -2016,10 +2016,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   // Save text which will be changed below
   atools::gui::ActionTextSaver saver({ui->actionMapRangeRings, ui->actionMapNavaidRange,
-                                      ui->actionRouteEditUserWaypoint,
-                                      ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
-                                      ui->actionRouteDeleteLeg, ui->actionRouteInsert, ui->actionMapTrafficPattern,
-                                      ui->actionMapHold});
+                                      ui->actionRouteEditUserWaypoint, ui->actionRouteShowApproaches,
+                                      ui->actionRouteShowApproachesCustom, ui->actionRouteDeleteLeg,
+                                      ui->actionRouteInsert, ui->actionMapTrafficPattern, ui->actionMapHold});
 
   // Re-enable actions on exit to allow keystrokes
   atools::gui::ActionStateSaver stateSaver(
@@ -2053,6 +2052,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionRouteShowApproachesCustom->setEnabled(false);
   ui->actionRouteShowApproaches->setEnabled(false);
+  ui->actionRouteEditUserWaypoint->setEnabled(false);
 
   // Menu above a row
   if(routeLeg != nullptr)
@@ -2184,8 +2184,26 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionMapNavaidRange->setText(tr("Show &Navaid Range"));
 
-  ui->actionRouteEditUserWaypoint->setEnabled(routeLeg != nullptr &&
-                                              routeLeg->getMapObjectType() == map::USERPOINTROUTE);
+  // Edit position ======================================0
+
+  ui->actionRouteEditUserWaypoint->setText(tr("Edit Flight Plan &Position or Remarks..."));
+  if(routeLeg != nullptr)
+  {
+    if(routeLeg->getMapObjectType() == map::USERPOINTROUTE)
+    {
+      ui->actionRouteEditUserWaypoint->setEnabled(true);
+      ui->actionRouteEditUserWaypoint->setText(tr("Edit Flight Plan &Position ..."));
+      ui->actionRouteEditUserWaypoint->setToolTip(tr("Edit name and coordinates of user defined flight plan position"));
+      ui->actionRouteEditUserWaypoint->setStatusTip(ui->actionRouteEditUserWaypoint->toolTip());
+    }
+    else if(route.canEditComment(row))
+    {
+      ui->actionRouteEditUserWaypoint->setEnabled(true);
+      ui->actionRouteEditUserWaypoint->setText(tr("Edit Flight Plan &Position Remarks ..."));
+      ui->actionRouteEditUserWaypoint->setToolTip(tr("Edit remarks for selected flight plan leg"));
+      ui->actionRouteEditUserWaypoint->setStatusTip(ui->actionRouteEditUserWaypoint->toolTip());
+    }
+  }
 
   QList<int> selectedRouteLegIndexes;
   getSelectedRouteLegs(selectedRouteLegIndexes);
@@ -2381,7 +2399,7 @@ void RouteController::editUserWaypointName(int index)
 {
   qDebug() << Q_FUNC_INFO << "index" << index;
 
-  if(index > 0 && route.value(index).getMapObjectType() == map::USERPOINTROUTE)
+  if(index >= 0 && route.canEditComment(index))
   {
     UserWaypointDialog dialog(mainWindow, route.value(index).getFlightplanEntry());
     if(dialog.exec() == QDialog::Accepted)
@@ -3754,11 +3772,11 @@ void RouteController::updateTableModel()
     QString remarks;
     if(leg.isAnyProcedure())
       remarks = proc::procedureLegRemark(leg.getProcedureLeg());
-    else if(leg.isUser())
+    else
       remarks = leg.getFlightplanEntry().getComment();
 
     itemRow[rcol::REMARKS] = new QStandardItem(atools::elideTextShort(remarks, 80));
-    itemRow[rcol::REMARKS]->setToolTip(remarks);
+    itemRow[rcol::REMARKS]->setToolTip(atools::elideTextLinesShort(remarks, 20, 80));
 
     // Travel time, remaining fuel and ETA are updated in updateModelRouteTime
 
