@@ -2128,40 +2128,38 @@ int Route::getAdjustedAltitude(int newAltitude) const
 
 void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd *runwayEnd) const
 {
-  int destinationLegIdx = getDestinationLegIndex();
-  if(destinationLegIdx < map::INVALID_INDEX_VALUE)
+  if(runwayEnd != nullptr)
+    *runwayEnd = approachLegs.runwayEnd;
+
+  ils.clear();
+  if(approachLegs.runwayEnd.isValid())
   {
-    const RouteLeg& leg = value(destinationLegIdx);
+    QString destIdent = getDestinationAirportLeg().getIdent();
+    // Get one or more ILS from flight plan leg as is
+    ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(destIdent, approachLegs.runwayEnd.name);
 
-    const RouteLeg& destLeg = getDestinationAirportLeg();
-
-    // Get the runway end for arrival
-    QList<map::MapRunwayEnd> runwayEnds;
-    if(approachLegs.runwayEnd.isValid())
-      NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name, destLeg.getAirport(),
-                                                     false /* nav data */);
-
-    ils.clear();
-    if(leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
+    if(ils.isEmpty())
     {
-      // Get ILS from flight plan leg as is
-      ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(destLeg.getAirport().ident, leg.getRunwayEnd().name);
-
-      if(ils.isEmpty())
-        // Get all ILS for the runway end found in a fuzzy way
-        ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(destLeg.getAirport().ident, runwayEnds.first().name);
-
-      if(ils.isEmpty())
-      {
-        // ILS does not even match runway - try again fuzzy
-        QStringList variants = map::runwayNameVariants(runwayEnds.first().name);
-        for(const QString& runwayVariant : variants)
-          ils.append(NavApp::getMapQuery()->getIlsByAirportAndRunway(destLeg.getAirport().ident, runwayVariant));
-      }
+      // ILS does not even match runway - try fuzzy
+      QStringList variants = map::runwayNameVariants(approachLegs.runwayEnd.name);
+      for(const QString& runwayVariant : variants)
+        ils.append(NavApp::getMapQuery()->getIlsByAirportAndRunway(destIdent, runwayVariant));
     }
 
-    if(runwayEnd != nullptr)
-      *runwayEnd = runwayEnds.isEmpty() ? map::MapRunwayEnd() : runwayEnds.first();
+    if(ils.size() > 1)
+    {
+      for(const proc::MapProcedureLeg& leg : approachLegs.approachLegs)
+      {
+        for(map::MapIls i : ils)
+        {
+          if(leg.recFixIdent == i.ident)
+          {
+            ils.clear();
+            ils.append(i);
+          }
+        }
+      }
+    }
   }
 }
 
