@@ -891,6 +891,8 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
   });
 
   SqlRecord aprec = db->record("airport");
+  if(aprec.contains("xpident"))
+    airportQueryBase.append("xpident");
   if(aprec.contains("icao"))
     airportQueryBase.append("icao");
   if(aprec.contains("iata"))

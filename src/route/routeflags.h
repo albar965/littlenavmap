@@ -32,15 +32,14 @@ enum RouteAdjustOption
   REPLACE_CUSTOM_WP = 1 << 3, /* Replace custom approach with user defined waypoints */
   REMOVE_ALTERNATE = 1 << 4, /* Remove all alternate legs. */
   REMOVE_TRACKS = 1 << 5, /* Empty track name to force direct */
-  FIX_AIRPORT_IDENT = 1 << 6, /* Replace X-Plane dummy airport idents with real ICAO ident if available. */
   FIX_CIRCLETOLAND = 1 << 7, /* Add a dummy best guess runway for circle-to-land approaches for X-Plane */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS,
 
   /* Export adjust options for XP11 and old FMS3 */
-  DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS | rf::FIX_AIRPORT_IDENT,
-  DEFAULT_OPTS_FMS11 = rf::DEFAULT_OPTS | rf::FIX_AIRPORT_IDENT | rf::FIX_CIRCLETOLAND,
+  DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS,
+  DEFAULT_OPTS_FMS11 = rf::DEFAULT_OPTS | rf::FIX_CIRCLETOLAND,
 
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SIDSTAR_WP | rf::SAVE_APPROACH_WP
 };

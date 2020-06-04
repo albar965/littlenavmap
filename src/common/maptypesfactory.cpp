@@ -147,6 +147,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.ident = record.valueStr("ident");
     ap.icao = record.valueStr("icao", QString());
     ap.iata = record.valueStr("iata", QString());
+    ap.xpident = record.valueStr("xpident", QString());
     ap.name = record.valueStr("name");
     ap.rating = record.valueInt("rating", -1);
     ap.longestRunwayLength = record.valueInt("longest_runway_length");

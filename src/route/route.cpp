@@ -1958,27 +1958,6 @@ Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
     // Airways are updated in route controller
   }
 
-  if(options.testFlag(rf::FIX_AIRPORT_IDENT))
-  {
-    // ========================================================================
-    // Need to use the real ICAO code instead of the X-Plane fake ID
-    const map::MapAirport& departAirport = route.getDepartureAirportLeg().getAirport();
-    if(departAirport.isValid() && !departAirport.icao.isEmpty() && departAirport.ident != departAirport.icao)
-    {
-      qDebug() << Q_FUNC_INFO << "Correcting departure from" << departAirport.ident << "to" << departAirport.icao;
-      plan.setDepartureIdent(departAirport.icao);
-      plan.getEntries()[route.getDepartureAirportLegIndex()].setIdent(departAirport.icao);
-    }
-
-    const map::MapAirport& destAirport = route.getDestinationAirportLeg().getAirport();
-    if(destAirport.isValid() && !destAirport.icao.isEmpty() && destAirport.ident != destAirport.icao)
-    {
-      qDebug() << Q_FUNC_INFO << "Correcting destination from" << destAirport.ident << "to" << destAirport.icao;
-      plan.setDestinationIdent(destAirport.icao);
-      plan.getEntries()[route.getDestinationAirportLegIndex()].setIdent(destAirport.icao);
-    }
-  }
-
   if(options.testFlag(rf::FIX_CIRCLETOLAND))
   {
     // ========================================================================

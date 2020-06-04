@@ -191,11 +191,18 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(!print)
     bearingText(airport.position, airport.magvar, html);
 
-  // Administrative information
+  // Administrative information ======================
+  if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+  {
+    if(airport.ident != airport.xpident)
+      html.row2If(tr("X-Plane Ident:"), airport.xpident);
+  }
+
   if(info)
   {
-    html.row2If(tr("ICAO:"), rec->valueStr("ICAO", QString()));
-    html.row2If(tr("IATA:"), rec->valueStr("IATA", QString()));
+    if(airport.icao != airport.ident)
+      html.row2If(tr("ICAO:"), airport.icao);
+    html.row2If(tr("IATA:"), rec->valueStr("iata", QString()));
     html.row2If(tr("Region:"), airport.region);
   }
 
@@ -3991,7 +3998,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
   if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
     links.append(html.cleared().a(tr("X-Plane Scenery Gateway"),
                                   QString("https://gateway.x-plane.com/scenery/page/%1").
-                                  arg(airport.ident), ahtml::LINK_NO_UL).getHtml());
+                                  arg(airport.xpident), ahtml::LINK_NO_UL).getHtml());
 
   // Skip X-Plane's obscure long idents
   if(airport.ident.size() <= 4 && airport.ident.size() >= 3)

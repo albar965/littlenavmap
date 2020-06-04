@@ -287,6 +287,7 @@ struct MapAirport
   QString ident, /* Ident in simulator mostly ICAO */
            icao, /* Real ICAO ident */
            iata, /* IATA ident */
+           xpident, /* X-Plane internal unique ident - mostly ICAO */
            name, /* Full name */
            region; /* Two letter region code */
   int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0, rating = -1,
