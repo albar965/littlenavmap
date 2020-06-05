@@ -41,8 +41,9 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   logdataSearchWidgets =
   {
     ui->horizontalLayoutLogdata,
-    ui->verticalLayoutLogdataMore,
     ui->horizontalLayoutLogdataDist,
+    ui->horizontalLayoutAircraftSim,
+    ui->horizontalLayoutLogdataDepartDest,
     ui->lineLogdataMore,
     ui->lineLogdataMoreDist,
     ui->actionLogdataSearchShowMoreOptions,

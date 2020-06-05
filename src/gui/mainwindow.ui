@@ -3174,7 +3174,7 @@ Will match any visited airport.</string>
             <number>0</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QHBoxLayout" name="horizontalLayoutLogdataDepartDest">
              <property name="spacing">
               <number>2</number>
              </property>
@@ -3231,7 +3231,7 @@ Will match any visited airport.</string>
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <layout class="QHBoxLayout" name="horizontalLayoutAircraftSim">
              <property name="spacing">
               <number>2</number>
              </property>
@@ -11511,7 +11511,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>
