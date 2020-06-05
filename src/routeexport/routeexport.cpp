@@ -216,7 +216,7 @@ bool RouteExport::routeExportInternalPln(bool annotated, const RouteExportFormat
   if(routeValidateMulti(format, true /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = exportFile(format, "Route/Pln" + NavApp::getCurrentSimulatorShortName(),
-                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename("_", ".pln"),
+                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(".pln"),
                                    false /* confirm overwrite */);
 
     if(!routeFile.isEmpty())
@@ -318,7 +318,7 @@ bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
   if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = exportFile(format, "Route/FlightGear", atools::documentsDir(),
-                                   buildDefaultFilename("_", ".fgfp"),
+                                   buildDefaultFilename(".fgfp"),
                                    false /* confirm overwrite */);
 
     if(!routeFile.isEmpty())
@@ -855,7 +855,7 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
   if(routeValidateMulti(format, false /* validate parking */, false /* validate departure and destination */))
   {
     QString routeFile = exportFile(format, "Route/Gpx", atools::documentsDir(),
-                                   buildDefaultFilename(QString(), ".gpx"),
+                                   buildDefaultFilename(".gpx"),
                                    false /* confirm overwrite */);
 
     if(!routeFile.isEmpty())
@@ -883,7 +883,7 @@ bool RouteExport::routeExportHtml(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
 
   QString routeFile = exportFile(format, "Route/Html", atools::documentsDir(),
-                                 buildDefaultFilename(QString(), ".html"),
+                                 buildDefaultFilename(".html"),
                                  false /* confirm overwrite */);
 
   if(!routeFile.isEmpty())
@@ -996,20 +996,16 @@ bool RouteExport::routeValidate(bool validateParking, bool validateDepartureAndD
   return true;
 }
 
-QString RouteExport::buildDefaultFilename(const QString& sep, const QString& suffix, const QString& extension) const
+QString RouteExport::buildDefaultFilename(const QString& suffix)
 {
-  return (OptionData::instance().getFlags2() & opts2::ROUTE_SAVE_SHORT_NAME) ?
-         buildDefaultFilenameShort(sep, suffix) : buildDefaultFilenameLong(extension, suffix);
-}
-
-QString RouteExport::buildDefaultFilenameLong(const QString& extension, const QString& suffix)
-{
-  return NavApp::getRouteConst().getFlightplan().getFilenameLong(extension, suffix);
+  return NavApp::getRouteConst().getFlightplan().getFilenamePattern(
+    OptionData::instance().getFlightplanPattern(), suffix);
 }
 
 QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix)
 {
-  return NavApp::getRouteConst().getFlightplan().getFilenameShort(sep, suffix);
+  return NavApp::getRouteConst().getFlightplan().getFilenamePattern(
+    atools::fs::pln::pattern::DEPARTIDENT + sep + atools::fs::pln::pattern::DESTIDENT, suffix);
 }
 
 bool RouteExport::exportFlighplanAsGfp(const QString& filename)

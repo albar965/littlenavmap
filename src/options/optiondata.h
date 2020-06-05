@@ -246,9 +246,7 @@ enum Flag2
    * ui->checkBoxOptionsMapEmptyAirports3D */
   MAP_EMPTY_AIRPORTS_3D = 1 << 0,
 
-  /* Save PLN using short names
-   * ui->checkBoxOptionsRouteShortName */
-  ROUTE_SAVE_SHORT_NAME = 1 << 1,
+  // ROUTE_SAVE_SHORT_NAME = 1 << 1,
 
   /* ui->checkBoxOptionsMapAirportText */
   MAP_AIRPORT_TEXT_BACKGROUND = 1 << 2,
@@ -869,6 +867,11 @@ public:
     return cacheOfflineElevationPath;
   }
 
+  const QString& getFlightplanPattern() const
+  {
+    return flightplanPattern;
+  }
+
   opts::AltitudeRule getAltitudeRuleType() const
   {
     return altitudeRuleType;
@@ -1067,6 +1070,9 @@ private:
           weatherIvaoUrl = "http://wx.ivao.aero/metar.php";
 
   QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions = "*.txt";
+
+  // Initialized by widget
+  QString flightplanPattern;
 
   // ui->listWidgetOptionsDatabaseAddon
   QStringList databaseAddonExclude;

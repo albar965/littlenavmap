@@ -36,6 +36,7 @@
 #include "util/htmlbuilder.h"
 #include "common/unitstringtool.h"
 #include "gui/translator.h"
+#include "fs/pln/flightplan.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -271,7 +272,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxDisplayOnlineFileLookup,
      ui->checkBoxOptionsMapEmptyAirports,
      ui->checkBoxOptionsMapEmptyAirports3D,
-     ui->checkBoxOptionsRouteShortName,
      ui->checkBoxOptionsMapTooltipAirport,
      ui->checkBoxOptionsMapTooltipNavaid,
      ui->checkBoxOptionsMapTooltipAirspace,
@@ -334,6 +334,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->radioButtonCacheUseOffineElevation,
      ui->radioButtonCacheUseOnlineElevation,
      ui->lineEditCacheOfflineDataPath,
+     ui->lineEditOptionsRouteFilename,
      ui->lineEditCacheUserAirspacePath,
      ui->lineEditCacheUserAirspaceExtensions,
 
@@ -542,6 +543,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsDisplayFlightplanPassedColor, &QPushButton::clicked,
           this, &OptionsDialog::flightplanPassedColorClicked);
 
+  connect(ui->lineEditOptionsRouteFilename, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateFlightplanExample);
+  connect(ui->pushButtonOptionsRouteFilenameShort, &QPushButton::clicked,
+          this, &OptionsDialog::flightplanPatterShortClicked);
+  connect(ui->pushButtonOptionsRouteFilenameLong, &QPushButton::clicked,
+          this, &OptionsDialog::flightplanPatterLongClicked);
+
   connect(ui->radioButtonCacheUseOffineElevation, &QRadioButton::clicked,
           this, &OptionsDialog::updateCacheElevationStates);
   connect(ui->radioButtonCacheUseOnlineElevation, &QRadioButton::clicked,
@@ -639,6 +647,7 @@ void OptionsDialog::open()
   eastWestRuleClicked();
   updateWidgetUnits();
   mapClickAirportProcsToggled();
+  updateFlightplanExample();
 
   QDialog::open();
 }
@@ -962,6 +971,7 @@ void OptionsDialog::restoreState()
 
   updateWebServerStatus();
   updateWebDocrootStatus();
+  updateFlightplanExample();
 
   if(ui->listWidgetOptionPages->selectedItems().isEmpty())
     ui->listWidgetOptionPages->selectionModel()->select(ui->listWidgetOptionPages->model()->index(0, 0),
@@ -1434,7 +1444,6 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
 
   toFlags2(ui->checkBoxOptionsMapEmptyAirports3D, opts2::MAP_EMPTY_AIRPORTS_3D);
-  toFlags2(ui->checkBoxOptionsRouteShortName, opts2::ROUTE_SAVE_SHORT_NAME);
 
   toFlags2(ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
@@ -1449,6 +1458,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   toFlags2(ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
 
+  data.flightplanPattern = ui->lineEditOptionsRouteFilename->text();
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
   data.cacheUserAirspacePath = ui->lineEditCacheUserAirspacePath->text();
   data.cacheUserAirspaceExtensions = ui->lineEditCacheUserAirspaceExtensions->text();
@@ -1668,7 +1678,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data, ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
 
   fromFlags2(data, ui->checkBoxOptionsMapEmptyAirports3D, opts2::MAP_EMPTY_AIRPORTS_3D);
-  fromFlags2(data, ui->checkBoxOptionsRouteShortName, opts2::ROUTE_SAVE_SHORT_NAME);
 
   fromFlags2(data, ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
@@ -1683,6 +1692,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   fromFlags2(data, ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
 
+  ui->lineEditOptionsRouteFilename->setText(data.flightplanPattern);
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
   ui->lineEditCacheUserAirspacePath->setText(data.cacheUserAirspacePath);
   ui->lineEditCacheUserAirspaceExtensions->setText(data.cacheUserAirspaceExtensions);
@@ -2351,4 +2361,40 @@ void OptionsDialog::updateWebOptionsFromGui()
 void OptionsDialog::mapClickAirportProcsToggled()
 {
   ui->checkBoxOptionsMapClickAirportProcs->setEnabled(ui->checkBoxOptionsMapClickAirport->isChecked());
+}
+
+void OptionsDialog::flightplanPatterShortClicked()
+{
+  ui->lineEditOptionsRouteFilename->setText(atools::fs::pln::pattern::SHORT);
+  updateFlightplanExample();
+}
+
+void OptionsDialog::flightplanPatterLongClicked()
+{
+  ui->lineEditOptionsRouteFilename->setText(atools::fs::pln::pattern::LONG);
+  updateFlightplanExample();
+}
+
+void OptionsDialog::updateFlightplanExample()
+{
+  if(!ui->lineEditOptionsRouteFilename->text().isEmpty())
+  {
+    QString example = atools::fs::pln::Flightplan::getFilenamePattern(ui->lineEditOptionsRouteFilename->text(),
+                                                                      "IFR", "Frankfurt Am Main", "EDDF",
+                                                                      "Fiumicino", "LIRF", ".lnmpln", 30000, false);
+
+    QString text = tr("Example: \"%1\"").arg(atools::cleanFilename(example));
+
+    // Check if the cleaned filename differs from user input
+    if(example != atools::cleanFilename(example))
+      text.append(tr("<br/>") +
+                  atools::util::HtmlBuilder::errorMessage({tr("Pattern contains invalid characters or double spaces."),
+                                                           tr("Not allowed are: \\  /  :  \'  \" *  <  >  ?  $")}));
+
+    ui->labelOptionsRouteFilenameExample->setText(text);
+  }
+  else
+    ui->labelOptionsRouteFilenameExample->setText(
+      atools::util::HtmlBuilder::warningMessage(tr("Pattern is empty. Using default \"%1\".").
+                                                arg(atools::fs::pln::pattern::SHORT)));
 }

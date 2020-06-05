@@ -646,6 +646,9 @@ Note that some translations might be incomplete.</string>
              <property name="margin">
               <number>5</number>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="1" column="0" colspan="2">
@@ -2933,6 +2936,9 @@ also define the order when reading coordinates in the user interface if enabled.
           <property name="margin">
            <number>5</number>
           </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -3555,10 +3561,7 @@ Note that this value does not affect flight plan calculation or saving of flight
           <property name="title">
            <string>Loading, Saving and Export</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_6">
-           <property name="spacing">
-            <number>2</number>
-           </property>
+          <layout class="QGridLayout" name="gridLayout_7">
            <property name="leftMargin">
             <number>2</number>
            </property>
@@ -3571,7 +3574,45 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="bottomMargin">
             <number>2</number>
            </property>
-           <item>
+           <item row="4" column="2">
+            <widget class="QPushButton" name="pushButtonOptionsRouteFilenameLong">
+             <property name="toolTip">
+              <string>Set flight plan file pattern to long name &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)&quot;
+Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</string>
+             </property>
+             <property name="text">
+              <string>&amp;Long</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QPushButton" name="pushButtonOptionsRouteFilenameShort">
+             <property name="toolTip">
+              <string>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
+Example: &quot;EDDF_LIRF.lnmpln&quot;</string>
+             </property>
+             <property name="text">
+              <string>&amp;Short</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0" colspan="3">
+            <widget class="QLabel" name="labelOptionsRouteFilenameExample">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>5</number>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="3">
             <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
              <property name="toolTip">
               <string>Does not apply to the flight plan loaded after startup.</string>
@@ -3584,36 +3625,32 @@ Note that this value does not affect flight plan calculation or saving of flight
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiAvoidOverwrite">
+           <item row="4" column="0">
+            <widget class="QLineEdit" name="lineEditOptionsRouteFilename">
              <property name="toolTip">
-              <string>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
-The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</string>
+              <string>Applies to new filenames when saving LNMPLN FSX, P3D or FlightGear flight plans.
+The file suffix like &quot;.lnmpln&quot;, &quot;.pln&quot; or &quot;.fgfp&quot; is appended automatically.
+
+PLANTYPE: IFR or VFR
+DEPARTIDENT: Departure airport ICAO code
+DEPARTNAME: Departure airport name
+DESTIDENT: Destination airport ICAO code
+DESTNAME: Destination airport name
+CRUISEALT: Cruise altitude</string>
              </property>
              <property name="text">
-              <string>&amp;Avoid overwriting Flight Plan with not matching departure and destination</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
+              <string>PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</string>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsRouteShortName">
-             <property name="text">
-              <string>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX, P3D or
-FlightGear flight plans instead of the long name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
+           <item row="7" column="0" colspan="3">
             <widget class="Line" name="line_10">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="8" column="0" colspan="3">
             <widget class="QCheckBox" name="checkBoxOptionsRouteExportUserWpt">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This saves all waypoints as user defined waypoints when exporting flight plans for a Garmin unit. &lt;br/&gt;This avoids locked waypoints due to different AIRAC cycles and affects the export functions below: &lt;/p&gt;
@@ -3628,6 +3665,37 @@ FlightGear flight plans instead of the long name</string>
              <property name="text">
               <string>&amp;Export navaids and airports as user defined waypoints for
 Garmin GTN and GNS to avoid locked waypoints</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="3">
+            <widget class="QCheckBox" name="checkBoxOptionsGuiAvoidOverwrite">
+             <property name="toolTip">
+              <string>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
+The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Avoid overwriting Flight Plan with not matching departure and destination</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>&amp;Pattern for default flight plan names:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditOptionsRouteFilename</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="3">
+            <widget class="Line" name="line_19">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -4090,6 +4158,9 @@ If this field is empty, the default Active Sky weather file path will be used wh
              <property name="margin">
               <number>2</number>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="3" column="1" colspan="2">
@@ -4111,6 +4182,9 @@ If this field is empty, the default Active Sky weather file path will be used wh
              </property>
              <property name="margin">
               <number>5</number>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -4245,6 +4319,9 @@ Entering a wrong value will cause errors when downloading wind reports.</string>
              </property>
              <property name="margin">
               <number>5</number>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -4862,6 +4939,9 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
              <property name="openExternalLinks">
               <bool>true</bool>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="2" column="1" colspan="2">
@@ -5148,6 +5228,9 @@ You have to reload the scenery library so that the changes take effect.</string>
           <property name="margin">
            <number>5</number>
           </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+          </property>
          </widget>
         </item>
        </layout>
@@ -5291,7 +5374,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
   <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
-  <tabstop>checkBoxOptionsRouteShortName</tabstop>
   <tabstop>checkBoxOptionsRouteExportUserWpt</tabstop>
   <tabstop>checkBoxOptionsRouteDeclination</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>

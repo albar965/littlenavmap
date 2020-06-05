@@ -476,7 +476,7 @@ void RouteController::flightplanHeader(atools::util::HtmlBuilder& html, bool tit
 
 QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
 {
-  QString filename = RouteExport::buildDefaultFilenameLong(QString(), QString());
+  QString filename = RouteExport::buildDefaultFilename(".html");
   atools::util::HtmlBuilder html(true);
   html.doc(tr("%1 - %2").arg(QApplication::applicationName()).arg(filename),
            QString(),
@@ -765,6 +765,7 @@ void RouteController::restoreState()
           fileDepartureIdent.clear();
           fileDestinationIdent.clear();
           fileIfrVfr = pln::VFR;
+          fileCruiseAlt = 0.f;
           route.clear();
         }
       }
@@ -774,6 +775,7 @@ void RouteController::restoreState()
         fileDepartureIdent.clear();
         fileDestinationIdent.clear();
         fileIfrVfr = pln::VFR;
+        fileCruiseAlt = 0.f;
         route.clear();
       }
     }
@@ -919,6 +921,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   fileDepartureIdent = route.getFlightplan().getDepartureIdent();
   fileDestinationIdent = route.getFlightplan().getDestinationIdent();
   fileIfrVfr = route.getFlightplan().getFlightplanType();
+  fileCruiseAlt = route.getCruisingAltitudeFeet();
 
   route.updateLegAltitudes();
   updateRouteCycleMetadata();
@@ -1308,6 +1311,7 @@ bool RouteController::saveFlightplanLnmInternal()
 
     // Remember type, departure and destination for filename checking (save/saveAs)
     fileIfrVfr = flightplan.getFlightplanType();
+    fileCruiseAlt = route.getCruisingAltitudeFeet();
     fileDepartureIdent = flightplan.getDepartureIdent();
     fileDestinationIdent = flightplan.getDestinationIdent();
 
@@ -2578,16 +2582,26 @@ bool RouteController::doesLnmFilenameMatchRoute()
   if(!routeFilename.isEmpty())
   {
     if(!(OptionData::instance().getFlags() & opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN))
+      // User decided to ignore departure and destination change in flight plan
       return true;
 
-    if(OptionData::instance().getFlags2() & opts2::ROUTE_SAVE_SHORT_NAME)
-      return fileDepartureIdent == route.getFlightplan().getDepartureIdent() &&
-             fileDestinationIdent == route.getFlightplan().getDestinationIdent();
-    else
-      return fileIfrVfr == route.getFlightplan().getFlightplanType() &&
-             fileDepartureIdent == route.getFlightplan().getDepartureIdent() &&
-             fileDestinationIdent == route.getFlightplan().getDestinationIdent();
+    // Check if any parameters in the flight plan name have changed
+    bool ok = true;
+    const QString pattern = OptionData::instance().getFlightplanPattern();
 
+    if(pattern.contains(atools::fs::pln::pattern::PLANTYPE))
+      ok &= fileIfrVfr == route.getFlightplan().getFlightplanType();
+
+    if(pattern.contains(atools::fs::pln::pattern::CRUISEALT))
+      ok &= atools::almostEqual(fileCruiseAlt, route.getCruisingAltitudeFeet(), 10.f);
+
+    if(pattern.contains(atools::fs::pln::pattern::DEPARTIDENT))
+      ok &= fileDepartureIdent == route.getFlightplan().getDepartureIdent();
+
+    if(pattern.contains(atools::fs::pln::pattern::DESTIDENT))
+      ok &= fileDestinationIdent == route.getFlightplan().getDestinationIdent();
+
+    return ok;
   }
   return false;
 }
@@ -4383,6 +4397,7 @@ void RouteController::clearRoute()
   fileDepartureIdent.clear();
   fileDestinationIdent.clear();
   fileIfrVfr = pln::VFR;
+  fileCruiseAlt = 0.f;
   undoStack->clear();
   undoIndex = 0;
   undoIndexClean = 0;

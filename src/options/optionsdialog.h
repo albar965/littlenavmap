@@ -195,6 +195,10 @@ private:
   void udpdateLanguageComboBox(const QString& language);
   void languageChanged(int);
 
+  void flightplanPatterShortClicked();
+  void flightplanPatterLongClicked();
+  void updateFlightplanExample();
+
   QString language;
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
@@ -213,6 +217,7 @@ private:
   QHash<optsd::DisplayOptionsRoute, QTreeWidgetItem *> displayOptItemIndexRoute;
 
   UnitStringTool *units = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

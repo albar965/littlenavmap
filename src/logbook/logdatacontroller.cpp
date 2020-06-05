@@ -736,9 +736,7 @@ void LogdataController::planSaveAs(atools::sql::SqlRecord *record, QWidget *pare
     atools::fs::pln::FlightplanIO().loadLnmGz(flightplan, record->value("flightplan").toByteArray());
 
     // Build filename
-    QString defFilename = (OptionData::instance().getFlags2() & opts2::ROUTE_SAVE_SHORT_NAME) ?
-                          flightplan.getFilenameShort() : flightplan.getFilenameLong();
-
+    QString defFilename = flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), ".lnmpln");
     QString filename = mainWindow->routeSaveFileDialogLnm(defFilename);
     if(!filename.isEmpty())
       atools::fs::pln::FlightplanIO().saveLnm(flightplan, filename);
@@ -802,9 +800,7 @@ void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *paren
     atools::fs::pln::Flightplan flightplan;
     atools::fs::pln::FlightplanIO().loadLnmStr(flightplan, plan);
 
-    QString defFilename = (OptionData::instance().getFlags2() & opts2::ROUTE_SAVE_SHORT_NAME) ?
-                          flightplan.getFilenameShort(QString(), ".gpx") :
-                          flightplan.getFilenameLong(QString(), ".gpx");
+    QString defFilename = flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), ".gpx");
 
     QString filename = dialog->saveFileDialog(
       tr("Save GPX"),

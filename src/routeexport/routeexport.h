@@ -190,14 +190,8 @@ public:
   /* Validates only if this is a manual save */
   bool routeValidateMulti(const RouteExportFormat& format, bool validateParking, bool validateDepartureAndDestination);
 
-  /* Build short or long filename depending on settings.
-   * Short schema is ICAO{sep}ICAO{extension}{suffix}
-   *  Long schema is ICAO (NAME) ICAO (NAME){extension}{suffix}*/
-  QString buildDefaultFilename(const QString& sep = "_", const QString& suffix = ".lnmpln",
-                               const QString& extension = QString()) const;
-
-  /* Create a default filename based on departure and destination names. Suffix includes dot. */
-  static QString buildDefaultFilenameLong(const QString& extension = QString(), const QString& suffix = ".lnmpln");
+  /* Build filename according to pattern set in options. */
+  static QString buildDefaultFilename(const QString& suffix = ".lnmpln");
 
   /* Create a default filename based on departure and destination idents. Suffix includes dot. */
   static QString buildDefaultFilenameShort(const QString& sep, const QString& suffix);
