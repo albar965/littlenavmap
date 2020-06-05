@@ -601,6 +601,19 @@ void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int siz
   painter->drawEllipse(x - radius, y - radius, size, size);
 }
 
+void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, int x, int y, int size)
+{
+  atools::util::PainterContextSaver saver(painter);
+  painter->setBackgroundMode(Qt::TransparentMode);
+  painter->setBrush(Qt::white);
+
+  float lineWidth = std::max(size / 5.f, 2.0f);
+  painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+
+  int radius = size / 2;
+  painter->drawEllipse(x - radius, y - radius, size, size);
+}
+
 void SymbolPainter::drawProcedureUnderlay(QPainter *painter, int x, int y, int size, bool flyover, bool faf)
 {
   if(flyover)

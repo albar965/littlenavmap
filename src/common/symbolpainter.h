@@ -134,6 +134,9 @@ public:
   /* Circle for approach points which are not navaids */
   void drawProcedureSymbol(QPainter *painter, int x, int y, int size, bool routeFill);
 
+  /* Circle for flight plan waypoints */
+  void drawLogbookPreviewSymbol(QPainter *painter, int x, int y, int size);
+
   /* Maltese cross to indicate FAF on the map and ring to indicate fly over*/
   void drawProcedureUnderlay(QPainter *painter, int x, int y, int size, bool flyover, bool faf);
 

@@ -340,6 +340,7 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   painter->setBackgroundMode(Qt::TransparentMode);
   painter->setBackground(mapcolors::routeOutlineColor);
   painter->setBrush(Qt::NoBrush);
+  context->szFont(context->textSizeFlightplan);
 
   // Draw connecting lines ==========================================================================
   QVector<const MapLogbookEntry *> visibleLogEntries;
@@ -355,17 +356,20 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   {
     float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
     float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
+    float symbolSize = context->sz(context->thicknessFlightplan, 10);
 
     painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap,
                          Qt::RoundJoin));
 
+    // Draw outline for all selected entries ===============
     for(const MapLogbookEntry *entry : visibleLogEntries)
     {
       const LineString *linestring = logdataManager->getRouteGeometry(entry->id);
       if(linestring != nullptr)
-        drawLineString(context, *logdataManager->getRouteGeometry(entry->id));
+        drawLineString(context, *linestring);
     }
 
+    // Draw line for all selected entries ===============
     // Use a lighter pen for the flight plan legs ======================================
     QPen routePen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     routePen.setColor(mapcolors::routeLogEntryColor.lighter(130));
@@ -373,8 +377,27 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
     for(const MapLogbookEntry *entry : visibleLogEntries)
     {
       const LineString *linestring = logdataManager->getRouteGeometry(entry->id);
+      const QStringList *names = logdataManager->getRouteNames(entry->id);
       if(linestring != nullptr)
-        drawLineString(context, *logdataManager->getRouteGeometry(entry->id));
+      {
+        drawLineString(context, *linestring);
+
+        // Draw waypoint symbols and text for route preview =========
+        for(int i = 1; i < linestring->size() - 1; i++)
+        {
+          float x, y;
+          if(wToS(linestring->at(i), x, y))
+          {
+            symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
+
+            if(names != nullptr && context->mapLayer->isWaypointRouteName() && names->size() == linestring->size())
+            {
+              symbolPainter->textBox(context->painter, {names->at(i)}, mapcolors::routeLogEntryOutlineColor,
+                                     x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
+            }
+          }
+        }
+      }
     }
   }
 
