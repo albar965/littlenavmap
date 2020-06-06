@@ -77,7 +77,7 @@ void MapPainterAircraft::render(PaintContext *context)
     {
       for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
       {
-        if(ac.getCategory() != atools::fs::sc::BOAT)
+        if(!ac.isAnyBoat())
           allAircraft.append(&ac);
       }
     }

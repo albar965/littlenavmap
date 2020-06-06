@@ -558,8 +558,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
     {
       for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraftConst())
       {
-        if(obj.getCategory() == atools::fs::sc::BOAT &&
-           (obj.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
+        if(obj.isAnyBoat() && (obj.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
         {
           if(conv.wToS(obj.getPosition(), x, y))
             if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
@@ -576,7 +575,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
     {
       for(const atools::fs::sc::SimConnectAircraft& obj : mapPaintWidget->getAiAircraft())
       {
-        if(obj.getCategory() != atools::fs::sc::BOAT && mapfunc::aircraftVisible(obj, mapLayer))
+        if(!obj.isAnyBoat() && mapfunc::aircraftVisible(obj, mapLayer))
         {
           if(conv.wToS(obj.getPosition(), x, y))
           {

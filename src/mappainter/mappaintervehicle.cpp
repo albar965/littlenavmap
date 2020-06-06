@@ -75,7 +75,7 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context, const SimCon
         context->painter->rotate(rotate);
 
         int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
-        int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
+        int minSize = vehicle.isAnyBoat() ? 28 : 32;
 
         int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
         int offset = -(size / 2);
@@ -86,7 +86,7 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context, const SimCon
         context->painter->resetTransform();
 
         // Build text label
-        if(vehicle.getCategory() != atools::fs::sc::BOAT)
+        if(!vehicle.isAnyBoat())
         {
           context->szFont(context->textSizeAircraftAi);
           paintTextLabelAi(context, x, y, size, vehicle, forceLabel);

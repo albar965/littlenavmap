@@ -2952,14 +2952,20 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     QString type(tr(" Unknown"));
     switch(aircraft.getCategory())
     {
+      case atools::fs::sc::BOAT:
+        type = tr(" Ship");
+        break;
+      case atools::fs::sc::CARRIER:
+        type = tr(" Carrier");
+        break;
+      case atools::fs::sc::FRIGATE:
+        type = tr(" Frigate");
+        break;
       case atools::fs::sc::AIRPLANE:
         type = tr(" Aircraft");
         break;
       case atools::fs::sc::HELICOPTER:
         type = tr(" Helicopter");
-        break;
-      case atools::fs::sc::BOAT:
-        type = tr(" Ship");
         break;
       case atools::fs::sc::UNKNOWN:
         type.clear();
@@ -3010,7 +3016,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   if(!type.isEmpty())
     html.row2(tr("Model:"), type);
 
-  if(aircraft.getCategory() == atools::fs::sc::BOAT)
+  if(aircraft.isAnyBoat())
   {
     if(info && aircraft.getModelRadius() > 0)
       html.row2(tr("Size:"), Unit::distShortFeet(aircraft.getModelRadius() * 2));
@@ -3612,20 +3618,34 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
     }
 
-    QString ice;
+    // Ice ===============================================
+    QStringList ice;
 
     if(userAircaft->getPitotIcePercent() >= 1.f)
-      ice += tr("Pitot ") + locale.toString(userAircaft->getPitotIcePercent(), 'f', 0) + tr(" %");
+      ice.append(tr("Pitot ") + locale.toString(userAircaft->getPitotIcePercent(), 'f', 0) + tr(" %"));
+
     if(userAircaft->getStructuralIcePercent() >= 1.f)
-    {
-      if(!ice.isEmpty())
-        ice += tr(", ");
-      ice += tr("Structure ") + locale.toString(userAircaft->getStructuralIcePercent(), 'f', 0) + tr(" %");
-    }
+      ice.append(tr("Structure ") + locale.toString(userAircaft->getStructuralIcePercent(), 'f', 0) + tr(" %"));
+
+    if(userAircaft->getAoaIcePercent() >= 1.f)
+      ice.append(tr("AOA ") + locale.toString(userAircaft->getAoaIcePercent(), 'f', 0) + tr(" %"));
+
+    if(userAircaft->getInletIcePercent() >= 1.f)
+      ice.append(tr("Inlet ") + locale.toString(userAircaft->getInletIcePercent(), 'f', 0) + tr(" %"));
+
+    if(userAircaft->getPropIcePercent() >= 1.f)
+      ice.append(tr("Prop ") + locale.toString(userAircaft->getPropIcePercent(), 'f', 0) + tr(" %"));
+
+    if(userAircaft->getStatIcePercent() >= 1.f)
+      ice.append(tr("Static ") + locale.toString(userAircaft->getStatIcePercent(), 'f', 0) + tr(" %"));
+
+    if(userAircaft->getWindowIcePercent() >= 1.f)
+      ice.append(tr("Window ") + locale.toString(userAircaft->getWindowIcePercent(), 'f', 0) + tr(" %"));
+
     if(ice.isEmpty())
       html.row2(tr("Ice:"), tr("None"));
     else
-      html.row2Error(tr("Ice:"), ice);
+      html.row2Error(tr("Ice:"), ice.join(tr(", ")));
   }
   html.tableEnd();
 
@@ -3636,14 +3656,14 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     head(html, tr("Altitude"));
   html.table();
 
-  if(aircraft.getCategory() != atools::fs::sc::BOAT)
+  if(!aircraft.isAnyBoat())
   {
     if(longDisplay && aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()), ahtml::BOLD);
   }
   html.row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
 
-  if(!less && userAircaft != nullptr && longDisplay && aircraft.getCategory() != atools::fs::sc::BOAT)
+  if(!less && userAircaft != nullptr && longDisplay && !aircraft.isAnyBoat())
   {
     if(userAircaft->getAltitudeAboveGroundFt() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(tr("Above Ground:"), Unit::altFeet(userAircaft->getAltitudeAboveGroundFt()));
@@ -3679,8 +3699,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(longDisplay)
       head(html, tr("Speed"));
     html.table();
-    if(longDisplay && aircraft.getCategory() != atools::fs::sc::BOAT &&
-       aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+    if(longDisplay && !aircraft.isAnyBoat() && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
     {
       if(aircraft.getIndicatedAltitudeFt() < 10000.f && aircraft.getIndicatedSpeedKts() > 251.)
         html.row2Warning(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
@@ -3691,11 +3710,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(longDisplay ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
 
-    if(longDisplay && aircraft.getCategory() != atools::fs::sc::BOAT)
+    if(longDisplay && !aircraft.isAnyBoat())
       if(!less && aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
         html.row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueAirspeedKts()));
 
-    if(!less && aircraft.getCategory() != atools::fs::sc::BOAT)
+    if(!less && !aircraft.isAnyBoat())
     {
       if(longDisplay && aircraft.getMachSpeed() < atools::fs::sc::SC_INVALID_FLOAT)
       {

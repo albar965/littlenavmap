@@ -65,7 +65,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
 
   connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
-  connect(dataReader, &DataReaderThread::postLogMessage, this, &ConnectClient::postLogMessage);
+  connect(dataReader, &DataReaderThread::postStatus, this, &ConnectClient::statusPosted);
   connect(dataReader, &DataReaderThread::connectedToSimulator, this, &ConnectClient::connectedToSimulatorDirect);
   connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this,
           &ConnectClient::disconnectedFromSimulatorDirect);
@@ -227,50 +227,100 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
   if(NavApp::getOnlinedataController()->isShadowAircraft(userAircraft))
     userAircraft.setFlags(atools::fs::sc::SIM_ONLINE_SHADOW | userAircraft.getFlags());
 
-  emit dataPacketReceived(dataPacket);
-
-  if(!dataPacket.getMetars().isEmpty())
+  if(dataPacket.getStatus() == atools::fs::sc::OK)
   {
-    if(verbose)
-      qDebug() << "Metars number" << dataPacket.getMetars().size();
-
-    for(atools::fs::weather::MetarResult metar : dataPacket.getMetars())
-    {
-      QString ident = metar.requestIdent;
-      if(verbose)
-      {
-        qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
-                 << ident << "pos" << metar.requestPos.toString();
-        qDebug() << "Station" << metar.metarForStation;
-        qDebug() << "Nearest" << metar.metarForNearest;
-        qDebug() << "Interpolated" << metar.metarForInterpolated;
-      }
-
-      if(metar.metarForStation.isEmpty())
-      {
-        if(verbose)
-          qDebug() << "Station" << metar.requestIdent << "not available";
-
-        // Remember airports that have no station reports to avoid recurring requests by airport weather
-        notAvailableStations.insert(metar.requestIdent, metar.requestIdent);
-      }
-      else if(notAvailableStations.contains(metar.requestIdent))
-        // Remove from blacklist since it now has a station report
-        notAvailableStations.remove(metar.requestIdent);
-
-      metar.simulator = true;
-      metarIdentCache.insert(ident, metar);
-    }
+    emit dataPacketReceived(dataPacket);
 
     if(!dataPacket.getMetars().isEmpty())
-      emit weatherUpdated();
+    {
+      if(verbose)
+        qDebug() << "Metars number" << dataPacket.getMetars().size();
+
+      for(atools::fs::weather::MetarResult metar : dataPacket.getMetars())
+      {
+        QString ident = metar.requestIdent;
+        if(verbose)
+        {
+          qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
+                   << ident << "pos" << metar.requestPos.toString();
+          qDebug() << "Station" << metar.metarForStation;
+          qDebug() << "Nearest" << metar.metarForNearest;
+          qDebug() << "Interpolated" << metar.metarForInterpolated;
+        }
+
+        if(metar.metarForStation.isEmpty())
+        {
+          if(verbose)
+            qDebug() << "Station" << metar.requestIdent << "not available";
+
+          // Remember airports that have no station reports to avoid recurring requests by airport weather
+          notAvailableStations.insert(metar.requestIdent, metar.requestIdent);
+        }
+        else if(notAvailableStations.contains(metar.requestIdent))
+          // Remove from blacklist since it now has a station report
+          notAvailableStations.remove(metar.requestIdent);
+
+        metar.simulator = true;
+        metarIdentCache.insert(ident, metar);
+      }
+
+      if(!dataPacket.getMetars().isEmpty())
+        emit weatherUpdated();
+    }
+  } // if(dataPacket.getStatus() == atools::fs::sc::OK)
+  else
+  {
+    bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isConnectedNetwork();
+    atools::fs::sc::SimConnectStatus status = dataPacket.getStatus();
+    QString statusText = simConnectData->getStatusText();
+
+    disconnectClicked();
+    showErrorMessage(status, statusText, xplane, network);
   }
 }
 
-void ConnectClient::postLogMessage(QString message, bool warning)
+void ConnectClient::showErrorMessage(atools::fs::sc::SimConnectStatus status, const QString& error,
+                                     bool xplane, bool network)
 {
-  if(warning)
-    mainWindow->setConnectionStatusMessageText(tr("Warning"), message);
+  QString hint, program;
+
+  if(xplane)
+    program = tr("Little Xpconnect");
+  if(network)
+    program = tr("Little Navconnect");
+
+  switch(status)
+  {
+    case atools::fs::sc::OK:
+      break;
+    case atools::fs::sc::INVALID_MAGIC_NUMBER:
+    case atools::fs::sc::VERSION_MISMATCH:
+      hint = tr("Update <i>%1</i> to the latest version.<br/>"
+                "Your installed version of <i>%1</i><br/>"
+                "is not compatible with this version of <i>Little Navmap</i>.<br/>"
+                "Install the latest version of <i>%1</i>.").arg(program);
+      break;
+    case atools::fs::sc::INSUFFICIENT_WRITE:
+    case atools::fs::sc::WRITE_ERROR:
+      hint = tr("The connection is not reliable.<br/>"
+                "Check your network or installation.");
+      break;
+  }
+
+  QMessageBox::critical(mainWindow, QApplication::applicationName(),
+                        tr("<p>Error receiving data from <i>%1</i>:</p>"
+                             "<p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
+
+}
+
+void ConnectClient::statusPosted(atools::fs::sc::SimConnectStatus status, QString statusText)
+{
+  qDebug() << Q_FUNC_INFO << status << statusText;
+
+  if(status != atools::fs::sc::OK)
+    showErrorMessage(status, statusText, dataReader->isXplaneHandler(), isConnectedNetwork());
+  else
+    mainWindow->setConnectionStatusMessageText(QString(), statusText);
 }
 
 void ConnectClient::saveState()
@@ -668,10 +718,13 @@ void ConnectClient::readFromSocket()
       if(simConnectData->getStatus() != atools::fs::sc::OK)
       {
         // Something went wrong - shutdown
-        QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                              QString(tr("Error reading data from Little Navconnect: %1.")).
-                              arg(simConnectData->getStatusText()));
+
+        bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isConnectedNetwork();
+        atools::fs::sc::SimConnectStatus status = simConnectData->getStatus();
+        QString statusText = simConnectData->getStatusText();
+
         closeSocket(false);
+        showErrorMessage(status, statusText, xplane, network);
         return;
       }
 

@@ -1756,7 +1756,8 @@ void MainWindow::showDatabaseFiles()
 /* Updates label and tooltip for connection status */
 void MainWindow::setConnectionStatusMessageText(const QString& text, const QString& tooltipText)
 {
-  connectionStatus = text;
+  if(!text.isEmpty())
+    connectionStatus = text;
   connectionStatusTooltip = tooltipText;
   updateConnectionStatusMessageText();
 }

@@ -122,7 +122,7 @@ const QPixmap *VehicleIcons::pixmapFromCache(const atools::fs::sc::SimConnectAir
     key.type = AC_ONLINE;
   else if(ac.getCategory() == atools::fs::sc::HELICOPTER)
     key.type = AC_HELICOPTER;
-  else if(ac.getCategory() == atools::fs::sc::BOAT)
+  else if(ac.isAnyBoat())
     key.type = AC_SHIP;
   else if(ac.getEngineType() == atools::fs::sc::JET)
     key.type = AC_JET;

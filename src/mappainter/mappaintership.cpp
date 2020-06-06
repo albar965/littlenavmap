@@ -26,7 +26,7 @@
 
 using atools::fs::sc::SimConnectAircraft;
 
-MapPainterShip::MapPainterShip(MapPaintWidget* mapWidget, MapScale *mapScale)
+MapPainterShip::MapPainterShip(MapPaintWidget *mapWidget, MapScale *mapScale)
   : MapPainterVehicle(mapWidget, mapScale)
 {
 
@@ -52,7 +52,7 @@ void MapPainterShip::render(PaintContext *context)
 
       for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
       {
-        if(ac.getCategory() == atools::fs::sc::BOAT &&
+        if(ac.isAnyBoat() &&
            (ac.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))
           paintAiVehicle(context, ac, false /* force label */);
       }

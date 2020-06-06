@@ -122,7 +122,6 @@ private:
   void writeReplyToSocket(atools::fs::sc::SimConnectReply& reply);
   void disconnectClicked();
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
-  void postLogMessage(QString message, bool warning);
   void connectedToSimulatorDirect();
   void disconnectedFromSimulatorDirect();
   void autoConnectToggled(bool state);
@@ -135,6 +134,10 @@ private:
   /* Options in ConnectDialog have changed */
   void fetchOptionsChanged(cd::ConnectSimType type);
   void directUpdateRateChanged(cd::ConnectSimType type);
+
+  void showErrorMessage(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network);
+
+  void statusPosted(atools::fs::sc::SimConnectStatus status, QString statusText);
 
   bool silent = false, manualDisconnect = false;
   ConnectDialog *dialog = nullptr;
