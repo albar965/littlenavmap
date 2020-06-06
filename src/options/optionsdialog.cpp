@@ -2389,7 +2389,8 @@ void OptionsDialog::updateFlightplanExample()
     if(example != atools::cleanFilename(example))
       text.append(tr("<br/>") +
                   atools::util::HtmlBuilder::errorMessage({tr("Pattern contains invalid characters or double spaces."),
-                                                           tr("Not allowed are: \\  /  :  \'  \" *  <  >  ?  $")}));
+                                                           tr("Not allowed are:  "
+                                                              "\\  /  :  \'  *  &amp;  &gt;  &lt;  ?  $")}));
 
     ui->labelOptionsRouteFilenameExample->setText(text);
   }
