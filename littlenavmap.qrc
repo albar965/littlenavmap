@@ -17,6 +17,14 @@
         <file>resources/icons/aircraft_boat_ground.svg</file>
         <file>resources/icons/aircraft_boat_ground_user.svg</file>
         <file>resources/icons/aircraft_boat_user.svg</file>
+        <file>resources/icons/aircraft_carrier.svg</file>
+        <file>resources/icons/aircraft_carrier_ground.svg</file>
+        <file>resources/icons/aircraft_carrier_ground_user.svg</file>
+        <file>resources/icons/aircraft_carrier_user.svg</file>
+        <file>resources/icons/aircraft_frigate.svg</file>
+        <file>resources/icons/aircraft_frigate_ground.svg</file>
+        <file>resources/icons/aircraft_frigate_ground_user.svg</file>
+        <file>resources/icons/aircraft_frigate_user.svg</file>
         <file>resources/icons/aircraft_helicopter.svg</file>
         <file>resources/icons/aircraft_helicopter_ground.svg</file>
         <file>resources/icons/aircraft_helicopter_ground_user.svg</file>
@@ -64,6 +72,7 @@
         <file>resources/icons/airspaceroutealt.svg</file>
         <file>resources/icons/airspacespec.svg</file>
         <file>resources/icons/airwayjet.svg</file>
+        <file>resources/icons/airwaytrack.svg</file>
         <file>resources/icons/airwayvictor.svg</file>
         <file>resources/icons/application-exit.svg</file>
         <file>resources/icons/approach.svg</file>
@@ -74,6 +83,7 @@
         <file>resources/icons/arrowdown.svg</file>
         <file>resources/icons/arrowleft.svg</file>
         <file>resources/icons/arrowright.svg</file>
+        <file>resources/icons/arrowrightsmall.svg</file>
         <file>resources/icons/arrowup.svg</file>
         <file>resources/icons/back.svg</file>
         <file>resources/icons/boatai.svg</file>
@@ -90,6 +100,7 @@
         <file>resources/icons/clearselection.svg</file>
         <file>resources/icons/cleartable.svg</file>
         <file>resources/icons/compassrose.svg</file>
+        <file>resources/icons/compassroseattach.svg</file>
         <file>resources/icons/copy.svg</file>
         <file>resources/icons/database.svg</file>
         <file>resources/icons/databaseairspace.svg</file>
@@ -104,6 +115,8 @@
         <file>resources/icons/filenew.svg</file>
         <file>resources/icons/fileopen.svg</file>
         <file>resources/icons/filesave.svg</file>
+        <file>resources/icons/filesaveall.svg</file>
+        <file>resources/icons/filesaveallopts.svg</file>
         <file>resources/icons/filesaveas.svg</file>
         <file>resources/icons/filter-add.svg</file>
         <file>resources/icons/filter-remove.svg</file>
@@ -174,6 +187,8 @@
         <file>resources/icons/routeadd.svg</file>
         <file>resources/icons/routeadjustalt.svg</file>
         <file>resources/icons/routealt.svg</file>
+        <file>resources/icons/routecalc.svg</file>
+        <file>resources/icons/routecalcdock.svg</file>
         <file>resources/icons/routedeleteleg.svg</file>
         <file>resources/icons/routedirect.svg</file>
         <file>resources/icons/routedock.svg</file>
@@ -185,6 +200,8 @@
         <file>resources/icons/routeradio.svg</file>
         <file>resources/icons/routereverse.svg</file>
         <file>resources/icons/routestring.svg</file>
+        <file>resources/icons/routetoctod.svg</file>
+        <file>resources/icons/routetrack.svg</file>
         <file>resources/icons/saveasfg.svg</file>
         <file>resources/icons/saveasfms.svg</file>
         <file>resources/icons/search.svg</file>
@@ -246,20 +263,11 @@
         <file>resources/icons/vor.svg</file>
         <file>resources/icons/waypoint.svg</file>
         <file>resources/icons/weather.svg</file>
+        <file>resources/icons/weatherurl.svg</file>
         <file>resources/icons/web.svg</file>
         <file>resources/icons/wind.svg</file>
         <file>resources/icons/windpointer.svg</file>
         <file>resources/icons/zoomin.svg</file>
         <file>resources/icons/zoomout.svg</file>
-        <file>resources/icons/routecalc.svg</file>
-        <file>resources/icons/routecalcdock.svg</file>
-        <file>resources/icons/routetrack.svg</file>
-        <file>resources/icons/airwaytrack.svg</file>
-        <file>resources/icons/filesaveall.svg</file>
-        <file>resources/icons/filesaveallopts.svg</file>
-        <file>resources/icons/weatherurl.svg</file>
-        <file>resources/icons/compassroseattach.svg</file>
-        <file>resources/icons/arrowrightsmall.svg</file>
-        <file>resources/icons/routetoctod.svg</file>
     </qresource>
 </RCC>

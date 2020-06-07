@@ -77,6 +77,12 @@ const QPixmap *VehicleIcons::pixmapFromCache(const PixmapKey& key, int rotate)
       case AC_SHIP:
         name += "_boat";
         break;
+      case AC_CARRIER:
+        name += "_carrier";
+        break;
+      case AC_FRIGATE:
+        name += "_frigate";
+        break;
     }
 
     if(key.ground)
@@ -123,7 +129,14 @@ const QPixmap *VehicleIcons::pixmapFromCache(const atools::fs::sc::SimConnectAir
   else if(ac.getCategory() == atools::fs::sc::HELICOPTER)
     key.type = AC_HELICOPTER;
   else if(ac.isAnyBoat())
-    key.type = AC_SHIP;
+  {
+    if(ac.getCategory() == atools::fs::sc::CARRIER)
+      key.type = AC_CARRIER;
+    else if(ac.getCategory() == atools::fs::sc::FRIGATE)
+      key.type = AC_FRIGATE;
+    else
+      key.type = AC_SHIP;
+  }
   else if(ac.getEngineType() == atools::fs::sc::JET)
     key.type = AC_JET;
   else

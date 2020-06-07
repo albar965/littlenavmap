@@ -3020,6 +3020,8 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   {
     if(info && aircraft.getModelRadius() > 0)
       html.row2(tr("Size:"), Unit::distShortFeet(aircraft.getModelRadius() * 2));
+    if(info && aircraft.getDeckHeight() > 0)
+      html.row2(tr("Deck height:"), Unit::distShortFeet(aircraft.getDeckHeight()));
   }
   else if(info && aircraft.getWingSpan() > 0)
     html.row2(tr("Wingspan:"), Unit::distShortFeet(aircraft.getWingSpan()));
@@ -3246,6 +3248,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
   html.row2AlignRight();
 
+  // Flight plan legs =========================================================================
   float distanceToTod = map::INVALID_DISTANCE_VALUE;
   if(!route.isEmpty() && userAircaft != nullptr && info)
   {
@@ -3581,6 +3584,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.br();
   }
 
+  // Aircraft =========================================================================
   if(info && userAircaft != nullptr)
     head(html, tr("Aircraft"));
   html.table();
@@ -3646,50 +3650,57 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       html.row2(tr("Ice:"), tr("None"));
     else
       html.row2Error(tr("Ice:"), ice.join(tr(", ")));
-  }
+  } // if(userAircaft != nullptr && info)
   html.tableEnd();
 
   // Display more text for information display if not online aircraft
   bool longDisplay = info && !aircraft.isOnline();
 
-  if(longDisplay)
-    head(html, tr("Altitude"));
-  html.table();
-
-  if(!aircraft.isAnyBoat())
+  // Altitude =========================================================================
+  if(aircraft.getCategory() != atools::fs::sc::CARRIER && aircraft.getCategory() != atools::fs::sc::FRIGATE)
   {
-    if(longDisplay && aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()), ahtml::BOLD);
-  }
-  html.row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
+    if(longDisplay)
+      head(html, tr("Altitude"));
+    html.table();
 
-  if(!less && userAircaft != nullptr && longDisplay && !aircraft.isAnyBoat())
-  {
-    if(userAircaft->getAltitudeAboveGroundFt() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.row2(tr("Above Ground:"), Unit::altFeet(userAircaft->getAltitudeAboveGroundFt()));
-    if(userAircaft->getGroundAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
-  }
-
-  if(!less && distanceToTod <= 0 && userAircaft != nullptr)
-  {
-    // Display vertical path deviation when after TOD
-    float vertAlt = route.getAltitudeForDistance(distToDestNm);
-
-    if(vertAlt < map::INVALID_ALTITUDE_VALUE)
+    if(!aircraft.isAnyBoat())
     {
-      float diff = aircraft.getPosition().getAltitude() - vertAlt;
-      QString upDown;
-      if(diff >= 100.f)
-        upDown = tr(", above <b>▼</b>");
-      else if(diff <= -100)
-        upDown = tr(", below <b>▲</b>");
-
-      html.row2(tr("Vertical Path Dev.:"), Unit::altFeet(diff) + upDown, ahtml::NO_ENTITIES);
+      if(longDisplay && aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+        html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()), ahtml::BOLD);
     }
-  }
-  html.tableEnd();
 
+    if(aircraft.getPosition().getAltitude() < atools::fs::sc::SC_INVALID_FLOAT)
+      html.row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
+
+    if(!less && userAircaft != nullptr && longDisplay && !aircraft.isAnyBoat())
+    {
+      if(userAircaft->getAltitudeAboveGroundFt() < atools::fs::sc::SC_INVALID_FLOAT)
+        html.row2(tr("Above Ground:"), Unit::altFeet(userAircaft->getAltitudeAboveGroundFt()));
+      if(userAircaft->getGroundAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+        html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
+    }
+
+    if(!less && distanceToTod <= 0 && userAircaft != nullptr)
+    {
+      // Display vertical path deviation when after TOD
+      float vertAlt = route.getAltitudeForDistance(distToDestNm);
+
+      if(vertAlt < map::INVALID_ALTITUDE_VALUE)
+      {
+        float diff = aircraft.getPosition().getAltitude() - vertAlt;
+        QString upDown;
+        if(diff >= 100.f)
+          upDown = tr(", above <b>▼</b>");
+        else if(diff <= -100)
+          upDown = tr(", below <b>▲</b>");
+
+        html.row2(tr("Vertical Path Dev.:"), Unit::altFeet(diff) + upDown, ahtml::NO_ENTITIES);
+      }
+    }
+    html.tableEnd();
+  }
+
+  // Speed =========================================================================
   if(aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
      aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
      aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
@@ -3744,6 +3755,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.tableEnd();
   }
 
+  // Environment =========================================================================
   if(userAircaft != nullptr && longDisplay)
   {
     head(html, tr("Environment"));

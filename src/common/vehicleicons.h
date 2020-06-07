@@ -56,6 +56,8 @@ private:
     AC_JET,
     AC_HELICOPTER,
     AC_SHIP,
+    AC_CARRIER,
+    AC_FRIGATE,
     AC_ONLINE
   };
 
