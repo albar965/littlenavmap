@@ -45,6 +45,9 @@ ConnectClient::ConnectClient(MainWindow *parent)
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
+  errorMessageBox = new QMessageBox(QMessageBox::Critical, QApplication::applicationName(),
+                                    QString(), QMessageBox::Ok, mainWindow);
+
   // Create FSX/P3D handler for SimConnect
   simConnectHandler = new atools::fs::sc::SimConnectHandler(verbose);
   simConnectHandler->loadSimConnect(QApplication::applicationFilePath() + ".simconnect");
@@ -78,7 +81,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   connect(dialog, &ConnectDialog::autoConnectToggled, this, &ConnectClient::autoConnectToggled);
 
   reconnectNetworkTimer.setSingleShot(true);
-  connect(&reconnectNetworkTimer, &QTimer::timeout, this, &ConnectClient::connectInternal);
+  connect(&reconnectNetworkTimer, &QTimer::timeout, this, &ConnectClient::connectInternalAuto);
 
   flushQueuedRequestsTimer.setInterval(FLUSH_QUEUE_MS);
   connect(&flushQueuedRequestsTimer, &QTimer::timeout, this, &ConnectClient::flushQueuedRequests);
@@ -105,6 +108,9 @@ ConnectClient::~ConnectClient()
 
   qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
+
+  qDebug() << Q_FUNC_INFO << "delete errorMessage";
+  delete errorMessageBox;
 }
 
 void ConnectClient::flushQueuedRequests()
@@ -127,6 +133,7 @@ void ConnectClient::connectToServerDialog()
 
   if(retval == QDialog::Accepted)
   {
+    errorState = false;
     silent = false;
     closeSocket(false /* allow restart */);
 
@@ -191,7 +198,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   qDebug() << Q_FUNC_INFO;
 
   // Try to reconnect if it was not unlinked by using the disconnect button
-  if(dialog->isAutoConnect() && dialog->isAnyConnectDirect() && !manualDisconnect)
+  if(!errorState && dialog->isAutoConnect() && dialog->isAnyConnectDirect() && !manualDisconnect)
     connectInternal();
   else
     mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
@@ -275,12 +282,12 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     QString statusText = simConnectData->getStatusText();
 
     disconnectClicked();
-    showErrorMessage(status, statusText, xplane, network);
+    handleError(status, statusText, xplane, network);
   }
 }
 
-void ConnectClient::showErrorMessage(atools::fs::sc::SimConnectStatus status, const QString& error,
-                                     bool xplane, bool network)
+void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const QString& error,
+                                bool xplane, bool network)
 {
   QString hint, program;
 
@@ -297,20 +304,21 @@ void ConnectClient::showErrorMessage(atools::fs::sc::SimConnectStatus status, co
     case atools::fs::sc::VERSION_MISMATCH:
       hint = tr("Update <i>%1</i> to the latest version.<br/>"
                 "Your installed version of <i>%1</i><br/>"
-                "is not compatible with this version of <i>Little Navmap</i>.<br/>"
+                "is not compatible with this version of <i>Little Navmap</i>.<br/><br/>"
                 "Install the latest version of <i>%1</i>.").arg(program);
+      errorState = true;
       break;
     case atools::fs::sc::INSUFFICIENT_WRITE:
     case atools::fs::sc::WRITE_ERROR:
-      hint = tr("The connection is not reliable.<br/>"
+      hint = tr("The connection is not reliable.<br/><br/>"
                 "Check your network or installation.");
+      errorState = true;
       break;
   }
 
-  QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                        tr("<p>Error receiving data from <i>%1</i>:</p>"
-                             "<p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
-
+  errorMessageBox->setText(tr("<p>Error receiving data from <i>%1</i>:</p>"
+                                "<p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
+  errorMessageBox->show();
 }
 
 void ConnectClient::statusPosted(atools::fs::sc::SimConnectStatus status, QString statusText)
@@ -318,7 +326,7 @@ void ConnectClient::statusPosted(atools::fs::sc::SimConnectStatus status, QStrin
   qDebug() << Q_FUNC_INFO << status << statusText;
 
   if(status != atools::fs::sc::OK)
-    showErrorMessage(status, statusText, dataReader->isXplaneHandler(), isConnectedNetwork());
+    handleError(status, statusText, dataReader->isXplaneHandler(), isConnectedNetwork());
   else
     mainWindow->setConnectionStatusMessageText(QString(), statusText);
 }
@@ -473,7 +481,7 @@ void ConnectClient::autoConnectToggled(bool state)
       dataReader->terminateThread();
       qDebug() << "Stopping reconnect done";
     }
-    mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Autoconnect switched off."));
+    mainWindow->setConnectionStatusMessageText(QString(), tr("Autoconnect switched off."));
   }
 }
 
@@ -481,6 +489,7 @@ void ConnectClient::autoConnectToggled(bool state)
 void ConnectClient::disconnectClicked()
 {
   qDebug() << Q_FUNC_INFO;
+  errorState = false;
 
   reconnectNetworkTimer.stop();
 
@@ -492,6 +501,12 @@ void ConnectClient::disconnectClicked()
 
   // Close but do not allow reconnect if auto is on
   closeSocket(false);
+}
+
+void ConnectClient::connectInternalAuto()
+{
+  if(!errorState)
+    connectInternal();
 }
 
 void ConnectClient::connectInternal()
@@ -724,7 +739,7 @@ void ConnectClient::readFromSocket()
         QString statusText = simConnectData->getStatusText();
 
         closeSocket(false);
-        showErrorMessage(status, statusText, xplane, network);
+        handleError(status, statusText, xplane, network);
         return;
       }
 

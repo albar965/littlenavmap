@@ -29,6 +29,7 @@
 class QTcpSocket;
 class ConnectDialog;
 class MainWindow;
+class QMessageBox;
 
 namespace atools {
 namespace fs {
@@ -119,6 +120,7 @@ private:
   void connectedToServerSocket();
   void closeSocket(bool allowRestart);
   void connectInternal();
+  void connectInternalAuto();
   void writeReplyToSocket(atools::fs::sc::SimConnectReply& reply);
   void disconnectClicked();
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
@@ -135,7 +137,7 @@ private:
   void fetchOptionsChanged(cd::ConnectSimType type);
   void directUpdateRateChanged(cd::ConnectSimType type);
 
-  void showErrorMessage(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network);
+  void handleError(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network);
 
   void statusPosted(atools::fs::sc::SimConnectStatus status, QString statusText);
 
@@ -167,8 +169,12 @@ private:
   /* Cache holding all weather stations that do not allow a direct report but rather interpolated or nearest */
   atools::util::TimedCache<QString, QString> notAvailableStations;
 
+  QMessageBox *errorMessageBox = nullptr;
+
   // have to remember state separately to avoid sending signals when autoconnect fails
   bool socketConnected = false;
+
+  bool errorState = false;
 };
 
 #endif // LITTLENAVMAP_CONNECTCLIENT_H
