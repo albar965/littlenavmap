@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>508</width>
-    <height>390</height>
+    <width>413</width>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,23 +19,128 @@
      <property name="topMargin">
       <number>0</number>
      </property>
-     <property name="verticalSpacing">
+     <property name="horizontalSpacing">
       <number>6</number>
      </property>
-     <item row="8" column="1" colspan="3">
-      <widget class="QCheckBox" name="checkBoxConnectFetchAiAircraftFsx">
-       <property name="toolTip">
-        <string>Deselect to disable fetching and transmission of AI or multiplayer aircraft</string>
-       </property>
+     <property name="verticalSpacing">
+      <number>2</number>
+     </property>
+     <item row="12" column="1">
+      <widget class="QLabel" name="labelConnectUpdateRateXp">
        <property name="text">
-        <string>Fetch AI or multiplayer &amp;aircraft</string>
+        <string>&amp;Update time interval:</string>
        </property>
-       <property name="checked">
-        <bool>true</bool>
+       <property name="buddy">
+        <cstring>spinBoxConnectUpdateRateFsx</cstring>
        </property>
       </widget>
      </item>
-     <item row="16" column="0" colspan="4">
+     <item row="19" column="1">
+      <widget class="QLabel" name="labelConnectPort">
+       <property name="text">
+        <string>&amp;Port:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxConnectPort</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="0" colspan="4">
+      <widget class="Line" name="lineBottom">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLabel" name="labelConnectUpdateRateFsx">
+       <property name="text">
+        <string>&amp;Update time interval:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxConnectUpdateRateFsx</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="19" column="2">
+      <widget class="QSpinBox" name="spinBoxConnectPort">
+       <property name="toolTip">
+        <string>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.
+Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</string>
+       </property>
+       <property name="minimum">
+        <number>1024</number>
+       </property>
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+       <property name="value">
+        <number>51968</number>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0" colspan="4">
+      <widget class="Line" name="lineFsxXp">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="2">
+      <widget class="QSpinBox" name="spinBoxConnectUpdateRateFsx">
+       <property name="toolTip">
+        <string>Allowed range is 50 milliseconds up to 1 second.
+Little Navmap fetches data from the flight simulator using this time interval.
+Lower values will result in a more fluid aircraft movement but can potentially induce stutters.</string>
+       </property>
+       <property name="suffix">
+        <string> ms</string>
+       </property>
+       <property name="minimum">
+        <number>50</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="singleStep">
+        <number>50</number>
+       </property>
+       <property name="value">
+        <number>500</number>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="3">
+      <widget class="QPushButton" name="pushButtonConnectDeleteHostname">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Delete the current hostname or IP address from the list.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../littlenavmap.qrc">
+         <normaloff>:/littlenavmap/resources/icons/cancel.svg</normaloff>:/littlenavmap/resources/icons/cancel.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="1">
+      <widget class="QLabel" name="labelConnectHostname">
+       <property name="text">
+        <string>&amp;Hostname or IP address:</string>
+       </property>
+       <property name="buddy">
+        <cstring>comboBoxConnectHostname</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="0" colspan="4">
       <widget class="QRadioButton" name="radioButtonConnectRemote">
        <property name="font">
         <font>
@@ -52,23 +157,6 @@
        <attribute name="buttonGroup">
         <string notr="true">buttonGroupConnectType</string>
        </attribute>
-      </widget>
-     </item>
-     <item row="18" column="2">
-      <widget class="QSpinBox" name="spinBoxConnectPort">
-       <property name="toolTip">
-        <string>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.
-Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</string>
-       </property>
-       <property name="minimum">
-        <number>1024</number>
-       </property>
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="value">
-        <number>51968</number>
-       </property>
       </widget>
      </item>
      <item row="6" column="0" colspan="4">
@@ -93,67 +181,23 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
        </attribute>
       </widget>
      </item>
-     <item row="19" column="0" colspan="4">
-      <widget class="Line" name="lineBottom">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="18" column="1">
-      <widget class="QLabel" name="labelConnectPort">
-       <property name="text">
-        <string>&amp;Port:</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinBoxConnectPort</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="1">
-      <widget class="QLabel" name="labelConnectUpdateRateXp">
-       <property name="text">
-        <string>&amp;Update time interval:</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinBoxConnectUpdateRateFsx</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="1" colspan="3">
-      <widget class="QCheckBox" name="checkBoxConnectFetchAiAircraftXp">
+     <item row="18" column="2">
+      <widget class="QComboBox" name="comboBoxConnectHostname">
        <property name="toolTip">
-        <string>Deselect to disable fetching and transmission of AI or multiplayer aircraft</string>
+        <string>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.
+Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</string>
        </property>
-       <property name="text">
-        <string>Fetch AI or multiplayer &amp;aircraft</string>
-       </property>
-       <property name="checked">
+       <property name="editable">
         <bool>true</bool>
        </property>
-      </widget>
-     </item>
-     <item row="15" column="0" colspan="4">
-      <widget class="Line" name="lineXpRemote">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+       <property name="currentText">
+        <string/>
        </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QLabel" name="labelConnectUpdateRateFsx">
-       <property name="text">
-        <string>&amp;Update time interval:</string>
+       <property name="maxCount">
+        <number>10</number>
        </property>
-       <property name="buddy">
-        <cstring>spinBoxConnectUpdateRateFsx</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0" colspan="4">
-      <widget class="Line" name="lineFsxXp">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+       <property name="insertPolicy">
+        <enum>QComboBox::InsertAtTop</enum>
        </property>
       </widget>
      </item>
@@ -192,33 +236,10 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
        </property>
       </widget>
      </item>
-     <item row="17" column="1">
-      <widget class="QLabel" name="labelConnectHostname">
-       <property name="text">
-        <string>&amp;Hostname or IP address:</string>
-       </property>
-       <property name="buddy">
-        <cstring>comboBoxConnectHostname</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="17" column="2">
-      <widget class="QComboBox" name="comboBoxConnectHostname">
-       <property name="toolTip">
-        <string>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.
-Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</string>
-       </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="currentText">
-        <string/>
-       </property>
-       <property name="maxCount">
-        <number>10</number>
-       </property>
-       <property name="insertPolicy">
-        <enum>QComboBox::InsertAtTop</enum>
+     <item row="16" column="0" colspan="4">
+      <widget class="Line" name="lineXpRemote">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -246,47 +267,42 @@ Lower values will result in a more fluid aircraft movement but can potentially i
        </property>
       </widget>
      </item>
-     <item row="7" column="2">
-      <widget class="QSpinBox" name="spinBoxConnectUpdateRateFsx">
+     <item row="8" column="1" colspan="3">
+      <widget class="QCheckBox" name="checkBoxConnectFetchAiAircraftFsx">
        <property name="toolTip">
-        <string>Allowed range is 50 milliseconds up to 1 second.
-Little Navmap fetches data from the flight simulator using this time interval.
-Lower values will result in a more fluid aircraft movement but can potentially induce stutters.</string>
+        <string>Deselect to disable fetching and transmission of AI or multiplayer aircraft</string>
        </property>
-       <property name="suffix">
-        <string> ms</string>
+       <property name="text">
+        <string>Fetch AI or multiplayer &amp;aircraft</string>
        </property>
-       <property name="minimum">
-        <number>50</number>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="singleStep">
-        <number>50</number>
-       </property>
-       <property name="value">
-        <number>500</number>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="17" column="3">
-      <widget class="QPushButton" name="pushButtonConnectDeleteHostname">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+     <item row="13" column="1" colspan="3">
+      <widget class="QCheckBox" name="checkBoxConnectFetchAiAircraftXp">
        <property name="toolTip">
-        <string>Delete the current hostname or IP address from the list.</string>
+        <string>Deselect to disable fetching and transmission of AI or multiplayer aircraft</string>
        </property>
        <property name="text">
-        <string/>
+        <string>Fetch AI or multiplayer &amp;aircraft</string>
        </property>
-       <property name="icon">
-        <iconset resource="../../littlenavmap.qrc">
-         <normaloff>:/littlenavmap/resources/icons/cancel.svg</normaloff>:/littlenavmap/resources/icons/cancel.svg</iconset>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1" colspan="3">
+      <widget class="QCheckBox" name="checkBoxConnectFetchAiShipXp">
+       <property name="toolTip">
+        <string>Deselect to disable fetching and transmission of AI or multiplayer ships</string>
+       </property>
+       <property name="text">
+        <string>Fetch AI or multiplayer &amp;ships</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
