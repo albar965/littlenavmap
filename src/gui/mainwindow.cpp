@@ -1893,16 +1893,16 @@ void MainWindow::routeResetAll()
                             tr("Select items to reset for a new flight"),
                             lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
 
-  choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
-  choiceDialog.add(DELETE_TRAIL, tr("&Delete aircaft trail"),
+  choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
+  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircaft trail"),
                    tr("Delete simulator aircraft trail from map and elevation profile"), true);
-  choiceDialog.add(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
+  choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
                    tr("Remove the active (magenta) flight plan leg"), true);
-  choiceDialog.add(RESTART_PERF, tr("Restart Aircraft &Performance Collection"),
+  choiceDialog.addCheckBox(RESTART_PERF, tr("Restart Aircraft &Performance Collection"),
                    tr("Restarts the background aircraft performance collection"), true);
-  choiceDialog.add(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
+  choiceDialog.addCheckBox(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
                    tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
-  choiceDialog.add(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns and Holdings"),
+  choiceDialog.addCheckBox(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns and Holdings"),
                    tr("Remove all range rings, measurements, traffic patterns and holdings from map"), false);
 
   choiceDialog.restoreState();

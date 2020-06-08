@@ -42,15 +42,18 @@ public:
   virtual ~ChoiceDialog() override;
 
   /* Add a checkbox with the given id, text and tooltip */
-  void add(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
-           bool disabled = false, bool hidden = false);
+  void addCheckBox(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
+                   bool disabled = false, bool hidden = false);
+
+  /* Add a separator line */
+  void addLine();
 
   /* Shortcut to add a disabled widget */
-  void addDisabled(int id, const QString& text, const QString& tooltip, bool checked);
+  void addCheckBoxDisabled(int id, const QString& text, const QString& tooltip, bool checked);
 
   /* Shortcut to add a hidden, disabled and unchecked widget.
    * Useful if different configurations are saved in the same setting variable. */
-  void addHidden(int id);
+  void addCheckBoxHidden(int id);
 
   /* Call after adding all buttons to restore button state */
   void restoreState();
@@ -58,9 +61,17 @@ public:
   /* true if box for id is checked and enabled */
   bool isChecked(int id) const;
 
+  /* Get checkbox for given id */
+  QCheckBox *getCheckBox(int id);
+
+signals:
+  /* Emitted when a checkbox is toggled */
+  void checkBoxToggled(int id, bool checked);
+
 private:
   QVector<std::pair<int, bool> > getCheckState() const;
   void buttonBoxClicked(QAbstractButton *button);
+  void checkBoxToggledInternal(bool checked);
   void saveState();
 
   Ui::ChoiceDialog *ui;

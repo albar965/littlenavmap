@@ -1960,7 +1960,7 @@ void RouteController::visibleColumnsTriggered()
 
   QHeaderView *header = view->horizontalHeader();
   for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
-    dialog.add(col, Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " "),
+    dialog.addCheckBox(col, Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " "),
                routeColumnTooltips.at(col),
                !header->isSectionHidden(col));
 

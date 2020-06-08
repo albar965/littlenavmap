@@ -735,6 +735,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     // nothing select and not append option - do not show dialog
     return true;
 
+  // Dialog options
   enum
   {
     SELECTED, APPEND, HEADER
@@ -745,25 +746,34 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
                             lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
 
   if(appendAllowed)
-    choiceDialog.add(APPEND, tr("&Append to an already present file"), QString(), false);
+    choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
+                             tr("File header will be ignore if this is enabled."), false);
   else
     // Add a hidden dummy which still allows to save the settings to the same key/variable
-    choiceDialog.addHidden(APPEND);
+    choiceDialog.addCheckBoxHidden(APPEND);
 
-  choiceDialog.add(SELECTED, tr("Export &selected entries only"), QString(), true, numSelected == 0 /* disabled */);
+  choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QString(), true,
+                           numSelected == 0 /* disabled */);
 
   if(headerAllowed)
-    choiceDialog.add(HEADER, tr("Add a &header to the first line"), QString(), false);
+    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QString(), false);
   else
-    choiceDialog.addHidden(HEADER);
+    choiceDialog.addCheckBoxHidden(HEADER);
 
   choiceDialog.restoreState();
+
+  choiceDialog.getCheckBox(HEADER)->setDisabled(choiceDialog.isChecked(APPEND));
+  ChoiceDialog *dlgPtr = &choiceDialog;
+  connect(&choiceDialog, &ChoiceDialog::checkBoxToggled, [dlgPtr](int id, bool checked) {
+    if(id == APPEND)
+      dlgPtr->getCheckBox(HEADER)->setDisabled(checked);
+  });
 
   if(choiceDialog.exec() == QDialog::Accepted)
   {
     selected = choiceDialog.isChecked(SELECTED); // Only true if enabled too
     append = choiceDialog.isChecked(APPEND);
-    header = choiceDialog.isChecked(HEADER);
+    header = choiceDialog.isChecked(HEADER) && !choiceDialog.isChecked(APPEND);
     return true;
   }
   else
