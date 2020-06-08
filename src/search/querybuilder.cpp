@@ -16,3 +16,48 @@
 *****************************************************************************/
 
 #include "search/querybuilder.h"
+
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QSpinBox>
+
+void QueryBuilder::resetWidgets()
+{
+  for(QWidget *widget : widgets)
+  {
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
+    if(lineEdit != nullptr)
+    {
+      lineEdit->clear();
+      continue;
+    }
+
+    QCheckBox *check = dynamic_cast<QCheckBox *>(widget);
+    if(check != nullptr)
+    {
+      check->setCheckState(check->isTristate() ? Qt::PartiallyChecked : Qt::Unchecked);
+      continue;
+    }
+
+    QSpinBox *spin = dynamic_cast<QSpinBox *>(widget);
+    if(spin != nullptr)
+    {
+      spin->setValue(0);
+      continue;
+    }
+
+    QComboBox *cb = dynamic_cast<QComboBox *>(widget);
+    if(cb != nullptr)
+    {
+      if(cb->isEditable())
+      {
+        cb->setCurrentText(QString());
+        cb->setCurrentIndex(-1);
+      }
+      else
+        cb->setCurrentIndex(0);
+      continue;
+    }
+  }
+}

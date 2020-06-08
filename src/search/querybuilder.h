@@ -75,6 +75,9 @@ public:
     return columns;
   }
 
+  /* Clear all widgets of type QLineEdit, QCheckBox, QComboBox and QSpinBox */
+  void resetWidgets();
+
 private:
   QueryBuilderFuncType func;
   QVector<QWidget *> widgets;

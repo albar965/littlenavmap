@@ -163,7 +163,7 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
     if(!exceptColNames.contains(cd->getColumnName()))
     {
       if(QLineEdit *le = cd->getLineEditWidget())
-        le->setText(QString());
+        le->clear();
       if(QComboBox *cb = cd->getComboBoxWidget())
       {
         if(cb->isEditable())
@@ -212,6 +212,8 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
 
   if(distanceCheckBox != nullptr)
     distanceCheckBox->setCheckState(Qt::Unchecked);
+
+  queryBuilder.resetWidgets();
 }
 
 void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
