@@ -557,7 +557,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayoutAirportSearch">
            <property name="spacing">
-            <number>4</number>
+            <number>2</number>
            </property>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch">
@@ -1661,7 +1661,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayoutNavSearch">
            <property name="spacing">
-            <number>4</number>
+            <number>2</number>
            </property>
            <property name="bottomMargin">
             <number>0</number>
@@ -4886,7 +4886,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
        <property name="tabBarAutoHide">
         <bool>false</bool>
        </property>
-       <widget class="QWidget" name="tabAirportInfo">
+       <widget class="QWidget" name="tabAirport">
         <property name="toolTip">
          <string/>
         </property>
@@ -4901,216 +4901,257 @@ Wind speed will be interpolated for climb and descent phases.</string>
           <number>2</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>2</number>
          </property>
          <property name="bottomMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <item>
-          <widget class="QTextBrowser" name="textBrowserAirportInfo">
-           <property name="readOnly">
+          <widget class="QTabWidget" name="tabWidgetAirport">
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="tabsClosable">
             <bool>true</bool>
            </property>
-           <property name="placeholderText">
-            <string>No airport selected.</string>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabRunwayInfo">
-        <attribute name="title">
-         <string>Runways</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>Runway and helipad information</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserRunwayInfo">
-           <property name="readOnly">
+           <property name="movable">
             <bool>true</bool>
            </property>
-           <property name="placeholderText">
-            <string>No airport selected.</string>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabComInfo">
-        <attribute name="title">
-         <string>Com</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>Airport communication frequencies</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_11">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserComInfo">
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-           <property name="placeholderText">
-            <string>No airport selected.</string>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabProceduresInfo">
-        <attribute name="title">
-         <string>Procedures</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>Airport procedures</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_22">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserApproachInfo">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>3</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-           <property name="placeholderText">
-            <string>No airport selected.</string>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabNearest">
-        <attribute name="title">
-         <string>Nearest</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>Nearest navaids and airports in
+           <widget class="QWidget" name="tabAirportOverview">
+            <attribute name="title">
+             <string>Overview</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Aiport overview</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QTextBrowser" name="textBrowserAirportInfo">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+               <property name="placeholderText">
+                <string>No airport selected.</string>
+               </property>
+               <property name="openLinks">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabAirportRunway">
+            <attribute name="title">
+             <string>Runways</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Runway and helipad information</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QTextBrowser" name="textBrowserRunwayInfo">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+               <property name="placeholderText">
+                <string>No airport selected.</string>
+               </property>
+               <property name="openLinks">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabAirportCom">
+            <attribute name="title">
+             <string>Com</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Airport communication frequencies</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_19">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QTextBrowser" name="textBrowserComInfo">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+               <property name="placeholderText">
+                <string>No airport selected.</string>
+               </property>
+               <property name="openLinks">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabAirportApproach">
+            <attribute name="title">
+             <string>Procedures</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Airport procedures</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_22">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QTextBrowser" name="textBrowserApproachInfo">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>3</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+               <property name="placeholderText">
+                <string>No airport selected.</string>
+               </property>
+               <property name="openLinks">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabAirportNearest">
+            <attribute name="title">
+             <string>Nearest</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Nearest navaids and airports in
 relation to shown airport</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_35">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserNearestInfo">
-           <property name="placeholderText">
-            <string>No airport selected.</string>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabWeatherInfo">
-        <attribute name="title">
-         <string>Weather</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>Decoded weather information for airport</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_19">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserWeatherInfo">
-           <property name="placeholderText">
-            <string>No airport selected.</string>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_35">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QTextBrowser" name="textBrowserNearestInfo">
+               <property name="placeholderText">
+                <string>No airport selected.</string>
+               </property>
+               <property name="openLinks">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabAirportWeather">
+            <attribute name="title">
+             <string>Weather</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Decoded weather information for airport</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_38">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QTextBrowser" name="textBrowserWeatherInfo">
+               <property name="placeholderText">
+                <string>No airport selected.</string>
+               </property>
+               <property name="openLinks">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -5130,13 +5171,13 @@ relation to shown airport</string>
           <number>2</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>2</number>
          </property>
          <property name="bottomMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserNavaidInfo">
@@ -5165,13 +5206,13 @@ relation to shown airport</string>
           <number>2</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>2</number>
          </property>
          <property name="bottomMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserAirspaceInfo">
@@ -5200,13 +5241,13 @@ relation to shown airport</string>
           <number>2</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>2</number>
          </property>
          <property name="bottomMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserUserpointInfo">
@@ -5235,13 +5276,13 @@ relation to shown airport</string>
           <number>2</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>2</number>
          </property>
          <property name="bottomMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserLogbookInfo">
@@ -5270,13 +5311,13 @@ relation to shown airport</string>
           <number>2</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>2</number>
          </property>
          <property name="bottomMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserClientInfo">
@@ -5305,13 +5346,13 @@ relation to shown airport</string>
           <number>2</number>
          </property>
          <property name="topMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>2</number>
          </property>
          <property name="bottomMargin">
-          <number>2</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserCenterInfo">
@@ -11493,12 +11534,6 @@ Best track will be selected automatically.</string>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
   <tabstop>textBrowserAircraftAiInfo</tabstop>
   <tabstop>tabWidgetInformation</tabstop>
-  <tabstop>textBrowserAirportInfo</tabstop>
-  <tabstop>textBrowserRunwayInfo</tabstop>
-  <tabstop>textBrowserComInfo</tabstop>
-  <tabstop>textBrowserApproachInfo</tabstop>
-  <tabstop>textBrowserNearestInfo</tabstop>
-  <tabstop>textBrowserWeatherInfo</tabstop>
   <tabstop>textBrowserNavaidInfo</tabstop>
   <tabstop>textBrowserAirspaceInfo</tabstop>
   <tabstop>textBrowserUserpointInfo</tabstop>

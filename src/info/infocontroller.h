@@ -100,6 +100,7 @@ public:
   QStringList getAirportTextFull(const QString& ident) const;
 
   void setCurrentInfoTabIndex(ic::TabInfoId tabId);
+  void setCurrentAirportInfoTabIndex(ic::TabAirportInfoId tabId);
   void setCurrentAircraftTabIndex(ic::TabAircraftId tabId);
 
   void resetWindowLayout();
@@ -117,7 +118,8 @@ private:
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_BEARING_TIME_MS = 1000;
 
   void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop, bool forceWeatherUpdate);
-  bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate);
+  bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop,
+                            bool forceUpdate);
   bool updateUserpointInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();
@@ -135,6 +137,7 @@ private:
   /* QTabWidget::currentChanged - update content when visible */
   void currentAircraftTabChanged(int id);
   void currentInfoTabChanged(int id);
+  void currentAirportInfoTabChanged(int id);
 
   /* QDockWidget::visibilityChanged - update when shown */
   void visibilityChangedAircraft(bool visible);
@@ -157,7 +160,8 @@ private:
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
   bool lessAircraftProgress = false;
 
-  atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAircraft = nullptr;
+  atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAirportInfo = nullptr,
+                                *tabHandlerAircraft = nullptr;
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

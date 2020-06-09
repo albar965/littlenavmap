@@ -1619,6 +1619,7 @@ void MainWindow::actionShortcutAirportInformationTriggered()
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetInformation);
   infoController->setCurrentInfoTabIndex(ic::INFO_AIRPORT);
+  infoController->setCurrentAirportInfoTabIndex(ic::INFO_AIRPORT_OVERVIEW);
   ui->textBrowserAirportInfo->setFocus();
 }
 
@@ -1626,7 +1627,8 @@ void MainWindow::actionShortcutAirportWeatherTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetInformation);
-  infoController->setCurrentInfoTabIndex(ic::INFO_WEATHER);
+  infoController->setCurrentInfoTabIndex(ic::INFO_AIRPORT);
+  infoController->setCurrentAirportInfoTabIndex(ic::INFO_AIRPORT_WEATHER);
   ui->textBrowserWeatherInfo->setFocus();
 }
 

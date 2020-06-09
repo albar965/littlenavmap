@@ -71,6 +71,11 @@ InfoController::InfoController(MainWindow *parent)
                                                      tr("Open or close tabs"));
   tabHandlerInfo->init(ic::TabInfoIds, lnm::INFOWINDOW_WIDGET_TABS);
 
+  tabHandlerAirportInfo = new atools::gui::TabWidgetHandler(ui->tabWidgetAirport,
+                                                            QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
+                                                            tr("Open or close tabs"));
+  tabHandlerAirportInfo->init(ic::TabAirportInfoIds, lnm::INFOWINDOW_WIDGET_AIRPORT_TABS);
+
   tabHandlerAircraft = new atools::gui::TabWidgetHandler(ui->tabWidgetAircraft,
                                                          QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                          tr("Open or close tabs"));
@@ -119,7 +124,10 @@ InfoController::InfoController(MainWindow *parent)
 
   connect(tabHandlerAircraft, &atools::gui::TabWidgetHandler::tabChanged,
           this, &InfoController::currentAircraftTabChanged);
-  connect(tabHandlerInfo, &atools::gui::TabWidgetHandler::tabChanged, this, &InfoController::currentInfoTabChanged);
+  connect(tabHandlerInfo, &atools::gui::TabWidgetHandler::tabChanged,
+          this, &InfoController::currentInfoTabChanged);
+  connect(tabHandlerAirportInfo, &atools::gui::TabWidgetHandler::tabChanged,
+          this, &InfoController::currentAirportInfoTabChanged);
 
   connect(ui->dockWidgetAircraft, &QDockWidget::visibilityChanged, this, &InfoController::visibilityChangedAircraft);
   connect(ui->dockWidgetInformation, &QDockWidget::visibilityChanged, this, &InfoController::visibilityChangedInfo);
@@ -128,6 +136,7 @@ InfoController::InfoController(MainWindow *parent)
 InfoController::~InfoController()
 {
   delete tabHandlerInfo;
+  delete tabHandlerAirportInfo;
   delete tabHandlerAircraft;
   delete infoBuilder;
 }
@@ -141,7 +150,10 @@ void InfoController::visibilityChangedAircraft(bool visible)
 void InfoController::visibilityChangedInfo(bool visible)
 {
   if(visible)
+  {
     currentInfoTabChanged(tabHandlerInfo->getCurrentTabId());
+    currentAirportInfoTabChanged(tabHandlerAirportInfo->getCurrentTabId());
+  }
 }
 
 void InfoController::currentAircraftTabChanged(int id)
@@ -167,8 +179,8 @@ void InfoController::currentInfoTabChanged(int id)
   switch(static_cast<ic::TabInfoId>(id))
   {
     case ic::INFO_AIRPORT:
-      updateAirportInternal(false /* new */, true /* bearing changed */, false /* scroll to top */,
-                            false /* force weather update */);
+      // Tab of airport tabs - pass signal along
+      currentAirportInfoTabChanged(tabHandlerAirportInfo->getCurrentTabId());
       break;
 
     case ic::INFO_NAVAID:
@@ -180,15 +192,29 @@ void InfoController::currentInfoTabChanged(int id)
       updateUserpointInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
       break;
 
-    case ic::INFO_RUNWAYS:
-    case ic::INFO_COM:
-    case ic::INFO_APPROACHES:
-    case ic::INFO_NEAREST:
-    case ic::INFO_WEATHER:
     case ic::INFO_AIRSPACE:
     case ic::INFO_LOGBOOK:
     case ic::INFO_ONLINE_CLIENT:
     case ic::INFO_ONLINE_CENTER:
+      break;
+  }
+}
+
+void InfoController::currentAirportInfoTabChanged(int id)
+{
+  // Update new tab to avoid delay or obsolete information
+  switch(static_cast<ic::TabAirportInfoId>(id))
+  {
+    case ic::INFO_AIRPORT_OVERVIEW:
+      updateAirportInternal(false /* new */, true /* bearing changed */, false /* scroll to top */,
+                            false /* force weather update */);
+      break;
+
+    case ic::INFO_AIRPORT_RUNWAYS:
+    case ic::INFO_AIRPORT_COM:
+    case ic::INFO_AIRPORT_APPROACHES:
+    case ic::INFO_AIRPORT_NEAREST:
+    case ic::INFO_AIRPORT_WEATHER:
       break;
   }
 }
@@ -383,12 +409,14 @@ void InfoController::saveState()
   settings.setValue(lnm::INFOWINDOW_MORE_LESS_PROGRESS, lessAircraftProgress);
 
   tabHandlerInfo->saveState();
+  tabHandlerAirportInfo->saveState();
   tabHandlerAircraft->saveState();
 }
 
 void InfoController::restoreState()
 {
   tabHandlerInfo->restoreState();
+  tabHandlerAirportInfo->restoreState();
   tabHandlerAircraft->restoreState();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_INFO)
@@ -808,10 +836,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   if(showWindows)
   {
     // Select tab to activate ==========================================================
-    ic::TabInfoId idx = static_cast<ic::TabInfoId>(tabHandlerInfo->getCurrentTabId());
-    // Is any airport related tab active?
-    bool airportActive = idx == ic::INFO_AIRPORT || idx == ic::INFO_RUNWAYS || idx == ic::INFO_COM ||
-                         idx == ic::INFO_APPROACHES || idx == ic::INFO_NEAREST || idx == ic::INFO_WEATHER;
+    ic::TabInfoId idx = tabHandlerInfo->getCurrentTabId<ic::TabInfoId>();
 
     ic::TabInfoId newId = idx;
 
@@ -819,10 +844,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     {
       // Select the tab to activate by preferred type so that it matches the selected menu item
       if(preferredType & map::AIRPORT)
-      {
-        if(!airportActive)
-          newId = ic::INFO_AIRPORT;
-      }
+        newId = ic::INFO_AIRPORT;
       else if(preferredType & map::USERPOINT)
         newId = ic::INFO_USERPOINT;
       else if(preferredType & map::NAV_ALL || preferredType & map::AIRWAY)
@@ -848,10 +870,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       else if(foundUserpoint)
         newId = ic::INFO_USERPOINT;
       else if(foundAirport)
-      {
-        if(!airportActive)
-          newId = ic::INFO_AIRPORT;
-      }
+        newId = ic::INFO_AIRPORT;
       else if(foundNavaid)
         newId = ic::INFO_NAVAID;
       else if(foundOnlineCenter)
@@ -867,11 +886,6 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     switch(newId)
     {
       case ic::INFO_AIRPORT:
-      case ic::INFO_RUNWAYS:
-      case ic::INFO_COM:
-      case ic::INFO_APPROACHES:
-      case ic::INFO_NEAREST:
-      case ic::INFO_WEATHER:
         objType = tr("airport");
         break;
       case ic::INFO_NAVAID:
@@ -1047,6 +1061,7 @@ void InfoController::postDatabaseLoad()
 void InfoController::styleChanged()
 {
   tabHandlerInfo->styleChanged();
+  tabHandlerAirportInfo->styleChanged();
   tabHandlerAircraft->styleChanged();
   showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */,
                           true /* forceUpdate */);
@@ -1210,7 +1225,7 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
     // Last update was more than a second ago
     if(data.getUserAircraftConst().isValid() && ui->dockWidgetInformation->isVisible())
     {
-      if(tabHandlerInfo->getCurrentTabId() == ic::INFO_AIRPORT)
+      if(tabHandlerAirportInfo->getCurrentTabId() == ic::INFO_AIRPORT_OVERVIEW)
         updateAirportInternal(false /* new */, true /* bearing change*/, false /* scroll to top */,
                               false /* force weather update */);
 
@@ -1367,6 +1382,11 @@ void InfoController::setCurrentInfoTabIndex(ic::TabInfoId tabId)
   tabHandlerInfo->setCurrentTab(tabId);
 }
 
+void InfoController::setCurrentAirportInfoTabIndex(ic::TabAirportInfoId tabId)
+{
+  tabHandlerAirportInfo->setCurrentTab(tabId);
+}
+
 void InfoController::setCurrentAircraftTabIndex(ic::TabAircraftId tabId)
 {
   tabHandlerAircraft->setCurrentTab(tabId);
@@ -1375,5 +1395,6 @@ void InfoController::setCurrentAircraftTabIndex(ic::TabAircraftId tabId)
 void InfoController::resetWindowLayout()
 {
   tabHandlerInfo->reset();
+  tabHandlerAirportInfo->reset();
   tabHandlerAircraft->reset();
 }
