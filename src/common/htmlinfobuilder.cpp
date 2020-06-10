@@ -384,7 +384,11 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
                  false /* fs */, src == WEATHER_SOURCE_NOAA);
 
     // VATSIM weather =====================================================
-    addMetarLine(html, tr("VATSIM"), airport, weatherContext.vatsimMetar, QString(), QDateTime(),
+    addMetarLine(html, tr("VATSIM Station"), airport, weatherContext.vatsimMetar.metarForStation,
+                 weatherContext.vatsimMetar.requestIdent, weatherContext.vatsimMetar.timestamp,
+                 false /* fs */, src == WEATHER_SOURCE_VATSIM);
+    addMetarLine(html, tr("VATSIM Nearest"), airport, weatherContext.vatsimMetar.metarForNearest,
+                 weatherContext.vatsimMetar.requestIdent, weatherContext.vatsimMetar.timestamp,
                  false /* fs */, src == WEATHER_SOURCE_VATSIM);
 
     // IVAO weather =====================================================
@@ -1613,18 +1617,13 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
                      false /* FSX/P3D */, src == WEATHER_SOURCE_ACTIVE_SKY && weatherShown);
       }
 
-      // NOAA or nearest
+      // NOAA or nearest ===========================
       decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA && weatherShown);
 
       // Vatsim metar ===========================
-      if(!context.vatsimMetar.isEmpty())
-      {
-        html.p(tr("VATSIM Weather"), WEATHER_TITLE_FLAGS);
-        decodedMetar(html, airport, map::MapAirport(), Metar(context.vatsimMetar),
-                     false /* interpolated */, false /* FSX/P3D */, src == WEATHER_SOURCE_VATSIM && weatherShown);
-      }
+      decodedMetars(html, context.vatsimMetar, airport, tr("VATSIM"), src == WEATHER_SOURCE_VATSIM && weatherShown);
 
-      // IVAO or nearest
+      // IVAO or nearest ===========================
       decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
     } // if(flags & optsw::WEATHER_INFO_ALL)
     else

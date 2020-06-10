@@ -265,7 +265,6 @@ const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_WEATHER_DEBUG("Options/WeatherDebug");
 const QLatin1Literal OPTIONS_TRACK_DEBUG("Options/TrackDebug");
 const QLatin1Literal OPTIONS_WEATHER_LEVELS("Options/WeatherLevels");
-const QLatin1Literal OPTIONS_WEATHER_INDEX_SIZE("Options/WeatherIndexSize");
 const QLatin1Literal OPTIONS_WIND_DEBUG("Options/WindDebug");
 const QLatin1Literal OPTIONS_WEBSERVER_DEBUG("Options/WebserverDebug");
 const QLatin1Literal OPTIONS_VERSION("Options/Version");

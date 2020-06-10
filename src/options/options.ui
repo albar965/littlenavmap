@@ -4021,7 +4021,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
 &quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
              </property>
              <property name="text">
-              <string>https://metar.vatsim.net/metar.php?id=%1</string>
+              <string>http://metar.vatsim.net/metar.php?id=ALL</string>
              </property>
              <property name="cursorPosition">
               <number>40</number>

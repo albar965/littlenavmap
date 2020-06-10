@@ -90,7 +90,7 @@ public:
    * @return VATSIM metar from cache or empty if not entry was found in the cache. Once the request was
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
    */
-  QString getVatsimMetar(const QString& airportIcao);
+  atools::fs::weather::MetarResult getVatsimMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /*
    * @return IVAO metar from downloaded file or empty if airport has not report.
@@ -186,7 +186,7 @@ private:
   void updateTimeouts();
 
   atools::fs::weather::NoaaWeatherDownloader *noaaWeather = nullptr;
-  atools::fs::weather::WeatherNetSingle *vatsimWeather = nullptr;
+  atools::fs::weather::WeatherNetDownload *vatsimWeather = nullptr;
   atools::fs::weather::WeatherNetDownload *ivaoWeather = nullptr;
 
   QHash<QString, QString> activeSkyMetars;

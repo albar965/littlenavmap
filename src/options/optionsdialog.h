@@ -124,7 +124,6 @@ private:
   void testWeatherVatsimUrlClicked();
   void testWeatherIvaoUrlClicked();
   void testWeatherNoaaWindUrlClicked();
-  void testWeatherUrl(const QString& url);
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);
   void flightplanColorClicked();

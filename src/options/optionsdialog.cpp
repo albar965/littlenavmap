@@ -1210,7 +1210,18 @@ void OptionsDialog::testWeatherNoaaUrlClicked()
 void OptionsDialog::testWeatherVatsimUrlClicked()
 {
   qDebug() << Q_FUNC_INFO;
-  testWeatherUrl(ui->lineEditOptionsWeatherVatsimUrl->text());
+  QStringList resultStr;
+
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+  bool result = WeatherReporter::testUrl(ui->lineEditOptionsWeatherVatsimUrl->text(), QString(), resultStr);
+  QGuiApplication::restoreOverrideCursor();
+
+  if(result)
+    QMessageBox::information(this, QApplication::applicationName(),
+                             tr("<p>Success. First METARs in file:</p><hr/><code>%1</code><hr/><br/>").
+                             arg(resultStr.join("<br/>")));
+  else
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
 
 /* Test IVAO weather download URL and show a dialog of the first line */
@@ -1243,17 +1254,6 @@ void OptionsDialog::testWeatherNoaaWindUrlClicked()
     QMessageBox::information(this, QApplication::applicationName(), tr("Success."));
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
-}
-
-void OptionsDialog::testWeatherUrl(const QString& url)
-{
-  QStringList result;
-  if(WeatherReporter::testUrl(url, "KORD", result))
-    QMessageBox::information(this, QApplication::applicationName(),
-                             tr("<p>Success. Result:</p><hr/><code>%1</code><hr/><br/>").
-                             arg(result.join("<br/>")));
-  else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
 }
 
 /* Show directory dialog to add exclude path */

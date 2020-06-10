@@ -29,7 +29,6 @@
 #include "fs/util/fsutil.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
-#include "fs/weather/weathernetsingle.h"
 #include "fs/weather/metar.h"
 #include "util/filesystemwatcher.h"
 #include "connect/connectclient.h"
@@ -56,7 +55,6 @@ static const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|Destinat
 using atools::fs::FsPaths;
 using atools::fs::weather::NoaaWeatherDownloader;
 using atools::fs::weather::WeatherNetDownload;
-using atools::fs::weather::WeatherNetSingle;
 using atools::fs::weather::MetarResult;
 using atools::fs::weather::Metar;
 using atools::util::FileSystemWatcher;
@@ -71,21 +69,19 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
   verbose = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
-  // Use a large index size so, that all METARs fit in for whole file downloads
-  int indexSize = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_INDEX_SIZE, 100000).toInt();
-
-  xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, indexSize, verbose);
-
-  noaaWeather = new NoaaWeatherDownloader(parentWindow, indexSize, verbose);
-  noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
-
   auto coordFunc = std::bind(&WeatherReporter::fetchAirportCoordinates, this, _1);
+
+  xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, verbose);
+
+  noaaWeather = new NoaaWeatherDownloader(parentWindow, verbose);
+  noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   noaaWeather->setFetchAirportCoords(coordFunc);
 
-  vatsimWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
+  vatsimWeather = new WeatherNetDownload(parentWindow, atools::fs::weather::FLAT, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
+  vatsimWeather->setFetchAirportCoords(coordFunc);
 
-  ivaoWeather = new WeatherNetDownload(parentWindow, indexSize, verbose);
+  ivaoWeather = new WeatherNetDownload(parentWindow, atools::fs::weather::FLAT, verbose);
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
   // Set callback so the reader can build an index for nearest airports
   ivaoWeather->setFetchAirportCoords(coordFunc);
@@ -104,12 +100,12 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
   // Forward signals from clients for updates
   connect(noaaWeather, &NoaaWeatherDownloader::weatherUpdated, this, &WeatherReporter::weatherUpdated);
-  connect(vatsimWeather, &WeatherNetSingle::weatherUpdated, this, &WeatherReporter::weatherUpdated);
+  connect(vatsimWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::weatherUpdated);
   connect(ivaoWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::weatherUpdated);
 
   // Forward signals from clients for errors
   connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
-  connect(vatsimWeather, &WeatherNetSingle::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
+  connect(vatsimWeather, &WeatherNetDownload::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
   connect(ivaoWeather, &WeatherNetDownload::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
 }
 
@@ -580,10 +576,10 @@ atools::fs::weather::MetarResult WeatherReporter::getNoaaMetar(const QString& ai
   return noaaWeather->getMetar(airportIcao, pos);
 }
 
-QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
+atools::fs::weather::MetarResult WeatherReporter::getVatsimMetar(const QString& airportIcao,
+                                                                 const atools::geo::Pos& pos)
 {
-  // VATSIM does not use nearest station
-  return vatsimWeather->getMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation;
+  return vatsimWeather->getMetar(airportIcao, pos);
 }
 
 atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos)
@@ -619,7 +615,7 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
       return Metar(getNoaaMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
 
     case map::WEATHER_SOURCE_VATSIM:
-      return Metar(getVatsimMetar(airportIcao));
+      return Metar(getVatsimMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
 
     case map::WEATHER_SOURCE_IVAO:
       return Metar(getIvaoMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
@@ -641,9 +637,6 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     updateTimeouts();
     initActiveSkyNext();
     initXplane();
-
-    noaaWeather->updateIndex();
-    ivaoWeather->updateIndex();
   }
 }
 
@@ -677,6 +670,13 @@ void WeatherReporter::updateTimeouts()
   if(flags & optsw::WEATHER_INFO_IVAO ||
      flags & optsw::WEATHER_TOOLTIP_IVAO ||
      airportWeatherSource == map::WEATHER_SOURCE_IVAO)
+    ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
+  else
+    ivaoWeather->setUpdatePeriod(-1);
+
+  if(flags & optsw::WEATHER_INFO_VATSIM ||
+     flags & optsw::WEATHER_TOOLTIP_VATSIM ||
+     airportWeatherSource == map::WEATHER_SOURCE_VATSIM)
     ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     ivaoWeather->setUpdatePeriod(-1);

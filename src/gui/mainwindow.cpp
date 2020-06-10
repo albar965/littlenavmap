@@ -1897,15 +1897,15 @@ void MainWindow::routeResetAll()
 
   choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
   choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircaft trail"),
-                   tr("Delete simulator aircraft trail from map and elevation profile"), true);
+                           tr("Delete simulator aircraft trail from map and elevation profile"), true);
   choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
-                   tr("Remove the active (magenta) flight plan leg"), true);
+                           tr("Remove the active (magenta) flight plan leg"), true);
   choiceDialog.addCheckBox(RESTART_PERF, tr("Restart Aircraft &Performance Collection"),
-                   tr("Restarts the background aircraft performance collection"), true);
+                           tr("Restarts the background aircraft performance collection"), true);
   choiceDialog.addCheckBox(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
-                   tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
+                           tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
   choiceDialog.addCheckBox(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns and Holdings"),
-                   tr("Remove all range rings, measurements, traffic patterns and holdings from map"), false);
+                           tr("Remove all range rings, measurements, traffic patterns and holdings from map"), false);
 
   choiceDialog.restoreState();
 
@@ -3768,11 +3768,11 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 
   if(flags & optsw::WEATHER_INFO_VATSIM)
   {
-    QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->vatsimMetar))
+    atools::fs::weather::MetarResult vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
+    if(newAirport || (!vatsimMetar.isEmpty() && vatsimMetar != currentWeatherContext->vatsimMetar))
     {
       // Airport has changed or METAR has changed
-      currentWeatherContext->vatsimMetar = metarStr;
+      currentWeatherContext->vatsimMetar = vatsimMetar;
       changed = true;
     }
   }
@@ -3824,7 +3824,7 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
     weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
   if(flags & optsw::WEATHER_INFO_VATSIM)
-    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
 
   if(flags & optsw::WEATHER_INFO_IVAO)
     weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
@@ -3857,7 +3857,7 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
     weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
   if(flags & optsw::WEATHER_TOOLTIP_VATSIM)
-    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
 
   if(flags & optsw::WEATHER_TOOLTIP_IVAO)
     weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
