@@ -1961,8 +1961,8 @@ void RouteController::visibleColumnsTriggered()
   QHeaderView *header = view->horizontalHeader();
   for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
     dialog.addCheckBox(col, Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " "),
-               routeColumnTooltips.at(col),
-               !header->isSectionHidden(col));
+                       routeColumnTooltips.at(col),
+                       !header->isSectionHidden(col));
 
   if(dialog.exec() == QDialog::Accepted)
   {
@@ -2508,7 +2508,9 @@ void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlig
 void RouteController::undoMerge()
 {
   undoIndex--;
-  qDebug() << "undoMerge undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
+#ifdef DEBUG_INFORMATION
+ qDebug() << "undoMerge undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
+#endif
 }
 
 /* Update window after undo or redo action */
@@ -4430,7 +4432,9 @@ void RouteController::postChange(RouteCommand *undoCommand)
 
   // Index and clean index workaround
   undoIndex++;
+#ifdef DEBUG_INFORMATION
   qDebug() << "postChange undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
+#endif
   undoStack->push(undoCommand);
 }
 
