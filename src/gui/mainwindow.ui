@@ -4907,7 +4907,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
           <number>2</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <item>
           <widget class="QTabWidget" name="tabWidgetAirport">
@@ -5516,7 +5516,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>56</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -6117,6 +6117,21 @@ relation to shown airport</string>
    </attribute>
    <widget class="QWidget" name="dockWidgetRouteCalcContents">
     <layout class="QGridLayout" name="gridLayout">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <item row="12" column="1" colspan="3">
       <widget class="QGroupBox" name="groupBoxRouteCalcAirwayPrefer">
        <property name="title">
@@ -6253,6 +6268,9 @@ unusable airways (e.g. due to altitude restrictions).</string>
      </item>
      <item row="1" column="0" colspan="4">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <property name="topMargin">
         <number>0</number>
        </property>
@@ -6345,6 +6363,9 @@ unusable airways (e.g. due to altitude restrictions).</string>
      </item>
      <item row="18" column="0" colspan="4">
       <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1,1,2">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <item>
         <widget class="QPushButton" name="pushButtonRouteCalcDirect">
          <property name="sizePolicy">
@@ -11546,7 +11567,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>
