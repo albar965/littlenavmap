@@ -95,9 +95,15 @@ MapLayer& MapLayer::approach(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::approachTextAndDetail(bool value)
+MapLayer& MapLayer::approachDetail(bool value)
 {
-  layerApproachTextAndDetail = value;
+  layerApproachDetail = value;
+  return *this;
+}
+
+MapLayer& MapLayer::approachText(bool value)
+{
+  layerApproachText = value;
   return *this;
 }
 

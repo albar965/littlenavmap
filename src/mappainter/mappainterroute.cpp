@@ -179,21 +179,25 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   // Draw procedures ==========================================================================
   // Remember last point across procedures to avoid overlaying text
-  proc::MapProcedureLeg lastLegPoint;
-  if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
+
+  if(context->mapLayer->isApproach())
   {
-    const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
-    if(route->hasAnyApproachProcedure())
-      paintProcedure(lastLegPoint, context, route->getApproachLegs(), route->getApproachLegsOffset(),
-                     flightplanProcedureColor, false /* preview */);
+    proc::MapProcedureLeg lastLegPoint;
+    if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
+    {
+      const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
+      if(route->hasAnyApproachProcedure())
+        paintProcedure(lastLegPoint, context, route->getApproachLegs(), route->getApproachLegsOffset(),
+                       flightplanProcedureColor, false /* preview */);
 
-    if(route->hasAnyStarProcedure())
-      paintProcedure(lastLegPoint, context, route->getStarLegs(), route->getStarLegsOffset(),
-                     flightplanProcedureColor, false /* preview */);
+      if(route->hasAnyStarProcedure())
+        paintProcedure(lastLegPoint, context, route->getStarLegs(), route->getStarLegsOffset(),
+                       flightplanProcedureColor, false /* preview */);
 
-    if(route->hasAnySidProcedure())
-      paintProcedure(lastLegPoint, context, route->getSidLegs(), route->getSidLegsOffset(),
-                     flightplanProcedureColor, false /* preview */);
+      if(route->hasAnySidProcedure())
+        paintProcedure(lastLegPoint, context, route->getSidLegs(), route->getSidLegsOffset(),
+                       flightplanProcedureColor, false /* preview */);
+    }
   }
 
 #ifdef DEBUG_ROUTE_PAINT
@@ -527,7 +531,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   }
 
   // Draw text along lines only on low zoom factors ========
-  if(context->mapLayer->isApproachTextAndDetail())
+  if(context->mapLayer->isApproachText())
   {
     if(!context->drawFast)
     {
@@ -603,7 +607,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   {
     // No text labels for passed points
     bool drawText = i + 1 >= passedProcLeg || !activeValid || preview;
-    if(!context->mapLayer->isApproachTextAndDetail())
+    if(!context->mapLayer->isApproachText())
       drawText = false;
     paintProcedurePoint(lastLegPoint, context, legs, i, preview, drawText);
   }
@@ -652,7 +656,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
   QPainter *painter = context->painter;
   // ===========================================================
   // Draw lines simplified if no point is hidden to avoid weird things at high zoom factors in spherical projection
-  if(!context->mapLayer->isApproachTextAndDetail())
+  if(!context->mapLayer->isApproachDetail())
   {
     bool visible1, visible2, hidden1, hidden2;
     wToS(leg.line.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
@@ -1022,10 +1026,12 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
 }
 
 void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context,
-                                          const proc::MapProcedureLegs& legs, int index, bool preview, bool drawText)
+                                          const proc::MapProcedureLegs& legs, int index, bool preview,
+                                          bool drawTextFlag)
 {
   const proc::MapProcedureLeg& leg = legs.at(index);
-  bool drawTextDetail = context->mapLayer->isApproachTextAndDetail() && drawText;
+  bool drawDetail = context->mapLayer->isApproachDetail();
+  bool drawText = context->mapLayer->isApproachText() && drawTextFlag;
 
   // Debugging code for drawing ================================================
 #ifdef DEBUG_APPROACH_PAINT
@@ -1128,10 +1134,10 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       altRestriction.alt2 = 0.f;
 
       texts.append(proc::altRestrictionTextNarrow(altRestriction));
-      if(drawTextDetail)
+      if(drawDetail)
         paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
       paintProcedurePoint(context, x, y, false);
-      if(drawTextDetail)
+      if(drawText)
         paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
       texts.clear();
     }
@@ -1165,10 +1171,10 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       texts.append(leg.displayText);
       texts.append(proc::altRestrictionTextNarrow(altRestr));
       texts.append(proc::speedRestrictionTextNarrow(speedRestr));
-      if(drawTextDetail)
+      if(drawDetail)
         paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
       paintProcedurePoint(context, x, y, false);
-      if(drawTextDetail)
+      if(drawText)
         paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
       texts.clear();
     }
@@ -1184,7 +1190,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     {
       if(wToS(leg.line.getPos1(), x, y))
       {
-        if(drawTextDetail)
+        if(drawDetail)
           paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
         paintProcedurePoint(context, x, y, false);
       }
@@ -1195,10 +1201,10 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       {
         // Draw intercept comment - no altitude restriction there
         texts.append(leg.displayText);
-        if(drawTextDetail)
+        if(drawDetail)
           paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
         paintProcedurePoint(context, x, y, false);
-        if(drawTextDetail)
+        if(drawText)
           paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
       }
 
@@ -1276,56 +1282,56 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   if(!navaids.waypoints.isEmpty() && wToS(navaids.waypoints.first().position, x, y))
   {
-    if(drawTextDetail)
+    if(drawDetail)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintWaypoint(context, QColor(), x, y, false);
-    if(drawTextDetail)
+    if(drawText)
       paintWaypointText(context, x, y, navaids.waypoints.first(), true /* draw as route */, &texts);
   }
   else if(!navaids.vors.isEmpty() && wToS(navaids.vors.first().position, x, y))
   {
     symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
-    if(drawTextDetail)
+    if(drawDetail)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintVor(context, x, y, navaids.vors.first(), false);
-    if(drawTextDetail)
+    if(drawText)
       paintVorText(context, x, y, navaids.vors.first(), true /* draw as route */, &texts);
   }
   else if(!navaids.ndbs.isEmpty() && wToS(navaids.ndbs.first().position, x, y))
   {
     symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
-    if(drawTextDetail)
+    if(drawDetail)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintNdb(context, x, y, false);
-    if(drawTextDetail)
+    if(drawText)
       paintNdbText(context, x, y, navaids.ndbs.first(), true /* draw as route */, &texts);
   }
   else if(!navaids.ils.isEmpty() && wToS(navaids.ils.first().position, x, y))
   {
     texts.append(leg.fixIdent);
-    if(drawTextDetail)
+    if(drawDetail)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintProcedurePoint(context, x, y, false);
-    if(drawTextDetail)
+    if(drawText)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
   }
   else if(!navaids.runwayEnds.isEmpty() && wToS(navaids.runwayEnds.first().position, x, y))
   {
     texts.append(leg.fixIdent);
-    if(drawTextDetail)
+    if(drawDetail)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintProcedurePoint(context, x, y, false);
-    if(drawTextDetail)
+    if(drawText)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
   }
   else if(!leg.fixIdent.isEmpty() && wToS(leg.fixPos, x, y))
   {
     // Custom IF case
     texts.append(leg.fixIdent);
-    if(drawTextDetail)
+    if(drawDetail)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintProcedurePoint(context, x, y, false);
-    if(drawTextDetail)
+    if(drawText)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
   }
 

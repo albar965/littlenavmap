@@ -96,7 +96,7 @@ private:
 
   void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context,
                            const proc::MapProcedureLegs& legs, int index, bool preview,
-                           bool drawText);
+                           bool drawTextFlag);
 
   void drawSymbols(const PaintContext *context, const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints,
                    bool preview);

@@ -1130,7 +1130,7 @@ void MapPainterMark::paintHolds(const PaintContext *context)
   const QList<Hold>& holds = mapPaintWidget->getHolds();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
   context->szFont(context->textSizeRangeDistance);
-  bool detail = context->mapLayer->isApproachTextAndDetail();
+  bool detail = context->mapLayer->isApproachText();
 
   for(const Hold& hold : holds)
   {
@@ -1275,7 +1275,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
         float angle = static_cast<float>(angleFromQt(downwind.angle()));
         float oppAngle = static_cast<float>(opposedCourseDeg(angleFromQt(downwind.angle())));
 
-        if(pattern.showEntryExit && context->mapLayer->isApproachTextAndDetail())
+        if(pattern.showEntryExit && context->mapLayer->isApproachText())
         {
           // Draw a line below to fill the gap because of round edges
           painter->setBrush(Qt::white);
@@ -1314,7 +1314,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
         painter->setBrush(Qt::NoBrush);
         painter->drawPath(polygon.getPainterPath());
 
-        if(drawDetails && context->mapLayer->isApproachTextAndDetail())
+        if(drawDetails && context->mapLayer->isApproachText())
         {
           // Text for downwind leg =======================================
           QLineF final (baseFinalPoint, originPoint);

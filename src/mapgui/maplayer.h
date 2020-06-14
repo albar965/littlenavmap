@@ -74,7 +74,8 @@ public:
   MapLayer& airport(bool value = true);
 
   MapLayer& approach(bool value = true);
-  MapLayer& approachTextAndDetail(bool value = true);
+  MapLayer& approachDetail(bool value = true);
+  MapLayer& approachText(bool value = true);
 
   MapLayer& routeTextAndDetail(bool value = true);
 
@@ -213,9 +214,14 @@ public:
     return layerApproach;
   }
 
-  bool isApproachTextAndDetail() const
+  bool isApproachDetail() const
   {
-    return layerApproachTextAndDetail;
+    return layerApproachDetail;
+  }
+
+  bool isApproachText() const
+  {
+    return layerApproachText;
   }
 
   bool isAirportOverviewRunway() const
@@ -591,12 +597,11 @@ private:
   float maxRange = -1.;
 
   layer::AirportSource src;
-  bool layerAirport = false, layerAirportOverviewRunway = false,
-       layerAirportDiagram = false, layerAirportDiagramRunway = false,
-       layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false, layerAirportDiagramDetail3 = false,
-       layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
-       layerAirportName = false, layerAirportInfo = false, layerApproach = false, layerApproachTextAndDetail = false,
-       layerRouteTextAndDetail = false, layerUserpoint = false;
+  bool layerAirport = false, layerAirportOverviewRunway = false, layerAirportDiagram = false,
+       layerAirportDiagramRunway = false, layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false,
+       layerAirportDiagramDetail3 = false, layerAirportSoft = false, layerAirportNoRating = false,
+       layerAirportIdent = false, layerAirportName = false, layerAirportInfo = false, layerApproach = false,
+       layerApproachDetail = false, layerApproachText = false, layerRouteTextAndDetail = false, layerUserpoint = false;
 
   bool layerAirportWeather = false, layerAirportWeatherDetails = false;
 
@@ -605,14 +610,12 @@ private:
   bool layerWindBarbs = false;
   int layerWindBarbsSymbolSize = 5;
 
-  bool layerWaypoint = false, layerWaypointName = false,
-       layerVor = false, layerVorIdent = false, layerVorInfo = false, layerVorLarge = false,
-       layerNdb = false, layerNdbIdent = false, layerNdbInfo = false,
-       layerMarker = false, layerMarkerInfo = false, layerUserpointInfo = false,
-       layerIls = false, layerIlsIdent = false, layerIlsInfo = false,
-       layerAirway = false, layerAirwayWaypoint = false, layerAirwayIdent = false, layerAirwayInfo = false,
-       layerTrack = false, layerTrackWaypoint = false, layerTrackIdent = false, layerTrackInfo = false,
-       layerMinimumAltitude = false;
+  bool layerWaypoint = false, layerWaypointName = false, layerVor = false, layerVorIdent = false, layerVorInfo = false,
+       layerVorLarge = false, layerNdb = false, layerNdbIdent = false, layerNdbInfo = false, layerMarker = false,
+       layerMarkerInfo = false, layerUserpointInfo = false, layerIls = false, layerIlsIdent = false,
+       layerIlsInfo = false, layerAirway = false, layerAirwayWaypoint = false, layerAirwayIdent = false,
+       layerAirwayInfo = false, layerTrack = false, layerTrackWaypoint = false, layerTrackIdent = false,
+       layerTrackInfo = false, layerMinimumAltitude = false;
 
   bool layerAirportRouteInfo = false;
   bool layerVorRouteIdent = false, layerVorRouteInfo = false;
@@ -629,10 +632,8 @@ private:
     false, layerAirspaceSpecial = false, layerAirspaceOther = false;
 
   bool layerAiAircraftGround = false, layerAiAircraftLarge = false, layerAiAircraftSmall = false,
-       layerOnlineAircraft = false,
-       layerAiShipLarge = false, layerAiShipSmall = false,
+       layerOnlineAircraft = false, layerAiShipLarge = false, layerAiShipSmall = false,
        layerAiAircraftGroundText = false, layerAiAircraftText = false, layerOnlineAircraftText = false;
-
 };
 
 #endif // LITTLENAVMAP_MAPLAYER_H
