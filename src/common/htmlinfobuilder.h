@@ -373,8 +373,7 @@ private:
                       const QString& name = QString()) const;
 
   /* Adds text for preferred runways */
-  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, float windSpeed,
-                       float windDirectionDeg, int max, bool details) const;
+  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& parsed, int max, bool details) const;
   void descriptionText(const QString& descriptionText, atools::util::HtmlBuilder& html) const;
 
   /* Add morse code row2line */
