@@ -50,7 +50,7 @@ public:
   QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption) const;
 
 private:
-  QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options) const;
+  QStringList createStringForRouteInternal(const Route& routeParam, float speed, rs::RouteStringOptions options) const;
 
   /* Garming GFP format */
   QString createGfpStringForRouteInternal(const Route& route, bool userWaypointOption) const;

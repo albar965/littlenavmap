@@ -42,15 +42,13 @@ void AirwayTrackQuery::getAirwaysForWaypoint(QList<map::MapAirway>& airways, int
   maptools::removeDuplicatesById(airways);
 }
 
-void AirwayTrackQuery::getAirwayForWaypoints(map::MapAirway& airway, int waypointId1, int waypointId2,
-                                             const QString& airwayName)
+void AirwayTrackQuery::getAirwaysForWaypoints(QList<map::MapAirway>& airways, int waypointId1, int waypointId2,
+                                              const QString& airwayName)
 {
-  airway = map::MapAirway();
   if(useTracks)
-    trackQuery->getAirwayForWaypoints(airway, waypointId1, waypointId2, airwayName);
+    trackQuery->getAirwaysForWaypoints(airways, waypointId1, waypointId2, airwayName);
 
-  if(!airway.isValid())
-    airwayQuery->getAirwayForWaypoints(airway, waypointId1, waypointId2, airwayName);
+  airwayQuery->getAirwaysForWaypoints(airways, waypointId1, waypointId2, airwayName);
 }
 
 void AirwayTrackQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
@@ -113,19 +111,24 @@ void AirwayTrackQuery::getAirwaysByName(QList<map::MapAirway>& airways, const QS
   maptools::removeDuplicatesById(airways);
 }
 
-void AirwayTrackQuery::getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName,
-                                                  const QString& waypoint1,
-                                                  const QString& waypoint2)
+void AirwayTrackQuery::getAirwaysByNameAndWaypoint(QList<map::MapAirway>& airways, const QString& airwayName,
+                                                   const QString& waypoint1, const QString& waypoint2)
 {
-  if(airwayName.isEmpty() || waypoint1.isEmpty() || waypoint2.isEmpty())
+  if(airwayName.isEmpty() || waypoint1.isEmpty())
     return;
 
-  airway = map::MapAirway();
-  if(useTracks && !airway.isValid())
-    trackQuery->getAirwayByNameAndWaypoint(airway, airwayName, waypoint1, waypoint2);
+  if(useTracks)
+    trackQuery->getAirwaysByNameAndWaypoint(airways, airwayName, waypoint1, waypoint2);
 
-  if(!airway.isValid())
-    airwayQuery->getAirwayByNameAndWaypoint(airway, airwayName, waypoint1, waypoint2);
+  airwayQuery->getAirwaysByNameAndWaypoint(airways, airwayName, waypoint1, waypoint2);
+}
+
+bool AirwayTrackQuery::hasAirwayForNameAndWaypoint(const QString& airwayName, const QString& waypoint1,
+                                                   const QString& waypoint2)
+{
+  QList<map::MapAirway> airways;
+  getAirwaysByNameAndWaypoint(airways, airwayName, waypoint1, waypoint2);
+  return !airways.isEmpty();
 }
 
 void AirwayTrackQuery::getAirways(QList<map::MapAirway>& airways, const GeoDataLatLonBox& rect,

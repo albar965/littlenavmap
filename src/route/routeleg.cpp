@@ -76,10 +76,36 @@ void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirpo
   valid = validWaypoint = true;
 }
 
-void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg)
+void RouteLeg::createCopyFromProcedureLeg(int entryIndex, const RouteLeg& leg, const RouteLeg *prevLeg)
+{
+  createFromProcedureLeg(entryIndex, leg.getProcedureLeg(), prevLeg);
+
+  if(waypoint.isValid())
+    type = map::WAYPOINT;
+  else if(vor.isValid())
+    type = map::VOR;
+  else if(ndb.isValid())
+    type = map::NDB;
+  else if(ils.isValid())
+    type = map::ILS;
+  else if(runwayEnd.isValid())
+    type = map::RUNWAYEND;
+  else
+    type = map::USERPOINTROUTE;
+
+  airway = leg.airway;
+
+  procedureLeg = proc::MapProcedureLeg();
+
+  updateMagvar();
+  updateDistanceAndCourse(entryIndex, prevLeg);
+
+}
+
+void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLeg& leg, const RouteLeg *prevLeg)
 {
   index = entryIndex;
-  procedureLeg = legs.at(entryIndex);
+  procedureLeg = leg;
 
   type = map::PROCEDURE;
 
@@ -97,6 +123,11 @@ void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLe
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
   valid = validWaypoint = true;
+}
+
+void RouteLeg::createFromProcedureLegs(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg)
+{
+  createFromProcedureLeg(entryIndex, legs.at(entryIndex), prevLeg);
 }
 
 void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const Pos& last, float maxDistance)
@@ -662,10 +693,10 @@ QString RouteLeg::getName() const
 
 const QString& RouteLeg::getAirwayName() const
 {
-  if(isRoute())
-    return getFlightplanEntry().getAirway();
-  else
-    return EMPTY_STRING;
+  // if(isRoute())
+  return getFlightplanEntry().getAirway();
+  // else
+  // return EMPTY_STRING;
 }
 
 QString RouteLeg::getFrequencyOrChannel() const
@@ -703,13 +734,26 @@ const atools::fs::pln::FlightplanEntry& RouteLeg::getFlightplanEntry() const
 {
   if(index >= 0)
   {
-    if(isRoute())
-      return flightplan->at(index);
+    // if(isRoute())
+    return flightplan->at(index);
   }
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << index;
 
   return EMPTY_FLIGHTPLAN_ENTRY;
+}
+
+atools::fs::pln::FlightplanEntry *RouteLeg::getFlightplanEntry()
+{
+  if(index >= 0)
+  {
+    // if(isRoute())
+    return &flightplan->getEntries()[index];
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "invalid index" << index;
+
+  return nullptr;
 }
 
 const LineString& RouteLeg::getGeometry() const

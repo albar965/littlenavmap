@@ -31,11 +31,6 @@ FlightplanEntryBuilder::FlightplanEntryBuilder()
   mapQuery = NavApp::getMapQuery();
 }
 
-FlightplanEntryBuilder::~FlightplanEntryBuilder()
-{
-
-}
-
 /* Copy airport attributes to flight plan entry */
 void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry,
                                                   bool alternate) const

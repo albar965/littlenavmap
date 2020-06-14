@@ -57,7 +57,8 @@ enum RouteStringOption
   /* Writing options when converting flight plan to string ====================== */
   NO_TRACKS = 1 << 19, /* Do not use NAT, PACOTS or AUSOTS. */
 
-  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES
+  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES,
+  TRACK_DEFAULTS = rs::READ_NO_AIRPORTS | rs::READ_MATCH_WAYPOINTS | rs::NO_TRACKS
 };
 
 Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);

@@ -41,7 +41,7 @@ class RouteAltitudeLeg;
  * Leg methods return invalid legs if unusable index.
  *
  * Example layout of the list:
- *  0	DEPARTURE (AIRPORT)
+ *  0	DEPARTURE (AIRPORT), distanceTo 0
  *  1	SID Leg 1 (RW)
  *  2	SID Leg 2
  *  3	WPT 1
@@ -50,10 +50,10 @@ class RouteAltitudeLeg;
  *  5	STAR Leg 1
  *  6	STAR Leg 2
  *  7	APPR Leg 1
- *  8	APPR Leg 2 (RW)
- *  9	MISSED Leg 1 (excluded from total distance)
- * 10	MISSED Leg 2              "
- * 11	DESTINATION (AIRPORT)
+ *  8	APPR Leg 2 (RW), distanceTo = totalDistance
+ *  9	MISSED Leg 1, (excluded from total distance), distanceTo = distance to end of missed
+ * 10	MISSED Leg 2,              "
+ * 11	DESTINATION (AIRPORT), distanceTo = distance from "APPR Leg 2 (RW)"
  * 12	ALTERNATE 1 (distance calculated from dest airport)
  * 13	ALTERNATE 2               "
  */
@@ -101,9 +101,13 @@ public:
   int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
                                bool ignoreNotEditable) const;
 
-  /* First route leg after departure procedure */
+  /* First route leg after departure procedure or 0 for departure airport */
   int getStartIndexAfterProcedure() const;
   const RouteLeg& getStartAfterProcedure() const;
+
+  /* Last leg of departure procedure or 0 for departure airport */
+  int getLastIndexOfDepartureProcedure() const;
+  const RouteLeg& getLastLegOfDepartureProcedure() const;
 
   /* Last route leg before STAR, transition or approach */
   int getDestinationIndexBeforeProcedure() const;
@@ -284,12 +288,17 @@ public:
 
   bool hasAnyProcedure() const
   {
-    return hasAnyArrivalProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
+    return hasAnyApproachProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
+  }
+
+  bool hasAnyApproachProcedure() const
+  {
+    return !approachLegs.isEmpty();
   }
 
   bool hasAnyArrivalProcedure() const
   {
-    return !approachLegs.isEmpty();
+    return hasAnyApproachProcedure() || hasAnyStarProcedure();
   }
 
   bool hasTransitionProcedure() const
@@ -354,10 +363,6 @@ public:
   void removeProcedureLegs();
   void removeProcedureLegs(proc::MapProcedureTypes type);
 
-  /* Removes duplicate waypoints when transitioning from route to procedure and vice versa.
-   * Used after route calculation. */
-  void removeDuplicateRouteLegs();
-
   /* Needed to activate missed approach sequencing or not depending on visibility state */
   void setShownMapFeatures(map::MapObjectTypes types)
   {
@@ -415,6 +420,9 @@ public:
   {
     return approachLegsOffset;
   }
+
+  /* Index of first transition and/or approach/STAR leg in the route */
+  int getArrivaLegsOffset() const;
 
   /* Index of first SID leg in the route */
   int getSidLegsOffset() const
@@ -475,6 +483,13 @@ public:
     QList::removeAt(i);
   }
 
+  /* Removes the shadowed flight plan entry too */
+  void removeAllAt(int i) // OK
+  {
+    QList::removeAt(i);
+    flightplan.getEntries().removeAt(i);
+  }
+
   /* Removes only route legs and does not touch the flight plan copy */
   void clear() // OK
   {
@@ -488,6 +503,7 @@ public:
    * All procedure legs are converted to normal flight plan (user) legs if requested.
    * Used for flight plan export. */
   Route adjustedToOptions(rf::RouteAdjustOptions options) const;
+  static Route adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions options);
 
   /* Loads navaids from database and create all route map objects from flight plan.
    * Flight plan will be corrected if needed. */
@@ -556,6 +572,13 @@ public:
   void assignAltitudes();
 
 private:
+  /* Removes duplicate waypoints when transitioning from route to procedure and vice versa.
+   * Used after route calculation. */
+  void removeDuplicateRouteLegs();
+
+  /* Corrects the airways at the procedure entry and exit points as well as first leg */
+  void validateAirways();
+
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
    * no procedure legs. CPU intense do not use often. */
   void cleanupFlightPlanForProcedures();
@@ -585,6 +608,10 @@ private:
 
   /* Calculated distance for aircraft projection in profile */
   float projectedDistance(const atools::geo::LineDistance& result, float legFromStart, int legIndex) const;
+
+  /* get offsets for procedure entry/exit points and return true if a valid one was found */
+  bool arrivalRouteToProcLegs(int& arrivaLegsOffset) const;
+  bool departureProcToRouteLegs(int& startIndexAfterProcedure) const;
 
   atools::geo::Rect boundingRect;
 

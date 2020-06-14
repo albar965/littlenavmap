@@ -530,7 +530,7 @@ float RouteAltitude::findDepartureMaxAltitude(int index) const
 
 int RouteAltitude::findApproachFirstRestricion() const
 {
-  if(route->hasAnyArrivalProcedure() || route->hasAnyStarProcedure())
+  if(route->hasAnyApproachProcedure() || route->hasAnyStarProcedure())
   {
     // Search for first restriction in an arrival or STAR
     int start = route->getStarLegsOffset();

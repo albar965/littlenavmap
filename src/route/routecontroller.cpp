@@ -1038,7 +1038,6 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
   route.setStarProcedureLegs(star);
   route.setArrivalProcedureLegs(arrival);
   route.updateProcedureLegs(entryBuilder, clearOldProcedureProperties, false /* cleanup route */);
-
 }
 
 void RouteController::reportProcedureErrors(const QStringList& procedureLoadingErrors)
@@ -1200,6 +1199,8 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         // Copy SID properties from source
         atools::fs::pln::copySidProcedureProperties(route.getFlightplan().getProperties(),
                                                     flightplan.getProperties());
+
+        eraseAirway(1);
       }
       else if(insertBefore >= route.getSizeWithoutAlternates() - 1)
       {
@@ -1261,7 +1262,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     if(afterDestAppend)
       selectRange(insertPosSelection, route.size() - 1);
     else if(beforeDepartPrepend)
-      selectRange(0, flightplan.getEntries().size() + route.getStartIndexAfterProcedure() - 1); // fix
+      selectRange(0, flightplan.getEntries().size() + route.getLastIndexOfDepartureProcedure() - 1);
     else if(beforeDestInsert)
       selectRange(insertPosSelection, route.size() - 2 - route.getNumAlternateLegs());
     else if(middleInsert)
@@ -1307,7 +1308,7 @@ bool RouteController::saveFlightplanLnmInternal()
     route.assignAltitudes();
 
     // Create a copy which allows to change altitude
-    Flightplan flightplan = route.getFlightplan();
+    Flightplan flightplan = route.adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
 
     // Remember type, departure and destination for filename checking (save/saveAs)
     fileIfrVfr = flightplan.getFlightplanType();
@@ -1513,7 +1514,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
   if(calcRange)
   {
-    fromIndex = std::max(route.getStartIndexAfterProcedure(), fromIndex);
+    fromIndex = std::max(route.getLastIndexOfDepartureProcedure(), fromIndex);
     toIndex = std::min(route.getDestinationIndexBeforeProcedure(), toIndex);
 
     departurePos = route.value(fromIndex).getPosition();
@@ -1521,7 +1522,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   }
   else
   {
-    departurePos = route.getStartAfterProcedure().getPosition();
+    departurePos = route.getLastLegOfDepartureProcedure().getPosition();
     destinationPos = route.getDestinationBeforeProcedure().getPosition();
   }
 
@@ -1630,7 +1631,6 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       QGuiApplication::restoreOverrideCursor();
 
       // Remove duplicates in flight plan and route
-      route.removeDuplicateRouteLegs();
       route.updateAll();
 
       flightplan.setCruisingAltitude(atools::roundToInt(Unit::rev(altitudeFt, Unit::altFeetF)));
@@ -1745,6 +1745,7 @@ void RouteController::reverseRoute()
   // Erase all airways to avoid wrong direction travel against one way
   for(int i = 0; i < entries.size(); i++)
     entries[i].setAirway(QString());
+  flightplan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
 
   route.createRouteLegsFromFlightplan();
   route.updateAll();
@@ -2509,7 +2510,7 @@ void RouteController::undoMerge()
 {
   undoIndex--;
 #ifdef DEBUG_INFORMATION
- qDebug() << "undoMerge undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
+  qDebug() << "undoMerge undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
 #endif
 }
 
@@ -2529,9 +2530,9 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   remarksFlightPlanToWidget();
 
   updateTableModel();
-  NavApp::updateWindowTitle();
   updateMoveAndDeleteActions();
   updateErrorLabel();
+  NavApp::updateWindowTitle();
   emit routeChanged(true);
 }
 
@@ -3248,9 +3249,9 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
     // Assign runway for SID/STAR than can have multiple runways
     NavApp::getProcedureQuery()->insertSidStarRunway(legs, sidStarRunway);
 
-    // Will take care of the flight plan entries too
     route.setSidProcedureLegs(legs);
 
+    // Will take care of the flight plan entries too
     route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
   }
   route.updateAll();
@@ -3694,7 +3695,9 @@ void RouteController::updateTableModel()
     else
     {
       // Procedure ========================
-      itemRow[rcol::AIRWAY_OR_LEGTYPE] = new QStandardItem(proc::procedureLegTypeStr(leg.getProcedureLegType()));
+      itemRow[rcol::AIRWAY_OR_LEGTYPE] =
+        new QStandardItem(atools::strJoin({leg.getFlightplanEntry().getAirway(),
+                                           proc::procedureLegTypeStr(leg.getProcedureLegType())}, tr(",")));
 
       QString restrictions;
       if(leg.getProcedureLegAltRestr().isValid())

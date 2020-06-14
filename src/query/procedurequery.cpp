@@ -1843,38 +1843,24 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
   {
     properties.remove(pln::SIDAPPR);
     properties.remove(pln::SIDAPPRRW);
-    properties.remove(pln::SIDAPPRDISTANCE);
-    properties.remove(pln::SIDAPPRSIZE);
   }
 
   if(type & proc::PROCEDURE_SID_TRANSITION)
-  {
     properties.remove(pln::SIDTRANS);
-    properties.remove(pln::SIDTRANSDISTANCE);
-    properties.remove(pln::SIDTRANSSIZE);
-  }
 
   if(type & proc::PROCEDURE_STAR)
   {
     properties.remove(pln::STAR);
     properties.remove(pln::STARRW);
-    properties.remove(pln::STARDISTANCE);
-    properties.remove(pln::STARSIZE);
   }
 
   if(type & proc::PROCEDURE_STAR_TRANSITION)
-  {
     properties.remove(pln::STARTRANS);
-    properties.remove(pln::STARTRANSDISTANCE);
-    properties.remove(pln::STARTRANSSIZE);
-  }
 
   if(type & proc::PROCEDURE_TRANSITION)
   {
     properties.remove(pln::TRANSITION);
     properties.remove(pln::TRANSITIONTYPE);
-    properties.remove(pln::TRANSITIONDISTANCE);
-    properties.remove(pln::TRANSITIONSIZE);
   }
 
   if(type & proc::PROCEDURE_APPROACH)
@@ -1884,8 +1870,6 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
     properties.remove(pln::APPROACHTYPE);
     properties.remove(pln::APPROACHRW);
     properties.remove(pln::APPROACHSUFFIX);
-    properties.remove(pln::APPROACHDISTANCE);
-    properties.remove(pln::APPROACHSIZE);
 
     properties.remove(pln::APPROACH_CUSTOM_DISTANCE);
     properties.remove(pln::APPROACH_CUSTOM_ALTITUDE);
@@ -1900,34 +1884,24 @@ void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& 
   if(!sidLegs.isEmpty())
   {
     if(!sidLegs.transitionFixIdent.isEmpty())
-    {
       properties.insert(pln::SIDTRANS, sidLegs.transitionFixIdent);
-      properties.insert(pln::SIDTRANSDISTANCE, QString::number(sidLegs.transitionDistance, 'f', 1));
-      properties.insert(pln::SIDTRANSSIZE, QString::number(sidLegs.transitionLegs.size()));
-    }
+
     if(!sidLegs.approachFixIdent.isEmpty())
     {
       properties.insert(pln::SIDAPPR, sidLegs.approachFixIdent);
       properties.insert(pln::SIDAPPRRW, sidLegs.procedureRunway);
-      properties.insert(pln::SIDAPPRDISTANCE, QString::number(sidLegs.approachDistance, 'f', 1));
-      properties.insert(pln::SIDAPPRSIZE, QString::number(sidLegs.approachLegs.size()));
     }
   }
 
   if(!starLegs.isEmpty())
   {
     if(!starLegs.transitionFixIdent.isEmpty())
-    {
       properties.insert(pln::STARTRANS, starLegs.transitionFixIdent);
-      properties.insert(pln::STARTRANSDISTANCE, QString::number(starLegs.transitionDistance, 'f', 1));
-      properties.insert(pln::STARTRANSSIZE, QString::number(starLegs.transitionLegs.size()));
-    }
+
     if(!starLegs.isEmpty() && !starLegs.approachFixIdent.isEmpty())
     {
       properties.insert(pln::STAR, starLegs.approachFixIdent);
       properties.insert(pln::STARRW, starLegs.runwayEnd.name);
-      properties.insert(pln::STARDISTANCE, QString::number(starLegs.approachDistance, 'f', 1));
-      properties.insert(pln::STARSIZE, QString::number(starLegs.approachLegs.size()));
     }
   }
 
@@ -1937,8 +1911,6 @@ void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& 
     {
       properties.insert(pln::TRANSITION, arrivalLegs.transitionFixIdent);
       properties.insert(pln::TRANSITIONTYPE, arrivalLegs.transitionType);
-      properties.insert(pln::TRANSITIONDISTANCE, QString::number(arrivalLegs.transitionDistance, 'f', 1));
-      properties.insert(pln::TRANSITIONSIZE, QString::number(arrivalLegs.transitionLegs.size()));
     }
 
     if(!arrivalLegs.approachFixIdent.isEmpty())
@@ -1948,8 +1920,6 @@ void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& 
       properties.insert(pln::APPROACHTYPE, arrivalLegs.approachType);
       properties.insert(pln::APPROACHRW, arrivalLegs.procedureRunway);
       properties.insert(pln::APPROACHSUFFIX, arrivalLegs.approachSuffix);
-      properties.insert(pln::APPROACHDISTANCE, QString::number(arrivalLegs.approachDistance, 'f', 1));
-      properties.insert(pln::APPROACHSIZE, QString::number(arrivalLegs.approachLegs.size()));
 
       if(arrivalLegs.approachType == "CUSTOM")
       {

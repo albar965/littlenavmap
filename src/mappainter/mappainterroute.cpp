@@ -183,7 +183,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
   {
     const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
-    if(route->hasAnyArrivalProcedure())
+    if(route->hasAnyApproachProcedure())
       paintProcedure(lastLegPoint, context, route->getApproachLegs(), route->getApproachLegsOffset(),
                      flightplanProcedureColor, false /* preview */);
 
@@ -239,7 +239,7 @@ void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList
   if(!lines.isEmpty())
   {
     // Do not draw a line from runway end to airport center
-    if(route->hasAnyArrivalProcedure() && destAptIdx != map::INVALID_INDEX_VALUE)
+    if(route->hasAnyApproachProcedure() && destAptIdx != map::INVALID_INDEX_VALUE)
     {
       lines[destAptIdx - 1] = Line();
       routeTexts[destAptIdx - 1].clear();

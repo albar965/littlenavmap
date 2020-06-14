@@ -66,7 +66,12 @@ public:
    */
   void createFromAirport(int entryIndex, const map::MapAirport& newAirport, const RouteLeg *prevLeg);
 
-  void createFromProcedureLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg);
+  /* Create dummy procedure legs and copy all waypoint, etc. information into the waypoint, vor and other structs */
+  void createFromProcedureLeg(int entryIndex, const proc::MapProcedureLeg& leg, const RouteLeg *prevLeg);
+  void createFromProcedureLegs(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg);
+
+  /* Creates a clone of waypoint type but does not assign type PROCEDURE */
+  void createCopyFromProcedureLeg(int entryIndex, const RouteLeg& leg, const RouteLeg *prevLeg);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
@@ -323,6 +328,7 @@ public:
   void clearAirwayOrTrack();
 
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
+  atools::fs::pln::FlightplanEntry *getFlightplanEntry();
 
 private:
   // TODO assign functions are duplicatd in FlightplanEntryBuilder

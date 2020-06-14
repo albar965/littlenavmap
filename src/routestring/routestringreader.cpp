@@ -161,7 +161,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     lastPos = findFirstCoordinate(cleanItems);
   else
   {
-    // Get airports ============================================
+    // Get airports as well as SID and STAR ============================================
     // Insert first as departure
     if(!addDeparture(fp, mapObjectRefs, cleanItems))
       return false;
@@ -289,10 +289,11 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
               int insertPos = mapObjectRefs->size() - insertOffset;
 
               // Airway reference precedes waypoint
-              map::MapAirway airway;
-              airwayQuery->getAirwayForWaypoints(airway, lastRef.id, wp.id, item);
-              if(airway.isValid())
-                mapObjectRefs->insert(insertPos, map::MapObjectRefExt(airway.id, map::AIRWAY, airway.name));
+              QList<map::MapAirway> airways;
+              airwayQuery->getAirwaysForWaypoints(airways, lastRef.id, wp.id, item);
+              if(!airways.isEmpty())
+                mapObjectRefs->insert(insertPos,
+                                      map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
 
               insertPos = mapObjectRefs->size() - insertOffset;
               // Waypoint
@@ -343,11 +344,11 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
           if(lastParseEntry != nullptr && lastParseEntry->result.hasAirways())
           {
             // Insert airway entry leading towards following waypoint
-            map::MapAirway airway;
-            airwayQuery->getAirwayForWaypoints(airway, lastRef.id, curRef.id, lastParseEntry->airway);
-            if(airway.isValid())
+            QList<map::MapAirway> airways;
+            airwayQuery->getAirwaysForWaypoints(airways, lastRef.id, curRef.id, lastParseEntry->airway);
+            if(!airways.isEmpty())
               mapObjectRefs->insert(mapObjectRefs->size() - insertOffset,
-                                    map::MapObjectRefExt(airway.id, map::AIRWAY, airway.name));
+                                    map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
           }
 
           // Add navaid or airport including original name
@@ -563,9 +564,20 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
     {
       QString sidTrans = cleanItems.first();
 
+      // Check if the next couple of strings are an waypoint/airway triplet
+      // Skip procedure detection if yes
+      bool foundAirway = false;
+      if(cleanItems.size() > 2)
+      {
+        foundAirway =
+          airwayQuery->hasAirwayForNameAndWaypoint(cleanItems.at(1), cleanItems.at(0)) &&
+          airwayQuery->hasAirwayForNameAndWaypoint(cleanItems.at(1), cleanItems.at(2));
+      }
+
       bool foundSid = false;
       QRegularExpressionMatch sidMatch = SID_STAR_TRANS.match(sidTrans);
-      if(sidMatch.hasMatch())
+
+      if(!foundAirway && sidMatch.hasMatch())
       {
         QString sid = sidMatch.captured(1);
         if(sid.size() == 7)
@@ -575,10 +587,10 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
         QString trans = sidMatch.captured(3);
 
         int sidTransId = -1;
-        int sidId = procQuery->getSidId(departure, sid);
+        int sidId = procQuery->getSidId(departure, sid, QString(), true /* strict */);
         if(sidId != -1 && !trans.isEmpty())
         {
-          sidTransId = procQuery->getSidTransitionId(departure, trans, sidId);
+          sidTransId = procQuery->getSidTransitionId(departure, trans, sidId, true /* strict */);
           foundSid = sidTransId != -1;
         }
         else
@@ -780,10 +792,10 @@ void RouteStringReader::destinationInternal(map::MapAirport& destination, proc::
 
         int starTransId = -1;
         bool foundStar = false;
-        int starId = procQuery->getStarId(destination, star);
+        int starId = procQuery->getStarId(destination, star, QString(), true /* strict */);
         if(starId != -1 && !trans.isEmpty())
         {
-          starTransId = procQuery->getStarTransitionId(destination, trans, starId);
+          starTransId = procQuery->getStarTransitionId(destination, trans, starId, true /* strict */);
           foundStar = starTransId != -1;
         }
         else

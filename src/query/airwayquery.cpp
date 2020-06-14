@@ -65,20 +65,17 @@ void AirwayQuery::getAirwaysForWaypoint(QList<map::MapAirway>& airways, int wayp
   }
 }
 
-void AirwayQuery::getAirwayForWaypoints(map::MapAirway& airway, int waypointId1, int waypointId2,
-                                        const QString& airwayName)
+void AirwayQuery::getAirwaysForWaypoints(QList<map::MapAirway>& airways, int waypointId1, int waypointId2,
+                                         const QString& airwayName)
 {
-  QList<map::MapAirway> airways;
-  getAirwaysForWaypoint(airways, waypointId1);
+  QList<map::MapAirway> temp;
+  getAirwaysForWaypoint(temp, waypointId1);
 
   for(const map::MapAirway& a : airways)
   {
     if((airwayName.isEmpty() || a.name == airwayName) &&
        (waypointId2 == a.fromWaypointId || waypointId2 == a.toWaypointId))
-    {
-      airway = a;
-      break;
-    }
+      airways.append(a);
   }
 }
 
@@ -194,20 +191,22 @@ void AirwayQuery::getAirwaysByName(QList<map::MapAirway>& airways, const QString
   }
 }
 
-void AirwayQuery::getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName,
-                                             const QString& waypoint1,
-                                             const QString& waypoint2)
+void AirwayQuery::getAirwaysByNameAndWaypoint(QList<map::MapAirway>& airways, const QString& airwayName,
+                                              const QString& waypoint1, const QString& waypoint2)
 {
-  if(airwayName.isEmpty() || waypoint1.isEmpty() || waypoint2.isEmpty())
+  if(airwayName.isEmpty() || waypoint1.isEmpty())
     return;
 
-  airwayByNameAndWaypointQuery->bindValue(":airway", airwayName);
+  airwayByNameAndWaypointQuery->bindValue(":airway", airwayName.isEmpty() ? "%" : airwayName);
   airwayByNameAndWaypointQuery->bindValue(":ident1", waypoint1);
-  airwayByNameAndWaypointQuery->bindValue(":ident2", waypoint2);
+  airwayByNameAndWaypointQuery->bindValue(":ident2", waypoint2.isEmpty() ? "%" : waypoint2);
   airwayByNameAndWaypointQuery->exec();
-  if(airwayByNameAndWaypointQuery->next())
+  while(airwayByNameAndWaypointQuery->next())
+  {
+    map::MapAirway airway;
     mapTypesFactory->fillAirwayOrTrack(airwayByNameAndWaypointQuery->record(), airway, trackDatabase);
-  airwayByNameAndWaypointQuery->finish();
+    airways.append(airway);
+  }
 }
 
 const QList<map::MapAirway> *AirwayQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
@@ -297,8 +296,8 @@ void AirwayQuery::initQueries()
     "select " + queryBase +
     " from " + airwayTable + " a join " + waypointTable + " wf on a.from_waypoint_id = wf." + waypointIdCol +
     " join " + waypointTable + " wt on a.to_waypoint_id = wt." + waypointIdCol +
-    " where a." + airwayNameCol + " = :airway and ((wf.ident = :ident1 and wt.ident = :ident2) or "
-                                  " (wt.ident = :ident1 and wf.ident = :ident2))");
+    " where a." + airwayNameCol + " like :airway and ((wf.ident = :ident1 and wt.ident like :ident2) or "
+                                  " (wt.ident = :ident1 and wf.ident like :ident2))");
 
   airwayByIdQuery = new SqlQuery(dbNav);
   airwayByIdQuery->prepare("select " + queryBase + " from " + airwayTable +

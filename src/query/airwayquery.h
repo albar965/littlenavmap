@@ -56,15 +56,16 @@ public:
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId);
 
-  /* Get an airway with given name having two waypoints. Direction and waypoint order is not relevant. */
-  void getAirwayForWaypoints(map::MapAirway& airway, int waypointId1, int waypointId2,
-                             const QString& airwayName = QString());
+  /* Get an airway with given name having two waypoints. Direction and waypoint order is not relevant.
+   * All airways are returned if name is empty.*/
+  void getAirwaysForWaypoints(QList<map::MapAirway>& airways, int waypointId1, int waypointId2,
+                              const QString& airwayName);
+  void getAirwaysByNameAndWaypoint(QList<map::MapAirway>& airways, const QString& airwayName, const QString& waypoint1,
+                                   const QString& waypoint2 = QString());
 
   /* Get all waypoints of an airway */
   void getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
                              const QString& waypointIdent);
-  void getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName, const QString& waypoint1,
-                                  const QString& waypoint2);
 
   /* Get all airway segments by name */
   void getAirwaysByName(QList<map::MapAirway>& airways, const QString& name);

@@ -297,7 +297,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
 void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
 {
-  const atools::fs::pln::Flightplan& fp = NavApp::getRoute().getFlightplan();
+  atools::fs::pln::Flightplan fp = NavApp::getRoute().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
   record.setValue("flightplan", FlightplanIO().saveLnmGz(fp)); // blob
   record.setValue("aircraft_perf", NavApp::getAircraftPerformance().saveXmlGz()); // blob
 }

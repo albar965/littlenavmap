@@ -576,6 +576,12 @@ QString procedureLegTypeFullStr(ProcedureLegType type);
 QString procedureLegRemarks(proc::ProcedureLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
 
+/* true if leg has fix at the start */
+bool procedureLegFixAtStart(proc::ProcedureLegType type);
+
+/* true if leg has fix at the end */
+bool procedureLegFixAtEnd(proc::ProcedureLegType type);
+
 /* IAF, FAF, MAP */
 QString proceduresLegSecialTypeShortStr(proc::LegSpecialType type);
 QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type);

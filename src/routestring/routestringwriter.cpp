@@ -165,7 +165,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     retval.prepend("FPN/RI:F:" + route.getDepartureAirportLeg().getIdent());
   }
 
-  if((route.hasAnyArrivalProcedure() || route.hasAnyStarProcedure()) && !userWaypointOption)
+  if((route.hasAnyApproachProcedure() || route.hasAnyStarProcedure()) && !userWaypointOption)
   {
     // Arrival airport - no coordinates
     retval.append(":AA:" + route.getDestinationAirportLeg().getIdent());
@@ -180,7 +180,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     }
 
     // Approach ===============================
-    if(route.hasAnyArrivalProcedure())
+    if(route.hasAnyApproachProcedure())
     {
       QString apprArinc, apprTrans;
       route.getArrivalNames(apprArinc, apprTrans);
@@ -264,15 +264,17 @@ QString RouteStringWriter::createGfpStringForRouteInternal(const Route& route, b
   return retval.toUpper();
 }
 
-QStringList RouteStringWriter::createStringForRouteInternal(const Route& route, float speed,
+QStringList RouteStringWriter::createStringForRouteInternal(const Route& routeParam, float speed,
                                                             rs::RouteStringOptions options) const
 {
+  Route route = routeParam.adjustedToOptions(rf::DEFAULT_OPTS_ROUTESTRING);
+
   QStringList retval;
   QString sid, sidTrans, star, starTrans, depRwy, destRwy, arrivalName, arrivalTransition;
   route.getSidStarNames(sid, sidTrans, star, starTrans);
   route.getRunwayNames(depRwy, destRwy);
   route.getArrivalNames(arrivalName, arrivalTransition);
-  if(route.hasAnyArrivalProcedure() && !route.getApproachLegs().approachType.isEmpty())
+  if(route.hasAnyApproachProcedure() && !route.getApproachLegs().approachType.isEmpty())
   {
     // Flight factor specialities - there are probably more to guess
     if(route.getApproachLegs().approachType == "RNAV")
@@ -297,6 +299,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& route, 
   for(int i = 0; i <= route.getDestinationAirportLegIndex(); i++)
   {
     const RouteLeg& leg = route.value(i);
+
     if(leg.isAnyProcedure())
       continue;
 

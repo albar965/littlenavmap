@@ -157,7 +157,7 @@ bool Route::canEditLeg(int index) const
   if(hasAnyStarProcedure() && index > starLegsOffset)
     return false;
 
-  if(hasAnyArrivalProcedure() && index > approachLegsOffset)
+  if(hasAnyApproachProcedure() && index > approachLegsOffset)
     return false;
 
   if(hasAlternates() && index >= alternateLegsOffset)
@@ -188,7 +188,7 @@ void Route::getRunwayNames(QString& departure, QString& arrival) const
 {
   departure = sidLegs.runwayEnd.name;
 
-  if(hasAnyArrivalProcedure())
+  if(hasAnyApproachProcedure())
     arrival = approachLegs.runwayEnd.name;
   else if(hasAnyStarProcedure())
     arrival = starLegs.runwayEnd.name;
@@ -208,7 +208,7 @@ const QString& Route::getApproachRunwayName() const
 
 void Route::getArrivalNames(QString& arrivalArincName, QString& arrivalTransition) const
 {
-  if(hasAnyArrivalProcedure())
+  if(hasAnyApproachProcedure())
   {
     arrivalArincName = approachLegs.approachArincName;
     arrivalTransition = approachLegs.transitionFixIdent;
@@ -731,7 +731,7 @@ int Route::getDestinationLegIndex() const
   if(isEmpty())
     return map::INVALID_INDEX_VALUE;
 
-  if(hasAnyArrivalProcedure())
+  if(hasAnyApproachProcedure())
   {
     // Last leg before missed approach is destination runway
     for(int i = approachLegsOffset; i <= getDestinationAirportLegIndex(); i++)
@@ -1119,6 +1119,7 @@ void Route::cleanupFlightPlanForProcedures()
   updateIndices();
 
   // like removeDuplicateRouteLegs
+  // Remove any legs overlapping with SID ======================================================
   int fromIdx = -1, toIdx = -1;
   if(!sidLegs.isEmpty())
   {
@@ -1127,9 +1128,17 @@ void Route::cleanupFlightPlanForProcedures()
     fromIdx = 1;
   }
 
+  if(fromIdx > 0 && toIdx > 0)
+    removeLegs(fromIdx, toIdx);
+
+  fromIdx = -1;
+  toIdx = -1;
+
+  // Remove any legs overlapping with STAR or approach ======================================================
   if(!starLegs.isEmpty() || !approachLegs.isEmpty())
   {
     // Arrivals - start at first point and look for overlap with route traversing route from start to end
+    updateIndices();
     updateAlternateIndicesAndOffsets();
     toIdx = getDestinationAirportLegIndex() - 1;
 
@@ -1170,7 +1179,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
   {
     int insertIndex = 1 + i;
     RouteLeg obj(&flightplan);
-    obj.createFromProcedureLeg(i, sidLegs, &value(i));
+    obj.createFromProcedureLegs(i, sidLegs, &value(i));
     insert(insertIndex, obj);
 
     FlightplanEntry entry;
@@ -1188,7 +1197,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
     const RouteLeg *prev = size() >= 2 ? &value(size() - 2) : nullptr;
 
     RouteLeg obj(&flightplan);
-    obj.createFromProcedureLeg(i, starLegs, prev);
+    obj.createFromProcedureLegs(i, starLegs, prev);
     insert(size() - insertOffset, obj);
 
     FlightplanEntry entry;
@@ -1205,7 +1214,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
     const RouteLeg *prev = size() >= 2 ? &value(size() - 2) : nullptr;
 
     RouteLeg obj(&flightplan);
-    obj.createFromProcedureLeg(i, approachLegs, prev);
+    obj.createFromProcedureLegs(i, approachLegs, prev);
     insert(size() - insertOffset, obj);
 
     FlightplanEntry entry;
@@ -1277,6 +1286,8 @@ void Route::clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute, bo
 void Route::updateAll()
 {
   updateIndicesAndOffsets();
+  removeDuplicateRouteLegs();
+  validateAirways();
   updateAlternateProperties();
   updateMagvar();
   updateDistancesAndCourse();
@@ -1441,8 +1452,18 @@ void Route::setActiveLeg(int value)
 
 bool Route::isAirportAfterArrival(int index)
 {
-  return (hasAnyArrivalProcedure() /*|| hasStarProcedure()*/) &&
+  return (hasAnyApproachProcedure() /*|| hasStarProcedure()*/) &&
          index == getDestinationAirportLegIndex() && value(index).getMapObjectType() == map::AIRPORT;
+}
+
+int Route::getArrivaLegsOffset() const
+{
+  if(hasAnyStarProcedure())
+    return getStarLegsOffset();
+  else if(hasAnyApproachProcedure())
+    return getApproachLegsOffset();
+
+  return map::INVALID_INDEX_VALUE;
 }
 
 const RouteLeg& Route::value(int i) const
@@ -1465,7 +1486,7 @@ int Route::getSizeWithoutAlternates() const
 void Route::updateDistancesAndCourse()
 {
   totalDistance = 0.f;
-  RouteLeg *last = nullptr;
+  RouteLeg *last = nullptr, *beforeDestAirport = nullptr;
   for(int i = 0; i < size(); i++)
   {
     RouteLeg& leg = (*this)[i];
@@ -1476,14 +1497,20 @@ void Route::updateDistancesAndCourse()
     else
     {
       if(isAirportAfterArrival(i))
-        // Airport after arrival legs does not contain a valid distance - loop ends here anyway
+      {
+        // Update with distance from previous or last procedure leg like runway
+        leg.updateDistanceAndCourse(i, beforeDestAirport != nullptr ? beforeDestAirport : last);
         continue;
+      }
 
       leg.updateDistanceAndCourse(i, last);
 
       if(!leg.getProcedureLeg().isMissed())
         // Do not sum up missed legs
         totalDistance += leg.getDistanceTo();
+      else if(beforeDestAirport == nullptr)
+        // Remember leg before airport (usually runway if procedure is used)
+        beforeDestAirport = last;
     }
     last = &leg;
   }
@@ -1624,6 +1651,19 @@ const RouteLeg& Route::getStartAfterProcedure() const
   return value(getStartIndexAfterProcedure());
 }
 
+int Route::getLastIndexOfDepartureProcedure() const
+{
+  if(hasAnySidProcedure())
+    return sidLegsOffset + sidLegs.size() - 1;
+  else
+    return 0;
+}
+
+const RouteLeg& Route::getLastLegOfDepartureProcedure() const
+{
+  return value(getLastIndexOfDepartureProcedure());
+}
+
 const RouteLeg& Route::getDestinationBeforeProcedure() const
 {
   return value(getDestinationIndexBeforeProcedure());
@@ -1674,7 +1714,7 @@ bool Route::isAirportDestination(const QString& ident) const
 int Route::getStartIndexAfterProcedure() const
 {
   if(hasAnySidProcedure())
-    return sidLegsOffset + sidLegs.size() - 1;
+    return sidLegsOffset + sidLegs.size();
   else
     return 0;
 }
@@ -1683,79 +1723,175 @@ int Route::getDestinationIndexBeforeProcedure() const
 {
   if(hasAnyStarProcedure())
     return starLegsOffset;
-  else if(hasAnyArrivalProcedure())
+  else if(hasAnyApproachProcedure())
     return approachLegsOffset;
   else
     return size() - numAlternateLegs - 1;
 }
 
-void Route::removeDuplicateRouteLegs()
+bool Route::arrivalRouteToProcLegs(int& arrivaLegsOffset) const
 {
-  if(hasAnyStarProcedure() || hasAnyArrivalProcedure())
+  if(hasAnyArrivalProcedure())
   {
-    // remove duplicates between start of STAR, approach or transition and
-    // route: only legs that have the navaid at the start of the leg - currently only initial fix
-    int offset = -1;
-    if(hasAnyStarProcedure())
-      offset = getStarLegsOffset();
-    else if(hasAnyArrivalProcedure())
-      offset = getApproachLegsOffset();
-
-    if(offset != -1 && offset < size() - 1)
+    arrivaLegsOffset = getArrivaLegsOffset();
+    if(arrivaLegsOffset > 0 && arrivaLegsOffset < size() - 1)
     {
-      const RouteLeg& routeLeg = value(offset - 1);
-      const RouteLeg& arrivalLeg = value(offset);
-
-      if(arrivalLeg.isAnyProcedure() &&
-         routeLeg.isRoute() &&
-         atools::contains(arrivalLeg.getProcedureLegType(),
-                          {proc::INITIAL_FIX, proc::START_OF_PROCEDURE, proc::TRACK_FROM_FIX_FROM_DISTANCE,
-                           proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::FROM_FIX_TO_MANUAL_TERMINATION}) &&
-         arrivalLeg.isNavaidEqualTo(routeLeg))
-      {
-        qDebug() << "removing duplicate leg at" << (offset - 1) << value(offset - 1);
-        removeAt(offset - 1);
-        flightplan.getEntries().removeAt(offset - 1);
-      }
+      const RouteLeg& routeLeg = value(arrivaLegsOffset - 1);
+      const RouteLeg& arrivalLeg = value(arrivaLegsOffset);
+      return arrivalLeg.isAnyProcedure() && arrivalLeg.isValid() && routeLeg.isValid() && routeLeg.isRoute();
     }
   }
+  return false;
+}
 
+bool Route::departureProcToRouteLegs(int& startIndexAfterProcedure) const
+{
   if(hasAnySidProcedure())
   {
     // remove duplicates between end of SID and route: only legs that have the navaid at the end of the leg
-    int offset = getSidLegsOffset() + getSidLegs().size() - 1;
-    if(offset < size() - 1)
+    startIndexAfterProcedure = getStartIndexAfterProcedure();
+    if(startIndexAfterProcedure > 0 && startIndexAfterProcedure < size() - 1)
     {
-      const RouteLeg& departureLeg = value(offset);
-      const RouteLeg& routeLeg = value(offset + 1);
+      const RouteLeg& departureLeg = value(startIndexAfterProcedure - 1);
+      const RouteLeg& routeLeg = value(startIndexAfterProcedure);
+      return departureLeg.isAnyProcedure() && departureLeg.isValid() && routeLeg.isRoute() && routeLeg.isValid();
+    }
+  }
+  return false;
+}
 
-      if(departureLeg.isAnyProcedure() &&
-         routeLeg.isRoute() &&
-         atools::contains(departureLeg.getProcedureLegType(),
-                          {proc::TRACK_TO_FIX, proc::COURSE_TO_FIX, proc::ARC_TO_FIX, proc::DIRECT_TO_FIX}) &&
-         departureLeg.isNavaidEqualTo(routeLeg))
+// Needs updateIndex called before
+void Route::validateAirways()
+{
+  if(isEmpty())
+    return;
+
+  first().getFlightplanEntry()->setAirway(QString());
+  first().setAirway(map::MapAirway());
+
+  // Check arrival airway ===========================================================================
+  int arrivaLegsOffset = map::INVALID_INDEX_VALUE;
+  if(arrivalRouteToProcLegs(arrivaLegsOffset))
+  {
+    const RouteLeg& routeLeg = value(arrivaLegsOffset - 1);
+    RouteLeg& arrivalLeg = (*this)[arrivaLegsOffset];
+
+    QString airway = arrivalLeg.getAirwayName();
+    if(airway.isEmpty())
+      airway = flightplan.getProperties().value(atools::fs::pln::PROCAIRWAY);
+    if(NavApp::getAirwayTrackQuery()->hasAirwayForNameAndWaypoint(airway, routeLeg.getIdent(), arrivalLeg.getIdent()))
+    {
+      // Airway is valid - set into procedure leg and property
+      atools::fs::pln::FlightplanEntry *entry = arrivalLeg.getFlightplanEntry();
+      if(entry != nullptr)
       {
-        // Remove duplicate leg and erase airway of following
-        qDebug() << "removing duplicate leg at" << (offset + 1) << value(offset + 1);
-        removeAt(offset + 1);
-        (*this)[offset + 1].setAirway(map::MapAirway());
-
-        flightplan.getEntries().removeAt(offset + 1);
-        flightplan.getEntries()[offset + 1].setAirway(QString());
+        entry->setAirway(airway);
+        if(airway.isEmpty())
+          entry->setFlag(atools::fs::pln::entry::TRACK, false);
       }
+      else
+        qDebug() << Q_FUNC_INFO << "Entry is null";
+      flightplan.getProperties().insert(atools::fs::pln::PROCAIRWAY, airway);
+    }
+    else
+    {
+      // Airway not valid between legs - erase
+      atools::fs::pln::FlightplanEntry *entry = arrivalLeg.getFlightplanEntry();
+      if(entry != nullptr)
+      {
+        entry->setAirway(QString());
+        entry->setFlag(atools::fs::pln::entry::TRACK, false);
+      }
+      else
+        qDebug() << Q_FUNC_INFO << "Entry is null";
+      flightplan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
     }
   }
 
+  // Check departure airway ===========================================================================
+  int startIndexAfterProcedure = map::INVALID_INDEX_VALUE;
+  if(departureProcToRouteLegs(startIndexAfterProcedure))
+  {
+    // remove duplicates between end of SID and route: only legs that have the navaid at the end of the leg
+    const RouteLeg& departureLeg = value(startIndexAfterProcedure - 1);
+    const RouteLeg& routeLeg = value(startIndexAfterProcedure);
+
+    if(!NavApp::getAirwayTrackQuery()->hasAirwayForNameAndWaypoint(routeLeg.getAirwayName(), departureLeg.getIdent(),
+                                                                   routeLeg.getIdent()))
+      // Airway not valid for changed waypoints - erase
+      flightplan.getEntries()[startIndexAfterProcedure].setAirway(QString());
+  }
+}
+
+// Called after route calculation
+void Route::removeDuplicateRouteLegs()
+{
+  if(isEmpty())
+    return;
+
+  // Check arrival ===========================================================================
+  // remove duplicates between start of STAR, approach or transition and
+  // route: only legs that have the navaid at the start of the leg - currently only initial fix
+  int arrivaLegsOffset = map::INVALID_INDEX_VALUE;
+  bool changed = false;
+  if(arrivalRouteToProcLegs(arrivaLegsOffset))
+  {
+    const RouteLeg& routeLeg = value(arrivaLegsOffset - 1);
+    RouteLeg& arrivalLeg = (*this)[arrivaLegsOffset];
+
+    if(proc::procedureLegFixAtStart(arrivalLeg.getProcedureLegType()) && arrivalLeg.isNavaidEqualTo(routeLeg))
+    {
+      qDebug() << "removing duplicate leg at" << (arrivaLegsOffset - 1) << routeLeg;
+
+      // Copy airway name from the route leg to be deleted into the first procedure leg
+      flightplan.getEntries()[arrivaLegsOffset].setAirway(flightplan.getEntries().at(arrivaLegsOffset - 1).getAirway());
+
+      // Remove the route leg before the procedure
+      removeAllAt(arrivaLegsOffset - 1);
+      changed = true;
+    }
+  }
+
+  if(changed)
+    updateIndicesAndOffsets();
+  changed = false;
+
+  // Check departure  ===========================================================================
+  int startIndexAfterProcedure = map::INVALID_INDEX_VALUE;
+  if(departureProcToRouteLegs(startIndexAfterProcedure))
+  {
+    // remove duplicates between end of SID and route: only legs that have the navaid at the end of the leg
+    const RouteLeg& departureLeg = value(startIndexAfterProcedure - 1);
+    const RouteLeg& routeLeg = value(startIndexAfterProcedure);
+
+    if(proc::procedureLegFixAtEnd(departureLeg.getProcedureLegType()) && departureLeg.isNavaidEqualTo(routeLeg))
+    {
+      qDebug() << "removing duplicate leg at" << startIndexAfterProcedure << routeLeg;
+
+      // Remove the route leg after the procedure
+      removeAllAt(startIndexAfterProcedure);
+      changed = true;
+    }
+  }
+
+  if(changed)
+    updateIndicesAndOffsets();
+  changed = false;
+
+  // Remove all other duplicates from end to begin ============================
   for(int i = size() - 1; i > 0; i--)
   {
     const RouteLeg& leg1 = value(i - 1);
     const RouteLeg& leg2 = value(i);
     if(leg1.isRoute() && leg2.isRoute() && leg1.isNavaidEqualTo(leg2))
     {
-      removeAt(i);
-      flightplan.getEntries().removeAt(i);
+      removeAllAt(i);
+      changed = true;
     }
   }
+
+  if(changed)
+    updateIndicesAndOffsets();
 }
 
 const Pos& Route::getPositionAt(int i) const
@@ -1807,24 +1943,92 @@ void Route::assignAltitudes()
 
 Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
 {
+  return adjustedToOptions(*this, options);
+}
+
+Route Route::adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions options)
+{
+  qDebug() << Q_FUNC_INFO << "options" << options;
   bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP), saveSidStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
        replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP);
 
-  qDebug() << Q_FUNC_INFO << "options" << options;
-
   // Create copy which allows to modify the plan ==============
-  Route route(*this);
+  Route route(routeParam);
   atools::fs::pln::Flightplan& plan = route.getFlightplan();
+  atools::fs::pln::FlightplanEntryListType& entries = plan.getEntries();
+  FlightplanEntryBuilder entryBuilder;
+
+  // Copy flight plan profile altitudes into entries for FMS and other formats
+  // All following functions have to use setCoords instead of setPosition to avoid overwriting
+  route.assignAltitudes();
+
+  // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
+  if(options.testFlag(rf::FIX_PROC_ENTRY_EXIT))
+  {
+    // Check arrival airway ===========================================================================
+    int arrivaLegsOffset = map::INVALID_INDEX_VALUE;
+    if(route.arrivalRouteToProcLegs(arrivaLegsOffset))
+    {
+      const RouteLeg& routeLeg = route.value(arrivaLegsOffset - 1);
+      RouteLeg& arrivalLeg = route[arrivaLegsOffset];
+
+      QString airway = arrivalLeg.getAirwayName();
+      if(airway.isEmpty())
+        airway = plan.getProperties().value(atools::fs::pln::PROCAIRWAY);
+
+      if(!airway.isEmpty() && proc::procedureLegFixAtStart(arrivalLeg.getProcedureLegType()) &&
+         !arrivalLeg.isNavaidEqualTo(routeLeg))
+      {
+        FlightplanEntry entry;
+        entryBuilder.buildFlightplanEntry(arrivalLeg.getProcedureLeg(), entry,
+                                          true /* resolve waypoints to VOR and others*/);
+        entry.setAirway(arrivalLeg.getAirwayName());
+        entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+
+        RouteLeg newLeg = RouteLeg(&route.flightplan);
+        newLeg.createCopyFromProcedureLeg(arrivaLegsOffset, arrivalLeg, &routeLeg);
+        newLeg.setAirway(arrivalLeg.getAirway());
+
+        route.insert(arrivaLegsOffset, newLeg);
+        entries.insert(arrivaLegsOffset, entry);
+        plan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
+        route.updateIndicesAndOffsets();
+      }
+    }
+
+    // Check departure airway ===========================================================================
+    int startIndexAfterProcedure = map::INVALID_INDEX_VALUE;
+    if(route.departureProcToRouteLegs(startIndexAfterProcedure))
+    {
+      // remove duplicates between end of SID and route: only legs that have the navaid at the end of the leg
+      const RouteLeg& departureLeg = route.value(startIndexAfterProcedure - 1);
+      const RouteLeg& routeLeg = route.value(startIndexAfterProcedure);
+
+      if(!routeLeg.getAirwayName().isEmpty() && proc::procedureLegFixAtEnd(departureLeg.getProcedureLegType()) &&
+         !departureLeg.isNavaidEqualTo(routeLeg))
+      {
+        FlightplanEntry entry;
+        entryBuilder.buildFlightplanEntry(departureLeg.getProcedureLeg(), entry,
+                                          true /* resolve waypoints to VOR and others*/);
+        entry.setAirway(QString());
+        entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+
+        RouteLeg newLeg = RouteLeg(&route.flightplan);
+        newLeg.createCopyFromProcedureLeg(startIndexAfterProcedure, departureLeg, &routeLeg);
+        newLeg.setAirway(map::MapAirway());
+
+        route.insert(startIndexAfterProcedure, newLeg);
+        entries.insert(startIndexAfterProcedure, entry);
+        route.updateIndicesAndOffsets();
+      }
+    }
+  }
 
   if(options.testFlag(rf::REMOVE_ALTERNATE))
   {
     route.removeAlternateLegs();
     route.updateIndicesAndOffsets();
   }
-
-  // Copy flight plan profile altitudes into entries for FMS and other formats
-  // All following functions have to use setCoords instead of setPosition to avoid overwriting
-  route.assignAltitudes();
 
   if(route.getApproachLegs().isCustom() && replaceCustomWp)
     saveApproachWp = true;
@@ -1845,8 +2049,6 @@ Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
     route.updateIndicesAndOffsets();
   }
 
-  atools::fs::pln::FlightplanEntryListType& entries = plan.getEntries();
-
   // Remove track names from airway field but keep waypoints =========================================
   if(options.testFlag(rf::REMOVE_TRACKS))
   {
@@ -1860,6 +2062,7 @@ Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
     }
   }
 
+  // Remove airway names but keep waypoints =========================================
   if(options.testFlag(rf::SAVE_AIRWAY_WP))
   {
     for(int i = 0; i < entries.size(); i++)
@@ -1870,10 +2073,12 @@ Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
         entries[i].setAirway(QString());
       }
     }
+    plan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
   }
 
   if(saveApproachWp || saveSidStarWp)
   {
+    // Replace procedures with waypoints =======================================================================
     // Now replace all entries with either valid waypoints or user defined waypoints
     for(int i = 0; i < entries.size(); i++)
     {
@@ -1921,7 +2126,7 @@ Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
           entry.setWaypointType(atools::fs::pln::entry::USER);
 
           if((replaceCustomWp || saveApproachWp) &&
-             getApproachLegs().isCustom() && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
+             route.getApproachLegs().isCustom() && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
             entry.setIdent(leg.getProcedureLeg().fixIdent);
           else
             entry.setIdent(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
@@ -2012,9 +2217,18 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
 
     if(!routeLeg.getAirwayName().isEmpty())
     {
-      map::MapAirway airway;
-      NavApp::getAirwayTrackQuery()->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(),
-                                                                routeLeg.getIdent());
+      if(i == 1 && prevLeg.getMapObjectType() == map::AIRPORT)
+      {
+        routeLeg.setAirway(map::MapAirway());
+        routeLeg.getFlightplanEntry()->setAirway(QString());
+        routeLeg.getFlightplanEntry()->setFlag(atools::fs::pln::entry::TRACK, false);
+        continue;
+      }
+
+      QList<map::MapAirway> airways;
+      NavApp::getAirwayTrackQuery()->getAirwaysByNameAndWaypoint(airways, routeLeg.getAirwayName(), prevLeg.getIdent(),
+                                                                 routeLeg.getIdent());
+      map::MapAirway airway = airways.value(0);
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);
       if(airway.maxAltitude > 0)

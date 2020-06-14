@@ -140,8 +140,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
     // Read string into a list of references ====================================
     map::MapObjectRefExtVector refs;
     QString routeStr = track.route.join(" ");
-    if(reader.createRouteFromString(routeStr, rs::READ_NO_AIRPORTS | rs::READ_MATCH_WAYPOINTS | rs::NO_TRACKS,
-                                    nullptr, &refs))
+    if(reader.createRouteFromString(routeStr, rs::TRACK_DEFAULTS, nullptr, &refs))
     {
       if(verbose)
         qDebug() << Q_FUNC_INFO << refs;

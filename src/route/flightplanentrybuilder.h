@@ -58,7 +58,6 @@ class FlightplanEntryBuilder
 {
 public:
   FlightplanEntryBuilder();
-  virtual ~FlightplanEntryBuilder();
 
   void buildFlightplanEntry(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry,
                             bool alternate) const;
