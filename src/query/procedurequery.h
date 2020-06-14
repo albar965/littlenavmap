@@ -81,19 +81,15 @@ public:
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                  const proc::MapProcedureTypes& type);
 
-  int getSidId(map::MapAirport departure, const QString& sid,
-               const QString& runway = QString(), float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
-  int getSidTransitionId(map::MapAirport departure, const QString& sidTrans, int sidId,
-                         float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
+  int getSidId(map::MapAirport departure, const QString& sid, const QString& runway = QString(), bool strict = false);
+  int getSidTransitionId(map::MapAirport departure, const QString& sidTrans, int sidId, bool strict = false);
 
   int getStarId(map::MapAirport destination, const QString& star, const QString& runway = QString(),
-                float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
-  int getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId,
-                          float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
+                bool strict = false);
+  int getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId, bool strict = false);
 
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
-                            const map::MapRunwayEnd& runwayEndSim, float distance,
-                            float altitude);
+                            const map::MapRunwayEnd& runwayEndSim, float distance, float altitude);
 
   /* Flush the cache to update units */
   void clearCache();
@@ -163,11 +159,13 @@ private:
                         const QString& region, const QString& airport,
                         const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS);
 
-  int findTransitionId(const map::MapAirport& airport, atools::sql::SqlQuery *query, float distance, int size);
+  int findTransitionId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
+                       bool strict);
   int findApproachId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix,
-                     const QString& runway, float distance, int size);
+                     const QString& runway, bool strict);
   int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
-                         const QString& suffix, const QString& runway, float distance, int size, bool transition);
+                         const QString& suffix, const QString& runway, bool transition,
+                         bool strict);
 
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */

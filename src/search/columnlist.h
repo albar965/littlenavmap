@@ -37,7 +37,7 @@ class ColumnList
 {
 public:
   ColumnList(const QString& tableName, const QString& idColumnName);
-  virtual ~ColumnList();
+  ~ColumnList();
 
   /* Get column descriptor for the given query column name or alias */
   const Column *getColumn(int index) const;
