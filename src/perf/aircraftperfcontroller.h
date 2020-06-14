@@ -96,6 +96,12 @@ public:
   /* Update background colors in report */
   void optionsChanged();
 
+  /* Connection was established */
+  void connectedToSimulator();
+
+  /* Disconnected manually or due to error */
+  void disconnectedFromSimulator();
+
   /* Get currently loaded performance data */
   const atools::fs::perf::AircraftPerf& getAircraftPerformance() const
   {
@@ -230,11 +236,11 @@ private:
   atools::gui::FileHistoryHandler *fileHistory = nullptr;
 
   /* Last update of report when collecting data */
-  qint64 reportLastSampleTimeMs = 0L;
+  qint64 currentReportLastSampleTimeMs = 0L, reportLastSampleTimeMs = 0L;
 
   /* Timer to delay wind updates */
   QTimer windChangeTimer;
-
+  atools::fs::sc::SimConnectData *lastSimData;
 };
 
 #endif // LNM_AIRCRAFTPERFCONTROLLER_H

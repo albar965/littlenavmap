@@ -228,6 +228,8 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       manager->insertByRecord(record, &logEntryId);
       transaction.commit();
 
+      manager->clearGeometryCache();
+
       emit refreshLogSearch(false /* load all */, true /* keep selection */);
       emit logDataChanged();
       mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 added.").

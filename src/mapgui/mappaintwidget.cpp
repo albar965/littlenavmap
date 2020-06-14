@@ -1040,6 +1040,11 @@ const atools::fs::sc::SimConnectUserAircraft& MapPaintWidget::getUserAircraft() 
   return screenIndex->getUserAircraft();
 }
 
+const atools::fs::sc::SimConnectData& MapPaintWidget::getSimConnectData() const
+{
+  return screenIndex->getSimConnectData();
+}
+
 const QVector<atools::fs::sc::SimConnectAircraft>& MapPaintWidget::getAiAircraft() const
 {
   return screenIndex->getAiAircraft();

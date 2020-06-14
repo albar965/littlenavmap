@@ -186,6 +186,7 @@ public:
 
   /* User aircraft as shown on the map */
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const;
+  const atools::fs::sc::SimConnectData& getSimConnectData() const;
 
   /* AI aircraft as shown on the map */
   const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const;

@@ -431,6 +431,11 @@ const atools::fs::sc::SimConnectUserAircraft& NavApp::getUserAircraft()
   return mainWindow->getMapWidget()->getUserAircraft();
 }
 
+const atools::fs::sc::SimConnectData& NavApp::getSimConnectData()
+{
+  return mainWindow->getMapWidget()->getSimConnectData();
+}
+
 const atools::geo::Pos& NavApp::getUserAircraftPos()
 {
   return mainWindow->getMapWidget()->getUserAircraft().getPosition();

@@ -177,6 +177,11 @@ public:
     return simData.getUserAircraftConst();
   }
 
+  const atools::fs::sc::SimConnectData& getSimConnectData() const
+  {
+    return simData;
+  }
+
   const atools::fs::sc::SimConnectUserAircraft& getLastUserAircraft() const
   {
     return lastSimData.getUserAircraftConst();

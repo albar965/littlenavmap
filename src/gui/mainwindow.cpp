@@ -1452,12 +1452,12 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived, profileWidget, &ProfileWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simDataChanged);
 
-  connect(connectClient, &ConnectClient::connectedToSimulator,
-          NavApp::getAircraftPerfController(), &AircraftPerfController::updateReports);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          NavApp::getAircraftPerfController(), &AircraftPerfController::updateReports);
   connect(connectClient, &ConnectClient::dataPacketReceived,
           NavApp::getAircraftPerfController(), &AircraftPerfController::simDataChanged);
+  connect(connectClient, &ConnectClient::connectedToSimulator,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
           &RouteController::disconnectedFromSimulator);
@@ -2260,7 +2260,7 @@ bool MainWindow::routeSaveLnm()
                                     "Information might be lost.<br/>"
                                     "Use the export function instead.</b></p>"
                                     "<p><b>Save using the new LNMPLN format?</b></p>"),
-                                 tr("Do not show this dialog again."),
+                                 tr("Do not show this dialog again and save as LNMPLN."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
 
     if(result == QMessageBox::Cancel)

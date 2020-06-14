@@ -1119,7 +1119,7 @@ void InfoController::updateAircraftProgressText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraftConst().getPosition().isValid())
+    if(lastSimData.getUserAircraftConst().isValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
       {

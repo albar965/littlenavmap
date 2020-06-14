@@ -84,6 +84,7 @@ class Metar;
 namespace sc {
 class SimConnectUserAircraft;
 class SimConnectAircraft;
+class SimConnectData;
 }
 
 namespace userdata {
@@ -157,6 +158,7 @@ public:
   static bool isUserAircraftValid();
 
   static const atools::fs::sc::SimConnectUserAircraft& getUserAircraft();
+  static const atools::fs::sc::SimConnectData& getSimConnectData();
   static const atools::geo::Pos& getUserAircraftPos();
 
   static const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft();

@@ -61,6 +61,7 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
 
   perf = new AircraftPerf();
 
+  lastSimData = new atools::fs::sc::SimConnectData();
   // Remember original font for resizing in options
   infoFontPtSize = static_cast<float>(ui->textBrowserAircraftPerformanceReport->font().pointSizeF());
 
@@ -100,6 +101,7 @@ AircraftPerfController::~AircraftPerfController()
   delete fileHistory;
   delete perfHandler;
   delete perf;
+  delete lastSimData;
 }
 
 void AircraftPerfController::create()
@@ -951,7 +953,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       html.p().warning(tr("Aircraft type is not set.")).pEnd();
     else
     {
-      QString model = NavApp::getUserAircraft().getAirplaneModel();
+      QString model = lastSimData->getUserAircraft().getAirplaneModel();
       if(!model.isEmpty() && perf->getAircraftType() != model)
         html.p().
         warning(tr("Airplane model does not match:")).br().
@@ -1204,17 +1206,39 @@ void AircraftPerfController::optionsChanged()
   updateReportCurrent();
 }
 
+void AircraftPerfController::connectedToSimulator()
+{
+  currentReportLastSampleTimeMs = reportLastSampleTimeMs = 0L; // Force update on next simDataChanged
+  *lastSimData = atools::fs::sc::SimConnectData();
+}
+
+void AircraftPerfController::disconnectedFromSimulator()
+{
+  *lastSimData = atools::fs::sc::SimConnectData();
+  updateReports();
+}
+
 void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
+  *lastSimData = simulatorData;
+
   // Pass to handler for averaging
   perfHandler->simDataChanged(simulatorData);
 
   // Update report every second
   qint64 currentSampleTime = QDateTime::currentMSecsSinceEpoch();
-  if(currentSampleTime > reportLastSampleTimeMs + 1000)
+  if(currentSampleTime > currentReportLastSampleTimeMs + 1000)
+  {
+    currentReportLastSampleTimeMs = currentSampleTime;
+    updateReportCurrent();
+  }
+
+  // Update report every second
+  currentSampleTime = QDateTime::currentMSecsSinceEpoch();
+  if(currentSampleTime > reportLastSampleTimeMs + 5000)
   {
     reportLastSampleTimeMs = currentSampleTime;
-    updateReportCurrent();
+    updateReport();
   }
 }
 
