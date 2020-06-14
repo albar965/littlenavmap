@@ -66,10 +66,10 @@ public:
 
   /* Opens save as dialog to save the content in the string into a performance file
    * Does not affect current */
-  bool saveAsStr(const QString& string);
+  bool saveAsStr(const QString& string) const;
 
   /* Default file dialogs for opening and saving */
-  QString saveAsFileDialog() const;
+  QString saveAsFileDialog(const QString& filepath) const;
   QString openFileDialog() const;
 
   /* Ask user if data can be deleted when quitting.

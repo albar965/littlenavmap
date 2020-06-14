@@ -380,14 +380,19 @@ bool AircraftPerfController::save()
   }
 }
 
-bool AircraftPerfController::saveAsStr(const QString& string)
+bool AircraftPerfController::saveAsStr(const QString& string) const
 {
   qDebug() << Q_FUNC_INFO;
   bool retval = false;
 
   try
   {
-    QString perfFile = saveAsFileDialog();
+    // Load performance to get the filename
+    AircraftPerf aperf;
+    aperf.loadXmlStr(string);
+
+    QString filename = atools::cleanFilename(aperf.getName()) + ".lnmperf";
+    QString perfFile = saveAsFileDialog(filename);
     if(!perfFile.isEmpty())
     {
       QFile file(perfFile);
@@ -415,13 +420,13 @@ bool AircraftPerfController::saveAsStr(const QString& string)
   return retval;
 }
 
-QString AircraftPerfController::saveAsFileDialog() const
+QString AircraftPerfController::saveAsFileDialog(const QString& filepath) const
 {
   return atools::gui::Dialog(mainWindow).saveFileDialog(
     tr("Save Aircraft Performance File"),
     tr("Aircraft Performance Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_AIRCRAFT_PERF),
     "lnmperf", "AircraftPerformance/",
-    QString(), currentFilepath.isEmpty() ? perf->getName() + ".lnmperf" : QFileInfo(currentFilepath).fileName(),
+    QString(), filepath,
     false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 }
 
@@ -440,7 +445,9 @@ bool AircraftPerfController::saveAs()
 
   try
   {
-    QString perfFile = saveAsFileDialog();
+    QString perfFile = saveAsFileDialog(currentFilepath.isEmpty() ?
+                                        atools::cleanFilename(perf->getName()) + ".lnmperf" :
+                                        QFileInfo(currentFilepath).fileName());
     if(!perfFile.isEmpty())
     {
       currentFilepath = perfFile;
