@@ -1596,7 +1596,11 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       QList<FlightplanEntry>& entries = flightplan.getEntries();
 
       if(calcRange)
+      {
         entries.erase(flightplan.getEntries().begin() + fromIndex + 1, flightplan.getEntries().begin() + toIndex);
+        entries[toIndex].setAirway(QString());
+        entries[toIndex].setFlag(atools::fs::pln::entry::TRACK, false);
+      }
       else
         // Erase all but start and destination
         entries.erase(flightplan.getEntries().begin() + 1, entries.end() - numAlternateLegs - 1);

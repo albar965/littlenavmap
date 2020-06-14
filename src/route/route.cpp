@@ -149,8 +149,6 @@ int Route::getNextUserWaypointNumber() const
 
 bool Route::canEditLeg(int index) const
 {
-  // Do not allow any edits between the procedures
-
   if(hasAnySidProcedure() && index < sidLegsOffset + sidLegs.size())
     return false;
 
@@ -166,14 +164,14 @@ bool Route::canEditLeg(int index) const
   return true;
 }
 
-bool Route::canEditComment(int index) const
-{
-  return value(index).isRoute() && !value(index).isAlternate();
-}
-
 bool Route::canEditPoint(int index) const
 {
   return value(index).isRoute() || value(index).isAlternate();
+}
+
+bool Route::canEditComment(int index) const
+{
+  return value(index).isRoute() && !value(index).isAlternate();
 }
 
 void Route::getSidStarNames(QString& sid, QString& sidTrans, QString& star, QString& starTrans) const
