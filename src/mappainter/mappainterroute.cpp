@@ -462,7 +462,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
 
   // Keep a stack of last painted geometry since some functions need access back into the history
   QVector<QLineF> lastLines({QLineF()});
-  QLineF lastActiveLine;
+  QVector<QLineF> lastActiveLines({QLineF()});
 
   painter->setPen(QPen(mapcolors::routeProcedureOutlineColor, outerlinewidth,
                        Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -487,17 +487,18 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
 
   lastLines.clear();
   lastLines.append(QLineF());
-  QVector<DrawText> drawTextLines;
+  QVector<DrawText> drawTextLines, lastActiveDrawTextLines;
   drawTextLines.fill({Line(), false, false}, legs.size());
+  lastActiveDrawTextLines = drawTextLines;
 
   // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold
   context->szFont(context->textSizeFlightplan * 1.1f);
 
-  // Paint legs
+  // Paint legs ====================================================
+  bool noText = context->drawFast;
   for(int i = 0; i < legs.size(); i++)
   {
-    bool noText = context->drawFast;
     if(i < passedProcLeg && activeValid && !preview)
     {
       noText = true;
@@ -512,12 +513,11 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
     }
 
     if(i == activeProcLeg)
-      // Remember for drawing the active one
-      lastActiveLine = lastLines.last();
-
-    if(!preview && activeValid && activeProcLeg == i)
-      // Use pen for active leg
-      painter->setPen(legs.at(i).isMissed() ? missedActivePen : apprActivePen);
+    {
+      // Create snapshot of vectors for drawing the active one on top of others
+      lastActiveLines = lastLines;
+      lastActiveDrawTextLines = drawTextLines;
+    }
 
     if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn())
       // Use dashed line for CTL or straight in
@@ -527,7 +527,29 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
     else if(legs.at(i).isManual())
       mapcolors::adjustPenForManual(painter);
 
-    paintProcedureSegment(context, legs, i, lastLines, &drawTextLines, noText, preview, true /* draw */);
+    // Do not draw active - just fill the geometry arrays
+    bool draw = !activeValid || activeProcLeg != i;
+
+    // Paint segment
+    paintProcedureSegment(context, legs, i, lastLines, &drawTextLines, noText, preview, draw);
+  }
+
+  // Paint active on top of others ====================================================
+  if(!preview && activeValid && activeProcLeg >= 0)
+  {
+    // Use pen for active leg
+    painter->setPen(legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen);
+
+    if(legs.at(activeProcLeg).isCircleToLand() || legs.at(activeProcLeg).isStraightIn())
+      // Use dashed line for CTL or straight in
+      mapcolors::adjustPenForCircleToLand(painter);
+    else if(legs.at(activeProcLeg).isVectors())
+      mapcolors::adjustPenForVectors(painter);
+    else if(legs.at(activeProcLeg).isManual())
+      mapcolors::adjustPenForManual(painter);
+
+    paintProcedureSegment(context, legs, activeProcLeg, lastActiveLines, &lastActiveDrawTextLines, noText, preview,
+                          true /* draw */);
   }
 
   // Draw text along lines only on low zoom factors ========
