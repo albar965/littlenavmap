@@ -190,6 +190,9 @@ private:
   /* Connect buttons in dialog with above */
   void connectDialogSignals(LogdataDialog *dialog);
 
+  /* Emit signals for changed */
+  void logChanged(bool loadAll, bool keepSelection);
+
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
   int logEntryId = -1;

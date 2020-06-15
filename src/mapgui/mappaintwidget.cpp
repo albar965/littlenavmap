@@ -313,21 +313,33 @@ void MapPaintWidget::setShowMapPois(bool show)
 
 void MapPaintWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
 {
+  map::MapObjectTypes cur = paintLayer->getShownMapObjects();
   paintLayer->setShowMapObjects(type, show);
 
-  if(type & map::AIRWAYV || type & map::AIRWAYJ || type & map::TRACK)
+  // Update screen coordinate caches if display options have changed
+
+  if(type.testFlag(map::AIRWAYV) != cur.testFlag(map::AIRWAYV) ||
+     type.testFlag(map::AIRWAYJ) != cur.testFlag(map::AIRWAYJ) ||
+     type.testFlag(map::TRACK) != cur.testFlag(map::TRACK))
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type & map::AIRSPACE)
+  if(type.testFlag(map::AIRSPACE) != cur.testFlag(map::AIRSPACE))
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type & map::ILS)
+  if(type.testFlag(map::ILS) != cur.testFlag(map::ILS))
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show)
 {
+  map::MapObjectDisplayTypes cur = paintLayer->getShownMapObjectDisplayTypes();
   paintLayer->setShowMapObjectsDisplay(type, show);
+
+  // Update screen coordinate cache if display options have changed
+  if(type.testFlag(map::LOGBOOK_DIRECT) != cur.testFlag(map::LOGBOOK_DIRECT) ||
+     type.testFlag(map::LOGBOOK_ROUTE) != cur.testFlag(map::LOGBOOK_ROUTE) ||
+     type.testFlag(map::LOGBOOK_TRACK) != cur.testFlag(map::LOGBOOK_TRACK))
+    screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::setShowMapAirspaces(map::MapAirspaceFilter types)
@@ -906,6 +918,11 @@ void MapPaintWidget::changeAirwayHighlights(const QList<QList<map::MapAirway> >&
   screenIndex->changeAirwayHighlights(airways);
   screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
   update();
+}
+
+void MapPaintWidget::updateLogEntryScreenGeometry()
+{
+  screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::changeSearchHighlights(const map::MapSearchResult& newHighlights)

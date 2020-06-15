@@ -259,22 +259,27 @@ void MapScreenIndex::updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox
 
   if(scale->isValid())
   {
-    bool routePreview = NavApp::getLogdataController()->isRoutePreviewShown();
-    CoordinateConverter conv(mapPaintWidget->viewport());
-    for(map::MapLogbookEntry& entry : searchHighlights.logbookEntries)
-    {
-      if(entry.isValid())
-      {
-        updateLineScreenGeometry(logEntryLines, entry.id, entry.line(), curBox, conv);
+    map::MapObjectDisplayTypes types = paintLayer->getShownMapObjectDisplayTypes();
 
-        if(routePreview)
+    if(types.testFlag(map::LOGBOOK_DIRECT) || types.testFlag(map::LOGBOOK_ROUTE))
+    {
+      CoordinateConverter conv(mapPaintWidget->viewport());
+      for(map::MapLogbookEntry& entry : searchHighlights.logbookEntries)
+      {
+        if(entry.isValid())
         {
-          // Get geometry for flight plan if preview is enabled
-          const atools::geo::LineString *geo = NavApp::getLogdataController()->getRouteGeometry(entry.id);
-          if(geo != nullptr)
+          if(types.testFlag(map::LOGBOOK_DIRECT))
+            updateLineScreenGeometry(logEntryLines, entry.id, entry.line(), curBox, conv);
+
+          if(types.testFlag(map::LOGBOOK_ROUTE))
           {
-            for(int i = 0; i < geo->size() - 1; i++)
-              updateLineScreenGeometry(logEntryLines, entry.id, Line(geo->at(i), geo->at(i + 1)), curBox, conv);
+            // Get geometry for flight plan if preview is enabled
+            const atools::geo::LineString *geo = NavApp::getLogdataController()->getRouteGeometry(entry.id);
+            if(geo != nullptr)
+            {
+              for(int i = 0; i < geo->size() - 1; i++)
+                updateLineScreenGeometry(logEntryLines, entry.id, Line(geo->at(i), geo->at(i + 1)), curBox, conv);
+            }
           }
         }
       }
@@ -831,8 +836,27 @@ QSet<int> MapScreenIndex::nearestLineIds(const QList<std::pair<int, QLine> >& li
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
 {
-  for(int id : nearestLineIds(logEntryLines, xs, ys, maxDistance, false /* also distance to points */))
-    result.logbookEntries.append(NavApp::getLogdataController()->getLogEntryById(id));
+  CoordinateConverter conv(mapPaintWidget->viewport());
+  QSet<int> ids; // Deduplicate
+
+  // Look for logbook entry endpoints (departure and destination)
+  for(int i = searchHighlights.logbookEntries.size() - 1; i >= 0; i--)
+  {
+    const map::MapLogbookEntry& l = searchHighlights.logbookEntries.at(i);
+    int x, y;
+    if(conv.wToS(l.departurePos, x, y) || conv.wToS(l.destinationPos, x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+        maptools::insertSortedByDistance(conv, result.logbookEntries, &ids, xs, ys, l);
+  }
+
+  // Look for route and direct line geometry
+  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::LOGBOOK_DIRECT) ||
+     paintLayer->getShownMapObjectDisplayTypes().testFlag(map::LOGBOOK_ROUTE))
+  {
+    for(int id : nearestLineIds(logEntryLines, xs, ys, maxDistance, false /* also distance to points */))
+      maptools::insertSortedByDistance(conv, result.logbookEntries, &ids, xs, ys,
+                                       NavApp::getLogdataController()->getLogEntryById(id));
+  }
 }
 
 void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapSearchResult& result) const

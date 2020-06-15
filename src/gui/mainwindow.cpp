@@ -1045,6 +1045,7 @@ void MainWindow::connectAllSlots()
   // Logbook ===================================================================================
   LogdataController *logdataController = NavApp::getLogdataController();
   connect(logdataController, &LogdataController::refreshLogSearch, logSearch, &LogdataSearch::refreshData);
+  connect(logdataController, &LogdataController::logDataChanged, mapWidget, &MapWidget::updateLogEntryScreenGeometry);
   connect(logdataController, &LogdataController::logDataChanged, this, &MainWindow::updateMapObjectsShown);
   connect(logdataController, &LogdataController::logDataChanged, infoController,
           &InfoController::updateAllInformation);
@@ -1298,16 +1299,17 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowTocTod, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapHideRangeRings, &QAction::triggered, this, &MainWindow::clearRangeRingsAndDistanceMarkers);
 
-  connect(ui->actionSearchLogdataShowDirect, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionSearchLogdataShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionSearchLogdataShowTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-
+  // Logbook view options ============================================
   connect(ui->actionSearchLogdataShowDirect, &QAction::toggled,
           logdataController, &LogdataController::displayOptionsChanged);
   connect(ui->actionSearchLogdataShowRoute, &QAction::toggled,
           logdataController, &LogdataController::displayOptionsChanged);
   connect(ui->actionSearchLogdataShowTrack, &QAction::toggled,
           logdataController, &LogdataController::displayOptionsChanged);
+
+  connect(ui->actionSearchLogdataShowDirect, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionSearchLogdataShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionSearchLogdataShowTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   connect(ui->actionMapShowAirportWeather, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
 

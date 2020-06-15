@@ -308,6 +308,8 @@ private:
 
   /* Geometry objects that are cached in screen coordinate system for faster access to tooltips etc. */
   QList<std::pair<int, QLine> > airwayLines;
+
+  /* Collects logbook entry route and direct line geometry */
   QList<std::pair<int, QLine> > logEntryLines;
   QList<std::pair<map::MapAirspaceId, QPolygon> > airspacePolygons;
   QList<std::pair<int, QPolygon> > ilsPolygons;

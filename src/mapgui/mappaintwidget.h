@@ -310,6 +310,9 @@ public:
     return currentThemeIndex;
   }
 
+  /* Logbook display options have changed or new or edited logbook entry */
+  void updateLogEntryScreenGeometry();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);
