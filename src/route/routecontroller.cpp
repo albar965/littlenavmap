@@ -466,12 +466,12 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
   cursor.setPosition(table->lastPosition() + 1);
 }
 
-void RouteController::flightplanHeader(atools::util::HtmlBuilder& html, bool titleOnly) const
+void RouteController::flightplanHeaderPrint(atools::util::HtmlBuilder& html, bool titleOnly) const
 {
   html.text(buildFlightplanLabel(true /* print */, titleOnly), atools::util::html::NO_ENTITIES);
 
   if(!titleOnly)
-    html.p(buildFlightplanLabel2(), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+    html.p(buildFlightplanLabel2(true /* print */), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
 }
 
 QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
@@ -483,7 +483,7 @@ QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
            QString(),
            {"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />",
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />"});
-  html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, false),
+  html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, true /* print */),
             atools::util::html::NO_ENTITIES);
   html.docEnd();
   return html.getHtml();
@@ -499,7 +499,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
 
   // Header lines
   html.p(buildFlightplanLabel(print), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
-  html.p(buildFlightplanLabel2(), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+  html.p(buildFlightplanLabel2(print), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
   html.table();
 
   // Table header
@@ -4381,18 +4381,29 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
     return title + (approach.isEmpty() ? QString() : "<br/>" + approach);
 }
 
-QString RouteController::buildFlightplanLabel2() const
+QString RouteController::buildFlightplanLabel2(bool print) const
 {
   const Flightplan& flightplan = route.getFlightplan();
   if(!flightplan.isEmpty())
   {
-    if(NavApp::getAircraftPerfController()->isDescentValid() &&
-       route.getAltitudeLegs().getTravelTimeHours() > 0.f)
-      return tr("<b>%1, %2</b>").
-             arg(Unit::distNm(route.getTotalDistance())).
-             arg(formatter::formatMinutesHoursLong(route.getAltitudeLegs().getTravelTimeHours()));
-    else
-      return tr("<b>%1</b>").arg(Unit::distNm(route.getTotalDistance()));
+    QStringList texts;
+
+    texts.append(tr("<b>%1</b>").arg(Unit::distNm(route.getTotalDistance())));
+
+    if(route.getAltitudeLegs().getTravelTimeHours() > 0.f)
+      texts.append(tr("<b>%1</b>").arg(formatter::formatMinutesHoursLong(route.getAltitudeLegs().getTravelTimeHours())));
+
+    if(print)
+    {
+      texts.append(tr("<b>%1</b>").arg(Unit::altFeet(route.getCruisingAltitudeFeet())));
+      if(route.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
+        texts.append(tr("%1 from departure to top of climb").arg(Unit::distNm(route.getTopOfClimbDistance())));
+      if(route.getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE)
+        texts.append(tr("%1 from start of descent to destination").arg(Unit::distNm(
+                                                                         route.getTopOfDescentFromDestination())));
+    }
+
+    return texts.join(tr(", "));
   }
   else
     return QString();

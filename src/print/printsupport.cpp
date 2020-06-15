@@ -174,7 +174,7 @@ void PrintSupport::createFlightplanDocuments()
   HtmlBuilder html(mapcolors::mapPrintRowColor, mapcolors::mapPrintRowColorAlt);
   // Header line with program version
   addHeader(html);
-  NavApp::getRouteController()->flightplanHeader(html, !(opts & prt::HEADER));
+  NavApp::getRouteController()->flightplanHeaderPrint(html, !(opts & prt::HEADER));
 
   if(opts & prt::HEADER)
   {

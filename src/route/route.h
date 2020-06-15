@@ -194,10 +194,12 @@ public:
 
   /* Distance from TOD to destination in nm */
   float getTopOfDescentFromDestination() const;
+
+  /* Distance TOD from departure in NM or INVALID_DISTANCE_VALUE if it could not be calculated. */
   float getTopOfDescentDistance() const;
   int getTopOfDescentLegIndex() const;
 
-  /* Distance from TOC to destination in nm */
+  /* Distance TOC from departure in NM or INVALID_DISTANCE_VALUE if it could not be calculated. */
   float getTopOfClimbDistance() const;
   int getTopOfClimbLegIndex() const;
 

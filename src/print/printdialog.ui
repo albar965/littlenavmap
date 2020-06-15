@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>490</width>
-    <height>502</height>
+    <width>537</width>
+    <height>506</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -304,18 +304,38 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBoxPrintDepartureSoftRunways">
-          <property name="text">
-           <string>&amp;Include runways with soft surface</string>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="spacing">
+           <number>0</number>
           </property>
-         </widget>
+          <property name="leftMargin">
+           <number>22</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="checkBoxPrintDepartureSoftRunways">
+            <property name="text">
+             <string>&amp;Include runways with soft surface</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBoxPrintDepartureDetailRunways">
-          <property name="text">
-           <string>&amp;Detailed runway information</string>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <property name="spacing">
+           <number>0</number>
           </property>
-         </widget>
+          <property name="leftMargin">
+           <number>22</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="checkBoxPrintDepartureDetailRunways">
+            <property name="text">
+             <string>&amp;Detailed runway information</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureCom">
@@ -356,7 +376,7 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="2">
       <widget class="QGroupBox" name="groupBoxPrintDestination">
        <property name="title">
         <string>Destination Airport</string>
@@ -404,18 +424,38 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBoxPrintDestinationSoftRunways">
-          <property name="text">
-           <string>&amp;Include runways with soft surface</string>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>0</number>
           </property>
-         </widget>
+          <property name="leftMargin">
+           <number>22</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="checkBoxPrintDestinationSoftRunways">
+            <property name="text">
+             <string>&amp;Include runways with soft surface</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBoxPrintDestinationDetailRunways">
-          <property name="text">
-           <string>&amp;Detailed runway information</string>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="spacing">
+           <number>0</number>
           </property>
-         </widget>
+          <property name="leftMargin">
+           <number>22</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="checkBoxPrintDestinationDetailRunways">
+            <property name="text">
+             <string>&amp;Detailed runway information</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationCom">
@@ -480,18 +520,15 @@
   <tabstop>listWidgetPrintFlightplanCols</tabstop>
   <tabstop>checkBoxPrintDepartureOverview</tabstop>
   <tabstop>checkBoxPrintDepartureRunways</tabstop>
-  <tabstop>checkBoxPrintDepartureSoftRunways</tabstop>
-  <tabstop>checkBoxPrintDepartureDetailRunways</tabstop>
   <tabstop>checkBoxPrintDepartureCom</tabstop>
   <tabstop>checkBoxPrintDepartureAppr</tabstop>
   <tabstop>checkBoxPrintDepartureWeather</tabstop>
   <tabstop>checkBoxPrintDestinationOverview</tabstop>
   <tabstop>checkBoxPrintDestinationRunways</tabstop>
-  <tabstop>checkBoxPrintDestinationSoftRunways</tabstop>
   <tabstop>checkBoxPrintDestinationCom</tabstop>
-  <tabstop>checkBoxPrintDestinationDetailRunways</tabstop>
   <tabstop>checkBoxPrintDestinationAppr</tabstop>
   <tabstop>checkBoxPrintDestinationWeather</tabstop>
  </tabstops>
  <resources/>
+ <connections/>
 </ui>

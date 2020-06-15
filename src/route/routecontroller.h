@@ -213,7 +213,7 @@ public:
   void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;
 
   /* Get header for print report */
-  void flightplanHeader(atools::util::HtmlBuilder& html, bool titleOnly) const;
+  void flightplanHeaderPrint(atools::util::HtmlBuilder& html, bool titleOnly) const;
 
   /* Copy the route as a string to the clipboard */
   void routeStringToClipboard() const;
@@ -411,8 +411,11 @@ private:
   void dockVisibilityChanged(bool visible);
   void eraseAirway(int row);
 
+  /* Departure, destination and procedures. */
   QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr) const;
-  QString buildFlightplanLabel2() const;
+
+  /* Distance and time. */
+  QString buildFlightplanLabel2(bool print = false) const;
 
   void updateTableHeaders();
   void highlightNextWaypoint(int nearestLegIndex);
