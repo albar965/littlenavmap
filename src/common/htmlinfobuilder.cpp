@@ -4233,7 +4233,7 @@ void HtmlInfoBuilder::routeWindText(HtmlBuilder& html, const Route& route, int i
   if(index >= 0)
   {
     // Wind text is always shown independent of barb status at route
-    if(NavApp::getWindReporter()->isWindSourceEnabled() && route.hasValidProfile())
+    if(NavApp::getWindReporter()->hasWindData() && route.hasValidProfile())
     {
       const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
       if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() &&
