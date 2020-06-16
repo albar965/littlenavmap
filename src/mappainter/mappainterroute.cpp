@@ -1052,7 +1052,6 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
                                           bool drawTextFlag)
 {
   const proc::MapProcedureLeg& leg = legs.at(index);
-  bool drawDetail = context->mapLayer->isApproachDetail();
   bool drawText = context->mapLayer->isApproachText() && drawTextFlag;
 
   // Debugging code for drawing ================================================
@@ -1156,7 +1155,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       altRestriction.alt2 = 0.f;
 
       texts.append(proc::altRestrictionTextNarrow(altRestriction));
-      if(drawDetail)
+      if(drawText)
         paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
       paintProcedurePoint(context, x, y, false);
       if(drawText)
@@ -1193,7 +1192,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       texts.append(leg.displayText);
       texts.append(proc::altRestrictionTextNarrow(altRestr));
       texts.append(proc::speedRestrictionTextNarrow(speedRestr));
-      if(drawDetail)
+      if(drawText)
         paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
       paintProcedurePoint(context, x, y, false);
       if(drawText)
@@ -1212,7 +1211,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     {
       if(wToS(leg.line.getPos1(), x, y))
       {
-        if(drawDetail)
+        if(drawText)
           paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
         paintProcedurePoint(context, x, y, false);
       }
@@ -1223,7 +1222,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       {
         // Draw intercept comment - no altitude restriction there
         texts.append(leg.displayText);
-        if(drawDetail)
+        if(drawText)
           paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
         paintProcedurePoint(context, x, y, false);
         if(drawText)
@@ -1304,7 +1303,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   if(!navaids.waypoints.isEmpty() && wToS(navaids.waypoints.first().position, x, y))
   {
-    if(drawDetail)
+    if(drawText)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintWaypoint(context, QColor(), x, y, false);
     if(drawText)
@@ -1313,7 +1312,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   else if(!navaids.vors.isEmpty() && wToS(navaids.vors.first().position, x, y))
   {
     symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
-    if(drawDetail)
+    if(drawText)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintVor(context, x, y, navaids.vors.first(), false);
     if(drawText)
@@ -1322,7 +1321,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   else if(!navaids.ndbs.isEmpty() && wToS(navaids.ndbs.first().position, x, y))
   {
     symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
-    if(drawDetail)
+    if(drawText)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintNdb(context, x, y, false);
     if(drawText)
@@ -1331,7 +1330,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   else if(!navaids.ils.isEmpty() && wToS(navaids.ils.first().position, x, y))
   {
     texts.append(leg.fixIdent);
-    if(drawDetail)
+    if(drawText)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintProcedurePoint(context, x, y, false);
     if(drawText)
@@ -1340,7 +1339,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   else if(!navaids.runwayEnds.isEmpty() && wToS(navaids.runwayEnds.first().position, x, y))
   {
     texts.append(leg.fixIdent);
-    if(drawDetail)
+    if(drawText)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintProcedurePoint(context, x, y, false);
     if(drawText)
@@ -1350,7 +1349,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   {
     // Custom IF case
     texts.append(leg.fixIdent);
-    if(drawDetail)
+    if(drawText)
       paintProcedureUnderlay(context, leg, x, y, symbolSize);
     paintProcedurePoint(context, x, y, false);
     if(drawText)
