@@ -295,9 +295,12 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
 void LogdataController::logChanged(bool loadAll, bool keepSelection)
 {
+  // Clear cache and update map screen index
   manager->clearGeometryCache();
-  emit refreshLogSearch(loadAll, keepSelection);
   emit logDataChanged();
+
+  // Reload search
+  emit refreshLogSearch(loadAll, keepSelection);
 }
 
 void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
