@@ -191,7 +191,7 @@ void RouteCalcWindow::updateHeader()
     {
       title = HtmlBuilder::errorMessage({tr("Cannot calculate flight plan"),
                                          tr("between selected legs."),
-                                         tr("See tooltip on this message for details.")});
+                                         tr("Hover mouse over this message for details.")});
       tooltip = tr("Select a range or two flight plan legs in the flight plan table.\n"
                    "These must be neither a part of a procedure nor a part of an alternate destination.");
     }
@@ -222,7 +222,7 @@ void RouteCalcWindow::updateHeader()
     {
       title = HtmlBuilder::errorMessage({tr("Invalid flight plan."),
                                          tr("Set departure and destination first."),
-                                         tr("See tooltip on this message for details.")});
+                                         tr("Hover mouse over this message for details.")});
       tooltip = tr("Use the right-click context menu on the map or the airport search (F4)\n"
                    "to select departure and destination first.");
     }

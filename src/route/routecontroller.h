@@ -240,9 +240,9 @@ public:
 
   QString procedureTypeText(const RouteLeg& leg);
 
-  void clearSelection();
+  void clearTableSelection();
 
-  bool hasSelection();
+  bool hasTableSelection();
 
   void aircraftPerformanceChanged();
   void windUpdated();
@@ -411,6 +411,10 @@ private:
   void dockVisibilityChanged(bool visible);
   void eraseAirway(int row);
 
+  /* Time for clear selection triggered */
+  void clearSelectionTimeout();
+  void scrollTimeout();
+
   /* Departure, destination and procedures. */
   QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr) const;
 
@@ -449,6 +453,11 @@ private:
 
   /* Update navdata properties in flightplan properties for export and save */
   void updateRouteCycleMetadata();
+
+  /* Move active leg to second top position */
+  void scrollToActive();
+
+  void viewScrolled(int);
 
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
@@ -499,14 +508,16 @@ private:
 
   bool loadingDatabaseState = false;
   qint64 lastSimUpdate = 0;
+
+  /* Copy of current active aircraft updated every MIN_SIM_UPDATE_TIME_MS */
   atools::fs::sc::SimConnectUserAircraft aircraft;
 
   SymbolPainter *symbolPainter = nullptr;
 
   atools::gui::TabWidgetHandler *tabHandlerRoute = nullptr;
 
-  /* Calls RouteController::routeAltChangedDelayed */
-  QTimer routeAltDelayTimer;
+  /* Timers for updating altitude delayer, clear selection while flying and moving active to top */
+  QTimer routeAltDelayTimer, selectionTimer, scrollTimer;
 
   // Route table colum headings
   QStringList routeColumns, routeColumnTooltips;

@@ -79,6 +79,7 @@
 #include <QTextTable>
 #include <QPlainTextEdit>
 #include <QProgressDialog>
+#include <QScrollBar>
 
 namespace rcol {
 // Route table column indexes
@@ -235,8 +236,22 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(this, &RouteController::routeChanged, this, &RouteController::updateRemarkWidget);
   connect(ui->plainTextEditRouteRemarks, &QPlainTextEdit::textChanged, this, &RouteController::remarksTextChanged);
 
+  // Update route altitude and elevation profile with a delay
   connect(&routeAltDelayTimer, &QTimer::timeout, this, &RouteController::routeAltChangedDelayed);
   routeAltDelayTimer.setSingleShot(true);
+
+  // Clear selection after inactivity
+  connect(&selectionTimer, &QTimer::timeout, this, &RouteController::clearSelectionTimeout);
+  selectionTimer.setInterval(OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000);
+  selectionTimer.setSingleShot(true);
+
+  // Move active to top after inactivity (no scrolling)
+  connect(&scrollTimer, &QTimer::timeout, this, &RouteController::scrollTimeout);
+  scrollTimer.setInterval(OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000);
+  scrollTimer.setSingleShot(true);
+
+  // Restart timer when scrolling
+  connect(view->verticalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
 
   // set up table view
   view->horizontalHeader()->setSectionsMovable(true);
@@ -291,9 +306,9 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
-  connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::clearSelection);
+  connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::clearTableSelection);
   connect(ui->actionRouteTableSelectAll, &QAction::triggered, this, &RouteController::selectAllTriggered);
-  connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::clearSelection);
+  connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::clearTableSelection);
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
   connect(ui->actionRouteVisibleColumns, &QAction::triggered, this, &RouteController::visibleColumnsTriggered);
@@ -823,6 +838,7 @@ void RouteController::newFlightplan()
   updateRouteCycleMetadata();
 
   updateTableModel();
+  updateMoveAndDeleteActions();
   NavApp::updateWindowTitle();
   updateErrorLabel();
   remarksFlightPlanToWidget();
@@ -951,6 +967,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   remarksFlightPlanToWidget();
   updateTableModel();
+  updateMoveAndDeleteActions();
   updateErrorLabel();
   NavApp::updateWindowTitle();
   routeWindow->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
@@ -1268,6 +1285,8 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     else if(middleInsert)
       selectRange(insertPosSelection, insertPosSelection + flightplan.getEntries().size() - 1);
 
+    updateMoveAndDeleteActions();
+
     updateErrorLabel();
     reportProcedureErrors(procedureLoadingErrors);
     emit routeChanged(true);
@@ -1374,6 +1393,7 @@ void RouteController::calculateDirect()
   route.updateLegAltitudes();
 
   updateTableModel();
+  updateMoveAndDeleteActions();
   postChange(undoCommand);
   NavApp::updateWindowTitle();
   updateErrorLabel();
@@ -1646,6 +1666,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       route.updateLegAltitudes();
 
       updateTableModel();
+      updateMoveAndDeleteActions();
 
       postChange(undoCommand);
       NavApp::updateWindowTitle();
@@ -1759,6 +1780,7 @@ void RouteController::reverseRoute()
 
   updateActiveLeg();
   updateTableModel();
+  updateMoveAndDeleteActions();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -1806,6 +1828,8 @@ void RouteController::postDatabaseLoad()
 
   // Need to update model to reflect the flight plan changes before other methods call updateModelHighlights
   updateTableModel();
+  updateMoveAndDeleteActions();
+
   updateErrorLabel();
   routeAltChangedDelayed();
   updateRouteCycleMetadata();
@@ -2389,16 +2413,6 @@ void RouteController::updateActiveLeg()
   route.updateActiveLegAndPos(true /* force update */, aircraft.isFlying());
 }
 
-void RouteController::clearSelection()
-{
-  view->clearSelection();
-}
-
-bool RouteController::hasSelection()
-{
-  return view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection();
-}
-
 void RouteController::editUserWaypointTriggered()
 {
   editUserWaypointName(view->currentIndex().row());
@@ -2425,6 +2439,7 @@ void RouteController::editUserWaypointName(int index)
 
       updateActiveLeg();
       updateTableModel();
+      updateMoveAndDeleteActions();
 
       postChange(undoCommand);
       updateErrorLabel();
@@ -2452,6 +2467,37 @@ void RouteController::dockVisibilityChanged(bool visible)
   tableSelectionChanged(QItemSelection(), QItemSelection());
 }
 
+void RouteController::clearSelectionTimeout()
+{
+  if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION) &&
+     NavApp::isConnectedAndAircraftFlying())
+    clearTableSelection();
+}
+
+void RouteController::scrollTimeout()
+{
+  if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG) &&
+     NavApp::isConnectedAndAircraftFlying())
+    scrollToActive();
+}
+
+void RouteController::clearTableSelection()
+{
+  view->clearSelection();
+}
+
+bool RouteController::hasTableSelection()
+{
+  return view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection();
+}
+
+void RouteController::viewScrolled(int)
+{
+  if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG) &&
+     NavApp::isConnectedAndAircraftFlying())
+    scrollTimer.start();
+}
+
 void RouteController::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
   Q_UNUSED(selected)
@@ -2463,6 +2509,9 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   updateMoveAndDeleteActions();
   QItemSelectionModel *sm = view->selectionModel();
+
+  if(sm == nullptr)
+    return;
 
   int selectedRowSize = 0;
   if(sm != nullptr && sm->hasSelection())
@@ -2483,9 +2532,11 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   emit routeSelectionChanged(selectedRowSize, model->rowCount());
 
-  if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() &&
-     sm != nullptr &&
-     sm->currentIndex().isValid() &&
+  if(sm->hasSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION) &&
+     NavApp::isConnectedAndAircraftFlying())
+    selectionTimer.start();
+
+  if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() && sm->currentIndex().isValid() &&
      sm->isSelected(sm->currentIndex()))
     emit showPos(route.value(sm->currentIndex().row()).getPosition(), map::INVALID_DISTANCE_VALUE, false);
 }
@@ -2551,6 +2602,10 @@ void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
   routeWindow->optionsChanged();
+
+  int timeout = OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000;
+  selectionTimer.setInterval(timeout);
+  scrollTimer.setInterval(timeout);
 
   updateTableHeaders();
   updateTableModel();
@@ -2898,6 +2953,8 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
+  updateMoveAndDeleteActions();
+
   updateErrorLabel();
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2943,6 +3000,8 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
+  updateMoveAndDeleteActions();
+
   postChange(undoCommand);
   updateErrorLabel();
   NavApp::updateWindowTitle();
@@ -2973,6 +3032,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
 
   updateActiveLeg();
   updateTableModel();
+  updateMoveAndDeleteActions();
 
   postChange(undoCommand);
   updateErrorLabel();
@@ -3042,6 +3102,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
 
   updateActiveLeg();
   updateTableModel();
+  updateMoveAndDeleteActions();
 
   postChange(undoCommand);
   updateErrorLabel();
@@ -3269,6 +3330,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
 
   updateActiveLeg();
   updateTableModel();
+  updateMoveAndDeleteActions();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -3336,6 +3398,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
 
   updateActiveLeg();
   updateTableModel();
+  updateMoveAndDeleteActions();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -3412,6 +3475,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
 
   updateActiveLeg();
   updateTableModel();
+  updateMoveAndDeleteActions();
 
   postChange(undoCommand);
   updateErrorLabel();
@@ -3448,6 +3512,7 @@ void RouteController::routeDelete(int index)
   updateFlightplanFromWidgets();
 
   updateTableModel();
+  updateMoveAndDeleteActions();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -4011,6 +4076,10 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
       map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
       if(aircraft.isFlying())
       {
+        if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION) && aircraft.isFlying() &&
+           view->selectionModel()->hasSelection() && !selectionTimer.isActive())
+          selectionTimer.start();
+
         int previousRouteLeg = route.getActiveLegIndexCorrected();
         route.updateActiveLegAndPos(position);
         int routeLeg = route.getActiveLegIndexCorrected();
@@ -4021,14 +4090,25 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
           qDebug() << "new route leg" << previousRouteLeg << routeLeg;
           highlightNextWaypoint(routeLeg);
 
-          if(OptionData::instance().getFlags2() & opts2::ROUTE_CENTER_ACTIVE_LEG)
-            view->scrollTo(model->index(std::max(routeLeg - 1, 0), 0), QAbstractItemView::PositionAtTop);
+          scrollToActive();
         }
       }
       else
         route.updateActivePos(position);
     }
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
+  }
+}
+
+void RouteController::scrollToActive()
+{
+  if(NavApp::isConnectedAndAircraftFlying())
+  {
+    int routeLeg = route.getActiveLegIndexCorrected();
+
+    if(routeLeg != map::INVALID_INDEX_VALUE && routeLeg >= 0 &&
+       OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
+      view->scrollTo(model->index(std::max(routeLeg - 1, 0), 0), QAbstractItemView::PositionAtTop);
   }
 }
 

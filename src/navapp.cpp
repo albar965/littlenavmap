@@ -416,6 +416,10 @@ bool NavApp::isSimConnect()
   return NavApp::getConnectClient()->isSimConnect();
 }
 
+bool NavApp::isConnectedAndAircraftFlying()
+{
+  return (isConnected() && isUserAircraftValid() && getUserAircraft().isFlying()) || getUserAircraft().isDebug();
+}
 bool NavApp::isConnectedAndAircraft()
 {
   return (isConnected() && isUserAircraftValid()) || getUserAircraft().isDebug();

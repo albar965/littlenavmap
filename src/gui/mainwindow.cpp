@@ -1314,7 +1314,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAirportWeather, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
 
   // Clear selection and highlights
-  connect(ui->actionMapClearAllHighlights, &QAction::triggered, routeController, &RouteController::clearSelection);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, routeController, &RouteController::clearTableSelection);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, searchController, &SearchController::clearSelection);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearSearchHighlights);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearAirspaceHighlights);
@@ -3057,7 +3057,7 @@ void MainWindow::updateMarkActionStates()
 void MainWindow::updateHighlightActionStates()
 {
   ui->actionMapClearAllHighlights->setEnabled(
-    mapWidget->hasHighlights() || searchController->hasSelection() || routeController->hasSelection());
+    mapWidget->hasHighlights() || searchController->hasSelection() || routeController->hasTableSelection());
 }
 
 /* Enable or disable actions */

@@ -155,6 +155,7 @@ public:
   static bool isConnectedNetwork();
   static bool isSimConnect();
   static bool isConnectedAndAircraft();
+  static bool isConnectedAndAircraftFlying();
   static bool isUserAircraftValid();
 
   static const atools::fs::sc::SimConnectUserAircraft& getUserAircraft();

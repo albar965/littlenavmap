@@ -206,7 +206,7 @@ QString RouteAltitude::getErrorStrings(QString& toolTip, QString& statusTip) con
   {
     statusTip = tr("Cannot calculate profile.");
     toolTip = errors.join(tr("\n"));
-    return tr("Cannot calculate profile. See tooltip on this message for details.");
+    return tr("Cannot calculate profile. Hover mouse over this message for details.");
   }
   else
     return QString();
