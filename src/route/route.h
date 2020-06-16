@@ -276,6 +276,9 @@ public:
   /* @return true if it has at least two waypoints */
   bool canCalcRoute() const;
 
+  /* returns true if a route can be calculated between the selected legs */
+  bool canCalcSelection(int firstIndex, int lastIndex) const;
+
   /* Get a new number for a user waypoint for automatic naming */
   int getNextUserWaypointNumber() const;
 
@@ -423,7 +426,7 @@ public:
     return approachLegsOffset;
   }
 
-  /* Index of first transition and/or approach/STAR leg in the route */
+  /* Index of first transition and/or approach/STAR leg in the route or INVALID_INDEX_VALUE if no procedures */
   int getArrivaLegsOffset() const;
 
   /* Index of first SID leg in the route */

@@ -1617,9 +1617,9 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
       if(calcRange)
       {
-        entries.erase(flightplan.getEntries().begin() + fromIndex + 1, flightplan.getEntries().begin() + toIndex);
         entries[toIndex].setAirway(QString());
         entries[toIndex].setFlag(atools::fs::pln::entry::TRACK, false);
+        entries.erase(flightplan.getEntries().begin() + fromIndex + 1, flightplan.getEntries().begin() + toIndex);
       }
       else
         // Erase all but start and destination
@@ -2021,16 +2021,10 @@ void RouteController::selectAllTriggered()
 bool RouteController::canCalcSelection()
 {
   // Check if selected rows contain a procedure or if a procedure is between first and last selection
-  bool containsProc = false, containsAlternate = false;
-  if(!selectedRows.isEmpty())
-  {
-    containsProc = route.value(selectedRows.first()).isAnyProcedure() ||
-                   route.value(selectedRows.last()).isAnyProcedure();
-    containsAlternate = route.value(selectedRows.first()).isAlternate() ||
-                        route.value(selectedRows.last()).isAlternate();
-  }
+  if(selectedRows.size() > 1)
+    return route.canCalcSelection(selectedRows.first(), selectedRows.last());
 
-  return selectedRows.size() > 1 && !containsProc && !containsAlternate;
+  return false;
 }
 
 void RouteController::tableContextMenu(const QPoint& pos)

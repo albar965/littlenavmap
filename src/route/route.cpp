@@ -1408,8 +1408,7 @@ int Route::getActiveLegIndexCorrected(bool *corrected) const
     return map::INVALID_INDEX_VALUE;
 
   int nextLeg = activeLegIndex + 1;
-  if(nextLeg < size() && nextLeg == size() &&
-     value(nextLeg).isAnyProcedure()
+  if(nextLeg < size() && nextLeg == size() && value(nextLeg).isAnyProcedure()
      /*&&
       *  (at(nextLeg).getProcedureLegType() == proc::INITIAL_FIX || at(nextLeg).getProcedureLeg().isHold())*/)
   {
@@ -1756,6 +1755,40 @@ bool Route::departureProcToRouteLegs(int& startIndexAfterProcedure) const
     }
   }
   return false;
+}
+
+bool Route::canCalcSelection(int firstIndex, int lastIndex) const
+{
+  // Check validity of indexes first
+  if(!atools::inRange(*this, firstIndex) || !atools::inRange(*this, lastIndex))
+    return false;
+
+  if(firstIndex >= lastIndex)
+    return false;
+
+  if(value(firstIndex).isAlternate() || value(lastIndex).isAlternate())
+    // First or last are alternate - cannot calculate
+    return false;
+
+  bool ok = true;
+
+  int startIndexAfterProcedure = 0;
+  if(departureProcToRouteLegs(startIndexAfterProcedure) && firstIndex == startIndexAfterProcedure - 1)
+    // Index is on the last departure procedure leg - check for correct leg type
+    ok &= proc::procedureLegFixAtEnd(value(startIndexAfterProcedure - 1).getProcedureLegType());
+  else
+    // Test if index is at or after first route leg or departure airport
+    ok &= firstIndex >= getStartIndexAfterProcedure();
+
+  int arrivaLegsOffset = 0;
+  if(arrivalRouteToProcLegs(arrivaLegsOffset) && lastIndex == arrivaLegsOffset)
+    // Index on first STAR or approach (transition) leg - check for correct leg type
+    ok &= proc::procedureLegFixAtStart(value(arrivaLegsOffset).getProcedureLegType());
+  else
+    // Test if index is at or before first route leg
+    ok &= lastIndex < getArrivaLegsOffset();
+
+  return ok;
 }
 
 // Needs updateIndex called before
