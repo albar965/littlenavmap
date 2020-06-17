@@ -770,6 +770,13 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
     invalid = true;
   }
 
+  if(route->getCruisingAltitudeFeet() < 100.f)
+  {
+    errors.append(tr("Cruise altitude is too low."));
+    qWarning() << Q_FUNC_INFO << "Cruise altitude is too low";
+    invalid = true;
+  }
+
   const RouteLeg destinationLeg = route->getDestinationLeg();
   if(!destinationLeg.isValidWaypoint() ||
      (destinationLeg.getMapObjectType() != map::AIRPORT && destinationLeg.getMapObjectType() != map::PROCEDURE))
