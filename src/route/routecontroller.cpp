@@ -3235,7 +3235,8 @@ void RouteController::updateRouteTabChangedStatus()
   int idxRemark = NavApp::getRouteTabHandler()->getIndexForId(rc::REMARKS);
   if(idxRemark != -1)
   {
-    if(hasChanged())
+    // Add star only if remarks contain text
+    if(hasChanged() && !ui->plainTextEditRouteRemarks->toPlainText().isEmpty())
     {
       if(!ui->tabWidgetRoute->tabText(idxRemark).endsWith(tr(" *")))
         ui->tabWidgetRoute->setTabText(idxRemark, ui->tabWidgetRoute->tabText(idxRemark) + tr(" *"));
