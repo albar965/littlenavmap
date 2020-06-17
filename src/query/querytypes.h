@@ -49,8 +49,8 @@ void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, const
 void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
                          std::function<void(atools::sql::SqlQuery *query)> callback);
 
-QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor,
-                                                    double increment);
+QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor = 0.,
+                                                    double increment = 0.);
 
 /* Inflate rect by width and height in degrees. If it crosses the poles or date line it will be limited */
 void inflateQueryRect(Marble::GeoDataLatLonBox& rect, double factor, double increment);

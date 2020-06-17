@@ -1153,7 +1153,7 @@ Smaller values will allow a finer selection.</string>
               <string/>
              </property>
              <property name="minimum">
-              <number>4</number>
+              <number>2</number>
              </property>
              <property name="maximum">
               <number>20</number>
@@ -1185,7 +1185,7 @@ Smaller values will allow a finer selection.</string>
               <string/>
              </property>
              <property name="minimum">
-              <number>4</number>
+              <number>2</number>
              </property>
              <property name="maximum">
               <number>20</number>

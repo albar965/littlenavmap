@@ -104,10 +104,10 @@ void MapPainterAltitude::render(PaintContext *context)
               // Build rectangle
               float lonxF = static_cast<float>(lonx);
               float latyF = static_cast<float>(laty);
-              drawLine(context, Line(lonxF, latyF, lonxF + 1.f, latyF));
-              drawLine(context, Line(lonxF + 1.f, latyF, lonxF + 1, latyF - 1.f));
-              drawLine(context, Line(lonxF + 1.f, latyF - 1, lonxF, latyF - 1.f));
-              drawLine(context, Line(lonxF, latyF - 1.f, lonxF, latyF));
+              drawLine(context->painter, Line(lonxF, latyF, lonxF + 1.f, latyF));
+              drawLine(context->painter, Line(lonxF + 1.f, latyF, lonxF + 1, latyF - 1.f));
+              drawLine(context->painter, Line(lonxF + 1.f, latyF - 1, lonxF, latyF - 1.f));
+              drawLine(context->painter, Line(lonxF, latyF - 1.f, lonxF, latyF));
 
               if(!context->drawFast)
               {

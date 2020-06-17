@@ -3883,11 +3883,13 @@ void MapWidget::deleteAircraftTrack()
 void MapWidget::setDetailLevel(int factor)
 {
   qDebug() << "setDetailFactor" << factor;
-  paintLayer->setDetailFactor(factor);
-  updateMapVisibleUi();
-  getScreenIndex()->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
-  getScreenIndex()->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
-  getScreenIndex()->updateIlsScreenGeometry(getCurrentViewBoundingBox());
+
+  if(factor != paintLayer->getDetailFactor())
+  {
+    paintLayer->setDetailFactor(factor);
+    updateMapVisibleUi();
+    getScreenIndex()->updateAllGeometry(getCurrentViewBoundingBox());
+  }
 }
 
 #ifdef DEBUG_MOVING_AIRPLANE

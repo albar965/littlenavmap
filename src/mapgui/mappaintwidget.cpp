@@ -313,32 +313,28 @@ void MapPaintWidget::setShowMapPois(bool show)
 
 void MapPaintWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
 {
-  map::MapObjectTypes cur = paintLayer->getShownMapObjects();
+  bool curShow = (paintLayer->getShownMapObjects() & type) == type;
   paintLayer->setShowMapObjects(type, show);
 
   // Update screen coordinate caches if display options have changed
 
-  if(type.testFlag(map::AIRWAYV) != cur.testFlag(map::AIRWAYV) ||
-     type.testFlag(map::AIRWAYJ) != cur.testFlag(map::AIRWAYJ) ||
-     type.testFlag(map::TRACK) != cur.testFlag(map::TRACK))
+  if(type & map::AIRWAY_ALL && show != curShow)
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::AIRSPACE) != cur.testFlag(map::AIRSPACE))
+  if(type & map::AIRSPACE && show != curShow)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::ILS) != cur.testFlag(map::ILS))
+  if(type & map::ILS && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show)
 {
-  map::MapObjectDisplayTypes cur = paintLayer->getShownMapObjectDisplayTypes();
+  bool curShow = (paintLayer->getShownMapObjectDisplayTypes() & type) == type;
   paintLayer->setShowMapObjectsDisplay(type, show);
 
   // Update screen coordinate cache if display options have changed
-  if(type.testFlag(map::LOGBOOK_DIRECT) != cur.testFlag(map::LOGBOOK_DIRECT) ||
-     type.testFlag(map::LOGBOOK_ROUTE) != cur.testFlag(map::LOGBOOK_ROUTE) ||
-     type.testFlag(map::LOGBOOK_TRACK) != cur.testFlag(map::LOGBOOK_TRACK))
+  if(type & map::LOGBOOK_ALL && show != curShow)
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 

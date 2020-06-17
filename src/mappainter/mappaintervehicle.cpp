@@ -156,7 +156,7 @@ void MapPainterVehicle::paintAircraftTrack(const PaintContext *context)
   if(!aircraftTrack.isEmpty())
   {
     context->painter->setPen(mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2)));
-    paintTrack(context, aircraftTrack);
+    paintTrack(context->painter, aircraftTrack, context->viewport->projection() == Marble::Mercator);
   }
 }
 

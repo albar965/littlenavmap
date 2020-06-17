@@ -247,6 +247,12 @@ public:
     airwayHighlights = value;
   }
 
+  /* For debug functions */
+  QList<std::pair<int, QLine> > getAirwayLines() const
+  {
+    return airwayLines;
+  }
+
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;

@@ -88,6 +88,8 @@ enum MapObjectType
   /* All online, AI and multiplayer aircraft */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
 
+  AIRWAY_ALL = AIRWAY | AIRWAYV | AIRWAYJ,
+
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
 
   /* All navaids */
@@ -122,7 +124,9 @@ enum MapObjectDisplayType
   COMPASS_ROSE_ATTACH = 1 << 8, /* Attach to user aircraft */
 
   FLIGHTPLAN = 1 << 9, /* Flight plan */
-  FLIGHTPLAN_TOC_TOD = 1 << 10 /* Top of climb and top of descent */
+  FLIGHTPLAN_TOC_TOD = 1 << 10, /* Top of climb and top of descent */
+
+  LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
 
 Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);

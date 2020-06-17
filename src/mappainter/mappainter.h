@@ -214,18 +214,18 @@ protected:
                    float radiusNm, bool fast, int& xtext, int& ytext);
 
   /* Drawing functions for simple geometry */
-  void drawLineString(const PaintContext *context, const atools::geo::LineString& linestring);
-  void drawLine(const PaintContext *context, const atools::geo::Line& line);
-  void drawCircle(const PaintContext *context, const atools::geo::Pos& center, int radius);
+  void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
+  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line);
+  void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, int radius);
 
   /* Draw simple text with current settings. Corners are the text corners pointing to the position */
-  void drawText(const PaintContext *context, const atools::geo::Pos& pos, const QString& text, bool topCorner,
+  void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner,
                 bool leftCorner);
 
-  void drawCross(const PaintContext *context, int x, int y, int size);
+  void drawCross(Marble::GeoPainter *painter, int x, int y, int size);
 
   /* No GC and no rhumb */
-  void drawLineStraight(const PaintContext *context, const atools::geo::Line& line);
+  void drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line);
 
   /* Save versions of drawLine which check for valid coordinates and bounds */
   void drawLine(QPainter *painter, const QLineF& line);
@@ -270,8 +270,8 @@ protected:
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);
 
   /* Paint aircraft track or line string. Optimized for large amount of points */
-  void paintTrack(const PaintContext *context, const AircraftTrack& aircraftTrack);
-  void paintTrack(const PaintContext *context, const atools::geo::LineString& linestring);
+  void paintTrack(Marble::GeoPainter *painter, const AircraftTrack& aircraftTrack, bool mercator);
+  void paintTrack(Marble::GeoPainter *painter, const atools::geo::LineString& linestring, bool mercator);
 
   /* Minimum length in pixel of a track segment to be drawn */
   static Q_DECL_CONSTEXPR int TRACK_MIN_LINE_LENGTH = 5;
@@ -299,7 +299,7 @@ private:
   };
 
   /* Draw a long line with many small segments and optimize drawing */
-  void paintTrackInternal(const PaintContext *context, const TrackAdapter& linestring);
+  void paintTrackInternal(Marble::GeoPainter *painter, const TrackAdapter& linestring, bool mercator);
 
 };
 

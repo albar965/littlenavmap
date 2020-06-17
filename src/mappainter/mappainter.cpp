@@ -123,8 +123,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   bool visible1 = wToS(p1, x1, y1, DEFAULT_WTOS_SIZE, &hidden1);
 
   bool ringVisible = false, lastVisible = false;
-  GeoDataLineString ellipse;
-  ellipse.setTessellate(true);
+  LineString ellipse;
   // Draw ring segments and collect potential text positions
   for(int i = 0; i <= 360; i += step)
   {
@@ -143,12 +142,12 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
 
     if(lastVisible || nowVisible)
       // Last line or this one are visible add coords
-      ellipse.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, DEG));
+      ellipse.append(p1);
 
     if(lastVisible && !nowVisible)
     {
       // Not visible anymore draw previous line segment
-      painter->drawPolyline(ellipse);
+      drawLineString(painter, ellipse);
       ellipse.clear();
     }
 
@@ -180,8 +179,8 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
     if(!ellipse.isEmpty())
     {
       // Last one always needs closing the circle
-      ellipse.append(GeoDataCoordinates(startPoint.getLonX(), startPoint.getLatY(), 0, DEG));
-      painter->drawPolyline(ellipse);
+      ellipse.append(startPoint);
+      drawLineString(painter, ellipse);
     }
 
     if(!xtexts.isEmpty() && !ytexts.isEmpty())
@@ -198,15 +197,14 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   }
 }
 
-void MapPainter::drawLineStraight(const PaintContext *context, const atools::geo::Line& line)
+void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line)
 {
   double x1, y1, x2, y2;
   bool visible1 = wToS(line.getPos1(), x1, y1);
-
   bool visible2 = wToS(line.getPos2(), x2, y2);
 
   if(visible1 || visible2)
-    drawLine(context->painter, QPointF(x1, y1), QPointF(x2, y2));
+    drawLine(painter, QPointF(x1, y1), QPointF(x2, y2));
 }
 
 void MapPainter::drawLine(QPainter *painter, const QLineF& line)
@@ -225,33 +223,33 @@ void MapPainter::drawLine(QPainter *painter, const QLineF& line)
   }
 }
 
-void MapPainter::drawCircle(const PaintContext *context, const atools::geo::Pos& center, int radius)
+void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, int radius)
 {
   QPoint pt = wToS(center);
   if(!pt.isNull())
-    context->painter->drawEllipse(pt, radius, radius);
+    painter->drawEllipse(pt, radius, radius);
 }
 
-void MapPainter::drawText(const PaintContext *context, const Pos& pos, const QString& text, bool topCorner,
+void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QString& text, bool topCorner,
                           bool leftCorner)
 {
   QPoint pt = wToS(pos);
   if(!pt.isNull())
   {
-    QFontMetrics metrics = context->painter->fontMetrics();
+    QFontMetrics metrics = painter->fontMetrics();
     pt.setX(leftCorner ? pt.x() : pt.x() - metrics.width(text));
     pt.setY(topCorner ? pt.y() + metrics.ascent() : pt.y() - metrics.descent());
-    context->painter->drawText(pt, text);
+    painter->drawText(pt, text);
   }
 }
 
-void MapPainter::drawCross(const PaintContext *context, int x, int y, int size)
+void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size)
 {
-  context->painter->drawLine(x, y - size, x, y + size);
-  context->painter->drawLine(x - size, y, x + size, y);
+  painter->drawLine(x, y - size, x, y + size);
+  painter->drawLine(x - size, y, x + size, y);
 }
 
-void MapPainter::drawLineString(const PaintContext *context, const atools::geo::LineString& linestring)
+void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
 {
   GeoDataLineString ls;
   ls.setTessellate(true);
@@ -268,11 +266,11 @@ void MapPainter::drawLineString(const PaintContext *context, const atools::geo::
 
   QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
   for(GeoDataLineString *corrected : dateLineCorrected)
-    context->painter->drawPolyline(*corrected);
+    painter->drawPolyline(*corrected);
   qDeleteAll(dateLineCorrected);
 }
 
-void MapPainter::drawLine(const PaintContext *context, const atools::geo::Line& line)
+void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line)
 {
   if(line.isValid())
   {
@@ -288,7 +286,7 @@ void MapPainter::drawLine(const PaintContext *context, const atools::geo::Line& 
 
     QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
     for(GeoDataLineString *corrected : dateLineCorrected)
-      context->painter->drawPolyline(*corrected);
+      painter->drawPolyline(*corrected);
     qDeleteAll(dateLineCorrected);
   }
 }
@@ -626,7 +624,7 @@ void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
     pixmap = *pixmapPtr;
 }
 
-void MapPainter::paintTrack(const PaintContext *context, const AircraftTrack& aircraftTrack)
+void MapPainter::paintTrack(Marble::GeoPainter *painter, const AircraftTrack& aircraftTrack, bool mercator)
 {
   /* Specialize TrackAdapter for access to AircraftTrack */
   struct Adapter :
@@ -647,10 +645,10 @@ void MapPainter::paintTrack(const PaintContext *context, const AircraftTrack& ai
   adapter.track = &aircraftTrack;
 
   adapter.track = &aircraftTrack;
-  paintTrackInternal(context, adapter);
+  paintTrackInternal(painter, adapter, mercator);
 }
 
-void MapPainter::paintTrack(const PaintContext *context, const atools::geo::LineString& linestring)
+void MapPainter::paintTrack(Marble::GeoPainter *painter, const atools::geo::LineString& linestring, bool mercator)
 {
   /* Specialize TrackAdapter for access to LineString */
   struct Adapter :
@@ -670,16 +668,14 @@ void MapPainter::paintTrack(const PaintContext *context, const atools::geo::Line
   } adapter;
 
   adapter.track = &linestring;
-  paintTrackInternal(context, adapter);
+  paintTrackInternal(painter, adapter, mercator);
 }
 
-void MapPainter::paintTrackInternal(const PaintContext *context, const TrackAdapter& linestring)
+void MapPainter::paintTrackInternal(Marble::GeoPainter *painter, const TrackAdapter& linestring, bool mercator)
 {
   if(linestring.size() > 0)
   {
     QPolygon polyline;
-
-    GeoPainter *painter = context->painter;
 
     bool visible1 = false;
     int x1, y1;
@@ -702,7 +698,7 @@ void MapPainter::paintTrackInternal(const PaintContext *context, const TrackAdap
       if(!hidden1 && !hidden2)
         visible2 = rect.intersects(vpRect);
 
-      if(visible2 && context->viewport->projection() == Marble::Mercator)
+      if(visible2 && mercator)
         // Workaround to detect jumping between sides in Mercator projection - do not draw lines from far edges
         visible2 = QLineF(QPoint(x1, y1), QPoint(x2, y2)).length() < scale->getPixelForNm(1000.f);
 

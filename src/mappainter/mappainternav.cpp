@@ -187,7 +187,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
       if(context->objCount())
         return;
 
-      drawLine(context, Line(airway.from, airway.to));
+      drawLine(painter, Line(airway.from, airway.to));
 
       if(!fast)
       {

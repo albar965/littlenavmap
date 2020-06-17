@@ -87,6 +87,11 @@ public:
   /* Changes the detail factor (range 5-15 default is 10 */
   void setDetailFactor(int factor);
 
+  int getDetailFactor() const
+  {
+    return detailFactor;
+  }
+
   /* Get all shown map objects like airports, VOR, NDB, etc. */
   map::MapObjectTypes getShownMapObjects() const
   {

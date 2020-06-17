@@ -229,7 +229,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList routeTexts, QVector<Line> lines,
                                         int passedRouteLeg)
 {
-  QPainter *painter = context->painter;
+  Marble::GeoPainter *painter = context->painter;
   painter->setBackgroundMode(Qt::TransparentMode);
   painter->setBackground(mapcolors::routeOutlineColor);
   painter->setBrush(Qt::NoBrush);
@@ -270,31 +270,31 @@ void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList
       // Draw gray line for passed legs
       painter->setPen(routePassedPen);
       for(int i = 0; i < passedRouteLeg; i++)
-        drawLine(context, lines.at(i));
+        drawLine(painter, lines.at(i));
 
       painter->setPen(routeAlternateOutlinePen);
       if(alternateOffset != map::INVALID_INDEX_VALUE)
       {
         for(int idx = alternateOffset; idx < alternateOffset + route->getNumAlternateLegs(); idx++)
-          drawLine(context, lines.at(idx - 1));
+          drawLine(painter, lines.at(idx - 1));
       }
 
       // Draw background for legs ahead
       painter->setPen(routeOutlinePen);
       for(int i = passedRouteLeg; i < route->getDestinationAirportLegIndex(); i++)
-        drawLine(context, lines.at(i));
+        drawLine(painter, lines.at(i));
 
       // Draw center line for legs ahead
       painter->setPen(routePen);
       for(int i = passedRouteLeg; i < destAptIdx; i++)
-        drawLine(context, lines.at(i));
+        drawLine(painter, lines.at(i));
 
       // Draw center line for alternates all from destination airport to each alternate
       if(alternateOffset != map::INVALID_INDEX_VALUE)
       {
         mapcolors::adjustPenForAlternate(painter);
         for(int idx = alternateOffset; idx < alternateOffset + route->getNumAlternateLegs(); idx++)
-          drawLine(context, lines.at(idx - 1));
+          drawLine(painter, lines.at(idx - 1));
       }
     }
 
@@ -304,12 +304,12 @@ void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList
 
       // Draw active leg on top of all others to keep it visible ===========================
       painter->setPen(routeOutlinePen);
-      drawLine(context, lines.at(activeRouteLeg - 1));
+      drawLine(painter, lines.at(activeRouteLeg - 1));
 
       painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
                            Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-      drawLine(context, lines.at(activeRouteLeg - 1));
+      drawLine(painter, lines.at(activeRouteLeg - 1));
     }
   }
   context->szFont(context->textSizeFlightplan * 1.1f);
