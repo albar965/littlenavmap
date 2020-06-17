@@ -244,7 +244,7 @@ void MapWidget::handleInfoClick(QPoint point)
 
   mapSearchResultInfoClick.clear();
   getScreenIndexConst()->getAllNearest(point.x(), point.y(), screenSearchDistance, mapSearchResultInfoClick,
-                                       map::QUERY_HOLDS | map::QUERY_PATTERNS /* For double click */);
+                                       map::QUERY_NONE /* For double click */);
 
   // Remove all undesired features
   optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
@@ -391,9 +391,11 @@ bool MapWidget::event(QEvent *event)
 
       // Load tooltip data into mapSearchResultTooltip
       mapSearchResultTooltip = map::MapSearchResult();
-      getScreenIndexConst()->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
+      getScreenIndexConst()->getAllNearest(helpEvent->pos().x(),
+                                           helpEvent->pos().y(), screenSearchDistanceTooltip,
                                            mapSearchResultTooltip,
-                                           map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS);
+                                           map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS |
+                                           map::QUERY_RANGEMARKER);
 
       NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
                                                                     mapSearchResultTooltip.aiAircraft);
@@ -896,7 +898,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   }
   else
     getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult,
-                                         map::QUERY_HOLDS | map::QUERY_PATTERNS);
+                                         map::QUERY_HOLDS | map::QUERY_PATTERNS | map::QUERY_RANGEMARKER);
 
   if(mapSearchResult.userAircraft.isValid())
   {
@@ -934,6 +936,8 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.userpoints.first().position, 0.f, true);
     else if(!mapSearchResult.trafficPatterns.isEmpty())
       showPos(mapSearchResult.trafficPatterns.first().position, 0.f, true);
+    else if(!mapSearchResult.rangeMarkers.isEmpty())
+      showPos(mapSearchResult.rangeMarkers.first().position, 0.f, true);
     else if(!mapSearchResult.holds.isEmpty())
       showPos(mapSearchResult.holds.first().position, 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing on map.")));
@@ -3715,7 +3719,7 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes
 {
   map::RangeMarker ring;
   ring.type = type;
-  ring.center = pos;
+  ring.position = pos;
 
   if(type == map::VOR)
   {
@@ -3729,7 +3733,7 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes
 
   ring.ranges.append(range);
   getScreenIndex()->getRangeMarks().append(ring);
-  qDebug() << "navaid range" << ring.center;
+  qDebug() << "navaid range" << ring.position;
 
   update();
   mainWindow->updateMarkActionStates();
@@ -3740,7 +3744,7 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
 {
   map::RangeMarker rings;
   rings.type = map::NONE;
-  rings.center = pos;
+  rings.position = pos;
 
   const QVector<int> dists = OptionData::instance().getMapRangeRings();
   for(int dist : dists)
@@ -3748,7 +3752,7 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
 
   getScreenIndex()->getRangeMarks().append(rings);
 
-  qDebug() << "range rings" << rings.center;
+  qDebug() << "range rings" << rings.position;
   update();
   mainWindow->updateMarkActionStates();
   mainWindow->setStatusMessage(tr("Added range rings for position."));

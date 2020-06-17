@@ -57,6 +57,7 @@ struct MapBase;
 struct MapSearchResultIndex;
 struct Hold;
 struct TrafficPattern;
+struct RangeMarker;
 }
 
 namespace atools {
@@ -275,6 +276,7 @@ public:
 
   void holdText(const map::Hold& hold, atools::util::HtmlBuilder& html) const;
   void trafficPatternText(const map::TrafficPattern& pattern, atools::util::HtmlBuilder& html) const;
+  void rangeMarkerText(const map::RangeMarker& marker, atools::util::HtmlBuilder& html) const;
 
   void setSymbolSize(const QSize& value)
   {
@@ -373,7 +375,8 @@ private:
                       const QString& name = QString()) const;
 
   /* Adds text for preferred runways */
-  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& parsed, int max, bool details) const;
+  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
+                       const atools::fs::weather::MetarParser& parsed, int max, bool details) const;
   void descriptionText(const QString& descriptionText, atools::util::HtmlBuilder& html) const;
 
   /* Add morse code row2line */

@@ -884,6 +884,23 @@ QDataStream& operator>>(QDataStream& dataStream, map::Hold& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::Hold& obj);
 
 // =====================================================================
+/* Range rings marker. Can be converted to QVariant */
+struct RangeMarker
+  : public MapBase
+{
+  RangeMarker() : MapBase(map::NONE)
+  {
+  }
+
+  QString text; /* Text to display like VOR name and frequency */
+  QVector<int> ranges; /* Range ring list (nm) */
+  MapObjectTypes type; /* VOR, NDB, AIRPORT, etc. */
+};
+
+QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
+
+// =====================================================================
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
 struct MapSearchResult
 {
@@ -929,6 +946,7 @@ struct MapSearchResult
   atools::geo::Pos windPos;
   QList<map::Hold> holds;
   QList<map::TrafficPattern> trafficPatterns;
+  QList<map::RangeMarker> rangeMarkers;
 
   QList<proc::MapProcedurePoint> procPoints;
 
@@ -1064,30 +1082,6 @@ private:
 
   map::MapSearchResult result;
 };
-
-// =====================================================================
-/* Range rings marker. Can be converted to QVariant */
-struct RangeMarker
-{
-  QString text; /* Text to display like VOR name and frequency */
-  QVector<int> ranges; /* Range ring list (nm) */
-  atools::geo::Pos center;
-  MapObjectTypes type; /* VOR, NDB, AIRPORT, etc. */
-
-  bool isValid() const
-  {
-    return center.isValid();
-  }
-
-  const atools::geo::Pos& getPosition() const
-  {
-    return center;
-  }
-
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
 
 // =====================================================================
 /* Distance measurement line. Can be converted to QVariant */

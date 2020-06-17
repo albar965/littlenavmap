@@ -730,7 +730,8 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
     {
       int maxRadiusNm = *maxRingIter;
 
-      if(context->viewportRect.overlaps(Rect(rings.center, nmToMeter(maxRadiusNm))) || maxRadiusNm > 2000 /*&& !fast*/)
+      if(context->viewportRect.overlaps(Rect(rings.position,
+                                             nmToMeter(maxRadiusNm))) || maxRadiusNm > 2000 /*&& !fast*/)
       {
         // Ring is visible - the rest of the visibility check is done in paintCircle
 
@@ -750,7 +751,7 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
         painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
         bool centerVisible;
-        QPoint center = wToS(rings.center, DEFAULT_WTOS_SIZE, &centerVisible);
+        QPoint center = wToS(rings.position, DEFAULT_WTOS_SIZE, &centerVisible);
         if(centerVisible)
         {
           // Draw small center point
@@ -763,7 +764,7 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
         for(int radius : rings.ranges)
         {
           int xt, yt;
-          paintCircle(painter, rings.center, radius, context->drawFast, xt, yt);
+          paintCircle(painter, rings.position, radius, context->drawFast, xt, yt);
           if(xt != -1 && yt != -1)
           {
             // paintCirle found a text position - draw text

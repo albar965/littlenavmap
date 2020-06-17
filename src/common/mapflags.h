@@ -142,6 +142,7 @@ enum MapObjectQueryType
   QUERY_HOLDS = 1 << 1, /* Holds */
   QUERY_PATTERNS = 1 << 2, /* Traffic patterns */
   QUERY_PROCEDURES = 1 << 3, /* Procedures when querying route */
+  QUERY_RANGEMARKER = 1 << 4 /* Range rings */
 };
 
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);

@@ -143,7 +143,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
     numEntries++;
   }
 
-  // Holds ===========================================================================
+  // Traffic pattern ===========================================================================
   for(const TrafficPattern& entry : mapSearchResult.trafficPatterns)
   {
     if(checkText(html))
@@ -153,6 +153,20 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
       html.textBar(TEXT_BAR_LENGTH);
 
     info.trafficPatternText(entry, html);
+
+    numEntries++;
+  }
+
+  // Range rings ===========================================================================
+  for(const RangeMarker& entry : mapSearchResult.rangeMarkers)
+  {
+    if(checkText(html))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.textBar(TEXT_BAR_LENGTH);
+
+    info.rangeMarkerText(entry, html);
 
     numEntries++;
   }

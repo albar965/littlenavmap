@@ -1151,14 +1151,14 @@ MapAirwayRouteType airwayRouteTypeFromString(const QString& typeStr)
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj)
 {
   qint32 types;
-  dataStream >> obj.text >> obj.ranges >> obj.center >> types;
+  dataStream >> obj.text >> obj.ranges >> obj.position >> types;
   obj.type = static_cast<map::MapObjectTypes>(types);
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj)
 {
-  dataStream << obj.text << obj.ranges << obj.center << static_cast<qint32>(obj.type);
+  dataStream << obj.text << obj.ranges << obj.position << static_cast<qint32>(obj.type);
   return dataStream;
 }
 

@@ -2039,6 +2039,27 @@ void HtmlInfoBuilder::holdText(const Hold& hold, HtmlBuilder& html) const
   html.br();
 }
 
+void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::HtmlBuilder& html) const
+{
+  html.b(marker.ranges.size() > 1 ? tr("Range Rings") : tr("Range Ring"));
+  if(!marker.text.isEmpty())
+    html.brText(marker.text);
+
+  if(marker.ranges.isEmpty() || (marker.ranges.size() == 1 && marker.ranges.first() == 0))
+    html.brText(tr("No distance"));
+  else
+  {
+    QStringList distStr;
+    for(int dist : marker.ranges)
+      distStr.append(Unit::distNm(dist, false));
+
+    html.brText((marker.ranges.size() > 1 ? tr("Distances: %1 %2") : tr("Distance: %1 %2")).
+                arg(distStr.join(tr(", "))).arg(Unit::getUnitDistStr()));
+  }
+
+  html.br();
+}
+
 void HtmlInfoBuilder::trafficPatternText(const TrafficPattern& pattern, atools::util::HtmlBuilder& html) const
 {
   html.b(tr("Traffic Pattern"));
