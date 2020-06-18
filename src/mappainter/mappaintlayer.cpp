@@ -25,6 +25,7 @@
 #include "mapgui/mapwidget.h"
 #include "mapgui/maplayersettings.h"
 #include "mappainter/mappainteraircraft.h"
+#include "mappainter/mappaintertrack.h"
 #include "mappainter/mappaintership.h"
 #include "mappainter/mappainterairport.h"
 #include "mappainter/mappainterairspace.h"
@@ -64,6 +65,7 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries)
   mapPainterMark = new MapPainterMark(mapWidget, mapScale);
   mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &NavApp::getRouteConst());
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapScale);
+  mapPainterTrack = new MapPainterTrack(mapWidget, mapScale);
   mapPainterShip = new MapPainterShip(mapWidget, mapScale);
   mapPainterUser = new MapPainterUser(mapWidget, mapScale);
   mapPainterAltitude = new MapPainterAltitude(mapWidget, mapScale);
@@ -78,13 +80,14 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries)
 
 MapPaintLayer::~MapPaintLayer()
 {
-  delete mapPainterIls;
   delete mapPainterNav;
+  delete mapPainterIls;
   delete mapPainterAirport;
   delete mapPainterAirspace;
   delete mapPainterMark;
   delete mapPainterRoute;
   delete mapPainterAircraft;
+  delete mapPainterTrack;
   delete mapPainterShip;
   delete mapPainterUser;
   delete mapPainterAltitude;
@@ -651,6 +654,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       mapPainterRoute->render(&context);
 
       mapPainterWeather->render(&context);
+
+      mapPainterTrack->render(&context);
 
       // if(!context.isOverflow())
       mapPainterMark->render(&context);

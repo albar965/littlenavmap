@@ -20,7 +20,6 @@
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "online/onlinedatacontroller.h"
-#include "mapgui/maplayer.h"
 #include "mapgui/mapfunctions.h"
 #include "util/paintercontextsaver.h"
 #include "geo/calculations.h"
@@ -47,15 +46,12 @@ MapPainterAircraft::~MapPainterAircraft()
 
 void MapPainterAircraft::render(PaintContext *context)
 {
-  if(!(context->objectTypes & map::AIRCRAFT_ALL) && !context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
+  if(!(context->objectTypes & map::AIRCRAFT_ALL))
     // If actions are unchecked return
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
   Q_UNUSED(saver)
-
-  if(context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
-    paintAircraftTrack(context);
 
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
   const atools::geo::Pos& pos = userAircraft.getPosition();
