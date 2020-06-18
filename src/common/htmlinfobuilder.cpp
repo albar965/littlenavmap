@@ -3670,6 +3670,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(userAircaft->getWindowIcePercent() >= 1.f)
       ice.append(tr("Window ") + locale.toString(userAircaft->getWindowIcePercent(), 'f', 0) + tr(" %"));
 
+    if(userAircaft->getCarbIcePercent() >= 1.f)
+      ice.append(tr("Carb. ") + locale.toString(userAircaft->getCarbIcePercent(), 'f', 0) + tr(" %"));
+
     if(ice.isEmpty())
       html.row2(tr("Ice:"), tr("None"));
     else
