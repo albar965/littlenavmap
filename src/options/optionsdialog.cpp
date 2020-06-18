@@ -164,7 +164,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   /* *INDENT-OFF* */
   QListWidget*list = ui->listWidgetOptionPages;
   list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and\nchange update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));
-  list->addItem(pageListItem(list, tr("User Interface"), tr("Change text sizes and language settings\nand other user interface behavior."), ":/littlenavmap/resources/icons/statusbar.svg"));
+  list->addItem(pageListItem(list, tr("User Interface"), tr("Change language settings, window options\nand other user interface behavior."), ":/littlenavmap/resources/icons/statusbar.svg"));
+  list->addItem(pageListItem(list, tr("Display and Text"), tr("Change text sizes and display options."), ":/littlenavmap/resources/icons/copy.svg"));
   list->addItem(pageListItem(list, tr("Map"), tr("General map settings: Zoom, click and tooltip settings."), ":/littlenavmap/resources/icons/mapsettings.svg"));
   list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click and screen navigation settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));
   list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols and texts for map display objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));
@@ -262,6 +263,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiCenterKml,
      ui->checkBoxOptionsGuiProposeFilename,
      ui->checkBoxOptionsGuiRaiseWindows,
+     ui->checkBoxOptionsGuiRaiseDockWindows,
+     ui->checkBoxOptionsGuiRaiseMainWindow,
      ui->checkBoxOptionsGuiCenterRoute,
      ui->checkBoxOptionsGuiAvoidOverwrite,
      ui->checkBoxOptionsGuiOverrideLocale,
@@ -1416,6 +1419,8 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   toFlags2(ui->checkBoxOptionsGuiProposeFilename, opts2::PROPOSE_FILENAME);
   toFlags2(ui->checkBoxOptionsGuiRaiseWindows, opts2::RAISE_WINDOWS);
+  toFlags2(ui->checkBoxOptionsGuiRaiseDockWindows, opts2::RAISE_DOCK_WINDOWS);
+  toFlags2(ui->checkBoxOptionsGuiRaiseMainWindow, opts2::RAISE_MAIN_WINDOW);
   toFlags2(ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
   toFlags2(ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
   toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
@@ -1651,6 +1656,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data, ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   fromFlags2(data, ui->checkBoxOptionsGuiProposeFilename, opts2::PROPOSE_FILENAME);
   fromFlags2(data, ui->checkBoxOptionsGuiRaiseWindows, opts2::RAISE_WINDOWS);
+  fromFlags2(data, ui->checkBoxOptionsGuiRaiseDockWindows, opts2::RAISE_DOCK_WINDOWS);
+  fromFlags2(data, ui->checkBoxOptionsGuiRaiseMainWindow, opts2::RAISE_MAIN_WINDOW);
   fromFlags2(data, ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
   fromFlags2(data, ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
   fromFlags(data, ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);

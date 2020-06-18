@@ -333,7 +333,123 @@ logbook and other search tabs</string>
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsUserInterface">
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="11" column="0">
+        <item row="8" column="0">
+         <widget class="QGroupBox" name="groupBox_13">
+          <property name="title">
+           <string>Files</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
+             <property name="toolTip">
+              <string>This this option is checked: Little Navmap will suggest a new name
+on all &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
+New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Propose new name if  file already exists on &quot;Save as&quot; or &quot;Export&quot;</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
+             <property name="toolTip">
+              <string>Does not apply to the KML files loaded after startup.</string>
+             </property>
+             <property name="text">
+              <string>Center Google Earth &amp;KML after loading</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QGroupBox" name="groupBox_17">
+          <property name="title">
+           <string>Windows</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_14">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiRaiseWindows">
+             <property name="toolTip">
+              <string>This will open related windows and raise tabs on actions like
+opening files, modifying the flight plan and other operations.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Raise related windows on actions. Show flight plan after opening file, for example.</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiRaiseDockWindows">
+             <property name="toolTip">
+              <string>Raises and activates the dock window below the mouse cursor automatically</string>
+             </property>
+             <property name="text">
+              <string>Raise and activate &amp;docking windows when moving the mouse over it</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiRaiseMainWindow">
+             <property name="toolTip">
+              <string>Raises and activates the main program window below the mouse cursor automatically</string>
+             </property>
+             <property name="text">
+              <string>Raise and activate the &amp;main program window when moving the mouse over it</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="10" column="0">
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -347,6 +463,77 @@ logbook and other search tabs</string>
          </spacer>
         </item>
         <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox_6">
+          <property name="title">
+           <string>Language</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_6">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>&amp;User interface language:</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="buddy">
+              <cstring>comboBoxOptionsGuiLanguage</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="comboBoxOptionsGuiLanguage"/>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>&lt;b&gt;A restart is required after changing language or format settings.&lt;/b&gt;&lt;br/&gt;
+Note that some translations might be incomplete.</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>5</number>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QCheckBox" name="checkBoxOptionsGuiOverrideLocale">
+             <property name="toolTip">
+              <string>Overrides local settings like number and date formats and forces English formats
+which implies &quot;.&quot; as decimal separator, &quot;,&quot; as thousands separator, am/pm time and other changes.
+A restart is required for the settings to take effect.</string>
+             </property>
+             <property name="text">
+              <string>Use English &amp;number and date formats
+independent of current computer settings and language selection</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="stackedWidgetOptionsDisplay">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
          <widget class="QGroupBox" name="groupBox_7">
           <property name="title">
            <string>Display</string>
@@ -397,7 +584,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
           </layout>
          </widget>
         </item>
-        <item row="6" column="0">
+        <item>
          <widget class="QGroupBox" name="groupBox_8">
           <property name="title">
            <string>Text Size</string>
@@ -600,163 +787,18 @@ This will scale the Little Navmap map graphics and icons for better visibility i
           </layout>
          </widget>
         </item>
-        <item row="7" column="0">
-         <widget class="QGroupBox" name="groupBox_6">
-          <property name="title">
-           <string>Language</string>
+        <item>
+         <spacer name="verticalSpacer_16">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout_6">
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>&amp;User interface language:</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-             <property name="buddy">
-              <cstring>comboBoxOptionsGuiLanguage</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="comboBoxOptionsGuiLanguage"/>
-           </item>
-           <item row="2" column="0" colspan="2">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>&lt;b&gt;A restart is required after changing language or format settings.&lt;/b&gt;&lt;br/&gt;
-Note that some translations might be incomplete.</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-             <property name="margin">
-              <number>5</number>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" colspan="2">
-            <widget class="QCheckBox" name="checkBoxOptionsGuiOverrideLocale">
-             <property name="toolTip">
-              <string>Overrides local settings like number and date formats and forces English formats
-which implies &quot;.&quot; as decimal separator, &quot;,&quot; as thousands separator, am/pm time and other changes.
-A restart is required for the settings to take effect.</string>
-             </property>
-             <property name="text">
-              <string>Use English &amp;number and date formats
-independent of current computer settings and language selection</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="9" column="0">
-         <widget class="QGroupBox" name="groupBox_13">
-          <property name="title">
-           <string>Files</string>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_11">
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
-             <property name="toolTip">
-              <string>This this option is checked: Little Navmap will suggest a new name
-on all &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
-New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Propose new name if  file already exists on &quot;Save as&quot; or &quot;Export&quot;</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
-             <property name="toolTip">
-              <string>Does not apply to the KML files loaded after startup.</string>
-             </property>
-             <property name="text">
-              <string>Center Google Earth &amp;KML after loading</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="10" column="0">
-         <widget class="QGroupBox" name="groupBox_17">
-          <property name="title">
-           <string>Windows</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_14">
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QCheckBox" name="checkBoxOptionsGuiRaiseWindows">
-             <property name="toolTip">
-              <string>This will open related windows and raise tabs on actions like
-opening files, modifying the flight plan and other operations.</string>
-             </property>
-             <property name="text">
-              <string>Raise related windows on actions
-Show flight plan after opening file, for example.</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -5247,12 +5289,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>comboBoxOptionsStartupUpdateRate</tabstop>
   <tabstop>comboBoxOptionsStartupUpdateChannels</tabstop>
   <tabstop>pushButtonOptionsStartupCheckUpdate</tabstop>
-  <tabstop>checkBoxOptionsGuiHighDpi</tabstop>
-  <tabstop>spinBoxOptionsGuiRouteText</tabstop>
-  <tabstop>spinBoxOptionsGuiAircraftPerf</tabstop>
-  <tabstop>spinBoxOptionsGuiSearchText</tabstop>
-  <tabstop>spinBoxOptionsGuiInfoText</tabstop>
-  <tabstop>spinBoxOptionsGuiSimInfoText</tabstop>
   <tabstop>checkBoxOptionsGuiProposeFilename</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
   <tabstop>checkBoxOptionsGuiRaiseWindows</tabstop>

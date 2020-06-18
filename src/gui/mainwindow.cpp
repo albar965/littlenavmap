@@ -161,9 +161,8 @@ MainWindow::MainWindow()
     ui->setupUi(this);
     setAcceptDrops(true);
 
-    // #ifdef QT_NO_DEBUG
-    // ui->menuExportFlightplanToOtherFormats->removeAction(ui->actionRouteSaveAsPlnAnnotated);
-    // #endif
+    // Show tooltips also for inactive windows (e.g. if a floating window is active)
+    setAttribute(Qt::WA_AlwaysShowToolTips);
 
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
@@ -184,6 +183,7 @@ MainWindow::MainWindow()
     optionsDialog = new OptionsDialog(this);
     // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();
+    optionsChanged();
 
     // Dialog is opened with asynchronous open()
     connect(optionsDialog, &QDialog::finished, [ = ](int result) {
@@ -810,6 +810,7 @@ void MainWindow::setupUi()
   ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetLegend->toggleViewAction());
 
+  // ==============================================================
   // Create labels for the statusbar
   connectStatusLabel = new QLabel();
   connectStatusLabel->setAlignment(Qt::AlignCenter);
@@ -912,6 +913,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getTrackController(), &TrackController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::saveStateNow);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::optionsChanged);
 
   // Updated manually in dialog
   // connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);
@@ -3378,6 +3380,12 @@ void MainWindow::restoreStateMain()
     ui->dockWidgetMap->show();
 
   qDebug() << Q_FUNC_INFO << "leave";
+}
+
+void MainWindow::optionsChanged()
+{
+  dockHandler->setAutoRaiseDockWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
+  dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
 }
 
 void MainWindow::saveStateNow()

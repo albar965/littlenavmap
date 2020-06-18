@@ -305,6 +305,12 @@ enum Flag2
   /* ui->checkBoxOptionsSimClearSelection */
   ROUTE_CLEAR_SELECTION = 1 << 20,
 
+  /* checkBoxOptionsGuiRaiseDockWindows */
+  RAISE_DOCK_WINDOWS = 1 << 21,
+
+  /* checkBoxOptionsGuiRaiseMainWindow */
+  RAISE_MAIN_WINDOW = 1 << 22
+
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);

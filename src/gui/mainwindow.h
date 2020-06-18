@@ -354,6 +354,7 @@ private:
   void webserverStatusChanged(bool running);
   void openWebserver();
   void saveStateNow();
+  void optionsChanged();
 
 #ifdef DEBUG_INFORMATION
   void debugActionTriggered1();
