@@ -189,6 +189,7 @@ void ConnectClient::connectedToSimulatorDirect()
   mainWindow->setConnectionStatusMessageText(tr("Connected (%1)").arg(simShortName()),
                                              tr("Connected to local flight simulator (%1).").arg(simName()));
   dialog->setConnected(isConnected());
+  mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
   emit connectedToSimulator();
   emit weatherUpdated();
 }
@@ -212,6 +213,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 
   if(!NavApp::isShuttingDown())
   {
+    mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
     emit disconnectedFromSimulator();
     emit weatherUpdated();
   }
@@ -659,6 +661,7 @@ void ConnectClient::closeSocket(bool allowRestart)
 
     if(!NavApp::isShuttingDown())
     {
+      mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
       emit disconnectedFromSimulator();
       emit weatherUpdated();
     }
@@ -712,6 +715,7 @@ void ConnectClient::connectedToServerSocket()
   dialog->setConnected(isConnected());
 
   // Let other program parts know about the new connection
+  mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
   emit connectedToSimulator();
   emit weatherUpdated();
 }

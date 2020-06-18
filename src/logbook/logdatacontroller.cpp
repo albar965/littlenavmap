@@ -233,7 +233,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 added.").
                                    arg(departureArrivalText).
                                    arg(airport.ident).
-                                   arg(runwayText));
+                                   arg(runwayText), true /* addToLog */);
     }
     else if(logEntryId >= 0)
     {
@@ -279,7 +279,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 updated.").
                                    arg(departureArrivalText).
                                    arg(airport.ident).
-                                   arg(runwayText));
+                                   arg(runwayText), true /* addToLog */);
 
       logEntryId = -1;
     }

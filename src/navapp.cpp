@@ -420,6 +420,7 @@ bool NavApp::isConnectedAndAircraftFlying()
 {
   return (isConnected() && isUserAircraftValid() && getUserAircraft().isFlying()) || getUserAircraft().isDebug();
 }
+
 bool NavApp::isConnectedAndAircraft()
 {
   return (isConnected() && isUserAircraftValid()) || getUserAircraft().isDebug();
@@ -817,9 +818,9 @@ void NavApp::updateErrorLabels()
   mainWindow->updateErrorLabels();
 }
 
-void NavApp::setStatusMessage(const QString& message)
+void NavApp::setStatusMessage(const QString& message, bool addToLog)
 {
-  mainWindow->setStatusMessage(message);
+  mainWindow->setStatusMessage(message, addToLog);
 }
 
 QWidget *NavApp::getQMainWidget()

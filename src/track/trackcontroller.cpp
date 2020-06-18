@@ -200,7 +200,7 @@ void TrackController::downloadFinished(const atools::track::TrackVectorType& tra
     tracksLoaded();
     emit postTrackLoad();
 
-    NavApp::setStatusMessage(tr("Track download finished."));
+    NavApp::setStatusMessage(tr("Track download finished."), true /* addToLog */);
   }
 }
 
@@ -231,14 +231,12 @@ void TrackController::downloadFailed(const QString& error, int errorCode, QStrin
     qDebug() << Q_FUNC_INFO << "Download queue empty";
     emit postTrackLoad();
 
-    NavApp::setStatusMessage(tr("Track download failed."));
+    NavApp::setStatusMessage(tr("Track download failed."), true /* addToLog */);
   }
 }
 
 void TrackController::tracksLoaded()
 {
-  NavApp::setStatusMessage(tr("Track download finished."));
-
   QMap<atools::track::TrackType, int> numTracks = trackManager->getNumTracks();
 
   QStringList str;

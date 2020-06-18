@@ -180,6 +180,10 @@ private:
   void createFsWatcher();
   void initXplane();
 
+  void noaaWeatherUpdated();
+  void ivaoWeatherUpdated();
+  void vatsimWeatherUpdated();
+
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
   /* Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used */

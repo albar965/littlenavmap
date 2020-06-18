@@ -288,6 +288,8 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Creating PrintSupport";
     printSupport = new PrintSupport(this);
 
+    setStatusMessage(tr("Started."), true /* addToLog */);
+
     qDebug() << Q_FUNC_INFO << "Connecting slots";
     connectAllSlots();
     NavApp::getAircraftPerfController()->connectAllSlots();
@@ -2839,15 +2841,23 @@ void MainWindow::resetMessages()
 }
 
 /* Set a general status message */
-void MainWindow::setStatusMessage(const QString& message)
+void MainWindow::setStatusMessage(const QString& message, bool addToLog)
 {
-  if(statusMessages.isEmpty() || statusMessages.last() != message)
-    statusMessages.append(message);
+  if(addToLog)
+  {
+    statusMessages.append(std::make_pair(QTime::currentTime(), message));
+    while(statusMessages.size() > 20)
+      statusMessages.removeFirst();
 
-  if(statusMessages.size() > 1)
-    statusMessages.removeAt(0);
+    QStringList msg(tr("Background tasks:"));
+    for(int i = 0; i < statusMessages.size(); i++)
+      msg.append(tr("%1: %2").
+                 arg(QLocale().toString(statusMessages.at(i).first, tr("hh:mm:ss"))).
+                 arg(statusMessages.at(i).second));
+    ui->statusBar->setToolTip(msg.join("\n"));
+  }
 
-  ui->statusBar->showMessage(statusMessages.join(" "));
+  ui->statusBar->showMessage(message);
 }
 
 void MainWindow::setDetailLabelText(const QString& text)
@@ -2983,9 +2993,6 @@ void MainWindow::mainWindowShown()
   // Start regular download of online network files
   NavApp::getOnlinedataController()->startProcessing();
 
-  if(ui->actionRouteDownloadTracks->isChecked())
-    NavApp::getTrackController()->startDownload();
-
   // Start webserver
   if(ui->actionRunWebserver->isChecked())
     NavApp::getWebController()->startServer();
@@ -2997,11 +3004,14 @@ void MainWindow::mainWindowShown()
   //// Workaround for profile dock widget which is not resized properly on startup
   // QTimer::singleShot(20, this, &MainWindow::adjustProfileDockHeight);
 
-  setStatusMessage(tr("Ready."));
   renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
 
   // Make sure that window visible is only set after visibility is ensured
   QTimer::singleShot(100, NavApp::setMainWindowVisible);
+
+  if(ui->actionRouteDownloadTracks->isChecked())
+    QTimer::singleShot(2000, NavApp::getTrackController(), &TrackController::startDownload);
+
   qDebug() << Q_FUNC_INFO << "leave";
 }
 

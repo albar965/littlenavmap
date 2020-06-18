@@ -243,7 +243,7 @@ public:
 
   static void updateWindowTitle();
   static void updateErrorLabels();
-  static void setStatusMessage(const QString& message);
+  static void setStatusMessage(const QString& message, bool addToLog = false);
 
   /* Get main window in different variations to avoid including it */
   static QWidget *getQMainWidget();

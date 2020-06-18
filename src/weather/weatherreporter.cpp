@@ -99,9 +99,9 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
           this, &WeatherReporter::xplaneWeatherFileChanged);
 
   // Forward signals from clients for updates
-  connect(noaaWeather, &NoaaWeatherDownloader::weatherUpdated, this, &WeatherReporter::weatherUpdated);
-  connect(vatsimWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::weatherUpdated);
-  connect(ivaoWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::weatherUpdated);
+  connect(noaaWeather, &NoaaWeatherDownloader::weatherUpdated, this, &WeatherReporter::noaaWeatherUpdated);
+  connect(vatsimWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::vatsimWeatherUpdated);
+  connect(ivaoWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::ivaoWeatherUpdated);
 
   // Forward signals from clients for errors
   connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
@@ -117,6 +117,24 @@ WeatherReporter::~WeatherReporter()
   delete ivaoWeather;
 
   delete xpWeatherReader;
+}
+
+void WeatherReporter::noaaWeatherUpdated()
+{
+  mainWindow->setStatusMessage(tr("NOAA weather downloaded."), true /* addToLog */);
+  emit weatherUpdated();
+}
+
+void WeatherReporter::ivaoWeatherUpdated()
+{
+  mainWindow->setStatusMessage(tr("IVAO weather downloaded."), true /* addToLog */);
+  emit weatherUpdated();
+}
+
+void WeatherReporter::vatsimWeatherUpdated()
+{
+  mainWindow->setStatusMessage(tr("VATSIM weather downloaded."), true /* addToLog */);
+  emit weatherUpdated();
 }
 
 atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airportIdent)
@@ -542,6 +560,8 @@ void WeatherReporter::updateAirportWeather()
 
 void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode, QString url)
 {
+  mainWindow->setStatusMessage(tr("Weather download failed."), true /* addToLog */);
+
   if(!errorReported)
   {
     // Show an error dialog for any failed downloads but only once per session
@@ -688,13 +708,13 @@ void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
   qDebug() << Q_FUNC_INFO << "file" << path << "changed";
   loadActiveSkySnapshot(asPath);
   loadActiveSkyFlightplanSnapshot(asFlightplanPath);
-  mainWindow->setStatusMessage(tr("Active Sky weather information updated."));
+  mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
 
   emit weatherUpdated();
 }
 
 void WeatherReporter::xplaneWeatherFileChanged()
 {
-  mainWindow->setStatusMessage(tr("X-Plane weather information updated."));
+  mainWindow->setStatusMessage(tr("X-Plane weather information updated."), true /* addToLog */);
   emit weatherUpdated();
 }
