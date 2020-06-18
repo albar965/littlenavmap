@@ -186,7 +186,7 @@ void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
 
   float heading = primary ? atools::geo::opposedCourseDeg(rw.heading) : rw.heading;
   Pos pos = rw.position.endpoint(
-    atools::geo::feetToMeter(rw.length / 2 - (primary ? rw.primaryOffset : rw.secondaryOffset)), heading);
+    atools::geo::feetToMeter(rw.length / 2 - (primary ? rw.primaryOffset : rw.secondaryOffset)), heading).normalize();
 
   float altFeet = Unit::rev(static_cast<float>(ui->spinBoxTrafficPatternAltitude->value()), Unit::altFeetF);
   qDebug() << Q_FUNC_INFO << "altitude" << ui->spinBoxTrafficPatternAltitude->value()

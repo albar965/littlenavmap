@@ -120,9 +120,6 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   if(context->mapLayer->isRouteTextAndDetail())
     drawStartParking(context);
 
-  // qDebug() << "AL" << route->getActiveLegIndex();
-  // qDebug() << "RS" << route->size();
-
   // Get active route leg
   bool activeValid = route->isActiveValid();
   // Active normally start at 1 - this will consider all legs as not passed

@@ -2012,7 +2012,7 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
                                           const map::MapRunwayEnd& runwayEndSim, float distance, float altitude)
 {
   Pos initialFixPos = runwayEndSim.position.endpoint(ageo::nmToMeter(distance),
-                                                     ageo::opposedCourseDeg(runwayEndSim.heading));
+                                                     ageo::opposedCourseDeg(runwayEndSim.heading)).normalize();
 
   // Create procedure ========================================
   procedure.ref.runwayEndId = runwayEndSim.id;
