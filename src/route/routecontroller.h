@@ -411,9 +411,8 @@ private:
   void dockVisibilityChanged(bool visible);
   void eraseAirway(int row);
 
-  /* Time for clear selection triggered */
-  void clearSelectionTimeout();
-  void scrollTimeout();
+  /* Time for clear selection triggered or scroll active to top */
+  void cleanupTableTimeout();
 
   /* Departure, destination and procedures. */
   QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr) const;
@@ -489,6 +488,8 @@ private:
   /* Current loaded or saved format since the plans in the undo stack have different values */
   atools::fs::pln::FlightplanType fileIfrVfr;
 
+  bool contextMenuOpen = false;
+
   QMainWindow *mainWindow;
   QTableView *view;
   MapQuery *mapQuery;
@@ -517,7 +518,7 @@ private:
   atools::gui::TabWidgetHandler *tabHandlerRoute = nullptr;
 
   /* Timers for updating altitude delayer, clear selection while flying and moving active to top */
-  QTimer routeAltDelayTimer, selectionTimer, scrollTimer;
+  QTimer routeAltDelayTimer, cleanupTableTimer;
 
   // Route table colum headings
   QStringList routeColumns, routeColumnTooltips;

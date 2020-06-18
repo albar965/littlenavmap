@@ -241,14 +241,10 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   routeAltDelayTimer.setSingleShot(true);
 
   // Clear selection after inactivity
-  connect(&selectionTimer, &QTimer::timeout, this, &RouteController::clearSelectionTimeout);
-  selectionTimer.setInterval(OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000);
-  selectionTimer.setSingleShot(true);
-
-  // Move active to top after inactivity (no scrolling)
-  connect(&scrollTimer, &QTimer::timeout, this, &RouteController::scrollTimeout);
-  scrollTimer.setInterval(OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000);
-  scrollTimer.setSingleShot(true);
+  // Or move active to top after inactivity (no scrolling)
+  connect(&cleanupTableTimer, &QTimer::timeout, this, &RouteController::cleanupTableTimeout);
+  cleanupTableTimer.setInterval(OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000);
+  cleanupTableTimer.setSingleShot(true);
 
   // Restart timer when scrolling
   connect(view->verticalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
@@ -2030,7 +2026,7 @@ bool RouteController::canCalcSelection()
 void RouteController::tableContextMenu(const QPoint& pos)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-
+  contextMenuOpen = true;
   QPoint menuPos = QCursor::pos();
   // Use widget center if position is not inside widget
   if(!ui->tableViewRoute->rect().contains(ui->tableViewRoute->mapFromGlobal(QCursor::pos())))
@@ -2381,6 +2377,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
       calculateRouteWindowSelection();
     // Other actions emit signals directly
   }
+  contextMenuOpen = false;
 }
 
 /* Activate leg manually from menu */
@@ -2461,18 +2458,16 @@ void RouteController::dockVisibilityChanged(bool visible)
   tableSelectionChanged(QItemSelection(), QItemSelection());
 }
 
-void RouteController::clearSelectionTimeout()
+void RouteController::cleanupTableTimeout()
 {
-  if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION) &&
-     NavApp::isConnectedAndAircraftFlying())
-    clearTableSelection();
-}
+  if(NavApp::isConnectedAndAircraftFlying() && !contextMenuOpen)
+  {
+    if(hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION))
+      clearTableSelection();
 
-void RouteController::scrollTimeout()
-{
-  if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG) &&
-     NavApp::isConnectedAndAircraftFlying())
-    scrollToActive();
+    if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
+      scrollToActive();
+  }
 }
 
 void RouteController::clearTableSelection()
@@ -2487,9 +2482,10 @@ bool RouteController::hasTableSelection()
 
 void RouteController::viewScrolled(int)
 {
-  if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG) &&
-     NavApp::isConnectedAndAircraftFlying())
-    scrollTimer.start();
+  if(NavApp::isConnectedAndAircraftFlying() &&
+     ((hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
+      OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG)))
+    cleanupTableTimer.start();
 }
 
 void RouteController::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -2526,9 +2522,10 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   emit routeSelectionChanged(selectedRowSize, model->rowCount());
 
-  if(sm->hasSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION) &&
-     NavApp::isConnectedAndAircraftFlying())
-    selectionTimer.start();
+  if(NavApp::isConnectedAndAircraftFlying() &&
+     ((hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
+      OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG)))
+    cleanupTableTimer.start();
 
   if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() && sm->currentIndex().isValid() &&
      sm->isSelected(sm->currentIndex()))
@@ -2598,8 +2595,7 @@ void RouteController::optionsChanged()
   routeWindow->optionsChanged();
 
   int timeout = OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000;
-  selectionTimer.setInterval(timeout);
-  scrollTimer.setInterval(timeout);
+  cleanupTableTimer.setInterval(timeout);
 
   updateTableHeaders();
   updateTableModel();
@@ -4071,21 +4067,20 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
       map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
       if(aircraft.isFlying())
       {
-        if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION) && aircraft.isFlying() &&
-           view->selectionModel()->hasSelection() && !selectionTimer.isActive())
-          selectionTimer.start();
-
         int previousRouteLeg = route.getActiveLegIndexCorrected();
         route.updateActiveLegAndPos(position);
         int routeLeg = route.getActiveLegIndexCorrected();
+
+        if(!cleanupTableTimer.isActive() &&
+           ((hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
+            (OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))))
+          cleanupTableTimer.start();
 
         if(routeLeg != previousRouteLeg)
         {
           // Use corrected indexes to highlight initial fix
           qDebug() << "new route leg" << previousRouteLeg << routeLeg;
           highlightNextWaypoint(routeLeg);
-
-          scrollToActive();
         }
       }
       else
