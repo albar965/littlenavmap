@@ -1108,13 +1108,19 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
     QString initMagText = QString::number(atools::geo::normalizeCourse(initTrue - m.magvar), 'f', 0);
     QString finalMagText = QString::number(atools::geo::normalizeCourse(finalTrue - m.magvar), 'f', 0);
 
+#ifdef DEBUG_ALTERNATE_ARROW
+    QString arrowLeft = ">> ";
+#else
+    QString arrowLeft = tr("► ");
+#endif
+
     if(context->dOptMeasurement(optsd::MEASUREMNENT_TRUE) && context->dOptMeasurement(optsd::MEASUREMNENT_MAG) &&
        initTrueText == initMagText && finalTrueText == finalMagText)
     {
       if(initTrueText == finalTrueText)
         texts.append(initTrueText + tr("°M/T"));
       else
-        texts.append(initTrueText + tr("°M/T ► ") + finalTrueText + tr("°M/T"));
+        texts.append(initTrueText + tr("°M/T ") + arrowLeft + finalTrueText + tr("°M/T"));
     }
     else
     {
@@ -1123,7 +1129,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
         if(initMagText == finalMagText)
           texts.append(initMagText + tr("°M"));
         else
-          texts.append(initMagText + tr("°M ► ") + finalMagText + tr("°M"));
+          texts.append(initMagText + tr("°M ") + arrowLeft + finalMagText + tr("°M"));
       }
 
       if(context->dOptMeasurement(optsd::MEASUREMNENT_TRUE))
@@ -1131,7 +1137,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
         if(initTrueText == finalTrueText)
           texts.append(initTrueText + tr("°T"));
         else
-          texts.append(initTrueText + tr("°T ► ") + finalTrueText + tr("°T"));
+          texts.append(initTrueText + tr("°T ") + arrowLeft + finalTrueText + tr("°T"));
       }
     }
 

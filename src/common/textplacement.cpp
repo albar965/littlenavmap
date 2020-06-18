@@ -28,8 +28,15 @@ using atools::geo::Line;
 using atools::geo::Pos;
 
 TextPlacement::TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter)
-  : painter(painterParam), converter(coordinateConverter), arrowRight(tr(" ►")), arrowLeft(tr("◄ "))
+  : painter(painterParam), converter(coordinateConverter)
 {
+#ifdef DEBUG_ALTERNATE_ARROW
+  arrowRight = " >>";
+  arrowLeft = "<< ";
+#else
+  arrowRight = tr(" ►");
+  arrowLeft = tr("◄ ");
+#endif
 
 }
 

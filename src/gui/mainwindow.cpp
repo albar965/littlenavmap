@@ -2875,6 +2875,8 @@ void MainWindow::mainWindowShown()
   // Enable dock handler
   dockHandler->setHandleDockViews(true);
 
+  qDebug() << Q_FUNC_INFO << "UI font" << font();
+
   // Postpone loading of KML etc. until now when everything is set up
   mapWidget->mainWindowShown();
   profileWidget->mainWindowShown();
