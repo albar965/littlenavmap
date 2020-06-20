@@ -68,8 +68,9 @@ public:
    * Does not affect current */
   bool saveAsStr(const QString& string) const;
 
-  /* Default file dialogs for opening and saving */
-  QString saveAsFileDialog(const QString& filepath) const;
+  /* Default file dialogs for opening and saving.
+   *  Offers the INI format as alternative if oldFormat is not null. */
+  QString saveAsFileDialog(const QString& filepath, bool *oldFormat = nullptr) const;
   QString openFileDialog() const;
 
   /* Ask user if data can be deleted when quitting.

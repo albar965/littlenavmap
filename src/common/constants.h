@@ -305,6 +305,7 @@ const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
 const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
 const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml)");
 const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf)");
+const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF_INI("(*.lnmperf)");
 const QLatin1Literal FILE_PATTERN_GRIB("(*.grib)");
 
 const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
