@@ -200,13 +200,12 @@ bool RouteAltitude::hasErrors() const
                                 getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE);
 }
 
-QString RouteAltitude::getErrorStrings(QString& toolTip, QString& statusTip) const
+QString RouteAltitude::getErrorStrings(QStringList& toolTip) const
 {
   if(!errors.isEmpty())
   {
-    statusTip = tr("Cannot calculate profile.");
-    toolTip = errors.join(tr("\n"));
-    return tr("Cannot calculate profile. Hover mouse over this message for details.");
+    toolTip.append(errors);
+    return tr("Cannot calculate elevation profile.");
   }
   else
     return QString();

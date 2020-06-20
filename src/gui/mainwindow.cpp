@@ -2813,7 +2813,6 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOWROUTE_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_WARNING_MULTI, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_ERROR, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_PROC_ERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_ALTERNATE_ERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
   s.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
@@ -3956,22 +3955,38 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::updateErrorLabels()
 {
-  QString toolTipTxt, statusTipTxt;
-  QString err;
-  // Show only if route is valid, there are errors and nothing is collecting performance
-  bool showError = NavApp::getRoute().getSizeWithoutAlternates() >= 2 && NavApp::getAltitudeLegs().hasErrors();
-  if(showError)
-    err = atools::util::HtmlBuilder::errorMessage(NavApp::getAltitudeLegs().getErrorStrings(toolTipTxt, statusTipTxt));
+  using atools::util::HtmlBuilder;
 
-  ui->labelRouteError->setVisible(showError);
-  ui->labelRouteError->setText(err);
-  ui->labelRouteError->setToolTip(toolTipTxt);
-  ui->labelRouteError->setStatusTip(statusTipTxt);
+  const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
+  const RouteController& routeController = *NavApp::getRouteController();
 
-  ui->labelProfileError->setVisible(showError);
-  ui->labelProfileError->setText(err);
-  ui->labelProfileError->setToolTip(toolTipTxt);
-  ui->labelProfileError->setStatusTip(statusTipTxt);
+  QStringList toolTipTxtRoute, toolTipTxtProfile, errRoute, errProfile;
+  QString hintText = tr("<br/>Hover mouse over this message for details.");
+
+  // Do not show error for single waypoint plans since it is obvious that there is no profile
+  if(NavApp::getRoute().getSizeWithoutAlternates() >= 2 && altitudeLegs.hasErrors())
+    errProfile.append(altitudeLegs.getErrorStrings(toolTipTxtProfile));
+
+  if(routeController.hasErrors())
+    errRoute.append(routeController.getErrorStrings(toolTipTxtRoute));
+
+  errRoute.append(errProfile);
+  toolTipTxtRoute.append(toolTipTxtProfile);
+
+  if(!errRoute.isEmpty())
+    errRoute.append(hintText);
+  if(!errProfile.isEmpty())
+    errProfile.append(hintText);
+
+  ui->labelRouteError->setVisible(!errRoute.isEmpty());
+  ui->labelRouteError->setText(HtmlBuilder::errorMessage(errRoute.join(tr(" "))));
+  ui->labelRouteError->setToolTip(toolTipTxtRoute.join("\n"));
+  ui->labelRouteError->setStatusTip(tr("Error reading flight plan."));
+
+  ui->labelProfileError->setVisible(!errProfile.isEmpty());
+  ui->labelProfileError->setText(HtmlBuilder::errorMessage(errProfile.join(tr(" "))));
+  ui->labelProfileError->setToolTip(toolTipTxtProfile.join("\n"));
+  ui->labelProfileError->setStatusTip(tr("Error calculating profile."));
 }
 
 map::MapThemeComboIndex MainWindow::getMapThemeIndex() const

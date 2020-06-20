@@ -278,6 +278,10 @@ public:
   /* true if flight plan was loaded in LNMPLN format. Otherwise imported from PLN, FMS, etc. */
   bool isLnmFormatFlightplan();
 
+  /* Get error messages from route parsing */
+  bool hasErrors() const;
+  QString getErrorStrings(QStringList& toolTip) const;
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -423,8 +427,8 @@ private:
   void updateTableHeaders();
   void highlightNextWaypoint(int nearestLegIndex);
   void updateModelHighlights();
-  void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet, QStringList *procedureLoadingErrors);
-  void loadAlternateFromFlightplan(bool quiet);
+  void loadProceduresFromFlightplan(bool clearOldProcedureProperties);
+  void loadAlternateFromFlightplan();
 
   void beforeRouteCalc();
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
@@ -433,7 +437,6 @@ private:
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
-  void reportProcedureErrors(const QStringList& procedureLoadingErrors);
 
   void selectAllTriggered();
 
@@ -523,6 +526,9 @@ private:
   // Route table colum headings
   QStringList routeColumns, routeColumnTooltips;
   UnitStringTool *units = nullptr;
+
+  // Errors collected when parsing route for model
+  QStringList errors, procedureErrors, alternateErrors;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

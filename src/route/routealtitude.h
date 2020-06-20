@@ -218,7 +218,7 @@ public:
 
   /* True if result is not valid and error messages exist */
   bool hasErrors() const;
-  QString getErrorStrings(QString& toolTip, QString& statusTip) const;
+  QString getErrorStrings(QStringList& toolTip) const;
 
   /* Get an array for all altitudes in feet. Includes procedure points. */
   QVector<float> getAltitudes() const;

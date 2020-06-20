@@ -923,9 +923,8 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   // test and error after undo/redo and switch
 
-  QStringList procedureLoadingErrors;
-  loadProceduresFromFlightplan(false /* clear old procedure properties */, false /* quiet */, &procedureLoadingErrors);
-  loadAlternateFromFlightplan(false /* quiet */);
+  loadProceduresFromFlightplan(false /* clear old procedure properties */);
+  loadAlternateFromFlightplan();
   route.updateAll();
   route.updateAirwaysAndAltitude(adjustAltitude);
 
@@ -943,8 +942,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   // Update start position for other formats than FSX/P3D
   bool forceUpdate = format != atools::fs::pln::LNM_PLN && format != atools::fs::pln::FSX_PLN;
-
-  reportProcedureErrors(procedureLoadingErrors);
 
   // Do not create an entry on the undo stack since this plan file type does not support it
   if(updateStartPositionBestRunway(forceUpdate /* force */, false /* undo */))
@@ -976,7 +973,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 }
 
 /* Appends alternates to the end of the flight plan */
-void RouteController::loadAlternateFromFlightplan(bool quiet)
+void RouteController::loadAlternateFromFlightplan()
 {
   if(route.isEmpty())
     return;
@@ -1016,20 +1013,11 @@ void RouteController::loadAlternateFromFlightplan(bool quiet)
       notFound.append(ident);
   }
 
-  if(!quiet && !notFound.isEmpty())
-  {
-    NavApp::deleteSplashScreen();
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_ALTERNATE_ERROR,
-                                                   tr("<p>Cannot find alternate airport(s):</p>"
-                                                        "<ul><li>%1</li></ul>").
-                                                   arg(notFound.join("</li><li>")),
-                                                   tr("Do not &show this dialog again."));
-  }
+  alternateErrors = notFound;
 }
 
 /* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */
-void RouteController::loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet,
-                                                   QStringList *procedureLoadingErrors)
+void RouteController::loadProceduresFromFlightplan(bool clearOldProcedureProperties)
 {
   if(route.isEmpty())
     return;
@@ -1043,27 +1031,13 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
                                                               route.getDestinationAirportLeg().getAirport(),
                                                               arrival, star, departure, errors);
 
-  if(!quiet && procedureLoadingErrors != nullptr)
-    *procedureLoadingErrors = errors;
+  procedureErrors = errors;
 
   // SID/STAR with multiple runways are already assigned
   route.setSidProcedureLegs(departure);
   route.setStarProcedureLegs(star);
   route.setArrivalProcedureLegs(arrival);
   route.updateProcedureLegs(entryBuilder, clearOldProcedureProperties, false /* cleanup route */);
-}
-
-void RouteController::reportProcedureErrors(const QStringList& procedureLoadingErrors)
-{
-  if(!procedureLoadingErrors.isEmpty())
-  {
-    NavApp::deleteSplashScreen();
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_PROC_ERROR,
-                                                   tr("<p>Cannot load procedures into flight plan:</p>"
-                                                        "<ul><li>%1</li></ul>").
-                                                   arg(procedureLoadingErrors.join("</li><li>")),
-                                                   tr("Do not &show this dialog again."));
-  }
 }
 
 bool RouteController::loadFlightplanLnmStr(const QString& string)
@@ -1258,9 +1232,8 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     route.createRouteLegsFromFlightplan();
 
     // Load procedures and add legs
-    QStringList procedureLoadingErrors;
-    loadProceduresFromFlightplan(true /* clear old procedure properties */, false /* quiet */, &procedureLoadingErrors);
-    loadAlternateFromFlightplan(false /* quiet */);
+    loadProceduresFromFlightplan(true /* clear old procedure properties */);
+    loadAlternateFromFlightplan();
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
     route.updateLegAltitudes();
@@ -1284,7 +1257,6 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     updateMoveAndDeleteActions();
 
     updateErrorLabel();
-    reportProcedureErrors(procedureLoadingErrors);
     emit routeChanged(true);
   }
   catch(atools::Exception& e)
@@ -1646,8 +1618,8 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       route.createRouteLegsFromFlightplan();
 
       // Reload procedures from properties
-      loadProceduresFromFlightplan(true /* clear old procedure properties */, true /* quiet */, nullptr);
-      loadAlternateFromFlightplan(true /* quiet */);
+      loadProceduresFromFlightplan(true /* clear old procedure properties */);
+      loadAlternateFromFlightplan();
       QGuiApplication::restoreOverrideCursor();
 
       // Remove duplicates in flight plan and route
@@ -1807,8 +1779,8 @@ void RouteController::postDatabaseLoad()
   route.clearProcedureLegs(proc::PROCEDURE_ALL);
 
   route.createRouteLegsFromFlightplan();
-  QStringList procedureLoadingErrors;
-  loadProceduresFromFlightplan(false /* clear old procedure properties */, false /* quiet */, &procedureLoadingErrors);
+  loadProceduresFromFlightplan(false /* clear old procedure properties */);
+  // loadAlternateFromFlightplan();// not needed - alternates are already stored in dummy legs
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
@@ -1818,7 +1790,7 @@ void RouteController::postDatabaseLoad()
   if(!flightplan.getEntries().isEmpty() &&
      flightplan.getEntries().first().getWaypointType() == atools::fs::pln::entry::AIRPORT &&
      flightplan.getDepartureParkingName().isEmpty())
-    updateStartPositionBestRunway(false, true);
+    updateStartPositionBestRunway(false /* force */, false /* undo */);
 
   updateActiveLeg();
 
@@ -1834,7 +1806,6 @@ void RouteController::postDatabaseLoad()
 
   NavApp::updateWindowTitle();
   loadingDatabaseState = false;
-  reportProcedureErrors(procedureLoadingErrors);
 }
 
 /* Double click into table view */
@@ -2568,8 +2539,8 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 
   // Change format in plan according to last saved format
   route.createRouteLegsFromFlightplan();
-  loadProceduresFromFlightplan(false /* clear old procedure properties */, true /* quiet */, nullptr);
-  loadAlternateFromFlightplan(true /* quiet */);
+  loadProceduresFromFlightplan(false /* clear old procedure properties */);
+  loadAlternateFromFlightplan();
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
@@ -4156,6 +4127,7 @@ void RouteController::updateModelHighlights()
   bool night = NavApp::isCurrentGuiStyleNight();
   const QColor defaultColor = QApplication::palette().color(QPalette::Normal, QPalette::Text);
   const QColor invalidColor = night ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor;
+  errors.clear();
 
   for(int row = 0; row < model->rowCount(); ++row)
   {
@@ -4192,7 +4164,9 @@ void RouteController::updateModelHighlights()
           if(leg.getMapObjectType() == map::INVALID)
           {
             item->setForeground(invalidColor);
-            item->setToolTip(tr("Waypoint \"%1\" not found.").arg(leg.getIdent()));
+            QString err = tr("Waypoint \"%1\" not found.").arg(leg.getIdent());
+            item->setToolTip(err);
+            errors.append(err);
           }
           else
             item->setToolTip(QString());
@@ -4201,16 +4175,19 @@ void RouteController::updateModelHighlights()
         // Airway colum ==========================================
         if(col == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute())
         {
-          QStringList errors;
-          if(leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet(), &errors))
+          QStringList airwayErrors;
+          if(leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet(), &airwayErrors))
           {
             // Has airway but errors
             item->setForeground(invalidColor);
             QFont font = item->font();
             font.setBold(true);
             item->setFont(font);
-            if(!errors.isEmpty())
-              item->setToolTip(errors.join(tr("\n")));
+            if(!airwayErrors.isEmpty())
+            {
+              item->setToolTip(airwayErrors.join(tr("\n")));
+              errors.append(airwayErrors);
+            }
           }
           else
           {
@@ -4224,6 +4201,34 @@ void RouteController::updateModelHighlights()
       }
     }
   }
+}
+
+bool RouteController::hasErrors() const
+{
+  return !errors.isEmpty() || !procedureErrors.isEmpty() || !alternateErrors.isEmpty();
+}
+
+QString RouteController::getErrorStrings(QStringList& toolTip) const
+{
+  if(hasErrors())
+  {
+    if(!errors.isEmpty())
+      toolTip.append(errors);
+
+    if(!procedureErrors.isEmpty())
+      toolTip.append(tr("Cannot load %1: %2").
+                     arg(procedureErrors.size() > 1 ? tr("procedures") : tr("procedure")).
+                     arg(procedureErrors.join(tr(", "))));
+
+    if(!alternateErrors.isEmpty())
+      toolTip.append(tr("Cannot load %1: %2").
+                     arg(alternateErrors.size() > 1 ? tr("alternates") : tr("alternate")).
+                     arg(alternateErrors.join(tr(", "))));
+
+    return tr("Errors in flight plan.");
+  }
+  else
+    return QString();
 }
 
 /* Update the dock window top level label */
