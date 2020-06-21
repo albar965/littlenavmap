@@ -274,20 +274,14 @@ void AircraftPerfController::restartCollection(bool quiet)
   }
 }
 
-bool AircraftPerfController::calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest,
-                                                    float& fuelLbsToTod, float& fuelGalToTod,
-                                                    float& timeToDest, float& timeToTod,
-                                                    float distanceToDest, int activeLeg) const
+void AircraftPerfController::calculateFuelAndTimeTo(FuelTimeResult& result, float distanceToDest, float distanceToNext,
+                                                    int activeLeg) const
 {
 
   const atools::fs::sc::SimConnectUserAircraft& ac = NavApp::getUserAircraft();
-  return NavApp::getAltitudeLegs().calculateFuelAndTimeTo(fuelLbsToDest, fuelGalToDest,
-                                                          fuelLbsToTod, fuelGalToTod,
-                                                          timeToDest, timeToTod,
-                                                          distanceToDest, *perf,
-                                                          ac.getFuelFlowPPH(), ac.getFuelFlowGPH(),
-                                                          ac.getGroundSpeedKts(),
-                                                          activeLeg);
+  NavApp::getAltitudeLegs().calculateFuelAndTimeTo(result, distanceToDest, distanceToNext, *perf,
+                                                   ac.getFuelFlowPPH(), ac.getFuelFlowGPH(),
+                                                   ac.getGroundSpeedKts(), activeLeg);
 }
 
 void AircraftPerfController::mergeCollected()

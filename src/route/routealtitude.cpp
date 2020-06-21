@@ -254,114 +254,195 @@ QVector<float> RouteAltitude::getAltitudes() const
   return retval;
 }
 
-bool RouteAltitude::calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest,
-                                           float& fuelLbsToTod, float& fuelGalToTod,
-                                           float& timeToDest, float& timeToTod,
-                                           float distanceToDest, const atools::fs::perf::AircraftPerf& perf,
+void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanceToDest, float distanceToNext,
+                                           const atools::fs::perf::AircraftPerf& perf,
                                            float aircraftFuelFlowLbs, float aircraftFuelFlowGal,
                                            float aircraftGroundSpeed, int activeLeg) const
 {
   // otherwise estimated using aircraft fuel flow
-  bool fuelCalculated = false;
 
-  if(distanceToDest >= 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
+  bool alternate = route->isActiveAlternate();
+  bool missed = route->isActiveMissed();
+
+  // Need a valid profile and valid active leg
+  if(isValidProfile() && activeLeg != map::INVALID_INDEX_VALUE)
   {
-    if(!(getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE))
-      // Bail out if TOD is not valid - means whole profile is not valid
-      return false;
+    const RouteAltitudeLeg& leg = value(activeLeg);
+    float fuelToDest = 0.f;
 
-    // Distance from aircraft to TOD
-    float curDistToTod = distanceToDest - getTopOfDescentFromDestination();
-
-    // Need fuel flow and speed to calculate fuel and time
-    if(isValidProfile() && perf.isFuelFlowValid() && perf.isSpeedValid())
+    // Copy values from next into destination later if flying an alternate
+    // Alternate also has no TOD
+    if(!alternate)
     {
       // Calculate values based on profile data ======================================
-      if(activeLeg != map::INVALID_INDEX_VALUE)
+
+      // Calculate time and fuel to destination ============================================
+      // Fuel from end of leg to destination - missed will be estimated later
+      if(!missed && distanceToDest >= 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
       {
-        const RouteAltitudeLeg& leg = value(activeLeg);
-
-        // Calculate time and fuel to destination ============================================
-        // Fuel from end of leg to destination
         float distFromDeparture = getTotalDistance() - distanceToDest;
-        float fuelToDest = 0.f;
-        // calulate fuel and time from this leg
-        leg.getFuelAndTimeFromDistToDestination(fuelToDest, timeToDest, distFromDeparture);
 
-        // Convert units
-        if(perf.useFuelAsVolume())
+        if(perf.isFuelFlowValid())
         {
-          fuelLbsToDest = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToDest);
-          fuelGalToDest = fuelToDest;
-        }
-        else
-        {
-          fuelLbsToDest = fuelToDest;
-          fuelGalToDest = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToDest);
-        }
+          // calculate fuel and time from this leg
+          leg.getFuelFromDistToDestination(fuelToDest, distFromDeparture);
 
-        // Calculate time and fuel to TOD ============================================
-        int todIdx = getTopOfDescentLegIndex();
-        float todDistanceFromDeparture = getTopOfDescentDistance();
-        if(curDistToTod > 0.f && todIdx != map::INVALID_INDEX_VALUE &&
-           todDistanceFromDeparture < map::INVALID_DISTANCE_VALUE)
-        {
-          float fuelToTod = 0.f;
-          // Calculate fuel and time from TOD to destination
-          value(todIdx).getFuelAndTimeFromDistToDestination(fuelToTod, timeToTod, todDistanceFromDeparture);
-
-          // Calculate fuel and time from aircraft to TOD
-          fuelToTod = fuelToDest - fuelToTod;
-          timeToTod = timeToDest - timeToTod;
-
+          // Convert units
           if(perf.useFuelAsVolume())
           {
-            fuelLbsToTod = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToTod);
-            fuelGalToTod = fuelToTod;
+            result.fuelLbsToDest = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToDest);
+            result.fuelGalToDest = fuelToDest;
           }
           else
           {
-            fuelLbsToTod = fuelToTod;
-            fuelGalToTod = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToTod);
+            result.fuelLbsToDest = fuelToDest;
+            result.fuelGalToDest = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToDest);
           }
         }
-        else
-        {
-          fuelLbsToTod = map::INVALID_WEIGHT_VALUE;
-          fuelGalToTod = map::INVALID_VOLUME_VALUE;
-          timeToTod = map::INVALID_TIME_VALUE;
-        }
-      }
-      fuelCalculated = true;
-    }
-    else if(aircraftFuelFlowLbs > 0.01f && aircraftGroundSpeed > map::MIN_GROUND_SPEED)
-    {
-      // No valid profile - calculate values based on aircraft ======================================
-      // Use classic calculation based on actual consumption values ==================
-      fuelLbsToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowLbs;
-      fuelGalToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowGal;
-      timeToDest = distanceToDest / aircraftGroundSpeed;
 
-      // Calculate time and fuel to TOD ============================================
-      if(curDistToTod > 0.f)
+        if(perf.isSpeedValid())
+          leg.getTimeFromDistToDestination(result.timeToDest, distFromDeparture);
+
+        // Calculate time and fuel to TOD ===================================================
+        int todIdx = getTopOfDescentLegIndex();
+        float todDistanceFromDeparture = getTopOfDescentDistance();
+        float todDistanceFromDestination = getTopOfDescentFromDestination();
+
+        if(todDistanceFromDeparture >= 0.f && todDistanceFromDeparture < map::INVALID_DISTANCE_VALUE &&
+           todDistanceFromDestination >= 0.f && todDistanceFromDestination < map::INVALID_DISTANCE_VALUE &&
+           todIdx != map::INVALID_INDEX_VALUE)
+        {
+          if(perf.isFuelFlowValid())
+          {
+            float fuelTodToDist = 0.f;
+            // Calculate fuel and time from TOD to destination
+            value(todIdx).getFuelFromDistToDestination(fuelTodToDist, todDistanceFromDeparture);
+
+            // Calculate fuel and time from aircraft to TOD
+            float fuelToTod = fuelToDest - fuelTodToDist;
+
+            if(perf.useFuelAsVolume())
+            {
+              result.fuelLbsToTod = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToTod);
+              result.fuelGalToTod = fuelToTod;
+            }
+            else
+            {
+              result.fuelLbsToTod = fuelToTod;
+              result.fuelGalToTod = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToTod);
+            }
+          }
+
+          if(perf.isSpeedValid())
+          {
+            float timeTodToDist = 0.f;
+            leg.getTimeFromDistToDestination(timeTodToDist, todDistanceFromDeparture);
+            result.timeToTod = result.timeToDest - timeTodToDist;
+          }
+        }
+      } // if(distanceToDest > 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
+    } // if(!alternate)
+
+    // Calculate time and fuel to Next waypoint ============================================
+    if(distanceToNext >= 0.f && distanceToNext < map::INVALID_DISTANCE_VALUE)
+    {
+      int distNext = leg.getDistanceFromStart() + distanceToNext;
+      if(perf.isFuelFlowValid())
       {
-        timeToTod = curDistToTod / aircraftGroundSpeed;
+        float fuelCurToDist = 0.f;
+        leg.getFuelFromDistToDestination(fuelCurToDist, distNext);
+
+        // Calculate fuel and time from aircraft to TOD
+        float fuelToNext = fuelToDest - fuelCurToDist;
 
         if(perf.useFuelAsVolume())
         {
-          fuelLbsToTod = fuelLbsToDest - atools::geo::fromGalToLbs(perf.isJetFuel(), descentFuel);
-          fuelGalToTod = fuelGalToDest - descentFuel;
+          result.fuelLbsToNext = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToNext);
+          result.fuelGalToNext = fuelToNext;
         }
         else
         {
-          fuelLbsToTod = fuelLbsToDest - descentFuel;
-          fuelGalToTod = fuelGalToDest - atools::geo::fromLbsToGal(perf.isJetFuel(), descentFuel);
+          result.fuelLbsToNext = fuelToNext;
+          result.fuelGalToNext = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToNext);
         }
       }
-      fuelCalculated = false;
+
+      if(perf.isSpeedValid())
+      {
+        float timeCurToDist = 0.f;
+        leg.getTimeFromDistToDestination(timeCurToDist, distNext);
+      }
+    } // if(distanceToNext < map::INVALID_DISTANCE_VALUE)
+  } // if(isValidProfile())
+
+  // Fill missing values with estimates ====================================================
+  // Need aircraft flying but no active leg
+  if(aircraftFuelFlowLbs > 0.01f && aircraftGroundSpeed > map::MIN_GROUND_SPEED)
+  {
+    result.estimatedFuel = !perf.isFuelFlowValid() || !isValidProfile();
+    result.estimatedTime = !perf.isSpeedValid() || !isValidProfile();
+
+    // No valid profile - calculate values based on aircraft ======================================
+    // Use classic calculation based on actual consumption values ==================
+
+    if(!alternate)
+    {
+      // Estimate time and fuel to Destination =============================================================
+      if(distanceToDest > 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
+      {
+        if(!result.isFuelToDestValid())
+        {
+          result.fuelLbsToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowLbs;
+          result.fuelGalToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowGal;
+        }
+        if(!result.isTimeToDestValid())
+          result.timeToDest = distanceToDest / aircraftGroundSpeed;
+      }
+
+      // Estimate time and fuel to TOD =============================================================
+      float distanceToTod = distanceToDest - getTopOfDescentFromDestination();
+      if(distanceToTod > 0.f && distanceToTod < map::INVALID_DISTANCE_VALUE)
+      {
+        if(!result.isFuelToTodValid())
+        {
+          result.fuelLbsToTod = distanceToTod / aircraftGroundSpeed * aircraftFuelFlowLbs;
+          result.fuelGalToTod = distanceToTod / aircraftGroundSpeed * aircraftFuelFlowGal;
+        }
+
+        if(!result.isTimeToTodValid())
+          result.timeToTod = distanceToTod / aircraftGroundSpeed;
+      }
     }
+
+    // Estimate time and fuel to next waypoint ====================================================
+    if(distanceToNext > 0.f && distanceToNext < map::INVALID_DISTANCE_VALUE)
+    {
+      if(!result.isFuelToNextValid())
+      {
+        result.fuelLbsToNext = distanceToNext / aircraftGroundSpeed * aircraftFuelFlowLbs;
+        result.fuelGalToNext = distanceToNext / aircraftGroundSpeed * aircraftFuelFlowGal;
+      }
+
+      if(!result.isTimeToNextValid())
+        result.timeToNext = distanceToNext / aircraftGroundSpeed;
+    }
+  } // if(aircraftFuelFlowLbs > 0.01f && aircraftGroundSpeed > map::MIN_GROUND_SPEED)
+
+  if(alternate)
+  {
+    // Destination is the same as next for alternate legs
+    result.fuelLbsToDest = result.fuelLbsToNext;
+    result.fuelGalToDest = result.fuelGalToNext;
+    result.timeToDest = result.timeToNext;
   }
-  return fuelCalculated;
+
+  if(missed)
+  {
+    // RouteAltitude legs does not provide values for missed - calculate them based on aircraft
+    result.fuelLbsToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowLbs;
+    result.fuelGalToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowGal;
+    result.timeToDest = distanceToDest / aircraftGroundSpeed;
+  }
 }
 
 void RouteAltitude::adjustAltitudeForRestriction(RouteAltitudeLeg& leg) const
@@ -1656,6 +1737,26 @@ float RouteAltitude::windCorrectedGroundSpeed(atools::grib::Wind& wind, float co
 {
   float gs = ageo::windCorrectedGroundSpeed(wind.speed, wind.dir, course, speed);
   return gs < 1.f ? map::INVALID_SPEED_VALUE : gs;
+}
+
+QDebug operator<<(QDebug out, const FuelTimeResult& obj)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace()
+    << "FuelTimeResult["
+    << "fuelLbsToDest" << (obj.isFuelToDestValid() ? obj.fuelLbsToDest : -1.f)
+    << "fuelGalToDest" << (obj.isFuelToDestValid() ? obj.fuelGalToDest : -1.f)
+    << "timeToDest" << (obj.isTimeToDestValid() ? obj.timeToDest : -1.f)
+    << "fuelLbsToTod" << (obj.isFuelToTodValid() ? obj.fuelLbsToTod : -1.f)
+    << "fuelGalToTod" << (obj.isFuelToTodValid() ? obj.fuelGalToTod : -1.f)
+    << "timeToTod" << (obj.isTimeToTodValid() ? obj.timeToTod : -1.f)
+    << "fuelLbsToNext" << (obj.isFuelToNextValid() ? obj.fuelLbsToNext : -1.f)
+    << "fuelGalToNext" << (obj.isFuelToNextValid() ? obj.fuelGalToNext : -1.f)
+    << "timeToNext" << (obj.isTimeToNextValid() ? obj.timeToNext : -1.f)
+    << "estimatedFuel" << obj.estimatedFuel
+    << "estimatedTime" << obj.estimatedTime
+    << "]";
+  return out;
 }
 
 QDebug operator<<(QDebug out, const RouteAltitude& obj)

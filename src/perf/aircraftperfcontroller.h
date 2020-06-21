@@ -43,6 +43,7 @@ class AircraftPerfHandler;
 }
 
 class MainWindow;
+struct FuelTimeResult;
 
 /*
  * Takes care of aircraft performance managment, loading, saving, generating the report on the flight plan dock.
@@ -150,9 +151,7 @@ public:
   void restartCollection(bool quiet = false);
 
   /* Calculates values based on performance profile if valid - otherwise estimated by aircraft fuel flow and speed */
-  bool calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest, float& fuelLbsToTod, float& fuelGalToTod,
-                              float& timeToDest, float& timeToTod,
-                              float distanceToDest, int activeLeg) const;
+  void calculateFuelAndTimeTo(FuelTimeResult& result, float distanceToDest, float distanceToNext, int activeLeg) const;
 
 signals:
   /* Sent if performance or wind has changed */

@@ -1433,6 +1433,15 @@ bool Route::isActiveMissed() const
     return false;
 }
 
+bool Route::isActiveProcedure() const
+{
+  const RouteLeg *leg = getActiveLeg();
+  if(leg != nullptr)
+    return leg->isAnyProcedure();
+  else
+    return false;
+}
+
 void Route::setActiveLeg(int value)
 {
   if(size() > 1)
@@ -1675,6 +1684,18 @@ bool Route::isActiveAlternate() const
 {
   return alternateLegsOffset != map::INVALID_INDEX_VALUE && activeLegIndex != map::INVALID_INDEX_VALUE &&
          activeLegIndex >= alternateLegsOffset;
+}
+
+bool Route::isActiveDestinationAirport() const
+{
+  if(hasAnyArrivalProcedure())
+    return false;
+  else
+  {
+    int destIdx = getDestinationLegIndex();
+    return destIdx != map::INVALID_INDEX_VALUE && activeLegIndex != map::INVALID_INDEX_VALUE &&
+           activeLegIndex == getDestinationLegIndex();
+  }
 }
 
 void Route::setDepartureParking(const map::MapParking& departureParking)

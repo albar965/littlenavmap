@@ -390,6 +390,10 @@ private:
   /* Add remarks from a routeleg at the given index to a table */
   void flightplanWaypointRemarks(atools::util::HtmlBuilder& html, int index) const;
 
+  /* Join values and header with default values */
+  QString strJoinVal(const QStringList& list) const;
+  QString strJoinHdr(const QStringList& list) const;
+
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
 

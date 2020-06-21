@@ -42,6 +42,61 @@ struct WindAverageRoute;
 
 class Route;
 
+/* Result package of fuel and time calculation or estimate */
+struct FuelTimeResult
+{
+  float
+  /* To destination */
+    fuelLbsToDest = map::INVALID_WEIGHT_VALUE,
+    fuelGalToDest = map::INVALID_VOLUME_VALUE,
+    timeToDest = map::INVALID_TIME_VALUE,
+
+  /* To top of descent */
+    fuelLbsToTod = map::INVALID_WEIGHT_VALUE,
+    fuelGalToTod = map::INVALID_VOLUME_VALUE,
+    timeToTod = map::INVALID_TIME_VALUE,
+
+  /* To next waypoint */
+    fuelLbsToNext = map::INVALID_WEIGHT_VALUE,
+    fuelGalToNext = map::INVALID_VOLUME_VALUE,
+    timeToNext = map::INVALID_TIME_VALUE;
+
+  bool estimatedFuel = false, estimatedTime = false;
+
+  bool isTimeToDestValid() const
+  {
+    return timeToDest < map::INVALID_TIME_VALUE;
+  }
+
+  bool isTimeToTodValid() const
+  {
+    return timeToTod < map::INVALID_TIME_VALUE;
+  }
+
+  bool isTimeToNextValid() const
+  {
+    return timeToNext < map::INVALID_TIME_VALUE;
+  }
+
+  bool isFuelToDestValid() const
+  {
+    return fuelLbsToDest < map::INVALID_WEIGHT_VALUE && fuelGalToDest < map::INVALID_VOLUME_VALUE;
+  }
+
+  bool isFuelToTodValid() const
+  {
+    return fuelLbsToTod < map::INVALID_WEIGHT_VALUE && fuelGalToTod < map::INVALID_VOLUME_VALUE;
+  }
+
+  bool isFuelToNextValid() const
+  {
+    return fuelLbsToNext < map::INVALID_WEIGHT_VALUE && fuelGalToNext < map::INVALID_VOLUME_VALUE;
+  }
+
+};
+
+QDebug operator<<(QDebug out, const FuelTimeResult& obj);
+
 /*
  * This class calculates altitudes for all route legs. This covers top of climb/descent
  * and sticks to all altitude restrictions of procedures while calculating.
@@ -321,8 +376,7 @@ public:
 
   /* Calculates needed fuel to destination and TOD. Falls back to current aircraft consumption values if profile or
    * altitude legs are not valid. distanceToDest: Aircraft position distance to destination. */
-  bool calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest, float& fuelLbsToTod, float& fuelGalToTod,
-                              float& timeToDest, float& timeToTod, float distanceToDest,
+  void calculateFuelAndTimeTo(FuelTimeResult& calculation, float distanceToDest, float distanceToNext,
                               const atools::fs::perf::AircraftPerf& perf, float aircraftFuelFlowLbs,
                               float aircraftFuelFlowGal, float aircraftGroundSpeed, int activeLeg) const;
 
