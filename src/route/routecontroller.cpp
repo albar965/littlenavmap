@@ -1892,6 +1892,9 @@ void RouteController::updateMoveAndDeleteActions()
 /* From context menu */
 void RouteController::showInformationMenu()
 {
+  if(!hasTableSelection())
+    return;
+
   qDebug() << Q_FUNC_INFO;
   QModelIndex index = view->currentIndex();
   if(index.isValid())
@@ -1907,28 +1910,39 @@ void RouteController::showInformationMenu()
 /* From context menu */
 void RouteController::showProceduresMenu()
 {
+  if(!hasTableSelection())
+    return;
+
   QModelIndex index = view->currentIndex();
   if(index.isValid())
   {
     const RouteLeg& routeLeg = route.value(index.row());
-    emit showProcedures(routeLeg.getAirport());
+    if(routeLeg.isValidWaypoint() && routeLeg.getMapObjectType() == map::AIRPORT)
+      emit showProcedures(routeLeg.getAirport());
   }
 }
 
 /* From context menu */
 void RouteController::showProceduresMenuCustom()
 {
+  if(!hasTableSelection())
+    return;
+
   QModelIndex index = view->currentIndex();
   if(index.isValid())
   {
     const RouteLeg& routeLeg = route.value(index.row());
-    emit showProceduresCustom(routeLeg.getAirport());
+    if(routeLeg.isValidWaypoint() && routeLeg.getMapObjectType() == map::AIRPORT)
+      emit showProceduresCustom(routeLeg.getAirport());
   }
 }
 
 /* From context menu */
 void RouteController::showOnMapMenu()
 {
+  if(!hasTableSelection())
+    return;
+
   QModelIndex index = view->currentIndex();
   if(index.isValid())
   {
@@ -1970,7 +1984,7 @@ void RouteController::visibleColumnsTriggered()
 
 void RouteController::activateLegTriggered()
 {
-  if(!selectedRows.isEmpty())
+  if(hasTableSelection())
     activateLegManually(selectedRows.first());
 }
 
@@ -2377,7 +2391,8 @@ void RouteController::updateActiveLeg()
 
 void RouteController::editUserWaypointTriggered()
 {
-  editUserWaypointName(view->currentIndex().row());
+  if(hasTableSelection())
+    editUserWaypointName(view->currentIndex().row());
 }
 
 void RouteController::editUserWaypointName(int index)

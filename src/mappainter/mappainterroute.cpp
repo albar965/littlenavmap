@@ -532,7 +532,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   }
 
   // Paint active on top of others ====================================================
-  if(!preview && activeValid && activeProcLeg >= 0)
+  if(!preview && activeValid && activeProcLeg >= 0 && route->isActiveProcedure())
   {
     // Use pen for active leg
     painter->setPen(legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen);

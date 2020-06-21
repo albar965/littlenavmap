@@ -1137,7 +1137,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Draw user aircraft =========================================================
   if(simData.getUserAircraftConst().getPosition().isValid() && showAircraft &&
-     aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
+     aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE && !route.isActiveMissed() && !route.isActiveAlternate())
   {
     float acx = distanceX(aircraftDistanceFromStart);
     float acy = altitudeY(simData.getUserAircraftConst().getPosition().getAltitude());
@@ -1609,12 +1609,11 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   }
 
 #ifdef DEBUG_INFORMATION
-  float fuelLbs = 0.f, fuelGal = 0.f, fuelLbsTod = 0.f, fuelGalTod = 0.f, timeToDest = 0.f, timeToTod = 0.f;
-  NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(fuelLbs, fuelGal,
-                                                              fuelLbsTod, fuelGalTod,
-                                                              timeToDest, timeToTod,
-                                                              distanceToGo,
-                                                              index + 1);
+  using namespace formatter;
+  using namespace map;
+
+  FuelTimeResult result;
+  NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(result, distanceToGo, INVALID_DISTANCE_VALUE, index + 1);
 
   variableLabelText.append(QString("<br/><code>[alt %1,idx %2, crs %3, "
                                      "fuel dest %4/%5, fuel TOD %6/%7, "
@@ -1622,16 +1621,14 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
                            arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)).
                            arg(index).
                            arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-").
-                           arg(fuelLbs, 0, 'f', 2).
-                           arg(fuelGal, 0, 'f', 2).
-                           arg(fuelLbsTod < map::INVALID_WEIGHT_VALUE ? fuelLbsTod : -1., 0, 'f', 2).
-                           arg(fuelGalTod < map::INVALID_VOLUME_VALUE ? fuelGalTod : -1., 0, 'f', 2).
-                           arg(timeToDest, 0, 'f', 2).
-                           arg(formatter::formatMinutesHours(timeToDest)).
-                           arg(timeToTod < map::INVALID_TIME_VALUE ? timeToTod : -1., 0, 'f', 2).
-                           arg(timeToTod < map::INVALID_TIME_VALUE ?
-                               formatter::formatMinutesHours(timeToTod) : "-1")
-                           );
+                           arg(result.fuelLbsToDest, 0, 'f', 2).
+                           arg(result.fuelGalToDest, 0, 'f', 2).
+                           arg(result.fuelLbsToTod < INVALID_WEIGHT_VALUE ? result.fuelLbsToTod : -1., 0, 'f', 2).
+                           arg(result.fuelGalToTod < INVALID_VOLUME_VALUE ? result.fuelGalToTod : -1., 0, 'f', 2).
+                           arg(result.timeToDest, 0, 'f', 2).
+                           arg(formatMinutesHours(result.timeToDest)).
+                           arg(result.timeToTod < map::INVALID_TIME_VALUE ? result.timeToTod : -1., 0, 'f', 2).
+                           arg(result.timeToTod < INVALID_TIME_VALUE ? formatMinutesHours(result.timeToTod) : "-1"));
 #endif
 
   // Allow event to propagate to scroll widget
