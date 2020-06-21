@@ -151,6 +151,8 @@
     <addaction name="menuShortcuts"/>
     <addaction name="separator"/>
     <addaction name="actionShowFloatingWindows"/>
+    <addaction name="actionShowAllowDocking"/>
+    <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
     <addaction name="actionResetLayout"/>
@@ -5516,7 +5518,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>56</y>
+              <y>74</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -6976,7 +6978,7 @@ Best track will be selected automatically.</string>
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Status&amp;bar</string>
+    <string>&amp;Show Statusbar</string>
    </property>
    <property name="toolTip">
     <string>Show the statusbar</string>
@@ -11421,6 +11423,26 @@ Best track will be selected automatically.</string>
     <string>Show top of descent and top of climb points on the map and in the elevation profile</string>
    </property>
   </action>
+  <action name="actionShowAllowDocking">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Allow Window docking</string>
+   </property>
+   <property name="toolTip">
+    <string>Allows dock windows to snap back into the main window while moving.</string>
+   </property>
+   <property name="statusTip">
+    <string>Allows dock windows to snap back into the main window while moving.</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+9</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11567,7 +11589,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

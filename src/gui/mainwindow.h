@@ -225,6 +225,7 @@ private:
   void connectAllSlots();
   void mainWindowShown();
   void raiseFloatingWindows();
+  void allowDockingWindows();
 
   void saveStateMain();
   void saveActionStates();

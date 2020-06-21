@@ -304,6 +304,7 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Reading settings";
     restoreStateMain();
 
+    allowDockingWindows();
     updateActionStates();
     updateMarkActionStates();
     updateHighlightActionStates();
@@ -1157,6 +1158,7 @@ void MainWindow::connectAllSlots()
 
   // Windows menu ============================================================
   connect(ui->actionShowFloatingWindows, &QAction::triggered, this, &MainWindow::raiseFloatingWindows);
+  connect(ui->actionShowAllowDocking, &QAction::toggled, this, &MainWindow::allowDockingWindows);
 
   // File menu ============================================================
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
@@ -3018,6 +3020,11 @@ void MainWindow::mainWindowShown()
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
+void MainWindow::allowDockingWindows()
+{
+  dockHandler->setDockingAllowed(ui->actionShowAllowDocking->isChecked());
+}
+
 void MainWindow::raiseFloatingWindows()
 {
   dockHandler->raiseFloatingWindows();
@@ -3364,7 +3371,8 @@ void MainWindow::restoreStateMain()
                        ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                        ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionMapShowSunShading,
-                       ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRunWebserver});
+                       ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRunWebserver,
+                       ui->actionShowAllowDocking});
   widgetState.setBlockSignals(false);
 
   // Load status and allow to send signals
@@ -3601,8 +3609,8 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionWorkOffline,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                     ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionRunWebserver,
-                    ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack
-                   });
+                    ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
+                    ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking});
   Settings::instance().syncSettings();
 }
 
