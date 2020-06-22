@@ -38,6 +38,7 @@ class QSpinBox;
 class UnitStringTool;
 class QListWidgetItem;
 class QListWidget;
+class QFontDialog;
 
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
@@ -200,6 +201,7 @@ private:
   void resetGuiFontClicked();
   void selectMapFontClicked();
   void resetMapFontClicked();
+  void buildFontDialog();
 
   void flightplanPatterShortClicked();
   void flightplanPatterLongClicked();
@@ -224,6 +226,7 @@ private:
 
   UnitStringTool *units = nullptr;
 
+  QFontDialog *fontDialog = nullptr;
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

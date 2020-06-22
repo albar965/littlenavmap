@@ -1556,7 +1556,7 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</string>
         <item>
          <widget class="QGroupBox" name="groupBox_20">
           <property name="title">
-           <string>Map Font</string>
+           <string>Map and Elevation Profile Font</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <property name="spacing">
@@ -1577,20 +1577,20 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</string>
            <item>
             <widget class="QPushButton" name="pushButtonOptionsDisplaySelectFont">
              <property name="toolTip">
-              <string>Select a font for map display</string>
+              <string>Select a font for the map and the elevation profile</string>
              </property>
              <property name="text">
-              <string>Select Map &amp;Font ...</string>
+              <string>Select &amp;Font ...</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonOptionsDisplayResetFont">
              <property name="toolTip">
-              <string>Reset font for map display back to system default</string>
+              <string>Reset font for the map and the elevation profile back to default</string>
              </property>
              <property name="text">
-              <string>&amp;Reset Map Font to Default</string>
+              <string>&amp;Reset Font to Default</string>
              </property>
             </widget>
            </item>

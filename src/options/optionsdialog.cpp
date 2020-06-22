@@ -642,6 +642,7 @@ OptionsDialog::~OptionsDialog()
   delete rangeRingValidator;
   delete units;
   delete ui;
+  delete fontDialog;
 }
 
 void OptionsDialog::open()
@@ -2462,6 +2463,15 @@ void OptionsDialog::resetMapFontClicked()
   updateMapFontLabel();
 }
 
+void OptionsDialog::buildFontDialog()
+{
+  if(fontDialog == nullptr)
+  {
+    fontDialog = new QFontDialog(this);
+    fontDialog->setWindowTitle(tr("%1 - Select font").arg(QApplication::applicationName()));
+  }
+}
+
 void OptionsDialog::selectMapFontClicked()
 {
   QFont font;
@@ -2475,12 +2485,13 @@ void OptionsDialog::selectMapFontClicked()
     // Fall back to system font
     font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
 
-  bool ok;
-  font =
-    QFontDialog::getFont(&ok, font, this, tr("%1 - Select font for map").arg(QApplication::applicationName()));
-  if(ok)
-    mapFont = font.toString();
-  updateMapFontLabel();
+  buildFontDialog();
+  fontDialog->setCurrentFont(font);
+  if(fontDialog->exec())
+  {
+    mapFont = fontDialog->selectedFont().toString();
+    updateMapFontLabel();
+  }
 }
 
 void OptionsDialog::resetGuiFontClicked()
@@ -2498,20 +2509,26 @@ void OptionsDialog::resetGuiFontClicked()
 
 void OptionsDialog::selectGuiFontClicked()
 {
-  bool ok;
-  QFont font = QFontDialog::getFont(&ok, QApplication::font(), this,
-                                    tr("%1 - Select font for user interface").
-                                    arg(QApplication::applicationName()));
-  if(ok)
+  QFont font;
+  if(guiFont.isEmpty())
+    // Empty description means system font
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  else
+    font.fromString(guiFont);
+
+  buildFontDialog();
+  fontDialog->setCurrentFont(font);
+  if(fontDialog->exec())
   {
+    QFont font = fontDialog->selectedFont();
     guiFont = font.toString();
     qDebug() << Q_FUNC_INFO << guiFont;
 
     // the user clicked OK and font is set to the font the user selected
     if(QApplication::font() != font)
       QApplication::setFont(font);
+    updateGuiFontLabel();
   }
-  updateGuiFontLabel();
 }
 
 void OptionsDialog::updateFontFromData()
