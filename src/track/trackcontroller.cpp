@@ -199,8 +199,6 @@ void TrackController::downloadFinished(const atools::track::TrackVectorType& tra
     trackManager->loadTracks(trackVector, downloadOnlyValid);
     tracksLoaded();
     emit postTrackLoad();
-
-    NavApp::setStatusMessage(tr("Track download finished."), true /* addToLog */);
   }
 }
 
@@ -239,20 +237,20 @@ void TrackController::tracksLoaded()
 {
   QMap<atools::track::TrackType, int> numTracks = trackManager->getNumTracks();
 
-  QStringList str;
-  for(atools::track::TrackType type : numTracks.keys())
-  {
-    int num = numTracks.value(type);
-    str.append(tr("<li>%1: %2 tracks.</li>").
-               arg(atools::track::typeToString(type)).
-               arg(num == 0 ? tr("No") : QString::number(num)));
-
-  }
-
-  QString err;
   const QStringList& errorMessages = trackManager->getErrorMessages();
   if(!errorMessages.isEmpty())
   {
+    QStringList str;
+    QString err;
+    for(atools::track::TrackType type : numTracks.keys())
+    {
+      int num = numTracks.value(type);
+      str.append(tr("<li>%1: %2 tracks.</li>").
+                 arg(atools::track::typeToString(type)).
+                 arg(num == 0 ? tr("No") : QString::number(num)));
+
+    }
+
     err += tr("<p>Errors reading tracks.<br/>Make sure to use the latest navdata.</p><ul><li>");
     err += errorMessages.mid(0, 5).join("</li><li>");
 
@@ -260,14 +258,23 @@ void TrackController::tracksLoaded()
       err += tr("</li><li>More ...");
 
     err += tr("</li></ul>");
-  }
+    QString boxMessage = tr("<p>Tracks downloaded.</p><ul>%1</ul>%2").arg(str.join("")).arg(err);
 
-  QString boxMessage = tr("<p>Tracks downloaded.</p><ul>%1</ul>%2").arg(str.join("")).arg(err);
-
-  if(!errorMessages.isEmpty())
-    // Force display of dialog in case of errors
+    NavApp::deleteSplashScreen();
     QMessageBox::warning(mainWindow, QApplication::applicationName(), boxMessage);
+    NavApp::setStatusMessage(tr("Track download finished with errors."), true /* addToLog */);
+  }
   else
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, boxMessage,
-                                                   tr("Do not &show this dialog again."));
+  {
+    QStringList msg;
+    for(atools::track::TrackType type : numTracks.keys())
+    {
+      int num = numTracks.value(type);
+      msg.append(tr("%1: %2 tracks").
+                 arg(atools::track::typeToString(type)).
+                 arg(num == 0 ? tr("no") : QString::number(num)));
+    }
+
+    NavApp::setStatusMessage(tr("Track download finished: %1").arg(msg.join(tr(", "))), true /* addToLog */);
+  }
 }
