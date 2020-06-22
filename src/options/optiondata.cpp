@@ -20,6 +20,8 @@
 #include "exception.h"
 
 #include <QDebug>
+#include <QFont>
+#include <QFontDatabase>
 
 OptionData *OptionData::optionData = nullptr;
 
@@ -96,6 +98,18 @@ QString OptionData::getOnlineWhazzupUrl() const
       return QString();
   }
   return QString();
+}
+
+QFont OptionData::getMapFont() const
+{
+  QFont font;
+  if(!mapFont.isEmpty())
+    font.fromString(mapFont);
+  else if(!guiFont.isEmpty())
+    font.fromString(guiFont);
+  else
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  return font;
 }
 
 const OptionData& OptionData::instance()

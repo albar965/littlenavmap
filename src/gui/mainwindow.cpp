@@ -3295,6 +3295,23 @@ void MainWindow::restoreStateMain()
     move(geo.topLeft());
   }
 
+  // Enable tooltips for all menus
+  // QList<QAction *> stack;
+  // stack.append(ui->menuBar->actions().first());
+  // while(!stack.isEmpty())
+  // {
+  // QAction *action = stack.takeLast();
+  // if(action->menu() != nullptr)
+  // {
+  // action->menu()->setToolTipsVisible(true);
+  // for(QAction *sub : action->menu()->actions())
+  // {
+  // if(sub->menu() != nullptr)
+  // stack.append(sub);
+  // }
+  // }
+  // }
+
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
 

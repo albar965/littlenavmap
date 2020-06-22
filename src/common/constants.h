@@ -253,10 +253,9 @@ const QLatin1Literal OPTIONS_DIALOG_WEB_DOCROOT_DLG("OptionsDialog/WebDocroot");
 
 /* Other options that are only accessible in the configuration file */
 const QLatin1Literal OPTIONS_DIALOG_LANGUAGE("OptionsDialog/Language");
+const QLatin1Literal OPTIONS_DIALOG_FONT("OptionsDialog/Font");
+const QLatin1Literal OPTIONS_DIALOG_MAP_FONT("OptionsDialog/MapFont");
 const QLatin1Literal OPTIONS_PIXMAP_CACHE("Options/PixmapCache");
-const QLatin1Literal OPTIONS_FONT_FAMILY("Options/GuiFontFamily");
-const QLatin1Literal OPTIONS_FONT_PIXEL_SIZE("Options/GuiFontPixelSize");
-const QLatin1Literal OPTIONS_FONT_FILE("Options/GuiFontFile");
 const QLatin1Literal OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1Literal OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");

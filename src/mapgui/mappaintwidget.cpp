@@ -63,8 +63,12 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
 
   screenIndex = new MapScreenIndex(this, paintLayer);
 
-  setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
-  avoidBlurredMap = OptionData::instance().getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
+  const OptionData& options = OptionData::instance();
+
+  setSunShadingDimFactor(static_cast<double>(options.getDisplaySunShadingDimFactor()) / 100.);
+  avoidBlurredMap = options.getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
+
+  setFont(options.getMapFont());
 
   // Initialize the X-Plane apron geometry cache
   apronGeometryCache = new ApronGeometryCache();
@@ -230,12 +234,16 @@ void MapPaintWidget::unitsUpdated()
 
 void MapPaintWidget::optionsChanged()
 {
+  const OptionData& options = OptionData::instance();
+
+  setFont(options.getMapFont());
+
   unitsUpdated();
 
   // Updated sun shadow and force a tile refresh by changing the show status again
-  setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
+  setSunShadingDimFactor(static_cast<double>(options.getDisplaySunShadingDimFactor()) / 100.);
   setShowSunShading(showSunShading());
-  avoidBlurredMap = OptionData::instance().getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
+  avoidBlurredMap = options.getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
 
   // reloadMap();
   updateCacheSizes();

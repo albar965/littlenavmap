@@ -154,6 +154,9 @@ private:
   template<typename TYPE>
   void displayOptWidgetToOptionData(TYPE& type, const QHash<TYPE, QTreeWidgetItem *>& index) const;
 
+  void updateFontFromData();
+  void updateMapFontLabel();
+  void updateGuiFontLabel();
   void updateButtonColors();
   void updateCacheElevationStates();
   void updateCacheUserAirspaceStates();
@@ -191,14 +194,18 @@ private:
 
   void mapClickAirportProcsToggled();
 
-  void udpdateLanguageComboBox(const QString& language);
+  void udpdateLanguageComboBox(const QString& guiLanguage);
   void languageChanged(int);
+  void selectGuiFontClicked();
+  void resetGuiFontClicked();
+  void selectMapFontClicked();
+  void resetMapFontClicked();
 
   void flightplanPatterShortClicked();
   void flightplanPatterLongClicked();
   void updateFlightplanExample();
 
-  QString language;
+  QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
   Ui::Options *ui;

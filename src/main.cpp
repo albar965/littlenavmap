@@ -251,32 +251,17 @@ int main(int argc, char *argv[])
       QPixmapCache::setCacheLimit(pixmapCache);
     }
 
-    // Load font file from the configuration if desired
-    QString fontfile = settings.valueStr(lnm::OPTIONS_FONT_FILE, QString());
-    if(!fontfile.isEmpty())
+    // Load font from options settings ========================================
+    QString fontStr = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QString());
+    QFont font;
+    if(!fontStr.isEmpty())
     {
-      int id = QFontDatabase::addApplicationFont(fontfile);
-      qInfo() << "Loaded font" << fontfile << "result" << id;
-    }
+      font.fromString(fontStr);
 
-    // Set font family from configuration if given
-    QString fontfamily = settings.valueStr(lnm::OPTIONS_FONT_FAMILY, QString());
-    if(!fontfamily.isEmpty())
-    {
-      QFont font(fontfamily);
-      app.setFont(font);
-      qInfo() << "Set font" << font.family();
+      if(font != QApplication::font())
+        app.setFont(font);
     }
-
-    // Set default font size since manually selected families are too large
-    int fontSize = settings.valueInt(lnm::OPTIONS_FONT_PIXEL_SIZE, 0);
-    if(fontSize > 0)
-    {
-      QFont font = app.font();
-      font.setPixelSize(fontSize);
-      app.setFont(font);
-      qInfo() << "Set font size" << fontSize;
-    }
+    qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
 
     // Load available translations ============================================
     qInfo() << "Loading translations for" << OptionsDialog::getLocale();

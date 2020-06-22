@@ -22,6 +22,7 @@
 #include "common/elevationprovider.h"
 #include "common/unit.h"
 #include "atools.h"
+#include "gui/tools.h"
 #include "ui_options.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
@@ -48,6 +49,8 @@
 #include <QMainWindow>
 #include <QUrl>
 #include <QSettings>
+#include <QFontDialog>
+#include <QFontDatabase>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -163,12 +166,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   /* *INDENT-OFF* */
   QListWidget*list = ui->listWidgetOptionPages;
-  list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and\nchange update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));
-  list->addItem(pageListItem(list, tr("User Interface"), tr("Change language settings, window options\nand other user interface behavior."), ":/littlenavmap/resources/icons/statusbar.svg"));
-  list->addItem(pageListItem(list, tr("Display and Text"), tr("Change text sizes and display options."), ":/littlenavmap/resources/icons/copy.svg"));
+  list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));
+  list->addItem(pageListItem(list, tr("User Interface"), tr("Change language settings, window options and other user interface behavior."), ":/littlenavmap/resources/icons/statusbar.svg"));
+  list->addItem(pageListItem(list, tr("Display and Text"), tr("Change text sizes, user interface font and other display options."), ":/littlenavmap/resources/icons/copy.svg"));
   list->addItem(pageListItem(list, tr("Map"), tr("General map settings: Zoom, click and tooltip settings."), ":/littlenavmap/resources/icons/mapsettings.svg"));
   list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click and screen navigation settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));
-  list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols and texts for map display objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));
+  list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols, texts and font for map display objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));
   list->addItem(pageListItem(list, tr("Map Display 2"), tr("Change colors, symbols and texts for marks, user aircraft and more."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));
   list->addItem(pageListItem(list, tr("Map Display Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));
   list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordindate units as well as\noptions for course and heading display."), ":/littlenavmap/resources/icons/units.svg"));
@@ -448,6 +451,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // GUI language options
   connect(ui->comboBoxOptionsGuiLanguage, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &OptionsDialog::languageChanged);
+  connect(ui->pushButtonOptionsGuiSelectFont, &QPushButton::clicked, this, &OptionsDialog::selectGuiFontClicked);
+  connect(ui->pushButtonOptionsGuiResetFont, &QPushButton::clicked, this, &OptionsDialog::resetGuiFontClicked);
 
   // ===========================================================================
   // Weather widgets - ASN
@@ -504,6 +509,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->radioButtonOptionsMapNavDragMove, &QRadioButton::clicked, this, &OptionsDialog::updateNavOptions);
   connect(ui->radioButtonOptionsMapNavClickCenter, &QRadioButton::clicked, this, &OptionsDialog::updateNavOptions);
   connect(ui->radioButtonOptionsMapNavTouchscreen, &QRadioButton::clicked, this, &OptionsDialog::updateNavOptions);
+
+  connect(ui->pushButtonOptionsDisplaySelectFont, &QPushButton::clicked, this, &OptionsDialog::selectMapFontClicked);
+  connect(ui->pushButtonOptionsDisplayResetFont, &QPushButton::clicked, this, &OptionsDialog::resetMapFontClicked);
 
   // ===========================================================================
   // Database exclude path
@@ -829,6 +837,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "OPTIONS.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
   {
+    updateFontFromData();
     updateWebOptionsFromData();
     reject();
   }
@@ -846,6 +855,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
       updateWidgetStates();
 
       updateWebOptionsFromData();
+      updateFontFromData();
       updateWebServerStatus();
     }
   }
@@ -855,6 +865,8 @@ void OptionsDialog::updateWidgetStates()
 {
   simNoFollowAircraftOnScrollClicked(false);
   updateButtonColors();
+  updateGuiFontLabel();
+  updateMapFontLabel();
   onlineDisplayRangeClicked();
   eastWestRuleClicked();
   mapEmptyAirportsClicked(false);
@@ -883,7 +895,9 @@ void OptionsDialog::saveState()
 
   Settings& settings = Settings::instance();
 
-  settings.setValue(lnm::OPTIONS_DIALOG_LANGUAGE, language);
+  settings.setValue(lnm::OPTIONS_DIALOG_LANGUAGE, guiLanguage);
+  settings.setValue(lnm::OPTIONS_DIALOG_FONT, guiFont);
+  settings.setValue(lnm::OPTIONS_DIALOG_MAP_FONT, mapFont);
 
   // Save the path lists
   QStringList paths;
@@ -962,7 +976,9 @@ void OptionsDialog::restoreState()
   trailColor =
     settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
-  language = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
+  guiLanguage = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
+  guiFont = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QString());
+  mapFont = settings.valueStr(lnm::OPTIONS_DIALOG_MAP_FONT, QString());
 
   widgetsToOptionData();
   updateWidgetUnits();
@@ -970,6 +986,8 @@ void OptionsDialog::restoreState()
   mapEmptyAirportsClicked(false);
   simNoFollowAircraftOnScrollClicked(false);
   updateButtonColors();
+  updateGuiFontLabel();
+  updateMapFontLabel();
   onlineDisplayRangeClicked();
   eastWestRuleClicked();
 
@@ -986,8 +1004,8 @@ void OptionsDialog::restoreState()
 
 void OptionsDialog::languageChanged(int)
 {
-  language = ui->comboBoxOptionsGuiLanguage->currentData().value<QLocale>().name();
-  qDebug() << Q_FUNC_INFO << language;
+  guiLanguage = ui->comboBoxOptionsGuiLanguage->currentData().value<QLocale>().name();
+  qDebug() << Q_FUNC_INFO << guiLanguage;
 }
 
 void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
@@ -1034,19 +1052,19 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
   {
     // Language and country like "pt_BR"
     ui->comboBoxOptionsGuiLanguage->setCurrentIndex(currentIndexLangCountry);
-    language = ui->comboBoxOptionsGuiLanguage->itemData(currentIndexLangCountry).value<QLocale>().name();
+    guiLanguage = ui->comboBoxOptionsGuiLanguage->itemData(currentIndexLangCountry).value<QLocale>().name();
   }
   else if(currentIndexLang != -1)
   {
     // Language only like "de"
     ui->comboBoxOptionsGuiLanguage->setCurrentIndex(currentIndexLang);
-    language = ui->comboBoxOptionsGuiLanguage->itemData(currentIndexLang).value<QLocale>().name();
+    guiLanguage = ui->comboBoxOptionsGuiLanguage->itemData(currentIndexLang).value<QLocale>().name();
   }
   else if(englishLocale != -1)
   {
     // English as fallback
     ui->comboBoxOptionsGuiLanguage->setCurrentIndex(englishLocale);
-    language = ui->comboBoxOptionsGuiLanguage->itemData(englishLocale).value<QLocale>().name();
+    guiLanguage = ui->comboBoxOptionsGuiLanguage->itemData(englishLocale).value<QLocale>().name();
   }
 }
 
@@ -1387,7 +1405,9 @@ void OptionsDialog::widgetsToOptionData()
 {
   OptionData& data = OptionData::instanceInternal();
 
-  data.language = language;
+  data.guiLanguage = guiLanguage;
+  data.guiFont = guiFont;
+  data.mapFont = mapFont;
 
   data.flightplanColor = flightplanColor;
   data.flightplanProcedureColor = flightplanProcedureColor;
@@ -1630,8 +1650,12 @@ void OptionsDialog::displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *che
 /* Copy OptionData object to widget */
 void OptionsDialog::optionDataToWidgets(const OptionData& data)
 {
-  language = data.language;
-  udpdateLanguageComboBox(data.language);
+  guiLanguage = data.guiLanguage;
+  guiFont = data.guiFont;
+  mapFont = data.mapFont;
+  udpdateLanguageComboBox(data.guiLanguage);
+  updateGuiFontLabel();
+  updateMapFontLabel();
 
   flightplanColor = data.flightplanColor;
   flightplanProcedureColor = data.flightplanProcedureColor;
@@ -2408,4 +2432,99 @@ void OptionsDialog::updateFlightplanExample()
     ui->labelOptionsRouteFilenameExample->setText(
       atools::util::HtmlBuilder::warningMessage(tr("Pattern is empty. Using default \"%1\".").
                                                 arg(atools::fs::pln::pattern::SHORT)));
+}
+
+void OptionsDialog::updateMapFontLabel()
+{
+  QFont font;
+  if(!mapFont.isEmpty())
+    // Use set font
+    font.fromString(mapFont);
+  else if(!guiFont.isEmpty())
+    // Fall back to GUI font
+    font.fromString(guiFont);
+  else
+    // Fall back to system font
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+
+  atools::gui::fontDescription(font, ui->labelOptionsDisplayFont);
+}
+
+void OptionsDialog::updateGuiFontLabel()
+{
+  ui->labelOptionsGuiFont->setText(atools::gui::fontDescription(QApplication::font()));
+}
+
+void OptionsDialog::resetMapFontClicked()
+{
+  // Set to GUI font - no matter if this defaults to system or not
+  mapFont = guiFont;
+  updateMapFontLabel();
+}
+
+void OptionsDialog::selectMapFontClicked()
+{
+  QFont font;
+  if(!mapFont.isEmpty())
+    // Use set font
+    font.fromString(mapFont);
+  else if(!guiFont.isEmpty())
+    // Fall back to GUI font
+    font.fromString(guiFont);
+  else
+    // Fall back to system font
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+
+  bool ok;
+  font =
+    QFontDialog::getFont(&ok, font, this, tr("%1 - Select font for map").arg(QApplication::applicationName()));
+  if(ok)
+    mapFont = font.toString();
+  updateMapFontLabel();
+}
+
+void OptionsDialog::resetGuiFontClicked()
+{
+  // Empty description means system font
+  guiFont.clear();
+
+  // Set GUI back to system font
+  QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  qDebug() << Q_FUNC_INFO << font;
+  QApplication::setFont(font);
+
+  updateGuiFontLabel();
+}
+
+void OptionsDialog::selectGuiFontClicked()
+{
+  bool ok;
+  QFont font = QFontDialog::getFont(&ok, QApplication::font(), this,
+                                    tr("%1 - Select font for user interface").
+                                    arg(QApplication::applicationName()));
+  if(ok)
+  {
+    guiFont = font.toString();
+    qDebug() << Q_FUNC_INFO << guiFont;
+
+    // the user clicked OK and font is set to the font the user selected
+    if(QApplication::font() != font)
+      QApplication::setFont(font);
+  }
+  updateGuiFontLabel();
+}
+
+void OptionsDialog::updateFontFromData()
+{
+  OptionData& data = OptionData::instanceInternal();
+  QFont font;
+
+  if(data.guiFont.isEmpty())
+    // Empty description means system font
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  else
+    font.fromString(data.guiFont);
+
+  if(QApplication::font() != font)
+    QApplication::setFont(font);
 }
