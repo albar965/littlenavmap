@@ -864,6 +864,7 @@ void MainWindow::setupUi()
 #endif
   timeLabel->setToolTip(tr("Day of month and UTC time."));
   ui->statusBar->addPermanentWidget(timeLabel);
+  connect(ui->statusBar, &QStatusBar::messageChanged, this, &MainWindow::statusMessageChanged);
 }
 
 void MainWindow::clearProcedureCache()
@@ -2852,7 +2853,7 @@ void MainWindow::setStatusMessage(const QString& message, bool addToLog)
     while(statusMessages.size() > 20)
       statusMessages.removeFirst();
 
-    QStringList msg(tr("Background tasks:"));
+    QStringList msg(tr("Messages:"));
     for(int i = 0; i < statusMessages.size(); i++)
       msg.append(tr("%1: %2").
                  arg(QLocale().toString(statusMessages.at(i).first, tr("hh:mm:ss"))).
@@ -2861,6 +2862,18 @@ void MainWindow::setStatusMessage(const QString& message, bool addToLog)
   }
 
   ui->statusBar->showMessage(message);
+}
+
+void MainWindow::statusMessageChanged(const QString& text)
+{
+  if(text.isEmpty())
+  {
+    // Field is cleared. Show number of messages in otherwise empty field.
+    if(statusMessages.isEmpty())
+      ui->statusBar->showMessage(tr("No Messages"));
+    else
+      ui->statusBar->showMessage(tr("%1 Messages").arg(statusMessages.size()));
+  }
 }
 
 void MainWindow::setDetailLabelText(const QString& text)

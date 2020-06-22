@@ -51,7 +51,6 @@
 #include <QMessageBox>
 #include <QLibrary>
 #include <QPixmapCache>
-#include <QFontDatabase>
 #include <QSettings>
 #include <QScreen>
 
