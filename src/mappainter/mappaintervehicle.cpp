@@ -215,10 +215,8 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
         texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
       }
     }
-    textatt::TextAttributes atts(textatt::BOLD);
-
     // Draw text label
-    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
+    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, textatt::NONE, 255);
   }
 }
 
@@ -255,11 +253,9 @@ void MapPainterVehicle::paintTextLabelUser(const PaintContext *context, float x,
     texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
   }
 
-  textatt::TextAttributes atts(textatt::BOLD);
-  atts |= textatt::ROUTE_BG_COLOR;
-
   // Draw text label
-  symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2.f, y + size / 2.f, atts, 255);
+  symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2.f, y + size / 2.f,
+                          textatt::ROUTE_BG_COLOR, 255);
 }
 
 void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircraft& aircraft)
@@ -355,6 +351,7 @@ void MapPainterVehicle::paintTextLabelWind(const PaintContext *context, int x, i
     int xs, ys;
     QStringList texts;
 
+    textatt::TextAttributes atts = textatt::ROUTE_BG_COLOR;
     if(aircraft.getWindSpeedKts() >= 1.f)
     {
       if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND))
@@ -365,18 +362,16 @@ void MapPainterVehicle::paintTextLabelWind(const PaintContext *context, int x, i
 
         texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
       }
-      xs = x + size / 2;
+      xs = x + size / 2 + 4;
       ys = y + size / 2;
     }
     else
     {
+      atts |= textatt::CENTER;
       texts.append(tr("No wind"));
       xs = x;
       ys = y + size / 2;
     }
-
-    textatt::TextAttributes atts(textatt::BOLD);
-    atts |= textatt::ROUTE_BG_COLOR;
 
     // Draw text label
     symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), xs, ys, atts, 255);

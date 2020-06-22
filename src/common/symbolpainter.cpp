@@ -892,7 +892,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, int x
   if(flags & textflags::FREQ)
     texts.append(QString::number(ndb.frequency / 100., 'f', 1));
 
-  textatt::TextAttributes textAttrs = textatt::BOLD;
+  textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
@@ -928,7 +928,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, int x
       texts.append(vor.channel);
   }
 
-  textatt::TextAttributes textAttrs = textatt::BOLD;
+  textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
@@ -954,7 +954,7 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
   if(flags & textflags::IDENT)
     texts.append(wp.ident);
 
-  textatt::TextAttributes textAttrs = textatt::BOLD;
+  textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
@@ -978,7 +978,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
   QStringList texts = airportTexts(dispOpts, flags, airport, maxTextLength);
   if(!texts.isEmpty())
   {
-    textatt::TextAttributes atts = textatt::BOLD;
+    textatt::TextAttributes atts = textatt::NONE;
     if(airport.flags.testFlag(map::AP_ADDON))
       atts |= textatt::ITALIC | textatt::UNDERLINE;
 

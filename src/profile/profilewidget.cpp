@@ -716,11 +716,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     indexes.prepend(i);
   }
 
-  // Set default font to bold =======================================
-  QFont defaultFont = painter.font();
-  defaultFont.setBold(true);
-  painter.setFont(defaultFont);
-
   if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
   {
     // Draw altitude restriction bars ============================
@@ -808,7 +803,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     paintVasi(painter, route);
 
   mapcolors::scaleFont(&painter, 0.9f);
-  defaultFont = painter.font();
 
   const OptionData& optData = OptionData::instance();
 
@@ -912,7 +906,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
 
     // Draw the most unimportant symbols and texts first ============================
-    mapcolors::scaleFont(&painter, optData.getDisplayTextSizeFlightplan() / 100.f, &defaultFont);
+    mapcolors::scaleFont(&painter, optData.getDisplayTextSizeFlightplan() / 100.f, &painter.font());
     int waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
@@ -952,15 +946,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           symPainter.drawWaypointText(&painter, leg.getWaypoint(), symPt.x() - 5, symytxt, flags, 10, true);
         else if(type == map::USERPOINTROUTE)
           symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
-                             symPt.x() - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+                             symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
         else if(type == map::INVALID)
           symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
-                             symPt.x() - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+                             symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
         else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
           // Custom approach
           symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().fixIdent, 6)},
                              mapcolors::routeUserPointColor,
-                             symPt.x() - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+                             symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
       }
     }
 
@@ -1081,7 +1075,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
               symPainter.textBox(&painter, txt, QPen(Qt::black),
                                  tocX + 8, flightplanY + 8,
-                                 textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+                                 textatt::ROUTE_BG_COLOR, 255);
             }
           }
         }
@@ -1103,7 +1097,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
               symPainter.textBox(&painter, txt, QPen(Qt::black),
                                  todX + 8, flightplanY + 8,
-                                 textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+                                 textatt::ROUTE_BG_COLOR, 255);
             }
           }
         }
@@ -1159,7 +1153,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     painter.resetTransform();
 
     // Draw aircraft label
-    mapcolors::scaleFont(&painter, optData.getDisplayTextSizeAircraftUser() / 100.f, &defaultFont);
+    mapcolors::scaleFont(&painter, optData.getDisplayTextSizeAircraftUser() / 100.f, &painter.font());
 
     int vspeed = atools::roundToInt(simData.getUserAircraftConst().getVerticalSpeedFeetPerMin());
     QString upDown;
@@ -1174,7 +1168,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(vspeed > 10.f || vspeed < -10.f)
       texts.append(Unit::speedVertFpm(vspeed) + upDown);
 
-    textatt::TextAttributes att = textatt::BOLD;
+    textatt::TextAttributes att = textatt::NONE;
     float textx = acx, texty = acy + 20.f;
 
     QRect rect = symPainter.textBoxSize(&painter, texts, att);

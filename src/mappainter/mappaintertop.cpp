@@ -159,9 +159,6 @@ void MapPainterTop::paintCopyright(PaintContext *context)
 
     // Draw text
     context->szFont(0.8f);
-    QFont font = painter->font();
-    font.setBold(false);
-    painter->setFont(font);
     painter->setPen(Qt::black);
     painter->setBackground(QColor("#b0ffffff"));
     painter->setBrush(Qt::NoBrush);

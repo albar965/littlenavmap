@@ -513,7 +513,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       // Copy default font
       context.defaultFont = painter->font();
-      context.defaultFont.setBold(true);
       painter->setFont(context.defaultFont);
 
       const GeoDataLatLonAltBox& box = viewport->viewLatLonAltBox();

@@ -431,7 +431,7 @@ void MapPainterNav::paintMarkers(PaintContext *context, const QList<MapMarker> *
         type[0] = type.at(0).toUpper();
         x -= size / 2 + 2;
         symbolPainter->textBox(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
-                               textatt::BOLD | textatt::RIGHT, transparency);
+                               textatt::RIGHT, transparency);
       }
     }
   }

@@ -309,7 +309,7 @@ void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList
       drawLine(painter, lines.at(activeRouteLeg - 1));
     }
   }
-  context->szFont(context->textSizeFlightplan * 1.1f);
+  context->szFont(context->textSizeFlightplan);
 
   // Collect coordinates for text placement and lines first ============================
   LineString positions;
@@ -335,7 +335,6 @@ void MapPainterRoute::drawRouteInternal(const PaintContext *context, QStringList
   painter->restore();
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  context->szFont(context->textSizeFlightplan);
   // ================================================================================
 
   QBitArray visibleStartPoints = textPlacement.getVisibleStartPoints();
@@ -402,7 +401,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
 
           symbolPainter->textBox(context->painter, toc, QPen(mapcolors::routeTextColor),
                                  pt.x() + radius, pt.y() + radius,
-                                 textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+                                 textatt::ROUTE_BG_COLOR, transparency);
         }
       }
     }
@@ -426,7 +425,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
 
           symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
                                  pt.x() + radius, pt.y() + radius,
-                                 textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+                                 textatt::ROUTE_BG_COLOR, transparency);
         }
       }
     }
@@ -1521,8 +1520,6 @@ void MapPainterRoute::paintText(const PaintContext *context, const QColor& color
                                 const QStringList& texts, bool drawAsRoute, textatt::TextAttributes atts)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-
-  atts |= textatt::BOLD;
 
   if(drawAsRoute)
     atts |= textatt::ROUTE_BG_COLOR;

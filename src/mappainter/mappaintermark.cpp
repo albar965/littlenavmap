@@ -1160,7 +1160,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       int xt = -1, yt = -1;
       if(textPlacement.findTextPos(m.from, m.to, distanceMeter, metrics.width(texts.at(0)),
                                    metrics.height() * 2, xt, yt, nullptr))
-        symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
+        symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
     }
   }
 }
