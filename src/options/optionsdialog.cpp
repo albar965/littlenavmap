@@ -670,6 +670,7 @@ void OptionsDialog::reject()
   qDebug() << Q_FUNC_INFO;
 
   // Need to catch this here since dialog is owned by main window and kept alive
+  updateFontFromData();
   updateWebOptionsFromData();
 
   QDialog::reject();
@@ -837,11 +838,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "OPTIONS.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
-  {
-    updateFontFromData();
-    updateWebOptionsFromData();
     reject();
-  }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
   {
     qDebug() << "OptionsDialog::resetDefaultClicked";
@@ -2521,6 +2518,11 @@ void OptionsDialog::selectGuiFontClicked()
   if(fontDialog->exec())
   {
     QFont font = fontDialog->selectedFont();
+    if(font.pointSizeF() > 30.)
+      font.setPointSizeF(30.);
+    if(font.pixelSize() > 30)
+      font.setPixelSize(30);
+
     guiFont = font.toString();
     qDebug() << Q_FUNC_INFO << guiFont;
 

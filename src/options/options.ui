@@ -563,7 +563,8 @@ independent of current computer settings and language selection</string>
            <item row="1" column="1">
             <widget class="QPushButton" name="pushButtonOptionsGuiResetFont">
              <property name="toolTip">
-              <string>Reset font for user interface back to system default</string>
+              <string>Reset font for user interface back to system default.
+Changes are applied immediately. </string>
              </property>
              <property name="text">
               <string>&amp;Reset Font to Default</string>
@@ -573,7 +574,10 @@ independent of current computer settings and language selection</string>
            <item row="1" column="0">
             <widget class="QPushButton" name="pushButtonOptionsGuiSelectFont">
              <property name="toolTip">
-              <string>Select a font for the user interface</string>
+              <string>Select a font for the user interface.
+Changes are applied immediately. 
+Cancel the dialog to revert back to the old font.
+Font size is limited to 30 points/pixels.</string>
              </property>
              <property name="text">
               <string>Select &amp;Font ...</string>
@@ -1577,7 +1581,8 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</string>
            <item>
             <widget class="QPushButton" name="pushButtonOptionsDisplaySelectFont">
              <property name="toolTip">
-              <string>Select a font for the map and the elevation profile</string>
+              <string>Select a font for the map and the elevation profile.
+Note that some fonts, especially large fonts, can result in display errors on the map.</string>
              </property>
              <property name="text">
               <string>Select &amp;Font ...</string>
