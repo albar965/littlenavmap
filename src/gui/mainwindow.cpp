@@ -303,7 +303,7 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Creating PrintSupport";
     printSupport = new PrintSupport(this);
 
-    setStatusMessage(tr("Started."), true /* addToLog */);
+    setStatusMessage(tr("Started."));
 
     qDebug() << Q_FUNC_INFO << "Connecting slots";
     connectAllSlots();
@@ -2885,7 +2885,9 @@ void MainWindow::statusMessageChanged(const QString& text)
     if(statusMessages.isEmpty())
       ui->statusBar->showMessage(tr("No Messages"));
     else
-      ui->statusBar->showMessage(tr("%1 Messages").arg(statusMessages.size()));
+      ui->statusBar->showMessage(tr("%1 %2").
+                                 arg(statusMessages.size()).
+                                 arg(statusMessages.size() > 1 ? tr("Messages") : tr("Message")));
   }
 }
 
