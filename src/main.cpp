@@ -41,6 +41,7 @@
 #include "fs/weather/metarparser.h"
 #include "userdata/userdataicons.h"
 #include "routeexport/routeexportformat.h"
+#include "gui/dockwidgethandler.h"
 
 #include <QCommandLineParser>
 #include <QDebug>
@@ -71,14 +72,13 @@ int main(int argc, char *argv[])
   Q_INIT_RESOURCE(atools);
 
   // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
-  qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
+  atools::geo::registerMetaTypes();
+  atools::fs::sc::registerMetaTypes();
+  atools::gui::MapPosHistory::registerMetaTypes();
+  atools::gui::DockWidgetHandler::registerMetaTypes();
+
   qRegisterMetaTypeStreamOperators<FsPathType>();
-
-  qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
   qRegisterMetaTypeStreamOperators<SimulatorTypeMap>();
-
-  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
-  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
 
   qRegisterMetaTypeStreamOperators<map::DistanceMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::DistanceMarker> >();
@@ -99,12 +99,6 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<RouteExportFormatMap>();
 
   qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
-
-  // Needed to send SimConnectData through queued connections
-  qRegisterMetaType<atools::fs::sc::SimConnectData>();
-  qRegisterMetaType<atools::fs::sc::SimConnectReply>();
-  qRegisterMetaType<atools::fs::sc::SimConnectStatus>();
-  qRegisterMetaType<atools::fs::sc::WeatherRequest>();
 
   // Tasks that have to be done before creating the application object and logging system =================
   QStringList messages;
