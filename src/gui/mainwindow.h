@@ -26,24 +26,25 @@
 #include <QTimer>
 #include <marble/MarbleGlobal.h>
 
-class SearchController;
-class RouteController;
-class QComboBox;
-class QLabel;
-class QToolButton;
-class SearchBaseTable;
-class DatabaseManager;
-class WeatherReporter;
-class WindReporter;
 class ConnectClient;
-class ProfileWidget;
+class DatabaseManager;
 class InfoController;
 class OptionsDialog;
-class QActionGroup;
 class PrintSupport;
 class ProcedureSearch;
+class ProfileWidget;
+class QActionGroup;
+class QComboBox;
+class QLabel;
+class QPushButton;
+class QToolButton;
 class Route;
+class RouteController;
 class RouteExport;
+class SearchBaseTable;
+class SearchController;
+class WeatherReporter;
+class WindReporter;
 
 namespace Marble {
 class LegendWidget;
@@ -210,6 +211,12 @@ public:
   /* Show file dialog for opening a flight plan with all supported formats */
   QString routeOpenFileDialog();
 
+  /* true if map window is maximized */
+  bool isFullScreen() const;
+
+  /* Push button in map pressed */
+  void exitFullScreenPressed();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -227,6 +234,16 @@ private:
   void mainWindowShown();
   void raiseFloatingWindows();
   void allowDockingWindows();
+
+  /* Called by action */
+  void fullScreenMapToggle();
+
+  /* Switches fs on or off */
+  void fullScreenOn();
+  void fullScreenOff();
+
+  /* Called in window shown to apply full screen layout */
+  void enableDelayedFullscreen();
 
   void saveStateMain();
   void saveActionStates();
@@ -362,6 +379,11 @@ private:
   void debugActionTriggered1();
   void debugActionTriggered2();
   void debugActionTriggered3();
+
+#endif
+
+#ifdef DEBUG_SIZE_INFORMATION
+  virtual void resizeEvent(QResizeEvent *event) override;
 
 #endif
 

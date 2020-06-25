@@ -17,8 +17,6 @@
 *~
 *.bak
 *.sqlite
-*.BIN
-*.bin
 *.db
 atools_*.qm
 atools_*.ts

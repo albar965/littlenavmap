@@ -180,6 +180,38 @@ MapWidget::~MapWidget()
 
   qDebug() << Q_FUNC_INFO << "delete mapVisible";
   delete mapVisible;
+
+  qDebug() << Q_FUNC_INFO << "delete pushButtonExitFullscreen";
+  delete pushButtonExitFullscreen;
+}
+
+void MapWidget::addFullScreenExitButton()
+{
+  removeFullScreenExitButton();
+
+  pushButtonExitFullscreen = new QPushButton(QIcon(":/littlenavmap/resources/icons/fullscreen.svg"),
+                                             tr("Exit fullscreen mode"), this);
+  pushButtonExitFullscreen->setToolTip(tr("Leave fullscreen mode and restore normal window layout"));
+  pushButtonExitFullscreen->setStatusTip(pushButtonExitFullscreen->toolTip());
+
+  // Need to set palette since button inherits a empty one from the mapwidget
+  pushButtonExitFullscreen->setPalette(QApplication::palette());
+  pushButtonExitFullscreen->setFont(QApplication::font());
+  pushButtonExitFullscreen->adjustSize();
+  pushButtonExitFullscreen->move(size().width() / 8, 0);
+  pushButtonExitFullscreen->show();
+
+  connect(pushButtonExitFullscreen, &QPushButton::clicked, this, &MapWidget::exitFullScreenPressed);
+}
+
+void MapWidget::removeFullScreenExitButton()
+{
+  if(pushButtonExitFullscreen != nullptr)
+  {
+    disconnect(pushButtonExitFullscreen, &QPushButton::clicked, this, &MapWidget::exitFullScreenPressed);
+    delete pushButtonExitFullscreen;
+    pushButtonExitFullscreen = nullptr;
+  }
 }
 
 void MapWidget::getUserpointDragPoints(QPoint& cur, QPixmap& pixmap)
@@ -1631,6 +1663,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   menu.addAction(ui->actionMapSetMark);
   menu.addAction(ui->actionMapSetHome);
+
+  if(NavApp::isFullScreen())
+  {
+    menu.addSeparator();
+    menu.addAction(ui->actionShowFullscreenMap);
+  }
 
   int distMarkerIndex = -1;
   int trafficPatternIndex = -1;
@@ -3296,6 +3334,14 @@ bool MapWidget::checkPos(const atools::geo::Pos& pos)
 
   // Keep zooming
   return true;
+}
+
+void MapWidget::resizeEvent(QResizeEvent *event)
+{
+  if(pushButtonExitFullscreen != nullptr)
+    pushButtonExitFullscreen->move(size().width() / 8, 0);
+
+  MapPaintWidget::resizeEvent(event);
 }
 
 map::MapSunShading MapWidget::sunShadingFromUi()

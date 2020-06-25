@@ -400,6 +400,8 @@ protected:
    * returns true if position is ok. */
   virtual bool checkPos(const atools::geo::Pos&);
 
+  virtual void resizeEvent(QResizeEvent *event) override;
+
   /* Caches complex X-Plane apron geometry as objects in screen coordinates for faster painting. */
   ApronGeometryCache *apronGeometryCache;
 
@@ -457,7 +459,6 @@ private:
 
   /* Override widget events */
   virtual void paintEvent(QPaintEvent *paintEvent) override;
-  virtual void resizeEvent(QResizeEvent *event) override;
 
   void unitsUpdated();
 

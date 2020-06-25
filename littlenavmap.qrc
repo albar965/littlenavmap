@@ -269,5 +269,8 @@
         <file>resources/icons/windpointer.svg</file>
         <file>resources/icons/zoomin.svg</file>
         <file>resources/icons/zoomout.svg</file>
+        <file>resources/config/mainwindow_state_dock.bin</file>
+        <file>resources/config/mainwindow_state_nodock.bin</file>
+        <file>resources/icons/fullscreen.svg</file>
     </qresource>
 </RCC>

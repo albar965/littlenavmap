@@ -24,11 +24,12 @@
 
 #include <QTimer>
 
-class MapTooltip;
-class QContextMenuEvent;
 class JumpBack;
 class MainWindow;
+class MapTooltip;
 class MapVisible;
+class QContextMenuEvent;
+class QPushButton;
 
 namespace atools {
 namespace sql {
@@ -191,6 +192,10 @@ public:
   /* Clear all entries and reset current index */
   void clearHistory();
 
+  /* Add and remove button for exiting full screen on map */
+  void addFullScreenExitButton();
+  void removeFullScreenExitButton();
+
 signals:
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
@@ -236,6 +241,9 @@ signals:
   void showProcedures(map::MapAirport airport);
   void showProceduresCustom(map::MapAirport airport);
 
+  /* Emitted when the user presses the on-screen button */
+  void exitFullScreenPressed();
+
 private:
   /* For touchscreen mode. Grid of 3x3 rectangles numbered from lef to right and top to bottom */
   enum TouchArea
@@ -264,6 +272,8 @@ private:
   void sunShadingToUi(map::MapSunShading sunShading);
 
   virtual bool checkPos(const atools::geo::Pos& pos) override;
+
+  virtual void resizeEvent(QResizeEvent *event) override;
 
   /* Connect menu actions to overlays */
   void connectOverlayMenus();
@@ -442,6 +452,8 @@ private:
 
   /* Distance marker that is changed using drag and drop */
   int currentDistanceMarkerIndex = -1;
+
+  QPushButton *pushButtonExitFullscreen = nullptr;
 
 #ifdef DEBUG_MOVING_AIRPLANE
   void debugMovingPlane(QMouseEvent *event);

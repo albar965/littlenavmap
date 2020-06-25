@@ -285,6 +285,9 @@ public:
   static bool isShuttingDown();
   static void setShuttingDown(bool value);
 
+  /* true if map window is maximized */
+  static bool isFullScreen();
+
   static float getMagVar(const atools::geo::Pos& pos, float defaultValue = 0.f);
 
   static UpdateHandler *getUpdateHandler();

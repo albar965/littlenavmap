@@ -164,13 +164,25 @@ MainWindow::MainWindow()
     // Show tooltips also for inactive windows (e.g. if a floating window is active)
     setAttribute(Qt::WA_AlwaysShowToolTips);
 
+    // Create misc GUI handlers ============================================
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
     helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
-    dockHandler = new atools::gui::DockWidgetHandler(this, {ui->dockWidgetLegend, ui->dockWidgetAircraft,
-                                                            ui->dockWidgetSearch, ui->dockWidgetProfile,
-                                                            ui->dockWidgetInformation, ui->dockWidgetRoute,
-                                                            ui->dockWidgetRouteCalc});
+
+    // Create dock and mainwindow handler ============================================
+    atools::settings::Settings& settings = atools::settings::Settings::instance();
+    dockHandler =
+      new atools::gui::DockWidgetHandler(this,
+                                         // Add all available dock widgets here ==========================
+                                         {ui->dockWidgetLegend, ui->dockWidgetAircraft,
+                                          ui->dockWidgetSearch, ui->dockWidgetProfile,
+                                          ui->dockWidgetInformation, ui->dockWidgetRoute,
+                                          ui->dockWidgetRouteCalc},
+                                         // Add all available toolbars  here =============================
+                                         {ui->toolBarMain, ui->toolBarMap, ui->toolbarMapOptions,
+                                          ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces,
+                                          ui->toolBarMapThemeProjection},
+                                         settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
 
     marbleAbout = new Marble::MarbleAboutDialog(this);
     marbleAbout->setApplicationTitle(QApplication::applicationName());
@@ -431,10 +443,8 @@ MainWindow::~MainWindow()
   delete actionGroupMapWeatherSource;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherWindSource";
   delete actionGroupMapWeatherWindSource;
-
   qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
   delete currentWeatherContext;
-
   qDebug() << Q_FUNC_INFO << "delete routeExport";
   delete routeExport;
 
@@ -1160,6 +1170,7 @@ void MainWindow::connectAllSlots()
   // Windows menu ============================================================
   connect(ui->actionShowFloatingWindows, &QAction::triggered, this, &MainWindow::raiseFloatingWindows);
   connect(ui->actionShowAllowDocking, &QAction::toggled, this, &MainWindow::allowDockingWindows);
+  connect(ui->actionShowFullscreenMap, &QAction::toggled, this, &MainWindow::fullScreenMapToggle);
 
   // File menu ============================================================
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
@@ -1253,6 +1264,8 @@ void MainWindow::connectAllSlots()
 
   connect(mapWidget, &MapWidget::editLogEntryFromMap,
           NavApp::getLogdataController(), &LogdataController::editLogEntryFromMap);
+  connect(mapWidget, &MapWidget::exitFullScreenPressed,
+          this, &MainWindow::exitFullScreenPressed);
 
   // Connect toolbar combo boxes
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
@@ -2889,6 +2902,9 @@ void MainWindow::mainWindowShown()
   // Enable dock handler
   dockHandler->setHandleDockViews(true);
 
+  // Switch to fullscreen now after applying normal layout to avoid a distorted layout
+  enableDelayedFullscreen();
+
   qDebug() << Q_FUNC_INFO << "UI font" << font();
 
   // Postpone loading of KML etc. until now when everything is set up
@@ -3033,13 +3049,88 @@ void MainWindow::mainWindowShown()
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
+void MainWindow::exitFullScreenPressed()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Let the action pass a signal to toggle fs off
+  ui->actionShowFullscreenMap->setChecked(false);
+}
+
+bool MainWindow::isFullScreen() const
+{
+  return dockHandler->isFullScreen();
+}
+
+void MainWindow::enableDelayedFullscreen()
+{
+  if(dockHandler->isDelayedFullscreen())
+  {
+    // Started with normal screen layout but was saved as fullscreen - restore full now
+    dockHandler->fullscreenStateToWindow();
+
+    if(centralWidget() != ui->dockWidgetMap)
+      // Hide the map window title bar if map is undockable
+      ui->dockWidgetMap->setTitleBarWidget(new QWidget(ui->dockWidgetMap));
+
+    // Update action
+    ui->actionShowFullscreenMap->blockSignals(true);
+    ui->actionShowFullscreenMap->setChecked(dockHandler->isFullScreen());
+    ui->actionShowFullscreenMap->blockSignals(false);
+
+    mapWidget->addFullScreenExitButton();
+    mapWidget->setFocus();
+  }
+}
+
+void MainWindow::fullScreenOn()
+{
+  qDebug() << Q_FUNC_INFO << "setFullScreenOn";
+
+  // Hide toolbars and docks initially - user can open again if needed and state is saved then
+  dockHandler->setFullScreenOn(atools::gui::HIDE_TOOLBARS | atools::gui::HIDE_DOCKS);
+
+  if(centralWidget() != ui->dockWidgetMap)
+    // Add a dummy widget to erase the title bar if map is inside a dock widget
+    ui->dockWidgetMap->setTitleBarWidget(new QWidget(ui->dockWidgetMap));
+
+  mapWidget->addFullScreenExitButton();
+  mapWidget->setFocus();
+}
+
+void MainWindow::fullScreenOff()
+{
+  qDebug() << Q_FUNC_INFO << "setFullScreenOff";
+  mapWidget->removeFullScreenExitButton();
+
+  dockHandler->setFullScreenOff();
+
+  if(centralWidget() != ui->dockWidgetMap)
+  {
+    // Delete dummy widget to restore title bar
+    QWidget *oldTitleBar = ui->dockWidgetMap->titleBarWidget();
+    ui->dockWidgetMap->setTitleBarWidget(nullptr);
+    delete oldTitleBar;
+  }
+}
+
+void MainWindow::fullScreenMapToggle()
+{
+  if(ui->actionShowFullscreenMap->isChecked())
+    fullScreenOn();
+  else
+    fullScreenOff();
+}
+
 void MainWindow::allowDockingWindows()
 {
+  qDebug() << Q_FUNC_INFO;
   dockHandler->setDockingAllowed(ui->actionShowAllowDocking->isChecked());
 }
 
 void MainWindow::raiseFloatingWindows()
 {
+  qDebug() << Q_FUNC_INFO;
   dockHandler->raiseFloatingWindows();
 
   // Map window is not used by dockHandler
@@ -3231,25 +3322,22 @@ void MainWindow::resetWindowLayout()
 {
   qDebug() << Q_FUNC_INFO;
 
-  setWindowState(windowState() & ~Qt::WindowMinimized);
-  setWindowState(windowState() & ~Qt::WindowMaximized);
-  setWindowState(windowState() & ~Qt::WindowFullScreen);
+  mapWidget->removeFullScreenExitButton();
 
-  resize(lnm::DEFAULT_MAINWINDOW_SIZE);
-  // QRect screenSize = QApplication::desktop()->availableGeometry(this);
-  // move((screenSize.width() - lnm::DEFAULT_MAINWINDOW_SIZE.width()) / 2,
-  // (screenSize.height() - lnm::DEFAULT_MAINWINDOW_SIZE.height()) / 2);
+  bool allowUndockMap = OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK);
+  dockHandler->resetWindowState(lnm::DEFAULT_MAINWINDOW_SIZE,
+                                QString(":/littlenavmap/resources/config/mainwindow_state_%1.bin").
+                                arg(allowUndockMap ? "dock" : "nodock"));
 
-  restoreState(lnm::DEFAULT_MAINWINDOW_STATE, lnm::MAINWINDOW_STATE_VERSION);
-
-  if(!(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK))
-    ui->dockWidgetMap->hide();
-  else
-    ui->dockWidgetMap->show();
+  ui->dockWidgetMap->setVisible(allowUndockMap);
 
   NavApp::getRouteTabHandler()->reset();
   infoController->resetWindowLayout();
   searchController->resetWindowLayout();
+
+  ui->actionShowFullscreenMap->blockSignals(true);
+  ui->actionShowFullscreenMap->setChecked(false);
+  ui->actionShowFullscreenMap->blockSignals(false);
 }
 
 /* Read settings for all windows, docks, controller and manager classes */
@@ -3262,50 +3350,29 @@ void MainWindow::restoreStateMain()
 
   Settings& settings = Settings::instance();
 
-  if(settings.contains(lnm::MAINWINDOW_WIDGET_STATE))
+  if(settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
   {
-    restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE).toByteArray(), lnm::MAINWINDOW_STATE_VERSION);
+    dockHandler->restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray());
 
-    move(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_POS, QPoint(0, 0)).toPoint());
-    resize(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_SIZE, lnm::DEFAULT_MAINWINDOW_SIZE).toSize());
-
-#if !defined(Q_OS_MACOS)
-    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_FULLSCREEN, false).toBool())
-    {
-      qDebug() << Q_FUNC_INFO << "Full screen";
-      setWindowState(windowState() & ~Qt::WindowMinimized);
-      setWindowState(windowState() & ~Qt::WindowMaximized);
-      setWindowState(windowState() | Qt::WindowFullScreen);
-    }
-    else
-#endif
-    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, false).toBool())
-    {
-      qDebug() << Q_FUNC_INFO << "Maximized";
-      setWindowState(windowState() & ~Qt::WindowMinimized);
-      setWindowState(windowState() | Qt::WindowMaximized);
-      setWindowState(windowState() & ~Qt::WindowFullScreen);
-    }
-    else
-    {
-      qDebug() << Q_FUNC_INFO << "Normal";
-      setWindowState(windowState() & ~Qt::WindowMinimized);
-      setWindowState(windowState() & ~Qt::WindowMaximized);
-      setWindowState(windowState() & ~Qt::WindowFullScreen);
-    }
+    // Start with normal state - apply fullscreen later to avoid layout mess up
+    dockHandler->normalStateToWindow();
+    ui->actionShowFullscreenMap->blockSignals(true);
+    ui->actionShowFullscreenMap->setChecked(dockHandler->isFullScreen());
+    ui->actionShowFullscreenMap->blockSignals(false);
   }
   else
     // Use default state saved in application
     resetWindowLayout();
 
-  const QRect geo = QApplication::desktop()->availableGeometry(this);
+  QRect desktop = QApplication::desktop()->availableGeometry(this);
 
   // Check if window if off screen
-  qDebug() << "Screen geometry" << geo << "Win geometry" << frameGeometry();
-  if(!geo.intersects(frameGeometry()))
+  qDebug() << "Screen geometry" << desktop << "Win geometry" << frameGeometry();
+  QRect intersected = desktop.intersected(frameGeometry());
+  if(intersected.width() < 10 || intersected.height() < 10)
   {
     qDebug() << Q_FUNC_INFO << "Getting window back on screen";
-    move(geo.topLeft());
+    move(desktop.topLeft());
   }
 
   // Enable tooltips for all menus
@@ -3438,17 +3505,16 @@ void MainWindow::saveStateMain()
   qDebug() << Q_FUNC_INFO;
 
 #ifdef DEBUG_CREATE_WINDOW_STATE
-  // Print the main window state as binary for inclusion into the program =====================
-  qDebug() << "===============================================================================";
-  QStringList hexStr;
-  QByteArray state = saveState();
-  for(char i : state)
-    hexStr.append("0x" + QString::number(static_cast<unsigned char>(i), 16));
-  qDebug().noquote().nospace() << "\n\nconst static unsigned char mainWindowState["
-                               << state.size() << "] ="
-                               << "{" << hexStr.join(",") << "};\n";
-  qDebug() << "===============================================================================";
-  #endif
+  // Save the state into a binary file to be used for reset window layout
+  // One state is needed with undockable map window and one without
+  QFile stateFile("little_navmap_mainwindow_state.bin");
+  if(stateFile.open(QFile::WriteOnly))
+  {
+    stateFile.write(saveState());
+    stateFile.close();
+  }
+
+#endif
 
 #ifdef DEBUG_DUMP_SHORTCUTS
   // Print all main menu and sub menu shortcuts ==============================================
@@ -3608,14 +3674,7 @@ void MainWindow::saveMainWindowStates()
   widgetState.save(ui->statusBar);
 
   Settings& settings = Settings::instance();
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE, saveState(lnm::MAINWINDOW_STATE_VERSION));
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_POS, pos());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_SIZE, size());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, isMaximized());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_FULLSCREEN, isFullScreen());
-
-  qDebug() << Q_FUNC_INFO << "pos" << pos() << "size" << size()
-           << "maximized" << isMaximized() << "fullscreen" << isFullScreen();
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER, dockHandler->saveState());
 
   // Save profile dock size separately since it is sometimes resized by other docks
   // settings.setValue(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", ui->dockWidgetContentsProfile->height());
@@ -3990,6 +4049,15 @@ void MainWindow::dropEvent(QDropEvent *event)
       routeOpenFile(filepath);
   }
 }
+
+#ifdef DEBUG_SIZE_INFORMATION
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+  qDebug() << event->size();
+}
+
+#endif
 
 void MainWindow::updateErrorLabels()
 {

@@ -125,16 +125,6 @@ void checkAndMigrateSettings()
       // ------------------------------------------------------
       // Migrate/delete any settings that are not compatible right here
       // ------------------------------------------------------
-      if(optionsVersion <= Version(1, 2, 4)) // Reset main window state since a toolbar was added
-      {
-        qInfo() << Q_FUNC_INFO << "removing" << lnm::MAINWINDOW_WIDGET_STATE << lnm::MAINWINDOW_WIDGET_STATE_POS
-                << lnm::MAINWINDOW_WIDGET_STATE_SIZE << lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED;
-        settings.remove(lnm::MAINWINDOW_WIDGET_STATE);
-        settings.remove(lnm::MAINWINDOW_WIDGET_STATE_POS);
-        settings.remove(lnm::MAINWINDOW_WIDGET_STATE_SIZE);
-        settings.remove(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED);
-        settings.syncSettings();
-      }
 
       // Test the update channels
       if(!settings.contains(lnm::OPTIONS_UPDATE_CHANNELS) || (optionsVersion.isStable() && !appVersion.isStable()))

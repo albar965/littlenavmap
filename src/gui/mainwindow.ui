@@ -150,6 +150,8 @@
     <addaction name="separator"/>
     <addaction name="menuShortcuts"/>
     <addaction name="separator"/>
+    <addaction name="actionShowFullscreenMap"/>
+    <addaction name="separator"/>
     <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowAllowDocking"/>
     <addaction name="separator"/>
@@ -4874,7 +4876,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="documentMode">
         <bool>false</bool>
@@ -5518,7 +5520,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>74</y>
+              <y>63</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -5579,6 +5581,9 @@ relation to shown airport</string>
           <widget class="QLabel" name="labelProfileError">
            <property name="text">
             <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
             <set>Qt::TextSelectableByMouse</set>
@@ -5929,6 +5934,7 @@ relation to shown airport</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionShowFullscreenMap"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetLegend">
    <property name="enabled">
@@ -11443,6 +11449,30 @@ Best track will be selected automatically.</string>
     <string>Alt+9</string>
    </property>
   </action>
+  <action name="actionShowFullscreenMap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/fullscreen.svg</normaloff>:/littlenavmap/resources/icons/fullscreen.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Fullscreen Map</string>
+   </property>
+   <property name="toolTip">
+    <string>Maximize the map and hide all other dock windows, toolbar and menu bar</string>
+   </property>
+   <property name="statusTip">
+    <string>Maximize the map and hide all other dock windows, toolbar and menu bar</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F11</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11589,7 +11619,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

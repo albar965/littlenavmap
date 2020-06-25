@@ -1070,7 +1070,7 @@ private:
 
   opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_ROUTE_TEXT_BACKGROUND |
                          opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AIRPORT_DIAGRAM |
-                         opts2::MAP_ALLOW_UNDOCK | opts2::MAP_AVOID_BLURRED_MAP | opts2::ONLINE_AIRSPACE_BY_FILE |
+                         opts2::MAP_AVOID_BLURRED_MAP | opts2::ONLINE_AIRSPACE_BY_FILE |
                          opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS | opts2::MAP_EMPTY_AIRPORTS_3D |
                          opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_AUTOZOOM | opts2::ROUTE_NO_FOLLOW_ON_MOVE;

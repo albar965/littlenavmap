@@ -973,6 +973,11 @@ void NavApp::setShuttingDown(bool value)
   shuttingDown = value;
 }
 
+bool NavApp::isFullScreen()
+{
+  return mainWindow->isFullScreen();
+}
+
 float NavApp::getMagVar(const atools::geo::Pos& pos, float defaultValue)
 {
   if(magDecReader != nullptr && magDecReader->isValid())
