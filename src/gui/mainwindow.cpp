@@ -757,9 +757,6 @@ void MainWindow::setupUi()
   ui->dockWidgetRouteCalc->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                           arg(ui->dockWidgetRouteCalc->windowTitle()));
   ui->dockWidgetRouteCalc->toggleViewAction()->setStatusTip(ui->dockWidgetRouteCalc->toggleViewAction()->toolTip());
-  ui->dockWidgetRouteCalc->setAllowedAreas(Qt::NoDockWidgetArea);
-  ui->dockWidgetRouteCalc->setFloating(true);
-  ui->dockWidgetRouteCalc->setVisible(false); // Hide on first start - is superseded by restore state later
 
   ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
   ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
@@ -3507,7 +3504,8 @@ void MainWindow::saveStateMain()
 #ifdef DEBUG_CREATE_WINDOW_STATE
   // Save the state into a binary file to be used for reset window layout
   // One state is needed with undockable map window and one without
-  QFile stateFile("little_navmap_mainwindow_state.bin");
+  QFile stateFile(QString("mainwindow_state_%1.bin").
+                  arg(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK) ? "dock" : "nodock"));
   if(stateFile.open(QFile::WriteOnly))
   {
     stateFile.write(saveState());
