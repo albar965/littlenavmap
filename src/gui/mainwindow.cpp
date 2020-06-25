@@ -161,6 +161,9 @@ MainWindow::MainWindow()
     ui->setupUi(this);
     setAcceptDrops(true);
 
+    // Avoid short popping up on startup
+    ui->dockWidgetRouteCalc->hide();
+
     // Show tooltips also for inactive windows (e.g. if a floating window is active)
     setAttribute(Qt::WA_AlwaysShowToolTips);
 
