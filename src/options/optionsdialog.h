@@ -73,6 +73,9 @@ public:
 
   QString selectCacheUserAirspace();
 
+  /* Test if a public network is used with a too low update rate */
+  void checkOfficialOnlineUrls();
+
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();
@@ -165,16 +168,20 @@ private:
   void userAirspacePathSelectClicked();
   void checkUpdateClicked();
   void mapEmptyAirportsClicked(bool state);
-  void updateOnlineWidgetStatus();
-  void onlineTestStatusUrlClicked();
-  void onlineTestWhazzupUrlClicked();
-  void onlineTestUrl(const QString& url, bool statusFile);
   int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);
   void displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value);
   void updateNavOptions();
 
+  /* Online networks */
+  void updateOnlineWidgetStatus();
+  void onlineTestStatusUrlClicked();
+  void onlineTestWhazzupUrlClicked();
+  void onlineTestUrl(const QString& url, bool statusFile);
+
+  /* Converts range ring string to vector of integers*/
   QVector<int> ringStrToVector(const QString& string) const;
 
+  /* Add a dialog page */
   QListWidgetItem *pageListItem(QListWidget *parent, const QString& text, const QString& tooltip = QString(),
                                 const QString& iconPath = QString());
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
@@ -195,8 +202,11 @@ private:
 
   void mapClickAirportProcsToggled();
 
+  /* Fill combo box with available languages and select best match. English, otherwise.*/
   void udpdateLanguageComboBox(const QString& guiLanguage);
   void languageChanged(int);
+
+  /* Font selection for map and GUI */
   void selectGuiFontClicked();
   void resetGuiFontClicked();
   void selectMapFontClicked();

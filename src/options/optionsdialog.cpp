@@ -58,6 +58,8 @@
 const int MAX_RANGE_RING_SIZE = 4000;
 const int MAX_RANGE_RINGS = 10;
 
+const int MIN_ONLINE_UPDATE = 120;
+
 using atools::settings::Settings;
 using atools::gui::HelpHandler;
 using atools::util::HtmlBuilder;
@@ -693,6 +695,40 @@ void OptionsDialog::onlineDisplayRangeClicked()
   ui->spinBoxDisplayOnlineTower->setEnabled(!ui->checkBoxDisplayOnlineTowerRange->isChecked());
 }
 
+void OptionsDialog::checkOfficialOnlineUrls()
+{
+  if(ui->spinBoxOptionsOnlineUpdate->value() < MIN_ONLINE_UPDATE)
+  {
+    QUrl url;
+    if(ui->radioButtonOptionsOnlineCustom->isChecked())
+      // Custom whazzup.txt
+      url = QUrl(ui->lineEditOptionsOnlineWhazzupUrl->text());
+    else if(ui->radioButtonOptionsOnlineCustomStatus->isChecked())
+      // Custom status.txt
+      url = QUrl(ui->lineEditOptionsOnlineStatusUrl->text());
+
+    if(!url.isEmpty() && !url.isLocalFile())
+    {
+      QString host = url.host().toLower();
+      if(host.endsWith("ivao.aero") || host.endsWith("vatsim.net") || host.endsWith("littlenavmap.org") ||
+         host.endsWith("pilotedge.net"))
+      {
+        qWarning() << Q_FUNC_INFO << "Update of" << ui->spinBoxOptionsOnlineUpdate->value()
+                   << "s for url" << url << "host" << host;
+        NavApp::deleteSplashScreen();
+        QMessageBox::warning(this, QApplication::applicationName(),
+                             tr("Do not use an update period smaller than %1 seconds "
+                                "for official networks like VATSIM, IVAO or PilotEdge.\n\n"
+                                "Resetting update period back to %1 seconds.").arg(MIN_ONLINE_UPDATE));
+
+        // Reset both widget and data
+        ui->spinBoxOptionsOnlineUpdate->setValue(MIN_ONLINE_UPDATE);
+        OptionData::instanceInternal().onlineReloadSeconds = MIN_ONLINE_UPDATE;
+      }
+    }
+  }
+}
+
 void OptionsDialog::onlineTestStatusUrlClicked()
 {
   onlineTestUrl(ui->lineEditOptionsOnlineStatusUrl->text(), true);
@@ -816,6 +852,9 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
   if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
   {
+    // Test if user uses a too low update rate for well known URLs of official networks
+    checkOfficialOnlineUrls();
+
     widgetsToOptionData();
     saveState();
     emit optionsChanged();
@@ -828,6 +867,9 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
   {
+    // Test if user uses a too low update rate for well known URLs of official networks
+    checkOfficialOnlineUrls();
+
     widgetsToOptionData();
     saveState();
     updateWidgetUnits();

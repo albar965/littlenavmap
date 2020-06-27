@@ -4223,7 +4223,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
            <item row="6" column="1">
             <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
              <property name="toolTip">
-              <string>Download URL for the IVAO weather file</string>
+              <string>Download URL for the IVAO weather file.
+Default is &quot;http://wx.ivao.aero/metar.php&quot;.</string>
              </property>
              <property name="text">
               <string>http://wx.ivao.aero/metar.php</string>
@@ -4252,8 +4253,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
            <item row="5" column="1">
             <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
              <property name="toolTip">
-              <string>Complete URL of the VATSIM network weather service.
-&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
+              <string>Complete URL of the VATSIM network weather download service.
+Default is &quot;http://metar.vatsim.net/metar.php?id=ALL&quot;.</string>
              </property>
              <property name="text">
               <string>http://metar.vatsim.net/metar.php?id=ALL</string>
@@ -4337,7 +4338,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaStationsUrl">
              <property name="toolTip">
               <string>Complete URL of the NOAA weather service file.
-&quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.</string>
+&quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
+Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT&quot;</string>
              </property>
              <property name="text">
               <string>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</string>
@@ -4476,7 +4478,8 @@ The default X-Plane wind file will be used if this field is empty.</string>
              <property name="toolTip">
               <string>Base URL of the NOAA weather service.
 There is usually no need to change this URL.
-Entering a wrong value will cause errors when downloading wind reports.</string>
+Entering a wrong value will cause errors when downloading wind reports.
+Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</string>
              </property>
              <property name="text">
               <string>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</string>
@@ -4744,15 +4747,13 @@ Entering a wrong value will cause errors when downloading wind reports.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.&lt;br/&gt;&lt;br/&gt;
-&lt;b&gt;Never use values smaller than two minutes for official networks like VATSIM or IVAO.
-Use lower values only for private networks.&lt;/b&gt;</string>
+              <string>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.</string>
              </property>
              <property name="suffix">
               <string> seconds</string>
              </property>
              <property name="minimum">
-              <number>5</number>
+              <number>2</number>
              </property>
              <property name="maximum">
               <number>1800</number>

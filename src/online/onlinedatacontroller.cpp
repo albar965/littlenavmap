@@ -160,6 +160,13 @@ void OnlinedataController::startProcessing()
 void OnlinedataController::startDownloadInternal()
 {
   qDebug() << Q_FUNC_INFO;
+
+  if(downloader->isDownloading() || currentState != NONE)
+  {
+    qWarning() << Q_FUNC_INFO;
+    return;
+  }
+
   stopAllProcesses();
 
   const OptionData& od = OptionData::instance();

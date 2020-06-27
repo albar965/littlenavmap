@@ -2667,7 +2667,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
   {
     type = tr("Clients");
     QString lastUpdate = tr(" Last Update: %1").
-                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::SystemLocaleShortDate));
+                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::DefaultLocaleShortDate));
     ui->labelOnlineClientSearchStatus->setText(selectionLabelText.
                                                arg(selected).arg(total).arg(type).arg(visible).
                                                arg(lastUpdate));
@@ -2676,7 +2676,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
   {
     type = tr("Centers");
     QString lastUpdate = tr(" Last Update: %1").
-                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::SystemLocaleShortDate));
+                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::DefaultLocaleShortDate));
     ui->labelOnlineCenterSearchStatus->setText(selectionLabelText.
                                                arg(selected).arg(total).arg(type).arg(visible).
                                                arg(lastUpdate));
@@ -3025,6 +3025,8 @@ void MainWindow::mainWindowShown()
 
   // Check for updates once main window is visible
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
+
+  optionsDialog->checkOfficialOnlineUrls();
 
   // Start regular download of online network files
   NavApp::getOnlinedataController()->startProcessing();
