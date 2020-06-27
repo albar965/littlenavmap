@@ -278,15 +278,26 @@ void MapWidget::handleInfoClick(QPoint point)
   getScreenIndexConst()->getAllNearest(point.x(), point.y(), screenSearchDistance, mapSearchResultInfoClick,
                                        map::QUERY_NONE /* For double click */);
 
-  // Remove all undesired features
+  // Remove all unwanted features
   optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
-  if(!(opts & optsd::CLICK_AIRPORT))
+
+  if(!opts.testFlag(optsd::CLICK_AIRCRAFT_USER))
+    mapSearchResultInfoClick.userAircraft = atools::fs::sc::SimConnectUserAircraft();
+
+  if(!opts.testFlag(optsd::CLICK_AIRCRAFT_AI))
+  {
+    mapSearchResultInfoClick.aiAircraft.clear();
+    mapSearchResultInfoClick.onlineAircraft.clear();
+    mapSearchResultInfoClick.onlineAircraftIds.clear();
+  }
+
+  if(!opts.testFlag(optsd::CLICK_AIRPORT))
   {
     mapSearchResultInfoClick.airports.clear();
     mapSearchResultInfoClick.airportIds.clear();
   }
 
-  if(!(opts & optsd::CLICK_NAVAID))
+  if(!(opts.testFlag(optsd::CLICK_NAVAID)))
   {
     mapSearchResultInfoClick.vors.clear();
     mapSearchResultInfoClick.vorIds.clear();
@@ -300,10 +311,11 @@ void MapWidget::handleInfoClick(QPoint point)
     mapSearchResultInfoClick.logbookEntries.clear();
   }
 
-  if(!(opts & optsd::CLICK_AIRSPACE))
+  if(!opts.testFlag(optsd::CLICK_AIRSPACE))
     mapSearchResultInfoClick.airspaces.clear();
 
-  if(opts & optsd::CLICK_AIRPORT && opts & optsd::CLICK_AIRPORT_PROC && mapSearchResultInfoClick.hasAirports())
+  if(opts.testFlag(optsd::CLICK_AIRPORT) && opts.testFlag(optsd::CLICK_AIRPORT_PROC) &&
+     mapSearchResultInfoClick.hasAirports())
     emit showProcedures(mapSearchResultInfoClick.airports.first());
 
   emit showInformation(mapSearchResultInfoClick, map::NONE);

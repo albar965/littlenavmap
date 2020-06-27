@@ -280,10 +280,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxDisplayOnlineFileLookup,
      ui->checkBoxOptionsMapEmptyAirports,
      ui->checkBoxOptionsMapEmptyAirports3D,
+     ui->checkBoxOptionsMapTooltipUserAircraft,
+     ui->checkBoxOptionsMapTooltipAiAircraft,
      ui->checkBoxOptionsMapTooltipAirport,
      ui->checkBoxOptionsMapTooltipNavaid,
      ui->checkBoxOptionsMapTooltipAirspace,
      ui->checkBoxOptionsMapTooltipWind,
+     ui->checkBoxOptionsMapClickUserAircraft,
+     ui->checkBoxOptionsMapClickAiAircraft,
      ui->checkBoxOptionsMapClickAirport,
      ui->checkBoxOptionsMapClickAirportProcs,
      ui->checkBoxOptionsMapClickNavaid,
@@ -1530,10 +1534,17 @@ void OptionsDialog::widgetsToOptionData()
   data.cacheUserAirspacePath = ui->lineEditCacheUserAirspacePath->text();
   data.cacheUserAirspaceExtensions = ui->lineEditCacheUserAirspaceExtensions->text();
 
+  data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRCRAFT_USER,
+                                     ui->checkBoxOptionsMapTooltipUserAircraft->isChecked());
+  data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRCRAFT_AI, ui->checkBoxOptionsMapTooltipAiAircraft->isChecked());
+
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRPORT, ui->checkBoxOptionsMapTooltipAirport->isChecked());
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_NAVAID, ui->checkBoxOptionsMapTooltipNavaid->isChecked());
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRSPACE, ui->checkBoxOptionsMapTooltipAirspace->isChecked());
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_WIND, ui->checkBoxOptionsMapTooltipWind->isChecked());
+
+  data.displayClickOptions.setFlag(optsd::CLICK_AIRCRAFT_USER, ui->checkBoxOptionsMapClickUserAircraft->isChecked());
+  data.displayClickOptions.setFlag(optsd::CLICK_AIRCRAFT_AI, ui->checkBoxOptionsMapClickAiAircraft->isChecked());
 
   data.displayClickOptions.setFlag(optsd::CLICK_AIRPORT, ui->checkBoxOptionsMapClickAirport->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_AIRPORT_PROC, ui->checkBoxOptionsMapClickAirportProcs->isChecked());

@@ -478,7 +478,9 @@ enum DisplayTooltipOption
   TOOLTIP_AIRPORT = 1 << 1,
   TOOLTIP_NAVAID = 1 << 2,
   TOOLTIP_AIRSPACE = 1 << 3,
-  TOOLTIP_WIND = 1 << 4
+  TOOLTIP_WIND = 1 << 4,
+  TOOLTIP_AIRCRAFT_AI = 1 << 5,
+  TOOLTIP_AIRCRAFT_USER = 1 << 6
 };
 
 Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);
@@ -490,7 +492,9 @@ enum DisplayClickOption
   CLICK_AIRPORT = 1 << 1,
   CLICK_NAVAID = 1 << 2,
   CLICK_AIRSPACE = 1 << 3,
-  CLICK_AIRPORT_PROC = 1 << 4
+  CLICK_AIRPORT_PROC = 1 << 4,
+  CLICK_AIRCRAFT_AI = 1 << 5,
+  CLICK_AIRCRAFT_USER = 1 << 6
 };
 
 Q_DECLARE_FLAGS(DisplayClickOptions, DisplayClickOption);
@@ -1300,9 +1304,11 @@ private:
 
   optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE_GC;
 
-  optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
+  optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRCRAFT_USER | optsd::TOOLTIP_AIRCRAFT_AI |
+                                                       optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
                                                        optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND;
-  optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRPORT | optsd::CLICK_AIRPORT_PROC |
+  optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRCRAFT_USER | optsd::CLICK_AIRCRAFT_AI |
+                                                   optsd::CLICK_AIRPORT | optsd::CLICK_AIRPORT_PROC |
                                                    optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
 
   opts::UpdateRate updateRate = opts::DAILY;

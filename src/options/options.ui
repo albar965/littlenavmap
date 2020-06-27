@@ -899,7 +899,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
         <item row="2" column="0" alignment="Qt::AlignTop">
          <widget class="QGroupBox" name="groupBoxMapTooltips">
           <property name="title">
-           <string>Tooltips</string>
+           <string>Map Tooltips</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <property name="spacing">
@@ -918,12 +918,45 @@ This will scale the Little Navmap map graphics and icons for better visibility i
             <number>2</number>
            </property>
            <item>
+            <widget class="QCheckBox" name="checkBoxOptionsMapTooltipUserAircraft">
+             <property name="toolTip">
+              <string>Show tooltips for the user aircraft when hovering the cursor over the map</string>
+             </property>
+             <property name="text">
+              <string>&amp;User aircraft</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsMapTooltipAiAircraft">
+             <property name="toolTip">
+              <string>Show tooltips for AI or multiplayer aircraft / ship when hovering the cursor over the map</string>
+             </property>
+             <property name="text">
+              <string>AI / multiplayer vehicles</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QCheckBox" name="checkBoxOptionsMapTooltipAirport">
              <property name="toolTip">
               <string>Show tooltips for airports, parking, towers and helipads when hovering the cursor over the map</string>
              </property>
              <property name="text">
-              <string>Show for &amp;airports</string>
+              <string>&amp;Airports</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -950,7 +983,7 @@ userpoints and logbook entries when hovering the cursor over the map</string>
               <string>Show tooltips for airspaces when hovering the cursor over the map</string>
              </property>
              <property name="text">
-              <string>Show for air&amp;spaces</string>
+              <string>Air&amp;spaces</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -963,7 +996,7 @@ userpoints and logbook entries when hovering the cursor over the map</string>
               <string>Show a tooltip for high altitude winds when hovering the cursor over a wind barb.</string>
              </property>
              <property name="text">
-              <string>Show for high altitude &amp;wind barbs</string>
+              <string>High altitude &amp;wind barbs</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -976,7 +1009,7 @@ userpoints and logbook entries when hovering the cursor over the map</string>
         <item row="2" column="1" alignment="Qt::AlignTop">
          <widget class="QGroupBox" name="groupBoxOptionsMapInfoClicks">
           <property name="title">
-           <string>Information Clicks</string>
+           <string>Map Information Clicks</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <property name="spacing">
@@ -994,6 +1027,39 @@ userpoints and logbook entries when hovering the cursor over the map</string>
            <property name="bottomMargin">
             <number>2</number>
            </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsMapClickUserAircraft">
+             <property name="toolTip">
+              <string>Show information for the user aircraft when clicking on the map</string>
+             </property>
+             <property name="text">
+              <string>&amp;User aircraft</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsMapClickAiAircraft">
+             <property name="toolTip">
+              <string>Show information for AI or multiplayer aircraft / ship when clicking on the map</string>
+             </property>
+             <property name="text">
+              <string>AI / multiplayer vehicles</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_9">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsMapClickAirport">
              <property name="toolTip">
