@@ -153,15 +153,23 @@ map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
   // Mask out all types that are not visible in the current layer
   map::MapAirspaceFilter filter = airspaceTypes;
   if(!mapLayer->isAirspaceIcao())
-    filter.types &= ~map::AIRSPACE_ICAO;
-  if(!mapLayer->isAirspaceFir())
-    filter.types &= ~map::AIRSPACE_FIR;
+    filter.types &= ~map::AIRSPACE_CLASS_ICAO;
+
+  if(!mapLayer->isAirspaceFg())
+    filter.types &= ~map::AIRSPACE_CLASS_FG;
+
+  if(!mapLayer->isAirspaceFirUir())
+    filter.types &= ~map::AIRSPACE_FIR_UIR;
+
   if(!mapLayer->isAirspaceCenter())
     filter.types &= ~map::AIRSPACE_CENTER;
+
   if(!mapLayer->isAirspaceRestricted())
     filter.types &= ~map::AIRSPACE_RESTRICTED;
+
   if(!mapLayer->isAirspaceSpecial())
     filter.types &= ~map::AIRSPACE_SPECIAL;
+
   if(!mapLayer->isAirspaceOther())
     filter.types &= ~map::AIRSPACE_OTHER;
 
@@ -201,8 +209,8 @@ void MapPaintLayer::initMapLayerSettings()
 
                       onlineAircraft().onlineAircraftText().
 
-                      airspaceCenter().airspaceFir().airspaceOther().airspaceRestricted().airspaceSpecial().
-                      airspaceIcao().
+                      airspaceCenter().airspaceFg().airspaceFirUir().airspaceOther().airspaceRestricted().
+                      airspaceSpecial().airspaceIcao().
 
                       vorRouteIdent().vorRouteInfo().ndbRouteIdent().ndbRouteInfo().waypointRouteName().
                       airportRouteInfo();
@@ -388,7 +396,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraftText(false).
-         airspaceFir(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
+         airspaceFg(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          trackIdent().trackInfo(false).trackWaypoint(false).
@@ -408,7 +416,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraft(false).onlineAircraftText(false).
-         airspaceCenter(false).airspaceFir(false).airspaceOther(false).
+         airspaceCenter(false).airspaceFg(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          trackIdent().trackInfo(false).trackWaypoint(false).
@@ -426,7 +434,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraft(false).onlineAircraftText(false).
-         airspaceCenter(false).airspaceFir(false).airspaceOther(false).
+         airspaceCenter(false).airspaceFirUir(false).airspaceFg(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          trackIdent().trackInfo(false).trackWaypoint(false).
@@ -445,7 +453,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraft(false).onlineAircraftText(false).
-         airspaceCenter(false).airspaceFir(false).airspaceOther(false).
+         airspaceCenter(false).airspaceFirUir(false).airspaceFg(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).track(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).

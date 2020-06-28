@@ -42,7 +42,8 @@ bool MapLayer::hasSameQueryParametersAirspace(const MapLayer *other) const
   // Or any airspace parameter which needs a new query
   return layerAirspaceCenter == other->layerAirspaceCenter &&
          layerAirspaceIcao == other->layerAirspaceIcao &&
-         layerAirspaceFir == other->layerAirspaceFir &&
+         layerAirspaceFg == other->layerAirspaceFg &&
+         layerAirspaceFirUir == other->layerAirspaceFirUir &&
          layerAirspaceRestricted == other->layerAirspaceRestricted &&
          layerAirspaceSpecial == other->layerAirspaceSpecial &&
          layerAirspaceOther == other->layerAirspaceOther;
@@ -382,9 +383,15 @@ MapLayer& MapLayer::airspaceIcao(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::airspaceFir(bool value)
+MapLayer& MapLayer::airspaceFg(bool value)
 {
-  layerAirspaceFir = value;
+  layerAirspaceFg = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airspaceFirUir(bool value)
+{
+  layerAirspaceFirUir = value;
   return *this;
 }
 

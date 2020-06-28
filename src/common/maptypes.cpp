@@ -387,6 +387,8 @@ void initTranslateableTexts()
       {map::CLASS_E, QObject::tr("Class E")},
       {map::CLASS_F, QObject::tr("Class F")},
       {map::CLASS_G, QObject::tr("Class G")},
+      {map::FIR, QObject::tr("FIR")},
+      {map::UIR, QObject::tr("UIR")},
       {map::TOWER, QObject::tr("Tower")},
       {map::CLEARANCE, QObject::tr("Clearance")},
       {map::GROUND, QObject::tr("Ground")},
@@ -430,6 +432,8 @@ void initTranslateableTexts()
       {map::CLASS_E, QObject::tr("Controlled, IFR and VFR, ATC clearance required for IFR only.")},
       {map::CLASS_F, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
       {map::CLASS_G, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
+      {map::FIR, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
+      {map::UIR, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
       {map::TOWER, QString()},
       {map::CLEARANCE, QString()},
       {map::GROUND, QString()},
@@ -537,6 +541,8 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"CE", map::CLASS_E},
     {"CF", map::CLASS_F},
     {"CG", map::CLASS_G},
+    {"FIR", map::FIR}, // New FIR region that replaces certain centers
+    {"UIR", map::UIR}, // As above for UIR
     {"T", map::TOWER},
     {"CL", map::CLEARANCE},
     {"G", map::GROUND},
@@ -555,7 +561,7 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"TR", map::TRAINING},
     {"GP", map::GLIDERPROHIBITED},
     {"WW", map::WAVEWINDOW},
-    {"OBS", map::ONLINE_OBSERVER}, /* No database type */
+    {"OBS", map::ONLINE_OBSERVER} /* No database type */
   });
 
 static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
@@ -569,6 +575,8 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
     {map::CLASS_E, "CE"},
     {map::CLASS_F, "CF"},
     {map::CLASS_G, "CG"},
+    {map::FIR, "FIR"},
+    {map::UIR, "UIR"},
     {map::TOWER, "T"},
     {map::CLEARANCE, "CL"},
     {map::GROUND, "G"},
@@ -599,12 +607,13 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
     {map::ONLINE_OBSERVER, 2},
     {map::CENTER, 3},
 
-    {map::CLASS_A, 10},
+    {map::FIR, 4},
+    {map::UIR, 5},
 
+    {map::CLASS_A, 10},
     {map::CLASS_B, 11},
     {map::CLASS_C, 12},
     {map::CLASS_D, 13},
-
     {map::CLASS_E, 14},
 
     {map::CLASS_F, 20},
@@ -629,8 +638,8 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
     {map::DANGER, 62},
 
     {map::NATIONAL_PARK, 2},
-    {map::MODEC, 5},
-    {map::RADAR, 6},
+    {map::MODEC, 6},
+    {map::RADAR, 7},
     {map::TRAINING, 59},
   });
 

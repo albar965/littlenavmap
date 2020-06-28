@@ -105,7 +105,10 @@ private:
 
   static int queryMaxRows;
 
-  bool hasAirspaces = false;
+  /* True if tables atc or boundary have content. Updated in clearCache and initQueries */
+  bool hasAirspaces = false,
+  /* true if database contains new FIR/UIR types */
+       hasFirUir = false;
 
   /* Database queries */
   atools::sql::SqlQuery *airspaceByRectQuery = nullptr, *airspaceByRectBelowAltQuery = nullptr,

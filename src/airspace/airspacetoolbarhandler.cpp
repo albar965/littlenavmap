@@ -170,7 +170,7 @@ void AirspaceToolBarHandler::createToolButtons()
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspacefir.svg",
                            tr("Select FIR airspaces"),
-                           {map::CLASS_F, map::CLASS_G}, {});
+                           {map::FIR, map::UIR, map::CLASS_F, map::CLASS_G}, {});
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspacerestr.svg",
                            tr("Select MOA, restricted, prohibited and danger airspaces"),

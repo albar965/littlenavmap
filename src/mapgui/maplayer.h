@@ -171,7 +171,8 @@ public:
   // MapLayer& airspace(bool value = true);
   MapLayer& airspaceCenter(bool value = true);
   MapLayer& airspaceIcao(bool value = true);
-  MapLayer& airspaceFir(bool value = true);
+  MapLayer& airspaceFg(bool value = true);
+  MapLayer& airspaceFirUir(bool value = true);
   MapLayer& airspaceRestricted(bool value = true);
   MapLayer& airspaceSpecial(bool value = true);
   MapLayer& airspaceOther(bool value = true);
@@ -471,8 +472,8 @@ public:
 
   bool isAirspace() const
   {
-    return isAirspaceCenter() || isAirspaceFir() || isAirspaceIcao() || isAirspaceOther() || isAirspaceRestricted() ||
-           isAirspaceSpecial();
+    return isAirspaceCenter() || isAirspaceFg() || isAirspaceFirUir() || isAirspaceIcao() || isAirspaceOther() ||
+           isAirspaceRestricted() || isAirspaceSpecial();
   }
 
   bool isAirspaceCenter() const
@@ -485,9 +486,14 @@ public:
     return layerAirspaceIcao;
   }
 
-  bool isAirspaceFir() const
+  bool isAirspaceFg() const
   {
-    return layerAirspaceFir;
+    return layerAirspaceFg;
+  }
+
+  bool isAirspaceFirUir() const
+  {
+    return layerAirspaceFirUir;
   }
 
   bool isAirspaceRestricted() const
@@ -628,8 +634,8 @@ private:
   int maximumTextLengthAirport = 16;
   int maximumTextLengthUserpoint = 10;
 
-  bool layerAirspaceCenter = false, layerAirspaceIcao = false, layerAirspaceFir = false, layerAirspaceRestricted =
-    false, layerAirspaceSpecial = false, layerAirspaceOther = false;
+  bool layerAirspaceCenter = false, layerAirspaceIcao = false, layerAirspaceFg = false, layerAirspaceFirUir = false,
+       layerAirspaceRestricted = false, layerAirspaceSpecial = false, layerAirspaceOther = false;
 
   bool layerAiAircraftGround = false, layerAiAircraftLarge = false, layerAiAircraftSmall = false,
        layerOnlineAircraft = false, layerAiShipLarge = false, layerAiShipSmall = false,

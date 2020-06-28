@@ -196,13 +196,13 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
 void AirspaceController::getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect,
                                       const MapLayer *mapLayer, map::MapAirspaceFilter filter,
                                       float flightPlanAltitude, bool lazy,
-                                      map::MapAirspaceSources src)
+                                      map::MapAirspaceSources sources)
 {
   // Merge airspace pointers from all sources/caches into one list
-  for(map::MapAirspaceSources s : map::MAP_AIRSPACE_SRC_VALUES)
+  for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
   {
-    if(src & s)
-      getAirspacesInternal(airspaces, rect, mapLayer, filter, flightPlanAltitude, lazy, s);
+    if(sources & src)
+      getAirspacesInternal(airspaces, rect, mapLayer, filter, flightPlanAltitude, lazy, src);
   }
 }
 

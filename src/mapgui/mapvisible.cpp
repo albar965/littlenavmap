@@ -226,16 +226,22 @@ void MapVisible::updateVisibleObjectsStatusBar()
         }
         std::sort(airspacesTooltip.begin(), airspacesTooltip.end());
 
-        if(airspaceFilter.types & map::AIRSPACE_ICAO)
+        if(airspaceFilter.types & map::AIRSPACE_CLASS_ICAO)
         {
           airspaceGroupLabel.append(tr("ICAO"));
           airspaceGroupTooltip.append(tr("Class A-E (ICAO)"));
         }
 
-        if(airspaceFilter.types & map::AIRSPACE_FIR)
+        if(airspaceFilter.types & map::AIRSPACE_CLASS_FG)
         {
-          airspaceGroupLabel.append(tr("FIR"));
-          airspaceGroupTooltip.append(tr("Flight Information Region, class F and/or G (FIR)"));
+          airspaceGroupLabel.append(tr("F,G"));
+          airspaceGroupTooltip.append(tr("Class F and/or G"));
+        }
+
+        if(airspaceFilter.types & map::AIRSPACE_FIR_UIR)
+        {
+          airspaceGroupLabel.append(tr("FIR,UIR"));
+          airspaceGroupTooltip.append(tr("Flight and/or Upper Information Regions"));
         }
 
         if(airspaceFilter.types & map::AIRSPACE_RESTRICTED)
