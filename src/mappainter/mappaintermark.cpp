@@ -562,38 +562,21 @@ void MapPainterMark::paintAirwayList(PaintContext *context, const QList<map::Map
       linestring.append(airway.to);
   }
 
-  // Build and draw marble line string ====================================================
-  LineString ls;
-  for(int i = 1; i < linestring.size(); i++)
-  {
-    qreal laty1 = linestring.at(i - 1).getLatY();
-    qreal laty2 = linestring.at(i).getLatY();
-    if(atools::almostEqual(laty1, laty2))
-    {
-      // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
-      laty1 -= 0.000001;
-      laty2 += 0.000001;
-    }
-
-    ls.append(Pos(static_cast<double>(linestring.at(i - 1).getLonX()), laty1));
-    ls.append(Pos(static_cast<double>(linestring.at(i).getLonX()), laty2));
-  }
-
   // Outline =================
-  float lineWidth = context->szF(context->thicknessRangeDistance, 7);
+  float lineWidth = context->szF(context->thicknessRangeDistance, 5.f);
   QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::RoundCap);
   painter->setPen(outerPen);
-  drawLineString(painter, ls);
+  drawLineString(painter, linestring);
 
   // Inner line ================
-  QPen innerPen = mapcolors::airwayVictorPen;
+  QPen innerPen(mapcolors::airwayVictorColor, lineWidth);
   innerPen.setWidthF(lineWidth * 0.5);
   innerPen.setColor(innerPen.color().lighter(150));
   painter->setPen(innerPen);
-  drawLineString(painter, ls);
+  drawLineString(painter, linestring);
 
   // Arrows ================
-  QPolygonF arrow = buildArrow(static_cast<float>(mapcolors::airwayBothPen.widthF() * 6.));
+  QPolygonF arrow = buildArrow(lineWidth);
   context->painter->setPen(QPen(mapcolors::highlightBackColor, lineWidth / 3., Qt::SolidLine, Qt::RoundCap));
   context->painter->setBrush(Qt::white);
   for(const map::MapAirway& airway : airwayList)
@@ -631,7 +614,7 @@ void MapPainterMark::paintAirwayTextList(PaintContext *context, const QList<map:
   {
     if(airway.isValid())
     {
-      QPen innerPen = mapcolors::penForAirwayTrack(airway);
+      QPen innerPen = mapcolors::colorForAirwayTrack(airway);
 
       // Draw text  at center position of a line
       int x, y;
@@ -658,7 +641,7 @@ void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace
   const LineString *airspaceGeometry = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
   Marble::GeoPainter *painter = context->painter;
 
-  float lineWidth = context->szF(context->thicknessRangeDistance, 7);
+  float lineWidth = context->szF(context->thicknessRangeDistance, 5);
 
   QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::FlatCap);
 

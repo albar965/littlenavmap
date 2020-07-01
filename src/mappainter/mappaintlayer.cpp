@@ -542,6 +542,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.textSizeAirport = od.getDisplayTextSizeAirport() / 100.f;
       context.textSizeFlightplan = od.getDisplayTextSizeFlightplan() / 100.f;
       context.textSizeNavaid = od.getDisplayTextSizeNavaid() / 100.f;
+      context.textSizeAirway = od.getDisplayTextSizeAirway() / 100.f;
       context.textSizeCompassRose = od.getDisplayTextSizeCompassRose() / 100.f;
       context.textSizeMora = od.getDisplayTextSizeMora() / 100.f;
       context.transparencyMora = od.getDisplayTransparencyMora() / 100.f;
@@ -550,6 +551,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.thicknessTrail = od.getDisplayThicknessTrail() / 100.f;
       context.thicknessRangeDistance = od.getDisplayThicknessRangeDistance() / 100.f;
       context.thicknessCompassRose = od.getDisplayThicknessCompassRose() / 100.f;
+      context.thicknessAirway = od.getDisplayThicknessAirway() / 100.f;
 
       context.dispOpts = od.getDisplayOptions();
       context.dispOptsRose = od.getDisplayOptionsRose();

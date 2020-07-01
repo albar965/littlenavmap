@@ -382,6 +382,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsDisplayTextSizeCompassRose,
      ui->spinBoxOptionsDisplayTextSizeRangeDistance,
 
+     ui->checkBoxOptionsMapAirwayText,
+     ui->spinBoxOptionsDisplayTextSizeAirway,
+     ui->spinBoxOptionsDisplayThicknessAirway,
+
      ui->spinBoxOptionsDisplayTextSizeMora,
      ui->spinBoxOptionsDisplayTransparencyMora,
      ui->spinBoxOptionsMapNavTouchArea,
@@ -1517,6 +1521,7 @@ void OptionsDialog::widgetsToOptionData()
 
   toFlags2(ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
+  toFlags2(ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapAirportBoundary, opts2::MAP_AIRPORT_BOUNDARY);
   toFlags2(ui->checkBoxOptionsMapAirportDiagram, opts2::MAP_AIRPORT_DIAGRAM);
@@ -1610,6 +1615,8 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTextSizeAircraftAi = ui->spinBoxOptionsDisplayTextSizeAircraftAi->value();
   data.displaySymbolSizeNavaid = ui->spinBoxOptionsDisplaySymbolSizeNavaid->value();
   data.displayTextSizeNavaid = ui->spinBoxOptionsDisplayTextSizeNavaid->value();
+  data.displayThicknessAirway = ui->spinBoxOptionsDisplayThicknessAirway->value();
+  data.displayTextSizeAirway = ui->spinBoxOptionsDisplayTextSizeAirway->value();
   data.displayThicknessFlightplan = ui->spinBoxOptionsDisplayThicknessFlightplan->value();
   data.displaySymbolSizeAirport = ui->spinBoxOptionsDisplaySymbolSizeAirport->value();
   data.displaySymbolSizeAirportWeather = ui->spinBoxOptionsDisplaySymbolSizeAirportWeather->value();
@@ -1765,6 +1772,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   fromFlags2(data, ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
+  fromFlags2(data, ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapAirportBoundary, opts2::MAP_AIRPORT_BOUNDARY);
   fromFlags2(data, ui->checkBoxOptionsMapAirportDiagram, opts2::MAP_AIRPORT_DIAGRAM);
@@ -1873,6 +1881,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplayTextSizeAircraftAi->setValue(data.displayTextSizeAircraftAi);
   ui->spinBoxOptionsDisplaySymbolSizeNavaid->setValue(data.displaySymbolSizeNavaid);
   ui->spinBoxOptionsDisplayTextSizeNavaid->setValue(data.displayTextSizeNavaid);
+  ui->spinBoxOptionsDisplayThicknessAirway->setValue(data.displayThicknessAirway);
+  ui->spinBoxOptionsDisplayTextSizeAirway->setValue(data.displayTextSizeAirway);
   ui->spinBoxOptionsDisplayThicknessFlightplan->setValue(data.displayThicknessFlightplan);
   ui->spinBoxOptionsDisplaySymbolSizeAirport->setValue(data.displaySymbolSizeAirport);
   ui->spinBoxOptionsDisplaySymbolSizeAirportWeather->setValue(data.displaySymbolSizeAirportWeather);

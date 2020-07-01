@@ -311,7 +311,10 @@ enum Flag2
   RAISE_DOCK_WINDOWS = 1 << 21,
 
   /* checkBoxOptionsGuiRaiseMainWindow */
-  RAISE_MAIN_WINDOW = 1 << 22
+  RAISE_MAIN_WINDOW = 1 << 22,
+
+  /* ui->checkBoxOptionsMapAirwayText */
+  MAP_AIRWAY_TEXT_BACKGROUND = 1 << 23,
 
 };
 
@@ -798,6 +801,16 @@ public:
     return displaySymbolSizeNavaid;
   }
 
+  int getDisplayTextSizeAirway() const
+  {
+    return displayTextSizeAirway;
+  }
+
+  int getDisplayThicknessAirway() const
+  {
+    return displayThicknessAirway;
+  }
+
   const QColor& getFlightplanColor() const
   {
     return flightplanColor;
@@ -1204,6 +1217,12 @@ private:
 
   // spinBoxOptionsDisplaySymbolSizeNavaid
   int displaySymbolSizeNavaid = 100;
+
+  // spinBoxOptionsDisplayTextSizeAirway
+  int displayTextSizeAirway = 100;
+
+  // spinBoxOptionsDisplayThicknessAirway
+  int displayThicknessAirway = 100;
 
   // spinBoxOptionsDisplayTextSizeFlightplan
   int displayTextSizeFlightplan = 100;

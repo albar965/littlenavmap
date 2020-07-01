@@ -58,7 +58,7 @@ void MapPainterNav::render(PaintContext *context)
                     (context->objectTypes.testFlag(map::AIRWAYJ) ||
                      context->objectTypes.testFlag(map::AIRWAYV));
 
-  context->szFont(context->textSizeNavaid);
+  context->szFont(context->textSizeAirway);
 
   if(drawAirway && !context->isOverflow())
   {
@@ -78,6 +78,7 @@ void MapPainterNav::render(PaintContext *context)
     paintAirways(context, &tracks, context->drawFast);
   }
 
+  context->szFont(context->textSizeNavaid);
   // Waypoints -------------------------------------------------
   bool drawWaypoint = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(map::WAYPOINT);
   if((drawWaypoint || drawAirway || drawTrack) && !context->isOverflow())
@@ -139,23 +140,27 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     QVector<bool> positionReversed; // Line is reversed for text
   };
 
+  bool fill = context->flags2 & opts2::MAP_AIRWAY_TEXT_BACKGROUND;
+  float linewidthAirway = context->szF(context->thicknessAirway, 1.f);
+  float linewidthTrack = context->szF(context->thicknessAirway, 2.f);
+
   // Used to combine texts of different airway lines with the same coordinates into one text.
   // Key is line coordinates as text (avoid floating point compare) and
   // value is index into texts and airwayIndex
   QHash<QString, int> lines;
   // Contains combined text for overlapping airway lines and points to index or airway in airway list
   QVector<Place> textlist;
-  QPolygonF arrow = buildArrow(static_cast<float>(mapcolors::airwayBothPen.widthF() * 2.5));
+  QPolygonF arrowAirway = buildArrow(static_cast<float>(linewidthAirway * 2.5));
+  QPolygonF arrowTrack = buildArrow(static_cast<float>(linewidthTrack * 2.5));
   Marble::GeoPainter *painter = context->painter;
 
   for(int i = 0; i < airways->size(); i++)
   {
     const MapAirway& airway = airways->at(i);
     bool isTrack = airway.isTrack();
-    bool isAirway = airway.isAirway();
 
-    bool ident = (isAirway && context->mapLayer->isAirwayIdent()) || (isTrack && context->mapLayer->isTrackIdent());
-    bool info = (isAirway && context->mapLayer->isAirwayInfo()) || (isTrack && context->mapLayer->isTrackInfo());
+    bool ident = (!isTrack && context->mapLayer->isAirwayIdent()) || (isTrack && context->mapLayer->isTrackIdent());
+    bool info = (!isTrack && context->mapLayer->isAirwayInfo()) || (isTrack && context->mapLayer->isTrackInfo());
 
     if(airway.type == map::AIRWAY_JET && !context->objectTypes.testFlag(map::AIRWAYJ))
       continue;
@@ -164,7 +169,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     if(isTrack && !context->objectTypes.testFlag(map::TRACK))
       continue;
 
-    painter->setPen(mapcolors::penForAirwayTrack(airway));
+    painter->setPen(QPen(mapcolors::colorForAirwayTrack(airway), isTrack ? linewidthTrack : linewidthAirway));
     painter->setBrush(painter->pen().color());
 
     // Get start and end point of airway segment in screen coordinates
@@ -195,7 +200,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
         {
           Line arrLine = airway.direction != map::DIR_FORWARD ?
                          Line(airway.from, airway.to) : Line(airway.to, airway.from);
-          paintArrowAlongLine(painter, arrLine, arrow, 0.5f);
+          paintArrowAlongLine(painter, arrLine, isTrack ? arrowTrack : arrowAirway, 0.5f);
         }
 
         // Build text index
@@ -265,6 +270,13 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
   {
     int i = 0;
     painter->setPen(mapcolors::airwayTextColor);
+    if(fill)
+    {
+      painter->setBackgroundMode(Qt::OpaqueMode);
+      painter->setBrush(mapcolors::textBoxColor);
+      painter->setBackground(mapcolors::textBoxColor);
+    }
+
     for(Place& place: textlist)
     {
       const MapAirway& airway = airways->at(place.airwayIndexByText.first());
@@ -293,7 +305,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
         painter->translate(xt, yt);
         painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
         painter->drawText(-painter->fontMetrics().width(text) / 2,
-                          painter->fontMetrics().ascent(), text);
+                          painter->fontMetrics().ascent() + linewidthAirway, text);
         painter->resetTransform();
       }
       i++;

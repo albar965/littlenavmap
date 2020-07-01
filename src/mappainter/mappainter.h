@@ -95,6 +95,8 @@ struct PaintContext
   float symbolSizeNavaid = 1.f;
   float thicknessFlightplan = 1.f;
   float textSizeNavaid = 1.f;
+  float textSizeAirway = 1.f;
+  float thicknessAirway = 1.f;
   float textSizeCompassRose = 1.f;
   float textSizeRangeDistance = 1.f;
   float symbolSizeAirport = 1.f;

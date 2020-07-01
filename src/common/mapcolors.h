@@ -59,10 +59,10 @@ extern QColor ilsSymbolColor;
 extern QColor ilsFillColor;
 extern QColor ilsTextColor;
 extern QColor waypointSymbolColor;
-extern QPen airwayVictorPen;
-extern QPen airwayJetPen;
-extern QPen airwayBothPen;
-extern QPen airwayTrackPen;
+extern QColor airwayVictorColor;
+extern QColor airwayJetColor;
+extern QColor airwayBothColor;
+extern QColor airwayTrackColor;
 extern QColor airwayTextColor;
 extern QColor rangeRingColor;
 extern QColor rangeRingTextColor;
@@ -246,7 +246,7 @@ const QPen aircraftTrailPen(float size);
 const QPen& penForAirspace(const map::MapAirspace& airspace);
 const QColor& colorForAirspaceFill(const map::MapAirspace& airspace);
 
-const QPen& penForAirwayTrack(const map::MapAirway& airway);
+const QColor& colorForAirwayTrack(const map::MapAirway& airway);
 
 /* Convert current pen into dotted pen leaving style and color as is */
 void adjustPenForCircleToLand(QPainter *painter);
