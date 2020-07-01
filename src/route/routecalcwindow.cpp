@@ -36,17 +36,17 @@ RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
   QObject(parent)
 {
   preferenceTexts = QStringList({
-    tr("Airways and tracks only."),
-    tr("More airways and less direct."),
-    tr("More airways and less direct."),
-    tr("More airways and less direct."),
-    tr("More airways and direct."),
-    tr("Airways and direct connections."),
-    tr("More direct and airways."),
-    tr("More direct and less airways."),
-    tr("More direct and less airways."),
-    tr("More direct and less airways."),
-    tr("Direct connections only.")
+    tr("Airways and tracks only.\nFastest calculation."),
+    tr("More airways and few direct.\nSlower calculation."),
+    tr("More airways and less direct.\nSlower calculation."),
+    tr("Airways and less direct.\nSlower calculation."),
+    tr("Airways and direct.\nSlower calculation."),
+    tr("Airways and direct.\nSlower calculation."),
+    tr("Airways and direct.\nSlower calculation."),
+    tr("Airways and more direct.\nSlower calculation."),
+    tr("Less airways and more direct.\nSlower calculation."),
+    tr("Few airways and more direct.\nSlower calculation."),
+    tr("Direct using waypoints only.\nSlower calculation.")
   });
 
   Ui::MainWindow *ui = NavApp::getMainUi();

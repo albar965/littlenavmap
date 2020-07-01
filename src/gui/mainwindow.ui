@@ -5520,7 +5520,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>63</y>
+              <y>46</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -6231,8 +6231,24 @@ unusable airways (e.g. due to altitude restrictions).</string>
         </item>
         <item row="2" column="0" colspan="3">
          <widget class="QLabel" name="labelRouteCalcPreference">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
-           <string/>
+           <string>Airways and tracks only.
+Fastest calculation</string>
+          </property>
+          <property name="wordWrap">
+           <bool>false</bool>
+          </property>
+          <property name="margin">
+           <number>5</number>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
           </property>
          </widget>
         </item>
