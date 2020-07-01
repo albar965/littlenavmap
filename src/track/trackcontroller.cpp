@@ -24,6 +24,7 @@
 #include "track/trackmanager.h"
 #include "query/airwaytrackquery.h"
 #include "navapp.h"
+#include "atools.h"
 #include "gui/dialog.h"
 #include "query/airwayquery.h"
 #include "query/waypointtrackquery.h"
@@ -80,8 +81,9 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
                                                TrackDownloader::PARAM.value(t::AUSOTS)).toStringList());
 #endif
 
-  connect(downloader, &TrackDownloader::downloadFinished, this, &TrackController::downloadFinished);
-  connect(downloader, &TrackDownloader::downloadFailed, this, &TrackController::downloadFailed);
+  connect(downloader, &TrackDownloader::trackDownloadFinished, this, &TrackController::trackDownloadFinished);
+  connect(downloader, &TrackDownloader::trackDownloadFailed, this, &TrackController::trackDownloadFailed);
+  connect(downloader, &TrackDownloader::trackDownloadSslErrors, this, &TrackController::trackDownloadSslErrors);
 
   connect(this, &TrackController::postTrackLoad, [ = ](void) -> void {
     waypointTrackQuery->postTrackLoad();
@@ -179,7 +181,7 @@ bool TrackController::hasTracks() const
   return trackManager->hasData();
 }
 
-void TrackController::downloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type)
+void TrackController::trackDownloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type)
 {
   qDebug() << Q_FUNC_INFO << static_cast<int>(type) << "size" << tracks.size();
 
@@ -202,8 +204,26 @@ void TrackController::downloadFinished(const atools::track::TrackVectorType& tra
   }
 }
 
-void TrackController::downloadFailed(const QString& error, int errorCode, QString downloadUrl,
-                                     atools::track::TrackType type)
+void TrackController::trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
+{
+  int result = atools::gui::Dialog(mainWindow).
+               showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK,
+                                  tr("<p>Errors while trying to establish an encrypted "
+                                       "connection to download track information:</p>"
+                                       "<p>URL: %1</p>"
+                                         "<p>Error messages:<br/>%2</p>"
+                                           "<p>Continue?</p>").
+                                  arg(downloadUrl).
+                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  tr("Do not show this again and ignore errors in the future"),
+                                  QMessageBox::Cancel | QMessageBox::Yes,
+                                  QMessageBox::Cancel, QMessageBox::Yes);
+
+  downloader->setIgnoreSslErrors(result == QMessageBox::Yes);
+}
+
+void TrackController::trackDownloadFailed(const QString& error, int errorCode, QString downloadUrl,
+                                          atools::track::TrackType type)
 {
   qDebug() << Q_FUNC_INFO << error << errorCode << downloadUrl << static_cast<int>(type);
 

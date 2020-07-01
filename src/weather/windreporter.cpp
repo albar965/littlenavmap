@@ -27,6 +27,7 @@
 #include "perf/aircraftperfcontroller.h"
 #include "route/route.h"
 #include "mapgui/maplayer.h"
+#include "gui/dialog.h"
 
 #include <QToolButton>
 #include <QDebug>
@@ -61,6 +62,7 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
   windQuery = new atools::grib::WindQuery(parent, verbose);
   connect(windQuery, &atools::grib::WindQuery::windDataUpdated, this, &WindReporter::windDownloadFinished);
   connect(windQuery, &atools::grib::WindQuery::windDownloadFailed, this, &WindReporter::windDownloadFailed);
+  connect(windQuery, &atools::grib::WindQuery::windDownloadSslErrors, this, &WindReporter::windDownloadSslErrors);
 
   // Layers from custom settings ==================
   windQueryManual = new atools::grib::WindQuery(parent, verbose);
@@ -158,6 +160,24 @@ void WindReporter::windDownloadFinished()
   qDebug() << Q_FUNC_INFO;
   updateToolButtonState();
   emit windUpdated();
+}
+
+void WindReporter::windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
+{
+  int result = atools::gui::Dialog(NavApp::getQMainWindow()).
+               showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WIND,
+                                  tr("<p>Errors while trying to establish an encrypted "
+                                       "connection to download winds aloft:</p>"
+                                       "<p>URL: %1</p>"
+                                         "<p>Error messages:<br/>%2</p>"
+                                           "<p>Continue?</p>").
+                                  arg(downloadUrl).
+                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  tr("Do not show this again and ignore errors in the future"),
+                                  QMessageBox::Cancel | QMessageBox::Yes,
+                                  QMessageBox::Cancel, QMessageBox::Yes);
+
+  windQuery->setIgnoreSslErrors(result == QMessageBox::Yes);
 }
 
 void WindReporter::windDownloadFailed(const QString& error, int errorCode)

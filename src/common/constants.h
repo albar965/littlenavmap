@@ -92,6 +92,11 @@ const QLatin1Literal ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS("Actions/TrackDownloadS
 const QLatin1Literal ACTIONS_SHOW_LOGBOOK_CONVERSION("Actions/LogbookConversion");
 const QLatin1Literal ACTIONS_SHOW_USER_AIRSPACE_NOTE("Actions/UserAirspaceNote");
 
+const QLatin1Literal ACTIONS_SHOW_SSL_WARNING_ONLINE("Actions/SslWarningOnline");
+const QLatin1Literal ACTIONS_SHOW_SSL_WARNING_WIND("Actions/SslWarningWind");
+const QLatin1Literal ACTIONS_SHOW_SSL_WARNING_TRACK("Actions/SslWarningTrack");
+const QLatin1Literal ACTIONS_SHOW_SSL_WARNING_WEATHER("Actions/SslWarningWeather");
+
 const QLatin1Literal ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");
 const QLatin1Literal ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarning");
 

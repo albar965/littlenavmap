@@ -165,6 +165,7 @@ signals:
 
 private:
   void weatherDownloadFailed(const QString& error, int errorCode, QString url);
+  void weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
   void activeSkyWeatherFileChanged(const QString& path);
   void xplaneWeatherFileChanged();

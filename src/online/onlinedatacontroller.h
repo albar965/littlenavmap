@@ -147,6 +147,7 @@ private:
   /* HTTP download signal slots */
   void downloadFinished(const QByteArray& data, QString url);
   void downloadFailed(const QString& error, int errorCode, QString url);
+  void downloadSslErrors(const QStringList& errors, const QString& downloadUrl);
   void statusBarMessage();
 
   void startDownloadInternal();

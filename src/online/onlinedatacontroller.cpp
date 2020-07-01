@@ -82,6 +82,7 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 
   connect(downloader, &HttpDownloader::downloadFinished, this, &OnlinedataController::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &OnlinedataController::downloadFailed);
+  connect(downloader, &HttpDownloader::downloadSslErrors, this, &OnlinedataController::downloadSslErrors);
 
   // Recurring downloads
   connect(&downloadTimer, &QTimer::timeout, this, &OnlinedataController::startDownloadInternal);
@@ -344,6 +345,23 @@ void OnlinedataController::downloadFailed(const QString& error, int errorCode, Q
 
   // Delay next download for three minutes to give the user a chance to correct the URLs
   QTimer::singleShot(180 * 1000, this, &OnlinedataController::startProcessing);
+}
+
+void OnlinedataController::downloadSslErrors(const QStringList& errors, const QString& downloadUrl)
+{
+  int result = atools::gui::Dialog(mainWindow).
+               showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE,
+                                  tr("<p>Errors while trying to establish an encrypted connection "
+                                       "to download online network data:</p>"
+                                       "<p>URL: %1</p>"
+                                         "<p>Error messages:<br/>%2</p>"
+                                           "<p>Continue?</p>").
+                                  arg(downloadUrl).
+                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  tr("Do not show this again and ignore errors in the future"),
+                                  QMessageBox::Cancel | QMessageBox::Yes,
+                                  QMessageBox::Cancel, QMessageBox::Yes);
+  downloader->setIgnoreSslErrors(result == QMessageBox::Yes);
 }
 
 void OnlinedataController::statusBarMessage()

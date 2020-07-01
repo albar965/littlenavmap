@@ -107,6 +107,14 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
   connect(vatsimWeather, &WeatherNetDownload::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
   connect(ivaoWeather, &WeatherNetDownload::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
+
+  // Forward signals from clients for SSL errors
+  connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadSslErrors,
+          this, &WeatherReporter::weatherDownloadSslErrors);
+  connect(vatsimWeather, &WeatherNetDownload::weatherDownloadSslErrors,
+          this, &WeatherReporter::weatherDownloadSslErrors);
+  connect(ivaoWeather, &WeatherNetDownload::weatherDownloadSslErrors,
+          this, &WeatherReporter::weatherDownloadSslErrors);
 }
 
 WeatherReporter::~WeatherReporter()
@@ -556,6 +564,30 @@ QString WeatherReporter::getCurrentActiveSkyName() const
 void WeatherReporter::updateAirportWeather()
 {
   updateTimeouts();
+}
+
+void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
+{
+  int result = atools::gui::Dialog(mainWindow).
+               showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER,
+                                  tr("<p>Errors while trying to establish an encrypted "
+                                       "connection to download weather information:</p>"
+                                       "<p>URL: %1</p>"
+                                         "<p>Error messages:<br/>%2</p>"
+                                           "<p>Continue?</p>").
+                                  arg(downloadUrl).
+                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  tr("Do not show this again and ignore errors in the future"),
+                                  QMessageBox::Cancel | QMessageBox::Yes,
+                                  QMessageBox::Cancel, QMessageBox::Yes);
+
+  atools::fs::weather::WeatherDownloadBase *downloader =
+    dynamic_cast<atools::fs::weather::WeatherDownloadBase *>(sender());
+
+  if(downloader != nullptr)
+    downloader->setIgnoreSslErrors(result == QMessageBox::Yes);
+  else
+    qWarning() << Q_FUNC_INFO << "Downloader is null";
 }
 
 void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode, QString url)

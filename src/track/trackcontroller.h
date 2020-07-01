@@ -79,8 +79,9 @@ signals:
 
 private:
   /* Slots called by the TrackDownloader after finishing each source */
-  void downloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type);
-  void downloadFailed(const QString& error, int errorCode, QString downloadUrl, atools::track::TrackType type);
+  void trackDownloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type);
+  void trackDownloadFailed(const QString& error, int errorCode, QString downloadUrl, atools::track::TrackType type);
+  void trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
   void tracksLoaded();
 
   /* Avoid multiple error reports. */

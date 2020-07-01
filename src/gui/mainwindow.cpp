@@ -2853,6 +2853,10 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, true);
   s.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
   s.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
+  s.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE, true);
+  s.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
+  s.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK, true);
+  s.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }

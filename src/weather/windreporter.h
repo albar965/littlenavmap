@@ -171,6 +171,7 @@ private:
 
   /* Download failed.  Only for void init(). */
   void windDownloadFailed(const QString& error, int errorCode);
+  void windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
   /* Copy GUI action state to fields and vice versa */
   void actionToValues();
