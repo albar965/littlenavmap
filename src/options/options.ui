@@ -4815,10 +4815,10 @@ Default is &quot;http://wx.ivao.aero/metar.php&quot;.</string>
                 <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
                  <property name="toolTip">
                   <string>Complete URL of the VATSIM network weather download service.
-Default is &quot;http://metar.vatsim.net/metar.php?id=ALL&quot;.</string>
+Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</string>
                  </property>
                  <property name="text">
-                  <string>http://metar.vatsim.net/metar.php?id=ALL</string>
+                  <string>https://metar.vatsim.net/metar.php?id=ALL</string>
                  </property>
                  <property name="cursorPosition">
                   <number>40</number>
