@@ -159,6 +159,23 @@ void WindReporter::windDownloadFinished()
 {
   qDebug() << Q_FUNC_INFO;
   updateToolButtonState();
+  if(!isWindManual())
+  {
+    QString msg;
+
+    switch(currentSource)
+    {
+      case wind::NO_SOURCE:
+        break;
+      case wind::SIMULATOR:
+        msg = tr("Wind updated from simulator.");
+        break;
+      case wind::NOAA:
+        msg = tr("NOAA winds aloft download finished.");
+        break;
+    }
+    NavApp::setStatusMessage(msg, true /* addToLog */);
+  }
   emit windUpdated();
 }
 

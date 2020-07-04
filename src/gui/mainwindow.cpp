@@ -108,6 +108,8 @@
 
 static const int WEATHER_UPDATE_MS = 15000;
 
+static const int MAX_STATUS_MESSAGES = 20;
+
 // All known map themes
 static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "opentopomap", "plain",
                                            "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
@@ -2864,10 +2866,10 @@ void MainWindow::resetMessages()
 /* Set a general status message */
 void MainWindow::setStatusMessage(const QString& message, bool addToLog)
 {
-  if(addToLog)
+  if(addToLog && !message.isEmpty())
   {
     statusMessages.append(std::make_pair(QTime::currentTime(), message));
-    while(statusMessages.size() > 20)
+    while(statusMessages.size() > MAX_STATUS_MESSAGES)
       statusMessages.removeFirst();
 
     QStringList msg(tr("Messages:"));
@@ -2904,6 +2906,9 @@ void MainWindow::setDetailLabelText(const QString& text)
 void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
+
+  // Set empty to disable arbitrary messages from map view changes
+  setStatusMessage(QString());
 
   // Enable dock handler
   dockHandler->setHandleDockViews(true);
