@@ -245,7 +245,7 @@
    </widget>
    <widget class="QMenu" name="menuUserdata">
     <property name="title">
-     <string>&amp;Userdata</string>
+     <string>&amp;Userpoints</string>
     </property>
     <addaction name="actionShortcutUserpointSearch"/>
     <addaction name="separator"/>
@@ -2740,7 +2740,7 @@
 &lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="statusTip">
-              <string>Show help for the userdata search tab</string>
+              <string>Show help for the userpoints search tab</string>
              </property>
              <property name="text">
               <string/>
@@ -7077,6 +7077,9 @@ Best track will be selected automatically.</string>
    <property name="statusTip">
     <string>Open the options dialog</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+,</string>
+   </property>
    <property name="menuRole">
     <enum>QAction::PreferencesRole</enum>
    </property>
@@ -10856,13 +10859,13 @@ Best track will be selected automatically.</string>
   </action>
   <action name="actionLogdataConvertUserdata">
    <property name="text">
-    <string>Convert Logbook Entries from &amp;Userdata</string>
+    <string>Convert Logbook Entries from &amp;Userpoints</string>
    </property>
    <property name="toolTip">
-    <string>Convert legacy logbook entries from userdata to the new logbook</string>
+    <string>Convert legacy logbook entries from userpoints to the new logbook</string>
    </property>
    <property name="statusTip">
-    <string>Convert legacy logbook entries from userdata to the new logbook</string>
+    <string>Convert legacy logbook entries from userpoints to the new logbook</string>
    </property>
   </action>
   <action name="actionViewAirspaceSrcSimulator">
