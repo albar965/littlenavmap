@@ -45,6 +45,7 @@
 #include "atools.h"
 #include "sql/sqlexception.h"
 #include "track/trackmanager.h"
+#include "util/version.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -577,7 +578,15 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
     SqlDatabase tempDb(DATABASE_NAME_TEMP);
     openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
+
+    // Delete all tables that are not used in Little Navmap versions > 2.4.5
+    if(atools::util::Version(QApplication::applicationVersion()) > atools::util::Version(2, 4, 5))
+      NavDatabase::runPreparationPost245(tempDb);
+
+    // Executes all statements like create index in the table script and deletes it afterwards
     NavDatabase::runPreparationScript(tempDb);
+
+    tempDb.vacuum();
     tempDb.analyze();
     closeDatabaseFile(&tempDb);
 

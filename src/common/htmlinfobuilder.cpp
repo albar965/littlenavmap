@@ -2485,7 +2485,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     addScenery(rec, html);
 
 #ifdef DEBUG_INFORMATION
-  html.small(QString("Database: waypoint_id = %1").arg(waypoint.getId())).br();
+  html.small(QString("Database: waypoint_id = %1, artificial = %2").arg(waypoint.getId()).arg(waypoint.artificial)).br();
 #endif
 
   if(info)

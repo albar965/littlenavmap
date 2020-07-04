@@ -315,6 +315,11 @@ void ProcedureSearch::updateHeaderLabel()
   ui->labelProcedureSearch->setStatusTip(tooltip);
   treeWidget->setToolTip(tooltip);
   treeWidget->setStatusTip(tooltip);
+
+#ifdef DEBUG_INFORMATION
+  ui->labelProcedureSearch->setText(ui->labelProcedureSearch->text() + (errors ? " ***ERRORS*** " : " ---OK---"));
+
+#endif
 }
 
 QString ProcedureSearch::approachAndTransitionText(const QTreeWidgetItem *item)
@@ -944,9 +949,24 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   QAction *action = menu.exec(menuPos);
   if(action == ui->actionInfoApproachExpandAll)
   {
+#ifdef DEBUG_INFORMATION
+    const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
+    for(int i = 0; i < root->childCount(); ++i)
+    {
+      QTreeWidgetItem *item = root->child(i);
+      item->setExpanded(true);
+      for(int j = 0; j < item->childCount(); ++j)
+        item->child(j)->setExpanded(true);
+    }
+
+    if(errors)
+      updateHeaderLabel();
+
+#else
     const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
     for(int i = 0; i < root->childCount(); ++i)
       root->child(i)->setExpanded(true);
+#endif
   }
   else if(action == ui->actionSearchResetView)
   {
@@ -1337,6 +1357,7 @@ void ProcedureSearch::setItemStyle(QTreeWidgetItem *item, const MapProcedureLeg&
     {
       item->setFont(i, invalidLegFont);
       item->setForeground(i, Qt::red);
+      errors = true;
     }
   }
 }

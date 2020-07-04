@@ -569,6 +569,7 @@ struct MapWaypoint
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
 
   bool hasVictorAirways = false, hasJetAirways = false, hasTracks = false;
+  int artificial = 0;
 };
 
 /* Waypoint or intersection */

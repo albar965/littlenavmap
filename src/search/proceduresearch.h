@@ -220,7 +220,7 @@ private:
 
   FilterIndex filterIndex = FILTER_ALL_PROCEDURES;
   TreeEventFilter *treeEventFilter = nullptr;
-
+  bool errors = false;
 };
 
 #endif // LITTLENAVMAP_PROCTREECONTROLLER_H
