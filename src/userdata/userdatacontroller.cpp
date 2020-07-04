@@ -239,7 +239,6 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
     if(result.hasAirports())
     {
       const map::MapAirport& ap = result.airports.first();
-
       prefill.appendFieldAndValue("ident", ap.ident)
       .appendFieldAndValue("name", ap.name)
       .appendFieldAndValue("type", "Airport")
@@ -249,9 +248,23 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
     else if(result.hasVor())
     {
       const map::MapVor& vor = result.vors.first();
+
+      // Determine default type
+      QString type = "VOR";
+      if(vor.tacan)
+        type = "TACAN";
+      else if(vor.vortac)
+        type = "VORTAC";
+      else if(vor.dmeOnly)
+        type = "DME";
+      else if(vor.hasDme)
+        type = "VORDME";
+      else
+        type = "VOR";
+
       prefill.appendFieldAndValue("ident", vor.ident)
       .appendFieldAndValue("name", map::vorText(vor))
-      .appendFieldAndValue("type", "Waypoint")
+      .appendFieldAndValue("type", type)
       .appendFieldAndValue("region", vor.region);
       pos = vor.position;
     }
@@ -260,7 +273,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapNdb& ndb = result.ndbs.first();
       prefill.appendFieldAndValue("ident", ndb.ident)
       .appendFieldAndValue("name", map::ndbText(ndb))
-      .appendFieldAndValue("type", "Waypoint")
+      .appendFieldAndValue("type", "NDB")
       .appendFieldAndValue("region", ndb.region);
       pos = ndb.position;
     }
