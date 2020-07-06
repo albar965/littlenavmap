@@ -274,6 +274,7 @@ SOURCES += \
   src/main.cpp \
   src/mapgui/aprongeometrycache.cpp \
   src/mapgui/imageexportdialog.cpp \
+  src/mapgui/mapcontextmenu.cpp \
   src/mapgui/mapfunctions.cpp \
   src/mapgui/maplayer.cpp \
   src/mapgui/maplayersettings.cpp \
@@ -430,6 +431,7 @@ HEADERS  += \
   src/logbook/logstatisticsdialog.h \
   src/mapgui/aprongeometrycache.h \
   src/mapgui/imageexportdialog.h \
+  src/mapgui/mapcontextmenu.h \
   src/mapgui/mapfunctions.h \
   src/mapgui/maplayer.h \
   src/mapgui/maplayersettings.h \

@@ -19,12 +19,37 @@
 #define LITTLENAVMAP_MAPSCREENINDEX_H
 
 #include "fs/sc/simconnectdata.h"
+#include "common/mapflags.h"
 
-#include "route/route.h"
+namespace atools {
+namespace geo {
+class Line;
+}
+}
+
+namespace proc {
+struct MapProcedureLeg;
+struct MapProcedureLegs;
+}
 
 namespace map {
 struct MapSearchResult;
-
+struct MapAirport;
+struct MapVor;
+struct MapNdb;
+struct MapWaypoint;
+struct MapIls;
+struct MapUserpointRoute;
+struct MapAirway;
+struct MapParking;
+struct MapHelipad;
+struct MapAirspace;
+struct MapUserpoint;
+struct MapLogbookEntry;
+struct RangeMarker;
+struct DistanceMarker;
+struct Hold;
+struct TrafficPattern;
 }
 
 namespace Marble {
@@ -35,6 +60,8 @@ class MapPaintWidget;
 class AirwayTrackQuery;
 class AirportQuery;
 class MapPaintLayer;
+class MapQuery;
+class CoordinateConverter;
 
 /*
  * Keeps an indes of certain map objects like flight plan lines, airway lines in screen coordinates
@@ -49,6 +76,10 @@ public:
   ~MapScreenIndex();
 
   void copy(const MapScreenIndex& other);
+
+  /* Do not allow copying */
+  MapScreenIndex(MapScreenIndex const&) = delete;
+  MapScreenIndex& operator=(MapScreenIndex const&) = delete;
 
   /*
    * Finds all objects near the screen coordinates with maximal distance of maxDistance to xs/ys.
@@ -105,27 +136,18 @@ public:
   }
 
   /* Get objects that are highlighted because of selected rows in a search result table */
-  void changeSearchHighlights(const map::MapSearchResult& newHighlights)
-  {
-    searchHighlights = newHighlights;
-  }
+  void changeSearchHighlights(const map::MapSearchResult& newHighlights);
 
   const map::MapSearchResult& getSearchHighlights() const
   {
-    return searchHighlights;
+    return *searchHighlights;
   }
 
-  void setApproachLegHighlights(const proc::MapProcedureLeg *leg)
-  {
-    if(leg != nullptr)
-      approachLegHighlights = *leg;
-    else
-      approachLegHighlights = proc::MapProcedureLeg();
-  }
+  void setApproachLegHighlights(const proc::MapProcedureLeg *leg);
 
   const proc::MapProcedureLeg& getApproachLegHighlights() const
   {
-    return approachLegHighlights;
+    return *approachLegHighlights;
   }
 
   /* Get range rings */
@@ -209,12 +231,12 @@ public:
 
   const proc::MapProcedureLegs& getProcedureHighlight() const
   {
-    return approachHighlight;
+    return *approachHighlight;
   }
 
   proc::MapProcedureLegs& getProcedureHighlight()
   {
-    return approachHighlight;
+    return *approachHighlight;
   }
 
   void setProfileHighlight(const atools::geo::Pos& value)
@@ -286,9 +308,9 @@ private:
   MapPaintLayer *paintLayer;
 
   /* All highlights from search windows - also online airspaces */
-  map::MapSearchResult searchHighlights;
-  proc::MapProcedureLeg approachLegHighlights;
-  proc::MapProcedureLegs approachHighlight;
+  map::MapSearchResult *searchHighlights;
+  proc::MapProcedureLeg *approachLegHighlights;
+  proc::MapProcedureLegs *approachHighlight;
 
   /* All airspace highlights from information window */
   QList<map::MapAirspace> airspaceHighlights;

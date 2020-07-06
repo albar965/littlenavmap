@@ -18,7 +18,6 @@
 #include "mapgui/mapscreenindex.h"
 
 #include "navapp.h"
-#include "common/proctypes.h"
 #include "route/routecontroller.h"
 #include "online/onlinedatacontroller.h"
 #include "logbook/logdatacontroller.h"
@@ -26,19 +25,14 @@
 #include "mapgui/mapfunctions.h"
 #include "mapgui/mapwidget.h"
 #include "mappainter/mappaintlayer.h"
-#include "mapgui/maplayer.h"
-#include "common/maptypes.h"
-#include "query/airportquery.h"
 #include "mapgui/mapmarkhandler.h"
 #include "common/maptools.h"
 #include "query/mapquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/airportquery.h"
-#include "common/coordinateconverter.h"
 #include "common/constants.h"
 #include "settings/settings.h"
 #include "airspace/airspacecontroller.h"
-#include "geo/linestring.h"
 
 #include <marble/GeoDataLineString.h>
 
@@ -56,20 +50,26 @@ MapScreenIndex::MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLaye
   mapQuery = NavApp::getMapQuery();
   airwayQuery = NavApp::getAirwayTrackQuery();
   airportQuery = NavApp::getAirportQuerySim();
+
+  searchHighlights = new map::MapSearchResult;
+  approachLegHighlights = new proc::MapProcedureLeg;
+  approachHighlight = new proc::MapProcedureLegs;
 }
 
 MapScreenIndex::~MapScreenIndex()
 {
-
+  delete searchHighlights;
+  delete approachLegHighlights;
+  delete approachHighlight;
 }
 
 void MapScreenIndex::copy(const MapScreenIndex& other)
 {
   simData = other.simData;
   lastSimData = other.lastSimData;
-  searchHighlights = other.searchHighlights;
-  approachLegHighlights = other.approachLegHighlights;
-  approachHighlight = other.approachHighlight;
+  *searchHighlights = *other.searchHighlights;
+  *approachLegHighlights = *other.approachLegHighlights;
+  *approachHighlight = *other.approachHighlight;
   airspaceHighlights = other.airspaceHighlights;
   airwayHighlights = other.airwayHighlights;
   profileHighlight = other.profileHighlight;
@@ -107,7 +107,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
       airspaces.append(&airspace);
 
     // Get highlighted airspaces from online center search ================================
-    for(const map::MapAirspace& airspace : searchHighlights.airspaces)
+    for(const map::MapAirspace& airspace : searchHighlights->airspaces)
       airspaces.append(&airspace);
 
     CoordinateConverter conv(mapPaintWidget->viewport());
@@ -245,7 +245,7 @@ void MapScreenIndex::updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox
     if(types.testFlag(map::LOGBOOK_DIRECT) || types.testFlag(map::LOGBOOK_ROUTE))
     {
       CoordinateConverter conv(mapPaintWidget->viewport());
-      for(map::MapLogbookEntry& entry : searchHighlights.logbookEntries)
+      for(map::MapLogbookEntry& entry : searchHighlights->logbookEntries)
       {
         if(entry.isValid())
         {
@@ -412,6 +412,19 @@ void MapScreenIndex::restoreState()
   rangeMarks = s.valueVar(lnm::MAP_RANGEMARKERS).value<QList<map::RangeMarker> >();
   trafficPatterns = s.valueVar(lnm::MAP_TRAFFICPATTERNS).value<QList<map::TrafficPattern> >();
   holds = s.valueVar(lnm::MAP_HOLDS).value<QList<map::Hold> >();
+}
+
+void MapScreenIndex::changeSearchHighlights(const map::MapSearchResult& newHighlights)
+{
+  *searchHighlights = newHighlights;
+}
+
+void MapScreenIndex::setApproachLegHighlights(const proc::MapProcedureLeg *leg)
+{
+  if(leg != nullptr)
+    *approachLegHighlights = *leg;
+  else
+    *approachLegHighlights = proc::MapProcedureLeg();
 }
 
 void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
@@ -605,18 +618,18 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
 {
   using maptools::insertSorted;
   CoordinateConverter conv(mapPaintWidget->viewport());
-  insertSorted(conv, xs, ys, searchHighlights.airports, result.airports, &result.airportIds, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.vors, result.vors, &result.vorIds, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.ndbs, result.ndbs, &result.ndbIds, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.waypoints, result.waypoints, &result.waypointIds, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.userpoints, result.userpoints, &result.userpointIds, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.airspaces, result.airspaces, nullptr, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.airways, result.airways, nullptr, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.ils, result.ils, nullptr, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.aiAircraft, result.aiAircraft, nullptr, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds,
+  insertSorted(conv, xs, ys, searchHighlights->airports, result.airports, &result.airportIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->vors, result.vors, &result.vorIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->ndbs, result.ndbs, &result.ndbIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->waypoints, result.waypoints, &result.waypointIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->userpoints, result.userpoints, &result.userpointIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->airspaces, result.airspaces, nullptr, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->airways, result.airways, nullptr, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->ils, result.ils, nullptr, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->aiAircraft, result.aiAircraft, nullptr, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds,
                maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights.runwayEnds, result.runwayEnds, nullptr, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
   // Add only if requested and visible on map
   if(types & map::QUERY_HOLDS && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDS)
@@ -637,9 +650,9 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
 
   using maptools::insertSorted;
 
-  for(int i = 0; i < approachHighlight.size(); i++)
+  for(int i = 0; i < approachHighlight->size(); i++)
   {
-    const proc::MapProcedureLeg& leg = approachHighlight.at(i);
+    const proc::MapProcedureLeg& leg = approachHighlight->at(i);
 
     insertSorted(conv, xs, ys, leg.navaids.airports, result.airports, &result.airportIds, maxDistance);
     insertSorted(conv, xs, ys, leg.navaids.vors, result.vors, &result.vorIds, maxDistance);
@@ -779,9 +792,9 @@ void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::
   QSet<int> ids; // Deduplicate
 
   // Look for logbook entry endpoints (departure and destination)
-  for(int i = searchHighlights.logbookEntries.size() - 1; i >= 0; i--)
+  for(int i = searchHighlights->logbookEntries.size() - 1; i >= 0; i--)
   {
-    const map::MapLogbookEntry& l = searchHighlights.logbookEntries.at(i);
+    const map::MapLogbookEntry& l = searchHighlights->logbookEntries.at(i);
     int x, y;
     if(conv.wToS(l.departurePos, x, y) || conv.wToS(l.destinationPos, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
