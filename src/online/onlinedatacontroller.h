@@ -113,8 +113,8 @@ public:
   static void fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
 
   /* Removes the online aircraft from the result which also have a simulator shadow in the result */
-  void filterOnlineShadowAircraft(QList<atools::fs::sc::SimConnectAircraft>& onlineAircraft,
-                                  const QList<atools::fs::sc::SimConnectAircraft>& simAircraft);
+  void filterOnlineShadowAircraft(QList<map::MapOnlineAircraft>& onlineAircraft,
+                                  const QList<map::MapAiAircraft>& simAircraft);
 
   /* Get client record with all field values */
   atools::sql::SqlRecord getClientRecordById(int clientId);

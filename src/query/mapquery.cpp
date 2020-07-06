@@ -425,7 +425,7 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
     atools::fs::sc::SimConnectAircraft aircraft;
     NavApp::getOnlinedataController()->getClientAircraftById(aircraft, id);
     if(aircraft.isValid())
-      result.onlineAircraft.append(aircraft);
+      result.onlineAircraft.append(map::MapOnlineAircraft(aircraft));
   }
   else if(type == map::AIRWAY)
   {

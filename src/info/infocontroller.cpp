@@ -600,7 +600,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   currentSearchResult.userAircraft = result.userAircraft;
   foundUserAircraft = currentSearchResult.userAircraft.getPosition().isValid();
   if(foundUserAircraft)
-    foundUserAircraftShadow = currentSearchResult.userAircraft.isOnlineShadow();
+    foundUserAircraftShadow = currentSearchResult.userAircraft.aircraft.isOnlineShadow();
 
   // Remember the clicked AI for the next update
   if(!result.aiAircraft.isEmpty())
@@ -611,8 +611,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   }
 
   // AI aircraft ================================================================
-  for(const SimConnectAircraft& ac : currentSearchResult.aiAircraft)
-    qDebug() << "Show AI" << ac.getAirplaneRegistration() << "id" << ac.getObjectId();
+  for(const map::MapAiAircraft& ac : currentSearchResult.aiAircraft)
+    qDebug() << "Show AI" << ac.aircraft.getAirplaneRegistration() << "id" << ac.aircraft.getObjectId();
 
   if(foundUserAircraftShadow || !result.onlineAircraft.isEmpty())
   {
@@ -621,7 +621,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     if(foundUserAircraftShadow)
     {
       SimConnectAircraft ac;
-      odc->getShadowAircraft(ac, currentSearchResult.userAircraft);
+      odc->getShadowAircraft(ac, currentSearchResult.userAircraft.aircraft);
       infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
       infoBuilder->aircraftProgressText(ac, html, Route(),
                                         false /* show more/less switch */, false /* true if less info mode */);
@@ -635,12 +635,12 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       currentSearchResult.onlineAircraft.clear();
       currentSearchResult.onlineAircraftIds.clear();
 
-      for(const SimConnectAircraft& ac : result.onlineAircraft)
+      for(const map::MapOnlineAircraft& ac : result.onlineAircraft)
       {
-        infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
-        infoBuilder->aircraftProgressText(ac, html, Route(),
+        infoBuilder->aircraftText(ac.aircraft, html, num++, odc->getNumClients());
+        infoBuilder->aircraftProgressText(ac.aircraft, html, Route(),
                                           false /* show more/less switch */, false /* true if less info mode */);
-        infoBuilder->aircraftOnlineText(ac, odc->getClientRecordById(ac.getId()), html);
+        infoBuilder->aircraftOnlineText(ac.aircraft, odc->getClientRecordById(ac.getId()), html);
 
         currentSearchResult.onlineAircraft.append(ac);
       }
@@ -1157,10 +1157,10 @@ void InfoController::updateAiAircraftText()
         if(!currentSearchResult.aiAircraft.isEmpty())
         {
           int num = 1;
-          for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
+          for(const map::MapAiAircraft& aircraft : currentSearchResult.aiAircraft)
           {
-            infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraftConst().size());
-            infoBuilder->aircraftProgressText(aircraft, html, Route(),
+            infoBuilder->aircraftText(aircraft.aircraft, html, num, lastSimData.getAiAircraftConst().size());
+            infoBuilder->aircraftProgressText(aircraft.aircraft, html, Route(),
                                               false /* show more/less switch */, false /* true if less info mode */);
             num++;
           }
@@ -1246,23 +1246,23 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
   {
     // Ignore weather updates
     const QVector<atools::fs::sc::SimConnectAircraft>& newAiAircraft = data.getAiAircraftConst();
-    QVector<atools::fs::sc::SimConnectAircraft> newAiAircraftShown;
+    QList<map::MapAiAircraft> newAiAircraftShown;
 
     // Find all aircraft currently shown on the page in the newly arrived ai list
-    for(SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
+    for(const map::MapAiAircraft& aircraft : currentSearchResult.aiAircraft)
     {
       QVector<atools::fs::sc::SimConnectAircraft>::const_iterator it =
         std::find_if(newAiAircraft.begin(), newAiAircraft.end(),
                      [ = ](const SimConnectAircraft& ac) -> bool
       {
-        return ac.getObjectId() == aircraft.getObjectId();
+        return ac.getObjectId() == aircraft.aircraft.getObjectId();
       });
       if(it != newAiAircraft.end())
-        newAiAircraftShown.append(*it);
+        newAiAircraftShown.append(map::MapAiAircraft(*it));
     }
 
     // Overwite old list
-    currentSearchResult.aiAircraft = newAiAircraftShown.toList();
+    currentSearchResult.aiAircraft = newAiAircraftShown;
   }
 }
 

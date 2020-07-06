@@ -75,8 +75,8 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
       if(!html.isEmpty())
         html.textBar(TEXT_BAR_LENGTH);
 
-      info.aircraftText(mapSearchResult.userAircraft, html);
-      info.aircraftProgressText(mapSearchResult.userAircraft, html, route,
+      info.aircraftText(mapSearchResult.userAircraft.aircraft, html);
+      info.aircraftProgressText(mapSearchResult.userAircraft.aircraft, html, route,
                                 false /* show more/less switch */, false /* true if less info mode */);
 
       numEntries++;
@@ -86,7 +86,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   // Online Aircraft ===========================================================================
   if(opts.testFlag(optsd::TOOLTIP_AIRCRAFT_AI))
   {
-    for(const SimConnectAircraft& aircraft : mapSearchResult.onlineAircraft)
+    for(const map::MapOnlineAircraft& aircraft : mapSearchResult.onlineAircraft)
     {
       if(checkText(html))
         return html.getHtml();
@@ -94,15 +94,15 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
       if(!html.isEmpty())
         html.textBar(TEXT_BAR_LENGTH);
 
-      info.aircraftText(aircraft, html);
-      info.aircraftProgressText(aircraft, html, Route(),
+      info.aircraftText(aircraft.aircraft, html);
+      info.aircraftProgressText(aircraft.aircraft, html, Route(),
                                 false /* show more/less switch */, false /* true if less info mode */);
 
       numEntries++;
     }
 
     // AI Aircraft ===========================================================================
-    for(const SimConnectAircraft& aircraft : mapSearchResult.aiAircraft)
+    for(const map::MapAiAircraft& aircraft : mapSearchResult.aiAircraft)
     {
       if(checkText(html))
         return html.getHtml();
@@ -110,8 +110,8 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
       if(!html.isEmpty())
         html.textBar(TEXT_BAR_LENGTH);
 
-      info.aircraftText(aircraft, html);
-      info.aircraftProgressText(aircraft, html, Route(),
+      info.aircraftText(aircraft.aircraft, html);
+      info.aircraftProgressText(aircraft.aircraft, html, Route(),
                                 false /* show more/less switch */, false /* true if less info mode */);
 
       numEntries++;

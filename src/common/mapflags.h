@@ -66,7 +66,7 @@ enum MapObjectType
   AIRWAYV = 1 << 11,
   AIRWAYJ = 1 << 12,
   // 13
-  AIRCRAFT = 1 << 14, /* Simulator aircraft */
+  AIRCRAFT = 1 << 14, /* Simulator user aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
   AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track */

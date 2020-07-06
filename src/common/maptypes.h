@@ -114,6 +114,9 @@ struct MapObjectRef
 
 };
 
+QDataStream& operator>>(QDataStream& dataStream, map::MapObjectRef& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::MapObjectRef& obj);
+
 QDebug operator<<(QDebug out, const map::MapObjectRef& ref);
 
 inline uint qHash(const map::MapObjectRef& type)
@@ -198,8 +201,18 @@ bool isSoftSurface(const QString& surface);
  * Object type can be NONE if no polymorphism is needed */
 struct MapBase
 {
-  MapBase(map::MapObjectType type)
+  explicit MapBase(map::MapObjectType type)
     : objType(type)
+  {
+  }
+
+  explicit MapBase(map::MapObjectType type, int idParam)
+    : id(idParam), objType(type)
+  {
+  }
+
+  explicit MapBase(map::MapObjectType type, int idParam, const atools::geo::Pos& positionParam)
+    : id(idParam), position(positionParam), objType(type)
   {
   }
 
@@ -248,6 +261,12 @@ struct MapBase
       return nullptr;
   }
 
+  template<typename TYPE>
+  const TYPE *asType() const
+  {
+    return static_cast<const TYPE *>(this);
+  }
+
   bool operator==(const map::MapBase& other) const
   {
     return id == other.id && objType == other.objType;
@@ -266,6 +285,11 @@ struct MapBase
 
   /* Get type using QFlags wrapper */
   map::MapObjectTypes getType() const
+  {
+    return objType;
+  }
+
+  map::MapObjectType getTypeEnum() const
   {
     return objType;
   }
@@ -608,6 +632,59 @@ struct MapUserpoint
 };
 
 // =====================================================================
+/* User aircraft wrapper */
+struct MapUserAircraft
+  : public MapBase
+{
+  MapUserAircraft() : MapBase(map::AIRCRAFT)
+  {
+  }
+
+  explicit MapUserAircraft(const atools::fs::sc::SimConnectUserAircraft& aircraftParam)
+    : MapBase(map::AIRCRAFT, aircraftParam.getObjectId(), aircraftParam.getPosition()), aircraft(aircraftParam)
+  {
+  }
+
+  void clear()
+  {
+    aircraft = atools::fs::sc::SimConnectUserAircraft();
+  }
+
+  atools::fs::sc::SimConnectUserAircraft aircraft;
+};
+
+/* AI aircraft wrapper */
+struct MapAiAircraft
+  : public MapBase
+{
+  MapAiAircraft() : MapBase(map::AIRCRAFT_AI)
+  {
+  }
+
+  explicit MapAiAircraft(const atools::fs::sc::SimConnectAircraft& aircraftParam)
+    : MapBase(map::AIRCRAFT_AI, aircraftParam.getObjectId(), aircraftParam.getPosition()), aircraft(aircraftParam)
+  {
+  }
+
+  atools::fs::sc::SimConnectAircraft aircraft;
+};
+/* Online aircraft wrapper */
+struct MapOnlineAircraft
+  : public MapBase
+{
+  MapOnlineAircraft() : MapBase(map::AIRCRAFT_ONLINE)
+  {
+  }
+
+  explicit MapOnlineAircraft(const atools::fs::sc::SimConnectAircraft& aircraftParam)
+    : MapBase(map::AIRCRAFT_ONLINE, aircraftParam.getObjectId(), aircraftParam.getPosition()), aircraft(aircraftParam)
+  {
+  }
+
+  atools::fs::sc::SimConnectAircraft aircraft;
+};
+
+// =====================================================================
 /* Logbook entry */
 struct MapLogbookEntry
   : public MapBase
@@ -938,10 +1015,10 @@ struct MapSearchResult
   /* Logbook entries */
   QList<MapLogbookEntry> logbookEntries;
 
-  QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
-  atools::fs::sc::SimConnectUserAircraft userAircraft;
+  map::MapUserAircraft userAircraft;
 
-  QList<atools::fs::sc::SimConnectAircraft> onlineAircraft;
+  QList<map::MapAiAircraft> aiAircraft;
+  QList<map::MapOnlineAircraft> onlineAircraft;
   QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
 
   atools::geo::Pos windPos;
@@ -1030,8 +1107,8 @@ struct MapSearchResult
   bool hasOnlineAirspaces() const;
   void clearNavdataAirspaces();
   void clearOnlineAirspaces();
-  MapAirspace *firstSimNavUserAirspace();
-  MapAirspace *firstOnlineAirspace();
+  const MapAirspace* firstSimNavUserAirspace() const;
+  const MapAirspace* firstOnlineAirspace() const;
   int numSimNavUserAirspaces() const;
   int numOnlineAirspaces() const;
 
@@ -1190,8 +1267,11 @@ const QString& airspaceTypeToString(map::MapAirspaceTypes type);
 const QString& airspaceFlagToString(map::MapAirspaceFlags type);
 QString mapObjectTypeToString(MapObjectTypes type); /* For debugging purposes. */
 const QString& airspaceRemark(map::MapAirspaceTypes type);
+
 int airspaceDrawingOrder(map::MapAirspaceTypes type);
 QString airspaceSourceText(map::MapAirspaceSources src);
+QString airspaceName(const map::MapAirspace& airspace);
+QString airspaceText(const map::MapAirspace& airspace);
 
 map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
 const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);
@@ -1235,8 +1315,7 @@ void updateUnits();
 
 } // namespace types
 
-Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);
-
+/* Type info */
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunwayEnd, Q_MOVABLE_TYPE);
@@ -1258,12 +1337,19 @@ Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
 
+/* Type info and serializable objects */
+Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(map::MapObjectRef);
+
 Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::RangeMarker);
+
 Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::DistanceMarker);
+
 Q_DECLARE_TYPEINFO(map::TrafficPattern, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::TrafficPattern);
+
 Q_DECLARE_TYPEINFO(map::Hold, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::Hold);
 

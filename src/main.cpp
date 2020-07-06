@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<RouteExportFormatMap>();
 
   qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
+  qRegisterMetaTypeStreamOperators<map::MapObjectRef>();
 
   // Tasks that have to be done before creating the application object and logging system =================
   QStringList messages;

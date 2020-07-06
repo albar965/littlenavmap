@@ -254,7 +254,7 @@ void OnlineClientSearch::getSelectedMapObjects(map::MapSearchResult& result) con
 
         atools::fs::sc::SimConnectAircraft ac;
         NavApp::getOnlinedataController()->fillAircraftFromClient(ac, rec);
-        result.onlineAircraft.append(ac);
+        result.onlineAircraft.append(map::MapOnlineAircraft(ac));
       }
     }
   }

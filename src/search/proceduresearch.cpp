@@ -1121,10 +1121,9 @@ QVector<QAction *> ProcedureSearch::buildRunwaySubmenu(QMenu& menu, const ProcDa
   QMenu *sub = nullptr;
   if(submenu)
   {
-    sub = new QMenu(ui->actionInfoApproachAttach->text(), mainWindow);
+    sub = menu.addMenu(ui->actionInfoApproachAttach->text());
     sub->setIcon(ui->actionInfoApproachAttach->icon());
     sub->setStatusTip(ui->actionInfoApproachAttach->statusTip());
-    menu.addMenu(sub);
   }
 
   int index = 1;

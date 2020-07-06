@@ -2527,7 +2527,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   else
   {
     // Do not capitalize online network center names
-    QString name = airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name);
+    QString name = map::airspaceName(airspace);
     if(!info)
       name = atools::elideTextShort(name, 40);
 

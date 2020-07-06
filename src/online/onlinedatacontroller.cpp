@@ -594,24 +594,24 @@ void OnlinedataController::fillAircraftFromClient(atools::fs::sc::SimConnectAirc
 }
 
 /* Removes the online aircraft from the result which also have a simulator shadow in the result */
-void OnlinedataController::filterOnlineShadowAircraft(QList<SimConnectAircraft>& onlineAircraft,
-                                                      const QList<SimConnectAircraft>& simAircraft)
+void OnlinedataController::filterOnlineShadowAircraft(QList<map::MapOnlineAircraft>& onlineAircraft,
+                                                      const QList<map::MapAiAircraft>& simAircraft)
 {
   // Collect simulator shadow aircraft
   QHash<QString, Pos> registrations;
-  for(const SimConnectAircraft& ac : simAircraft)
+  for(const map::MapAiAircraft& ac : simAircraft)
   {
-    if(ac.isOnlineShadow() && !ac.getAirplaneRegistration().isEmpty() &&
-       simulatorAiRegistrations.contains(ac.getAirplaneRegistration()))
-      registrations.insert(ac.getAirplaneRegistration(), ac.getPosition());
+    if(ac.aircraft.isOnlineShadow() && !ac.aircraft.getAirplaneRegistration().isEmpty() &&
+       simulatorAiRegistrations.contains(ac.aircraft.getAirplaneRegistration()))
+      registrations.insert(ac.aircraft.getAirplaneRegistration(), ac.getPosition());
   }
 
   // Remove the shadow aircraft from the online list
-  QList<SimConnectAircraft>::iterator it = std::remove_if(onlineAircraft.begin(), onlineAircraft.end(), [registrations](
-                                                            const SimConnectAircraft& aircraft) -> bool
+  auto it = std::remove_if(onlineAircraft.begin(), onlineAircraft.end(), [registrations](
+                             const map::MapOnlineAircraft& aircraft) -> bool
   {
-    return registrations.contains(aircraft.getAirplaneRegistration()) &&
-    aircraft.getPosition().distanceMeterTo(registrations.value(aircraft.getAirplaneRegistration())) <=
+    return registrations.contains(aircraft.aircraft.getAirplaneRegistration()) &&
+    aircraft.getPosition().distanceMeterTo(registrations.value(aircraft.aircraft.getAirplaneRegistration())) <=
     MIN_DISTANCE_DUPLICATE_M;
   });
 

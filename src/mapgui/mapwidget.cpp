@@ -278,7 +278,7 @@ void MapWidget::handleInfoClick(QPoint point)
   optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
 
   if(!opts.testFlag(optsd::CLICK_AIRCRAFT_USER))
-    mapSearchResultInfoClick.userAircraft = atools::fs::sc::SimConnectUserAircraft();
+    mapSearchResultInfoClick.userAircraft.clear();
 
   if(!opts.testFlag(optsd::CLICK_AIRCRAFT_AI))
   {

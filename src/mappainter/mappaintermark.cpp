@@ -174,7 +174,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   for(const MapUserpoint& user : highlightResultsSearch.userpoints)
     positions.append(user.position);
 
-  for(const atools::fs::sc::SimConnectAircraft& aircraft: highlightResultsSearch.onlineAircraft)
+  for(const map::MapOnlineAircraft& aircraft: highlightResultsSearch.onlineAircraft)
     positions.append(aircraft.getPosition());
 
   // Draw boundary for selected online network airspaces =====================================================

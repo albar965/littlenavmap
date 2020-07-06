@@ -488,7 +488,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   map::MapObjectDisplayTypes shownDisplay = paintLayer->getShownMapObjectDisplayTypes();
 
   // Check for user aircraft
-  result.userAircraft = atools::fs::sc::SimConnectUserAircraft();
+  result.userAircraft.clear();
   if(shown & map::AIRCRAFT && NavApp::isConnectedAndAircraft())
   {
     const atools::fs::sc::SimConnectUserAircraft& user = simData.getUserAircraftConst();
@@ -496,7 +496,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
     if(conv.wToS(user.getPosition(), x, y))
     {
       if(atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
-        result.userAircraft = user;
+        result.userAircraft = map::MapUserAircraft(user);
     }
   }
 
@@ -515,7 +515,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
         {
           if(conv.wToS(obj.getPosition(), x, y))
             if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-              insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
+              insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, map::MapAiAircraft(obj));
         }
       }
     }
@@ -537,9 +537,10 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
               // Add online network shadow aircraft from simulator to online list
               atools::fs::sc::SimConnectAircraft shadow;
               if(NavApp::getOnlinedataController()->getShadowAircraft(shadow, obj))
-                insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, shadow);
+                insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys,
+                                       map::MapOnlineAircraft(shadow));
 
-              insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
+              insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, map::MapAiAircraft(obj));
             }
           }
         }
@@ -553,7 +554,8 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
       {
         if(conv.wToS(obj.getPosition(), x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-            insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, obj);
+            insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys,
+                                   map::MapOnlineAircraft(obj));
       }
     }
   }
