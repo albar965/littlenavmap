@@ -44,10 +44,13 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
     return atools::fs::FsPaths::FSX_SE;
   else if(contains(atools::fs::FsPaths::FSX) && value(atools::fs::FsPaths::FSX).hasDatabase)
     return atools::fs::FsPaths::FSX;
-  else if(contains(atools::fs::FsPaths::XPLANE11) && value(atools::fs::FsPaths::XPLANE11).hasDatabase)
-    return atools::fs::FsPaths::XPLANE11;
+
+  // else if(contains(atools::fs::FsPaths::XPLANE11) && value(atools::fs::FsPaths::XPLANE11).hasDatabase)
+  // If all fails use X-Plane as default
+  return atools::fs::FsPaths::XPLANE11;
 
 #else
+  // macOS and Linux - only X-Plane
   return atools::fs::FsPaths::XPLANE11;
 
 #endif
@@ -68,10 +71,13 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled()
     return atools::fs::FsPaths::FSX_SE;
   else if(contains(atools::fs::FsPaths::FSX) && value(atools::fs::FsPaths::FSX).isInstalled)
     return atools::fs::FsPaths::FSX;
-  else if(contains(atools::fs::FsPaths::XPLANE11) && value(atools::fs::FsPaths::XPLANE11).isInstalled)
-    return atools::fs::FsPaths::XPLANE11;
+
+  // else if(contains(atools::fs::FsPaths::XPLANE11) && value(atools::fs::FsPaths::XPLANE11).isInstalled)
+  // If all fails use X-Plane as default
+  return atools::fs::FsPaths::XPLANE11;
 
 #else
+  // macOS and Linux - only X-Plane
   return atools::fs::FsPaths::XPLANE11;
 
 #endif
