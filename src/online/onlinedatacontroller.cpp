@@ -273,7 +273,9 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
                                 manager->getLastUpdateTimeFromWhazzup()))
     {
       // Get all callsigns and positions from online list to allow deduplication
+      clientCallsignAndPosMap.clear();
       manager->getClientCallsignAndPosMap(clientCallsignAndPosMap);
+      qDebug() << Q_FUNC_INFO << clientCallsignAndPosMap.size();
 
       QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
       if(!whazzupVoiceUrlFromStatus.isEmpty() &&
@@ -375,7 +377,7 @@ void OnlinedataController::stopAllProcesses()
   downloadTimer.stop();
   currentState = NONE;
   simulatorAiRegistrations.clear();
-  clientCallsignAndPosMap.clear();
+  // clientCallsignAndPosMap.clear(); // Do not clear these until the download is finished
 }
 
 void OnlinedataController::showMessageDialog()
@@ -556,7 +558,7 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
   return &aircraftCache.list;
 }
 
-bool OnlinedataController::getShadowAircraft(atools::fs::sc::SimConnectAircraft& aircraft,
+bool OnlinedataController::getShadowAircraft(atools::fs::sc::SimConnectAircraft& onlineClient,
                                              const atools::fs::sc::SimConnectAircraft& simAircraft)
 {
   if(isShadowAircraft(simAircraft))
@@ -565,7 +567,10 @@ bool OnlinedataController::getShadowAircraft(atools::fs::sc::SimConnectAircraft&
 
     if(!clients.isEmpty())
     {
-      fillAircraftFromClient(aircraft, clients.first());
+      fillAircraftFromClient(onlineClient, clients.first());
+
+      // Update to real simulator position including altitude for shadows
+      onlineClient.getPosition() = simAircraft.getPosition();
       return true;
     }
     else
@@ -577,7 +582,6 @@ bool OnlinedataController::getShadowAircraft(atools::fs::sc::SimConnectAircraft&
 bool OnlinedataController::isShadowAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft)
 {
   const atools::geo::Pos pos = clientCallsignAndPosMap.value(simAircraft.getAirplaneRegistration());
-
   return simAircraft.isOnlineShadow() ||
          (pos.isValid() && pos.distanceMeterTo(simAircraft.getPosition()) < MIN_DISTANCE_DUPLICATE_M);
 }
@@ -593,7 +597,6 @@ void OnlinedataController::fillAircraftFromClient(atools::fs::sc::SimConnectAirc
   OnlinedataManager::fillFromClient(ac, record);
 }
 
-/* Removes the online aircraft from the result which also have a simulator shadow in the result */
 void OnlinedataController::filterOnlineShadowAircraft(QList<map::MapOnlineAircraft>& onlineAircraft,
                                                       const QList<map::MapAiAircraft>& simAircraft)
 {
@@ -601,17 +604,17 @@ void OnlinedataController::filterOnlineShadowAircraft(QList<map::MapOnlineAircra
   QHash<QString, Pos> registrations;
   for(const map::MapAiAircraft& ac : simAircraft)
   {
-    if(ac.aircraft.isOnlineShadow() && !ac.aircraft.getAirplaneRegistration().isEmpty() &&
-       simulatorAiRegistrations.contains(ac.aircraft.getAirplaneRegistration()))
-      registrations.insert(ac.aircraft.getAirplaneRegistration(), ac.getPosition());
+    if(ac.getAircraft().isOnlineShadow() && !ac.getAircraft().getAirplaneRegistration().isEmpty() &&
+       simulatorAiRegistrations.contains(ac.getAircraft().getAirplaneRegistration()))
+      registrations.insert(ac.getAircraft().getAirplaneRegistration(), ac.getPosition());
   }
 
-  // Remove the shadow aircraft from the online list
+  // Remove the shadowed aircraft from the online list which have a copy in simulator
   auto it = std::remove_if(onlineAircraft.begin(), onlineAircraft.end(), [registrations](
                              const map::MapOnlineAircraft& aircraft) -> bool
   {
-    return registrations.contains(aircraft.aircraft.getAirplaneRegistration()) &&
-    aircraft.getPosition().distanceMeterTo(registrations.value(aircraft.aircraft.getAirplaneRegistration())) <=
+    return registrations.contains(aircraft.getAircraft().getAirplaneRegistration()) &&
+    aircraft.getPosition().distanceMeterTo(registrations.value(aircraft.getAircraft().getAirplaneRegistration())) <=
     MIN_DISTANCE_DUPLICATE_M;
   });
 
