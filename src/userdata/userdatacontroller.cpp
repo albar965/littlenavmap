@@ -229,7 +229,7 @@ QStringList UserdataController::getAllTypes() const
 void UserdataController::addUserpointFromMap(const map::MapSearchResult& result, atools::geo::Pos pos)
 {
   qDebug() << Q_FUNC_INFO;
-  if(result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
+  if(result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT))
     // No prefill start empty dialog of with last added data
     addUserpoint(-1, pos);
   else
@@ -285,6 +285,18 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       .appendFieldAndValue("type", "Waypoint")
       .appendFieldAndValue("region", wp.region);
       pos = wp.position;
+    }
+    else if(result.hasUserpoints())
+    {
+      const map::MapUserpoint& up = result.userpoints.first();
+      prefill.appendFieldAndValue("ident", up.ident)
+      .appendFieldAndValue("name", up.name)
+      .appendFieldAndValue("type", up.type)
+      .appendFieldAndValue("region", up.region)
+      // .appendFieldAndValue("description", up.description)
+      // .appendFieldAndValue("tags", up.tags)
+      ;
+      pos = up.position;
     }
     else
       prefill.appendFieldAndValue("type", UserdataDialog::DEFAULT_TYPE);
