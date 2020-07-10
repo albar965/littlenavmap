@@ -1384,7 +1384,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     {
       map::MapSearchResult result;
       result.airports.append(airport);
-      emit showInformation(result, map::AIRPORT);
+      emit showInformation(result);
     }
     else if(action == ui->actionSearchShowOnMapAirport)
     {

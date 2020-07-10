@@ -149,7 +149,7 @@ signals:
   void selectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
 
   /* Show information in context menu selected */
-  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
+  void showInformation(map::MapSearchResult result);
 
   /* Show approaches in context menu selected */
   void showProcedures(const map::MapAirport& airport);

@@ -56,6 +56,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
 {
   optsd::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << mapSearchResult;
+#endif
+
   HtmlBuilder html(false);
   HtmlInfoBuilder info(mainWindow, false);
   int numEntries = 0;
@@ -75,17 +79,17 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
       if(!html.isEmpty())
         html.textBar(TEXT_BAR_LENGTH);
 
-      info.aircraftText(mapSearchResult.userAircraft.aircraft, html);
-      info.aircraftProgressText(mapSearchResult.userAircraft.aircraft, html, route,
+      info.aircraftText(mapSearchResult.userAircraft.getAircraft(), html);
+      info.aircraftProgressText(mapSearchResult.userAircraft.getAircraft(), html, route,
                                 false /* show more/less switch */, false /* true if less info mode */);
 
       numEntries++;
     }
   }
 
-  // Online Aircraft ===========================================================================
   if(opts.testFlag(optsd::TOOLTIP_AIRCRAFT_AI))
   {
+    // Online Aircraft ===========================================================================
     for(const map::MapOnlineAircraft& aircraft : mapSearchResult.onlineAircraft)
     {
       if(checkText(html))
@@ -94,8 +98,8 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
       if(!html.isEmpty())
         html.textBar(TEXT_BAR_LENGTH);
 
-      info.aircraftText(aircraft.aircraft, html);
-      info.aircraftProgressText(aircraft.aircraft, html, Route(),
+      info.aircraftText(aircraft.getAircraft(), html);
+      info.aircraftProgressText(aircraft.getAircraft(), html, Route(),
                                 false /* show more/less switch */, false /* true if less info mode */);
 
       numEntries++;
@@ -110,8 +114,8 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
       if(!html.isEmpty())
         html.textBar(TEXT_BAR_LENGTH);
 
-      info.aircraftText(aircraft.aircraft, html);
-      info.aircraftProgressText(aircraft.aircraft, html, Route(),
+      info.aircraftText(aircraft.getAircraft(), html);
+      info.aircraftProgressText(aircraft.getAircraft(), html, Route(),
                                 false /* show more/less switch */, false /* true if less info mode */);
 
       numEntries++;

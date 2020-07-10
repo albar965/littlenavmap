@@ -364,7 +364,6 @@ private:
   QString filepathTextShow(const QString& filepath, const QString& prefix = QString()) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;
 
-  QString airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const;
   void airportRow(const map::MapAirport& ap, atools::util::HtmlBuilder& html) const;
 
   void addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,

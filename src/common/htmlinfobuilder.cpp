@@ -606,7 +606,7 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
         break;
 
       // Airport ======================================
-      const map::MapAirport *ap = base->asType<map::MapAirport>(map::AIRPORT);
+      const map::MapAirport *ap = base->asPtr<map::MapAirport>(map::AIRPORT);
       if(ap != nullptr)
       {
         // Convert navdatabase airport to simulator
@@ -618,24 +618,24 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
                                    QString(), &simAp, simAp.magvar, frequencyCol, airportCol);
       }
 
-      const map::MapVor *vor = base->asType<map::MapVor>(map::VOR);
+      const map::MapVor *vor = base->asPtr<map::MapVor>(map::VOR);
       if(vor != nullptr)
         nearestMapObjectsTextRow(airport, html, map::vorType(*vor), vor->ident, vor->name,
                                  locale.toString(vor->frequency / 1000., 'f',
                                                  2), vor, vor->magvar, frequencyCol, airportCol);
 
-      const map::MapNdb *ndb = base->asType<map::MapNdb>(map::NDB);
+      const map::MapNdb *ndb = base->asPtr<map::MapNdb>(map::NDB);
       if(ndb != nullptr)
         nearestMapObjectsTextRow(airport, html, tr("NDB"), ndb->ident, ndb->name,
                                  locale.toString(ndb->frequency / 100., 'f',
                                                  1), ndb, ndb->magvar, frequencyCol, airportCol);
 
-      const map::MapWaypoint *waypoint = base->asType<map::MapWaypoint>(map::WAYPOINT);
+      const map::MapWaypoint *waypoint = base->asPtr<map::MapWaypoint>(map::WAYPOINT);
       if(waypoint != nullptr)
         nearestMapObjectsTextRow(airport, html, tr("Waypoint"), waypoint->ident, QString(),
                                  QString(), waypoint, waypoint->magvar, frequencyCol, airportCol);
 
-      const map::MapIls *ils = base->asType<map::MapIls>(map::ILS);
+      const map::MapIls *ils = base->asPtr<map::MapIls>(map::ILS);
       if(ils != nullptr)
         nearestMapObjectsTextRow(airport, html, map::ilsType(*ils), ils->ident, ils->name,
                                  QString::number(ils->frequency / 1000., 'f',
@@ -2965,53 +2965,33 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
   aircraftTitle(aircraft, html, false /* show more/less switch */, false /* true if less info mode */);
 
+
   QString aircraftText;
+  QString typeText;
+  QString type = map::aircraftTypeString(aircraft);
+  if(aircraft.isUser() && aircraft.isOnlineShadow())
+    typeText = tr("User %1 / Online Client").arg(type);
+  else if(aircraft.isUser())
+    typeText = tr("User %1").arg(type);
+  else if(aircraft.isOnlineShadow())
+    typeText = tr("AI / Multiplayer %1 / Online Client").arg(type);
+  else if(aircraft.isOnline())
+    typeText = tr("Online Client");
+  else
+    typeText = tr("AI / Multiplayer %1").arg(type);
+
   if(aircraft.isUser())
   {
-    aircraftText = tr("User Aircraft");
+    aircraftText = typeText;
     if(info && !(NavApp::getShownMapFeatures() & map::AIRCRAFT))
       html.p(tr("User aircraft is not shown on map."), ahtml::BOLD);
   }
   else
   {
-    QString type(tr(" Unknown"));
-    switch(aircraft.getCategory())
-    {
-      case atools::fs::sc::BOAT:
-        type = tr(" Ship");
-        break;
-      case atools::fs::sc::CARRIER:
-        type = tr(" Carrier");
-        break;
-      case atools::fs::sc::FRIGATE:
-        type = tr(" Frigate");
-        break;
-      case atools::fs::sc::AIRPLANE:
-        type = tr(" Aircraft");
-        break;
-      case atools::fs::sc::HELICOPTER:
-        type = tr(" Helicopter");
-        break;
-      case atools::fs::sc::UNKNOWN:
-        type.clear();
-        break;
-      case atools::fs::sc::GROUNDVEHICLE:
-      case atools::fs::sc::CONTROLTOWER:
-      case atools::fs::sc::SIMPLEOBJECT:
-      case atools::fs::sc::VIEWER:
-        break;
-    }
-
-    QString typeText;
-    if(aircraft.isOnline())
-      typeText = tr("Online Client");
-    else
-      typeText = tr("AI / Multiplayer");
-
     if(num != -1 && total != -1)
-      aircraftText = tr("%1%2 - %3 of %4 Vehicles").arg(typeText).arg(type).arg(num).arg(total);
+      aircraftText = tr("%1 - %2 of %3").arg(typeText).arg(num).arg(total);
     else
-      aircraftText = tr("%1%2").arg(typeText).arg(type);
+      aircraftText = typeText;
 
     if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
       html.p(tr("No %2 shown on map.").arg(typeText), ahtml::BOLD);
@@ -3037,9 +3017,9 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   if(!aircraft.getAirplaneRegistration().isEmpty())
     html.row2(tr("Registration:"), aircraft.getAirplaneRegistration());
 
-  QString type = airplaneType(aircraft);
-  if(!type.isEmpty())
-    html.row2(tr("Model:"), type);
+  QString model = map::aircraftType(aircraft);
+  if(!model.isEmpty())
+    html.row2(tr("Model:"), model);
 
   if(aircraft.isAnyBoat())
   {
@@ -3923,14 +3903,19 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         " fuelToTodGal " + QString::number(fuelTime.fuelGalToTod, 'f', 2)) : QString())
       );
 
-    html.pre().textBr("TimeToDestValid " + QString::number(fuelTime.isTimeToDestValid()));
+    html.pre();
+    html.textBr("TimeToDestValid " + QString::number(fuelTime.isTimeToDestValid()));
     html.textBr("TimeToTodValid " + QString::number(fuelTime.isTimeToTodValid()));
     html.textBr("TimeToNextValid " + QString::number(fuelTime.isTimeToNextValid()));
     html.textBr("FuelToDestValid " + QString::number(fuelTime.isFuelToDestValid()));
     html.textBr("FuelToTodValid " + QString::number(fuelTime.isFuelToTodValid()));
     html.textBr("FuelToNextValid " + QString::number(fuelTime.isFuelToNextValid()));
-    html.textBr("estimatedFuel " + QString::number(fuelTime.estimatedFuel));
-    html.textBr("estimatedTime " + QString::number(fuelTime.estimatedTime)).preEnd();
+    html.textBr("EstimatedFuel " + QString::number(fuelTime.estimatedFuel));
+    html.textBr("EstimatedTime " + QString::number(fuelTime.estimatedTime));
+    html.textBr("OnlineShadow " + QString::number(aircraft.isOnlineShadow()));
+    html.textBr("Online " + QString::number(aircraft.isOnline()));
+    html.textBr("User " + QString::number(aircraft.isUser()));
+    html.preEnd();
   }
 #endif
 }
@@ -3969,8 +3954,14 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   });
   html.tr();
   html.td();
-  if(aircraft.isUser())
+  if(aircraft.isUser() && aircraft.isOnlineShadow())
+    html.img(icon, tr("User Vehicle / Online Client (%1)").arg(NavApp::getOnlineNetworkTranslated()),
+             QString(), symbolSizeVehicle);
+  else if(aircraft.isUser())
     html.img(icon, tr("User Vehicle"), QString(), symbolSizeVehicle);
+  else if(aircraft.isOnlineShadow())
+    html.img(icon, tr("AI / Multiplayer / Online Client (%1)").arg(NavApp::getOnlineNetworkTranslated()),
+             QString(), symbolSizeVehicle);
   else if(aircraft.isOnline())
     html.img(icon, tr("Online Client (%1)").arg(NavApp::getOnlineNetworkTranslated()), QString(), symbolSizeVehicle);
   else
@@ -3978,7 +3969,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   html.nbsp().nbsp();
 
   QString title(aircraft.getAirplaneRegistration());
-  QString title2 = airplaneType(aircraft);
+  QString title2 = map::aircraftType(aircraft);
   QString title3 = aircraft.isOnline() ? NavApp::getOnlineNetworkTranslated() : QString();
 
   if(!aircraft.getAirplaneModel().isEmpty())
@@ -4032,15 +4023,6 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
 
   html.trEnd();
   html.tableEnd();
-}
-
-QString HtmlInfoBuilder::airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const
-{
-  if(!aircraft.getAirplaneType().isEmpty())
-    return aircraft.getAirplaneType();
-  else
-    // Convert model ICAO code to a name
-    return atools::fs::util::aircraftTypeForCode(aircraft.getAirplaneModel());
 }
 
 void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool ils) const

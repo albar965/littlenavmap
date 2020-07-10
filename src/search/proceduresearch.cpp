@@ -1020,7 +1020,7 @@ void ProcedureSearch::showInformationSelected()
     map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(currentAirportNav);
     map::MapSearchResult result;
     result.airports.append(airportSim);
-    emit showInformation(result, map::AIRPORT);
+    emit showInformation(result);
   }
 }
 

@@ -225,7 +225,7 @@ signals:
   void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
 
   /* Show information about objects from single click or context menu */
-  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
+  void showInformation(map::MapSearchResult result);
 
   /* Add user point and pass result to it so it can prefill the dialog */
   void addUserpointFromMap(map::MapSearchResult result, const atools::geo::Pos& pos);
@@ -300,6 +300,7 @@ private:
   void addMeasurement(const atools::geo::Pos& pos, const map::MapSearchResult& result);
   void addMeasurement(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
                       const map::MapNdb *ndb, const map::MapWaypoint *waypoint);
+  void showResultInSearch(const map::MapBase* base);
 
   /* Timer for takeoff and landing recognition fired */
   void takeoffLandingTimeout();

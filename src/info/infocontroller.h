@@ -19,7 +19,7 @@
 #define LITTLENAVMAP_INFOCONTROLLER_H
 
 #include "fs/sc/simconnectdata.h"
-#include "common/maptypes.h"
+#include "common/mapresult.h"
 #include "common/tabindexes.h"
 
 #include <QObject>
@@ -57,7 +57,7 @@ public:
   /* Populates all tabs in the information dock with the given results. Only one airport is shown
    * but multiple navaids can be shown in the tab.
    *  Raises all related windows and tabs and scrolls to top. */
-  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType);
+  void showInformation(map::MapSearchResult result);
 
   /* Update the currently shown airport information if weather data or connection status has changed.
    * Does not raise windows and does not scroll to top. */
@@ -126,7 +126,7 @@ private:
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
-  void showInformationInternal(map::MapSearchResult result, map::MapObjectTypes preferredType,
+  void showInformationInternal(map::MapSearchResult result,
                                bool showWindows, bool scrollToTop, bool forceUpdate);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateUserAircraftText();

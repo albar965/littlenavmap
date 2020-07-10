@@ -99,7 +99,7 @@ signals:
   void routeInsertProcedure(const proc::MapProcedureLegs& legs, const QString& sidStarRunway);
 
   /* Show information info window on navaid on double click */
-  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
+  void showInformation(map::MapSearchResult result);
 
   /* Show a map object in the search panel (context menu) */
   void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
