@@ -19,10 +19,9 @@
 
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
+#include "common/mapresult.h"
 #include "common/maptools.h"
-#include "query/querytypes.h"
 #include "mapgui/maplayer.h"
-#include "navapp.h"
 #include "settings/settings.h"
 #include "sql/sqlutil.h"
 

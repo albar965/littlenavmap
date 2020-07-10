@@ -19,9 +19,8 @@
 
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
-#include "common/maptools.h"
 #include "common/proctypes.h"
-#include "query/airportquery.h"
+#include "mapgui/maplayer.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
 

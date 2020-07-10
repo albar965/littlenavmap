@@ -177,6 +177,7 @@ public:
   /* true if flight plan is not empty and airport is departure or destination */
   bool isAirportDeparture(const QString& ident) const;
   bool isAirportDestination(const QString& ident) const;
+  bool isAirportAlternate(const QString& ident) const;
 
   /* Get active leg or null if this is none */
   const RouteLeg *getActiveLeg() const;

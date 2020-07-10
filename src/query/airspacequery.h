@@ -19,7 +19,6 @@
 #define LITTLENAVMAP_AIRSPACEQUERY_H
 
 #include "query/querytypes.h"
-#include "common/maptypes.h"
 
 #include <QCache>
 

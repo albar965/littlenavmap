@@ -1729,6 +1729,11 @@ bool Route::isAirportDestination(const QString& ident) const
          getDestinationAirportLeg().getAirport().ident == ident;
 }
 
+bool Route::isAirportAlternate(const QString& ident) const
+{
+  return !isEmpty() && getAlternateIdents().contains(ident);
+}
+
 int Route::getStartIndexAfterProcedure() const
 {
   if(hasAnySidProcedure())

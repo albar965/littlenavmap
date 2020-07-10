@@ -18,10 +18,7 @@
 #ifndef LITTLENAVMAP_PROCTYPES_H
 #define LITTLENAVMAP_PROCTYPES_H
 
-#include "common/maptypes.h"
-#include "geo/pos.h"
-#include "geo/line.h"
-#include "geo/linestring.h"
+#include "common/mapresult.h"
 
 #include <QColor>
 #include <QRegularExpression>

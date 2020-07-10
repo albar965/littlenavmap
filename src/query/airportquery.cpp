@@ -19,16 +19,12 @@
 
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
-#include "common/maptools.h"
 #include "query/querytypes.h"
 #include "common/proctypes.h"
 #include "fs/common/binarygeometry.h"
-#include "sql/sqlquery.h"
-#include "sql/sqlrecord.h"
 #include "sql/sqldatabase.h"
 #include "common/maptools.h"
 #include "settings/settings.h"
-#include "fs/common/xpgeometry.h"
 #include "navapp.h"
 #include "sql/sqlutil.h"
 
@@ -634,13 +630,13 @@ map::MapSearchResultIndex *AirportQuery::nearestAirportsProcInternal(const map::
     });
 
     result = new map::MapSearchResultIndex;
-    result->addFromResult(res);
+    result->add(res);
 
     // Remove all that are too far away
-    result->removeByDistance(airport.position, distanceNm);
+    result->remove(airport.position, distanceNm);
 
     // Sort the rest by distance
-    result->sortByDistance(airport.position, true /*sortNearToFar*/);
+    result->sort(airport.position, true /*sortNearToFar*/);
 
     nearestAirportCache.insert(key, result);
   }

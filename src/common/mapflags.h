@@ -76,7 +76,7 @@ enum MapObjectType
   INVALID = 1 << 21, /* Flight plan waypoint not found in database */
   MISSED_APPROACH = 1 << 22, /* Only procedure type that can be hidden */
   PROCEDURE = 1 << 23, /* General procedure leg */
-  AIRSPACE = 1 << 24, /* General airspace boundary */
+  AIRSPACE = 1 << 24, /* General airspace boundary, online or offline */
   HELIPAD = 1 << 25, /* Helipads on airports */
   // 26
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */

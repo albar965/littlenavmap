@@ -20,6 +20,10 @@
 
 #include "query/querytypes.h"
 
+namespace map {
+struct MapSearchResult;
+}
+
 class WaypointQuery;
 class CoordinateConverter;
 

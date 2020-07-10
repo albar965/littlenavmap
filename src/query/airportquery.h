@@ -18,19 +18,30 @@
 #ifndef LITTLENAVMAP_AIRPORTQUERY_H
 #define LITTLENAVMAP_AIRPORTQUERY_H
 
-#include "common/maptypes.h"
-#include "mapgui/maplayer.h"
+#include "geo/pos.h"
 
 #include <QCache>
-#include <QList>
 
-#include <functional>
-
-#include <marble/GeoDataLatLonBox.h>
+namespace Marble {
+class GeoDataLatLonBox;
+}
+namespace map {
+struct MapSearchResult;
+struct MapSearchResultIndex;
+struct MapAirport;
+struct MapRunway;
+struct MapRunwayEnd;
+struct MapParking;
+struct MapHelipad;
+struct MapStart;
+struct MapApron;
+struct MapTaxiPath;
+}
 
 namespace atools {
 namespace geo {
 class Rect;
+class Pos;
 }
 namespace sql {
 class SqlDatabase;

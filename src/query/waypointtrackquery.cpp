@@ -17,13 +17,8 @@
 
 #include "query/waypointtrackquery.h"
 
-#include "common/constants.h"
-#include "common/maptypesfactory.h"
 #include "common/maptools.h"
-#include "mapgui/maplayer.h"
 #include "query/waypointquery.h"
-#include "navapp.h"
-#include "settings/settings.h"
 
 using namespace Marble;
 using namespace atools::sql;

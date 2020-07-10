@@ -22,6 +22,11 @@
 
 #include <QCache>
 
+namespace map {
+struct MapSearchResult;
+struct MapSearchResultIndex;
+}
+
 namespace atools {
 namespace geo {
 class Rect;

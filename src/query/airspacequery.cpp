@@ -19,22 +19,14 @@
 
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
-#include "common/maptools.h"
-#include "fs/common/binarygeometry.h"
-#include "sql/sqlquery.h"
-#include "sql/sqlrecord.h"
+#include "mapgui/maplayer.h"
 #include "sql/sqlutil.h"
-#include "query/airportquery.h"
 #include "fs/common/binarygeometry.h"
-#include "navapp.h"
 #include "common/maptools.h"
 #include "settings/settings.h"
-#include "fs/common/xpgeometry.h"
 #include "db/databasemanager.h"
 
-#include <QDataStream>
 #include <QFileInfo>
-#include <QRegularExpression>
 
 using namespace Marble;
 using namespace atools::sql;

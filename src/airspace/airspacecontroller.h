@@ -19,6 +19,7 @@
 #define LNM_AIRSPACECONTROLLER_H
 
 #include "common/maptypes.h"
+#include "fs/fspaths.h"
 
 #include <QObject>
 

@@ -19,6 +19,7 @@
 
 #include "navapp.h"
 #include "route/routecontroller.h"
+#include "mapgui/maplayer.h"
 #include "online/onlinedatacontroller.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapscale.h"

@@ -22,6 +22,10 @@
 
 #include <QCache>
 
+namespace map {
+struct MapSearchResult;
+}
+
 class MapTypesFactory;
 class CoordinateConverter;
 

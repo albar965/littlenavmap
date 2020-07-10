@@ -97,6 +97,20 @@ QIcon SymbolPainter::createNdbIcon(int size)
   return QIcon(pixmap);
 }
 
+QIcon SymbolPainter::createAirwayIcon(const map::MapAirway& airway, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(QColor(Qt::transparent));
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  painter.setPen(QPen(mapcolors::colorForAirwayTrack(airway), 1.5));
+
+  painter.drawLine(0, 0, size, size);
+
+  return QIcon(pixmap);
+}
+
 QIcon SymbolPainter::createWaypointIcon(int size, const QColor& color)
 {
   QPixmap pixmap(size, size);
@@ -142,6 +156,55 @@ QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int si
   painter.setBrush(mapcolors::colorForAirspaceFill(airspace));
   painter.drawEllipse(2, 2, size - 4, size - 4);
   return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createHelipadIcon(const MapHelipad& helipad, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(QColor(Qt::transparent));
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  painter.setBackgroundMode(Qt::TransparentMode);
+  drawHelipadSymbol(&painter, helipad, size / 2, size / 2, size * 0.40f, size * 0.40f, false);
+  return QIcon(pixmap);
+}
+
+void SymbolPainter::drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, int x, int y, int w, int h,
+                                      bool fast)
+{
+  painter->setBrush(mapcolors::colorForSurface(helipad.surface));
+  painter->setPen(QPen(mapcolors::helipadOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
+
+  painter->translate(QPoint(x, y));
+  painter->rotate(helipad.heading);
+
+  if(helipad.type == "SQUARE" || helipad.type == "MEDICAL")
+    painter->drawRect(-w, -h, w * 2, h * 2);
+  else
+    painter->drawEllipse(-w, -h, w * 2, h * 2);
+
+  if(!fast)
+  {
+    if(helipad.type == "MEDICAL")
+      painter->setPen(QPen(mapcolors::helipadMedicalOutlineColor, 3, Qt::SolidLine, Qt::FlatCap));
+
+    // if(helipad.type != "CIRCLE")
+    // {
+    // Draw the H symbol
+    painter->drawLine(-w / 3, -h / 2, -w / 3, h / 2);
+    painter->drawLine(-w / 3, 0, w / 3, 0);
+    painter->drawLine(w / 3, -h / 2, w / 3, h / 2);
+    // }
+
+    if(helipad.closed)
+    {
+      // Cross out
+      painter->drawLine(-w, -w, w, w);
+      painter->drawLine(-w, w, w, -w);
+    }
+  }
+  painter->resetTransform();
 }
 
 void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& airport,

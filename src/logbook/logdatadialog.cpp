@@ -18,6 +18,7 @@
 #include "logbook/logdatadialog.h"
 #include "ui_logdatadialog.h"
 
+#include "common/maptypes.h"
 #include "common/constants.h"
 #include "common/dialogrecordhelper.h"
 #include "geo/calculations.h"

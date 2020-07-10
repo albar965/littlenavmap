@@ -33,6 +33,10 @@ class FlightplanEntry;
 }
 }
 
+namespace map {
+struct MapSearchResult;
+}
+
 namespace proc {
 struct MapProcedureLegs;
 }

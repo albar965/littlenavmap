@@ -21,6 +21,7 @@
 #include "common/maptypesfactory.h"
 #include "common/maptools.h"
 #include "common/proctypes.h"
+#include "mapgui/maplayer.h"
 #include "online/onlinedatacontroller.h"
 #include "airspace/airspacecontroller.h"
 #include "logbook/logdatacontroller.h"
@@ -237,13 +238,13 @@ map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, floa
     }
 
     result = new map::MapSearchResultIndex;
-    result->addFromResult(res);
+    result->add(res);
 
     // Remove all that are too far away
-    result->removeByDistance(pos, distanceNm);
+    result->remove(pos, distanceNm);
 
     // Sort the rest by distance
-    result->sortByDistance(pos, true /* sortNearToFar */);
+    result->sort(pos, true /* sortNearToFar */);
 
     nearestNavaidCache.insert(key, result);
   }

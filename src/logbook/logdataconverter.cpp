@@ -17,14 +17,12 @@
 
 #include "logbook/logdataconverter.h"
 
-#include "sql/sqldatabase.h"
-#include "sql/sqlquery.h"
+#include "common/maptypes.h"
+#include "query/airportquery.h"
 #include "sql/sqlrecord.h"
 #include "fs/userdata/logdatamanager.h"
-#include "geo/pos.h"
 #include "common/formatter.h"
 #include "geo/calculations.h"
-#include "query/airportquery.h"
 #include "sql/sqltransaction.h"
 #include "userdata/userdatacontroller.h"
 #include "common/unit.h"

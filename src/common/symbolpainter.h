@@ -45,17 +45,13 @@ class GeoPainter;
 
 namespace map {
 struct MapAirport;
-
 struct MapWaypoint;
-
 struct MapVor;
-
 struct MapNdb;
-
 struct MapMarker;
-
 struct MapAirspace;
-
+struct MapAirway;
+struct MapHelipad;
 }
 
 /*
@@ -80,10 +76,12 @@ public:
   QIcon createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size);
   QIcon createVorIcon(const map::MapVor& vor, int size);
   QIcon createNdbIcon(int size);
+  QIcon createAirwayIcon(const map::MapAirway& airway, int size);
   QIcon createWaypointIcon(int size, const QColor& color = QColor());
   QIcon createUserpointIcon(int size);
   QIcon createProcedurePointIcon(int size);
   QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size);
+  QIcon createHelipadIcon(const map::MapHelipad& helipad, int size);
 
   /* Airport symbol. For airport diagram use a transparent text background */
   void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, int size,
@@ -127,6 +125,8 @@ public:
 
   void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, int x, int y, int size,
                         bool fast);
+
+  void drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, int x, int y, int w, int h, bool fast);
 
   /* User defined flight plan waypoint */
   void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill);
