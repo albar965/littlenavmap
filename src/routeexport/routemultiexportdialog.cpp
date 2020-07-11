@@ -24,6 +24,7 @@
 #include "gui/itemviewzoomhandler.h"
 #include "settings/settings.h"
 #include "atools.h"
+#include "navapp.h"
 #include "gui/dialog.h"
 
 #include <QStandardItemModel>
@@ -95,6 +96,7 @@ bool TableSortProxyModel::lessThan(const QModelIndex& leftIndex, const QModelInd
 
 #else
     return leftData < rightData;
+
 #endif
   }
   else
@@ -596,6 +598,7 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint& pos)
 
   // Build menu ===================================================
   QMenu menu;
+  menu.setToolTipsVisible(NavApp::isToolTipsVisible());
   menu.addAction(ui->actionSelectExportPath);
   menu.addAction(ui->actionResetExportPath);
   menu.addAction(ui->actionExportFileNow);

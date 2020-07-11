@@ -1099,6 +1099,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   // Build the menu depending on tab =========================================================================
   int selectedRows = getSelectedRowCount();
   QMenu menu;
+  menu.setToolTipsVisible(NavApp::isToolTipsVisible());
   if(atools::contains(tabIndex,
                       {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
                        si::SEARCH_ONLINE_CLIENT}))
@@ -1120,6 +1121,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     // Logbook airport menu if clicked on departure or destination =======================
     // menu takes ownership
     QMenu *sub = menu.addMenu(tr("&Airport"));
+    sub->setToolTipsVisible(NavApp::isToolTipsVisible());
     sub->addAction(ui->actionSearchShowInformationAirport);
     sub->addAction(ui->actionSearchShowOnMapAirport);
     sub->addSeparator();
@@ -1226,6 +1228,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
     // menu takes ownership of sub
     QMenu *sub = menu.addMenu(tr("&Files"));
+    sub->setToolTipsVisible(NavApp::isToolTipsVisible());
     sub->addAction(ui->actionLogdataRouteOpen);
     sub->addAction(ui->actionLogdataPerfLoad);
     sub->addSeparator();
@@ -1249,6 +1252,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     {
       // Logbook display options menu =======================
       QMenu *sub = menu.addMenu(tr("&View Options"));
+      sub->setToolTipsVisible(NavApp::isToolTipsVisible());
       sub->addAction(ui->actionSearchLogdataShowDirect);
       sub->addAction(ui->actionSearchLogdataShowRoute);
       sub->addAction(ui->actionSearchLogdataShowTrack);

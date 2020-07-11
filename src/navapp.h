@@ -250,6 +250,9 @@ public:
   static QMainWindow *getQMainWindow();
   static MainWindow *getMainWindow();
 
+  /* true if tooltips in menus are visible */
+  static bool isMenuToolTipsVisible();
+
   static MapWidget *getMapWidget();
   static MapPaintWidget *getMapPaintWidget();
   static RouteController *getRouteController();

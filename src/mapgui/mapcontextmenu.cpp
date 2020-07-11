@@ -139,7 +139,7 @@ void MapContextMenu::buildMainMenu()
   menu.clear();
 
   // Inherit tool tip status from well know menu
-  menu.setToolTipsVisible(ui->menuFile->toolTipsVisible());
+  menu.setToolTipsVisible(NavApp::isToolTipsVisible());
 
   insertInformationMenu(menu);
   insertProcedureMenu(menu);
@@ -173,6 +173,7 @@ void MapContextMenu::buildMainMenu()
   menu.addSeparator();
 
   QMenu *sub = menu.addMenu(QIcon(":/littlenavmap/resources/icons/userdata.svg"), tr("&Userpoints"));
+  sub->setToolTipsVisible(menu.toolTipsVisible());
   if(visibleOnMap)
   {
     insertUserpointAddMenu(*sub);

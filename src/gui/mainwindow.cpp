@@ -254,6 +254,7 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for flight plans";
     routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,
                                               ui->actionRecentRoutesClear);
+    ui->menuRecentRoutes->setToolTipsVisible(true);
 
     qDebug() << Q_FUNC_INFO << "Creating RouteController";
     routeController = new RouteController(this, ui->tableViewRoute);
@@ -261,6 +262,7 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for KML files";
     kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
                                             ui->actionClearKmlMenu);
+    ui->menuRecentKml->setToolTipsVisible(true);
 
     // Create map widget and replace dummy widget in window
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
@@ -3386,22 +3388,24 @@ void MainWindow::restoreStateMain()
     move(desktop.topLeft());
   }
 
+#ifdef DEBUG_MENU_TOOLTIPS
   // Enable tooltips for all menus
-  // QList<QAction *> stack;
-  // stack.append(ui->menuBar->actions().first());
-  // while(!stack.isEmpty())
-  // {
-  // QAction *action = stack.takeLast();
-  // if(action->menu() != nullptr)
-  // {
-  // action->menu()->setToolTipsVisible(true);
-  // for(QAction *sub : action->menu()->actions())
-  // {
-  // if(sub->menu() != nullptr)
-  // stack.append(sub);
-  // }
-  // }
-  // }
+  QList<QAction *> stack;
+  stack.append(ui->menuBar->actions());
+  while(!stack.isEmpty())
+  {
+    QMenu *menu = stack.takeLast()->menu();
+    if(menu != nullptr)
+    {
+      menu->setToolTipsVisible(true);
+      for(QAction *sub : menu->actions())
+      {
+        if(sub->menu() != nullptr)
+          stack.append(sub);
+      }
+    }
+  }
+#endif
 
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();

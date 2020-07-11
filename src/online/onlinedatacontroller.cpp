@@ -340,7 +340,7 @@ void OnlinedataController::downloadFailed(const QString& error, int errorCode, Q
   qWarning() << Q_FUNC_INFO << "Failed" << error << errorCode << url;
   stopAllProcesses();
 
-  mainWindow->setOnlineConnectionStatusMessageText(tr("Failed"),
+  mainWindow->setOnlineConnectionStatusMessageText(tr("Online Network Failed"),
                                                    tr("Download from\n\"%1\"\nfailed. "
                                                       "Reason:\n%2\nRetrying again in three minutes.").
                                                    arg(url).arg(error));

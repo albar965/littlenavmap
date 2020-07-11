@@ -838,6 +838,11 @@ MainWindow *NavApp::getMainWindow()
   return mainWindow;
 }
 
+bool NavApp::isMenuToolTipsVisible()
+{
+  return getMainUi()->menuFile->toolTipsVisible();
+}
+
 MapWidget *NavApp::getMapWidget()
 {
   return mainWindow->getMapWidget();

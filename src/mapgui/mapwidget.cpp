@@ -1855,6 +1855,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, con
   // Add id and type to actions
   const int ICON_SIZE = 20;
   QMenu menu;
+  menu.setToolTipsVisible(NavApp::isToolTipsVisible());
   SymbolPainter symbolPainter;
 
   for(const map::MapAirport& obj : result.airports)

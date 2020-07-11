@@ -918,6 +918,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   // Create menu ===================================================================================
   QMenu menu;
+  menu.setToolTipsVisible(NavApp::isToolTipsVisible());
   menu.addAction(ui->actionInfoApproachShow);
   menu.addSeparator();
 
@@ -1073,6 +1074,7 @@ void ProcedureSearch::attachApproach(QString runway)
     if(!procData.sidStarRunways.isEmpty() && runway.isEmpty())
     {
       QMenu menu;
+      menu.setToolTipsVisible(NavApp::isToolTipsVisible());
       QVector<QAction *> runwayActions = buildRunwaySubmenu(menu, procData, false /* only runway items */);
       QAction *action = menu.exec(treeWidget->mapToGlobal(QPoint(0, 0)));
       if(action != nullptr)

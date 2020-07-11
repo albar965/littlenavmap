@@ -72,6 +72,7 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
   fileHistory = new atools::gui::FileHistoryHandler(this, lnm::AIRCRAFT_PERF_FILENAMESRECENT,
                                                     ui->menuAircraftPerformanceRecent,
                                                     ui->actionAircraftPerformanceClearMenu);
+  ui->menuAircraftPerformanceRecent->setToolTipsVisible(true);
 
   connect(fileHistory, &atools::gui::FileHistoryHandler::fileSelected,
           this, &AircraftPerfController::loadFile);
