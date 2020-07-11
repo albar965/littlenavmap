@@ -189,8 +189,10 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   }
 
   // Add bearing/distance to table
+  if(!print && !info) // Only tooltip
+    distanceToRouteText(airport.position, html);
   if(!print)
-    bearingText(airport.position, airport.magvar, html);
+    bearingToUserText(airport.position, airport.magvar, html);
 
   // Administrative information ======================
   if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
@@ -1114,7 +1116,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   if(standalone)
   {
     // Add bearing/distance to table ==========================
-    bearingText(ageo::Pos(ilsRec->valueFloat("lonx"), ilsRec->valueFloat("laty")), ilsMagvar, html);
+    bearingToUserText(ageo::Pos(ilsRec->valueFloat("lonx"), ilsRec->valueFloat("laty")), ilsMagvar, html);
 
     // ILS information ==================================================
     QString runway = ilsRec->valueStr("loc_runway_name");
@@ -1898,7 +1900,10 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   }
 
   // Add bearing/distance to table
-  bearingText(vor.position, vor.magvar, html);
+  if(!print && !info) // Only tooltip
+    distanceToRouteText(vor.position, html);
+  if(!print)
+    bearingToUserText(vor.position, vor.magvar, html);
 
   if(vor.tacan)
   {
@@ -1973,7 +1978,10 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   }
 
   // Add bearing/distance to table
-  bearingText(ndb.position, ndb.magvar, html);
+  if(!print && !info) // Only tooltip
+    distanceToRouteText(ndb.position, html);
+  if(!print)
+    bearingToUserText(ndb.position, ndb.magvar, html);
 
   if(!ndb.type.isEmpty())
     html.row2(tr("Type:"), map::navTypeNameNdb(ndb.type));
@@ -2099,8 +2107,12 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     }
 
     html.table();
+
     // Add bearing/distance to table
-    bearingText(userpoint.position, NavApp::getMagVar(userpoint.position), html);
+    if(!print && !info) // Only tooltip
+      distanceToRouteText(userpoint.position, html);
+    if(!print)
+      bearingToUserText(userpoint.position, NavApp::getMagVar(userpoint.position), html);
 
     // Be cautious with user defined data and adapt it for HTML display
     html.row2If(tr("Type:"), userpoint.type, ahtml::REPLACE_CRLF);
@@ -2422,7 +2434,10 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   }
 
   // Add bearing/distance to table
-  bearingText(waypoint.position, waypoint.magvar, html);
+  if(!print && !info) // Only tooltip
+    distanceToRouteText(waypoint.position, html);
+  if(!print)
+    bearingToUserText(waypoint.position, waypoint.magvar, html);
 
   if(info)
   {
@@ -2493,18 +2508,33 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
 }
 
-void HtmlInfoBuilder::bearingText(const ageo::Pos& pos, float magVar, HtmlBuilder& html) const
+void HtmlInfoBuilder::distanceToRouteText(const ageo::Pos& pos, HtmlBuilder& html) const
 {
-  const atools::fs::sc::SimConnectUserAircraft& userAircraft = NavApp::getUserAircraft();
-
-  float distance = pos.distanceMeterTo(userAircraft.getPosition());
-  if(NavApp::isConnectedAndAircraft() && distance < MAX_DISTANCE_FOR_BEARING_METER)
+  const Route& route = NavApp::getRouteConst();
+  if(!route.isEmpty())
   {
-    html.row2(tr("Bearing and distance to user:"),
-              tr("%1, %2").
-              arg(courseTextFromTrue(normalizeCourse(userAircraft.getPosition().angleDegTo(pos)), magVar)).
-              arg(Unit::distMeter(distance)),
-              ahtml::NO_ENTITIES);
+    const RouteLeg& lastLeg = route.getDestinationLeg();
+    float distance = pos.distanceMeterTo(lastLeg.getPosition());
+    if(distance < MAX_DISTANCE_FOR_BEARING_METER)
+      html.row2(tr("Distance to last flight plan leg:"), Unit::distMeter(distance), ahtml::NO_ENTITIES);
+  }
+}
+
+void HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, HtmlBuilder& html) const
+{
+  if(NavApp::isConnectedAndAircraft())
+  {
+    const atools::fs::sc::SimConnectUserAircraft& userAircraft = NavApp::getUserAircraft();
+
+    float distance = pos.distanceMeterTo(userAircraft.getPosition());
+    if(distance < MAX_DISTANCE_FOR_BEARING_METER)
+    {
+      html.row2(tr("Bearing and distance to user:"),
+                tr("%1, %2").
+                arg(courseTextFromTrue(normalizeCourse(userAircraft.getPosition().angleDegTo(pos)), magVar)).
+                arg(Unit::distMeter(distance)),
+                ahtml::NO_ENTITIES);
+    }
   }
 }
 
@@ -2964,7 +2994,6 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     return;
 
   aircraftTitle(aircraft, html, false /* show more/less switch */, false /* true if less info mode */);
-
 
   QString aircraftText;
   QString typeText;
