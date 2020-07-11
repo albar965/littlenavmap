@@ -3335,11 +3335,6 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapObjectT
 
   int insertIndex = calculateInsertIndex(entry.getPosition(), legIndex);
 
-  routeAddInternal(entry, insertIndex);
-}
-
-void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertIndex)
-{
   qDebug() << Q_FUNC_INFO << "insertIndex" << insertIndex;
 
   RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
@@ -3361,7 +3356,13 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
 
   route.insert(insertIndex, routeLeg);
 
-  proc::MapProcedureTypes procs = affectedProcedures({insertIndex});
+  proc::MapProcedureTypes procs = proc::PROCEDURE_NONE;
+
+  if(legIndex == map::INVALID_INDEX_VALUE)
+    procs = proc::PROCEDURE_ARRIVAL_ALL;
+  else
+    procs = affectedProcedures({insertIndex});
+
   route.removeProcedureLegs(procs);
 
   // Reload procedures from the database after deleting a transition.
@@ -4559,6 +4560,7 @@ bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
 
 proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& indexes)
 {
+  qDebug() << Q_FUNC_INFO << indexes;
   proc::MapProcedureTypes types = proc::PROCEDURE_NONE;
 
   for(int index : indexes)
@@ -4567,7 +4569,7 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
       // Delete SID if departure airport is affected
       types |= proc::PROCEDURE_DEPARTURE;
 
-    if(index == route.getDestinationAirportLegIndex())
+    if(index >= route.getDestinationAirportLegIndex())
       // Delete all arrival procedures if destination airport is affected or an new leg is appended after
       types |= proc::PROCEDURE_ARRIVAL_ALL;
 
