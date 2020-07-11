@@ -84,6 +84,7 @@ enum MapObjectType
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
 
   LOGBOOK = 1 << 30, /* Logbook entry */
+  // LAST = 1 << 31,
 
   /* All online, AI and multiplayer aircraft */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,

@@ -670,6 +670,7 @@ struct MapUserAircraft
     id = -1;
   }
 
+  /* Encapsulate it to avoid changes */
   const atools::fs::sc::SimConnectAircraft& getAircraft() const
   {
     return aircraft;
@@ -692,6 +693,7 @@ struct MapAiAircraft
   {
   }
 
+  /* Encapsulate it to avoid changes */
   const atools::fs::sc::SimConnectAircraft& getAircraft() const
   {
     return aircraft;
@@ -713,6 +715,7 @@ struct MapOnlineAircraft
   {
   }
 
+  /* Encapsulate it to avoid changes */
   const atools::fs::sc::SimConnectAircraft& getAircraft() const
   {
     return aircraft;
@@ -1140,6 +1143,7 @@ QString airspaceText(const map::MapAirspace& airspace);
 QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft); /* Helicopter, etc. */
 QString aircraftTextShort(const atools::fs::sc::SimConnectAircraft& aircraft);
 QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft);
+bool isAircraftShadow(const map::MapBase *base);
 
 map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
 const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);

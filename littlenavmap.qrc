@@ -272,5 +272,7 @@
         <file>resources/config/mainwindow_state_dock.bin</file>
         <file>resources/config/mainwindow_state_nodock.bin</file>
         <file>resources/icons/fullscreen.svg</file>
+        <file>resources/icons/userdata.svg</file>
+        <file>resources/icons/coordinate.svg</file>
     </qresource>
 </RCC>

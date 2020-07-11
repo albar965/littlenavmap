@@ -1733,7 +1733,7 @@ void MainWindow::changeMapProjection(int index)
   ui->actionMapProjectionMercator->setChecked(proj == Marble::Mercator);
   ui->actionMapProjectionSpherical->setChecked(proj == Marble::Spherical);
 
-  setStatusMessage(tr("Map projection changed to %1").arg(mapProjectionComboBox->currentText()));
+  setStatusMessage(tr("Map projection changed to %1.").arg(mapProjectionComboBox->currentText()));
 }
 
 /* Called by the toolbar combo box */
@@ -1754,7 +1754,7 @@ void MainWindow::changeMapTheme()
 
   updateLegend();
 
-  setStatusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
+  setStatusMessage(tr("Map theme changed to %1.").arg(mapThemeComboBox->currentText()));
 }
 
 void MainWindow::updateLegend()

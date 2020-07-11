@@ -352,6 +352,7 @@ private:
   void moveSelectedLegsUp();
   void moveSelectedLegsInternal(MoveDirection direction);
   void deleteSelectedLegs();
+  void deleteSelectedLegsInternal(const QList<int>& rows);
   void getSelectedRows(QList<int>& selectedRows, bool reverseRoute);
 
   void selectList(const QList<int>& selectedRows, int offset);

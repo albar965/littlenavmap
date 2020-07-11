@@ -2754,10 +2754,14 @@ void RouteController::eraseAirway(int row)
 /* Called by action */
 void RouteController::deleteSelectedLegs()
 {
-  // Get selected rows
   QList<int> rows;
+  // Get selected rows
   getSelectedRows(rows, true /* reverse */);
+  deleteSelectedLegsInternal(rows);
+}
 
+void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
+{
   qDebug() << Q_FUNC_INFO << rows;
 
   if(!rows.isEmpty())
@@ -3464,40 +3468,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
 void RouteController::routeDelete(int index)
 {
   qDebug() << Q_FUNC_INFO << index;
-
-  RouteCommand *undoCommand = preChange(tr("Delete"));
-
-  route.getFlightplan().getEntries().removeAt(index);
-
-  route.removeAt(index);
-  eraseAirway(index);
-
-  if(index == route.getDestinationAirportLegIndex())
-    route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
-
-  if(index == 0)
-    route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
-
-  route.updateAll();
-  route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
-  route.updateLegAltitudes();
-
-  // Force update of start if departure airport was removed
-  updateStartPositionBestRunway(index == 0 /* force */, false /* undo */);
-  routeToFlightPlan();
-  // Get type and cruise altitude from widgets
-  updateFlightplanFromWidgets();
-
-  updateTableModel();
-  updateMoveAndDeleteActions();
-
-  postChange(undoCommand);
-  NavApp::updateWindowTitle();
-  updateErrorLabel();
-
-  emit routeChanged(true);
-
-  NavApp::setStatusMessage(tr("Removed waypoint from flight plan."));
+  deleteSelectedLegsInternal({index});
 }
 
 int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIndex)

@@ -2052,6 +2052,21 @@ int routeIndex(const map::MapBase *base)
   return -1;
 }
 
+bool isAircraftShadow(const map::MapBase *base)
+{
+  if(base != nullptr)
+  {
+    map::MapObjectTypes type = base->getType();
+    if(type == map::AIRCRAFT)
+      return base->asPtr<map::MapUserAircraft>()->getAircraft().isOnlineShadow();
+    else if(type == map::AIRCRAFT_AI)
+      return base->asPtr<map::MapAiAircraft>()->getAircraft().isOnlineShadow();
+    else if(type == map::AIRCRAFT_ONLINE)
+      return base->asPtr<map::MapOnlineAircraft>()->getAircraft().isOnlineShadow();
+  }
+  return false;
+}
+
 map::MapAirspaceSources airspaceSource(const map::MapBase *base)
 {
   if(base != nullptr)

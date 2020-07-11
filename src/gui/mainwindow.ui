@@ -5520,7 +5520,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>46</y>
+              <y>31</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -7182,21 +7182,6 @@ Best track will be selected automatically.</string>
     <string>Show navaid scenery search options</string>
    </property>
   </action>
-  <action name="actionShowInSearch">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/search.svg</normaloff>:/littlenavmap/resources/icons/search.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show %1 in Search</string>
-   </property>
-   <property name="toolTip">
-    <string>Show airport or navaid in search window</string>
-   </property>
-   <property name="statusTip">
-    <string>Show airport or navaid in search window</string>
-   </property>
-  </action>
   <action name="actionMapMoreDetails">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -7477,21 +7462,6 @@ Best track will be selected automatically.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+0</string>
-   </property>
-  </action>
-  <action name="actionMapMeasureDistance">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Measure &amp;Distance from %1</string>
-   </property>
-   <property name="toolTip">
-    <string>Measure great circle distance on map</string>
-   </property>
-   <property name="statusTip">
-    <string>Measure great circle distance on map</string>
    </property>
   </action>
   <action name="actionMapRangeRings">
@@ -7839,21 +7809,6 @@ Best track will be selected automatically.</string>
     <string>Ctrl+Down</string>
    </property>
   </action>
-  <action name="actionRouteDeleteWaypoint">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Delete %1 from Flight Plan</string>
-   </property>
-   <property name="toolTip">
-    <string>Delete this airport, navaid or map position from flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Delete this airport, navaid or map position from flight plan</string>
-   </property>
-  </action>
   <action name="actionRouteCalcDirect">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -8104,21 +8059,6 @@ Best track will be selected automatically.</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+T</string>
-   </property>
-  </action>
-  <action name="actionMapShowInformation">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show &amp;Information for %1</string>
-   </property>
-   <property name="toolTip">
-    <string>Show Information for airport or navaid</string>
-   </property>
-   <property name="statusTip">
-    <string>Show Information for airport or navaid</string>
    </property>
   </action>
   <action name="actionRouteEditMode">
@@ -8708,21 +8648,6 @@ Best track will be selected automatically.</string>
     <string>Show or hide the navigation map floating overlay</string>
    </property>
   </action>
-  <action name="actionMapEditUserWaypoint">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Edit Flight Plan %1</string>
-   </property>
-   <property name="toolTip">
-    <string>Edit name and coordinates of user defined flight plan position</string>
-   </property>
-   <property name="statusTip">
-    <string>Edit name and coordinates of user defined flight plan position</string>
-   </property>
-  </action>
   <action name="actionHelpContentsOffline">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -8847,21 +8772,6 @@ Best track will be selected automatically.</string>
     <string>Return to the overview showing all procedures for an airport</string>
    </property>
   </action>
-  <action name="actionMapShowApproaches">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show %1&amp;Procedures for %2</string>
-   </property>
-   <property name="toolTip">
-    <string>Show procedures for this airport</string>
-   </property>
-   <property name="statusTip">
-    <string>Show procedures for this airport</string>
-   </property>
-  </action>
   <action name="actionRouteShowApproaches">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -8896,21 +8806,6 @@ Best track will be selected automatically.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+R</string>
-   </property>
-  </action>
-  <action name="actionMapShowApproachesCustom">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add custom approach for %1</string>
-   </property>
-   <property name="toolTip">
-    <string>Add a custom approach to the flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Add a custom approach to the flight plan</string>
    </property>
   </action>
   <action name="actionRouteShowApproachesCustom">
@@ -9464,66 +9359,6 @@ Best track will be selected automatically.</string>
    </property>
    <property name="shortcut">
     <string>Del</string>
-   </property>
-  </action>
-  <action name="actionMapUserdataAdd">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/userdata_add.svg</normaloff>:/littlenavmap/resources/icons/userdata_add.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Add Userpoint %1 ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Add Userpoint</string>
-   </property>
-   <property name="statusTip">
-    <string>Add Userpoint</string>
-   </property>
-  </action>
-  <action name="actionMapUserdataEdit">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Edit Userpoint %1 ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Edit Userpoint</string>
-   </property>
-   <property name="statusTip">
-    <string>Edit Userpoint</string>
-   </property>
-  </action>
-  <action name="actionMapUserdataDelete">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Delete Userpoint %1</string>
-   </property>
-   <property name="toolTip">
-    <string>Delete Userpoint</string>
-   </property>
-   <property name="statusTip">
-    <string>Delete Userpoint</string>
-   </property>
-  </action>
-  <action name="actionMapUserdataMove">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/userdata_move.svg</normaloff>:/littlenavmap/resources/icons/userdata_move.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Move Userpoint %1</string>
-   </property>
-   <property name="toolTip">
-    <string>Move Userpoint</string>
-   </property>
-   <property name="statusTip">
-    <string>Move Userpoint</string>
    </property>
   </action>
   <action name="actionRouteSaveApprWaypoints">
@@ -10834,21 +10669,6 @@ Best track will be selected automatically.</string>
     <string>Open aircraft performance file from logbook entry</string>
    </property>
   </action>
-  <action name="actionMapLogdataEdit">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</normaloff>:/littlenavmap/resources/icons/logdata_edit.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Edit Log Entry %1 ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Edit Log Entry</string>
-   </property>
-   <property name="statusTip">
-    <string>Edit Log Entry</string>
-   </property>
-  </action>
   <action name="actionLogdataShowStatistics">
    <property name="text">
     <string>S&amp;how Statistics</string>
@@ -11490,6 +11310,21 @@ Best track will be selected automatically.</string>
    </property>
    <property name="shortcut">
     <string>Shift+F11</string>
+   </property>
+  </action>
+  <action name="actionMapCopyCoordinates">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/coordinate.svg</normaloff>:/littlenavmap/resources/icons/coordinate.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Copy %1 to clipboard</string>
+   </property>
+   <property name="toolTip">
+    <string>Copies the coordinates into the clipboard</string>
+   </property>
+   <property name="statusTip">
+    <string>Copies the coordinates into the clipboard</string>
    </property>
   </action>
  </widget>

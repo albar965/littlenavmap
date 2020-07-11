@@ -121,6 +121,9 @@ public:
   /* End all distance line and route dragging modes */
   virtual void cancelDragAll() override;
 
+  /* Start function move userpoint */
+  void startUserpointDrag(const map::MapUserpoint& userpoint, const QPoint& point);
+
   /* New data from simconnect has arrived. Update aircraft position and track. */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
@@ -300,7 +303,9 @@ private:
   void addMeasurement(const atools::geo::Pos& pos, const map::MapSearchResult& result);
   void addMeasurement(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
                       const map::MapNdb *ndb, const map::MapWaypoint *waypoint);
-  void showResultInSearch(const map::MapBase* base);
+
+  /* Show the given object in the search search window with filters and selection set */
+  void showResultInSearch(const map::MapBase *base);
 
   /* Timer for takeoff and landing recognition fired */
   void takeoffLandingTimeout();
