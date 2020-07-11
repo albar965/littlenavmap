@@ -316,6 +316,8 @@ enum Flag2
   /* ui->checkBoxOptionsMapAirwayText */
   MAP_AIRWAY_TEXT_BACKGROUND = 1 << 23,
 
+  /* ui->checkBoxOptionsMapAirportRunways */
+  MAP_AIRPORT_RUNWAYS = 1 << 24,
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -1086,7 +1088,7 @@ private:
     optsw::WEATHER_TOOLTIP_NOAA;
 
   opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_ROUTE_TEXT_BACKGROUND |
-                         opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AIRPORT_DIAGRAM |
+                         opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AIRPORT_DIAGRAM | opts2::MAP_AIRPORT_RUNWAYS |
                          opts2::MAP_AVOID_BLURRED_MAP | opts2::ONLINE_AIRSPACE_BY_FILE |
                          opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS | opts2::MAP_EMPTY_AIRPORTS_3D |
                          opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |

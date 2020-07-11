@@ -121,7 +121,7 @@ void MapPainterAirport::render(PaintContext *context)
   {
     // In diagram mode draw background first to avoid overwriting other airports
     for(const PaintAirportType& airport : visibleAirports)
-      drawAirportDiagramBackround(context, *airport.airport);
+      drawAirportDiagramBackground(context, *airport.airport);
   }
 
   // Draw the diagrams first
@@ -165,8 +165,7 @@ void MapPainterAirport::render(PaintContext *context)
 }
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
-void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
-                                                    const map::MapAirport& airport)
+void MapPainterAirport::drawAirportDiagramBackground(const PaintContext *context, const map::MapAirport& airport)
 {
   Marble::GeoPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(painter);
@@ -179,29 +178,34 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
                        scale->getPixelIntForMeter(AIRPORT_DIAGRAM_BACKGROUND_METER),
                        Qt::SolidLine, Qt::RoundCap));
 
-  // Get all runways for this airport
-  const QList<MapRunway> *runways = airportQuery->getRunways(airport.id);
+  if(context->flags2.testFlag(opts2::MAP_AIRPORT_RUNWAYS))
+  {
+    // Get all runways for this airport
+    const QList<MapRunway> *runways = airportQuery->getRunways(airport.id);
 
-  // Calculate all runway screen coordinates
-  QList<QPoint> runwayCenters;
-  QList<QRect> runwayRects, runwayOutlineRects;
-  runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
+    // Calculate all runway screen coordinates
+    QList<QPoint> runwayCenters;
+    QList<QRect> runwayRects, runwayOutlineRects;
+    runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
 
-  // Draw white background ---------------------------------
-  // For runways
-  for(int i = 0; i < runwayCenters.size(); i++)
-    if(runways->at(i).surface != "W")
+    // Draw white background ---------------------------------
+    // For runways
+    for(int i = 0; i < runwayCenters.size(); i++)
     {
-      painter->translate(runwayCenters.at(i));
-      painter->rotate(runways->at(i).heading);
+      if(runways->at(i).surface != "W")
+      {
+        painter->translate(runwayCenters.at(i));
+        painter->rotate(runways->at(i).heading);
 
-      const QRect backRect = runwayOutlineRects.at(i);
-      painter->drawRect(backRect);
+        const QRect backRect = runwayOutlineRects.at(i);
+        painter->drawRect(backRect);
 
-      painter->resetTransform();
+        painter->resetTransform();
+      }
     }
+  }
 
-  if(context->mapLayerEffective->isAirportDiagram() && context->flags2 & opts2::MAP_AIRPORT_DIAGRAM)
+  if(context->mapLayerEffective->isAirportDiagram() && context->flags2.testFlag(opts2::MAP_AIRPORT_DIAGRAM))
   {
     // For taxipaths
     const QList<MapTaxiPath> *taxipaths = airportQuery->getTaxiPaths(airport.id);
@@ -256,28 +260,33 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->setFont(context->defaultFont);
 
-  // Get all runways for this airport
-  const QList<MapRunway> *runways = airportQuery->getRunways(airport.id);
-
-  // Calculate all runway screen coordinates
   QList<QPoint> runwayCenters;
   QList<QRect> runwayRects, runwayOutlineRects;
-  runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
 
-  if(!fast && context->flags2 & opts2::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
+  const QList<MapRunway> *runways = nullptr;
+  if(context->flags2.testFlag(opts2::MAP_AIRPORT_RUNWAYS))
   {
-    // Draw runway shoulders (X-Plane) --------------------------------
-    painter->setPen(Qt::NoPen);
-    for(int i = 0; i < runwayCenters.size(); i++)
+    // Get all runways for this airport
+    runways = airportQuery->getRunways(airport.id);
+
+    // Calculate all runway screen coordinates
+    runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
+
+    if(!fast && context->flags2 & opts2::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
     {
-      if(!runways->at(i).shoulder.isEmpty())
+      // Draw runway shoulders (X-Plane) --------------------------------
+      painter->setPen(Qt::NoPen);
+      for(int i = 0; i < runwayCenters.size(); i++)
       {
-        painter->translate(runwayCenters.at(i));
-        painter->rotate(runways->at(i).heading);
-        painter->setBrush(mapcolors::colorForSurface(runways->at(i).shoulder));
-        float width = static_cast<float>(runwayRects.at(i).width()) / 4.f;
-        painter->drawRect(QRectF(runwayRects.at(i)).marginsAdded(QMarginsF(width, 0.f, width, 0.f)));
-        painter->resetTransform();
+        if(!runways->at(i).shoulder.isEmpty())
+        {
+          painter->translate(runwayCenters.at(i));
+          painter->rotate(runways->at(i).heading);
+          painter->setBrush(mapcolors::colorForSurface(runways->at(i).shoulder));
+          float width = static_cast<float>(runwayRects.at(i).width()) / 4.f;
+          painter->drawRect(QRectF(runwayRects.at(i)).marginsAdded(QMarginsF(width, 0.f, width, 0.f)));
+          painter->resetTransform();
+        }
       }
     }
   }
@@ -445,7 +454,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     }
   }
 
-  if(!fast)
+  if(!fast && runways != nullptr)
   {
     // Draw runway overrun and blast pads --------------------------------
     painter->setPen(QPen(mapcolors::runwayOutlineColor, 1, Qt::SolidLine, Qt::FlatCap));
@@ -494,7 +503,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     }
   }
 
-  if(!fast)
+  if(!fast && runways != nullptr)
   {
     // Draw black runway outlines --------------------------------
     painter->setPen(QPen(mapcolors::runwayOutlineColor, 1, Qt::SolidLine, Qt::FlatCap));
@@ -512,67 +521,70 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   }
 
   // Draw runways --------------------------------
-  for(int i = 0; i < runwayCenters.size(); i++)
+  if(runways != nullptr)
   {
-    const MapRunway& runway = runways->at(i);
-    const QRect& rect = runwayRects.at(i);
-
-    QColor col = mapcolors::colorForSurface(runway.surface);
-
-    painter->translate(runwayCenters.at(i));
-    painter->rotate(runway.heading);
-
-    painter->setBrush(col);
-    painter->setPen(QPen(col, 1, Qt::SolidLine, Qt::FlatCap));
-    painter->drawRect(rect);
-    painter->resetTransform();
-  }
-
-  if(!fast)
-  {
-    // Draw runway offset thresholds --------------------------------
-    painter->setBackgroundMode(Qt::TransparentMode);
-    painter->setBrush(mapcolors::runwayOffsetColor);
     for(int i = 0; i < runwayCenters.size(); i++)
     {
       const MapRunway& runway = runways->at(i);
+      const QRect& rect = runwayRects.at(i);
 
-      if(runway.primaryOffset > 0 || runway.secondaryOffset > 0)
-      {
-        const QRect& rect = runwayRects.at(i);
+      QColor col = mapcolors::colorForSurface(runway.surface);
 
-        painter->translate(runwayCenters.at(i));
-        painter->rotate(runway.heading);
+      painter->translate(runwayCenters.at(i));
+      painter->rotate(runway.heading);
 
-        if(runway.primaryOffset > 0)
-        {
-          int offs = scale->getPixelIntForFeet(runway.primaryOffset, runway.heading);
-
-          // Draw solid boundary to runway
-          painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
-          painter->drawLine(rect.left(), rect.bottom() - offs, rect.right(), rect.bottom() - offs);
-
-          // Draw dashed line
-          painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::DashLine, Qt::FlatCap));
-          painter->drawLine(0, rect.bottom(), 0, rect.bottom() - offs);
-        }
-
-        if(runway.secondaryOffset > 0)
-        {
-          int offs = scale->getPixelIntForFeet(runway.secondaryOffset, runway.heading);
-
-          // Draw solid boundary to runway
-          painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
-          painter->drawLine(rect.left(), rect.top() + offs, rect.right(), rect.top() + offs);
-
-          // Draw dashed line
-          painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::DashLine, Qt::FlatCap));
-          painter->drawLine(0, rect.top(), 0, rect.top() + offs);
-        }
-        painter->resetTransform();
-      }
+      painter->setBrush(col);
+      painter->setPen(QPen(col, 1, Qt::SolidLine, Qt::FlatCap));
+      painter->drawRect(rect);
+      painter->resetTransform();
     }
-    painter->setBackgroundMode(Qt::OpaqueMode);
+
+    if(!fast)
+    {
+      // Draw runway offset thresholds --------------------------------
+      painter->setBackgroundMode(Qt::TransparentMode);
+      painter->setBrush(mapcolors::runwayOffsetColor);
+      for(int i = 0; i < runwayCenters.size(); i++)
+      {
+        const MapRunway& runway = runways->at(i);
+
+        if(runway.primaryOffset > 0 || runway.secondaryOffset > 0)
+        {
+          const QRect& rect = runwayRects.at(i);
+
+          painter->translate(runwayCenters.at(i));
+          painter->rotate(runway.heading);
+
+          if(runway.primaryOffset > 0)
+          {
+            int offs = scale->getPixelIntForFeet(runway.primaryOffset, runway.heading);
+
+            // Draw solid boundary to runway
+            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
+            painter->drawLine(rect.left(), rect.bottom() - offs, rect.right(), rect.bottom() - offs);
+
+            // Draw dashed line
+            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::DashLine, Qt::FlatCap));
+            painter->drawLine(0, rect.bottom(), 0, rect.bottom() - offs);
+          }
+
+          if(runway.secondaryOffset > 0)
+          {
+            int offs = scale->getPixelIntForFeet(runway.secondaryOffset, runway.heading);
+
+            // Draw solid boundary to runway
+            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
+            painter->drawLine(rect.left(), rect.top() + offs, rect.right(), rect.top() + offs);
+
+            // Draw dashed line
+            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::DashLine, Qt::FlatCap));
+            painter->drawLine(0, rect.top(), 0, rect.top() + offs);
+          }
+          painter->resetTransform();
+        }
+      }
+      painter->setBackgroundMode(Qt::OpaqueMode);
+    }
   }
 
   if(context->flags2 & opts2::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
@@ -730,7 +742,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   }
 
   // Draw runway texts --------------------------------
-  if(!fast)
+  if(!fast && runways != nullptr)
   {
     painter->setBackgroundMode(Qt::TransparentMode);
 

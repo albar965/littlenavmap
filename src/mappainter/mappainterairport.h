@@ -57,7 +57,7 @@ private:
   // void drawWindPointer(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
 
   void drawAirportDiagram(const PaintContext *context, const map::MapAirport& airport);
-  void drawAirportDiagramBackround(const PaintContext *context, const map::MapAirport& airport);
+  void drawAirportDiagramBackground(const PaintContext *context, const map::MapAirport& airport);
   void drawAirportSymbolOverview(const PaintContext *context, const map::MapAirport& ap, float x, float y);
   void runwayCoords(const QList<map::MapRunway> *runways, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *outlineRects, bool overview);
