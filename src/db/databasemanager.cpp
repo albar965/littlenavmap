@@ -670,7 +670,7 @@ void DatabaseManager::insertSimSwitchActions()
 
     QString dbname = FsPaths::typeToName(FsPaths::NAVIGRAPH);
     navDbSubMenu = new QMenu("&" + QString::number(index) + " " + dbname + cycle);
-    navDbSubMenu->setToolTipsVisible(NavApp::isToolTipsVisible());
+    navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
     navDbGroup = new QActionGroup(navDbSubMenu);
 
     navDbActionAll = new QAction(tr("Use %1 for &all Features").arg(dbname), navDbSubMenu);

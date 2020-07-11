@@ -2051,7 +2051,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   }
 
   QMenu menu;
-  menu.setToolTipsVisible(NavApp::isToolTipsVisible());
+  menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
 
   updateMoveAndDeleteActions();
 

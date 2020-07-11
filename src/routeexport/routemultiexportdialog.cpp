@@ -598,7 +598,7 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint& pos)
 
   // Build menu ===================================================
   QMenu menu;
-  menu.setToolTipsVisible(NavApp::isToolTipsVisible());
+  menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
   menu.addAction(ui->actionSelectExportPath);
   menu.addAction(ui->actionResetExportPath);
   menu.addAction(ui->actionExportFileNow);

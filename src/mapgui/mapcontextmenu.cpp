@@ -139,7 +139,7 @@ void MapContextMenu::buildMainMenu()
   menu.clear();
 
   // Inherit tool tip status from well know menu
-  menu.setToolTipsVisible(NavApp::isToolTipsVisible());
+  menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
 
   insertInformationMenu(menu);
   insertProcedureMenu(menu);

@@ -1682,7 +1682,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   ui->actionProfileDeleteAircraftTrack->setEnabled(hasTrackPoints());
 
   QMenu menu;
-  menu.setToolTipsVisible(NavApp::isToolTipsVisible());
+  menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
   menu.addAction(ui->actionProfileShowOnMap);
   menu.addSeparator();
   menu.addAction(ui->actionProfileExpand);
