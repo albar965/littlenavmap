@@ -741,7 +741,7 @@ QString UserdataController::garminGtnUserWptPath()
 {
   QString path;
 #ifdef Q_OS_WIN32
-  QString gtnPath(qgetenv("GTNSIMDATA"));
+  QString gtnPath(QProcessEnvironment::systemEnvironment().value("GTNSIMDATA"));
   path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\GTN" : gtnPath;
 #elif DEBUG_INFORMATION
   path = atools::buildPath({atools::documentsDir(), "Garmin", "Trainers", "GTN"});

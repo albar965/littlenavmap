@@ -46,6 +46,7 @@
 #include <QRegularExpression>
 #include <QEventLoop>
 #include <functional>
+#include <QProcess>
 
 // Checks the first line of an ASN file if it has valid content
 static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
@@ -479,7 +480,7 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
 {
  #if defined(Q_OS_WIN32)
   // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
-  QString appdata = QString(qgetenv("APPDATA"));
+  QString appdata = QProcessEnvironment::systemEnvironment().value("APPDATA");
 #else
   // Use $HOME/.config for testing
   QString appdata = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();

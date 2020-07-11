@@ -184,7 +184,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   // GNS path ===========================
   QString gns;
 #ifdef Q_OS_WIN32
-  QString gnsPath(qgetenv("GNSAPPDATA"));
+  QString gnsPath(QProcessEnvironment::systemEnvironment().value("GNSAPPDATA"));
   gns = gnsPath.isEmpty() ? "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL" : gnsPath + "\\FPL";
 #elif DEBUG_INFORMATION
   gns = atools::buildPath({documents, "Garmin", "GNS Trainer Data", "GNS", "FPL"});
@@ -196,7 +196,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   QString gtn;
   // Location depends on trainer version - this is all above 6.41
 #ifdef Q_OS_WIN32
-  QString gtnPath(qgetenv("GTNSIMDATA"));
+  QString gtnPath(QProcessEnvironment::systemEnvironment().value("GTNSIMDATA"));
   gtn = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN" : gtnPath + "\\Databases\\FPLN";
 #elif DEBUG_INFORMATION
   gtn = atools::buildPath({documents, "Garmin", "Trainers", "GTN", "FPLN"});

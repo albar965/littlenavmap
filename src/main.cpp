@@ -101,6 +101,8 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
   qRegisterMetaTypeStreamOperators<map::MapObjectRef>();
 
+  atools::fs::FsPaths::intitialize();
+
   // Tasks that have to be done before creating the application object and logging system =================
   QStringList messages;
   QSettings earlySettings(QSettings::IniFormat, QSettings::UserScope, "ABarthel", "little_navmap");
@@ -215,8 +217,8 @@ int main(int argc, char *argv[])
 
     atools::fs::FsPaths::logAllPaths();
 
-    qInfo() << "QT_OPENGL" << QString::fromLocal8Bit(qgetenv("QT_OPENGL").constData());
-    qInfo() << "QT_SCALE_FACTOR" << QString::fromLocal8Bit(qgetenv("QT_SCALE_FACTOR").constData());
+    qInfo() << "QT_OPENGL" << QProcessEnvironment::systemEnvironment().value("QT_OPENGL");
+    qInfo() << "QT_SCALE_FACTOR" << QProcessEnvironment::systemEnvironment().value("QT_SCALE_FACTOR");
     if(app.testAttribute(Qt::AA_UseDesktopOpenGL))
       qInfo() << "Using Qt desktop renderer";
     if(app.testAttribute(Qt::AA_UseOpenGLES))
