@@ -28,9 +28,6 @@
 #include "navapp.h"
 #include "sql/sqlutil.h"
 
-#include <QDataStream>
-#include <QRegularExpression>
-
 using namespace Marble;
 using namespace atools::sql;
 using map::MapAirport;
@@ -39,7 +36,25 @@ using map::MapHelipad;
 
 namespace ageo = atools::geo;
 
-inline uint qHash(const AirportQuery::NearestCacheKeyAirport& key)
+/* Key for nearestCache combining all query parameters */
+struct NearestCacheKeyAirport
+{
+  atools::geo::Pos pos;
+  float distanceNm;
+
+  bool operator==(const NearestCacheKeyAirport& other) const
+  {
+    return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01;
+  }
+
+  bool operator!=(const NearestCacheKeyAirport& other) const
+  {
+    return !operator==(other);
+  }
+
+};
+
+inline uint qHash(const NearestCacheKeyAirport& key)
 {
   return qHash(key.pos) ^ qHash(key.distanceNm);
 }

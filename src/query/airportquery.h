@@ -18,8 +18,6 @@
 #ifndef LITTLENAVMAP_AIRPORTQUERY_H
 #define LITTLENAVMAP_AIRPORTQUERY_H
 
-#include "geo/pos.h"
-
 #include <QCache>
 
 namespace Marble {
@@ -53,6 +51,9 @@ class CoordinateConverter;
 class MapTypesFactory;
 class MapLayer;
 
+/* Key for nearestCache combining all query parameters */
+struct NearestCacheKeyAirport;
+
 /*
  * Provides map related database queries. Fill objects of the maptypes namespace and maintains a cache.
  * Objects from methods returning a pointer to a list might be deleted from the cache and should be copied
@@ -83,8 +84,8 @@ public:
   map::MapAirport getAirportByIcao(const QString& icao);
 
   /* Try to get airport by ident, icao or position as a fallback if pos is valid */
-  void getAirportFuzzy(map::MapAirport& airport, const QString& ident, const QString& icao = QString(),
-                       const atools::geo::Pos& pos = atools::geo::EMPTY_POS);
+  void getAirportFuzzy(map::MapAirport& airport, const QString& ident, const QString& icao,
+                       const atools::geo::Pos& pos);
 
   atools::geo::Pos getAirportPosByIdent(const QString& ident);
 
@@ -175,25 +176,7 @@ public:
   static QStringList airportOverviewColumns(const atools::sql::SqlDatabase *db);
 
 private:
-  /* Key for nearestCache combining all query parameters */
-  struct NearestCacheKeyAirport
-  {
-    atools::geo::Pos pos;
-    float distanceNm;
-
-    bool operator==(const NearestCacheKeyAirport& other) const
-    {
-      return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01;
-    }
-
-    bool operator!=(const NearestCacheKeyAirport& other) const
-    {
-      return !operator==(other);
-    }
-
-  };
-
-  friend inline uint qHash(const AirportQuery::NearestCacheKeyAirport& key);
+  friend inline uint qHash(const NearestCacheKeyAirport& key);
 
   map::MapSearchResultIndex *nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm);
 
