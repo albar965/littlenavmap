@@ -991,6 +991,10 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
   connect(routeController, &RouteController::routeInsert, this, &MainWindow::routeInsert);
 
+  connect(routeController, &RouteController::routeChanged, NavApp::updateErrorLabels);
+  connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
+  connect(routeController, &RouteController::routeAltitudeChanged, NavApp::updateErrorLabels);
+
   // Airport search ===================================================================================
   AirportSearch *airportSearch = searchController->getAirportSearch();
   connect(airportSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);

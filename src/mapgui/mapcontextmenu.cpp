@@ -157,6 +157,8 @@ void MapContextMenu::buildMainMenu()
 
   insertPatternMenu(menu);
   menu.addAction(ui->actionMapHideTrafficPattern);
+  menu.addSeparator();
+
   insertHoldMenu(menu);
   menu.addAction(ui->actionMapHideHold);
   menu.addSeparator();

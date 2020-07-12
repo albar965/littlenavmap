@@ -447,7 +447,6 @@ private:
   void contextMenu(const QPoint& pos);
 
   void updateUnits();
-  void updateErrorLabel();
 
   void editUserWaypointTriggered();
 
@@ -460,6 +459,9 @@ private:
   void scrollToActive();
 
   void viewScrolled(int);
+
+  /* Remove all errors from lists */
+  void clearAllErrors();
 
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
