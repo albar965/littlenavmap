@@ -2736,6 +2736,11 @@ void RouteController::eraseAirway(int row)
   }
 }
 
+void RouteController::routeDelete(int index)
+{
+  deleteSelectedLegsInternal({index});
+}
+
 /* Called by action */
 void RouteController::deleteSelectedLegs()
 {
@@ -2762,6 +2767,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 
     if(view->selectionModel() != nullptr)
       view->selectionModel()->clear();
+
     for(int row : rows)
     {
       route.getFlightplan().getEntries().removeAt(row);
@@ -2785,6 +2791,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
       route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
     }
 
+    route.updateIndicesAndOffsets();
     if(route.getSizeWithoutAlternates() == 0)
     {
       // Remove alternates too if last leg was deleted
@@ -3434,12 +3441,6 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
   postChange(undoCommand);
   emit routeChanged(true);
   NavApp::setStatusMessage(tr("Replaced waypoint in flight plan."));
-}
-
-void RouteController::routeDelete(int index)
-{
-  qDebug() << Q_FUNC_INFO << index;
-  deleteSelectedLegsInternal({index});
 }
 
 int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIndex)
@@ -4539,8 +4540,13 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
       types |= proc::PROCEDURE_DEPARTURE;
 
     if(index >= route.getDestinationAirportLegIndex())
-      // Delete all arrival procedures if destination airport is affected or an new leg is appended after
-      types |= proc::PROCEDURE_ARRIVAL_ALL;
+    {
+      int altIndex = route.getAlternateLegsOffset();
+      // Check if trying to delete an alternate
+      if(altIndex == map::INVALID_INDEX_VALUE || index < altIndex)
+        // Delete all arrival procedures if destination airport is affected or an new leg is appended after
+        types |= proc::PROCEDURE_ARRIVAL_ALL;
+    }
 
     if(index >= 0 && index < route.getDestinationAirportLegIndex())
     {
