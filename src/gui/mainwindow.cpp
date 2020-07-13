@@ -2643,6 +2643,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 /* Selection in one of the search result tables has changed */
 void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total)
 {
+  bool updateAirspace = false, updateLogEntries = false;
   QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.%5");
   QString type;
   if(source->getTabIndex() == si::SEARCH_AIRPORT)
@@ -2665,6 +2666,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
   }
   else if(source->getTabIndex() == si::SEARCH_LOG)
   {
+    updateLogEntries = true;
     type = tr("Logbook Entries");
     ui->labelLogdata->setText(selectionLabelText.
                               arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
@@ -2680,6 +2682,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
   }
   else if(source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
   {
+    updateAirspace = true;
     type = tr("Centers");
     QString lastUpdate = tr(" Last Update: %1").
                          arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::DefaultLocaleShortDate));
@@ -2690,7 +2693,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
 
   map::MapSearchResult result;
   searchController->getSelectedMapObjects(result);
-  mapWidget->changeSearchHighlights(result);
+  mapWidget->changeSearchHighlights(result, updateAirspace, updateLogEntries);
   updateHighlightActionStates();
 }
 

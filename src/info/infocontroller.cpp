@@ -239,7 +239,7 @@ void InfoController::anchorClicked(const QUrl& url)
         // Hide online airspaces from search or information window =========================================
         map::MapSearchResult searchHighlights = mapWidget->getSearchHighlights();
         searchHighlights.airspaces.clear();
-        mapWidget->changeSearchHighlights(searchHighlights);
+        mapWidget->changeSearchHighlights(searchHighlights, true /* updateAirspace*/, false /* updateLogEntries */);
         mainWindow->updateHighlightActionStates();
       }
       else if(query.hasQueryItem("hideairways"))
@@ -300,7 +300,7 @@ void InfoController::anchorClicked(const QUrl& url)
             map::MapSearchResult searchHighlights = mapWidget->getSearchHighlights();
             if(!maptools::containsId(searchHighlights.airspaces, airspace.id))
               searchHighlights.airspaces.append(airspace);
-            mapWidget->changeSearchHighlights(searchHighlights);
+            mapWidget->changeSearchHighlights(searchHighlights, true /* updateAirspace*/, false /* updateLogEntries */);
           }
           else
           {

@@ -82,7 +82,7 @@ public:
   void showAircraft(bool centerAircraftChecked);
 
   /* Update hightlighted objects */
-  void changeSearchHighlights(const map::MapSearchResult& newHighlights);
+  void changeSearchHighlights(const map::MapSearchResult& newHighlights, bool updateAirspace, bool updateLogEntries);
   void changeRouteHighlights(const QList<int>& routeHighlight);
   void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
 

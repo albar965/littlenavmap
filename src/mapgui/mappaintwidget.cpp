@@ -929,11 +929,14 @@ void MapPaintWidget::updateLogEntryScreenGeometry()
   screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
-void MapPaintWidget::changeSearchHighlights(const map::MapSearchResult& newHighlights)
+void MapPaintWidget::changeSearchHighlights(const map::MapSearchResult& newHighlights, bool updateAirspace,
+                                            bool updateLogEntries)
 {
   screenIndex->changeSearchHighlights(newHighlights);
-  screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
-  screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
+  if(updateLogEntries)
+    screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
+  if(updateAirspace)
+    screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
 
