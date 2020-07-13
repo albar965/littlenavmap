@@ -119,36 +119,36 @@ private:
                             float distance, float altitude);
 
   /* See comments in postProcessLegs about the steps below */
-  void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs);
-  void processLegs(proc::MapProcedureLegs& legs);
-  void processLegErrors(proc::MapProcedureLegs& legs);
-  void processAltRestrictions(proc::MapProcedureLegs& procedure);
-  void processLegsFafAndFacf(proc::MapProcedureLegs& legs);
+  void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const;
+  void processLegs(proc::MapProcedureLegs& legs) const;
+  void processLegErrors(proc::MapProcedureLegs& legs) const;
+  void processAltRestrictions(proc::MapProcedureLegs& procedure) const;
+  void processLegsFafAndFacf(proc::MapProcedureLegs& legs) const;
 
   /* Fill the courese and heading to intercept legs after all other lines are calculated */
-  void processCourseInterceptLegs(proc::MapProcedureLegs& legs);
+  void processCourseInterceptLegs(proc::MapProcedureLegs& legs) const;
 
-  /* Fill calculatedDistance and calculated course fields */
-  void processLegsDistanceAndCourse(proc::MapProcedureLegs& legs);
+  /* Fill calculatedDistance, geometry from line and calculated course fields */
+  void processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) const;
 
   /* Add an artificial (not in the database) runway leg if no connection to the end is given */
-  void processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs);
+  void processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const;
 
   /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
    * initial fix having "2000" */
-  void processLegsFixRestrictions(proc::MapProcedureLegs& legs);
+  void processLegsFixRestrictions(proc::MapProcedureLegs& legs) const;
 
   /* Assign magnetic variation from the navaids */
-  void updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs);
-  void updateBounding(proc::MapProcedureLegs& legs);
+  void updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const;
+  void updateBounding(proc::MapProcedureLegs& legs) const;
 
-  void assignType(proc::MapProcedureLegs& procedure);
+  void assignType(proc::MapProcedureLegs& procedure) const;
 
   /* Create artificial legs, i.e. legs which are not official ones */
   proc::MapProcedureLeg createRunwayLeg(const proc::MapProcedureLeg& leg,
-                                        const proc::MapProcedureLegs& legs);
+                                        const proc::MapProcedureLegs& legs) const;
   proc::MapProcedureLeg createStartLeg(const proc::MapProcedureLeg& leg,
-                                       const proc::MapProcedureLegs& legs, const QStringList& displayText);
+                                       const proc::MapProcedureLegs& legs, const QStringList& displayText) const;
 
   proc::MapProcedureLegs *buildApproachLegs(const map::MapAirport& airport, int approachId);
   proc::MapProcedureLegs *fetchApproachLegs(const map::MapAirport& airport, int approachId);

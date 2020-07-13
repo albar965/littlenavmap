@@ -733,6 +733,10 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
 
       // Adjust leg if two equal legs (IAF) are after each other - otherwise no change will be done
       rightAlt = &(*this)[index + 2];
+
+      // Right leg is too far after destination - quit here
+      if(rightAlt->isAlternate() || rightAlt->isMissed())
+        return;
     }
   }
 
@@ -850,7 +854,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
     invalid = true;
   }
 
-  if(route->getCruisingAltitudeFeet() < 100.f)
+  if(cruiseAltitide < 100.f)
   {
     errors.append(tr("Cruise altitude is too low."));
     qWarning() << Q_FUNC_INFO << "Cruise altitude is too low";
@@ -887,12 +891,14 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
 
       // Do a second iteration if difference in average climb or descent exceeds 10 knots ============================
       if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 10.f) ||
-         atools::almostNotEqual(descentRateWindFtPerNm, perf.getDescentSpeed(), 10.f))
+         atools::almostNotEqual(descentSpeedWindCorrected, perf.getDescentSpeed(), 10.f))
       {
-        qDebug() << Q_FUNC_INFO << "Second iteration: windHeadClimb" << windHeadClimb << "windHeadCruise" <<
-          windHeadCruise
+        qDebug() << Q_FUNC_INFO << "Second iteration: windHeadClimb" << windHeadClimb
+                 << "windHeadCruise" << windHeadCruise
                  << "climbSpeedWindCorrected" << climbSpeedWindCorrected
-                 << "descentSpeedWindCorrected" << descentSpeedWindCorrected;
+                 << "descentSpeedWindCorrected" << descentSpeedWindCorrected
+                 << "perf.getClimbSpeed()" << perf.getClimbSpeed()
+                 << "perf.getDescentSpeed()" << perf.getDescentSpeed();
 
         climbRateWindFtPerNm = perf.getClimbVertSpeed() * 60.f / climbSpeedWindCorrected;
         descentRateWindFtPerNm = perf.getDescentVertSpeed() * 60.f / descentSpeedWindCorrected;
@@ -910,8 +916,15 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
 
           // Do a third iteration if difference in average climb or descent exceeds 30 knots ============================
           if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 30.f) ||
-             atools::almostNotEqual(descentRateWindFtPerNm, perf.getDescentSpeed(), 30.f))
+             atools::almostNotEqual(descentSpeedWindCorrected, perf.getDescentSpeed(), 30.f))
           {
+            qDebug() << Q_FUNC_INFO << "Third iteration: windHeadClimb" << windHeadClimb
+                     << "windHeadCruise" << windHeadCruise
+                     << "climbSpeedWindCorrected" << climbSpeedWindCorrected
+                     << "descentSpeedWindCorrected" << descentSpeedWindCorrected
+                     << "perf.getClimbSpeed()" << perf.getClimbSpeed()
+                     << "perf.getDescentSpeed()" << perf.getDescentSpeed();
+
             clearAll();
             calculate(altRestrErrors);
             collectErrors(altRestrErrors);
@@ -1330,11 +1343,11 @@ void RouteAltitude::fillGeometry()
       }
 
       if(altLeg.topOfClimb)
-        altLeg.line.insert(1, route->getPositionAtDistance(distanceTopOfClimb).alt(route->getCruisingAltitudeFeet()));
+        altLeg.line.insert(1, route->getPositionAtDistance(distanceTopOfClimb).alt(cruiseAltitide));
 
       if(altLeg.topOfDescent)
         altLeg.line.insert(altLeg.line.size() - 1,
-                           route->getPositionAtDistance(distanceTopOfDescent).alt(route->getCruisingAltitudeFeet()));
+                           route->getPositionAtDistance(distanceTopOfDescent).alt(cruiseAltitide));
     }
 
     if(!altLeg.line.hasAllValidPoints())
@@ -1687,7 +1700,8 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
     leg.fuelToDest = fuelToDest;
     fuelToDest -= leg.getFuel();
 
-    leg.timeToDest = timeToDest;
+    // Round down and correct negative values
+    leg.timeToDest = timeToDest > 0.000001f ? timeToDest : 0.f;
     timeToDest -= leg.getTime();
   }
 

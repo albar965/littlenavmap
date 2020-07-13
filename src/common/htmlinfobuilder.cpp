@@ -3457,12 +3457,17 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(activeLegCorrected != map::INVALID_INDEX_VALUE)
       {
         if(!routeLegCorrected.getIdent().isEmpty())
-          nextName = tr(" - ") + routeLegCorrected.getIdent() +
+          nextName = routeLegCorrected.getIdent() +
                      (routeLegCorrected.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") +
                       routeLegCorrected.getMapObjectTypeName());
       }
 
-      head(html, tr("Next Waypoint%1%2").arg(wpText).arg(nextName));
+      // From or to fix depending on leg type
+      QString fromTo = tr(" - to ");
+      if(routeLegCorrected.isAnyProcedure() && !proc::procedureLegFixAtEnd(routeLegCorrected.getProcedureLegType()))
+        fromTo = tr(" - from ");
+
+      head(html, tr("Next Waypoint%1%2%3").arg(wpText).arg(fromTo).arg(nextName));
       html.table();
 
       if(activeLegCorrected != map::INVALID_INDEX_VALUE)

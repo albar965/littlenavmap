@@ -555,7 +555,7 @@ void ProcedureQuery::mapObjectByIdent(map::MapSearchResult& result, map::MapObje
                                   nmToMeter(1000.f), true /* airport from nav database */);
 }
 
-void ProcedureQuery::updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs)
+void ProcedureQuery::updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const
 {
   // Calculate average magvar for all legs
   float avgMagvar = 0.f;
@@ -589,7 +589,7 @@ void ProcedureQuery::updateMagvar(const map::MapAirport& airport, proc::MapProce
   }
 }
 
-void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs)
+void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs) const
 {
   for(int i = 0; i < legs.size(); i++)
   {
@@ -762,7 +762,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
 }
 
 void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs,
-                                     bool addArtificialLegs)
+                                     bool addArtificialLegs) const
 {
   // Clear lists so this method can run twice on a legs object
   for(MapProcedureLeg& leg : legs.approachLegs)
@@ -819,7 +819,7 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
 }
 
 void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs,
-                                           bool addArtificialLegs)
+                                           bool addArtificialLegs) const
 {
   if(!legs.isEmpty() && addArtificialLegs)
   {
@@ -1074,6 +1074,7 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs,
 
     if(contains(curLeg.type, {proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION}))
     {
+      qDebug() << Q_FUNC_INFO << "Correcting manual termination";
       if(nextLeg != nullptr)
         // Adjust geometry and attach it to the next approach leg
         curLeg.line = Line(curLeg.line.getPos1(), nextLeg->line.getPos1());
@@ -1088,7 +1089,9 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs,
           // Use fix position as last resort
           curLeg.line = Line(curLeg.line.getPos1(), curLeg.fixPos);
       }
-      curLeg.geometry << curLeg.line.getPos1() << curLeg.line.getPos2();
+      // geometry is updated in processLegsDistanceAndCourse
+      // curLeg.geometry.clear();
+      // curLeg.geometry << curLeg.line.getPos1() << curLeg.line.getPos2();
 
       // Clear ident to avoid display
       curLeg.fixIdent.clear();
@@ -1096,6 +1099,8 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs,
       curLeg.fixType.clear();
 
       changed = true;
+
+      qDebug() << Q_FUNC_INFO << "Corrected manual termination" << curLeg.line << curLeg.geometry;
     }
   }
 
@@ -1107,14 +1112,14 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs,
   }
 }
 
-void ProcedureQuery::processLegErrors(proc::MapProcedureLegs& legs)
+void ProcedureQuery::processLegErrors(proc::MapProcedureLegs& legs) const
 {
   legs.hasError = false;
   for(int i = 1; i < legs.size(); i++)
     legs.hasError |= legs.at(i).hasErrorRef();
 }
 
-void ProcedureQuery::processLegsFixRestrictions(proc::MapProcedureLegs& legs)
+void ProcedureQuery::processLegsFixRestrictions(proc::MapProcedureLegs& legs) const
 {
   for(int i = 1; i < legs.size(); i++)
   {
@@ -1134,7 +1139,7 @@ void ProcedureQuery::processLegsFixRestrictions(proc::MapProcedureLegs& legs)
   }
 }
 
-void ProcedureQuery::processLegsFafAndFacf(proc::MapProcedureLegs& legs)
+void ProcedureQuery::processLegsFafAndFacf(proc::MapProcedureLegs& legs) const
 {
   if(legs.mapType & proc::PROCEDURE_ARRIVAL)
   {
@@ -1160,7 +1165,7 @@ void ProcedureQuery::processLegsFafAndFacf(proc::MapProcedureLegs& legs)
   }
 }
 
-void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
+void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) const
 {
   legs.transitionDistance = 0.f;
   legs.approachDistance = 0.f;
@@ -1170,6 +1175,8 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
   {
     proc::MapProcedureLeg& leg = legs[i];
     proc::ProcedureLegType type = leg.type;
+
+    leg.geometry.clear();
 
     if(!leg.line.isValid())
       qWarning() << "leg line for leg is invalid" << leg;
@@ -1320,7 +1327,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
   }
 }
 
-void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
+void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 {
   // Assumptions: 3.5 nm per min
   // Climb 500 ft/min
@@ -1650,7 +1657,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
   }
 }
 
-void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
+void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) const
 {
   for(int i = 0; i < legs.size(); ++i)
   {
@@ -2577,7 +2584,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
   return procedureId;
 }
 
-void ProcedureQuery::processAltRestrictions(proc::MapProcedureLegs& procedure)
+void ProcedureQuery::processAltRestrictions(proc::MapProcedureLegs& procedure) const
 {
   if(procedure.mapType & proc::PROCEDURE_APPROACH)
   {
@@ -2597,7 +2604,7 @@ void ProcedureQuery::processAltRestrictions(proc::MapProcedureLegs& procedure)
   }
 }
 
-void ProcedureQuery::assignType(proc::MapProcedureLegs& procedure)
+void ProcedureQuery::assignType(proc::MapProcedureLegs& procedure) const
 {
   if(NavApp::hasSidStarInDatabase() && procedure.approachType == "GPS" &&
      (procedure.approachSuffix == "A" || procedure.approachSuffix == "D") && procedure.gpsOverlay)
@@ -2656,7 +2663,7 @@ void ProcedureQuery::assignType(proc::MapProcedureLegs& procedure)
 /* Create proceed to runway entry based on information in given leg and the runway end information
  *  in the given legs */
 proc::MapProcedureLeg ProcedureQuery::createRunwayLeg(const proc::MapProcedureLeg& leg,
-                                                      const proc::MapProcedureLegs& legs)
+                                                      const proc::MapProcedureLegs& legs) const
 {
   proc::MapProcedureLeg rwleg;
   rwleg.approachId = legs.ref.approachId;
@@ -2687,7 +2694,8 @@ proc::MapProcedureLeg ProcedureQuery::createRunwayLeg(const proc::MapProcedureLe
 
 /* Create start of procedure entry based on information in given leg */
 proc::MapProcedureLeg ProcedureQuery::createStartLeg(const proc::MapProcedureLeg& leg,
-                                                     const proc::MapProcedureLegs& legs, const QStringList& displayText)
+                                                     const proc::MapProcedureLegs& legs,
+                                                     const QStringList& displayText) const
 {
   proc::MapProcedureLeg sleg;
   sleg.approachId = legs.ref.approachId;

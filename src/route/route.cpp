@@ -684,18 +684,21 @@ Pos Route::getPositionAtDistance(float distFromStartNm) const
   if(foundIndex < size() - 1)
   {
     foundIndex++;
-    if(value(foundIndex).getGeometry().size() > 2)
+    const RouteLeg& leg = value(foundIndex);
+    if(leg.getGeometry().size() > 2)
     {
+      float calculatedDistance = leg.getProcedureLeg().calculatedDistance;
+
       // Use approach geometry to display
-      float base = distFromStartNm - (total - value(foundIndex).getProcedureLeg().calculatedDistance);
-      float fraction = base / value(foundIndex).getProcedureLeg().calculatedDistance;
-      retval = value(foundIndex).getGeometry().interpolate(fraction);
+      float base = distFromStartNm - (total - calculatedDistance);
+      float fraction = base / calculatedDistance;
+      retval = leg.getGeometry().interpolate(fraction);
     }
     else
     {
-      float base = distFromStartNm - (total - value(foundIndex).getDistanceTo());
-      float fraction = base / value(foundIndex).getDistanceTo();
-      retval = getPrevPositionAt(foundIndex).interpolate(getPositionAt(foundIndex), fraction);
+      float base = distFromStartNm - (total - leg.getDistanceTo());
+      float fraction = base / leg.getDistanceTo();
+      retval = getPrevPositionAt(foundIndex).interpolate(leg.getPosition(), fraction);
     }
   }
 

@@ -655,6 +655,11 @@ bool MapProcedureLeg::noCourseDisplay() const
   return type == /*proctypes::INITIAL_FIX ||*/ isCircular();
 }
 
+bool MapProcedureLeg::noIdentDisplay() const
+{
+  return type == proc::FROM_FIX_TO_MANUAL_TERMINATION || type == proc::HEADING_TO_MANUAL_TERMINATION;
+}
+
 const MapProcedureLeg *MapProcedureLegs::transitionLegById(int legId) const
 {
   for(const MapProcedureLeg& leg : transitionLegs)

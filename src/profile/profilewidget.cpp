@@ -940,21 +940,24 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, leg.getProcedureLeg().flyover,
                                            leg.getProcedureLeg().malteseCross);
 
-        // Labels ========================================================
-        int symytxt = std::min(symPt.y() + 14, h);
-        if(type == map::WAYPOINT || leg.getWaypoint().isValid())
-          symPainter.drawWaypointText(&painter, leg.getWaypoint(), symPt.x() - 5, symytxt, flags, 10, true);
-        else if(type == map::USERPOINTROUTE)
-          symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
-                             symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
-        else if(type == map::INVALID)
-          symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
-                             symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
-        else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
-          // Custom approach
-          symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().fixIdent, 6)},
-                             mapcolors::routeUserPointColor,
-                             symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+        if(!leg.getProcedureLeg().noIdentDisplay())
+        {
+          // Labels ========================================================
+          int symytxt = std::min(symPt.y() + 14, h);
+          if(type == map::WAYPOINT || leg.getWaypoint().isValid())
+            symPainter.drawWaypointText(&painter, leg.getWaypoint(), symPt.x() - 5, symytxt, flags, 10, true);
+          else if(type == map::USERPOINTROUTE)
+            symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
+                               symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+          else if(type == map::INVALID)
+            symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
+                               symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+          else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
+            // Custom approach
+            symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().fixIdent, 6)},
+                               mapcolors::routeUserPointColor,
+                               symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+        }
       }
     }
 
@@ -986,12 +989,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, leg.getProcedureLeg().flyover,
                                            leg.getProcedureLeg().malteseCross);
 
-        // Labels ========================================================
-        int symytxt = std::min(symPt.y() + 14, h);
-        if(type == map::NDB || leg.getNdb().isValid())
-          symPainter.drawNdbText(&painter, leg.getNdb(), symPt.x() - 5, symytxt, flags, 10, true);
-        else if(type == map::VOR || leg.getVor().isValid())
-          symPainter.drawVorText(&painter, leg.getVor(), symPt.x() - 5, symytxt, flags, 10, true);
+        if(!leg.getProcedureLeg().noIdentDisplay())
+        {
+          // Labels ========================================================
+          int symytxt = std::min(symPt.y() + 14, h);
+          if(type == map::NDB || leg.getNdb().isValid())
+            symPainter.drawNdbText(&painter, leg.getNdb(), symPt.x() - 5, symytxt, flags, 10, true);
+          else if(type == map::VOR || leg.getVor().isValid())
+            symPainter.drawVorText(&painter, leg.getVor(), symPt.x() - 5, symytxt, flags, 10, true);
+        }
       }
     }
 

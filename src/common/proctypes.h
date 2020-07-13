@@ -421,6 +421,9 @@ struct MapProcedureLeg
   /* No course display for e.g. arc legs */
   bool noCourseDisplay() const;
 
+  /* No ident at end of manual legs */
+  bool noIdentDisplay() const;
+
 };
 
 QDebug operator<<(QDebug out, const proc::MapProcedureLeg& leg);

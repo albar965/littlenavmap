@@ -470,7 +470,7 @@ private:
   bool validProfile = false;
 
   /* From aircraft performance */
-  /* Climb and descent are corrected for tail/head wind duringfor second iteration in significant wind */
+  /* Climb and descent are corrected for tail/head wind for second iteration in significant wind */
   float climbRateWindFtPerNm = 333.f, descentRateWindFtPerNm = 333.f, cruiseAltitide = 0.f;
 
   /* Set by calculate */
