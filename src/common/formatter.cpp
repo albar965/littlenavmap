@@ -165,13 +165,16 @@ bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *p
 
   atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text);
 
+  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+    readPos.swapLonXLatY();
+
   if(pos != nullptr)
     *pos = readPos;
 
-  if(readPos.isValid())
+  if(readPos.isValidRange())
   {
     QString coords = Unit::coords(readPos);
-    if(coords != text)
+    if(coords.simplified() != text.simplified())
     {
       if(Unit::getUnitCoords() == opts::COORDS_LATY_LONX || Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
         message =

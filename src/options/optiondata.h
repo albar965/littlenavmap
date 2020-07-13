@@ -184,7 +184,7 @@ enum UnitCoords
   COORDS_DEC, /* Decimal degree */
   COORDS_DM, /* Degree and minutes */
   COORDS_LATY_LONX, /* lat/lon with sign */
-  COORDS_LONX_LATY /* lon/lat with sign */
+  COORDS_LONX_LATY /* lon/lat with sign - need to be swapped internally */
 };
 
 /* comboBoxOptionsUnitVertFuel */
