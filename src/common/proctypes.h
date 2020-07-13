@@ -582,6 +582,9 @@ bool procedureLegFixAtStart(proc::ProcedureLegType type);
 /* true if leg has fix at the end */
 bool procedureLegFixAtEnd(proc::ProcedureLegType type);
 
+/* true if flying from waypoint and a "from" indication should be displayed */
+bool procedureLegFrom(proc::ProcedureLegType type);
+
 /* IAF, FAF, MAP */
 QString proceduresLegSecialTypeShortStr(proc::LegSpecialType type);
 QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type);

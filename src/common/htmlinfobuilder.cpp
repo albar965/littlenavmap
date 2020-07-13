@@ -3463,9 +3463,15 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
 
       // From or to fix depending on leg type
-      QString fromTo = tr(" - to ");
-      if(routeLegCorrected.isAnyProcedure() && !proc::procedureLegFixAtEnd(routeLegCorrected.getProcedureLegType()))
-        fromTo = tr(" - from ");
+      QString fromTo;
+      if(!routeLegCorrected.getIdent().isEmpty())
+      {
+        fromTo = tr(" - to ");
+        if(routeLegCorrected.isAnyProcedure() && proc::procedureLegFrom(routeLegCorrected.getProcedureLegType()))
+          fromTo = tr(" - from ");
+      }
+      else
+        fromTo = tr(" - ");
 
       head(html, tr("Next Waypoint%1%2%3").arg(wpText).arg(fromTo).arg(nextName));
       html.table();
