@@ -381,13 +381,18 @@ MainWindow::MainWindow()
   QAction *debugAction3 = new QAction("DEBUG - Force Check updates");
   this->addAction(debugAction3);
 
+  QAction *debugAction4 = new QAction("DEBUG - Reload flight plan");
+  this->addAction(debugAction4);
+
   ui->menuHelp->addSeparator();
   ui->menuHelp->addAction(debugAction1);
   ui->menuHelp->addAction(debugAction2);
   ui->menuHelp->addAction(debugAction3);
+  ui->menuHelp->addAction(debugAction4);
   connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
   connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
   connect(debugAction3, &QAction::triggered, this, &MainWindow::debugActionTriggered3);
+  connect(debugAction4, &QAction::triggered, this, &MainWindow::debugActionTriggered4);
 
 #endif
 
@@ -502,6 +507,12 @@ void MainWindow::debugActionTriggered3()
   atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
 
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
+}
+
+void MainWindow::debugActionTriggered4()
+{
+  QString file = routeController->getRouteFilepath();
+  routeController->loadFlightplan(file);
 }
 
 #endif

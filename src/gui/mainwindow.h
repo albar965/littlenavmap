@@ -379,6 +379,7 @@ private:
   void debugActionTriggered1();
   void debugActionTriggered2();
   void debugActionTriggered3();
+  void debugActionTriggered4();
 
 #endif
 
