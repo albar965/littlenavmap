@@ -1375,7 +1375,25 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 
         // Calculate course difference between last leg and this one
         const proc::MapProcedureLeg *lastLeg = i > 0 ? &legs.at(i - 1) : nullptr;
-        float lastLegCourse = lastLeg != nullptr ? lastLeg->line.angleDeg() : map::INVALID_COURSE_VALUE;
+        float lastLegCourse = map::INVALID_COURSE_VALUE;
+
+        if(lastLeg != nullptr)
+        {
+          if(lastLeg->isCircular())
+          {
+            // Calculate an geometry approximation and get the course from the last line in the geometry
+            ageo::LineString lastGeometry;
+            ageo::calcArcLength(lastLeg->line, lastLeg->recFixPos, lastLeg->turnDirection == "L",
+                                nullptr, &lastGeometry);
+            if(lastGeometry.size() >= 2)
+              lastLegCourse =
+                lastGeometry.at(lastGeometry.size() - 2).angleDegTo(lastGeometry.at(lastGeometry.size() - 1));
+          }
+
+          if(!(lastLegCourse < map::INVALID_COURSE_VALUE))
+            // No circular or too small geometry - use default line
+            lastLegCourse = lastLeg->line.angleDeg();
+        }
         float courseDiff = map::INVALID_COURSE_VALUE;
         if(lastLegCourse < map::INVALID_COURSE_VALUE / 2)
           courseDiff = ageo::angleAbsDiff(legCourse, lastLegCourse);
