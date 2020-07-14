@@ -117,7 +117,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   QVector<int> ytexts;
 
   // Use north endpoint of radius as start position
-  Pos startPoint = centerPos.endpoint(radiusMeter, 0).normalize();
+  Pos startPoint = centerPos.endpoint(radiusMeter, 0);
   Pos p1 = startPoint;
   bool hidden1 = true, hidden2 = true;
   bool visible1 = wToS(p1, x1, y1, DEFAULT_WTOS_SIZE, &hidden1);
@@ -128,7 +128,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   for(int i = 0; i <= 360; i += step)
   {
     // Line segment from p1 to p2
-    Pos p2 = centerPos.endpoint(radiusMeter, i).normalize();
+    Pos p2 = centerPos.endpoint(radiusMeter, i);
 
     bool visible2 = wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
 

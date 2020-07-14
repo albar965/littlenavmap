@@ -1285,7 +1285,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
 
       leg.holdLine.setPos2(leg.line.getPos1());
       leg.holdLine.setPos1(leg.line.getPos1().endpoint(nmToMeter(segmentLength),
-                                                       opposedCourseDeg(leg.calculatedTrueCourse)).normalize());
+                                                       opposedCourseDeg(leg.calculatedTrueCourse)));
     }
     else if(contains(type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::COURSE_TO_DME_DISTANCE,
                             proc::HEADING_TO_DME_DISTANCE_TERMINATION,
@@ -1470,7 +1470,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
         // Turn left and then turn 180 deg right
         course = leg.legTrueCourse() + 45.f;
 
-      leg.procedureTurnPos = leg.fixPos.endpoint(nmToMeter(leg.distance), course).normalize();
+      leg.procedureTurnPos = leg.fixPos.endpoint(nmToMeter(leg.distance), course);
       lastPos = leg.fixPos;
       curPos = leg.procedureTurnPos;
     }
@@ -1486,7 +1486,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 
       if(!lastPos.isValid())
         lastPos = start;
-      curPos = start.endpoint(nmToMeter(2.f), leg.legTrueCourse()).normalize();
+      curPos = start.endpoint(nmToMeter(2.f), leg.legTrueCourse());
       leg.displayText << tr("Altitude");
     }
     // ===========================================================
@@ -1550,7 +1550,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       if(!lastPos.isValid())
         lastPos = leg.fixPos;
 
-      curPos = leg.fixPos.endpoint(nmToMeter(leg.distance), leg.legTrueCourse()).normalize();
+      curPos = leg.fixPos.endpoint(nmToMeter(leg.distance), leg.legTrueCourse());
 
       leg.displayText << leg.fixIdent + "/" + Unit::distNm(leg.distance, true, 20, true) + "/" +
         QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
@@ -1582,7 +1582,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       float legDistMeter = nmToMeter(leg.distance);
 
       // Create a extended line to calculate the intersection with the DME distance
-      Line line(start, start.endpoint(distMeter + legDistMeter * 4, leg.legTrueCourse()).normalize());
+      Line line(start, start.endpoint(distMeter + legDistMeter * 4, leg.legTrueCourse()));
 
       if(!lastPos.isValid())
         lastPos = start;
@@ -1608,13 +1608,13 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
         if(leg.course > 0)
           // Use an exteneded line from fix with the given course as geometry
           curPos = leg.fixPos.endpoint(nmToMeter(leg.distance > 0.f ? leg.distance : 3.f),
-                                       leg.legTrueCourse()).normalize();
+                                       leg.legTrueCourse());
         else
           curPos = leg.fixPos;
       }
       else
         // Use an exteneded line from last position with the given course as geometry
-        curPos = lastPos.endpoint(nmToMeter(leg.distance > 0.f ? leg.distance : 3.f), leg.legTrueCourse()).normalize();
+        curPos = lastPos.endpoint(nmToMeter(leg.distance > 0.f ? leg.distance : 3.f), leg.legTrueCourse());
 
       // Geometry might be changed later in postProcessLegsForRoute()
 
@@ -1688,7 +1688,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
           Pos intersect;
           if(nextIsArc)
           {
-            Line line(start, start.endpoint(nmToMeter(200), leg.legTrueCourse()).normalize());
+            Line line(start, start.endpoint(nmToMeter(200), leg.legTrueCourse()));
             intersect = line.intersectionWithCircle(next->recFixPos, nmToMeter(next->rho), 20);
           }
           else
@@ -2028,7 +2028,7 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
                                           const map::MapRunwayEnd& runwayEndSim, float distance, float altitude)
 {
   Pos initialFixPos = runwayEndSim.position.endpoint(ageo::nmToMeter(distance),
-                                                     ageo::opposedCourseDeg(runwayEndSim.heading)).normalize();
+                                                     ageo::opposedCourseDeg(runwayEndSim.heading));
 
   // Create procedure ========================================
   procedure.ref.runwayEndId = runwayEndSim.id;

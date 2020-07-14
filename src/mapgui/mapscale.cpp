@@ -62,7 +62,7 @@ bool MapScale::update(ViewportParams *viewportParams, double distance)
       double screenEndX, screenEndY;
 
       // Calculate screen coordinates for an point that is in the given direction in 1 km distance
-      converter.wToS(center.endpoint(1000.f, compassDirection).normalize(), screenEndX, screenEndY);
+      converter.wToS(center.endpoint(1000.f, compassDirection), screenEndX, screenEndY);
 
       // Calculate the screen distance in pixels between the two points that are 1 km apart
       scales.append(atools::geo::simpleDistanceF(screenCenterX, screenCenterY, screenEndX, screenEndY));
@@ -99,7 +99,6 @@ float MapScale::getScreenRotation(float angle, const atools::geo::Pos& position,
     // Use a tenth of the zoom distance which results in a screen length of 15 - 30 pixel
     // Calculate endpoint in global coordinate system
     Pos end = position.endpoint(zoomDistanceMeter / 10.f, angle);
-    end.normalize();
 
     // Calculate screen coordinates of endpoint
     Marble::GeoDataCoordinates endcoords(end.getLonX(), end.getLatY(), 0., GeoDataCoordinates::Degree);

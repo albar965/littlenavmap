@@ -828,7 +828,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     QVector<QPointF> endpointsScreen;
     for(float angle = 0.f; angle < 360.f; angle += 5)
     {
-      endpoints.append(pos.endpoint(radiusMeter, magVar + angle).normalize());
+      endpoints.append(pos.endpoint(radiusMeter, magVar + angle));
       endpointsScreen.append(wToSF(endpoints.last()));
     }
 
@@ -855,7 +855,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 
     painter->setBrush(QBrush(Qt::white));
     // Calculate and draw triangle for true north ======================================================
-    Pos trueNorth = pos.endpoint(radiusMeter, 0).normalize();
+    Pos trueNorth = pos.endpoint(radiusMeter, 0);
     QPointF trueNorthPoint = wToSF(trueNorth);
 
     if(!trueNorthPoint.isNull())
@@ -884,7 +884,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       if(context->dOptRose(optsd::ROSE_TRACK_LINE))
       {
         float trackTrue = aircraft.getTrackDegTrue();
-        Pos trueTrackPos = pos.endpoint(radiusMeter, trackTrue).normalize();
+        Pos trueTrackPos = pos.endpoint(radiusMeter, trackTrue);
         drawLine(painter, Line(pos, trueTrackPos));
       }
 
@@ -892,7 +892,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       if(context->dOptRose(optsd::ROSE_HEADING_LINE))
       {
         float headingTrue = aircraft.getHeadingDegTrue();
-        Pos trueHeadingPos = pos.endpoint(radiusMeter, headingTrue).normalize();
+        Pos trueHeadingPos = pos.endpoint(radiusMeter, headingTrue);
         painter->setPen(headingLinePen);
         drawLine(painter, Line(pos, trueHeadingPos));
       }
@@ -961,7 +961,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     {
       for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
       {
-        QPointF s = wToSF(pos.endpoint(nmToMeter(i * stepsizeNm), trackTrue).normalize());
+        QPointF s = wToSF(pos.endpoint(nmToMeter(i * stepsizeNm), trackTrue));
         if(!s.isNull())
           symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, 20, true)}, painter->pen(),
                                   static_cast<float>(s.x()), static_cast<float>(s.y()), textatt::CENTER);
@@ -995,7 +995,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
             float crabAngle = windCorrectedHeading(aircraft.getWindSpeedKts(), aircraft.getWindDirectionDegT(),
                                                    courseToWptTrue, aircraft.getTrueAirspeedKts());
 
-            Pos crabPos = pos.endpoint(radiusMeter, crabAngle).normalize();
+            Pos crabPos = pos.endpoint(radiusMeter, crabAngle);
             painter->setPen(rosePen);
             painter->setBrush(OptionData::instance().getFlightplanActiveSegmentColor());
 
@@ -1006,7 +1006,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
           if(context->dOptRose(optsd::ROSE_NEXT_WAYPOINT) && courseToWptTrue < map::INVALID_COURSE_VALUE)
           {
             // Draw small line to show course to next waypoint ========================
-            Pos endPt = pos.endpoint(radiusMeter, courseToWptTrue).normalize();
+            Pos endPt = pos.endpoint(radiusMeter, courseToWptTrue);
             Line crsLine(pos.interpolate(endPt, radiusMeter, 0.92f), endPt);
             painter->setPen(QPen(mapcolors::routeOutlineColor, context->sz(context->thicknessFlightplan, 7),
                                  Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -1023,7 +1023,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       // Aircraft track label at end of track line ======================================================
       if(context->dOptRose(optsd::ROSE_TRACK_LABEL))
       {
-        QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue).normalize());
+        QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue));
         if(!trueTrackTextPoint.isNull())
         {
           painter->setPen(mapcolors::compassRoseTextColor);
@@ -1244,20 +1244,20 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
 
       // Turn point base to final
       Pos baseFinal = pattern.position.endpoint(nmToMeter(finalDistance),
-                                                opposedCourseDeg(pattern.courseTrue)).normalize();
+                                                opposedCourseDeg(pattern.courseTrue));
 
       // Turn point downwind to base
       Pos downwindBase = baseFinal.endpoint(nmToMeter(pattern.downwindDistance),
-                                            pattern.courseTrue + (pattern.turnRight ? 90.f : -90.f)).normalize();
+                                            pattern.courseTrue + (pattern.turnRight ? 90.f : -90.f));
 
       // Turn point upwind to crosswind
       Pos upwindCrosswind = pattern.position.endpoint(nmToMeter(finalDistance) + feetToMeter(pattern.runwayLength),
-                                                      pattern.courseTrue).normalize();
+                                                      pattern.courseTrue);
 
       // Turn point crosswind to downwind
       Pos crosswindDownwind = upwindCrosswind.endpoint(nmToMeter(pattern.downwindDistance),
                                                        pattern.courseTrue +
-                                                       (pattern.turnRight ? 90.f : -90.f)).normalize();
+                                                       (pattern.turnRight ? 90.f : -90.f));
 
       // Calculate bounding rectangle and check if it is at least partially visible
       Rect rect(baseFinal);
@@ -1269,7 +1269,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
       {
         // Entry at opposite runway threshold
         Pos downwindEntry = downwindBase.endpoint(nmToMeter(finalDistance) + feetToMeter(
-                                                    pattern.runwayLength), pattern.courseTrue).normalize();
+                                                    pattern.runwayLength), pattern.courseTrue);
 
         bool visible, hidden;
         // Bail out if any points are hidden behind the globe
@@ -1310,19 +1310,19 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
 
           // Straight out exit for pattern =======================
           QPointF exitStraight =
-            wToS(upwindCrosswind.endpoint(nmToMeter(1.f), oppAngle).normalize(),
+            wToS(upwindCrosswind.endpoint(nmToMeter(1.f), oppAngle),
                  DEFAULT_WTOS_SIZE, &visible, &hidden);
           drawLine(painter, upwind.p2(), exitStraight);
 
           // 45 degree exit for pattern =======================
           QPointF exit45Deg =
-            wToS(upwindCrosswind.endpoint(nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)).normalize(),
+            wToS(upwindCrosswind.endpoint(nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)),
                  DEFAULT_WTOS_SIZE, &visible, &hidden);
           drawLine(painter, upwind.p2(), exit45Deg);
 
           // Entry to downwind
           QPointF entry =
-            wToS(downwindEntry.endpoint(nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)).normalize(),
+            wToS(downwindEntry.endpoint(nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)),
                  DEFAULT_WTOS_SIZE, &visible, &hidden);
           drawLine(painter, downwindEntryPoint, entry);
 
