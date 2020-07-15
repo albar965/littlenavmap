@@ -1361,7 +1361,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
     {
       // Calculate the leading extended position to the fix - this is the from position
       Pos extended = leg.fixPos.endpoint(nmToMeter(leg.distance > 0 ? leg.distance : 1.f /* Fix for missing dist */),
-                                         opposedCourseDeg(leg.legTrueCourse())).normalize();
+                                         opposedCourseDeg(leg.legTrueCourse()));
+
 
       ageo::LineDistance result;
       lastPos.distanceMeterToLine(extended, leg.fixPos, result);
@@ -1717,7 +1718,10 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
           }
           else
             intersect =
-              Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(), next->legTrueCourse());
+              Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(),
+                                       // Leg might have no course and calculated is not available yet
+                                       next->course == 0 || next->course == map::INVALID_COURSE_VALUE ?
+                                       next->line.angleDeg() : next->trueCourse);
 
           leg.line.setPos1(start);
 
