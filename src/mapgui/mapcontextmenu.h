@@ -253,11 +253,11 @@ private:
    * tip is added as status tip and as tooltip if menu tooltips are enabled.
    * allowNoMapObject Enables the menu for an empty index (click without map object) and also inserts a coordinates menu.  */
   void insertMenuOrAction(QMenu& menu, mc::MenuActionType actionType, const map::MapSearchResultIndex& index,
-                          const QString& text, const QString& tip, const QIcon& icon,
+                          const QString& text, const QString& tip, const QString& key, const QIcon& icon,
                           bool allowNoMapObject = false, const ActionCallback& callback = nullptr);
 
   /* Insert a single action. */
-  QAction *insertAction(QMenu& menu, mc::MenuActionType actionType, const QString& text, const QString& tip,
+  QAction *insertAction(QMenu& menu, mc::MenuActionType actionType, const QString& text, const QString& tip, const QString& key,
                         const QIcon& icon, const map::MapBase *base, bool submenu,
                         bool allowNoMapObject, const ActionCallback& callback);
 

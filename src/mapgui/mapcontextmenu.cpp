@@ -89,6 +89,9 @@ MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidge
   QList<QAction *> actions(
   {
     // Save state since widgets are shared with others
+    ui->actionMapCopyCoordinates,
+    ui->actionMapHideDistanceMarker,
+    ui->actionMapHideOneRangeRing,
     ui->actionMapHold,
     ui->actionMapNavaidRange,
     ui->actionMapRangeRings,
@@ -97,8 +100,7 @@ MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidge
     ui->actionRouteAirportAlternate,
     ui->actionRouteAirportDest,
     ui->actionRouteAirportStart,
-    ui->actionRouteAppendPos,
-    ui->actionMapCopyCoordinates
+    ui->actionRouteAppendPos
   });
 
   // Texts with % will be replaced save them and let the ActionTextSaver restore them on return
@@ -147,11 +149,14 @@ void MapContextMenu::buildMainMenu()
   menu.addSeparator();
 
   insertMeasureMenu(menu);
+  ui->actionMapHideDistanceMarker->setText(ui->actionMapHideDistanceMarker->text() + tr("\tCtrl+Click"));
   menu.addAction(ui->actionMapHideDistanceMarker);
   menu.addSeparator();
 
+  ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + tr("\tShift+Click"));
   menu.addAction(ui->actionMapRangeRings);
   insertNavaidRangeMenu(menu);
+  ui->actionMapHideOneRangeRing->setText(ui->actionMapHideOneRangeRing->text() + tr("\tShift+Click"));
   menu.addAction(ui->actionMapHideOneRangeRing);
   menu.addSeparator();
 
@@ -191,9 +196,6 @@ void MapContextMenu::buildMainMenu()
   insertLogEntryEdit(menu);
   menu.addSeparator();
 
-  insertShowInSearchMenu(menu);
-  menu.addSeparator();
-
   if(NavApp::isFullScreen())
   {
     // Add menu to exit full screen
@@ -205,6 +207,9 @@ void MapContextMenu::buildMainMenu()
   if(visibleOnMap)
   {
     // More rarely used menu items
+    insertShowInSearchMenu(*sub);
+    sub->addSeparator();
+
     sub->addAction(ui->actionMapCopyCoordinates);
     sub->addAction(ui->actionMapSetMark);
     sub->addAction(ui->actionMapSetHome);
@@ -343,8 +348,9 @@ QIcon MapContextMenu::mapBaseIcon(const map::MapBase *base)
 }
 
 QAction *MapContextMenu::insertAction(QMenu& menu, mc::MenuActionType actionType, const QString& text,
-                                      const QString& tip, const QIcon& icon, const map::MapBase *base, bool submenu,
-                                      bool allowNoMapObject, const ActionCallback& callback)
+                                      const QString& tip, const QString& key, const QIcon& icon,
+                                      const map::MapBase *base, bool submenu, bool allowNoMapObject,
+                                      const ActionCallback& callback)
 {
   QString actionText = text;
   QIcon callbackIcon;
@@ -354,6 +360,13 @@ QAction *MapContextMenu::insertAction(QMenu& menu, mc::MenuActionType actionType
   if(callback)
     // Execute callback if not null
     callback(base, actionText, callbackIcon, disable, submenu);
+
+  if(!submenu)
+  {
+    // Add mouse button hints only for top level menus
+    if(!key.isEmpty())
+      actionText += "\t" + key;
+  }
 
   // Prepare associated menu data
   MenuData data;
@@ -423,19 +436,24 @@ QAction *MapContextMenu::insertAction(QMenu& menu, mc::MenuActionType actionType
 
 void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionType,
                                         const map::MapSearchResultIndex& index, const QString& text,
-                                        const QString& tip, const QIcon& icon, bool allowNoMapObject,
-                                        const ActionCallback& callback)
+                                        const QString& tip, const QString& key, const QIcon& icon,
+                                        bool allowNoMapObject, const ActionCallback& callback)
 {
   if(index.isEmpty())
     // Insert an disabled menu with base text - %1 replaced with empty string
-    insertAction(menu, actionType, text, tip, icon, nullptr, false, allowNoMapObject, callback);
+    insertAction(menu, actionType, text, tip, key, icon, nullptr, false, allowNoMapObject, callback);
   else if(index.size() == 1)
     // Insert a single menu item with text
-    insertAction(menu, actionType, text, tip, icon, index.first(), false, allowNoMapObject, callback);
+    insertAction(menu, actionType, text, tip, key, icon, index.first(), false, allowNoMapObject, callback);
   else
   {
+    QString subText = text.arg(QString());
+    if(!key.isEmpty())
+      subText += "\t" + key;
+
     // Add a sub-menu with all found entries - cut off and add "more..." if size exceeded
-    QMenu *subMenu = new QMenu(text.arg(QString()), mainWindow);
+    QMenu *subMenu = new QMenu(subText, mainWindow);
+
     subMenu->setIcon(icon);
     if(menu.toolTipsVisible())
       subMenu->setToolTip(tip); // Inherit from parent menu
@@ -461,12 +479,13 @@ void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionTy
       }
 
       // Insert related menu item for map object
-      insertAction(*subMenu, actionType, tr("%1"), tip, QIcon(), index.at(i), true, allowNoMapObject, callback);
+      insertAction(*subMenu, actionType, tr("%1"), tip, QString(), QIcon(), index.at(i), true, allowNoMapObject,
+                   callback);
     }
 
     if(allowNoMapObject)
       // Add a coordinate menu item if no map object is allowed
-      insertAction(*subMenu, actionType, tr("&Position %1").arg(Unit::coords(mapBasePos->position)), tip,
+      insertAction(*subMenu, actionType, tr("&Position %1").arg(Unit::coords(mapBasePos->position)), tip, QString(),
                    QIcon(":/littlenavmap/resources/icons/coordinate.svg"), mapBasePos, true, allowNoMapObject,
                    callback);
   }
@@ -482,6 +501,7 @@ void MapContextMenu::insertInformationMenu(QMenu& menu)
                             map::LOGBOOK).sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("&Show Information for %1"),
                      tr("Show information for airport or navaid"),
+                     tr("Click"),
                      QIcon(":/littlenavmap/resources/icons/globals.svg"));
 }
 
@@ -539,6 +559,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
                      MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("Show &procedures for %1"),
                      tr("Show procedures for this airport"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/approach.svg"), false /* allowNoMapObject */, callback);
 }
 
@@ -562,6 +583,7 @@ void MapContextMenu::insertCustomProcedureMenu(QMenu& menu)
                      MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("Create &custom procedure for %1"),
                      tr("Add a custom approach to this airport to the flight plan"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/approachcustom.svg"),
                      false /* allowNoMapObject */,
                      callback);
@@ -575,7 +597,7 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
       disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT);
       if(base == nullptr)
         // Any position
-        text = tr("&Measure Distance from here");
+        text = text.arg(tr("here"));
 
       if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT))
         // Hidden - add remark and disable
@@ -587,6 +609,7 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("&Measure Distance from %1"),
                      tr("Measure great circle distance on the map"),
+                     tr("Ctrl+Click"),
                      QIcon(":/littlenavmap/resources/icons/distancemeasure.svg"),
                      true /* allowNoMapObject */,
                      callback);
@@ -622,6 +645,7 @@ void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)
                      MapSearchResultIndex().addRef(*result, map::VOR | map::NDB).sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Show &Navaid Range for %1"),
                      tr("Show a ring for the radio navaid range on the map"),
+                     tr("Shift+Click"),
                      QIcon(":/littlenavmap/resources/icons/navrange.svg"),
                      false /* allowNoMapObject */,
                      callback);
@@ -641,6 +665,7 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::PATTERN, MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("Display Airport &Traffic Pattern at %1 ..."),
                      tr("Show a traffic pattern to a runway for this airport"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/trafficpattern.svg"),
                      false /* allowNoMapObject */,
                      callback);
@@ -665,6 +690,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Display &Holding at %1 ..."),
                      tr("Show a holding pattern on the map at a position or a navaid"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/hold.svg"),
                      true /* allowNoMapObject */,
                      callback);
@@ -737,6 +763,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::DEPARTURE, index,
                      tr("Set %1 as &Flight Plan Departure"),
                      tr("Set airport as departure in the flight plan"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/airportroutedest.svg"),
                      false /* allowNoMapObject */,
                      callback);
@@ -770,6 +797,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::DESTINATION, MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("Set %1 as Flight Plan &Destination"),
                      tr("Set airport as destination in the flight plan"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/airportroutestart.svg"),
                      false /* allowNoMapObject */,
                      callback);
@@ -808,6 +836,7 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::ALTERNATE, MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("&Add %1 as Flight Plan Alternate"),
                      tr("Add airport as alternate to the flight plan"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/airportroutealt.svg"),
                      false /* allowNoMapObject */,
                      callback);
@@ -830,6 +859,7 @@ void MapContextMenu::insertAddRouteMenu(QMenu& menu)
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Add %1 to Flight &Plan"),
                      tr("Add airport, navaid or position to nearest flight plan leg"),
+                     tr("Ctrl+Alt+Click"),
                      QIcon(":/littlenavmap/resources/icons/routeadd.svg"),
                      true /* allowNoMapObject */,
                      callback);
@@ -852,6 +882,7 @@ void MapContextMenu::insertAppendRouteMenu(QMenu& menu)
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Append %1 to &Flight Plan"),
                      tr("Append airport, navaid or position to the end of the flight plan"),
+                     tr("Shift+Alt+Click"),
                      QIcon(":/littlenavmap/resources/icons/routeadd.svg"),
                      true /* allowNoMapObject */,
                      callback);
@@ -896,6 +927,7 @@ void MapContextMenu::insertDeleteRouteWaypointMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::DELETEROUTEWAYPOINT, index,
                      tr("&Delete %1 from Flight Plan"),
                      tr("Delete airport, navaid or position from the flight plan"),
+                     tr("Shift+Alt+Click"),
                      QIcon(":/littlenavmap/resources/icons/routedeleteleg.svg"),
                      false /* allowNoMapObject */,
                      callback);
@@ -935,6 +967,7 @@ void MapContextMenu::insertEditRouteUserpointMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::EDITROUTEUSERPOINT, index,
                      tr("Edit Flight Plan &Position %1 ..."),
                      tr("Edit remark, name or coordinate of flight plan position"),
+                     tr("Shift+Alt+Click"),
                      QIcon(":/littlenavmap/resources/icons/routestring.svg"),
                      false /* allowNoMapObject */,
                      callback);
@@ -957,6 +990,7 @@ void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Add &Userpoint %1 ..."),
                      tr("Add a userpoint at this position"),
+                     tr("Ctrl+Shift+Click"),
                      QIcon(":/littlenavmap/resources/icons/userdata_add.svg"),
                      true /* allowNoMapObject */,
                      callback);
@@ -967,6 +1001,7 @@ void MapContextMenu::insertUserpointEditMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::USERPOINTEDIT, MapSearchResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
                      tr("&Edit Userpoint %1 ..."),
                      tr("Edit the userpoint at this position"),
+                     tr("Ctrl+Shift+Click"),
                      QIcon(":/littlenavmap/resources/icons/userdata_edit.svg"));
 }
 
@@ -975,6 +1010,7 @@ void MapContextMenu::insertUserpointMoveMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::USERPOINTMOVE, MapSearchResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
                      tr("&Move Userpoint %1"),
                      tr("Move the userpoint to a new position on the map"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/userdata_move.svg"));
 }
 
@@ -983,6 +1019,7 @@ void MapContextMenu::insertUserpointDeleteMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::USERPOINTDELETE, MapSearchResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
                      tr("&Delete Userpoint %1"),
                      tr("Remove the userpoint at this position"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/userdata_delete.svg"));
 }
 
@@ -991,6 +1028,7 @@ void MapContextMenu::insertLogEntryEdit(QMenu& menu)
   insertMenuOrAction(menu, mc::LOGENTRYEDIT, MapSearchResultIndex().addRef(*result, map::LOGBOOK).sort(alphaSort),
                      tr("Edit &Log Entry %1 ..."),
                      tr("Edit the logbook entry at this position"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/logdata_edit.svg"));
 }
 
@@ -1016,6 +1054,7 @@ void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::SHOWINSEARCH, index,
                      tr("&Show %1 in Search"),
                      tr("Show the airport, navaid, userpoint or other object in the search window"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/search.svg"));
 }
 
