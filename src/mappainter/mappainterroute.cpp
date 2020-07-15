@@ -656,7 +656,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
   if(leg.disabled)
     return;
 
-  if(leg.type == proc::INITIAL_FIX)
+  if(leg.isInitialFix())
   {
     // Nothing to do here
     lastLines.append(line);
@@ -745,7 +745,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
                               proc::HEADING_TO_RADIAL_TERMINATION}))
   {
     if(contains(leg.turnDirection, {"R", "L"}) &&
-       prevLeg != nullptr && prevLeg->type != proc::INITIAL_FIX && prevLeg->type != proc::START_OF_PROCEDURE)
+       prevLeg != nullptr /*&& !prevLeg->isInitialFix() && prevLeg->type != proc::START_OF_PROCEDURE*/)
     {
       float lineDist = static_cast<float>(QLineF(lastLines.last().p2(), line.p1()).length());
       if(!lastLines.last().p2().isNull() && lineDist > 2.f)

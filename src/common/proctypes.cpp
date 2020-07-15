@@ -590,7 +590,10 @@ bool MapProcedureLeg::hasErrorRef() const
 
 float MapProcedureLeg::legTrueCourse() const
 {
-  return trueCourse ? course : atools::geo::normalizeCourse(course + magvar);
+  if(course < map::INVALID_COURSE_VALUE / 2.f)
+    return trueCourse ? course : atools::geo::normalizeCourse(course + magvar);
+
+  return map::INVALID_COURSE_VALUE;
 }
 
 bool MapProcedureLeg::isFinalApproachFix() const
@@ -612,6 +615,11 @@ bool MapProcedureLeg::isHold() const
 {
   return atools::contains(type,
                           {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION});
+}
+
+bool MapProcedureLeg::isInitialFix() const
+{
+  return type == proc::INITIAL_FIX;
 }
 
 bool MapProcedureLeg::isCircular() const

@@ -415,6 +415,8 @@ struct MapProcedureLeg
   bool isHold() const;
   bool isCircular() const;
 
+  bool isInitialFix() const;
+
   /* Do not display distance e.g. for course to altitude */
   bool noDistanceDisplay() const;
 

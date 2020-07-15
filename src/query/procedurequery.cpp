@@ -1379,7 +1379,13 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 
         if(lastLeg != nullptr)
         {
-          if(lastLeg->isCircular())
+          if(lastLeg->isInitialFix())
+          {
+            // Initial fix has no valid course - assume course to center of next leg line
+            atools::geo::Pos center = extended.interpolate(leg.fixPos, 0.5f);
+            lastLegCourse = lastLeg->fixPos.angleDegTo(center);
+          }
+          else if(lastLeg->isCircular())
           {
             // Calculate an geometry approximation and get the course from the last line in the geometry
             ageo::LineString lastGeometry;
@@ -1406,8 +1412,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
         if(courseDiff < 150. || !(courseDiff < map::INVALID_COURSE_VALUE))
         {
           // Try left or right intercept
-          Pos intr1 = Pos::intersectingRadials(extended, legCourse, lastPos, legCourse - 45.f).normalize();
-          Pos intr2 = Pos::intersectingRadials(extended, legCourse, lastPos, legCourse + 45.f).normalize();
+          Pos intr1 = Pos::intersectingRadials(extended, legCourse, lastPos, legCourse - 45.f);
+          Pos intr2 = Pos::intersectingRadials(extended, legCourse, lastPos, legCourse + 45.f);
 
           // Use whatever course is shorter - calculate distance to interception candidates
           float dist1 = intr1.distanceMeterTo(lastPos);
