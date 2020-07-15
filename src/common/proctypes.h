@@ -307,17 +307,18 @@ struct MapProcedureLeg
   int approachId = -1, transitionId = -1, legId = -1, navId = -1, recNavId = -1;
 
   float course, /* magnetic from ARINC */
-        distance /* Distance from source in nm */,
-        calculatedDistance /* Calculated distance closer to the real one in nm */,
+        distance /* Distance from source in NM */,
+        calculatedDistance /* Calculated distance closer to the real one in NM */,
         calculatedTrueCourse /* Calculated distance closer to the real one - great circle line */,
         time /* Only for holds in minutes */,
         theta /* magnetic course to recommended navaid */,
-        rho /* distance to recommended navaid */,
+        rho /* distance to recommended navaid in NM */,
         magvar /* from navaid or airport */;
 
   bool missed, flyover, trueCourse,
        intercept, /* Leg was modfied by a previous intercept */
        disabled, /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */
+       correctedArc, /* Fix of previous leg does not match arc distance. Therefore, p1 is corrected for distance */
        malteseCross; /* Draw maltese cross for either FAF or FACF depending on ILS altitude restriction */
 
   bool isValid() const

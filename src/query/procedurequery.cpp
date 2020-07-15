@@ -927,7 +927,8 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
     else
     {
       // ====================================================================================
-      // Add an artificial initial fix if first leg is no point to keep all consistent ========================
+      // Add an artificial initial fix if first leg is no intital fix to keep all consistent ========================
+      // if(!proc::procedureLegFixAtStart(legs.first().type) && !legs.first().line.isPoint())
       if(!contains(legs.first().type, {proc::INITIAL_FIX}) && !legs.first().line.isPoint())
       {
         proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs, {tr("Start")});
@@ -1175,6 +1176,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
   {
     proc::MapProcedureLeg& leg = legs[i];
     proc::ProcedureLegType type = leg.type;
+    const proc::MapProcedureLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
 
     leg.geometry.clear();
 
@@ -1211,6 +1213,13 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
                             &leg.geometry);
         leg.calculatedDistance = meterToNm(leg.calculatedDistance);
         leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
+
+        if(leg.correctedArc && type == proc::ARC_TO_FIX && prevLeg != nullptr)
+        {
+          // Corrected first position of DME arc - adjust geometry and distance for entry segment
+          leg.geometry.prepend(prevLeg->line.getPos2());
+          leg.calculatedDistance += meterToNm(prevLeg->line.getPos2().distanceMeterTo(leg.line.getPos1()));
+        }
       }
       else
       {
@@ -1299,7 +1308,6 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
 
-    const proc::MapProcedureLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
     if(prevLeg != nullptr && !leg.intercept && type != proc::INITIAL_FIX)
     {
       // Add distance from any existing gaps, bows or turns except for intercept legs
@@ -1352,7 +1360,18 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
     {
       curPos = leg.fixPos;
 
-      leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.rho, true, 20, true) + "/" +
+      // Check if first leg position matches distance to navaid - modify entry point to match distance if not
+      if(atools::almostNotEqual(leg.rho, meterToNm(lastPos.distanceMeterTo(leg.recFixPos)), 0.5f))
+      {
+        // Get point at correct distance to navaid between fix and recommended fix
+        lastPos = leg.recFixPos.endpoint(nmToMeter(leg.rho), leg.recFixPos.angleDegTo(lastPos));
+        leg.interceptPos = lastPos;
+        leg.correctedArc = true;
+      }
+      else
+        leg.correctedArc = false;
+
+      leg.displayText << leg.recFixIdent + tr("/") + Unit::distNm(leg.rho, true, 20, true) + tr("/") +
         QLocale().toString(leg.theta, 'f', 0) + tr("°M");
       leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
     }
@@ -1362,7 +1381,6 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       // Calculate the leading extended position to the fix - this is the from position
       Pos extended = leg.fixPos.endpoint(nmToMeter(leg.distance > 0 ? leg.distance : 1.f /* Fix for missing dist */),
                                          opposedCourseDeg(leg.legTrueCourse()));
-
 
       ageo::LineDistance result;
       lastPos.distanceMeterToLine(extended, leg.fixPos, result);
@@ -1703,7 +1721,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
 
         if(next != nullptr)
         {
-          bool nextIsArc = next->isCircular();
+          bool nextIsCircular = next->isCircular();
           Pos start = prevLeg != nullptr ? prevLeg->line.getPos2() : leg.fixPos;
 
           if(prevLeg != nullptr && (prevLeg->isCircleToLand() || prevLeg->isStraightIn()) && leg.isMissed())
@@ -1711,7 +1729,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
             start = prevLeg->line.getPos1();
 
           Pos intersect;
-          if(nextIsArc)
+          if(nextIsCircular)
           {
             Line line(start, start.endpoint(nmToMeter(200), leg.legTrueCourse()));
             intersect = line.intersectionWithCircle(next->recFixPos, nmToMeter(next->rho), 20);
@@ -1740,7 +1758,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
               leg.line.setPos2(intersect);
               leg.displayText << tr("Intercept");
 
-              if(nextIsArc)
+              if(nextIsCircular)
                 leg.displayText << next->recFixIdent + "/" + Unit::distNm(next->rho, true, 20, true);
               else
                 leg.displayText << tr("Leg");

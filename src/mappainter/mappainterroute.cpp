@@ -711,6 +711,8 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
     {
       if(draw)
       {
+        if(leg.correctedArc)
+          drawLine(painter, lastLines.last().p2(), line.p1());
         QPointF point = wToS(leg.recFixPos, size, &hidden);
         paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
       }
