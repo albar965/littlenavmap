@@ -569,13 +569,17 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       {
         // Add rings for Shift+Click
         if(result.hasVor())
+        {
           // Add VOR range
-          addNavRangeRing(pos, map::VOR, result.vors.first().ident, result.vors.first().getFrequencyOrChannel(),
-                          result.vors.first().range);
+          const map::MapVor& vor = result.vors.first();
+          addNavRangeRing(vor.position, map::VOR, vor.ident, vor.getFrequencyOrChannel(), vor.range);
+        }
         else if(result.hasNdb())
+        {
           // Add NDB range
-          addNavRangeRing(pos, map::NDB, result.ndbs.first().ident, QString::number(result.ndbs.first().frequency),
-                          result.ndbs.first().range);
+          const map::MapNdb& ndb = result.ndbs.first();
+          addNavRangeRing(ndb.position, map::NDB, ndb.ident, QString::number(ndb.frequency), ndb.range);
+        }
         else
           // Add range rings per configuration
           addRangeRing(pos);
