@@ -814,7 +814,8 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
       // Do not edit procedures
       continue;
 
-    if(conv.wToS(leg.getPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
+    // Use fix position to get real navaids from procedures instead of projected or otherwise modified positions
+    if(conv.wToS(leg.getFixPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
     {
       if(leg.getVor().isValid())
       {

@@ -534,10 +534,19 @@ float RouteLeg::getMagVarBySettings() const
   return OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION ? magvarPos : magvar;
 }
 
-const atools::geo::Pos& RouteLeg::getPosition() const
+const atools::geo::Pos& RouteLeg::getFixPosition() const
 {
   if(isAnyProcedure())
     return procedureLeg.fixPos;
+  else
+    return getPosition();
+}
+
+const atools::geo::Pos& RouteLeg::getPosition() const
+{
+  if(isAnyProcedure())
+    return procedureLeg.line.getPos2();
+  // return procedureLeg.fixPos;
   else
   {
     if(type == map::INVALID)
