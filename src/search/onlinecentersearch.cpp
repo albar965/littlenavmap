@@ -227,7 +227,7 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
   return SearchBaseTable::formatModelData(col, displayRoleValue);
 }
 
-void OnlineCenterSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void OnlineCenterSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;

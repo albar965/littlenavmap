@@ -74,7 +74,7 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries)
   mapPainterTop = new MapPainterTop(mapWidget, mapScale);
 
   // Default for visible object types
-  objectTypes = map::MapObjectTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);
+  objectTypes = map::MapTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);
   objectDisplayTypes = map::DISPLAY_TYPE_NONE;
 }
 
@@ -121,7 +121,7 @@ void MapPaintLayer::postDatabaseLoad()
   databaseLoadStatus = false;
 }
 
-void MapPaintLayer::setShowMapObjects(map::MapObjectTypes type, bool show)
+void MapPaintLayer::setShowMapObjects(map::MapTypes type, bool show)
 {
   if(show)
     objectTypes |= type;
@@ -571,14 +571,14 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         for(int i = 0; i < route.size(); i++)
         {
           const RouteLeg& routeLeg = route.value(i);
-          map::MapObjectTypes type = routeLeg.getMapObjectType();
+          map::MapTypes type = routeLeg.getMapObjectType();
           if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
             context.routeIdMap.insert(map::MapObjectRef(routeLeg.getId(), routeLeg.getMapObjectType()));
           else if(type == map::PROCEDURE)
           {
             if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
             {
-              const map::MapSearchResult& navaids = routeLeg.getProcedureLeg().navaids;
+              const map::MapResult& navaids = routeLeg.getProcedureLeg().navaids;
               if(navaids.hasWaypoints())
                 context.routeIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
               if(navaids.hasVor())
@@ -592,7 +592,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       // ====================================
       // Get airports from logbook highlight to avoid duplicate drawing
-      const map::MapSearchResult& highlightResultsSearch = mapWidget->getSearchHighlights();
+      const map::MapResult& highlightResultsSearch = mapWidget->getSearchHighlights();
       for(const map::MapLogbookEntry& entry : highlightResultsSearch.logbookEntries)
       {
         if(entry.departurePos.isValid())

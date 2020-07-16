@@ -83,13 +83,13 @@ struct MapObjectRef
 
   }
 
-  MapObjectRef(int idParam, map::MapObjectType typeParam)
+  MapObjectRef(int idParam, map::MapType typeParam)
     : id(idParam), objType(typeParam)
   {
   }
 
-  MapObjectRef(int idParam, map::MapObjectTypes typeParam)
-    : id(idParam), objType(static_cast<map::MapObjectType>(typeParam.operator unsigned int()))
+  MapObjectRef(int idParam, map::MapTypes typeParam)
+    : id(idParam), objType(static_cast<map::MapType>(typeParam.operator unsigned int()))
   {
   }
 
@@ -97,7 +97,7 @@ struct MapObjectRef
   int id;
 
   /* Use simple type information to avoid vtable and RTTI overhead. Avoid QFlags wrapper here. */
-  map::MapObjectType objType;
+  map::MapType objType;
 
   bool operator==(const map::MapObjectRef& other) const
   {
@@ -133,22 +133,22 @@ struct MapObjectRefExt
   {
   }
 
-  MapObjectRefExt(int idParam, map::MapObjectType typeParam)
+  MapObjectRefExt(int idParam, map::MapType typeParam)
     : MapObjectRef(idParam, typeParam)
   {
   }
 
-  MapObjectRefExt(int idParam, const atools::geo::Pos posParam, map::MapObjectType typeParam)
+  MapObjectRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam)
     : MapObjectRef(idParam, typeParam), position(posParam)
   {
   }
 
-  MapObjectRefExt(int idParam, map::MapObjectType typeParam, const QString& nameParam)
+  MapObjectRefExt(int idParam, map::MapType typeParam, const QString& nameParam)
     : MapObjectRef(idParam, typeParam), name(nameParam)
   {
   }
 
-  MapObjectRefExt(int idParam, const atools::geo::Pos posParam, map::MapObjectType typeParam, const QString& nameParam)
+  MapObjectRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam, const QString& nameParam)
     : MapObjectRef(idParam, typeParam), position(posParam), name(nameParam)
   {
   }
@@ -183,7 +183,7 @@ typedef QVector<MapObjectRefExt> MapObjectRefExtVector;
 
 // =====================================================================
 /* Convert type from nav_search table to enum */
-map::MapObjectTypes navTypeToMapObjectType(const QString& navType);
+map::MapTypes navTypeToMapObjectType(const QString& navType);
 bool navTypeTacan(const QString& navType);
 bool navTypeVortac(const QString& navType);
 
@@ -198,17 +198,17 @@ bool isSoftSurface(const QString& surface);
  * Object type can be NONE if no polymorphism is needed */
 struct MapBase
 {
-  explicit MapBase(map::MapObjectType type)
+  explicit MapBase(map::MapType type)
     : objType(type)
   {
   }
 
-  explicit MapBase(map::MapObjectType type, int idParam)
+  explicit MapBase(map::MapType type, int idParam)
     : id(idParam), objType(type)
   {
   }
 
-  explicit MapBase(map::MapObjectType type, int idParam, const atools::geo::Pos& positionParam)
+  explicit MapBase(map::MapType type, int idParam, const atools::geo::Pos& positionParam)
     : id(idParam), position(positionParam), objType(type)
   {
   }
@@ -217,7 +217,7 @@ struct MapBase
   atools::geo::Pos position;
 
   /* Use simple type information to avoid vtable and RTTI overhead. Avoid QFlags wrapper here. */
-  map::MapObjectType objType;
+  map::MapType objType;
 
   bool isValid() const
   {
@@ -251,7 +251,7 @@ struct MapBase
 
   /* Returns object cast to concrete object or null if type does not match */
   template<typename TYPE>
-  const TYPE *asPtr(map::MapObjectTypes type) const
+  const TYPE *asPtr(map::MapTypes type) const
   {
     if(objType == type)
       return static_cast<const TYPE *>(this);
@@ -268,7 +268,7 @@ struct MapBase
 
   /* Returns object cast to concrete object or default constructed value if type does not match */
   template<typename TYPE>
-  TYPE asObj(map::MapObjectTypes type) const
+  TYPE asObj(map::MapTypes type) const
   {
     const TYPE *obj = asPtr<TYPE>(type);
 
@@ -296,18 +296,18 @@ struct MapBase
   }
 
   /* Set type using QFlags wrapper */
-  void setType(map::MapObjectTypes type)
+  void setType(map::MapTypes type)
   {
-    objType = static_cast<map::MapObjectType>(type.operator unsigned int());
+    objType = static_cast<map::MapType>(type.operator unsigned int());
   }
 
   /* Get type using QFlags wrapper */
-  map::MapObjectTypes getType() const
+  map::MapTypes getType() const
   {
     return objType;
   }
 
-  map::MapObjectType getTypeEnum() const
+  map::MapType getTypeEnum() const
   {
     return objType;
   }
@@ -385,7 +385,7 @@ struct MapAirport
    * @param objectTypes Map display configuration flags
    * @return true if this airport is visible on map
    */
-  bool isVisible(map::MapObjectTypes objectTypes) const;
+  bool isVisible(map::MapTypes objectTypes) const;
 
 };
 
@@ -979,7 +979,7 @@ struct Hold
   }
 
   QString navIdent; /* Only for display purposes */
-  map::MapObjectTypes navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
+  map::MapTypes navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
   bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
   QColor color;
 
@@ -1013,7 +1013,7 @@ struct RangeMarker
 
   QString text; /* Text to display like VOR name and frequency */
   QVector<int> ranges; /* Range ring list (nm) */
-  MapObjectTypes type; /* VOR, NDB, AIRPORT, etc. */
+  MapTypes type; /* VOR, NDB, AIRPORT, etc. */
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
@@ -1132,7 +1132,7 @@ QString parkingNameForFlightplan(const MapParking& parking);
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type);
 const QString& airspaceFlagToString(map::MapAirspaceFlags type);
-QString mapObjectTypeToString(MapObjectTypes type); /* For debugging purposes. */
+QString mapObjectTypeToString(MapTypes type); /* For debugging purposes. */
 const QString& airspaceRemark(map::MapAirspaceTypes type);
 
 int airspaceDrawingOrder(map::MapAirspaceTypes type);

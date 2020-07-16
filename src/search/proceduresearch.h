@@ -79,7 +79,7 @@ public:
   virtual void postDatabaseLoad() override;
 
   /* No op overrides */
-  virtual void getSelectedMapObjects(map::MapSearchResult& result) const override;
+  virtual void getSelectedMapObjects(map::MapResult& result) const override;
   virtual void connectSearchSlots() override;
   virtual void updateUnits() override;
   virtual void updateTableSelection(bool noFollow) override;
@@ -99,10 +99,10 @@ signals:
   void routeInsertProcedure(const proc::MapProcedureLegs& legs, const QString& sidStarRunway);
 
   /* Show information info window on navaid on double click */
-  void showInformation(map::MapSearchResult result);
+  void showInformation(map::MapResult result);
 
   /* Show a map object in the search panel (context menu) */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
+  void showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select);
 
 private:
   friend class TreeEventFilter;

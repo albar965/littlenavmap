@@ -58,8 +58,8 @@ void WaypointTrackQuery::getWaypointByIdent(QList<map::MapWaypoint>& waypoints, 
 }
 
 void WaypointTrackQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                                 map::MapObjectTypes types, int xs,
-                                                 int ys, int screenDistance, map::MapSearchResult& result)
+                                                 map::MapTypes types, int xs,
+                                                 int ys, int screenDistance, map::MapResult& result)
 {
   if(useTracks)
     trackQuery->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);

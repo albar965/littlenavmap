@@ -918,7 +918,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       QPoint symPt(altLegs.at(waypointIndex).last());
 
-      map::MapObjectTypes type = leg.getMapObjectType();
+      map::MapTypes type = leg.getMapObjectType();
 
       // Symbols ========================================================
       if(type == map::WAYPOINT || leg.getWaypoint().isValid())
@@ -972,7 +972,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       QPoint symPt(altLegs.at(waypointIndex).last());
 
-      map::MapObjectTypes type = leg.getMapObjectType();
+      map::MapTypes type = leg.getMapObjectType();
 
       // Symbols ========================================================
       if(type == map::NDB || leg.getNdb().isValid())

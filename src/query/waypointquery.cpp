@@ -145,8 +145,8 @@ const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBo
 }
 
 void WaypointQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                            map::MapObjectTypes types, int xs, int ys,
-                                            int screenDistance, map::MapSearchResult& result)
+                                            map::MapTypes types, int xs, int ys,
+                                            int screenDistance, map::MapResult& result)
 {
   int x, y;
 

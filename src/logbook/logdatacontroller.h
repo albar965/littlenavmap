@@ -49,7 +49,7 @@ class LogdataManager;
 }
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 
 struct MapUserpoint;
 struct MapLogbookEntry;
@@ -174,7 +174,7 @@ signals:
   void logDataChanged();
 
   /* Show search after converting or importing entries */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
+  void showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select);
 
 private:
   /* Create a logbook entry on takeoff and update it on landing */

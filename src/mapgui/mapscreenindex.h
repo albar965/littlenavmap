@@ -33,7 +33,7 @@ struct MapProcedureLegs;
 }
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 struct MapAirport;
 struct MapVor;
 struct MapNdb;
@@ -88,7 +88,7 @@ public:
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
-  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+  void getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result,
                      map::MapObjectQueryTypes types) const;
 
   /* Get nearest distance measurement line index (only the endpoint)
@@ -136,9 +136,9 @@ public:
   }
 
   /* Get objects that are highlighted because of selected rows in a search result table */
-  void changeSearchHighlights(const map::MapSearchResult& newHighlights);
+  void changeSearchHighlights(const map::MapResult& newHighlights);
 
-  const map::MapSearchResult& getSearchHighlights() const
+  const map::MapResult& getSearchHighlights() const
   {
     return *searchHighlights;
   }
@@ -276,14 +276,14 @@ public:
   }
 
 private:
-  void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
-  void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
+  void getNearestAirways(int xs, int ys, int maxDistance, map::MapResult& result) const;
+  void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapResult& result) const;
 
-  void getNearestIls(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
-  void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result) const;
-  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+  void getNearestIls(int xs, int ys, int maxDistance, map::MapResult& result) const;
+  void getNearestAirspaces(int xs, int ys, map::MapResult& result) const;
+  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
                             map::MapObjectQueryTypes types) const;
-  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
                                      map::MapObjectQueryTypes types) const;
   void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids,
                                             map::MapAirspaceSources source,
@@ -308,7 +308,7 @@ private:
   MapPaintLayer *paintLayer;
 
   /* All highlights from search windows - also online airspaces */
-  map::MapSearchResult *searchHighlights;
+  map::MapResult *searchHighlights;
   proc::MapProcedureLeg *approachLegHighlights;
   proc::MapProcedureLegs *approachHighlight;
 

@@ -21,7 +21,7 @@
 #include "query/querytypes.h"
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 }
 
 class WaypointQuery;
@@ -67,9 +67,9 @@ public:
                           const QString& region = QString());
 
   /* Get nearest waypoint by screen coordinates for types and given map layer. */
-  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, map::MapObjectTypes types,
+  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, map::MapTypes types,
                                int xs, int ys,
-                               int screenDistance, map::MapSearchResult& result);
+                               int screenDistance, map::MapResult& result);
 
   /* Get nearest waypoint - slow */
   void getWaypointNearest(map::MapWaypoint& waypoint, const atools::geo::Pos& pos);

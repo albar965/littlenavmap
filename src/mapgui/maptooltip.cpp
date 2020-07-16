@@ -52,7 +52,7 @@ MapTooltip::~MapTooltip()
   qDebug() << Q_FUNC_INFO;
 }
 
-QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, const Route& route, bool airportDiagram)
+QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const Route& route, bool airportDiagram)
 {
   optsd::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
 
@@ -402,7 +402,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   if(opts.testFlag(optsd::TOOLTIP_AIRSPACE))
   {
     // Put all online airspace on top of the list to have consistent ordering with menus and info windows
-    MapSearchResult res = mapSearchResult.moveOnlineAirspacesToFront();
+    MapResult res = mapSearchResult.moveOnlineAirspacesToFront();
 
     for(const MapAirspace& airspace : res.airspaces)
     {

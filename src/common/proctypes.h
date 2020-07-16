@@ -182,8 +182,10 @@ enum LegSpecialType
 
 /* Reduced procedure leg type for map index, tooltips and similar */
 struct MapProcedurePoint
+  : public map::MapBase
 {
   MapProcedurePoint()
+    : MapBase(map::NONE)
   {
   }
 
@@ -203,24 +205,6 @@ struct MapProcedurePoint
   proc::ProcedureLegType type;
 
   bool missed, flyover, preview;
-
-  atools::geo::Pos position;
-
-  bool isValid() const
-  {
-    return position.isValid();
-  }
-
-  const atools::geo::Pos& getPosition() const
-  {
-    return position;
-  }
-
-  int getId() const
-  {
-    return -1;
-  }
-
 };
 
 struct MapProcedureRef
@@ -296,7 +280,7 @@ struct MapProcedureLeg
   atools::geo::LineString geometry; /* Same as line or geometry approximation for intercept or arcs for distance to leg calculation */
 
   /* Navaids resolved by approach query class */
-  map::MapSearchResult navaids;
+  map::MapResult navaids;
 
   MapAltRestriction altRestriction;
   MapSpeedRestriction speedRestriction;

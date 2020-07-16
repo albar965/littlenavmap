@@ -42,7 +42,7 @@ void RouteExtractor::extractRoute(QVector<RouteEntry>& route, float& distanceMet
 }
 
 /* Convert internal network type to MapObjectTypes for extract route */
-map::MapObjectType RouteExtractor::toMapObjectType(atools::routing::NodeType type) const
+map::MapType RouteExtractor::toMapObjectType(atools::routing::NodeType type) const
 {
   switch(type)
   {

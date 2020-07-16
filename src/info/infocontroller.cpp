@@ -237,7 +237,7 @@ void InfoController::anchorClicked(const QUrl& url)
       else if(query.hasQueryItem("hideonlineairspaces"))
       {
         // Hide online airspaces from search or information window =========================================
-        map::MapSearchResult searchHighlights = mapWidget->getSearchHighlights();
+        map::MapResult searchHighlights = mapWidget->getSearchHighlights();
         searchHighlights.airspaces.clear();
         mapWidget->changeSearchHighlights(searchHighlights, true /* updateAirspace*/, false /* updateLogEntries */);
         mainWindow->updateHighlightActionStates();
@@ -280,7 +280,7 @@ void InfoController::anchorClicked(const QUrl& url)
       else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
       {
         // Zoom to an map object =========================================
-        map::MapObjectTypes type(query.queryItemValue("type").toInt());
+        map::MapTypes type(query.queryItemValue("type").toInt());
         int id = query.queryItemValue("id").toInt();
 
         if(type == map::AIRPORT)
@@ -297,7 +297,7 @@ void InfoController::anchorClicked(const QUrl& url)
           if(src & map::AIRSPACE_SRC_ONLINE)
           {
             // Append online center to current highlight list if not already present
-            map::MapSearchResult searchHighlights = mapWidget->getSearchHighlights();
+            map::MapResult searchHighlights = mapWidget->getSearchHighlights();
             if(!maptools::containsId(searchHighlights.airspaces, airspace.id))
               searchHighlights.airspaces.append(airspace);
             mapWidget->changeSearchHighlights(searchHighlights, true /* updateAirspace*/, false /* updateLogEntries */);
@@ -419,13 +419,13 @@ void InfoController::restoreState()
       atools::settings::Settings::instance().valueBool(lnm::INFOWINDOW_MORE_LESS_PROGRESS, false);
 
     // Go through the string and collect all objects in the MapSearchResult
-    map::MapSearchResult res;
+    map::MapResult res;
 
     // All objects =================================
     QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
     QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
     for(int i = 0; i < refsStrList.size(); i += 2)
-      mapQuery->getMapObjectById(res, map::MapObjectTypes(refsStrList.value(i + 1).toInt()), map::AIRSPACE_SRC_NONE,
+      mapQuery->getMapObjectById(res, map::MapTypes(refsStrList.value(i + 1).toInt()), map::AIRSPACE_SRC_NONE,
                                  refsStrList.value(i).toInt(), false /* airport from nav database */);
 
     // Airspaces =================================
@@ -538,7 +538,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserCenterInfo->clear();
 }
 
-void InfoController::showInformation(map::MapSearchResult result)
+void InfoController::showInformation(map::MapResult result)
 {
   showInformationInternal(result, true /* Show windows */, true /* scroll to top */,
                           false /* forceUpdate */);
@@ -574,7 +574,7 @@ void InfoController::onlineClientAndAtcUpdated()
 
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
-void InfoController::showInformationInternal(map::MapSearchResult result, bool showWindows, bool scrollToTop,
+void InfoController::showInformationInternal(map::MapResult result, bool showWindows, bool scrollToTop,
                                              bool forceUpdate)
 {
 #ifdef DEBUG_INFORMATION
@@ -926,7 +926,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   }
 }
 
-bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop,
+bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop,
                                           bool forceUpdate)
 {
   HtmlBuilder html(true);
@@ -1015,7 +1015,7 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
   return foundNavaid;
 }
 
-bool InfoController::updateUserpointInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop)
+bool InfoController::updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop)
 {
   HtmlBuilder html(true);
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -1045,7 +1045,7 @@ bool InfoController::updateUserpointInternal(const map::MapSearchResult& result,
 void InfoController::preDatabaseLoad()
 {
   // Clear current airport and navaids result
-  currentSearchResult = map::MapSearchResult();
+  currentSearchResult = map::MapResult();
   databaseLoadStatus = true;
   clearInfoTextBrowsers();
 }

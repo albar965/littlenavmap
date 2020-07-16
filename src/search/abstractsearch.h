@@ -23,7 +23,7 @@
 #include "common/tabindexes.h"
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 
 }
 
@@ -53,7 +53,7 @@ public:
   virtual void restoreState() = 0;
 
   /* Get all selected map objects (MapAirport will be only partially filled */
-  virtual void getSelectedMapObjects(map::MapSearchResult& result) const = 0;
+  virtual void getSelectedMapObjects(map::MapResult& result) const = 0;
 
   /* Options dialog has changed some options */
   virtual void optionsChanged() = 0;

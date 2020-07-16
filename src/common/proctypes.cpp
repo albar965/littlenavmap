@@ -542,6 +542,7 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 }
 
 MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg, bool previewParam)
+  : map::MapBase(map::NONE)
 {
   preview = previewParam;
   calculatedDistance = leg.calculatedDistance;

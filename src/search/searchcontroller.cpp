@@ -86,7 +86,7 @@ SearchController::~SearchController()
   delete onlineServerSearch;
 }
 
-void SearchController::getSelectedMapObjects(map::MapSearchResult& result) const
+void SearchController::getSelectedMapObjects(map::MapResult& result) const
 {
   int id = tabHandlerSearch->getCurrentTabId();
   if(id != -1)
@@ -285,7 +285,7 @@ bool SearchController::hasSelection()
   return selection;
 }
 
-void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select)
+void SearchController::showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select)
 {
   qDebug() << Q_FUNC_INFO << record;
 

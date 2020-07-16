@@ -43,7 +43,7 @@ struct MapWaypoint;
 
 struct MapUserpoint;
 
-struct MapSearchResult;
+struct MapResult;
 
 }
 
@@ -62,14 +62,14 @@ public:
   void buildFlightplanEntry(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry,
                             bool alternate) const;
 
-  void buildFlightplanEntry(int id, const atools::geo::Pos& userPos, map::MapObjectTypes type,
+  void buildFlightplanEntry(int id, const atools::geo::Pos& userPos, map::MapTypes type,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
-  void buildFlightplanEntry(const atools::geo::Pos& userPos, const map::MapSearchResult& result,
+  void buildFlightplanEntry(const atools::geo::Pos& userPos, const map::MapResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints,
-                            map::MapObjectTypes type);
+                            map::MapTypes type);
 
-  void buildFlightplanEntry(const map::MapSearchResult& result,
+  void buildFlightplanEntry(const map::MapResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
   void buildFlightplanEntry(const proc::MapProcedureLeg& leg,

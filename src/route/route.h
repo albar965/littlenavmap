@@ -245,7 +245,7 @@ public:
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                  map::MapSearchResult& mapobjects,
+                  map::MapResult& mapobjects,
                   map::MapObjectQueryTypes types) const;
 
   /* @return true if any leg has an airway name */
@@ -376,7 +376,7 @@ public:
   void removeProcedureLegs(proc::MapProcedureTypes type);
 
   /* Needed to activate missed approach sequencing or not depending on visibility state */
-  void setShownMapFeatures(map::MapObjectTypes types)
+  void setShownMapFeatures(map::MapTypes types)
   {
     shownTypes = types;
   }
@@ -632,7 +632,7 @@ private:
 
   atools::fs::pln::Flightplan flightplan;
   proc::MapProcedureLegs approachLegs, starLegs, sidLegs;
-  map::MapObjectTypes shownTypes;
+  map::MapTypes shownTypes;
 
   int activeLegIndex = map::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;

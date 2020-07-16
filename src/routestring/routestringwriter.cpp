@@ -294,7 +294,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
   QString lastAirway, lastId;
   Pos lastPos;
-  map::MapObjectTypes lastType = map::NONE;
+  map::MapTypes lastType = map::NONE;
   int lastIndex = 0;
   for(int i = 0; i <= route.getDestinationAirportLegIndex(); i++)
   {

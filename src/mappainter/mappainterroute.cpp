@@ -1297,7 +1297,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   texts.removeDuplicates();
   texts.removeAll(QString());
 
-  const map::MapSearchResult& navaids = leg.navaids;
+  const map::MapResult& navaids = leg.navaids;
   int symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
 
   if(!navaids.waypoints.isEmpty() && wToS(navaids.waypoints.first().position, x, y))
@@ -1546,7 +1546,7 @@ void MapPainterRoute::drawSymbols(const PaintContext *context,
       int x = atools::roundToInt(pt.x());
       int y = atools::roundToInt(pt.y());
       const RouteLeg& obj = route->value(i);
-      map::MapObjectTypes type = obj.getMapObjectType();
+      map::MapTypes type = obj.getMapObjectType();
       switch(type)
       {
         case map::INVALID:
@@ -1615,7 +1615,7 @@ void MapPainterRoute::drawRouteSymbolText(const PaintContext *context,
       int x = atools::roundToInt(pt.x());
       int y = atools::roundToInt(pt.y());
       const RouteLeg& obj = route->value(i);
-      map::MapObjectTypes type = obj.getMapObjectType();
+      map::MapTypes type = obj.getMapObjectType();
       switch(type)
       {
         case map::INVALID:

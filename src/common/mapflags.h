@@ -49,7 +49,7 @@ Q_DECL_CONSTEXPR static float MIN_GROUND_SPEED = 30.f;
 Q_DECL_CONSTEXPR static float MIN_WIND_BARB_ALTITUDE = 4000.f;
 
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
-enum MapObjectType
+enum MapType
 {
   NONE = 0,
   AIRPORT = 1 << 0,
@@ -102,10 +102,10 @@ enum MapObjectType
   ALL = 0xffffffff
 };
 
-Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectTypes);
+Q_DECLARE_FLAGS(MapTypes, MapType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes);
 
-QDebug operator<<(QDebug out, const map::MapObjectTypes& type);
+QDebug operator<<(QDebug out, const map::MapTypes& type);
 
 /* Type that is used only for flags to determine what should be drawn. Not used in other contexts. */
 enum MapObjectDisplayType

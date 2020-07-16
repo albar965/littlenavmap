@@ -226,7 +226,7 @@ QStringList UserdataController::getAllTypes() const
   return icons->getAllTypes();
 }
 
-void UserdataController::addUserpointFromMap(const map::MapSearchResult& result, atools::geo::Pos pos)
+void UserdataController::addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos)
 {
   qDebug() << Q_FUNC_INFO;
   if(result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT))
@@ -351,7 +351,7 @@ void UserdataController::setMagDecReader(atools::fs::common::MagDecReader *magDe
   manager->setMagDecReader(magDecReader);
 }
 
-void UserdataController::editUserpointFromMap(const map::MapSearchResult& result)
+void UserdataController::editUserpointFromMap(const map::MapResult& result)
 {
   qDebug() << Q_FUNC_INFO;
   editUserpoints({result.userpoints.first().id});

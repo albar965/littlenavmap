@@ -31,7 +31,7 @@ class Pos;
 }
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 struct Hold;
 }
 
@@ -49,7 +49,7 @@ class HoldDialog :
   Q_OBJECT
 
 public:
-  explicit HoldDialog(QWidget *parent, const map::MapSearchResult& resultParam, const atools::geo::Pos& positionParam);
+  explicit HoldDialog(QWidget *parent, const map::MapResult& resultParam, const atools::geo::Pos& positionParam);
   virtual ~HoldDialog() override;
 
   void fillHold(map::Hold& hold);
@@ -65,7 +65,7 @@ private:
   void updateLength();
 
   Ui::HoldDialog *ui;
-  map::MapSearchResult *result;
+  map::MapResult *result;
   atools::geo::Pos *position;
 
   QColor color;

@@ -513,7 +513,7 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
       airportTitle(airport, html, -1);
 
     // Get nearest airports that have procedures ====================================
-    MapSearchResultIndex *nearestAirports = airportQueryNav->getNearestAirportsProc(airport,
+    MapResultIndex *nearestAirports = airportQueryNav->getNearestAirportsProc(airport,
                                                                                     NEAREST_MAX_DISTANCE_AIRPORT_NM);
     if(!nearestMapObjectsText(airport, html, nearestAirports, tr("Nearest Airports with Procedures"), false, true,
                               NEAREST_MAX_NUM_AIRPORT))
@@ -521,7 +521,7 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
                  arg(Unit::distNm(NEAREST_MAX_DISTANCE_AIRPORT_NM * 4.f))).pEnd();
 
     // Get nearest VOR and NDB ====================================
-    MapSearchResultIndex *nearestNavaids = mapQuery->getNearestNavaids(airport.position,
+    MapResultIndex *nearestNavaids = mapQuery->getNearestNavaids(airport.position,
                                                                        NEAREST_MAX_DISTANCE_NAVAID_NM,
                                                                        map::VOR | map::NDB | map::ILS,
                                                                        3 /* max ILS */, 4.f /* max ILS dist NM */);
@@ -574,7 +574,7 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
 }
 
 bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuilder& html,
-                                            const map::MapSearchResultIndex *nearest, const QString& header,
+                                            const map::MapResultIndex *nearest, const QString& header,
                                             bool frequencyCol, bool airportCol, int maxRows) const
 {
   if(nearest != nullptr && !nearest->isEmpty())
@@ -1468,7 +1468,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
     else if(fixType == "TV")
       html.row2(tr("Fix Type:"), tr("Terminal VOR"));
 
-    map::MapSearchResult result;
+    map::MapResult result;
 
     mapQuery->getMapObjectByIdent(result, map::VOR, recApp.valueStr("fix_ident"), recApp.valueStr("fix_region"));
 
@@ -1515,7 +1515,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
     else if(fixType == "TN")
       html.row2(tr("Fix Type:"), tr("Terminal NDB"));
 
-    map::MapSearchResult result;
+    map::MapResult result;
     mapQuery->getMapObjectByIdent(result, map::NDB, recApp.valueStr("fix_ident"), recApp.valueStr("fix_region"));
 
     if(result.hasNdb())

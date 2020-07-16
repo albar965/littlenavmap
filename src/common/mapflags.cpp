@@ -22,7 +22,7 @@
 
 namespace map {
 
-QDebug operator<<(QDebug out, const map::MapObjectTypes& type)
+QDebug operator<<(QDebug out, const map::MapTypes& type)
 {
   QDebugStateSaver saver(out);
   Q_UNUSED(saver);

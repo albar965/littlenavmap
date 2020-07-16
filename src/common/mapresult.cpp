@@ -23,7 +23,7 @@
 
 namespace map {
 
-void MapSearchResult::clear(const MapObjectTypes& types)
+void MapResult::clear(const MapTypes& types)
 {
   if(types.testFlag(map::AIRPORT))
   {
@@ -90,13 +90,13 @@ void MapSearchResult::clear(const MapObjectTypes& types)
 }
 
 template<typename T>
-void MapSearchResult::clearAllButFirst(QList<T>& list)
+void MapResult::clearAllButFirst(QList<T>& list)
 {
   while(list.size() > 1)
     list.removeLast();
 }
 
-void MapSearchResult::clearAllButFirst(const MapObjectTypes& types)
+void MapResult::clearAllButFirst(const MapTypes& types)
 {
   if(types.testFlag(map::AIRPORT))
   {
@@ -159,7 +159,7 @@ void MapSearchResult::clearAllButFirst(const MapObjectTypes& types)
   }
 }
 
-void MapSearchResult::moveOnlineAirspacesToFront()
+void MapResult::moveOnlineAirspacesToFront()
 {
   QList<MapAirspace> list;
   for(const MapAirspace& a: airspaces)
@@ -175,14 +175,14 @@ void MapSearchResult::moveOnlineAirspacesToFront()
   airspaces = list;
 }
 
-MapSearchResult MapSearchResult::moveOnlineAirspacesToFront() const
+MapResult MapResult::moveOnlineAirspacesToFront() const
 {
-  MapSearchResult retval(*this);
+  MapResult retval(*this);
   retval.moveOnlineAirspacesToFront();
   return retval;
 }
 
-bool MapSearchResult::hasSimNavUserAirspaces() const
+bool MapResult::hasSimNavUserAirspaces() const
 {
   for(const map::MapAirspace& airspace : airspaces)
   {
@@ -192,7 +192,7 @@ bool MapSearchResult::hasSimNavUserAirspaces() const
   return false;
 }
 
-bool MapSearchResult::hasOnlineAirspaces() const
+bool MapResult::hasOnlineAirspaces() const
 {
   for(const map::MapAirspace& airspace : airspaces)
   {
@@ -202,7 +202,7 @@ bool MapSearchResult::hasOnlineAirspaces() const
   return false;
 }
 
-const map::MapAirspace *MapSearchResult::firstSimNavUserAirspace() const
+const map::MapAirspace *MapResult::firstSimNavUserAirspace() const
 {
   QList<map::MapAirspace>::const_iterator it =
     std::find_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& a) -> bool
@@ -216,7 +216,7 @@ const map::MapAirspace *MapSearchResult::firstSimNavUserAirspace() const
   return nullptr;
 }
 
-const map::MapAirspace *MapSearchResult::firstOnlineAirspace() const
+const map::MapAirspace *MapResult::firstOnlineAirspace() const
 {
   QList<map::MapAirspace>::const_iterator it =
     std::find_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& a) -> bool
@@ -230,7 +230,7 @@ const map::MapAirspace *MapSearchResult::firstOnlineAirspace() const
   return nullptr;
 }
 
-int MapSearchResult::numSimNavUserAirspaces() const
+int MapResult::numSimNavUserAirspaces() const
 {
   int num = 0;
   for(const map::MapAirspace& airspace : airspaces)
@@ -238,7 +238,7 @@ int MapSearchResult::numSimNavUserAirspaces() const
   return num;
 }
 
-int MapSearchResult::numOnlineAirspaces() const
+int MapResult::numOnlineAirspaces() const
 {
   int num = 0;
   for(const map::MapAirspace& airspace : airspaces)
@@ -246,7 +246,7 @@ int MapSearchResult::numOnlineAirspaces() const
   return num;
 }
 
-QList<map::MapAirspace> MapSearchResult::getSimNavUserAirspaces() const
+QList<map::MapAirspace> MapResult::getSimNavUserAirspaces() const
 {
   QList<map::MapAirspace> retval;
   for(const map::MapAirspace& airspace : airspaces)
@@ -257,7 +257,7 @@ QList<map::MapAirspace> MapSearchResult::getSimNavUserAirspaces() const
   return retval;
 }
 
-QList<map::MapAirspace> MapSearchResult::getOnlineAirspaces() const
+QList<map::MapAirspace> MapResult::getOnlineAirspaces() const
 {
   QList<map::MapAirspace> retval;
   for(const map::MapAirspace& airspace : airspaces)
@@ -268,7 +268,7 @@ QList<map::MapAirspace> MapSearchResult::getOnlineAirspaces() const
   return retval;
 }
 
-void MapSearchResult::clearNavdataAirspaces()
+void MapResult::clearNavdataAirspaces()
 {
   QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
                                                         [](const map::MapAirspace& airspace) -> bool
@@ -279,7 +279,7 @@ void MapSearchResult::clearNavdataAirspaces()
     airspaces.erase(it, airspaces.end());
 }
 
-void MapSearchResult::clearOnlineAirspaces()
+void MapResult::clearOnlineAirspaces()
 {
   QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
                                                         [](const map::MapAirspace& airspace) -> bool
@@ -290,9 +290,9 @@ void MapSearchResult::clearOnlineAirspaces()
     airspaces.erase(it, airspaces.end());
 }
 
-const atools::geo::Pos& MapSearchResult::getPosition(const std::initializer_list<MapObjectTypes>& types) const
+const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTypes>& types) const
 {
-  for(const MapObjectTypes& type : types)
+  for(const MapTypes& type : types)
   {
     if(!isEmpty(type))
     {
@@ -329,9 +329,9 @@ const atools::geo::Pos& MapSearchResult::getPosition(const std::initializer_list
   return atools::geo::EMPTY_POS;
 }
 
-QString MapSearchResult::getIdent(const std::initializer_list<MapObjectTypes>& types) const
+QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
 {
-  for(const MapObjectTypes& type : types)
+  for(const MapTypes& type : types)
   {
     if(!isEmpty(type))
     {
@@ -368,13 +368,13 @@ QString MapSearchResult::getIdent(const std::initializer_list<MapObjectTypes>& t
   return QString();
 }
 
-bool MapSearchResult::getIdAndType(int& id, MapObjectTypes& type,
-                                   const std::initializer_list<MapObjectTypes>& types) const
+bool MapResult::getIdAndType(int& id, MapTypes& type,
+                                   const std::initializer_list<MapTypes>& types) const
 {
   id = -1;
   type = NONE;
 
-  for(const MapObjectTypes& t : types)
+  for(const MapTypes& t : types)
   {
     if(!isEmpty(t))
     {
@@ -467,7 +467,7 @@ bool MapSearchResult::getIdAndType(int& id, MapObjectTypes& type,
   return id != -1;
 }
 
-MapSearchResult& MapSearchResult::fromMapBase(const MapBase *base)
+MapResult& MapResult::fromMapBase(const MapBase *base)
 {
   if(base != nullptr)
   {
@@ -503,7 +503,7 @@ MapSearchResult& MapSearchResult::fromMapBase(const MapBase *base)
   return *this;
 }
 
-int MapSearchResult::size(const MapObjectTypes& types) const
+int MapResult::size(const MapTypes& types) const
 {
   int totalSize = 0;
   totalSize += types.testFlag(map::AIRPORT) ? airports.size() : 0;
@@ -523,7 +523,7 @@ int MapSearchResult::size(const MapObjectTypes& types) const
   return totalSize;
 }
 
-QDebug operator<<(QDebug out, const map::MapSearchResult& record)
+QDebug operator<<(QDebug out, const map::MapResult& record)
 {
   QDebugStateSaver saver(out);
 
@@ -636,7 +636,7 @@ QDebug operator<<(QDebug out, const map::MapSearchResult& record)
   return out;
 }
 
-MapSearchResultIndex& MapSearchResultIndex::add(const MapSearchResult& resultParam, const MapObjectTypes& types)
+MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes& types)
 {
   if(types.testFlag(AIRPORT))
   {
@@ -729,7 +729,7 @@ MapSearchResultIndex& MapSearchResultIndex::add(const MapSearchResult& resultPar
   return *this;
 }
 
-MapSearchResultIndex& MapSearchResultIndex::addRef(const MapSearchResult& resultParam, const MapObjectTypes& types)
+MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTypes& types)
 {
   if(types.testFlag(AIRPORT))
     addAll(resultParam.airports);
@@ -771,8 +771,8 @@ MapSearchResultIndex& MapSearchResultIndex::addRef(const MapSearchResult& result
   return *this;
 }
 
-MapSearchResultIndex& MapSearchResultIndex::sort(const QVector<MapObjectTypes>& types,
-                                                 const MapSearchResultIndex::SortFunction& sortFunc)
+MapResultIndex& MapResultIndex::sort(const QVector<MapTypes>& types,
+                                                 const MapResultIndex::SortFunction& sortFunc)
 {
   if(size() <= 1)
     // Nothing to sort
@@ -784,7 +784,7 @@ MapSearchResultIndex& MapSearchResultIndex::sort(const QVector<MapObjectTypes>& 
   else if(!types.isEmpty())
   {
     // Sort by types - create hash map of priorities
-    QHash<MapObjectTypes, int> priorities;
+    QHash<MapTypes, int> priorities;
     for(int i = 0; i < types.size(); i++)
     {
       if(types.at(i) != map::NONE)
@@ -805,7 +805,7 @@ MapSearchResultIndex& MapSearchResultIndex::sort(const QVector<MapObjectTypes>& 
   return *this;
 }
 
-MapSearchResultIndex& MapSearchResultIndex::sort(const atools::geo::Pos& pos, bool sortNearToFar)
+MapResultIndex& MapResultIndex::sort(const atools::geo::Pos& pos, bool sortNearToFar)
 {
   if(isEmpty() || !pos.isValid())
     // Nothing to sort
@@ -820,7 +820,7 @@ MapSearchResultIndex& MapSearchResultIndex::sort(const atools::geo::Pos& pos, bo
   return *this;
 }
 
-MapSearchResultIndex& MapSearchResultIndex::remove(const atools::geo::Pos& pos, float maxDistanceNm)
+MapResultIndex& MapResultIndex::remove(const atools::geo::Pos& pos, float maxDistanceNm)
 {
   if(isEmpty() || !pos.isValid())
     return *this;

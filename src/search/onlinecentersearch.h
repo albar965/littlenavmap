@@ -49,7 +49,7 @@ public:
   virtual void saveState() override;
   virtual void restoreState() override;
 
-  virtual void getSelectedMapObjects(map::MapSearchResult& result) const override;
+  virtual void getSelectedMapObjects(map::MapResult& result) const override;
   virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
 

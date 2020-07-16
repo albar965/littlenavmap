@@ -2702,7 +2702,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
                                                arg(lastUpdate));
   }
 
-  map::MapSearchResult result;
+  map::MapResult result;
   searchController->getSelectedMapObjects(result);
   mapWidget->changeSearchHighlights(result, updateAirspace, updateLogEntries);
   updateHighlightActionStates();

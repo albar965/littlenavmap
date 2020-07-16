@@ -132,7 +132,7 @@ void RouteLeg::createFromProcedureLegs(int entryIndex, const proc::MapProcedureL
 
 void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const Pos& last, float maxDistance)
 {
-  map::MapSearchResult mapobjectResult;
+  map::MapResult mapobjectResult;
   NavApp::getMapQuery()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
                                              flightplanEntry->getIdent(), flightplanEntry->getRegion(),
                                              QString(), last, maxDistance);
@@ -168,7 +168,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
   if(region == "KK" || region == "ZZ") // Invalid route finder region
     region.clear();
 
-  map::MapSearchResult mapobjectResult;
+  map::MapResult mapobjectResult;
   switch(flightplanEntry->getWaypointType())
   {
     // ====================== Create by totally unknown type with probably invalid position
@@ -845,7 +845,7 @@ void RouteLeg::assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry)
   flightplanEntry->setMagvar(NavApp::getMagVar(flightplanEntry->getPosition()));
 }
 
-void RouteLeg::assignAirport(const map::MapSearchResult& mapobjectResult,
+void RouteLeg::assignAirport(const map::MapResult& mapobjectResult,
                              atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::AIRPORT;
@@ -861,7 +861,7 @@ void RouteLeg::assignAirport(const map::MapSearchResult& mapobjectResult,
   flightplanEntry->setMagvar(airport.magvar);
 }
 
-void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
+void RouteLeg::assignIntersection(const map::MapResult& mapobjectResult,
                                   atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::WAYPOINT;
@@ -875,7 +875,7 @@ void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
   flightplanEntry->setMagvar(waypoint.magvar);
 }
 
-void RouteLeg::assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
+void RouteLeg::assignVor(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::VOR;
   vor = mapobjectResult.vors.first();
@@ -890,7 +890,7 @@ void RouteLeg::assignVor(const map::MapSearchResult& mapobjectResult, atools::fs
   flightplanEntry->setFrequency(vor.frequency);
 }
 
-void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
+void RouteLeg::assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::NDB;
   ndb = mapobjectResult.ndbs.first();

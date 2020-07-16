@@ -1813,7 +1813,7 @@ void RouteController::doubleClick(const QModelIndex& index)
     else
       emit showPos(mo.getPosition(), 0.f, true);
 
-    map::MapSearchResult result;
+    map::MapResult result;
     mapQuery->getMapObjectById(result, mo.getMapObjectType(), map::AIRSPACE_SRC_NONE, mo.getId(),
                                false /* airport from nav database */);
     emit showInformation(result);
@@ -1890,7 +1890,7 @@ void RouteController::showInformationMenu()
   if(index.isValid())
   {
     const RouteLeg& routeLeg = route.value(index.row());
-    map::MapSearchResult result;
+    map::MapResult result;
     mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg.getId(),
                                false /* airport from nav database */);
     emit showInformation(result);
@@ -2308,7 +2308,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
       NavApp::getMapWidget()->addTrafficPattern(routeLeg->getAirport());
     else if(action == ui->actionMapHold && routeLeg != nullptr)
     {
-      map::MapSearchResult result;
+      map::MapResult result;
       mapQuery->getMapObjectById(result, routeLeg->getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg->getId(),
                                  false /* airport from nav*/);
 
@@ -2325,7 +2325,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         const RouteLeg& routeLegSel = route.value(idx);
         if(routeLegSel.getNdb().isValid() || routeLegSel.getVor().isValid())
         {
-          map::MapObjectTypes type = routeLegSel.getMapObjectType();
+          map::MapTypes type = routeLegSel.getMapObjectType();
           if(routeLegSel.isAnyProcedure())
           {
             if(routeLegSel.getNdb().isValid())
@@ -2416,7 +2416,7 @@ void RouteController::editUserWaypointName(int index)
   }
 }
 
-void RouteController::shownMapFeaturesChanged(map::MapObjectTypes types)
+void RouteController::shownMapFeaturesChanged(map::MapTypes types)
 {
   // qDebug() << Q_FUNC_INFO;
   route.setShownMapFeatures(types);
@@ -3305,7 +3305,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
   NavApp::setStatusMessage(tr("Added procedure to flight plan."));
 }
 
-void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex)
+void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex)
 {
   qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id
            << "type" << type << "leg index" << legIndex;
@@ -3370,7 +3370,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapObjectT
   NavApp::setStatusMessage(tr("Added waypoint to flight plan."));
 }
 
-void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type,
+void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type,
                                    int legIndex)
 {
   qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id

@@ -56,7 +56,7 @@ class Rect;
 namespace map {
 struct MapAirport;
 
-struct MapSearchResult;
+struct MapResult;
 
 }
 
@@ -149,7 +149,7 @@ signals:
   void selectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
 
   /* Show information in context menu selected */
-  void showInformation(map::MapSearchResult result);
+  void showInformation(map::MapResult result);
 
   /* Show approaches in context menu selected */
   void showProcedures(const map::MapAirport& airport);
@@ -165,7 +165,7 @@ signals:
   void routeAddAlternate(const map::MapAirport& airport);
 
   /* Add airport or navaid to flight plan. Leg will be selected automatically */
-  void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
+  void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Load flight plan or load aircraft performance file triggered from logbook */
   void loadRouteFile(const QString& filepath);
@@ -209,8 +209,8 @@ private:
   void doubleClick(const QModelIndex& index);
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void reconnectSelectionModel();
-  void getNavTypeAndId(int row, map::MapObjectTypes& navType, int& id);
-  void getNavTypeAndId(int row, map::MapObjectTypes& navType, map::MapAirspaceSources& airspaceSource, int& id);
+  void getNavTypeAndId(int row, map::MapTypes& navType, int& id);
+  void getNavTypeAndId(int row, map::MapTypes& navType, map::MapAirspaceSources& airspaceSource, int& id);
   void editTimeout();
 
   void loadAllRowsIntoView();

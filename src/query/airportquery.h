@@ -24,8 +24,8 @@ namespace Marble {
 class GeoDataLatLonBox;
 }
 namespace map {
-struct MapSearchResult;
-struct MapSearchResultIndex;
+struct MapResult;
+struct MapResultIndex;
 struct MapAirport;
 struct MapRunway;
 struct MapRunwayEnd;
@@ -132,7 +132,7 @@ public:
   const QList<map::MapRunway> *getRunways(int airportId);
 
   QStringList getRunwayNames(int airportId);
-  void getRunwayEndByNames(map::MapSearchResult& result, const QString& runwayName, const QString& airportIdent);
+  void getRunwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent);
   map::MapRunwayEnd getRunwayEndByName(int airportId, const QString& runway);
   bool getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
                                        const atools::geo::Pos& pos, float trackTrue);
@@ -149,7 +149,7 @@ public:
 
   /* Get nearest airports that have a procedure sorted by distance to pos with a maximum distance distanceNm.
    * Uses distance * 4 and searches again if nothing was found.*/
-  map::MapSearchResultIndex *getNearestAirportsProc(const map::MapAirport& airport, float distanceNm);
+  map::MapResultIndex *getNearestAirportsProc(const map::MapAirport& airport, float distanceNm);
 
   /* Get a list of runways of all airports inside rectangle sorted by distance to pos */
   void getRunways(QVector<map::MapRunway>& runways, const atools::geo::Rect& rect, const atools::geo::Pos& pos);
@@ -178,7 +178,7 @@ public:
 private:
   friend inline uint qHash(const NearestCacheKeyAirport& key);
 
-  map::MapSearchResultIndex *nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm);
+  map::MapResultIndex *nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm);
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query, bool reverse,
@@ -188,7 +188,7 @@ private:
   bool hasQueryByAirportIdent(atools::sql::SqlQuery& query, const QString& ident) const;
   void startByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName,
                          const atools::geo::Pos& position);
-  void runwayEndByNames(map::MapSearchResult& result, const QString& runwayName, const QString& airportIdent);
+  void runwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent);
   map::MapRunwayEnd runwayEndByName(int airportId, const QString& runway);
 
   const int queryRowLimit = 5000;
@@ -209,7 +209,7 @@ private:
 
   QCache<QString, map::MapAirport> airportIdentCache, airportIcaoCache;
   QCache<int, map::MapAirport> airportIdCache;
-  QCache<NearestCacheKeyAirport, map::MapSearchResultIndex> nearestAirportCache;
+  QCache<NearestCacheKeyAirport, map::MapResultIndex> nearestAirportCache;
 
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,

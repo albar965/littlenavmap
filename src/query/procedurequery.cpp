@@ -414,7 +414,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
 
   // Load navaid information for recommended fix and set fix position
   // Also update magvar if not already set
-  map::MapSearchResult recResult;
+  map::MapResult recResult;
   if(leg.recFixType == "W" || leg.recFixType == "TW")
   {
     mapObjectByIdent(recResult, map::WAYPOINT, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
@@ -528,14 +528,14 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
 }
 
-void ProcedureQuery::runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport)
+void ProcedureQuery::runwayEndByName(map::MapResult& result, const QString& name, const map::MapAirport& airport)
 {
   Q_ASSERT(airport.navdata);
 
   mapQuery->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, true /* navdata */);
 }
 
-void ProcedureQuery::runwayEndByNameSim(map::MapSearchResult& result, const QString& name,
+void ProcedureQuery::runwayEndByNameSim(map::MapResult& result, const QString& name,
                                         const map::MapAirport& airport)
 {
   Q_ASSERT(!airport.navdata);
@@ -543,7 +543,7 @@ void ProcedureQuery::runwayEndByNameSim(map::MapSearchResult& result, const QStr
   mapQuery->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, false /* navdata */);
 }
 
-void ProcedureQuery::mapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
+void ProcedureQuery::mapObjectByIdent(map::MapResult& result, map::MapTypes type,
                                       const QString& ident, const QString& region, const QString& airport,
                                       const Pos& sortByDistancePos)
 {
@@ -751,7 +751,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
   {
     // Nothing found in the database - search by name fuzzy or add a dummy entry if nothing was found by name
     qWarning() << "Runway end for approach" << approachId << "not found";
-    map::MapSearchResult result;
+    map::MapResult result;
     runwayEndByName(result, legs->procedureRunway, airport);
 
     if(!result.runwayEnds.isEmpty())
@@ -2142,7 +2142,7 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
                                           const QString& runwayEnd, float distance, float altitude)
 {
   // Custom approaches use the simulator airport
-  map::MapSearchResult result;
+  map::MapResult result;
   runwayEndByNameSim(result, runwayEnd, airport);
   if(!result.runwayEnds.isEmpty())
     createCustomApproach(procedure, airport, result.runwayEnds.first(), distance, altitude);

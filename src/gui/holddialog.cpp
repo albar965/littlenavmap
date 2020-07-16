@@ -35,7 +35,7 @@
 #include <QColorDialog>
 #include <navapp.h>
 
-HoldDialog::HoldDialog(QWidget *parent, const map::MapSearchResult& resultParam, const atools::geo::Pos& positionParam)
+HoldDialog::HoldDialog(QWidget *parent, const map::MapResult& resultParam, const atools::geo::Pos& positionParam)
   : QDialog(parent), ui(new Ui::HoldDialog), color(Qt::darkBlue)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -44,7 +44,7 @@ HoldDialog::HoldDialog(QWidget *parent, const map::MapSearchResult& resultParam,
   ui->setupUi(this);
 
   // Copy result
-  result = new map::MapSearchResult;
+  result = new map::MapResult;
   *result = resultParam;
 
   // Remove duplicates

@@ -34,7 +34,7 @@ class FlightplanEntry;
 }
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 }
 
 namespace proc {
@@ -111,20 +111,20 @@ private:
                         QList<map::MapWaypoint>& airwayWaypoints);
 
   /* Build flight plan entry for the given search result. */
-  void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapSearchResult& result,
+  void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result,
                            const atools::geo::Pos& nearestPos);
 
   /* Get a result set with the single closest element */
-  void resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
-                         const atools::geo::Pos& nearestPos, map::MapObjectTypes types);
+  void resultWithClosest(map::MapResult& resultWithClosest, const map::MapResult& result,
+                         const atools::geo::Pos& nearestPos, map::MapTypes types);
 
   /* Get airport or any navaid for item. Also resolves coordinate formats. Optionally tries to match position
    * to waypoints like oceaninc or confluence points.*/
-  void findWaypoints(map::MapSearchResult& result, const QString& item, bool matchWaypoints);
+  void findWaypoints(map::MapResult& result, const QString& item, bool matchWaypoints);
 
   /* Get nearest waypoint for given position probably removing ones which are too far away. Changes given result.
    * Also checks airways and connections if lastResult is given. */
-  void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, const map::MapSearchResult *lastResult,
+  void filterWaypoints(map::MapResult& result, atools::geo::Pos& lastPos, const map::MapResult *lastResult,
                        float maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);
   QStringList cleanItemList(const QStringList& items, float *speedKnots, float *altFeet);
@@ -148,7 +148,7 @@ private:
 
   /* Create reference struct from given entry and map search result */
   map::MapObjectRefExt mapObjectRefFromEntry(const atools::fs::pln::FlightplanEntry& entry,
-                                             const map::MapSearchResult& result, const QString& name);
+                                             const map::MapResult& result, const QString& name);
 
   /* Get airway segments with given name between  waypoints */
   map::MapAirway extractAirway(const QList<map::MapAirway>& airways, int waypointId1, int waypointId2,

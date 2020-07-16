@@ -23,8 +23,8 @@
 #include <QCache>
 
 namespace map {
-struct MapSearchResult;
-struct MapSearchResultIndex;
+struct MapResult;
+struct MapResultIndex;
 }
 
 namespace atools {
@@ -95,12 +95,12 @@ public:
    * @param ident ICAO ident
    * @param region two letter ICAO region code
    */
-  void getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
+  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
                            const QString& ident, const QString& region = QString(), const QString& airport = QString(),
                            const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
                            float maxDistance = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false);
 
-  void getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
+  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
                            const QString& ident, const QString& region,
                            const QString& airport, bool airportFromNavDatabase);
 
@@ -110,7 +110,7 @@ public:
    * @param type AIRPORT, VOR, NDB or WAYPOINT
    * @param id database id
    */
-  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, map::MapAirspaceSources src, int id,
+  void getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src, int id,
                         bool airportFromNavDatabase);
 
   /*
@@ -126,14 +126,14 @@ public:
    * @param result will receive objects based on type
    */
   void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
-                               map::MapObjectTypes types, int xs, int ys, int screenDistance,
-                               map::MapSearchResult& result);
+                               map::MapTypes types, int xs, int ys, int screenDistance,
+                               map::MapResult& result);
 
   /* Only VOR, NDB, ILS and waypoints
    * All sorted by distance to pos with a maximum distance distanceNm
    * Uses distance * 4 and searches again if nothing was found.*/
-  map::MapSearchResultIndex *getNearestNavaids(const atools::geo::Pos& pos, float distanceNm,
-                                               map::MapObjectTypes type, int maxIls, float maxIlsDist);
+  map::MapResultIndex *getNearestNavaids(const atools::geo::Pos& pos, float distanceNm,
+                                               map::MapTypes type, int maxIls, float maxIlsDist);
 
   /*
    * Fetch airports for a map coordinate rectangle.
@@ -178,10 +178,10 @@ public:
   bool hasDepartureProcedures(const map::MapAirport& airport);
 
 private:
-  map::MapSearchResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
-                                                    map::MapObjectTypes type, int maxIls, float maxIlsDist);
+  map::MapResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
+                                                    map::MapTypes type, int maxIls, float maxIlsDist);
 
-  void mapObjectByIdentInternal(map::MapSearchResult& result, map::MapObjectTypes type,
+  void mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
                                 float maxDistance, bool airportFromNavDatabase);
@@ -207,7 +207,7 @@ private:
 
   /* ID/object caches */
   QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
-  QCache<query::NearestCacheKeyNavaid, map::MapSearchResultIndex> nearestNavaidCache;
+  QCache<query::NearestCacheKeyNavaid, map::MapResultIndex> nearestNavaidCache;
 
   static int queryMaxRows;
 

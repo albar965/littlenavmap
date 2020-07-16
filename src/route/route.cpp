@@ -801,7 +801,7 @@ const RouteLeg& Route::getDepartureAirportLeg() const
 }
 
 void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                       map::MapSearchResult& mapobjects, map::MapObjectQueryTypes types) const
+                       map::MapResult& mapobjects, map::MapObjectQueryTypes types) const
 {
   using maptools::insertSortedByDistance;
 

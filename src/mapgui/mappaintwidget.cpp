@@ -319,7 +319,7 @@ void MapPaintWidget::setShowMapPois(bool show)
   setShowTerrain(show);
 }
 
-void MapPaintWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
+void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
 {
   bool curShow = (paintLayer->getShownMapObjects() & type) == type;
   paintLayer->setShowMapObjects(type, show);
@@ -369,7 +369,7 @@ bool MapPaintWidget::checkPos(const atools::geo::Pos&)
   // No-op
 }
 
-map::MapObjectTypes MapPaintWidget::getShownMapFeatures() const
+map::MapTypes MapPaintWidget::getShownMapFeatures() const
 {
   return paintLayer->getShownMapObjects();
 }
@@ -839,7 +839,7 @@ const atools::geo::Pos& MapPaintWidget::getProfileHighlight() const
 
 void MapPaintWidget::clearSearchHighlights()
 {
-  screenIndex->changeSearchHighlights(map::MapSearchResult());
+  screenIndex->changeSearchHighlights(map::MapResult());
 
   screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
   screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
@@ -871,7 +871,7 @@ bool MapPaintWidget::hasTrackPoints() const
   return !aircraftTrack->isEmpty();
 }
 
-const map::MapSearchResult& MapPaintWidget::getSearchHighlights() const
+const map::MapResult& MapPaintWidget::getSearchHighlights() const
 {
   return screenIndex->getSearchHighlights();
 }
@@ -929,7 +929,7 @@ void MapPaintWidget::updateLogEntryScreenGeometry()
   screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
-void MapPaintWidget::changeSearchHighlights(const map::MapSearchResult& newHighlights, bool updateAirspace,
+void MapPaintWidget::changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace,
                                             bool updateLogEntries)
 {
   screenIndex->changeSearchHighlights(newHighlights);

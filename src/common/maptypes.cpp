@@ -961,7 +961,7 @@ bool MapAirport::noRunways() const
   return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER);
 }
 
-bool MapAirport::isVisible(map::MapObjectTypes objectTypes) const
+bool MapAirport::isVisible(map::MapTypes objectTypes) const
 {
   if(addon() && objectTypes.testFlag(map::AIRPORT_ADDON))
     return true;
@@ -979,9 +979,9 @@ bool MapAirport::isVisible(map::MapObjectTypes objectTypes) const
 }
 
 /* Convert nav_search type */
-map::MapObjectTypes navTypeToMapObjectType(const QString& navType)
+map::MapTypes navTypeToMapObjectType(const QString& navType)
 {
-  map::MapObjectTypes type = NONE;
+  map::MapTypes type = NONE;
   if(navType.startsWith("V") || navType == "D" || navType.startsWith("TC"))
     type = map::VOR;
   else if(navType == "N")
@@ -1169,7 +1169,7 @@ QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj)
 {
   qint32 types;
   dataStream >> obj.text >> obj.ranges >> obj.position >> types;
-  obj.type = static_cast<map::MapObjectTypes>(types);
+  obj.type = static_cast<map::MapTypes>(types);
   return dataStream;
 }
 
@@ -1272,7 +1272,7 @@ QDataStream& operator>>(QDataStream& dataStream, MapObjectRef& obj)
 {
   quint32 type;
   dataStream >> obj.id >> type;
-  obj.objType = static_cast<map::MapObjectType>(type);
+  obj.objType = static_cast<map::MapType>(type);
   return dataStream;
 }
 
@@ -1539,7 +1539,7 @@ const QString& airspaceFlagToString(map::MapAirspaceFlags type)
   return airspaceFlagNameMap[type];
 }
 
-QString mapObjectTypeToString(MapObjectTypes type)
+QString mapObjectTypeToString(MapTypes type)
 {
   if(type == NONE)
     return QObject::tr("None");
@@ -2037,7 +2037,7 @@ int routeIndex(const map::MapBase *base)
 {
   if(base != nullptr)
   {
-    map::MapObjectTypes type = base->getType();
+    map::MapTypes type = base->getType();
     if(type == map::AIRPORT)
       return base->asPtr<map::MapAirport>()->routeIndex;
     else if(type == map::VOR)
@@ -2056,7 +2056,7 @@ bool isAircraftShadow(const map::MapBase *base)
 {
   if(base != nullptr)
   {
-    map::MapObjectTypes type = base->getType();
+    map::MapTypes type = base->getType();
     if(type == map::AIRCRAFT)
       return base->asPtr<map::MapUserAircraft>()->getAircraft().isOnlineShadow();
     else if(type == map::AIRCRAFT_AI)
@@ -2071,7 +2071,7 @@ map::MapAirspaceSources airspaceSource(const map::MapBase *base)
 {
   if(base != nullptr)
   {
-    map::MapObjectTypes type = base->getType();
+    map::MapTypes type = base->getType();
     if(type == map::AIRSPACE)
       return base->asPtr<map::MapAirspace>()->src;
   }

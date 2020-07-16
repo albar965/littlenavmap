@@ -22,7 +22,7 @@
 #include <QApplication>
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 
 }
 
@@ -62,7 +62,7 @@ public:
    * displayed in airport diagrams.
    * @return HTML code of the tooltip
    */
-  QString buildTooltip(const map::MapSearchResult& mapSearchResult, const Route& route,
+  QString buildTooltip(const map::MapResult& mapSearchResult, const Route& route,
                        bool airportDiagram);
 
 private:

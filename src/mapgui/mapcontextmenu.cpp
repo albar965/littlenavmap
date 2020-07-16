@@ -40,7 +40,7 @@
 
 #include <ui_mainwindow.h>
 
-using map::MapSearchResultIndex;
+using map::MapResultIndex;
 
 // Maximum number of items in disambiguation sub-menus
 const static int MAX_MENU_ITEMS = 10;
@@ -58,7 +58,7 @@ struct MapContextMenu::MenuData
 };
 
 // Default sort order for disambiguation sub-menus
-const static QVector<map::MapObjectTypes> DEFAULT_TYPE_SORT(
+const static QVector<map::MapTypes> DEFAULT_TYPE_SORT(
 {
   map::AIRCRAFT,
   map::AIRCRAFT_ONLINE,
@@ -82,7 +82,7 @@ const static QVector<map::MapObjectTypes> DEFAULT_TYPE_SORT(
 MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidgetParam)
   : mapWidget(mapWidgetParam), mainWindow(mainWindowParam), menu(mainWindowParam)
 {
-  result = new map::MapSearchResult;
+  result = new map::MapResult;
   mapBasePos = new map::MapBase(map::NONE, -1, atools::geo::EMPTY_POS);
 
   ui = NavApp::getMainUi();
@@ -435,7 +435,7 @@ QAction *MapContextMenu::insertAction(QMenu& menu, mc::MenuActionType actionType
 }
 
 void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionType,
-                                        const map::MapSearchResultIndex& index, const QString& text,
+                                        const map::MapResultIndex& index, const QString& text,
                                         const QString& tip, const QString& key, const QIcon& icon,
                                         bool allowNoMapObject, const ActionCallback& callback)
 {
@@ -494,7 +494,7 @@ void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionTy
 void MapContextMenu::insertInformationMenu(QMenu& menu)
 {
   insertMenuOrAction(menu, mc::INFORMATION,
-                     MapSearchResultIndex().
+                     MapResultIndex().
                      addRef(*result,
                             map::AIRPORT | map::VOR | map::NDB | map::ILS | map::WAYPOINT | map::AIRWAY | map::TRACK |
                             map::USERPOINT | map::AIRSPACE | map::AIRCRAFT | map::AIRCRAFT_AI | map::AIRCRAFT_ONLINE |
@@ -556,7 +556,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::PROCEDURE,
-                     MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
+                     MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("Show &procedures for %1"),
                      tr("Show procedures for this airport"),
                      QString(),
@@ -580,7 +580,7 @@ void MapContextMenu::insertCustomProcedureMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::CUSTOMPROCEDURE,
-                     MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
+                     MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("Create &custom procedure for %1"),
                      tr("Add a custom approach to this airport to the flight plan"),
                      QString(),
@@ -604,7 +604,7 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
         text.append(tr(" (hidden on map)"));
     };
 
-  insertMenuOrAction(menu, mc::MEASURE, MapSearchResultIndex().
+  insertMenuOrAction(menu, mc::MEASURE, MapResultIndex().
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("&Measure Distance from %1"),
@@ -642,7 +642,7 @@ void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::NAVAIDRANGE,
-                     MapSearchResultIndex().addRef(*result, map::VOR | map::NDB).sort(DEFAULT_TYPE_SORT, alphaSort),
+                     MapResultIndex().addRef(*result, map::VOR | map::NDB).sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Show &Navaid Range for %1"),
                      tr("Show a ring for the radio navaid range on the map"),
                      tr("Shift+Click"),
@@ -662,7 +662,7 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
         text.append(tr(" (hidden on map)"));
     };
 
-  insertMenuOrAction(menu, mc::PATTERN, MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
+  insertMenuOrAction(menu, mc::PATTERN, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("Display Airport &Traffic Pattern at %1 ..."),
                      tr("Show a traffic pattern to a runway for this airport"),
                      QString(),
@@ -684,7 +684,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
         text.append(tr(" (hidden on map)"));
     };
 
-  insertMenuOrAction(menu, mc::HOLD, MapSearchResultIndex().
+  insertMenuOrAction(menu, mc::HOLD, MapResultIndex().
                      addRef(*result,
                             map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT | map::USERPOINTROUTE).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
@@ -698,7 +698,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
 
 void MapContextMenu::insertDepartureMenu(QMenu& menu)
 {
-  MapSearchResultIndex index;
+  MapResultIndex index;
   index.addRef(*result, map::AIRPORT | map::PARKING | map::HELIPAD).sort(DEFAULT_TYPE_SORT, alphaSort);
 
   // Erase all helipads without start position
@@ -794,7 +794,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
       }
     };
 
-  insertMenuOrAction(menu, mc::DESTINATION, MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
+  insertMenuOrAction(menu, mc::DESTINATION, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("Set %1 as Flight Plan &Destination"),
                      tr("Set airport as destination in the flight plan"),
                      QString(),
@@ -833,7 +833,7 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
       }
     };
 
-  insertMenuOrAction(menu, mc::ALTERNATE, MapSearchResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
+  insertMenuOrAction(menu, mc::ALTERNATE, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
                      tr("&Add %1 as Flight Plan Alternate"),
                      tr("Add airport as alternate to the flight plan"),
                      QString(),
@@ -854,7 +854,7 @@ void MapContextMenu::insertAddRouteMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::ADDROUTE,
-                     MapSearchResultIndex().
+                     MapResultIndex().
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Add %1 to Flight &Plan"),
@@ -877,7 +877,7 @@ void MapContextMenu::insertAppendRouteMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::APPENDROUTE,
-                     MapSearchResultIndex().
+                     MapResultIndex().
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Append %1 to &Flight Plan"),
@@ -890,7 +890,7 @@ void MapContextMenu::insertAppendRouteMenu(QMenu& menu)
 
 void MapContextMenu::insertDeleteRouteWaypointMenu(QMenu& menu)
 {
-  MapSearchResultIndex index;
+  MapResultIndex index;
   index.addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINTROUTE).
   sort(DEFAULT_TYPE_SORT, alphaSort);
 
@@ -935,7 +935,7 @@ void MapContextMenu::insertDeleteRouteWaypointMenu(QMenu& menu)
 
 void MapContextMenu::insertEditRouteUserpointMenu(QMenu& menu)
 {
-  MapSearchResultIndex index;
+  MapResultIndex index;
   index.addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINTROUTE).
   sort(DEFAULT_TYPE_SORT, alphaSort);
 
@@ -985,7 +985,7 @@ void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::USERPOINTADD,
-                     MapSearchResultIndex().
+                     MapResultIndex().
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Add &Userpoint %1 ..."),
@@ -998,7 +998,7 @@ void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
 
 void MapContextMenu::insertUserpointEditMenu(QMenu& menu)
 {
-  insertMenuOrAction(menu, mc::USERPOINTEDIT, MapSearchResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
+  insertMenuOrAction(menu, mc::USERPOINTEDIT, MapResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
                      tr("&Edit Userpoint %1 ..."),
                      tr("Edit the userpoint at this position"),
                      tr("Ctrl+Shift+Click"),
@@ -1007,7 +1007,7 @@ void MapContextMenu::insertUserpointEditMenu(QMenu& menu)
 
 void MapContextMenu::insertUserpointMoveMenu(QMenu& menu)
 {
-  insertMenuOrAction(menu, mc::USERPOINTMOVE, MapSearchResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
+  insertMenuOrAction(menu, mc::USERPOINTMOVE, MapResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
                      tr("&Move Userpoint %1"),
                      tr("Move the userpoint to a new position on the map"),
                      QString(),
@@ -1016,7 +1016,7 @@ void MapContextMenu::insertUserpointMoveMenu(QMenu& menu)
 
 void MapContextMenu::insertUserpointDeleteMenu(QMenu& menu)
 {
-  insertMenuOrAction(menu, mc::USERPOINTDELETE, MapSearchResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
+  insertMenuOrAction(menu, mc::USERPOINTDELETE, MapResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
                      tr("&Delete Userpoint %1"),
                      tr("Remove the userpoint at this position"),
                      QString(),
@@ -1025,7 +1025,7 @@ void MapContextMenu::insertUserpointDeleteMenu(QMenu& menu)
 
 void MapContextMenu::insertLogEntryEdit(QMenu& menu)
 {
-  insertMenuOrAction(menu, mc::LOGENTRYEDIT, MapSearchResultIndex().addRef(*result, map::LOGBOOK).sort(alphaSort),
+  insertMenuOrAction(menu, mc::LOGENTRYEDIT, MapResultIndex().addRef(*result, map::LOGBOOK).sort(alphaSort),
                      tr("Edit &Log Entry %1 ..."),
                      tr("Edit the logbook entry at this position"),
                      QString(),
@@ -1034,7 +1034,7 @@ void MapContextMenu::insertLogEntryEdit(QMenu& menu)
 
 void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
 {
-  MapSearchResultIndex index;
+  MapResultIndex index;
   index.addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT | map::AIRSPACE |
                map::AIRCRAFT | map::AIRCRAFT_AI | map::AIRCRAFT_ONLINE | map::LOGBOOK).
   sort(DEFAULT_TYPE_SORT, alphaSort);

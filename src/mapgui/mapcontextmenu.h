@@ -61,8 +61,8 @@ struct MapHelipad;
 struct MapAirspace;
 struct MapUserpoint;
 struct MapLogbookEntry;
-struct MapSearchResult;
-struct MapSearchResultIndex;
+struct MapResult;
+struct MapResultIndex;
 }
 
 namespace mc {
@@ -252,7 +252,7 @@ private:
   /* Insert menu for given action and given map objects from index. Adds a sub-menu if needed.
    * tip is added as status tip and as tooltip if menu tooltips are enabled.
    * allowNoMapObject Enables the menu for an empty index (click without map object) and also inserts a coordinates menu.  */
-  void insertMenuOrAction(QMenu& menu, mc::MenuActionType actionType, const map::MapSearchResultIndex& index,
+  void insertMenuOrAction(QMenu& menu, mc::MenuActionType actionType, const map::MapResultIndex& index,
                           const QString& text, const QString& tip, const QString& key, const QIcon& icon,
                           bool allowNoMapObject = false, const ActionCallback& callback = nullptr);
 
@@ -290,7 +290,7 @@ private:
 
   // Result keeps all objects in the menu near the click position
   // Dynamically created indexes which point into these objects are used
-  map::MapSearchResult *result;
+  map::MapResult *result;
 
   struct MenuData;
   // Index mapped to menu data which also contains a pointer to result above

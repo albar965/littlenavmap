@@ -100,7 +100,7 @@ void OnlineServerSearch::restoreViewState(bool distSearchActive)
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
 
-void OnlineServerSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void OnlineServerSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   Q_UNUSED(result);
 }

@@ -23,8 +23,8 @@
 #include <QCache>
 
 namespace map {
-struct MapSearchResult;
-struct MapSearchResultIndex;
+struct MapResult;
+struct MapResultIndex;
 }
 
 namespace atools {
@@ -109,7 +109,7 @@ private:
   query::SimpleRectCache<map::MapAirway> airwayCache;
 
   /* ID/object caches */
-  QCache<query::NearestCacheKeyNavaid, map::MapSearchResultIndex> nearestNavaidCache;
+  QCache<query::NearestCacheKeyNavaid, map::MapResultIndex> nearestNavaidCache;
 
   /* true if this uses the track database (PACOTS, NAT, etc.) */
   bool trackDatabase;

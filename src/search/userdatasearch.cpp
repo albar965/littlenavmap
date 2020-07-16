@@ -273,7 +273,7 @@ QString UserdataSearch::formatModelData(const Column *col, const QVariant& displ
   return displayRoleValue.toString();
 }
 
-void UserdataSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void UserdataSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;

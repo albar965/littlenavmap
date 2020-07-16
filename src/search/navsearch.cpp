@@ -388,7 +388,7 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
   return displayRoleValue.toString();
 }
 
-void NavSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void NavSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;
@@ -409,7 +409,7 @@ void NavSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 
       // All objects are fully populated
       QString navType = rec.valueStr("nav_type");
-      map::MapObjectTypes type = map::navTypeToMapObjectType(navType);
+      map::MapTypes type = map::navTypeToMapObjectType(navType);
 
       if(type == map::WAYPOINT)
       {

@@ -40,10 +40,10 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport
 
 /* create a flight plan entry from object id/type or user position */
 void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos& userPos,
-                                                  map::MapObjectTypes type, FlightplanEntry& entry,
+                                                  map::MapTypes type, FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
-  map::MapSearchResult result;
+  map::MapResult result;
   mapQuery->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id, false /* airport from nav database */);
   buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
@@ -181,12 +181,12 @@ void FlightplanEntryBuilder::entryFromWaypoint(const map::MapWaypoint& waypoint,
 }
 
 void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPos,
-                                                  const map::MapSearchResult& result,
+                                                  const map::MapResult& result,
                                                   FlightplanEntry& entry,
                                                   bool resolveWaypoints,
-                                                  map::MapObjectTypes type)
+                                                  map::MapTypes type)
 {
-  map::MapObjectTypes moType = type;
+  map::MapTypes moType = type;
 
   if(moType == map::NONE)
   {
@@ -221,7 +221,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
     qWarning() << "Unknown Map object type" << moType;
 }
 
-void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapSearchResult& result,
+void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapResult& result,
                                                   atools::fs::pln::FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {

@@ -502,7 +502,7 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
   return displayRoleValue.toString();
 }
 
-void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;

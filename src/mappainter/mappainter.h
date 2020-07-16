@@ -68,7 +68,7 @@ struct PaintContext
   float zoomDistanceMeter;
   bool drawFast; /* true if reduced details should be used */
   bool lazyUpdate; /* postpone reloading until map is still */
-  map::MapObjectTypes objectTypes; /* Object types that should be drawn */
+  map::MapTypes objectTypes; /* Object types that should be drawn */
   map::MapObjectDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */

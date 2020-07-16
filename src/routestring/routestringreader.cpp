@@ -36,7 +36,7 @@
 
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
-using map::MapSearchResult;
+using map::MapResult;
 using atools::geo::Pos;
 namespace coords = atools::fs::util;
 namespace plnentry = atools::fs::pln::entry;
@@ -56,22 +56,22 @@ const static QRegularExpression AIRPORT_TIME_RUNWAY("^([A-Z0-9]{3,4})(\\d{4})?(/
 
 const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,7})(\\.([A-Z0-9]{1,6}))?$");
 
-const static map::MapObjectTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYPOINT |
+const static map::MapTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYPOINT |
                                                         map::VOR | map::NDB | map::USERPOINTROUTE |
                                                         map::AIRWAY);
 
-const static map::MapObjectTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
+const static map::MapTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
 
 // No airports
-const static map::MapObjectTypes ROUTE_TYPES_NAVAIDS(map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
-const static std::initializer_list<map::MapObjectTypes> ROUTE_TYPES_NAVAIDS_LIST =
+const static map::MapTypes ROUTE_TYPES_NAVAIDS(map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
+const static std::initializer_list<map::MapTypes> ROUTE_TYPES_NAVAIDS_LIST =
 {map::WAYPOINT, map::VOR, map::NDB, map::USERPOINTROUTE};
 
 /* Internal parsing structure which holds all found potential candidates from a search */
 struct RouteStringReader::ParseEntry
 {
   QString item, airway;
-  map::MapSearchResult result;
+  map::MapResult result;
 };
 
 RouteStringReader::RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder, bool verboseParam)
@@ -206,12 +206,12 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   for(const QString& item : cleanItems)
   {
     // Fetch all possible waypoints
-    MapSearchResult result;
+    MapResult result;
     findWaypoints(result, item, options & rs::READ_MATCH_WAYPOINTS);
 
     // Get last result so we can check for airway/waypoint matches when selecting the last position
     // The nearest is used if no airway matches
-    const MapSearchResult *lastResult = resultList.isEmpty() ? nullptr : &resultList.last().result;
+    const MapResult *lastResult = resultList.isEmpty() ? nullptr : &resultList.last().result;
 
     // Sort lists by distance and remove all which are too far away and update last pos
     filterWaypoints(result, lastPos, lastResult, maxDistance);
@@ -258,7 +258,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   for(int i = 0; i < resultList.size(); i++)
   {
     const QString& item = resultList.at(i).item;
-    const MapSearchResult& result = resultList.at(i).result;
+    const MapResult& result = resultList.at(i).result;
     const ParseEntry *lastParseEntry = i > 0 ? &resultList.at(i - 1) : nullptr;
     map::MapObjectRefExt curRef;
 
@@ -408,7 +408,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 }
 
 map::MapObjectRefExt RouteStringReader::mapObjectRefFromEntry(const FlightplanEntry& entry,
-                                                              const map::MapSearchResult& result, const QString& name)
+                                                              const map::MapResult& result, const QString& name)
 {
   atools::fs::pln::entry::WaypointType type = entry.getWaypointType();
 
@@ -427,20 +427,20 @@ map::MapObjectRefExt RouteStringReader::mapObjectRefFromEntry(const FlightplanEn
     return map::MapObjectRefExt();
 }
 
-void RouteStringReader::buildEntryForResult(FlightplanEntry& entry, const MapSearchResult& result,
+void RouteStringReader::buildEntryForResult(FlightplanEntry& entry, const MapResult& result,
                                             const atools::geo::Pos& nearestPos)
 {
-  MapSearchResult newResult;
+  MapResult newResult;
   resultWithClosest(newResult, result, nearestPos, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT);
   entryBuilder->buildFlightplanEntry(newResult, entry, true);
 }
 
-void RouteStringReader::resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
-                                          const atools::geo::Pos& nearestPos, map::MapObjectTypes types)
+void RouteStringReader::resultWithClosest(map::MapResult& resultWithClosest, const map::MapResult& result,
+                                          const atools::geo::Pos& nearestPos, map::MapTypes types)
 {
   struct DistData
   {
-    map::MapObjectTypes type;
+    map::MapTypes type;
     int index;
     atools::geo::Pos pos;
 
@@ -827,7 +827,7 @@ atools::geo::Pos RouteStringReader::findFirstCoordinate(const QStringList& clean
 {
   Pos lastPos;
   // Get coordinate of the first and last navaid ============================================
-  MapSearchResult result;
+  MapResult result;
   findWaypoints(result, cleanItems.first(), false);
 
   if(result.isEmpty(ROUTE_TYPES_NAVAIDS))
@@ -941,8 +941,8 @@ void RouteStringReader::extractWaypoints(const QList<map::MapAirwayWaypoint>& al
   }
 }
 
-void RouteStringReader::filterWaypoints(MapSearchResult& result, atools::geo::Pos& lastPos,
-                                        const MapSearchResult *lastResult,
+void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& lastPos,
+                                        const MapResult *lastResult,
                                         float maxDistance)
 {
   if(lastPos.isValid())
@@ -1010,7 +1010,7 @@ void RouteStringReader::filterWaypoints(MapSearchResult& result, atools::geo::Po
       {
         float distMeter;
         Pos pos;
-        map::MapObjectTypes type;
+        map::MapTypes type;
       };
 
       // Find something whatever is nearest and use that for the last position
@@ -1076,13 +1076,13 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
   if(i == 0 || i > resultList.size() - 1)
     return;
 
-  MapSearchResult& result = resultList[i].result;
+  MapResult& result = resultList[i].result;
 
   if(!result.airways.isEmpty())
   {
     QList<map::MapWaypoint> waypoints;
-    MapSearchResult& lastResult = resultList[i - 1].result;
-    MapSearchResult& nextResult = resultList[i + 1].result;
+    MapResult& lastResult = resultList[i - 1].result;
+    MapResult& nextResult = resultList[i + 1].result;
     const QString& airwayName = resultList.at(i).item;
     const QString& waypointNameStart = resultList.at(i - 1).item;
 
@@ -1190,7 +1190,7 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
   }
 }
 
-void RouteStringReader::findWaypoints(MapSearchResult& result, const QString& item, bool matchWaypoints)
+void RouteStringReader::findWaypoints(MapResult& result, const QString& item, bool matchWaypoints)
 {
   bool searchCoords = false;
   if(item.length() > 5)

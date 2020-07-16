@@ -795,7 +795,7 @@ void SearchBaseTable::showRow(int row, bool showInfo)
   qDebug() << Q_FUNC_INFO;
 
   // Show on information panel
-  map::MapObjectTypes navType = map::NONE;
+  map::MapTypes navType = map::NONE;
   map::MapAirspaceSources airspaceSource = map::AIRSPACE_SRC_NONE;
   int id = -1;
   // get airport, VOR, NDB or waypoint id from model row
@@ -845,7 +845,7 @@ void SearchBaseTable::showRow(int row, bool showInfo)
 
     if(showInfo)
     {
-      map::MapSearchResult result;
+      map::MapResult result;
       mapQuery->getMapObjectById(result, navType, airspaceSource, id, false /* airport from nav database */);
 
       emit showInformation(result);
@@ -907,7 +907,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   bool columnCanFilter = false;
   atools::geo::Pos position;
   QModelIndex index = controller->getModelIndexAt(pos);
-  map::MapObjectTypes navType = map::NONE;
+  map::MapTypes navType = map::NONE;
 
   // Airport in airport search also used for airport below cursor in logbook
   map::MapAirport airport;
@@ -1345,7 +1345,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       NavApp::getMapWidget()->addTrafficPattern(airport);
     else if(action == ui->actionMapHold)
     {
-      map::MapSearchResult result;
+      map::MapResult result;
       if(navType == map::USERPOINT)
         NavApp::getMapWidget()->addHold(result, position);
       else
@@ -1386,7 +1386,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       emit routeAdd(id, atools::geo::EMPTY_POS, navType, map::INVALID_INDEX_VALUE);
     else if(action == ui->actionSearchShowInformationAirport)
     {
-      map::MapSearchResult result;
+      map::MapResult result;
       result.airports.append(airport);
       emit showInformation(result);
     }
@@ -1431,12 +1431,12 @@ void SearchBaseTable::showInformationTriggered()
     QModelIndex index = selectedOrFirstIndex();
     if(index.isValid())
     {
-      map::MapObjectTypes navType = map::NONE;
+      map::MapTypes navType = map::NONE;
       map::MapAirspaceSources airspaceSource = map::AIRSPACE_SRC_NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, airspaceSource, id);
 
-      map::MapSearchResult result;
+      map::MapResult result;
       mapQuery->getMapObjectById(result, navType, airspaceSource, id, false /* airport from nav database */);
       emit showInformation(result);
     }
@@ -1464,7 +1464,7 @@ void SearchBaseTable::showApproaches(bool custom)
     QModelIndex index = selectedOrFirstIndex();
     if(index.isValid())
     {
-      map::MapObjectTypes navType = map::NONE;
+      map::MapTypes navType = map::NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, id);
 
@@ -1486,12 +1486,12 @@ void SearchBaseTable::showOnMapTriggered()
     QModelIndex index = selectedOrFirstIndex();
     if(index.isValid())
     {
-      map::MapObjectTypes navType = map::NONE;
+      map::MapTypes navType = map::NONE;
       map::MapAirspaceSources airspaceSource = map::AIRSPACE_SRC_NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, airspaceSource, id);
 
-      map::MapSearchResult result;
+      map::MapResult result;
       mapQuery->getMapObjectById(result, navType, airspaceSource, id, false /* airport from nav database */);
 
       if(!result.airports.isEmpty())
@@ -1546,14 +1546,14 @@ QModelIndex SearchBaseTable::selectedOrFirstIndex()
   return idx;
 }
 
-void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int& id)
+void SearchBaseTable::getNavTypeAndId(int row, map::MapTypes& navType, int& id)
 {
   map::MapAirspaceSources airspaceSource;
   getNavTypeAndId(row, navType, airspaceSource, id);
 }
 
 /* Fetch nav type and database id from a model row */
-void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, map::MapAirspaceSources& airspaceSource,
+void SearchBaseTable::getNavTypeAndId(int row, map::MapTypes& navType, map::MapAirspaceSources& airspaceSource,
                                       int& id)
 {
   navType = map::NONE;

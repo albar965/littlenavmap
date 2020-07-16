@@ -143,7 +143,7 @@ public:
   void removeTrafficPatterm(int index);
 
   /* Opens a dialog for configuration and adds a hold */
-  void addHold(const map::MapSearchResult& result, const atools::geo::Pos& position);
+  void addHold(const map::MapResult& result, const atools::geo::Pos& position);
 
   /* Remove hold at index and update the map */
   void removeHold(int index);
@@ -164,7 +164,7 @@ public:
   void addRangeRing(const atools::geo::Pos& pos);
 
   /* Add radio navaid range ring */
-  void addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type, const QString& ident,
+  void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& ident,
                        const QString& frequency, int range);
 
   /* If true stop downloading map data */
@@ -221,18 +221,18 @@ signals:
   /* Add, replace or delete object from flight plan from context menu or drag and drop.
    *  index = 0: prepend to route
    *  index = size()-1: append to route */
-  void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
-  void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int oldIndex);
+  void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
+  void routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int oldIndex);
 
   /* Show a map object in the search panel (context menu) */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
+  void showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select);
 
   /* Show information about objects from single click or context menu */
-  void showInformation(map::MapSearchResult result);
+  void showInformation(map::MapResult result);
 
   /* Add user point and pass result to it so it can prefill the dialog */
-  void addUserpointFromMap(map::MapSearchResult result, const atools::geo::Pos& pos);
-  void editUserpointFromMap(map::MapSearchResult result);
+  void addUserpointFromMap(map::MapResult result, const atools::geo::Pos& pos);
+  void editUserpointFromMap(map::MapResult result);
   void deleteUserpointFromMap(int id);
 
   void editLogEntryFromMap(int id);
@@ -300,7 +300,7 @@ private:
   void elevationDisplayTimerTimeout();
 
   /* Start a line measurement after context menu selection or click+modifier */
-  void addMeasurement(const atools::geo::Pos& pos, const map::MapSearchResult& result);
+  void addMeasurement(const atools::geo::Pos& pos, const map::MapResult& result);
   void addMeasurement(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
                       const map::MapNdb *ndb, const map::MapWaypoint *waypoint);
 
@@ -330,7 +330,7 @@ private:
   void updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend);
 
   /* Show menu to allow selection of a map feature below the cursor */
-  bool showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, const map::MapSearchResult& result,
+  bool showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result,
                                 const QString& menuText);
 
   /* MapPaintWidget overrides for UI updates mostly ============================================================ */
@@ -402,8 +402,8 @@ private:
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipPos;
-  map::MapSearchResult mapSearchResultTooltip;
-  map::MapSearchResult mapSearchResultInfoClick;
+  map::MapResult mapSearchResultTooltip;
+  map::MapResult mapSearchResultInfoClick;
 
   MapTooltip *mapTooltip;
 

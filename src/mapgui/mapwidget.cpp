@@ -435,7 +435,7 @@ bool MapWidget::event(QEvent *event)
       QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
       // Load tooltip data into mapSearchResultTooltip
-      mapSearchResultTooltip = map::MapSearchResult();
+      mapSearchResultTooltip = map::MapResult();
       getScreenIndexConst()->getAllNearest(helpEvent->pos().x(),
                                            helpEvent->pos().y(), screenSearchDistanceTooltip,
                                            mapSearchResultTooltip,
@@ -552,7 +552,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
     Pos pos(lon, lat);
 
     // Look for navaids or airports nearby click
-    map::MapSearchResult result;
+    map::MapResult result;
     getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result,
                                          map::QUERY_NONE);
 
@@ -946,7 +946,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
   hideTooltip();
 
-  map::MapSearchResult mapSearchResult;
+  map::MapResult mapSearchResult;
 
   if(OptionData::instance().getMapNavigation() == opts::MAP_NAV_CLICK_CENTER &&
      !mapSearchResultInfoClick.isEmpty(map::AIRPORT | map::AIRCRAFT_ALL | map::NAV_ALL | map::ILS | map::USERPOINT |
@@ -1529,7 +1529,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   }
 }
 
-void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapSearchResult& result)
+void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapResult& result)
 {
   addMeasurement(pos, atools::firstOrNull(result.airports),
                  atools::firstOrNull(result.vors),
@@ -1682,10 +1682,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                     base->asObj<map::MapUserpoint>(map::USERPOINT) : map::MapUserpoint();
 
       int id = base != nullptr ? base->id : -1;
-      map::MapObjectTypes type = base != nullptr ? base->objType : map::NONE;
+      map::MapTypes type = base != nullptr ? base->objType : map::NONE;
 
       // Create a result object as it is needed for some methods
-      map::MapSearchResult result;
+      map::MapResult result;
       result.fromMapBase(base);
 
       switch(contextMenu.getSelectedActionType())
@@ -1797,21 +1797,21 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
   qDebug() << "End route drag" << newPoint << "leg" << leg << "point" << point;
 
   // Get all objects where the mouse button was released
-  map::MapSearchResult result;
+  map::MapResult result;
   getScreenIndexConst()->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result, map::QUERY_NONE);
 
   // Allow only aiports for alterates
   if(point >= 0)
   {
     if(NavApp::getRouteConst().value(point).isAlternate())
-      result.clear(map::MapObjectType(~map::AIRPORT));
+      result.clear(map::MapType(~map::AIRPORT));
   }
 
   // Count number of all objects
   int totalSize = result.size(map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);
 
   int id = -1;
-  map::MapObjectTypes type = map::NONE;
+  map::MapTypes type = map::NONE;
   if(totalSize == 0)
   {
     // Nothing at the position - add userpoint
@@ -1865,7 +1865,7 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
   }
 }
 
-bool MapWidget::showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, const map::MapSearchResult& result,
+bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result,
                                          const QString& menuText)
 {
   // Add id and type to actions
@@ -1952,7 +1952,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, con
     // Get id and type from selected action
     QVariantList data = action->data().toList();
     id = data.first().toInt();
-    type = map::MapObjectTypes(data.at(1).toInt());
+    type = map::MapTypes(data.at(1).toInt());
     return true;
   }
   return false;
@@ -3037,7 +3037,7 @@ void MapWidget::removeTrafficPatterm(int index)
   mainWindow->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
 }
 
-void MapWidget::addHold(const map::MapSearchResult& result, const atools::geo::Pos& position)
+void MapWidget::addHold(const map::MapResult& result, const atools::geo::Pos& position)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -3127,7 +3127,7 @@ void MapWidget::changeHome()
   mainWindow->setStatusMessage(QString(tr("Changed home position.")));
 }
 
-void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type,
+void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type,
                                 const QString& ident, const QString& frequency, int range)
 {
   map::RangeMarker ring;

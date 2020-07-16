@@ -82,7 +82,7 @@ public:
   void showAircraft(bool centerAircraftChecked);
 
   /* Update hightlighted objects */
-  void changeSearchHighlights(const map::MapSearchResult& newHighlights, bool updateAirspace, bool updateLogEntries);
+  void changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries);
   void changeRouteHighlights(const QList<int>& routeHighlight);
   void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
 
@@ -118,7 +118,7 @@ public:
   }
 
   /* Getters used by the painters */
-  const map::MapSearchResult& getSearchHighlights() const;
+  const map::MapResult& getSearchHighlights() const;
   const proc::MapProcedureLeg& getProcedureLegHighlights() const;
   const proc::MapProcedureLegs& getProcedureHighlight() const;
 
@@ -175,11 +175,11 @@ public:
   QDateTime getSunShadingDateTime() const;
 
   /* Define which airport or navaid types are shown on the map. Updates screen index on demand. */
-  void setShowMapFeatures(map::MapObjectTypes type, bool show);
+  void setShowMapFeatures(map::MapTypes type, bool show);
   void setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show);
   void setShowMapAirspaces(map::MapAirspaceFilter types);
 
-  map::MapObjectTypes getShownMapFeatures() const;
+  map::MapTypes getShownMapFeatures() const;
   map::MapObjectDisplayTypes getShownMapFeaturesDisplay() const;
   map::MapAirspaceFilter getShownAirspaces() const;
   map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
@@ -332,7 +332,7 @@ signals:
   /* Aircraft track was pruned and needs to be updated */
   void aircraftTrackPruned();
 
-  void shownMapFeaturesChanged(map::MapObjectTypes types);
+  void shownMapFeaturesChanged(map::MapTypes types);
 
   /* Search center has changed by context menu */
   void searchMarkChanged(const atools::geo::Pos& mark);

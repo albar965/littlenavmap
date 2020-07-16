@@ -293,7 +293,7 @@ map::MapRunwayEnd AirportQuery::getRunwayEndById(int id)
   return end;
 }
 
-void AirportQuery::getRunwayEndByNames(map::MapSearchResult& result, const QString& runwayName,
+void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& runwayName,
                                        const QString& airportIdent)
 {
   for(const QString& rname: map::runwayNameZeroPrefixVariants(runwayName))
@@ -304,7 +304,7 @@ void AirportQuery::getRunwayEndByNames(map::MapSearchResult& result, const QStri
   }
 }
 
-void AirportQuery::runwayEndByNames(map::MapSearchResult& result, const QString& runwayName,
+void AirportQuery::runwayEndByNames(map::MapResult& result, const QString& runwayName,
                                     const QString& airportIdent)
 {
   QString rname(runwayName);
@@ -616,23 +616,23 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
   }
 }
 
-map::MapSearchResultIndex *AirportQuery::getNearestAirportsProc(const map::MapAirport& airport, float distanceNm)
+map::MapResultIndex *AirportQuery::getNearestAirportsProc(const map::MapAirport& airport, float distanceNm)
 {
-  map::MapSearchResultIndex *nearest = nearestAirportsProcInternal(airport, distanceNm);
+  map::MapResultIndex *nearest = nearestAirportsProcInternal(airport, distanceNm);
   if(nearest == nullptr || nearest->size() < 5)
     nearest = nearestAirportsProcInternal(airport, distanceNm * 4.f);
   return nearest;
 }
 
-map::MapSearchResultIndex *AirportQuery::nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm)
+map::MapResultIndex *AirportQuery::nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm)
 {
   NearestCacheKeyAirport key = {airport.position, distanceNm};
 
-  map::MapSearchResultIndex *result = nearestAirportCache.object(key);
+  map::MapResultIndex *result = nearestAirportCache.object(key);
 
   if(result == nullptr)
   {
-    map::MapSearchResult res;
+    map::MapResult res;
     // Create a rectangle that roughly covers the requested region
     ageo::Rect rect(airport.position, ageo::nmToMeter(distanceNm));
 
@@ -644,7 +644,7 @@ map::MapSearchResultIndex *AirportQuery::nearestAirportsProcInternal(const map::
         res.airports.append(obj);
     });
 
-    result = new map::MapSearchResultIndex;
+    result = new map::MapResultIndex;
     result->add(res);
 
     // Remove all that are too far away

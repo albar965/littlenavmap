@@ -49,7 +49,7 @@ class UserdataManager;
 }
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 
 struct MapUserpoint;
 
@@ -136,8 +136,8 @@ public:
   }
 
   /* Add userpoint from map and prefill with result data */
-  void addUserpointFromMap(const map::MapSearchResult& result, atools::geo::Pos pos);
-  void editUserpointFromMap(const map::MapSearchResult& result);
+  void addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos);
+  void editUserpointFromMap(const map::MapResult& result);
   void deleteUserpointFromMap(int id);
   void moveUserpointFromMap(const map::MapUserpoint& userpoint);
 

@@ -1019,7 +1019,7 @@ void ProcedureSearch::showInformationSelected()
   if(currentAirportNav.isValid())
   {
     map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(currentAirportNav);
-    map::MapSearchResult result;
+    map::MapResult result;
     result.airports.append(airportSim);
     emit showInformation(result);
   }
@@ -1481,7 +1481,7 @@ void ProcedureSearch::createFonts()
   invalidLegFont.setBold(true);
 }
 
-void ProcedureSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void ProcedureSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   Q_UNUSED(result);
 }

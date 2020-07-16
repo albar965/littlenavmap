@@ -142,7 +142,7 @@ void MapPainterMark::paintHome(const PaintContext *context)
 void MapPainterMark::paintHighlights(PaintContext *context)
 {
   // Draw hightlights from the search result view =====================================================
-  const MapSearchResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
+  const MapResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
   int size = context->sz(context->symbolSizeAirport, 6);
 
   // Get airport entries from log to avoid rings around log entry airports

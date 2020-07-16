@@ -150,7 +150,7 @@ public:
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
 
-  map::MapObjectTypes getMapObjectType() const
+  map::MapTypes getMapObjectType() const
   {
     return type;
   }
@@ -332,14 +332,14 @@ public:
 
 private:
   // TODO assign functions are duplicatd in FlightplanEntryBuilder
-  void assignIntersection(const map::MapSearchResult& mapobjectResult,
+  void assignIntersection(const map::MapResult& mapobjectResult,
                           atools::fs::pln::FlightplanEntry *flightplanEntry);
-  void assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
-  void assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignVor(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last,
                        float maxDistance);
   void assignRunwayOrHelipad(const QString& name);
-  void assignAirport(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignAirport(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry);
 
   /* Parent flight plan */
@@ -347,7 +347,7 @@ private:
   /* Associated flight plan entry or approach leg entry */
   int index = -1;
 
-  map::MapObjectTypes type = map::NONE;
+  map::MapTypes type = map::NONE;
   map::MapAirport airport;
   map::MapParking parking;
   map::MapStart start;

@@ -322,7 +322,7 @@ QString LogdataSearch::formatModelData(const Column *col, const QVariant& displa
   return displayRoleValue.toString();
 }
 
-void LogdataSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void LogdataSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;

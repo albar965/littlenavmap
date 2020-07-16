@@ -155,7 +155,7 @@ private:
   proc::MapProcedureLegs *fetchTransitionLegs(const map::MapAirport& airport, int approachId,
                                               int transitionId);
   int approachIdForTransitionId(int transitionId);
-  void mapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type, const QString& ident,
+  void mapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
                         const QString& region, const QString& airport,
                         const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS);
 
@@ -169,8 +169,8 @@ private:
 
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
-  void runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);
-  void runwayEndByNameSim(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);
+  void runwayEndByName(map::MapResult& result, const QString& name, const map::MapAirport& airport);
+  void runwayEndByNameSim(map::MapResult& result, const QString& name, const map::MapAirport& airport);
 
   /* Check if a runway matches an SID/STAR "ALL" or e.g. "RW10B" pattern or matches exactly */
   bool doesRunwayMatch(const QString& runway, const QString& runwayFromQuery, const QString& arincName,

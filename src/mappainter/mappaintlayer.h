@@ -81,7 +81,7 @@ public:
   }
 
   /* Set the flags for map objects on or off depending on value show. Does not repaint */
-  void setShowMapObjects(map::MapObjectTypes type, bool show);
+  void setShowMapObjects(map::MapTypes type, bool show);
   void setShowMapObjectsDisplay(map::MapObjectDisplayTypes type, bool show);
   void setShowAirspaces(map::MapAirspaceFilter types);
 
@@ -94,7 +94,7 @@ public:
   }
 
   /* Get all shown map objects like airports, VOR, NDB, etc. */
-  map::MapObjectTypes getShownMapObjects() const
+  map::MapTypes getShownMapObjects() const
   {
     return objectTypes;
   }
@@ -159,7 +159,7 @@ private:
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
   /* Map objects currently shown */
-  map::MapObjectTypes objectTypes = map::NONE;
+  map::MapTypes objectTypes = map::NONE;
   map::MapObjectDisplayTypes objectDisplayTypes = map::DISPLAY_TYPE_NONE;
   map::MapAirspaceFilter airspaceTypes;
   map::MapWeatherSource weatherSource = map::WEATHER_SOURCE_SIMULATOR;

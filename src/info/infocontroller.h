@@ -57,7 +57,7 @@ public:
   /* Populates all tabs in the information dock with the given results. Only one airport is shown
    * but multiple navaids can be shown in the tab.
    *  Raises all related windows and tabs and scrolls to top. */
-  void showInformation(map::MapSearchResult result);
+  void showInformation(map::MapResult result);
 
   /* Update the currently shown airport information if weather data or connection status has changed.
    * Does not raise windows and does not scroll to top. */
@@ -118,15 +118,15 @@ private:
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_BEARING_TIME_MS = 1000;
 
   void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop, bool forceWeatherUpdate);
-  bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop,
+  bool updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop,
                             bool forceUpdate);
-  bool updateUserpointInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
+  bool updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
-  void showInformationInternal(map::MapSearchResult result,
+  void showInformationInternal(map::MapResult result,
                                bool showWindows, bool scrollToTop, bool forceUpdate);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateUserAircraftText();
@@ -149,7 +149,7 @@ private:
   qint64 lastSimBearingUpdate = 0;
 
   /* Airport and navaids that are currently shown in the tabs */
-  map::MapSearchResult currentSearchResult;
+  map::MapResult currentSearchResult;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;

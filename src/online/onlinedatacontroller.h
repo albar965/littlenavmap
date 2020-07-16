@@ -55,7 +55,7 @@ class OnlinedataManager;
 }
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 
 }
 

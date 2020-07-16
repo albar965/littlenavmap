@@ -162,25 +162,25 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
   ndbNearestQuery->finish();
 }
 
-map::MapSearchResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapObjectTypes type,
+map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapTypes type,
                                                        int maxIls, float maxIlsDist)
 {
-  map::MapSearchResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
+  map::MapResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
   if(nearest == nullptr || nearest->size() < 5)
     nearest = nearestNavaidsInternal(pos, distanceNm * 4.f, type, maxIls, maxIlsDist);
   return nearest;
 }
 
-map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapObjectTypes type,
+map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapTypes type,
                                                             int maxIls, float maxIlsDist)
 {
   query::NearestCacheKeyNavaid key = {pos, distanceNm, type};
 
-  map::MapSearchResultIndex *result = nearestNavaidCache.object(key);
+  map::MapResultIndex *result = nearestNavaidCache.object(key);
 
   if(result == nullptr)
   {
-    map::MapSearchResult res;
+    map::MapResult res;
 
     // Create a rectangle that roughly covers the requested region
     atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm));
@@ -237,7 +237,7 @@ map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, floa
       res.ils.append(ilsRes.mid(0, maxIls));
     }
 
-    result = new map::MapSearchResultIndex;
+    result = new map::MapResultIndex;
     result->add(res);
 
     // Remove all that are too far away
@@ -251,7 +251,7 @@ map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, floa
   return result;
 }
 
-void MapQuery::getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
+void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
                                    const QString& ident, const QString& region, const QString& airport,
                                    const Pos& sortByDistancePos, float maxDistance, bool airportFromNavDatabase)
 {
@@ -259,14 +259,14 @@ void MapQuery::getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectT
                            airportFromNavDatabase);
 }
 
-void MapQuery::getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type, const QString& ident,
+void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
                                    const QString& region, const QString& airport, bool airportFromNavDatabase)
 {
   mapObjectByIdentInternal(result, type, ident, region, airport, EMPTY_POS, map::INVALID_DISTANCE_VALUE,
                            airportFromNavDatabase);
 }
 
-void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapObjectTypes type, const QString& ident,
+void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type, const QString& ident,
                                         const QString& region, const QString& airport, const Pos& sortByDistancePos,
                                         float maxDistance, bool airportFromNavDatabase)
 {
@@ -360,7 +360,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
     NavApp::getAirwayTrackQuery()->getAirwaysByName(result.airways, ident);
 }
 
-void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, map::MapAirspaceSources src,
+void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src,
                                 int id, bool airportFromNavDatabase)
 {
   if(type == map::AIRPORT)
@@ -497,9 +497,9 @@ QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent
 }
 
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                       bool airportDiagram, map::MapObjectTypes types,
+                                       bool airportDiagram, map::MapTypes types,
                                        int xs, int ys, int screenDistance,
-                                       map::MapSearchResult& result)
+                                       map::MapResult& result)
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
@@ -902,7 +902,7 @@ void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const 
                                     const map::MapAirport& airport, bool navData)
 {
   AirportQuery *aquery = navData ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
-  map::MapSearchResult result;
+  map::MapResult result;
 
   if(!name.isEmpty())
   {

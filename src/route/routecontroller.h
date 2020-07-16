@@ -162,13 +162,13 @@ public:
    * @param type Type of object to insert. maptypes::USER if userPos is set.
    * @param legIndex Insert after the leg with this index. Will use nearest leg if index is -1.
    */
-  void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
+  void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
   void routeAddProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
 
   /* Same as above but replaces waypoint at legIndex */
-  void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
+  void routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Delete waypoint at the given index. Will also delete departure or destination */
   void routeDelete(int index);
@@ -232,7 +232,7 @@ public:
 
   void editUserWaypointName(int index);
 
-  void shownMapFeaturesChanged(map::MapObjectTypes types);
+  void shownMapFeaturesChanged(map::MapTypes types);
 
   void activateLegManually(int index);
   void resetActiveLeg();
@@ -301,7 +301,7 @@ signals:
   void routeAltitudeChanged(float altitudeFeet);
 
   /* Show information about the airports or navaids in the search result */
-  void showInformation(map::MapSearchResult result);
+  void showInformation(map::MapResult result);
 
   /* Show approach information about the airport */
   void showProcedures(map::MapAirport airport);

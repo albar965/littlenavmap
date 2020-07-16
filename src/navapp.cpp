@@ -948,7 +948,7 @@ const AircraftTrack& NavApp::getAircraftTrack()
   return getMapWidget()->getAircraftTrack();
 }
 
-map::MapObjectTypes NavApp::getShownMapFeatures()
+map::MapTypes NavApp::getShownMapFeatures()
 {
   return mainWindow->getMapWidget()->getShownMapFeatures();
 }

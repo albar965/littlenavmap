@@ -55,7 +55,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
     if(layer != nullptr)
     {
-      map::MapObjectTypes shown = paintLayer->getShownMapObjects();
+      map::MapTypes shown = paintLayer->getShownMapObjects();
       map::MapObjectDisplayTypes shownDispTypes = paintLayer->getShownMapObjectDisplayTypes();
 
       QStringList airportLabel;

@@ -52,7 +52,7 @@ MapScreenIndex::MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLaye
   airwayQuery = NavApp::getAirwayTrackQuery();
   airportQuery = NavApp::getAirportQuerySim();
 
-  searchHighlights = new map::MapSearchResult;
+  searchHighlights = new map::MapResult;
   approachLegHighlights = new proc::MapProcedureLeg;
   approachHighlight = new proc::MapProcedureLegs;
 }
@@ -416,7 +416,7 @@ void MapScreenIndex::restoreState()
   holds = s.valueVar(lnm::MAP_HOLDS).value<QList<map::Hold> >();
 }
 
-void MapScreenIndex::changeSearchHighlights(const map::MapSearchResult& newHighlights)
+void MapScreenIndex::changeSearchHighlights(const map::MapResult& newHighlights)
 {
   *searchHighlights = newHighlights;
 }
@@ -456,7 +456,7 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
       int x2, y2;
       if(conv.wToS(p2, x2, y2))
       {
-        map::MapObjectTypes type = routeLeg.getMapObjectType();
+        map::MapTypes type = routeLeg.getMapObjectType();
         if(type == map::AIRPORT && (i == departIndex || i == destIndex || routeLeg.isAlternate()))
           // Departure, destination or alternate airport - put to from of list for higher priority
           airportPoints.append(std::make_pair(i, QPoint(x2, y2)));
@@ -485,7 +485,7 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
   }
 }
 
-void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result,
                                    map::MapObjectQueryTypes types) const
 {
   using maptools::insertSortedByDistance;
@@ -494,7 +494,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   const MapLayer *mapLayer = paintLayer->getMapLayer();
   const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
 
-  map::MapObjectTypes shown = paintLayer->getShownMapObjects();
+  map::MapTypes shown = paintLayer->getShownMapObjects();
   map::MapObjectDisplayTypes shownDisplay = paintLayer->getShownMapObjectDisplayTypes();
 
   // Check for user aircraft
@@ -625,7 +625,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   }
 }
 
-void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
                                           map::MapObjectQueryTypes types) const
 {
   using maptools::insertSorted;
@@ -654,7 +654,7 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
     insertSorted(conv, xs, ys, rangeMarks, result.rangeMarkers, nullptr, maxDistance);
 }
 
-void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
                                                    map::MapObjectQueryTypes types) const
 {
   CoordinateConverter conv(mapPaintWidget->viewport());
@@ -767,7 +767,7 @@ void MapScreenIndex::updateAllGeometry(const Marble::GeoDataLatLonBox& curBox)
 }
 
 /* Get all airways near cursor position */
-void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapSearchResult& result) const
+void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapResult& result) const
 {
   for(int i = 0; i < airspacePolygons.size(); i++)
   {
@@ -798,7 +798,7 @@ QSet<int> MapScreenIndex::nearestLineIds(const QList<std::pair<int, QLine> >& li
 }
 
 /* Get all airways near cursor position */
-void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
+void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::MapResult& result) const
 {
   CoordinateConverter conv(mapPaintWidget->viewport());
   QSet<int> ids; // Deduplicate
@@ -823,7 +823,7 @@ void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::
   }
 }
 
-void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
+void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapResult& result) const
 {
   if(!paintLayer->getShownMapObjects().testFlag(map::ILS))
     return;
@@ -848,7 +848,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapSear
 }
 
 /* Get all airways near cursor position */
-void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
+void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::MapResult& result) const
 {
   for(int id : nearestLineIds(airwayLines, xs, ys, maxDistance, true /* lineDistanceOnly */))
     result.airways.append(airwayQuery->getAirwayById(id));

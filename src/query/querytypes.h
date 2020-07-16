@@ -207,7 +207,7 @@ struct NearestCacheKeyNavaid
 {
   atools::geo::Pos pos;
   float distanceNm;
-  map::MapObjectTypes type;
+  map::MapTypes type;
 
   bool operator==(const query::NearestCacheKeyNavaid& other) const
   {
