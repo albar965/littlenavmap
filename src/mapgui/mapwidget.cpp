@@ -590,8 +590,19 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
     else if(event->modifiers() == (Qt::AltModifier | Qt::ControlModifier) ||
             event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
     {
-      int routeIndex = getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(),
-                                                                        event->pos().y(), screenSearchDistance);
+      // First check for not editable points if these are procedures which can be removed ======================
+      int routeIndex = getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
+                                                                        screenSearchDistance, false /* editableOnly */);
+
+      if(NavApp::getRouteConst().value(routeIndex).isAnyProcedure())
+      {
+        NavApp::getRouteController()->routeDelete(routeIndex);
+        return true;
+      }
+
+      // No procedure found - check for editable points which can be removed or added ===============
+      routeIndex = getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
+                                                                    screenSearchDistance, true /* editableOnly */);
 
       if(routeIndex != -1)
       {
@@ -815,7 +826,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
           // Make distance a bit larger to prefer points
           int routePoint =
             getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                             screenSearchDistance * 4 / 3);
+                                                             screenSearchDistance * 4 / 3, true /* editableOnly */);
           if(routePoint != -1)
           {
             // Drag a waypoint ==============================================
@@ -1473,7 +1484,8 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
         // Make distance a bit larger to prefer points
         if(routeEditMode &&
            getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                            screenSearchDistance * 4 / 3) != -1 &&
+                                                            screenSearchDistance * 4 / 3,
+                                                            true /* editableOnly */) != -1 &&
            route.size() > 1)
           // Change cursor at one route point
           cursorShape = Qt::SizeAllCursor;

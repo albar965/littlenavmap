@@ -105,7 +105,7 @@ public:
   int getNearestRouteLegIndex(int xs, int ys, int maxDistance) const;
 
   /* Get index of nearest flight plan waypoint or -1 if nothing was found nearby. */
-  int getNearestRoutePointIndex(int xs, int ys, int maxDistance) const;
+  int getNearestRoutePointIndex(int xs, int ys, int maxDistance, bool editableOnly) const;
 
   /* Update geometry after a route or scroll or map change */
   void updateAllGeometry(const Marble::GeoDataLatLonBox& curBox);
@@ -332,7 +332,8 @@ private:
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;
-  QList<std::pair<int, QPoint> > routePoints;
+  QList<std::pair<int, QPoint> > routePoints; /* Editable points */
+  QList<std::pair<int, QPoint> > routePointsAll; /* All points */
 
   /* Geometry objects that are cached in screen coordinate system for faster access to tooltips etc. */
   QList<std::pair<int, QLine> > airwayLines;

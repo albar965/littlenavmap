@@ -537,7 +537,7 @@ float RouteLeg::getMagVarBySettings() const
 const atools::geo::Pos& RouteLeg::getPosition() const
 {
   if(isAnyProcedure())
-    return procedureLeg.line.getPos2();
+    return procedureLeg.fixPos;
   else
   {
     if(type == map::INVALID)

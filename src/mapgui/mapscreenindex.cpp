@@ -85,6 +85,7 @@ void MapScreenIndex::copy(const MapScreenIndex& other)
   ilsPolygons = other.ilsPolygons;
   ilsLines = other.ilsLines;
   routePoints = other.routePoints;
+  routePointsAll = other.routePointsAll;
 }
 
 void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids, map::MapAirspaceSources source,
@@ -434,15 +435,19 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
 
   routeLines.clear();
   routePoints.clear();
+  routePointsAll.clear();
 
   QList<std::pair<int, QPoint> > airportPoints;
-  QList<std::pair<int, QPoint> > otherPoints;
+  QList<std::pair<int, QPoint> > otherPointsEditable;
+  QList<std::pair<int, QPoint> > otherPointsNotEditable;
 
   CoordinateConverter conv(mapPaintWidget->viewport());
   const MapScale *scale = paintLayer->getMapScale();
   if(scale->isValid())
   {
     Pos p1;
+    int departIndex = route.getDepartureAirportLegIndex();
+    int destIndex = route.getDestinationAirportLegIndex();
     for(int i = 0; i < route.size(); i++)
     {
       const RouteLeg& routeLeg = route.value(i);
@@ -452,13 +457,13 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
       if(conv.wToS(p2, x2, y2))
       {
         map::MapObjectTypes type = routeLeg.getMapObjectType();
-        if(type == map::AIRPORT && (i == route.getDepartureAirportLegIndex() ||
-                                    i == route.getDestinationAirportLegIndex() ||
-                                    routeLeg.isAlternate()))
+        if(type == map::AIRPORT && (i == departIndex || i == destIndex || routeLeg.isAlternate()))
           // Departure, destination or alternate airport - put to from of list for higher priority
           airportPoints.append(std::make_pair(i, QPoint(x2, y2)));
         else if(route.canEditPoint(i))
-          otherPoints.append(std::make_pair(i, QPoint(x2, y2)));
+          otherPointsEditable.append(std::make_pair(i, QPoint(x2, y2)));
+        else
+          otherPointsNotEditable.append(std::make_pair(i, QPoint(x2, y2)));
       }
 
       if(!route.canEditLeg(i))
@@ -472,7 +477,11 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
       p1 = p2;
     }
     routePoints.append(airportPoints);
-    routePoints.append(otherPoints);
+    routePoints.append(otherPointsEditable);
+
+    routePointsAll.append(airportPoints);
+    routePointsAll.append(otherPointsEditable);
+    routePointsAll.append(otherPointsNotEditable);
   }
 }
 
@@ -726,7 +735,7 @@ int MapScreenIndex::getNearestIndex(int xs, int ys, int maxDistance, const QList
   return -1;
 }
 
-int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance) const
+int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance, bool editableOnly) const
 {
   if(!paintLayer->getShownMapObjectDisplayTypes().testFlag(map::FLIGHTPLAN))
     return -1;
@@ -734,7 +743,7 @@ int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance) c
   int minIndex = -1;
   float minDist = map::INVALID_DISTANCE_VALUE;
 
-  for(const std::pair<int, QPoint>& rsp : routePoints)
+  for(const std::pair<int, QPoint>& rsp : (editableOnly ? routePoints : routePointsAll))
   {
     const QPoint& point = rsp.second;
     float dist = atools::geo::manhattanDistance(point.x(), point.y(), xs, ys);

@@ -46,7 +46,7 @@ using map::MapSearchResultIndex;
 const static int MAX_MENU_ITEMS = 10;
 
 // Truncate map object texts in the middle
-const static int TEXT_ELIDE = 30;
+const static int TEXT_ELIDE = 25;
 
 // Keeps information for each menu, action and sub-menu.
 struct MapContextMenu::MenuData
@@ -927,7 +927,7 @@ void MapContextMenu::insertDeleteRouteWaypointMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::DELETEROUTEWAYPOINT, index,
                      tr("&Delete %1 from Flight Plan"),
                      tr("Delete airport, navaid or position from the flight plan"),
-                     tr("Shift+Alt+Click"),
+                     tr("Ctrl+Alt+Click"),
                      QIcon(":/littlenavmap/resources/icons/routedeleteleg.svg"),
                      false /* allowNoMapObject */,
                      callback);
@@ -967,7 +967,7 @@ void MapContextMenu::insertEditRouteUserpointMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::EDITROUTEUSERPOINT, index,
                      tr("Edit Flight Plan &Position %1 ..."),
                      tr("Edit remark, name or coordinate of flight plan position"),
-                     tr("Shift+Alt+Click"),
+                     QString(),
                      QIcon(":/littlenavmap/resources/icons/routestring.svg"),
                      false /* allowNoMapObject */,
                      callback);
