@@ -257,6 +257,7 @@ void ProfileWidget::disconnectedFromSimulator()
   updateScreenCoords();
   update();
   updateLabel();
+  scrollArea->hideTooltip();
 }
 
 float ProfileWidget::calcGroundBuffer(float maxElevation)
@@ -1560,25 +1561,34 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   QString from = atools::elideTextShort(legList.route.value(index).getIdent(), 20);
   QString to = atools::elideTextShort(legList.route.value(index + 1).getIdent(), 20);
 
+  // Create text for tooltip ==========================
+  atools::util::HtmlBuilder html;
+
+  // Header from and to distance, altitude and next waypoint ============
+  html.p().b(Unit::distNm(distance) + tr(" ► ") + Unit::distNm(distanceToGo));
   float altitude = NavApp::getRoute().getAltitudeForDistance(distanceToGo);
-  float aboveGround = map::INVALID_ALTITUDE_VALUE;
+  if(altitude < map::INVALID_ALTITUDE_VALUE)
+    html.b(tr(", %1, to %2").arg(Unit::altFeet(altitude)).arg(to));
+  html.pEnd();
+
+  // Build table =====================
+  html.table();
+
+  if(groundElevation < map::INVALID_ALTITUDE_VALUE)
+    html.row2(tr("Ground Elevation:"), Unit::altFeet(groundElevation));
 
   if(altitude < map::INVALID_ALTITUDE_VALUE && groundElevation < map::INVALID_ALTITUDE_VALUE)
+  {
+    float aboveGround = map::INVALID_ALTITUDE_VALUE;
     aboveGround = std::max(0.f, altitude - groundElevation);
+    if(aboveGround < map::INVALID_ALTITUDE_VALUE)
+      html.row2(tr("Above Ground:"), Unit::altFeet(aboveGround));
+  }
 
-  // Add text to upper dock window label ==========================
-  variableLabelText =
-    from + tr(" ► ") + to + tr(", ") +
-    Unit::distNm(distance) + tr(" ► ") +
-    Unit::distNm(distanceToGo) + tr(", ") +
-    (groundElevation < map::INVALID_ALTITUDE_VALUE ?
-     tr(" Ground Elevation ") + Unit::altFeet(groundElevation) + tr(", ") : QString()) +
-    (aboveGround < map::INVALID_ALTITUDE_VALUE ?
-     tr(" Above Ground Altitude ") + Unit::altFeet(aboveGround) + tr(", ") : QString()) +
-    (maxElev < map::INVALID_ALTITUDE_VALUE ?
-     tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev) : QString());
+  if(maxElev < map::INVALID_ALTITUDE_VALUE)
+    html.row2(tr("Leg Safe Altitude:"), Unit::altFeet(maxElev));
 
-  // Show wind at altitude===============================================
+  // Show wind at altitude ===============================================
   const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.value(index + 1) : nullptr;
   WindReporter *windReporter = NavApp::getWindReporter();
   if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
@@ -1591,11 +1601,12 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 
       float magVar = NavApp::getMagVar(pos);
 
-      variableLabelText.append(tr(", %1Wind %2°M, %3").
-                               arg(windReporter->isWindManual() ? tr("Manual ") : QString()).
-                               arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
-                               arg(Unit::speedKts(wind.speed)));
+      QString windText = tr("%1°M, %2").
+                         arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
+                         arg(Unit::speedKts(wind.speed));
+      html.row2(tr("%1Wind:").arg(windReporter->isWindManual() ? tr("Manual ") : QString()), windText);
 
+      // Add tail/headwind if sufficient =======================================
       if(std::abs(headWind) >= 1.f)
       {
         QString windPtr;
@@ -1603,17 +1614,19 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
           windPtr = tr("◄");
         else if(headWind <= -1.f)
           windPtr = tr("►");
-        variableLabelText.append(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
+        html.row2(QString(), tr("%1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
       }
     }
   }
+  html.tableEnd();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_PROFILE
   using namespace formatter;
   using namespace map;
 
   FuelTimeResult result;
-  NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(result, distanceToGo, INVALID_DISTANCE_VALUE, index + 1);
+  NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(result, distanceToGo, INVALID_DISTANCE_VALUE,
+                                                              index + 1);
 
   variableLabelText.append(QString("<br/><code>[alt %1,idx %2, crs %3, "
                                      "fuel dest %4/%5, fuel TOD %6/%7, "
@@ -1631,9 +1644,14 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
                            arg(result.timeToTod < INVALID_TIME_VALUE ? formatMinutesHours(result.timeToTod) : "-1"));
 #endif
 
+  // Update and show header label
+  updateLabel();
+
+  // Show tooltip
+  scrollArea->showTooltip(mouseEvent->globalPos(), html.getHtml());
+
   // Allow event to propagate to scroll widget
   mouseEvent->ignore();
-  updateLabel();
 
   // Follow cursor on map if enabled ==========================
   if(NavApp::getMainUi()->actionProfileFollow->isChecked())
@@ -1702,6 +1720,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addSeparator();
   menu.addAction(ui->actionProfileFollow);
   menu.addSeparator();
+  menu.addAction(ui->actionProfileShowTooltip);
   menu.addAction(ui->actionProfileShowZoom);
   menu.addAction(ui->actionProfileShowLabels);
   menu.addAction(ui->actionProfileShowScrollbars);
@@ -1761,17 +1780,22 @@ void ProfileWidget::updateLabel()
           fixedLabelText = tr("<b>To Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
       }
     }
+    NavApp::getMainUi()->labelProfileInfo->setVisible(true);
   }
   else
+  {
+    NavApp::getMainUi()->labelProfileInfo->setVisible(false);
     fixedLabelText.clear();
+  }
 
-  NavApp::getMainUi()->labelProfileInfo->setText(fixedLabelText + " " + variableLabelText);
+  NavApp::getMainUi()->labelProfileInfo->setText(fixedLabelText /* + " " + variableLabelText*/);
 }
 
 /* Cursor leaves widget. Stop displaying the rubberband */
 void ProfileWidget::leaveEvent(QEvent *)
 {
   hideRubberBand();
+  scrollArea->hideTooltip();
 }
 
 void ProfileWidget::hideRubberBand()
@@ -1782,7 +1806,6 @@ void ProfileWidget::hideRubberBand()
   delete rubberBand;
   rubberBand = nullptr;
 
-  variableLabelText.clear();
   updateLabel();
 
   // Tell map widget to erase highlight
@@ -1792,12 +1815,6 @@ void ProfileWidget::hideRubberBand()
 /* Resizing needs an update of the screen coordinates */
 void ProfileWidget::resizeEvent(QResizeEvent *)
 {
-  // Ui::MainWindow *ui = NavApp::getMainUi();
-  // qDebug() << Q_FUNC_INFO << size();
-  // qDebug() << Q_FUNC_INFO << "sizeHint()" << sizeHint();
-  // qDebug() << Q_FUNC_INFO << "viewport()->size()" << ui->scrollAreaProfile->viewport()->size();
-  // qDebug() << Q_FUNC_INFO << "viewport()->sizeHint()" << ui->scrollAreaProfile->viewport()->sizeHint();
-
   updateScreenCoords();
 }
 
@@ -1815,6 +1832,7 @@ void ProfileWidget::preDatabaseLoad()
 {
   jumpBack->cancel();
   updateTimer->stop();
+  scrollArea->hideTooltip();
   terminateThread();
   databaseLoadStatus = true;
 }
@@ -1823,12 +1841,14 @@ void ProfileWidget::preDatabaseLoad()
 void ProfileWidget::postDatabaseLoad()
 {
   databaseLoadStatus = false;
+  scrollArea->hideTooltip();
   routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
 
 void ProfileWidget::optionsChanged()
 {
   jumpBack->cancel();
+  scrollArea->hideTooltip();
   updateScreenCoords();
   updateErrorLabel();
   updateLabel();

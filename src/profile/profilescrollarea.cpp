@@ -32,6 +32,7 @@
 #include <QSlider>
 #include <QTimer>
 #include <QWidget>
+#include <QToolTip>
 #include "ui_mainwindow.h"
 
 ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollAreaParam)
@@ -78,22 +79,46 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   connect(ui->pushButtonProfileHelp, &QPushButton::clicked, this, &ProfileScrollArea::helpClicked);
   connect(ui->actionProfileExpand, &QAction::triggered, this, &ProfileScrollArea::expandWidget);
 
-  connect(ui->actionProfileShowLabels, &QAction::toggled, this, &ProfileScrollArea::showLabels);
-  connect(ui->actionProfileShowScrollbars, &QAction::toggled, this, &ProfileScrollArea::showScrollbars);
-  connect(ui->actionProfileShowZoom, &QAction::toggled, this, &ProfileScrollArea::showZoom);
+  connect(ui->actionProfileShowLabels, &QAction::toggled, this, &ProfileScrollArea::showLabelsToggled);
+  connect(ui->actionProfileShowScrollbars, &QAction::toggled, this, &ProfileScrollArea::showScrollbarsToggled);
+  connect(ui->actionProfileShowTooltip, &QAction::toggled, this, &ProfileScrollArea::showTooltipToggled);
+  connect(ui->actionProfileShowZoom, &QAction::toggled, this, &ProfileScrollArea::showZoomToggled);
 
   // Need to resize scroll area
   connect(ui->splitterProfile, &QSplitter::splitterMoved, this, &ProfileScrollArea::splitterMoved);
 
-  // Install event filter to area and viewport widgets avoid subclassing
+  // Install event filter to area and viewport widgets avoid subclassing ====================
   scrollArea->installEventFilter(this);
   scrollArea->viewport()->installEventFilter(this);
+
+  // Use a label as top level window styled as a tooltip ====================
+  tooltipLabel = new QLabel(viewport, Qt::ToolTip | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+
+  // Keep inactiave
+  tooltipLabel->setAttribute(Qt::WA_ShowWithoutActivating);
+  tooltipLabel->setAutoFillBackground(true);
+  tooltipLabel->setFrameShape(QFrame::Box);
+  tooltipLabel->setMargin(0);
+
+  // Use tooltip palette
+  tooltipLabel->setPalette(QToolTip::palette());
+  tooltipLabel->setForegroundRole(QPalette::ToolTipText);
+  tooltipLabel->setBackgroundRole(QPalette::ToolTipBase);
+
+  // Shrink font a bit
+  QFont font = tooltipLabel->font();
+  if(font.pointSizeF() > 1.)
+  {
+    font.setPointSizeF(font.pointSizeF() * 0.875);
+    tooltipLabel->setFont(font);
+  }
 }
 
 ProfileScrollArea::~ProfileScrollArea()
 {
   scrollArea->removeEventFilter(this);
   scrollArea->viewport()->removeEventFilter(this);
+  delete tooltipLabel;
   delete labelWidget;
 }
 
@@ -117,6 +142,63 @@ void ProfileScrollArea::expandWidget()
   ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
   ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
   scrollArea->setWidgetResizable(false);
+}
+
+void ProfileScrollArea::showTooltip(const QPoint& globalPos, const QString& text)
+{
+  if(NavApp::getMainUi()->actionProfileShowTooltip->isChecked())
+  {
+    // Set text if changed and adjust window size
+    if(text != tooltipLabel->text())
+    {
+      tooltipLabel->setText(text);
+      tooltipLabel->adjustSize();
+    }
+
+    if(tooltipLabel->isVisible())
+    {
+      // Cut off width and/or height if the tooltip is bigger than the viewport
+      if(tooltipLabel->height() > viewport->height())
+        tooltipLabel->resize(tooltipLabel->width(), viewport->height());
+
+      if(tooltipLabel->width() > viewport->width())
+        tooltipLabel->resize(viewport->width(), tooltipLabel->height());
+
+      // Check if tooltip has to jump to other side
+      int buffer = std::min(tooltipLabel->width() * 5 / 4, viewport->width() / 3);
+      int leftMargin = buffer;
+      int rightMargin = viewport->width() - buffer;
+
+      bool tooltipIsLeft = viewport->mapFromGlobal(tooltipLabel->pos()).x() <= 2;
+      int cursorX = viewport->mapFromGlobal(globalPos).x();
+      if(!tooltipIsLeft && cursorX >= rightMargin)
+        // Tooltip at right side and cursor above right margin - move to left side
+        tooltipLabel->move(viewport->mapToGlobal(QPoint()));
+      else if(tooltipIsLeft && cursorX <= leftMargin)
+        // Tooltip at left side and cursor below left margin - move to right side
+        tooltipLabel->move(viewport->mapToGlobal(QPoint(viewport->width() - tooltipLabel->width(), 0)));
+    }
+    else
+    {
+      // Not visible yet. Move to either side depending on cursor position
+      if(viewport->mapFromGlobal(globalPos).x() > viewport->width() / 2)
+        // Cursor right half of window - move tooltip to left side
+        tooltipLabel->move(viewport->mapToGlobal(QPoint()));
+      else
+        // Cursor left half of window - move tooltip to right side
+        tooltipLabel->move(viewport->mapToGlobal(QPoint(viewport->width() - tooltipLabel->width(), 0)));
+
+      // Show it
+      tooltipLabel->setVisible(true);
+    }
+  }
+  else if(tooltipLabel->isVisible())
+    tooltipLabel->setVisible(false);
+}
+
+void ProfileScrollArea::hideTooltip()
+{
+  tooltipLabel->setVisible(false);
 }
 
 void ProfileScrollArea::splitterMoved(int pos, int index)
@@ -551,7 +633,13 @@ QPoint ProfileScrollArea::getOffset() const
   return profileWidget->pos() * -1;
 }
 
-void ProfileScrollArea::showZoom(bool show)
+void ProfileScrollArea::showTooltipToggled(bool show)
+{
+  if(!show)
+    hideTooltip();
+}
+
+void ProfileScrollArea::showZoomToggled(bool show)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -563,14 +651,14 @@ void ProfileScrollArea::showZoom(bool show)
   resizeEvent();
 }
 
-void ProfileScrollArea::showScrollbars(bool show)
+void ProfileScrollArea::showScrollbarsToggled(bool show)
 {
   scrollArea->setVerticalScrollBarPolicy(show ? Qt::ScrollBarAlwaysOn : Qt::ScrollBarAlwaysOff);
   scrollArea->setHorizontalScrollBarPolicy(show ? Qt::ScrollBarAlwaysOn : Qt::ScrollBarAlwaysOff);
   resizeEvent();
 }
 
-void ProfileScrollArea::showLabels(bool show)
+void ProfileScrollArea::showLabelsToggled(bool show)
 {
   labelWidget->setVisible(show);
 
@@ -588,6 +676,7 @@ void ProfileScrollArea::saveState()
     ui->actionProfileFollow,
     ui->actionProfileShowLabels,
     ui->actionProfileShowScrollbars,
+    ui->actionProfileShowTooltip,
     ui->actionProfileShowZoom,
     ui->actionProfileShowIls,
     ui->actionProfileShowVasi
@@ -604,6 +693,7 @@ void ProfileScrollArea::restoreState()
     ui->actionProfileFollow,
     ui->actionProfileShowLabels,
     ui->actionProfileShowScrollbars,
+    ui->actionProfileShowTooltip,
     ui->actionProfileShowZoom,
     ui->actionProfileShowIls,
     ui->actionProfileShowVasi

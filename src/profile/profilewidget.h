@@ -276,7 +276,7 @@ private:
 
   QRubberBand *rubberBand = nullptr;
 
-  QString fixedLabelText, variableLabelText;
+  QString fixedLabelText;
 
   bool widgetVisible = false, showAircraft = false, showAircraftTrack = false;
   QVector<int> waypointX; /* Flight plan waypoint screen coordinates - does contain the dummy
