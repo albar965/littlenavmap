@@ -97,7 +97,7 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   // Keep inactiave
   tooltipLabel->setAttribute(Qt::WA_ShowWithoutActivating);
   tooltipLabel->setAutoFillBackground(true);
-  tooltipLabel->setFrameShape(QFrame::Box);
+  tooltipLabel->setFrameShape(QFrame::Box); // Black border
   tooltipLabel->setMargin(0);
 
   // Use tooltip palette
@@ -109,7 +109,7 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   QFont font = tooltipLabel->font();
   if(font.pointSizeF() > 1.)
   {
-    font.setPointSizeF(font.pointSizeF() * 0.875);
+    font.setPointSizeF(font.pointSizeF() * 0.9);
     tooltipLabel->setFont(font);
   }
 }

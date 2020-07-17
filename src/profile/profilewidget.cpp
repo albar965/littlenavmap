@@ -1558,8 +1558,15 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   calculateDistancesAndPos(x, pos, index, distance, distanceToGo, groundElevation, maxElev);
 
   // Get from/to text
-  QString from = atools::elideTextShort(legList.route.value(index).getIdent(), 20);
-  QString to = atools::elideTextShort(legList.route.value(index + 1).getIdent(), 20);
+  // QString fromWaypoint = atools::elideTextShort(legList.route.value(index).getIdent(), 20);
+
+  QString fromTo(tr("to"));
+
+  const RouteLeg& routeLeg = legList.route.value(index + 1);
+  if(routeLeg.isAnyProcedure() && proc::procedureLegFrom(routeLeg.getProcedureLegType()))
+    fromTo = tr("from");
+
+  QString toWaypoint = atools::elideTextShort(routeLeg.getIdent(), 20);
 
   // Create text for tooltip ==========================
   atools::util::HtmlBuilder html;
@@ -1568,7 +1575,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   html.p().b(Unit::distNm(distance) + tr(" ► ") + Unit::distNm(distanceToGo));
   float altitude = NavApp::getRoute().getAltitudeForDistance(distanceToGo);
   if(altitude < map::INVALID_ALTITUDE_VALUE)
-    html.b(tr(", %1, to %2").arg(Unit::altFeet(altitude)).arg(to));
+    html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude)).arg(fromTo).arg(toWaypoint));
   html.pEnd();
 
   // Build table =====================
