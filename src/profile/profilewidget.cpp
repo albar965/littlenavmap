@@ -121,6 +121,7 @@ ProfileWidget::~ProfileWidget()
   delete jumpBack;
 
   updateTimer->stop();
+  updateTimer->deleteLater();
   terminateThread();
   delete scrollArea;
 }
@@ -1552,10 +1553,36 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   rubberBand->setGeometry(x - 1, 0, 2, rect().height());
   rubberBand->show();
 
-  atools::geo::Pos pos;
+  buildTooltip(x);
+
+  // Show tooltip
+  if(!lastTooltipString.isEmpty())
+    scrollArea->showTooltip(mouseEvent->globalPos(), lastTooltipString);
+
+  // Allow event to propagate to scroll widget
+  mouseEvent->ignore();
+
+  // Follow cursor on map if enabled ==========================
+  if(NavApp::getMainUi()->actionProfileFollow->isChecked())
+    emit showPos(calculatePos(x), map::INVALID_DISTANCE_VALUE, false);
+
+  // Tell map widget to create a rubberband rectangle on the map
+  emit highlightProfilePoint(lastTooltipPos);
+}
+
+void ProfileWidget::buildTooltip(int x)
+{
   int index;
   float distance, distanceToGo, groundElevation, maxElev;
-  calculateDistancesAndPos(x, pos, index, distance, distanceToGo, groundElevation, maxElev);
+  calculateDistancesAndPos(x, lastTooltipPos, index, distance, distanceToGo, groundElevation, maxElev);
+
+  if(!NavApp::getMainUi()->actionProfileShowTooltip->isChecked())
+    return;
+
+  if(atools::almostEqual(lastTooltipX, x, 3))
+    return;
+  else
+    lastTooltipX = x;
 
   // Get from/to text
   // QString fromWaypoint = atools::elideTextShort(legList.route.value(index).getIdent(), 20);
@@ -1600,13 +1627,13 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   WindReporter *windReporter = NavApp::getWindReporter();
   if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
   {
-    atools::grib::Wind wind = windReporter->getWindForPosRoute(pos.alt(altitude));
+    atools::grib::Wind wind = windReporter->getWindForPosRoute(lastTooltipPos.alt(altitude));
     if(wind.isValid() && !wind.isNull())
     {
       float headWind = 0.f, crossWind = 0.f;
       atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseToTrue());
 
-      float magVar = NavApp::getMagVar(pos);
+      float magVar = NavApp::getMagVar(lastTooltipPos);
 
       QString windText = tr("%1°M, %2").
                          arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
@@ -1651,21 +1678,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
                            arg(result.timeToTod < INVALID_TIME_VALUE ? formatMinutesHours(result.timeToTod) : "-1"));
 #endif
 
-  // Update and show header label
-  updateLabel();
-
-  // Show tooltip
-  scrollArea->showTooltip(mouseEvent->globalPos(), html.getHtml());
-
-  // Allow event to propagate to scroll widget
-  mouseEvent->ignore();
-
-  // Follow cursor on map if enabled ==========================
-  if(NavApp::getMainUi()->actionProfileFollow->isChecked())
-    emit showPos(calculatePos(x), map::INVALID_DISTANCE_VALUE, false);
-
-  // Tell map widget to create a rubberband rectangle on the map
-  emit highlightProfilePoint(pos);
+  lastTooltipString = html.getHtml();
 }
 
 void ProfileWidget::contextMenuEvent(QContextMenuEvent *event)

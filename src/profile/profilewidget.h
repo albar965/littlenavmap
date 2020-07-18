@@ -21,7 +21,6 @@
 #include "route/route.h"
 #include "fs/sc/simconnectdata.h"
 
-#include <QFuture>
 #include <QFutureWatcher>
 #include <QWidget>
 
@@ -229,6 +228,8 @@ private:
   void saveAircraftTrack();
   void loadAircraftTrack();
 
+  void buildTooltip(int x);
+
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
@@ -275,6 +276,10 @@ private:
   bool databaseLoadStatus = false;
 
   QRubberBand *rubberBand = nullptr;
+
+  int lastTooltipX = -999;
+  QString lastTooltipString;
+  atools::geo::Pos lastTooltipPos;
 
   QString fixedLabelText;
 
