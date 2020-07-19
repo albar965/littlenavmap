@@ -307,9 +307,17 @@ private:
   void showDonationPage();
   void showFaqPage();
 
+  /* Loading of KML files */
   void kmlOpenRecent(const QString& kmlFile);
   void kmlOpen();
   void kmlClear();
+
+  /* Loading and saving of window layout files */
+  void layoutOpen();
+  void layoutSaveAs();
+  void layoutOpenRecent(const QString& layoutFile);
+  void layoutOpenDrag(const QString& layoutFile); /* Open from drag and drop event */
+  bool layoutOpenInternal(const QString& layoutFile);
 
   void legendAnchorClicked(const QUrl& url);
 
@@ -392,7 +400,7 @@ private:
   QString mainWindowTitle;
   SearchController *searchController = nullptr;
   RouteController *routeController = nullptr;
-  atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
+  atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr, *layoutFileHistory = nullptr;
 
   /* Filepath of the inline nav map legend */
   QString legendFile;

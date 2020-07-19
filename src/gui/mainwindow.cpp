@@ -217,7 +217,7 @@ MainWindow::MainWindow()
     // centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     // centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
     // setCentralWidget(centralWidget);
-    if(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK)
+    if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
       centralWidget()->hide();
 
     setupUi();
@@ -252,17 +252,19 @@ MainWindow::MainWindow()
     windReporter->addToolbarButton();
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for flight plans";
-    routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,
+    routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMES_RECENT, ui->menuRecentRoutes,
                                               ui->actionRecentRoutesClear);
-    ui->menuRecentRoutes->setToolTipsVisible(true);
 
     qDebug() << Q_FUNC_INFO << "Creating RouteController";
     routeController = new RouteController(this, ui->tableViewRoute);
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for KML files";
-    kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
+    kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKML_RECENT, ui->menuRecentKml,
                                             ui->actionClearKmlMenu);
-    ui->menuRecentKml->setToolTipsVisible(true);
+
+    qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for layout files";
+    layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent,
+                                               ui->actionWindowLayoutClearRecent);
 
     // Create map widget and replace dummy widget in window
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
@@ -431,6 +433,8 @@ MainWindow::~MainWindow()
   delete routeFileHistory;
   qDebug() << Q_FUNC_INFO << "delete kmlFileHistory";
   delete kmlFileHistory;
+  qDebug() << Q_FUNC_INFO << "delete layoutFileHistory";
+  delete layoutFileHistory;
   qDebug() << Q_FUNC_INFO << "delete optionsDialog";
   delete optionsDialog;
   qDebug() << Q_FUNC_INFO << "delete mapWidget";
@@ -1236,7 +1240,6 @@ void MainWindow::connectAllSlots()
   // KML actions
   connect(ui->actionLoadKml, &QAction::triggered, this, &MainWindow::kmlOpen);
   connect(ui->actionClearKml, &QAction::triggered, this, &MainWindow::kmlClear);
-
   connect(kmlFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::kmlOpenRecent);
 
   // Flight plan calculation
@@ -1303,6 +1306,11 @@ void MainWindow::connectAllSlots()
     if(checked)
       mapProjectionComboBox->setCurrentIndex(1);
   });
+
+  // Window menu ======================================
+  connect(layoutFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::layoutOpenRecent);
+  connect(ui->actionWindowLayoutOpen, &QAction::triggered, this, &MainWindow::layoutOpen);
+  connect(ui->actionWindowLayoutSaveAs, &QAction::triggered, this, &MainWindow::layoutSaveAs);
 
   // Let theme menus update combo boxes
   connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
@@ -2436,6 +2444,79 @@ void MainWindow::kmlOpenRecent(const QString& kmlFile)
   }
 }
 
+void MainWindow::layoutOpen()
+{
+  QString layoutFile = dialog->openFileDialog(tr("Window Layout"),
+                                              tr("Window Layout Files %1;;All Files (*)").
+                                              arg(lnm::FILE_PATTERN_LAYOUT), "WindowLayout/", QString());
+
+  if(!layoutFile.isEmpty())
+  {
+    if(layoutOpenInternal(layoutFile))
+      layoutFileHistory->addFile(layoutFile);
+  }
+}
+
+void MainWindow::layoutSaveAs()
+{
+
+  QString layoutFile = dialog->saveFileDialog(
+    tr("Window Layout"),
+    tr("Window Layout %1;;All Files (*)").arg(lnm::FILE_PATTERN_LAYOUT),
+    "lnmlayout", "WindowLayout/", atools::documentsDir(), QString(), false /* confirm overwrite */);
+
+  if(!layoutFile.isEmpty())
+  {
+    try
+    {
+      dockHandler->saveWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK));
+      layoutFileHistory->addFile(layoutFile);
+      setStatusMessage(tr("Window layout saved."));
+    }
+    catch(atools::Exception& e)
+    {
+      atools::gui::ErrorHandler(this).handleException(e);
+    }
+  }
+}
+
+/* Called from menu or toolbar by action */
+void MainWindow::layoutOpenRecent(const QString& layoutFile)
+{
+  if(!layoutOpenInternal(layoutFile))
+    layoutFileHistory->removeFile(layoutFile);
+}
+
+void MainWindow::layoutOpenDrag(const QString& layoutFile)
+{
+  if(layoutOpenInternal(layoutFile))
+    layoutFileHistory->addFile(layoutFile);
+  else
+    layoutFileHistory->removeFile(layoutFile);
+}
+
+bool MainWindow::layoutOpenInternal(const QString& layoutFile)
+{
+  try
+  {
+    if(dockHandler->loadWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
+                                    tr("The option \"Allow to undock map window\" in the saved file is "
+                                       "different than the currently set option.\n"
+                                       "The layout might not be restored properly.\n\n"
+                                       "Apply the loaded window layout anyway?")))
+    {
+      dockHandler->currentStateToWindow();
+      setStatusMessage(tr("Window layout loaded and restored."));
+      return true;
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  return false;
+}
+
 bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json)
 {
   ImageExportDialog exportDialog(this, dialogTitle, optionPrefx, mapWidget->width(), mapWidget->height());
@@ -3431,6 +3512,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "kmlFileHistory";
   kmlFileHistory->restoreState();
 
+  qDebug() << "layoutFileHistory";
+  layoutFileHistory->restoreState();
+
   qDebug() << "searchController";
   routeFileHistory->restoreState();
 
@@ -3690,6 +3774,7 @@ void MainWindow::saveStateMain()
 void MainWindow::saveFileHistoryStates()
 {
   qDebug() << Q_FUNC_INFO;
+
   qDebug() << "routeFileHistory";
   if(routeFileHistory != nullptr)
     routeFileHistory->saveState();
@@ -3697,6 +3782,11 @@ void MainWindow::saveFileHistoryStates()
   qDebug() << "kmlFileHistory";
   if(kmlFileHistory != nullptr)
     kmlFileHistory->saveState();
+
+  qDebug() << "layoutFileHistory";
+  if(layoutFileHistory != nullptr)
+    layoutFileHistory->saveState();
+
   Settings::instance().syncSettings();
 }
 
@@ -4039,9 +4129,8 @@ void MainWindow::clearWeatherContext()
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
   qDebug() << Q_FUNC_INFO;
-  // Accept only one flight plan
-  if(event->mimeData() != nullptr && event->mimeData()->hasUrls() &&
-     event->mimeData()->urls().size() == 1)
+  // Accept only one file
+  if(event->mimeData() != nullptr && event->mimeData()->hasUrls() && event->mimeData()->urls().size() == 1)
   {
     QList<QUrl> urls = event->mimeData()->urls();
 
@@ -4051,13 +4140,14 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
       QUrl url = urls.first();
       if(url.isLocalFile())
       {
-        // accept if file exists, is readable and matches the supported extensions
+        // accept if file exists, is readable and matches the supported extensions or content
         QFileInfo file(url.toLocalFile());
+
         if(file.exists() && file.isReadable() && file.isFile() &&
            (atools::fs::pln::FlightplanIO::detectFormat(file.filePath()) ||
-            AircraftPerfController::isPerformanceFile(file.filePath())))
+            AircraftPerfController::isPerformanceFile(file.filePath()) ||
+            atools::gui::DockWidgetHandler::isWindowLayoutFile(file.filePath())))
         {
-
           qDebug() << Q_FUNC_INFO << "accepting" << url;
           event->acceptProposedAction();
           return;
@@ -4075,7 +4165,10 @@ void MainWindow::dropEvent(QDropEvent *event)
     QString filepath = event->mimeData()->urls().first().toLocalFile();
     qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
 
-    if(AircraftPerfController::isPerformanceFile(filepath))
+    if(atools::gui::DockWidgetHandler::isWindowLayoutFile(filepath))
+      // Open window layout file
+      layoutOpenDrag(filepath);
+    else if(AircraftPerfController::isPerformanceFile(filepath))
       // Load aircraft performance file
       NavApp::getAircraftPerfController()->loadFile(filepath);
     else

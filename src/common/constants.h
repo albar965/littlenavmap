@@ -149,11 +149,13 @@ const QLatin1Literal MAP_SUN_SHADING_TIME_OPTION("Map/SunShadingTimeOption");
 const QLatin1Literal MAP_SUN_SHADING_TIME("Map/SunShadingTime");
 const QLatin1Literal MAP_MARK_DISPLAY("Map/MarkDisplay");
 
+const QLatin1Literal LAYOUT_RECENT("WindowLayout/FilenamesRecent");
+
 const QLatin1Literal NAVCONNECT_REMOTEHOSTS("NavConnect/RemoteHosts");
 const QLatin1Literal NAVCONNECT_REMOTE("NavConnect/Remote");
 const QLatin1Literal ROUTE_FILENAME("Route/Filename");
-const QLatin1Literal ROUTE_FILENAMESRECENT("Route/FilenamesRecent");
-const QLatin1Literal ROUTE_FILENAMESKMLRECENT("Route/FilenamesKmlRecent");
+const QLatin1Literal ROUTE_FILENAMES_RECENT("Route/FilenamesRecent");
+const QLatin1Literal ROUTE_FILENAMESKML_RECENT("Route/FilenamesKmlRecent");
 const QLatin1Literal ROUTE_VIEW("Route/View");
 const QLatin1Literal ROUTE_PRINT_DIALOG("Route/PrintWidget");
 const QLatin1Literal ROUTE_STRING_DIALOG_SIZE("Route/StringDialogSize");
@@ -308,12 +310,14 @@ const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf)");
 const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF_INI("(*.lnmperf)");
 const QLatin1Literal FILE_PATTERN_GRIB("(*.grib)");
 
-const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
-const QString FILE_PATTERN_XPLANE_METAR("(METAR.rwx)");
-const QString FILE_PATTERN_XPLANE_LOGBOOK("(X-Plane*Pilot.txt)"); /* Need * since file dialog fails on spaces */
+const QLatin1Literal FILE_PATTERN_LAYOUT("(*.lnmlayout)");
 
-const QString FILE_PATTERN_IMAGE("(*.jpg *.jpeg *.png *.bmp)");
-const QString FILE_PATTERN_IMAGE_AVITAB("(*.png *.jpeg)");
+const QLatin1Literal FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
+const QLatin1Literal FILE_PATTERN_XPLANE_METAR("(METAR.rwx)");
+const QLatin1Literal FILE_PATTERN_XPLANE_LOGBOOK("(X-Plane*Pilot.txt)"); /* Need * since file dialog fails on spaces */
+
+const QLatin1Literal FILE_PATTERN_IMAGE("(*.jpg *.jpeg *.png *.bmp)");
+const QLatin1Literal FILE_PATTERN_IMAGE_AVITAB("(*.png *.jpeg)");
 
 /* Sqlite database names */
 const QLatin1Literal DATABASE_DIR("little_navmap_db");
@@ -324,13 +328,13 @@ const QLatin1Literal DATABASE_BACKUP_SUFFIX("-backup");
 /* This is the default configuration file for reading the scenery library.
  * It can be overridden by placing a  file with the same name into
  * the configuration directory. */
-const QString DATABASE_NAVDATAREADER_CONFIG = ":/littlenavmap/resources/config/navdatareader.cfg";
+const QLatin1Literal DATABASE_NAVDATAREADER_CONFIG(":/littlenavmap/resources/config/navdatareader.cfg");
 
 /* Configuration for online networks */
-const QString NETWORKS_CONFIG = ":/littlenavmap/resources/config/networks.cfg";
+const QLatin1Literal NETWORKS_CONFIG(":/littlenavmap/resources/config/networks.cfg");
 
 /* Configuration for online networks */
-const QString URLS_CONFIG = ":/littlenavmap/resources/config/urls.cfg";
+const QLatin1Literal URLS_CONFIG(":/littlenavmap/resources/config/urls.cfg");
 
 /* Main window state for first startup. Generated in MainWindow::writeSettings() */
 extern const QSize DEFAULT_MAINWINDOW_SIZE;

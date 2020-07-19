@@ -110,7 +110,7 @@
     </property>
     <widget class="QMenu" name="menuViewOverlays">
      <property name="title">
-      <string>&amp;Map Overlays</string>
+      <string>M&amp;ap Overlays</string>
      </property>
      <addaction name="actionMapOverlayOverview"/>
      <addaction name="actionMapOverlayCompass"/>
@@ -144,20 +144,30 @@
      <addaction name="separator"/>
      <addaction name="actionShortcutAircraftProgress"/>
     </widget>
+    <widget class="QMenu" name="menuWindowLayoutRecent">
+     <property name="title">
+      <string>&amp;Recent Window Layout Files</string>
+     </property>
+     <addaction name="actionWindowLayoutClearRecent"/>
+    </widget>
+    <addaction name="menuShortcuts"/>
+    <addaction name="separator"/>
     <addaction name="menuViewOverlays"/>
     <addaction name="separator"/>
     <addaction name="menuWindowStyle"/>
     <addaction name="separator"/>
-    <addaction name="menuShortcuts"/>
+    <addaction name="actionWindowLayoutOpen"/>
+    <addaction name="actionWindowLayoutSaveAs"/>
+    <addaction name="menuWindowLayoutRecent"/>
+    <addaction name="separator"/>
+    <addaction name="actionResetLayout"/>
     <addaction name="separator"/>
     <addaction name="actionShowFullscreenMap"/>
     <addaction name="separator"/>
     <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowAllowDocking"/>
-    <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
-    <addaction name="actionResetLayout"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -6997,7 +7007,7 @@ Best track will be selected automatically.</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>&amp;Show Statusbar</string>
@@ -9028,7 +9038,7 @@ Best track will be selected automatically.</string>
   </action>
   <action name="actionResetLayout">
    <property name="text">
-    <string>&amp;Reset Window Layout</string>
+    <string>&amp;Reset Window Layout to Default</string>
    </property>
    <property name="toolTip">
     <string>Reset the window layout and all dock windows back to default</string>
@@ -11342,6 +11352,42 @@ Best track will be selected automatically.</string>
    </property>
    <property name="statusTip">
     <string>Show a tooltip with elevation and more information when hovering the mouse over the profile</string>
+   </property>
+  </action>
+  <action name="actionWindowLayoutOpen">
+   <property name="text">
+    <string>&amp;Open Window Layout ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open and restore window layout file</string>
+   </property>
+   <property name="statusTip">
+    <string>Open and restore window layout file</string>
+   </property>
+  </action>
+  <action name="actionWindowLayoutClearRecent">
+   <property name="text">
+    <string>&amp;Clear Menu</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all recent window layout files from menu</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove all recent window layout files from menu</string>
+   </property>
+  </action>
+  <action name="actionWindowLayoutSaveAs">
+   <property name="text">
+    <string>Save Window &amp;Layout as ...</string>
+   </property>
+   <property name="iconText">
+    <string>Save Window Layout as</string>
+   </property>
+   <property name="toolTip">
+    <string>Save current window layout</string>
+   </property>
+   <property name="statusTip">
+    <string>Save current window layout</string>
    </property>
   </action>
  </widget>
