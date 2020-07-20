@@ -244,14 +244,34 @@ void RouteExportFormatMap::updateDefaultPaths()
     (*this)[type].defaultPath = QDir::toNativeSeparators(value(type).defaultPath);
 }
 
-bool RouteExportFormat::isPathValid() const
+bool RouteExportFormat::isPathValid(QString *errorMessage) const
 {
-  if(QFile::exists(getPathOrDefault()))
+  const QString& path = getPathOrDefault();
+  if(QFile::exists(path))
   {
-    if(isFile())
-      return QFileInfo(getPathOrDefault()).isFile();
+    if(isExportToFile())
+    {
+      // Export target is a file ===========
+      if(QFileInfo(path).isFile())
+        return true;
+      else if(errorMessage != nullptr)
+        *errorMessage = tr("Expected file but given path is a directory");
+    }
     else
-      return QFileInfo(getPathOrDefault()).isDir();
+    {
+      // Export target is a folder ===========
+      if(QFileInfo(path).isDir())
+        return true;
+      else if(errorMessage != nullptr)
+        *errorMessage = tr("Expected directory but given path is a file");
+    }
+  }
+  else if(errorMessage != nullptr)
+  {
+    if(isExportToFile())
+      *errorMessage = tr("File does not exist");
+    else
+      *errorMessage = tr("Directory does not exist");
   }
   return false;
 }
@@ -270,7 +290,7 @@ QString RouteExportFormat::getFilter() const
   QStringList formats;
   formats << format << atools::capWord(format) << format.toUpper();
 
-  if(isFile())
+  if(isExportToFile())
     return "(" + formats.join(" ") + ")";
   else
     return "(*." + formats.join(" ") + ")";

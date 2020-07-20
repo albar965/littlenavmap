@@ -131,7 +131,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
   else
   {
     // Called from multiexport action or multiexport dialog ======================================
-    if(format.isFile())
+    if(format.isExportToFile())
     {
       // Append to file
       dontComfirmOverwrite = true;
@@ -140,7 +140,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
 
     // Build filename
     QString name;
-    if(format.isFile())
+    if(format.isExportToFile())
       name = format.getPathOrDefault();
     else
       name = format.getPathOrDefault() + QDir::separator() + filename;
@@ -165,7 +165,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
 
       case RouteMultiExportDialog::RENAME_EXISTING:
         // Rotate for new files - otherwise keep it since appending is desired
-        if(!format.isFile())
+        if(!format.isExportToFile())
           rotateFile(name);
         routeFile = name;
         break;
@@ -180,7 +180,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
 
 QString RouteExport::exportFileMulti(const RouteExportFormat& format, const QString& filename)
 {
-  return exportFile(format, QString() /* settingsPrefix */, QString() /* path */, filename, format.isFile());
+  return exportFile(format, QString() /* settingsPrefix */, QString() /* path */, filename, format.isExportToFile());
 }
 
 void RouteExport::rotateFile(const QString& filename)

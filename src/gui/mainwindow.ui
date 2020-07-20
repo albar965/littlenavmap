@@ -11090,6 +11090,9 @@ Best track will be selected automatically.</string>
    <property name="statusTip">
     <string>Configure the Export for Flight Plans into several formats</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+M</string>
+   </property>
   </action>
   <action name="actionSearchShowInformationAirport">
    <property name="icon">

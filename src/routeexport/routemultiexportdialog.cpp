@@ -241,11 +241,15 @@ void RouteMultiExportDialog::updateTableColors()
         if(col == PATH)
         {
           item->setToolTip(tr("Double click to edit"));
-          if(fmt.isSelected() && !fmt.isPathValid())
+          QString errorMessage;
+          if(fmt.isSelected() && !fmt.isPathValid(&errorMessage))
           {
             // Red for invalid paths/files =====================
             item->setForeground(QColor(Qt::red));
-            item->setToolTip(tr("Error: File or directory does not exist.\nDouble click to edit."));
+            if(fmt.isExportToFile())
+              item->setToolTip(tr("Error: %1.\nDouble click to edit.").arg(errorMessage));
+            else
+              item->setToolTip(tr("Error: %1.\nDouble click to edit.").arg(errorMessage));
           }
           else
           {
@@ -262,7 +266,7 @@ void RouteMultiExportDialog::updateTableColors()
               item->setForeground(QApplication::palette().color(QPalette::Text));
               if(fmt.isSelected())
                 item->setToolTip(tr("File or directory selected for export and changed by user.\n"
-                                    "Will be used for all simulators.\n"
+                                    "Given path will be used for all simulators.\n"
                                     "Double click to edit."));
             }
           }
@@ -459,7 +463,7 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
   const RouteExportFormat fmt = formatMap->value(type);
   QString filepath;
 
-  if(fmt.isFile())
+  if(fmt.isExportToFile())
   {
     // Format use a file to append plan
     filepath = atools::gui::Dialog(this).openFileDialog(tr("Select Export File for %1").arg(fmt.getComment()),

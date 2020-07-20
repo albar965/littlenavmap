@@ -176,7 +176,7 @@ public:
     return flags.testFlag(rexp::MANUAL);
   }
 
-  bool isFile() const
+  bool isExportToFile() const
   {
     return flags.testFlag(rexp::FILE);
   }
@@ -215,7 +215,7 @@ public:
   }
 
   /* true if directoy or file exists */
-  bool isPathValid() const;
+  bool isPathValid(QString *errorMessage = nullptr) const;
 
 private:
   friend QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj);
