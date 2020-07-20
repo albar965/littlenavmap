@@ -391,6 +391,11 @@ private:
 
 #endif
 
+#ifdef DEBUG_DUMP_SHORTCUTS
+  void printShortcuts();
+
+#endif
+
 #ifdef DEBUG_SIZE_INFORMATION
   virtual void resizeEvent(QResizeEvent *event) override;
 

@@ -3635,47 +3635,7 @@ void MainWindow::saveStateMain()
 #endif
 
 #ifdef DEBUG_DUMP_SHORTCUTS
-  // Print all main menu and sub menu shortcuts ==============================================
-  qDebug() << "===============================================================================";
-  QList<const QAction *> actions;
-
-  QString out;
-  QTextStream stream(&out, QIODevice::WriteOnly);
-
-  stream << "| Menu | Shortcut |" << endl;
-  stream << "| --- | --- |" << endl;
-  for(const QAction *mainmenus : ui->menuBar->actions())
-  {
-    if(mainmenus->menu() != nullptr)
-    {
-      QString mainmenu = mainmenus->text().remove("&");
-      for(const QAction *mainAction : mainmenus->menu()->actions())
-      {
-        if(mainAction->menu() != nullptr)
-        {
-          QString submenu = mainAction->text().remove("&");
-          for(const QAction *subAction : mainAction->menu()->actions())
-          {
-            if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
-              stream << "| " << mainmenu << " -> " << submenu << " -> "
-                     << subAction->text().remove("&")
-                     << " | `" << subAction->shortcut().toString() << "` |" << endl;
-          }
-          submenu.clear();
-        }
-        else
-        {
-          if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
-            stream << "| " << mainmenu << " -> "
-                   << mainAction->text().remove("&")
-                   << " | `" << mainAction->shortcut().toString() << "` |" << endl;
-        }
-      }
-    }
-  }
-  qDebug().nospace().noquote() << endl << out;
-
-  qDebug() << "===============================================================================";
+  printShortcuts();
 #endif
 
   // About to reset all settings and restart application
@@ -3826,6 +3786,65 @@ void MainWindow::saveActionStates()
                     ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking});
   Settings::instance().syncSettings();
 }
+
+#ifdef DEBUG_DUMP_SHORTCUTS
+void MainWindow::printShortcuts()
+{
+  // Print all main menu and sub menu shortcuts ==============================================
+  qDebug() << "===============================================================================";
+  QList<const QAction *> actions;
+
+  QString out;
+  QTextStream stream(&out, QIODevice::WriteOnly);
+  QSet<QKeySequence> keys;
+
+  stream << "| Menu | Shortcut |" << endl;
+  stream << "| --- | --- |" << endl;
+  for(const QAction *mainmenus : ui->menuBar->actions())
+  {
+    if(mainmenus->menu() != nullptr)
+    {
+      QString mainmenu = mainmenus->text().remove("&");
+      for(const QAction *mainAction : mainmenus->menu()->actions())
+      {
+        if(mainAction->menu() != nullptr)
+        {
+          QString submenu = mainAction->text().remove("&");
+          for(const QAction *subAction : mainAction->menu()->actions())
+          {
+            if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
+            {
+              if(keys.contains(subAction->shortcut()))
+                qWarning() << Q_FUNC_INFO << "Duplicate shortcut" << subAction->shortcut();
+              stream << "| " << mainmenu << " -> " << submenu << " -> "
+                     << subAction->text().remove("&")
+                     << " | `" << subAction->shortcut().toString() << "` |" << endl;
+              keys.insert(subAction->shortcut());
+            }
+          }
+          submenu.clear();
+        }
+        else
+        {
+          if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
+          {
+            if(keys.contains(mainAction->shortcut()))
+              qWarning() << Q_FUNC_INFO << "Duplicate shortcut" << mainAction->shortcut();
+            stream << "| " << mainmenu << " -> "
+                   << mainAction->text().remove("&")
+                   << " | `" << mainAction->shortcut().toString() << "` |" << endl;
+            keys.insert(mainAction->shortcut());
+          }
+        }
+      }
+    }
+  }
+  qDebug().nospace().noquote() << endl << out;
+
+  qDebug() << "===============================================================================";
+}
+
+#endif
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
