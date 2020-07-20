@@ -146,7 +146,7 @@
     </widget>
     <widget class="QMenu" name="menuWindowLayoutRecent">
      <property name="title">
-      <string>&amp;Recent Window Layout Files</string>
+      <string>&amp;Recent Window Layouts</string>
      </property>
      <addaction name="actionWindowLayoutClearRecent"/>
     </widget>
@@ -11359,10 +11359,10 @@ Best track will be selected automatically.</string>
     <string>&amp;Open Window Layout ...</string>
    </property>
    <property name="toolTip">
-    <string>Open and restore window layout file</string>
+    <string>Open and restore window layout</string>
    </property>
    <property name="statusTip">
-    <string>Open and restore window layout file</string>
+    <string>Open and restore window layout</string>
    </property>
   </action>
   <action name="actionWindowLayoutClearRecent">
@@ -11370,10 +11370,10 @@ Best track will be selected automatically.</string>
     <string>&amp;Clear Menu</string>
    </property>
    <property name="toolTip">
-    <string>Remove all recent window layout files from menu</string>
+    <string>Remove all recent window layouts from menu</string>
    </property>
    <property name="statusTip">
-    <string>Remove all recent window layout files from menu</string>
+    <string>Remove all recent window layouts from menu</string>
    </property>
   </action>
   <action name="actionWindowLayoutSaveAs">
