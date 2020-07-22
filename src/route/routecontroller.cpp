@@ -1285,11 +1285,9 @@ bool RouteController::saveFlightplanLnmInternal()
   {
     updateRouteCycleMetadata();
 
-    // Copy altitudes to flight plan entries
-    route.assignAltitudes();
-
     // Create a copy which allows to change altitude
-    Flightplan flightplan = route.adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
+    // Copy altitudes to flight plan entries
+    Flightplan flightplan = route.updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
 
     // Remember type, departure and destination for filename checking (save/saveAs)
     fileIfrVfr = flightplan.getFlightplanType();

@@ -117,8 +117,9 @@ void Route::copy(const Route& other)
   for(RouteLeg& routeLeg : *this)
     routeLeg.setFlightplan(&flightplan);
 
+  delete altitude;
   altitude = new RouteAltitude(this);
-  *altitude = *other.altitude;
+  *altitude = other.altitude->copy(this);
 }
 
 void Route::clearAll()
@@ -2002,6 +2003,18 @@ void Route::assignAltitudes()
     flightplan.getEntries()[i].setAltitude(altVector.at(i));
 }
 
+Route Route::updatedAltitudes() const
+{
+  return updatedAltitudes(*this);
+}
+
+Route Route::updatedAltitudes(const Route& routeParam)
+{
+  Route route(routeParam);
+  route.assignAltitudes();
+  return route;
+}
+
 Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
 {
   return adjustedToOptions(*this, options);
@@ -2018,10 +2031,6 @@ Route Route::adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions o
   atools::fs::pln::Flightplan& plan = route.getFlightplan();
   atools::fs::pln::FlightplanEntryListType& entries = plan.getEntries();
   FlightplanEntryBuilder entryBuilder;
-
-  // Copy flight plan profile altitudes into entries for FMS and other formats
-  // All following functions have to use setCoords instead of setPosition to avoid overwriting
-  route.assignAltitudes();
 
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
   if(options.testFlag(rf::FIX_PROC_ENTRY_EXIT))
@@ -2241,7 +2250,6 @@ Route Route::adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions o
         plan.getProperties().insert(atools::fs::pln::APPROACHRW, runways->last().primaryName);
     }
   }
-
   return route;
 }
 
@@ -2263,7 +2271,6 @@ bool Route::hasValidParking() const
     return false;
 }
 
-/* Fetch airways by waypoint and name and adjust route altititude if needed */
 void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
 {
   if(isEmpty())

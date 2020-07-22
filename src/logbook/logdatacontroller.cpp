@@ -260,7 +260,8 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       QVector<quint32> timestamps;
       NavApp::getAircraftTrack().convert(&track, &timestamps);
       record.setValue("aircraft_trail",
-                      FlightplanIO().saveGpxGz(NavApp::getRoute().adjustedToOptions(rf::DEFAULT_OPTS_GPX).getFlightplan(),
+                      FlightplanIO().saveGpxGz(NavApp::getRoute().
+                                               updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).getFlightplan(),
                                                track, timestamps,
                                                static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
 
@@ -305,7 +306,8 @@ void LogdataController::logChanged(bool loadAll, bool keepSelection)
 
 void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
 {
-  atools::fs::pln::Flightplan fp = NavApp::getRoute().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
+  atools::fs::pln::Flightplan fp = NavApp::getRoute().
+                                   updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
   record.setValue("flightplan", FlightplanIO().saveLnmGz(fp)); // blob
   record.setValue("aircraft_perf", NavApp::getAircraftPerformance().saveXmlGz()); // blob
 }

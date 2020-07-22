@@ -31,6 +31,7 @@
 using atools::interpolate;
 namespace ageo = atools::geo;
 
+
 RouteAltitude::RouteAltitude(const Route *routeParam)
   : route(routeParam)
 {
@@ -40,6 +41,13 @@ RouteAltitude::RouteAltitude(const Route *routeParam)
 RouteAltitude::~RouteAltitude()
 {
 
+}
+
+RouteAltitude RouteAltitude::copy(const Route *routeParam)
+{
+  RouteAltitude retval(*this);
+  retval.route = routeParam;
+  return retval;
 }
 
 int RouteAltitude::indexForDistance(float distanceToDest) const

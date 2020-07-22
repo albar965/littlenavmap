@@ -121,6 +121,9 @@ public:
   RouteAltitude(const Route *routeParam);
   ~RouteAltitude();
 
+  /* Create a copy and assign the given route */
+  RouteAltitude copy(const Route *routeParam);
+
   /* Calculate altitudes for all legs. TOD and TOC are INVALID_DISTANCE_VALUE if these could not be calculated which
    * can happen for short routes with too high cruise altitude.
    * Use perf to calculate climb and descent legs
@@ -461,7 +464,7 @@ private:
   int legIndexTopOfClimb = map::INVALID_INDEX_VALUE,
       legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
 
-  const Route *route;
+  const Route *route = nullptr;
 
   /* Configuration options */
   bool simplify = true, calcTopOfDescent = true, calcTopOfClimb = true;

@@ -513,9 +513,19 @@ public:
 
   /* Removes approaches and SID/STAR depending on save options, deletes duplicates and returns a copy.
    * All procedure legs are converted to normal flight plan (user) legs if requested.
-   * Used for flight plan export. */
+   * Used for flight plan export.
+   *
+   * Does not adapt RouteAltitude legs. */
   Route adjustedToOptions(rf::RouteAdjustOptions options) const;
   static Route adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions options);
+
+  /* Copy flight plan profile altitudes into entries for FMS and other formats
+   *  All following functions have to use setCoords instead of setPosition to avoid overwriting.
+   *
+   * This has to be called before adjustedToOptions() since the RouteAltitude legs
+   * are not adapted and might have a different size*/
+  Route updatedAltitudes() const;
+  static Route updatedAltitudes(const Route& routeParam);
 
   /* Loads navaids from database and create all route map objects from flight plan.
    * Flight plan will be corrected if needed. */
@@ -525,6 +535,8 @@ public:
    *  has parking or helipad as start position */
   bool hasValidParking() const;
 
+  /* Fetch airways by waypoint and name and adjust route altititude if needed */
+  /* Uses airway by name cache in query which is called often. */
   void updateAirwaysAndAltitude(bool adjustRouteAltitude);
   int getAdjustedAltitude(int newAltitude) const;
 
@@ -579,11 +591,11 @@ public:
    * This is needed since attached transitions can change procedures. */
   void reloadProcedures(proc::MapProcedureTypes procs);
 
+private:
   /* Copy flight plan profile altitudes into entries for FMS and other formats
    *  All following functions have to use setCoords instead of setPosition to avoid overwriting*/
   void assignAltitudes();
 
-private:
   /* Removes duplicate waypoints when transitioning from route to procedure and vice versa.
    * Used after route calculation. */
   void removeDuplicateRouteLegs();
@@ -643,7 +655,7 @@ private:
       alternateLegsOffset = map::INVALID_INDEX_VALUE; /* First alternate airport*/
   int numAlternateLegs = 0;
 
-  RouteAltitude *altitude;
+  RouteAltitude *altitude = nullptr;
 };
 
 QDebug operator<<(QDebug out, const Route& route);
