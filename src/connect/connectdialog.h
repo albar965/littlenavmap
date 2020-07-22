@@ -86,7 +86,6 @@ private:
   void buttonBoxClicked(QAbstractButton *button);
   void deleteClicked();
   void updateButtonStates();
-  void enableWidgets();
 
   Ui::ConnectDialog *ui;
   bool simConnect = false;

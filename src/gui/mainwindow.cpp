@@ -186,7 +186,7 @@ MainWindow::MainWindow()
                                          // Add all available toolbars  here =============================
                                          {ui->toolBarMain, ui->toolBarMap, ui->toolbarMapOptions,
                                           ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces,
-                                          ui->toolBarMapThemeProjection},
+                                          ui->toolBarMapThemeProjection, ui->toolBarTools},
                                          settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
 
     marbleAbout = new Marble::MarbleAboutDialog(this);
@@ -828,7 +828,8 @@ void MainWindow::setupUi()
                                ui->toolBarMapThemeProjection->toggleViewAction(),
                                ui->toolBarRoute->toggleViewAction(),
                                ui->toolBarAirspaces->toggleViewAction(),
-                               ui->toolBarView->toggleViewAction()});
+                               ui->toolBarView->toggleViewAction(),
+                               ui->toolBarTools->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
   // Add toobar actions to toolbar

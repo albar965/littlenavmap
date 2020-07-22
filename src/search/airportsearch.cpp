@@ -156,7 +156,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
 
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
-  append(Column("state", ui->lineEditAirportStateSearch, tr("State")).filter()).
+  append(Column("state", ui->lineEditAirportStateSearch, tr("State or\nProvince")).filter()).
   append(Column("country", ui->lineEditAirportCountrySearch, tr("Country or\nArea Code")).filter()).
 
   append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).includesName().indexCondMap(ratingCondMap)).

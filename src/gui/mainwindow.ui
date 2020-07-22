@@ -193,7 +193,6 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
-    <addaction name="actionConnectSimulator"/>
     <addaction name="separator"/>
     <addaction name="actionRunWebserver"/>
     <addaction name="actionOpenWebserver"/>
@@ -202,7 +201,6 @@
     <addaction name="actionResetAllSettings"/>
     <addaction name="actionSaveAllNow"/>
     <addaction name="separator"/>
-    <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuMap">
     <property name="title">
@@ -5530,7 +5528,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>31</y>
+              <y>46</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -6643,6 +6641,19 @@ Best track will be selected automatically.</string>
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBarTools">
+   <property name="windowTitle">
+    <string>Tools Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionConnectSimulator"/>
+   <addaction name="actionOptions"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -11539,7 +11550,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>
