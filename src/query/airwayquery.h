@@ -111,6 +111,9 @@ private:
   /* ID/object caches */
   QCache<query::NearestCacheKeyNavaid, map::MapResultIndex> nearestNavaidCache;
 
+  /* Caches airway by name query which is called quite often. key is {airwayName, waypoint1, waypoint2} */
+  QCache<QStringList, QList<map::MapAirway> > airwayByNameCache;
+
   /* true if this uses the track database (PACOTS, NAT, etc.) */
   bool trackDatabase;
 

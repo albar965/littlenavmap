@@ -196,15 +196,31 @@ void AirwayQuery::getAirwaysByNameAndWaypoint(QList<map::MapAirway>& airways, co
   if(airwayName.isEmpty() || waypoint1.isEmpty())
     return;
 
-  airwayByNameAndWaypointQuery->bindValue(":airway", airwayName.isEmpty() ? "%" : airwayName);
-  airwayByNameAndWaypointQuery->bindValue(":ident1", waypoint1);
-  airwayByNameAndWaypointQuery->bindValue(":ident2", waypoint2.isEmpty() ? "%" : waypoint2);
-  airwayByNameAndWaypointQuery->exec();
-  while(airwayByNameAndWaypointQuery->next())
+  QList<map::MapAirway> *airwaysObj = airwayByNameCache.object({airwayName, waypoint1, waypoint2});
+  if(airwaysObj != nullptr)
+    // Copy airways from cache
+    airways = *airwaysObj;
+  else
   {
-    map::MapAirway airway;
-    mapTypesFactory->fillAirwayOrTrack(airwayByNameAndWaypointQuery->record(), airway, trackDatabase);
-    airways.append(airway);
+    airwaysObj = new QList<map::MapAirway>(airways);
+
+    // Query from database
+    airwayByNameAndWaypointQuery->bindValue(":airway", airwayName.isEmpty() ? "%" : airwayName);
+    airwayByNameAndWaypointQuery->bindValue(":ident1", waypoint1);
+    airwayByNameAndWaypointQuery->bindValue(":ident2", waypoint2.isEmpty() ? "%" : waypoint2);
+    airwayByNameAndWaypointQuery->exec();
+    while(airwayByNameAndWaypointQuery->next())
+    {
+      map::MapAirway airway;
+      mapTypesFactory->fillAirwayOrTrack(airwayByNameAndWaypointQuery->record(), airway, trackDatabase);
+      airwaysObj->append(airway);
+    }
+
+    // Add to the cache
+    airwayByNameCache.insert({airwayName, waypoint1, waypoint2}, airwaysObj);
+
+    // Return copy
+    airways = *airwaysObj;
   }
 }
 
@@ -364,5 +380,6 @@ void AirwayQuery::deInitQueries()
 void AirwayQuery::clearCache()
 {
   airwayCache.clear();
+  airwayByNameCache.clear();
   nearestNavaidCache.clear();
 }
