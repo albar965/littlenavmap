@@ -282,7 +282,7 @@ bool RouteExportFormat::isPathValid(QString *errorMessage) const
 QString RouteExportFormat::getFilter() const
 {
 #if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
-  if(isFile())
+  if(isExportToFile())
     return "(" + format + ")";
   else
     return "(*." + format + ")";
