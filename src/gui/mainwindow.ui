@@ -193,6 +193,7 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <addaction name="actionConnectSimulator"/>
     <addaction name="separator"/>
     <addaction name="actionRunWebserver"/>
     <addaction name="actionOpenWebserver"/>
@@ -201,6 +202,7 @@
     <addaction name="actionResetAllSettings"/>
     <addaction name="actionSaveAllNow"/>
     <addaction name="separator"/>
+    <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuMap">
     <property name="title">
@@ -5528,7 +5530,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>46</y>
+              <y>31</y>
               <width>228</width>
               <height>86</height>
              </rect>
