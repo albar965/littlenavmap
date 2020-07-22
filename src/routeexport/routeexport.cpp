@@ -290,7 +290,17 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
   return false;
 }
 
+bool RouteExport::routeExportFlpCrjMulti(const RouteExportFormat& format)
+{
+  return routeExportInternalFlp(format, true /* CRJ */);
+}
+
 bool RouteExport::routeExportFlpMulti(const RouteExportFormat& format)
+{
+  return routeExportInternalFlp(format, false /* CRJ */);
+}
+
+bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool crj)
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
@@ -300,7 +310,10 @@ bool RouteExport::routeExportFlpMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFlp, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS,
+                         crj ?
+                         std::bind(&FlightplanIO::saveCrjFlp, flightplanIO, _1, _2) :
+                         std::bind(&FlightplanIO::saveFlp, flightplanIO, _1, _2)))
         return true;
     }
   }

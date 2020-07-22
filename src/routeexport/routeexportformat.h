@@ -25,41 +25,50 @@ namespace rexp {
 /* Enum for all export formats. Order in multiexport dialog list is defined by order in this enumeration. */
 enum RouteExportFormatType : quint8
 {
-  PLN, /* FSX/P3D XML PLN format. */
-  PLNANNOTATED, /* Save as above but with annotations for procedures as used by LNM before 2.4.5 */
-  FMS3, /* Old X-Plane FMS 3 */
-  FMS11, /* New X-Plane FMS 11 */
-  FLIGHTGEAR, /* FlightGear XML */
-  PROSIM, /* ProSim */
+  /* Simulators ================ */
+  PLN = 0, /* FSX/P3D XML PLN format. */
+  PLNANNOTATED = 1, /* Save as above but with annotations for procedures as used by LNM before 2.4.5 */
+  FMS3 = 2, /* Old X-Plane FMS 3 */
+  FMS11 = 3, /* New X-Plane FMS 11 */
+  FLIGHTGEAR = 4, /* FlightGear XML */
+  PROSIM = 5, /* ProSim */
 
-  RXPGNS, /* Reality XP GNS */
-  RXPGTN, /* Reality XP GTN */
-  GFP, /* Garmin GFP Format */
+  /* Garmin ================ */
+  RXPGNS = 6, /* Reality XP GNS */
+  RXPGTN = 7, /* Reality XP GTN */
+  GFP = 8, /* Garmin GFP Format */
 
-  VFP, /* vPilot VATSIM */
-  IVAP, /* IVAP for IVAO */
-  XIVAP, /* X-IVAP for IVAO */
+  /* Online ================ */
+  VFP = 9, /* vPilot VATSIM */
+  IVAP = 10, /* IVAP for IVAO */
+  XIVAP = 11, /* X-IVAP for IVAO */
 
-  XFMC, /* X-FMC */
-  UFMC, /* UFMC */
+  /* FMC ================ */
+  XFMC = 12, /* X-FMC */
+  UFMC = 13, /* UFMC */
 
-  FLP, /* Aerosoft airbus FLP */
-  TXT, /* Rotate MD-80 and others */
-  RTE, /* PMDG RTE format */
-  FPR, /* Majestic Dash binary format */
-  FPL, /* IXEG 737 */
-  CORTEIN, /* Flight factor airbus */
-  FLTPLAN, /* iFly */
-  BBS, /* BlackBox Simulations Airbus */
-  FEELTHEREFPL, /* FeelThere or Wilco aircraft */
-  LEVELDRTE, /* Level-D */
-  QWRTE, /* QualityWings Aircraft RTE */
-  MDR, /* Leonardo Maddog X */
-  TFDI, /* TFDi Design 717 */
+  /* Aircraft ================ */
+  FLP = 14, /* Aerosoft Airbus FLP */
+  FLPCRJ = 30, /* Aerosoft CRJ FLP */
+  TXT = 15, /* Rotate MD-80 and others */
+  RTE = 16, /* PMDG RTE format */
+  FPR = 17, /* Majestic Dash binary format */
+  FPL = 18, /* IXEG 737 */
+  CORTEIN = 19, /* Flight factor airbus */
+  FLTPLAN = 20, /* iFly */
+  BBS = 21, /* BlackBox Simulations Airbus */
+  FEELTHEREFPL = 22, /* FeelThere or Wilco aircraft */
+  LEVELDRTE = 23, /* Level-D */
+  QWRTE = 24, /* QualityWings Aircraft RTE */
+  MDR = 25, /* Leonardo Maddog X */
+  TFDI = 26, /* TFDi Design 717 */
 
-  EFBR, /* AivlaSoft EFB */
-  GPX, /* Garmin exchange format. Not a flight plan format.  */
-  HTML /* Export as HTML page */
+  /* Other ================ */
+  EFBR = 27, /* AivlaSoft EFB */
+  GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
+  HTML = 29, /* Export as HTML page */
+
+  LAST = FLPCRJ
 };
 
 /* Flags for export format */

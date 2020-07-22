@@ -124,6 +124,9 @@ public:
   /* Aerosoft airbus FLP */
   bool routeExportFlpMulti(const RouteExportFormat& format);
 
+  /* Aerosoft CRJ FLP */
+  bool routeExportFlpCrjMulti(const RouteExportFormat& format);
+
   /* Flight plan export functions */
   bool routeExportGfpMulti(const RouteExportFormat& format);
 
@@ -219,6 +222,7 @@ signals:
 
 private:
   bool routeExportInternalPln(bool annotated, const RouteExportFormat& format);
+  bool routeExportInternalFlp(const RouteExportFormat& format, bool crj);
 
   /* Formats that have no export method in FlightplanIO */
   bool exportFlighplanAsGfp(const QString& filename);

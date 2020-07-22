@@ -93,6 +93,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[FMS3        ].func = bind(&RouteExport::routeExportFms3Multi,         routeExport, _1);
   (*this)[FMS11       ].func = bind(&RouteExport::routeExportFms11,             routeExport, _1);
   (*this)[FLP         ].func = bind(&RouteExport::routeExportFlpMulti,          routeExport, _1);
+  (*this)[FLPCRJ      ].func = bind(&RouteExport::routeExportFlpCrjMulti,       routeExport, _1);
   (*this)[FLIGHTGEAR  ].func = bind(&RouteExport::routeExportFlightgear,        routeExport, _1);
   (*this)[GFP         ].func = bind(&RouteExport::routeExportGfpMulti,          routeExport, _1);
   (*this)[TXT         ].func = bind(&RouteExport::routeExportTxtMulti,          routeExport, _1);
@@ -132,7 +133,8 @@ void RouteExportFormatMap::init()
   insert(PLNANNOTATED, RouteExportFormat(PLNANNOTATED, NONE, tr("pln"),               tr("Simulator"), tr("FSX and Prepar3D (annotated for old Little Navmap versions)") ));
   insert(FMS3,         RouteExportFormat(FMS3,         NONE, tr("fms"),               tr("Simulator"), tr("X-Plane FMS 3 (old limited format)")                          ));
   insert(FMS11,        RouteExportFormat(FMS11,        NONE, tr("fms"),               tr("Simulator"), tr("X-Plane FMS 11")                                              ));
-  insert(FLP,          RouteExportFormat(FLP,          NONE, tr("flp"),               tr("Aircraft"),  tr("Aerosoft airbus and others")                                  ));
+  insert(FLP,          RouteExportFormat(FLP,          NONE, tr("flp"),               tr("Aircraft"),  tr("Aerosoft Airbus and others")                                  ));
+  insert(FLPCRJ,       RouteExportFormat(FLPCRJ,       NONE, tr("flp"),               tr("Aircraft"),  tr("Aerosoft CRJ")                                                ));
   insert(FLIGHTGEAR,   RouteExportFormat(FLIGHTGEAR,   NONE, tr("fgfp"),              tr("Simulator"), tr("FlightGear")                                                  ));
   insert(GFP,          RouteExportFormat(GFP,          NONE, tr("gfp"),               tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                  ));
   insert(TXT,          RouteExportFormat(TXT,          NONE, tr("txt"),               tr("Aircraft"),  tr("Rotate MD-80, JARDesign and others")                          ));
@@ -213,6 +215,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[FMS3        ].defaultPath = xpBasePath;
   (*this)[FMS11       ].defaultPath = xpBasePath;
   (*this)[FLP         ].defaultPath = documents;
+  (*this)[FLPCRJ      ].defaultPath = documents + SEP + "Aerosoft" + SEP + "Digital Aviation CRJ" + SEP + "FlightPlans";
   (*this)[FLIGHTGEAR  ].defaultPath = documents;
   (*this)[GFP         ].defaultPath = base + SEP + "F1GTN" + SEP + "FPL";
   (*this)[TXT         ].defaultPath = base + SEP + "Aircraft";
