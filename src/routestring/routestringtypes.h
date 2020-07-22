@@ -57,6 +57,8 @@ enum RouteStringOption
   /* Writing options when converting flight plan to string ====================== */
   NO_TRACKS = 1 << 19, /* Do not use NAT, PACOTS or AUSOTS. */
 
+  SID_STAR_NONE = 1 << 20, /* Needed in dialog action only */
+
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES,
   TRACK_DEFAULTS = rs::READ_NO_AIRPORTS | rs::READ_MATCH_WAYPOINTS | rs::NO_TRACKS
 };

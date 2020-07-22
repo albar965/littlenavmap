@@ -216,79 +216,87 @@ void WindReporter::addToolbarButton()
 {
   // Create and add toolbar button =====================================
   Ui::MainWindow *ui = NavApp::getMainUi();
-  QToolButton *button = new QToolButton(ui->toolbarMapOptions);
-  windlevelToolButton = button;
-  button->setIcon(QIcon(":/littlenavmap/resources/icons/wind.svg"));
-  button->setPopupMode(QToolButton::InstantPopup);
-  button->setToolTip(tr("Wind forecast altitude levels to display"));
-  button->setStatusTip(button->toolTip());
-  button->setCheckable(true);
+  windlevelToolButton = new QToolButton(ui->toolbarMapOptions);
+  windlevelToolButton->setIcon(QIcon(":/littlenavmap/resources/icons/wind.svg"));
+  windlevelToolButton->setPopupMode(QToolButton::InstantPopup);
+  windlevelToolButton->setToolTip(tr("Wind forecast altitude levels to display"));
+  windlevelToolButton->setStatusTip(windlevelToolButton->toolTip());
+  windlevelToolButton->setCheckable(true);
+
+  // Add tear off menu to button =======
+  windlevelToolButton->setMenu(new QMenu(windlevelToolButton));
+  QMenu *buttonMenu = windlevelToolButton->menu();
+  buttonMenu->setToolTipsVisible(true);
+  buttonMenu->setTearOffEnabled(true);
 
   // Insert before show route
-  ui->toolbarMapOptions->insertWidget(ui->actionMapShowSunShading, button);
+  ui->toolbarMapOptions->insertWidget(ui->actionMapShowSunShading, windlevelToolButton);
   ui->menuHighAltitudeWindLevels->clear();
 
   // Create and add flight plan action =====================================
-  actionFlightplanWaypoints = new QAction(tr("&At Flight Plan Waypoints"), button);
+  actionFlightplanWaypoints = new QAction(tr("&At Flight Plan Waypoints"), buttonMenu);
   actionFlightplanWaypoints->setToolTip(tr("Show wind at flight plan waypoints"));
   actionFlightplanWaypoints->setStatusTip(actionFlightplanWaypoints->toolTip());
   actionFlightplanWaypoints->setCheckable(true);
-  button->addAction(actionFlightplanWaypoints);
+  buttonMenu->addAction(actionFlightplanWaypoints);
   ui->menuHighAltitudeWindLevels->addAction(actionFlightplanWaypoints);
   connect(actionFlightplanWaypoints, &QAction::triggered, this, &WindReporter::toolbarActionFlightplanTriggered);
 
   ui->menuHighAltitudeWindLevels->addSeparator();
+  buttonMenu->addSeparator();
 
-  actionGroup = new QActionGroup(button);
+  actionGroup = new QActionGroup(buttonMenu);
   // Create and add none action =====================================
-  actionNone = new QAction(tr("&None"), button);
+  actionNone = new QAction(tr("&None"), buttonMenu);
   actionNone->setToolTip(tr("Do not show wind barbs"));
   actionNone->setStatusTip(actionNone->toolTip());
   actionNone->setData(wind::NONE);
   actionNone->setCheckable(true);
   actionNone->setActionGroup(actionGroup);
-  button->addAction(actionNone);
+  buttonMenu->addAction(actionNone);
   ui->menuHighAltitudeWindLevels->addAction(actionNone);
   connect(actionNone, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
 
   // Create and add level actions =====================================
   for(int level : levels)
   {
-    if(level == wind::FLIGHTPLAN)
-    {
-      // Create and add flight plan action =====================================
-      actionFlightplan = new QAction(tr("At Flight Plan Cruise Altitude"), button);
-      actionFlightplan->setToolTip(tr("Show wind at flight plan cruise altitude"));
-      actionFlightplan->setStatusTip(actionFlightplan->toolTip());
-      actionFlightplan->setData(wind::FLIGHTPLAN);
-      actionFlightplan->setCheckable(true);
-      actionFlightplan->setActionGroup(actionGroup);
-      button->addAction(actionFlightplan);
-      ui->menuHighAltitudeWindLevels->addAction(actionFlightplan);
-      connect(actionFlightplan, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
-    }
-    else if(level == wind::AGL)
+    if(level == wind::AGL)
     {
       // Create and add ground/AGL action =====================================
-      actionAgl = new QAction(tr("Ground (only NOAA)"), button);
+      actionAgl = new QAction(tr("Ground (only NOAA)"), buttonMenu);
       actionAgl->setToolTip(tr("Show wind for 80 m / 260 ft above ground"));
       actionAgl->setStatusTip(actionAgl->toolTip());
       actionAgl->setData(wind::AGL);
       actionAgl->setCheckable(true);
       actionAgl->setActionGroup(actionGroup);
-      button->addAction(actionAgl);
+      buttonMenu->addAction(actionAgl);
       ui->menuHighAltitudeWindLevels->addAction(actionAgl);
       connect(actionAgl, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
     }
+    else if(level == wind::FLIGHTPLAN)
+    {
+      // Create and add flight plan action =====================================
+      actionFlightplan = new QAction(tr("At Flight Plan Cruise Altitude"), buttonMenu);
+      actionFlightplan->setToolTip(tr("Show wind at flight plan cruise altitude"));
+      actionFlightplan->setStatusTip(actionFlightplan->toolTip());
+      actionFlightplan->setData(wind::FLIGHTPLAN);
+      actionFlightplan->setCheckable(true);
+      actionFlightplan->setActionGroup(actionGroup);
+      buttonMenu->addAction(actionFlightplan);
+      ui->menuHighAltitudeWindLevels->addAction(actionFlightplan);
+      connect(actionFlightplan, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);
+      ui->menuHighAltitudeWindLevels->addSeparator();
+      buttonMenu->addSeparator();
+    }
     else
     {
-      QAction *action = new QAction(tr("At %1").arg(Unit::altFeet(level)), button);
+      QAction *action = new QAction(tr("At %1").arg(Unit::altFeet(level)), buttonMenu);
       action->setToolTip(tr("Show wind at %1 altitude").arg(Unit::altFeet(level)));
       action->setData(level);
       action->setCheckable(true);
       action->setStatusTip(action->toolTip());
       action->setActionGroup(actionGroup);
-      button->addAction(action);
+      buttonMenu->addAction(action);
       actionLevelVector.append(action);
       ui->menuHighAltitudeWindLevels->addAction(action);
       connect(action, &QAction::triggered, this, &WindReporter::toolbarActionTriggered);

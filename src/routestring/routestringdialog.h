@@ -36,6 +36,7 @@ class Flightplan;
 
 class MapQuery;
 class QAbstractButton;
+class QActionGroup;
 class RouteController;
 class RouteStringWriter;
 class RouteStringReader;
@@ -84,8 +85,10 @@ private:
   RouteController *controller = nullptr;
   RouteStringWriter *routeStringWriter;
   RouteStringReader *routeStringReader;
+  QActionGroup *procActionGroup;
+
   float speedKts = 0.f;
-  bool altitudeIncluded = false;
+  bool altitudeIncluded = false, updatingActions = false;
   rs::RouteStringOptions options = rs::DEFAULT_OPTIONS;
 
   void updateFlightplan();

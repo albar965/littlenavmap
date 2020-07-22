@@ -76,56 +76,67 @@ QString UserdataController::getDefaultType(const QString& type)
 void UserdataController::addToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  QToolButton *button = new QToolButton(ui->toolbarMapOptions);
+  userdataToolButton = new QToolButton(ui->toolbarMapOptions);
 
   // Create and add toolbar button =====================================
-  button->setIcon(QIcon(":/littlenavmap/resources/icons/userpoint_POI.svg"));
-  button->setPopupMode(QToolButton::InstantPopup);
-  button->setToolTip(tr("Select userpoints for display"));
-  button->setStatusTip(button->toolTip());
-  button->setCheckable(true);
-  userdataToolButton = button;
+  userdataToolButton->setIcon(QIcon(":/littlenavmap/resources/icons/userpoint_POI.svg"));
+  userdataToolButton->setPopupMode(QToolButton::InstantPopup);
+  userdataToolButton->setToolTip(tr("Select userpoints for display"));
+  userdataToolButton->setStatusTip(userdataToolButton->toolTip());
+  userdataToolButton->setCheckable(true);
+
+  // Add tear off menu to button =======
+  userdataToolButton->setMenu(new QMenu(userdataToolButton));
+  QMenu *buttonMenu = userdataToolButton->menu();
+  buttonMenu->setToolTipsVisible(true);
+  buttonMenu->setTearOffEnabled(true);
 
   // Insert before show route
-  ui->toolbarMapOptions->insertWidget(ui->actionMapShowRoute, button);
+  ui->toolbarMapOptions->insertWidget(ui->actionMapShowRoute, userdataToolButton);
   ui->toolbarMapOptions->insertSeparator(ui->actionMapShowRoute);
 
   // Create and add select all action =====================================
-  actionAll = new QAction(tr("&All"), button);
+  actionAll = new QAction(tr("&All"), buttonMenu);
   actionAll->setToolTip(tr("Show all userpoints"));
   actionAll->setStatusTip(actionAll->toolTip());
-  button->addAction(actionAll);
+  buttonMenu->addAction(actionAll);
   ui->menuViewUserpoints->addAction(actionAll);
   connect(actionAll, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
 
   // Create and add select none action =====================================
-  actionNone = new QAction(tr("&None"), button);
+  actionNone = new QAction(tr("&None"), buttonMenu);
   actionNone->setToolTip(tr("Hide all userpoints"));
   actionNone->setStatusTip(actionNone->toolTip());
-  button->addAction(actionNone);
+  buttonMenu->addAction(actionNone);
   ui->menuViewUserpoints->addAction(actionNone);
   connect(actionNone, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
 
+  buttonMenu->addSeparator();
+  ui->menuViewUserpoints->addSeparator();
+
   // Create and add select unknown action =====================================
-  actionUnknown = new QAction(tr("&Unknown Types"), button);
+  actionUnknown = new QAction(tr("&Unknown Types"), buttonMenu);
   actionUnknown->setToolTip(tr("Show or hide unknown userpoint types"));
   actionUnknown->setStatusTip(actionUnknown->toolTip());
   actionUnknown->setCheckable(true);
-  button->addAction(actionUnknown);
+  buttonMenu->addAction(actionUnknown);
   ui->menuViewUserpoints->addAction(actionUnknown);
   ui->menuViewUserpoints->addSeparator();
   connect(actionUnknown, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
+
+  buttonMenu->addSeparator();
+  ui->menuViewUserpoints->addSeparator();
 
   // Create and add select an action for each registered type =====================================
   for(const QString& type : icons->getAllTypes())
   {
     QIcon icon(icons->getIconPath(type));
-    QAction *action = new QAction(icon, type, button);
+    QAction *action = new QAction(icon, type, buttonMenu);
     action->setData(QVariant(type));
     action->setCheckable(true);
     action->setToolTip(tr("Show or hide %1 userpoints").arg(type));
     action->setStatusTip(action->toolTip());
-    button->addAction(action);
+    buttonMenu->addAction(action);
     ui->menuViewUserpoints->addAction(action);
     connect(action, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
     actions.append(action);
