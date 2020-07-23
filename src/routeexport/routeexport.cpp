@@ -822,6 +822,7 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
       // <FlightPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
       // FlightType="IFR"
       exportData.setFlightRules(flightplanType == atools::fs::pln::IFR ? "IFR" : "VFR");
+      exportData.setVoiceType("Full");
       break;
 
     case re::IVAP:

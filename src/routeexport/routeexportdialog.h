@@ -28,7 +28,7 @@ namespace re {
 enum RouteExportType
 {
   UNKNOWN,
-  VFP, /* VATSIM VFP format - vPilot */
+  VFP, /* VATSIM VFP format - vPilot or SWIFT */
   IVAP, /* IVAO IVAP */
   XIVAP /* IVAO X-IVAP */
 };
