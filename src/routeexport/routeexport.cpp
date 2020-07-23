@@ -798,7 +798,6 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
   RouteExportData exportData;
 
   const Route& route = NavApp::getRouteConst();
-  exportData.setRoute(RouteStringWriter().createStringForRoute(route, 0.f, rs::SID_STAR));
   exportData.setDeparture(route.getFlightplan().getDepartureIdent());
   exportData.setDestination(route.getFlightplan().getDestinationIdent());
   exportData.setDepartureTime(QDateTime::currentDateTimeUtc().time());
@@ -822,16 +821,14 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
       // <FlightPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
       // FlightType="IFR"
       exportData.setFlightRules(flightplanType == atools::fs::pln::IFR ? "IFR" : "VFR");
+      exportData.setRoute(RouteStringWriter().createStringForRoute(route, 0.f, rs::SID_STAR));
       exportData.setVoiceType("Full");
       break;
 
     case re::IVAP:
     case re::XIVAP:
-
-      // [FLIGHTPLAN]
-      // FLIGHTTYPE=N
-      // RULES=I
       exportData.setFlightRules(flightplanType == atools::fs::pln::IFR ? "I" : "V");
+      exportData.setRoute(RouteStringWriter().createStringForRoute(route, 0.f, rs::SID_STAR | rs::DCT));
       break;
 
   }
@@ -1238,72 +1235,118 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
   {
+    // IvAp ===================================================
     // [FLIGHTPLAN]
-    // CALLSIGN=VPI333
-    // PIC=NAME
+    // ID=LU965
+    // RULES=I
+    // FLIGHTTYPE=S
+    // NUMBER=1
+    // ACTYPE=A306
+    // WAKECAT=H
+    // EQUIPMENT=SDE3FGHIRWY
+    // TRANSPONDER=LB1
+    // DEPICAO=KMFR
+    // DEPTIME=1400
+    // SPEEDTYPE=N
+    // SPEED=0477
+    // LEVELTYPE=F
+    // LEVEL=310
+    // ROUTE=BRUTE7 BRUTE V122 ACLOB DCT LEIFF DCT OLEBY DCT LMT DCT BIDDS DCT 4218N12112W DCT LKV V122 REO V113 BOI V4 LAR V118 CYS V138 SNY V6 IOW V8 BENKY BENKY5
+    // DESTICAO=KORD
+    // EET=0336
+    // ALTICAO=KDTW
+    // ALTICAO2=
+    // OTHER=PBN/A1B1C1D1L1O1S1 DOF/200723 REG/N306SB EET/KZLC0026 KZDV0133 KZMP0222 KZAU0252 OPR/LU PER/C RMK/TCAS
+    // ENDURANCE=0517
+    // POB=275
+
+    // X-IvAp ===================================================
+    // [FLIGHTPLAN]
+    // CALLSIGN=N9999
+    // PIC=Pilot
     // FMCROUTE=
     // LIVERY=
-    // AIRLINE=VPI
+    // AIRLINE=
     // SPEEDTYPE=N
-    // POB=83
-    // ENDURANCE=0215
-    // OTHER=X-IvAp CREW OF 2 PILOT VPI07/COPILOT VPI007
+    // POB=150
+    // ENDURANCE=0531
+    // OTHER=PBN/A1B1C1D1O1S1 DOF/200721 REG/N319SB OPR/LU PER/C RMK/TCAS
     // ALT2ICAO=
-    // ALTICAO=LFMP
-    // EET=0115
-    // DESTICAO=LFBO
-    // ROUTE=TINOT UY268 DIVKO UM731 FJR
-    // LEVEL=330
+    // ALTICAO=KDTW
+    // EET=0346
+    // DESTICAO=KORD
+    // ROUTE=BRUTE7 BRUTE V122 ACLOB DCT LEIFF DCT OLEBY DCT LMT DCT BIDDS DCT 4218N12112W DCT LKV V122 REO V113 BOI V4 LAR V118 CYS V138 SNY V6 IOW V8 BENKY BENKY5
+    // LEVEL=350
     // LEVELTYPE=F
-    // SPEED=300
-    // DEPTIME=2110
-    // DEPICAO=LFKJ
-    // TRANSPONDER=S
-    // EQUIPMENT=SDFGW
+    // SPEED=0460
+    // DEPTIME=1400
+    // DEPICAO=KMFR
+    // TRANSPONDER=LB1
+    // EQUIPMENT=SDE3FGHIRWY
     // WAKECAT=M
-    // ACTYPE=B733
+    // ACTYPE=A319
     // NUMBER=1
-    // FLIGHTTYPE=N
+    // FLIGHTTYPE=S
     // RULES=I
-    QTextStream stream(&file);
-    stream << "[FLIGHTPLAN]" << endl;
 
+    QTextStream stream(&file);
+    writeIvapLine(stream, "[FLIGHTPLAN]", type);
+
+    // X-IvAp and IvAp idiotically use a slightly different format
     if(type == re::XIVAP)
     {
-      stream << endl;
       writeIvapLine(stream, "CALLSIGN", exportData.getCallsign(), type);
+      writeIvapLine(stream, "PIC", exportData.getPilotInCommand(), type);
+      writeIvapLine(stream, "FMCROUTE", QString(), type);
       writeIvapLine(stream, "LIVERY", exportData.getLivery(), type);
       writeIvapLine(stream, "AIRLINE", exportData.getAirline(), type);
-      writeIvapLine(stream, "PIC", exportData.getPilotInCommand(), type);
+      writeIvapLine(stream, "SPEEDTYPE", "N", type);
+      writeIvapLine(stream, "POB", exportData.getPassengers(), type);
+      writeIvapLine(stream, "ENDURANCE", minToHourMinStr(exportData.getEnduranceMinutes()), type);
+      writeIvapLine(stream, "OTHER", exportData.getRemarks(), type);
       writeIvapLine(stream, "ALT2ICAO", exportData.getAlternate2(), type);
-      writeIvapLine(stream, "FMCROUTE", QString(), type);
+      writeIvapLine(stream, "ALTICAO", exportData.getAlternate(), type);
+      writeIvapLine(stream, "EET", minToHourMinStr(exportData.getEnrouteMinutes()), type);
+      writeIvapLine(stream, "DESTICAO", exportData.getDestination(), type);
+      writeIvapLine(stream, "ROUTE", exportData.getRoute(), type);
+      writeIvapLine(stream, "LEVEL", exportData.getCruiseAltitude() / 100, type);
+      writeIvapLine(stream, "LEVELTYPE", "F", type);
+      writeIvapLine(stream, "SPEED", exportData.getSpeed(), type);
+      writeIvapLine(stream, "DEPTIME", exportData.getDepartureTime().toString("HHmm"), type);
+      writeIvapLine(stream, "DEPICAO", exportData.getDeparture(), type);
+      writeIvapLine(stream, "TRANSPONDER", exportData.getTransponder(), type);
+      writeIvapLine(stream, "EQUIPMENT", exportData.getEquipment(), type);
+      writeIvapLine(stream, "WAKECAT", exportData.getWakeCategory(), type);
+      writeIvapLine(stream, "ACTYPE", exportData.getAircraftType(), type);
+      writeIvapLine(stream, "NUMBER", "1", type);
+      writeIvapLine(stream, "FLIGHTTYPE", exportData.getFlightType(), type);
+      writeIvapLine(stream, "RULES", exportData.getFlightRules(), type);
     }
     else
     {
       writeIvapLine(stream, "ID", exportData.getCallsign(), type);
+      writeIvapLine(stream, "RULES", exportData.getFlightRules(), type);
+      writeIvapLine(stream, "FLIGHTTYPE", exportData.getFlightType(), type);
+      writeIvapLine(stream, "NUMBER", "1", type);
+      writeIvapLine(stream, "ACTYPE", exportData.getAircraftType(), type);
+      writeIvapLine(stream, "WAKECAT", exportData.getWakeCategory(), type);
+      writeIvapLine(stream, "EQUIPMENT", exportData.getEquipment(), type);
+      writeIvapLine(stream, "TRANSPONDER", exportData.getTransponder(), type);
+      writeIvapLine(stream, "DEPICAO", exportData.getDeparture(), type);
+      writeIvapLine(stream, "DEPTIME", exportData.getDepartureTime().toString("HHmm"), type);
+      writeIvapLine(stream, "SPEEDTYPE", "N", type);
+      writeIvapLine(stream, "SPEED", exportData.getSpeed(), type);
+      writeIvapLine(stream, "LEVELTYPE", "F", type);
+      writeIvapLine(stream, "LEVEL", exportData.getCruiseAltitude() / 100, type);
+      writeIvapLine(stream, "ROUTE", exportData.getRoute(), type);
+      writeIvapLine(stream, "DESTICAO", exportData.getDestination(), type);
+      writeIvapLine(stream, "EET", minToHourMinStr(exportData.getEnrouteMinutes()), type);
+      writeIvapLine(stream, "ALTICAO", exportData.getAlternate(), type);
       writeIvapLine(stream, "ALTICAO2", exportData.getAlternate2(), type);
+      writeIvapLine(stream, "OTHER", exportData.getRemarks(), type);
+      writeIvapLine(stream, "ENDURANCE", minToHourMinStr(exportData.getEnduranceMinutes()), type);
+      writeIvapLine(stream, "POB", exportData.getPassengers(), type);
     }
-
-    writeIvapLine(stream, "SPEEDTYPE", "N", type);
-    writeIvapLine(stream, "POB", exportData.getPassengers(), type);
-    writeIvapLine(stream, "ENDURANCE", minToHourMinStr(exportData.getEnduranceMinutes()), type);
-    writeIvapLine(stream, "OTHER", exportData.getRemarks(), type);
-    writeIvapLine(stream, "ALTICAO", exportData.getAlternate(), type);
-    writeIvapLine(stream, "EET", minToHourMinStr(exportData.getEnrouteMinutes()), type);
-    writeIvapLine(stream, "DESTICAO", exportData.getDestination(), type);
-    writeIvapLine(stream, "ROUTE", exportData.getRoute(), type);
-    writeIvapLine(stream, "LEVEL", exportData.getCruiseAltitude() / 100, type);
-    writeIvapLine(stream, "LEVELTYPE", "F", type);
-    writeIvapLine(stream, "SPEED", exportData.getSpeed(), type);
-    writeIvapLine(stream, "DEPTIME", exportData.getDepartureTime().toString("HHmm"), type);
-    writeIvapLine(stream, "DEPICAO", exportData.getDeparture(), type);
-    writeIvapLine(stream, "TRANSPONDER", exportData.getTransponder(), type);
-    writeIvapLine(stream, "EQUIPMENT", exportData.getEquipment(), type);
-    writeIvapLine(stream, "WAKECAT", exportData.getWakeCategory(), type);
-    writeIvapLine(stream, "ACTYPE", exportData.getAircraftType(), type);
-    writeIvapLine(stream, "NUMBER", "1", type);
-    writeIvapLine(stream, "FLIGHTTYPE", exportData.getFlightType(), type);
-    writeIvapLine(stream, "RULES", exportData.getFlightRules(), type);
 
     file.close();
     return true;
@@ -1555,18 +1598,31 @@ QString RouteExport::minToHourMinStr(int minutes)
   return QString("%1%2").arg(enrouteHours, 2, 10, QChar('0')).arg(minutes - enrouteHours * 60, 2, 10, QChar('0'));
 }
 
+void RouteExport::writeIvapLine(QTextStream& stream, const QString& string, re::RouteExportType type)
+{
+  stream << string;
+  if(type == re::XIVAP)
+    stream << "\r\r\n";
+  else if(type == re::IVAP)
+    stream << "\r\n";
+}
+
 void RouteExport::writeIvapLine(QTextStream& stream, const QString& key, const QString& value, re::RouteExportType type)
 {
-  stream << key << "=" << value << endl;
+  stream << key << "=" << value;
   if(type == re::XIVAP)
-    stream << endl;
+    stream << "\r\r\n";
+  else if(type == re::IVAP)
+    stream << "\r\n";
 }
 
 void RouteExport::writeIvapLine(QTextStream& stream, const QString& key, int value, re::RouteExportType type)
 {
-  stream << key << "=" << value << endl;
+  stream << key << "=" << value;
   if(type == re::XIVAP)
-    stream << endl;
+    stream << "\r\r\n";
+  else if(type == re::IVAP)
+    stream << "\r\n";
 }
 
 bool RouteExport::routeSaveCheckFMS11Warnings()

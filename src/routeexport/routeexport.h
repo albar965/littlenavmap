@@ -259,6 +259,7 @@ private:
 
   void writeIvapLine(QTextStream& stream, const QString& key, const QString& value, re::RouteExportType type);
   void writeIvapLine(QTextStream& stream, const QString& key, int value, re::RouteExportType type);
+  void writeIvapLine(QTextStream& stream, const QString& string, re::RouteExportType type);
 
   bool routeSaveCheckFMS11Warnings();
 
