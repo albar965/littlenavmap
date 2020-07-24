@@ -2894,6 +2894,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
     // Do not allow tooltip to break line
     html.br().text(tr("Airline Codes: ") + txt, ahtml::NOBR | ahtml::REPLACE_CRLF);
   }
+  html.br();
 }
 
 void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, HtmlBuilder& html) const

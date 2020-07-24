@@ -614,8 +614,12 @@ bool MapProcedureLeg::isFinalEndpointFix() const
 
 bool MapProcedureLeg::isHold() const
 {
-  return atools::contains(type,
-                          {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION});
+  return atools::contains(type, {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION});
+}
+
+bool MapProcedureLeg::isProcedureTurn() const
+{
+  return type == proc::PROCEDURE_TURN;
 }
 
 bool MapProcedureLeg::isInitialFix() const

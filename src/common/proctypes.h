@@ -398,6 +398,7 @@ struct MapProcedureLeg
   bool isFinalEndpointFix() const;
 
   bool isHold() const;
+  bool isProcedureTurn() const;
   bool isCircular() const;
 
   bool isInitialFix() const;

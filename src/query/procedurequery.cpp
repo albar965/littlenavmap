@@ -602,6 +602,13 @@ void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs) const
                                 nmToMeter(leg.time > 0.f ? leg.time / 60.f * 250.f : 10.f)));
       legs.bounding.extend(leg.holdLine.boundingRect());
     }
+    else if(leg.isProcedureTurn())
+    {
+      legs.bounding.extend(leg.procedureTurnPos);
+
+      // Approximate the extension of the turn section
+      legs.bounding.extend(leg.procedureTurnPos.endpoint(atools::geo::nmToMeter(8.f), leg.legTrueCourse()));
+    }
 
     legs.bounding.extend(leg.fixPos);
     legs.bounding.extend(leg.interceptPos);
