@@ -223,8 +223,8 @@ void MapPaintLayer::initMapLayerSettings()
          airportSymbolSize(20).airportInfo().
          windBarbsSymbolSize(22).
          waypointSymbolSize(14).waypointName().
-         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(24).ndbIdent().ndbInfo().
+         vorSymbolSize(42).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(42).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
@@ -236,8 +236,8 @@ void MapPaintLayer::initMapLayerSettings()
          airportSymbolSize(20).airportInfo().
          windBarbsSymbolSize(20).
          waypointSymbolSize(14).waypointName().
-         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(24).ndbIdent().ndbInfo().
+         vorSymbolSize(40).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(40).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
@@ -251,8 +251,8 @@ void MapPaintLayer::initMapLayerSettings()
          windBarbsSymbolSize(20).
          aiAircraftGroundText(false).
          waypointSymbolSize(14).waypointName().
-         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(24).ndbIdent().ndbInfo().
+         vorSymbolSize(38).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(38).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
@@ -265,8 +265,8 @@ void MapPaintLayer::initMapLayerSettings()
          waypointSymbolSize(10).waypointName().
          windBarbsSymbolSize(18).
          aiAircraftGroundText(false).
-         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(24).ndbIdent().ndbInfo().
+         vorSymbolSize(32).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(32).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
@@ -279,8 +279,8 @@ void MapPaintLayer::initMapLayerSettings()
          waypointSymbolSize(8).waypointName().
          windBarbsSymbolSize(16).
          aiAircraftGroundText(false).
-         vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(22).ndbIdent().ndbInfo().
+         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
