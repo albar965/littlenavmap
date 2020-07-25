@@ -64,7 +64,7 @@ void MapPainterAirspace::render()
   {
     // qDebug() << Q_FUNC_INFO << "NON ONLINE";
     controller->getAirspaces(airspaces, curBox, context->mapLayer, context->airspaceFilterByLayer,
-                             route->getCruisingAltitudeFeet(),
+                             context->route->getCruisingAltitudeFeet(),
                              context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL);
   }
 

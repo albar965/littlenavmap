@@ -27,8 +27,6 @@ class GeoDataLineString;
 }
 
 class MapWidget;
-class RouteController;
-class Route;
 class RouteLeg;
 
 namespace proc {

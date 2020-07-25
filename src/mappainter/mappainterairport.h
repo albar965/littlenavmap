@@ -33,7 +33,6 @@ struct MapRunway;
 
 }
 
-class Route;
 struct PaintAirportType;
 
 /*
