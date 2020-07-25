@@ -304,6 +304,7 @@
      <addaction name="actionMapThemeStamenTerrain"/>
      <addaction name="actionMapThemeCartoLight"/>
      <addaction name="actionMapThemeCartoDark"/>
+     <addaction name="actionMapTheme4Umaps"/>
      <addaction name="separator"/>
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
@@ -5530,7 +5531,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>31</y>
+              <y>46</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -11404,6 +11405,20 @@ Best track will be selected automatically.</string>
    </property>
    <property name="statusTip">
     <string>Save current window layout</string>
+   </property>
+  </action>
+  <action name="actionMapTheme4Umaps">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>4UMaps</string>
+   </property>
+   <property name="toolTip">
+    <string>4UMaps online map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>CARTO Dark online map theme</string>
    </property>
   </action>
  </widget>

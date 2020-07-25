@@ -112,7 +112,8 @@ static const int MAX_STATUS_MESSAGES = 20;
 
 // All known map themes
 static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "opentopomap", "plain",
-                                           "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
+                                           "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight",
+                                           "4umaps"});
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -681,6 +682,7 @@ void MainWindow::setupUi()
   mapThemeComboBox->addItem(tr("Stamen Terrain"), "earth/stamenterrain/stamenterrain.dgml");
   mapThemeComboBox->addItem(tr("CARTO Light"), "earth/cartolight/cartolight.dgml");
   mapThemeComboBox->addItem(tr("CARTO Dark"), "earth/cartodark/cartodark.dgml");
+  mapThemeComboBox->addItem(tr("4UMaps"), "earth/4umaps/4umaps.dgml");
   mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
   mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
   mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");
@@ -722,6 +724,9 @@ void MainWindow::setupUi()
 
   ui->actionMapThemeCartoDark->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeCartoDark->setData(map::CARTODARK);
+
+  ui->actionMapTheme4Umaps->setActionGroup(actionGroupMapTheme);
+  ui->actionMapTheme4Umaps->setData(map::FOURYOUMAPS);
 
   ui->actionMapThemeSimple->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeSimple->setData(map::SIMPLE);
@@ -1319,6 +1324,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapThemeStamenTerrain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeCartoLight, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeCartoDark, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapTheme4Umaps, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeSimple, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemePlain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeAtlas, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
