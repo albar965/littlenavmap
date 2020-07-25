@@ -33,8 +33,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterWeather::MapPainterWeather(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterWeather::MapPainterWeather(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -42,7 +42,7 @@ MapPainterWeather::~MapPainterWeather()
 {
 }
 
-void MapPainterWeather::render(PaintContext *context)
+void MapPainterWeather::render()
 {
   bool drawWeather = context->objectDisplayTypes.testFlag(map::AIRPORT_WEATHER) &&
                      context->mapLayer->isAirportWeather();
@@ -103,13 +103,12 @@ void MapPainterWeather::render(PaintContext *context)
     {
       float x = static_cast<float>(airportWeather.point.x());
       float y = static_cast<float>(airportWeather.point.y());
-      drawAirportWeather(context, metar, x, y);
+      drawAirportWeather(metar, x, y);
     }
   }
 }
 
-void MapPainterWeather::drawAirportWeather(PaintContext *context,
-                                           const atools::fs::weather::Metar& metar, float x, float y)
+void MapPainterWeather::drawAirportWeather(const atools::fs::weather::Metar& metar, float x, float y)
 {
   float size = context->sz(context->symbolSizeAirportWeather, context->mapLayerEffective->getAirportSymbolSize());
   bool windBarbs = context->mapLayer->isAirportWeatherDetails();

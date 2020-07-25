@@ -58,20 +58,20 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries)
   mapScale = new MapScale();
 
   // Create all painters
-  mapPainterNav = new MapPainterNav(mapWidget, mapScale);
-  mapPainterIls = new MapPainterIls(mapWidget, mapScale);
-  mapPainterAirport = new MapPainterAirport(mapWidget, mapScale, &NavApp::getRouteConst());
-  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapScale, &NavApp::getRouteConst());
-  mapPainterMark = new MapPainterMark(mapWidget, mapScale);
-  mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &NavApp::getRouteConst());
-  mapPainterAircraft = new MapPainterAircraft(mapWidget, mapScale);
-  mapPainterTrack = new MapPainterTrack(mapWidget, mapScale);
-  mapPainterShip = new MapPainterShip(mapWidget, mapScale);
-  mapPainterUser = new MapPainterUser(mapWidget, mapScale);
-  mapPainterAltitude = new MapPainterAltitude(mapWidget, mapScale);
-  mapPainterWeather = new MapPainterWeather(mapWidget, mapScale);
-  mapPainterWind = new MapPainterWind(mapWidget, mapScale);
-  mapPainterTop = new MapPainterTop(mapWidget, mapScale);
+  mapPainterNav = new MapPainterNav(mapWidget, mapScale, &context);
+  mapPainterIls = new MapPainterIls(mapWidget, mapScale, &context);
+  mapPainterAirport = new MapPainterAirport(mapWidget, mapScale, &context);
+  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapScale, &context);
+  mapPainterMark = new MapPainterMark(mapWidget, mapScale, &context);
+  mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &context);
+  mapPainterAircraft = new MapPainterAircraft(mapWidget, mapScale, &context);
+  mapPainterTrack = new MapPainterTrack(mapWidget, mapScale, &context);
+  mapPainterShip = new MapPainterShip(mapWidget, mapScale, &context);
+  mapPainterUser = new MapPainterUser(mapWidget, mapScale, &context);
+  mapPainterAltitude = new MapPainterAltitude(mapWidget, mapScale, &context);
+  mapPainterWeather = new MapPainterWeather(mapWidget, mapScale, &context);
+  mapPainterWind = new MapPainterWind(mapWidget, mapScale, &context);
+  mapPainterTop = new MapPainterTop(mapWidget, mapScale, &context);
 
   // Default for visible object types
   objectTypes = map::MapTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);
@@ -499,7 +499,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       qDebug() << Q_FUNC_INFO << "layer" << *mapLayer;
 #endif
 
-      PaintContext context;
+      context = PaintContext();
+      context.route = &NavApp::getRouteConst();
       context.mapLayer = mapLayer;
       context.mapLayerEffective = mapLayerEffective;
       context.painter = painter;
@@ -528,6 +529,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
                                                box.north(GeoDataCoordinates::Degree),
                                                box.east(GeoDataCoordinates::Degree),
                                                box.south(GeoDataCoordinates::Degree));
+
+      context.screenRect = mapWidget->rect();
 
       const OptionData& od = OptionData::instance();
 
@@ -619,59 +622,59 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       // Draw ====================================
 
       // Altitude below all others
-      mapPainterAltitude->render(&context);
+      mapPainterAltitude->render();
 
       // Ship below other navaids and airports
-      mapPainterShip->render(&context);
+      mapPainterShip->render();
 
       if(mapWidget->distance() < layer::DISTANCE_CUT_OFF_LIMIT)
       {
         if(!context.isOverflow())
-          mapPainterAirspace->render(&context);
+          mapPainterAirspace->render();
 
         if(context.mapLayerEffective->isAirportDiagram())
         {
           // Put ILS below and navaids on top of airport diagram
-          mapPainterIls->render(&context);
+          mapPainterIls->render();
 
           if(!context.isOverflow())
-            mapPainterAirport->render(&context);
+            mapPainterAirport->render();
 
           if(!context.isOverflow())
-            mapPainterNav->render(&context);
+            mapPainterNav->render();
         }
         else
         {
           // Airports on top of all
           if(!context.isOverflow())
-            mapPainterIls->render(&context);
+            mapPainterIls->render();
 
           if(!context.isOverflow())
-            mapPainterNav->render(&context);
+            mapPainterNav->render();
 
           if(!context.isOverflow())
-            mapPainterAirport->render(&context);
+            mapPainterAirport->render();
         }
       }
 
       if(!context.isOverflow())
-        mapPainterUser->render(&context);
+        mapPainterUser->render();
 
-      mapPainterWind->render(&context);
+      mapPainterWind->render();
 
       // if(!context.isOverflow()) always paint route even if number of objets is too large
-      mapPainterRoute->render(&context);
+      mapPainterRoute->render();
 
-      mapPainterWeather->render(&context);
+      mapPainterWeather->render();
 
-      mapPainterTrack->render(&context);
+      mapPainterTrack->render();
 
       // if(!context.isOverflow())
-      mapPainterMark->render(&context);
+      mapPainterMark->render();
 
-      mapPainterAircraft->render(&context);
+      mapPainterAircraft->render();
 
-      mapPainterTop->render(&context);
+      mapPainterTop->render();
 
       if(context.isOverflow())
         overflow = PaintContext::MAX_OBJECT_COUNT;

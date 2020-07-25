@@ -36,17 +36,17 @@ class MapPainterIls :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterIls(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterIls(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterIls() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
   /* Fixed value that is used when writing the database. See atools::fs::db::IlsWriter */
   static Q_DECL_CONSTEXPR int FEATHER_LEN_NM = 9;
   static Q_DECL_CONSTEXPR int MIN_LENGHT_FOR_TEXT = 40;
 
-  void drawIlsSymbol(const PaintContext *context, const map::MapIls& ils);
+  void drawIlsSymbol(const map::MapIls& ils);
 
 };
 

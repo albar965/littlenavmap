@@ -170,6 +170,8 @@ private:
 
   bool databaseLoadStatus = false;
 
+  PaintContext context;
+
   /* All painters */
   MapPainterAirport *mapPainterAirport;
   MapPainterAirspace *mapPainterAirspace;

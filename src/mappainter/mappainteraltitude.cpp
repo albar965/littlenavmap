@@ -36,8 +36,8 @@ using namespace Marble;
 using namespace atools::geo;
 using map::MapIls;
 
-MapPainterAltitude::MapPainterAltitude(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterAltitude::MapPainterAltitude(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -45,7 +45,7 @@ MapPainterAltitude::~MapPainterAltitude()
 {
 }
 
-void MapPainterAltitude::render(PaintContext *context)
+void MapPainterAltitude::render()
 {
   using atools::fs::common::MoraReader;
 

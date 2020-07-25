@@ -33,8 +33,8 @@ const int NUM_CLOSEST_AI_LABELS = 5;
 const float DIST_METER_CLOSEST_AI_LABELS = atools::geo::nmToMeter(20);
 const float DIST_FT_CLOSEST_AI_LABELS = 5000;
 
-MapPainterAircraft::MapPainterAircraft(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainterVehicle(mapWidget, mapScale)
+MapPainterAircraft::MapPainterAircraft(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainterVehicle(mapWidget, mapScale, paintContext)
 {
 
 }
@@ -44,7 +44,7 @@ MapPainterAircraft::~MapPainterAircraft()
 
 }
 
-void MapPainterAircraft::render(PaintContext *context)
+void MapPainterAircraft::render()
 {
   if(!(context->objectTypes & map::AIRCRAFT_ALL))
     // If actions are unchecked return
@@ -105,8 +105,7 @@ void MapPainterAircraft::render(PaintContext *context)
       const SimConnectAircraft& ac = *adt.aircraft;
       if(mapfunc::aircraftVisible(ac, context->mapLayer))
       {
-        paintAiVehicle(context, ac,
-                       --num < NUM_CLOSEST_AI_LABELS &&
+        paintAiVehicle(ac, --num < NUM_CLOSEST_AI_LABELS &&
                        adt.distanceLateralMeter < DIST_METER_CLOSEST_AI_LABELS &&
                        adt.distanceVerticalFt < DIST_FT_CLOSEST_AI_LABELS);
       }
@@ -119,14 +118,14 @@ void MapPainterAircraft::render(PaintContext *context)
     if(pos.isValid())
     {
       if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND_POINTER))
-        paintWindPointer(context, userAircraft, context->painter->device()->width() / 2, 0);
+        paintWindPointer(userAircraft, context->painter->device()->width() / 2, 0);
 
       bool hidden = false;
       float x, y;
       if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
       {
         if(!hidden)
-          paintUserAircraft(context, userAircraft, x, y);
+          paintUserAircraft(userAircraft, x, y);
       }
     }
   }

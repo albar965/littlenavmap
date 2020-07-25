@@ -38,8 +38,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterNav::MapPainterNav(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterNav::MapPainterNav(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -47,7 +47,7 @@ MapPainterNav::~MapPainterNav()
 {
 }
 
-void MapPainterNav::render(PaintContext *context)
+void MapPainterNav::render()
 {
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
@@ -65,7 +65,7 @@ void MapPainterNav::render(PaintContext *context)
     // Draw airway lines
     QList<MapAirway> airways;
     airwayQuery->getAirways(airways, curBox, context->mapLayer, context->lazyUpdate);
-    paintAirways(context, &airways, context->drawFast);
+    paintAirways(&airways, context->drawFast);
   }
 
   // Tracks -------------------------------------------------
@@ -75,7 +75,7 @@ void MapPainterNav::render(PaintContext *context)
     // Draw track lines
     QList<MapAirway> tracks;
     airwayQuery->getTracks(tracks, curBox, context->mapLayer, context->lazyUpdate);
-    paintAirways(context, &tracks, context->drawFast);
+    paintAirways(&tracks, context->drawFast);
   }
 
   context->szFont(context->textSizeNavaid);
@@ -87,7 +87,7 @@ void MapPainterNav::render(PaintContext *context)
     QList<MapWaypoint> waypoints;
     waypointQuery->getWaypoints(waypoints, curBox, context->mapLayer, context->lazyUpdate);
     if(!waypoints.isEmpty())
-      paintWaypoints(context, &waypoints, drawWaypoint);
+      paintWaypoints(&waypoints, drawWaypoint);
   }
 
   // VOR -------------------------------------------------
@@ -95,7 +95,7 @@ void MapPainterNav::render(PaintContext *context)
   {
     const QList<MapVor> *vors = mapQuery->getVors(curBox, context->mapLayer, context->lazyUpdate);
     if(vors != nullptr)
-      paintVors(context, vors, context->drawFast);
+      paintVors(vors, context->drawFast);
   }
 
   // NDB -------------------------------------------------
@@ -103,7 +103,7 @@ void MapPainterNav::render(PaintContext *context)
   {
     const QList<MapNdb> *ndbs = mapQuery->getNdbs(curBox, context->mapLayer, context->lazyUpdate);
     if(ndbs != nullptr)
-      paintNdbs(context, ndbs, context->drawFast);
+      paintNdbs(ndbs, context->drawFast);
   }
 
   // Marker -------------------------------------------------
@@ -111,12 +111,12 @@ void MapPainterNav::render(PaintContext *context)
   {
     const QList<MapMarker> *markers = mapQuery->getMarkers(curBox, context->mapLayer, context->lazyUpdate);
     if(markers != nullptr)
-      paintMarkers(context, markers, context->drawFast);
+      paintMarkers(markers, context->drawFast);
   }
 }
 
 /* Draw airways and texts */
-void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *airways, bool fast)
+void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 {
   QFontMetrics metrics = context->painter->fontMetrics();
 
@@ -314,7 +314,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
 }
 
 /* Draw waypoints. If airways are enabled corresponding waypoints are drawn too */
-void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoint> *waypoints, bool drawWaypoint)
+void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool drawWaypoint)
 {
   bool drawAirwayV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
   bool drawAirwayJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
@@ -354,7 +354,7 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
   }
 }
 
-void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, bool drawFast)
+void MapPainterNav::paintVors(const QList<MapVor> *vors, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
@@ -388,7 +388,7 @@ void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, 
   }
 }
 
-void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, bool drawFast)
+void MapPainterNav::paintNdbs(const QList<MapNdb> *ndbs, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
@@ -420,7 +420,7 @@ void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, 
   }
 }
 
-void MapPainterNav::paintMarkers(PaintContext *context, const QList<MapMarker> *markers, bool drawFast)
+void MapPainterNav::paintMarkers(const QList<MapMarker> *markers, bool drawFast)
 {
   int transparency = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
 

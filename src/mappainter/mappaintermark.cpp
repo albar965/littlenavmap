@@ -54,8 +54,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterMark::MapPainterMark(MapPaintWidget *mapWidgetParam, MapScale *mapScale)
-  : MapPainter(mapWidgetParam, mapScale)
+MapPainterMark::MapPainterMark(MapPaintWidget *mapWidgetParam, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidgetParam, mapScale, paintContext)
 {
 }
 
@@ -64,34 +64,34 @@ MapPainterMark::~MapPainterMark()
 
 }
 
-void MapPainterMark::render(PaintContext *context)
+void MapPainterMark::render()
 {
   atools::util::PainterContextSaver saver(context->painter);
   Q_UNUSED(saver);
 
   map::MapMarkTypes types = NavApp::getMapMarkHandler()->getMarkTypes();
 
-  paintMark(context);
-  paintHome(context);
+  paintMark();
+  paintHome();
 
   if(types & map::MARK_PATTERNS)
-    paintTrafficPatterns(context);
+    paintTrafficPatterns();
 
   if(types & map::MARK_HOLDS)
-    paintHolds(context);
+    paintHolds();
 
   if(types & map::MARK_RANGE_RINGS)
-    paintRangeRings(context);
+    paintRangeRings();
 
   if(types & map::MARK_MEASUREMENT)
-    paintDistanceMarkers(context);
+    paintDistanceMarkers();
 
-  paintCompassRose(context);
+  paintCompassRose();
 
-  paintHighlights(context);
+  paintHighlights();
 
-  paintRouteDrag(context);
-  paintUserpointDrag(context);
+  paintRouteDrag();
+  paintUserpointDrag();
 
 #ifdef DEBUG_AIRWAY_PAINT
   context->painter->setPen(QPen(QColor(0, 0, 255, 50), 10, Qt::SolidLine, Qt::RoundCap));
@@ -104,7 +104,7 @@ void MapPainterMark::render(PaintContext *context)
 }
 
 /* Draw black yellow cross for search distance marker */
-void MapPainterMark::paintMark(const PaintContext *context)
+void MapPainterMark::paintMark()
 {
   GeoPainter *painter = context->painter;
 
@@ -120,7 +120,7 @@ void MapPainterMark::paintMark(const PaintContext *context)
 }
 
 /* Paint the center of the home position */
-void MapPainterMark::paintHome(const PaintContext *context)
+void MapPainterMark::paintHome()
 {
   GeoPainter *painter = context->painter;
 
@@ -139,7 +139,7 @@ void MapPainterMark::paintHome(const PaintContext *context)
 }
 
 /* Draw rings around objects that are selected on the search or flight plan tables */
-void MapPainterMark::paintHighlights(PaintContext *context)
+void MapPainterMark::paintHighlights()
 {
   // Draw hightlights from the search result view =====================================================
   const MapResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
@@ -179,20 +179,20 @@ void MapPainterMark::paintHighlights(PaintContext *context)
 
   // Draw boundary for selected online network airspaces =====================================================
   for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
-    paintAirspace(context, airspace);
+    paintAirspace(airspace);
 
   // Draw boundary for airspaces higlighted in the information window =======================================
   for(const MapAirspace& airspace: mapPaintWidget->getAirspaceHighlights())
-    paintAirspace(context, airspace);
+    paintAirspace(airspace);
 
   // Draw airways higlighted in the information window =====================================================
   for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())
-    paintAirwayList(context, airwayFull);
+    paintAirwayList(airwayFull);
   for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())
-    paintAirwayTextList(context, airwayFull);
+    paintAirwayTextList(airwayFull);
 
   // Selected logbook entries ------------------------------------------
-  paintLogEntries(context, highlightResultsSearch.logbookEntries);
+  paintLogEntries(highlightResultsSearch.logbookEntries);
 
   // ====================================================================
   // Draw all highlight rings for positions collected above =============
@@ -346,7 +346,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   }
 }
 
-void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::MapLogbookEntry>& entries)
+void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 {
   GeoPainter *painter = context->painter;
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -548,7 +548,7 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   }
 }
 
-void MapPainterMark::paintAirwayList(PaintContext *context, const QList<map::MapAirway>& airwayList)
+void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
 {
   Marble::GeoPainter *painter = context->painter;
 
@@ -606,7 +606,7 @@ void MapPainterMark::paintAirwayList(PaintContext *context, const QList<map::Map
   }
 }
 
-void MapPainterMark::paintAirwayTextList(PaintContext *context, const QList<map::MapAirway>& airwayList)
+void MapPainterMark::paintAirwayTextList(const QList<map::MapAirway>& airwayList)
 {
   context->szFont(context->textSizeRangeDistance);
 
@@ -636,7 +636,7 @@ void MapPainterMark::paintAirwayTextList(PaintContext *context, const QList<map:
   }
 }
 
-void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace& airspace)
+void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
 {
   const LineString *airspaceGeometry = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
   Marble::GeoPainter *painter = context->painter;
@@ -694,7 +694,7 @@ void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace
 }
 
 /* Draw all rang rings. This includes the red rings and the radio navaid ranges. */
-void MapPainterMark::paintRangeRings(const PaintContext *context)
+void MapPainterMark::paintRangeRings()
 {
   const QList<map::RangeMarker>& rangeRings = mapPaintWidget->getRangeRings();
   GeoPainter *painter = context->painter;
@@ -772,7 +772,7 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
 }
 
 /* Draw a compass rose for the user aircraft with tick marks. */
-void MapPainterMark::paintCompassRose(const PaintContext *context)
+void MapPainterMark::paintCompassRose()
 {
   if(context->objectDisplayTypes & map::COMPASS_ROSE && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
   {
@@ -1041,7 +1041,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 }
 
 /* Draw great circle line distance measurement lines */
-void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
+void MapPainterMark::paintDistanceMarkers()
 {
   GeoPainter *painter = context->painter;
   context->szFont(context->textSizeRangeDistance);
@@ -1148,7 +1148,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
   }
 }
 
-void MapPainterMark::paintHolds(const PaintContext *context)
+void MapPainterMark::paintHolds()
 {
 
   atools::util::PainterContextSaver saver(context->painter);
@@ -1216,7 +1216,7 @@ void MapPainterMark::paintHolds(const PaintContext *context)
   }
 }
 
-void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
+void MapPainterMark::paintTrafficPatterns()
 {
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
@@ -1398,7 +1398,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
   }
 }
 
-void MapPainterMark::paintUserpointDrag(const PaintContext *context)
+void MapPainterMark::paintUserpointDrag()
 {
   // Get screen position an pixmap
   QPoint cur;
@@ -1412,7 +1412,7 @@ void MapPainterMark::paintUserpointDrag(const PaintContext *context)
 }
 
 /* Draw route dragging/moving lines */
-void MapPainterMark::paintRouteDrag(const PaintContext *context)
+void MapPainterMark::paintRouteDrag()
 {
   LineString fixed;
   QPoint cur;

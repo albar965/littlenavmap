@@ -59,10 +59,10 @@ class MapPainterRoute :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterRoute(MapPaintWidget *mapPaintWidget, MapScale *mapScale, const Route *routeParam);
+  MapPainterRoute(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterRoute() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
   struct DrawText
@@ -74,41 +74,39 @@ private:
     bool distance, course;
   };
 
-  void paintRoute(const PaintContext *context);
+  void paintRoute();
 
-  void paintAirport(const PaintContext *context, int x, int y, const map::MapAirport& obj);
-  void paintVor(const PaintContext *context, int x, int y, const map::MapVor& obj, bool preview);
-  void paintNdb(const PaintContext *context, int x, int y, bool preview);
-  void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y, bool preview);
-  void paintProcedure(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context,
+  void paintAirport(int x, int y, const map::MapAirport& obj);
+  void paintVor(int x, int y, const map::MapVor& obj, bool preview);
+  void paintNdb(float x, float y, bool preview);
+  void paintWaypoint(const QColor& col, int x, int y, bool preview);
+  void paintProcedure(proc::MapProcedureLeg& lastLegPoint,
                       const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview);
-  void paintWaypointText(const PaintContext *context, int x, int y, const map::MapWaypoint& obj, bool drawAsRoute,
+  void paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawAsRoute,
                          const QStringList *additionalText = nullptr);
-  void paintNdbText(const PaintContext *context, int x, int y, const map::MapNdb& obj, bool drawAsRoute,
+  void paintNdbText(float x, float y, const map::MapNdb& obj, bool drawAsRoute,
                     const QStringList *additionalText = nullptr);
-  void paintVorText(const PaintContext *context, int x, int y, const map::MapVor& obj, bool drawAsRoute,
+  void paintVorText(float x, float y, const map::MapVor& obj, bool drawAsRoute,
                     const QStringList *additionalText = nullptr);
-  void paintAirportText(const PaintContext *context, int x, int y, bool drawAsRoute, const map::MapAirport& obj);
-  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts,
+  void paintAirportText(float x, float y, const map::MapAirport& obj, bool drawAsRoute);
+  void paintText(const QColor& color, float x, float y, const QStringList& texts,
                  bool drawAsRoute, textatt::TextAttributes atts = textatt::NONE);
-  void paintUserpoint(const PaintContext *context, int x, int y, bool preview);
-  void paintProcedurePoint(const PaintContext *context, int x, int y, bool preview);
+  void paintUserpoint(int x, int y, bool preview);
+  void paintProcedurePoint(int x, int y, bool preview);
 
-  void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context,
+  void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint,
                            const proc::MapProcedureLegs& legs, int index, bool preview,
                            bool drawTextFlag);
 
-  void drawSymbols(const PaintContext *context, const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints,
-                   bool preview);
+  void drawSymbols(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints, bool preview);
 
-  void drawRouteSymbolText(const PaintContext *context,
-                           const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
+  void drawRouteSymbolText(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
-  void paintProcedureSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
+  void paintProcedureSegment(const proc::MapProcedureLegs& legs,
                              int index, QVector<QLineF>& lastLines, QVector<DrawText> *drawTextLines, bool noText,
                              bool preview, bool draw);
 
-  void paintTopOfDescentAndClimb(const PaintContext *context);
+  void paintTopOfDescentAndClimb();
 
   QLineF paintProcedureTurn(QVector<QLineF>& lastLines, QLineF line, const proc::MapProcedureLeg& leg,
                             QPainter *painter, const QPointF& intersectPoint, bool draw);
@@ -116,19 +114,15 @@ private:
                          QLineF line, const proc::MapProcedureLeg& leg, const QPointF& intersectPoint, bool draw);
 
   /* Waypoint Underlays */
-  void paintProcedureUnderlay(const PaintContext *context, const proc::MapProcedureLeg& leg, int x, int y, int size);
+  void paintProcedureUnderlay(const proc::MapProcedureLeg& leg, int x, int y, int size);
 
-  void drawStartParking(const PaintContext *context);
-  void drawWindBarbs(const PaintContext *context, const QBitArray& visibleStartPoints,
-                     const QList<QPointF>& startPoints);
-  void drawWindBarbAtWaypoint(const PaintContext *context, float windSpeed, float windDir, float x, float y);
-  void drawRouteInternal(const PaintContext *context, QStringList routeTexts, QVector<atools::geo::Line> lines,
-                         int passedRouteLeg);
-  QString buildLegText(const PaintContext *context, const RouteLeg& leg);
-  QString buildLegText(const PaintContext *context, float dist,
-                       float courseGcMag, float courseGcTrue);
+  void drawStartParking();
+  void drawWindBarbs(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
+  void drawWindBarbAtWaypoint(float windSpeed, float windDir, float x, float y);
+  void drawRouteInternal(QStringList routeTexts, QVector<atools::geo::Line> lines, int passedRouteLeg);
+  QString buildLegText(const RouteLeg& leg);
+  QString buildLegText(float dist, float courseGcMag, float courseGcTrue);
 
-  const Route *route;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERROUTE_H

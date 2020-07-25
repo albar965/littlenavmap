@@ -33,17 +33,17 @@ class MapPainterNav :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterNav(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterNav(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterNav() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
-  void paintMarkers(PaintContext *context, const QList<map::MapMarker> *markers, bool drawFast);
-  void paintNdbs(PaintContext *context, const QList<map::MapNdb> *ndbs, bool drawFast);
-  void paintVors(PaintContext *context, const QList<map::MapVor> *vors, bool drawFast);
-  void paintWaypoints(PaintContext *context, const QList<map::MapWaypoint> *waypoints, bool drawWaypoint);
-  void paintAirways(PaintContext *context, const QList<map::MapAirway> *airways, bool fast);
+  void paintMarkers(const QList<map::MapMarker> *markers, bool drawFast);
+  void paintNdbs(const QList<map::MapNdb> *ndbs, bool drawFast);
+  void paintVors(const QList<map::MapVor> *vors, bool drawFast);
+  void paintWaypoints(const QList<map::MapWaypoint> *waypoints, bool drawWaypoint);
+  void paintAirways(const QList<map::MapAirway> *airways, bool fast);
 
 };
 

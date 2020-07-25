@@ -28,10 +28,10 @@ class MapPainterShip :
 {
 
 public:
-  MapPainterShip(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterShip(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterShip() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 };
 

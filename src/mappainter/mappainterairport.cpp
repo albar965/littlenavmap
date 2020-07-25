@@ -56,9 +56,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirport::MapPainterAirport(MapPaintWidget *mapWidget, MapScale *mapScale,
-                                     const Route *routeParam)
-  : MapPainter(mapWidget, mapScale), route(routeParam)
+MapPainterAirport::MapPainterAirport(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -66,7 +65,7 @@ MapPainterAirport::~MapPainterAirport()
 {
 }
 
-void MapPainterAirport::render(PaintContext *context)
+void MapPainterAirport::render()
 {
   if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
      (!context->mapLayerEffective->isAirportDiagramRunway()) && context->routeIdMap.isEmpty())
@@ -121,7 +120,7 @@ void MapPainterAirport::render(PaintContext *context)
   {
     // In diagram mode draw background first to avoid overwriting other airports
     for(const PaintAirportType& airport : visibleAirports)
-      drawAirportDiagramBackground(context, *airport.airport);
+      drawAirportDiagramBackground(*airport.airport);
   }
 
   // Draw the diagrams first
@@ -129,7 +128,7 @@ void MapPainterAirport::render(PaintContext *context)
   {
     // Airport diagram is not influenced by detail level
     if(context->mapLayerEffective->isAirportDiagramRunway())
-      drawAirportDiagram(context, *airport.airport);
+      drawAirportDiagram(*airport.airport);
   }
 
   textflags::TextFlags apTextFlags = context->airportTextFlags();
@@ -145,13 +144,13 @@ void MapPainterAirport::render(PaintContext *context)
     // Airport diagram is not influenced by detail level
     if(!context->mapLayerEffective->isAirportDiagramRunway())
       // Draw simplified runway lines
-      drawAirportSymbolOverview(context, *airport, x, y);
+      drawAirportSymbolOverview(*airport, x, y);
 
     // More detailed symbol will be drawn by the route or log painter - so skip here
     if(!context->routeIdMap.contains(airport->getRef()))
     {
       // Symbol will be omitted for runway overview
-      drawAirportSymbol(context, *airport, x, y);
+      drawAirportSymbol(*airport, x, y);
 
       context->szFont(context->textSizeAirport);
       symbolPainter->drawAirportText(context->painter, *airport, x, y,
@@ -165,7 +164,7 @@ void MapPainterAirport::render(PaintContext *context)
 }
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
-void MapPainterAirport::drawAirportDiagramBackground(const PaintContext *context, const map::MapAirport& airport)
+void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airport)
 {
   Marble::GeoPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(painter);
@@ -223,15 +222,15 @@ void MapPainterAirport::drawAirportDiagramBackground(const PaintContext *context
     {
       // FSX/P3D geometry
       if(!apron.vertices.isEmpty())
-        drawFsApron(context, apron);
+        drawFsApron(apron);
       if(!apron.geometry.boundary.isEmpty())
-        drawXplaneApron(context, apron, true /* draw fast */);
+        drawXplaneApron(apron, true /* draw fast */);
     }
   }
 }
 
 /* Draw simple FSX/P3D aprons */
-void MapPainterAirport::drawFsApron(const PaintContext *context, const map::MapApron& apron)
+void MapPainterAirport::drawFsApron(const map::MapApron& apron)
 {
   QVector<QPoint> apronPoints;
   bool visible;
@@ -240,7 +239,7 @@ void MapPainterAirport::drawFsApron(const PaintContext *context, const map::MapA
   context->painter->QPainter::drawPolygon(apronPoints.data(), apronPoints.size());
 }
 
-void MapPainterAirport::drawXplaneApron(const PaintContext *context, const map::MapApron& apron, bool fast)
+void MapPainterAirport::drawXplaneApron(const map::MapApron& apron, bool fast)
 {
   // Create the apron boundary or get it from the cache for this zoom distance
   QPainterPath boundaryPath =
@@ -251,7 +250,7 @@ void MapPainterAirport::drawXplaneApron(const PaintContext *context, const map::
 }
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
-void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const map::MapAirport& airport)
+void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 {
   Marble::GeoPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(painter);
@@ -315,11 +314,11 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 
         // FSX/P3D geometry
         if(!apron.vertices.isEmpty())
-          drawFsApron(context, apron);
+          drawFsApron(apron);
 
         // X-Plane geometry
         if(!apron.geometry.boundary.isEmpty())
-          drawXplaneApron(context, apron, context->drawFast);
+          drawXplaneApron(apron, context->drawFast);
       }
 
       // Draw taxiways ---------------------------------
@@ -918,8 +917,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 }
 
 /* Draw airport runway overview as in VFR maps (runways with white center line) */
-void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const map::MapAirport& ap,
-                                                  float x, float y)
+void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y)
 {
   Marble::GeoPainter *painter = context->painter;
 
@@ -971,7 +969,7 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
 }
 
 /* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
-void MapPainterAirport::drawAirportSymbol(PaintContext *context, const map::MapAirport& ap, float x, float y)
+void MapPainterAirport::drawAirportSymbol(const map::MapAirport& ap, float x, float y)
 {
   if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(map::AP_CLOSED) ||
      ap.waterOnly() || ap.longestRunwayLength < RUNWAY_OVERVIEW_MIN_LENGTH_FEET ||

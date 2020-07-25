@@ -29,13 +29,13 @@ class MapPainterWind :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterWind(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterWind(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterWind() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
-  void drawWindBarb(PaintContext *context, float speed, float direction, float x, float y);
+  void drawWindBarb(float speed, float direction, float x, float y);
 
 };
 

@@ -42,28 +42,28 @@ class MapPainterMark :
   Q_DECLARE_TR_FUNCTIONS(MapPainterMark)
 
 public:
-  MapPainterMark(MapPaintWidget *mapWidgetParam, MapScale *mapScale);
+  MapPainterMark(MapPaintWidget *mapWidgetParam, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterMark() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
-  void paintMark(const PaintContext *context);
-  void paintHome(const PaintContext *context);
-  void paintHighlights(PaintContext *context);
-  void paintRangeRings(const PaintContext *context);
-  void paintDistanceMarkers(const PaintContext *context);
+  void paintMark();
+  void paintHome();
+  void paintHighlights();
+  void paintRangeRings();
+  void paintDistanceMarkers();
 
-  void paintTrafficPatterns(const PaintContext *context);
-  void paintHolds(const PaintContext *context);
+  void paintTrafficPatterns();
+  void paintHolds();
 
-  void paintRouteDrag(const PaintContext *context);
-  void paintCompassRose(const PaintContext *context);
-  void paintUserpointDrag(const PaintContext *context);
-  void paintAirspace(PaintContext *context, const map::MapAirspace& airspace);
-  void paintAirwayList(PaintContext *context, const QList<map::MapAirway>& airwayList);
-  void paintAirwayTextList(PaintContext *context, const QList<map::MapAirway>& airwayList);
-  void paintLogEntries(PaintContext *context, const QList<map::MapLogbookEntry>& entries);
+  void paintRouteDrag();
+  void paintCompassRose();
+  void paintUserpointDrag();
+  void paintAirspace(const map::MapAirspace& airspace);
+  void paintAirwayList(const QList<map::MapAirway>& airwayList);
+  void paintAirwayTextList(const QList<map::MapAirway>& airwayList);
+  void paintLogEntries(const QList<map::MapLogbookEntry>& entries);
 
 };
 

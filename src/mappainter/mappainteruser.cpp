@@ -39,8 +39,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterUser::MapPainterUser(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterUser::MapPainterUser(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -48,7 +48,7 @@ MapPainterUser::~MapPainterUser()
 {
 }
 
-void MapPainterUser::render(PaintContext *context)
+void MapPainterUser::render()
 {
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
@@ -58,13 +58,11 @@ void MapPainterUser::render(PaintContext *context)
   context->szFont(context->textSizeNavaid);
 
   // Always call paint to fill cache
-  paintUserpoints(context,
-                  mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
-                                              context->userPointTypeUnknown,
-                                              context->distance), context->drawFast);
+  paintUserpoints(mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
+                                              context->userPointTypeUnknown, context->distance), context->drawFast);
 }
 
-void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserpoint>& userpoints, bool drawFast)
+void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
   UserdataIcons *icons = NavApp::getUserdataIcons();

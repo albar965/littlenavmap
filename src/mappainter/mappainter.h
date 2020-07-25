@@ -48,6 +48,7 @@ class MapWidget;
 class SymbolPainter;
 class WaypointTrackQuery;
 class AircraftTrack;
+class Route;
 
 namespace map {
 struct MapAirport;
@@ -55,7 +56,7 @@ struct MapObjectRef;
 
 }
 
-/* Struct that is passed on each paint event to all painters */
+/* Struct that is passed to all painters */
 struct PaintContext
 {
   const MapLayer *mapLayer; /* layer for the current zoom distance also affected by detail level
@@ -72,12 +73,16 @@ struct PaintContext
   map::MapObjectDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
+  QRect screenRect; /* Screen coordinate rect */
+
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
   float distance; /* Zoom distance in NM */
   QStringList userPointTypes, /* In menu selected types */
               userPointTypesAll; /* All available tyes */
   bool userPointTypeUnknown; /* Show unknown types */
+
+  const Route *route;
 
   // All waypoints from the route and add them to the map to avoid duplicate drawing
   QSet<map::MapObjectRef> routeIdMap;
@@ -91,6 +96,7 @@ struct PaintContext
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
 
+  /* Text sizes and line thickness in percent / 100 */
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
   float thicknessFlightplan = 1.f;
@@ -129,24 +135,24 @@ struct PaintContext
     return objectCount > MAX_OBJECT_COUNT;
   }
 
-  bool  dOpt(const optsd::DisplayOptions& opts) const
+  bool  dOpt(optsd::DisplayOption opts) const
   {
-    return dispOpts & opts;
+    return dispOpts.testFlag(opts);
   }
 
-  bool  dOptRose(const optsd::DisplayOptionsRose& opts) const
+  bool  dOptRose(optsd::DisplayOptionRose opts) const
   {
-    return dispOptsRose & opts;
+    return dispOptsRose.testFlag(opts);
   }
 
-  bool  dOptMeasurement(const optsd::DisplayOptionsMeasurement& opts) const
+  bool  dOptMeasurement(optsd::DisplayOptionMeasurement opts) const
   {
-    return dispOptsMeasurement & opts;
+    return dispOptsMeasurement.testFlag(opts);
   }
 
-  bool  dOptRoute(const optsd::DisplayOptionsRoute& opts) const
+  bool  dOptRoute(optsd::DisplayOptionRoute opts) const
   {
-    return dispOptsRoute & opts;
+    return dispOptsRoute.testFlag(opts);
   }
 
   /* Calculate real symbol size */
@@ -195,6 +201,8 @@ struct PaintAirportType
   QPointF point;
 };
 
+// =============================================================================================
+
 /*
  * Base class for all map painters
  */
@@ -204,10 +212,10 @@ class MapPainter :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainter(MapPaintWidget *marbleWidget, MapScale *mapScale);
+  MapPainter(MapPaintWidget *marbleWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainter();
 
-  virtual void render(PaintContext *context) = 0;
+  virtual void render() = 0;
 
 protected:
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
@@ -283,6 +291,7 @@ protected:
   /* Maximum points to use for a circle */
   const int CIRCLE_MAX_POINTS = 72;
 
+  PaintContext *context;
   SymbolPainter *symbolPainter;
   MapPaintWidget *mapPaintWidget;
   MapQuery *mapQuery;

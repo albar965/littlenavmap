@@ -29,10 +29,10 @@ class MapPainterAltitude :
   public MapPainter
 {
 public:
-  MapPainterAltitude(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterAltitude(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterAltitude() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 };
 

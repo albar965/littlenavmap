@@ -26,8 +26,8 @@
 
 using atools::fs::sc::SimConnectAircraft;
 
-MapPainterShip::MapPainterShip(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainterVehicle(mapWidget, mapScale)
+MapPainterShip::MapPainterShip(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainterVehicle(mapWidget, mapScale, paintContext)
 {
 
 }
@@ -36,7 +36,7 @@ MapPainterShip::~MapPainterShip()
 {
 }
 
-void MapPainterShip::render(PaintContext *context)
+void MapPainterShip::render()
 {
   if(!context->objectTypes.testFlag(map::AIRCRAFT_AI_SHIP))
     // If actions are unchecked return
@@ -54,7 +54,7 @@ void MapPainterShip::render(PaintContext *context)
       {
         if(ac.isAnyBoat() &&
            (ac.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))
-          paintAiVehicle(context, ac, false /* force label */);
+          paintAiVehicle(ac, false /* force label */);
       }
     }
   }

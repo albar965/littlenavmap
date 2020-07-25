@@ -34,10 +34,10 @@ class MapPainterAirspace :
   public MapPainter
 {
 public:
-  MapPainterAirspace(MapPaintWidget *mapPaintWidget, MapScale *mapScale, const Route *routeParam);
+  MapPainterAirspace(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterAirspace() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
   const Route *route;

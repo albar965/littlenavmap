@@ -36,9 +36,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirspace::MapPainterAirspace(MapPaintWidget *mapWidget, MapScale *mapScale,
-                                       const Route *routeParam)
-  : MapPainter(mapWidget, mapScale), route(routeParam)
+MapPainterAirspace::MapPainterAirspace(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -47,7 +46,7 @@ MapPainterAirspace::~MapPainterAirspace()
 
 }
 
-void MapPainterAirspace::render(PaintContext *context)
+void MapPainterAirspace::render()
 {
   if(!context->mapLayer->isAirspace() || !(context->objectTypes.testFlag(map::AIRSPACE)))
     return;

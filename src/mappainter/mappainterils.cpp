@@ -33,8 +33,8 @@ using namespace Marble;
 using namespace atools::geo;
 using map::MapIls;
 
-MapPainterIls::MapPainterIls(MapPaintWidget* mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterIls::MapPainterIls(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -42,7 +42,7 @@ MapPainterIls::~MapPainterIls()
 {
 }
 
-void MapPainterIls::render(PaintContext *context)
+void MapPainterIls::render()
 {
   if(!context->objectTypes.testFlag(map::ILS))
     return;
@@ -72,14 +72,14 @@ void MapPainterIls::render(PaintContext *context)
           if(context->objCount())
             return;
 
-          drawIlsSymbol(context, ils);
+          drawIlsSymbol(ils);
         }
       }
     }
   }
 }
 
-void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls& ils)
+void MapPainterIls::drawIlsSymbol(const map::MapIls& ils)
 {
   atools::util::PainterContextSaver saver(context->painter);
 

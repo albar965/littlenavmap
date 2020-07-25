@@ -27,10 +27,10 @@ class MapPainterTrack :
   public MapPainterVehicle
 {
 public:
-  MapPainterTrack(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterTrack(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterTrack() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 };
 

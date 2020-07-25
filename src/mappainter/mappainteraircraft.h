@@ -27,10 +27,10 @@ class MapPainterAircraft :
   public MapPainterVehicle
 {
 public:
-  MapPainterAircraft(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterAircraft(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterAircraft() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 };
 

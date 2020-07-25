@@ -82,8 +82,9 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
 }
 
 // =================================================
-MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale)
-  : CoordinateConverter(parentMapWidget->viewport()), mapPaintWidget(parentMapWidget), scale(mapScale)
+MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : CoordinateConverter(parentMapWidget->viewport()), context(paintContext), mapPaintWidget(parentMapWidget),
+  scale(mapScale)
 {
   mapQuery = NavApp::getMapQuery();
   airwayQuery = NavApp::getAirwayTrackQuery();

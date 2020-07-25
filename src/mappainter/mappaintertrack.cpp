@@ -23,8 +23,8 @@
 
 using atools::fs::sc::SimConnectAircraft;
 
-MapPainterTrack::MapPainterTrack(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainterVehicle(mapWidget, mapScale)
+MapPainterTrack::MapPainterTrack(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainterVehicle(mapWidget, mapScale, paintContext)
 {
 
 }
@@ -34,12 +34,12 @@ MapPainterTrack::~MapPainterTrack()
 
 }
 
-void MapPainterTrack::render(PaintContext *context)
+void MapPainterTrack::render()
 {
   if(!context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
     // If actions are unchecked return
     return;
 
   atools::util::PainterContextSaver(context->painter);
-  paintAircraftTrack(context);
+  paintAircraftTrack();
 }

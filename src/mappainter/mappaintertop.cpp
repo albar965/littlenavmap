@@ -28,8 +28,8 @@
 
 #include <marble/GeoPainter.h>
 
-MapPainterTop::MapPainterTop(MapPaintWidget *mapWidgetParam, MapScale *mapScale)
-  : MapPainter(mapWidgetParam, mapScale)
+MapPainterTop::MapPainterTop(MapPaintWidget *mapWidgetParam, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidgetParam, mapScale, paintContext)
 {
 
 }
@@ -39,7 +39,7 @@ MapPainterTop::~MapPainterTop()
 
 }
 
-void MapPainterTop::render(PaintContext *context)
+void MapPainterTop::render()
 {
   paintCopyright(context);
 
@@ -74,15 +74,15 @@ void MapPainterTop::render(PaintContext *context)
   {
     int areaSize = OptionData::instance().getMapNavTouchArea();
     if(opts & optsd::NAVAIDS_TOUCHSCREEN_REGIONS)
-      drawTouchRegions(context, areaSize);
+      drawTouchRegions(areaSize);
 
     if(opts & optsd::NAVAIDS_TOUCHSCREEN_AREAS)
     {
       painter->setPen(mapcolors::touchMarkBackPen);
-      drawTouchMarks(context, size, areaSize);
+      drawTouchMarks(size, areaSize);
 
       painter->setPen(mapcolors::touchMarkFillPen);
-      drawTouchMarks(context, size2, areaSize);
+      drawTouchMarks(size2, areaSize);
     }
 
     // Navigation icons in the corners
@@ -90,7 +90,7 @@ void MapPainterTop::render(PaintContext *context)
     {
       // Make icon size dependent on screen size but limit min and max
       int iconSize = std::max(painter->viewport().height(), painter->viewport().width()) / 20;
-      drawTouchIcons(context, std::max(std::min(iconSize, 30), 10));
+      drawTouchIcons(std::max(std::min(iconSize, 30), 10));
     }
   }
 
@@ -168,7 +168,7 @@ void MapPainterTop::paintCopyright(PaintContext *context)
   }
 }
 
-void MapPainterTop::drawTouchIcons(const PaintContext *context, int iconSize)
+void MapPainterTop::drawTouchIcons(int iconSize)
 {
   Marble::GeoPainter *painter = context->painter;
   QRect vp = painter->viewport();
@@ -203,7 +203,7 @@ void MapPainterTop::drawTouchIcons(const PaintContext *context, int iconSize)
   painter->drawPixmap(QPoint(w - iconSize - borderDist, h - iconSize - borderDist), pixmap);
 }
 
-void MapPainterTop::drawTouchRegions(const PaintContext *context, int areaSize)
+void MapPainterTop::drawTouchRegions(int areaSize)
 {
   Marble::GeoPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(painter);
@@ -229,7 +229,7 @@ void MapPainterTop::drawTouchRegions(const PaintContext *context, int areaSize)
   painter->drawPolygon(poly);
 }
 
-void MapPainterTop::drawTouchMarks(const PaintContext *context, int lineSize, int areaSize)
+void MapPainterTop::drawTouchMarks(int lineSize, int areaSize)
 {
   QRect vp = context->painter->viewport();
   int w = vp.width() * areaSize / 100;

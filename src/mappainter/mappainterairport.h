@@ -46,25 +46,23 @@ class MapPainterAirport :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterAirport(MapPaintWidget *mapPaintWidget, MapScale *mapScale, const Route *routeParam);
+  MapPainterAirport(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterAirport() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
-  void drawAirportSymbol(PaintContext *context, const map::MapAirport& ap, float x, float y);
+  void drawAirportSymbol(const map::MapAirport& ap, float x, float y);
 
-  // void drawWindPointer(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
+  // void drawWindPointer(const maptypes::MapAirport& ap, int x, int y);
 
-  void drawAirportDiagram(const PaintContext *context, const map::MapAirport& airport);
-  void drawAirportDiagramBackground(const PaintContext *context, const map::MapAirport& airport);
-  void drawAirportSymbolOverview(const PaintContext *context, const map::MapAirport& ap, float x, float y);
+  void drawAirportDiagram(const map::MapAirport& airport);
+  void drawAirportDiagramBackground(const map::MapAirport& airport);
+  void drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y);
   void runwayCoords(const QList<map::MapRunway> *runways, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *outlineRects, bool overview);
-  void drawFsApron(const PaintContext *context, const map::MapApron& apron);
-  void drawXplaneApron(const PaintContext *context, const map::MapApron& apron, bool fast);
-
-  const Route *route;
+  void drawFsApron(const map::MapApron& apron);
+  void drawXplaneApron(const map::MapApron& apron, bool fast);
 
 };
 
