@@ -218,6 +218,26 @@ public:
   virtual void render() = 0;
 
 protected:
+  /* All wToSBuf() methods receive a margin parameter. Margins are applied to the screen rectangle for an
+   * additional visibility check to avoid objects or texts popping out of view at the screen borders */
+  bool wToSBuf(const atools::geo::Pos& coords, int& x, int& y, QSize size, const QMargins& margins,
+               bool *hidden = nullptr) const;
+
+  bool wToSBuf(const atools::geo::Pos& coords, int& x, int& y, const QMargins& margins,
+               bool *hidden = nullptr) const
+  {
+    return wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
+  }
+
+  bool wToSBuf(const atools::geo::Pos& coords, float& x, float& y, QSize size, const QMargins& margins,
+               bool *hidden = nullptr) const;
+
+  bool wToSBuf(const atools::geo::Pos& coords, float& x, float& y, const QMargins& margins,
+               bool *hidden = nullptr) const
+  {
+    return wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
+  }
+
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance */
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,

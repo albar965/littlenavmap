@@ -498,7 +498,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       // Text for one line
       LineString positions = entry->lineString();
 
-      TextPlacement textPlacement(context->painter, this);
+      TextPlacement textPlacement(context->painter, this, QRect());
       textPlacement.setDrawFast(context->drawFast);
       textPlacement.setLineWidth(outerlinewidth);
       textPlacement.calculateTextPositions(positions);
@@ -734,13 +734,13 @@ void MapPainterMark::paintRangeRings()
         painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
         bool centerVisible;
-        QPoint center = wToS(rings.position, DEFAULT_WTOS_SIZE, &centerVisible);
+        QPointF center = wToSF(rings.position, DEFAULT_WTOS_SIZE, &centerVisible);
         if(centerVisible)
         {
           // Draw small center point
           painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           painter->setBrush(Qt::white);
-          painter->drawEllipse(center, 4, 4);
+          painter->drawEllipse(center, 4., 4.);
         }
 
         // Draw all rings
@@ -1049,7 +1049,7 @@ void MapPainterMark::paintDistanceMarkers()
 
   const QList<map::DistanceMarker>& distanceMarkers = mapPaintWidget->getDistanceMarkers();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
-  TextPlacement textPlacement(context->painter, this);
+  TextPlacement textPlacement(context->painter, this, QRect());
 
   for(const map::DistanceMarker& m : distanceMarkers)
   {
@@ -1086,10 +1086,15 @@ void MapPainterMark::paintDistanceMarkers()
     GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, DEG);
     double initTrue = normalizeCourse(from.bearing(to, DEG, INITBRG));
     double finalTrue = normalizeCourse(from.bearing(to, DEG, FINALBRG));
-    QString initTrueText = QString::number(initTrue, 'f', 0);
-    QString finalTrueText = QString::number(finalTrue, 'f', 0);
-    QString initMagText = QString::number(atools::geo::normalizeCourse(initTrue - m.magvar), 'f', 0);
-    QString finalMagText = QString::number(atools::geo::normalizeCourse(finalTrue - m.magvar), 'f', 0);
+#ifdef DEBUG_INFORMATION_MEASUREMENT
+    int precision = 3;
+#else
+    int precision = 0;
+#endif
+    QString initTrueText = QString::number(initTrue, 'f', precision);
+    QString finalTrueText = QString::number(finalTrue, 'f', precision);
+    QString initMagText = QString::number(atools::geo::normalizeCourse(initTrue - m.magvar), 'f', precision);
+    QString finalMagText = QString::number(atools::geo::normalizeCourse(finalTrue - m.magvar), 'f', precision);
 
 #ifdef DEBUG_ALTERNATE_ARROW
     QString arrowLeft = ">> ";
@@ -1224,7 +1229,7 @@ void MapPainterMark::paintTrafficPatterns()
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
   context->szFont(context->textSizeRangeDistance);
 
-  TextPlacement textPlacement(painter, this);
+  TextPlacement textPlacement(painter, this, context->screenRect.marginsAdded(QMargins(50, 50, 50, 50)));
   textPlacement.setLineWidth(lineWidth);
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->setBackground(Qt::white);

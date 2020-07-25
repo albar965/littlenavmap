@@ -98,6 +98,33 @@ MapPainter::~MapPainter()
   delete symbolPainter;
 }
 
+bool MapPainter::wToSBuf(const Pos& coords, int& x, int& y, QSize size, const QMargins& margins,
+                         bool *hidden) const
+{
+  float xf, yf;
+  bool visible = wToSBuf(coords, xf, yf, size, margins, hidden);
+  x = atools::roundToInt(xf);
+  y = atools::roundToInt(yf);
+
+  return visible;
+}
+
+bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, const QMargins& margins,
+                         bool *hidden) const
+{
+  bool hid = false;
+  bool visible = wToS(coords, x, y, size, &hid);
+
+  if(hidden != nullptr)
+    *hidden = hid;
+
+  if(!visible && !hid)
+    // Check additional visibility using the extended rectangle only if the object is not hidden behind the globe
+    return context->screenRect.marginsAdded(margins).contains(x, y);
+
+  return visible;
+}
+
 void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast,
                              int& xtext, int& ytext)
 {

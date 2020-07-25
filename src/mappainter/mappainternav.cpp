@@ -263,7 +263,7 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
     }
   }
 
-  TextPlacement textPlacement(painter, this);
+  TextPlacement textPlacement(painter, this, QRect());
 
   // Draw texts ----------------------------------------
   if(!textlist.isEmpty())
@@ -322,6 +322,8 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool dra
 
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
+  // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
+  QMargins margins(50, 10, 10, 10);
   for(const MapWaypoint& waypoint : *waypoints)
   {
     // If waypoints are off, airways are on and waypoint has no airways skip it
@@ -332,10 +334,8 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool dra
     if(context->routeIdMap.contains(waypoint.getRef()))
       continue;
 
-    int x, y;
-    bool visible = wToS(waypoint.position, x, y);
-
-    if(visible)
+    float x, y;
+    if(wToSBuf(waypoint.position, x, y, margins))
     {
       if(context->objCount())
         return;
@@ -358,23 +358,26 @@ void MapPainterNav::paintVors(const QList<MapVor> *vors, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
+  int vorSize = context->mapLayerEffective->isVorLarge() ? size * 5 : 0;
+
+  // Use margins for text placed on the left side of the object to avoid disappearing at the right screen border
+  // Also consider VOR size
+  int margin = std::max(vorSize, size);
+  QMargins margins(margin, margin, std::max(margin, 50), margin);
+
   for(const MapVor& vor : *vors)
   {
     if(context->routeIdMap.contains(vor.getRef()))
       continue;
 
-    int x, y;
-    bool visible = wToS(vor.position, x, y);
-
-    if(visible)
+    float x, y;
+    if(wToSBuf(vor.position, x, y, margins))
     {
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
-      symbolPainter->drawVorSymbol(context->painter, vor, x, y,
-                                   size, false, drawFast,
-                                   context->mapLayerEffective->isVorLarge() ? size * 5 : 0);
+      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, false, drawFast, vorSize);
 
       textflags::TextFlags flags;
 
@@ -392,20 +395,22 @@ void MapPainterNav::paintNdbs(const QList<MapNdb> *ndbs, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
+
+  // Use margins for text placed on the bottom of the object to avoid disappearing at the top screen border
+  QMargins margins(size, std::max(size, 50), size, size);
+
   for(const MapNdb& ndb : *ndbs)
   {
     if(context->routeIdMap.contains(ndb.getRef()))
       continue;
 
-    int x, y;
-    bool visible = wToS(ndb.position, x, y);
-
-    if(visible)
+    float x, y;
+    if(wToSBuf(ndb.position, x, y, margins))
     {
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
       symbolPainter->drawNdbSymbol(context->painter, x, y, size, false, drawFast);
 
       textflags::TextFlags flags;
@@ -424,17 +429,19 @@ void MapPainterNav::paintMarkers(const QList<MapMarker> *markers, bool drawFast)
 {
   int transparency = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
 
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getMarkerSymbolSize());
+  QMargins margins(size, size, size, size);
+
   for(const MapMarker& marker : *markers)
   {
-    int x, y;
-    bool visible = wToS(marker.position, x, y);
+    float x, y;
+    bool visible = wToSBuf(marker.position, x, y, margins);
 
     if(visible)
     {
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getMarkerSymbolSize());
       symbolPainter->drawMarkerSymbol(context->painter, marker, x, y, size, drawFast);
 
       if(context->mapLayer->isMarkerInfo())
@@ -442,8 +449,8 @@ void MapPainterNav::paintMarkers(const QList<MapMarker> *markers, bool drawFast)
         QString type = marker.type.toLower();
         type[0] = type.at(0).toUpper();
         x -= size / 2 + 2;
-        symbolPainter->textBox(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
-                               textatt::RIGHT, transparency);
+        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
+                                textatt::RIGHT, transparency);
       }
     }
   }

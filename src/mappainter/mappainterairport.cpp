@@ -82,6 +82,9 @@ void MapPainterAirport::render()
   else
     airportCache = mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate);
 
+  // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
+  QMargins margins(100, 10, 10, 10);
+
   // Collect all airports that are visible
   QList<PaintAirportType> visibleAirports;
   for(const MapAirport& airport : *airportCache)
@@ -91,15 +94,14 @@ void MapPainterAirport::render()
     {
       float x, y;
       bool hidden;
-      bool visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
+      bool visibleOnMap = wToSBuf(airport.position, x, y,
+                                  scale->getScreeenSizeForRect(airport.bounding), margins, &hidden);
 
       if(!hidden)
       {
         if(!visibleOnMap && context->mapLayer->isAirportOverviewRunway())
           // Check bounding rect for visibility if relevant - not for point symbols
           visibleOnMap = airport.bounding.overlaps(context->viewportRect);
-
-        airport.bounding.overlaps(context->viewportRect);
 
         // Either part of the route or enabled in the actions/menus/toolbar
         bool drawAirport = airport.isVisible(context->objectTypes) ||
@@ -198,7 +200,6 @@ void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airp
 
         const QRect backRect = runwayOutlineRects.at(i);
         painter->drawRect(backRect);
-
         painter->resetTransform();
       }
     }
@@ -504,6 +505,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
   if(!fast && runways != nullptr)
   {
+    QMargins margins(2, 2, 2, 2);
     // Draw black runway outlines --------------------------------
     painter->setPen(QPen(mapcolors::runwayOutlineColor, 1, Qt::SolidLine, Qt::FlatCap));
     painter->setBrush(mapcolors::runwayOutlineColor);
@@ -513,7 +515,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       {
         painter->translate(runwayCenters.at(i));
         painter->rotate(runways->at(i).heading);
-        painter->drawRect(runwayRects.at(i).marginsAdded(QMargins(2, 2, 2, 2)));
+        painter->drawRect(runwayRects.at(i).marginsAdded(margins));
         painter->resetTransform();
       }
     }
@@ -586,15 +588,19 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     }
   }
 
+  // Approximate needed margings by largest parking diameter to avoid parking circles dissappearing on the screen borders
+  float size = scale->getPixelForFeet(200);
+  QMargins margins(size, size, size, size);
+  QMargins marginsSmall(30, 30, 30, 30);
+
   if(context->flags2 & opts2::MAP_AIRPORT_DIAGRAM && context->mapLayerEffective->isAirportDiagram())
   {
     // Draw parking --------------------------------
     const QList<MapParking> *parkings = airportQuery->getParkingsForAirport(airport.id);
     for(const MapParking& parking : *parkings)
     {
-      bool visible;
-      QPoint pt = wToS(parking.position, DEFAULT_WTOS_SIZE, &visible);
-      if(visible)
+      float x, y;
+      if(wToSBuf(parking.position, x, y, margins))
       {
         // Calculate approximate screen width and height
         int w = scale->getPixelIntForFeet(parking.radius, 90);
@@ -602,18 +608,18 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
         painter->setPen(QPen(mapcolors::colorOutlineForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
         painter->setBrush(mapcolors::colorForParkingType(parking.type));
-        painter->drawEllipse(pt, w, h);
+        painter->drawEllipse(QPointF(x, y), w, h);
 
         if(!fast)
         {
           if(parking.jetway)
             // Draw second ring for jetway
-            painter->drawEllipse(pt, w * 3 / 4, h * 3 / 4);
+            painter->drawEllipse(QPointF(x, y), w * 3. / 4., h * 3. / 4.);
 
           // Draw heading tick mark
-          painter->translate(pt);
+          painter->translate(QPointF(x, y));
           painter->rotate(parking.heading);
-          painter->drawLine(0, h * 2 / 3, 0, h);
+          painter->drawLine(QPointF(0, h * 2. / 3.), QPointF(0., h));
           painter->resetTransform();
         }
       }
@@ -625,13 +631,12 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     {
       for(const MapHelipad& helipad : *helipads)
       {
-        bool visible;
-        QPoint pt = wToS(helipad.position, DEFAULT_WTOS_SIZE, &visible);
-        if(visible)
+        float x, y;
+        if(wToSBuf(helipad.position, x, y, margins))
         {
           int w = scale->getPixelIntForFeet(helipad.width, 90) / 2;
           int h = scale->getPixelIntForFeet(helipad.length, 0) / 2;
-          symbolPainter->drawHelipadSymbol(painter, helipad, pt.x(), pt.y(), w, h, fast);
+          symbolPainter->drawHelipadSymbol(painter, helipad, x, y, w, h, fast);
         }
       }
     }
@@ -639,9 +644,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     // Draw tower -------------------------------------------------
     if(airport.towerCoords.isValid())
     {
-      bool visible;
-      QPoint pt = wToS(airport.towerCoords, DEFAULT_WTOS_SIZE, &visible);
-      if(visible)
+      float x, y;
+      if(wToSBuf(airport.towerCoords, x, y, marginsSmall))
       {
         if(airport.towerFrequency > 0)
         {
@@ -654,9 +658,9 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
           painter->setBrush(mapcolors::inactiveTowerColor);
         }
 
-        int w = scale->getPixelIntForMeter(10, 90);
-        int h = scale->getPixelIntForMeter(10, 0);
-        painter->drawEllipse(pt, w < 6 ? 6 : w, h < 6 ? 6 : h);
+        double w = scale->getPixelForMeter(10.f, 90);
+        double h = scale->getPixelForMeter(10.f, 0);
+        painter->drawEllipse(QPointF(x, y), w < 6. ? 6. : w, h < 6. ? 6. : h);
       }
     }
 
@@ -672,9 +676,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       {
         if(context->mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 40)
         {
-          bool visible;
-          QPoint pt = wToS(parking.position, DEFAULT_WTOS_SIZE, &visible);
-          if(visible)
+          float x, y;
+          if(wToSBuf(parking.position, x, y, marginsSmall))
           {
             // Use different text pen for better readability depending on background
             painter->setPen(QPen(mapcolors::colorTextForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
@@ -714,11 +717,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
                 }
               }
             }
-
-            pt.setY(pt.y() + metrics.ascent() / 2);
-            pt.setX(pt.x() - metrics.width(text) / 2);
-
-            painter->drawText(pt, text);
+            painter->drawText(x - metrics.width(text) / 2, y + metrics.ascent() / 2, text);
           }
         } // if(context->mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 40)
       } // for(const MapParking& parking : *parkings)
@@ -727,15 +726,12 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     // Draw tower T -----------------------------
     if(!fast && airport.towerCoords.isValid())
     {
-      bool visible;
-      QPoint pt = wToS(airport.towerCoords, DEFAULT_WTOS_SIZE, &visible);
-      if(visible)
+      float x, y;
+      if(wToSBuf(airport.towerCoords, x, y, marginsSmall))
       {
         QString text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Tower") : tr("T");
-        pt.setY(pt.y() + metrics.ascent() / 2);
-        pt.setX(pt.x() - metrics.width(text) / 2);
         painter->setPen(QPen(mapcolors::towerTextColor, 2, Qt::SolidLine, Qt::FlatCap));
-        painter->drawText(pt, text);
+        painter->drawText(x - metrics.width(text) / 2, y + metrics.ascent() / 2, text);
       }
     }
   }

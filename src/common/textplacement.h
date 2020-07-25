@@ -43,7 +43,7 @@ class TextPlacement
   Q_DECLARE_TR_FUNCTIONS(TextPlacement)
 
 public:
-  TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter);
+  TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter, const QRect& screenRectParam);
 
   /* Prepare for drawTextAlongLines and also fills data for getVisibleStartPoints and getStartPoints.
    * Lines do not have to form a connected linestring. */
@@ -147,6 +147,8 @@ private:
   float lineWidth = 10.f;
   QVector<QColor> colors;
   QVector<QColor> colors2;
+
+  QRect screenRect;
 };
 
 #endif // LITTLENAVMAP_TEXTPLACEMENT_H

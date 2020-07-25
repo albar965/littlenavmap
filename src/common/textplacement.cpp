@@ -27,7 +27,8 @@
 using atools::geo::Line;
 using atools::geo::Pos;
 
-TextPlacement::TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter)
+TextPlacement::TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter,
+                             const QRect& screenRectParam)
   : painter(painterParam), converter(coordinateConverter)
 {
 #ifdef DEBUG_ALTERNATE_ARROW
@@ -38,6 +39,7 @@ TextPlacement::TextPlacement(QPainter *painterParam, CoordinateConverter *coordi
   arrowLeft = tr("◄ ");
 #endif
 
+  screenRect = screenRectParam;
 }
 
 void TextPlacement::calculateTextPositions(const atools::geo::LineString& points)
@@ -48,6 +50,11 @@ void TextPlacement::calculateTextPositions(const atools::geo::LineString& points
   {
     int x1 = 0, y1 = 0;
     bool visibleStart = points.at(i).isValid() ? converter->wToS(points.at(i), x1, y1) : false;
+
+    if(!visibleStart && !screenRect.isNull())
+      // Not visible - try the (extended) screen rectangle
+      visibleStart = screenRect.contains(x1, y1);
+
     visibleStartPoints.setBit(i, visibleStart);
     startPoints.append(QPointF(x1, y1));
   }
