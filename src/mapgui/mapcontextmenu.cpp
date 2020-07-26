@@ -774,7 +774,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
           // Get related airport
           airport = NavApp::getAirportQuerySim()->getAirportById(helipad->airportId);
 
-          text = tr("Set %1 at %2 as &Flight Plan Departure").
+          text = tr("Set %1 at %2 as &Departure").
                  arg(atools::elideTextShortMiddle(map::helipadText(*helipad), TEXT_ELIDE)).
                  arg(atools::elideTextShortMiddle(map::airportText(airport), TEXT_ELIDE));
         }
@@ -786,7 +786,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
           // Get related airport
           airport = NavApp::getAirportQuerySim()->getAirportById(parking->airportId);
 
-          text = tr("Set %1 at %2 as &Flight Plan Departure").
+          text = tr("Set %1 at %2 as &Departure").
                  arg(atools::elideTextShortMiddle(map::parkingText(*parking), TEXT_ELIDE)).
                  arg(atools::elideTextShortMiddle(map::airportText(airport), TEXT_ELIDE));
         }
@@ -812,7 +812,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::DEPARTURE, index,
-                     tr("Set %1 as &Flight Plan Departure"),
+                     tr("Set %1 as &Departure"),
                      tr("Set airport as departure in the flight plan"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/airportroutedest.svg"),
@@ -846,7 +846,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::DESTINATION, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("Set %1 as Flight Plan &Destination"),
+                     tr("Set %1 as &Destination"),
                      tr("Set airport as destination in the flight plan"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/airportroutestart.svg"),
@@ -885,7 +885,7 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::ALTERNATE, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("&Add %1 as Flight Plan Alternate"),
+                     tr("&Add %1 as Alternate"),
                      tr("Add airport as alternate to the flight plan"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/airportroutealt.svg"),
