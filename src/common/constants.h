@@ -52,6 +52,7 @@ extern QString helpOnlineLegendUrl;
 extern QString helpOnlineInstallRedistUrl;
 extern QString helpOnlineInstallGlobeUrl;
 extern QString helpOnlineNavdatabasesUrl;
+extern QString helpOnlineStartUrl;
 extern QString helpLegendLocalFile;
 extern QString helpOfflineFile;
 extern QString helpDonateUrl;

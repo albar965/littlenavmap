@@ -37,6 +37,7 @@ QString helpOnlineLegendUrl;
 QString helpOnlineInstallRedistUrl;
 QString helpOnlineInstallGlobeUrl;
 QString helpOnlineNavdatabasesUrl;
+QString helpOnlineStartUrl;
 QString helpLegendLocalFile;
 QString helpOfflineFile;
 QString helpDonateUrl;
@@ -85,6 +86,7 @@ void loadHelpUrls()
   helpOnlineInstallRedistUrl = settings.value("help/installredist", base + "INSTALLATION.html#windows").toString();
   helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "OPTIONS.html#cache-elevation").toString();
   helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
+  helpOnlineStartUrl = settings.value("help/start", base + "START.html").toString();
 
   // [help] - Other URLs
   helpDonateUrl = settings.value("help/donate", "https://www.littlenavmap.org/donate.html").toString();

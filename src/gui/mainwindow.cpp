@@ -3075,6 +3075,10 @@ void MainWindow::mainWindowShown()
   if(firstApplicationStart)
   {
     firstApplicationStart = false;
+
+    // Open a start page in the web browser ============================
+    helpHandler->openHelpUrlWeb(this, lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
+
     if(!databaseManager->hasSimulatorDatabases())
     {
       NavApp::deleteSplashScreen();
@@ -3113,12 +3117,14 @@ void MainWindow::mainWindowShown()
           databaseManager->run();
       }
 #else
-      // Show always on non Windows systems
+      // Show always on non Windows systems ========================
       databaseManager->run();
 #endif
-    }
+    } // else have databases do nothing
 
-    // else have databases do nothing
+    // Open connection dialog ============================
+    NavApp::deleteSplashScreen();
+    NavApp::getConnectClient()->connectToServerDialog();
   }
   else if(databasesErased)
   {
