@@ -46,7 +46,8 @@ using map::MapResultIndex;
 const static int MAX_MENU_ITEMS = 10;
 
 // Truncate map object texts in the middle
-const static int TEXT_ELIDE = 25;
+const static int TEXT_ELIDE = 35;
+const static int TEXT_ELIDE_AIRPORT_NAME = 15;
 
 // Keeps information for each menu, action and sub-menu.
 struct MapContextMenu::MenuData
@@ -236,7 +237,7 @@ QString MapContextMenu::mapBaseText(const map::MapBase *base)
 #pragma GCC diagnostic pop
     {
       case map::AIRPORT:
-        return map::airportText(*base->asPtr<map::MapAirport>());
+        return map::airportText(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME);
 
       case map::VOR:
         return map::vorText(*base->asPtr<map::MapVor>());
@@ -511,7 +512,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool submenu) -> void
     {
-      if(base != nullptr)
+      if(base != nullptr && base->objType == map::AIRPORT)
       {
         bool departure = false, destination = false, arrivalProc = false, departureProc = false;
         disable = false;
@@ -519,7 +520,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
         if(!arrivalProc && !departureProc)
         {
           // No procedures - disable and add remark
-          text.append(tr(" (has no procedure)"));
+          text.append(tr(" (no procedure)"));
           disable = true;
         }
         else
@@ -528,11 +529,11 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
           {
             if(arrivalProc)
               // Airport is destination and has approaches/STAR
-              text = submenu ? tr("%1 - arrival procedures") : tr("Show arrival &procedures for %1");
+              text = submenu ? tr("%1 - Arrival Procedures") : tr("Show Arrival &Procedures for %1");
             else
             {
               // Airport is destination and has no approaches/STAR - disable
-              text = submenu ? tr("%1 (no arrival)") : tr("Show arrival &procedures for %1 (no arrival)");
+              text = submenu ? tr("%1 (no arrival)") : tr("Show Arrival &Procedures for %1 (no arrival)");
               disable = true;
             }
           }
@@ -540,24 +541,28 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
           {
             if(departureProc)
               // Airport is departure and has SID
-              text = submenu ? tr("%1 - departure &procedures") : tr("Show departure &procedures for %1");
+              text = submenu ? tr("%1 - Departure &Procedures") : tr("Show Departure &Procedures for %1");
             else
             {
               // Airport is departure and has no SID - disable
-              text = submenu ? tr("%1 (no departure)") : tr("Show departure &procedures for %1 (no departure)");
+              text = submenu ? tr("%1 (no departure)") : tr("Show Departure &Procedures for %1 (no departure)");
               disable = true;
             }
           }
         }
+
+        // Do our own text subsitution for the airport to use shorter name
+        if(text.contains("%1"))
+          text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
       }
       else
-        // No object - should not happen
+        // No object or not an airport
         disable = true;
     };
 
   insertMenuOrAction(menu, mc::PROCEDURE,
                      MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("Show &procedures for %1"),
+                     tr("Show &Procedures for %1"),
                      tr("Show procedures for this airport"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/approach.svg"), false /* allowNoMapObject */, callback);
@@ -568,20 +573,42 @@ void MapContextMenu::insertCustomProcedureMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool submenu) -> void
     {
-      bool departure = false, destination = false;
-      procedureFlags(base, &departure, &destination);
-      disable = base == nullptr;
-      if(destination)
-        // Airport is destination - insert into plan
-        text = submenu ? tr("%1 - insert into Flight Plan") : tr("&Create Approach to %1 and insert into Flight Plan");
+      if(base != nullptr && base->objType == map::AIRPORT)
+      {
+        const map::MapAirport *airport = base->asPtr<map::MapAirport>();
+        if(airport->noRunways())
+        {
+          // Heliport or other without runway - disable with remark
+          text.append(tr(" (no runway)"));
+          disable = true;
+        }
+        else
+        {
+          bool departure = false, destination = false;
+          procedureFlags(base, &departure, &destination);
+          if(destination)
+            // Airport is destination - insert into plan
+            text =
+              submenu ? tr("%1 - add to Flight Plan") : tr("&Create Approach to %1 and add to Flight Plan");
+          else
+            // Airport is not destination - insert into plan and use airport
+            text = submenu ? tr("%1 - use as Destination") : tr("&Create Approach and use %1 as Destination");
+
+          disable = false;
+        }
+
+        // Do our own text subsitution for the airport to use shorter name
+        if(text.contains("%1") && base->objType == map::AIRPORT)
+          text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
+      }
       else
-        // Airport is not destination - insert into plan and use airport
-        text = submenu ? tr("%1 - use as destination") : tr("&Create Approach and use %1 as Destination");
+        // No object or not an airport
+        disable = true;
     };
 
   insertMenuOrAction(menu, mc::CUSTOMPROCEDURE,
                      MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("Create &custom procedure for %1"),
+                     tr("Create &Custom Procedure for %1"),
                      tr("Add a custom approach to this airport to the flight plan"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/approachcustom.svg"),
@@ -656,14 +683,38 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = base == nullptr || !NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS);
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
+      if(base != nullptr && base->objType == map::AIRPORT)
+      {
+        if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
+        {
+          // Hidden - add remark and disable
+          text.append(tr(" (hidden on map)"));
+          disable = true;
+        }
+        else
+        {
+          const map::MapAirport *airport = base->asPtr<map::MapAirport>();
+          if(airport->noRunways())
+          {
+            text.append(tr(" (no runway)"));
+            disable = true;
+          }
+          else
+            disable = false;
+        }
+
+        // Do our own text subsitution for the airport to use shorter name
+        if(text.contains("%1"))
+          text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
+      }
+      else
+        // No object or not an airport
+        disable = true;
+
     };
 
   insertMenuOrAction(menu, mc::PATTERN, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("Display Airport &Traffic Pattern at %1 ..."),
+                     tr("Display &Traffic Pattern at %1 ..."),
                      tr("Show a traffic pattern to a runway for this airport"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/trafficpattern.svg"),

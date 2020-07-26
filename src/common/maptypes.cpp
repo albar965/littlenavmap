@@ -1397,15 +1397,18 @@ QString airportText(const MapAirport& airport, int elideName)
 {
   if(!airport.isValid())
     return QObject::tr("Airport");
-  else if(airport.name.isEmpty())
-    return QObject::tr("Airport %1").arg(airport.ident);
   else
-    return QObject::tr("Airport %1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.ident);
+    return QObject::tr("Airport %1").arg(airportTextShort(airport, elideName));
 }
 
-QString airportTextShort(const MapAirport& airport)
+QString airportTextShort(const MapAirport& airport, int elideName)
 {
-  return QObject::tr("%1 (%2)").arg(airport.name).arg(airport.ident);
+  if(!airport.isValid())
+    return QObject::tr("Airport");
+  else if(airport.name.isEmpty())
+    return QObject::tr("%1").arg(airport.ident);
+  else
+    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.ident);
 }
 
 QString comTypeName(const QString& type)

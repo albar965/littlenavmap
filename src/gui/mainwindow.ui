@@ -9757,7 +9757,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Remove Airport &amp;Traffic Pattern</string>
+    <string>Remove &amp;Traffic Pattern</string>
    </property>
    <property name="toolTip">
     <string>Remove this airport traffic pattern</string>

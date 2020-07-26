@@ -1157,7 +1157,7 @@ map::MapAirwayRouteType  airwayRouteTypeFromString(const QString& typeStr);
 QString comTypeName(const QString& type);
 
 QString airportText(const map::MapAirport& airport, int elideName = 1000);
-QString airportTextShort(const map::MapAirport& airport);
+QString airportTextShort(const map::MapAirport& airport, int elideName = 1000);
 QString vorFullShortText(const map::MapVor& vor);
 QString vorText(const map::MapVor& vor);
 QString vorTextShort(const MapVor& vor);
