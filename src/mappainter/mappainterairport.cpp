@@ -862,16 +862,14 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     rwTextFont.setPixelSize(numSize);
     painter->setFont(rwTextFont);
     QFontMetrics rwTextMetrics = painter->fontMetrics();
+    QMargins margins(20, 20, 20, 20);
     for(int i = 0; i < runwayCenters.size(); i++)
     {
       const MapRunway& runway = runways->at(i);
-      bool primaryVisible, secondaryVisible;
-      QPoint prim = wToS(runway.primaryPosition, DEFAULT_WTOS_SIZE, &primaryVisible);
-      QPoint sec = wToS(runway.secondaryPosition, DEFAULT_WTOS_SIZE, &secondaryVisible);
-
-      if(primaryVisible)
+      float x, y;
+      if(wToSBuf(runway.primaryPosition, x, y, margins))
       {
-        painter->translate(prim);
+        painter->translate(x, y);
         painter->rotate(runway.heading);
 
         QRect rectSec = rwTextMetrics.boundingRect(runway.primaryName);
@@ -889,9 +887,9 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         painter->resetTransform();
       }
 
-      if(secondaryVisible)
+      if(wToSBuf(runway.secondaryPosition, x, y, margins))
       {
-        painter->translate(sec);
+        painter->translate(x, y);
         painter->rotate(runway.heading + 180.f);
 
         QRect rectPrim = rwTextMetrics.boundingRect(runway.secondaryName);

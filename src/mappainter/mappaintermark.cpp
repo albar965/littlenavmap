@@ -1270,6 +1270,9 @@ void MapPainterMark::paintTrafficPatterns()
       rect.extend(upwindCrosswind);
       rect.extend(crosswindDownwind);
 
+      // Expand rect by approximately 2 NM
+      rect.inflateMeter(atools::geo::nmToMeter(2.f), atools::geo::nmToMeter(2.f));
+
       if(context->viewportRect.overlaps(rect))
       {
         // Entry at opposite runway threshold
