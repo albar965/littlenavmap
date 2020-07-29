@@ -619,7 +619,7 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint& pos)
   QAction *action = menu.exec(menuPos);
 
   QStandardItem *item = nullptr;
-  rexp::RouteExportFormatType type;
+  rexp::RouteExportFormatType type = rexp::NO_TYPE;
   if(row != -1)
   {
     item = itemModel->item(row, PATH);

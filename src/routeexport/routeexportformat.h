@@ -26,6 +26,7 @@ namespace rexp {
 enum RouteExportFormatType : quint8
 {
   /* Simulators ================ */
+  NO_TYPE = 255,
   PLN = 0, /* FSX/P3D XML PLN format. */
   PLNANNOTATED = 1, /* Save as above but with annotations for procedures as used by LNM before 2.4.5 */
   FMS3 = 2, /* Old X-Plane FMS 3 */
