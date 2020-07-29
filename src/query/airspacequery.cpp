@@ -21,6 +21,7 @@
 #include "common/maptypesfactory.h"
 #include "mapgui/maplayer.h"
 #include "sql/sqlutil.h"
+#include "sql/sqldatabase.h"
 #include "fs/common/binarygeometry.h"
 #include "common/maptools.h"
 #include "settings/settings.h"

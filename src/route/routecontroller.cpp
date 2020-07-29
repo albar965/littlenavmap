@@ -1513,7 +1513,9 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   progress.setMinimumDuration(500);
 
   bool dialogShown = false, canceled = false;
-  routeFinder->setProgressCallback([&progress, &canceled, &dialogShown](int distToDest, int currentDistToDest) -> bool {
+  routeFinder->setProgressCallback([&progress, &canceled, &dialogShown](int distToDest, int currentDistToDest) -> bool
+  {
+    QApplication::processEvents();
     progress.setMaximum(distToDest);
     progress.setValue(distToDest - currentDistToDest);
     canceled = progress.wasCanceled();
