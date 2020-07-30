@@ -48,12 +48,18 @@ void DatabaseProgressDialog::buttonBoxClicked(QAbstractButton *button)
   if(button == ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Ok))
     QDialog::accept();
   else if(button == ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Cancel))
+  {
     canceled = true;
+    button->setDisabled(true);
+  }
 }
 
 void DatabaseProgressDialog::reject()
 {
   canceled = true;
+  QPushButton *cancelButton = ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Cancel);
+  if(cancelButton != nullptr)
+    cancelButton->setDisabled(true);
 
   if(ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Ok) != nullptr)
     QDialog::reject();
