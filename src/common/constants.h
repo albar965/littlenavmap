@@ -238,6 +238,7 @@ const QLatin1Literal OPTIONS_DIALOG_XPLANE_DLG("OptionsDialog/WeatherFileDialogX
 const QLatin1Literal OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG("OptionsDialog/WeatherFileDialogXplaneWind");
 const QLatin1Literal OPTIONS_DIALOG_GLOBE_FILE_DLG("OptionsDialog/CacheFileDialogGlobe");
 const QLatin1Literal OPTIONS_DIALOG_DB_DIR_DLG("OptionsDialog/DatabaseDirDialog");
+const QLatin1Literal OPTIONS_DIALOG_DB_PROGRESS_DLG("OptionsDialog/DatabaseProgressDialog");
 const QLatin1Literal OPTIONS_DIALOG_DB_FILE_DLG("OptionsDialog/DatabaseFilesDialog");
 const QLatin1Literal OPTIONS_DIALOG_DB_EXCLUDE("OptionsDialog/DatabaseExclude");
 const QLatin1Literal OPTIONS_DIALOG_DB_ADDON_EXCLUDE("OptionsDialog/DatabaseAddonExclude");

@@ -18,7 +18,6 @@
 #ifndef LITTLENAVMAP_DATABASEMANAGER_H
 #define LITTLENAVMAP_DATABASEMANAGER_H
 
-#include "sql/sqldatabase.h"
 #include "fs/fspaths.h"
 #include "db/dbtypes.h"
 
@@ -26,6 +25,9 @@
 #include <QObject>
 
 namespace atools {
+namespace sql {
+class SqlDatabase;
+}
 namespace fs {
 class NavDatabaseProgress;
 
@@ -41,13 +43,13 @@ class OnlinedataManager;
 }
 }
 
-class QProgressDialog;
 class QElapsedTimer;
 class DatabaseDialog;
 class MainWindow;
 class QSplashScreen;
 class QMessageBox;
 class TrackManager;
+class DatabaseProgressDialog;
 
 namespace dm {
 enum NavdatabaseStatus
@@ -256,8 +258,6 @@ private:
   void updateSimulatorPathsFromDialog();
   bool loadScenery(atools::sql::SqlDatabase *db);
   void correctSimulatorType();
-  QMessageBox *showSimpleProgressDialog(const QString& message);
-  void deleteSimpleProgressDialog(QMessageBox *messageBox);
 
   /* Get cycle metadata from a database file */
   void metaFromFile(QString *cycle, QDateTime *compilationTime, bool *settingsNeedsPreparation, QString *source,
@@ -311,7 +311,7 @@ private:
   *databaseOnline = nullptr /* Database for network online data */;
 
   MainWindow *mainWindow = nullptr;
-  QProgressDialog *progressDialog = nullptr;
+  DatabaseProgressDialog *progressDialog = nullptr;
 
   /* Switch simulator actions */
   QActionGroup *simDbGroup = nullptr, *navDbGroup = nullptr;

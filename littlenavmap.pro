@@ -254,6 +254,7 @@ SOURCES += \
   src/connect/connectdialog.cpp \
   src/db/databasedialog.cpp \
   src/db/databasemanager.cpp \
+  src/db/databaseprogressdialog.cpp \
   src/db/dbtypes.cpp \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
@@ -413,6 +414,7 @@ HEADERS  += \
   src/connect/connectdialog.h \
   src/db/databasedialog.h \
   src/db/databasemanager.h \
+  src/db/databaseprogressdialog.h \
   src/db/dbtypes.h \
   src/export/csvexporter.h \
   src/export/exporter.h \
@@ -542,6 +544,7 @@ HEADERS  += \
 FORMS += \
   src/connect/connectdialog.ui \
   src/db/databasedialog.ui \
+  src/db/databaseprogressdialog.ui \
   src/gui/choicedialog.ui \
   src/gui/holddialog.ui \
   src/gui/mainwindow.ui \

@@ -18,7 +18,7 @@
 #include "db/databasemanager.h"
 
 #include "gui/textdialog.h"
-#include "gui/application.h"
+#include "sql/sqldatabase.h"
 #include "options/optiondata.h"
 #include "common/constants.h"
 #include "fs/db/databasemeta.h"
@@ -27,7 +27,6 @@
 #include "fs/navdatabaseoptions.h"
 #include "fs/navdatabaseprogress.h"
 #include "common/formatter.h"
-#include "fs/fspaths.h"
 #include "fs/xp/scenerypacks.h"
 #include "gui/helphandler.h"
 #include "fs/navdatabase.h"
@@ -43,23 +42,15 @@
 #include "fs/online/onlinedatamanager.h"
 #include "io/fileroller.h"
 #include "atools.h"
+#include "db/databaseprogressdialog.h"
 #include "sql/sqlexception.h"
 #include "track/trackmanager.h"
 #include "util/version.h"
+#include "fs/navdatabaseerrors.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
-#include <QLabel>
-#include <QProgressDialog>
-#include <QApplication>
-#include <QFileInfo>
-#include <QList>
-#include <QMenu>
 #include <QDir>
-#include <QMessageBox>
-#include <QAbstractButton>
 #include <QSettings>
-#include <QSplashScreen>
 
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;
@@ -133,7 +124,8 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
                                  );
 
   databaseTimeText = QObject::tr(
-    "<b>%1</b><br/><br/><br/>"
+    "<b>%1</b><br/>" // Scenery:
+    "<br/><br/>" // File:
     "<b>Time:</b> %2<br/>%3%4"
       "<b>Errors:</b> %5<br/><br/>"
       "<big>Found:</big></br>"
@@ -389,12 +381,16 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         ok = false;
       else if(result == QMessageBox::Yes)
       {
-        QMessageBox *dialog = showSimpleProgressDialog(tr("Deleting ..."));
+        NavApp::deleteSplashScreen();
+        QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Deleting ..."));
+        atools::gui::Application::processEventsExtended();
 
         int i = 0;
         for(const QString& dbfile : databaseFiles)
         {
           dialog->setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
+          atools::gui::Application::processEventsExtended();
+          dialog->repaint();
           atools::gui::Application::processEventsExtended();
 
           if(QFile::remove(dbfile))
@@ -420,36 +416,11 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
           }
           i++;
         }
-        QGuiApplication::restoreOverrideCursor();
-
-        deleteSimpleProgressDialog(dialog);
+        atools::gui::Dialog::deleteSimpleProgressDialog(dialog);
       }
     }
   }
   return ok;
-}
-
-void DatabaseManager::deleteSimpleProgressDialog(QMessageBox *messageBox)
-{
-  messageBox->close();
-  messageBox->deleteLater();
-
-  QGuiApplication::restoreOverrideCursor();
-}
-
-QMessageBox *DatabaseManager::showSimpleProgressDialog(const QString& message)
-{
-  // Avoid the splash screen hiding the dialog
-  NavApp::deleteSplashScreen();
-
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-  QMessageBox *progressBox = new QMessageBox(QMessageBox::NoIcon, QApplication::applicationName(), message);
-  progressBox->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
-  progressBox->setStandardButtons(QMessageBox::NoButton);
-  progressBox->show();
-  atools::gui::Application::processEventsExtended();
-  return progressBox;
 }
 
 void DatabaseManager::checkCopyAndPrepareDatabases()
@@ -521,8 +492,10 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       if(result == QMessageBox::Yes)
       {
         // We have a database in the application folder and it is newer than the one in the settings folder
-        QMessageBox *dialog =
-          showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+        QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow,
+                                                                            tr("Preparing %1 Database ...").
+                                                                            arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+        atools::gui::Application::processEventsExtended();
 
         bool resultRemove = true, resultCopy = false;
         // Remove target
@@ -537,6 +510,8 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         {
           dialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
+          dialog->repaint();
+          atools::gui::Application::processEventsExtended();
           resultCopy = QFile(appDb).copy(settingsDb);
           qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
         }
@@ -548,15 +523,19 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
           openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
           dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
+          dialog->repaint();
+          atools::gui::Application::processEventsExtended();
           NavDatabase::runPreparationScript(tempDb);
 
           dialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          atools::gui::Application::processEventsExtended();
+          dialog->repaint();
           atools::gui::Application::processEventsExtended();
           tempDb.analyze();
           closeDatabaseFile(&tempDb);
           settingsNeedsPreparation = false;
         }
-        deleteSimpleProgressDialog(dialog);
+        atools::gui::Dialog::deleteSimpleProgressDialog(dialog);
 
         if(!resultRemove)
           atools::gui::Dialog::warning(nullptr,
@@ -573,8 +552,12 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
   if(settingsNeedsPreparation && hasSettings)
   {
-    QMessageBox *dialog =
-      showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+    NavApp::deleteSplashScreen();
+    QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Preparing %1 Database ...").
+                                                                        arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+    atools::gui::Application::processEventsExtended();
+    dialog->repaint();
+    atools::gui::Application::processEventsExtended();
 
     SqlDatabase tempDb(DATABASE_NAME_TEMP);
     openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
@@ -590,7 +573,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     tempDb.analyze();
     closeDatabaseFile(&tempDb);
 
-    deleteSimpleProgressDialog(dialog);
+    atools::gui::Dialog::deleteSimpleProgressDialog(dialog);
   }
 }
 
@@ -1296,25 +1279,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   navDatabaseOpts.setSimulatorType(selectedFsType);
 
   delete progressDialog;
-  progressDialog = new QProgressDialog(mainWindow);
-  progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
-  progressDialog->setWindowModality(Qt::ApplicationModal);
-
-  progressDialog->setWindowTitle(tr("%1 - Loading %2").
-                                 arg(QApplication::applicationName()).
-                                 arg(atools::fs::FsPaths::typeToShortName(selectedFsType)));
-
-  // Label will be owned by progress
-  QLabel *label = new QLabel(progressDialog);
-  label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-  label->setIndent(10);
-  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-  label->setMinimumWidth(800);
-
-  progressDialog->setLabel(label);
-  progressDialog->setAutoClose(false);
-  progressDialog->setAutoReset(false);
-  progressDialog->setMinimumDuration(0);
+  progressDialog = new DatabaseProgressDialog(mainWindow, atools::fs::FsPaths::typeToShortName(selectedFsType));
 
   navDatabaseOpts.setSceneryFile(simulators.value(selectedFsType).sceneryCfg);
   navDatabaseOpts.setBasepath(simulators.value(selectedFsType).basePath);
@@ -1323,17 +1288,22 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   progressTimerElapsed = 0L;
 
   progressDialog->setLabelText(
-    databaseTimeText.arg(QString()).
+    databaseTimeText.arg(tr("Counting files ...")).
     arg(QString()).
     arg(QString()).arg(QString()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0));
 
+  // Dialog does not close when clicking cancel
   progressDialog->show();
+
+  atools::gui::Application::processEventsExtended();
+  progressDialog->repaint();
+  atools::gui::Application::processEventsExtended();
 
   navDatabaseOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this,
                                                 std::placeholders::_1, timer));
 
   // Let the dialog close and show the busy pointer
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  QApplication::processEvents();
   atools::fs::NavDatabaseErrors errors;
 
   qInfo() << Q_FUNC_INFO << navDatabaseOpts;
@@ -1360,7 +1330,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
     success = false;
   }
 
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  QApplication::processEvents();
 
   // Show errors that occured during loading, if any
   if(errors.getTotalErrors() > 0)
@@ -1419,11 +1389,11 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
     errorDialog.exec();
   }
 
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  QApplication::processEvents();
   if(!progressDialog->wasCanceled() && success)
   {
     // Show results and wait until user selects ok
-    progressDialog->setCancelButtonText(tr("&OK"));
+    progressDialog->setOkButton();
     progressDialog->exec();
   }
   else
@@ -1523,7 +1493,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
         arg(progress.getNumBoundaries()));
     }
 
-    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    QApplication::processEvents();
     progressTimerElapsed = timer.elapsed();
   }
 
