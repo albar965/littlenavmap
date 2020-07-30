@@ -42,6 +42,8 @@ TextDialog::TextDialog(QWidget *parent, const QString& title, const QString& hel
   if(helpBaseUrl.isEmpty())
     ui->buttonBox->removeButton(ui->buttonBox->button(QDialogButtonBox::Help));
 
+  ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &TextDialog::buttonBoxClicked);
   connect(ui->textBrowser, &QTextBrowser::anchorClicked, this, &TextDialog::anchorClicked);
 }

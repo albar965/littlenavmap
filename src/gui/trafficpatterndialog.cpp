@@ -42,6 +42,9 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
 
   ui->setupUi(this);
 
+  ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Ok)->setDefault(true);
+  ui->tableWidgetTrafficPatternRunway->setFocus();
+
   runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetTrafficPatternRunway);
   runwaySelection->setAirportLabel(ui->labelTrafficPatternAirport);
   runwaySelection->setShowPattern(true);

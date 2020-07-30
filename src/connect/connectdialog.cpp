@@ -67,6 +67,7 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   okButton->setToolTip(tr("Connect to a local or remote simulator.\n"
                           "Will retry to connect if \"Connect automatically\" "
                           "is checked."));
+  okButton->setDefault(true);
 
   QPushButton *resetButton = ui->buttonBoxConnect->button(QDialogButtonBox::Reset);
   resetButton->setText(tr("&Disconnect"));

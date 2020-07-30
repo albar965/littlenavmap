@@ -58,6 +58,9 @@ ImageExportDialog::ImageExportDialog(QWidget *parent, const QString& titleParam,
   ui->setupUi(this);
   setWindowTitle(QApplication::applicationName() + titleParam);
 
+  ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+  ui->comboBoxResolution->setFocus();
+
   // Put current map size into current map view option
   ui->comboBoxResolution->setItemText(CURRENT_MAP_VIEW, ui->comboBoxResolution->itemText(CURRENT_MAP_VIEW).
                                       arg(curWidth).arg(curHeight));

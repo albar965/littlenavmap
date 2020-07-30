@@ -56,6 +56,9 @@ HoldDialog::HoldDialog(QWidget *parent, const map::MapResult& resultParam, const
   position = new atools::geo::Pos;
   *position = positionParam;
 
+  ui->buttonBoxHold->button(QDialogButtonBox::Ok)->setDefault(true);
+  ui->comboBoxHoldTurnDirection->setFocus();
+
   connect(ui->buttonBoxHold, &QDialogButtonBox::clicked, this, &HoldDialog::buttonBoxClicked);
   connect(ui->pushButtonHoldColor, &QPushButton::clicked, this, &HoldDialog::colorButtonClicked);
   connect(ui->spinBoxHoldSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),

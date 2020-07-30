@@ -51,6 +51,8 @@ ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString&
     // Remove help button if not requested
     ui->buttonBoxChoice->removeButton(ui->buttonBoxChoice->button(QDialogButtonBox::Help));
 
+  ui->buttonBoxChoice->button(QDialogButtonBox::Ok)->setDefault(true);
+
   connect(ui->buttonBoxChoice, &QDialogButtonBox::clicked, this, &ChoiceDialog::buttonBoxClicked);
 }
 
