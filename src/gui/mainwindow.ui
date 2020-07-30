@@ -6656,6 +6656,7 @@ Best track will be selected automatically.</string>
     <bool>false</bool>
    </attribute>
    <addaction name="actionConnectSimulator"/>
+   <addaction name="actionReloadScenery"/>
    <addaction name="actionOptions"/>
   </widget>
   <action name="actionSearchFilterIncluding">
