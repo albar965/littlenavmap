@@ -36,6 +36,7 @@ QString helpOnlineTutorialsUrl;
 QString helpOnlineLegendUrl;
 QString helpOnlineInstallRedistUrl;
 QString helpOnlineInstallGlobeUrl;
+QString helpOnlineInstallDirUrl;
 QString helpOnlineNavdatabasesUrl;
 QString helpOnlineStartUrl;
 QString helpLegendLocalFile;
@@ -85,6 +86,7 @@ void loadHelpUrls()
   helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();
   helpOnlineInstallRedistUrl = settings.value("help/installredist", base + "INSTALLATION.html#windows").toString();
   helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "OPTIONS.html#cache-elevation").toString();
+  helpOnlineInstallDirUrl = settings.value("help/installdir", base + "FOLDERS.html").toString();
   helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
   helpOnlineStartUrl = settings.value("help/start", base + "START.html").toString();
 

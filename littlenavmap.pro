@@ -230,6 +230,7 @@ SOURCES += \
   src/common/constants.cpp \
   src/common/coordinateconverter.cpp \
   src/common/dialogrecordhelper.cpp \
+  src/common/dirtool.cpp \
   src/common/elevationprovider.cpp \
   src/common/formatter.cpp \
   src/common/fueltool.cpp \
@@ -390,6 +391,7 @@ HEADERS  += \
   src/common/constants.h \
   src/common/coordinateconverter.h \
   src/common/dialogrecordhelper.h \
+  src/common/dirtool.h \
   src/common/elevationprovider.h \
   src/common/formatter.h \
   src/common/fueltool.h \

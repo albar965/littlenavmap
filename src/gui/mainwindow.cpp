@@ -82,6 +82,7 @@
 #include "gui/choicedialog.h"
 #include "gui/dockwidgethandler.h"
 #include "track/trackcontroller.h"
+#include "common/dirtool.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -2293,10 +2294,10 @@ bool MainWindow::routeSaveLnm()
 {
   // Show a simple warning for the rare case that altitude is null ===============
   if(atools::almostEqual(NavApp::getRoute().getCruisingAltitudeFeet(), 0.f, 10.f))
-    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING,
-                                                tr("Flight plan cruise altitude is zero.\n"
-                                                   "A simulator might not be able to load the flight plan."),
-                                                QObject::tr("Do not &show this dialog again."));
+    atools::gui::Dialog(this).showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING,
+                                             tr("Flight plan cruise altitude is zero.\n"
+                                                "A simulator might not be able to load the flight plan."),
+                                             QObject::tr("Do not &show this dialog again."));
 
   if(!routeController->isLnmFormatFlightplan())
   {
@@ -2951,6 +2952,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
+  s.setValue(lnm::ACTIONS_SHOW_INSTALL_DIRS, true);
   s.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
   s.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
   s.setValue(lnm::ACTIONS_SHOW_DELETE_MARKS, true);
@@ -3050,8 +3052,8 @@ void MainWindow::mainWindowShown()
     message += message2;
 #endif
 
-    atools::gui::Dialog(nullptr).showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message,
-                                                QObject::tr("Do not &show this dialog again."));
+    atools::gui::Dialog(this).showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message,
+                                             QObject::tr("Do not &show this dialog again."));
   }
 
   if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
@@ -3070,13 +3072,19 @@ void MainWindow::mainWindowShown()
                                     "is limited and has a lot of errors.<br/>"
                                     "Therefore, it is recommended to download and use the offline GLOBE elevation data "
                                     "which provides world wide coverage.</p>"
-                                    "<p><b>Go to: Main menu -&gt; <i>Tools</i> -&gt; <i>Options</i> and then to page <i>Cache and files</i> to add the GLOBE data.</b></p>"
-                                      "<p><a href=\"%1\"><b>Click here for more information in the <i>Little Navmap</i> online manual</b></a></p>")
+                                    "<p><b>Go to: Main menu -&gt; <i>Tools</i> -&gt; <i>Options</i> and "
+                                      "then to page <i>Cache and files</i> to add the GLOBE data.</b></p>"
+                                      "<p><a href=\"%1\"><b>Click here for more information in the "
+                                        "<i>Little Navmap</i> online manual</b></a></p>")
                       .arg(url.toString());
 
-    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
-                                                QObject::tr("Do not &show this dialog again."));
+    atools::gui::Dialog(this).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
+                                             QObject::tr("Do not &show this dialog again."));
   }
+
+  // Create recommended folder structure if user confirms
+  DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
+  dirTool.run();
 
   DatabaseManager *databaseManager = NavApp::getDatabaseManager();
   if(firstApplicationStart)

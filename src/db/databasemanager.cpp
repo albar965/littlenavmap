@@ -466,7 +466,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       if(hasSettings)
       {
         NavApp::deleteSplashScreen();
-        result = atools::gui::Dialog(nullptr).showQuestionMsgBox(
+        result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(
           lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
           tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
              "Overwrite your current navdata file with the new one?"
@@ -734,8 +734,8 @@ void DatabaseManager::switchNavFromMainMenu()
           "<p><b>Click the link below for more information:<br/><br/>"
           "<a href=\"%1\">Online Manual - Navigation Databases</a></b><br/></p>").arg(url.toString());
 
-    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
-                                                QObject::tr("Do not &show this dialog again."));
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
+                                                   QObject::tr("Do not &show this dialog again."));
   }
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);

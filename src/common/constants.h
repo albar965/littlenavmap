@@ -51,6 +51,7 @@ extern QString helpOnlineTutorialsUrl;
 extern QString helpOnlineLegendUrl;
 extern QString helpOnlineInstallRedistUrl;
 extern QString helpOnlineInstallGlobeUrl;
+extern QString helpOnlineInstallDirUrl;
 extern QString helpOnlineNavdatabasesUrl;
 extern QString helpOnlineStartUrl;
 extern QString helpLegendLocalFile;
@@ -81,6 +82,7 @@ const QLatin1Literal ACTIONS_SHOWROUTE_START_CHANGED("Actions/ShowRouteStartChan
 const QLatin1Literal ACTIONS_SHOW_UPDATE_FAILED("Actions/ShowUpdateFailed");
 const QLatin1Literal ACTIONS_SHOW_SSL_FAILED("Actions/ShowSslFailed");
 const QLatin1Literal ACTIONS_SHOW_INSTALL_GLOBE("Actions/ShowInstallGlobe");
+const QLatin1Literal ACTIONS_SHOW_INSTALL_DIRS("Actions/ShowInstallDirs");
 const QLatin1Literal ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
 const QLatin1Literal ACTIONS_SHOW_START_PERF_COLLECTION("Actions/ShowPerfCollection");
 const QLatin1Literal ACTIONS_SHOW_DELETE_TRAIL("Actions/DeleteTrail");
