@@ -58,7 +58,8 @@ void DirTool::run()
                         "<p>The follwing folders will be created:</p>"
                           "<p><b>%1</b><br/>"
                           "Top level directory for all files of <i>Little Navmap</i> "
-                          "containing the following sub-directories:</p>").arg(documentsDir + SEP + applicationDir));
+                          "containing the following sub-directories:</p>").
+                   arg(QDir::toNativeSeparators(documentsDir + SEP + applicationDir)));
 
     // Show list of folders and comment =========
     message.append(tr("<ul>"));
@@ -135,7 +136,8 @@ void DirTool::mkdir(const QString& dir)
   else
   {
     if(fi.isFile())
-      errors.append(tr("Cannot create directory \"%1\". File with same name already exists.").arg(fi.filePath()));
+      errors.append(tr("Cannot create directory \"%1\". File with same name already exists.").
+                    arg(QDir::toNativeSeparators(fi.filePath())));
   }
 }
 
@@ -145,7 +147,7 @@ void DirTool::mkdirBase()
   if(!fi.exists())
   {
     if(!QDir(documentsDir).mkdir(applicationDir))
-      errors.append(tr("Cannot create directory \"%1\"").arg(fi.filePath()));
+      errors.append(tr("Cannot create directory \"%1\"").arg(QDir::toNativeSeparators(fi.filePath())));
   }
   else
   {
