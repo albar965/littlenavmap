@@ -193,7 +193,6 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
       case map::SIMPLE:
       case map::PLAIN:
       case map::ATLAS:
-      case map::BLUEMARBLE:
       case map::CUSTOM:
         setShowClouds(false);
         break;
@@ -421,7 +420,6 @@ QString MapPaintWidget::getMapCopyright() const
       return FOURYOUMAPS;
 
     // Pubic domain, none or other open licenses
-    case map::BLUEMARBLE:
     case map::SIMPLE:
     case map::PLAIN:
     case map::ATLAS:

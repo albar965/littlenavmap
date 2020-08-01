@@ -2770,7 +2770,6 @@ void MapWidget::updateThemeUi(int index)
         ui->actionMapShowSunShading->setEnabled(true);
         break;
 
-      case map::BLUEMARBLE:
       case map::SIMPLE:
       case map::PLAIN:
       case map::ATLAS:
@@ -2826,20 +2825,16 @@ void MapWidget::updateMapObjectsShown()
   paintLayer->setWeatherSource(weatherSourceFromUi());
 
   // Other map features ====================================================
-  setShowMapPois(ui->actionMapShowCities->isChecked() &&
-                 (currentThemeIndex == map::SIMPLE || currentThemeIndex == map::PLAIN
-                  || currentThemeIndex == map::ATLAS || currentThemeIndex == map::BLUEMARBLE));
+  setShowMapPois(
+    ui->actionMapShowCities->isChecked() &&
+    (currentThemeIndex == map::SIMPLE || currentThemeIndex == map::PLAIN ||
+     currentThemeIndex == map::ATLAS));
   setShowGrid(ui->actionMapShowGrid->isChecked());
-
-  // Clouds only in Blue Marble theme - useless since static image
-  // setShowClouds(currentThemeIndex == map::BLUEMARBLE);
 
   // Need to keep track of hillshading separately since Marble has not getter
   hillshading = ui->actionMapShowHillshading->isChecked() &&
-                (currentThemeIndex == map::OPENSTREETMAP ||
-                 currentThemeIndex == map::CARTODARK ||
-                 currentThemeIndex == map::CARTOLIGHT ||
-                 currentThemeIndex >= map::CUSTOM);
+                (currentThemeIndex == map::OPENSTREETMAP || currentThemeIndex == map::CARTODARK ||
+                 currentThemeIndex == map::CARTOLIGHT || currentThemeIndex >= map::CUSTOM);
   setPropertyValue("hillshading", hillshading);
 
   setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());

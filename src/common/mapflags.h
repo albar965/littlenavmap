@@ -338,7 +338,6 @@ enum MapThemeComboIndex
   CARTOLIGHT,
   CARTODARK,
   FOURYOUMAPS,
-  BLUEMARBLE,
   SIMPLE,
   PLAIN,
   ATLAS,
@@ -349,7 +348,7 @@ enum MapThemeComboIndex
 /* All known map theme names =========================================== */
 static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "opentopomap", "plain",
                                            "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight",
-                                           "4umaps", "bluemarble"});
+                                           "4umaps"});
 
 /* Sun shading sub menu actions.
  * Values are saved in settings do not change */
