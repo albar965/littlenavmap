@@ -193,12 +193,9 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
       case map::SIMPLE:
       case map::PLAIN:
       case map::ATLAS:
+      case map::BLUEMARBLE:
       case map::CUSTOM:
         setShowClouds(false);
-        break;
-
-      case map::BLUEMARBLE:
-        setShowClouds(true);
         break;
 
       case map::OPENTOPOMAP:

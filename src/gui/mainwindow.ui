@@ -305,8 +305,8 @@
      <addaction name="actionMapThemeCartoLight"/>
      <addaction name="actionMapThemeCartoDark"/>
      <addaction name="actionMapTheme4Umaps"/>
-     <addaction name="actionMapThemeBlueMarble"/>
      <addaction name="separator"/>
+     <addaction name="actionMapThemeBlueMarble"/>
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
      <addaction name="actionMapThemeAtlas"/>
@@ -11428,7 +11428,7 @@ Best track will be selected automatically.</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Blue Marble</string>
+    <string>Blue Marble (Offline)</string>
    </property>
    <property name="toolTip">
     <string>Blue Marble offline map theme with clouds</string>

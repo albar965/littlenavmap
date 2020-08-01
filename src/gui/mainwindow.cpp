@@ -678,7 +678,7 @@ void MainWindow::setupUi()
   mapThemeComboBox->addItem(tr("CARTO Light"), "earth/cartolight/cartolight.dgml");
   mapThemeComboBox->addItem(tr("CARTO Dark"), "earth/cartodark/cartodark.dgml");
   mapThemeComboBox->addItem(tr("4UMaps"), "earth/4umaps/4umaps.dgml");
-  mapThemeComboBox->addItem(tr("Blue Marble"), "earth/bluemarble/bluemarble.dgml");
+  mapThemeComboBox->addItem(tr("Blue Marble (Offline)"), "earth/bluemarble/bluemarble.dgml");
   mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
   mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
   mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");

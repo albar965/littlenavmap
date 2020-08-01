@@ -46,13 +46,14 @@
                     <installmap> bluemarble.jpg </installmap>
                     <storageLayout maximumTileLevel="7"/>
                 </texture>
-                <texture name="clouds_data" expire="10800"><!-- type="texture"-->
+                <!-- The cloud layer completely useless since it is a static image
+                <texture name="clouds_data" expire="3600">
                     <sourcedir format="JPG"> earth/clouds </sourcedir>
                     <tileSize width="675" height="675" />
                     <installmap> clouds.jpg </installmap>
                     <storageLayout maximumTileLevel="5"/>
                     <blending name="CloudsBlending" />
-                </texture>
+                </texture> -->
             </layer>
             <layer name="naturalearth" backend="geodata">
                 <geodata name="border" property="borders">
@@ -156,12 +157,12 @@
                 </property>
             </group>
 
-            <group name="Texture Layers">
+            <!-- <group name="Texture Layers">
                 <property name="clouds_data">
                     <value>true</value>
                     <available>true</available>
                 </property>
-            </group>
+            </group>-->
 
             <property name="coordinate-grid">
                 <value>true</value>

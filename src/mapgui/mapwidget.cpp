@@ -2831,8 +2831,8 @@ void MapWidget::updateMapObjectsShown()
                   || currentThemeIndex == map::ATLAS || currentThemeIndex == map::BLUEMARBLE));
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
-  // Clouds only in Blue Marble theme
-  setShowClouds(currentThemeIndex == map::BLUEMARBLE);
+  // Clouds only in Blue Marble theme - useless since static image
+  // setShowClouds(currentThemeIndex == map::BLUEMARBLE);
 
   // Need to keep track of hillshading separately since Marble has not getter
   hillshading = ui->actionMapShowHillshading->isChecked() &&
