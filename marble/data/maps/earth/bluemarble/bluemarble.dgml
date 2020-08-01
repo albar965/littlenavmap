@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     This xml file is free software licensed under the GNU LGPL. You can
+     find a copy of this license in LICENSE.txt in the top directory of
+     the source code.
+-->
+<dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+    <document>
+        <head>
+            <!-- the license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
+            <license short="NASA / Public Domain">Source: NASA Goddard Space Flight Center Earth Observatory http://earthobservatory.nasa.gov/Newsroom/BlueMarble, License: Public Domain</license>
+            <name>Satellite View</name>
+            <target>earth</target>
+            <theme>bluemarble</theme>
+            <icon pixmap="bluemarble-preview.png"/>
+
+            <!-- describes whether the map theme item will be hidden (e.g.
+                for a clouds layer): -->
+            <visible> true </visible>
+
+            <!-- The description allows for rich text of course: -->
+            <description><![CDATA[<p>Earth as seen from Space.</p><p>The map is based on NASA's beautiful "Blue Marble Next Generation" pictures. Credits: NASA's Earth Observatory</p>]]></description>
+
+            <zoom>
+                <minimum>   900  </minimum>
+                <maximum>  3500  </maximum>
+
+                <!-- describes whether you can zoom trough the levels
+                    continuously -->
+                <discrete> false </discrete>
+            </zoom>
+        </head>
+
+            <!-- Now we create the layer structure that gets handled by the
+    layer management class -->
+
+        <map bgcolor="#000000" labelColor="#ffffff">
+            <canvas/>
+            <!-- In this place one could e.g. insert a sky plugin -->
+            <target/>
+
+            <!-- This layer creates the elevation model -->
+            <layer name="bluemarble" backend="texture">
+                <texture name="bluemarble_data"><!-- type="texture"-->
+                    <sourcedir format="JPG"> earth/bluemarble </sourcedir>
+                    <installmap> bluemarble.jpg </installmap>
+                    <storageLayout maximumTileLevel="7"/>
+                </texture>
+                <texture name="clouds_data" expire="10800"><!-- type="texture"-->
+                    <sourcedir format="JPG"> earth/clouds </sourcedir>
+                    <tileSize width="675" height="675" />
+                    <installmap> clouds.jpg </installmap>
+                    <storageLayout maximumTileLevel="5"/>
+                    <blending name="CloudsBlending" />
+                </texture>
+            </layer>
+            <layer name="naturalearth" backend="geodata">
+                <geodata name="border" property="borders">
+                    <sourcefile> naturalearth/ne_50m_admin_0_boundary_lines_land.pn2 </sourcefile>
+                    <pen color="#ffe300" width="1.0" />
+                </geodata>
+                <geodata name="maritimeindicators" property="borders">
+                    <sourcefile> naturalearth/ne_50m_admin_0_boundary_lines_maritime_indicator.pn2 </sourcefile>
+                    <pen color="#ffe300" width="1.0" />
+                </geodata>
+                <geodata name="breakawaydisputed" property="borders">
+                    <sourcefile> naturalearth/ne_50m_admin_0_breakaway_disputed_areas.pn2 </sourcefile>
+                    <pen color="#cccbca" width="1"/>
+                    <brush color="#cccbca" alpha="0.5" />
+                </geodata>
+                <geodata name="admin1" property="borders">
+                    <sourcefile> naturalearth/ne_50m_admin_1_states_provinces_lines.pn2 </sourcefile>
+                    <pen color="#ffe300" style="dashdotline" />
+                </geodata>
+                <geodata name="international dateline" property="borders">
+                    <sourcefile> mwdbii/DATELINE.PNT </sourcefile>
+                    <pen color="#000000" />
+                </geodata>
+            </layer>
+
+            <layer name="standardplaces" backend="geodata">
+                <geodata name="cityplacemarks">
+                    <sourcefile>cityplacemarks.cache</sourcefile>
+                </geodata>
+                <geodata name="baseplacemarks">
+                    <sourcefile>baseplacemarks.cache</sourcefile>
+                </geodata>
+                <geodata name="elevplacemarks">
+                    <sourcefile>elevplacemarks.cache</sourcefile>
+                </geodata>
+                <geodata name="otherplacemarks">
+                    <sourcefile>otherplacemarks.cache</sourcefile>
+                </geodata>
+                <geodata name="boundaryplacemarks">
+                    <sourcefile>boundaryplacemarks.cache</sourcefile>
+                </geodata>
+            </layer>
+        </map>
+
+        <settings>
+            <group name="Places">
+                <property name="places">
+                    <value>true</value>
+                    <available>true</available>
+                </property>
+                <property name="cities">
+                    <value>true</value>
+                    <available>true</available>
+                </property>
+                <property name="terrain">
+                    <value>true</value>
+                    <available>true</available>
+                </property>
+                <property name="otherplaces">
+                    <value>true</value>
+                    <available>true</available>
+                </property>
+            </group>
+
+            <group name="Boundaries">
+                <property name="borders">
+                    <value>false</value>
+                    <available>true</available>
+                </property>
+                <property name="international-boundaries">
+                    <value>false</value>
+                    <available>true</available>
+                </property>
+                <property name="state-boundaries">
+                    <value>false</value>
+                    <available>true</available>
+                </property>
+            </group>
+            <group name="Water Bodies">
+                <property name="waterbodies">
+                    <available>true</available>
+                    <value>true</value>
+                </property>
+                <property name="lakes">
+                    <available>false</available>
+                    <value>false</value>
+                </property>
+                <property name="rivers">
+                    <available>false</available>
+                    <value>false</value>
+                </property>
+            </group>
+            <group name="Surface">
+                <property name="ice">
+                    <value>false</value>
+                    <available>false</available>
+                </property>
+                <property name="relief">
+                    <value>false</value>
+                    <available>false</available>
+                </property>
+            </group>
+
+            <group name="Texture Layers">
+                <property name="clouds_data">
+                    <value>true</value>
+                    <available>true</available>
+                </property>
+            </group>
+
+            <property name="coordinate-grid">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <property name="overviewmap">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <property name="compass">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <property name="scalebar">
+                <value>true</value>
+                <available>true</available>
+            </property>
+        </settings>
+
+        <!-- At last we define some legend properties -->
+
+        <legend>
+            <section name="terrain" checkable="true" connect="terrain" spacing="12">
+                <heading>Terrain</heading>
+
+                <item name="mountain">
+                    <icon pixmap="bitmaps/mountain_1.png"/>
+                    <text>Mountain</text>
+                </item>
+                <item name="volcano">
+                    <icon pixmap="bitmaps/volcano_1.png"/>
+                    <text>Volcano</text>
+                </item>
+            </section>
+
+            <section name="otherplaces" checkable="true" connect="otherplaces" spacing="12">
+                <heading>Places of Interest</heading>
+
+                <item name="geographic-pole">
+                    <icon pixmap="bitmaps/pole_1.png"/>
+                    <text>Geographic Pole</text>
+                </item>
+                <item name="magnetic-pole">
+                    <icon pixmap="bitmaps/pole_2.png"/>
+                    <text>Magnetic Pole</text>
+                </item>
+                <item name="airport">
+                    <icon pixmap="bitmaps/airport.png"/>
+                    <text>Airport</text>
+                </item>
+                <item name="shipwreck">
+                    <icon pixmap="bitmaps/shipwreck.png"/>
+                    <text>Shipwreck</text>
+                </item>
+                <item name="observatory">
+                    <icon pixmap="bitmaps/observatory.png"/>
+                    <text>Astronomical Observatory</text>
+                </item>
+            </section>
+
+            <section name="borders" checkable="true" connect="borders" spacing="12">
+                <heading>Boundaries</heading>
+
+                <item name="international-boundary">
+                    <icon color="#ffe300" pixmap="bitmaps/border_1.png"/>
+                    <text>International</text>
+                </item>
+                <item name="state">
+                    <icon color="#ffe300" pixmap="bitmaps/border_2.png"/>
+                    <text>State</text>
+                </item>
+            </section>
+
+            <section name="surface" checkable="false" spacing="12">
+                <heading>Surface</heading>
+
+                <item name="ice">
+                    <icon pixmap="maps/earth/bluemarble/legend/ice.png"/>
+                    <text>Ice</text>
+                </item>
+                <item name="mountain">
+                    <icon pixmap="maps/earth/bluemarble/legend/mountain.png"/>
+                    <text>Mountain</text>
+                </item>
+                <item name="vegetation">
+                    <icon pixmap="maps/earth/bluemarble/legend/vegetation.png"/>
+                    <text>Vegetation</text>
+                </item>
+                <item name="desert">
+                    <icon pixmap="maps/earth/bluemarble/legend/desert.png"/>
+                    <text>Desert</text>
+                </item>
+                <item name="water">
+                    <icon pixmap="maps/earth/bluemarble/legend/water.png"/>
+                    <text>Water</text>
+                </item>
+            </section>
+
+            <section name="coordinate-grid" checkable="true" connect="coordinate-grid" spacing="12">
+                <heading>Coordinate Grid</heading>
+            </section>
+        </legend>
+    </document>
+</dgml>

@@ -305,6 +305,7 @@
      <addaction name="actionMapThemeCartoLight"/>
      <addaction name="actionMapThemeCartoDark"/>
      <addaction name="actionMapTheme4Umaps"/>
+     <addaction name="actionMapThemeBlueMarble"/>
      <addaction name="separator"/>
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
@@ -11419,7 +11420,21 @@ Best track will be selected automatically.</string>
     <string>4UMaps online map theme</string>
    </property>
    <property name="statusTip">
-    <string>CARTO Dark online map theme</string>
+    <string>4UMaps online map theme</string>
+   </property>
+  </action>
+  <action name="actionMapThemeBlueMarble">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Blue Marble</string>
+   </property>
+   <property name="toolTip">
+    <string>Blue Marble offline map theme with clouds</string>
+   </property>
+   <property name="statusTip">
+    <string>Blue Marble offline map theme with clouds</string>
    </property>
   </action>
  </widget>

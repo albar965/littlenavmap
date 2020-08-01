@@ -2759,13 +2759,14 @@ void MapWidget::updateThemeUi(int index)
         break;
 
       case map::OPENSTREETMAP:
-      case map::CARTODARK:
       case map::CARTOLIGHT:
+      case map::CARTODARK:
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(true);
         ui->actionMapShowSunShading->setEnabled(true);
         break;
 
+      case map::BLUEMARBLE:
       case map::SIMPLE:
       case map::PLAIN:
       case map::ATLAS:
@@ -2773,7 +2774,8 @@ void MapWidget::updateThemeUi(int index)
         ui->actionMapShowHillshading->setEnabled(false);
         ui->actionMapShowSunShading->setEnabled(false);
         break;
-      case map::INVALID:
+
+      case map::INVALID_THEME:
         qWarning() << "Invalid theme index" << index;
         break;
     }
@@ -2822,8 +2824,11 @@ void MapWidget::updateMapObjectsShown()
   // Other map features ====================================================
   setShowMapPois(ui->actionMapShowCities->isChecked() &&
                  (currentThemeIndex == map::SIMPLE || currentThemeIndex == map::PLAIN
-                  || currentThemeIndex == map::ATLAS));
+                  || currentThemeIndex == map::ATLAS || currentThemeIndex == map::BLUEMARBLE));
   setShowGrid(ui->actionMapShowGrid->isChecked());
+
+  // Clouds only in Blue Marble theme
+  setShowClouds(currentThemeIndex == map::BLUEMARBLE);
 
   // Need to keep track of hillshading separately since Marble has not getter
   hillshading = ui->actionMapShowHillshading->isChecked() &&

@@ -110,11 +110,6 @@ static const int WEATHER_UPDATE_MS = 15000;
 
 static const int MAX_STATUS_MESSAGES = 20;
 
-// All known map themes
-static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "opentopomap", "plain",
-                                           "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight",
-                                           "4umaps"});
-
 using namespace Marble;
 using atools::settings::Settings;
 using atools::gui::FileHistoryHandler;
@@ -683,6 +678,7 @@ void MainWindow::setupUi()
   mapThemeComboBox->addItem(tr("CARTO Light"), "earth/cartolight/cartolight.dgml");
   mapThemeComboBox->addItem(tr("CARTO Dark"), "earth/cartodark/cartodark.dgml");
   mapThemeComboBox->addItem(tr("4UMaps"), "earth/4umaps/4umaps.dgml");
+  mapThemeComboBox->addItem(tr("Blue Marble"), "earth/bluemarble/bluemarble.dgml");
   mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
   mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
   mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");
@@ -727,6 +723,9 @@ void MainWindow::setupUi()
 
   ui->actionMapTheme4Umaps->setActionGroup(actionGroupMapTheme);
   ui->actionMapTheme4Umaps->setData(map::FOURYOUMAPS);
+
+  ui->actionMapThemeBlueMarble->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeBlueMarble->setData(map::BLUEMARBLE);
 
   ui->actionMapThemeSimple->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeSimple->setData(map::SIMPLE);
@@ -1325,6 +1324,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapThemeCartoLight, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeCartoDark, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapTheme4Umaps, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapThemeBlueMarble, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeSimple, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemePlain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeAtlas, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
@@ -1727,7 +1727,7 @@ void MainWindow::findCustomMaps(QFileInfoList& customDgmlFiles)
   // Look for new map themes
   for(const QFileInfo& info : entries)
   {
-    if(!STOCK_MAP_THEMES.contains(info.baseName(), Qt::CaseInsensitive))
+    if(!map::STOCK_MAP_THEMES.contains(info.baseName(), Qt::CaseInsensitive))
     {
       // Found a new directory
       qDebug() << "Custom theme" << info.absoluteFilePath();

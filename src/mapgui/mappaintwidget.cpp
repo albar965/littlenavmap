@@ -193,6 +193,11 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
       case map::PLAIN:
       case map::ATLAS:
       case map::CUSTOM:
+        setShowClouds(false);
+        break;
+
+      case map::BLUEMARBLE:
+        setShowClouds(true);
         break;
 
       case map::OPENTOPOMAP:
@@ -200,6 +205,7 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
         // This actually does not work until the polygon files are deleted from the configuration
         setPropertyValue("ice", false);
         setShowIceLayer(false);
+        setShowClouds(false);
         break;
 
       case map::INVALID_THEME:
@@ -416,6 +422,8 @@ QString MapPaintWidget::getMapCopyright() const
     case map::FOURYOUMAPS:
       return FOURYOUMAPS;
 
+    // Pubic domain, none or other open licenses
+    case map::BLUEMARBLE:
     case map::SIMPLE:
     case map::PLAIN:
     case map::ATLAS:
