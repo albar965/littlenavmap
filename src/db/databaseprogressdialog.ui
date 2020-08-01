@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>DatabaseProgressDialog</class>
  <widget class="QDialog" name="DatabaseProgressDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>658</width>
-    <height>260</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
@@ -19,7 +11,7 @@
      <property name="minimumSize">
       <size>
        <width>640</width>
-       <height>120</height>
+       <height>180</height>
       </size>
      </property>
      <property name="frameShape">

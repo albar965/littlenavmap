@@ -2669,8 +2669,8 @@ Afftects map and elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>405</width>
-             <height>317</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -3041,8 +3041,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>325</width>
-             <height>352</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -3506,8 +3506,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>348</height>
+             <width>600</width>
+             <height>480</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -3837,8 +3837,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>580</width>
-             <height>393</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4177,8 +4177,8 @@ after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>477</width>
-             <height>383</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -4518,8 +4518,8 @@ Check this if you rely on GPS when flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>258</width>
-             <height>302</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -4729,8 +4729,8 @@ Check this if you rely on GPS when flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>333</width>
-             <height>368</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -5168,8 +5168,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>283</width>
-             <height>311</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -5455,8 +5455,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>450</width>
-             <height>234</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -5642,8 +5642,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>491</width>
-             <height>442</height>
+             <width>572</width>
+             <height>470</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -5838,8 +5838,10 @@ Has a 30 arc second grid (approximately 900 meter near the equator).</string>
                <item row="3" column="0" colspan="3">
                 <widget class="QLabel" name="labelCacheGlobePathDownload">
                  <property name="text">
-                  <string>&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;Get the free GLOBE elevation data here.&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
-Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; and extract the archive to an arbitrary place. See help for more information.</string>
+                  <string>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;Click here to open the download page for the GLOBE data in your browser&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
+Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select GLOBE Directory ...&lt;/i&gt; above and choose the directory with the extracted files.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here for more information in the &lt;i&gt;Little Navmap&lt;/i&gt; online manual&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -6024,8 +6026,8 @@ Currently only OpenAir is supported (*.txt). </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>191</width>
-             <height>543</height>
+             <width>586</width>
+             <height>483</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

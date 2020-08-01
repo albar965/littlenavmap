@@ -3058,13 +3058,20 @@ void MainWindow::mainWindowShown()
   {
     NavApp::deleteSplashScreen();
 
+    // Text from options
+    // <p><a href="https://www.ngdc.noaa.gov/mgg/topo/gltiles.html"><b>Click here to open the download page for the GLOBE data in your browser</b></a><br/>
+    // Download the file <b><i>All Tiles in One .zip (all10g.zip)</i></b> from the page and extract
+    // the archive to an arbitrary place, e.g in <i>Documents</i>. Then click <i>Select GLOBE Directory ...</i>
+    // above and choose the directory with the extracted files.</p>
+    // <p><a href="%1"><b>Click here for more information in the <i>Little Navmap</i> online manual</b></a></p>
+
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
     QString message = QObject::tr("<p>The online elevation data which is used by default for the elevation profile "
                                     "is limited and has a lot of errors.<br/>"
                                     "Therefore, it is recommended to download and use the offline GLOBE elevation data "
                                     "which provides world wide coverage.</p>"
-                                    "<p><b>Click the link below for more information:<br/><br/>"
-                                    "<a href=\"%1\">Online Manual - Options Dialog / Flight Plan Elevation Profile</a></b><br/></p>")
+                                    "<p><b>Go to: Main menu -&gt; <i>Tools</i> -&gt; <i>Options</i> and then to page <i>Cache and files</i> to add the GLOBE data.</b></p>"
+                                      "<p><a href=\"%1\"><b>Click here for more information in the <i>Little Navmap</i> online manual</b></a></p>")
                       .arg(url.toString());
 
     atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
