@@ -49,10 +49,12 @@ void TextPlacement::calculateTextPositions(const atools::geo::LineString& points
   for(int i = 0; i < points.size(); i++)
   {
     int x1 = 0, y1 = 0;
-    bool visibleStart = points.at(i).isValid() ? converter->wToS(points.at(i), x1, y1) : false;
+    bool hidden;
+    bool visibleStart = points.at(i).isValid() ?
+                        converter->wToS(points.at(i), x1, y1, CoordinateConverter::DEFAULT_WTOS_SIZE, &hidden) : false;
 
-    if(!visibleStart && !screenRect.isNull())
-      // Not visible - try the (extended) screen rectangle
+    if(!visibleStart && !screenRect.isNull() && !hidden)
+      // Not visible - try the (extended) screen rectangle if not hidden behind the globe
       visibleStart = screenRect.contains(x1, y1);
 
     visibleStartPoints.setBit(i, visibleStart);
