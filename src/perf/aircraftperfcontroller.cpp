@@ -1194,7 +1194,8 @@ void AircraftPerfController::restoreState()
           this, &AircraftPerfController::updateTabTiltle);
 
   fileHistory->restoreState();
-  loadFile(settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME));
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
+    loadFile(settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME));
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::WidgetState state(lnm::AIRCRAFT_PERF_WIDGETS, true /* visibility */, true /* block signals */);

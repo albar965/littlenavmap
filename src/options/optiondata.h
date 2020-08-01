@@ -101,7 +101,12 @@ enum Flag
   ROUTE_GARMIN_USER_WPT = 1 << 22,
 
   /* checkBoxOptionsRouteDeclination */
-  ROUTE_IGNORE_VOR_DECLINATION = 1 << 23
+  ROUTE_IGNORE_VOR_DECLINATION = 1 << 23,
+
+  /* Reload aircraft performance on startup.
+   * ui->checkBoxOptionsStartupLoadperf */
+  STARTUP_LOAD_PERF = 1 << 24,
+
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);

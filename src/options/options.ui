@@ -102,7 +102,40 @@
                <property name="spacing">
                 <number>2</number>
                </property>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
+                 <property name="text">
+                  <string>Load last used &amp;flight plan</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
                <item row="1" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionsStartupLoadPerf">
+                 <property name="text">
+                  <string>Load last used &amp;aircraft performance</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
+                 <property name="toolTip">
+                  <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
+                 </property>
+                 <property name="text">
+                  <string>Load the &amp;map display saved settings</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
                 <widget class="QCheckBox" name="checkBoxOptionsStartupLoadTrail">
                  <property name="toolTip">
                   <string>Load the last flight trail flown</string>
@@ -119,29 +152,6 @@
                 <widget class="QCheckBox" name="checkBoxOptionsStartupLoadKml">
                  <property name="text">
                   <string>Load all last used Google Earth &amp;KML files</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
-                 <property name="text">
-                  <string>Load last used &amp;flight plan</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
-                 <property name="toolTip">
-                  <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
-                 </property>
-                 <property name="text">
-                  <string>Load the &amp;map display saved settings</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -6256,9 +6266,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsStartupLoadRoute</tabstop>
   <tabstop>checkBoxOptionsStartupLoadMapSettings</tabstop>
   <tabstop>checkBoxOptionsStartupLoadTrail</tabstop>
-  <tabstop>checkBoxOptionsStartupLoadInfoContent</tabstop>
-  <tabstop>checkBoxOptionsStartupLoadKml</tabstop>
-  <tabstop>checkBoxOptionsStartupLoadSearch</tabstop>
   <tabstop>radioButtonOptionsStartupShowLast</tabstop>
   <tabstop>radioButtonOptionsStartupShowHome</tabstop>
   <tabstop>radioButtonOptionsStartupShowFlightplan</tabstop>

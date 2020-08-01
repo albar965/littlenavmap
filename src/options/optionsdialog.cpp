@@ -300,6 +300,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsStartupLoadKml,
      ui->checkBoxOptionsStartupLoadMapSettings,
      ui->checkBoxOptionsStartupLoadRoute,
+     ui->checkBoxOptionsStartupLoadPerf,
      ui->checkBoxOptionsStartupLoadTrail,
      ui->checkBoxOptionsStartupLoadSearch,
      ui->checkBoxOptionsStartupLoadInfoContent,
@@ -672,6 +673,7 @@ void OptionsDialog::open()
   updateWidgetUnits();
   mapClickAirportProcsToggled();
   updateFlightplanExample();
+  updateLinks();
 
   QDialog::open();
 }
@@ -1480,6 +1482,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
   toFlags(ui->checkBoxOptionsStartupLoadTrail, opts::STARTUP_LOAD_TRAIL);
   toFlags(ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
+  toFlags(ui->checkBoxOptionsStartupLoadPerf, opts::STARTUP_LOAD_PERF);
   toFlags(ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);
   toFlags(ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
   toFlags(ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
@@ -1731,6 +1734,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data, ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   fromFlags(data, ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
   fromFlags(data, ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
+  fromFlags(data, ui->checkBoxOptionsStartupLoadPerf, opts::STARTUP_LOAD_PERF);
   fromFlags(data, ui->checkBoxOptionsStartupLoadTrail, opts::STARTUP_LOAD_TRAIL);
   fromFlags(data, ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
   fromFlags(data, ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);
@@ -2471,6 +2475,13 @@ void OptionsDialog::flightplanPatterLongClicked()
 {
   ui->lineEditOptionsRouteFilename->setText(atools::fs::pln::pattern::LONG);
   updateFlightplanExample();
+}
+
+void OptionsDialog::updateLinks()
+{
+  QString url =
+    atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline()).toString();
+  ui->labelCacheGlobePathDownload->setText(ui->labelCacheGlobePathDownload->text().arg(url));
 }
 
 void OptionsDialog::updateFlightplanExample()

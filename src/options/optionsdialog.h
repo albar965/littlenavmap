@@ -216,6 +216,7 @@ private:
   void flightplanPatterShortClicked();
   void flightplanPatterLongClicked();
   void updateFlightplanExample();
+  void updateLinks();
 
   QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
