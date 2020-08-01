@@ -1064,6 +1064,10 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       }
     }
   }
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "distance NM" << atools::geo::kmToNm(distance()) << "zoom" << zoom();
+#endif
 }
 
 bool MapWidget::touchAreaClicked(QMouseEvent *event)

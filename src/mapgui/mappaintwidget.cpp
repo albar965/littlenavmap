@@ -41,6 +41,7 @@ const float POS_IS_POINT_EPSILON = 0.0001f;
 // KM
 const static double MINIMUM_DISTANCE_KM = 0.1;
 const static double MAXIMUM_DISTANCE_KM = 6000.;
+const static int MAXIMUM_ZOOM = 1120;
 
 using namespace Marble;
 using atools::geo::Rect;
@@ -638,6 +639,13 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
     else
       setDistanceToMap(MAXIMUM_DISTANCE_KM, allowAdjust);
   }
+
+  if(zoom() < MAXIMUM_ZOOM)
+    setZoom(MAXIMUM_ZOOM);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "distance NM" << atools::geo::kmToNm(distance()) << "zoom" << zoom();
+#endif
 }
 
 void MapPaintWidget::adjustMapDistance()
