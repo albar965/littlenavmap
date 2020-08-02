@@ -189,7 +189,6 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
       case map::OPENSTREETMAP:
       case map::CARTODARK:
       case map::CARTOLIGHT:
-      case map::FOURYOUMAPS:
       case map::SIMPLE:
       case map::PLAIN:
       case map::ATLAS:
@@ -402,7 +401,6 @@ QString MapPaintWidget::getMapCopyright() const
 {
   static const QString OSM("© OpenStreetMap contributors");
   static const QString OTM("© OpenStreetMap / OpenTopoMap contributors");
-  static const QString FOURYOUMAPS("© 4UMaps.com, © OpenStreetMap and contributors");
   static const QString NONE;
 
   switch(currentThemeIndex)
@@ -415,9 +413,6 @@ QString MapPaintWidget::getMapCopyright() const
     case map::CARTOLIGHT:
     case map::CARTODARK:
       return OSM;
-
-    case map::FOURYOUMAPS:
-      return FOURYOUMAPS;
 
     // Pubic domain, none or other open licenses
     case map::SIMPLE:

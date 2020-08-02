@@ -304,7 +304,6 @@
      <addaction name="actionMapThemeStamenTerrain"/>
      <addaction name="actionMapThemeCartoLight"/>
      <addaction name="actionMapThemeCartoDark"/>
-     <addaction name="actionMapTheme4Umaps"/>
      <addaction name="separator"/>
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
@@ -11406,20 +11405,6 @@ Best track will be selected automatically.</string>
    </property>
    <property name="statusTip">
     <string>Save current window layout</string>
-   </property>
-  </action>
-  <action name="actionMapTheme4Umaps">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>4UMaps</string>
-   </property>
-   <property name="toolTip">
-    <string>4UMaps online map theme</string>
-   </property>
-   <property name="statusTip">
-    <string>4UMaps online map theme</string>
    </property>
   </action>
  </widget>

@@ -2755,7 +2755,6 @@ void MapWidget::updateThemeUi(int index)
     switch(index)
     {
       case map::STAMENTERRAIN:
-      case map::FOURYOUMAPS:
       case map::OPENTOPOMAP:
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(false);
