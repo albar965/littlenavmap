@@ -1599,28 +1599,35 @@ void ProfileWidget::buildTooltip(int x)
   atools::util::HtmlBuilder html;
 
   // Header from and to distance, altitude and next waypoint ============
-  html.p().b(Unit::distNm(distance) + tr(" ► ") + Unit::distNm(distanceToGo));
+  html.b(Unit::distNm(distance, false) + tr(" ► ") + Unit::distNm(distanceToGo));
   float altitude = NavApp::getRoute().getAltitudeForDistance(distanceToGo);
   if(altitude < map::INVALID_ALTITUDE_VALUE)
     html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude)).arg(fromTo).arg(toWaypoint));
-  html.pEnd();
+
+  if(routeLeg.getCourseToMag() < map::INVALID_COURSE_VALUE)
+    html.br().b(tr("Course: ")).
+    text(formatter::courseTextFromMag(routeLeg.getCourseToMag(), routeLeg.getMagvar(), false, false),
+         atools::util::html::NO_ENTITIES);
 
   // Build table =====================
-  html.table();
+  QStringList groundText;
 
   if(groundElevation < map::INVALID_ALTITUDE_VALUE)
-    html.row2(tr("Ground Elevation:"), Unit::altFeet(groundElevation));
+    groundText.append(Unit::altFeet(groundElevation));
 
   if(altitude < map::INVALID_ALTITUDE_VALUE && groundElevation < map::INVALID_ALTITUDE_VALUE)
   {
     float aboveGround = map::INVALID_ALTITUDE_VALUE;
     aboveGround = std::max(0.f, altitude - groundElevation);
     if(aboveGround < map::INVALID_ALTITUDE_VALUE)
-      html.row2(tr("Above Ground:"), Unit::altFeet(aboveGround));
+      groundText.append(tr("%1 above").arg(Unit::altFeet(aboveGround)));
   }
 
+  if(!groundText.isEmpty())
+    html.br().b(tr("Ground: ")).text(atools::strJoin(groundText, tr(", ")));
+
   if(maxElev < map::INVALID_ALTITUDE_VALUE)
-    html.row2(tr("Leg Safe Altitude:"), Unit::altFeet(maxElev));
+    html.br().b(tr("Leg Safe Altitude: ")).text(Unit::altFeet(maxElev));
 
   // Show wind at altitude ===============================================
   const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.value(index + 1) : nullptr;
@@ -1638,7 +1645,7 @@ void ProfileWidget::buildTooltip(int x)
       QString windText = tr("%1°M, %2").
                          arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
                          arg(Unit::speedKts(wind.speed));
-      html.row2(tr("%1Wind:").arg(windReporter->isWindManual() ? tr("Manual ") : QString()), windText);
+      html.br().b(tr("%1Wind: ").arg(windReporter->isWindManual() ? tr("Manual ") : QString())).text(windText);
 
       // Add tail/headwind if sufficient =======================================
       if(std::abs(headWind) >= 1.f)
@@ -1648,11 +1655,10 @@ void ProfileWidget::buildTooltip(int x)
           windPtr = tr("◄");
         else if(headWind <= -1.f)
           windPtr = tr("►");
-        html.row2(QString(), tr("%1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
+        html.text(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
       }
     }
   }
-  html.tableEnd();
 
 #ifdef DEBUG_INFORMATION_PROFILE
   using namespace formatter;
