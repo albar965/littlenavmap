@@ -201,9 +201,9 @@ MainWindow::MainWindow()
 
     // Dialog is opened with asynchronous open()
     connect(optionsDialog, &QDialog::finished, [ = ](int result) {
-      if(result == QDialog::Accepted)
-        setStatusMessage(tr("Options changed."));
-    });
+              if(result == QDialog::Accepted)
+                setStatusMessage(tr("Options changed."));
+            });
 
     // Setup central widget ==================================================
     // Set one pixel fixed width
@@ -1294,16 +1294,16 @@ void MainWindow::connectAllSlots()
 
   // Let projection menus update combo boxes
   connect(ui->actionMapProjectionMercator, &QAction::triggered, [this](bool checked)
-  {
-    if(checked)
-      mapProjectionComboBox->setCurrentIndex(0);
-  });
+          {
+            if(checked)
+              mapProjectionComboBox->setCurrentIndex(0);
+          });
 
   connect(ui->actionMapProjectionSpherical, &QAction::triggered, [this](bool checked)
-  {
-    if(checked)
-      mapProjectionComboBox->setCurrentIndex(1);
-  });
+          {
+            if(checked)
+              mapProjectionComboBox->setCurrentIndex(1);
+          });
 
   // Window menu ======================================
   connect(layoutFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::layoutOpenRecent);
@@ -2166,10 +2166,10 @@ void MainWindow::routeOpen()
 QString MainWindow::routeOpenFileDialog()
 {
   return dialog->openFileDialog(
-    tr("Open Flight Plan"),
-    tr("Flight Plan Files %1;;All Files (*)").
-    arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/LnmPln", atools::documentsDir());
+           tr("Open Flight Plan"),
+           tr("Flight Plan Files %1;;All Files (*)").
+           arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+           "Route/LnmPln", atools::documentsDir());
 }
 
 void MainWindow::routeOpenFile(QString filepath)
@@ -2292,7 +2292,8 @@ bool MainWindow::routeSaveLnm()
   if(!routeController->isLnmFormatFlightplan())
   {
     // Forbid saving of other formats than LNMPLN directly =========================================
-    atools::gui::DialogButtonList buttonList = {
+    atools::gui::DialogButtonList buttonList =
+    {
       {QString(), QMessageBox::Cancel},
       {tr("Save &as LNMPLN ..."), QMessageBox::Save},
       {QString(), QMessageBox::Help}
@@ -2340,11 +2341,11 @@ bool MainWindow::routeSaveLnm()
 QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
 {
   return dialog->saveFileDialog(
-    tr("Save Flight Plan as LNMPLN Format"),
-    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
-    "lnmpln", "Route/LnmPln", atools::documentsDir(),
-    filename.isEmpty() ? routeExport->buildDefaultFilename() : filename,
-    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+           tr("Save Flight Plan as LNMPLN Format"),
+           tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
+           "lnmpln", "Route/LnmPln", atools::documentsDir(),
+           filename.isEmpty() ? routeExport->buildDefaultFilename() : filename,
+           false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 }
 
 bool MainWindow::routeSaveAsLnm()
@@ -2564,13 +2565,13 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
       // Get download job information and update progress text
       int queuedJobs = -1, activeJobs = -1;
       connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged,
-              [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued) -> void
-      {
-        progress.setLabelText(label.arg(numSeconds) + tr("%1 downloads active and %2 downloads queued.").
-                              arg(active).arg(queued));
-        queuedJobs = queued;
-        activeJobs = active;
-      });
+              [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued)->void
+              {
+                progress.setLabelText(label.arg(numSeconds) + tr("%1 downloads active and %2 downloads queued.").
+                                      arg(active).arg(queued));
+                queuedJobs = queued;
+                activeJobs = active;
+              });
 
       // Loop until seconds are over
       for(int i = 0; i < numSeconds; i++)
@@ -3058,14 +3059,15 @@ void MainWindow::mainWindowShown()
     // <p><a href="%1"><b>Click here for more information in the <i>Little Navmap</i> online manual</b></a></p>
 
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
-    QString message = QObject::tr("<p>The online elevation data which is used by default for the elevation profile "
-                                    "is limited and has a lot of errors.<br/>"
-                                    "Therefore, it is recommended to download and use the offline GLOBE elevation data "
-                                    "which provides world wide coverage.</p>"
-                                    "<p><b>Go to: Main menu -&gt; <i>Tools</i> -&gt; <i>Options</i> and "
-                                      "then to page <i>Cache and files</i> to add the GLOBE data.</b></p>"
-                                      "<p><a href=\"%1\"><b>Click here for more information in the "
-                                        "<i>Little Navmap</i> online manual</b></a></p>")
+    QString message = QObject::tr(
+      "<p>The online elevation data which is used by default for the elevation profile "
+        "is limited and has a lot of errors.<br/>"
+        "Therefore, it is recommended to download and use the offline GLOBE elevation data "
+        "which provides world wide coverage.</p>"
+        "<p><b>Go to: Main menu -&gt; <i>Tools</i> -&gt; <i>Options</i> and "
+          "then to page <i>Cache and files</i> to add the GLOBE data.</b></p>"
+          "<p><a href=\"%1\"><b>Click here for more information in the "
+            "<i>Little Navmap</i> online manual</b></a></p>")
                       .arg(url.toString());
 
     atools::gui::Dialog(this).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
@@ -3165,7 +3167,7 @@ void MainWindow::mainWindowShown()
   // Raise all floating docks and focus map widget
   QTimer::singleShot(10, this, &MainWindow::raiseFloatingWindows);
 
-  //// Workaround for profile dock widget which is not resized properly on startup
+  // // Workaround for profile dock widget which is not resized properly on startup
   // QTimer::singleShot(20, this, &MainWindow::adjustProfileDockHeight);
 
   renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
@@ -3175,6 +3177,14 @@ void MainWindow::mainWindowShown()
 
   if(ui->actionRouteDownloadTracks->isChecked())
     QTimer::singleShot(2000, NavApp::getTrackController(), &TrackController::startDownload);
+
+  // Log screen information ==============
+  for(QScreen *screen : QGuiApplication::screens())
+    qDebug() << Q_FUNC_INFO
+             << (screen == QGuiApplication::primaryScreen() ? "Primary Screen" : "Screen")
+             << "name" << screen->name() << "model" << screen->model() << "manufacturer" << screen->manufacturer()
+             << "geo" << screen->geometry() << "available geo" << screen->availableGeometry()
+             << "available virtual geo" << screen->availableVirtualGeometry();
 
   qDebug() << Q_FUNC_INFO << "leave";
 }
@@ -3272,15 +3282,15 @@ void MainWindow::raiseFloatingWindows()
 
 // void MainWindow::adjustProfileDockHeight()
 // {
-//// Load last height
+// // Load last height
 // int profileHeight = Settings::instance().valueInt(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", -1);
 // if(profileHeight > 20)
 // {
-//// resizeDocks({ui->dockWidgetProfile}, {profileHeight}, Qt::Vertical);
-//// Workaround - set minimum since resize and resize docks does not work
+// // resizeDocks({ui->dockWidgetProfile}, {profileHeight}, Qt::Vertical);
+// // Workaround - set minimum since resize and resize docks does not work
 // int oldMinHeight = ui->dockWidgetContentsProfile->minimumHeight();
 // ui->dockWidgetContentsProfile->setMinimumHeight(profileHeight);
-//// Reset to old value later in event loop
+// // Reset to old value later in event loop
 // QTimer::singleShot(0, [ = ]() -> void {
 // ui->dockWidgetContentsProfile->setMinimumHeight(oldMinHeight);
 // });
