@@ -24,6 +24,7 @@
 #include <QMainWindow>
 #include <QFileInfoList>
 #include <QTimer>
+#include <QDateTime>
 #include <marble/MarbleGlobal.h>
 
 class ConnectClient;
@@ -426,7 +427,13 @@ private:
   QString connectionStatus, connectionStatusTooltip, onlineConnectionStatus, onlineConnectionStatusTooltip;
 
   /* List of status bar messages. First is shown and others are shown in tooltip. */
-  QVector<std::pair<QTime, QString> > statusMessages;
+  struct StatusMessage
+  {
+    QDateTime timestamp;
+    QString message;
+  };
+
+  QVector<StatusMessage> statusMessages;
 
   /* true if database is currently switched off (i.e. the scenery library loading is open) */
   bool hasDatabaseLoadStatus = false;

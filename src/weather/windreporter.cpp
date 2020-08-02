@@ -140,10 +140,7 @@ void WindReporter::updateDataSource()
       path = NavApp::getSimulatorBasePath(NavApp::getCurrentSimulatorDb()) + QDir::separator() + "global_winds.grib";
 
     if(QFileInfo::exists(path))
-    {
       windQuery->initFromFile(path);
-      windDownloadFinished();
-    }
   }
   else if(ui->actionMapShowWindNOAA->isChecked())
     // Download from NOAA - will call windDownloadFinished later
@@ -151,7 +148,8 @@ void WindReporter::updateDataSource()
   else
   {
     windQuery->deinit();
-    windDownloadFinished();
+    updateToolButtonState();
+    emit windUpdated();
   }
 }
 
@@ -168,7 +166,7 @@ void WindReporter::windDownloadFinished()
       case wind::NO_SOURCE:
         break;
       case wind::SIMULATOR:
-        msg = tr("Wind updated from simulator.");
+        msg = tr("Winds aloft updated from simulator.");
         break;
       case wind::NOAA:
         msg = tr("NOAA winds aloft download finished.");

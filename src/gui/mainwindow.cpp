@@ -2966,15 +2966,15 @@ void MainWindow::setStatusMessage(const QString& message, bool addToLog)
 {
   if(addToLog && !message.isEmpty())
   {
-    statusMessages.append(std::make_pair(QTime::currentTime(), message));
+    statusMessages.append({QDateTime::currentDateTime(), message});
+
     while(statusMessages.size() > MAX_STATUS_MESSAGES)
       statusMessages.removeFirst();
 
     QStringList msg(tr("Messages:"));
     for(int i = 0; i < statusMessages.size(); i++)
-      msg.append(tr("%1: %2").
-                 arg(QLocale().toString(statusMessages.at(i).first, tr("hh:mm:ss"))).
-                 arg(statusMessages.at(i).second));
+      msg.append(tr("%1: %2").arg(QLocale().toString(statusMessages.at(i).timestamp.time(), tr("hh:mm:ss"))).
+                 arg(statusMessages.at(i).message));
     ui->statusBar->setToolTip(msg.join("\n"));
   }
 

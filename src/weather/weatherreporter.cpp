@@ -185,6 +185,7 @@ void WeatherReporter::createFsWatcher()
     fsWatcherAsPath->connect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
                              &WeatherReporter::activeSkyWeatherFileChanged);
   }
+  activeSkyWeatherFileChanged(asPath);
   fsWatcherAsPath->setFilenameAndStart(asPath);
 
   if(fsWatcherAsFlightplanPath == nullptr)
@@ -737,8 +738,8 @@ void WeatherReporter::updateTimeouts()
 
 void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
 {
-  Q_UNUSED(path);
   qDebug() << Q_FUNC_INFO << "file" << path << "changed";
+
   loadActiveSkySnapshot(asPath);
   loadActiveSkyFlightplanSnapshot(asFlightplanPath);
   mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
