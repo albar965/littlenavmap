@@ -38,6 +38,8 @@ typedef QVector<map::MapObjectRefExt> MapObjectRefExtVector;
 class TrackManager
   : public atools::fs::userdata::DataManagerBase
 {
+  Q_DECLARE_TR_FUNCTIONS(TrackManager)
+
 public:
   explicit TrackManager(atools::sql::SqlDatabase *trackDatabase, atools::sql::SqlDatabase *navDatabase);
   ~TrackManager();

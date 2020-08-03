@@ -44,6 +44,8 @@ class SqlExport;
 class CsvExporter :
   public Exporter
 {
+  Q_DECLARE_TR_FUNCTIONS(CsvExporter)
+
 public:
   CsvExporter(QWidget *parentWidget, SqlController *controller);
   virtual ~CsvExporter();

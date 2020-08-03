@@ -15,9 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routemultiexportdialog.h"
+#include "routeexport/routemultiexportdialog.h"
 #include "ui_routemultiexportdialog.h"
 
+#include "routeexport/routeexportformat.h"
 #include "gui/widgetstate.h"
 #include "common/constants.h"
 #include "gui/helphandler.h"

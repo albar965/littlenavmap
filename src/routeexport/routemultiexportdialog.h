@@ -18,7 +18,7 @@
 #ifndef LNM_ROUTEEXPORTALLDIALOG_H
 #define LNM_ROUTEEXPORTALLDIALOG_H
 
-#include "routeexport/routeexportformat.h"
+#include "routeexport/routeexportflags.h"
 
 #include <QDialog>
 #include <functional>
@@ -37,6 +37,8 @@ class QAbstractButton;
 class QStandardItem;
 class QStandardItemModel;
 class TableSortProxyModel;
+class RouteExportFormatMap;
+class RouteExportFormat;
 
 /*
  * Dialog for multiexport. Allows to modify selection status and custom paths of export formats.
@@ -68,7 +70,7 @@ public:
 
 signals:
   /* Save now button list is clicked */
-  void saveNowButtonClicked(RouteExportFormat format);
+  void saveNowButtonClicked(const RouteExportFormat& format);
 
 private:
   void buttonBoxClicked(QAbstractButton *button);

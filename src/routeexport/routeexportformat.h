@@ -15,79 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LNM_ROUTEEXPORTTYPES_H
-#define LNM_ROUTEEXPORTTYPES_H
+#ifndef LNM_ROUTEEXPORTFORMAT_H
+#define LNM_ROUTEEXPORTFORMAT_H
+
+#include "routeexport/routeexportflags.h"
 
 #include <QApplication>
-
-namespace rexp {
-
-/* Enum for all export formats. Order in multiexport dialog list is defined by order in this enumeration. */
-enum RouteExportFormatType : quint8
-{
-  /* Simulators ================ */
-  NO_TYPE = 255,
-  PLN = 0, /* FSX/P3D XML PLN format. */
-  PLNANNOTATED = 1, /* Save as above but with annotations for procedures as used by LNM before 2.4.5 */
-  FMS3 = 2, /* Old X-Plane FMS 3 */
-  FMS11 = 3, /* New X-Plane FMS 11 */
-  FLIGHTGEAR = 4, /* FlightGear XML */
-  PROSIM = 5, /* ProSim */
-
-  /* Garmin ================ */
-  RXPGNS = 6, /* Reality XP GNS */
-  RXPGTN = 7, /* Reality XP GTN */
-  GFP = 8, /* Garmin GFP Format */
-
-  /* Online ================ */
-  VFP = 9, /* vPilot VATSIM */
-  IVAP = 10, /* IVAP for IVAO */
-  XIVAP = 11, /* X-IVAP for IVAO */
-
-  /* FMC ================ */
-  XFMC = 12, /* X-FMC */
-  UFMC = 13, /* UFMC */
-
-  /* Aircraft ================ */
-  FLP = 14, /* Aerosoft Airbus FLP */
-  FLPCRJ = 30, /* Aerosoft CRJ FLP */
-  TXT = 15, /* Rotate MD-80 and others */
-  RTE = 16, /* PMDG RTE format */
-  FPR = 17, /* Majestic Dash binary format */
-  FPL = 18, /* IXEG 737 */
-  CORTEIN = 19, /* Flight factor airbus */
-  FLTPLAN = 20, /* iFly */
-  BBS = 21, /* BlackBox Simulations Airbus */
-  FEELTHEREFPL = 22, /* FeelThere or Wilco aircraft */
-  LEVELDRTE = 23, /* Level-D */
-  QWRTE = 24, /* QualityWings Aircraft RTE */
-  MDR = 25, /* Leonardo Maddog X */
-  TFDI = 26, /* TFDi Design 717 */
-
-  /* Other ================ */
-  EFBR = 27, /* AivlaSoft EFB */
-  GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
-  HTML = 29, /* Export as HTML page */
-
-  LAST = FLPCRJ
-};
-
-/* Flags for export format */
-enum RouteExportFormatFlag : quint8
-{
-  NONE = 0,
-  FILE = 1 << 0, /* Append to file instead of saving to folder.
-                  *  path and default path contain filename instead of directory if this is the case. */
-  SELECTED = 1 << 1, /* Selected for multiexport in dialog. */
-  MANUAL = 1 << 2, /* Format is cloned and selected for manual export from file menu */
-  FILEDIALOG = 1 << 3 /* Format is cloned and selected for manual export from file dialog.
-                       *  Forces file dialog to be shown. */
-};
-
-Q_DECLARE_FLAGS(RouteExportFormatFlags, RouteExportFormatFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags);
-
-} // namespace rf
 
 class RouteExport;
 
@@ -305,4 +238,4 @@ Q_DECLARE_METATYPE(RouteExportFormatMap);
 QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj);
 QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormatMap& obj);
 
-#endif // LNM_ROUTEEXPORTTYPES_H
+#endif // LNM_ROUTEEXPORTFORMAT_H

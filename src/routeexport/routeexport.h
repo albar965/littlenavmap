@@ -18,8 +18,8 @@
 #ifndef LNM_ROUTEEXPORT_H
 #define LNM_ROUTEEXPORT_H
 
-#include "routeexport/routeexportdialog.h"
 #include "route/routeflags.h"
+#include "routeexport/routeexportflags.h"
 
 #include <QObject>
 #include <functional>

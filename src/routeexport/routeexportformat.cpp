@@ -16,12 +16,14 @@
 *****************************************************************************/
 
 #include "routeexport/routeexportformat.h"
+
 #include "routeexport/routeexport.h"
 #include "common/constants.h"
 #include "atools.h"
 #include "settings/settings.h"
 #include "navapp.h"
 
+#include <QDataStream>
 #include <QDir>
 
 using atools::settings::Settings;

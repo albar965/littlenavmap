@@ -17,6 +17,8 @@
 
 #include "routeexport/routeexport.h"
 
+#include "routeexport/routeexportformat.h"
+#include "routeexport/routeexportdialog.h"
 #include "atools.h"
 #include "common/aircrafttrack.h"
 #include "common/constants.h"

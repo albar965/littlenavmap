@@ -122,6 +122,8 @@ class MainWindow;
 class NavApp :
   public atools::gui::Application
 {
+  Q_DECLARE_TR_FUNCTIONS(NavApp)
+
 public:
   NavApp(int& argc, char **argv, int flags = ApplicationFlags);
   virtual ~NavApp();

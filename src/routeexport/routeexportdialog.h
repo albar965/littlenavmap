@@ -18,21 +18,12 @@
 #ifndef LNM_ROUTEEXPORTDIALOG_H
 #define LNM_ROUTEEXPORTDIALOG_H
 
+#include "routeexport/routeexportflags.h"
+
 #include <QDialog>
 
 namespace Ui {
 class RouteExportDialog;
-}
-
-namespace re {
-enum RouteExportType
-{
-  UNKNOWN,
-  VFP, /* VATSIM VFP format, XML - vPilot or SWIFT */
-  IVAP, /* IVAO IVAP, INI */
-  XIVAP /* IVAO X-IVAP, INI */
-};
-
 }
 
 class UnitStringTool;
