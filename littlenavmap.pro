@@ -343,6 +343,7 @@ SOURCES += \
   src/routeexport/routeexport.cpp \
   src/routeexport/routeexportdata.cpp \
   src/routeexport/routeexportdialog.cpp \
+  src/routeexport/routeexportflags.cpp \
   src/routeexport/routeexportformat.cpp \
   src/routeexport/routemultiexportdialog.cpp \
   src/routestring/routestringdialog.cpp \
@@ -503,6 +504,7 @@ HEADERS  += \
   src/routeexport/routeexport.h \
   src/routeexport/routeexportdata.h \
   src/routeexport/routeexportdialog.h \
+  src/routeexport/routeexportflags.h \
   src/routeexport/routeexportformat.h \
   src/routeexport/routemultiexportdialog.h \
   src/routestring/routestringdialog.h \
