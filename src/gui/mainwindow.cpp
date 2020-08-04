@@ -109,7 +109,7 @@
 
 static const int WEATHER_UPDATE_MS = 15000;
 
-static const int MAX_STATUS_MESSAGES = 20;
+static const int MAX_STATUS_MESSAGES = 10;
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -201,9 +201,9 @@ MainWindow::MainWindow()
 
     // Dialog is opened with asynchronous open()
     connect(optionsDialog, &QDialog::finished, [ = ](int result) {
-              if(result == QDialog::Accepted)
-                setStatusMessage(tr("Options changed."));
-            });
+      if(result == QDialog::Accepted)
+        setStatusMessage(tr("Options changed."));
+    });
 
     // Setup central widget ==================================================
     // Set one pixel fixed width
@@ -1294,16 +1294,16 @@ void MainWindow::connectAllSlots()
 
   // Let projection menus update combo boxes
   connect(ui->actionMapProjectionMercator, &QAction::triggered, [this](bool checked)
-          {
-            if(checked)
-              mapProjectionComboBox->setCurrentIndex(0);
-          });
+  {
+    if(checked)
+      mapProjectionComboBox->setCurrentIndex(0);
+  });
 
   connect(ui->actionMapProjectionSpherical, &QAction::triggered, [this](bool checked)
-          {
-            if(checked)
-              mapProjectionComboBox->setCurrentIndex(1);
-          });
+  {
+    if(checked)
+      mapProjectionComboBox->setCurrentIndex(1);
+  });
 
   // Window menu ======================================
   connect(layoutFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::layoutOpenRecent);
@@ -2166,10 +2166,10 @@ void MainWindow::routeOpen()
 QString MainWindow::routeOpenFileDialog()
 {
   return dialog->openFileDialog(
-           tr("Open Flight Plan"),
-           tr("Flight Plan Files %1;;All Files (*)").
-           arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-           "Route/LnmPln", atools::documentsDir());
+    tr("Open Flight Plan"),
+    tr("Flight Plan Files %1;;All Files (*)").
+    arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+    "Route/LnmPln", atools::documentsDir());
 }
 
 void MainWindow::routeOpenFile(QString filepath)
@@ -2341,11 +2341,11 @@ bool MainWindow::routeSaveLnm()
 QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
 {
   return dialog->saveFileDialog(
-           tr("Save Flight Plan as LNMPLN Format"),
-           tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
-           "lnmpln", "Route/LnmPln", atools::documentsDir(),
-           filename.isEmpty() ? routeExport->buildDefaultFilename() : filename,
-           false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+    tr("Save Flight Plan as LNMPLN Format"),
+    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
+    "lnmpln", "Route/LnmPln", atools::documentsDir(),
+    filename.isEmpty() ? routeExport->buildDefaultFilename() : filename,
+    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 }
 
 bool MainWindow::routeSaveAsLnm()
@@ -2565,13 +2565,13 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
       // Get download job information and update progress text
       int queuedJobs = -1, activeJobs = -1;
       connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged,
-              [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued)->void
-              {
-                progress.setLabelText(label.arg(numSeconds) + tr("%1 downloads active and %2 downloads queued.").
-                                      arg(active).arg(queued));
-                queuedJobs = queued;
-                activeJobs = active;
-              });
+              [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued) -> void
+      {
+        progress.setLabelText(label.arg(numSeconds) + tr("%1 downloads active and %2 downloads queued.").
+                              arg(active).arg(queued));
+        queuedJobs = queued;
+        activeJobs = active;
+      });
 
       // Loop until seconds are over
       for(int i = 0; i < numSeconds; i++)
@@ -2969,14 +2969,23 @@ void MainWindow::setStatusMessage(const QString& message, bool addToLog)
   {
     statusMessages.append({QDateTime::currentDateTime(), message});
 
+    bool removed = false;
     while(statusMessages.size() > MAX_STATUS_MESSAGES)
+    {
       statusMessages.removeFirst();
+      removed = true;
+    }
 
-    QStringList msg(tr("Messages:"));
+    QStringList msg(tr("<p style='white-space:pre'><b>Messages:</b>"));
+
+    if(removed)
+      // Indicate overflow
+      msg.append(tr("..."));
+
     for(int i = 0; i < statusMessages.size(); i++)
       msg.append(tr("%1: %2").arg(QLocale().toString(statusMessages.at(i).timestamp.time(), tr("hh:mm:ss"))).
                  arg(statusMessages.at(i).message));
-    ui->statusBar->setToolTip(msg.join("\n"));
+    ui->statusBar->setToolTip(msg.join(tr("<br/>")) + tr("</p>"));
   }
 
   ui->statusBar->showMessage(message);
@@ -3167,9 +3176,6 @@ void MainWindow::mainWindowShown()
   // Raise all floating docks and focus map widget
   QTimer::singleShot(10, this, &MainWindow::raiseFloatingWindows);
 
-  // // Workaround for profile dock widget which is not resized properly on startup
-  // QTimer::singleShot(20, this, &MainWindow::adjustProfileDockHeight);
-
   renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
 
   // Make sure that window visible is only set after visibility is ensured
@@ -3279,23 +3285,6 @@ void MainWindow::raiseFloatingWindows()
   // Avoid having random widget focus
   mapWidget->setFocus();
 }
-
-// void MainWindow::adjustProfileDockHeight()
-// {
-// // Load last height
-// int profileHeight = Settings::instance().valueInt(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", -1);
-// if(profileHeight > 20)
-// {
-// // resizeDocks({ui->dockWidgetProfile}, {profileHeight}, Qt::Vertical);
-// // Workaround - set minimum since resize and resize docks does not work
-// int oldMinHeight = ui->dockWidgetContentsProfile->minimumHeight();
-// ui->dockWidgetContentsProfile->setMinimumHeight(profileHeight);
-// // Reset to old value later in event loop
-// QTimer::singleShot(0, [ = ]() -> void {
-// ui->dockWidgetContentsProfile->setMinimumHeight(oldMinHeight);
-// });
-// }
-// }
 
 /* Enable or disable actions related to online networks */
 void MainWindow::updateOnlineActionStates()
