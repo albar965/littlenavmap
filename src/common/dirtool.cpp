@@ -33,17 +33,36 @@ DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, c
   : parentWidget(parent), documentsDir(base), settingsPrefix(settingsKeyPrefix)
 {
   documentsDir = base;
+  /*: Default folder name which might be created initially by program.
+   * Change only once. Otherwise program might suggest the user to create the new folders again */
   applicationDir = tr("%1 Files").arg(appName);
 
 #ifndef QT_NO_DEBUG
   applicationDir += " - DEBUG";
 #endif
 
+  /*: Default folder name which might be created initially by program.
+   * Change only once. Otherwise program might suggest the user to create the new folders again */
   flightPlanDir = tr("Flight Plans");
+
+  /*: Default folder name which might be created initially by program.
+   * Change only once. Otherwise program might suggest the user to create the new folders again */
   perfDir = tr("Aircraft Performance");
+
+  /*: Default folder name which might be created initially by program.
+   * Change only once. Otherwise program might suggest the user to create the new folders again */
   layoutDir = tr("Window Layouts");
+
+  /*: Default folder name which might be created initially by program.
+   * Change only once. Otherwise program might suggest the user to create the new folders again */
   airspaceDir = tr("User Airspaces");
+
+  /*: Default folder name which might be created initially by program.
+   * Change only once. Otherwise program might suggest the user to create the new folders again */
   globeDir = tr("GLOBE Elevation Data");
+
+  /*: Default folder name which might be created initially by program.
+   * Change only once. Otherwise program might suggest the user to create the new folders again */
   airportsDir = tr("Airports");
 }
 
