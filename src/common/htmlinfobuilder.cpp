@@ -514,7 +514,7 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
 
     // Get nearest airports that have procedures ====================================
     MapResultIndex *nearestAirports = airportQueryNav->getNearestAirportsProc(airport,
-                                                                                    NEAREST_MAX_DISTANCE_AIRPORT_NM);
+                                                                              NEAREST_MAX_DISTANCE_AIRPORT_NM);
     if(!nearestMapObjectsText(airport, html, nearestAirports, tr("Nearest Airports with Procedures"), false, true,
                               NEAREST_MAX_NUM_AIRPORT))
       html.p().b(tr("No airports with procedures within a radius of %1.").
@@ -522,9 +522,9 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
 
     // Get nearest VOR and NDB ====================================
     MapResultIndex *nearestNavaids = mapQuery->getNearestNavaids(airport.position,
-                                                                       NEAREST_MAX_DISTANCE_NAVAID_NM,
-                                                                       map::VOR | map::NDB | map::ILS,
-                                                                       3 /* max ILS */, 4.f /* max ILS dist NM */);
+                                                                 NEAREST_MAX_DISTANCE_NAVAID_NM,
+                                                                 map::VOR | map::NDB | map::ILS,
+                                                                 3 /* max ILS */, 4.f /* max ILS dist NM */);
     if(!nearestMapObjectsText(airport, html, nearestNavaids, tr("Nearest Radio Navaids"), true, false,
                               NEAREST_MAX_NUM_NAVAID))
       html.p().b(tr("No navaids within a radius of %1.").
@@ -2075,7 +2075,9 @@ void HtmlInfoBuilder::trafficPatternText(const TrafficPattern& pattern, atools::
   html.brText(tr("Airport %1, runway %2").arg(pattern.airportIcao).arg(pattern.runwayName));
   html.brText(tr("Heading at final %1").arg(courseTextFromTrue(pattern.courseTrue, pattern.magvar)),
               ahtml::NO_ENTITIES);
-  html.brText(tr("Pattern altitude %1").arg(Unit::altFeet(pattern.position.getAltitude())));
+  html.brText(tr("Pattern altitude %1").arg(Unit::altFeet(pattern.position.getAltitude(),
+                                                          true /* addUnit */, false /* narrow */,
+                                                          10.f /* round to */)));
   html.br();
 }
 

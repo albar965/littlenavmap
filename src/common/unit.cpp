@@ -320,14 +320,14 @@ float Unit::speedVertFpmF(float value)
   return 0.f;
 }
 
-QString Unit::altMeter(float value, bool addUnit, bool narrow)
+QString Unit::altMeter(float value, bool addUnit, bool narrow, float round)
 {
-  return u(altMeterF(value), unitAltStr, addUnit, narrow);
+  return u(atools::roundToNearest(altMeterF(value), round), unitAltStr, addUnit, narrow);
 }
 
-QString Unit::altFeet(float value, bool addUnit, bool narrow)
+QString Unit::altFeet(float value, bool addUnit, bool narrow, float round)
 {
-  return altMeter(atools::geo::feetToMeter(value), addUnit, narrow);
+  return altMeter(atools::geo::feetToMeter(value), addUnit, narrow, round);
 }
 
 float Unit::altMeterF(float value)

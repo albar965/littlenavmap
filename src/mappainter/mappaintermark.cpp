@@ -1354,7 +1354,8 @@ void MapPainterMark::paintTrafficPatterns()
           QLineF final (baseFinalPoint, originPoint);
           QPointF center = downwind.center();
           QString text = tr("%1/%2").
-                         arg(Unit::altFeet(pattern.position.getAltitude(), true, true)).
+                         arg(Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, true /* narrow */,
+                                           10.f /* round */)).
                          arg(formatter::courseTextFromTrue(opposedCourseDeg(pattern.courseTrue), pattern.magvar,
                                                            false /* no bold */, false /* no small*/));
 
