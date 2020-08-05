@@ -16480,11 +16480,6 @@ A range ring will be added for each radius value.</source>
 每个值都会增加一个距离环。</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1376"/>
-        <source>50 100 200 500</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/options/options.ui" line="1339"/>
         <source>Details while scrolling (click and drag, zoom in and out):</source>
         <translation>缩放时显示的详情(点击并拖动，放大及缩小)：</translation>
@@ -17615,11 +17610,6 @@ If this field is empty, the default Active Sky weather file path will be used wh
         <translation type="vanished">下载IVAO气象文件的URL</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4814"/>
-        <source>http://wx.ivao.aero/metar.php</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/options/options.ui" line="4820"/>
         <source>No URL set. IVAO weather reports are disabled.</source>
         <translation>没有设置URL。 IVAO气象报告已被禁止。</translation>
@@ -17694,11 +17684,6 @@ If this field is empty, the default Active Sky weather file path will be used wh
 &quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.</source>
         <translation type="vanished">完整的NOAA气象服务地址URL。
 “%1” 是一个占位符，将会被当前的2位UTC小时取代。</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4929"/>
-        <source>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4935"/>
@@ -17798,11 +17783,6 @@ Entering a wrong value will cause errors when downloading wind reports.</source>
         <translation type="vanished">NOAA气象服务的基础地址URL。
 通常不需要改变这个URL。
 输入错误的值将会导致下载风况报告时候出错。</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="5059"/>
-        <source>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5075"/>
@@ -18081,11 +18061,7 @@ DEPARTNAME: Departure airport name
 DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4387"/>
-        <source>PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</source>
+        <extracomment>Do not translate the keywords</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18108,11 +18084,6 @@ Default is &quot;http://wx.ivao.aero/metar.php&quot;.</source>
         <location filename="src/options/options.ui" line="4840"/>
         <source>Complete URL of the VATSIM network weather download service.
 Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4844"/>
-        <source>https://metar.vatsim.net/metar.php?id=ALL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18480,11 +18451,6 @@ Little Navmap当前只能读取OpenAIR文件。</translation>
         <location filename="src/options/options.ui" line="5943"/>
         <source>Space separated list of file extension to read as OpenAIR airspace files.</source>
         <translation>以空格分隔的文件扩展名列表，用于以OpenAir格式打开。</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="5946"/>
-        <source>*.txt</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5956"/>

@@ -17055,11 +17055,7 @@ DEPARTNAME: Departure airport name
 DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4387"/>
-        <source>PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</source>
+        <extracomment>Do not translate the keywords</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17077,11 +17073,6 @@ Default is &quot;http://wx.ivao.aero/metar.php&quot;.</source>
         <location filename="src/options/options.ui" line="4840"/>
         <source>Complete URL of the VATSIM network weather download service.
 Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4844"/>
-        <source>https://metar.vatsim.net/metar.php?id=ALL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17146,11 +17137,6 @@ Little Navmap can currently only read OpenAIR files.</source>
     <message>
         <location filename="src/options/options.ui" line="5943"/>
         <source>Space separated list of file extension to read as OpenAIR airspace files.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="5946"/>
-        <source>*.txt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17403,9 +17389,8 @@ Little Navmap GIT repository.
 &quot;%1&quot; identificador ICAO ident es un marcador de posición que se sustituirá por el aeropuerto.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1376"/>
         <source>50 100 200 500</source>
-        <translation>50 100 200 500</translation>
+        <translation type="vanished">50 100 200 500</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4284"/>
@@ -18299,9 +18284,8 @@ Ignorado cuando &quot;Centrar Mapa en aeronave y próximo waypoint del Plan de V
         <translation type="vanished">Descargar URL para archivo de clima IVAO</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4814"/>
         <source>http://wx.ivao.aero/metar.php</source>
-        <translation>http://wx.ivao.aero/metar.php</translation>
+        <translation type="vanished">http://wx.ivao.aero/metar.php</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4820"/>
@@ -18844,11 +18828,6 @@ Check this if you rely on GPS when flying.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4929"/>
-        <source>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/options/options.ui" line="4571"/>
         <location filename="src/options/options.ui" line="4651"/>
         <source>&amp;Flight Simulator</source>
@@ -18867,11 +18846,6 @@ Check this if you rely on GPS when flying.</source>
     <message>
         <location filename="src/options/options.ui" line="5043"/>
         <source>No &quot;global_winds.grib&quot; selected. Using X-Plane base path.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="5059"/>
-        <source>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

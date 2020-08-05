@@ -16930,11 +16930,7 @@ DEPARTNAME: Departure airport name
 DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4387"/>
-        <source>PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</source>
+        <extracomment>Do not translate the keywords</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17091,9 +17087,8 @@ A range ring will be added for each radius value.</source>
 Eén ring per ingevulde straal zal toegevoegd worden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1376"/>
         <source>50 100 200 500</source>
-        <translation>50 100 200 500</translation>
+        <translation type="vanished">50 100 200 500</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1302"/>
@@ -17774,18 +17769,8 @@ Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4844"/>
-        <source>https://metar.vatsim.net/metar.php?id=ALL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/options/options.ui" line="4864"/>
         <source>No &quot;METAR.rwx&quot; selected. Using default file.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4929"/>
-        <source>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17861,11 +17846,6 @@ Little Navmap can currently only read OpenAIR files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5946"/>
-        <source>*.txt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/options/options.ui" line="5956"/>
         <source>Files with these extensions will be loaded as airspaces.
 Currently only OpenAir is supported (*.txt). </source>
@@ -17879,11 +17859,6 @@ Currently only OpenAir is supported (*.txt). </source>
     <message>
         <location filename="src/options/options.ui" line="5043"/>
         <source>No &quot;global_winds.grib&quot; selected. Using X-Plane base path.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="5059"/>
-        <source>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18818,9 +18793,8 @@ Wanneer &quot;Centreer kaart op vliegtuig en volgende waypoint van het vluchtpla
         <translation type="vanished">Download URL voor het IVAO weersbestand</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4814"/>
         <source>http://wx.ivao.aero/metar.php</source>
-        <translation>http://wx.ivao.aero/metar.php</translation>
+        <translation type="vanished">http://wx.ivao.aero/metar.php</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4820"/>

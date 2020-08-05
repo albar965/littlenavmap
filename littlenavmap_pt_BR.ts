@@ -17434,11 +17434,6 @@ Veja as notas no manual para detalhes sobre essa configuração e como se movime
 &quot;%1&quot; é um espaço reservado que será substituído pela hora UTC atual de dois dígitos.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4929"/>
-        <source>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="src/options/options.ui" line="5018"/>
         <source>Files and Web Addresses for Wind Reports</source>
         <translation>Arquivos e Endereços da Web para Relatórios de Vento</translation>
@@ -17513,11 +17508,7 @@ DEPARTNAME: Departure airport name
 DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4387"/>
-        <source>PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</source>
+        <extracomment>Do not translate the keywords</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17538,11 +17529,6 @@ Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4844"/>
-        <source>https://metar.vatsim.net/metar.php?id=ALL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/options/options.ui" line="4924"/>
         <source>Complete URL of the NOAA weather service file.
 &quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
@@ -17556,11 +17542,6 @@ There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading wind reports.
 Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="5059"/>
-        <source>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</source>
-        <translation></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5075"/>
@@ -17672,11 +17653,6 @@ Atualmente, Little Navmap pode apenas ler arquivos OpenAIR.</translation>
         <location filename="src/options/options.ui" line="5943"/>
         <source>Space separated list of file extension to read as OpenAIR airspace files.</source>
         <translation>Lista separada por espaço de extensão de arquivo para ler, como arquivos de espaço aéreo do OpenAIR.</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="5946"/>
-        <source>*.txt</source>
-        <translation></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5956"/>
@@ -17813,11 +17789,6 @@ aerovias:</translation>
         <location filename="src/options/options.ui" line="1516"/>
         <source>&amp;Zoom distance for double click on object:</source>
         <translation>&amp;Distância de zoom para duplo clique no objeto:</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="1376"/>
-        <source>50 100 200 500</source>
-        <translation></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4453"/>
@@ -19341,11 +19312,6 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <location filename="src/options/options.ui" line="1495"/>
         <source>Zoom and Click</source>
         <translation>Zoom e clique</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4814"/>
-        <source>http://wx.ivao.aero/metar.php</source>
-        <translation></translation>
     </message>
 </context>
 <context>

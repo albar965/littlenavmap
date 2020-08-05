@@ -17186,9 +17186,8 @@ A range ring will be added for each radius value.</source>
 Sarà aggiunto un anello di distanza per ciascun valore di raggio.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1376"/>
         <source>50 100 200 500</source>
-        <translation>50 100 200 500</translation>
+        <translation type="vanished">50 100 200 500</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1302"/>
@@ -18582,9 +18581,8 @@ Al momento Little Navmap può leggere solo file OpenAIR.</translation>
         <translation>Elenco separato da spazi dell&apos;estensione di file da leggere come file di spazio aereo OpenAIR.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5946"/>
         <source>*.txt</source>
-        <translation>*.txt</translation>
+        <translation type="vanished">*.txt</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5956"/>
@@ -18673,9 +18671,8 @@ Spunta questo se fai affidamento sul GPS quando voli.</translation>
 &quot;%1&quot; è un segnaposto che verrà sostituito con l&apos;ora corrente UTC a due cifre.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4929"/>
         <source>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</source>
-        <translation>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</translation>
+        <translation type="vanished">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4591"/>
@@ -18735,9 +18732,8 @@ Spunta questo se fai affidamento sul GPS quando voli.</translation>
         <translation type="vanished">URL Download per file meteo IVAO</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4814"/>
         <source>http://wx.ivao.aero/metar.php</source>
-        <translation>http://wx.ivao.aero/metar.php</translation>
+        <translation type="vanished">http://wx.ivao.aero/metar.php</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4820"/>
@@ -19170,9 +19166,8 @@ Di solito non è necessario modificare questo URL.
 L&apos;immissione di un valore errato causerà errori durante il download dei rapporti sul vento.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5059"/>
         <source>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</source>
-        <translation>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</translation>
+        <translation type="vanished">https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5075"/>
@@ -19302,11 +19297,7 @@ DEPARTNAME: Departure airport name
 DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4387"/>
-        <source>PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</source>
+        <extracomment>Do not translate the keywords</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -19324,11 +19315,6 @@ Default is &quot;http://wx.ivao.aero/metar.php&quot;.</source>
         <location filename="src/options/options.ui" line="4840"/>
         <source>Complete URL of the VATSIM network weather download service.
 Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4844"/>
-        <source>https://metar.vatsim.net/metar.php?id=ALL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

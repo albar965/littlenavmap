@@ -17267,9 +17267,8 @@ A range ring will be added for each radius value.</source>
 Un anneau de porté est ajouté à chaque valeur de rayon.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1376"/>
         <source>50 100 200 500</source>
-        <translation>50 100 200 500</translation>
+        <translation type="vanished">50 100 200 500</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1302"/>
@@ -18219,11 +18218,7 @@ DEPARTNAME: Departure airport name
 DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4387"/>
-        <source>PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</source>
+        <extracomment>Do not translate the keywords</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18241,11 +18236,6 @@ Default is &quot;http://wx.ivao.aero/metar.php&quot;.</source>
         <location filename="src/options/options.ui" line="4840"/>
         <source>Complete URL of the VATSIM network weather download service.
 Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4844"/>
-        <source>https://metar.vatsim.net/metar.php?id=ALL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18334,9 +18324,8 @@ Little Navmap ne peut actuellement lire que les fichiers &quot;OpenAIR&quot;.</t
         <translation type="unfinished">Liste séparée par espace de l&apos;extension de fichier à lire en tant que fichiers &quot;OpenAIR&quot; de l&apos;espace aérien.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5946"/>
         <source>*.txt</source>
-        <translation type="unfinished">*.txt</translation>
+        <translation type="obsolete">*.txt</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5956"/>
@@ -18806,9 +18795,8 @@ Ignoré lorsque &quot;Centrer la carte sur l&apos;aéronef et le prochain waypoi
         <translation type="vanished">Télécharger l&apos;URL du fichier météo de l&apos;IVAO</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4814"/>
         <source>http://wx.ivao.aero/metar.php</source>
-        <translation>http://wx.ivao.aero/metar.php</translation>
+        <translation type="vanished">http://wx.ivao.aero/metar.php</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4820"/>
@@ -19593,9 +19581,8 @@ Cochez cette case si vous vous fiez au GPS en vol.</translation>
 &quot;%1&quot; est un caractère de remplissage qui sera remplacé par les deux chiffres de l&apos;heure UTC actuelle.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4929"/>
         <source>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</source>
-        <translation type="unfinished">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</translation>
+        <translation type="obsolete">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5018"/>
@@ -19613,9 +19600,8 @@ Cochez cette case si vous vous fiez au GPS en vol.</translation>
         <translation type="unfinished">Aucun fichier &quot;global_winds.grib&quot; sélectionné. Utilisation du chemin de base X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5059"/>
         <source>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</source>
-        <translation type="unfinished">https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</translation>
+        <translation type="obsolete">https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5075"/>

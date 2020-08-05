@@ -1373,7 +1373,7 @@ Restart the program after changing this option. You might also need to reset the
 A range ring will be added for each radius value.</string>
                  </property>
                  <property name="text">
-                  <string>50 100 200 500</string>
+                  <string notr="true">50 100 200 500</string>
                  </property>
                  <property name="cursorPosition">
                   <number>14</number>
@@ -4373,7 +4373,7 @@ Example: &quot;EDDF_LIRF.lnmpln&quot;</string>
                <item row="4" column="0">
                 <widget class="QLineEdit" name="lineEditOptionsRouteFilename">
                  <property name="toolTip">
-                  <string>Applies to new filenames when saving LNMPLN FSX, P3D or FlightGear flight plans.
+                  <string extracomment="Do not translate the keywords">Applies to new filenames when saving LNMPLN FSX, P3D or FlightGear flight plans.
 The file suffix like &quot;.lnmpln&quot;, &quot;.pln&quot; or &quot;.fgfp&quot; is appended automatically.
 
 PLANTYPE: IFR or VFR
@@ -4384,7 +4384,7 @@ DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</string>
                  </property>
                  <property name="text">
-                  <string>PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</string>
+                  <string notr="true">PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</string>
                  </property>
                 </widget>
                </item>
@@ -4811,7 +4811,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
 Default is &quot;http://wx.ivao.aero/metar.php&quot;.</string>
                  </property>
                  <property name="text">
-                  <string>http://wx.ivao.aero/metar.php</string>
+                  <string notr="true">http://wx.ivao.aero/metar.php</string>
                  </property>
                  <property name="cursorPosition">
                   <number>29</number>
@@ -4841,7 +4841,7 @@ Default is &quot;http://wx.ivao.aero/metar.php&quot;.</string>
 Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</string>
                  </property>
                  <property name="text">
-                  <string>https://metar.vatsim.net/metar.php?id=ALL</string>
+                  <string notr="true">https://metar.vatsim.net/metar.php?id=ALL</string>
                  </property>
                  <property name="cursorPosition">
                   <number>41</number>
@@ -4926,7 +4926,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
 Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT&quot;</string>
                  </property>
                  <property name="text">
-                  <string>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</string>
+                  <string notr="true">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</string>
                  </property>
                  <property name="cursorPosition">
                   <number>65</number>
@@ -5056,7 +5056,7 @@ Entering a wrong value will cause errors when downloading wind reports.
 Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</string>
                  </property>
                  <property name="text">
-                  <string>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</string>
+                  <string notr="true">https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</string>
                  </property>
                  <property name="cursorPosition">
                   <number>55</number>
@@ -5943,7 +5943,7 @@ Little Navmap can currently only read OpenAIR files.</string>
                   <string>Space separated list of file extension to read as OpenAIR airspace files.</string>
                  </property>
                  <property name="text">
-                  <string>*.txt</string>
+                  <string notr="true">*.txt</string>
                  </property>
                  <property name="placeholderText">
                   <string/>

@@ -17284,9 +17284,8 @@ A range ring will be added for each radius value.</source>
 Für jeden Wert wird ein Ring hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1376"/>
         <source>50 100 200 500</source>
-        <translation>50 100 200 500</translation>
+        <translation type="vanished">50 100 200 500</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1302"/>
@@ -18577,9 +18576,8 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
         <translation type="vanished">URL zum Herunterladen der IVAO-Wetterdatei</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4814"/>
         <source>http://wx.ivao.aero/metar.php</source>
-        <translation>http://wx.ivao.aero/metar.php</translation>
+        <translation type="vanished">http://wx.ivao.aero/metar.php</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4820"/>
@@ -19090,9 +19088,8 @@ Nutzen Sie dies, wenn Sie sich beim Fliegen nur auf GPS verlassen.</translation>
 &quot;%1&quot; ist ein Platzhalter, der mit der aktuellen UTC-Stunde ersetzt wird.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4929"/>
         <source>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</source>
-        <translation>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</translation>
+        <translation type="vanished">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4571"/>
@@ -19352,11 +19349,7 @@ DEPARTNAME: Departure airport name
 DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4387"/>
-        <source>PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</source>
+        <extracomment>Do not translate the keywords</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -19374,11 +19367,6 @@ Default is &quot;http://wx.ivao.aero/metar.php&quot;.</source>
         <location filename="src/options/options.ui" line="4840"/>
         <source>Complete URL of the VATSIM network weather download service.
 Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="4844"/>
-        <source>https://metar.vatsim.net/metar.php?id=ALL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -19462,9 +19450,8 @@ Little Navmap kann derzeit nur OpenAIR-Dateien lesen.</translation>
         <translation>Mit Leerzeichen getrennte Liste von Dateiendungen, die als OpenAIR-Luftraumdateien gelesen werden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5946"/>
         <source>*.txt</source>
-        <translation>*.txt</translation>
+        <translation type="vanished">*.txt</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5956"/>
@@ -19484,9 +19471,8 @@ Derzeit wird nur OpenAir unterstützt (*.txt). </translation>
         <translation>Keine &quot;global_winds.grib&quot; ausgewählt. Benutze X-Plane Standardpfad.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5059"/>
         <source>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</source>
-        <translation>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</translation>
+        <translation type="vanished">https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5075"/>
