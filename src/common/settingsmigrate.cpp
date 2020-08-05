@@ -34,15 +34,26 @@ using  atools::util::Version;
 
 namespace migrate {
 
+void removeAndLog(Settings& settings, const QString& key)
+{
+  if(settings.contains(key))
+  {
+    qInfo() << Q_FUNC_INFO << "Removing" << QFileInfo(settings.getFilename()).fileName() << key;
+    settings.remove(key);
+  }
+}
+
 void checkAndMigrateSettings()
 {
   Settings& settings = Settings::instance();
 
   Version optionsVersion(settings.valueStr(lnm::OPTIONS_VERSION));
-  Version appVersion;
+  Version programVersion;
 
   if(optionsVersion.isValid())
   {
+    qInfo() << Q_FUNC_INFO << "Options" << optionsVersion << "program" << programVersion;
+
     // Migrate map style file =======================================================================
     QFile nightstyleFile(Settings::getPath() + QDir::separator() + "little_navmap_nightstyle.ini");
     QFile mapstyleFile(Settings::getPath() + QDir::separator() + "little_navmap_mapstyle.ini");
@@ -68,17 +79,30 @@ void checkAndMigrateSettings()
     }
 
     // Migrate settings =======================================================================
-    if(optionsVersion != appVersion)
+    if(optionsVersion != programVersion)
     {
-      qInfo().nospace().noquote() << "Found settings version mismatch. Settings file: " <<
-        optionsVersion << ". Program " << appVersion << ".";
+      qInfo() << Q_FUNC_INFO << "Found settings version mismatch. Settings file version" <<
+        optionsVersion << "Program version" << programVersion << ".";
 
-      // http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT to
-      // https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT
-      // in widget Widget_lineEditOptionsWeatherNoaaUrl
+      // ===============================================================
+      if(optionsVersion <= Version("2.0.2"))
+      {
+        // CenterRadiusACC=60 and CenterRadiusFIR=60
+        qInfo() << Q_FUNC_INFO << "Adjusting Online/CenterRadiusACC and Online/CenterRadiusFIR";
+        if(settings.valueInt("Online/CenterRadiusACC", -1) == -1)
+          settings.setValue("Online/CenterRadiusACC", 100);
+        if(settings.valueInt("Online/CenterRadiusFIR", -1) == -1)
+          settings.setValue("Online/CenterRadiusFIR", 100);
+        settings.syncSettings();
+      }
+
+      // ===============================================================
       if(optionsVersion < Version("2.2.4"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting NOAA URL";
+        // http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT to
+        // https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT
+        // in widget Widget_lineEditOptionsWeatherNoaaUrl
 
         // Widget_lineEditOptionsWeatherNoaaUrl=http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT
         QString noaaUrl = settings.valueStr("OptionsDialog/Widget_lineEditOptionsWeatherNoaaUrl");
@@ -93,63 +117,103 @@ void checkAndMigrateSettings()
         }
       }
 
+      // ===============================================================
       if(optionsVersion < Version("2.4.2.beta"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.2.beta";
-        settings.remove(lnm::ROUTE_STRING_DIALOG_OPTIONS);
+        removeAndLog(settings, lnm::ROUTE_STRING_DIALOG_OPTIONS);
         settings.syncSettings();
 
         nightstyleSettings.remove("StyleColors/Disabled_WindowText");
         nightstyleSettings.sync();
       }
 
+      // ===============================================================
       if(optionsVersion < Version("2.4.3.rc1"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.3.rc1";
-        settings.remove("MainWindow/Widget_mapThemeComboBox");
+        removeAndLog(settings, "MainWindow/Widget_mapThemeComboBox");
         settings.syncSettings();
       }
 
-      // CenterRadiusACC=60 and CenterRadiusFIR=60
-      if(optionsVersion <= Version(2, 0, 2))
+      // ===============================================================
+      if(optionsVersion <= Version("2.4.5"))
       {
-        qInfo() << Q_FUNC_INFO << "Adjusting Online/CenterRadiusACC and Online/CenterRadiusFIR";
-        if(settings.valueInt("Online/CenterRadiusACC", -1) == -1)
-          settings.setValue("Online/CenterRadiusACC", 100);
-        if(settings.valueInt("Online/CenterRadiusFIR", -1) == -1)
-          settings.setValue("Online/CenterRadiusFIR", 100);
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.4.5";
+
+        // Route view
+        removeAndLog(settings, "Route/View_tableViewRoute");
+
+        // Table columns dialog
+        removeAndLog(settings, "Route/FlightPlanTableColumnsCheckBoxStates");
+
+        // Route tabs
+        removeAndLog(settings, "Route/WidgetTabsTabIds");
+        removeAndLog(settings, "Route/WidgetTabsCurrentTabId");
+        removeAndLog(settings, "Route/WidgetTabsLocked");
+
+        // Reset all before flight
+        removeAndLog(settings, "Route/ResetAllDialogCheckBoxStates");
+
+        // Complete log search options
+        qInfo() << Q_FUNC_INFO << "Removing" << QFileInfo(settings.getFilename()).fileName() << "SearchPaneLogdata";
+        settings.remove("SearchPaneLogdata");
+
+        // Search views
+        removeAndLog(settings, "SearchPaneAirport/WidgetView_tableViewAirportSearch");
+        removeAndLog(settings, "SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
+        removeAndLog(settings, "SearchPaneNav/WidgetView_tableViewAirportSearch");
+        removeAndLog(settings, "SearchPaneNav/WidgetDistView_tableViewAirportSearch");
+        removeAndLog(settings, "SearchPaneUserdata/WidgetView_tableViewUserdata");
+
+        // info tabs
+        removeAndLog(settings, "InfoWindow/WidgetTabsTabIds");
+        removeAndLog(settings, "InfoWindow/WidgetTabsCurrentTabId");
+        removeAndLog(settings, "InfoWindow/WidgetTabsLocked");
+
+        // Choice dialog import and export
+        removeAndLog(settings, "UserdataExport/ChoiceDialogCheckBoxStates");
+        removeAndLog(settings, "Logdata/CsvExportCheckBoxStates");
+
+        // Marble plugins
+        for(const QString& key : settings.childGroups())
+          if(key.startsWith("plugin_"))
+            removeAndLog(settings, key);
+
+        // and vatsim URL,
+        settings.setValue("Widget_lineEditOptionsWeatherVatsimUrl", "https://metar.vatsim.net/metar.php?id=ALL");
+
+        // clear allow undock map
 
         settings.syncSettings();
       }
 
-      // ------------------------------------------------------
-      // Migrate/delete any settings that are not compatible right here
-      // ------------------------------------------------------
-
-      // Test the update channels
-      if(!settings.contains(lnm::OPTIONS_UPDATE_CHANNELS) || (optionsVersion.isStable() && !appVersion.isStable()))
+      // =====================================================================
+      // Adapt update channels if not yet saved
+      if(!settings.contains(lnm::OPTIONS_UPDATE_CHANNELS) || (optionsVersion.isStable() && !programVersion.isStable()))
       {
         // No channel assigned yet or user moved from a stable to beta or development version
-        if(appVersion.isBeta() || appVersion.isReleaseCandidate())
+        if(programVersion.isBeta() || programVersion.isReleaseCandidate())
         {
-          qInfo() << "Adjusting update channel to beta";
+          qInfo() << Q_FUNC_INFO << "Adjusting update channel to beta";
           settings.setValue(lnm::OPTIONS_UPDATE_CHANNELS, opts::STABLE_BETA);
         }
-        else if(appVersion.isDevelop())
+        else if(programVersion.isDevelop())
         {
-          qInfo() << "Adjusting update channel to develop";
+          qInfo() << Q_FUNC_INFO << "Adjusting update channel to develop";
           settings.setValue(lnm::OPTIONS_UPDATE_CHANNELS, opts::STABLE_BETA_DEVELOP);
         }
       }
 
-      settings.setValue(lnm::OPTIONS_VERSION, appVersion.getVersionString());
+      // Set program version to options and save ===================
+      settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
       settings.syncSettings();
     }
   }
   else
   {
-    qWarning() << "No version information found in settings file. Updating to" << appVersion;
-    settings.setValue(lnm::OPTIONS_VERSION, appVersion.getVersionString());
+    qWarning() << Q_FUNC_INFO << "No version information found in settings file. Updating to" << programVersion;
+    settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
     settings.syncSettings();
   }
 }
