@@ -1599,19 +1599,47 @@ void ProfileWidget::buildTooltip(int x)
   atools::util::HtmlBuilder html;
 
   // Header from and to distance, altitude and next waypoint ============
+  float altitude = legList.route.getAltitudeForDistance(distanceToGo);
+  const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.value(index + 1) : nullptr;
+  WindReporter *windReporter = NavApp::getWindReporter();
+  atools::grib::Wind wind;
+  if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
+    wind = windReporter->getWindForPosRoute(lastTooltipPos.alt(altitude));
+
   html.b(Unit::distNm(distance, false) + tr(" ► ") + Unit::distNm(distanceToGo));
-  float altitude = NavApp::getRoute().getAltitudeForDistance(distanceToGo);
   if(altitude < map::INVALID_ALTITUDE_VALUE)
     html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude)).arg(fromTo).arg(toWaypoint));
 
+  // Course ========================================
   if(routeLeg.getCourseToMag() < map::INVALID_COURSE_VALUE)
+  {
     html.br().b(tr("Course: ")).
-    text(formatter::courseTextFromMag(routeLeg.getCourseToMag(), routeLeg.getMagvar(), false, false),
+    text(formatter::courseTextFromMag(routeLeg.getCourseToMag(), routeLeg.getMagvar(), false /* magBold */),
          atools::util::html::NO_ENTITIES);
 
-  // Build table =====================
-  QStringList groundText;
+    // Crab angle / heading ========================================
+    if(wind.isValid() && !wind.isNull())
+    {
+      float tas = legList.route.getSpeedForDistance(distanceToGo);
+      if(tas < map::INVALID_SPEED_VALUE)
+      {
+#ifdef DEBUG_INFORMATION
+        html.brText(QString("[TAS %1 kts, %2°T %3 kts]").
+                    arg(tas, 0, 'f', 0).arg(wind.dir, 0, 'f', 0).arg(wind.speed, 0, 'f', 0));
+#endif
 
+        float headingTrue = atools::geo::windCorrectedHeading(wind.speed, wind.dir, routeLeg.getCourseToTrue(), tas);
+        if(headingTrue < map::INVALID_COURSE_VALUE &&
+           atools::almostNotEqual(headingTrue, routeLeg.getCourseToTrue(), 1.f))
+          html.br().b(tr("Heading: ")).
+          text(formatter::courseTextFromTrue(headingTrue, routeLeg.getMagvar(), routeLeg.getCourseToTrue()),
+               atools::util::html::NO_ENTITIES);
+      }
+    }
+  }
+
+  // Ground ===============================================================
+  QStringList groundText;
   if(groundElevation < map::INVALID_ALTITUDE_VALUE)
     groundText.append(Unit::altFeet(groundElevation));
 
@@ -1626,37 +1654,32 @@ void ProfileWidget::buildTooltip(int x)
   if(!groundText.isEmpty())
     html.br().b(tr("Ground: ")).text(atools::strJoin(groundText, tr(", ")));
 
+  // Safe altitude ===============================================================
   if(maxElev < map::INVALID_ALTITUDE_VALUE)
     html.br().b(tr("Leg Safe Altitude: ")).text(Unit::altFeet(maxElev));
 
   // Show wind at altitude ===============================================
-  const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.value(index + 1) : nullptr;
-  WindReporter *windReporter = NavApp::getWindReporter();
-  if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
+  if(wind.isValid() && !wind.isNull())
   {
-    atools::grib::Wind wind = windReporter->getWindForPosRoute(lastTooltipPos.alt(altitude));
-    if(wind.isValid() && !wind.isNull())
+    float headWind = 0.f, crossWind = 0.f;
+    atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseToTrue());
+
+    float magVar = NavApp::getMagVar(lastTooltipPos);
+
+    QString windText = tr("%1°M, %2").
+                       arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
+                       arg(Unit::speedKts(wind.speed));
+    html.br().b(tr("%1Wind: ").arg(windReporter->isWindManual() ? tr("Manual ") : QString())).text(windText);
+
+    // Add tail/headwind if sufficient =======================================
+    if(std::abs(headWind) >= 1.f)
     {
-      float headWind = 0.f, crossWind = 0.f;
-      atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseToTrue());
-
-      float magVar = NavApp::getMagVar(lastTooltipPos);
-
-      QString windText = tr("%1°M, %2").
-                         arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
-                         arg(Unit::speedKts(wind.speed));
-      html.br().b(tr("%1Wind: ").arg(windReporter->isWindManual() ? tr("Manual ") : QString())).text(windText);
-
-      // Add tail/headwind if sufficient =======================================
-      if(std::abs(headWind) >= 1.f)
-      {
-        QString windPtr;
-        if(headWind >= 1.f)
-          windPtr = tr("◄");
-        else if(headWind <= -1.f)
-          windPtr = tr("►");
-        html.text(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
-      }
+      QString windPtr;
+      if(headWind >= 1.f)
+        windPtr = tr("◄");
+      else if(headWind <= -1.f)
+        windPtr = tr("►");
+      html.text(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
     }
   }
 

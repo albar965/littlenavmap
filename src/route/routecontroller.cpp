@@ -103,6 +103,9 @@ enum RouteColumns
   ETA,
   FUEL_WEIGHT,
   FUEL_VOLUME,
+  WIND,
+  WIND_HEAD_TAIL,
+  ALTITUDE,
   REMARKS,
   LAST_COLUMN = REMARKS
 };
@@ -139,6 +142,9 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("ETA\nhh:mm"),
                                  QObject::tr("Fuel Rem.\n%weight%"),
                                  QObject::tr("Fuel Rem.\n%volume%"),
+                                 QObject::tr("Wind °M\n%speed%"),
+                                 QObject::tr("Head- or Tailwind\n%speed%"),
+                                 QObject::tr("Altitude\n%alt%"),
                                  QObject::tr("Remarks")});
 
   routeColumnTooltips = QList<QString>(
@@ -165,6 +171,10 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     QObject::tr("Fuel weight remaining at waypoint, once for volume and once for weight.\n"
                 "Calculated based on the aircraft performance profile."),
     QObject::tr("Fuel volume remaining at waypoint, once for volume and once for weight.\n"
+                "Calculated based on the aircraft performance profile."),
+    QObject::tr("Wind direction and speed at waypoint."),
+    QObject::tr("Head- or tailwind at waypoint."),
+    QObject::tr("Altitude at waypoint\n"
                 "Calculated based on the aircraft performance profile."),
     QObject::tr("Turn instructions, flyover or related navaid for procedure legs.")
   });
@@ -308,6 +318,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
   connect(ui->actionRouteVisibleColumns, &QAction::triggered, this, &RouteController::visibleColumnsTriggered);
+  connect(ui->pushButtonRouteSettings, &QPushButton::clicked, this, &RouteController::visibleColumnsTriggered);
 
   connect(this, &RouteController::routeChanged, routeWindow, &RouteCalcWindow::updateWidgets);
   connect(routeWindow, &RouteCalcWindow::calculateClicked, this, &RouteController::calculateRoute);
@@ -3871,6 +3882,9 @@ void RouteController::updateModelRouteTimeFuel()
   int widthEta = header->isSectionHidden(rcol::ETA) ? -1 : view->columnWidth(rcol::ETA);
   int widthFuelWeight = header->isSectionHidden(rcol::FUEL_WEIGHT) ? -1 : view->columnWidth(rcol::FUEL_WEIGHT);
   int widthFuelVol = header->isSectionHidden(rcol::FUEL_VOLUME) ? -1 : view->columnWidth(rcol::FUEL_VOLUME);
+  int widthWind = header->isSectionHidden(rcol::WIND) ? -1 : view->columnWidth(rcol::WIND);
+  int widthWindHt = header->isSectionHidden(rcol::WIND_HEAD_TAIL) ? -1 : view->columnWidth(rcol::WIND_HEAD_TAIL);
+  int widthAlt = header->isSectionHidden(rcol::ALTITUDE) ? -1 : view->columnWidth(rcol::ALTITUDE);
 
   for(int i = 0; i < route.size(); i++)
   {
@@ -3881,13 +3895,17 @@ void RouteController::updateModelRouteTimeFuel()
       model->setItem(row, rcol::ETA, new QStandardItem());
       model->setItem(row, rcol::FUEL_WEIGHT, new QStandardItem());
       model->setItem(row, rcol::FUEL_VOLUME, new QStandardItem());
+      model->setItem(row, rcol::WIND, new QStandardItem());
+      model->setItem(row, rcol::WIND_HEAD_TAIL, new QStandardItem());
+      model->setItem(row, rcol::ALTITUDE, new QStandardItem());
     }
     else if(!route.isAirportAfterArrival(row)) // Avoid airport after last procedure leg
     {
       const RouteLeg& leg = route.value(i);
+      const RouteAltitudeLeg& altLeg = altitudeLegs.value(i);
 
       // Leg time =====================================================================
-      float travelTime = altitudeLegs.value(i).getTime();
+      float travelTime = altLeg.getTime();
       if(row == 0 || !(travelTime < map::INVALID_TIME_VALUE) || leg.getProcedureLeg().isMissed())
         model->setItem(row, rcol::LEG_TIME, new QStandardItem());
       else
@@ -3919,11 +3937,11 @@ void RouteController::updateModelRouteTimeFuel()
 
         // Fuel at leg =====================================================================
         if(!leg.isAlternate())
-          totalFuelLbsOrGal -= altitudeLegs.value(i).getFuel();
+          totalFuelLbsOrGal -= altLeg.getFuel();
         float totalTempFuel = totalFuelLbsOrGal;
 
         if(leg.isAlternate())
-          totalTempFuel -= altitudeLegs.value(i).getFuel();
+          totalTempFuel -= altLeg.getFuel();
 
         float weight = 0.f, vol = 0.f;
         if(perf.useFuelAsVolume())
@@ -3944,15 +3962,55 @@ void RouteController::updateModelRouteTimeFuel()
           // Avoid -0 case
           weight = 0.f;
 
-        txt = perf.isFuelFlowValid() ? Unit::weightLbs(weight, false /* no unit */) : QString();
+        txt = perf.isFuelFlowValid() ? Unit::weightLbs(weight, false /* addUnit */) : QString();
         item = new QStandardItem(txt);
         item->setTextAlignment(Qt::AlignRight);
         model->setItem(row, rcol::FUEL_WEIGHT, item);
 
-        txt = perf.isFuelFlowValid() ? Unit::volGallon(vol, false /* no unit */) : QString();
+        txt = perf.isFuelFlowValid() ? Unit::volGallon(vol, false /* addUnit */) : QString();
         item = new QStandardItem(txt);
         item->setTextAlignment(Qt::AlignRight);
         model->setItem(row, rcol::FUEL_VOLUME, item);
+
+        // Wind at waypoint ========================================================
+        txt.clear();
+        float headWind = 0.f, crossWind = 0.f;
+        if(altLeg.getWindSpeed() >= 1.f)
+        {
+          atools::geo::windForCourse(headWind, crossWind, altLeg.getWindSpeed(),
+                                     altLeg.getWindDirection(), leg.getCourseToTrue());
+
+          txt = tr("%1, %2").
+                arg(atools::geo::normalizeCourse(altLeg.getWindDirection() - leg.getMagvar()), 0, 'f', 0).
+                arg(Unit::speedKts(altLeg.getWindSpeed(), false /* addUnit */));
+        }
+
+        item = new QStandardItem(txt);
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(row, rcol::WIND, item);
+
+        // Head or tailwind at waypoint ========================================================
+        txt.clear();
+        if(std::abs(headWind) >= 1.f)
+        {
+          QString ptr;
+          if(headWind >= 1.f)
+            ptr = tr("◄");
+          else if(headWind <= -1.f)
+            ptr = tr("►");
+          txt.append(tr("%1 %2").arg(ptr).arg(Unit::speedKts(std::abs(headWind), false /* addUnit */)));
+        }
+        item = new QStandardItem(txt);
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(row, rcol::WIND_HEAD_TAIL, item);
+
+        // Altitude at waypoint ========================================================
+        float alt = altLeg.getWaypointAltitude();
+        if(alt < map::INVALID_ALTITUDE_VALUE)
+          txt = Unit::altFeet(alt, false /* addUnit */);
+        item = new QStandardItem(txt);
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(row, rcol::ALTITUDE, item);
       }
     } // else if(!route.isAirportAfterArrival(row))
     row++;
@@ -3963,18 +4021,36 @@ void RouteController::updateModelRouteTimeFuel()
     view->setColumnWidth(rcol::LEG_TIME, widthLegTime);
   else
     header->hideSection(rcol::LEG_TIME);
+
   if(widthEta > 0)
     view->setColumnWidth(rcol::ETA, widthEta);
   else
     header->hideSection(rcol::ETA);
+
   if(widthFuelWeight > 0)
     view->setColumnWidth(rcol::FUEL_WEIGHT, widthFuelWeight);
   else
     header->hideSection(rcol::FUEL_WEIGHT);
+
   if(widthFuelVol > 0)
     view->setColumnWidth(rcol::FUEL_VOLUME, widthFuelVol);
   else
     header->hideSection(rcol::FUEL_VOLUME);
+
+  if(widthWind > 0)
+    view->setColumnWidth(rcol::WIND, widthWind);
+  else
+    header->hideSection(rcol::WIND);
+
+  if(widthWindHt > 0)
+    view->setColumnWidth(rcol::WIND_HEAD_TAIL, widthWindHt);
+  else
+    header->hideSection(rcol::WIND_HEAD_TAIL);
+
+  if(widthAlt > 0)
+    view->setColumnWidth(rcol::ALTITUDE, widthAlt);
+  else
+    header->hideSection(rcol::ALTITUDE);
 }
 
 void RouteController::disconnectedFromSimulator()
