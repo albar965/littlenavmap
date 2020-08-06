@@ -210,8 +210,12 @@ public:
   float getTopOfClimbDistance() const;
   int getTopOfClimbLegIndex() const;
 
-  /* Above or below planned descent */
+  /* Get interpolated altitude value in ft for the given distance to destination in NM.
+   *  Not for missed and alternate legs. */
   float getAltitudeForDistance(float currentDistToDest) const;
+
+  /* Same as above for TAS knots from performance profile */
+  float getSpeedForDistance(float currentDistToDest) const;
 
   /* Total route distance in nautical miles */
   float getTotalDistance() const

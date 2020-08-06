@@ -2185,7 +2185,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   // Edit position ======================================0
 
-  ui->actionRouteEditUserWaypoint->setText(tr("Edit Flight Plan &Position or Remarks..."));
+  ui->actionRouteEditUserWaypoint->setText(tr("Edit Flight Plan &Position or Remarks ..."));
   if(routeLeg != nullptr)
   {
     if(routeLeg->getMapObjectType() == map::USERPOINTROUTE)
@@ -3834,6 +3834,10 @@ void RouteController::updateTableModel()
         ui->comboBoxRouteType->setCurrentIndex(1);
     }
   }
+
+  // Update header tooltips
+  for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
+    model->horizontalHeaderItem(col)->setToolTip(routeColumnTooltips.at(col));
 
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());

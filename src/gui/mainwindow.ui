@@ -4241,6 +4241,29 @@ Will match any visited airport.</string>
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="pushButtonRouteSettings">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Hide or show columns in flight plan table</string>
+             </property>
+             <property name="statusTip">
+              <string>Hide or show columns in flight plan table</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="pushButtonRouteHelp">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -7986,7 +8009,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/network.svg</normaloff>:/littlenavmap/resources/icons/network.svg</iconset>
    </property>
    <property name="text">
-    <string>Flight Simulator &amp;Connection...</string>
+    <string>Flight Simulator &amp;Connection ...</string>
    </property>
    <property name="toolTip">
     <string>Connect to or disconnect from simulator via Little Navconnect on another computer or directly to a simulator on the same computer</string>
@@ -10893,14 +10916,18 @@ Best track will be selected automatically.</string>
    </property>
   </action>
   <action name="actionRouteVisibleColumns">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
+   </property>
    <property name="text">
     <string>&amp;Select visible Columns ...</string>
    </property>
    <property name="toolTip">
-    <string>Hide or show columns in table</string>
+    <string>Hide or show columns in flight plan table</string>
    </property>
    <property name="statusTip">
-    <string>Hide or show columns in table</string>
+    <string>Hide or show columns in flight plan table</string>
    </property>
   </action>
   <action name="actionRouteSaveAsXIvap">

@@ -525,7 +525,7 @@ void ConnectClient::connectInternal()
 
     dataReader->start();
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting (%1)...").arg(simShortName()),
+    mainWindow->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
                                                tr("Trying to connect to local flight simulator (%1).").arg(simName()));
   }
   else if(socket == nullptr && !dialog->getRemoteHostname().isEmpty())
@@ -544,7 +544,7 @@ void ConnectClient::connectInternal()
     qDebug() << "Connecting to" << dialog->getRemoteHostname() << ":" << dialog->getRemotePort();
     socket->connectToHost(dialog->getRemoteHostname(), dialog->getRemotePort(), QAbstractSocket::ReadWrite);
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
+    mainWindow->setConnectionStatusMessageText(tr("Connecting ..."),
                                                tr("Trying to connect to remote flight simulator on \"%1\".").
                                                arg(dialog->getRemoteHostname()));
   }
@@ -635,7 +635,7 @@ void ConnectClient::closeSocket(bool allowRestart)
   {
     if(silent)
     {
-      msg = tr("Connecting...");
+      msg = tr("Connecting ...");
       msgTooltip = tr("Error while trying to connect to \"%1\": %2 (%3).\nWill retry.").
                    arg(peer).arg(errorStr).arg(error);
     }

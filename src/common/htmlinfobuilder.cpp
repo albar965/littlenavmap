@@ -3588,7 +3588,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           {
             courseToWptTrue = aircraft.getPosition().angleDegTo(routeLeg.getPosition());
 
-            html.row2(tr("Course:"),
+            html.row2(tr("Course to waypoint:"),
                       courseTextFromTrue(courseToWptTrue, routeLeg.getMagVarBySettings(), true /* bold */),
                       ahtml::NO_ENTITIES);
           }
@@ -3607,12 +3607,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             if(!less && userAircaft != nullptr && userAircaft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
             {
               // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
-              float crabAngleTrue = ageo::windCorrectedHeading(userAircaft->getWindSpeedKts(),
-                                                               userAircaft->getWindDirectionDegT(),
-                                                               courseToWptTrue,
-                                                               userAircaft->getTrueAirspeedKts());
-              if(crabAngleTrue < INVALID_COURSE_VALUE)
-                html.row2(tr("Crab angle:"), courseTextFromTrue(crabAngleTrue, userAircaft->getMagVarDeg()),
+              float headingTrue = ageo::windCorrectedHeading(userAircaft->getWindSpeedKts(),
+                                                             userAircaft->getWindDirectionDegT(),
+                                                             courseToWptTrue,
+                                                             userAircaft->getTrueAirspeedKts());
+              if(headingTrue < INVALID_COURSE_VALUE)
+                html.row2(tr("Heading:"), courseTextFromTrue(headingTrue, userAircaft->getMagVarDeg()),
                           ahtml::NO_ENTITIES);
             }
           }

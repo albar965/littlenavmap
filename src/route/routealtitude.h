@@ -136,6 +136,9 @@ public:
    *  Not for missed and alternate legs. */
   float getAltitudeForDistance(float distanceToDest) const;
 
+  /* Same as above for TAS knots from performance profile */
+  float getSpeedForDistance(float distanceToDest, const atools::fs::perf::AircraftPerf& perf) const;
+
   /* 0 if invalid */
   float getTravelTimeHours() const;
 

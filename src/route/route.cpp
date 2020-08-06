@@ -636,6 +636,11 @@ float Route::getAltitudeForDistance(float currentDistToDest) const
   return altitude->getAltitudeForDistance(currentDistToDest);
 }
 
+float Route::getSpeedForDistance(float currentDistToDest) const
+{
+  return altitude->getSpeedForDistance(currentDistToDest, NavApp::getAircraftPerformance());
+}
+
 float Route::getTopOfDescentFromDestination() const
 {
   return altitude->getTopOfDescentFromDestination();

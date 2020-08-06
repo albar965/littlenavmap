@@ -92,11 +92,16 @@ public:
 
   /* First point is equal to last point of previous leg. Last point is position of the waypoint for this leg.
    * Can contain more than two points for TOC and/or TOD legs.
-   * x = distance from start and y = altitude
+   * x = distance from start and y = altitude in feet
    */
   const QPolygonF& getGeometry() const
   {
     return geometry;
+  }
+
+  float getWaypointAltitude() const
+  {
+    return geometry.isEmpty() ? map::INVALID_ALTITUDE_VALUE : geometry.last().y();
   }
 
   bool isTopOfClimb() const
@@ -147,11 +152,13 @@ public:
     return line;
   }
 
+  /* knots */
   float getWindSpeed() const
   {
     return windSpeed;
   }
 
+  /* Degrees true */
   float getWindDirection() const
   {
     return windDirection;
@@ -242,7 +249,7 @@ private:
   float fuelToDest = 0.f; /* Fuel from start of this leg to the destination or alternate */
   float timeToDest = 0.f; /* Time from start of this leg to the destination or alternate */
 
-  // Wind at the waypoint (y2)
+  // Wind at the waypoint (y2) degrees true
   float windSpeed = 0.f, windDirection = 0.f;
 
 };

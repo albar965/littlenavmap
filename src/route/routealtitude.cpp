@@ -31,7 +31,6 @@
 using atools::interpolate;
 namespace ageo = atools::geo;
 
-
 RouteAltitude::RouteAltitude(const Route *routeParam)
   : route(routeParam)
 {
@@ -72,6 +71,22 @@ int RouteAltitude::indexForDistance(float distanceToDest) const
   return map::INVALID_INDEX_VALUE;
 }
 
+float RouteAltitude::getSpeedForDistance(float distanceToDest, const atools::fs::perf::AircraftPerf& perf) const
+{
+  if(isValidProfile())
+  {
+    float distFromStart = route->getTotalDistance() - distanceToDest;
+    if(distFromStart < distanceTopOfClimb)
+      return perf.getClimbSpeed();
+    else if(distFromStart < distanceTopOfDescent)
+      return perf.getCruiseSpeed();
+    else
+      return perf.getDescentSpeed();
+  }
+
+  return map::INVALID_SPEED_VALUE;
+}
+
 float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
 {
   if(isEmpty())
@@ -91,7 +106,7 @@ float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
       std::lower_bound(leg.geometry.begin(), leg.geometry.end(), distFromStart,
                        [](const QPointF& pt, float dist) -> bool
     {
-      // binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
+      // true if first is less than second, i.e. ordered before
       return pt.x() < dist;
     });
 
