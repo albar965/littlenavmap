@@ -300,21 +300,22 @@ void ProcedureSearch::updateHeaderLabel()
   for(QTreeWidgetItem *item : items)
     procs.append(approachAndTransitionText(item));
 
-  QString tooltip;
+  QString tooltip, statusTip;
   Ui::MainWindow *ui = NavApp::getMainUi();
   if(airportSim.isValid())
     ui->labelProcedureSearch->setText("<b>" + map::airportTextShort(airportSim) + "</b><br/>" + procs + "&nbsp;");
   else
   {
     ui->labelProcedureSearch->setText(tr("<b>No Airport selected.</b><br/>&nbsp;"));
-    tooltip = tr("Use the right-click context menu in the map or\n"
-                 "the airport search result table (F4)\n"
-                 "and select \"Show Procedures\" for an airport.");
+    tooltip = tr("<p style='white-space:pre'>Use the right-click context menu in the map or<br/>"
+                 "the airport search result table (<code>F4</code>)<br/>"
+                 "and select <i>Show Procedures</i> for an airport.</p>");
+    statusTip = tr("Select \"Show Procedures\" for an airport to fill this list");
   }
   ui->labelProcedureSearch->setToolTip(tooltip);
-  ui->labelProcedureSearch->setStatusTip(tooltip);
+  ui->labelProcedureSearch->setStatusTip(statusTip);
   treeWidget->setToolTip(tooltip);
-  treeWidget->setStatusTip(tooltip);
+  treeWidget->setStatusTip(statusTip);
 
 #ifdef DEBUG_INFORMATION
   ui->labelProcedureSearch->setText(ui->labelProcedureSearch->text() + (errors ? " ***ERRORS*** " : " ---OK---"));

@@ -4272,19 +4272,19 @@ QString RouteController::getErrorStrings(QStringList& toolTip) const
 /* Update the dock window top level label */
 void RouteController::updateWindowLabel()
 {
-  QString tooltip;
-  QString text = buildFlightplanLabel(false, false, &tooltip) + "<br/>" + buildFlightplanLabel2();
+  QString tooltip, statustip;
+  QString text = buildFlightplanLabel(false, false, &tooltip, &statustip) + "<br/>" + buildFlightplanLabel2();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->labelRouteInfo->setText(text);
   ui->labelRouteInfo->setToolTip(tooltip);
-  ui->labelRouteInfo->setStatusTip(tooltip);
+  ui->labelRouteInfo->setStatusTip(statustip);
 
   ui->tableViewRoute->setToolTip(tooltip);
-  ui->tableViewRoute->setStatusTip(tooltip);
+  ui->tableViewRoute->setStatusTip(statustip);
 }
 
-QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QString *tooltip) const
+QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QString *tooltip, QString *statustip) const
 {
   const Flightplan& flightplan = route.getFlightplan();
 
@@ -4484,8 +4484,12 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
   {
     title = tr("<b>No Flight Plan loaded.</b>");
     if(tooltip != nullptr)
-      *tooltip = tr("Use the right-click context menu on the map or the airport search (F4)\n"
-                    "to select departure and destination.");
+      *tooltip = tr("<p style='white-space:pre'>Use the right-click context menu on the map or the airport search (<code>F4</code>)<br/>"
+                    "to select departure and destination.</p>");
+
+    if(statustip != nullptr)
+      *statustip = tr("Select departure and destination in the map or airport search");
+
   }
 
   if(print)

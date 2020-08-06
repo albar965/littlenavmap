@@ -169,7 +169,7 @@ void RouteCalcWindow::updateHeader()
 {
   const Route& route = NavApp::getRouteConst();
   const atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
-  QString departure, destination, title, tooltip;
+  QString departure, destination, title, tooltip, statustip;
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   if(ui->comboBoxRouteCalcMode->currentIndex() == 1)
@@ -223,12 +223,14 @@ void RouteCalcWindow::updateHeader()
       title = HtmlBuilder::errorMessage({tr("Invalid flight plan."),
                                          tr("Set departure and destination first."),
                                          tr("Hover mouse over this message for details.")});
-      tooltip = tr("Use the right-click context menu on the map or the airport search (F4)\n"
-                   "to select departure and destination first.");
+      tooltip = tr("<p style='white-space:pre'>Use the right-click context menu on the map or the airport search (<code>F4</code>)<br/>"
+                   "to select departure and destination first.</p>");
+      statustip = tr("Select departure and destination first");
     }
   }
   ui->labelRouteCalcHeader->setText(title);
   ui->labelRouteCalcHeader->setToolTip(tooltip);
+  ui->labelRouteCalcHeader->setStatusTip(statustip);
 }
 
 void RouteCalcWindow::restoreState()

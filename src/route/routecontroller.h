@@ -420,7 +420,8 @@ private:
   void cleanupTableTimeout();
 
   /* Departure, destination and procedures. */
-  QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr) const;
+  QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr,
+                               QString *statustip = nullptr) const;
 
   /* Distance and time. */
   QString buildFlightplanLabel2(bool print = false) const;
