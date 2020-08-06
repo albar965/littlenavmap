@@ -97,6 +97,13 @@ InfoController::InfoController(MainWindow *parent)
   ui->textBrowserAircraftProgressInfo->setSearchPaths(paths);
   ui->textBrowserAircraftAiInfo->setSearchPaths(paths);
 
+  waitingForUpdateText = tr("Connected and waiting for update.\nAircraft has to be loaded for updates.");
+  waitingForUpdateTooltip = tr("Prepare your flight and load your aircraft in the simulator to see progress updates.");
+
+  notConnectedText = tr("Not connected to simulator.");
+  notConnectedTooltip = tr("Go to: Main menu -&gt; <i>Tools</i> -&gt; <i>Flight Simulator Connection</i> or press Ctrl+C.\n"
+                           "Then choose your simulator and connect.");
+
   // Create connections for "Map" links in text browsers
   connect(ui->textBrowserAirportInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
@@ -1102,10 +1109,16 @@ void InfoController::updateUserAircraftText()
       }
     }
     else
-      ui->textBrowserAircraftInfo->setPlainText(tr("Connected. Waiting for update."));
+    {
+      ui->textBrowserAircraftInfo->setPlainText(waitingForUpdateText);
+      ui->textBrowserAircraftInfo->setToolTip(waitingForUpdateTooltip);
+    }
   }
   else
-    ui->textBrowserAircraftInfo->clear();
+  {
+    ui->textBrowserAircraftInfo->setPlainText(notConnectedText);
+    ui->textBrowserAircraftInfo->setToolTip(notConnectedTooltip);
+  }
 }
 
 void InfoController::updateAircraftProgressText()
@@ -1130,10 +1143,16 @@ void InfoController::updateAircraftProgressText()
       }
     }
     else
-      ui->textBrowserAircraftProgressInfo->setPlainText(tr("Connected. Waiting for update."));
+    {
+      ui->textBrowserAircraftProgressInfo->setPlainText(waitingForUpdateText);
+      ui->textBrowserAircraftProgressInfo->setToolTip(waitingForUpdateTooltip);
+    }
   }
   else
-    ui->textBrowserAircraftProgressInfo->clear();
+  {
+    ui->textBrowserAircraftProgressInfo->setPlainText(notConnectedText);
+    ui->textBrowserAircraftProgressInfo->setToolTip(notConnectedTooltip);
+  }
 }
 
 void InfoController::updateAiAircraftText()
@@ -1184,10 +1203,16 @@ void InfoController::updateAiAircraftText()
       }
     }
     else
-      ui->textBrowserAircraftAiInfo->setPlainText(tr("Connected. Waiting for update."));
+    {
+      ui->textBrowserAircraftAiInfo->setPlainText(waitingForUpdateText);
+      ui->textBrowserAircraftAiInfo->setToolTip(waitingForUpdateTooltip);
+    }
   }
   else
-    ui->textBrowserAircraftAiInfo->clear();
+  {
+    ui->textBrowserAircraftAiInfo->setPlainText(notConnectedText);
+    ui->textBrowserAircraftAiInfo->setToolTip(notConnectedTooltip);
+  }
 }
 
 void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)

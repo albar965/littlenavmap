@@ -143,6 +143,8 @@ private:
   void visibilityChangedAircraft(bool visible);
   void visibilityChangedInfo(bool visible);
 
+  QString waitingForUpdateText, notConnectedText, waitingForUpdateTooltip, notConnectedTooltip;
+
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
   qint64 lastSimUpdate = 0;
