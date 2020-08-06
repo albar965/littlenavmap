@@ -1606,6 +1606,7 @@ void ProfileWidget::buildTooltip(int x)
   if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
     wind = windReporter->getWindForPosRoute(lastTooltipPos.alt(altitude));
 
+  html.p(atools::util::html::NOBR_WHITESPACE);
   html.b(Unit::distNm(distance, false) + tr(" ► ") + Unit::distNm(distanceToGo));
   if(altitude < map::INVALID_ALTITUDE_VALUE)
     html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude)).arg(fromTo).arg(toWaypoint));
@@ -1706,7 +1707,7 @@ void ProfileWidget::buildTooltip(int x)
                            arg(result.timeToTod < map::INVALID_TIME_VALUE ? result.timeToTod : -1., 0, 'f', 2).
                            arg(result.timeToTod < INVALID_TIME_VALUE ? formatMinutesHours(result.timeToTod) : "-1"));
 #endif
-
+  html.pEnd(); // html.p(atools::util::html::NOBR_WHITESPACE);
   lastTooltipString = html.getHtml();
 }
 
