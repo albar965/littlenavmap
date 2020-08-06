@@ -46,7 +46,7 @@ using map::MapResultIndex;
 const static int MAX_MENU_ITEMS = 10;
 
 // Truncate map object texts in the middle
-const static int TEXT_ELIDE = 35;
+const static int TEXT_ELIDE = 30;
 const static int TEXT_ELIDE_AIRPORT_NAME = 15;
 
 // Keeps information for each menu, action and sub-menu.
