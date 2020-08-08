@@ -172,8 +172,6 @@ void PrintSupport::createFlightplanDocuments()
 
   // Header =========================================================================
   HtmlBuilder html(mapcolors::mapPrintRowColor, mapcolors::mapPrintRowColorAlt);
-  // Header line with program version
-  addHeader(html);
   NavApp::getRouteController()->flightplanHeaderPrint(html, !(opts & prt::HEADER));
 
   if(opts & prt::HEADER)
@@ -226,6 +224,14 @@ void PrintSupport::createFlightplanDocuments()
     addAirport(cursor, route.getDepartureAirportLeg().getAirport(), tr("Departure"), true /* departure */);
   if(route.hasValidDestination() && opts & prt::DESTINATION_ANY)
     addAirport(cursor, route.getDestinationAirportLeg().getAirport(), tr("Destination"), false /* destination */);
+
+  // Footer with program version at end of all pages ===============================================
+  setPrintTextSize(printDialog->getPrintTextSize());
+  cursor.insertText(tr("\n\n%1 Version %2 (revision %3) on %4 ").
+                    arg(QApplication::applicationName()).
+                    arg(QApplication::applicationVersion()).
+                    arg(GIT_REVISION).
+                    arg(QLocale().toString(QDateTime::currentDateTime())));
 
   printDocument->adjustSize();
 }
@@ -305,16 +311,6 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
     if(newPage)
       cursor.insertBlock(pageBreakBlock);
   }
-}
-
-/* Add header paragraph at cursor position */
-void PrintSupport::addHeader(atools::util::HtmlBuilder& html)
-{
-  html.p().small(tr("%1 Version %2 (revision %3) on %4 ").
-                 arg(QApplication::applicationName()).
-                 arg(QApplication::applicationVersion()).
-                 arg(GIT_REVISION).
-                 arg(QLocale().toString(QDateTime::currentDateTime()))).pEnd();
 }
 
 void PrintSupport::deleteFlightplanDocuments()

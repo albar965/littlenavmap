@@ -499,14 +499,29 @@ void RouteController::flightplanHeaderPrint(atools::util::HtmlBuilder& html, boo
 QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
 {
   QString filename = RouteExport::buildDefaultFilename(".html");
+
+  // Embedded style sheet =================================
+  QString css("table { border-collapse: collapse; } "
+              "th, td { border-right: 1px solid #aaa; padding: 0px 3px 0px 3px; white-space: nowrap; font-size: 0.9em; } "
+              "th { white-space: normal; padding: 3px 3px 3px 3px; font-size: 0.95em; } "
+              "tr:hover {background-color: #c8c8c8; } ");
+
+  // Metadata in header =================================
+  QStringList headerLines({"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />",
+                           "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />"});
+
   atools::util::HtmlBuilder html(true);
   html.doc(tr("%1 - %2").arg(QApplication::applicationName()).arg(filename),
-           QString(),
-           QString(),
-           {"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />",
-            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />"});
+           css, QString() /* bodyStyle */, headerLines);
   html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, true /* print */),
             atools::util::html::NO_ENTITIES);
+
+  // Add footer ==============================
+  html.p().small(tr("%1 Version %2 (revision %3) on %4 ").
+                 arg(QApplication::applicationName()).
+                 arg(QApplication::applicationVersion()).
+                 arg(GIT_REVISION).
+                 arg(QLocale().toString(QDateTime::currentDateTime()))).pEnd();
   html.docEnd();
   return html.getHtml();
 }
@@ -575,10 +590,16 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
                    leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
             color = Qt::red;
 
+          atools::util::html::Flags flags = atools::util::html::NONE;
+          // Make ident column text bold
+          if(col == rcol::IDENT)
+            flags |= atools::util::html::BOLD;
+
+          // Take over alignment from model
           if(item->textAlignment().testFlag(Qt::AlignRight))
-            html.td(item->text().toHtmlEscaped(), atools::util::html::ALIGN_RIGHT, color);
-          else
-            html.td(item->text().toHtmlEscaped(), atools::util::html::NONE, color);
+            flags |= atools::util::html::ALIGN_RIGHT;
+
+          html.td(item->text().toHtmlEscaped(), flags, color);
         }
         else
           html.td(QString());
@@ -3665,7 +3686,11 @@ void RouteController::updateTableModel()
     itemRow[rcol::REGION] = new QStandardItem(leg.getRegion());
     itemRow[rcol::NAME] = new QStandardItem(leg.getName());
 
-    if(leg.isAlternate())
+    if(row == route.getDepartureAirportLegIndex())
+      itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Departure"));
+    else if(row == route.getDestinationAirportLegIndex())
+      itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Destination"));
+    else if(leg.isAlternate())
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
     else
       itemRow[rcol::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType()));

@@ -202,11 +202,11 @@ public:
   /* UI style changed */
   void styleChanged();
 
-  /* Get the route table as a HTML snipped only containing the table and header.
-   * Uses own colors for table background. */
+  /* Get the route table as a HTML snippet only containing the table and header.
+   * Uses own colors for table background. Used by web server. */
   QString getFlightplanTableAsHtml(float iconSizePixel, bool print) const;
 
-  /* Same as above but full HTML document */
+  /* Same as above but full HTML document for export */
   QString getFlightplanTableAsHtmlDoc(float iconSizePixel) const;
 
   /* Insert a flight plan table as QTextTable object at the cursor position */
