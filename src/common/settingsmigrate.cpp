@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QDir>
 #include <QSettings>
+#include <QFont>
 
 using atools::settings::Settings;
 using  atools::util::Version;
@@ -183,7 +184,12 @@ void checkAndMigrateSettings()
         // and vatsim URL,
         settings.setValue("Widget_lineEditOptionsWeatherVatsimUrl", "https://metar.vatsim.net/metar.php?id=ALL");
 
-        // clear allow undock map
+        // Make map font a bold copy of system font
+        QFont font(QGuiApplication::font());
+        font.setBold(true);
+        settings.setValueVar(lnm::OPTIONS_DIALOG_MAP_FONT, font);
+
+        // clear allow undock map?
 
         settings.syncSettings();
       }
