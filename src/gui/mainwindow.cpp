@@ -611,6 +611,17 @@ void MainWindow::showOfflineHelp()
   HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::instance().getLanguage()));
 }
 
+void MainWindow::openLogFile()
+{
+  for(const QString& log : atools::logging::LoggingHandler::getLogFiles())
+    HelpHandler::openFile(this, log);
+}
+
+void MainWindow::openConfigFile()
+{
+  HelpHandler::openFile(this, Settings::getFilename());
+}
+
 /* Show marble legend */
 void MainWindow::showMapLegend()
 {
@@ -1260,6 +1271,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);
   connect(ui->actionHelpDonate, &QAction::triggered, this, &MainWindow::showDonationPage);
   connect(ui->actionHelpFaq, &QAction::triggered, this, &MainWindow::showFaqPage);
+  connect(ui->actionHelpOpenLogFile, &QAction::triggered, this, &MainWindow::openLogFile);
+  connect(ui->actionHelpOpenConfigFile, &QAction::triggered, this, &MainWindow::openConfigFile);
 
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);

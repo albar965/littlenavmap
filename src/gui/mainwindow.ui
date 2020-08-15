@@ -166,6 +166,7 @@
     <addaction name="separator"/>
     <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowAllowDocking"/>
+    <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
    </widget>
@@ -189,6 +190,14 @@
     <addaction name="actionHelpDonate"/>
     <addaction name="actionHelpCheckUpdates"/>
    </widget>
+    <widget class="QMenu" name="menuHelpFilesAndFolders">
+     <property name="title">
+      <string>&amp;Files and Folders</string>
+     </property>
+     <addaction name="actionHelpOpenLogFile"/>
+     <addaction name="actionHelpOpenConfigFile"/>
+     <addaction name="actionDatabaseFiles"/>
+    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
      <string>&amp;Tools</string>
@@ -201,6 +210,8 @@
     <addaction name="actionResetMessages"/>
     <addaction name="actionResetAllSettings"/>
     <addaction name="actionSaveAllNow"/>
+    <addaction name="separator"/>
+    <addaction name="menuHelpFilesAndFolders"/>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
@@ -8177,10 +8188,10 @@ Best track will be selected automatically.</string>
     <string>&amp;Show Database Files</string>
    </property>
    <property name="toolTip">
-    <string>Open the Little Navmap database directory in a file manager</string>
+    <string>Open the Little Navmap database directory in the default file manager</string>
    </property>
    <property name="statusTip">
-    <string>Open the Little Navmap database directory in a file manager</string>
+    <string>Open the Little Navmap database directory in the default file manager</string>
    </property>
   </action>
   <action name="actionLoadKml">
@@ -10969,7 +10980,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Calculate Flight Plan</string>
+    <string>&amp;Calculate Flight Plan ...</string>
    </property>
    <property name="toolTip">
     <string>Calculate a flight plan between departure and destination</string>
@@ -11434,6 +11445,28 @@ Best track will be selected automatically.</string>
     <string>Save current window layout</string>
    </property>
   </action>
+  <action name="actionHelpOpenLogFile">
+   <property name="text">
+    <string>Open &amp;Log File</string>
+   </property>
+   <property name="toolTip">
+    <string>Opens the log file of Little Navmap in the default text editor</string>
+   </property>
+   <property name="statusTip">
+    <string>Opens the log file of Little Navmap in the default text editor</string>
+   </property>
+  </action>
+  <action name="actionHelpOpenConfigFile">
+   <property name="text">
+    <string>Open &amp;Configuration File</string>
+   </property>
+   <property name="toolTip">
+    <string>Opens the configuration file of Little Navmap in the default text editor</string>
+   </property>
+   <property name="statusTip">
+    <string>Opens the configuration file of Little Navmap in the default text editor</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11580,7 +11613,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

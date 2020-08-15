@@ -337,6 +337,9 @@ private:
   bool openInSkyVector();
   void clearProcedureCache();
 
+  void openLogFile();
+  void openConfigFile();
+
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
   void weatherUpdateTimeout();
