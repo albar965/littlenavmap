@@ -141,7 +141,7 @@ void MapPainterMark::paintHome()
 /* Draw rings around objects that are selected on the search or flight plan tables */
 void MapPainterMark::paintHighlights()
 {
-  // Draw hightlights from the search result view =====================================================
+  // Draw highlight from the search result view =====================================================
   const MapResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
   int size = context->sz(context->symbolSizeAirport, 6);
 
@@ -181,11 +181,11 @@ void MapPainterMark::paintHighlights()
   for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
     paintAirspace(airspace);
 
-  // Draw boundary for airspaces higlighted in the information window =======================================
+  // Draw boundary for airspaces highlighted in the information window =======================================
   for(const MapAirspace& airspace: mapPaintWidget->getAirspaceHighlights())
     paintAirspace(airspace);
 
-  // Draw airways higlighted in the information window =====================================================
+  // Draw airways highlighted in the information window =====================================================
   for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())
     paintAirwayList(airwayFull);
   for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())
@@ -222,7 +222,7 @@ void MapPainterMark::paintHighlights()
     }
   }
 
-  // Draw hightlights from the approach selection =====================================================
+  // Draw highlights from the approach selection =====================================================
   const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
 
   if(leg.recFixPos.isValid())
@@ -295,7 +295,7 @@ void MapPainterMark::paintHighlights()
     }
   }
 
-  // Draw hightlights from the flight plan view =====================================================
+  // Draw highlights from the flight plan view =====================================================
   if(context->mapLayerEffective->isAirport())
     size = std::max(size, context->mapLayerEffective->getAirportSymbolSize());
 
@@ -357,35 +357,36 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   // Collect visible feature parts ==========================================================================
   atools::fs::userdata::LogdataManager *logdataManager = NavApp::getLogdataManager();
   QVector<const MapLogbookEntry *> visibleLogEntries;
-  QVector<const atools::geo::LineString *> visibleRouteGeometries;
+  QVector<atools::geo::LineString> visibleRouteGeometries;
   QVector<QStringList> visibleRouteTexts;
-  QVector<const atools::geo::LineString *> visibleTrackGeometries;
+  QVector<atools::geo::LineString> visibleTrackGeometries;
   for(const MapLogbookEntry& entry : entries)
   {
     if(context->viewportRect.overlaps(entry.bounding()))
       visibleLogEntries.append(&entry);
 
     const atools::fs::userdata::LogEntryGeometry *geometry = logdataManager->getGeometry(entry.id);
-
     // Geometry might be null in case of cache overflow
     if(geometry != nullptr)
     {
+      // Geometry has to be copied since cache in LogDataManager might remove it any time
+
       // Limit number of visible routes
       if(visibleRouteGeometries.size() < 20 && context->objectDisplayTypes & map::LOGBOOK_ROUTE)
       {
         if(context->viewportRect.overlaps(geometry->routeRect))
-          visibleRouteGeometries.append(&geometry->route);
+          visibleRouteGeometries.append(geometry->route);
         else
           // Insert null to have it in sync with route texts
-          visibleRouteGeometries.append(nullptr);
+          visibleRouteGeometries.append(atools::geo::EMPTY_LINESTRING);
 
         visibleRouteTexts.append(geometry->names);
       }
 
       // Limit number of visible tracks
-      if(context->objectDisplayTypes & map::LOGBOOK_TRACK && visibleTrackGeometries.size() < 10 &&
+      if(context->objectDisplayTypes & map::LOGBOOK_TRACK && visibleTrackGeometries.size() < 20 &&
          context->viewportRect.overlaps(geometry->trackRect))
-        visibleTrackGeometries.append(&geometry->track);
+        visibleTrackGeometries.append(geometry->track);
     }
   }
 
@@ -400,10 +401,10 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
                          Qt::RoundJoin));
 
     // Draw outline for all selected entries ===============
-    for(const atools::geo::LineString *geo: visibleRouteGeometries)
+    for(const atools::geo::LineString& geo: visibleRouteGeometries)
     {
-      if(geo != nullptr)
-        drawLineString(painter, *geo);
+      if(geo.isValid())
+        drawLineString(painter, geo);
     }
 
     // Draw line for all selected entries ===============
@@ -414,26 +415,41 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 
     for(int i = 0; i < visibleRouteGeometries.size(); i++)
     {
-      const atools::geo::LineString *geo = visibleRouteGeometries.at(i);
+      const atools::geo::LineString& geo = visibleRouteGeometries.at(i);
 
-      if(geo != nullptr)
+      if(geo.isValid())
       {
-        drawLineString(painter, *geo);
+        drawLineString(painter, geo);
 
         // Draw waypoint symbols and text for route preview =========
         const QStringList& names = visibleRouteTexts.at(i);
-        for(int j = 1; j < geo->size() - 1; j++)
+        for(int j = 1; j < geo.size() - 1; j++)
         {
           float x, y;
-          if(wToS(geo->at(j), x, y))
+          if(wToS(geo.at(j), x, y))
           {
             symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
 
-            if(context->mapLayer->isWaypointRouteName() && names.size() == geo->size())
+            if(context->mapLayer->isWaypointRouteName() && names.size() == geo.size())
               symbolPainter->textBox(context->painter, {names.at(j)}, mapcolors::routeLogEntryOutlineColor,
                                      x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
           }
         }
+      }
+    }
+
+    painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, (outerlinewidth - innerlinewidth) / 2.f,
+                         Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->setBrush(Qt::white);
+    QPolygonF arrow = buildArrow(outerlinewidth);
+    for(int i = 0; i < visibleRouteGeometries.size(); i++)
+    {
+      const atools::geo::LineString& geo = visibleRouteGeometries.at(i);
+      if(geo.isValid())
+      {
+        // Draw waypoint symbols and text for route preview =========
+        for(int j = 1; j < geo.size() - 1; j++)
+          paintArrowAlongLine(painter, Line(geo.at(j), geo.at(j - 1)), arrow, 0.5f /* pos*/, 40.f /* minLength */);
       }
     }
   }
@@ -446,10 +462,10 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     trackPen.setColor(mapcolors::routeLogEntryColor.darker(200));
     painter->setPen(trackPen);
 
-    for(const atools::geo::LineString *geo: visibleTrackGeometries)
+    for(const atools::geo::LineString& geo: visibleTrackGeometries)
     {
-      if(geo != nullptr)
-        paintTrack(painter, *geo, context->viewport->projection() == Marble::Mercator);
+      if(geo.isValid())
+        paintTrack(painter, geo, context->viewport->projection() == Marble::Mercator);
     }
   }
 
