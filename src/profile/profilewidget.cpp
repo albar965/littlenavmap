@@ -41,6 +41,7 @@
 #include "common/jumpback.h"
 #include "weather/windreporter.h"
 #include "grib/windquery.h"
+#include "options/optiondata.h"
 
 #include <QPainter>
 #include <QTimer>
@@ -607,9 +608,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Keep margin to left, right and top
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
-  // Nothing to show label =========================
+  // Copy map font
+  const OptionData& optData = OptionData::instance();
+  QFont mapFont = optData.getMapFont();
+  setFont(mapFont);
+
   SymbolPainter symPainter;
   QPainter painter(this);
+
+  // Nothing to show label =========================
   if(route.isEmpty())
   {
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
@@ -759,25 +766,25 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
           if(descr == proc::MapAltRestriction::AT_OR_ABOVE ||
              descr == proc::MapAltRestriction::AT)
-            // Draw diagonal pattern rectancle above
+            // Draw diagonal pattern rectangle above
             painter.fillRect(x11, y1, rectWidth, rectHeight, diagPatternBrush);
 
           if(descr == proc::MapAltRestriction::AT_OR_BELOW ||
              descr == proc::MapAltRestriction::AT)
-            // Draw diagonal pattern rectancle below
+            // Draw diagonal pattern rectangle below
             painter.fillRect(x11, y1 - rectHeight, rectWidth, rectHeight, diagPatternBrush);
 
           if(descr == proc::MapAltRestriction::BETWEEN)
           {
             // At or above alt2 and at or below alt1
 
-            // Draw diagonal pattern rectancle for below alt1
+            // Draw diagonal pattern rectangle for below alt1
             painter.fillRect(x11, y1 - rectHeight, rectWidth, rectHeight, diagPatternBrush);
 
             int x21 = waypointX.at(routeIndex) - rectWidth / 2;
             int x22 = waypointX.at(routeIndex) + rectWidth / 2;
             int y2 = altitudeY(restriction.alt2);
-            // Draw diagonal pattern rectancle for above alt2
+            // Draw diagonal pattern rectangle for above alt2
             painter.fillRect(x21, y2, rectWidth, rectHeight, diagPatternBrush);
 
             // Connect above and below with a thin line
@@ -800,15 +807,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw ILS or VASI guidance ============================
+  mapcolors::scaleFont(&painter, 0.9f);
+
   if(NavApp::getMainUi()->actionProfileShowIls->isChecked())
     paintIls(painter, route);
 
   if(NavApp::getMainUi()->actionProfileShowVasi->isChecked())
     paintVasi(painter, route);
-
-  mapcolors::scaleFont(&painter, 0.9f);
-
-  const OptionData& optData = OptionData::instance();
 
   // Get active route leg but ignore alternate legs
   bool activeValid = route.isActiveValid();
