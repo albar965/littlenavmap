@@ -608,8 +608,8 @@ void MapContextMenu::insertCustomProcedureMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::CUSTOMPROCEDURE,
                      MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("Create &Custom Procedure for %1"),
-                     tr("Add a custom approach to this airport to the flight plan"),
+                     tr("Create &Approach to %1"),
+                     tr("Add a custom approach to this airport into the flight plan"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/approachcustom.svg"),
                      false /* allowNoMapObject */,

@@ -2146,7 +2146,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         }
       }
       else
-        ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no procedure)"));
+        ui->actionRouteShowApproaches->setText(tr("Show Procedures (airport has no procedure)"));
 
       ui->actionRouteShowApproachesCustom->setEnabled(true);
       if(airportDestination)
@@ -2156,8 +2156,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     }
     else
     {
-      ui->actionRouteShowApproaches->setText(tr("Show &procedures"));
-      ui->actionRouteShowApproachesCustom->setText(tr("Create &approach"));
+      ui->actionRouteShowApproaches->setText(tr("Show &Procedures"));
+      ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to Airport"));
     }
 
     ui->actionRouteShowOnMap->setEnabled(true);
