@@ -189,7 +189,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   }
 
   // Add bearing/distance to table
-  if(!print && !info) // Only tooltip
+  if(!print && !info && airport.routeIndex == -1) // Only tooltip
     distanceToRouteText(airport.position, html);
   if(!print)
     bearingToUserText(airport.position, airport.magvar, html);
@@ -1900,7 +1900,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   }
 
   // Add bearing/distance to table
-  if(!print && !info) // Only tooltip
+  if(!print && !info && vor.routeIndex == -1) // Only tooltip
     distanceToRouteText(vor.position, html);
   if(!print)
     bearingToUserText(vor.position, vor.magvar, html);
@@ -1978,7 +1978,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   }
 
   // Add bearing/distance to table
-  if(!print && !info) // Only tooltip
+  if(!print && !info && ndb.routeIndex == -1) // Only tooltip
     distanceToRouteText(ndb.position, html);
   if(!print)
     bearingToUserText(ndb.position, ndb.magvar, html);
@@ -2436,7 +2436,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   }
 
   // Add bearing/distance to table
-  if(!print && !info) // Only tooltip
+  if(!print && !info && waypoint.routeIndex == -1) // Only tooltip
     distanceToRouteText(waypoint.position, html);
   if(!print)
     bearingToUserText(waypoint.position, waypoint.magvar, html);
@@ -2517,8 +2517,7 @@ void HtmlInfoBuilder::distanceToRouteText(const ageo::Pos& pos, HtmlBuilder& htm
   {
     const RouteLeg& lastLeg = route.getDestinationLeg();
     float distance = pos.distanceMeterTo(lastLeg.getPosition());
-    if(distance < MAX_DISTANCE_FOR_BEARING_METER)
-      html.row2(tr("Distance to last flight plan leg:"), Unit::distMeter(distance), ahtml::NO_ENTITIES);
+    html.row2(tr("Distance to last flight plan leg:"), Unit::distMeter(distance), ahtml::NO_ENTITIES);
   }
 }
 
