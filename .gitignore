@@ -15,6 +15,7 @@
 *.dll
 *.so
 *~
+.~*#
 *.bak
 *.sqlite
 *.db
