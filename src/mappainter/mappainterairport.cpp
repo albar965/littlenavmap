@@ -819,16 +819,21 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
           // This case is rare (eg. LTAI) - probably primary in the wrong place
           rotate = runway.heading + 90.f;
           textPrim = tr("► ") +
-                     formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar, false, false);
-          textSec = formatter::courseTextFromTrue(runway.heading, airport.magvar, false, false) +
+                     formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar,
+                                                   false /* magBold */, false /* trueSmall */, true /* narrow */);
+
+          textSec = formatter::courseTextFromTrue(runway.heading, airport.magvar,
+                                                  false /* magBold */, false /* trueSmall */, true /* narrow */) +
                     tr(" ◄");
         }
         else
         {
           rotate = runway.heading - 90.f;
           textPrim = tr("► ") +
-                     formatter::courseTextFromTrue(runway.heading, airport.magvar, false, false);
-          textSec = formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar, false, false) +
+                     formatter::courseTextFromTrue(runway.heading, airport.magvar,
+                                                   false /* magBold */, false /* trueSmall */, true /* narrow */);
+          textSec = formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar,
+                                                  false /* magBold */, false /* trueSmall */, true /* narrow */) +
                     tr(" ◄");
         }
 

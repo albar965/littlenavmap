@@ -99,8 +99,9 @@ InfoController::InfoController(MainWindow *parent)
 
   // Inactive texts, tooltips and placeholders
   waitingForUpdateText = tr("Connected and waiting for update.\nAircraft has to be loaded for updates.");
-  waitingForUpdateTooltip = tr("<p style='white-space:pre'>Prepare your flight and "
-                                 "load your aircraft in the simulator to see progress updates.</p>");
+  waitingForUpdateTooltip = tr("<p style='white-space:pre'><i>Little Navmap</i> is already connected to a simulator.<br/>"
+                               "Prepare your flight and "
+                               "load your aircraft in the simulator to see progress updates.</p>");
   waitingForUpdateStatustip = tr("Load your aircraft in the simulator to see progress updates");
 
   notConnectedText = tr("Not connected to simulator.");

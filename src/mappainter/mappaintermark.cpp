@@ -1151,13 +1151,13 @@ void MapPainterMark::paintDistanceMarkers()
     {
       if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&
          distanceMeter < 6000)
-        texts.append(QString::number(distanceMeter, 'f', 0) + Unit::getUnitShortDistStr());
+        texts.append(QLocale(QLocale::C).toString(distanceMeter, 'f', 0) + Unit::getUnitShortDistStr());
       else
       {
-        texts.append(Unit::distMeter(distanceMeter));
+        texts.append(Unit::distMeter(distanceMeter, true /* addUnit */, 20, true /* narrow */));
         if(distanceMeter < 6000)
           // Add feet to text for short distances
-          texts.append(Unit::distShortMeter(distanceMeter));
+          texts.append(Unit::distShortMeter(distanceMeter, true /* addUnit */, true /* narrow */));
       }
     }
 
@@ -1204,7 +1204,8 @@ void MapPainterMark::paintHolds()
           // Text for inbound leg =======================================
           inboundText = tr("%1/%2min").
                         arg(formatter::courseTextFromTrue(hold.courseTrue, hold.magvar,
-                                                          false /* no bold */, false /* no small*/)).
+                                                          false /* magBold */, false /* trueSmall */,
+                                                          true /* narrow */)).
                         arg(QString::number(hold.minutes, 'g', 2));
 
           if(!hold.navIdent.isEmpty())
@@ -1213,7 +1214,8 @@ void MapPainterMark::paintHolds()
           // Text for outbound leg =======================================
           outboundText = tr("%1/%2/%3").
                          arg(formatter::courseTextFromTrue(opposedCourseDeg(hold.courseTrue), hold.magvar,
-                                                           false /* no bold */, false /* no small*/)).
+                                                           false /* magBold */, false /* trueSmall */,
+                                                           true /* narrow */)).
                          arg(Unit::speedKts(hold.speedKts, true, true)).
                          arg(Unit::altFeet(hold.position.getAltitude(), true, true));
         }
@@ -1374,8 +1376,10 @@ void MapPainterMark::paintTrafficPatterns()
           QString text = tr("%1/%2").
                          arg(Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, true /* narrow */,
                                            10.f /* round */)).
-                         arg(formatter::courseTextFromTrue(opposedCourseDeg(pattern.courseTrue), pattern.magvar,
-                                                           false /* no bold */, false /* no small*/));
+                         arg(formatter::courseTextFromTrue(opposedCourseDeg(
+                                                             pattern.courseTrue), pattern.magvar,
+                                                           false /* magBold */, false /* trueSmall */,
+                                                           true /* narrow */));
 
           painter->setBrush(Qt::white);
           textPlacement.drawTextAlongOneLine(text, angle, center, atools::roundToInt(downwind.length()),
@@ -1385,7 +1389,7 @@ void MapPainterMark::paintTrafficPatterns()
           text = tr("RW%1/%2").
                  arg(pattern.runwayName).
                  arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar,
-                                                   false /* no bold */, false /* no small*/));
+                                                   false /* magBold */, false /* trueSmall */, true /* narrow */));
           textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()),
                                              true /* both visible */);
 

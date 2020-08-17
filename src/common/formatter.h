@@ -77,10 +77,12 @@ QString windInformationCross(float crossWind);
 QString windInformationHead(float headWind);
 
 /* Get course or heading text with magnetic and/or true course depending on settings */
-QString courseText(float magCourse, float trueCourse, bool magBold = false, bool trueSmall = true);
+QString courseText(float magCourse, float trueCourse, bool magBold = false, bool trueSmall = true, bool narrow = false);
 QString courseSuffix();
-QString courseTextFromMag(float magCourse, float magvar, bool magBold = false, bool trueSmall = true);
-QString courseTextFromTrue(float trueCourse, float magvar, bool magBold = false, bool trueSmall = true);
+QString courseTextFromMag(float magCourse, float magvar, bool magBold = false, bool trueSmall = true,
+                          bool narrow = false);
+QString courseTextFromTrue(float trueCourse, float magvar, bool magBold = false, bool trueSmall = true,
+                           bool narrow = false);
 
 } // namespace formatter
 
