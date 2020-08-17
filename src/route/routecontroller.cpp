@@ -2242,7 +2242,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   for(int idx : selectedRouteLegIndexes)
   {
     const RouteLeg& leg = route.value(idx);
-    if(leg.getVor().isValid() || leg.getNdb().isValid())
+    if((leg.getVor().isValid() && leg.getVor().range > 0) || (leg.getNdb().isValid() && leg.getNdb().range > 0))
     {
       ui->actionMapNavaidRange->setEnabled(true);
       break;
@@ -2365,9 +2365,11 @@ void RouteController::tableContextMenu(const QPoint& pos)
             if(routeLegSel.getVor().isValid())
               type = map::VOR;
           }
-          NavApp::getMapWidget()->addNavRangeRing(routeLegSel.getPosition(), type,
-                                                  routeLegSel.getIdent(), routeLegSel.getFrequencyOrChannel(),
-                                                  routeLegSel.getRange());
+
+          if(routeLegSel.getRange() > 0)
+            NavApp::getMapWidget()->addNavRangeRing(routeLegSel.getPosition(), type,
+                                                    routeLegSel.getIdent(), routeLegSel.getFrequencyOrChannel(),
+                                                    routeLegSel.getRange());
         }
       }
     }

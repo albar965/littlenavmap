@@ -589,7 +589,7 @@ public:
   }
 
   /* Vector of (red) range ring distances in nautical miles */
-  const QVector<int>& getMapRangeRings() const
+  const QVector<float>& getMapRangeRings() const
   {
     return mapRangeRings;
   }
@@ -1100,7 +1100,8 @@ private:
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_AUTOZOOM | opts2::ROUTE_NO_FOLLOW_ON_MOVE;
 
   // ui->lineEditOptionsMapRangeRings
-  QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});
+  const static QVector<float> MAP_RANGERINGS_DEFAULT;
+  QVector<float> mapRangeRings = MAP_RANGERINGS_DEFAULT;
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
           weatherXplanePath, // lineEditOptionsWeatherXplanePath

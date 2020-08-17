@@ -24,6 +24,7 @@
 #include <QFontDatabase>
 
 OptionData *OptionData::optionData = nullptr;
+const QVector<float> OptionData::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
 
 /* Default values for well known networks */
 

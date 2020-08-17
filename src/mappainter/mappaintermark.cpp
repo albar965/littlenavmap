@@ -723,14 +723,14 @@ void MapPainterMark::paintRangeRings()
   for(const map::RangeMarker& rings : rangeRings)
   {
     // Get the biggest ring to check visibility
-    QVector<int>::const_iterator maxRingIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
+    QVector<float>::const_iterator maxRingIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
 
     if(maxRingIter != rings.ranges.end())
     {
-      int maxRadiusNm = *maxRingIter;
+      float maxRadiusNm = *maxRingIter;
 
       if(context->viewportRect.overlaps(Rect(rings.position,
-                                             nmToMeter(maxRadiusNm))) || maxRadiusNm > 2000 /*&& !fast*/)
+                                             nmToMeter(maxRadiusNm))) || maxRadiusNm > 2000.f /*&& !fast*/)
       {
         // Ring is visible - the rest of the visibility check is done in paintCircle
 
@@ -760,26 +760,28 @@ void MapPainterMark::paintRangeRings()
         }
 
         // Draw all rings
-        for(int radius : rings.ranges)
+        for(float radius : rings.ranges)
         {
           int xt, yt;
           paintCircle(painter, rings.position, radius, context->drawFast, xt, yt);
           if(xt != -1 && yt != -1)
           {
-            // paintCirle found a text position - draw text
+            // paintCircle found a text position - draw text
             painter->setPen(textColor);
 
-            QString txt;
-            if(rings.text.isEmpty())
-              txt = Unit::distNm(radius);
-            else
-              txt = rings.text;
+            QStringList texts;
 
-            xt -= painter->fontMetrics().width(txt) / 2;
+            if(!rings.text.isEmpty())
+              texts.append(rings.text);
+
+            // Build narrow text manually
+            if(radius > 0.f)
+              texts.append(tr("%1%2").
+                           arg(QLocale(QLocale::C).toString(Unit::distNmF(radius), 'g', 6)).
+                           arg(Unit::getUnitDistStr()));
+
             yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
-
-            symbolPainter->textBox(painter, {txt}, painter->pen(), xt, yt);
-            painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+            symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
           }
         }
       }

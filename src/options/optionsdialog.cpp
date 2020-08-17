@@ -55,7 +55,9 @@
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
 
-const int MAX_RANGE_RING_SIZE = 4000;
+// Also adjust text in options dialog if changing these numbers
+const float MIN_RANGE_RING_SIZE = 0.01f;
+const float MAX_RANGE_RING_SIZE = 4000.f;
 const int MAX_RANGE_RINGS = 10;
 
 const int MIN_ONLINE_UPDATE = 120;
@@ -72,54 +74,49 @@ public:
   RangeRingValidator();
 
 private:
-  virtual QValidator::State validate(QString& input, int& pos) const override;
+  virtual QValidator::State validate(QString& input, int&) const override;
 
   bool ringStrToVector(const QString& str) const;
 
-  QRegularExpressionValidator regexpVal;
 };
 
 RangeRingValidator::RangeRingValidator()
 {
-  // Multiple numbers starting 1-9 max 4 digits separated by space
-  regexpVal.setRegularExpression(QRegularExpression("^([1-9]\\d{0,3} )*[1-9]\\d{1,3}$"));
 }
 
-QValidator::State RangeRingValidator::validate(QString& input, int& pos) const
-{
-  State state = regexpVal.validate(input, pos);
-  if(state == Invalid)
-    return Invalid;
-  else
-  {
-    // Half valid check number of rings and distance
-    if(!ringStrToVector(input))
-      return Invalid;
-  }
-
-  return state;
-}
-
-/* Check for maximum of 10 rings with a maximum size of 4000 nautical miles.
- * @return true if string is ok
- */
-bool RangeRingValidator::ringStrToVector(const QString& input) const
+QValidator::State RangeRingValidator::validate(QString& input, int&) const
 {
   int numRing = 0;
-  for(const QString& str : input.split(" "))
+  QStringList split = input.simplified().split(tr(" ", "Range ring separator"));
+  if(split.isEmpty())
+    // Nothing entered - do not keep user from editing
+    return Intermediate;
+
+  QValidator::State state = Acceptable;
+  for(const QString& str : split)
   {
     QString val = str.trimmed();
     if(!val.isEmpty())
     {
       bool ok;
-      int num = val.toInt(&ok);
+      float num = QLocale().toFloat(val, &ok);
       if(!ok || num > MAX_RANGE_RING_SIZE)
-        return false;
+        // No number or radius too large - keep user from adding more characters
+        state = Invalid;
+
+      if(num < MIN_RANGE_RING_SIZE && state == Acceptable)
+        // Zero entered - do not keep user from editing
+        state = Intermediate;
 
       numRing++;
     }
   }
-  return numRing <= MAX_RANGE_RINGS;
+
+  if(numRing > MAX_RANGE_RINGS)
+    // Too many rings - keep user from adding more characters
+    state = Invalid;
+
+  return state;
 }
 
 // ------------------------------------------------------------------------
@@ -314,7 +311,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsWeatherTooltipVatsim,
      ui->checkBoxOptionsWeatherTooltipIvao,
      ui->checkBoxOptionsWeatherTooltipFs,
-     ui->lineEditOptionsMapRangeRings,
+     // ui->lineEditOptionsMapRangeRings, // Saved separately lnm::OPTIONS_DIALOG_RANGE_DISTANCES
      ui->lineEditOptionsWeatherAsnPath,
      ui->lineEditOptionsWeatherXplanePath,
      ui->lineEditOptionsWeatherNoaaStationsUrl,
@@ -827,6 +824,7 @@ void OptionsDialog::updateWidgetUnits()
       ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
       ui->spinBoxOptionsRouteGroundBuffer,
       ui->labelOptionsMapRangeRings,
+      ui->lineEditOptionsMapRangeRings,
       ui->spinBoxDisplayOnlineClearance,
       ui->spinBoxDisplayOnlineArea,
       ui->spinBoxDisplayOnlineApproach,
@@ -946,6 +944,8 @@ void OptionsDialog::saveState()
 
   Settings& settings = Settings::instance();
 
+  settings.setValue(lnm::OPTIONS_DIALOG_RANGE_DISTANCES,
+                    atools::floatVectorToStrList(rangeStringToFloat(ui->lineEditOptionsMapRangeRings->text())));
   settings.setValue(lnm::OPTIONS_DIALOG_LANGUAGE, guiLanguage);
   settings.setValue(lnm::OPTIONS_DIALOG_FONT, guiFont);
   settings.setValue(lnm::OPTIONS_DIALOG_MAP_FONT, mapFont);
@@ -1015,6 +1015,10 @@ void OptionsDialog::restoreState()
     ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE))
     ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
+
+  if(settings.contains(lnm::OPTIONS_DIALOG_RANGE_DISTANCES))
+    ui->lineEditOptionsMapRangeRings->setText(
+      rangeFloatToString(atools::strListToFloatVector(settings.valueStrList(lnm::OPTIONS_DIALOG_RANGE_DISTANCES))));
 
   flightplanColor =
     settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, QColor(Qt::yellow)).value<QColor>();
@@ -1432,25 +1436,6 @@ void OptionsDialog::simNoFollowAircraftOnScrollClicked(bool state)
   ui->spinBoxSimDoNotFollowOnScrollTime->setEnabled(ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked());
 }
 
-/* Convert the range ring string to an int vector */
-QVector<int> OptionsDialog::ringStrToVector(const QString& string) const
-{
-  QVector<int> rings;
-  for(const QString& str : string.split(" "))
-  {
-    QString val = str.trimmed();
-
-    if(!val.isEmpty())
-    {
-      bool ok;
-      int num = val.toInt(&ok);
-      if(ok && num <= MAX_RANGE_RING_SIZE)
-        rings.append(num);
-    }
-  }
-  return rings;
-}
-
 /* Copy widget states to OptionData object */
 void OptionsDialog::widgetsToOptionData()
 {
@@ -1561,7 +1546,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayClickOptions.setFlag(optsd::CLICK_NAVAID, ui->checkBoxOptionsMapClickNavaid->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_AIRSPACE, ui->checkBoxOptionsMapClickAirspace->isChecked());
 
-  data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
+  data.mapRangeRings = rangeStringToFloat(ui->lineEditOptionsMapRangeRings->text());
 
   data.weatherXplanePath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplanePath->text());
   data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
@@ -1807,17 +1792,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->checkBoxOptionsMapClickNavaid->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_NAVAID));
   ui->checkBoxOptionsMapClickAirspace->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRSPACE));
 
-  QString txt;
-  for(int val : data.mapRangeRings)
-  {
-    if(val > 0)
-    {
-      if(!txt.isEmpty())
-        txt += " ";
-      txt += QString::number(val);
-    }
-  }
-  ui->lineEditOptionsMapRangeRings->setText(txt);
+  ui->lineEditOptionsMapRangeRings->setText(rangeFloatToString(data.mapRangeRings));
   ui->lineEditOptionsWeatherXplanePath->setText(QDir::toNativeSeparators(data.weatherXplanePath));
   ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(data.weatherActiveSkyPath));
   ui->lineEditOptionsWeatherNoaaStationsUrl->setText(data.weatherNoaaUrl);
@@ -2625,4 +2600,40 @@ void OptionsDialog::updateFontFromData()
 
   if(QApplication::font() != font)
     QApplication::setFont(font);
+}
+
+QString OptionsDialog::rangeFloatToString(const QVector<float>& ranges) const
+{
+  QStringList txt;
+  for(float value : ranges)
+  {
+    if(value >= MIN_RANGE_RING_SIZE && value <= MAX_RANGE_RING_SIZE)
+      txt.append(QLocale().toString(value, 'g', 6));
+  }
+
+  if(txt.isEmpty())
+    return rangeFloatToString(OptionData::MAP_RANGERINGS_DEFAULT);
+  else
+    return txt.join(tr(" ", "Range ring number separator"));
+}
+
+QVector<float> OptionsDialog::rangeStringToFloat(const QString& rangeStr) const
+{
+  QVector<float> retval;
+  for(const QString& str : rangeStr.simplified().split(tr(" ", "Range ring separator")))
+  {
+    QString val = str.trimmed();
+    if(!val.isEmpty())
+    {
+      bool ok;
+      float num = QLocale().toFloat(val, &ok);
+      if(ok && num >= MIN_RANGE_RING_SIZE && num <= MAX_RANGE_RING_SIZE)
+        retval.append(num);
+    }
+  }
+
+  if(retval.isEmpty())
+    retval = OptionData::MAP_RANGERINGS_DEFAULT;
+
+  return retval;
 }

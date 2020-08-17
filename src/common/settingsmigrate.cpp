@@ -176,6 +176,9 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "UserdataExport/ChoiceDialogCheckBoxStates");
         removeAndLog(settings, "Logdata/CsvExportCheckBoxStates");
 
+        // Range rings
+        removeAndLog(settings, lnm::MAP_RANGEMARKERS);
+
         // Marble plugins
         for(const QString& key : settings.childGroups())
           if(key.startsWith("plugin_"))

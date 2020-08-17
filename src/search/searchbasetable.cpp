@@ -967,7 +967,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().arg(filter));
   ui->actionSearchFilterExcluding->setEnabled(!fieldData.isEmpty() && index.isValid() && columnCanFilter);
 
-  ui->actionMapNavaidRange->setEnabled(navType == map::VOR || navType == map::NDB);
+  int range = controller->getRawData(index.row(), "range").toInt();
+  ui->actionMapNavaidRange->setEnabled(range > 0 && (navType == map::VOR || navType == map::NDB));
 
   ui->actionRouteAddPos->setEnabled(navType == map::VOR || navType == map::NDB ||
                                     navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERPOINT);
@@ -1356,7 +1357,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     }
     else if(action == ui->actionMapNavaidRange)
     {
-      QString freqChaStr;
+      QString freqChannelStr;
       if(navType == map::VOR)
       {
         int frequency = controller->getRawData(index.row(), "frequency").toInt();
@@ -1364,19 +1365,18 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
         {
           // Use frequency for VOR and VORTAC
           frequency /= 10;
-          freqChaStr = QString::number(frequency);
+          freqChannelStr = QString::number(frequency);
         }
         else
           // Use channel for TACAN
-          freqChaStr = controller->getRawData(index.row(), "channel").toString();
+          freqChannelStr = controller->getRawData(index.row(), "channel").toString();
       }
       else if(navType == map::NDB)
-        freqChaStr = controller->getRawData(index.row(), "frequency").toString();
+        freqChannelStr = controller->getRawData(index.row(), "frequency").toString();
 
       NavApp::getMapWidget()->addNavRangeRing(position, navType,
                                               controller->getRawData(index.row(), "ident").toString(),
-                                              freqChaStr,
-                                              controller->getRawData(index.row(), "range").toInt());
+                                              freqChannelStr, controller->getRawData(index.row(), "range").toInt());
     }
     // else if(action == ui->actionMapHideRangeRings)
     // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly

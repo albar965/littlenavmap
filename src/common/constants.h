@@ -257,6 +257,7 @@ const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID("OptionsDialog/Displa
 const QLatin1Literal OPTIONS_DIALOG_GUI_STYLE_INDEX("OptionsDialog/GuiStyleIndex");
 const QLatin1Literal OPTIONS_DIALOG_WARN_STYLE("OptionsDialog/StyleWarning");
 const QLatin1Literal OPTIONS_DIALOG_WEB_DOCROOT_DLG("OptionsDialog/WebDocroot");
+const QLatin1Literal OPTIONS_DIALOG_RANGE_DISTANCES("OptionsDialog/RangeDistances");
 
 /* Other options that are only accessible in the configuration file */
 const QLatin1Literal OPTIONS_DIALOG_LANGUAGE("OptionsDialog/Language");

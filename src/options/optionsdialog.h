@@ -178,9 +178,6 @@ private:
   void onlineTestWhazzupUrlClicked();
   void onlineTestUrl(const QString& url, bool statusFile);
 
-  /* Converts range ring string to vector of integers*/
-  QVector<int> ringStrToVector(const QString& string) const;
-
   /* Add a dialog page */
   QListWidgetItem *pageListItem(QListWidget *parent, const QString& text, const QString& tooltip = QString(),
                                 const QString& iconPath = QString());
@@ -218,6 +215,11 @@ private:
   void updateFlightplanExample();
   void updateLinks();
 
+  /* Converts range ring string to vector of integers. Falls back to 100 units single ring if nothing is valid.
+   * Uses current locale to convert numbers and check min and max. */
+  QVector<float> rangeStringToFloat(const QString& rangeStr) const;
+  QString rangeFloatToString(const QVector<float>& ranges) const;
+
   QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
@@ -238,6 +240,7 @@ private:
   UnitStringTool *units = nullptr;
 
   QFontDialog *fontDialog = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

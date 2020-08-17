@@ -2550,6 +2550,8 @@ void MapWidget::restoreState()
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML)
     kmlFilePaths = s.valueStrList(lnm::MAP_KMLFILES);
+
+  // Restore range rings, patterns, holds and more
   getScreenIndex()->restoreState();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL)
@@ -3127,29 +3129,35 @@ void MapWidget::changeHome()
 }
 
 void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type,
-                                const QString& ident, const QString& frequency, int range)
+                                const QString& ident, const QString& frequency, float range)
 {
-  map::RangeMarker ring;
-  ring.type = type;
-  ring.position = pos;
-
-  if(type == map::VOR)
+  if(range > 0.f)
   {
-    if(frequency.endsWith("X") || frequency.endsWith("Y"))
-      ring.text = ident + " " + frequency;
-    else
-      ring.text = ident + " " + QString::number(frequency.toFloat() / 1000., 'f', 2);
+    map::RangeMarker ring;
+    ring.type = type;
+    ring.position = pos;
+
+    if(type == map::VOR)
+    {
+      if(frequency.endsWith('X') || frequency.endsWith('Y'))
+        ring.text = tr("%1 %2").arg(ident).arg(frequency);
+      else
+        ring.text = tr("%1 %2").arg(ident).arg(QString::number(frequency.toFloat() / 1000., 'f', 2));
+    }
+    else if(type == map::NDB)
+      ring.text = tr("%1 %2").arg(ident).arg(QString::number(frequency.toFloat() / 100., 'f', 2));
+
+    ring.ranges.append(range);
+    getScreenIndex()->getRangeMarks().append(ring);
+    qDebug() << "navaid range" << ring.position;
+
+    update();
+    mainWindow->updateMarkActionStates();
+    mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(ident));
   }
-  else if(type == map::NDB)
-    ring.text = ident + " " + QString::number(frequency.toFloat() / 100., 'f', 2);
-
-  ring.ranges.append(range);
-  getScreenIndex()->getRangeMarks().append(ring);
-  qDebug() << "navaid range" << ring.position;
-
-  update();
-  mainWindow->updateMarkActionStates();
-  mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(ident));
+  else
+    // No range - fall back to normal rings
+    addRangeRing(pos);
 }
 
 void MapWidget::addRangeRing(const atools::geo::Pos& pos)
@@ -3158,9 +3166,8 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
   rings.type = map::NONE;
   rings.position = pos;
 
-  const QVector<int> dists = OptionData::instance().getMapRangeRings();
-  for(int dist : dists)
-    rings.ranges.append(atools::roundToInt(Unit::rev(dist, Unit::distNmF)));
+  for(float dist : OptionData::instance().getMapRangeRings())
+    rings.ranges.append(Unit::rev(dist, Unit::distNmF));
 
   getScreenIndex()->getRangeMarks().append(rings);
 

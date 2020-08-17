@@ -163,9 +163,9 @@ public:
   /* Add general (red) range ring */
   void addRangeRing(const atools::geo::Pos& pos);
 
-  /* Add radio navaid range ring */
+  /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
   void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& ident,
-                       const QString& frequency, int range);
+                       const QString& frequency, float range);
 
   /* If true stop downloading map data */
   void workOffline(bool offline);

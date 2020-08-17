@@ -2059,7 +2059,7 @@ void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::H
   else
   {
     QStringList distStr;
-    for(int dist : marker.ranges)
+    for(float dist : marker.ranges)
       distStr.append(Unit::distNm(dist, false));
 
     html.brText((marker.ranges.size() > 1 ? tr("Distances: %1 %2") : tr("Distance: %1 %2")).
