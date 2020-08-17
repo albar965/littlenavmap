@@ -2933,16 +2933,11 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     map::MapUserpoint userpoint = base->asObj<map::MapUserpoint>();
 
     SqlRecord rec;
-    if(!userpoint.ident.isEmpty())
-      rec.appendFieldAndValue("ident", userpoint.ident);
-    if(!userpoint.region.isEmpty())
-      rec.appendFieldAndValue("region", userpoint.region);
-    if(!userpoint.name.isEmpty())
-      rec.appendFieldAndValue("name", userpoint.name);
-    if(!userpoint.type.isEmpty())
-      rec.appendFieldAndValue("type", userpoint.type);
-    if(!userpoint.tags.isEmpty())
-      rec.appendFieldAndValue("tags", userpoint.tags);
+    rec.appendFieldAndValue("ident", userpoint.ident);
+    rec.appendFieldAndValue("region", userpoint.region);
+    rec.appendFieldAndValue("name", userpoint.name);
+    rec.appendFieldAndValue("type", userpoint.type);
+    rec.appendFieldAndValue("tags", userpoint.tags);
 
     emit showInSearch(map::USERPOINT, rec, true /* select */);
   }
@@ -2954,8 +2949,8 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     map::MapVor vor = base->asObj<map::MapVor>();
     SqlRecord rec;
     rec.appendFieldAndValue("ident", vor.ident);
-    if(!vor.region.isEmpty())
-      rec.appendFieldAndValue("region", vor.region);
+    rec.appendFieldAndValue("name", vor.name);
+    rec.appendFieldAndValue("region", vor.region);
 
     emit showInSearch(map::VOR, rec, true /* select */);
   }
@@ -2964,8 +2959,8 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     map::MapNdb ndb = base->asObj<map::MapNdb>();
     SqlRecord rec;
     rec.appendFieldAndValue("ident", ndb.ident);
-    if(!ndb.region.isEmpty())
-      rec.appendFieldAndValue("region", ndb.region);
+    rec.appendFieldAndValue("name", ndb.name);
+    rec.appendFieldAndValue("region", ndb.region);
 
     emit showInSearch(map::NDB, rec, true /* select */);
   }
@@ -2974,8 +2969,8 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     map::MapWaypoint waypoint = base->asObj<map::MapWaypoint>();
     SqlRecord rec;
     rec.appendFieldAndValue("ident", waypoint.ident);
-    if(!waypoint.region.isEmpty())
-      rec.appendFieldAndValue("region", waypoint.region);
+    rec.appendFieldAndValue("name", QString());
+    rec.appendFieldAndValue("region", waypoint.region);
 
     emit showInSearch(map::WAYPOINT, rec, true /* select */);
   }
