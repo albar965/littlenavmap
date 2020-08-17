@@ -130,7 +130,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
 {
   QRect vpRect(painter->viewport());
 
-  // Calculate the number of points to use depending in screen resolution
+  // Calculate the number of points to use depending on screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
   int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
 
@@ -153,7 +153,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   bool ringVisible = false, lastVisible = false;
   LineString ellipse;
   // Draw ring segments and collect potential text positions
-  for(int i = 0; i <= 360; i += step)
+  for(int i = step; i <= 360; i += step)
   {
     // Line segment from p1 to p2
     Pos p2 = centerPos.endpoint(radiusMeter, i);
@@ -283,6 +283,10 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
   ls.setTessellate(true);
   for(int i = 1; i < linestring.size(); i++)
   {
+    if(linestring.at(i - 1).almostEqual(linestring.at(i)))
+      // Do not draw  duplicates
+      continue;
+
     // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
     qreal correction = 0.;
     if(atools::almostEqual(linestring.at(i - 1).getLatY(), linestring.at(i).getLatY()))
