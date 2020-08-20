@@ -1,5 +1,269 @@
-Numbers (#) refer to Github issues.
+﻿Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
+
+Version 2.6.0.beta
+
+Highlights:
+
+* Oceanic tracks: NAT, PACOTS and AUSOTS. Visible on map and can be used in flight planning as well as for automatic plan calculation. See `Flight Plan` -> `Download Tracks`.
+* Multi-export: Export more than one flight plan format at once with just one click. Formats and paths are configurable. See `File` -> `Multi Export Flight Plan Options`.
+* Many changes to logbook: A log entry now gets track and flight plan attached which can be shown in preview.
+* Improved flight plan calculation. Can now calculate across regions which are void of airways. Can use oceanic tracks, avoid RNAV airways and more options. `Flight Plan` -> `Calculate Flight Plan`.
+* Little Navmap now uses its own flight plan format which allows removing most of the confusing warning dialogs. Flight plan saving and loading logic has changed completely.
+* User can add remarks or comments on flight plan and flight plan waypoints. See tab `Flight Plan Remarks` in `Flight Planning` dock window. Right click on flight plan waypoint in plan table or map and select `Edit Flight Plan Position Remarks`.
+* Better map context menu with sub-menus for easier selection of actions if more than one map object is below clicked position.
+* User can now select fonts for user interface and map display. Options dialog on pages `User Interface` and `Map`.
+* Free user interface language selection (if translation available). Change this in the dialog `Options` on page `User Interface`
+* Fullscreen mode maximizes map on one click or key press. See `Window` -> `Fullscreen Map`.
+* Save and load window layouts for dock windows. This also saves toolbar positions and the main window size. See menu `Window`. Layouts are saved separately for both normal and fullscreen mode.
+* Optionally focus and raise dock windows or main window on mouse hover. Change this in `Options` on page `User Interface`.
+* Option to disallow docking windows from snapping back to main window when moving around. Can be toggled in menu `Window` -> `Show all floating Windows`.
+* Many changes in user interface for better usability. Better error reporting for flight plan issues.
+* Added new map display options. Text size and line width for airways, labels for measurement lines and more. Dialog `Options` on pages `Map Display` and `Map Display 2`.
+* Now reading and showing X-Plane frigate and carrier as AI.
+* Many drawing issues fixed like disappearing lines around the date line, problems with procedures and symbols popping out at the map window border.
+* Tear off toolbar button menus, e.g. for userpoints.
+
+Limitations:
+
+* Translations are not updated yet. The user interface will be a mix of your local language and English.
+* The online and offline manuals are not updated yet. Neither the English nor the translated versions. Help buttons and links are not functional yet. Ask in the Avsim forum if you have questions: https://www.avsim.com/forums/forum/780-little-navmap-little-navconnect-little-logbook-support-forum/.
+
+Notes:
+
+* MSFS2020 support is being worked on and will be progressively added during the beta cycle.
+* The data exchange protocol has changed. You have to update Little Navconnect (if using remote/network connections) and Little Xpconnect (if using X-Plane) too.
+* Reload the scenery library database to see fixes and improvements.
+* Some features like RNAV airways and the new UIR/FIR regions are only available with Navigraph databases from cycle 2008.
+* Little Navmap will reset some settings like window layout, search options, order of table columns on first start using the new version.
+* Range rings cannot be reloaded since the format has changed. Range ring radii in options dialog are reset back to default values.
+* The flight plan short/long format was dropped. Go to `Options` on page `Flight Plan` and adjust the file pattern to your needs.
+* Little Navmap will ask to create a recommended folder structure for your files in documents folder. Skip this step (`Do not show again`) if you do not like this.
+
+Changes:
+
+Flight Plan:
+
+* Introduced the new default LNMPLN flight plan format for saving and loading. Completely changed open/save/save-as logic. All other formats are now only exported and not saved. Removed most of the confusing warning dialogs when exporting to other formats. Little Navmap can still open and export the same flight plan formats as the old version. No limitations were introduced in this regard.
+* Improved display of error messages for flight plan errors. Now showing message below flight plan table if procedures, waypoints or airways could not be found.
+* Removed dialog showing procedure and alternate loading errors. Using error label in window `Flight Planning` now.
+* Added remarks tab to flight planning window which is saved with the new flight plan format. Adding change indication `*` to flight plan remarks tab only if it has text. #442
+* Added region, name and comment fields for user defined flight plan points (green rectangles) which can be saved in LNMPLN format. Right click on user defined flight plan position in the map or flight plan table to edit. #429
+* New option to add comments for waypoints and other navaids in flight plan. Limited to departure, destination and en-route points. Not available for alternate and procedure waypoints. Right click on waypoint in flight plan table or map to edit.
+* Added columns for wind forecast and calculated altitude to flight plan table.
+* Added button for column settings to flight plan window.
+* Fixed issues when loading flight plans with ICAO ids that are different to X-Plane ids. For example ICAO `CAT4` versus X-Plane `AT4`.
+* Removed useless and FSX/P3D only route type (VOR, Direct, etc).
+* Automatic changing of departure position when switching simulator does not alter change status now to avoid flight plan changed warnings when changing simulator database.
+* Now showing correct approach related ILS frequency for runways with more than one ILS. For example EDDF 25R/07L.
+* Flight plan table header now shows tooltips.
+* Preventing crashes when setting cruise altitude to zero now.
+* Fixed crash when adding procedure after user defined flight plan waypoints.
+* Fixed problem where flight plan legs inside procedures could be moved.
+
+Flight Plan Export, Save and Print:
+
+* Added flight plan multi-export with configuration in menu `File`. Removed now redundant menu items for export.
+* Removed short and long flight plan name option and replaced it by a more flexible pattern based approach. User can now define own default flight plan name. See dialog `Options` on page `Flight Plan`.
+* Improved style and text display for flight plan table in HTML export, web server and printing.
+* Added cruise altitude and distance to top of climb as well as top of descent to flight plan table print as well as HTML export. #482
+* Attempt to fix issues for X-IvAp and IvAp export.
+* vPilot default voice type is now `Full` to avoid misleading error message from vPilot. #468 and #493
+* Added flight plan export format for Aerosoft CRJ. #184
+* Added support for reading Garmin FPL files (XML format).
+* Added option to export flight plan without airways using only waypoints. #463
+* Fixed issue where destination airport had null altitude in some exported flight plan formats.
+
+Route Description:
+
+* Fixed issue where SID was wrongly identified as a waypoint. Example: `SGES COSTA COSTA A311 VAS A556 VIR W11 PAZ A304 JUL V11 ILMOX ILMO3B SPZO`
+* Clean up and improvements in route description code to be able to parse tracks. Can read route strings without destination and departure airports now. Can now optionally match user coordinates to waypoints. #82
+* Fixed several issues when reading and writing route descriptions with airways at procedure entry/exit.
+* More bug fixes in reading and writing route descriptions.
+* More cleanup in drop-down menu.
+* Fixed issue in route descriptions reader where NDB were used before nearby waypoints.
+
+Fuel Report and Aircraft Performance:
+
+* Changed aircraft performance file saving to new XML format. Old INI format is automatically detected and can still be loaded. This is normally not noticeable by the user. LNMPERF can be saved into old format by selecting another file filter if needed. #523
+* Issue in performance tab fixed which was not updated after connecting to simulator.
+
+Flight Plan Calculation:
+
+* Flight plan calculation can now optionally skip regions void of airways by inserting waypoints.
+* New option to avoid RNAV airways.
+* Option to use oceanic tracks.
+* Added floating dock window for flight plan calculation and options. Removed now useless toolbar buttons and menu items. #466
+* Added progress dialog with cancel option for flight plan calculation. #466
+* Fixed issues where airway was erased in flight plan at procedure entry or exit. Now adding extra waypoint in export formats at procedure entry or exit if an attached airway is used. Overlapping departure waypoints are now correctly removed when adding a SID. #478
+* Flight plan can now be calculated between procedure entry and exit points without needing dummy waypoints. #478
+* Removed option to force algorithm using the closest radio navaids near start and destination before waypoints. Add these manually if needed.
+
+Oceanic Tracks:
+* Added loading and display of NAT, PACOTS and AUSOTS tracks on map, in information display and for tooltips. Added new toolbar button for track display. See menu `Flight Plan` and `View`.
+* Added download on startup as well as manual download for tracks. #82
+
+Elevation Profile:
+
+* Added tooltip replacing the header text for mouse hover in the elevation profile. Added calculated altitude, course and heading (based on wind) to display text in profile tooltip.
+* Removing aircraft on elevation profile when flying missed or alternate leg.
+
+Options:
+
+* New shortcut `Ctrl+Shift+,` for options.
+* Options dialog now adds scrollbars on pages to avoid window growing too large.
+* Added option to fill and raise procedure search tab when clicking on airport.
+* Added option to enable or disable loading of aircraft performance file on page `Startup` in dialog `Options`.
+* Added options to disable drawing of runways on page `Map Display`.
+* Added customization options for airway line thickness, airway text size and airway text background. #486
+* Added options to disable user and AI aircraft click and tooltip on page `Map`.
+* Now checking for abuse of official online networks using custom configuration with a too low refresh rate.
+* Online network download is now skipped if already downloading to fix issues if using low update rates.
+* Added option to select map font in options dialog on page `Map Display`. #373
+* Added option to clear flight plan table selection and highlights while flying on page `Simulator Aircraft`.
+* Added option to show true airspeed for user and AI aircraft on page `Map Display 2`.
+* Fixed issues with too large options dialog. Enabled word wrap in labels. Split page `Weather` into two new pages. #521
+
+Procedures:
+
+* Fixed issues in procedure search where transition could not be selected from transition leg.
+* Added fix for DME arc legs where last fix before arc does not match distance. Example: `LTBS WESTB LCRA` #205
+* Fixed issue where procedure turn in approaches disappeared while scrolling.
+* Fixed issue where intercept position of track to fix legs with an initial fix in between was not calculated correctly. #205
+* Display issue for course to fix procedure legs after initial fix solved. #205
+* Fixed issue with wrong intercept legs after circular (DME Arc or constant turn radius) legs in procedures. #205
+* Problems with manually terminated procedure leg types fixed. Example: `CYDC PIGLU3 CYLW` Fixed crashes, display issues and wrong distance calculation.
+* Active procedure leg is now drawn on top of others.
+* Added separate text map drawing layer for procedures and increased detail level for procedure drawing. Closes #483
+* Fixed disappearing hold when scrolling map. For example at KSMN, approach VORDME-B IRWAV (VDMB) via LKT. #205
+* Now using coordinates to match procedure fixes if available. NDBs are now found for all procedures. #478
+
+Weather:
+
+* Solved issue where weather and winds aloft were updated twice on startup.
+* Added download of full VATSIM weather file which results in faster updates. The program can now show nearest VATSIM weather station for an airport.
+* Changed VATSIM METAR URL to encrypted HTTPS/SSL.
+* Now omitting the best runway report if no directional wind provided, such as `ENRO 021720Z VRB06KT 9999 -SHSN BKN019 M03/M06 Q1011`.
+* Corrected parsing of METAR which failed to read pressure after `//////CB`.
+
+User Interface:
+
+* Added saving and loading of window layouts to menu `Window` including recent files. Layout files can also be loaded by dropping them into the main window. Saved state covers window size, position, maximized, full screen, dock windows, tool bars and status bar for both normal main window and maximized main window. #451
+* Added an option to window menu to forbid dock windows snapping back into main window.
+* Added options to raise dock windows and/or main window on mouse over.
+* Fixed issue where dock window sizes were not restored properly. #121
+* Tooltips for whole program are now always shown even if window is inactive.
+* Option `Allow to undock map window` is now off per default.
+* Reset window layout moves window to primary screen now.
+* Added opening of connection dialog and a start page in browser on first startup.
+* Added startup dialog asking to create recommended folder structure in documents folder. This also sets the default path for all file dialogs where applicable.
+* Added menu items to open log file, configuration file and database folder. See `Tools` -> `Files and Folders`.
+* Made instructions for installing the GLOBE data more clear.
+* Added toolbar for simulator connection, load scenery library and options.
+* Moved all toolbutton drop-down actions to menus allowing separator lines and tooltips in menus. All toolbutton (toolbar and route string) drop down menus can now be teared off. This allows clicking menu items repeatedly without the need to reopen the menu again.
+* Enabled tooltips with full file path for all file history menus.
+* Coordinate format longitude/latitude can now be read back without problems.
+* Added handling for HTTPS/SSL errors in encrypted connections like they happen for self signed certificates. Now showing a dialog on SSL errors which allows to cancel downloading or to ignore the error.
+* Added options to select GUI and map font separately in options dialog. Removed old options to change font in configuration file. Note that any custom font like https://b612-font.com has to be installed using the usual operating system functions before. #373
+* Added log of background messages like weather downloads on the left side of the status bar tooltip. Shows number of messages if no other status bar message is shown.
+* Moved option to show TOC and TOC into `View` menu and to elevation profile context menu.
+* Now overriding locale/region settings after setting language. Fixes issue where setting region formats like number and date to English also changed language. #492
+* Added free language selection in options dialog. Shows all available translations in combo box.
+* Changed all comment or description field names to `Remarks` for consistency.
+* Put userpoint menu items into sub-menu in map context menu.
+* Added `Remove all Ranges, Measurements, Patterns and Holdings` option to reset all function.
+* Fixed issues where shortcuts in flight plan menu could be triggered inadvertently even if disabled.
+* Disabled splitter styling for Linux to avoid messing up user interface themes.
+* Removed rhumb measurement lines and all other rhumb distance/course options in flight plan legs and flight plan table. Removed rhumb course and distance display settings in options dialog.
+* Made tooltip error message more clear (`Hover mouse`).
+
+Scenery Database:
+
+* Added scenery database load action to toolbar.
+* Progress for scenery database loading with FSX/P3D, X-Plane and DFD reworked to avoid under-/overflow and to have a more balanced progress rate.
+* Changed progress dialog when loading scenery to avoid dialog growing larger than screen size. Added `Counting files` to describe initial freeze in scenery loading dialog.
+* Now using airport ICAO ids throughout the whole program instead of the X-Plane internal ids. The X-Plane internal id is still shown in information window if it differs from ICAO id.
+* Fixed issues with user home folders containing special characters. This caused issues when detecting flight simulators. Path to `Scenery.cfg` was wrongly requested in this case.
+* Fixed issue where loading of X-Plane on a blank system without `x-plane_install_11.txt` failed which can happen if XP was copied manually to the system. Path to `Scenery.cfg` was wrongly requested in this case.
+* Added removal of generated waypoints to support procedure fix resolution in LNM <= 2.4.5 and database vacuuming after converting Navigraph database.
+* Disabled processing of routing tables in configuration file when loading scenery library. These are now created on the fly. #466
+
+Simulator Connection:
+
+* Reorganized connect dialog user interface. Now using a tab for each simulator. * Now showing a warning message if FSX SP2 SimConnect cannot be found on Windows.
+* Added frigate and carrier as boat AI for X-Plane. Added fetch AI ships option for X-Plane. #531
+
+Information and Aircraft Progress:
+
+* Now showing fuel and ETA for next leg. Changed fuel calculation for progress display completely and fixed several issues with fuel and ETA calculation. Re-arranged fields in progress display.
+* Moved all airport information tabs to a separate airport tab. This should make more clear which tabs are updated if clicking on an airport or navaid.
+* Added helpful tooltips and hints to simulator aircraft tabs if not connected or waiting for update.
+* Corrected waypoint from/to display in progress display for next waypoint. Now indicating from/to for certain procedure legs like `Fix to altitude`. Omitting duplicate waypoint display for manual legs in elevation profile. #205
+* Improved information display around user, AI and online aircraft.
+* Added runway smoothness and airport flatten flags from X-Plane to information display.
+* Replaced wrong `Crab angle` label with `Heading` in aircraft progress. This still shows the same wind corrected heading value.
+* Added display for frigate and carrier as boat AI for X-Plane. #531
+* Showing new X-Plane icing options: AOA, inlet, prop, static and window ice given in percent maximum if multiple sources.
+
+Online Networks:
+
+* Solved problem where online shadow aircraft lost shadow status while downloading new files. As a result duplicate aircraft might appear even if configuration is correct.
+
+Map:
+
+* Completely reorganized the map context menu. Now showing sub-menus with icons for all objects nearby the right-click position if menu action can be applied to more than one feature. #270
+* Now showing more hints why menu items are disabled, like `no procedure`, `hidden on map` and others.
+* Procedures can now be deleted using the map context menu.
+* Added hints for mouse click modifiers like `Ctrl+Click` to map context menu. #270
+* Mouse `Ctrl+Wheel` can now be used to quickly increase and decrease details in map.
+* Added distance to last flight plan leg to airport and navaid tooltip. This helps when building plans manually.
+* Compass rose can now be detached from the user aircraft independent of connection status. Detached compass rose remains in screen center.
+* Range rings now allow distance rings smaller than 1 NM, km or mile.
+* Disabled loading status (`Waiting for update` now `Loading`) in statusbar for custom maps since it is unusable there. Status `Loading` is removed after a timeout since some maps do not provide meaningful values.
+* Added tooltip for range ring center with distances.
+* Changed map settings for AI aircraft. Now visible for higher zoom levels.
+* Changed all fonts in map display and elevation profile to use selected font from options. This affects all features and marks in map and elevation profile. Font is set to system font and bold for first start of new Little Navmap version. #373
+* Map scale display corrected. Fixed inaccurate scale. Scale now uses more natural range steps opposed to values like 32, 48, 96 before. Scale saves options now. #328
+* Fixed problem with inadvertent zooming when moving the mouse above the navigation overlay while scrolling.
+* Fixed several line drawing issues around the anti-meridian in Mercator mode. Related to #515. This also solves issues with ghost tooltips for airways and ghost airspace tooltips in the Pacific Ocean. Range circles now drawing correctly.
+* Fixed issue where offline map state was not loaded on startup. Now updating map after leaving offline state.
+* Added rounding to nearest 10 ft/m value for traffic pattern altitude.
+* Now limiting maximum zoom out to avoid freeze and empty map when centering long flight plans, for example.
+* Fixed objects and texts popping in and out of view at screen borders.
+* Increased VOR and NDB symbol sizes at lowest zoom levels.
+* Changed drawing of symbols to avoid jitters when scrolling.
+* Fixed issues where wrong waypoints were shown in tooltip and other selections over procedure points.
+* Radio navaid range ring centers are now correctly placed above navaid when creating one by clicking into the map.
+* Added Marble atmosphere plugin.
+* Removing wind pointer on map now if no wind.
+* Now showing warning if zooming to a position near the poles in Mercator projection. #515
+
+Logbook:
+
+* Added attachments to logbook entry for flight plan, aircraft performance and GPX format files for trail and flight plan preview. Files are attached upon takeoff and landing and can be opened, loaded and saved from the context menu in the search table or the logbook entry edit dialog. Export to and import from CSV covers these attachments too.
+* Direct connection, flight plan with waypoints and trail are shown when clicking on logbook entry in search table. All three options can be enabled or disabled.
+* Added hint for attached or referenced files in information display.
+* Added separate airport search field to logbook search window which filters by both departure and destination. Departure and destination search fields were moved to additional search options line. #455
+* Clean up in logbook context menu. Added menu items for attached files in logbook context menu. New menu items for enabling display of track and flight plan in logbook context menu. #432
+* Added more airport related menu items to logbook context menu: `Show Information`, `Show on Map`, `Set as destination`, `Set as Departure` and ` Add as alternate`. Right click on airport name or ICAO in the search table to enable these menu items. #432
+* Option for CSV header in logbook export added. Added header detection on CSV import.
+
+Airspaces:
+
+* Added new `FIR` and `UIR` boundary types instead of the merged type `Center`. New program remains backward compatible with old databases and new databases can still be used with the old program (versions <= 2.4.5). New boundaries need Navigraph databases newer or equal to cycle 2008.
+* Moved class F and G airspaces to ICAO dropdown button in toolbar.
+* Fixed display issues of large airspaces and ghost tooltips, especially near the anti-meridian and for airspaces extending to the poles.
+
+Userpoints:
+
+* New userpoints can now be created as a shallow copy when clicked on the map. This means that all fields are taken from a present userpoint on the map if you right click on it and select `Add Userpoint`.
+* Corrected default types for userpoint when creating a userpoint based on navaid. Now setting types `VOR`, `NDB` and others correctly.
+* Added display of magnetic declination in userpoint edit dialog and userpoint infofmation.
+* Changed userdata export headers for more readability. Added header option for CSV export in userdata. Added recognition of header on import.
+* Renamed all occurrences of `Userdata` in the user interface to `Userpoints` for more consistency.
+
+
+===============================================================================
 
 Version 2.4.5
 
@@ -30,12 +294,12 @@ User Interface:
 * Updated German legend.
 
 Build:
-* Added option to include common "../build_options.pro" file with defines for qmake.
+* Added option to include common `../build_options.pro` file with defines for qmake.
   File is included automatically if it exists.
 
 related from atools version 3.4.6
 * Fixed error reporting in wind download and decoding. #480
-* Added option to include common "../build_options.pro" file with defines for qmake.
+* Added option to include common `../build_options.pro` file with defines for qmake.
 * Chinese translation by John Liu.
 
 ===============================================================================
@@ -62,8 +326,8 @@ Version 2.4.3.rc2
 * Finished German translation.
 * Fixed many typos in German and English texts and adapted all translation files to changes.
 * Fixed magnetic course calculation when flying outbound from a VOR.
-* Corrected help URL for "reset all for new flight" dialog.
-* Added help button to "reset and restart" dialog.
+* Corrected help URL for `reset all for new flight` dialog.
+* Added help button to `reset and restart` dialog.
 * Now using correct ICAO ident in web page links in airport information instead of X-Plane internal ids.
 
 ===============================================================================
@@ -78,7 +342,7 @@ Help:
 * English online manual is now complete. PDF and other formats are available for download:
   https://albar965.github.io/pages/24/littlenavmapmanuals.html
 * PDF Manuals for French, Italian and German are included in download archive but still based on version 2.2.
-* Sources for the manuals are committed to Github and can be found on branch "release/2.4".
+* Sources for the manuals are committed to Github and can be found on branch `release/2.4`.
 
 Help - New Chapters:
 * Dock Windows: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/DOCKWINDOWS.html
@@ -146,7 +410,7 @@ Options:
 * Other small user interface fixes.
 
 Procedures:
-* Fixed display issue for procedure leg names like "XAROL+5". Was using wrong distance value before.
+* Fixed display issue for procedure leg names like `XAROL+5`. Was using wrong distance value before.
 * Fixed issue where navaids were hidden on the map if part of a missed procedure in the flight plan.
 * Fixed display problem when deleting transitions from a flight plan resulting in invalid approach.
 
@@ -168,7 +432,7 @@ Version 2.4.2.beta
 * Removed merge options for aircraft type and model in performance merge dialog which resulted in
   unwanted changes. Now limited to copy and ignore.
 * Added real ICAO code to airport to avoid issues with X-Plane's artificial airport ids. Now finds
-  procedures for e.g. "AT4" where ICAO is actually "CAT4". Reload the scenery library to see this fix.
+  procedures for e.g. `AT4` where ICAO is actually `CAT4`. Reload the scenery library to see this fix.
 * X-Plane FMS flight plan is now adjusted for real ICAO airport idents when using procedures to
   avoid problems loading plan.
 * Fixed display problem when deleting transitions from a flight plan.
@@ -227,7 +491,7 @@ Profile Display:
 * Aircraft label could be hidden in elevation profile display.
 
 Map:
-* Corrected "View" -> "Reset Display Settings" function and added missing display features to
+* Corrected `View` -> `Reset Display Settings` function and added missing display features to
   reset (weather, airspace sources, user features and more).
 * Fixed several issues where airspace buttons were disabled and/or not updated properly after changing source.
 * Fixed double drawing of waypoints and navaids which are part of a flight plan.
@@ -236,7 +500,7 @@ Map:
   before airport for all actions.
 
 Weather:
-* Moved wind and airport weather source from menu "View" to new menu "Weather" since these functions also
+* Moved wind and airport weather source from menu `View` to new menu `Weather` since these functions also
   affect flight planning and not just the map display.
 * Wind speed and direction fields are now hidden in flight planning tab if no manual wind is used.
   This allows to shrink the flight planning dock window to a smaller size.
@@ -246,24 +510,24 @@ Weather:
 
 Options:
 * Changed defaults in options dialog to more sensible values. This will affect only new users of after selecting
-  "Reset all Settings and Restart" in the tools menu.
-* Fixed several issues with "Restore Defaults" function in options dialog where values were not reset at all
+  `Reset all Settings and Restart` in the tools menu.
+* Fixed several issues with `Restore Defaults` function in options dialog where values were not reset at all
   or reset to the wrong defaults.
 * Fixed issues in options dialog where webserver settings were not used or reverted back to old values.
 * Fixed issue where the webserver was always started after exiting options dialog.
 
 User Interface
-* Added "Reset all Settings and Restart" function in tools menu which replaces the need to delete the settings
-  folder in case of issues. This will create a backup of the "little_navmap.ini" and erase all contents afterwards.
+* Added `Reset all Settings and Restart` function in tools menu which replaces the need to delete the settings
+  folder in case of issues. This will create a backup of the `little_navmap.ini` and erase all contents afterwards.
 * Stacks of tabbed dock windows are now completely closed if one of the docks in the stack is closed by
   using the shortcut, menu or toolbar. Closed stacks are reopened completely if one of the dock windows
   is reopened or activated.
 * Stacked dock windows are now correctly raised on shortcut or other activation. Before the stack of dock
   windows was raised only while the dock window was still hidden.
 * Fixed issue where splitter handles (in elevation profile and route description dialog) were too large.
-* Style "macintosh" is now usable again on smaller screens for macOS. Tabs took up too much space previously and
+* Style `macintosh` is now usable again on smaller screens for macOS. Tabs took up too much space previously and
   prevented dock windows from shrinking.
-  Default style is now "macintosh" again after a new installation on macOS.
+  Default style is now `macintosh` again after a new installation on macOS.
 * Attempt to fix options dialog which appeared without content in some cases.
 * More small fixes for more clarity and consistency in user interface.
 
@@ -297,7 +561,7 @@ Installation:
 
 Help:
 * Draft manuals can be accessed here: https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/
-* List of closed issues: https://github.com/albar965/littlenavmap/milestone/7?closed=1
+* List of closed issues: https://github.com//milestone/7?closed=1
 * Included map legend updated.
 
 User Interface:
@@ -308,18 +572,18 @@ User Interface:
   - Tab states and positions are saved between sessions.
   - Tabs are opened and/or raised on demand on info click or menu selection.
   - Reset window layout also resets tab layout and reopens all closed.
-* Now raising windows and/or tabs optionally on actions like e.g. "Set Destination". Also after
+* Now raising windows and/or tabs optionally on actions like e.g. `Set Destination`. Also after
   loading, importing or creating a new flight plan, aircraft performance file or others.
   This should help to avoid confusion when creating new or modifying documents.
-  This behavior can be disabled in "Options" -> "User Interface" -> "Raise related windows ...".
+  This behavior can be disabled in `Options` -> `User Interface` -> `Raise related windows ...`.
 * Moved map theme and projection into separate toolbar. This helps to avoid toolbar overflow on the
   right for the map toolbar.
-* Changed default layout to use a bigger window which is also used after "Reset Window Layout".
-* Added menu item to save all options and window layout. Menu "Tools" -> "Save Options and State". #420
+* Changed default layout to use a bigger window which is also used after `Reset Window Layout`.
+* Added menu item to save all options and window layout. Menu `Tools` -> `Save Options and State`. #420
 * Now saving full program state after changing options or style.
-* Renamed dock window "Flight Plan" to "Flight Planning" and tab "Aircraft Performance" to
-  "Fuel Report".
-* Changed user interface style to "Fusion" as default on macOS since the cumbersome default style
+* Renamed dock window `Flight Plan` to `Flight Planning` and tab `Aircraft Performance` to
+  `Fuel Report`.
+* Changed user interface style to `Fusion` as default on macOS since the cumbersome default style
   needs too much space for tabs.
 * Fixed issue where table cells where initially not resized and appeared too large despite
   selecting a small font.
@@ -329,49 +593,49 @@ User Interface:
 Options:
 * Replaced tabs in options dialog with list including icons and tooltips for better overview.
 * Added option for high DPI high resolution display support.
-  Dialog "Options" -> "User Interface" -> "Enable high DPI ...".
-* Added option to disable proposed filename when doing "Save as" or "Export" and file already
-  exists. Dialog "Options" -> "User Interface" -> "Propose new name ...". #433
+  Dialog `Options` -> `User Interface` -> `Enable high DPI ...`.
+* Added option to disable proposed filename when doing `Save as` or `Export` and file already
+  exists. Dialog `Options` -> `User Interface` -> `Propose new name ...`. #433
 * Added option to add true heading/course to all values in display in smaller font. This affects
   all information, progress and tooltip displays.
-  Can be selected in "Options" -> "Units" -> "Show true course ...".  Useful for flying in areas
+  Can be selected in `Options` -> `Units` -> `Show true course ...`.  Useful for flying in areas
   with high or unreliable magnetic declination.
 * Added option to ignore radio navaid declination when calculating magnetic flight plan leg course.
   This is helpful if you use mostly GPS for flying and do not care about radials of VOR which might
-  have an  outdated calibration. Dialog "Options" -> "Flight Plan" -> "Ignore Declination ...".
+  have an  outdated calibration. Dialog `Options` -> `Flight Plan` -> `Ignore Declination ...`.
 * Other fuel units (kg/liter vs. lb/gal) can now be displayed in small font besides selected fuel
-  unit. This affects the fuel plan and aircraft progress tabs. See dialog "Options" -> "Units" ->
-  "Show other fuel  units too". #401
+  unit. This affects the fuel plan and aircraft progress tabs. See dialog `Options` -> `Units` ->
+  `Show other fuel  units too`. #401
 * Added new coordinate formats for display and reading: Plain latitude/longitude or
-  longitude/latitude numbers with sign. Can be selected in "Options" -> "Units" -> "Coordinates". Not
+  longitude/latitude numbers with sign. Can be selected in `Options` -> `Units` -> `Coordinates`. Not
   that this also affects the order  (lat/lon vs. lon/lat) when reading coordinates in dialogs if
   selected.
 * Added options to change MORA grid transparency and text size.
-  Dialog "Options" -> "Map Display 2". #343
+  Dialog `Options` -> `Map Display 2`. #343
 * Added separate size option for airport weather icons.
 * Added text display options for flight plan legs. Now one can select distance, and
   true/magnetic/rhumb/great circle indicators. Labels indicating type will be shown and values will
-  be merged if equal. "Options" -> "Map Display 2" -> "Flight Plan" in tree. #365
+  be merged if equal. `Options` -> `Map Display 2` -> `Flight Plan` in tree. #365
 
 Scenery Database:
 * Added recursive import of OpenAir airspaces for user database from folder. #236 and #426
   - New folder setting in options dialog for default airspace base folder and file extensions.
-    See dialog "Options" -> "Cache and Files".
-  - Load airspaces from folder in "Scenery Library" -> "Load Airspaces ...".
+    See dialog `Options` -> `Cache and Files`.
+  - Load airspaces from folder in `Scenery Library` -> `Load Airspaces ...`.
   - Added switches in menu for airspace source databases and added separate user airspace database.
     User can now choose between any combination of simulator, Navigraph, user or online airspaces.
-    Menu "View"  -> "Airspace Source".
+    Menu `View`  -> `Airspace Source`.
   - Removed online airspace button and function to copy airspaces from P3D to X-Plane.
-  - Removed option to read airspaces from "Documents/Little Navmap" in X-Plane compiler.
+  - Removed option to read airspaces from `Documents/Little Navmap` in X-Plane compiler.
   - Made airspace databases independent of navdata switch.
-* Added better error message about missing "scenery_packs.ini" for X-Plane.
+* Added better error message about missing `scenery_packs.ini` for X-Plane.
 * Added geomagnetic model calculation for X-Plane compilation based on current year and month. #300
   - Resulting table is written into database when compiling scenery library.
   - Showing error dialog about missing declination data. Falling back to world magnetic model if
     database is empty now.
-* Added support for the new "gui_label" 3D attribute in X-Plane 11.35 and higher. This gives a more
+* Added support for the new `gui_label` 3D attribute in X-Plane 11.35 and higher. This gives a more
   precise detection of 3D airports now which will be consistent with the X-Plane airport selection
-  and can be used to hide "Empty Airports". #424 and #410
+  and can be used to hide `Empty Airports`. #424 and #410
 * Fixed display for transparent aprons in X-Plane.
 * Fixed issue where FSX was wrongly selected on initial startup on Linux or macOS.
 * Potential fix on macOS folder resolution problems that appear when using case sensitive file
@@ -380,11 +644,11 @@ Scenery Database:
 * Fixed crash that appears when using fsAerodata cycle 1905r1 or later. #413
 
 Information and Aircraft Progress:
-* Added ILS map tooltip, "Show information" in map context menu and information display. #386
-  - Click on ILS shows information in "Navaid" tab.
-  - Zoom to ILS on double click in map or selecting "Map" link in information display.
+* Added ILS map tooltip, `Show information` in map context menu and information display. #386
+  - Click on ILS shows information in `Navaid` tab.
+  - Zoom to ILS on double click in map or selecting `Map` link in information display.
   - Added offset localizer hint to ILS information if runway heading does not match ILS heading.
-  - Displaying ILS source for clarification in information panel. Either "Navigraph" or "Simulator".
+  - Displaying ILS source for clarification in information panel. Either `Navigraph` or `Simulator`.
 * Added preferred runways depending on wind conditions to tooltip, airport information tab and
   as detailed table including runway surface and length to weather tab. #187
 * Aircraft progress tab now shows red warning text for icing and insufficient fuel.
@@ -393,16 +657,16 @@ Information and Aircraft Progress:
   below reserve at destination (needs valid aircraft performance).
 * Now showing orange warning text if no active flight plan leg can be found if aircraft is too far
   from plan.
-* Tab "Aircraft" on window "Simulator Aircraft" shows gross weight as red warning text if heavier
+* Tab `Aircraft` on window `Simulator Aircraft` shows gross weight as red warning text if heavier
   than max weight.
 * Now displaying more fuel values and weights in alternative units as small text in information
-  window and progress window. See above in "Options". #401
+  window and progress window. See above in `Options`. #401
 * Added new tab to show nearest map objects around selected airport: One list with airports having
   procedures and one list with radio navaids. #344
 * Added highlighting of whole airway strings from information window similar to airspaces. #348
   - Highlighted airways as well as highlighted airspaces have tooltips now.
   - Thickness of highlighted lines (airspace boundaries, airways, etc.) and text size can now now
-    adjusted with option settings ("Options" -> "Map Display 2" -> "Range rings, ...").
+    adjusted with option settings (`Options` -> `Map Display 2` -> `Range rings, ...`).
 * Added links to FlightAware, SkyVector, X-Plane Gateway and OpenNav web pages in airport
   information which link to the airport information on the respective pages.
 * Fuel and time prediction in aircraft progress tab is now based on aircraft performance (if
@@ -415,9 +679,9 @@ Flight Plan:
   drop editing, all flight plan move, delete, edit and append functions as well as all relevant context menus.
   Fuel calculation considers farthest alternate in fuel calculation now. #230
 * Added reset all function to quickly set up program for a new flight.
-  Menu "File" -> "Reset all for a new Flight".
+  Menu `File` -> `Reset all for a new Flight`.
 * Added dialog to show or hide columns in flight plan table. See context menu of flight plan table.
-  Context menu item "Select visible Columns".
+  Context menu item `Select visible Columns`.
 * Added columns for true rhumb and true great circle course to flight plan table.
 * Better messages about missing and invalid flight plan. Now adding tooltip to empty flight plan
   table space and header label with hints if plan is empty. Same for procedure search. This should
@@ -425,22 +689,22 @@ Flight Plan:
 * Now clearly describing which flight plan legs violate altitude restrictions in tooltip of error
   message. #347
 * Added warning if cruise altitude could not be detected when loading X-Plane FMS plan.
-* Edit flight plan position now allows to use shortcut "Return" for editing of user defined flight
+* Edit flight plan position now allows to use shortcut `Return` for editing of user defined flight
   plan waypoints.
 * Added missing region information (where available) for airports in flight plan table.
 * Improved route description parser. Now using VOR if a VOR and NDB with the same name are close by
-  (for example "LOWI VIC FAL PRU TEA LIRN").
+  (for example `LOWI VIC FAL PRU TEA LIRN`).
 * Fixed crashes after dropping several flight plans into the main window for loading.
 
 Flight Plan Export:
 * Added separate export menu item for X-IvAp since format differs slightly from IvAp. #395
   Fixed more issues with IVAP export. Alternate airports are now pre-filled in online format export.
 * Added TFDi Design 717 flight plan export format. #399
-* Now omitting final DCT for flight factor aircraft export to "corte.in".
+* Now omitting final DCT for flight factor aircraft export to `corte.in`.
   Should fix loading of flight plans without STAR. #394
-* Fixed Maddog X export to use correct file extension "mdr".
-* Fixed missing "=" in cruise altitude for BBS Airbus export. #396
-* Made loading of X-Plane FMS flight plans more tolerant for wrong "DIRECT" instead of "DRCT"
+* Fixed Maddog X export to use correct file extension `mdr`.
+* Fixed missing `=` in cruise altitude for BBS Airbus export. #396
+* Made loading of X-Plane FMS flight plans more tolerant for wrong `DIRECT` instead of `DRCT`
   which comes from incorrect SimBrief plans.
 * Fixed issue where flight plan was saved in wrong format when exporting to clean PLN.
 * Added flight plan table export to HTML page. #4
@@ -451,35 +715,35 @@ Weather:
   an interface). #283 This shows the NOAA wind aloft forecast which is updated four times a day and
   is used as a source by most weather programs and simulators.
   - Display of wind barbs for selected altitude, flight plan altitude and/or at flight plan
-    waypoints. Toolbar button with drop down menu or menu "View" -> "Wind Levels" allow to select
+    waypoints. Toolbar button with drop down menu or menu `View` -> `Wind Levels` allow to select
     wind display.
   - Tooltip on map shows wind for several layers when hovering over a wind barb. Setting for
-    wind barbs tooltip on "Options" -> "Map Display".
+    wind barbs tooltip on `Options` -> `Map Display`.
   - Hovering over the elevation profile shows wind at position in the header line of the elevation
     profile.
   - Fuel planning now considers high altitude winds. The manual cruise wind selection is still
     available and can be used to override the downloaded winds.
   - Top of climb and top of descent and now adjusted for head- and tailwind.
-  - See menu "View" -> "Wind Levels" and "Wind Source", dialog "Options" -> "Map" -> "Tooltips" and
-    "Options" -> "Weather" -> "Files and web addresses for wind reports".
+  - See menu `View` -> `Wind Levels` and `Wind Source`, dialog `Options` -> `Map` -> `Tooltips` and
+    `Options` -> `Weather` -> `Files and web addresses for wind reports`.
   - Download and processing can be disabled in menu if not needed.
 * Added display of gusts as red lines in wind barbs for airport weather.
-* Fixed several METAR parsing issues related to no data like "///". #441
+* Fixed several METAR parsing issues related to no data like `///`. #441
 * Now ignoring ASX weather files written for X-Plane and fixed excessive logging about missing
   file. #422
 * Full NOAA METAR file is now downloaded to avoid time consuming single web requests for airports.
   Weather display is now faster on map for NOAA METARs.  Changed NOAA download URL in dialog
-  "Options". #359
-* Added option to change X-Plane "METAR.rwx" path to allow custom file, e.g. for remote setups
+  `Options`. #359
+* Added option to change X-Plane `METAR.rwx` path to allow custom file, e.g. for remote setups
   across a share.
 * Added error dialog if weather downloads fail.
 
 Online Networks:
 * Added two options to fetch online center boundary from user airspaces. Now optionally looking
   up geometry for online centers either by airspace name or filename. Falling back to circle shape
-  if not present. See dialog "Options" -> "Map Display Online" -> "Online Center Boundary Lookup ...".
+  if not present. See dialog `Options` -> `Map Display Online` -> `Online Center Boundary Lookup ...`.
 * Disabled wrong rounding of frequencies for online centers. Now displaying as given.
-* Replacing "A7" in online ATIS text now with line breaks.
+* Replacing `A7` in online ATIS text now with line breaks.
 * Changed AI and online network aircraft icon colors for better visibility. This is also reflected
   in the toolbar buttons. The aircraft icons can still be overloaded by the user.
 * Enabled PilotEdge network. #388
@@ -488,14 +752,14 @@ Online Networks:
 Map:
 * Added option to display holding on map similar to traffic pattern. Holding can be customized
   before adding to map. See map, search and flight plan context menu item
-  "Add Holding at position". #326
+  `Add Holding at position`. #326
 * Added menu items and drop down button to hide or show user features like range rings, holdings,
   measurement lines and traffic patterns.
-  - See menu "View" -> "User Features".
+  - See menu `View` -> `User Features`.
   - Context menu items for range rings, measurement lines, holds and patterns are now disabled with
     a remark in the menu text when respective user feature is hidden on the map. You have to enable
     the respective user feature before you can add one on the map.
-  - Special shortcut clicks on the map like e.g. "Shift+Left Mouse button" for range rings enable
+  - Special shortcut clicks on the map like e.g. `Shift+Left Mouse button` for range rings enable
     display of the respective user features silently if hidden.
 * Traffic patterns and holdings have tooltips now.
 * Added warning dialog before deleting all user features. Warning dialog can be disabled.
@@ -514,13 +778,13 @@ Map:
   allows to wait for online map updates to avoid blurry maps. #377 and #384
 
 Map Navigation:
-* Added "Click to center map" navigation mode where mouse wheel zooms to center position. Also added
-  new "Map Areas" navigation mode using click/touch zones on the map screen. The latter mode is
+* Added `Click to center map` navigation mode where mouse wheel zooms to center position. Also added
+  new `Map Areas` navigation mode using click/touch zones on the map screen. The latter mode is
   helpful for touchscreen navigation. Both navigation options can be selected on new tab
-  "Map Navigation" in the options dialog. "Map Areas" still allows the classic navigation if clicking
+  `Map Navigation` in the options dialog. `Map Areas` still allows the classic navigation if clicking
   outside the active zones. #380 and #411
 * Navigation aids like symbols, center cross and navigation areas for the above mentioned navigation
-  modes can be enabled in "Options" -> "Map Display 2" -> "Navigation Aids" in tree.
+  modes can be enabled in `Options` -> `Map Display 2` -> `Navigation Aids` in tree.
 
 Procedures:
 * Added custom, user defined final approaches made of final leg altitude and distance to threshold
@@ -538,10 +802,10 @@ Procedures:
   - Fixed display of SID that start with an initial fix. Now using vectors leg. Example: ENSG EVNA1F
   - Fixed issue where first course to fix procedure leg was missing intercept point.
   - Fixed procedure decoding which wrongly used the final endpoint fix altitude as a restriction.
-* Fixed several issues with runways from simulator database having no "0" prefix.
+* Fixed several issues with runways from simulator database having no `0` prefix.
 
 Userpoints:
-* Moved user point information out of information tab "Navaids" and added separate information tab
+* Moved user point information out of information tab `Navaids` and added separate information tab
   for user defined waypoints.
 * Custom userpoint icons now allow SVG, PNG, JPG and GIF image formats.
 * Added new default userpoint types VOR, VORDME, VORTAC, DME, TACAN, NDB and lighthouse.
@@ -549,18 +813,18 @@ Userpoints:
 
 Aircraft Performance #367, #340 and #339.
 * Removed manual option to collect performance and introduced background collection which is running
-  permanently now. Tab "Current Performance" in window "Flight Planning".
+  permanently now. Tab `Current Performance` in window `Flight Planning`.
 * New dialog for merging current performance at any time with collected aircraft performance or
-  another performance file. See menu "Aircraft" -> "Merge Collected ..." and
-  menu "Aircraft" -> "Open Aircraft Performance and merge ..."
-* Added new tab "Current Performance" showing collected values.
-* Renamed tab "Aircraft Performance" to "Fuel Report".
-* Function "New Aircraft Performance" shows edit dialog now to avoid confusion.
+  another performance file. See menu `Aircraft` -> `Merge Collected ...` and
+  menu `Aircraft` -> `Open Aircraft Performance and merge ...`
+* Added new tab `Current Performance` showing collected values.
+* Renamed tab `Aircraft Performance` to `Fuel Report`.
+* Function `New Aircraft Performance` shows edit dialog now to avoid confusion.
 * Aircraft performance dialog now allows to switch between US and metric units independent of
   program settings.
 * Added alternate speed, alternate fuel flow, minimum runway length, runway type and usable fuel to
   aircraft performance.
-* Tab "Fuel Report" shows a warning if usable fuel (new field) is not given.
+* Tab `Fuel Report` shows a warning if usable fuel (new field) is not given.
 * Changed aircraft performance editing dialog and split page in three tabs.
 * Added aircraft state, required runway parameters and alternate fuel units to fuel report.
 * Improved aircraft performance display without flight plan. Now showing basic information about
@@ -573,34 +837,34 @@ Aircraft Performance #367, #340 and #339.
 * Now showing a warning if aircraft type does not match performance type.
 * Top of climb and top of descent are now calculated considering the manual or real (NOAA or X-Plane)
   wind situation.
-* Fix for invalid "Cannot Comply with Altitude Restriction" message. #417
+* Fix for invalid `Cannot Comply with Altitude Restriction` message. #417
 
 Search:
 * All keyboard shortcuts can now be used in search tabs from input fields or buttons. For example:
-  Enter an airport ICAO in the search field and press "Ctrl+M" to show the airport on top of the list
+  Enter an airport ICAO in the search field and press `Ctrl+M` to show the airport on top of the list
   on the map.
 * Fixed issues in procedure search where runway selection did not show up when opening context menu
   above a leg.
 * Keyboard shortcuts now working everywhere in procedure search.
-* "Show in search" in map context menu now selects found items in search result table.
+* `Show in search` in map context menu now selects found items in search result table.
 * Fixed issue where map objects were centered unexpectedly when follow mode was enabled for a
   search tab.
 * Now showing warning dialog when enabling distance search and search center is not set.
 
 Webserver: #163
-* Added internal web server which can be started in menu "Tools". This shows a web page which has
+* Added internal web server which can be started in menu `Tools`. This shows a web page which has
   simple use cases for map display, aircraft progress and airport information with automatic refresh.
   The page can be accessed from any computer, tablet or smartphone in the local network (you need to
   adjust you router settings to access it from the internet).
-* Simple stateless protocol added to fetch map images and more. See directory "web/test.html" or
-  "http://localhost:8965/test.html" when running the webserver for examples.
+* Simple stateless protocol added to fetch map images and more. See directory `web/test.html` or
+  `http://localhost:8965/test.html` when running the webserver for examples.
 * Allowing HTTPS/SSL connections to internal web server. An example private and public key for
   encrypted server connections is included.
-* Added configuration for web server in option dialog on page "Web Server".
+* Added configuration for web server in option dialog on page `Web Server`.
 
 Logbook: #346
 * Split logbook completely off from userpoints and added new format for entries.
-  - New main menu "Logbook".
+  - New main menu `Logbook`.
   - Added own search tab including edit, delete and create facilities similar to userpoints.
   - Bulk edit for logbook entries available similar to userpoints.
   - Selected logbook entries are highlighted on the map showing great circle line connection
@@ -621,12 +885,12 @@ Build and Deployment for Developers: #387
 * Complete update of project files to allow configuration with environment variables. Removed all
   hardcoded paths.
 * Added documentation about environment variables to configure build and updated build instructions
-  in "BUILD.txt" and "littlenavmap.pro" files.
-* Added template for Linux desktop file. Explained usage of Linux desktop file in "README.txt". #378
+  in `BUILD.txt` and `littlenavmap.pro` files.
+* Added template for Linux desktop file. Explained usage of Linux desktop file in `README.txt`. #378
 
 Little Xpconnect / X-Plane:
 * Added new X-Plane turboprop definitions used since 11.30 to better recognize aircraft and fuel type.
-* Now using tail number from aircraft ".acf" file only if the tail number from the dataref is not set.
+* Now using tail number from aircraft `.acf` file only if the tail number from the dataref is not set.
   This helps to get the right tail number if add-on aircraft inject this manually using a script.
 
 related from atools version 3.4.0.beta
@@ -638,7 +902,7 @@ Version 2.2.4
 
 * Changed default email, manual and help link URLs from Gitbook to https://www.littlenavmap.org #238
   Manuals in all formats and languages can be found here: https://albar965.github.io/manuals.html
-* Moved hardcoded help URLs into configuration file "urls.cfg" which can be overloaded in settings directory. #238
+* Moved hardcoded help URLs into configuration file `urls.cfg` which can be overloaded in settings directory. #238
 
 * Changed default weather URLs (except IVAO) to use HTTPS/SSL.
 * Added migration code to convert NOAA weather URL to use SSL/HTTPS if user left URL unchanged.
@@ -646,7 +910,7 @@ Version 2.2.4
 * Enabled IVAO support based on mirror on (https://www.littlenavmap.org) #244.
 
 * Now pre-filling flight plan type (VFR and IFR) in online network export. #176 and #317
-* Removed "RestoreDefaults" button from online network export since it has limited use.
+* Removed `RestoreDefaults` button from online network export since it has limited use.
 * Now hiding the scalebar when saving map images. Scale bar is now only included when printing.
 * Changed AI/multiplayer aircraft on ground to appear earlier when zooming in.
 * Relaxed maximum distance requirements for waypoints in route string parser. Airports are now always used
@@ -661,14 +925,14 @@ Version 2.2.4
 * Changed Level-D default export path to correct location. #206
 * Changed default export folder for aircraft flight plan formats to simulator base folder.
 
-* Fixed issue where leg "From fix to DME distance" in procedures was calculated incorrectly.
+* Fixed issue where leg `From fix to DME distance` in procedures was calculated incorrectly.
   Case: EDVK Via LUXUX and ILS ABLIB (I09) to runway 09.
 * Fixed drawing issue with intercept procedure legs.
 
-* Now reading environment variable "LNM_RENDERER" for potential fixes on crashes or graphic problems.
-  To use desktop OpenGL renderer set it to "desktop". Use Angle to DirectX adapter for rendering: "angle".
-  To use the software renderer set it to "software".
-* Added "[Options]" "PixmapCache" allowing to change pixmap cache size as a potential fix for disappearing icons.
+* Now reading environment variable `LNM_RENDERER` for potential fixes on crashes or graphic problems.
+  To use desktop OpenGL renderer set it to `desktop`. Use Angle to DirectX adapter for rendering: `angle`.
+  To use the software renderer set it to `software`.
+* Added `[Options]` `PixmapCache` allowing to change pixmap cache size as a potential fix for disappearing icons.
 * Added preliminary options for manual application font configuration in settings. #373. Example:
   [Options]
   GuiFontFamily=FONTNAME
@@ -677,7 +941,7 @@ Version 2.2.4
 
 * Added shortcuts to switch between styles Fusion (Shift+F2) and Night (Shift+F3).
 * Shortcuts (Window -> Shortcuts) are now enabled on all windows.
-* Changed lengthy prefix for custom map themes to "*".
+* Changed lengthy prefix for custom map themes to `*`.
 * Limited text length when loading database to avoid growing the progress dialog.
 * Added automatic numbering of performance files on save as.
 * Small fix to avoid wrong time display.
@@ -707,20 +971,20 @@ Version 2.2.4.rc1
 * Added FPL flight plan export for FeelThere aircraft. #206
 * New flight plan export for Level-D (.rte). #206
 
-* Added function key shortcuts in menu "Window" -> "Shortcuts" to have quick access to search, flight plan, map and more. #364
+* Added function key shortcuts in menu `Window` -> `Shortcuts` to have quick access to search, flight plan, map and more. #364
 * Adapted flight plan file type detection to new formats and improved it for drag and drop of flight plans.
   Files are now accepted for drop independent of file extension.
-* Now automatically suggesting a numbered filename if file already exists when exporting or using "Save as".
+* Now automatically suggesting a numbered filename if file already exists when exporting or using `Save as`.
 * Reorganized export flight plan menu items for better overview.
 
-* Added links to well known directory "Documents/Little Navmap Files/ICAO" for airport information.
+* Added links to well known directory `Documents/Little Navmap Files/ICAO` for airport information.
   Links to all included files are shown if the path exists for an airport with the given ICAO ident.
-  The path is locale sensitive, e.g. in German "Dokumente/Little Navmap Dateien/ICAO". This depends on
-  completeness of the translation. Try both variants ("Files" vs. your system language) if in doubt.
+  The path is locale sensitive, e.g. in German `Dokumente/Little Navmap Dateien/ICAO`. This depends on
+  completeness of the translation. Try both variants (`Files` vs. your system language) if in doubt.
   Clicking on a link opens the file in the default editor or viewer of the system.
 
 * Changed taxiway color for better visibility against light backgrounds.
-* Added taxiway colors and pens to "little_navmap_mapstyle.ini" to allow configuration.
+* Added taxiway colors and pens to `little_navmap_mapstyle.ini` to allow configuration.
 * Logbook userpoint icon now displayed using an offset from airport icon to avoid covering airport.
   Hotspot of logbook userpoint is now top left of the symbol. #366
 * Fixed issue where MORA data was displayed only with Navigraph data enabled.
@@ -734,7 +998,7 @@ Version 2.2.4.rc1
 * Now considering helipads for rating calculation for airports.
 * Now displaying simulator type in information window for online network clients.
 
-* Fixed wrong test in options dialog for online "status.txt" file. Now looking for the correct values to verify the file.
+* Fixed wrong test in options dialog for online `status.txt` file. Now looking for the correct values to verify the file.
 * Default folder is now the simulator base path when selecting exclusions in the options dialog.
 * Fixed issue where date display used 12 hour time without AM/PM indicator in several places.
   Now always using 24 hour time in these cases.
@@ -762,9 +1026,9 @@ related from atools version 3.2.4.rc1
 
 Version 2.2.3
 
-* Fixed crash when reading unexpected value in "activeflightplanwx.txt" of Active Sky.
-* Fixed crash when doing "Show all" after "Select all" in search result table while using a spatial query.
-* Problem solved where altitude restrictions in procedures caused an invalid "cannot comply to altitude restrictions" error.
+* Fixed crash when reading unexpected value in `activeflightplanwx.txt` of Active Sky.
+* Fixed crash when doing `Show all` after `Select all` in search result table while using a spatial query.
+* Problem solved where altitude restrictions in procedures caused an invalid `cannot comply to altitude restrictions` error.
 * Fixed several display issues in profile (e.g. LPPR ADNOV I17 at CI17).
 * Fixed drawing issues with overlapping procedure leg points having different altitude restrictions (e.g. LPPR ADNOV I17 at CI17).
 * Fixed issue where flight plan airports or navaids were not detected when airport display is off.
@@ -780,8 +1044,8 @@ Version 2.2.3
 
 Version 2.2.2
 
-* Fixed wrong display of airspace/airway information when selecting "show information" in map context menu.
-* Now showing all airspaces below cursorr when selecting "Show information for airspace(s)".
+* Fixed wrong display of airspace/airway information when selecting `show information` in map context menu.
+* Now showing all airspaces below cursorr when selecting `Show information for airspace(s)`.
 * Fixed issues with airspace selection and tooltip when map window is unfloatable.
 * Fixed display issues on procedure labels: Wrong runway label at departure and redundant restriction at IF legs before others.
 * Missing status messages added for copy map to clipboard and save map as image.
@@ -799,7 +1063,7 @@ Version 2.2.2
 
 Version 2.2.2.rc2
 
-* Added option to disable map window undocking in options dialog on tab "Map".
+* Added option to disable map window undocking in options dialog on tab `Map`.
   Allowing to undock the map window (option checked - default) can cause issues
   when resizing dock windows or the main window.
   Uncheck this option if you see strange or annoying resizing behavior when changing dock window or main
@@ -807,15 +1071,15 @@ Version 2.2.2.rc2
   if you see one of these issues.
 
 * Better URL test for weather and online URLs now also considering files.
-* Improved check for valid whazzup file. Now looking for sections "!GENERAL" and "!CLIENTS".
+* Improved check for valid whazzup file. Now looking for sections `!GENERAL` and `!CLIENTS`.
 * Fixed issue with missing runway in X-Plane FMS files having circle-to-land approaches.
   X-Plane can now load these type of approaches without error message.
 * Fixed wrong heading display for online aircraft in information display in some cases.
 * Now centering destination and aircraft also for single airport plans (if flying a pattern).
 * Fixed crash and/or freeze when saving flight plans with one leg or if TOC/TOD could not be calculated.
-* Sped up zoom for maps "Plain" and "Simple". More accurate display for zoom distance at lower levels.
-* Fixed issue with ActiveSky showing old weather from stale "activeflightplanwx.txt" flight plan files.
-  Now always using the latest from either "activeflightplanwx.txt" or "current_wx_snapshot.txt".
+* Sped up zoom for maps `Plain` and `Simple`. More accurate display for zoom distance at lower levels.
+* Fixed issue with ActiveSky showing old weather from stale `activeflightplanwx.txt` flight plan files.
+  Now always using the latest from either `activeflightplanwx.txt` or `current_wx_snapshot.txt`.
 * Fixed issue with wrong course display in traffic pattern in some cases.
 * Com frequencies are now forced into 25 kHz raster on display.
 * More minor GUI adjustements and fixes.
@@ -823,7 +1087,7 @@ Version 2.2.2.rc2
 related from atools version 3.2.2.rc2
 
 * Fixed rounding error for COM frequencies in DFD compiler.
-* Fixed warning message "q_startOperation was called more than once" in log file
+* Fixed warning message `q_startOperation was called more than once` in log file
   by skipping if already downloading weather files.
 
 ===============================================================================
@@ -865,7 +1129,7 @@ Help:
   - Options for map display and simulator aircraft:
     https://www.littlenavmap.org/manuals/littlenavmap/release/2.2/en//OPTIONS.html#blurred-map
     https://www.littlenavmap.org/manuals/littlenavmap/release/2.2/en//OPTIONS.html#simulator-aircraft-allow-scroll-zoom
-  - Scenery loading can now exclude files and use X-Plane "scenery_packs.ini":
+  - Scenery loading can now exclude files and use X-Plane `scenery_packs.ini`:
     https://www.littlenavmap.org/manuals/littlenavmap/release/2.2/en//SCENERY.html#load-scenery-library-dialog-options
     https://www.littlenavmap.org/manuals/littlenavmap/release/2.2/en//OPTIONS.html#scenery-library-database_exclude
   - Improvements to printing:
@@ -894,9 +1158,9 @@ Elevation Profile:
 * Fixed issue where ILS and localizers were not recognized for renamed runways and inconsistent data.
 
 Information:
-* Fixed issues with file links for "BGL" and "apt.dat" files which did not work on Windows
+* Fixed issues with file links for `BGL` and `apt.dat` files which did not work on Windows
   if base path had a trailing backslash.
-* Fixed issue where airways were not displayed when selecting "Show information" on the map.
+* Fixed issue where airways were not displayed when selecting `Show information` on the map.
 
 Flight Plan:
 * ILS frequency in flight plan table now also shown for destinations where airport and procedure runway do not match.
@@ -910,12 +1174,12 @@ Online Networks:
 * Removed display of true heading in information window and tooltips. Now always calculating magnetic.
 
 Map:
-* Changed map context menu to show only the mentioned item in "Show information" and nothing else.
-* Removed "and more" indication in context menu since it is not used any more.
+* Changed map context menu to show only the mentioned item in `Show information` and nothing else.
+* Removed `and more` indication in context menu since it is not used any more.
 * Attempt to fix several zoom issues like zooming all way out and permanent map update when
   centering aircraft and active flight plan leg.
 * Added workaround for issues when zooming to map objects. Now determining the best zoom distance until all is visible.
-* Made "Too many objects" and "Offline" warning messages more clear.
+* Made `Too many objects` and `Offline` warning messages more clear.
 * Now drawing weather symbols above flight plan.
 * Sun shading is now reset to real time when disconnecting simulator.
 * Fixed issue of map jumping to the wrong place when zooming around the anti-meridian.
@@ -927,16 +1191,16 @@ Map:
 * Fixed issue where OpenTopoMap constantly showed waiting for data.
 
 User Interface:
-* Added "Copy Map Image to Clipboard" function in file menu.
-* Now appending date and time suffix to map screenshot name to avoid overwriting for "Save Map as Image".
+* Added `Copy Map Image to Clipboard` function in file menu.
+* Now appending date and time suffix to map screenshot name to avoid overwriting for `Save Map as Image`.
 * Disabled restoring of full screen mode on macOS since Qt freezes dock windows.
   If that happens double click the title bar of any dock window to float it. Double click again
   to dock it back and you can resize all docks again.
 * Maximized window state is now correctly saved and restored.
-* "Reset window layout" now also changes window size and centers window to avoid messed up layouts.
+* `Reset window layout` now also changes window size and centers window to avoid messed up layouts.
   Changed default layout to avoid locked elevation profile size.
 * Updated icons that were barely visible in night mode.
-* Added "clear all highlights" to toolbar and removed clear aircraft trail button.
+* Added `clear all highlights` to toolbar and removed clear aircraft trail button.
 * Fixed issue where tooltips reappeared after leaving the map.
 * Updated French translation by Patrick.
 
@@ -950,7 +1214,7 @@ related from atools version 3.2.2.rc1
 Version 2.2.1.beta
 
 Aircraft Performance:
-* Now always showing both volume and weight in aircraft performance report on tab "Aircraft".
+* Now always showing both volume and weight in aircraft performance report on tab `Aircraft`.
   **Avgas is the default fuel type. Change you present performance configurations to the correct fuel type to ensure
     proper weight volume conversion.**
 * Aircraft performance edit dialog now has a fuel type (Avgas and Jetfuel) setting and converts fuel between
@@ -974,7 +1238,7 @@ Simulator Aircraft and Flight Plan:
   if distance to flight plan is larger than 50 NM.
   This helps to avoid situations where the program zoomed too far out.
 * Changed jump-back-to-aircraft logic to avoid weird behavior (zooming far out and others).
-  **When aircraft is on ground or "&Center map on aircraft and next flight plan waypoint" is not selected:
+  **When aircraft is on ground or `&Center map on aircraft and next flight plan waypoint` is not selected:
     Start looking around on the map by moving first (mouse drag or cursor keys) and not by
     zooming (mouse wheel or plus and minus keys) to avoid aircraft centering for the time given in options.
     Zooming without movement (drag or cursor keys) keeps the zoom distance.**
@@ -982,17 +1246,17 @@ Simulator Aircraft and Flight Plan:
 Elevation Profile:
 * Fixed several issues with elevation profile and altitude restrictions as well as TOC and TOD calculation.
 * Now forcing all legs after FAF and FACF to minimum altitude to avoid arriving above ILS glideslope or above VASI.
-* Added display of "GS" indicator for certain altitude restrictions.
+* Added display of `GS` indicator for certain altitude restrictions.
 * Fixed issue with circle-to-land approaches having a lower MAP altitude restriction than runway elevation + 50 ft.
-  This resulted in a "cannot comply to alt restrictions" message.
+  This resulted in a `cannot comply to alt restrictions` message.
 * Made zoom sliders in profile less sensitive to mouse wheel by lowering page size.
-* Display of "Above Ground Altitude" now follows climb and descent slope instead of using cruise altitude.
+* Display of `Above Ground Altitude` now follows climb and descent slope instead of using cruise altitude.
 
 Procedures:
-* Now adding last leg "Circle to Land" only if approach has no runway assigned.
+* Now adding last leg `Circle to Land` only if approach has no runway assigned.
   This avoids classifiying too many approaches as circle-to-land.
-* Adding new leg type "Straight In" for the last segment between MAP and runway now.
-* Fixed drawing issues with missed approaches where first leg is of type "Intercept".
+* Adding new leg type `Straight In` for the last segment between MAP and runway now.
+* Fixed drawing issues with missed approaches where first leg is of type `Intercept`.
   Missed approach now correctly starts at MAP in these cases.
 * The Maltese cross is now applied to either FAF or FACF depending on ILS GS intercept altitude.
 * Fixed regression where the last leg to runway was omitted for all approaches.
@@ -1001,7 +1265,7 @@ Procedures:
   procedure search (red procedure leg).
 * Drawing problems with the turn to the first missed leg solved.
 * Fixed issue with manual procedure legs before initial fix.
-  This corrupted flight plans, altitude and distance calculation. Added new leg type "Vectors" for this.
+  This corrupted flight plans, altitude and distance calculation. Added new leg type `Vectors` for this.
 * Now loading procedures partially from a flight plan if some could not be found.
 * Better error report on procedure loading issues. No showing the procedure names which cannot be found in the database.
 * Fixed lost procedure information after switching scenery databases.
@@ -1014,19 +1278,19 @@ Map:
 
 User Interface:
 * Crab angle in aircraft progress now based on course to next waypoint instead of leg course.
-* Moved options "Use a short name "ICAO_ICAO.pln" when saving FSX or P3D flight plans instead of the long name",
- "Avoid overwriting Flight Plan with not matching departure and destination" and
- "Center flight plan on map after loading" to flight plan tab in options.
+* Moved options `Use a short name `ICAO_ICAO.pln` when saving FSX or P3D flight plans instead of the long name`,
+ `Avoid overwriting Flight Plan with not matching departure and destination` and
+ `Center flight plan on map after loading` to flight plan tab in options.
 * User data type search is now properly reloaded for userpoints if the option for reloading saves is disabled.
-  Always reloaded with "Airport" userpoint type before.
+  Always reloaded with `Airport` userpoint type before.
 * Disabled tooltip effects (fading, sliding, etc.) since these do not work well with tooltip updates for weather.
 * Now raising all floating windows on startup to avoid hidden and/or inaccessible windows.
-* Changed "Show map window" menu item to "Show all floating Windows" which raises all floating docks windows.
-* Fixed issue where main window title was not updated after "save as".
+* Changed `Show map window` menu item to `Show all floating Windows` which raises all floating docks windows.
+* Fixed issue where main window title was not updated after `save as`.
 * Added workaround to restore elevation profile window height on startup.
-* Modified all question message boxes with destructive actions to have default "No" also on windows.
+* Modified all question message boxes with destructive actions to have default `No` also on windows.
 * Now pre-filling altitude and turn direction in airport pattern dialog if available (FSX and P3D only).
-* Added "Copy to Clipboard" button to update dialog.
+* Added `Copy to Clipboard` button to update dialog.
 * Changed download button in update dialog to make clear that download is started in browser.
 * Update dialog now remains open after clicking download to give user a chance to read or copy text.
 * Updated Italian translations from Flavio.
@@ -1052,18 +1316,18 @@ related from atools version 3.2.1.beta
 Version 2.2.0.beta
 
 === Notes ===
-* List of closed issues for milestone 2.2: https://github.com/albar965/littlenavmap/milestone/6?closed=1
+* List of closed issues for milestone 2.2: https://github.com//milestone/6?closed=1
 * A reload of the scenery library is recommended.
 * Some new features like the MORA grid, display of FAF and others need an AIRAC cycle from Navigraph
   later or equal to cycle 1810 or the included AIRAC cycle.
 * X-Plane: Replace the Little Xpconnect plugin with the new included one to see the improvements mentioned below
-  at "X-Plane / Little Xpconnect".
+  at `X-Plane / Little Xpconnect`.
 * The manual is not updated yet. Therefore, help links do not work.
 
 === Changes ===
 Elevation Profile:
 * Added scrolling and zooming ability to elevation profile. Elevation profile now has a context
-  menu also including "show on map" and more functions. Added splitter to elevation profile dock
+  menu also including `show on map` and more functions. Added splitter to elevation profile dock
   window which has sliders for zooming vertically and horizontally. These can be hidden by dragging the splitter
   to the right. Zooming can also be done using mouse wheel (Wheel+Shift for vertical zooming). Added keyboard navigation
   using cursor keys and numpad keys for zooming and scrolling. Panning in elevation profile with mouse click and moving
@@ -1079,38 +1343,38 @@ Elevation Profile:
 * Now showing procedure altitude restrictions in profile display.
 * Top of descent is now calculated considering altitude restrictions of approach or STAR. Same for top of climb and SID.
 * Removed barely visible highlight on map when hovering cursor above elevation profile. Highlight
-  colors can now be customized in "little_navmap_mapstyle.ini". #34
+  colors can now be customized in `little_navmap_mapstyle.ini`. #34
 * Jump back to aircraft functionality added in elevation profile. Uses the same settings as the map. #34
 * Giving clear error indication if cruise altitude is too high (i.e. TOC and TOC overlap) or if restrictions are
   violated due to too low cruise altitude.
 * Fixed display color of profile labels for night mode. Removed all dark profile colors and pens from
-  "little_navmap_mapstyle.ini". Using OS and style colors now. #34
+  `little_navmap_mapstyle.ini`. Using OS and style colors now. #34
 * Solved problems where aircraft in elevation profile jumped to wrong leg or moved backwards. Aircraft remains
   at destination now if moving past last route leg.
 * Aircraft track is now ignored when determining profile altitude to avoid confusion when remaining tracks
   result in wrong profile maximum altitude.
 
-Aircraft Performance: (see main menu -> "Aircraft" and tab "Aircraft" in dock window "Flight plan")
-Note that the new tab in the "Flight plan" dock window is meant for fuel planning and does not
+Aircraft Performance: (see main menu -> `Aircraft` and tab `Aircraft` in dock window `Flight plan`)
+Note that the new tab in the `Flight plan` dock window is meant for fuel planning and does not
 change during flight (except when collecting performance data).
 * Added aircraft performance facilities including edit dialog, new, save, save as, load, file history and report.
   Performance files (*.lnmperf) can be dragged into the main window to load. Added main menu
-  "Aircraft" and tab on flight plan dock window for loading and saving of performance files.
+  `Aircraft` and tab on flight plan dock window for loading and saving of performance files.
 * Performance and fuel calculation can use an average cruise wind setting where wind is interpolated for
   climb and descent for calculation.
 * Removed now useless speed setting from flight plan dock and deleted rule of thumb descent setting in options dialog.
 * Added automatic aircraft performance calculation option during flight
-  ("Aircraft" -> "Collect Performance for Flight"). #255
+  (`Aircraft` -> `Collect Performance for Flight`). #255
 * A default performance profile with 3 NM / 1000 ft descent and climb rules and no fuel consumption is default.
 * Now showing fuel remaining in flight plan table.
-* Added drag and drop of aircraft performance files to main window ("lnmperf") for loading. #291
+* Added drag and drop of aircraft performance files to main window (`lnmperf`) for loading. #291
 * Window title now shows aircraft performance file name and change state. #255
 * Added aircraft performance file to userpoint log entry.
 * URLs are recognized in aircraft performance description and can be opened there. Local file and directory links
-  (e.g. "file:///C:/Projekte/atools" or "file:///home/alex/") links as well as web URLs are recognized and opened.
+  (e.g. `file:///C:/Projekte/atools` or `file:///home/alex/`) links as well as web URLs are recognized and opened.
 * Added setting in options to change text size in performance report.
 
-Printing: (see main menu -> "File" -> "Print Map" and "Print Flight Plan")
+Printing: (see main menu -> `File` -> `Print Map` and `Print Flight Plan`)
 * Added flight plan column selection to print dialog. Added more options for header, fuel, performance and
   others to print dialog.
 * Improved printing of flight plan table. Now has proper word wrap, proper column sizes and shows a header
@@ -1121,37 +1385,37 @@ Printing: (see main menu -> "File" -> "Print Map" and "Print Flight Plan")
 
 Online Networks:
 * Added settings for online center sizes in options dialog. Old settings are now ignored.
-  See dialog "Options" on tab "Map Display Online". #267
+  See dialog `Options` on tab `Map Display Online`. #267
 * Added estimated arrival time to online client information tab and search table. Invalid times are
   now omitted in display. #303
 * Changed lower limit of online updates for custom networks to five seconds.
-  Emphasized warning **not to use this for official networks**. See dialog "Options" on tab "Online Flying".
-* Renamed "ACC" to Area Control Center for online centers. #267
+  Emphasized warning **not to use this for official networks**. See dialog `Options` on tab `Online Flying`.
+* Renamed `ACC` to Area Control Center for online centers. #267
 
 Compass Rose:
 * Now showing crab angle and added display indicator for next waypoint in compass rose. #284
-* Added configuration options for compass rose in tree view in dialog "Options" on tab "Map Display". #285
-* Text size for compass rose, measurement lines and range rings can now be set in dialog "Options" on
-  tab "Map Display".
+* Added configuration options for compass rose in tree view in dialog `Options` on tab `Map Display`. #285
+* Text size for compass rose, measurement lines and range rings can now be set in dialog `Options` on
+  tab `Map Display`.
 * Compass rose range rings are now always drawn. Also if not connected to simulator.
 * Fixed issue in compass rose where decimal digits were truncated in some cases.
 
 Flight Plan:
 * Added drag and drop of flight plans from file manager into main window for loading.
-  Accepts single flight plan and all allowed formats for loading ("fms", "flp", "pln") as
-  well as aircraft performance files ("lnmperf"). #291
+  Accepts single flight plan and all allowed formats for loading (`fms`, `flp`, `pln`) as
+  well as aircraft performance files (`lnmperf`). #291
 * Added indication for DME distance to waypoint ident in procedure search and flight plan table for
-  leg types "track from fix from distance", "track from fix to dme distance",
-  "heading to dme distance termination" and "course to dme distance". This minimizes the confusing
+  leg types `track from fix from distance`, `track from fix to dme distance`,
+  `heading to dme distance termination` and `course to dme distance`. This minimizes the confusing
   duplicate display of idents in the flight plan table. #265
 * Now displaying FAF, IAF, FACF and MAP in the procedure preview, flight plan table and tooltip. #196
 * FAF is shown with a maltese cross on the map and in elevation profile. #196
-* Changed last "Proceed to Runway" leg to correct "Circle to Land" for CTL approaches. #252
+* Changed last `Proceed to Runway` leg to correct `Circle to Land` for CTL approaches. #252
 * Added warning dialog for flight plan zero cruise altitude before saving. #263
 * Made loading of procedures more tolerant for renamed runways and for ARINC names of procedures.
-* Added procedure name to flight plan table instead of the generic names like "SID" or "STAR".
-* Added display of ARINC name (e.g. "Q21" or "I16") to flight plan header label since some FMC need this value. #306
-* Added "Insert Flight Plan" menu item into flight plan table context menu. Added "Append Flight Plan" menu item
+* Added procedure name to flight plan table instead of the generic names like `SID` or `STAR`.
+* Added display of ARINC name (e.g. `Q21` or `I16`) to flight plan header label since some FMC need this value. #306
+* Added `Insert Flight Plan` menu item into flight plan table context menu. Added `Append Flight Plan` menu item
   into flight plan table context menu.
 * Procedures are now correctly used or removed when inserting and appending flight plans.
 * Now selecting and highlighting imported legs after inserting or appending flight plan. #264
@@ -1171,23 +1435,23 @@ Map:
   - Ctrl+Alt+Click: Insert point into nearest flight plan leg.
   - Shift+Alt+Click: Append point to flight plan.
 * Added minimum off route altitude (MORA) data and one degree grid display to map. Data coming from Navigraph.
-  See main menu -> "View" -> "Show Minimum Altitude". #84
+  See main menu -> `View` -> `Show Minimum Altitude`. #84
 * Added extra airport display layer in map that shows runways before airport diagram shows up.
 * Information tabs for airspaces and online centers now highlight geometry on map when clicking the
-  blue "Map" link in the information window. Above mentioned tabs also have a "Remove Highlights from Map"
+  blue `Map` link in the information window. Above mentioned tabs also have a `Remove Highlights from Map`
   link on top that clears all highlighted airspaces from the map.
-* Added new "Remove all Highlights and Selections" menu item to menu "Map". #308
-* Moved "Remove all Ranges, Measurements and Patterns" from all context menus to main Map menu. #308
+* Added new `Remove all Highlights and Selections` menu item to menu `Map`. #308
+* Moved `Remove all Ranges, Measurements and Patterns` from all context menus to main Map menu. #308
 * Fixed several problems for aircraft and next waypoint centering mode. Updates are now triggered
   by a timer depending on speed and distance to waypoint. Minimum zoom distance is now a function of
-  altitude above ground. See dialog "Options" on tab "Simulator Aircraft": "Allow scrolling ..." and "Jump back ...".
+  altitude above ground. See dialog `Options` on tab `Simulator Aircraft`: `Allow scrolling ...` and `Jump back ...`.
 * Added option to avoid blurred online maps. Enabled per default.
-  See dialog "Options" on tab "Map": "Avoid blurred ...". Works best with map projection "Mercator". #254
+  See dialog `Options` on tab `Map`: `Avoid blurred ...`. Works best with map projection `Mercator`. #254
 * Added option for sun shading on map which can use real time, simulator time or user defined time.
-  See main menu "View" -> "Show Sun Shading" and "Sun Shading" sub-menu.
-  Shading darkness can be adjusted in dialog "Options" on tab "Map Display": "Sun shading ...".
+  See main menu `View` -> `Show Sun Shading` and `Sun Shading` sub-menu.
+  Shading darkness can be adjusted in dialog `Options` on tab `Map Display`: `Sun shading ...`.
 * Added dialog to set user defined time and date for sun shading.
-  See main menu "View" -> "Sun Shading" -> "Set user defined time". #60
+  See main menu `View` -> `Sun Shading` -> `Set user defined time`. #60
 * Drawing of complex X-Plane airports accelerated. Now from 100 to 500 ms down to less than 1 ms
   for large airports. #245
 * Circle-to-land legs and following missed approach legs are now drawn correctly with a dashed line from MAP. #252
@@ -1208,16 +1472,16 @@ Map:
 * Aircraft icon heading is now more correct at higher zoom levels when using spherical projection. #239
 * Now allowing font sizes up to 200 percent instead of 150.
 
-Weather: (see main menu -> "View" -> "Show Airport Weather" and "Airport Weather Source")
+Weather: (see main menu -> `View` -> `Show Airport Weather` and `Airport Weather Source`)
 * Added display for weather symbols to map showing lowest cloud coverage (filled or empty circle),
   wind direction, wind speed (barbs) and flight rules according to official color coding:
   LIFR/magenta, IFR/red, MVFR/blue and VFR/green.
 * Showing flight rules and icon in information window and tooltip. #6
 * Added map weather selection for all supported weather sources in menu view.
-  See main menu -> "View" -> "Airport Weather Source". #6
+  See main menu -> `View` -> `Airport Weather Source`. #6
 * Airport weather icons are loaded from FSX/P3D and remote connections too. #6
 * Showing flight rules and icon for all sources. Showing selected source for weather in map in the information
-  display by adding suffix "- Map" to "Flight Rules" text. #6
+  display by adding suffix `- Map` to `Flight Rules` text. #6
 * Fixes for problems where ASX and ASN updated weather files were not recognized.
 * Fixed issue where variable wind showed wind pointer although no direction given. #6
 * Attempt to fix weather loading issues (disappearing report) for X-Plane metar.dat.
@@ -1227,15 +1491,15 @@ Weather: (see main menu -> "View" -> "Show Airport Weather" and "Airport Weather
 Information and Progress:
 * Added sunrise and sunset display (civil twilight) in UTC for airport information display. Time is
   based on simulator date or real date depending on connection status.
-  Dock window "Information" on tab "Airport". #281
+  Dock window `Information` on tab `Airport`. #281
 * Added distance and bearing (rhumb line) to navaids and airports from the user aircraft in information window
   and tooltip. Disabled when distance is larger than 500 NM. #274
-* Added "More" / "Less" link to aircraft progress display to show detailed or brief performance
+* Added `More` / `Less` link to aircraft progress display to show detailed or brief performance
   information during flight.
 * Added crab angle to aircraft progress display to indicate the needed heading to follow a track in cross wind. #284
 * Fixed issue where distances to initial fix of transitions where not calculated correctly in
   progress window.
-* Now showing restricted airspace designation (like "D-30") in information and tooltip.
+* Now showing restricted airspace designation (like `D-30`) in information and tooltip.
 * Showing active time criteria (NOTAM, holidays, etc.) for airspaces now in information window.
   Added multiple code as indicator for duplicate overlapping airspaces. Navigraph data only. #279
 * Now displaying related airport information for navaids if available. #289
@@ -1249,7 +1513,7 @@ Information and Progress:
 
 Airport Traffic Pattern
 * Added option to draw airport traffic pattern on the map to all map, flight plan table and airport search
-  context menus. "Display Airport Traffic pattern at ..." enabled when right clicking on an airport.
+  context menus. `Display Airport Traffic pattern at ...` enabled when right clicking on an airport.
 * A configuration dialog is shown when adding a traffic pattern that allows to customize distances,
   colors and other options. #197
 
@@ -1258,19 +1522,19 @@ Options:
 * Various other changes. See related items in this change log.
 
 Search:
-* Added "Show Information for Airport", "Show Airport on Map" and "Show Airport in Search" items to the context menu in
+* Added `Show Information for Airport`, `Show Airport on Map` and `Show Airport in Search` items to the context menu in
   the procedure search tab.
-* Fixed issue where runway filter was not reset in procedure search when selecting "Show Arrival/Departure Procedures".
+* Fixed issue where runway filter was not reset in procedure search when selecting `Show Arrival/Departure Procedures`.
 * Fixed issue where procedure highlight reappeared after closing dock and restart.
 
 Userpoints:
 * URLs are now recognized in userpoint information display and can be opened there. Local file and directory links
-  (e.g. "file:///C:/Projekte/atools" or "file:///home/alex/") links as well as web URLs are recognized and opened.
+  (e.g. `file:///C:/Projekte/atools` or `file:///home/alex/`) links as well as web URLs are recognized and opened.
 * Fixed issue where takeoff or landing airports and runways were not recognized correctly for logbook entries.
 
 User Interface and General:
-* GUI style including "Night" can now be changed on the fly from the menu "Window" -> "Style".
-  Removed style from options dialog and moved map darkness for night style to dialog "Options" to tab "Map Display".
+* GUI style including `Night` can now be changed on the fly from the menu `Window` -> `Style`.
+  Removed style from options dialog and moved map darkness for night style to dialog `Options` to tab `Map Display`.
   Fixed all remaining artifacts which appeared after style change. #142
 * Now always showing version in main window title. Development versions also show Git revision. #304
 * Added warning dialog when using the buggy and limited online elevation data.
@@ -1285,7 +1549,7 @@ User Interface and General:
 * Added menu item to raise (a probably lost) floating map window.
 * Changed search path for custom map themes to be based on executable path since macOS gives a
   wrong current directory. #261
-* Fixed empty "Show info ..." menu item for X-Plane AI which is lacking all kind of
+* Fixed empty `Show info ...` menu item for X-Plane AI which is lacking all kind of
   information.
 * Removed more inconsistencies in map context menu where wrong information was shown
   (i.e. airport instead of AI) in some cases.
@@ -1293,17 +1557,17 @@ User Interface and General:
   error reporting. #275
 * Updated all translations.
 * Updated French manual to Gitbook generated PDF.
-* Changed deployment to use local folder "little_navmap_help" in Projects for manuals. Removed PDF
+* Changed deployment to use local folder `little_navmap_help` in Projects for manuals. Removed PDF
   manuals from Git since commits are getting too large.
 * Updated translations to fix translated menu shortcut Ctrl+Up and Ctrl+Down in German translation.
-* Added "Copy to Clipboard" to update notification dialog to copy contents as plain and formatted text.
+* Added `Copy to Clipboard` to update notification dialog to copy contents as plain and formatted text.
 * Fixed several issues around display of procedures.
 
 Scenery Library:
 * Files can now be excluded from loading for all simulators in options dialog. List in exclusion
-  paths now allow multi selection. See dialog "Options" on tab "Scenery Library Database": "Add Files ...". #29
+  paths now allow multi selection. See dialog `Options` on tab `Scenery Library Database`: `Add Files ...`. #29
 * Check box for reading inactive scenery is now enabled to choose between reading of X-Plane
-  "scenery_packs.ini" or full directory structure in scenery loading dialog.
+  `scenery_packs.ini` or full directory structure in scenery loading dialog.
   This helps if using tools to disable scenery.#151
 * Now fetching the first X-Plane installation path from x-plane_install_11.txt as base path.
 * X-Plane parking positions are now at correct coordinates. #256
@@ -1313,7 +1577,7 @@ Scenery Library:
 
 X-Plane / Little Xpconnect:
 * Added airplane model and registration. Now using description for title. #271
-* Now reading X-Plane "acf" files once to get aircraft name and engine type for a better classification.
+* Now reading X-Plane `acf` files once to get aircraft name and engine type for a better classification.
   Allows to show helicopter and jet AI symbols in Little Navmap. #271
 
 related from atools version 3.2.0.beta
@@ -1356,10 +1620,10 @@ Map:
 * Added departure and destination to label for online network and AI aircraft.
 * Disabled SSL for OpenMapSurfer theme due to obscure SSL problems on macOS.
 * Now hiding all airspaces at small zoom distance when airport diagram is shown.
-* Fixed issue where airspace was not displayed when selecting "show information".
+* Fixed issue where airspace was not displayed when selecting `show information`.
 * Now ignoring null frequencies on airspaces.
-* Fixed issues with map context menu where "Show ..." and "Show ... in search" used the wrong map objects,
-  i.e. "Show Network Client" showed airport in information window.
+* Fixed issues with map context menu where `Show ...` and `Show ... in search` used the wrong map objects,
+  i.e. `Show Network Client` showed airport in information window.
 * Now using consistent order where online and simulator aircraft are above airports when clicking in the map for all
   show functions.
 
@@ -1367,7 +1631,7 @@ Misc:
 * Fixed issue where program cannot be opened by Linux file managers.
 * Fixed translation issues in navserver resulting in confusing messages in Little Navconnect log window. (atools)
 * Now showing coordinates in userpoint search result table.
-  A "Reset View" from the context menu is required to show the new columns.
+  A `Reset View` from the context menu is required to show the new columns.
 * Increased Garmin userdata export ident length. (atools)
 * Now disabling less used search options on first startup after initial installation.
 * Added option to disable less used type filters in nav search.
@@ -1414,7 +1678,7 @@ Navdata:
 GUI:
 * Save button is now always enabled to allow saving PLN file again after P3D changes file.
 * Fixed misleading warning in route string parser if airport name as intermediate destination is equal to an airway.
-* Fixed tooltip and information display showing facility "Procedures" for all airports.
+* Fixed tooltip and information display showing facility `Procedures` for all airports.
 * Improved handing of information dialog to raise the correct tab when selecting from context menu.
 
 Userpoints:
@@ -1434,8 +1698,8 @@ Online:
 Customization:
 * Added reset/migration for mapstyle INI file and adding version now to file.
 * Added customize folder and icons.zip for icon templates to allow users creating their own icons based on default ones.
-* Program will create a backup of "little_navmap_mapstyle.ini" and replace file with new colors (blue airways).
-  All customization files are now versioned. Section "[Options]".
+* Program will create a backup of `little_navmap_mapstyle.ini` and replace file with new colors (blue airways).
+  All customization files are now versioned. Section `[Options]`.
 
 Small changes:
 * Userpoints now have the same priority in menus as in map display.
@@ -1443,22 +1707,22 @@ Small changes:
 * Fixes to wrong status bar and tooltips and misleading context menu items in search.
 * Small fix for runway display using wrong width when 0.
 * Corrected text for wind pointer which was scaled together with AI aircraft text.
-* Fixed issue where user agent got translated request type included (e.g. "Custom"). #45
+* Fixed issue where user agent got translated request type included (e.g. `Custom`). #45
 * Fixed issue where airspace tooltips were shown in high zoom distances with no airspaces displayed.
 * Corrected tab order in main window and options dialog.
 * Added help button to user waypoint dialog.
 * Removed menu items from macOS application menu since automatic adaption from Qt does not work.
 * Fixes for missing about dialog on macOS.
 * Help system now more flexible and can load legend and help files if present for language.
-  Also uses a fuzzy way to find files by ignoring language region like "pt" vs. "pt_BR".
-* Fixed issue where flight plan was saved in the wrong format after undo/redo and using "Save as".
+  Also uses a fuzzy way to find files by ignoring language region like `pt` vs. `pt_BR`.
+* Fixed issue where flight plan was saved in the wrong format after undo/redo and using `Save as`.
 * FSX/P3D is not hidden in the scenery library menu if the simulator folder from the registry does not exist.
 * Now disabling show AI aircraft and ship actions according to fetch settings in connection dialog.
 
 from atools version 3.0.2.rc1
 
 * Updated translations: Brazilian Portuguese, French, Spanish and German. All finished.
-* Now exporting all userdata columns to CSV: Added "last_edit_timestamp" and "visible_from".
+* Now exporting all userdata columns to CSV: Added `last_edit_timestamp` and `visible_from`.
   Columns are optional for import. See manual.
 * Fixed region field not adjusted in X-Plane userdata export.
 * Now using minimum and maximum circle radii for online ATC geometry.
@@ -1469,9 +1733,9 @@ Version 2.0.1.beta
 
 * Changed OSM, OpenMapSurfer and Hillshading map downloads to use SSL encrypted connections (HTTPS).
   For fallback in case of problems replace the files
-  "Little Navmap/data/maps/earth/openstreetmap/openstreetmap.dgml",
-  "Little Navmap/data/maps/earth/openstreetmaproads/openstreetmaproads.dgml" and
-  "Little Navmap/data/maps/earth/srtm2/srtm2.dgml" with files from the previous version.
+  `Little Navmap/data/maps/earth/openstreetmap/openstreetmap.dgml`,
+  `Little Navmap/data/maps/earth/openstreetmaproads/openstreetmaproads.dgml` and
+  `Little Navmap/data/maps/earth/srtm2/srtm2.dgml` with files from the previous version.
 * Fixed SSL loading problems on Linux (first noticed on Ubuntu 18.04).
 
 Online:
@@ -1484,7 +1748,7 @@ Online:
 * Change online center/airspaces to ignore visual range which is often wrong.
   Ground is now shows as a 5 NM circle, approach 20 NM and tower 10 NM. Can be changed in configuration file.
 * Added facility to override visual range for online airspace circles in configuration file.
-  See section "[Online]" in file "little_navmap.ini".
+  See section `[Online]` in file `little_navmap.ini`.
 * Visual range for online clients now uses correct units in search result.
 * Online servers remained in search result table after switching networks.
 
@@ -1499,7 +1763,7 @@ Translations:
 
 Other:
 * Now showing navaid ranges for navaids which are parts of procedures
-  E.g. "Show navaid range" for a NDB which is part of a procedure.
+  E.g. `Show navaid range` for a NDB which is part of a procedure.
 
 from atools version 3.0.1.beta
 * Weather texts are now shown translated.
@@ -1525,19 +1789,19 @@ Flight Plan and Export:
 
 Online Networks:
 * Added IVAO, VATSIM and custom online networks (#45). IVAO and VATSIM are currently disabled due to missing clearance.
-  * Update rate and URL configuration in dialog "Options" on tab "Online Flying".
+  * Update rate and URL configuration in dialog `Options` on tab `Online Flying`.
   * Display of clients, servers and online centers on map, in information windows, search tabs and context menus.
   * Search highlights and tooltips for centers and client aircraft.
   * CSV export via clipboard for all online information.
   * Added embedded configuration file to enable or disable online networks.
 * Online network tabs and menu items are hidden in Little Navmap until online is activated in
-  dialog "Options" on tab "Online Flying".
+  dialog `Options` on tab `Online Flying`.
 
 Weather:
 * Removed METAR date for simulator weather since it was wrongly parsed and corresponds to simulator date.
 * Added display for NOAA nearest weather stations. Now downloading index page from NOAA to avoid empty requests.
 * Added IVAO weather reports including options, URL configuration, URL test and display of nearest station. #132
-* Fixed variable wind reported for "///KT" METAR. #224
+* Fixed variable wind reported for `///KT` METAR. #224
 * Fixed X-Plane weather file not reloaded in some cases.
 
 Userpoints (#3)
@@ -1547,13 +1811,13 @@ Userpoints (#3)
 * Added option for volatile/temporary userpoints.
 * Changed draw order of userpoints. These are now displayed before navaids in tooltip and info as on map.
 * Fixed inconsistencies when creating new userpoints. Filename is now erased for new points.
-* Made naming in GUI more consistent. "Userpoints" are bookmarks, VRPs, etc. "Positions" are
+* Made naming in GUI more consistent. `Userpoints` are bookmarks, VRPs, etc. `Positions` are
   user defined positions in a flight plan.
 * Added coordinate validation in userpoint import functions.
 * Fixed issues with elevation and units in userpoints.
 * Added tooltip for userpoint description in search result table.
 * New userpoint from map is now filled with actual elevation at clicked position (only for GLOBE data).
-* Disabled CSV backup of userpoints and creating backups of file "little_navmap_userdata.sqlite" on startup now.
+* Disabled CSV backup of userpoints and creating backups of file `little_navmap_userdata.sqlite` on startup now.
 * Changed database settings to avoid data loss on crash.
 * Added manual transactions to userpoint management to avoid locked up application.
 * Error reporting on locked user database on startup.
@@ -1564,14 +1828,14 @@ Flight Plan Description:
 
 GUI and Map Display:
 * Added ILS frequency in flight plan table for ILS and LOC approach procedures.
-* Added "zoom to departure" option in parking question dialog which shows up before saving.
+* Added `zoom to departure` option in parking question dialog which shows up before saving.
 * Added approach procedure suffix to flight plan window label. Made display of suffix consistent across the program.
 * Fixed issues with procedure display where restriction texts were not drawn on map in case of intercept legs.
 * Improved text display between overlapping procedure legs slightly to avoid text labels hiding each other.
 * Tooltips now show exact procedure type.
 * Fixed wrong display o procedure suffix and runway in flight plan window top label.
 * Added tooltips for all tab headers on main window and shortened some tab labels to save space.
-* Fixed issues where estimated gross weight at destination disappeared in progress tab for window "Simulator Aircraft".
+* Fixed issues where estimated gross weight at destination disappeared in progress tab for window `Simulator Aircraft`.
 * Now showing real aircraft icons as on the map in tooltips and information tabs instead of the generic icon.
 * Now falling back to magnetic heading for aircraft rotation on map if true heading is not available.
   Should solve wrong aircraft heading on some online clients.
@@ -1582,13 +1846,13 @@ GUI and Map Display:
 
 from atools version 3.0.0.beta
 
-* Added complete data management and parsing for IVAO, VATSIM and custom "status.txt" and "whazzup.txt" files.
+* Added complete data management and parsing for IVAO, VATSIM and custom `status.txt` and `whazzup.txt` files.
 * Fixed issues with X-Plane user_fix.dat export. Now using correct metadata so that X-Plane can read the file.
 * Issues with X-Plane and Garmin userpoint import and export fixed.
 
 * Added script by Gérard to clean out fake runways for AI in FSX/P3D.
 * Added logging for airport altitude when reading delete records from FSX/P3D.
-  Example: "Add-on airport altitude for VQ10 changed from 7703 ft (BGL Scenery/0902/APX72220.bgl) to 8363 ft"
+  Example: `Add-on airport altitude for VQ10 changed from 7703 ft (BGL Scenery/0902/APX72220.bgl) to 8363 ft`
 * Improved BGL file and scenery reading to include hidden and system files.
 * Fixed issue where approach name and/or suffix were not read correctly in X-Plane and DFD compiler.
 * Fixed error with duplicate VOR/NDB waypoints in DFD compiler.
@@ -1609,8 +1873,8 @@ Version 1.9.1.develop
 Userpoints #3
 
 * Added Userpoints (aka. user defined waypoint or bookmark or POI or whatever) management.
-* New main menu "Userdata" which provides various import and export options and more.
-* A new search tab "Userpoints" in the "Search Window" for editing and searching with the same functionality as
+* New main menu `Userdata` which provides various import and export options and more.
+* A new search tab `Userpoints` in the `Search Window` for editing and searching with the same functionality as
   the other search tabs.
 * New menu entries in map context menu to add, edit, delete or move userpoints.
 * Information window and map tooltips can display userpoint information.
@@ -1620,38 +1884,38 @@ Userpoints #3
   Content can be cleared using the reset button.
 * Add dialog is context sensitive and prefills airport data if you add a bookmark on an airport for example.
 * Coordinates can be edited manually in edit/add dialog. More than 10 coordinate formats are recognized. See tooltip on
-  "Latitude and Longitude" field.
+  `Latitude and Longitude` field.
 * Userpoints can be added to a flight plan and are converted to flight plan user defined waypoints (green square).
 * A timestamp of last change is kept for each userpoint which allows to find latest changes.
 * Flight plan drag and drop editing allows to add userpoints.
 
-* Import and export for CSV (format from other well known programs), Garmin "user.wpt" and X-Plane "user_fix.dat".
+* Import and export for CSV (format from other well known programs), Garmin `user.wpt` and X-Plane `user_fix.dat`.
 * Export to a XML file suitable for the FSX/P3D BGL compiler.
 
 * Userpoint database is backed up to CSV on startup.
 
-* Icons and types can be extended by placing SVG files with names like "userdata_MYTYPE.svg"
+* Icons and types can be extended by placing SVG files with names like `userdata_MYTYPE.svg`
   in the settings directory. Icons for stock types can be changed by placing an icon with the same name
-  like "userdata_Airstrip.svg" in the settings directory.
+  like `userdata_Airstrip.svg` in the settings directory.
 
-* Option for automatic creation of userpoint entry of type "Logbook" for each takeoff and landing.
+* Option for automatic creation of userpoint entry of type `Logbook` for each takeoff and landing.
 * Logbook entry for landing contains trip information like average speed, fuel consumption and more.
 * Skipping logbook creation when simulator is paused or in replay mode.
 
 Flying
 
-* Added option to keep active leg on top of flight plan table. "Options" on tab "Simulator Aircraft".
+* Added option to keep active leg on top of flight plan table. `Options` on tab `Simulator Aircraft`.
 
 * Added new flight plan and aircraft centering mode which keeps active leg and aircraft visible
   on the map when flying. Falls back to center aircraft on ground.
-  "Options" on tab "Simulator Aircraft". #133
+  `Options` on tab `Simulator Aircraft`. #133
 
-* Added "jump back to aircraft" after given time when flying. "Options" on tab "Simulator Aircraft".
-  Allows zooming and scrolling during flight without disabling "Center Aircraft". #133
+* Added `jump back to aircraft` after given time when flying. `Options` on tab `Simulator Aircraft`.
+  Allows zooming and scrolling during flight without disabling `Center Aircraft`. #133
 
 * Added option to dim passed legs of flight plan on the map and display them in a different color.
   Labels for passed legs are omitted to unclutter the map. Added color selection for passed flight
-  plan legs. "Options" on tab "Map Display". All #218
+  plan legs. `Options` on tab `Map Display`. All #218
 
 * Adjusted label display for nearest five AI to show within 20 nm if vertical difference is not more than
   5000 ft.
@@ -1661,7 +1925,7 @@ Flying
 
 Weather
 
-* Weather reports older than six hours are now shown in red in information window on tab "Weather".
+* Weather reports older than six hours are now shown in red in information window on tab `Weather`.
 
 * Fixed error on METAR stations improperly reporting CAVOK 9999.
 * Weather report now corrects old dates back to last valid date instead of creating future dates.
@@ -1678,7 +1942,7 @@ Flight Plan
 * Coordinates of flight plan user defined waypoints can now be changed in edit dialog. See tooltip on coordinate
   field for recognized coordinate formats.
 
-* Added option to save FSX/P3D flight plans using short names. "Options" on tab "Flight Plan".
+* Added option to save FSX/P3D flight plans using short names. `Options` on tab `Flight Plan`.
 
 * Now highlighting flight plan segments traveling against one-way airways in red to indicate error.
 
@@ -1693,19 +1957,19 @@ Map
 * Split Map menu into Map and View since it got too big.
 
 * Added option to disable all airport diagram features except runways for all who like to use the
-  OpenStreetMap background. See dialog "Options" on tab "Map Display".
-* Added options to disable label background color for airport, flight plan and navaids. "Options" on tab "Map Display".
-* White airport background can be disabled now. "Options" on tab "Map Display".
+  OpenStreetMap background. See dialog `Options` on tab `Map Display`.
+* Added options to disable label background color for airport, flight plan and navaids. `Options` on tab `Map Display`.
+* White airport background can be disabled now. `Options` on tab `Map Display`.
 
-* Added compass rose showing magnetic direction plus option for line thickness ("Options" on tab "Map Display").
+* Added compass rose showing magnetic direction plus option for line thickness (`Options` on tab `Map Display`).
   Compass rose is always visible when enabled. Heading and track lines are displayed as well if an aircraft is shown.
-  Rose adjusts to screen size with a maximum of 500 nm radius. Enable in menu "View" -> "Show compass rose". #141
+  Rose adjusts to screen size with a maximum of 500 nm radius. Enable in menu `View` -> `Show compass rose`. #141
 
 * Added options to disable map clicks for airports, navaids and airspaces similar to tooltips.
-  Dialog "Options" on tab "Map".
+  Dialog `Options` on tab `Map`.
 
 * Added X-Plane 3D airport flag as additional criteria for treating empty airports. This can be used to hide or dim
-  all X-Plane airports which are not 3D. "Options" on tab "Map".
+  all X-Plane airports which are not 3D. `Options` on tab `Map`.
 
 * Tooltips now show exact procedure type.
 * Improved text display between overlapping procedure legs to avoid text labels hiding each other.
@@ -1715,25 +1979,25 @@ Map
 
 Information and Search
 
-* Added zero fuel weight and total payload to window "Simulator Aircraft" on tab "Aircraft".
+* Added zero fuel weight and total payload to window `Simulator Aircraft` on tab `Aircraft`.
 * Added estimated fuel at destination and TOD was well as estimated gross weight at destination to
-  window "Simulator Aircraft" on tab "Progress".
+  window `Simulator Aircraft` on tab `Progress`.
 
 * Added zulu time and day of month to status bar on the right.
 * Added display of magnetic declination below cursor to status bar.
 
 * Added override mode for airport ICAO search. All other search options will be ignored if a user
-  enters more than two characters in the "ICAO Code" field. Override is indicate in the bottom label below the search
+  enters more than two characters in the `ICAO Code` field. Override is indicate in the bottom label below the search
   result table. This helps to quickly find an airport without resetting search options.
 
-* Changed context menu "Show Procedures" to show different texts when airport is destination or
+* Changed context menu `Show Procedures` to show different texts when airport is destination or
   departure of current flight plan. Show procedures now sets filter to departure or arrival
   procedures depending on selected airport.
 
 * Added follow selection mode to context menus of the flight plan and all search windows. Will center
   selected navaid, airport or procedures on the map using the current zoomlevel when enabled. #129
 
-* Changes for SID and STAR that use multiple or parallel runway assignments indicated by e.g. "All" or "23L/23R".
+* Changes for SID and STAR that use multiple or parallel runway assignments indicated by e.g. `All` or `23L/23R`.
   Added sub menu in procedure search for SID/STAR selection if more than one runway can be selected.
   Procedures are now correctly resolved if loading or assigning such cases. This solves problems when saving
   procedures in X-Plane FMC 11 format or other various formats. #179
@@ -1747,8 +2011,8 @@ Information and Search
 
 General
 
-* Fixes to translatable texts. About dialog "Contact:" and other texts are now translated.
-* Translated windows titles in menu "Window" are now correct and not lower case.
+* Fixes to translatable texts. About dialog `Contact:` and other texts are now translated.
+* Translated windows titles in menu `Window` are now correct and not lower case.
 * Now all export menu items are disabled if not flight plan is loaded.
 * Extended version comparison for update checking release candidates where 1.1.1.rc2 is
   smaller than stable 1.1.1 for example.
@@ -1757,9 +2021,9 @@ Scenery Database
 
 * Updated magnetic declination file to 2018.
 
-* FSX/P3D only: Now reading FSX/P3D scenery entries pointing to "scenery" instead of the base directory
+* FSX/P3D only: Now reading FSX/P3D scenery entries pointing to `scenery` instead of the base directory
   which is allowed in P3D. These were silently omitted previously.
-* FSX/P3D only: Reading ".../Roaming/.../add-on.cfg" and ".../ProgramData/.../add-on.cfg" now. #211
+* FSX/P3D only: Reading `.../Roaming/.../add-on.cfg` and `.../ProgramData/.../add-on.cfg` now. #211
 
 * X-Plane only: Fixed problem where CIFP files with lower case names were not recognized correctly.
 * X-Plane only: Fixed approach lighting system indication for airports in X-Plane compiler.
@@ -1768,7 +2032,7 @@ Scenery Database
 * X-Plane only: Fixed issues with file or directory exclusion for X-Plane scenery loader which did not work
   properly in some cases.
 
-* X-Plane only: "Custom Scenery/Global Airports/Earth nav data/earth_nav.dat" is now read to get fixed ILS.
+* X-Plane only: `Custom Scenery/Global Airports/Earth nav data/earth_nav.dat` is now read to get fixed ILS.
   This fixes wrong ILS heading in many places like LOWI.
 
 * Navigraph only: Added transition altitude to airport.
@@ -1776,7 +2040,7 @@ Scenery Database
 * Navigraph only: Corrected wrong runway heading for Navigraph compilation. #214
 
 * X-Plane and Navigraph only: SID and STAR common routes are now merged correctly into procedures for
-  Navigraph and X-Plane compiler. This results in correct SID/STAR and also removes the "ghost" entries. #193
+  Navigraph and X-Plane compiler. This results in correct SID/STAR and also removes the `ghost` entries. #193
 
 * X-Plane and Navigraph only: Now removing all unneeded dummy NDB and VOR waypoints that were created for
   airway generation. #201
@@ -1830,9 +2094,9 @@ from atools version 2.8.4
 * Logging library paths now for debugging.
 * Added Garmin GNS XML flight plan export.
 * Added option to save GNS XML flightplans with user defined waypoints.
-* Column "arinc_name" in table "approaches" is now filled for SID and STAR to get runway
+* Column `arinc_name` in table `approaches` is now filled for SID and STAR to get runway
   information for multiple or all. Needed for future fixes of #179. Needs scenery database reload
-* Added new columns "region" and "is_3d" (X-Plane) in airport table. Adapted all compilers to fill it. Needs scenery database reload
+* Added new columns `region` and `is_3d` (X-Plane) in airport table. Adapted all compilers to fill it. Needs scenery database reload
 * Database minor version bumped up to 8.
 * Made flight plan format detection more tolerant for FMS 11 with missing cycle information.
 * Fixed issues where X-Plane cannot load STAR in FMS 11 flight plans because runway reference is missing. #173
@@ -1879,10 +2143,10 @@ Version 1.8.0.beta
 
 * Added sub-menu for third party navdata with three display options.
 * Changed main window title bar to indicate usage of navdata (i.e. Navigraph):
-  "FSX/N": simulator and navdata, "(FSX)/N": navdata only and "FSX": simulator only.
+  `FSX/N`: simulator and navdata, `(FSX)/N`: navdata only and `FSX`: simulator only.
 * Added Navigraph database cycle 1707 to program download archive. Database is prepared and
   used automatically on startup.
-* Program can now display mixed data (i.e. "FSX/N") on map and in information window:
+* Program can now display mixed data (i.e. `FSX/N`) on map and in information window:
   Complete airports and ILS from simulator data. Navaids, airways, airspaces and procedures
   from third party navdata like Navigraph.
 * Additonal third party database is now opened from application directory
@@ -1893,13 +2157,13 @@ Version 1.8.0.beta
 * Added French legend and updates to translation by Patrick.
 * Updated Linux startup script so that it can be used also by the desktop launcher (thanks to Valerio for the tip).
 * Now adding all readme and changelog files to macOS deployment.
-* Added command line option "-s" or "--settings-directory" that allows to change the "ABarthel" part of the
+* Added command line option `-s` or `--settings-directory` that allows to change the `ABarthel` part of the
   settings directory for testing purposes like running more than one version of Little Navmap.
 
-* Added settings in option dialog on tab "User Interface" to force language and
+* Added settings in option dialog on tab `User Interface` to force language and
   locale (number format, date format and more) in program to English. #156
 * Added options to disable restoring the last search parameters, information window content and
-  aircraft trail on startup in options dialog on tab "Startup".
+  aircraft trail on startup in options dialog on tab `Startup`.
 
 * Moved most flight export menus to sub-menu.
 * Added flight plan export for Majestic Dash. Currently limited to waypoints. #140
@@ -1912,7 +2176,7 @@ Version 1.8.0.beta
 
 * Removed SIDs and STARs in information dock window on procedure tab since this information was not useful.
 * Fixed error where ARINC name of procedures was not loaded causing problems when exporting and loading flight plans.
-* Information dock window on tab "Runways/Helipads" can now display more than one ILS for a runway end (EDDF 25R/07L).
+* Information dock window on tab `Runways/Helipads` can now display more than one ILS for a runway end (EDDF 25R/07L).
 
 * Fixed problem in route description parser where an airway as an invalid first entry did not generate a warning message.
 * Fixed error in route string parser which did not recognize STARs correctly.
@@ -1927,7 +2191,7 @@ Version 1.8.0.beta
 
 * Fixed error where an automatic connect was attempted even when hostname is empty.
 * Fixed problem with almost invisible checkbox in night mode.
-* Removed unused "what's this" question mark in scenery database error dialog.
+* Removed unused `what's this` question mark in scenery database error dialog.
 
 from atools version  2.8.0.beta
 
@@ -1950,14 +2214,14 @@ from atools version  2.8.0.beta
 Version 1.6.7
 
 * Fixed problem where procedures were assigned to the wrong runway in search window.
-* "No runway" filter is now back in procedure search.
+* `No runway` filter is now back in procedure search.
 * Fixed problem with gap and wrong distance calculation for SIDs starting with an initial fix.
 * Fixed crash after startup when airport procedures changed.
 * Added adjustable limitation for maximum points of aircraft track
 * Added txt flight plan format usable by JARDesign or Rotate Simulations aircraft.
 * Fixed errors in route description generation where a DCT was inserted after SID or before STAR
   statement creating invalid routes.
-* Fixed problem where X-Plane basepath was not found as "save as" or "export" default path.
+* Fixed problem where X-Plane basepath was not found as `save as` or `export` default path.
 * Fixes for translation support.
 
 from atools version 2.6.8
@@ -1973,11 +2237,11 @@ Version 1.6.6
 
 * Attempt to fix zoom distance creep while using moving map.
 * Fixed error in airspace copying from older database schemes where bounding rectangle was messed up.
-  This resulted in an "too many objects" message in the statusbar.
+  This resulted in an `too many objects` message in the statusbar.
 * Offline map themes Atlas and Simple: Fixed missing lakes in map.
 * Fixed problem where airspace showed wrong scenery files after copying. Now disabled.
 * Airspace buttons now disabled if no airspaces are loaded.
-* "Calculate based on given altitude" is working again. Previously failed with "no route found".
+* `Calculate based on given altitude` is working again. Previously failed with `no route found`.
 * Now correctly considering min and maximum altitude ranges when calculating to avoid
   non-overlapping airway altitude min/max ranges.
 * Fixed error in flight plan saving logic where cancel did not stop saving.
@@ -1990,8 +2254,8 @@ Version 1.6.5.beta
 * Added scenery file display for airspaces.
 * Fixed potential crash on failing network connection.
 * Fixed status bar connection indication remaining in disconnected state sometimes.
-* Removed "no SimConnect" header label in connect dialog.
-* Fixed "Connect on startup" checkbox state not saved.
+* Removed `no SimConnect` header label in connect dialog.
+* Fixed `Connect on startup` checkbox state not saved.
 * Added download button to update notification dialog.
 * Fixed several small text errors.
 * Solved problem with gaps between SIDs, STARs and the respective transitions resulting in wrong
@@ -2075,7 +2339,7 @@ Version 1.6.1.beta
 * Workaround in route string generation for malformed PLN files from PFPX.
 * Now all waypoints are added instead if an airway could not be found in the database in route string.
 * Invalid waypoints (not found in database) are now added as name instead of coordinates to route string.
-* Removed "select nothing" click areas in flight plan and procedure search top level labels. Added push buttons instead.
+* Removed `select nothing` click areas in flight plan and procedure search top level labels. Added push buttons instead.
 
 derived from atools:
 * Increased database version for schema changes - needs a reload.
@@ -2184,7 +2448,7 @@ Scenery Database
 * Adapted database dialog behavior for X-Plane support. Dialog can now be shown even without installed simulator.
 
 Other
-* Added "only waypoints" option to route string dialog usable for X-Plane ATC.
+* Added `only waypoints` option to route string dialog usable for X-Plane ATC.
 * Added clickspots in top labels to clear sometimes annoying selection in procedure search and flight plan.
 * Scenery is now compiled to a temporary database. Erase database dialog should not pop up anymore after crash.
 * Added links to start positions in information display.
@@ -2222,7 +2486,7 @@ Version 1.4.4
 * Fixed problem with links in scenery database error dialog opening inline.
 * Renamed manifest file. #110
 * Added notification message if SimConnect was not found in connect dialog. #110
-* SimConnect is now loaded dynamically. The file "littlenavmap-nosimconnect.exe" was removed. #110
+* SimConnect is now loaded dynamically. The file `littlenavmap-nosimconnect.exe` was removed. #110
 * Changed to Qt 5.9
 
 derived from atools:
@@ -2250,9 +2514,9 @@ Version 1.4.2.beta
 * Added tutorial links in help menu.
 * Fixed unit update for airspace altitude filter. Now also uses metric units if set in options dialog.
 * Increased jump distance when aircraft track is removed if simulator position changes.
-* Added workaround for not intersecting procedure legs in "course to fix" leg.
+* Added workaround for not intersecting procedure legs in `course to fix` leg.
 * Fixed problems with actions disabled in background resulting in shortcut keys being unavailable.
-* Added shortcut key combinations for "show procedures" and "activate leg".
+* Added shortcut key combinations for `show procedures` and `activate leg`.
 * Changed and enabled shortcut key combination for clear selection.
 * Fixed problem where splash screen could hide dialogs on startup.
 
@@ -2307,7 +2571,7 @@ Version 1.3.7.develop
 * Fixed automatic leg sequencing when exiting holds.
 
 derived from atools:
-* Fixed crash on database version detection after adding "has_sid_star" column.
+* Fixed crash on database version detection after adding `has_sid_star` column.
 
 Version 1.3.6.develop
 
@@ -2353,7 +2617,7 @@ or automatically determined.
 * Reverse route now working correctly with procedures.
 * Fixed crash in procedure search when starting with an empty database.
 * Fixed aircraft progress cleared and not updated after database switch and other window update problems.
-* Fixed "Unknown Waypoint" in procedures.
+* Fixed `Unknown Waypoint` in procedures.
 * Fixed invalid course value for distance search when distance is null.
 * Added cache setting for the SQLite database in the ini file.
 * Fixed potential crashes and small memory leaks.
@@ -2370,7 +2634,7 @@ Version 1.3.5.develop
 * Scenery database has to be reloaded due to schema change to airspace tables.
 
 * Added support for GLOBE offline elevation data as second elevation data source.
-  See dialog "Options" -> tab "Cache and Files". All explained there.
+  See dialog `Options` -> tab `Cache and Files`. All explained there.
 * Elevation under cursor is now shown after a short delay on the bottom right in the status bar if offline data is used.
 
 * Added TACAN and VORTAC stations to display, search and all other VOR related functions. This fixes unusable procedures
@@ -2380,14 +2644,14 @@ Version 1.3.5.develop
 * Moved FIR Class F and G airspaces one layer up in map display. Now shown earlier when zooming in.
 * Added show/hide all toolbar button for airspaces.
 * Disabling airspace semi transparent fill for certain map display performance modes now for faster scrolling.
-  See "Options" -> "Map" -> "Details while scrolling ..."
+  See `Options` -> `Map` -> `Details while scrolling ...`
 * Increased cache size for airway geometry and other features.
 
 * Procedures are now sorted by type, runway and fix name in search tab.
 * Selection now cleared when adding procedure to flight plan to avoid preview overlapping route.
 * Fixed several problems when resolving procedure navaids resulting in unusable procedures.
 
-* Added menu item in menu "Map" to reset map settings back to default.
+* Added menu item in menu `Map` to reset map settings back to default.
 * Improved statusbar display for shown map features and airspaces. Added empty airports.
 * Flight plan file paths are now remembered for each simulator separately. Fixed error that intially
   always used the FSX files path.
@@ -2409,7 +2673,7 @@ Version 1.3.4.devel
 
 * Added display of airspaces to map, information window and tooltips.
 * Added separate toolbar for airspaces to limit display by type, altitude or flight plan cruise level.
-* Added new map update mode in options dialog on tab "Map" that combines full details and lazy load.
+* Added new map update mode in options dialog on tab `Map` that combines full details and lazy load.
 * Airspaces and airways are now always loaded lazily when scrolling or zooming.
 * Active leg sequencing is now only done for airborne aircraft. No magenta line while you are on ground.
 * Added better and more detailed error reports for scenery database loading. Report now contains missing scenery
@@ -2544,7 +2808,7 @@ from atools:
 * Fixed problem of wrong elevation adjustments overwriting add-on airport.
 * BGL files are now read ordered by name to get more deterministic behavior.
 * Only line comments are allowed now in ini files and scenery.cfg to avoid problems with
-  filenames containing "#". Behavior is now equal to flight simulator.
+  filenames containing `#`. Behavior is now equal to flight simulator.
 
 Version 1.2.0.beta
 
@@ -2562,7 +2826,7 @@ Little Navconnect is only needed for remote connections now.
 * Coordinate format can now be changed from degree/minutes/seconds to decimal degree format.
 * Freqencies for VOR, NDB and ILS added to approach information tab.
 * Added display of helipad details to information window.
-* When changing departure, destination or flight plan type, the save function will optionally show the "save as" dialog. This helps to avoid overwriting flight plans with the wrong content.
+* When changing departure, destination or flight plan type, the save function will optionally show the `save as` dialog. This helps to avoid overwriting flight plans with the wrong content.
 * `Save Map as image function added.`
 * All help is now available either offline as an included PDF or online from Gitbook.
 
@@ -2641,12 +2905,12 @@ Little Navmap
 * Added: Disable aircraft tracking on double click and others (issue #28)
 * Lowered maximumConnections of OpenMapSurfer to 2 to avoid parallel connection blocking from single source.
 * Improvement to error handling dialogs to allow instant access to contact and log file.
-* Closing splash now before it hides the "application already running dialog".
+* Closing splash now before it hides the `application already running dialog`.
 * Fixed display of closed taxiways and taxiways having width of 0 ft.
 * Made aircraft movement a bit smoother.
 * Added help buttons to connect and database dialog. Removed explanation label from connect dialog.
 * Improved help system. Converted help label in search to button linking to help document.
-* Added help to "no simulator found" dialog.
+* Added help to `no simulator found` dialog.
 
 Little Navmap Manual
 * Rework, clarifications and fixes in manual, legend and feature list. Added program menu icons to manual.
@@ -2659,7 +2923,7 @@ Inherited from atools:
 * Fixed scenery loading error for airports without city names.
 * Improvement to error handling dialogs to allow instant access to contact and log file.
 * Scenery.cfg reading is now more error tolerant, only prints warnings and ignores invalid entries.
-* Fixed exclude and include directives for scenery not working for relative paths containing "..".
+* Fixed exclude and include directives for scenery not working for relative paths containing `..`.
 
 Version 1.0.4.beta
 
@@ -2703,7 +2967,7 @@ Little Navmap
 * Fixed errors in options dialog weather tab.
 * Improved tooltips in weather tab.
 * Additions to manual: Database update, weather, copy and paste from dialogs and hightlighted text.
-* Removed "untested" annotation since it is all beta anyway.
+* Removed `untested` annotation since it is all beta anyway.
 * Marble cache is now initialized late to avoid disk trashing on startup for those without SSD.
 * Options - scenery database: Deleting the last path in the list was not saved.
 
@@ -2716,9 +2980,9 @@ Inherited from atools:
 
 Version 1.0.2.beta
 * Older add-on airports using FS9 BGLs can now be read.
-* Fixed crash "locked database" on ILS update during scenery loading.
+* Fixed crash `locked database` on ILS update during scenery loading.
 * Several problems reading add-on airports are solved.
-* Fixed display/zoom problems for some add-on airports on double click or "Show on map".
+* Fixed display/zoom problems for some add-on airports on double click or `Show on map`.
 * Updates to legend and manual.
 
 Version 1.0.1.beta
@@ -2729,3 +2993,5 @@ Version 1.0.1.beta
 Version 1.0.0.beta
 
 * Public beta release
+
+
