@@ -7528,13 +7528,13 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/rangerings.svg</normaloff>:/littlenavmap/resources/icons/rangerings.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Range &amp;Rings</string>
+    <string>Add Range &amp;Rings</string>
    </property>
    <property name="toolTip">
-    <string>Show range rings on map</string>
+    <string>Add range rings at this position to map</string>
    </property>
    <property name="statusTip">
-    <string>Show range rings on map</string>
+    <string>Add range rings at this position map</string>
    </property>
   </action>
   <action name="actionMapNavaidRange">
@@ -7543,7 +7543,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/navrange.svg</normaloff>:/littlenavmap/resources/icons/navrange.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Navaid Range for %1</string>
+    <string>Add &amp;Navaid Range Ring for %1</string>
    </property>
    <property name="toolTip">
     <string>Show range for navaid on map</string>
@@ -9776,7 +9776,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</iconset>
    </property>
    <property name="text">
-    <string>Display Airport &amp;Traffic Pattern at %1 ...</string>
+    <string>Add Airport &amp;Traffic Pattern at %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Show Airport traffic pattern for a runway at this airport</string>
@@ -10838,7 +10838,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
    </property>
    <property name="text">
-    <string>Display &amp;Holding at %1 ...</string>
+    <string>Add &amp;Holding at %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Display holding at this position or navaid</string>

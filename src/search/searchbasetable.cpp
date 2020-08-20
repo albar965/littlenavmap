@@ -967,7 +967,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().arg(filter));
   ui->actionSearchFilterExcluding->setEnabled(!fieldData.isEmpty() && index.isValid() && columnCanFilter);
 
-  int range = controller->getRawData(index.row(), "range").toInt();
+  int range = controller->hasColumn("range") ? controller->getRawData(index.row(), "range").toInt() : 0;
   ui->actionMapNavaidRange->setEnabled(range > 0 && (navType == map::VOR || navType == map::NDB));
 
   ui->actionRouteAddPos->setEnabled(navType == map::VOR || navType == map::NDB ||
@@ -1041,7 +1041,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionMapRangeRings->setEnabled(index.isValid());
   ui->actionSearchSetMark->setEnabled(index.isValid());
 
-  ui->actionMapNavaidRange->setText(tr("Show &Navaid Range"));
+  ui->actionMapNavaidRange->setText(tr("Add &Navaid Range Ring"));
   ui->actionRouteAddPos->setText(tr("&Add to Flight Plan"));
   ui->actionRouteAppendPos->setText(tr("Append to &Flight Plan"));
 
@@ -1068,8 +1068,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ui->actionRouteAirportAlternate->setText(tr("Add %1 as Flight Plan &Alternate").arg(airportText));
   }
 
-  ui->actionMapTrafficPattern->setText(tr("Display Airport &Traffic Pattern ..."));
-  ui->actionMapHold->setText(tr("Display &Holding ..."));
+  ui->actionMapTrafficPattern->setText(tr("Add Airport &Traffic Pattern ..."));
+  ui->actionMapHold->setText(tr("Add &Holding ..."));
 
   ui->actionSearchTableCopy->setEnabled(index.isValid());
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);

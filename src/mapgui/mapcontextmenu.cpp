@@ -670,7 +670,7 @@ void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::NAVAIDRANGE,
                      MapResultIndex().addRef(*result, map::VOR | map::NDB).sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Show &Navaid Range for %1"),
+                     tr("Add &Navaid Range Ring for %1"),
                      tr("Show a ring for the radio navaid range on the map"),
                      tr("Shift+Click"),
                      QIcon(":/littlenavmap/resources/icons/navrange.svg"),
@@ -714,7 +714,7 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::PATTERN, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("Display &Traffic Pattern at %1 ..."),
+                     tr("Add &Traffic Pattern at %1 ..."),
                      tr("Show a traffic pattern to a runway for this airport"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/trafficpattern.svg"),
@@ -729,7 +729,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
     {
       disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS);
       if(base == nullptr)
-        text = tr("Display &Holding here ...");
+        text = tr("Add &Holding here ...");
       if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
         // Hidden - add remark and disable
         text.append(tr(" (hidden on map)"));
@@ -739,7 +739,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
                      addRef(*result,
                             map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT | map::USERPOINTROUTE).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Display &Holding at %1 ..."),
+                     tr("Add &Holding at %1 ..."),
                      tr("Show a holding pattern on the map at a position or a navaid"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/hold.svg"),

@@ -2200,10 +2200,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapTrafficPattern->setEnabled(true);
   else
     ui->actionMapTrafficPattern->setEnabled(false);
-  ui->actionMapTrafficPattern->setText(tr("Display Airport &Traffic Pattern ..."));
+  ui->actionMapTrafficPattern->setText(tr("Add Airport &Traffic Pattern ..."));
 
   ui->actionMapHold->setEnabled(routeLeg != nullptr);
-  ui->actionMapHold->setText(tr("Display &Holding ..."));
+  ui->actionMapHold->setText(tr("Add &Holding ..."));
 
   ui->actionRouteCalcSelected->setEnabled(canCalcSelection());
 
@@ -2213,7 +2213,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection());
   ui->actionRouteTableSelectAll->setEnabled(!route.isEmpty());
 
-  ui->actionMapNavaidRange->setText(tr("Show &Navaid Range"));
+  ui->actionMapNavaidRange->setText(tr("Add &Navaid Range Ring"));
 
   // Edit position ======================================0
 
