@@ -40,6 +40,7 @@
 
 #include <QBitArray>
 #include <QDir>
+#include <QProcessEnvironment>
 #include <QXmlStreamReader>
 
 using atools::fs::pln::FlightplanIO;

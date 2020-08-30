@@ -38,6 +38,7 @@
 #include "gui/choicedialog.h"
 
 #include <QDebug>
+#include <QProcessEnvironment>
 #include <QStandardPaths>
 
 using atools::sql::SqlTransaction;

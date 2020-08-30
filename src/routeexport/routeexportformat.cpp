@@ -25,6 +25,7 @@
 
 #include <QDataStream>
 #include <QDir>
+#include <QProcessEnvironment>
 
 using atools::settings::Settings;
 
