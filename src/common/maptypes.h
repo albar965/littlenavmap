@@ -370,7 +370,6 @@ struct MapAirport
   bool parking() const;
   bool als() const;
   bool vasi() const;
-  bool fence() const;
   bool closedRunways() const;
   bool procedure() const;
 

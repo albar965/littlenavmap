@@ -319,7 +319,6 @@ enum MapAirportFlag
   AP_PARKING = 1 << 16,
   AP_ALS = 1 << 17, /* Has at least one runway with an approach lighting system */
   AP_VASI = 1 << 18, /* Has at least one runway with a VASI */
-  AP_FENCE = 1 << 19,
   AP_RW_CLOSED = 1 << 20, /* Has at least one closed runway */
   AP_COMPLETE = 1 << 21, /* Struct completely loaded? */
   AP_3D = 1 << 22, /* X-Plane 3D airport */

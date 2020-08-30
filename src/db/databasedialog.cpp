@@ -209,9 +209,10 @@ void DatabaseDialog::updateComboBox()
 void DatabaseDialog::updateWidgets()
 {
   bool showXplane = currentFsType == atools::fs::FsPaths::XPLANE11 || currentFsType == atools::fs::FsPaths::UNKNOWN;
+  bool showMsfs = currentFsType == atools::fs::FsPaths::MSFS || currentFsType == atools::fs::FsPaths::UNKNOWN;
 
-  ui->lineEditDatabaseSceneryFile->setDisabled(showXplane);
-  ui->labelDatabaseSceneryFile->setDisabled(showXplane);
+  ui->lineEditDatabaseSceneryFile->setDisabled(showXplane || showMsfs);
+  ui->labelDatabaseSceneryFile->setDisabled(showXplane || showMsfs);
 
   ui->lineEditDatabaseSceneryFile->blockSignals(true);
   ui->lineEditDatabaseSceneryFile->setText(simulators.value(currentFsType).sceneryCfg);
@@ -227,9 +228,9 @@ void DatabaseDialog::updateWidgets()
 
   // Disable everything if no installed simulators are found
   // (normally not needed since the action is already disabled)
-  ui->pushButtonDatabaseSceneryFile->setEnabled(!showXplane);
-  ui->lineEditDatabaseSceneryFile->setEnabled(!showXplane);
-  ui->pushButtonDatabaseResetPaths->setEnabled(!showXplane);
+  ui->pushButtonDatabaseSceneryFile->setEnabled(!showXplane && !showMsfs);
+  ui->lineEditDatabaseSceneryFile->setEnabled(!showXplane && !showMsfs);
+  // ui->pushButtonDatabaseResetPaths->setEnabled(!showXplane && !showMsfs);
 }
 
 QString DatabaseDialog::fixBasePath(QString path)

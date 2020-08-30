@@ -221,7 +221,6 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("has_tower_object").hidden()).
   append(Column("num_runway_end_vasi").hidden()).
   append(Column("num_runway_end_als").hidden()).
-  append(Column("num_boundary_fence").hidden()).
 
   append(Column("tower_lonx").hidden()).
   append(Column("tower_laty").hidden()).
@@ -232,8 +231,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("bottom_laty").hidden()).
 
   append(Column("lonx", tr("Longitude")).hidden()).
-  append(Column("laty", tr("Latitude")).hidden())
-  ;
+  append(Column("laty", tr("Latitude")).hidden());
 
   ui->labelAirportSearchOverride->hide();
 

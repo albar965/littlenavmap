@@ -167,7 +167,8 @@ const QColor& alternatingRowColor(int row, bool isSort)
 const QColor& colorOutlineForParkingType(const QString& type)
 {
   if(type == "RMCB" || type == "RMC" || type.startsWith("G") || type.startsWith("RGA") || type.startsWith("DGA") ||
-     type.startsWith("RC") || type.startsWith("FUEL") || type == ("H") || type == ("T"))
+     type.startsWith("RC") || type.startsWith("FUEL") || type == ("H") || type == ("T") || type == ("RE") ||
+     type == ("GE"))
     return parkingOutlineColor;
   else
     return parkingUnknownOutlineColor;
@@ -194,7 +195,8 @@ const QColor& colorForParkingType(const QString& type)
     return rampMilCombat;
   else if(type.startsWith(QLatin1Literal("G")))
     return gate;
-  else if(type.startsWith(QLatin1Literal("RGA")) || type.startsWith(QLatin1Literal("DGA")))
+  else if(type.startsWith(QLatin1Literal("RGA")) || type.startsWith(QLatin1Literal("DGA")) ||
+          type.startsWith(QLatin1Literal("RE")))
     return rampGa;
   else if(type.startsWith(QLatin1Literal("RC")))
     return rampCargo;
@@ -216,7 +218,7 @@ const QColor& colorTextForParkingType(const QString& type)
     return mapcolors::brightParkingTextColor;
   else if(type.startsWith("G"))
     return mapcolors::brightParkingTextColor;
-  else if(type.startsWith("RGA") || type.startsWith("DGA"))
+  else if(type.startsWith("RGA") || type.startsWith("DGA") || type.startsWith("RE"))
     return mapcolors::brightParkingTextColor;
   else if(type.startsWith("RC"))
     return mapcolors::brightParkingTextColor;
@@ -262,7 +264,7 @@ const QIcon& iconForParkingType(const QString& type)
     return mil;
   else if(type.startsWith("G"))
     return gate;
-  else if(type.startsWith("RGA") || type.startsWith("DGA"))
+  else if(type.startsWith("RGA") || type.startsWith("DGA") || type == "RE")
     return ga;
   else if(type.startsWith("RC"))
     return cargo;
@@ -282,7 +284,7 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor grass("#00a000");
   static const QColor water("#808585ff");
   static const QColor asphalt("#707070");
-  static const QColor cement("#d0d0d0");
+  static const QColor cement("#a0a0a0");
   static const QColor clay("#DEB887");
   static const QColor snow("#dbdbdb");
   static const QColor ice("#d0d0ff");
@@ -291,7 +293,7 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor gravel("#c0c0c0");
   static const QColor oilTreated("#2F4F4F");
   static const QColor steelMats("#a0f0ff");
-  static const QColor bituminous("#808080");
+  static const QColor bituminous("#505050");
   static const QColor brick("#A0522D");
   static const QColor macadam("#c8c8c8");
   static const QColor planks("#8B4513");
@@ -299,8 +301,7 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor shale("#F5DEB3");
   static const QColor tarmac("#909090");
   static const QColor unknown("#ffffff");
-  static const QColor transparent("#ffffff");
-
+  static const QColor transparent("#88ffffff");
   if(surface == "A")
     return asphalt;
   else if(surface == "G")

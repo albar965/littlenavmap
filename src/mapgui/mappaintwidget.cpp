@@ -499,7 +499,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
          east = rect.east(GeoDataCoordinates::Degree), west = rect.west(GeoDataCoordinates::Degree);
 
   if(!visibleWidget)
-    qDebug() << Q_FUNC_INFO << "intial zoom" << zoom() << "zoom step" << zoomStep();
+    qDebug() << Q_FUNC_INFO << "initial zoom" << zoom() << "zoom step" << zoomStep();
 
   // Zoom in deeper
   zoomIn();

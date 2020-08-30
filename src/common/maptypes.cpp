@@ -100,6 +100,7 @@ void initTranslateableTexts()
       {"RGAS", QObject::tr("Ramp GA Small")},
       {"RGAM", QObject::tr("Ramp GA Medium")},
       {"RGAL", QObject::tr("Ramp GA Large")},
+      {"RE", QObject::tr("Ramp Extra")},
       {"RC", QObject::tr("Ramp Cargo")},
       {"RM", QObject::tr("Ramp Mil")},
       {"RMC", QObject::tr("Ramp Mil Cargo")},
@@ -110,6 +111,7 @@ void initTranslateableTexts()
       {"GS", QObject::tr("Small")},
       {"GM", QObject::tr("Medium")},
       {"GH", QObject::tr("Heavy")},
+      {"GE", QObject::tr("Extra")},
       {"DGA", QObject::tr("Dock GA")},
       {"FUEL", QObject::tr("Fuel")},
       {"V", QObject::tr("Vehicles")}
@@ -124,6 +126,7 @@ void initTranslateableTexts()
       {"RGAM", QObject::tr("Medium")},
       {"RGAL", QObject::tr("Large")},
       {"RC", QObject::tr("Ramp Cargo")},
+      {"RE", QObject::tr("Ramp Extra")},
       {"RM", QObject::tr("Ramp Mil")},
       {"RMC", QObject::tr("Ramp Mil Cargo")},
       {"RMCB", QObject::tr("Ramp Mil Combat")},
@@ -133,6 +136,7 @@ void initTranslateableTexts()
       {"GS", QObject::tr("Gate Small")},
       {"GM", QObject::tr("Gate Medium")},
       {"GH", QObject::tr("Gate Heavy")},
+      {"GE", QObject::tr("Gate Extra")},
       {"DGA", QObject::tr("Dock GA")},
       {"FUEL", QObject::tr("Fuel")},
       {"V", QObject::tr("Vehicles")}
@@ -147,6 +151,7 @@ void initTranslateableTexts()
       {"RGAS", QObject::tr("Ramp GA Small")},
       {"RGAM", QObject::tr("Ramp GA Medium")},
       {"RGAL", QObject::tr("Ramp GA Large")},
+      {"RE", QObject::tr("Ramp GA Extra")},
       {"RC", QObject::tr("Ramp Cargo")},
       {"RM", QObject::tr("Ramp Mil")},
       {"RMC", QObject::tr("Ramp Mil Cargo")},
@@ -157,6 +162,7 @@ void initTranslateableTexts()
       {"GS", QObject::tr("Gate Small")},
       {"GM", QObject::tr("Gate Medium")},
       {"GH", QObject::tr("Gate Heavy")},
+      {"GE", QObject::tr("Gate Extra")},
       {"DGA", QObject::tr("Dock GA")},
       {"FUEL", QObject::tr("Fuel")},
       {"V", QObject::tr("Vehicles")}
@@ -290,7 +296,12 @@ void initTranslateableTexts()
       {"WT", QObject::tr("Track")},
       {"WU", QObject::tr("Unnamed")},
       {"V", QObject::tr("VOR")},
-      {"N", QObject::tr("NDB")}
+      {"N", QObject::tr("NDB")},
+      {"VFR", QObject::tr("VFR")},
+      {"RNAV", QObject::tr("RNAV")},
+      {"OA", QObject::tr("Off Airway")},
+      {"IAF", QObject::tr("IAF")},
+      {"FAF", QObject::tr("FAF")}
     });
 
   navTypeNames = QHash<QString, QString>(
@@ -850,11 +861,6 @@ bool MapAirport::als() const
 bool MapAirport::vasi() const
 {
   return flags.testFlag(AP_VASI);
-}
-
-bool MapAirport::fence() const
-{
-  return flags.testFlag(AP_FENCE);
 }
 
 bool MapAirport::closedRunways() const

@@ -302,8 +302,6 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     facilities.append(tr("VASI"));
   if(airport.als())
     facilities.append(tr("ALS"));
-  if(airport.fence())
-    facilities.append(tr("Boundary Fence"));
 
   if(airport.flatten == 1)
     facilities.append(tr("Flatten"));

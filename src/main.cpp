@@ -54,6 +54,7 @@
 #include <QPixmapCache>
 #include <QSettings>
 #include <QScreen>
+#include <QProcess>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -101,6 +102,7 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
   qRegisterMetaTypeStreamOperators<map::MapObjectRef>();
 
+  // Register types and load process environment
   atools::fs::FsPaths::intitialize();
 
   // Tasks that have to be done before creating the application object and logging system =================
@@ -215,8 +217,6 @@ int main(int argc, char *argv[])
     qInfo() << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
             << "SimConnectReply Version" << atools::fs::sc::SimConnectReply::getReplyVersion();
 
-    atools::fs::FsPaths::logAllPaths();
-
     qInfo() << "QT_OPENGL" << QProcessEnvironment::systemEnvironment().value("QT_OPENGL");
     qInfo() << "QT_SCALE_FACTOR" << QProcessEnvironment::systemEnvironment().value("QT_SCALE_FACTOR");
     if(app.testAttribute(Qt::AA_UseDesktopOpenGL))
@@ -271,6 +271,8 @@ int main(int argc, char *argv[])
       QLocale::setDefault(QLocale("en"));
     }
 
+    qDebug() << "Locale after setting to" << OptionsDialog::getLocale() << QLocale();
+
     // Add paths here to allow translation =================================
     Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
 
@@ -281,6 +283,10 @@ int main(int argc, char *argv[])
 
     // Load help URLs from urls.cfg =================================
     lnm::loadHelpUrls();
+
+    // Load simulator paths =================================
+    atools::fs::FsPaths::loadAllPaths();
+    atools::fs::FsPaths::logAllPaths();
 
     // Avoid static translations and load these dynamically now  =================================
     Unit::initTranslateableTexts();

@@ -890,7 +890,7 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
     "is_closed", "is_military", "is_addon",
     "num_apron", "num_taxi_path",
     "num_parking_gate", "num_parking_ga_ramp", "num_parking_cargo", "num_parking_mil_cargo", "num_parking_mil_combat",
-    "num_runway_end_vasi", "num_runway_end_als", "num_boundary_fence", "num_runway_end_closed",
+    "num_runway_end_vasi", "num_runway_end_als", "num_runway_end_closed",
     "num_approach", "num_runway_hard", "num_runway_soft", "num_runway_water", "num_runway_light", "num_runway_end_ils",
     "num_helipad",
     "longest_runway_length", "longest_runway_heading",

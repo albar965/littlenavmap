@@ -3126,13 +3126,14 @@ void MainWindow::mainWindowShown()
         msgBox.setText(
           tr("Could not find a<ul>"
              "<li>Microsoft Flight Simulator X,</li>"
-               "<li>Flight Simulator - Steam Edition or</li>"
-                 "<li>Prepar3D installation</li></ul>"
-                   "on this computer. Also, no scenery library databases were found.<br/><br/>"
-                   "You can copy a Little Navmap scenery library database from another computer.<br/>"
-                   "Press the help button for more information on this.<br/><br/>"
-                   "If you have X-Plane 11 installed you can go to the scenery library "
-                   "loading dialog by clicking the X-Plane button below.<br/><br/>"
+               "<li>Microsoft Flight Simulator - Steam Edition or</li>"
+                 "<li>Microsoft Flight Simulator 2020 or</li>"
+                   "<li>Prepar3D installation</li></ul>"
+                     "on this computer. Also, no scenery library databases were found.<br/><br/>"
+                     "You can copy a Little Navmap scenery library database from another computer.<br/>"
+                     "Press the help button for more information on this.<br/><br/>"
+                     "If you have X-Plane 11 installed you can go to the scenery library "
+                     "loading dialog by clicking the X-Plane button below.<br/><br/>"
              )
           );
         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Open | QMessageBox::Help);
