@@ -346,7 +346,9 @@ void NavApp::readMagDecFromDatabase()
   else
   {
     qWarning() << Q_FUNC_INFO << "Empty database falling back to WMM";
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     magDecReader->readFromWmm();
+    QGuiApplication::restoreOverrideCursor();
   }
 
   qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate()

@@ -309,7 +309,7 @@ void ProcedureSearch::updateHeaderLabel()
     ui->labelProcedureSearch->setText(tr("<b>No Airport selected.</b><br/>&nbsp;"));
     tooltip = tr("<p style='white-space:pre'>Use the right-click context menu in the map or<br/>"
                  "the airport search result table (<code>F4</code>)<br/>"
-                 "and select <i>Show Procedures</i> for an airport.</p>");
+                 "and select \"Show Procedures\" for an airport.</p>");
     statusTip = tr("Select \"Show Procedures\" for an airport to fill this list");
   }
   ui->labelProcedureSearch->setToolTip(tooltip);

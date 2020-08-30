@@ -106,7 +106,7 @@ InfoController::InfoController(MainWindow *parent)
 
   notConnectedText = tr("Not connected to simulator.");
   notConnectedTooltip = tr("<p style='white-space:pre'>Go to: "
-                             "Main menu -&gt; <i>Tools</i> -&gt; <i>Flight Simulator Connection</i> "
+                             "Main menu -&gt; \"Tools\" -&gt; \"Flight Simulator Connection\" "
                              "or press <code>Ctrl+Shift+C</code>.<br/>"
                              "Then choose your simulator and connect.</p>");
   notConnectedStatustip = tr("Connect to simulator to see updates");

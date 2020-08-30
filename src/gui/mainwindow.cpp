@@ -3076,7 +3076,7 @@ void MainWindow::mainWindowShown()
     // Text from options
     // <p><a href="https://www.ngdc.noaa.gov/mgg/topo/gltiles.html"><b>Click here to open the download page for the GLOBE data in your browser</b></a><br/>
     // Download the file <b><i>All Tiles in One .zip (all10g.zip)</i></b> from the page and extract
-    // the archive to an arbitrary place, e.g in <i>Documents</i>. Then click <i>Select GLOBE Directory ...</i>
+    // the archive to an arbitrary place, e.g in \"Documents\". Then click \"Select GLOBE Directory ...\"
     // above and choose the directory with the extracted files.</p>
     // <p><a href="%1"><b>Click here for more information in the <i>Little Navmap</i> online manual</b></a></p>
 
@@ -3086,8 +3086,8 @@ void MainWindow::mainWindowShown()
         "is limited and has a lot of errors.<br/>"
         "Therefore, it is recommended to download and use the offline GLOBE elevation data "
         "which provides world wide coverage.</p>"
-        "<p><b>Go to: Main menu -&gt; <i>Tools</i> -&gt; <i>Options</i> and "
-          "then to page <i>Cache and files</i> to add the GLOBE data.</b></p>"
+        "<p><b>Go to: Main menu -&gt; \"Tools\" -&gt; \"Options\" and "
+          "then to page \"Cache and files\" to add the GLOBE data.</b></p>"
           "<p><a href=\"%1\"><b>Click here for more information in the "
             "<i>Little Navmap</i> online manual</b></a></p>")
                       .arg(url.toString());
