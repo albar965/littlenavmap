@@ -108,7 +108,8 @@ InfoController::InfoController(MainWindow *parent)
   notConnectedTooltip = tr("<p style='white-space:pre'>Go to: "
                              "Main menu -&gt; \"Tools\" -&gt; \"Flight Simulator Connection\" "
                              "or press <code>Ctrl+Shift+C</code>.<br/>"
-                             "Then choose your simulator and connect.</p>");
+                             "Then choose your simulator and connect.</p>",
+                           "Keep instructions in sync with translated menus and shortcuts");
   notConnectedStatustip = tr("Connect to simulator to see updates");
 
   // Create connections for "Map" links in text browsers
