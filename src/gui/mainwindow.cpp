@@ -1859,7 +1859,11 @@ const ElevationModel *MainWindow::getElevationModel()
 void MainWindow::resultTruncated(int truncatedTo)
 {
   if(truncatedTo > 0)
-    messageLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects.")));
+  {
+    messageLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects")));
+    messageLabel->setToolTip(tr("Reduce map details in the \"View\" menu.",
+                                "Keep menu item in sync with menu translation"));
+  }
 }
 
 void MainWindow::distanceChanged()
@@ -3086,10 +3090,11 @@ void MainWindow::mainWindowShown()
         "is limited and has a lot of errors.<br/>"
         "Therefore, it is recommended to download and use the offline GLOBE elevation data "
         "which provides world wide coverage.</p>"
-        "<p><b>Go to: Main menu -&gt; \"Tools\" -&gt; \"Options\" and "
+        "<p><b>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and "
           "then to page \"Cache and files\" to add the GLOBE data.</b></p>"
           "<p><a href=\"%1\"><b>Click here for more information in the "
-            "<i>Little Navmap</i> online manual</b></a></p>")
+            "<i>Little Navmap</i> online manual</b></a></p>",
+      "Keep instructions in sync with translated menus")
                       .arg(url.toString());
 
     atools::gui::Dialog(this).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
