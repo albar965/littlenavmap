@@ -235,6 +235,7 @@ private:
 
   // Maps options flags to items in the tree widget
   QHash<optsd::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
+  QHash<optsd::DisplayOptionsAirport, QTreeWidgetItem *> displayOptItemIndexAirport;
   QHash<optsd::DisplayOptionsNavAid, QTreeWidgetItem *> displayOptItemIndexNavAid;
   QHash<optsd::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
   QHash<optsd::DisplayOptionsMeasurement, QTreeWidgetItem *> displayOptItemIndexMeasurement;

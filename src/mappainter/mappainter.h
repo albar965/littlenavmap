@@ -88,6 +88,7 @@ struct PaintContext
   QSet<map::MapObjectRef> routeIdMap;
 
   optsd::DisplayOptions dispOpts;
+  optsd::DisplayOptionsAirport dispOptsAirport;
   optsd::DisplayOptionsRose dispOptsRose;
   optsd::DisplayOptionsMeasurement dispOptsMeasurement;
   optsd::DisplayOptionsRoute dispOptsRoute;
@@ -138,6 +139,11 @@ struct PaintContext
   bool  dOpt(optsd::DisplayOption opts) const
   {
     return dispOpts.testFlag(opts);
+  }
+
+  bool  dOptAp(optsd::DisplayOptionAirport opts) const
+  {
+    return dispOptsAirport.testFlag(opts);
   }
 
   bool  dOptRose(optsd::DisplayOptionRose opts) const

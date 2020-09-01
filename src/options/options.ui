@@ -1054,7 +1054,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
+             <width>560</width>
              <height>486</height>
             </rect>
            </property>
@@ -1512,8 +1512,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>591</width>
+             <height>290</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -1847,8 +1847,8 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>535</height>
+             <width>432</width>
+             <height>511</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -1952,33 +1952,14 @@ Note that some fonts, especially large fonts, can result in display errors on th
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="11" column="2">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAirway">
-                 <property name="toolTip">
-                  <string>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
-Afftects map and elevation profile.</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Text </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
+               <item row="24" column="0" colspan="3">
+                <widget class="Line" name="line_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <item row="21" column="2">
+               <item row="20" column="2">
                 <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanActiveColor">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -1995,7 +1976,7 @@ Afftects map and elevation profile.</string>
                 </widget>
                </item>
                <item row="16" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftUser">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftAi">
                  <property name="toolTip">
                   <string/>
                  </property>
@@ -2019,65 +2000,50 @@ Afftects map and elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="9" column="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapNavaidText">
-                 <property name="toolTip">
-                  <string>Draw white background for navaid labels</string>
-                 </property>
+               <item row="3" column="0">
+                <widget class="QLabel" name="labelOptionsMapSizeAirportWeather">
                  <property name="text">
-                  <string>Text &amp;Background</string>
+                  <string>Airport &amp;Weather:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAirportWeather</cstring>
                  </property>
                 </widget>
                </item>
-               <item row="14" column="2">
+               <item row="2" column="0" colspan="3">
+                <widget class="Line" name="line_21">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="14" column="0" colspan="3">
+                <widget class="Line" name="line_20">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="10" column="0">
+                <widget class="QLabel" name="labelOptionsMapSizeAirway">
+                 <property name="text">
+                  <string>Air&amp;ways:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="13" column="2">
                 <widget class="QCheckBox" name="checkBoxOptionsMapAirwayText">
                  <property name="toolTip">
                   <string>Draw white background for navaid labels</string>
                  </property>
                  <property name="text">
                   <string>Text &amp;Background</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="18" column="0" colspan="3">
-                <widget class="Line" name="line">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="17" column="0">
-                <widget class="QLabel" name="labelOptionsMapSizeAircraftAi">
-                 <property name="text">
-                  <string>AI or &amp;multiplayer aircraft:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftAi</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="16" column="2">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAircraftUser">
-                 <property name="toolTip">
-                  <string/>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Text </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
                  </property>
                 </widget>
                </item>
@@ -2106,162 +2072,20 @@ Afftects map and elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="23" column="0">
-                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanDimPassed">
-                 <property name="toolTip">
-                  <string>Draw already flown legs in a different color and hide waypoint texts to unclutter the map.
-Change color with the &quot;Passed Leg Color&quot;.</string>
-                 </property>
+               <item row="7" column="0" rowspan="2">
+                <widget class="QLabel" name="labelOptionsMapSizeNavaid">
                  <property name="text">
-                  <string>&amp;Dim passed Legs</string>
+                  <string>&amp;Navaids:</string>
                  </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeWindBarbs">
-                 <property name="toolTip">
-                  <string>Size of high altitude wind barbs</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Symbol </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="23" column="1">
-                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanPassedColor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Color for passed flight plan legs.
-Enable &quot;Dim passed Legs&quot; to see his color.</string>
-                 </property>
-                 <property name="text">
-                  <string>Passed Leg Color</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="labelOptionsMapSizeAirportWeather">
-                 <property name="text">
-                  <string>Airport &amp;Weather:</string>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeAirportWeather</cstring>
+                  <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
                  </property>
                 </widget>
                </item>
-               <item row="19" column="2">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeFlightplan">
-                 <property name="toolTip">
-                  <string/>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Text </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="17" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftAi">
-                 <property name="toolTip">
-                  <string/>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Symbol </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0" colspan="3">
-                <widget class="Line" name="line_21">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="25" column="0" colspan="3">
-                <widget class="Line" name="line_2">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="11" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessAirway">
-                 <property name="toolTip">
-                  <string/>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Width </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>300</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="1">
+               <item row="7" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeNavaid">
                  <property name="toolTip">
                   <string>For VOR, NDB, waypoints, top of climb and top of descent (also for flight plan).
@@ -2287,18 +2111,8 @@ Afftects map and elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="28" column="0">
-                <widget class="QLabel" name="labelOptionsMapSizeTrail">
-                 <property name="text">
-                  <string>User aircraft &amp;trail:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="19" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessFlightplan">
+               <item row="16" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAircraftAi">
                  <property name="toolTip">
                   <string/>
                  </property>
@@ -2306,7 +2120,7 @@ Afftects map and elevation profile.</string>
                   <string> %</string>
                  </property>
                  <property name="prefix">
-                  <string>Width </string>
+                  <string>Text </string>
                  </property>
                  <property name="minimum">
                   <number>50</number>
@@ -2322,61 +2136,64 @@ Afftects map and elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="16" column="0">
-                <widget class="QLabel" name="labelOptionsMapSizeAircraftUser">
-                 <property name="text">
-                  <string>&amp;User aircraft:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftUser</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0" rowspan="2">
-                <widget class="QLabel" name="labelOptionsMapSizeNavaid">
-                 <property name="text">
-                  <string>&amp;Navaids:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="19" column="0">
-                <widget class="QLabel" name="labelOptionsMapSizeFlightplan">
-                 <property name="text">
-                  <string>&amp;Flight plan:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessFlightplan</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="0" colspan="3">
+               <item row="6" column="0" colspan="3">
                 <widget class="Line" name="line_5">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QCheckBox" name="checkBoxOptionsMapAirportDiagram">
+               <item row="18" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeFlightplan">
                  <property name="toolTip">
-                  <string>Draw airport diagrams.
-Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</string>
+                  <string/>
                  </property>
-                 <property name="text">
-                  <string>&amp;Diagram</string>
+                 <property name="suffix">
+                  <string> %</string>
                  </property>
-                 <property name="checked">
-                  <bool>true</bool>
+                 <property name="prefix">
+                  <string>Text </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
-               <item row="28" column="1">
+               <item row="10" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessAirway">
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Width </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="27" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessTrail">
                  <property name="toolTip">
                   <string/>
@@ -2398,6 +2215,124 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
                  </property>
                  <property name="value">
                   <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="labelOptionsMapSizeAirportWindBarbs">
+                 <property name="text">
+                  <string>Wind &amp;Barbs:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeWindBarbs</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="22" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanDimPassed">
+                 <property name="toolTip">
+                  <string>Draw already flown legs in a different color and hide waypoint texts to unclutter the map.
+Change color with the &quot;Passed Leg Color&quot;.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Dim passed Legs</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="16" column="0">
+                <widget class="QLabel" name="labelOptionsMapSizeAircraftAi">
+                 <property name="text">
+                  <string>AI or &amp;multiplayer aircraft:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftAi</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="22" column="1">
+                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanPassedColor">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Color for passed flight plan legs.
+Enable &quot;Dim passed Legs&quot; to see his color.</string>
+                 </property>
+                 <property name="text">
+                  <string>Passed Leg Color</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="labelOptionsMapSizeAirport">
+                 <property name="text">
+                  <string>&amp;Airports:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAirport</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeWindBarbs">
+                 <property name="toolTip">
+                  <string>Size of high altitude wind barbs</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Symbol </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="20" column="1">
+                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanColor">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Color for flight plan line</string>
+                 </property>
+                 <property name="text">
+                  <string>Color</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="22" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanProcedureColor">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Color for the procedure legs of a flight plan</string>
+                 </property>
+                 <property name="text">
+                  <string>Procedure Leg Color</string>
                  </property>
                 </widget>
                </item>
@@ -2426,53 +2361,34 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
                  </property>
                 </widget>
                </item>
-               <item row="20" column="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanText">
+               <item row="7" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeNavaid">
                  <property name="toolTip">
-                  <string>Draw bright yellow background for flight plan labels</string>
+                  <string>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
+Afftects map and elevation profile.</string>
                  </property>
-                 <property name="text">
-                  <string>Text &amp;Background</string>
+                 <property name="suffix">
+                  <string> %</string>
                  </property>
-                 <property name="checked">
-                  <bool>true</bool>
+                 <property name="prefix">
+                  <string>Text </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
-               <item row="23" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanProcedureColor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Color for the procedure legs of a flight plan</string>
-                 </property>
-                 <property name="text">
-                  <string>Procedure Leg Color</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="21" column="1">
-                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanColor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Color for flight plan line</string>
-                 </property>
-                 <property name="text">
-                  <string>Color</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="17" column="2">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAircraftAi">
+               <item row="15" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAircraftUser">
                  <property name="toolTip">
                   <string/>
                  </property>
@@ -2496,75 +2412,7 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="labelOptionsMapSizeAirport">
-                 <property name="text">
-                  <string>&amp;Airports:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeAirport</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QCheckBox" name="checkBoxOptionsMapAirportBoundary">
-                 <property name="toolTip">
-                  <string>Draw white background boundary around airport diagram</string>
-                 </property>
-                 <property name="text">
-                  <string>Diagram &amp;Boundary</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAirportWeather">
-                 <property name="toolTip">
-                  <string>Size of airport weather symbols</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Symbol </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="10" column="0" colspan="3">
-                <widget class="Line" name="line_4">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapAirportText">
-                 <property name="toolTip">
-                  <string>Draw white background for airport labels</string>
-                 </property>
-                 <property name="text">
-                  <string>Text &amp;Background</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="28" column="2">
+               <item row="27" column="2">
                 <layout class="QHBoxLayout" name="horizontalLayout_4">
                  <property name="spacing">
                   <number>2</number>
@@ -2609,38 +2457,115 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
                  </item>
                 </layout>
                </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="labelOptionsMapSizeAirportWindBarbs">
-                 <property name="text">
-                  <string>Wind &amp;Barbs:</string>
+               <item row="3" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAirportWeather">
+                 <property name="toolTip">
+                  <string>Size of airport weather symbols</string>
                  </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeWindBarbs</cstring>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Symbol </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
-               <item row="15" column="0" colspan="3">
-                <widget class="Line" name="line_20">
+               <item row="1" column="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapAirportText">
+                 <property name="toolTip">
+                  <string>Draw white background for airport labels</string>
+                 </property>
+                 <property name="text">
+                  <string>Text &amp;Background</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="27" column="0">
+                <widget class="QLabel" name="labelOptionsMapSizeTrail">
+                 <property name="text">
+                  <string>User aircraft &amp;trail:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="0" colspan="3">
+                <widget class="Line" name="line_4">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <item row="11" column="0">
-                <widget class="QLabel" name="labelOptionsMapSizeAirway">
+               <item row="15" column="0">
+                <widget class="QLabel" name="labelOptionsMapSizeAircraftUser">
                  <property name="text">
-                  <string>Air&amp;ways:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                  <string>&amp;User aircraft:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftUser</cstring>
                  </property>
                 </widget>
                </item>
-               <item row="8" column="2">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeNavaid">
+               <item row="18" column="0">
+                <widget class="QLabel" name="labelOptionsMapSizeFlightplan">
+                 <property name="text">
+                  <string>&amp;Flight plan:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessFlightplan</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="17" column="0" colspan="3">
+                <widget class="Line" name="line">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="18" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessFlightplan">
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Width </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="10" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAirway">
                  <property name="toolTip">
                   <string>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
 Afftects map and elevation profile.</string>
@@ -2665,16 +2590,51 @@ Afftects map and elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QCheckBox" name="checkBoxOptionsMapAirportRunways">
+               <item row="8" column="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapNavaidText">
                  <property name="toolTip">
-                  <string>Draw airport runways.</string>
+                  <string>Draw white background for navaid labels</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Runways</string>
+                  <string>Text &amp;Background</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="19" column="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanText">
+                 <property name="toolTip">
+                  <string>Draw bright yellow background for flight plan labels</string>
+                 </property>
+                 <property name="text">
+                  <string>Text &amp;Background</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="15" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftUser">
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Symbol </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
@@ -2712,8 +2672,8 @@ Afftects map and elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>407</width>
+             <height>317</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -3084,8 +3044,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>325</width>
+             <height>352</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -3549,8 +3509,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>600</width>
-             <height>480</height>
+             <width>557</width>
+             <height>348</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -3880,8 +3840,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>580</width>
+             <height>393</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4220,8 +4180,8 @@ after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>477</width>
+             <height>383</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -4561,8 +4521,8 @@ Check this if you rely on GPS when flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>258</width>
+             <height>302</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -4772,8 +4732,8 @@ Check this if you rely on GPS when flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>337</width>
+             <height>368</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -5211,8 +5171,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>283</width>
+             <height>311</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -5498,8 +5458,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>450</width>
+             <height>234</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -5685,7 +5645,7 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
+             <width>491</width>
              <height>470</height>
             </rect>
            </property>
@@ -6069,8 +6029,8 @@ Currently only OpenAir is supported (*.txt). </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>483</height>
+             <width>191</width>
+             <height>543</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -6343,8 +6303,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsMapZoomAvoidBlurred</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAirport</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirport</tabstop>
-  <tabstop>checkBoxOptionsMapAirportDiagram</tabstop>
-  <tabstop>checkBoxOptionsMapAirportBoundary</tabstop>
   <tabstop>checkBoxOptionsMapAirportText</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAirportWeather</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeWindBarbs</tabstop>

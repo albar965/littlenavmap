@@ -199,11 +199,19 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Area Icons"), tr("Shows icons for the screen areas. Useful if map areas are used for touchscreen navigation.\nOnly shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_ICONS, false);
 
   QTreeWidgetItem *airport = addTopItem(root, tr("Airport"), tr("Select airport labels to display on the map."));
-  addItem<optsd::DisplayOptions>(airport, displayOptItemIndex, tr("Name (Ident)"), QString(), optsd::ITEM_AIRPORT_NAME, true);
-  addItem<optsd::DisplayOptions>(airport, displayOptItemIndex, tr("Tower Frequency"), QString(), optsd::ITEM_AIRPORT_TOWER, true);
-  addItem<optsd::DisplayOptions>(airport, displayOptItemIndex, tr("ATIS / ASOS / AWOS Frequency"), QString(), optsd::ITEM_AIRPORT_ATIS, true);
-  addItem<optsd::DisplayOptions>(airport, displayOptItemIndex, tr("Runway Information"), tr("Show runway length, width and light inidcator text."), optsd::ITEM_AIRPORT_RUNWAY, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"), QString(), optsd::ITEM_AIRPORT_NAME, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QString(), optsd::ITEM_AIRPORT_TOWER, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("ATIS / ASOS / AWOS Frequency"), QString(), optsd::ITEM_AIRPORT_ATIS, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"), tr("Show runway length, width and light inidcator text."), optsd::ITEM_AIRPORT_RUNWAY, true);
   // addItem(ap, tr("Wind Pointer"), optsd::ITEM_AIRPORT_WIND_POINTER, false);
+
+  QTreeWidgetItem *airportDetails = addTopItem(root, tr("Airport Details"), tr("Select airport diagram elements."));
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Runways"), tr("Show runways."), optsd::ITEM_AIRPORT_DETAIL_RUNWAY, true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiways"), tr("Show taxiway lines and background."), optsd::ITEM_AIRPORT_DETAIL_TAXI, true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Aprons"), tr("Display aprons."), optsd::ITEM_AIRPORT_DETAIL_APRON, true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Parking"), tr("Show fuel, tower, helipads, gates and ramp parking."), optsd::ITEM_AIRPORT_DETAIL_PARKING, true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Boundary"), tr("Display a white boundary around and below the airport diagram."), optsd::ITEM_AIRPORT_DETAIL_BOUNDARY, false);
+
 
   QTreeWidgetItem *route = addTopItem(root, tr("Flight Plan"), tr("Select display options for the flight plan line."));
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg."), optsd::ROUTE_DISTANCE, true);
@@ -405,9 +413,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapAirportText,
      ui->checkBoxOptionsMapNavaidText,
      ui->checkBoxOptionsMapFlightplanText,
-     ui->checkBoxOptionsMapAirportBoundary,
-     ui->checkBoxOptionsMapAirportDiagram,
-     ui->checkBoxOptionsMapAirportRunways,
      ui->checkBoxOptionsMapFlightplanDimPassed,
      ui->checkBoxOptionsSimDoNotFollowOnScroll,
      ui->checkBoxOptionsSimCenterLeg,
@@ -943,9 +948,12 @@ void OptionsDialog::saveState()
   optionDataToWidgets(OptionData::instanceInternal());
 
   // Save widgets to settings
-  atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
-                           false /* save visibility */, true /* block signals */).save(widgets);
+  atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /* save visibility */, true /* block signals */);
+  state.save(widgets);
+  state.save(this);
+
   saveDisplayOptItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
+  saveDisplayOptItemStates(displayOptItemIndexAirport, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_AIRPORT);
   saveDisplayOptItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   saveDisplayOptItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
   saveDisplayOptItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
@@ -1010,9 +1018,12 @@ void OptionsDialog::restoreState()
   ui->radioButtonOptionsOnlinePilotEdge->setVisible(!od.onlinePilotEdgeStatusUrl.isEmpty());
   ui->radioButtonOptionsOnlineVatsim->setVisible(!od.onlineVatsimStatusUrl.isEmpty());
 
-  atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
-                           false /*save visibility*/, true /*block signals*/).restore(widgets);
+  atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /*save visibility*/, true /*block signals*/);
+  state.restore(this);
+  state.restore(widgets);
+
   restoreOptionItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
+  restoreOptionItemStates(displayOptItemIndexAirport, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_AIRPORT);
   restoreOptionItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   restoreOptionItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
   restoreOptionItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
@@ -1471,6 +1482,9 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOptions = optsd::ITEM_NONE;
   displayOptWidgetToOptionData(data.displayOptions, displayOptItemIndex);
 
+  data.displayOptionsAirport = optsd::AIRPORT_NONE;
+  displayOptWidgetToOptionData(data.displayOptionsAirport, displayOptItemIndexAirport);
+
   data.displayOptionsMeasurement = optsd::MEASUREMNENT_NONE;
   displayOptWidgetToOptionData(data.displayOptionsMeasurement, displayOptItemIndexMeasurement);
 
@@ -1530,9 +1544,6 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
-  toFlags2(ui->checkBoxOptionsMapAirportBoundary, opts2::MAP_AIRPORT_BOUNDARY);
-  toFlags2(ui->checkBoxOptionsMapAirportDiagram, opts2::MAP_AIRPORT_DIAGRAM);
-  toFlags2(ui->checkBoxOptionsMapAirportRunways, opts2::MAP_AIRPORT_RUNWAYS);
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
   toFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
@@ -1729,6 +1740,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   flightplanPassedColor = data.flightplanPassedColor;
   trailColor = data.trailColor;
   displayOptDataToWidget(data.displayOptions, displayOptItemIndex);
+  displayOptDataToWidget(data.displayOptionsAirport, displayOptItemIndexAirport);
   displayOptDataToWidget(data.displayOptionsRose, displayOptItemIndexRose);
   displayOptDataToWidget(data.displayOptionsMeasurement, displayOptItemIndexMeasurement);
   displayOptDataToWidget(data.displayOptionsRoute, displayOptItemIndexRoute);
@@ -1784,9 +1796,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
-  fromFlags2(data, ui->checkBoxOptionsMapAirportBoundary, opts2::MAP_AIRPORT_BOUNDARY);
-  fromFlags2(data, ui->checkBoxOptionsMapAirportDiagram, opts2::MAP_AIRPORT_DIAGRAM);
-  fromFlags2(data, ui->checkBoxOptionsMapAirportRunways, opts2::MAP_AIRPORT_RUNWAYS);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
   fromFlags2(data, ui->checkBoxOptionsSimDoNotFollowOnScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   fromFlags2(data, ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);

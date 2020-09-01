@@ -557,6 +557,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.thicknessAirway = od.getDisplayThicknessAirway() / 100.f;
 
       context.dispOpts = od.getDisplayOptions();
+      context.dispOptsAirport = od.getDisplayOptionsAirport();
       context.dispOptsRose = od.getDisplayOptionsRose();
       context.dispOptsMeasurement = od.getDisplayOptionsMeasurement();
       context.dispOptsRoute = od.getDisplayOptionsRoute();
