@@ -345,6 +345,9 @@ MainWindow::MainWindow()
     updateLegend();
     updateWindowTitle();
 
+    // Enable or disable tooltips - call later since it needs the map window
+    optionsDialog->updateTooltipOption();
+
     // Update clock every second =====================
     clockTimer.setInterval(1000);
     connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);

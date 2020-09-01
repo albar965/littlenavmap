@@ -782,6 +782,45 @@ This will scale the Little Navmap map graphics and icons for better visibility i
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox_24">
+              <property name="title">
+               <string>Tooltips</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_24">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsGuiTooltips">
+                 <property name="toolTip">
+                  <string>Disables display of tooltips for the whole application.
+Tooltips are small help windows which pop up when hovering the mouse above an object.
+This does not affect the map window which can be changed separately on the options page &quot;Map&quot;. </string>
+                 </property>
+                 <property name="text">
+                  <string>Disable &amp;tooltips for whole application</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <widget class="QGroupBox" name="groupBox_8">
               <property name="title">
                <string>Text Size</string>

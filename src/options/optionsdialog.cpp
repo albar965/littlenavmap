@@ -271,6 +271,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiAvoidOverwrite,
      ui->checkBoxOptionsGuiOverrideLocale,
      ui->checkBoxOptionsGuiHighDpi,
+     ui->checkBoxOptionsGuiTooltips,
      // ui->comboBoxOptionsGuiLanguage, saved directly
 
      ui->checkBoxDisplayOnlineNameLookup,
@@ -866,6 +867,9 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
     widgetsToOptionData();
     saveState();
+
+    updateTooltipOption();
+
     emit optionsChanged();
 
     // Update dialog internal stuff
@@ -883,6 +887,9 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     saveState();
     updateWidgetUnits();
     updateWebOptionsFromData();
+
+    updateTooltipOption();
+
     emit optionsChanged();
     accept();
   }
@@ -906,6 +913,8 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
       updateWebOptionsFromData();
       updateFontFromData();
       updateWebServerStatus();
+
+      updateTooltipOption();
     }
   }
 }
@@ -1055,6 +1064,14 @@ void OptionsDialog::restoreState()
                                                         QItemSelectionModel::ClearAndSelect);
 
   ui->stackedWidgetOptions->setCurrentIndex(ui->listWidgetOptionPages->currentRow());
+}
+
+void OptionsDialog::updateTooltipOption()
+{
+  if(OptionData::instance().getFlags2().testFlag(opts2::DISABLE_TOOLTIPS))
+    NavApp::setTooltipsDisabled({NavApp::getMapWidget()});
+  else
+    NavApp::setTooltipsEnabled();
 }
 
 void OptionsDialog::languageChanged(int)
@@ -1502,6 +1519,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   toFlags2(ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   toFlags2(ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
+  toFlags2(ui->checkBoxOptionsGuiTooltips, opts2::DISABLE_TOOLTIPS);
 
   toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
@@ -1755,6 +1773,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   fromFlags2(data, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   fromFlags2(data, ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
+  fromFlags2(data, ui->checkBoxOptionsGuiTooltips, opts2::DISABLE_TOOLTIPS);
 
   fromFlags(data, ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   fromFlags(data, ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);

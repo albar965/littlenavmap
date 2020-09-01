@@ -323,6 +323,9 @@ enum Flag2
 
   /* ui->checkBoxOptionsMapAirportRunways */
   MAP_AIRPORT_RUNWAYS = 1 << 24,
+
+  /* checkBoxOptionsGuiTooltips */
+  DISABLE_TOOLTIPS = 1 << 25,
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);

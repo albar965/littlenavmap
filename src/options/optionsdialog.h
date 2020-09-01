@@ -76,6 +76,9 @@ public:
   /* Test if a public network is used with a too low update rate */
   void checkOfficialOnlineUrls();
 
+  /* Enable or disable tooltips changed */
+  void updateTooltipOption();
+
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();
