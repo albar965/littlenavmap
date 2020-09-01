@@ -165,7 +165,7 @@ QString ConnectClient::simName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("X-Plane");
     else if(dataReader->getHandler() == simConnectHandler)
-      return tr("FSX or Prepar3D");
+      return tr("FSX, Prepar3D or MSFS");
   }
   return QString();
 }
@@ -177,7 +177,7 @@ QString ConnectClient::simShortName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("XP");
     else if(dataReader->getHandler() == simConnectHandler)
-      return tr("FSX/P3D");
+      return tr("FSX/P3D/MSFS");
   }
   return QString();
 }

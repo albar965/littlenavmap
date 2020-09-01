@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>225</height>
+    <width>792</width>
+    <height>270</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,7 +86,10 @@
      <item row="2" column="1">
       <widget class="QLineEdit" name="lineEditDatabaseBasePath">
        <property name="toolTip">
-        <string>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</string>
+        <string>&lt;p style=&quot;white-space:pre&quot;&gt;Enter the path to the flight simulator base directory.
+This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.
+For X-Plane this is the path containing the X-Plane executable.
+For MSFS this has to point to the directory containing &amp;quot;Community&amp;quot; and &amp;quot;Official&amp;quot;.&lt;/p&gt;</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>

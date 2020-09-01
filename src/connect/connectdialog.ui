@@ -76,7 +76,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
           <number>50</number>
          </property>
          <property name="maximum">
-          <number>1000</number>
+          <number>5000</number>
          </property>
          <property name="singleStep">
           <number>50</number>
@@ -129,7 +129,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
      </widget>
      <widget class="QWidget" name="tabConnectFsx">
       <attribute name="title">
-       <string>&amp;FSX and Prepar3D</string>
+       <string>&amp;FSX, Prepar3D or MSFS</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0" colspan="2">
@@ -147,7 +147,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
           <enum>QFrame::Sunken</enum>
          </property>
          <property name="text">
-          <string>Connect directly to FSX or Prepar3D running on the same computer as &lt;i&gt;Little Navmap&lt;/i&gt;</string>
+          <string>Connect directly to FSX, Prepar3D or MSFS running on the same computer as &lt;i&gt;Little Navmap&lt;/i&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -187,7 +187,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
           <number>50</number>
          </property>
          <property name="maximum">
-          <number>1000</number>
+          <number>5000</number>
          </property>
          <property name="singleStep">
           <number>50</number>

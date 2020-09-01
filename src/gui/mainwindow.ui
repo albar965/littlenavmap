@@ -2025,22 +2025,17 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Waypoint - Named</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Waypoint - Unnamed</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
                  <string>Waypoint - VOR</string>
                 </property>
                </item>
                <item>
                 <property name="text">
                  <string>Waypoint - NDB</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Waypoint - Other</string>
                 </property>
                </item>
               </widget>

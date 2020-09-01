@@ -163,7 +163,7 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
 }
 
 map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapTypes type,
-                                                       int maxIls, float maxIlsDist)
+                                                 int maxIls, float maxIlsDist)
 {
   map::MapResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
   if(nearest == nullptr || nearest->size() < 5)
@@ -172,7 +172,7 @@ map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceN
 }
 
 map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapTypes type,
-                                                            int maxIls, float maxIlsDist)
+                                                      int maxIls, float maxIlsDist)
 {
   query::NearestCacheKeyNavaid key = {pos, distanceNm, type};
 

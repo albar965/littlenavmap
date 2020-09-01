@@ -2085,9 +2085,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     if((mapSearchResultTooltip.hasAirports() || mapSearchResultTooltip.hasVor() || mapSearchResultTooltip.hasNdb() ||
         mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasIls() ||
         mapSearchResultTooltip.hasUserpoints()) && NavApp::isConnectedAndAircraft())
-    {
       updateTooltip();
-    }
   }
 
   // ================================================================================
