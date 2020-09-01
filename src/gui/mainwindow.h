@@ -235,6 +235,7 @@ private:
   void mainWindowShown();
   void raiseFloatingWindows();
   void allowDockingWindows();
+  void stayOnTop();
 
   /* Called by action */
   void fullScreenMapToggle();

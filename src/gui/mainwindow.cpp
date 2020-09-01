@@ -1204,6 +1204,7 @@ void MainWindow::connectAllSlots()
 
   // Windows menu ============================================================
   connect(ui->actionShowFloatingWindows, &QAction::triggered, this, &MainWindow::raiseFloatingWindows);
+  connect(ui->actionWindowStayOnTop, &QAction::toggled, this, &MainWindow::stayOnTop);
   connect(ui->actionShowAllowDocking, &QAction::toggled, this, &MainWindow::allowDockingWindows);
   connect(ui->actionShowFullscreenMap, &QAction::toggled, this, &MainWindow::fullScreenMapToggle);
 
@@ -3195,6 +3196,9 @@ void MainWindow::mainWindowShown()
     NavApp::getWebController()->startServer();
   webserverStatusChanged(NavApp::getWebController()->isRunning());
 
+  // Set window flag
+  stayOnTop();
+
   // Raise all floating docks and focus map widget
   QTimer::singleShot(10, this, &MainWindow::raiseFloatingWindows);
 
@@ -3288,6 +3292,12 @@ void MainWindow::fullScreenMapToggle()
     fullScreenOn();
   else
     fullScreenOff();
+}
+
+void MainWindow::stayOnTop()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->setStayOnTop(ui->actionWindowStayOnTop->isChecked());
 }
 
 void MainWindow::allowDockingWindows()
@@ -3625,7 +3635,7 @@ void MainWindow::restoreStateMain()
                        ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                        ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionMapShowSunShading,
                        ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRunWebserver,
-                       ui->actionShowAllowDocking});
+                       ui->actionShowAllowDocking, ui->actionWindowStayOnTop});
   widgetState.setBlockSignals(false);
 
   // Load status and allow to send signals
@@ -3822,7 +3832,7 @@ void MainWindow::saveActionStates()
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                     ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionRunWebserver,
                     ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
-                    ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking});
+                    ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionWindowStayOnTop});
   Settings::instance().syncSettings();
 }
 

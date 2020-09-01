@@ -163,6 +163,7 @@
     <addaction name="actionResetLayout"/>
     <addaction name="separator"/>
     <addaction name="actionShowFullscreenMap"/>
+    <addaction name="actionWindowStayOnTop"/>
     <addaction name="separator"/>
     <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowAllowDocking"/>
@@ -11462,6 +11463,20 @@ Best track will be selected automatically.</string>
     <string>Opens the configuration file of Little Navmap in the default text editor</string>
    </property>
   </action>
+  <action name="actionWindowStayOnTop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Stay on Top</string>
+   </property>
+   <property name="toolTip">
+    <string>Keeps main window of program on top of others</string>
+   </property>
+   <property name="statusTip">
+    <string>Keeps main window of program on top of others</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11608,7 +11623,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>
