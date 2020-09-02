@@ -121,6 +121,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   NavApp::mainWindow = mainWindowParam;
   databaseManager = new DatabaseManager(mainWindow);
   databaseManager->openAllDatabases(); // Only readonly databases
+  databaseManager->loadLanguageIndex(); // MSFS translations from table "translation"
 
   userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
   logdataController = new LogdataController(databaseManager->getLogdataManager(), mainWindow);
@@ -903,6 +904,11 @@ WebController *NavApp::getWebController()
 DatabaseManager *NavApp::getDatabaseManager()
 {
   return databaseManager;
+}
+
+const atools::fs::scenery::LanguageJson& NavApp::getLanguageIndex()
+{
+  return databaseManager->getLanguageIndex();
 }
 
 ConnectClient *NavApp::getConnectClient()

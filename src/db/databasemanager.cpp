@@ -48,6 +48,7 @@
 #include "util/version.h"
 #include "fs/navdatabaseerrors.h"
 #include "options/optionsdialog.h"
+#include "fs/scenery/languagejson.h"
 
 #include <QElapsedTimer>
 #include <QDir>
@@ -139,6 +140,9 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     "<b>Errors:</b> %5<br/><br/>"
     "<big>Found:</big></br>"
     ) + databaseInfoText;
+
+  // Keeps MSFS translations from table "translation" in memory
+  languageIndex = new atools::fs::scenery::LanguageJson;
 
   // Also loads list of simulators
   restoreState();
@@ -283,6 +287,7 @@ DatabaseManager::~DatabaseManager()
   delete databaseUserAirspace;
   delete databaseSimAirspace;
   delete databaseNavAirspace;
+  delete languageIndex;
 
   SqlDatabase::removeDatabase(DATABASE_NAME_SIM);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
@@ -744,6 +749,7 @@ void DatabaseManager::switchNavFromMainMenu()
   // Disconnect all queries
   emit preDatabaseLoad();
 
+  clearLanguageIndex();
   closeAllDatabases();
 
   QString text;
@@ -765,6 +771,7 @@ void DatabaseManager::switchNavFromMainMenu()
   qDebug() << Q_FUNC_INFO << "usingNavDatabase" << navDatabaseStatus;
 
   openAllDatabases();
+  loadLanguageIndex();
 
   QGuiApplication::restoreOverrideCursor();
 
@@ -789,11 +796,13 @@ void DatabaseManager::switchSimFromMainMenu()
     // Disconnect all queries
     emit preDatabaseLoad();
 
+    clearLanguageIndex();
     closeAllDatabases();
 
     // Set new simulator
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
     openAllDatabases();
+    loadLanguageIndex();
 
     QGuiApplication::restoreOverrideCursor();
 
@@ -895,6 +904,16 @@ void DatabaseManager::closeLogDatabase()
 void DatabaseManager::closeOnlineDatabase()
 {
   closeDatabaseFile(databaseOnline);
+}
+
+void DatabaseManager::clearLanguageIndex()
+{
+  languageIndex->clear();
+}
+
+void DatabaseManager::loadLanguageIndex()
+{
+  languageIndex->readFromDb(databaseSim, OptionData::instance().getLanguage());
 }
 
 void DatabaseManager::openAllDatabases()
@@ -1180,6 +1199,7 @@ bool DatabaseManager::runInternal()
           // Successfully loaded
           reopenDialog = false;
 
+          clearLanguageIndex();
           closeDatabaseFile(&tempDb);
 
           emit preDatabaseLoad();
@@ -1201,6 +1221,7 @@ bool DatabaseManager::runInternal()
           currentFsType = selectedFsType;
 
           openAllDatabases();
+          loadLanguageIndex();
           emit postDatabaseLoad(currentFsType);
         }
         else

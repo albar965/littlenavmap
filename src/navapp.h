@@ -75,6 +75,10 @@ class Rect;
 
 namespace fs {
 
+namespace scenery {
+class LanguageJson;
+}
+
 namespace perf {
 class AircraftPerf;
 }
@@ -263,6 +267,9 @@ public:
   static QString getMapCopyright();
 
   static DatabaseManager *getDatabaseManager();
+
+  /* MSFS translations from table "translation" */
+  static const atools::fs::scenery::LanguageJson& getLanguageIndex();
 
   static ConnectClient *getConnectClient();
 

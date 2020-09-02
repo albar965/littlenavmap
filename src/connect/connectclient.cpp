@@ -29,6 +29,7 @@
 #include "settings/settings.h"
 #include "fs/sc/simconnecthandler.h"
 #include "fs/sc/xpconnecthandler.h"
+#include "fs/scenery/languagejson.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -249,6 +250,21 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
 
   if(dataPacket.getStatus() == atools::fs::sc::OK)
   {
+    // Update the MSFS translated aircraft names and types =============
+    /* Mooney, Boeing, Actually aircraft model. */
+    // const QString& getAirplaneType() const
+    // const QString& getAirplaneAirline() const
+    /* Beech Baron 58 Paint 1 */
+    // const QString& getAirplaneTitle() const
+    /* Short ICAO code MD80, BE58, etc. Actually type designator. */
+    // const QString& getAirplaneModel() const
+    const atools::fs::scenery::LanguageJson& idx = NavApp::getLanguageIndex();
+    if(!idx.isEmpty())
+      userAircraft.updateAircraftNames(idx.getName(userAircraft.getAirplaneType()),
+                                       idx.getName(userAircraft.getAirplaneAirline()),
+                                       idx.getName(userAircraft.getAirplaneTitle()),
+                                       idx.getName(userAircraft.getAirplaneModel()));
+
     emit dataPacketReceived(dataPacket);
 
     if(!dataPacket.getMetars().isEmpty())
