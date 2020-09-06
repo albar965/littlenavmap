@@ -191,7 +191,13 @@ private:
   void elevationUpdateAvailable();
   void updateTimeout();
   void updateThreadFinished();
+
+  /* Update all screen coordinates and scale factors */
   void updateScreenCoords();
+
+  /* Calculate the left and right margin based on font size and airport elevation text */
+  void calcLeftMargin();
+
   void terminateThread();
   float calcGroundBuffer(float maxElevation);
 
@@ -235,8 +241,8 @@ private:
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
   /* Scales should be at least this amount of pixels apart */
   static Q_DECL_CONSTEXPR int MIN_SCALE_SCREEN_DISTANCE = 25;
-  const int X0 = 52; // 65; /* Left margin inside widget */
-  const int Y0 = 16; // 14; /* Top margin inside widget */
+  int left = 30; /* Left margin inside widget - calculated depending on font and text size in paint */
+  const int TOP = 16; /* Top margin inside widget */
 
   /* Thread will start after this delay if route was changed */
   static Q_DECL_CONSTEXPR int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 1000;

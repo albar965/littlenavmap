@@ -264,6 +264,7 @@ SOURCES += \
   src/gui/holddialog.cpp \
   src/gui/mainwindow.cpp \
   src/gui/runwayselection.cpp \
+  src/gui/statusbareventfilter.cpp \
   src/gui/stylehandler.cpp \
   src/gui/textdialog.cpp \
   src/gui/timedialog.cpp \
@@ -426,6 +427,7 @@ HEADERS  += \
   src/gui/holddialog.h \
   src/gui/mainwindow.h \
   src/gui/runwayselection.h \
+  src/gui/statusbareventfilter.h \
   src/gui/stylehandler.h \
   src/gui/textdialog.h \
   src/gui/timedialog.h \

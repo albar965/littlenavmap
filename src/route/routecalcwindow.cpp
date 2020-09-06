@@ -25,6 +25,7 @@
 #include "atools.h"
 #include "route/route.h"
 #include "util/htmlbuilder.h"
+#include "gui/clicktooltiphandler.h"
 #include "ui_mainwindow.h"
 
 // Factor to put on costs for direct connections. Airways <-> Waypoints
@@ -72,6 +73,9 @@ RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
 
   units = new UnitStringTool();
   units->init({ui->spinBoxRouteCalcCruiseAltitude});
+
+  // Show error messages in tooltip on click ========================================
+  ui->labelRouteCalcHeader->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteCalcHeader));
 
   Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->minimum() == AIRWAY_WAYPOINT_PREF_MIN);
   Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->maximum() == AIRWAY_WAYPOINT_PREF_MAX);
@@ -191,7 +195,7 @@ void RouteCalcWindow::updateHeader()
     {
       title = HtmlBuilder::errorMessage({tr("Cannot calculate flight plan"),
                                          tr("between selected legs."),
-                                         tr("Hover mouse over this message for details.")});
+                                         tr("Click here for details.")});
       tooltip = tr("Select a range or two flight plan legs in the flight plan table.\n"
                    "These must be neither a part of a procedure nor a part of an alternate destination.");
     }
@@ -222,7 +226,7 @@ void RouteCalcWindow::updateHeader()
     {
       title = HtmlBuilder::errorMessage({tr("Invalid flight plan."),
                                          tr("Set departure and destination first."),
-                                         tr("Hover mouse over this message for details.")});
+                                         tr("Click here for details.")});
       tooltip = tr("<p style='white-space:pre'>Use the right-click context menu on the map or the airport search (<code>F4</code>)<br/>"
                    "to select departure and destination first.</p>");
       statustip = tr("Select departure and destination first");

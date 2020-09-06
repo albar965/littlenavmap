@@ -83,6 +83,8 @@
 #include "gui/dockwidgethandler.h"
 #include "track/trackcontroller.h"
 #include "common/dirtool.h"
+#include "gui/statusbareventfilter.h"
+#include "gui/clicktooltiphandler.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -905,7 +907,15 @@ void MainWindow::setupUi()
 #endif
   timeLabel->setToolTip(tr("Day of month and UTC time."));
   ui->statusBar->addPermanentWidget(timeLabel);
+
+  // Status bar takes ownership of filter which handles tooltip on click
+  ui->statusBar->installEventFilter(new StatusBarEventFilter(ui->statusBar, connectStatusLabel));
+
   connect(ui->statusBar, &QStatusBar::messageChanged, this, &MainWindow::statusMessageChanged);
+
+  // Show error messages in tooltip on click ========================================
+  ui->labelRouteError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteError));
+  ui->labelProfileError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelProfileError));
 }
 
 void MainWindow::clearProcedureCache()
@@ -4264,7 +4274,7 @@ void MainWindow::updateErrorLabels()
   const RouteController& routeController = *NavApp::getRouteController();
 
   QStringList toolTipTxtRoute, toolTipTxtProfile, errRoute, errProfile;
-  QString hintText = tr("<br/>Hover mouse over this message for details.");
+  QString hintText = tr("<br/>Click here for details.");
 
   // Do not show error for single waypoint plans since it is obvious that there is no profile
   if(NavApp::getRoute().getSizeWithoutAlternates() >= 2 && altitudeLegs.hasErrors())

@@ -1162,10 +1162,19 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
      atts.testFlag(textatt::OVERLINE))
   {
     QFont f = painter->font();
-    f.setBold(atts.testFlag(textatt::BOLD));
-    f.setItalic(atts.testFlag(textatt::ITALIC));
-    f.setUnderline(atts.testFlag(textatt::UNDERLINE));
-    f.setOverline(atts.testFlag(textatt::OVERLINE));
+
+    if(atts.testFlag(textatt::BOLD))
+      f.setBold(true);
+
+    if(atts.testFlag(textatt::ITALIC))
+      f.setItalic(true);
+
+    if(atts.testFlag(textatt::UNDERLINE))
+      f.setUnderline(true);
+
+    if(atts.testFlag(textatt::OVERLINE))
+      f.setOverline(true);
+
     painter->setFont(f);
   }
 
