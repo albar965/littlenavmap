@@ -104,8 +104,8 @@ void DatabaseDialog::helpClicked()
 /* Reset paths of the current simulator back to default */
 void DatabaseDialog::resetPathsClicked()
 {
-  simulators[currentFsType].basePath = FsPaths::getBasePath(currentFsType);
-  simulators[currentFsType].sceneryCfg = FsPaths::getSceneryLibraryPath(currentFsType);
+  simulators[currentFsType].basePath = QDir::toNativeSeparators(FsPaths::getBasePath(currentFsType));
+  simulators[currentFsType].sceneryCfg = QDir::toNativeSeparators(FsPaths::getSceneryLibraryPath(currentFsType));
   updateWidgets();
 }
 
@@ -225,6 +225,8 @@ void DatabaseDialog::updateWidgets()
   ui->checkBoxReadAddOnXml->setEnabled(currentFsType == atools::fs::FsPaths::P3D_V3 ||
                                        currentFsType == atools::fs::FsPaths::P3D_V4 ||
                                        currentFsType == atools::fs::FsPaths::P3D_V5);
+
+  ui->checkBoxReadInactive->setEnabled(currentFsType != atools::fs::FsPaths::MSFS);
 
   // Disable everything if no installed simulators are found
   // (normally not needed since the action is already disabled)
