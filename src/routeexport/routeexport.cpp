@@ -202,9 +202,19 @@ bool RouteExport::routeExportPlnMan()
   return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN));
 }
 
+bool RouteExport::routeExportPlnMsfsMan()
+{
+  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS));
+}
+
 bool RouteExport::routeExportPln(const RouteExportFormat& format)
 {
-  return routeExportInternalPln(false, format);
+  return routeExportInternalPln(false /* annotated */, format);
+}
+
+bool RouteExport::routeExportPlnMsfs(const RouteExportFormat& format)
+{
+  return routeExportInternalPln(false /* annotated */, format);
 }
 
 bool RouteExport::routeExportPlnAnnotatedMulti(const RouteExportFormat& format)
@@ -224,12 +234,16 @@ bool RouteExport::routeExportInternalPln(bool annotated, const RouteExportFormat
 
     if(!routeFile.isEmpty())
     {
-      using namespace std::placeholders;
-      auto func = annotated ?
-                  std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2) :
-                  std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2);
+      bool msfs = format.getType() == rexp::PLNMSFS;
 
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, func))
+      using namespace std::placeholders;
+      auto func = msfs ?
+                  std::bind(&FlightplanIO::savePlnMsfs, flightplanIO, _1, _2) :
+                  (annotated ?
+                   std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2) :
+                   std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
+
+      if(exportFlighplan(routeFile, msfs ? rf::DEFAULT_OPTS_MSFS : rf::DEFAULT_OPTS, func))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").arg(annotated ? tr("annotated ") : QString()));
         return true;

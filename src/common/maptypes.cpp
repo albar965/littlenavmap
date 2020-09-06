@@ -798,11 +798,11 @@ QString parkingNameNumberType(const map::MapParking& parking)
 
 QString startType(const map::MapStart& start)
 {
-  if(start.type == "R")
+  if(start.isRunway())
     return QObject::tr("Runway");
-  else if(start.type == "W")
+  else if(start.isWater())
     return QObject::tr("Water");
-  else if(start.type == "H")
+  else if(start.isHelipad())
     return QObject::tr("Helipad");
   else
     return QString();
@@ -1801,6 +1801,20 @@ QString runwayBestFit(const QString& procRunwayName, const QStringList& airportR
     }
   }
   return QString();
+}
+
+QString runwayDesignatorLong(const QString& name)
+{
+  if(name.startsWith('L'))
+    return "LEFT";
+  else if(name.startsWith('R'))
+    return "RIGHT";
+  else if(name.startsWith('C'))
+    return "CENTER";
+  else if(name.startsWith('W'))
+    return "WATER";
+
+  return name;
 }
 
 bool runwayNameSplit(const QString& name, int *number, QString *designator)

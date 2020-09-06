@@ -232,18 +232,18 @@ const QColor& colorTextForParkingType(const QString& type)
     return brightParkingTextColor;
 }
 
-const QIcon& iconForStartType(const QString& type)
+const QIcon& iconForStart(const map::MapStart& start)
 {
   static const QIcon runway(":/littlenavmap/resources/icons/startrunway.svg");
   static const QIcon helipad(":/littlenavmap/resources/icons/starthelipad.svg");
   static const QIcon water(":/littlenavmap/resources/icons/startwater.svg");
 
   static const QIcon empty;
-  if(type == "R")
+  if(start.isRunway())
     return runway;
-  else if(type == "H")
+  else if(start.isHelipad())
     return helipad;
-  else if(type == "R")
+  else if(start.isWater())
     return water;
   else
     return empty;

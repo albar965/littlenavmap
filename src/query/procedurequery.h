@@ -132,7 +132,8 @@ private:
   void processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) const;
 
   /* Add an artificial (not in the database) runway leg if no connection to the end is given */
-  void processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const;
+  void processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs,
+                             bool addArtificialLegs) const;
 
   /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
    * initial fix having "2000" */
@@ -181,6 +182,8 @@ private:
 
   /* Get first runway of an airport which matches an SID/STAR "ALL" or e.g. "RW10B" pattern. */
   QString anyMatchingRunwayForSidStar(const QString& arincName, const QStringList& airportRunways) const;
+
+  QString runwayErrorString(const QString& runway);
 
   atools::sql::SqlDatabase *dbNav;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,

@@ -27,6 +27,7 @@ struct MapAirport;
 
 struct MapAirspace;
 struct MapAirway;
+struct MapStart;
 
 }
 
@@ -222,7 +223,7 @@ const QColor nextWaypointColor(QColor(255, 100, 255));
 const QColor nextWaypointColorDark(QColor(150, 20, 150));
 
 /* Get an icon for the start type (RUNWAY, HELIPAD or WATER) */
-const QIcon& iconForStartType(const QString& type);
+const QIcon& iconForStart(const map::MapStart& start);
 
 /* General icon for parking (RAMP_MIL_*, GATE_*, RAMP_GA_* or RAMP_CARGO */
 const QIcon& iconForParkingType(const QString& type);

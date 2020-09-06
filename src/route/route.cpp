@@ -2025,14 +2025,14 @@ Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
   return adjustedToOptions(*this, options);
 }
 
-Route Route::adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions options)
+Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions options)
 {
   qDebug() << Q_FUNC_INFO << "options" << options;
   bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP), saveSidStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
-       replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP);
+       replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS);
 
   // Create copy which allows to modify the plan ==============
-  Route route(routeParam);
+  Route route(origRoute);
   atools::fs::pln::Flightplan& plan = route.getFlightplan();
   atools::fs::pln::FlightplanEntryListType& entries = plan.getEntries();
   FlightplanEntryBuilder entryBuilder;
@@ -2099,12 +2099,14 @@ Route Route::adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions o
     }
   }
 
+  // Remove trailing alternates ====================================================
   if(options.testFlag(rf::REMOVE_ALTERNATE))
   {
     route.removeAlternateLegs();
     route.updateIndicesAndOffsets();
   }
 
+  // Replace custom approach with user defined waypoints ==============
   if(route.getApproachLegs().isCustom() && replaceCustomWp)
     saveApproachWp = true;
 
@@ -2151,27 +2153,77 @@ Route Route::adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions o
     plan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
   }
 
-  if(saveApproachWp || saveSidStarWp)
+  if(saveApproachWp || saveSidStarWp || msfs)
   {
+    const proc::MapProcedureLegs& sid = route.getSidLegs();
+    const proc::MapProcedureLegs& star = route.getStarLegs();
+
     // Replace procedures with waypoints =======================================================================
     // Now replace all entries with either valid waypoints or user defined waypoints
     for(int i = 0; i < entries.size(); i++)
     {
       FlightplanEntry& entry = entries[i];
       const RouteLeg& leg = route.value(i);
+      bool appr = leg.getProcedureType() & proc::PROCEDURE_APPROACH_ALL;
+      bool sidStar = leg.getProcedureType() & proc::PROCEDURE_SID_STAR_ALL;
 
-      if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) ||
-         (saveSidStarWp && (leg.getProcedureType() & proc::PROCEDURE_SID_STAR_ALL)))
+      if( // Save approach or SID/STAR waypoints and this leg is part of a procedure
+        (saveApproachWp && appr) || (saveSidStarWp && sidStar) ||
+        // MSFS - save SID/STAR legs and this leg is one
+        (msfs && sidStar))
       {
-        // Entry is one of the category which have to be replaced
-        entry.setIdent(QString());
-        entry.setRegion(QString());
-        entry.setCoords(leg.getPosition());
-        entry.setAirway(QString());
-        entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
         entry.setFlag(atools::fs::pln::entry::TRACK, false);
 
-        if(leg.getWaypoint().isValid())
+        // Entry is one of the category which have to be replaced
+        // Information is updated further down - clear here
+        /// Coordinates are already set ok
+        entry.setIdent(QString());
+        entry.setRegion(QString());
+        entry.setAirway(QString());
+
+        if(!msfs || (saveSidStarWp && sidStar) || (saveApproachWp && appr))
+          // Clear procedure flag to keep legs in plan
+          entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+        else
+        {
+          // Prepare MSFS SID and STAR legs ==========================
+          int number = 0;
+          QString rw, designator;
+
+          if(leg.getProcedureType() & proc::PROCEDURE_SID_ALL)
+          {
+            // Clear procedure flag to keep legs in plan
+            entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+
+            entry.setSid(sid.approachFixIdent);
+            // entry.setAirport(leg.getAirport());
+            rw = sid.procedureRunway;
+          }
+          else if(leg.getProcedureType() & proc::PROCEDURE_STAR_ALL)
+          {
+            // Clear procedure flag to keep legs in plan
+            entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+
+            entry.setStar(star.approachFixIdent);
+            // entry.setAirport(origRoute.getDestinationAirportLeg().getIdent());
+            rw = star.procedureRunway;
+          }
+
+          if(!rw.isEmpty())
+          {
+            map::runwayNameSplit(rw, &number, &designator);
+            entry.setRunway(QString::number(number), map::runwayDesignatorLong(designator));
+          }
+        }
+
+        // Assign navaid to flight plan entry ================
+        if(leg.getAirport().isValid())
+        {
+          entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
+          entry.setIdent(leg.getAirport().ident);
+          entry.setRegion(leg.getAirport().region);
+        }
+        else if(leg.getWaypoint().isValid())
         {
           entry.setWaypointType(atools::fs::pln::entry::WAYPOINT);
           entry.setIdent(leg.getWaypoint().ident);
@@ -2206,29 +2258,62 @@ Route Route::adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions o
           else
             entry.setIdent(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
         }
-      }
-    }
+      } // if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) || ...
 
-    // Now get rid of all procedure legs in the flight plan
-    auto it = std::remove_if(entries.begin(), entries.end(),
-                             [](const FlightplanEntry& type) -> bool
+      if(msfs && i == route.getDepartureAirportLegIndex() && !(leg.getProcedureType() & proc::PROCEDURE_DEPARTURE) &&
+         !saveApproachWp)
+      {
+        // For MSFS: Add runway information to departure airport =======================================
+        // if there is a departure position on a runway and there is no SID
+        // Approach legs are not saved
+        const RouteLeg& departureAirportLeg = route.getDepartureAirportLeg();
+        const map::MapStart& start = departureAirportLeg.getDepartureStart();
+        if(start.isRunway())
+        {
+          int number = 0;
+          QString rw, designator;
+          map::runwayNameSplit(start.runwayName, &number, &designator);
+          entry.setRunway(QString::number(number), map::runwayDesignatorLong(designator));
+        }
+      }
+    } // for(int i = 0; i < entries.size(); i++)
+
+    // Now remove of all procedure legs in the flight plan =====================
+    entries.erase(std::remove_if(entries.begin(), entries.end(), [](const FlightplanEntry& type) -> bool
     {
       return type.getFlags() & atools::fs::pln::entry::PROCEDURE;
-    });
+    }), entries.end());
 
-    if(it != entries.end())
-      entries.erase(it, entries.end());
-
-    // Delete consecutive duplicates
-    for(int i = entries.size() - 1; i > 0; i--)
+    if(!msfs)
     {
-      const FlightplanEntry& entry = entries.at(i);
-      const FlightplanEntry& prev = entries.at(i - 1);
+      // Delete same consecutive =======================
+      for(int i = entries.size() - 1; i > 0; i--)
+      {
+        const FlightplanEntry& entry = entries.at(i);
+        const FlightplanEntry& prev = entries.at(i - 1);
 
-      if(entry.getIdent() == prev.getIdent() &&
-         entry.getRegion() == prev.getRegion() &&
-         entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
-        entries.removeAt(i);
+        if(entry.getIdent() == prev.getIdent() &&
+           entry.getRegion() == prev.getRegion() &&
+           entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
+          entries.removeAt(i);
+      }
+    }
+    else
+    {
+      // MSFS: Add approach information to destination airport ==============================
+      const proc::MapProcedureLegs& appr = route.getApproachLegs();
+
+      if(!appr.isEmpty())
+      {
+        // Can use last since alternates are already stripped off
+        FlightplanEntry& entry = entries.last();
+        int number = 0;
+        QString designator;
+
+        map::runwayNameSplit(appr.procedureRunway, &number, &designator);
+        entry.setRunway(QString::number(number), map::runwayDesignatorLong(designator));
+        entry.setApproach(appr.approachType, appr.approachSuffix);
+      }
     }
 
     // Copy flight plan entries to route legs - will also add coordinates
@@ -2236,7 +2321,8 @@ Route Route::adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions o
     route.updateAll();
 
     // Airways are updated in route controller
-  }
+
+  } // if(saveApproachWp || saveSidStarWp || msfs)
 
   if(options.testFlag(rf::FIX_CIRCLETOLAND))
   {

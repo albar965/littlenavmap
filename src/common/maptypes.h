@@ -528,7 +528,23 @@ struct MapStart
   {
   }
 
-  QString type /* RUNWAY, HELIPAD or WATER */, runwayName /* not empty if this is a runway start */;
+  bool isRunway() const
+  {
+    return type == 'R';
+  }
+
+  bool isHelipad() const
+  {
+    return type == 'H';
+  }
+
+  bool isWater() const
+  {
+    return type == 'W';
+  }
+
+  QChar type = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
+  QString runwayName /* not empty if this is a runway start */;
   int airportId /* database id airport.airport_id */;
   int heading, helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
 };
@@ -1092,6 +1108,7 @@ QString helipadText(const map::MapHelipad& helipad);
 /* Split runway name into parts and return true if name matches a runway number */
 bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr);
 bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr);
+QString runwayDesignatorLong(const QString& name);
 
 /* Get the closes matching runway name from the list of airport runways or empty if none */
 QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames);

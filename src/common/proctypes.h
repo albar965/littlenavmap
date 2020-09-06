@@ -51,6 +51,9 @@ enum MapProcedureType
   PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
   PROCEDURE_SID_ALL = PROCEDURE_SID | PROCEDURE_SID_TRANSITION,
 
+  /* Approach and transition but no missed */
+  PROCEDURE_APPROACH_ALL = PROCEDURE_APPROACH | PROCEDURE_TRANSITION,
+
   /* All SID, STAR and respective transitions */
   PROCEDURE_SID_STAR_ALL = PROCEDURE_STAR_ALL | PROCEDURE_SID_ALL,
 
@@ -433,7 +436,8 @@ struct MapProcedureLegs
   MapProcedureRef ref;
   atools::geo::Rect bounding;
 
-  QString approachType, approachSuffix, approachFixIdent, approachArincName, transitionType, transitionFixIdent,
+  QString approachType, approachSuffix, approachFixIdent /* Approach fix or SID/STAR name */,
+          approachArincName, transitionType, transitionFixIdent,
           procedureRunway; /* Runway from the procedure does not have to match the airport runway but is saved */
 
   /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search */

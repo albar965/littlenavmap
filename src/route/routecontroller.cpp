@@ -971,7 +971,8 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
 
   // Update start position for other formats than FSX/P3D
-  bool forceUpdate = format != atools::fs::pln::LNM_PLN && format != atools::fs::pln::FSX_PLN;
+  bool forceUpdate = format != atools::fs::pln::LNM_PLN && format != atools::fs::pln::FSX_PLN &&
+                     format != atools::fs::pln::MSFS_PLN;
 
   // Do not create an entry on the undo stack since this plan file type does not support it
   if(updateStartPositionBestRunway(forceUpdate /* force */, false /* undo */))

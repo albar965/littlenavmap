@@ -521,7 +521,7 @@ public:
    *
    * Does not adapt RouteAltitude legs. */
   Route adjustedToOptions(rf::RouteAdjustOptions options) const;
-  static Route adjustedToOptions(const Route& routeParam, rf::RouteAdjustOptions options);
+  static Route adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions options);
 
   /* Copy flight plan profile altitudes into entries for FMS and other formats
    *  All following functions have to use setCoords instead of setPosition to avoid overwriting.
@@ -570,10 +570,8 @@ public:
   /* SID RAMY6, Approach ILS 12, etc. */
   QString getProcedureLegText(proc::MapProcedureTypes mapType) const;
 
-  /* Assign index and pointer to flight plan for all objects */
-  void updateIndices();
+  /* Assign index and pointer to flight plan for all objects and also update all procedure and alternate offsets */
   void updateIndicesAndOffsets();
-  void updateAlternateIndicesAndOffsets();
 
   void clearFlightplanAlternateProperties();
 
@@ -600,6 +598,10 @@ private:
    *  All following functions have to use setCoords instead of setPosition to avoid overwriting*/
   void assignAltitudes();
 
+  /* Assign index and pointer to flight plan for all objects */
+  void updateIndices();
+  void updateAlternateIndicesAndOffsets();
+
   /* Removes duplicate waypoints when transitioning from route to procedure and vice versa.
    * Used after route calculation. */
   void removeDuplicateRouteLegs();
@@ -611,6 +613,7 @@ private:
    * no procedure legs. CPU intense do not use often. */
   void cleanupFlightPlanForProcedures();
 
+  /* Removes related properies in the flight plan only */
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
   /* Calculate all distances and courses for route map objects */

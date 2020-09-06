@@ -577,7 +577,7 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
 {
   start.id = record.valueInt("start_id");
   start.airportId = record.valueInt("airport_id");
-  start.type = record.valueStr("type");
+  start.type = atools::charAt(record.valueStr("type"), 0);
   start.runwayName = record.valueStr("runway_name");
   start.helipadNumber = record.valueInt("number");
   start.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));

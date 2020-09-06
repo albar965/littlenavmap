@@ -80,7 +80,9 @@ public:
   /* FSX/P3D XML PLN format */
   /* Also used for manual export */
   bool routeExportPlnMan(); /* Called by action */
+  bool routeExportPlnMsfsMan(); /* Called by action */
   bool routeExportPln(const RouteExportFormat& format);
+  bool routeExportPlnMsfs(const RouteExportFormat& format);
 
   /* New X-Plane FMS 11 */
   /* Also used for manual export */

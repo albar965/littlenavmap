@@ -2177,6 +2177,11 @@ QVector<int> ProcedureQuery::getTransitionIdsForApproach(int approachId)
   return transitionIds;
 }
 
+QString ProcedureQuery::runwayErrorString(const QString& runway)
+{
+  return runway.isEmpty() ? tr("no runway") : tr("runway %1").arg(runway);
+}
+
 void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
                                                     const map::MapAirport& departure,
                                                     const map::MapAirport& destination,
@@ -2200,7 +2205,9 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(sidApprId == -1)
     {
       qWarning() << "Loading of SID" << properties.value(pln::SIDAPPR) << "failed";
-      errors.append(tr("SID %1").arg(properties.value(pln::SIDAPPR)));
+      errors.append(tr("SID %1 from %2").
+                    arg(properties.value(pln::SIDAPPR)).
+                    arg(runwayErrorString(properties.value(pln::SIDAPPRRW))));
     }
   }
 
@@ -2216,7 +2223,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
   }
 
-  // Get an approach id =================================================================
+  // Get an approach id by ARINC name =================================================================
   if(properties.contains(pln::APPROACH_ARINC) && !properties.value(pln::APPROACH_ARINC).isEmpty() &&
      approachIdByArincNameQuery != nullptr)
   {
@@ -2254,11 +2261,15 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(approachId == -1)
     {
       qWarning() << "Loading of approach by ARINC name" << properties.value(pln::APPROACH_ARINC) << "failed";
-      errors.append(tr("Approach %1").arg(properties.value(pln::APPROACH_ARINC)));
+      errors.append(tr("Approach %1 to %2").
+                    arg(properties.value(pln::APPROACH_ARINC)).
+                    arg(runwayErrorString(properties.value(pln::APPROACHRW))));
     }
   }
-  else if(properties.contains(pln::APPROACH))
+  else if(properties.contains(pln::APPROACH) || properties.contains(pln::APPROACHTYPE))
   {
+    // Get an approach id by name or type =================================================================
+
     // Use approach name
     QString type = properties.value(pln::APPROACHTYPE);
     if(type == "CUSTOM")
@@ -2273,9 +2284,15 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
     else
     {
+      QString appr = properties.value(pln::APPROACH);
+
+      if(appr.isEmpty())
+        appr = "%";
+
       if(type.isEmpty())
         type = "%";
-      approachIdByNameQuery->bindValue(":fixident", properties.value(pln::APPROACH));
+
+      approachIdByNameQuery->bindValue(":fixident", appr);
       approachIdByNameQuery->bindValue(":type", type);
       approachIdByNameQuery->bindValue(":apident", destinationNav.ident);
 
@@ -2288,7 +2305,10 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(approachId == -1)
     {
       qWarning() << "Loading of approach" << properties.value(pln::APPROACH) << "failed";
-      errors.append(tr("Approach %1").arg(properties.value(pln::APPROACH)));
+      errors.append(tr("Approach %1 to %2").
+                    arg(properties.value(pln::APPROACH)).
+                    arg(runwayErrorString(properties.value(pln::APPROACHRW))));
+
     }
   }
 
@@ -2319,7 +2339,10 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(starId == -1)
     {
       qWarning() << "Loading of STAR " << properties.value(pln::STAR) << "failed";
-      errors.append(tr("STAR %1").arg(properties.value(pln::STAR)));
+      errors.append(tr("STAR %1 to %2").
+                    arg(properties.value(pln::STAR)).
+                    arg(runwayErrorString(properties.value(pln::STARRW))));
+
     }
   }
 

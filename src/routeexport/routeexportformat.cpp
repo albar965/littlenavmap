@@ -92,6 +92,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   // Assign callbacks from route export instance
   /* *INDENT-OFF* */
   (*this)[PLN         ].func = bind(&RouteExport::routeExportPln,               routeExport, _1);
+  (*this)[PLNMSFS     ].func = bind(&RouteExport::routeExportPlnMsfs,           routeExport, _1);
   (*this)[PLNANNOTATED].func = bind(&RouteExport::routeExportPlnAnnotatedMulti, routeExport, _1);
   (*this)[FMS3        ].func = bind(&RouteExport::routeExportFms3Multi,         routeExport, _1);
   (*this)[FMS11       ].func = bind(&RouteExport::routeExportFms11,             routeExport, _1);
@@ -133,6 +134,7 @@ void RouteExportFormatMap::init()
   /* *INDENT-OFF* */
   //     type          Object           (type          flags format                   category         comment
   insert(PLN,          RouteExportFormat(PLN,          NONE, tr("pln"),               tr("Simulator"), tr("FSX and Prepar3D")                                            ));
+  insert(PLNMSFS,      RouteExportFormat(PLNMSFS,      NONE, tr("pln"),               tr("Simulator"), tr("Microsoft Flight Simulator 2020")                             ));
   insert(PLNANNOTATED, RouteExportFormat(PLNANNOTATED, NONE, tr("pln"),               tr("Simulator"), tr("FSX and Prepar3D (annotated for old Little Navmap versions)") ));
   insert(FMS3,         RouteExportFormat(FMS3,         NONE, tr("fms"),               tr("Simulator"), tr("X-Plane FMS 3 (old limited format)")                          ));
   insert(FMS11,        RouteExportFormat(FMS11,        NONE, tr("fms"),               tr("Simulator"), tr("X-Plane FMS 11")                                              ));
@@ -214,6 +216,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   // Fill default paths
   /* *INDENT-OFF* */
   (*this)[PLN         ].defaultPath = curSimFiles;
+  (*this)[PLNMSFS     ].defaultPath = curSimFiles;
   (*this)[PLNANNOTATED].defaultPath = curSimFiles;
   (*this)[FMS3        ].defaultPath = xpBasePath;
   (*this)[FMS11       ].defaultPath = xpBasePath;

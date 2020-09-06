@@ -40,6 +40,7 @@ enum RouteExportFormatType : quint8
   NO_TYPE = 255,
   PLN = 0, /* FSX/P3D XML PLN format. */
   PLNANNOTATED = 1, /* Save as above but with annotations for procedures as used by LNM before 2.4.5 */
+  PLNMSFS = 31, /* Microsoft Flight Simulator 2020 */ // LAST VALUE
   FMS3 = 2, /* Old X-Plane FMS 3 */
   FMS11 = 3, /* New X-Plane FMS 11 */
   FLIGHTGEAR = 4, /* FlightGear XML */
@@ -78,9 +79,7 @@ enum RouteExportFormatType : quint8
   /* Other ================ */
   EFBR = 27, /* AivlaSoft EFB */
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
-  HTML = 29, /* Export as HTML page */
-
-  LAST = FLPCRJ
+  HTML = 29 /* Export as HTML page */
 };
 
 /* Flags for export format */

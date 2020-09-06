@@ -77,6 +77,7 @@
     <addaction name="separator"/>
     <addaction name="actionRouteResetAll"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteSaveAsPlnMsfs"/>
     <addaction name="actionRouteSaveAsPln"/>
     <addaction name="actionRouteSaveAsFms11"/>
     <addaction name="actionRouteSaveAsFlightGear"/>
@@ -191,18 +192,18 @@
     <addaction name="actionHelpDonate"/>
     <addaction name="actionHelpCheckUpdates"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
     <widget class="QMenu" name="menuHelpFilesAndFolders">
      <property name="title">
-      <string>&amp;Files and Folders</string>
+      <string>&amp;Files and Directories</string>
      </property>
      <addaction name="actionHelpOpenLogFile"/>
      <addaction name="actionHelpOpenConfigFile"/>
      <addaction name="actionDatabaseFiles"/>
     </widget>
-   <widget class="QMenu" name="menuTools">
-    <property name="title">
-     <string>&amp;Tools</string>
-    </property>
     <addaction name="actionConnectSimulator"/>
     <addaction name="separator"/>
     <addaction name="actionRunWebserver"/>
@@ -5560,7 +5561,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>46</y>
+              <y>31</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -7695,7 +7696,7 @@ Best track will be selected automatically.</string>
     <string>Center flight plan on map</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+F</string>
+    <string>Alt+Shift+F</string>
    </property>
   </action>
   <action name="actionMapShowVictorAirways">
@@ -10985,7 +10986,7 @@ Best track will be selected automatically.</string>
     <string>Calculate a flight plan between departure and destination</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+F</string>
+    <string>Alt+Shift+C</string>
    </property>
   </action>
   <action name="actionRouteCalcSelected">
@@ -11475,6 +11476,24 @@ Best track will be selected automatically.</string>
    </property>
    <property name="statusTip">
     <string>Keeps main window of program on top of others</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsPlnMsfs">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export Flight Plan &amp;as MSFS  PLN ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Flight Plan as PLN for Microsoft Flight Simulator 2020</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Flight Plan as PLN for Microsoft Flight Simulator 2020</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F</string>
    </property>
   </action>
  </widget>

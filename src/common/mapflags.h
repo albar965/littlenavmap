@@ -224,11 +224,8 @@ enum MapAirspaceSource
 Q_DECLARE_FLAGS(MapAirspaceSources, MapAirspaceSource);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources);
 
-static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES =
-{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_ONLINE, AIRSPACE_SRC_USER};
-
-static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES =
-{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER};
+extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES;
+extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 
 /* Airspace filter flags */
 enum MapAirspaceFlag

@@ -1226,6 +1226,7 @@ void MainWindow::connectAllSlots()
   // Flight plan export actions =====================================================================
   /* *INDENT-OFF* */
   connect(ui->actionRouteSaveAsPln, &QAction::triggered, [ = ]() { routeExport->routeExportPlnMan(); });
+  connect(ui->actionRouteSaveAsPlnMsfs, &QAction::triggered, [ = ]() { routeExport->routeExportPlnMsfsMan(); });
   connect(ui->actionRouteSaveAsFms11, &QAction::triggered, [ = ]() { routeExport->routeExportFms11Man(); });
   connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, [ = ]() { routeExport->routeExportFlightgearMan(); });
   connect(ui->actionRouteSaveAll, &QAction::triggered, [ = ]() { routeExport->routeMultiExport(); });
@@ -3367,6 +3368,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsFlightGear->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms11->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsPln->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsPlnMsfs->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsHtml->setEnabled(hasFlightplan);
   ui->actionRouteSaveAll->setEnabled(hasFlightplan && routeExport->hasSelected());
