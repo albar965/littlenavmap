@@ -137,7 +137,7 @@ FSX, P3D and MSFS allow a maxium of 105 NM.</string>
           <string> NM</string>
          </property>
          <property name="minimum">
-          <number>0</number>
+          <number>1</number>
          </property>
          <property name="maximum">
           <number>105</number>
