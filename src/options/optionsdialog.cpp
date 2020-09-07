@@ -2495,14 +2495,16 @@ void OptionsDialog::updateFlightplanExample()
                                                                       "IFR", "Frankfurt Am Main", "EDDF",
                                                                       "Fiumicino", "LIRF", ".lnmpln", 30000, false);
 
-    QString text = tr("Example: \"%1\"").arg(atools::cleanFilename(example));
+    QString text = tr("Example: \"%1\"").arg(atools::cleanFilename(example, atools::MAX_FILENAME_CHARS));
 
     // Check if the cleaned filename differs from user input
-    if(example != atools::cleanFilename(example))
+    if(example != atools::cleanFilename(example, atools::MAX_FILENAME_CHARS))
       text.append(tr("<br/>") +
-                  atools::util::HtmlBuilder::errorMessage({tr("Pattern contains invalid characters or double spaces."),
+                  atools::util::HtmlBuilder::errorMessage({tr("Pattern contains invalid characters, "
+                                                              "double spaces or is longer than %1 characters.").
+                                                           arg(atools::MAX_FILENAME_CHARS),
                                                            tr("Not allowed are:  "
-                                                              "\\  /  :  \'  *  &amp;  &gt;  &lt;  ?  $")}));
+                                                              "\\  /  :  \'  *  &amp;  &gt;  &lt;  ?  $  |")}));
 
     ui->labelOptionsRouteFilenameExample->setText(text);
   }
