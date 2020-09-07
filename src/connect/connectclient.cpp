@@ -376,7 +376,7 @@ void ConnectClient::restoreState()
 
 atools::fs::sc::ConnectHandler *ConnectClient::handlerByDialogSettings()
 {
-  if(dialog->getCurrentSimType() == cd::FSX_P3D)
+  if(dialog->getCurrentSimType() == cd::FSX_P3D_MSFS)
     return simConnectHandler;
   else
     return xpConnectHandler;
@@ -384,7 +384,7 @@ atools::fs::sc::ConnectHandler *ConnectClient::handlerByDialogSettings()
 
 void ConnectClient::directUpdateRateChanged(cd::ConnectSimType type)
 {
-  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D) ||
+  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS) ||
      (dataReader->getHandler() == xpConnectHandler && type == cd::XPLANE))
     // The currently active value has changed
     dataReader->setUpdateRate(dialog->getDirectUpdateRateMs(type));
@@ -392,7 +392,7 @@ void ConnectClient::directUpdateRateChanged(cd::ConnectSimType type)
 
 void ConnectClient::fetchOptionsChanged(cd::ConnectSimType type)
 {
-  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D) ||
+  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS) ||
      (dataReader->getHandler() == xpConnectHandler && type == cd::XPLANE))
   {
     // The currently active value has changed

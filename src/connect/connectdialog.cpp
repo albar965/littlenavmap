@@ -24,6 +24,7 @@
 #include "ui_connectdialog.h"
 #include "fs/sc/datareaderthread.h"
 #include "util/htmlbuilder.h"
+#include "navapp.h"
 
 #include <QDebug>
 #include <QUrl>
@@ -47,8 +48,10 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
     // Disable the FSX and P3D controls if no simconnect
     ui->tabConnectFsx->setDisabled(true);
     ui->labelConnectFsx->setText(atools::util::HtmlBuilder::warningMessage(
-                                   tr("SimConnect not found. "
-                                      "Install a FSX SP2 compatible version of SimConnect.<br/>")) +
+                                   tr("SimConnect not found. Your <i>Little Navmap</i> "
+                                      "installation is missing the file \"SimConnect.dll\".<br/>"
+                                      "Reinstall <i>Little Navmap</i> or "
+                                      "install a FSX SP2 compatible version of SimConnect on your computer.<br/>")) +
                                  ui->labelConnectFsx->text());
   }
 #else
@@ -174,12 +177,12 @@ bool ConnectDialog::isAutoConnect() const
 
 bool ConnectDialog::isAnyConnectDirect() const
 {
-  return getCurrentSimType() == cd::FSX_P3D || getCurrentSimType() == cd::XPLANE;
+  return getCurrentSimType() == cd::FSX_P3D_MSFS || getCurrentSimType() == cd::XPLANE;
 }
 
 bool ConnectDialog::isFetchAiAircraft(cd::ConnectSimType type) const
 {
-  if(type == cd::FSX_P3D)
+  if(type == cd::FSX_P3D_MSFS)
     return ui->checkBoxConnectFetchAiAircraftFsx->isChecked();
   else if(type == cd::XPLANE)
     return ui->checkBoxConnectFetchAiAircraftXp->isChecked();
@@ -190,7 +193,7 @@ bool ConnectDialog::isFetchAiAircraft(cd::ConnectSimType type) const
 
 bool ConnectDialog::isFetchAiShip(cd::ConnectSimType type) const
 {
-  if(type == cd::FSX_P3D)
+  if(type == cd::FSX_P3D_MSFS)
     return ui->checkBoxConnectFetchAiShipFsx->isChecked();
   else if(type == cd::XPLANE)
     return ui->checkBoxConnectFetchAiShipXp->isChecked();
@@ -201,11 +204,11 @@ bool ConnectDialog::isFetchAiShip(cd::ConnectSimType type) const
 
 cd::ConnectSimType ConnectDialog::getCurrentSimType() const
 {
-  QWidget *widget = ui->tabWidgetConnect->currentWidget();
+  const QWidget *widget = ui->tabWidgetConnect->currentWidget();
   if(widget == ui->tabConnectXp)
     return cd::XPLANE;
   else if(widget == ui->tabConnectFsx)
-    return cd::FSX_P3D;
+    return cd::FSX_P3D_MSFS;
   else if(widget == ui->tabConnectRemote)
     return cd::REMOTE;
   else
@@ -214,7 +217,7 @@ cd::ConnectSimType ConnectDialog::getCurrentSimType() const
 
 unsigned int ConnectDialog::getDirectUpdateRateMs(cd::ConnectSimType type)
 {
-  if(type == cd::FSX_P3D)
+  if(type == cd::FSX_P3D_MSFS)
     return static_cast<unsigned int>(ui->spinBoxConnectUpdateRateFsx->value());
   else if(type == cd::XPLANE)
     return static_cast<unsigned int>(ui->spinBoxConnectUpdateRateXp->value());
@@ -227,7 +230,7 @@ void ConnectDialog::directUpdateRateClicked()
   QSpinBox *spinBox = dynamic_cast<QSpinBox *>(sender());
 
   if(spinBox == ui->spinBoxConnectUpdateRateFsx)
-    emit directUpdateRateChanged(cd::FSX_P3D);
+    emit directUpdateRateChanged(cd::FSX_P3D_MSFS);
   else if(spinBox == ui->spinBoxConnectUpdateRateXp)
     emit directUpdateRateChanged(cd::XPLANE);
 }
@@ -237,7 +240,7 @@ void ConnectDialog::fetchOptionsClicked()
   QCheckBox *checkBox = dynamic_cast<QCheckBox *>(sender());
 
   if(checkBox == ui->checkBoxConnectFetchAiAircraftFsx || checkBox == ui->checkBoxConnectFetchAiShipFsx)
-    emit fetchOptionsChanged(cd::FSX_P3D);
+    emit fetchOptionsChanged(cd::FSX_P3D_MSFS);
   else if(checkBox == ui->checkBoxConnectFetchAiAircraftXp || checkBox == ui->checkBoxConnectFetchAiShipXp)
     emit fetchOptionsChanged(cd::XPLANE);
 }
@@ -268,6 +271,13 @@ void ConnectDialog::saveState()
   Settings::instance().setValue(lnm::NAVCONNECT_REMOTEHOSTS, entries);
 }
 
+void ConnectDialog::activateTab(QWidget *tabWidget)
+{
+  int idx = ui->tabWidgetConnect->indexOf(tabWidget);
+  if(idx != -1)
+    ui->tabWidgetConnect->setCurrentIndex(idx);
+}
+
 void ConnectDialog::restoreState()
 {
   QStringList entries = Settings::instance().valueStrList(lnm::NAVCONNECT_REMOTEHOSTS);
@@ -278,6 +288,22 @@ void ConnectDialog::restoreState()
       ui->comboBoxConnectHostname->addItem(entry);
 
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
+  if(!widgetState.contains(ui->tabWidgetConnect))
+  {
+    // Tab state not saved - set reasonable initial value
+#ifdef Q_OS_WIN32
+    if(NavApp::hasAnyMsSimulator())
+      // Activate FSX/P3D tab for Windows systems if any MS simulator was found
+      activateTab(ui->tabConnectFsx);
+    else
+#endif
+    if(NavApp::hasXplaneSimulator())
+      // X - Plane
+      activateTab(ui->tabConnectXp);
+    else
+      activateTab(ui->tabConnectRemote);
+  }
+
   widgetState.restore({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
                        ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup, ui->tabWidgetConnect,
                        ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,

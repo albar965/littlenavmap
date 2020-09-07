@@ -31,7 +31,7 @@ enum ConnectSimType
 {
   UNKNOWN,
   REMOTE,
-  FSX_P3D,
+  FSX_P3D_MSFS,
   XPLANE
 };
 
@@ -86,6 +86,7 @@ private:
   void buttonBoxClicked(QAbstractButton *button);
   void deleteClicked();
   void updateButtonStates();
+  void activateTab(QWidget* tabWidget);
 
   Ui::ConnectDialog *ui;
   bool simConnect = false;

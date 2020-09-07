@@ -114,7 +114,7 @@ void SimulatorTypeMap::fillOneDefault(atools::fs::FsPaths::SimulatorType type)
     path.isInstalled = !path.basePath.isEmpty();
   else
     // If already present or not - this one has a registry entry
-    path.isInstalled = FsPaths::hasSim(type);
+    path.isInstalled = FsPaths::hasSimulator(type);
 }
 
 QDebug operator<<(QDebug out, const FsPathType& record)

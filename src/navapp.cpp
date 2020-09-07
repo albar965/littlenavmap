@@ -555,6 +555,21 @@ QString NavApp::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type)
   return databaseManager->getSimulatorBasePath(type);
 }
 
+bool NavApp::hasSimulator(atools::fs::FsPaths::SimulatorType type)
+{
+  return atools::fs::FsPaths::hasSimulator(type);
+}
+
+bool NavApp::hasAnyMsSimulator()
+{
+  return atools::fs::FsPaths::hasAnyMsSimulator();
+}
+
+bool NavApp::hasXplaneSimulator()
+{
+  return atools::fs::FsPaths::hasXplaneSimulator();
+}
+
 bool NavApp::isNavdataAll()
 {
   return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;

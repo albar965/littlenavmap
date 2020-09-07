@@ -198,6 +198,9 @@ public:
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
+  static bool hasSimulator(atools::fs::FsPaths::SimulatorType type);
+  static bool hasAnyMsSimulator();
+  static bool hasXplaneSimulator();
 
   /* Selected navdatabase in menu */
   static bool isNavdataAll();
