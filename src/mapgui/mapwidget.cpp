@@ -146,6 +146,10 @@ MapWidget::MapWidget(MainWindow *parent)
   fuelOnOffTimer.setSingleShot(true);
   connect(&fuelOnOffTimer, &QTimer::timeout, this, &MapWidget::fuelOnOffTimeout);
 
+  resetPaintForDragTimer.setSingleShot(true);
+  resetPaintForDragTimer.setInterval(200);
+  connect(&resetPaintForDragTimer, &QTimer::timeout, this, &MapWidget::resetPaintForDrag);
+
   // Fill overlay / action map ============================
   // "Compass" id "compass"
   // "License" id "license"
@@ -162,6 +166,7 @@ MapWidget::MapWidget(MainWindow *parent)
 
 MapWidget::~MapWidget()
 {
+  resetPaintForDragTimer.stop();
   elevationDisplayTimer.stop();
   takeoffLandingTimer.stop();
   fuelOnOffTimer.stop();
@@ -669,6 +674,9 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
   jumpBackToAircraftStart(true /* save distance too */);
 
+  // Avoid repaints
+  resetPaintForDragTimer.stop();
+
   // Remember mouse position to check later if mouse was moved during click (drag map scroll)
   mouseMoved = event->pos();
   if(mouseState & mw::DRAG_ALL)
@@ -725,6 +733,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   hideTooltip();
 
   jumpBackToAircraftStart(true /* save distance too */);
+
+  // Avoid repaints
+  resetPaintForDragTimer.stop();
 
   // Check if mouse was move for dragging before switching to drag and drop
   int mouseMoveTolerance = 4;
@@ -945,6 +956,9 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   }
 
   hideTooltip();
+
+  // Avoid repaints
+  resetPaintForDragTimer.stop();
 
   map::MapResult mapSearchResult;
 
@@ -1527,8 +1541,22 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
   if(mouseState & mw::DRAG_ALL)
   {
-    // Force fast updates while dragging
+    // Set context for fast redraw
     setViewContext(Marble::Animation);
+    update();
+
+    // Start timer to call resetPaintForDrag later to do a full redraw to avoid missing map objects
+    resetPaintForDragTimer.start();
+  }
+}
+
+void MapWidget::resetPaintForDrag()
+{
+  // Reset context for full redraw when using drag and drop
+  if(mouseState & mw::DRAG_ALL)
+  {
+    // Do a full redraw with all details and reload
+    setViewContext(Marble::Still);
     update();
   }
 }
@@ -3186,6 +3214,9 @@ void MapWidget::workOffline(bool offline)
 
 void MapWidget::zoomInOut(bool directionIn, bool smooth)
 {
+  // Reset context for full redraw when using drag and drop
+  resetPaintForDrag();
+
   if(smooth)
   {
     // Smooth zoom

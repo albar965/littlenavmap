@@ -296,6 +296,9 @@ private:
   void cancelDragRoute();
   void cancelDragUserpoint();
 
+  /* Full redraw after timout when drag and drop to avoid missing objects while moving rubber band */
+  void resetPaintForDrag();
+
   /* Display elevation at mouse cursor after a short timeout */
   void elevationDisplayTimerTimeout();
 
@@ -388,6 +391,9 @@ private:
 
   /* Current moving position when dragging a flight plan point or leg */
   QPoint routeDragCur;
+
+  /* Do a full redraw after timout when using drag and drop */
+  QTimer resetPaintForDragTimer;
 
   /* Fixed points of route drag which will not move with the mouse */
   atools::geo::LineString routeDragFixed;
