@@ -26,6 +26,7 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
+#include "geo/calculations.h"
 #include "settings/settings.h"
 #include "fs/sc/simconnecthandler.h"
 #include "fs/sc/xpconnecthandler.h"
@@ -75,7 +76,8 @@ ConnectClient::ConnectClient(MainWindow *parent)
           &ConnectClient::disconnectedFromSimulatorDirect);
 
   dialog = new ConnectDialog(mainWindow, simConnectHandler->isLoaded());
-  connect(dialog, &ConnectDialog::directUpdateRateChanged, this, &ConnectClient::directUpdateRateChanged);
+  connect(dialog, &ConnectDialog::updateRateChanged, this, &ConnectClient::updateRateChanged);
+  connect(dialog, &ConnectDialog::aiFetchRadiusChanged, this, &ConnectClient::aiFetchRadiusChanged);
   connect(dialog, &ConnectDialog::fetchOptionsChanged, this, &ConnectClient::fetchOptionsChanged);
 
   connect(dialog, &ConnectDialog::disconnectClicked, this, &ConnectClient::disconnectClicked);
@@ -370,8 +372,10 @@ void ConnectClient::restoreState()
   dialog->restoreState();
 
   dataReader->setHandler(handlerByDialogSettings());
-  dataReader->setUpdateRate(dialog->getDirectUpdateRateMs(dialog->getCurrentSimType()));
+  dataReader->setUpdateRate(dialog->getUpdateRateMs(dialog->getCurrentSimType()));
+  dataReader->setAiFetchRadius(atools::geo::nmToKm(dialog->getAiFetchRadiusNm(dialog->getCurrentSimType())));
   fetchOptionsChanged(dialog->getCurrentSimType());
+  aiFetchRadiusChanged(dialog->getCurrentSimType());
 }
 
 atools::fs::sc::ConnectHandler *ConnectClient::handlerByDialogSettings()
@@ -382,12 +386,19 @@ atools::fs::sc::ConnectHandler *ConnectClient::handlerByDialogSettings()
     return xpConnectHandler;
 }
 
-void ConnectClient::directUpdateRateChanged(cd::ConnectSimType type)
+void ConnectClient::aiFetchRadiusChanged(cd::ConnectSimType type)
+{
+  if(dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS)
+    // The currently active value has changed
+    dataReader->setAiFetchRadius(atools::geo::nmToKm(dialog->getAiFetchRadiusNm(type)));
+}
+
+void ConnectClient::updateRateChanged(cd::ConnectSimType type)
 {
   if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS) ||
      (dataReader->getHandler() == xpConnectHandler && type == cd::XPLANE))
     // The currently active value has changed
-    dataReader->setUpdateRate(dialog->getDirectUpdateRateMs(type));
+    dataReader->setUpdateRate(dialog->getUpdateRateMs(type));
 }
 
 void ConnectClient::fetchOptionsChanged(cd::ConnectSimType type)
@@ -547,8 +558,9 @@ void ConnectClient::connectInternal()
     dataReader->setHandler(handlerByDialogSettings());
 
     // Copy settings from dialog
-    directUpdateRateChanged(dialog->getCurrentSimType());
+    updateRateChanged(dialog->getCurrentSimType());
     fetchOptionsChanged(dialog->getCurrentSimType());
+    aiFetchRadiusChanged(dialog->getCurrentSimType());
 
     dataReader->start();
 

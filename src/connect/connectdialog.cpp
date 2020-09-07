@@ -95,9 +95,11 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   connect(ui->comboBoxConnectHostname, &QComboBox::editTextChanged, this, &ConnectDialog::updateButtonStates);
 
   connect(ui->spinBoxConnectUpdateRateFsx, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &ConnectDialog::directUpdateRateClicked);
+          this, &ConnectDialog::updateRateHasChanged);
   connect(ui->spinBoxConnectUpdateRateXp, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &ConnectDialog::directUpdateRateClicked);
+          this, &ConnectDialog::updateRateHasChanged);
+  connect(ui->spinBoxConnectAiFetchRadius, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this, &ConnectDialog::aiFetchRadiusHasChanged);
 }
 
 ConnectDialog::~ConnectDialog()
@@ -215,7 +217,7 @@ cd::ConnectSimType ConnectDialog::getCurrentSimType() const
     return cd::UNKNOWN;
 }
 
-unsigned int ConnectDialog::getDirectUpdateRateMs(cd::ConnectSimType type)
+unsigned int ConnectDialog::getUpdateRateMs(cd::ConnectSimType type)
 {
   if(type == cd::FSX_P3D_MSFS)
     return static_cast<unsigned int>(ui->spinBoxConnectUpdateRateFsx->value());
@@ -225,14 +227,27 @@ unsigned int ConnectDialog::getDirectUpdateRateMs(cd::ConnectSimType type)
   return 500;
 }
 
-void ConnectDialog::directUpdateRateClicked()
+int ConnectDialog::getAiFetchRadiusNm(cd::ConnectSimType type)
+{
+  if(type == cd::FSX_P3D_MSFS)
+    return ui->spinBoxConnectAiFetchRadius->value();
+  else
+    return 200;
+}
+
+void ConnectDialog::aiFetchRadiusHasChanged()
+{
+  emit aiFetchRadiusChanged(cd::FSX_P3D_MSFS);
+}
+
+void ConnectDialog::updateRateHasChanged()
 {
   QSpinBox *spinBox = dynamic_cast<QSpinBox *>(sender());
 
   if(spinBox == ui->spinBoxConnectUpdateRateFsx)
-    emit directUpdateRateChanged(cd::FSX_P3D_MSFS);
+    emit updateRateChanged(cd::FSX_P3D_MSFS);
   else if(spinBox == ui->spinBoxConnectUpdateRateXp)
-    emit directUpdateRateChanged(cd::XPLANE);
+    emit updateRateChanged(cd::XPLANE);
 }
 
 void ConnectDialog::fetchOptionsClicked()
@@ -259,8 +274,8 @@ void ConnectDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
   widgetState.save({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
-                    ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup, ui->tabWidgetConnect,
-                    ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
+                    ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
+                    ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
                     ui->checkBoxConnectFetchAiShipFsx, ui->checkBoxConnectFetchAiShipXp});
 
   // Save combo entries separately
@@ -305,9 +320,10 @@ void ConnectDialog::restoreState()
   }
 
   widgetState.restore({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
-                       ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup, ui->tabWidgetConnect,
-                       ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
-                       ui->checkBoxConnectFetchAiShipFsx, ui->checkBoxConnectFetchAiShipXp});
+                       ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
+                       ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp,
+                       ui->checkBoxConnectFetchAiAircraftFsx, ui->checkBoxConnectFetchAiShipFsx,
+                       ui->checkBoxConnectFetchAiShipXp});
 
   updateButtonStates();
 }

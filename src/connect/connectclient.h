@@ -135,7 +135,8 @@ private:
 
   /* Options in ConnectDialog have changed */
   void fetchOptionsChanged(cd::ConnectSimType type);
-  void directUpdateRateChanged(cd::ConnectSimType type);
+  void updateRateChanged(cd::ConnectSimType type);
+  void aiFetchRadiusChanged(cd::ConnectSimType type);
 
   void handleError(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network);
 
