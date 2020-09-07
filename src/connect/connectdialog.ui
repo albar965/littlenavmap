@@ -130,22 +130,23 @@ Lower values will result in a more fluid aircraft movement but can potentially i
          <property name="toolTip">
           <string>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
-The unit is always nautical miles (1 NM equals to 1852 km).</string>
+The unit is always nautical miles (1 NM equals to 1852 km).
+FSX, P3D and MSFS allow a maxium of 105 NM.</string>
          </property>
          <property name="suffix">
           <string> NM</string>
          </property>
          <property name="minimum">
-          <number>1</number>
+          <number>0</number>
          </property>
          <property name="maximum">
-          <number>10000</number>
+          <number>105</number>
          </property>
          <property name="singleStep">
-          <number>10</number>
+          <number>1</number>
          </property>
          <property name="value">
-          <number>200</number>
+          <number>105</number>
          </property>
         </widget>
        </item>
