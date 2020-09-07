@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LittleNavmap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.littlenavmap.org/schema/lnmpln.xsd">
+  <Flightplan>
+    <Header>
+      <FlightplanType>VFR</FlightplanType>
+      <CruisingAlt>6500</CruisingAlt>
+      <Comment>This flight plan is for the Little Navmap tutorial &quot;Building a VFR Flight Plan&quot;
+
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/TUTORIALVFR.html</Comment>
+      <CreationDate>2020-09-07T18:26:11</CreationDate>
+      <FileVersion>1.0</FileVersion>
+      <ProgramName>Little Navmap</ProgramName>
+      <ProgramVersion>2.6.0.beta</ProgramVersion>
+      <Documentation>https://www.littlenavmap.org/lnmpln.html</Documentation>
+    </Header>
+    <SimData>MSFS</SimData>
+    <NavData Cycle="2008">NAVIGRAPH</NavData>
+    <AircraftPerformance>
+      <FilePath>/home/alex/Nextcloud/Flight Simulator/Aircraft Performance/Test/Normal Climb and Descent all Equal.lnmperf</FilePath>
+      <Type>MODEL</Type>
+      <Name>Normal Climb and Descent</Name>
+    </AircraftPerformance>
+    <Departure>
+      <Pos Lon="6.092314" Lat="45.923458" Alt="1520.00"/>
+      <Start>04</Start>
+    </Departure>
+    <Waypoints>
+      <Waypoint>
+        <Name>Meythet</Name>
+        <Ident>LFLP</Ident>
+        <Type>AIRPORT</Type>
+        <Pos Lon="6.106389" Lat="45.930832" Alt="1503.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>LacDAnnecy</Ident>
+        <Type>USER</Type>
+        <Pos Lon="6.167864" Lat="45.869450" Alt="2872.89"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>Verthier</Ident>
+        <Type>USER</Type>
+        <Pos Lon="6.230936" Lat="45.782368" Alt="4629.67"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>Faverges</Ident>
+        <Type>USER</Type>
+        <Pos Lon="6.294453" Lat="45.746685" Alt="5654.28"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>Frontenex</Ident>
+        <Type>USER</Type>
+        <Pos Lon="6.313347" Lat="45.635765" Alt="6500.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>SaintHelen</Ident>
+        <Type>USER</Type>
+        <Pos Lon="6.051172" Lat="45.479874" Alt="2700.29"/>
+      </Waypoint>
+      <Waypoint>
+        <Name>Challes-les-Eaux</Name>
+        <Ident>LFLE</Ident>
+        <Type>AIRPORT</Type>
+        <Pos Lon="5.976944" Lat="45.561390" Alt="963.00"/>
+      </Waypoint>
+    </Waypoints>
+  </Flightplan>
+</LittleNavmap>

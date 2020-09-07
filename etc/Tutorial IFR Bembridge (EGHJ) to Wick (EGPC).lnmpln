@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LittleNavmap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.littlenavmap.org/schema/lnmpln.xsd">
+  <Flightplan>
+    <Header>
+      <FlightplanType>IFR</FlightplanType>
+      <CruisingAlt>10000</CruisingAlt>
+      <Comment>This flight plan is for the Little Navmap tutorial 
+&quot;Building an IFR Flight Plan with Approach Procedures&quot;
+
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/TUTORIALIFR.html</Comment>
+      <CreationDate>2020-09-07T18:27:10</CreationDate>
+      <FileVersion>1.0</FileVersion>
+      <ProgramName>Little Navmap</ProgramName>
+      <ProgramVersion>2.6.0.beta</ProgramVersion>
+      <Documentation>https://www.littlenavmap.org/lnmpln.html</Documentation>
+    </Header>
+    <SimData>MSFS</SimData>
+    <NavData Cycle="2008">NAVIGRAPH</NavData>
+    <AircraftPerformance>
+      <FilePath>/home/alex/Nextcloud/Flight Simulator/Aircraft Performance/Test/Normal Climb and Descent all Equal.lnmperf</FilePath>
+      <Type>MODEL</Type>
+      <Name>Normal Climb and Descent</Name>
+    </AircraftPerformance>
+    <Departure>
+      <Pos Lon="-1.114792" Lat="50.679806" Alt="55.00"/>
+      <Start>12</Start>
+    </Departure>
+    <Procedures>
+      <Approach>
+        <Name>FD13</Name>
+        <ARINC>D13</ARINC>
+        <Runway>13</Runway>
+        <Type>VORDME</Type>
+        <Transition>CHINN</Transition>
+        <TransitionType>D</TransitionType>
+      </Approach>
+    </Procedures>
+    <Waypoints>
+      <Waypoint>
+        <Name>Bembridge</Name>
+        <Ident>EGHJ</Ident>
+        <Type>AIRPORT</Type>
+        <Pos Lon="-1.109450" Lat="50.678059" Alt="28.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Name>Southampton</Name>
+        <Ident>SAM</Ident>
+        <Region>EG</Region>
+        <Type>VOR</Type>
+        <Pos Lon="-1.345056" Lat="50.955250" Alt="5694.59"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>PEPIS</Ident>
+        <Region>EG</Region>
+        <Airway>Q41</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-1.243672" Lat="51.196651" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>TABEN</Ident>
+        <Region>EG</Region>
+        <Airway>Q41</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-1.172778" Lat="51.363609" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>NORRY</Ident>
+        <Region>EG</Region>
+        <Airway>Q41</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-1.123333" Lat="51.479721" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>COWLY</Ident>
+        <Region>EG</Region>
+        <Airway>Q41</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-1.065000" Lat="51.616112" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>SILVA</Ident>
+        <Region>EG</Region>
+        <Airway>Q41</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-1.005278" Lat="51.847500" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>FINMA</Ident>
+        <Region>EG</Region>
+        <Airway>M605</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-1.053611" Lat="51.996387" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Name>Daventry</Name>
+        <Ident>DTY</Ident>
+        <Region>EG</Region>
+        <Airway>M605</Airway>
+        <Type>VOR</Type>
+        <Pos Lon="-1.113789" Lat="52.180141" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>PEDIG</Ident>
+        <Region>EG</Region>
+        <Airway>M605</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-1.719444" Lat="52.746666" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Name>Pole Hill</Name>
+        <Ident>POL</Ident>
+        <Region>EG</Region>
+        <Airway>M605</Airway>
+        <Type>VOR</Type>
+        <Pos Lon="-2.103328" Lat="53.743767" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>NELSA</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-2.184722" Lat="53.863335" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>RIBEL</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-2.289722" Lat="54.016109" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>ERGAB</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-2.386667" Lat="54.156113" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>SHAPP</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-2.627222" Lat="54.500000" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>ABEVI</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-2.774722" Lat="54.707500" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>INPIP</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-2.896139" Lat="54.876537" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>UTOGU</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-3.078611" Lat="55.127777" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>INREV</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-3.094295" Lat="55.149288" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>ESKDO</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-3.204239" Lat="55.298889" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>IPDOR</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-3.262500" Lat="55.377499" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Name>Talla</Name>
+        <Ident>TLA</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>VOR</Type>
+        <Pos Lon="-3.352833" Lat="55.499146" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Ident>GRICE</Ident>
+        <Region>EG</Region>
+        <Airway>N601</Airway>
+        <Type>WAYPOINT</Type>
+        <Pos Lon="-3.685497" Lat="56.196667" Alt="10000.00"/>
+      </Waypoint>
+      <Waypoint>
+        <Name>Wick</Name>
+        <Ident>EGPC</Ident>
+        <Type>AIRPORT</Type>
+        <Pos Lon="-3.092772" Lat="58.458611" Alt="114.00"/>
+      </Waypoint>
+    </Waypoints>
+  </Flightplan>
+</LittleNavmap>
