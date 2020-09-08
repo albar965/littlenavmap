@@ -190,10 +190,10 @@ public:
 
   /* Check if route has valid departure  and destination and departure parking.
    *  @return true if route can be saved anyway */
-  bool routeValidate(bool validateParking, bool validateDepartureAndDestination, bool multi = false);
+  bool routeValidate(const QVector<RouteExportFormat>& formats, bool multi = false);
 
   /* Validates only if this is a manual save */
-  bool routeValidateMulti(const RouteExportFormat& format, bool validateParking, bool validateDepartureAndDestination);
+  bool routeValidateMulti(const RouteExportFormat& format);
 
   /* Build filename according to pattern set in options. */
   static QString buildDefaultFilename(const QString& suffix = ".lnmpln");

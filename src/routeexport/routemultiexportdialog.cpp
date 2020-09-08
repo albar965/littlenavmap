@@ -241,16 +241,16 @@ void RouteMultiExportDialog::updateTableColors()
         // Color style path =========================
         if(col == PATH)
         {
-          item->setToolTip(tr("Double click to edit"));
+          item->setToolTip(tr("Press F2 or double click to edit"));
           QString errorMessage;
           if(fmt.isSelected() && !fmt.isPathValid(&errorMessage))
           {
             // Red for invalid paths/files =====================
             item->setForeground(QColor(Qt::red));
             if(fmt.isExportToFile())
-              item->setToolTip(tr("Error: %1.\nDouble click to edit.").arg(errorMessage));
+              item->setToolTip(tr("Error: %1.\nPress F2 or double click to edit.").arg(errorMessage));
             else
-              item->setToolTip(tr("Error: %1.\nDouble click to edit.").arg(errorMessage));
+              item->setToolTip(tr("Error: %1.\nPress F2 or double click to edit.").arg(errorMessage));
           }
           else
           {
@@ -259,7 +259,8 @@ void RouteMultiExportDialog::updateTableColors()
               // Dark gray for default paths =====================
               item->setForeground(QColor(Qt::darkGray));
               if(fmt.isSelected())
-                item->setToolTip(tr("Default file or directory selected for export.\nDouble click to edit."));
+                item->setToolTip(tr("Default file or directory selected for export.\n"
+                                    "Press F2 or double click to edit."));
             }
             else
             {
@@ -268,7 +269,7 @@ void RouteMultiExportDialog::updateTableColors()
               if(fmt.isSelected())
                 item->setToolTip(tr("File or directory selected for export and changed by user.\n"
                                     "Given path will be used for all simulators.\n"
-                                    "Double click to edit."));
+                                    "Press F2 or double click to edit."));
             }
           }
         }
@@ -398,7 +399,7 @@ void RouteMultiExportDialog::updateModel()
     item = new QStandardItem(format.getPathOrDefault());
     item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     item->setData(userdata, FORMAT_TYPE_ROLE);
-    item->setToolTip(tr("Double click to edit"));
+    item->setToolTip(tr("Press F2 or double click to edit"));
     itemModel->setItem(row, PATH, item);
 
     row++;

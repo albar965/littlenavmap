@@ -95,7 +95,7 @@ void RouteExport::exportType(RouteExportFormat format)
 void RouteExport::routeMultiExport()
 {
   // First check constraints
-  if(routeValidate(true /* validate parking */, true /* validate departure and destination */, true /* multi */))
+  if(routeValidate(exportFormatMap->getSelected(), true /* multi */))
   {
     // Export all button or menu item
     int numExported = 0;
@@ -226,7 +226,7 @@ bool RouteExport::routeExportInternalPln(bool annotated, const RouteExportFormat
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(routeValidateMulti(format, true /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFile(format, "Route/Pln" + NavApp::getCurrentSimulatorShortName(),
                                    NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(".pln"),
@@ -257,7 +257,7 @@ bool RouteExport::routeExportFms3Multi(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fms"));
     if(!routeFile.isEmpty())
@@ -282,7 +282,7 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
   if(!routeSaveCheckFMS11Warnings())
     return false;
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     // Try to get X-Plane default output directory for flight plans
     QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
@@ -320,7 +320,7 @@ bool RouteExport::routeExportFlpMulti(const RouteExportFormat& format)
 bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool crj)
 {
   qDebug() << Q_FUNC_INFO;
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     // <Documents>/Aerosoft/Airbus/Flightplans.
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".flp"));
@@ -345,7 +345,7 @@ bool RouteExport::routeExportFlightgearMan()
 bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFile(format, "Route/FlightGear", atools::documentsDir(),
                                    buildDefaultFilename(".fgfp"),
@@ -367,7 +367,7 @@ bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
 
   // Save flight plan as FPL file usable by the GNS 530W/430W V2 - XML format
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString path;
 
@@ -399,7 +399,7 @@ bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
 
   // Save flight plan as GFP file usable by the Reality XP GTN 750/650 Touch
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString path;
 
@@ -432,7 +432,7 @@ bool RouteExport::routeExportGfpMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
 
   // <FSX/P3D>/F1GTN/FPL.
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("-", ".gfp"));
     if(!routeFile.isEmpty())
@@ -449,7 +449,7 @@ bool RouteExport::routeExportTxtMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".txt"));
     if(!routeFile.isEmpty())
@@ -465,7 +465,7 @@ bool RouteExport::routeExportRteMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".rte"));
     if(!routeFile.isEmpty())
@@ -484,7 +484,7 @@ bool RouteExport::routeExportFprMulti(const RouteExportFormat& format)
 
   // <FSX/P3D>/SimObjects/Airplanes/mjc8q400/nav/routes.
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpr"));
     if(!routeFile.isEmpty())
@@ -502,7 +502,7 @@ bool RouteExport::routeExportFplMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
 
   // \X-Plane 11\Aircraft\X-Aviation\IXEG 737 Classic\coroutes
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
     if(!routeFile.isEmpty())
@@ -519,7 +519,7 @@ bool RouteExport::routeExportCorteInMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, "corte.in");
     if(!routeFile.isEmpty())
@@ -538,7 +538,7 @@ bool RouteExport::routeExportFltplanMulti(const RouteExportFormat& format)
   // <FSX/P3D>/iFly/737NG/navdata/FLTPLAN.
   // YSSYYMML.FLTPLAN
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fltplan"));
     if(!routeFile.isEmpty())
@@ -559,7 +559,7 @@ bool RouteExport::routeExportXFmcMulti(const RouteExportFormat& format)
   // LFLLEHAM.FPL
   // Same as TXT but FPL
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
     if(!routeFile.isEmpty())
@@ -575,7 +575,7 @@ bool RouteExport::routeExportUFmcMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
   // EDDHLIRF.ufmc
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".ufmc"));
     if(!routeFile.isEmpty())
@@ -592,7 +592,7 @@ bool RouteExport::routeExportProSimMulti(const RouteExportFormat& format)
   // companyroutes.xml
   qDebug() << Q_FUNC_INFO;
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, "companyroutes.xml");
     if(!routeFile.isEmpty())
@@ -611,7 +611,7 @@ bool RouteExport::routeExportBbsMulti(const RouteExportFormat& format)
   // <FSX/P3D>/Blackbox Simulation/Company Routes.
   // Uses FS9 PLN format.   EDDHLIRF.pln
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".pln"));
     if(!routeFile.isEmpty())
@@ -627,7 +627,7 @@ bool RouteExport::routeExportBbsMulti(const RouteExportFormat& format)
 bool RouteExport::routeExportFeelthereFplMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".fpl"));
     if(!routeFile.isEmpty())
@@ -648,7 +648,7 @@ bool RouteExport::routeExportFeelthereFplMulti(const RouteExportFormat& format)
 bool RouteExport::routeExportLeveldRteMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".rte"));
     if(!routeFile.isEmpty())
@@ -664,7 +664,7 @@ bool RouteExport::routeExportLeveldRteMulti(const RouteExportFormat& format)
 bool RouteExport::routeExportEfbrMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".efbr"));
     if(!routeFile.isEmpty())
@@ -683,7 +683,7 @@ bool RouteExport::routeExportEfbrMulti(const RouteExportFormat& format)
 bool RouteExport::routeExportQwRteMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".rte"));
     if(!routeFile.isEmpty())
@@ -699,7 +699,7 @@ bool RouteExport::routeExportQwRteMulti(const RouteExportFormat& format)
 bool RouteExport::routeExportMdrMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".mdr"));
     if(!routeFile.isEmpty())
@@ -717,7 +717,7 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
   // {Simulator}\SimObjects\Airplanes\TFDi_Design_717\Documents\Company Routes/
 
   qDebug() << Q_FUNC_INFO;
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".xml"));
     if(!routeFile.isEmpty())
@@ -752,7 +752,7 @@ bool RouteExport::routeExportVfpMan()
 bool RouteExport::routeExportVfp(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     RouteExportData exportData = createRouteExportData(re::VFP);
     if(routeExportDialog(exportData, re::VFP))
@@ -793,7 +793,7 @@ bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteE
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(routeValidateMulti(format, false /* validate parking */, true /* validate departure and destination */))
+  if(routeValidateMulti(format))
   {
     RouteExportData exportData = createRouteExportData(type);
     if(routeExportDialog(exportData, type))
@@ -880,22 +880,19 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(routeValidateMulti(format, false /* validate parking */, false /* validate departure and destination */))
-  {
-    QString routeFile = exportFile(format, "Route/Gpx", atools::documentsDir(),
-                                   buildDefaultFilename(".gpx"),
-                                   false /* confirm overwrite */);
+  QString routeFile = exportFile(format, "Route/Gpx", atools::documentsDir(),
+                                 buildDefaultFilename(".gpx"),
+                                 false /* confirm overwrite */);
 
-    if(!routeFile.isEmpty())
+  if(!routeFile.isEmpty())
+  {
+    if(exportFlightplanAsGpx(routeFile))
     {
-      if(exportFlightplanAsGpx(routeFile))
-      {
-        if(NavApp::getAircraftTrack().isEmpty())
-          mainWindow->setStatusMessage(tr("Flight plan saved as GPX."));
-        else
-          mainWindow->setStatusMessage(tr("Flight plan and track saved as GPX."));
-        return true;
-      }
+      if(NavApp::getAircraftTrack().isEmpty())
+        mainWindow->setStatusMessage(tr("Flight plan saved as GPX."));
+      else
+        mainWindow->setStatusMessage(tr("Flight plan and track saved as GPX."));
+      return true;
     }
   }
   return false;
@@ -931,24 +928,30 @@ bool RouteExport::routeExportHtml(const RouteExportFormat& format)
   return false;
 }
 
-bool RouteExport::routeValidateMulti(const RouteExportFormat& format, bool validateParking,
-                                     bool validateDepartureAndDestination)
+bool RouteExport::routeValidateMulti(const RouteExportFormat& format)
 {
   if(format.isMulti())
     // Contraints are validated before running the export loop
     return true;
   else
     // Manual export
-    return routeValidate(validateParking, validateDepartureAndDestination);
+    return routeValidate({format});
 }
 
 /* Check if route has valid departure  and destination and departure parking.
  *  @return true if route can be saved anyway */
-bool RouteExport::routeValidate(bool validateParking, bool validateDepartureAndDestination, bool multi)
+bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool multi)
 {
+  bool validateParking = false, validateDepartAndDest = false;
+  for(const RouteExportFormat& fmt : formats)
+  {
+    validateParking |= fmt.getFlags().testFlag(rexp::PARKING);
+    validateDepartAndDest |= fmt.getFlags().testFlag(rexp::AIRPORTS);
+  }
+
   if(!NavApp::getRouteConst().hasValidDeparture() || !NavApp::getRouteConst().hasValidDestination())
   {
-    if(validateDepartureAndDestination)
+    if(validateDepartAndDest)
     {
       NavApp::deleteSplashScreen();
       const static atools::gui::DialogButtonList BUTTONS({
@@ -961,7 +964,7 @@ bool RouteExport::routeValidate(bool validateParking, bool validateDepartureAndD
       if(multi)
       {
         text = tr("Flight Plan must have a valid airport as start and destination and "
-                  "might not be usable.");
+                  "might not be usable for the selected export formats.");
         text2 = tr("Do not show this dialog again and export all files in the future.");
       }
       else
@@ -998,9 +1001,15 @@ bool RouteExport::routeValidate(bool validateParking, bool validateDepartureAndD
           {QString(), QMessageBox::Save}
         });
 
+        QString message;
+        if(multi)
+          message = tr("One or more of the selected export formats support "
+                       "setting a parking spot as a start position.\n\n");
+
+        message += tr("The departure airport has parking spots but no parking was selected for this Flight Plan.");
         int result = dialog->showQuestionMsgBox(
           lnm::ACTIONS_SHOWROUTE_PARKING_WARNING,
-          tr("The departure airport has parking spots but no parking was selected for this Flight Plan."),
+          message,
           tr("Do not show this dialog again and save Flight Plan in the future."),
           BUTTONS, QMessageBox::Yes, QMessageBox::Save);
 
