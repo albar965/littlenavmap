@@ -603,7 +603,7 @@ void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode,
     atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL,
                                                    tr(
                                                      "<p>Download of weather from<br/>\"%1\"<br/>failed.</p><p>Error: %2 (%3)</p>"
-                                                       "<p>Check you weather settings or disable weather downloads.</p>"
+                                                       "<p>Check your weather settings or disable weather downloads.</p>"
                                                          "<p>Suppressing further messages during this session.</p>").
                                                    arg(url).arg(error).arg(errorCode),
                                                    tr("Do not &show this dialog again."));
