@@ -185,7 +185,8 @@ void checkAndMigrateSettings()
             removeAndLog(settings, key);
 
         // and vatsim URL,
-        settings.setValue("Widget_lineEditOptionsWeatherVatsimUrl", "https://metar.vatsim.net/metar.php?id=ALL");
+        settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl",
+                          "https://metar.vatsim.net/metar.php?id=ALL");
 
         // Make map font a bold copy of system font
         QFont font(QGuiApplication::font());

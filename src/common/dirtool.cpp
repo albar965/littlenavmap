@@ -68,16 +68,17 @@ DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, c
 
 void DirTool::run()
 {
-  if(!hasAllDirs())
+  // if(!hasAllDirs())
   {
     QString message;
 
-    message.append(tr("<p><i>Little Navmap</i> can create a recommended directory structure to store all your files "
-                        "in your documents folder.</p>"
-                        "<p>The follwing folders will be created:</p>"
-                          "<p><b>%1</b><br/>"
-                          "Top level directory for all files of <i>Little Navmap</i> "
-                          "containing the following sub-directories:</p>").
+    message.append(tr("<p style='white-space:pre'>"
+                        "<b><i>Little Navmap</i> can create a recommended directory structure "
+                          "to store all your files in your documents folder.</b></p>"
+                          "<p>The follwing folders will be created:</p>"
+                            "<p><b>%1</b><br/>"
+                            "Top level directory for all files of <i>Little Navmap</i> "
+                            "containing the following sub-directories:</p>").
                    arg(QDir::toNativeSeparators(documentsDir + SEP + applicationDir)));
 
     // Show list of folders and comment =========

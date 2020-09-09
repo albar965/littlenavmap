@@ -203,7 +203,6 @@ message(ATOOLS_INC_PATH: $$ATOOLS_INC_PATH)
 message(ATOOLS_LIB_PATH: $$ATOOLS_LIB_PATH)
 message(MARBLE_INC_PATH: $$MARBLE_INC_PATH)
 message(MARBLE_LIB_PATH: $$MARBLE_LIB_PATH)
-macx : message(MARBLE_BUILD_PATH: $$MARBLE_BUILD_PATH)
 message(DEPLOY_BASE: $$DEPLOY_BASE)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
@@ -723,7 +722,7 @@ unix:!macx {
 # Mac specific deploy target
 macx {
 
-INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
+  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
          -change  $$INSTALL_MARBLE_DYLIB \
           @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
 
@@ -734,7 +733,7 @@ INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
   DEPLOY_APP=\"$$PWD/../deploy/Little Navmap.app\"
   DEPLOY_DIR=\"$$PWD/../deploy\"
 
-message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
+  message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
 
   deploy.commands = rm -Rfv $$DEPLOY_APP &&
   deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&

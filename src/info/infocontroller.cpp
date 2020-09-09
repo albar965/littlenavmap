@@ -98,20 +98,15 @@ InfoController::InfoController(MainWindow *parent)
   ui->textBrowserAircraftAiInfo->setSearchPaths(paths);
 
   // Inactive texts, tooltips and placeholders
-  waitingForUpdateText = tr("Connected and waiting for update.\nAircraft has to be loaded for updates.");
-  waitingForUpdateTooltip = tr("<p style='white-space:pre'><i>Little Navmap</i> is already connected to a "
-                               "simulator or <i>Little Navconnect</i>.<br/>"
-                               "Prepare your flight and "
-                               "load your aircraft in the simulator to see progress updates.</p>");
-  waitingForUpdateStatustip = tr("Load your aircraft in the simulator to see progress updates");
+  waitingForUpdateText = tr("Little Navmap is connected to a "
+                            "simulator or Little Navconnect.\n"
+                            "Prepare your flight and load your aircraft in the simulator to see progress updates.");
 
-  notConnectedText = tr("Not connected to simulator.");
-  notConnectedTooltip = tr("<p style='white-space:pre'>Go to: "
-                             "Main menu -&gt; \"Tools\" -&gt; \"Flight Simulator Connection\" "
-                             "or press <code>Ctrl+Shift+C</code>.<br/>"
-                             "Then choose your simulator and connect.</p>",
-                           "Keep instructions in sync with translated menus and shortcuts");
-  notConnectedStatustip = tr("Connect to simulator to see updates");
+  notConnectedText = tr("Not connected to simulator.\n"
+                        "Go to the main menu -> \"Tools\" -> \"Flight Simulator Connection\" "
+                        "or press \"Ctrl+Shift+C\".\n"
+                        "Then choose your simulator and click \"Connect\".\n",
+                        "Keep instructions in sync with translated menus and shortcuts");
 
   // Create connections for "Map" links in text browsers
   connect(ui->textBrowserAirportInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
@@ -1025,6 +1020,9 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
     foundNavaid = true;
   }
 
+  if(!foundNavaid)
+    html.clear();
+
   if(foundNavaid || forceUpdate)
     atools::gui::util::updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml(),
                                       scrollToTop, !scrollToTop /* keep selection */);
@@ -1124,16 +1122,12 @@ void InfoController::updateUserAircraftText()
     {
       ui->textBrowserAircraftInfo->clear();
       ui->textBrowserAircraftInfo->setPlaceholderText(waitingForUpdateText);
-      ui->textBrowserAircraftInfo->setToolTip(waitingForUpdateTooltip);
-      ui->textBrowserAircraftInfo->setStatusTip(waitingForUpdateStatustip);
     }
   }
   else
   {
     ui->textBrowserAircraftInfo->clear();
     ui->textBrowserAircraftInfo->setPlaceholderText(notConnectedText);
-    ui->textBrowserAircraftInfo->setToolTip(notConnectedTooltip);
-    ui->textBrowserAircraftInfo->setStatusTip(notConnectedStatustip);
   }
 }
 
@@ -1164,16 +1158,12 @@ void InfoController::updateAircraftProgressText()
     {
       ui->textBrowserAircraftProgressInfo->clear();
       ui->textBrowserAircraftProgressInfo->setPlaceholderText(waitingForUpdateText);
-      ui->textBrowserAircraftProgressInfo->setToolTip(waitingForUpdateTooltip);
-      ui->textBrowserAircraftProgressInfo->setStatusTip(waitingForUpdateStatustip);
     }
   }
   else
   {
     ui->textBrowserAircraftProgressInfo->clear();
     ui->textBrowserAircraftProgressInfo->setPlaceholderText(notConnectedText);
-    ui->textBrowserAircraftProgressInfo->setToolTip(notConnectedTooltip);
-    ui->textBrowserAircraftProgressInfo->setStatusTip(notConnectedStatustip);
   }
 }
 
@@ -1230,16 +1220,12 @@ void InfoController::updateAiAircraftText()
     {
       ui->textBrowserAircraftAiInfo->clear();
       ui->textBrowserAircraftAiInfo->setPlaceholderText(waitingForUpdateText);
-      ui->textBrowserAircraftAiInfo->setToolTip(waitingForUpdateTooltip);
-      ui->textBrowserAircraftAiInfo->setStatusTip(waitingForUpdateStatustip);
     }
   }
   else
   {
     ui->textBrowserAircraftAiInfo->clear();
     ui->textBrowserAircraftAiInfo->setPlaceholderText(notConnectedText);
-    ui->textBrowserAircraftAiInfo->setToolTip(notConnectedTooltip);
-    ui->textBrowserAircraftAiInfo->setStatusTip(notConnectedStatustip);
   }
 }
 

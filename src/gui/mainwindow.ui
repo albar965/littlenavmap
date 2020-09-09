@@ -11469,7 +11469,7 @@ Best track will be selected automatically.</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Stay on Top</string>
+    <string>&amp;Keep in Foreground</string>
    </property>
    <property name="toolTip">
     <string>Keeps main window of program on top of others</string>

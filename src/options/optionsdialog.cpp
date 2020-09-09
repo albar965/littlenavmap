@@ -177,7 +177,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft and trail."), ":/littlenavmap/resources/icons/aircraft.svg"));
   list->addItem(pageListItem(list, tr("Flight Plan"), tr("Options for flight plan calculation, saving and loading."), ":/littlenavmap/resources/icons/route.svg"));
   list->addItem(pageListItem(list, tr("Weather"), tr("Change weather sources for information and tooltips."), ":/littlenavmap/resources/icons/weather.svg"));
-  list->addItem(pageListItem(list, tr("Weather URLs"), tr("Change web download addresses of weather sources."), ":/littlenavmap/resources/icons/weatherurl.svg"));
+  list->addItem(pageListItem(list, tr("Weather Files"), tr("Change web download addresses or file paths of weather sources."), ":/littlenavmap/resources/icons/weatherurl.svg"));
   list->addItem(pageListItem(list, tr("Online Flying"), tr("Select online flying services like VATSIM, IVAO or custom."), ":/littlenavmap/resources/icons/aircraft_online.svg"));
   list->addItem(pageListItem(list, tr("Web Server"), tr("Change settings for the internal web server."), ":/littlenavmap/resources/icons/web.svg"));
   list->addItem(pageListItem(list, tr("Cache and Files"), tr("Change map cache, select elevation data source and the path for user airspaces."), ":/littlenavmap/resources/icons/filesave.svg"));
