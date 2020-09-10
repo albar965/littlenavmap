@@ -88,6 +88,7 @@ Notes:
   the file pattern to your needs.
 * Little Navmap will ask to create a recommended folder structure for your files in documents
   folder. Skip this step (`Do not show again`) if you do not like this.
+* macOS is supported up from macOS Sierra 10.12 inclusive. Older versions are not supported anymore.
 
 Changes:
 

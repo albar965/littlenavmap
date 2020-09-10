@@ -297,12 +297,12 @@ int main(int argc, char *argv[])
     formatter::initTranslateableTexts();
 
 #if defined(Q_OS_MACOS)
-    // Check for minimum macOS version 10.10
-    if(QSysInfo::macVersion() != QSysInfo::MV_None && QSysInfo::macVersion() < QSysInfo::MV_10_10)
+    // Check for minimum macOS version  macOS Sierra 10.12
+    if(QSysInfo::macVersion() != QSysInfo::MV_None && QSysInfo::macVersion() < QSysInfo::MV_10_12)
     {
       NavApp::deleteSplashScreen();
       QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
-                            QObject::tr("%1 needs at least macOS Yosemite version 10.10 or newer.").
+                            QObject::tr("%1 needs at least macOS Sierra version 10.12 or newer.").
                             arg(QApplication::applicationName()));
       return 1;
     }
