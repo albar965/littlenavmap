@@ -4376,7 +4376,7 @@ Example: &quot;EDDF_LIRF.lnmpln&quot;</string>
                <item row="4" column="0">
                 <widget class="QLineEdit" name="lineEditOptionsRouteFilename">
                  <property name="toolTip">
-                  <string extracomment="Do not translate the keywords">Applies to new filenames when saving LNMPLN FSX, P3D or FlightGear flight plans.
+                  <string extracomment="Do not translate the keywords">Applies to new filenames when saving LNMPLN, FSX, Prepar3D, FlightGear or MSFS flight plans.
 The file suffix like &quot;.lnmpln&quot;, &quot;.pln&quot; or &quot;.fgfp&quot; is appended automatically.
 
 PLANTYPE: IFR or VFR
@@ -6091,7 +6091,7 @@ Currently only OpenAir is supported (*.txt). </string>
                  <property name="toolTip">
                   <string>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
-These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
+These paths apply to all Flight Simulators (FSX, Prepar3D, MSFS and X-Plane).
 You have to reload the scenery library so that the changes take effect.</string>
                  </property>
                  <property name="editTriggers">
@@ -6171,7 +6171,7 @@ You have to reload the scenery library so that the changes take effect.</string>
                   <string>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
 You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
-These paths apply to all Flight Simulators  (FSX, P3D and X-Plane).
+These paths apply to all Flight Simulators  (FSX, Prepar3D, MSFS and X-Plane).
 You have to reload the scenery library so that the changes take effect.</string>
                  </property>
                  <property name="editTriggers">

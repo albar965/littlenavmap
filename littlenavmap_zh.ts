@@ -1598,7 +1598,11 @@ Lower values will result in a more fluid aircraft movement but can potentially i
         <source>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1852 km).
-FSX, P3D and MSFS allow a maxium of 105 NM.</source>
+FSX, Prepar3D and MSFS allow a maxium of 105 NM.</source>
+        <oldsource>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
+Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
+The unit is always nautical miles (1 NM equals to 1852 km).
+FSX, P3D and MSFS allow a maxium of 105 NM.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2293,79 +2297,80 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="75"/>
-        <source>&lt;p&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files in your documents folder.&lt;/p&gt;&lt;p&gt;The follwing folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/common/dirtool.cpp" line="84"/>
-        <source>&lt;ul&gt;</source>
+        <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files in your documents folder.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The follwing folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files in your documents folder.&lt;/p&gt;&lt;p&gt;The follwing folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="85"/>
+        <source>&lt;ul&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/dirtool.cpp" line="86"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;For flight plans in &lt;i&gt;Little Navmap&lt;/i&gt;&apos;s own format &lt;code&gt;.lnmpln&lt;/code&gt;&lt;/li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="88"/>
+        <location filename="src/common/dirtool.cpp" line="89"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Directory for aircraft performance files (&lt;code&gt;.lnmperf&lt;/code&gt;)&lt;/li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="91"/>
+        <location filename="src/common/dirtool.cpp" line="92"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;For saved window layouts (&lt;code&gt;.lnmlayout&lt;/code&gt;)&lt;/li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="94"/>
+        <location filename="src/common/dirtool.cpp" line="95"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the aiport information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="97"/>
+        <location filename="src/common/dirtool.cpp" line="98"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;User defined airspaces in OpenAir format&lt;/li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="100"/>
+        <location filename="src/common/dirtool.cpp" line="101"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place for the GLOBE data used by the flight plan elevation profile&lt;/li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="103"/>
+        <location filename="src/common/dirtool.cpp" line="104"/>
         <source>&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="105"/>
+        <location filename="src/common/dirtool.cpp" line="106"/>
         <source>&lt;p&gt;This step is optional.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="108"/>
+        <location filename="src/common/dirtool.cpp" line="109"/>
         <source>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here for more information in the &lt;i&gt;Little Navmap&lt;/i&gt; online manual&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="111"/>
+        <location filename="src/common/dirtool.cpp" line="112"/>
         <source>&lt;p&gt;Should &lt;i&gt;Little Navmap&lt;/i&gt; create these directories now?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="125"/>
+        <location filename="src/common/dirtool.cpp" line="126"/>
         <source>Errors creating directory structure:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="153"/>
-        <location filename="src/common/dirtool.cpp" line="169"/>
+        <location filename="src/common/dirtool.cpp" line="154"/>
+        <location filename="src/common/dirtool.cpp" line="170"/>
         <source>Cannot create directory &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="158"/>
-        <location filename="src/common/dirtool.cpp" line="174"/>
+        <location filename="src/common/dirtool.cpp" line="159"/>
+        <location filename="src/common/dirtool.cpp" line="175"/>
         <source>Cannot create directory &quot;%1&quot;. File with same name already exists.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2687,90 +2692,76 @@ This will change the shown map region and might change details.</source>
         <translation>打开或关闭选项页</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="101"/>
-        <source>Connected and waiting for update.
-Aircraft has to be loaded for updates.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/info/infocontroller.cpp" line="102"/>
-        <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;i&gt;Little Navmap&lt;/i&gt; is already connected to a simulator or &lt;i&gt;Little Navconnect&lt;/i&gt;.&lt;br/&gt;Prepare your flight and load your aircraft in the simulator to see progress updates.&lt;/p&gt;</source>
-        <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;Prepare your flight and load your aircraft in the simulator to see progress updates.&lt;/p&gt;</oldsource>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/info/infocontroller.cpp" line="106"/>
-        <source>Load your aircraft in the simulator to see progress updates</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/info/infocontroller.cpp" line="108"/>
         <source>Not connected to simulator.</source>
-        <translation type="unfinished">没有连接到模拟器。</translation>
+        <translation type="obsolete">没有连接到模拟器。</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="109"/>
-        <source>&lt;p style=&apos;white-space:pre&apos;&gt;Go to: Main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Flight Simulator Connection&quot; or press &lt;code&gt;Ctrl+Shift+C&lt;/code&gt;.&lt;br/&gt;Then choose your simulator and connect.&lt;/p&gt;</source>
+        <location filename="src/info/infocontroller.cpp" line="101"/>
+        <source>Little Navmap is connected to a simulator or Little Navconnect.
+Prepare your flight and load your aircraft in the simulator to see progress updates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/info/infocontroller.cpp" line="105"/>
+        <source>Not connected to simulator.
+Go to the main menu -&gt; &quot;Tools&quot; -&gt; &quot;Flight Simulator Connection&quot; or press &quot;Ctrl+Shift+C&quot;.
+Then choose your simulator and click &quot;Connect&quot;.
+</source>
         <comment>Keep instructions in sync with translated menus and shortcuts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="114"/>
-        <source>Connect to simulator to see updates</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/info/infocontroller.cpp" line="755"/>
+        <location filename="src/info/infocontroller.cpp" line="750"/>
         <source>Remove Airspace Highlights</source>
         <translation>移除空域高亮</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="795"/>
+        <location filename="src/info/infocontroller.cpp" line="790"/>
         <source>Remove Center Highlights</source>
         <translation>移除管制中心高亮</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="904"/>
+        <location filename="src/info/infocontroller.cpp" line="899"/>
         <source>airport</source>
         <translation>机场</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="907"/>
+        <location filename="src/info/infocontroller.cpp" line="902"/>
         <source>navaid</source>
         <translation>助航设备</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="910"/>
+        <location filename="src/info/infocontroller.cpp" line="905"/>
         <source>userpoint</source>
         <translation>用户航点</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="913"/>
+        <location filename="src/info/infocontroller.cpp" line="908"/>
         <source>airspace</source>
         <translation>空域</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="916"/>
+        <location filename="src/info/infocontroller.cpp" line="911"/>
         <source>logbook entry</source>
         <translation>记录本条目</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="919"/>
+        <location filename="src/info/infocontroller.cpp" line="914"/>
         <source>online clients</source>
         <translation>在线客户端</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="922"/>
+        <location filename="src/info/infocontroller.cpp" line="917"/>
         <source>online center</source>
         <translation>在线管制中心</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="925"/>
+        <location filename="src/info/infocontroller.cpp" line="920"/>
         <source>Showing information for %1.</source>
         <translation>正显示 %1 的信息。</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="960"/>
+        <location filename="src/info/infocontroller.cpp" line="955"/>
         <source>Remove Airway and Track Highlights</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2783,17 +2774,17 @@ Aircraft has to be loaded for updates.</source>
         <translation type="vanished">已连接，等待更新。</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="1217"/>
+        <location filename="src/info/infocontroller.cpp" line="1207"/>
         <source>&lt;b&gt;AI and multiplayer aircraft are not shown on map.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;AI或多人游戏的航空器没有显示在地图上。&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="1219"/>
+        <location filename="src/info/infocontroller.cpp" line="1209"/>
         <source>No AI or multiplayer aircraft selected.&lt;br/&gt;Found %1 AI or multiplayer aircraft.</source>
         <translation>没有AI或多人游戏航空器被选中。&lt;br/&gt; 已获取 %1 AI或多人游戏航空器。</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="1221"/>
+        <location filename="src/info/infocontroller.cpp" line="1211"/>
         <source>no</source>
         <translation>无</translation>
     </message>
@@ -6700,6 +6691,11 @@ Best track will be selected automatically.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="11472"/>
+        <source>&amp;Keep in Foreground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Status&amp;bar</source>
         <translation type="vanished">状态栏(&amp;B)</translation>
     </message>
@@ -7437,11 +7433,6 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7696"/>
         <source>Center flight plan on map</source>
         <translation>在地图上将飞行计划居中</translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.ui" line="11472"/>
-        <source>&amp;Stay on Top</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11475"/>
@@ -8406,13 +8397,6 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7354"/>
         <source>Set Home &amp;View</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.ui" line="7546"/>
-        <location filename="src/gui/mainwindow.ui" line="7549"/>
-        <source>Show range for navaid on map</source>
-        <oldsource>Show &amp;Navaid Range for %1</oldsource>
-        <translation type="unfinished">在地图上显示助航设备覆盖范围</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7561"/>
@@ -9434,12 +9418,6 @@ Best track will be selected automatically.</source>
         <translation type="vanished">显示 %1 的起落航线</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9779"/>
-        <location filename="src/gui/mainwindow.ui" line="9782"/>
-        <source>Show Airport traffic pattern for a runway at this airport</source>
-        <translation>显示此机场某条跑道的起落航线</translation>
-    </message>
-    <message>
         <source>Remove Airport Traffic Pattern</source>
         <translation type="vanished">移除机场起落航线</translation>
     </message>
@@ -10184,12 +10162,6 @@ Best track will be selected automatically.</source>
     <message>
         <source>Display Holding at %1</source>
         <translation type="vanished">显示 %1 的等待程序</translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.ui" line="10841"/>
-        <location filename="src/gui/mainwindow.ui" line="10844"/>
-        <source>Display holding at this position or navaid</source>
-        <translation>显示此位置或机场的等待程序</translation>
     </message>
     <message>
         <source>Remove Holding</source>
@@ -18277,7 +18249,7 @@ Example: &quot;EDDF_LIRF.lnmpln&quot;</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4379"/>
-        <source>Applies to new filenames when saving LNMPLN FSX, P3D or FlightGear flight plans.
+        <source>Applies to new filenames when saving LNMPLN, FSX, Prepar3D, FlightGear or MSFS flight plans.
 The file suffix like &quot;.lnmpln&quot;, &quot;.pln&quot; or &quot;.fgfp&quot; is appended automatically.
 
 PLANTYPE: IFR or VFR
@@ -18286,6 +18258,15 @@ DEPARTNAME: Departure airport name
 DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</source>
+        <oldsource>Applies to new filenames when saving LNMPLN FSX, P3D or FlightGear flight plans.
+The file suffix like &quot;.lnmpln&quot;, &quot;.pln&quot; or &quot;.fgfp&quot; is appended automatically.
+
+PLANTYPE: IFR or VFR
+DEPARTIDENT: Departure airport ICAO code
+DEPARTNAME: Departure airport name
+DESTIDENT: Destination airport ICAO code
+DESTNAME: Destination airport name
+CRUISEALT: Cruise altitude</oldsource>
         <extracomment>Do not translate the keywords</extracomment>
         <translation type="unfinished"></translation>
     </message>
@@ -18723,9 +18704,13 @@ Little Navmap当前只能读取OpenAIR文件。 </translation>
         <location filename="src/options/options.ui" line="6092"/>
         <source>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
-These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
+These paths apply to all Flight Simulators (FSX, Prepar3D, MSFS and X-Plane).
 You have to reload the scenery library so that the changes take effect.</source>
-        <translation>在此列表里的所有目录包括子目录及文件都将在载入地景到Little Navmap数据库时被忽略。
+        <oldsource>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
+You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
+These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
+You have to reload the scenery library so that the changes take effect.</oldsource>
+        <translation type="unfinished">在此列表里的所有目录包括子目录及文件都将在载入地景到Little Navmap数据库时被忽略。
 如您希望排除不包含机场或助航设备的目录，您也可以用这个列表来加速数据库载入。
 这个路径适用于所有的飞行模拟器(FSX，P3D和X-Plane)。
 您需要重新载入地景库以使更改生效。</translation>
@@ -18735,9 +18720,14 @@ You have to reload the scenery library so that the changes take effect.</source>
         <source>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
 You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
-These paths apply to all Flight Simulators  (FSX, P3D and X-Plane).
+These paths apply to all Flight Simulators  (FSX, Prepar3D, MSFS and X-Plane).
 You have to reload the scenery library so that the changes take effect.</source>
-        <translation>所有在默认“scenery”目录外找到的机场会被认为是附加机场。
+        <oldsource>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
+You can use this list to modify this behavior.
+Any airports found in these directories and their sub-directories will not be considered add-ons.
+These paths apply to all Flight Simulators  (FSX, P3D and X-Plane).
+You have to reload the scenery library so that the changes take effect.</oldsource>
+        <translation type="unfinished">所有在默认“scenery”目录外找到的机场会被认为是附加机场。
 您可以用这个列表来改变此行为。
 在这些目录及子目录里找到的机场不会被认为是附加机场。
 这个路径适用于所有的飞行模拟器(FSX，P3D和X-Plane)。
@@ -19134,12 +19124,8 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="180"/>
-        <source>Weather URLs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/optionsdialog.cpp" line="180"/>
-        <source>Change web download addresses of weather sources.</source>
+        <source>Weather Files</source>
+        <oldsource>Weather URLs</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -19543,6 +19529,11 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2513"/>
         <source>Pattern is empty. Using default &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/optionsdialog.cpp" line="180"/>
+        <source>Change web download addresses or file paths of weather sources.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23353,7 +23344,7 @@ Really use it?</source>
         <translation>&lt;b&gt;地景：&lt;/b&gt; %1 (%2)&lt;br/&gt;&lt;b&gt;文件：&lt;/b&gt; %3&lt;br/&gt;&lt;br/&gt;&lt;b&gt;时间：&lt;/b&gt; %4&lt;br/&gt;错误：&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;已找到：&lt;/big&gt;&lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="114"/>
+        <location filename="src/common/dirtool.cpp" line="115"/>
         <location filename="src/db/databasemanager.cpp" line="744"/>
         <location filename="src/gui/mainwindow.cpp" line="2322"/>
         <location filename="src/gui/mainwindow.cpp" line="3088"/>
@@ -25072,12 +25063,12 @@ to select departure and destination.</oldsource>
         <translation type="vanished">GPX文件 %1;;全部文件 (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="892"/>
+        <location filename="src/routeexport/routeexport.cpp" line="889"/>
         <source>Flight plan saved as GPX.</source>
         <translation>飞行计划已另存为GPX。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="894"/>
+        <location filename="src/routeexport/routeexport.cpp" line="891"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>飞行计划和轨迹已另存为GPX。</translation>
     </message>
@@ -25122,18 +25113,25 @@ to select departure and destination.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="302"/>
+        <location filename="src/routeexport/routeexport.cpp" line="299"/>
         <source>Flight plan saved as FMS.</source>
         <translation type="unfinished">飞行计划已另存为FMS。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="922"/>
+        <location filename="src/routeexport/routeexport.cpp" line="919"/>
         <source>Flight plan saved as HTML.</source>
         <translation>飞行计划已另存为HTML。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="959"/>
-        <location filename="src/routeexport/routeexport.cpp" line="999"/>
+        <location filename="src/routeexport/routeexport.cpp" line="961"/>
+        <source>
+
+Really continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="968"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1018"/>
         <source>Select Start &amp;Position</source>
         <translation>选择起始位置(&amp;P)</translation>
     </message>
@@ -25142,13 +25140,38 @@ to select departure and destination.</oldsource>
         <translation type="vanished">飞行计划必须有有效的机场作为出发地和到达地，这将对模拟器不可用。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="974"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1013"/>
+        <location filename="src/routeexport/routeexport.cpp" line="960"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1032"/>
         <source>Do not show this dialog again and save Flight Plan in the future.</source>
         <translation>不要再显示此对话框并在将来保存飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1000"/>
+        <location filename="src/routeexport/routeexport.cpp" line="977"/>
+        <source>Flight Plan must have a valid airport as start and destination and might not be usable by the simulator.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="995"/>
+        <source>One or more of the selected export formats require a valid AIRAC cycle.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="997"/>
+        <source>The export format requires a valid AIRAC cycle.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="999"/>
+        <source>The selected scenery database does not contain AIRAC cycle information.
+This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="1019"/>
         <source>Show &amp;Departure on Map</source>
         <translation>在地图上显示出发地(&amp;D)</translation>
     </message>
@@ -25157,87 +25180,80 @@ to select departure and destination.</oldsource>
         <translation type="vanished">起始机场有停机位，但是在飞行计划中没有选择停机位</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="966"/>
+        <location filename="src/routeexport/routeexport.cpp" line="974"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable for the selected export formats.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="968"/>
+        <location filename="src/routeexport/routeexport.cpp" line="958"/>
         <source>Do not show this dialog again and export all files in the future.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="972"/>
-        <source>Flight Plan must have a valid airport as start and destination and might not be usable by the Simulator.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1006"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1025"/>
         <source>One or more of the selected export formats support setting a parking spot as a start position.
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1009"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1028"/>
         <source>The departure airport has parking spots but no parking was selected for this Flight Plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1065"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1179"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1080"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1194"/>
         <source>While saving GFP file:</source>
         <translation>在保存GFP文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1086"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1101"/>
         <source>While saving TXT or FPL file:</source>
         <translation>在保存TXT或FLP文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1129"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1144"/>
         <source>While saving UFMC file:</source>
         <translation>在保存UFMC文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1253"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1268"/>
         <source>While saving VFP file:</source>
         <translation>在保存VFP文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1382"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1397"/>
         <source>While saving FPL file:</source>
         <translation>在保存FPL文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1437"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1452"/>
         <source>While reading corte.in file:</source>
         <translation>在读取corte.in文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1469"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1484"/>
         <source>While saving to corte.in file:</source>
         <translation>在保存到corte.in文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1515"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1530"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>在读取 companyroutes.xml 文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1569"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1584"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>在保存到 companyroutes.xml 文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1659"/>
         <source>Database contains no AIRAC cycle information which is required for the X-Plane FSM 11 flight plan format.&lt;br/&gt;&lt;br/&gt;This can happen if you save a flight plan based on FSX or Prepar3D scenery.&lt;br/&gt;&lt;br/&gt;Really continue?</source>
-        <translation type="unfinished">数据库没有X-Plane FSM 11飞行计划格式要求的AIRAC 周期信息。&lt;br/&gt;&lt;br/&gt;这可能是由于您基于FSX或Prepar3D地景保存了飞行计划&lt;br/&gt;&lt;br/&gt;真的要继续吗？</translation>
+        <translation type="obsolete">数据库没有X-Plane FSM 11飞行计划格式要求的AIRAC 周期信息。&lt;br/&gt;&lt;br/&gt;这可能是由于您基于FSX或Prepar3D地景保存了飞行计划&lt;br/&gt;&lt;br/&gt;真的要继续吗？</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1664"/>
         <source>Do not &amp;show this dialog again and save in the future.</source>
-        <translation type="unfinished">不要再显示此对话框并在将来保存(&amp;S)。</translation>
+        <translation type="obsolete">不要再显示此对话框并在将来保存(&amp;S)。</translation>
     </message>
 </context>
 <context>
