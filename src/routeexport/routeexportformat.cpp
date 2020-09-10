@@ -137,7 +137,7 @@ void RouteExportFormatMap::init()
   insert(PLNMSFS,      RouteExportFormat(PLNMSFS,      AIRPORTS/*|PARKING*/, tr("pln"),               tr("Simulator"), tr("Microsoft Flight Simulator 2020")                             ));
   insert(PLNANNOTATED, RouteExportFormat(PLNANNOTATED, AIRPORTS|PARKING, tr("pln"),               tr("Simulator"), tr("FSX and Prepar3D (annotated for old Little Navmap versions)") ));
   insert(FMS3,         RouteExportFormat(FMS3,         AIRPORTS,         tr("fms"),               tr("Simulator"), tr("X-Plane FMS 3 (old limited format)")                          ));
-  insert(FMS11,        RouteExportFormat(FMS11,        AIRPORTS,         tr("fms"),               tr("Simulator"), tr("X-Plane FMS 11")                                              ));
+  insert(FMS11,        RouteExportFormat(FMS11,        AIRPORTS|CYCLE,   tr("fms"),               tr("Simulator"), tr("X-Plane FMS 11")                                              ));
   insert(FLP,          RouteExportFormat(FLP,          AIRPORTS,         tr("flp"),               tr("Aircraft"),  tr("Aerosoft Airbus and others")                                  ));
   insert(FLPCRJ,       RouteExportFormat(FLPCRJ,       AIRPORTS,         tr("flp"),               tr("Aircraft"),  tr("Aerosoft CRJ")                                                ));
   insert(FLIGHTGEAR,   RouteExportFormat(FLIGHTGEAR,   AIRPORTS,         tr("fgfp"),              tr("Simulator"), tr("FlightGear")                                                  ));

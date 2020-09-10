@@ -94,7 +94,8 @@ enum RouteExportFormatFlag : quint8
                         *  Forces file dialog to be shown. */
 
   PARKING = 1 << 4, /* Format allows to import parking start position */
-  AIRPORTS = 1 << 5 /* Valid departure and destination airports are needed */
+  AIRPORTS = 1 << 5, /* Valid departure and destination airports are needed */
+  CYCLE = 1 << 6 /* Format needs a valid AIRAC cycle */
 };
 
 Q_DECLARE_FLAGS(RouteExportFormatFlags, RouteExportFormatFlag);

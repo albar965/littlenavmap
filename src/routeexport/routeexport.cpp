@@ -279,9 +279,6 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(!routeSaveCheckFMS11Warnings())
-    return false;
-
   if(routeValidateMulti(format))
   {
     // Try to get X-Plane default output directory for flight plans
@@ -942,95 +939,113 @@ bool RouteExport::routeValidateMulti(const RouteExportFormat& format)
  *  @return true if route can be saved anyway */
 bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool multi)
 {
-  bool validateParking = false, validateDepartAndDest = false;
+  bool validateParking = false, validateDepartAndDest = false, validateCycle = false;
   for(const RouteExportFormat& fmt : formats)
   {
     validateParking |= fmt.getFlags().testFlag(rexp::PARKING);
     validateDepartAndDest |= fmt.getFlags().testFlag(rexp::AIRPORTS);
+    validateCycle |= fmt.getFlags().testFlag(rexp::CYCLE);
   }
 
-  if(!NavApp::getRouteConst().hasValidDeparture() || !NavApp::getRouteConst().hasValidDestination())
-  {
-    if(validateDepartAndDest)
-    {
-      NavApp::deleteSplashScreen();
-      const static atools::gui::DialogButtonList BUTTONS({
-        {QString(), QMessageBox::Cancel},
-        {tr("Select Start &Position"), QMessageBox::Yes},
-        {QString(), QMessageBox::Save}
-      });
-      QString text, text2;
+  NavApp::deleteSplashScreen();
 
-      if(multi)
-      {
-        text = tr("Flight Plan must have a valid airport as start and destination and "
-                  "might not be usable for the selected export formats.");
-        text2 = tr("Do not show this dialog again and export all files in the future.");
-      }
-      else
-      {
-        text = tr("Flight Plan must have a valid airport as start and destination and "
-                  "might not be usable by the Simulator.");
-        text2 = tr("Do not show this dialog again and save Flight Plan in the future.");
-      }
+  // Default is to contue and save all formats
+  bool save = true;
+  const Route& route = NavApp::getRouteConst();
 
-      int result = dialog->showQuestionMsgBox(
-        multi ? lnm::ACTIONS_SHOWROUTE_WARNING_MULTI : lnm::ACTIONS_SHOWROUTE_WARNING,
-        text, text2, QMessageBox::Cancel | QMessageBox::Save, QMessageBox::Cancel, QMessageBox::Save);
-
-      if(result == QMessageBox::Save)
-        // Save anyway
-        return true;
-      else if(result == QMessageBox::Cancel)
-        return false;
-    }
-  }
+  QString doNotShowAgainText;
+  if(multi)
+    doNotShowAgainText = tr("Do not show this dialog again and export all files in the future.");
   else
+    doNotShowAgainText = tr("Do not show this dialog again and save Flight Plan in the future.");
+  QString reallyContinue = tr("\n\nReally continue?");
+
+  // Check for valid airports for departure and destination ================================
+  if(validateDepartAndDest && (!route.hasValidDeparture() || !route.hasValidDestination()))
   {
-    if(validateParking)
-    {
-      if(!NavApp::getRouteConst().hasValidParking())
-      {
-        NavApp::deleteSplashScreen();
+    const static atools::gui::DialogButtonList BUTTONS({
+      {QString(), QMessageBox::Cancel},
+      {tr("Select Start &Position"), QMessageBox::Yes},
+      {QString(), QMessageBox::Save}
+    });
+    QString message;
 
-        // Airport has parking but no one is selected
-        const static atools::gui::DialogButtonList BUTTONS({
-          {QString(), QMessageBox::Cancel},
-          {tr("Select Start &Position"), QMessageBox::Yes},
-          {tr("Show &Departure on Map"), QMessageBox::YesToAll},
-          {QString(), QMessageBox::Save}
-        });
+    if(multi)
+      message = tr("Flight Plan must have a valid airport as start and destination and "
+                   "might not be usable for the selected export formats.");
+    else
+      message = tr("Flight Plan must have a valid airport as start and destination and "
+                   "might not be usable by the simulator.");
 
-        QString message;
-        if(multi)
-          message = tr("One or more of the selected export formats support "
-                       "setting a parking spot as a start position.\n\n");
+    message += reallyContinue;
 
-        message += tr("The departure airport has parking spots but no parking was selected for this Flight Plan.");
-        int result = dialog->showQuestionMsgBox(
-          lnm::ACTIONS_SHOWROUTE_PARKING_WARNING,
-          message,
-          tr("Do not show this dialog again and save Flight Plan in the future."),
-          BUTTONS, QMessageBox::Yes, QMessageBox::Save);
+    int result = dialog->showQuestionMsgBox(
+      multi ? lnm::ACTIONS_SHOWROUTE_WARNING_MULTI : lnm::ACTIONS_SHOWROUTE_WARNING,
+      message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
-        if(result == QMessageBox::Yes)
-          // saving depends if user selects parking or cancels out of the dialog
-          emit selectDepartureParking();
-        else if(result == QMessageBox::YesToAll)
-        {
-          // Zoom to airport and cancel out
-          emit showRect(NavApp::getRouteConst().getDepartureAirportLeg().getAirport().bounding, false);
-          return false;
-        }
-        else if(result == QMessageBox::Save)
-          // Save right away
-          return true;
-        else if(result == QMessageBox::Cancel)
-          return false;
-      }
-    }
+    if(result == QMessageBox::Cancel)
+      save = false;
   }
-  return true;
+
+  // Check AIRAC cycle is not available but user saves for X-Plane  ================================
+  if(save && validateCycle && NavApp::getDatabaseAiracCycleNav().isEmpty())
+  {
+    QString message;
+    if(multi)
+      message = tr("One or more of the selected export formats require a valid AIRAC cycle.\n\n");
+    else
+      message = tr("The export format requires a valid AIRAC cycle.\n\n");
+
+    message += tr("The selected scenery database does not contain AIRAC cycle information.\n"
+                  "This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery.");
+
+    message += reallyContinue;
+
+    int result = dialog->showQuestionMsgBox(
+      lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING,
+      message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+
+    if(result == QMessageBox::No)
+      save = false;
+  }
+
+  // Check if user forgot to select parking for an airport which has it ================================
+  if(save && validateParking && route.hasValidDeparture() && !route.hasValidParking())
+  {
+    // Airport has parking but no one is selected
+    const static atools::gui::DialogButtonList BUTTONS({
+      {QString(), QMessageBox::Cancel},
+      {tr("Select Start &Position"), QMessageBox::Yes},
+      {tr("Show &Departure on Map"), QMessageBox::YesToAll},
+      {QString(), QMessageBox::Save}
+    });
+
+    QString message;
+    if(multi)
+      message = tr("One or more of the selected export formats support "
+                   "setting a parking spot as a start position.\n\n");
+
+    message += tr("The departure airport has parking spots but no parking was selected for this Flight Plan.");
+    int result = dialog->showQuestionMsgBox(
+      lnm::ACTIONS_SHOWROUTE_PARKING_WARNING,
+      message,
+      tr("Do not show this dialog again and save Flight Plan in the future."),
+      BUTTONS, QMessageBox::Yes, QMessageBox::Save);
+
+    if(result == QMessageBox::Yes)
+      // saving depends if user selects parking or cancels out of the dialog
+      save = emit selectDepartureParking();
+    else if(result == QMessageBox::YesToAll)
+    {
+      // Zoom to airport and cancel out
+      emit showRect(route.getDepartureAirportLeg().getAirport().bounding, false);
+      save = false;
+    }
+    else if(result == QMessageBox::Cancel)
+      save = false;
+  }
+
+  return save;
 }
 
 QString RouteExport::buildDefaultFilename(const QString& suffix)
@@ -1649,24 +1664,4 @@ void RouteExport::writeIvapLine(QTextStream& stream, const QString& key, int val
     stream << "\r\r\n";
   else if(type == re::IVAP)
     stream << "\r\n";
-}
-
-bool RouteExport::routeSaveCheckFMS11Warnings()
-{
-  if(NavApp::getDatabaseAiracCycleNav().isEmpty())
-  {
-    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING,
-                                            tr("Database contains no AIRAC cycle information which is "
-                                               "required for the X-Plane FSM 11 flight plan format.<br/><br/>"
-                                               "This can happen if you save a flight plan based on "
-                                               "FSX or Prepar3D scenery.<br/><br/>"
-                                               "Really continue?"),
-                                            tr("Do not &show this dialog again and save in the future."),
-                                            QMessageBox::Yes | QMessageBox::No,
-                                            QMessageBox::No, QMessageBox::Yes);
-
-    if(result == QMessageBox::No)
-      return false;
-  }
-  return true;
 }

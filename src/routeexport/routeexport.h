@@ -216,8 +216,8 @@ signals:
   /* Show airport on map to allow parking selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
-  /* Show parking selection dialog */
-  void  selectDepartureParking();
+  /* Show parking selection dialog. Returns true if something was selected. */
+  bool selectDepartureParking();
 
   /* Number of selected has changed */
   void  optionsUpdated();
@@ -262,8 +262,6 @@ private:
   void writeIvapLine(QTextStream& stream, const QString& key, const QString& value, re::RouteExportType type);
   void writeIvapLine(QTextStream& stream, const QString& key, int value, re::RouteExportType type);
   void writeIvapLine(QTextStream& stream, const QString& string, re::RouteExportType type);
-
-  bool routeSaveCheckFMS11Warnings();
 
   /* Called by all export functions that are used only in multiexport.
    * Uses all paths, descriptions, etc. from given RouteExportFormat. */

@@ -68,7 +68,7 @@ DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, c
 
 void DirTool::run()
 {
-  // if(!hasAllDirs())
+  if(!hasAllDirs())
   {
     QString message;
 
