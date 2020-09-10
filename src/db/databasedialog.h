@@ -75,7 +75,7 @@ public:
   void setCurrentFsType(atools::fs::FsPaths::SimulatorType value);
 
 signals:
-  /* Emitted if the user changed the fligh simulator in the combo box */
+  /* Emitted if the user changed the flight simulator in the combo box */
   void simulatorChanged(atools::fs::FsPaths::SimulatorType value);
 
 private:

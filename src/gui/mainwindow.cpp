@@ -125,8 +125,8 @@ MainWindow::MainWindow()
   qDebug() << Q_FUNC_INFO << "constructor";
 
   aboutMessage =
-    QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
-                  "airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.</p>"
+    QObject::tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
+                  "airport search and airport information system<br/>for X-Plane 11, Flight Simulator X and Prepar3D.</p>"
                   "<p>"
                     "<b>"
                       "If you would like to show your appreciation you can donate&nbsp;"
