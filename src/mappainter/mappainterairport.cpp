@@ -158,7 +158,7 @@ void MapPainterAirport::render()
 
       context->szFont(context->textSizeAirport);
       symbolPainter->drawAirportText(context->painter, *airport, x, y,
-                                     context->dispOpts, apTextFlags,
+                                     context->dispOptsAirport, apTextFlags,
                                      context->sz(context->symbolSizeAirport,
                                                  context->mapLayerEffective->getAirportSymbolSize()),
                                      context->mapLayerEffective->isAirportDiagramRunway(),

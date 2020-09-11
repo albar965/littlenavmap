@@ -547,7 +547,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     if(!airportIds.contains(entry->departure.id) && wToS(entry->departure.position, x, y))
     {
       symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast);
-      symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOpts, flags, size,
+      symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, size,
                                      context->mapLayerEffective->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
       airportIds.insert(entry->departure.id);
@@ -556,7 +556,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     if(!airportIds.contains(entry->destination.id) && wToS(entry->destination.position, x, y))
     {
       symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast);
-      symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOpts, flags, size,
+      symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, size,
                                      context->mapLayerEffective->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
       airportIds.insert(entry->destination.id);

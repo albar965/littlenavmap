@@ -1403,7 +1403,7 @@ void MapPainterRoute::paintAirport(int x, int y, const map::MapAirport& obj)
 void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& obj, bool drawAsRoute)
 {
   int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
-  symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOpts,
+  symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOptsAirport,
                                  context->airportTextFlagsRoute(drawAsRoute, false /* draw as log */), size,
                                  context->mapLayerEffective->isAirportDiagram(),
                                  context->mapLayer->getMaxTextLengthAirport());

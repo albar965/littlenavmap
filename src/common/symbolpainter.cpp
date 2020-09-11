@@ -1031,7 +1031,7 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
 }
 
 void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
-                                    optsd::DisplayOptions dispOpts, textflags::TextFlags flags, int size,
+                                    optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, int size,
                                     bool diagram, int maxTextLength)
 {
   QStringList texts = airportTexts(dispOpts, flags, airport, maxTextLength);
@@ -1062,7 +1062,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
   }
 }
 
-QStringList SymbolPainter::airportTexts(optsd::DisplayOptions dispOpts, textflags::TextFlags flags,
+QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags,
                                         const map::MapAirport& airport, int maxTextLength)
 {
   QStringList texts;

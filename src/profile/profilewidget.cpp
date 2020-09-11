@@ -1050,7 +1050,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         {
           int symytxt = std::min(symPt.y() + 14, h);
           symPainter.drawAirportText(&painter, leg.getAirport(), symPt.x() - 5, symytxt,
-                                     optData.getDisplayOptions(), flags, 10, false, 16);
+                                     optsd::AIRPORT_NONE, flags, 10, false, 16);
         }
       }
     }
@@ -1064,7 +1064,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         int textW = painter.fontMetrics().width(departureLeg.getIdent());
         symPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), left, flightplanY, airportSize, false, false);
         symPainter.drawAirportText(&painter, departureLeg.getAirport(), left - textW / 2, flightplanTextY,
-                                   optData.getDisplayOptions(), flags, 10, false, 16);
+                                   optsd::AIRPORT_NONE, flags, 10, false, 16);
       }
 
       // Draw destination always on the right also if there are approach procedures
@@ -1075,7 +1075,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false,
                                      false);
         symPainter.drawAirportText(&painter, destinationLeg.getAirport(), left + w - textW / 2, flightplanTextY,
-                                   optData.getDisplayOptions(), flags, 10, false, 16);
+                                   optsd::AIRPORT_NONE, flags, 10, false, 16);
       }
     }
 
