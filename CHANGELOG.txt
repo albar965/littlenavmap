@@ -16,7 +16,7 @@ Highlights:
   or shown in preview.
 * Improved flight plan calculation. Can now calculate across regions which are void of airways. Can
   use oceanic tracks, avoid RNAV airways and more options. `Flight Plan` -> `Calculate Flight Plan`.
-* Little Navmap now uses its own flight plan format which allows removing most of the confusing
+* Little Navmap now uses its own flight plan format which allows removing most of the 
   warning dialogs. Flight plan saving and loading logic has changed completely.
 * User can add remarks or comments on flight plan and flight plan waypoints. See tab `Flight Plan
   Remarks` in `Flight Planning` dock window. Right click on flight plan waypoint in plan table or map
@@ -24,7 +24,7 @@ Highlights:
 * Better map context menu with sub-menus for easier selection of actions if more than one map
   object is below clicked position.
 * User can now select fonts for user interface and map display. Options dialog on pages `User
-  Interface` and `Map`.
+  Interface` and `Map`. See https://b612-font.com for a highly legible open source font.
 * Free user interface language selection (if translation available). Change this in the dialog
   `Options` on page `User Interface`
 * Fullscreen mode maximizes map on one click or key press of `Shift+F11`. See `Window` ->
@@ -52,26 +52,23 @@ Limitations:
 * Translations are not updated yet. The user interface will be a mix of your local language and
   English.
 * The online and offline manuals are not updated yet. Neither the English nor the translated
-  versions. Help buttons and links are not functional yet. Ask in the Avsim forum if you have
-  questions:
+  versions. Help buttons and links are functional but point to placeholder pages. 
+  Ask in the Avsim forum if you have questions:
   https://www.avsim.com/forums/forum/780-little-navmap-little-navconnect-little-logbook-support-forum/
-
 
 MSFS Limitations:
 
 * No airport weather or any other weather information since the weather functions in SimConnect are
   deprecated and can even cause crashes. Weather functionality will be added again once supported by
   MSFS.
-* MSFS cannot load transtions and inserts these automatically depending on plan.
+* MSFS cannot load transitions and inserts these automatically depending on plan.
 * No TACAN (all shown as DME) and no VORTAC (all shown as VORDME).
-* Airways in MSFS are lacking information like maximum altitude restrictions, one-way restrictions
-  and RNAV attribute.
+* Airways in MSFS are lacking maximum altitude restrictions, one-way restrictions
+  and RNAV attribute. This can result in invalid plans calculated by MSFS.
 * Distinct airways with same name can appear as a single connected airway
-  opposed to real world.
+  opposed to real world in LNM due to MSFS format limitations.
 * Flight plans for MSFS cannot be saved with a parking spot like ramp or
-  gate selected.
-* MSFS sometimes sends weird coordinates while planning a flight which will cause LNM to show the
-  aircraft at wrong positions like west of Africa (0° East, 0° North).
+  gate selected. Select these in the simulator after loading the plan.
 
 Notes:
 
@@ -82,13 +79,12 @@ Notes:
   databases from cycle 2008.
 * Little Navmap will reset some settings like range rings, window layout, search options, order of
   table columns on first start using the new version.
-* Range rings cannot be reloaded since the format has changed. Range ring radii in options dialog
-  are reset back to default values.
-* The flight plan short/long format was dropped. Go to `Options` on page `Flight Plan` and adjust
-  the file pattern to your needs.
+* Range ring radii in options dialog are reset back to default values.
+* The flight plan short and long format options were dropped. Go to `Options` on page `Flight Plan` 
+  and adjust the file pattern to your needs.
 * Little Navmap will ask to create a recommended folder structure for your files in documents
   folder. Skip this step (`Do not show again`) if you do not like this.
-* macOS is supported up from macOS Sierra 10.12 inclusive. Older versions are not supported anymore.
+* macOS is supported up from macOS Sierra 10.12 inclusive. Older versions cannot be supported anymore.
 
 Changes:
 
