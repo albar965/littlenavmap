@@ -179,6 +179,9 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
   ignoreOverlayUpdates = true;
 
   updateThemeUi(currentThemeIndex);
+  MarbleModel *m = model();
+
+  setMapThemeId(theme);
 
   if(currentThemeIndex < map::CUSTOM)
   {
@@ -187,21 +190,31 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
     {
       case map::STAMENTERRAIN:
       case map::OPENSTREETMAP:
+      case map::OPENTOPOMAP:
       case map::CARTODARK:
       case map::CARTOLIGHT:
+      case map::CUSTOM:
+        setShowClouds(false);
+
+        // Need to remove the placemark files since they are shown randomly on online maps
+        m->removeGeoData("baseplacemarks.cache");
+        m->removeGeoData("boundaryplacemarks.cache");
+        m->removeGeoData("cityplacemarks.cache");
+        m->removeGeoData("elevplacemarks.cache");
+        m->removeGeoData("otherplacemarks.cache");
+        break;
+
       case map::SIMPLE:
       case map::PLAIN:
       case map::ATLAS:
-      case map::CUSTOM:
         setShowClouds(false);
-        break;
 
-      case map::OPENTOPOMAP:
-        // Disable ugly useless ice polygons on OpenTopoMap
-        // This actually does not work until the polygon files are deleted from the configuration
-        setPropertyValue("ice", false);
-        setShowIceLayer(false);
-        setShowClouds(false);
+        // Add placemark files again - ignored if already loaded
+        m->addGeoDataFile("baseplacemarks.cache");
+        m->addGeoDataFile("boundaryplacemarks.cache");
+        m->addGeoDataFile("cityplacemarks.cache");
+        m->addGeoDataFile("elevplacemarks.cache");
+        m->addGeoDataFile("otherplacemarks.cache");
         break;
 
       case map::INVALID_THEME:
@@ -210,7 +223,6 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
     }
   }
 
-  setMapThemeId(theme);
   updateMapObjectsShown();
 
   ignoreOverlayUpdates = false;

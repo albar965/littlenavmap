@@ -3030,7 +3030,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
   html.table();
   if(!aircraft.getAirplaneTitle().isEmpty())
-    html.row2(tr("Title:"), aircraft.getAirplaneTitle());
+    html.row2(tr("Title:"), aircraft.getAirplaneTitle()); // Asobo Baron G58
   else
     html.row2(tr("Number:"), locale.toString(aircraft.getObjectId() + 1));
 
@@ -3041,14 +3041,14 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     html.row2(tr("Flight Number:"), aircraft.getAirplaneFlightnumber());
 
   if(!aircraft.getAirplaneModel().isEmpty())
-    html.row2(tr("Type:"), aircraft.getAirplaneModel());
+    html.row2(tr("Type:"), aircraft.getAirplaneModel()); // BE58
 
   if(!aircraft.getAirplaneRegistration().isEmpty())
-    html.row2(tr("Registration:"), aircraft.getAirplaneRegistration());
+    html.row2(tr("Registration:"), aircraft.getAirplaneRegistration()); // ASXGS
 
   QString model = map::aircraftType(aircraft);
   if(!model.isEmpty())
-    html.row2(tr("Model:"), model);
+    html.row2(tr("Model:"), model); // Beechcraft
 
   if(aircraft.isAnyBoat())
   {
