@@ -2260,19 +2260,36 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         }
       } // if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) || ...
 
-      if(msfs && i == route.getDepartureAirportLegIndex() && !(leg.getProcedureType() & proc::PROCEDURE_DEPARTURE) &&
-         !saveApproachWp)
+      if(msfs && i == route.getDepartureAirportLegIndex())
       {
-        // For MSFS: Add runway information to departure airport =======================================
-        // if there is a departure position on a runway and there is no SID
+        // For MSFS: Always add runway information to departure airport =======================================
         // Approach legs are not saved
-        const RouteLeg& departureAirportLeg = route.getDepartureAirportLeg();
-        const map::MapStart& start = departureAirportLeg.getDepartureStart();
-        if(start.isRunway())
+
+        QString departRw;
+        if(!sid.isEmpty() && !sid.procedureRunway.isEmpty())
+          // Use runway from SID if available
+          departRw = sid.procedureRunway;
+        else
+        {
+          // if there is a departure position on a runway and there is no SID
+          const RouteLeg& departureAirportLeg = route.getDepartureAirportLeg();
+          map::MapStart start = departureAirportLeg.getDepartureStart();
+          if(start.isRunway())
+            // Use runway from start position
+            departRw = start.runwayName;
+          else
+          {
+            // Pick best runway and ignore parking
+            NavApp::getAirportQuerySim()->getBestStartPositionForAirport(start, departureAirportLeg.getAirport().id);
+            departRw = start.runwayName;
+          }
+        }
+
+        if(!departRw.isEmpty())
         {
           int number = 0;
-          QString rw, designator;
-          map::runwayNameSplit(start.runwayName, &number, &designator);
+          QString designator;
+          map::runwayNameSplit(departRw, &number, &designator);
           entry.setRunway(QString::number(number), map::runwayDesignatorLong(designator));
         }
       }
