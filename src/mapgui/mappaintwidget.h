@@ -462,6 +462,12 @@ private:
 
   void unitsUpdated();
 
+  /*  Add placemark files for offline maps */
+  void addPlacemarks();
+
+  /* Need to remove the placemark files since they are shown randomly on online maps */
+  void removePlacemarks();
+
   /* Keeps geographical objects as index in screen coordinates */
   MapScreenIndex *screenIndex = nullptr;
 

@@ -43,6 +43,15 @@ const static double MINIMUM_DISTANCE_KM = 0.1;
 const static double MAXIMUM_DISTANCE_KM = 6000.;
 const static int MAXIMUM_ZOOM = 1120;
 
+// Placemark files to remove or add
+const static QStringList PLACEMARK_FILES_CACHE({
+  "baseplacemarks.cache", "boundaryplacemarks.cache", "cityplacemarks.cache", "elevplacemarks.cache",
+  "otherplacemarks.cache"});
+
+// Additional maps refer to KML files get rid of these too
+const static QStringList PLACEMARK_FILES_KML({
+  "baseplacemarks.kml", "boundaryplacemarks.kml", "cityplacemarks.kml", "elevplacemarks.kml", "otherplacemarks.kml"});
+
 using namespace Marble;
 using atools::geo::Rect;
 using atools::geo::Pos;
@@ -179,9 +188,9 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
   ignoreOverlayUpdates = true;
 
   updateThemeUi(currentThemeIndex);
-  MarbleModel *m = model();
 
   setMapThemeId(theme);
+  setShowClouds(false);
 
   if(currentThemeIndex < map::CUSTOM)
   {
@@ -194,27 +203,15 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
       case map::CARTODARK:
       case map::CARTOLIGHT:
       case map::CUSTOM:
-        setShowClouds(false);
-
         // Need to remove the placemark files since they are shown randomly on online maps
-        m->removeGeoData("baseplacemarks.cache");
-        m->removeGeoData("boundaryplacemarks.cache");
-        m->removeGeoData("cityplacemarks.cache");
-        m->removeGeoData("elevplacemarks.cache");
-        m->removeGeoData("otherplacemarks.cache");
+        removePlacemarks();
         break;
 
       case map::SIMPLE:
       case map::PLAIN:
       case map::ATLAS:
-        setShowClouds(false);
-
         // Add placemark files again - ignored if already loaded
-        m->addGeoDataFile("baseplacemarks.cache");
-        m->addGeoDataFile("boundaryplacemarks.cache");
-        m->addGeoDataFile("cityplacemarks.cache");
-        m->addGeoDataFile("elevplacemarks.cache");
-        m->addGeoDataFile("otherplacemarks.cache");
+        addPlacemarks();
         break;
 
       case map::INVALID_THEME:
@@ -222,6 +219,8 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
         break;
     }
   }
+  else
+    removePlacemarks();
 
   updateMapObjectsShown();
 
@@ -229,6 +228,24 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
 
   // Show or hide overlays again
   overlayStateFromMenu();
+}
+
+void MapPaintWidget::removePlacemarks()
+{
+  MarbleModel *m = model();
+  // Need to remove the placemark files since they are shown randomly on online maps
+  for(const QString& file : PLACEMARK_FILES_CACHE)
+    m->removeGeoData(file);
+  for(const QString& file : PLACEMARK_FILES_KML)
+    m->removeGeoData(file);
+}
+
+void MapPaintWidget::addPlacemarks()
+{
+  MarbleModel *m = model();
+  // Add placemark files again - ignored if already loaded
+  for(const QString& file : PLACEMARK_FILES_CACHE)
+    m->addGeoDataFile(file);
 }
 
 void MapPaintWidget::unitsUpdated()
