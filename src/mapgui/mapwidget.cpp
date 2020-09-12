@@ -380,7 +380,7 @@ void MapWidget::jumpBackToAircraftUpdateDistance()
 
 void MapWidget::jumpBackToAircraftStart(bool saveDistance)
 {
-  if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked())
+  if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnectedAndAircraft())
   {
     if(jumpBack->isActive())
       // Simply restart
@@ -2059,14 +2059,19 @@ void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAi
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
   const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+
+  getScreenIndex()->updateSimData(simulatorData);
+
   if(databaseLoadStatus || !aircraft.isValid())
+  {
+    getScreenIndex()->updateLastSimData(atools::fs::sc::SimConnectData());
     return;
+  }
 
   if(NavApp::getMainUi()->actionMapShowSunShadingSimulatorTime->isChecked())
     // Update sun shade on globe with simulator time
     setSunShadingDateTime(aircraft.getZuluTime());
 
-  getScreenIndex()->updateSimData(simulatorData);
   const atools::fs::sc::SimConnectUserAircraft& last = getScreenIndexConst()->getLastUserAircraft();
 
   simDataCalcTakeoffLanding(aircraft, last);

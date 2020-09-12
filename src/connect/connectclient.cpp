@@ -227,16 +227,13 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 /* Posts data received directly from simconnect or the socket and caches any metar reports */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
-  if(dataPacket.getMetars().isEmpty())
-  {
-    const atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
+  atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
 
-    // Do not send updates for stationary aircraft near the 0,0 position
-    // Workaround for MSFS sending wrong position while in menu
-    if(userAircraft.getGroundSpeedKts() < 1.0f &&
-       userAircraft.getPosition().almostEqual(atools::geo::Pos(0.f, 0.f), 1.f))
-      return;
-  }
+  // Workaround for MSFS sending wrong positions around 0/0 while in menu
+  if(userAircraft.isValid() && userAircraft.getGroundSpeedKts() < 1.0f &&
+     userAircraft.getPosition().almostEqual(atools::geo::Pos(0.f, 0.f), 1.f))
+    // Invalidate position at the 0,0 position if no groundspeed
+    userAircraft.setCoordinates(atools::geo::EMPTY_POS);
 
   // Modify AI aircraft and set shadow flag if a online network with the same callsign exists
   for(atools::fs::sc::SimConnectAircraft& aircraft : dataPacket.getAiAircraft())
@@ -246,7 +243,6 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
   }
 
   // Same as above for user aircraft
-  atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
   if(NavApp::getOnlinedataController()->isShadowAircraft(userAircraft))
     userAircraft.setFlags(atools::fs::sc::SIM_ONLINE_SHADOW | userAircraft.getFlags());
 

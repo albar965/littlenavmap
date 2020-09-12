@@ -3626,7 +3626,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                 crossDirection = tr("<b>►</b>");
 
               html.row2(tr("Cross Track Distance:"),
-                        Unit::distNm(std::abs(crossTrackDistance)) + " " + crossDirection, ahtml::NO_ENTITIES);
+                        tr("%1 %2").
+                        arg(Unit::distNm(std::abs(crossTrackDistance))).arg(crossDirection), ahtml::NO_ENTITIES);
             }
             else
               html.row2(tr("Cross Track Distance:"), tr("Not along Track"));
@@ -3640,7 +3641,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     } // if(activeLegCorrected != map::INVALID_INDEX_VALUE && ...
     else
     {
-      if(route.isTooFarToFlightPlan())
+      if(route.isTooFarToFlightPlan() && NavApp::isConnectedAndAircraftFlying())
         html.warning(tr("No Active Flight Plan Leg. Too far from flight plan."));
       else
         html.b(tr("No Active Flight Plan Leg."));
