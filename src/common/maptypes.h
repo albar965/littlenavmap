@@ -860,6 +860,7 @@ struct MapAirway
   QVector<quint16> altitudeLevelsEast, altitudeLevelsWest;
   atools::geo::Pos from, to;
   atools::geo::Rect bounding; /* pre calculated using from and to */
+  bool eastCourse, westCourse;
 
 };
 

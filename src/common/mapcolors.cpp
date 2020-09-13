@@ -60,6 +60,8 @@ QColor airwayVictorColor("#969696"); // 1.
 QColor airwayJetColor("#000080"); // 1.
 QColor airwayBothColor("#646464"); // 1.
 QColor airwayTrackColor("#101010"); // 1.5
+QColor airwayTrackColorEast("#a01010"); // 1.5
+QColor airwayTrackColorWest("#1010a0"); // 1.5
 QColor airwayTextColor(80, 80, 80);
 
 QColor rangeRingColor(Qt::red);
@@ -492,6 +494,13 @@ const QColor& colorForAirwayTrack(const map::MapAirway& airway)
 
     case map::TRACK_NAT:
     case map::TRACK_PACOTS:
+      if(airway.westCourse)
+        return airwayTrackColorWest;
+      else if(airway.eastCourse)
+        return airwayTrackColorEast;
+      else
+        return airwayTrackColor;
+
     case map::TRACK_AUSOTS:
       return airwayTrackColor;
 
@@ -600,6 +609,8 @@ void syncColors()
   syncColor(colorSettings, "JetColor", airwayJetColor);
   syncColor(colorSettings, "BothColor", airwayBothColor);
   syncColor(colorSettings, "TrackColor", airwayTrackColor);
+  syncColor(colorSettings, "TrackColorEast", airwayTrackColorEast);
+  syncColor(colorSettings, "TrackColorWest", airwayTrackColorWest);
   syncColor(colorSettings, "TextColor", airwayTextColor);
   colorSettings.endGroup();
 

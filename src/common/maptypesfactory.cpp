@@ -451,9 +451,14 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
 
   if(airway.from.isValid() && airway.to.isValid())
   {
-    airway.bounding = Line(airway.from, airway.to).boundingRect();
+    Line line(airway.from, airway.to);
+    airway.bounding = line.boundingRect();
     airway.position = airway.bounding.getCenter();
+    airway.westCourse = line.isWestCourse();
+    airway.eastCourse = line.isEastCourse();
   }
+  else
+    airway.eastCourse = airway.westCourse = false;
 
   if(track)
   {
