@@ -836,9 +836,12 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
       name.toInt(&ok);
 
       // Assume that all short names might be tracks
-      bool track = isTrack() || name.length() == 1 || ok;
+      bool track = isTrack() || name.length() == 1 || ok ||
+                   // AUSOTS like "MY16"
+                   (atools::charAt(name, 0).isLetter() && atools::charAt(name, 1).isLetter() &&
+                    atools::charAt(name, 2).isNumber() && atools::charAt(name, 3).isNumber());
 
-      QString type = track ? tr("Airway or track") : tr("Airway");
+      QString type = track ? tr("Track or airway") : tr("Airway");
       invalid = true;
       if(errors != nullptr)
         errors->append(tr("%1 %2 not found for %3.").arg(type).arg(name).arg(getIdent()));

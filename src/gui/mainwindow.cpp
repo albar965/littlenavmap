@@ -4275,7 +4275,7 @@ void MainWindow::updateErrorLabels()
   const RouteController& routeController = *NavApp::getRouteController();
 
   QStringList toolTipTxtRoute, toolTipTxtProfile, errRoute, errProfile;
-  QString hintText = tr("<br/>Click here for details.");
+  QString hintText = tr("Click here for details.");
 
   // Do not show error for single waypoint plans since it is obvious that there is no profile
   if(NavApp::getRoute().getSizeWithoutAlternates() >= 2 && altitudeLegs.hasErrors())

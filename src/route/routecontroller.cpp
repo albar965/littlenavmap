@@ -4299,7 +4299,9 @@ QString RouteController::getErrorStrings(QStringList& toolTip) const
                      arg(alternateErrors.join(tr(", "))));
 
     if(trackErrors)
-      toolTip.append(tr("Download oceanic tracks or calculate the flight plan again if your plan uses tracks."));
+      toolTip.append(tr("Download oceanic tracks in menu \"Flight Plan\"\n"
+                        "or calculate the flight plan again if your plan uses tracks.",
+                        "Keep in sync with menu names"));
 
     return tr("Errors in flight plan.");
   }
