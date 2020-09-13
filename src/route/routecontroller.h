@@ -531,7 +531,8 @@ private:
   UnitStringTool *units = nullptr;
 
   // Errors collected when parsing route for model
-  QStringList errors, procedureErrors, alternateErrors;
+  QStringList flightplanErrors, procedureErrors, alternateErrors;
+  bool trackErrors = false;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

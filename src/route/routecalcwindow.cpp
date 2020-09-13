@@ -160,15 +160,18 @@ void RouteCalcWindow::updateWidgets()
                                             NavApp::getRouteConst().hasEntries());
   ui->pushButtonRouteCalcReverse->setEnabled(!isCalculateSelection() && canCalcRoute);
 
+  QString msg = tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
+                   "Best track will be selected automatically.\n"
+                   "Ensure to use the correct flight level.\n"
+                   "Otherwise, tracks will not be used.");
+  QString err = tr("\n\nNo tracks available. Press the download button or\n"
+                   "go to \"Flight Plan\" -> \"Download Tracks\" to fetch tracks.",
+                   "Keep translation in sync with menu items");
+
   if(NavApp::hasTracks())
-    ui->checkBoxRouteCalcAirwayTrack->setToolTip(tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
-                                                    "Best track will be selected automatically."));
+    ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg);
   else
-    ui->checkBoxRouteCalcAirwayTrack->setToolTip(tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
-                                                    "Best track will be selected automatically.\n\n"
-                                                    "No tracks available. Press the download button or\n"
-                                                    "go to \"Flight Plan\" -> \"Download Tracks\" to fetch tracks.",
-                                                    "Keep translation in sync with menu items"));
+    ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg + err);
 
   updateHeader();
   updatePreferenceLabel();

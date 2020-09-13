@@ -4196,7 +4196,8 @@ void RouteController::updateModelHighlights()
   bool night = NavApp::isCurrentGuiStyleNight();
   const QColor defaultColor = QApplication::palette().color(QPalette::Normal, QPalette::Text);
   const QColor invalidColor = night ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor;
-  errors.clear();
+  flightplanErrors.clear();
+  trackErrors = false;
 
   for(int row = 0; row < model->rowCount(); ++row)
   {
@@ -4235,7 +4236,7 @@ void RouteController::updateModelHighlights()
             item->setForeground(invalidColor);
             QString err = tr("Waypoint \"%1\" not found.").arg(leg.getIdent());
             item->setToolTip(err);
-            errors.append(err);
+            flightplanErrors.append(err);
           }
           else
             item->setToolTip(QString());
@@ -4245,7 +4246,8 @@ void RouteController::updateModelHighlights()
         if(col == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute())
         {
           QStringList airwayErrors;
-          if(leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet(), &airwayErrors))
+          bool trackError = false;
+          if(leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet(), &airwayErrors, &trackError))
           {
             // Has airway but errors
             item->setForeground(invalidColor);
@@ -4255,7 +4257,7 @@ void RouteController::updateModelHighlights()
             if(!airwayErrors.isEmpty())
             {
               item->setToolTip(airwayErrors.join(tr("\n")));
-              errors.append(airwayErrors);
+              flightplanErrors.append(airwayErrors);
             }
           }
           else
@@ -4266,6 +4268,8 @@ void RouteController::updateModelHighlights()
             item->setFont(font);
             item->setToolTip(QString());
           }
+
+          trackErrors |= trackError;
         }
       }
     }
@@ -4274,15 +4278,15 @@ void RouteController::updateModelHighlights()
 
 bool RouteController::hasErrors() const
 {
-  return !errors.isEmpty() || !procedureErrors.isEmpty() || !alternateErrors.isEmpty();
+  return !flightplanErrors.isEmpty() || !procedureErrors.isEmpty() || !alternateErrors.isEmpty();
 }
 
 QString RouteController::getErrorStrings(QStringList& toolTip) const
 {
   if(hasErrors())
   {
-    if(!errors.isEmpty())
-      toolTip.append(errors);
+    if(!flightplanErrors.isEmpty())
+      toolTip.append(flightplanErrors);
 
     if(!procedureErrors.isEmpty())
       toolTip.append(tr("Cannot load %1: %2").
@@ -4293,6 +4297,9 @@ QString RouteController::getErrorStrings(QStringList& toolTip) const
       toolTip.append(tr("Cannot load %1: %2").
                      arg(alternateErrors.size() > 1 ? tr("alternates") : tr("alternate")).
                      arg(alternateErrors.join(tr(", "))));
+
+    if(trackErrors)
+      toolTip.append(tr("Download oceanic tracks or calculate the flight plan again if your plan uses tracks."));
 
     return tr("Errors in flight plan.");
   }
@@ -4755,7 +4762,8 @@ void RouteController::clearAllErrors()
 {
   procedureErrors.clear();
   alternateErrors.clear();
-  errors.clear();
+  flightplanErrors.clear();
+  trackErrors = false;
 }
 
 #ifdef DEBUG_NETWORK_INFORMATION
