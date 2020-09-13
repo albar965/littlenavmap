@@ -49,7 +49,7 @@ using atools::fs::pln::FlightplanEntry;
 using atools::fs::pln::Flightplan;
 
 // Disable leg activation if distance is larger
-const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 50.f;
+const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 10.f;
 
 const static RouteLeg EMPTY_ROUTELEG;
 
@@ -2400,6 +2400,9 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
         routeLeg.getFlightplanEntry()->setFlag(atools::fs::pln::entry::TRACK, false);
         continue;
       }
+
+      if(routeLeg.getAirwayName() == "Z")
+        qDebug() << Q_FUNC_INFO;
 
       QList<map::MapAirway> airways;
       NavApp::getAirwayTrackQuery()->getAirwaysByNameAndWaypoint(airways, routeLeg.getAirwayName(), prevLeg.getIdent(),

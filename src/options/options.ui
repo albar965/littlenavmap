@@ -1054,7 +1054,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>560</width>
+             <width>572</width>
              <height>486</height>
             </rect>
            </property>
@@ -1512,8 +1512,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>591</width>
-             <height>290</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -1847,7 +1847,7 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>432</width>
+             <width>572</width>
              <height>511</height>
             </rect>
            </property>
@@ -2672,8 +2672,8 @@ Afftects map and elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>407</width>
-             <height>317</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -3044,8 +3044,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>325</width>
-             <height>352</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -3509,8 +3509,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>348</height>
+             <width>600</width>
+             <height>480</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -3840,8 +3840,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>580</width>
-             <height>393</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4180,8 +4180,8 @@ after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>477</width>
-             <height>383</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -4521,8 +4521,8 @@ Check this if you rely on GPS when flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>258</width>
-             <height>302</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -4732,8 +4732,8 @@ Check this if you rely on GPS when flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>337</width>
-             <height>368</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -5171,8 +5171,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>283</width>
-             <height>311</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -5458,8 +5458,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>450</width>
-             <height>234</height>
+             <width>586</width>
+             <height>466</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -5645,7 +5645,7 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>491</width>
+             <width>572</width>
              <height>470</height>
             </rect>
            </property>
@@ -6029,8 +6029,8 @@ Currently only OpenAir is supported (*.txt). </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>191</width>
-             <height>543</height>
+             <width>586</width>
+             <height>483</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

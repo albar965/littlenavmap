@@ -126,7 +126,8 @@ MainWindow::MainWindow()
 
   aboutMessage =
     QObject::tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
-                  "airport search and airport information system<br/>for X-Plane 11, Flight Simulator X and Prepar3D.</p>"
+                  "airport search and airport information system<br/>"
+                "for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
                   "<p>"
                     "<b>"
                       "If you would like to show your appreciation you can donate&nbsp;"

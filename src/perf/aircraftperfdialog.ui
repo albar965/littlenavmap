@@ -253,6 +253,9 @@ The fuel report will show a warning if this does not match the simulator aircraf
 above the alternate or at the destination at holding speed if
 an alternate is not required</string>
             </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
             <property name="suffix">
              <string> %fuel%</string>
             </property>
@@ -340,6 +343,9 @@ captain or the dispatcher</string>
              <string>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</string>
+            </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
             </property>
             <property name="suffix">
              <string> percent</string>

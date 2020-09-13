@@ -599,6 +599,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->checkBoxOptionsSimDoNotFollowOnScroll, &QCheckBox::toggled, this,
           &OptionsDialog::simNoFollowAircraftOnScrollClicked);
+  connect(ui->checkBoxOptionsSimCenterLegTable, &QCheckBox::toggled, this,
+          &OptionsDialog::simNoFollowAircraftOnScrollClicked);
 
   // Online tab =======================================================================
   connect(ui->radioButtonOptionsOnlineNone, &QRadioButton::clicked,
@@ -707,6 +709,15 @@ void OptionsDialog::onlineDisplayRangeClicked()
   ui->spinBoxDisplayOnlineObserver->setEnabled(!ui->checkBoxDisplayOnlineObserverRange->isChecked());
   ui->spinBoxDisplayOnlineGround->setEnabled(!ui->checkBoxDisplayOnlineGroundRange->isChecked());
   ui->spinBoxDisplayOnlineTower->setEnabled(!ui->checkBoxDisplayOnlineTowerRange->isChecked());
+
+  ui->labelDisplayOnlineClearance->setEnabled(!ui->checkBoxDisplayOnlineClearanceRange->isChecked());
+  ui->labelDisplayOnlineArea->setEnabled(!ui->checkBoxDisplayOnlineAreaRange->isChecked());
+  ui->labelDisplayOnlineApproach->setEnabled(!ui->checkBoxDisplayOnlineApproachRange->isChecked());
+  ui->labelDisplayOnlineDeparture->setEnabled(!ui->checkBoxDisplayOnlineDepartureRange->isChecked());
+  ui->labelDisplayOnlineFir->setEnabled(!ui->checkBoxDisplayOnlineFirRange->isChecked());
+  ui->labelDisplayOnlineObserver->setEnabled(!ui->checkBoxDisplayOnlineObserverRange->isChecked());
+  ui->labelDisplayOnlineGround->setEnabled(!ui->checkBoxDisplayOnlineGroundRange->isChecked());
+  ui->labelDisplayOnlineTower->setEnabled(!ui->checkBoxDisplayOnlineTowerRange->isChecked());
 }
 
 void OptionsDialog::checkOfficialOnlineUrls()
@@ -793,30 +804,40 @@ void OptionsDialog::updateOnlineWidgetStatus()
      ui->radioButtonOptionsOnlineIvao->isChecked() || ui->radioButtonOptionsOnlinePilotEdge->isChecked())
   {
     ui->lineEditOptionsOnlineStatusUrl->setEnabled(false);
+    ui->labelOptionsOnlineStatusUrl->setEnabled(false);
     ui->lineEditOptionsOnlineWhazzupUrl->setEnabled(false);
+    ui->labelOptionsOnlineWhazzupUrl->setEnabled(false);
     ui->pushButtonOptionsOnlineTestStatusUrl->setEnabled(false);
     ui->pushButtonOptionsOnlineTestWhazzupUrl->setEnabled(false);
     ui->spinBoxOptionsOnlineUpdate->setEnabled(false);
+    ui->labelOptionsOnlineUpdate->setEnabled(false);
     ui->comboBoxOptionsOnlineFormat->setEnabled(false);
+    ui->labelOptionsOnlineFormat->setEnabled(false);
   }
   else
   {
     if(ui->radioButtonOptionsOnlineCustomStatus->isChecked())
     {
       ui->lineEditOptionsOnlineStatusUrl->setEnabled(true);
+      ui->labelOptionsOnlineStatusUrl->setEnabled(true);
       ui->lineEditOptionsOnlineWhazzupUrl->setEnabled(false);
+      ui->labelOptionsOnlineWhazzupUrl->setEnabled(false);
       ui->pushButtonOptionsOnlineTestStatusUrl->setEnabled(QUrl(ui->lineEditOptionsOnlineStatusUrl->text()).isValid());
       ui->pushButtonOptionsOnlineTestWhazzupUrl->setEnabled(false);
     }
     else if(ui->radioButtonOptionsOnlineCustom->isChecked())
     {
       ui->lineEditOptionsOnlineStatusUrl->setEnabled(false);
+      ui->labelOptionsOnlineStatusUrl->setEnabled(false);
       ui->lineEditOptionsOnlineWhazzupUrl->setEnabled(true);
+      ui->labelOptionsOnlineWhazzupUrl->setEnabled(true);
       ui->pushButtonOptionsOnlineTestStatusUrl->setEnabled(false);
       ui->pushButtonOptionsOnlineTestWhazzupUrl->setEnabled(QUrl(ui->lineEditOptionsOnlineWhazzupUrl->text()).isValid());
     }
     ui->spinBoxOptionsOnlineUpdate->setEnabled(true);
+    ui->labelOptionsOnlineUpdate->setEnabled(true);
     ui->comboBoxOptionsOnlineFormat->setEnabled(true);
+    ui->labelOptionsOnlineFormat->setEnabled(true);
   }
 }
 
@@ -1450,6 +1471,7 @@ void OptionsDialog::simUpdatesConstantClicked(bool state)
 {
   Q_UNUSED(state)
   ui->spinBoxOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
+  ui->labelOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
 }
 
 void OptionsDialog::mapEmptyAirportsClicked(bool state)
@@ -1461,7 +1483,10 @@ void OptionsDialog::mapEmptyAirportsClicked(bool state)
 void OptionsDialog::simNoFollowAircraftOnScrollClicked(bool state)
 {
   Q_UNUSED(state)
-  ui->spinBoxSimDoNotFollowOnScrollTime->setEnabled(ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked());
+  ui->spinBoxSimDoNotFollowOnScrollTime->setEnabled(
+    ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked() || ui->checkBoxOptionsSimCenterLegTable->isChecked());
+  ui->labelSimDoNotFollowOnScroll->setEnabled(
+    ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked() || ui->checkBoxOptionsSimCenterLegTable->isChecked());
 }
 
 /* Copy widget states to OptionData object */
@@ -2292,6 +2317,7 @@ void OptionsDialog::weatherXplaneWindPathSelectClicked()
 void OptionsDialog::updateNavOptions()
 {
   ui->spinBoxOptionsMapNavTouchArea->setEnabled(ui->radioButtonOptionsMapNavTouchscreen->isChecked());
+  ui->labelOptionsMapNavTouchscreenArea->setEnabled(ui->radioButtonOptionsMapNavTouchscreen->isChecked());
 }
 
 void OptionsDialog::clearMemCachedClicked()
