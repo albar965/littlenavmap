@@ -754,7 +754,6 @@ void MapPainterMark::paintRangeRings()
         if(centerVisible)
         {
           // Draw small center point
-          painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           painter->setBrush(Qt::white);
           painter->drawEllipse(center, 4., 4.);
         }
@@ -782,6 +781,8 @@ void MapPainterMark::paintRangeRings()
 
             yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
             symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
+
+            painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           }
         }
       }
