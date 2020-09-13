@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidgetLogbook">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabAircraft">
       <attribute name="title">
@@ -820,6 +820,16 @@ This is only a file path reference and does not attach the file to the logbook e
               </property>
              </spacer>
             </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonAttachedPlanClear">
+              <property name="toolTip">
+               <string>Removes the attached file</string>
+              </property>
+              <property name="text">
+               <string>&amp;Clear</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="0">
@@ -938,6 +948,16 @@ GPX files contain flight plan points and the flown trail.</string>
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonAttachedGpxClear">
+              <property name="toolTip">
+               <string>Removes the attached file</string>
+              </property>
+              <property name="text">
+               <string>&amp;Clear</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -1089,6 +1109,16 @@ This updates only the path and does not attach the file to the logbook entry.</s
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonAttachedPerfClear">
+              <property name="toolTip">
+               <string>Removes the attached file</string>
+              </property>
+              <property name="text">
+               <string>&amp;Clear</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

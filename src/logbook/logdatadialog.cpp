@@ -102,15 +102,18 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
     ui->pushButtonAttachedPlanOpen->setVisible(false);
     ui->pushButtonAttachedPlanAdd->setVisible(false);
     ui->pushButtonAttachedPlanSaveAs->setVisible(false);
+    ui->pushButtonAttachedPlanClear->setVisible(false);
 
     ui->labelAttachedGpx->setVisible(false);
     ui->pushButtonAttachedGpxAdd->setVisible(false);
     ui->pushButtonAttachedGpxSaveAs->setVisible(false);
+    ui->pushButtonAttachedGpxClear->setVisible(false);
 
     ui->labelAttachedPerf->setVisible(false);
     ui->pushButtonAttachedPerfOpen->setVisible(false);
     ui->pushButtonAttachedPerfAdd->setVisible(false);
     ui->pushButtonAttachedPerfSaveAs->setVisible(false);
+    ui->pushButtonAttachedPerfClear->setVisible(false);
   }
 
   // Update units in widgets
@@ -174,13 +177,16 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
   connect(ui->pushButtonAttachedPlanOpen, &QPushButton::clicked, this, &LogdataDialog::planOpenClicked);
   connect(ui->pushButtonAttachedPlanAdd, &QPushButton::clicked, this, &LogdataDialog::planAddClicked);
   connect(ui->pushButtonAttachedPlanSaveAs, &QPushButton::clicked, this, &LogdataDialog::planSaveAsClicked);
+  connect(ui->pushButtonAttachedPlanClear, &QPushButton::clicked, this, &LogdataDialog::planClearClicked);
 
   connect(ui->pushButtonAttachedGpxAdd, &QPushButton::clicked, this, &LogdataDialog::gpxAddClicked);
   connect(ui->pushButtonAttachedGpxSaveAs, &QPushButton::clicked, this, &LogdataDialog::gpxSaveAsClicked);
+  connect(ui->pushButtonAttachedGpxClear, &QPushButton::clicked, this, &LogdataDialog::gpxClearClicked);
 
   connect(ui->pushButtonAttachedPerfOpen, &QPushButton::clicked, this, &LogdataDialog::perfOpenClicked);
   connect(ui->pushButtonAttachedPerfAdd, &QPushButton::clicked, this, &LogdataDialog::perfAddClicked);
   connect(ui->pushButtonAttachedPerfSaveAs, &QPushButton::clicked, this, &LogdataDialog::perfSaveAsClicked);
+  connect(ui->pushButtonAttachedPerfClear, &QPushButton::clicked, this, &LogdataDialog::perfClearClicked);
 }
 
 LogdataDialog::~LogdataDialog()
@@ -651,16 +657,19 @@ void LogdataDialog::updateAttachementWidgets()
 {
   if(editMode != ld::EDIT_MULTIPLE)
   {
-    bool hasPln = !record->isNull("flightplan");
+    bool hasPln = !record->isNull("flightplan") && !record->valueBytes("flightplan").isEmpty();
     ui->pushButtonAttachedPlanOpen->setEnabled(hasPln);
     ui->pushButtonAttachedPlanSaveAs->setEnabled(hasPln);
+    ui->pushButtonAttachedPlanClear->setEnabled(hasPln);
 
-    bool hasTrail = !record->isNull("aircraft_trail");
+    bool hasTrail = !record->isNull("aircraft_trail") && !record->valueBytes("aircraft_trail").isEmpty();
     ui->pushButtonAttachedGpxSaveAs->setEnabled(hasTrail);
+    ui->pushButtonAttachedGpxClear->setEnabled(hasTrail);
 
-    bool hasPerf = !record->isNull("aircraft_perf");
+    bool hasPerf = !record->isNull("aircraft_perf") && !record->valueBytes("aircraft_perf").isEmpty();
     ui->pushButtonAttachedPerfOpen->setEnabled(hasPerf);
     ui->pushButtonAttachedPerfSaveAs->setEnabled(hasPerf);
+    ui->pushButtonAttachedPerfClear->setEnabled(hasPerf);
   }
 }
 
@@ -715,4 +724,22 @@ void LogdataDialog::perfAddClicked()
 void LogdataDialog::perfSaveAsClicked()
 {
   emit perfSaveAs(record, this);
+}
+
+void LogdataDialog::planClearClicked()
+{
+  record->setNull("flightplan");
+  updateWidgets();
+}
+
+void LogdataDialog::perfClearClicked()
+{
+  record->setNull("aircraft_perf");
+  updateWidgets();
+}
+
+void LogdataDialog::gpxClearClicked()
+{
+  record->setNull("aircraft_trail");
+  updateWidgets();
 }
