@@ -165,7 +165,7 @@ void AirwayTrackQuery::deInitQueries()
   airwayQuery->deInitQueries();
 }
 
-void AirwayTrackQuery::postTrackLoad()
+void AirwayTrackQuery::clearCache()
 {
   trackQuery->clearCache();
 }

@@ -283,7 +283,7 @@ void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& 
   // First get geometry from highlights
   updateAirwayScreenGeometryInternal(ids, curBox, true /* highlight */);
 
-  // Get geometry from visible airspaces
+  // Get geometry from visible airways
   updateAirwayScreenGeometryInternal(ids, curBox, false /* highlight */);
 }
 
@@ -325,7 +325,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
       bool showTrack = paintLayer->getShownMapObjects().testFlag(map::TRACK);
       if(paintLayer->getMapLayer()->isTrack() && showTrack)
       {
-        // Airways are visible on map - get them from the cache/database
+        // Tracks are visible on map - get them from the cache/database
         QList<MapAirway> tracks;
         airwayQuery->getTracks(tracks, curBox, paintLayer->getMapLayer(), false);
 
@@ -592,7 +592,8 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   // Get objects from cache - already present objects will be skipped
   // Airway included to fetch waypoints
   mapQuery->getNearestScreenObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram() &&
-                                    OptionData::instance().getDisplayOptionsAirport().testFlag(optsd::ITEM_AIRPORT_DETAIL_PARKING),
+                                    OptionData::instance().getDisplayOptionsAirport().testFlag(optsd::
+                                                                                               ITEM_AIRPORT_DETAIL_PARKING),
                                     shown & (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
                                              map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK),
                                     xs, ys, maxDistance, result);

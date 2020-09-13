@@ -110,7 +110,7 @@ public:
   void deInitQueries();
 
   /* Tracks loaded - clear caches */
-  void postTrackLoad();
+  void clearCache();
 
   /* Set to false to ignore track database. Create a copy of this before using this method. */
   void setUseTracks(bool value)

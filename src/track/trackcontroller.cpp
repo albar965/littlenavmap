@@ -56,9 +56,9 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
 
   downloader = new TrackDownloader(this, verbose);
 #ifdef DEBUG_TRACK_TEST
-  downloader->setUrl(atools::track::NAT, "/home/alex/Temp/tracks/NAT.html");
-  downloader->setUrl(atools::track::PACOTS, "/home/alex/Temp/tracks/PACOTS.html");
-  downloader->setUrl(atools::track::AUSOTS, "/home/alex/Temp/tracks/AUSOTS.html");
+  downloader->setUrl(atools::track::NAT, "/tmp/NAT.txt");
+  downloader->setUrl(atools::track::PACOTS, "/tmp/PACOTS.txt");
+  downloader->setUrl(atools::track::AUSOTS, "/tmp/AUSOTS.txt");
 #else
   namespace t = atools::track;
   atools::settings::Settings& settings = Settings::instance();
@@ -86,8 +86,11 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   connect(downloader, &TrackDownloader::trackDownloadSslErrors, this, &TrackController::trackDownloadSslErrors);
 
   connect(this, &TrackController::postTrackLoad, [ = ](void) -> void {
-    waypointTrackQuery->postTrackLoad();
-    airwayTrackQuery->postTrackLoad();
+    waypointTrackQuery->clearCache();
+    airwayTrackQuery->clearCache();
+
+    waypointTrackQuery->initQueries();
+    airwayTrackQuery->initQueries();
   });
 
 }

@@ -135,7 +135,7 @@ void WaypointTrackQuery::deInitQueries()
   waypointQuery->deInitQueries();
 }
 
-void WaypointTrackQuery::postTrackLoad()
+void WaypointTrackQuery::clearCache()
 {
   trackQuery->clearCache();
 }

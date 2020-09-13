@@ -358,13 +358,13 @@ void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
 
   // Update screen coordinate caches if display options have changed
 
-  if(type & map::AIRWAY_ALL && show != curShow)
+  if((type.testFlag(map::AIRWAY_ALL) && show != curShow) || type.testFlag(map::TRACK) /* Update tracks always */)
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type & map::AIRSPACE && show != curShow)
+  if(type.testFlag(map::AIRSPACE) && show != curShow)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type & map::ILS && show != curShow)
+  if(type.testFlag(map::ILS) && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
