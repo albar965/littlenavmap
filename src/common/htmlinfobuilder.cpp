@@ -2808,11 +2808,15 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
         QDateTime to = trackMeta.valueDateTime("valid_to");
         QDateTime now = QDateTime::currentDateTimeUtc();
 
-        html.row2(tr("Track valid:"), tr("%1 UTC to<br/>%2 UTC%3").
-                  arg(locale.toString(from, QLocale::ShortFormat)).
-                  arg(locale.toString(to, QLocale::ShortFormat)).
-                  arg(now >= from && now <= to ? tr("<br/><b>Track is now valid.</b>") : QString()),
-                  atools::util::html::NO_ENTITIES);
+        if(!from.isNull() && !to.isNull())
+          html.row2(tr("Track valid:"), tr("%1 UTC to<br/>%2 UTC%3").
+                    arg(locale.toString(from, QLocale::ShortFormat)).
+                    arg(locale.toString(to, QLocale::ShortFormat)).
+                    arg(now >= from && now <= to ? tr("<br/><b>Track is now valid.</b>") : QString()),
+                    atools::util::html::NO_ENTITIES);
+        else
+          html.row2(tr("Track valid:"), tr("No validity period"));
+
         html.row2(tr("Track downloaded:"),
                   locale.toString(trackMeta.valueDateTime("download_timestamp"), QLocale::ShortFormat));
       }
@@ -2843,6 +2847,9 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 #ifdef DEBUG_INFORMATION
   if(!trackMeta.isEmpty())
     html.small(trackMeta.valueStr("route")).br();
+  html.small(atools::geo::Line(airway.from, airway.to).crossesAntiMeridian() ? "cross am" : "-").br();
+  html.small(airway.westCourse ? "west" : "").br();
+  html.small(airway.eastCourse ? "east" : "").br();
   html.small(QString("Database: airway_id = %1").arg(airway.getId())).br();
 #endif
 

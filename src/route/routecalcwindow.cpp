@@ -59,6 +59,7 @@ RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
   connect(ui->pushButtonRouteCalc, &QPushButton::clicked, this, &RouteCalcWindow::calculateClicked);
   connect(ui->pushButtonRouteCalcDirect, &QPushButton::clicked, this, &RouteCalcWindow::calculateDirectClicked);
   connect(ui->pushButtonRouteCalcReverse, &QPushButton::clicked, this, &RouteCalcWindow::calculateReverseClicked);
+  connect(ui->pushButtonRouteCalcTrackDownload, &QPushButton::clicked, this, &RouteCalcWindow::downloadTrackClicked);
   connect(ui->pushButtonRouteCalcHelp, &QPushButton::clicked, this, &RouteCalcWindow::helpClicked);
   connect(ui->pushButtonRouteCalcAdjustAltitude, &QPushButton::clicked, this, &RouteCalcWindow::adjustAltitudePressed);
   connect(ui->radioButtonRouteCalcAirway, &QRadioButton::clicked, this, &RouteCalcWindow::updateWidgets);
@@ -158,6 +159,16 @@ void RouteCalcWindow::updateWidgets()
   ui->pushButtonRouteCalcDirect->setEnabled(!isCalculateSelection() && canCalcRoute &&
                                             NavApp::getRouteConst().hasEntries());
   ui->pushButtonRouteCalcReverse->setEnabled(!isCalculateSelection() && canCalcRoute);
+
+  if(NavApp::hasTracks())
+    ui->checkBoxRouteCalcAirwayTrack->setToolTip(tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
+                                                    "Best track will be selected automatically."));
+  else
+    ui->checkBoxRouteCalcAirwayTrack->setToolTip(tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
+                                                    "Best track will be selected automatically.\n\n"
+                                                    "No tracks available. Press the download button or\n"
+                                                    "go to \"Flight Plan\" -> \"Download Tracks\" to fetch tracks.",
+                                                    "Keep translation in sync with menu items"));
 
   updateHeader();
   updatePreferenceLabel();

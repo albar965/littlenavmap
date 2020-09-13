@@ -37,6 +37,7 @@
 #include "gui/actiontextsaver.h"
 #include "gui/actionstatesaver.h"
 #include "gui/errorhandler.h"
+#include "track/trackcontroller.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "query/mapquery.h"
@@ -324,6 +325,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(routeWindow, &RouteCalcWindow::calculateClicked, this, &RouteController::calculateRoute);
   connect(routeWindow, &RouteCalcWindow::calculateDirectClicked, this, &RouteController::calculateDirect);
   connect(routeWindow, &RouteCalcWindow::calculateReverseClicked, this, &RouteController::reverseRoute);
+  connect(routeWindow, &RouteCalcWindow::downloadTrackClicked,
+          NavApp::getTrackController(), &TrackController::startDownload);
 }
 
 RouteController::~RouteController()
