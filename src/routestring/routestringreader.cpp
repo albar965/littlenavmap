@@ -57,8 +57,8 @@ const static QRegularExpression AIRPORT_TIME_RUNWAY("^([A-Z0-9]{3,4})(\\d{4})?(/
 const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,7})(\\.([A-Z0-9]{1,6}))?$");
 
 const static map::MapTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYPOINT |
-                                                        map::VOR | map::NDB | map::USERPOINTROUTE |
-                                                        map::AIRWAY);
+                                                  map::VOR | map::NDB | map::USERPOINTROUTE |
+                                                  map::AIRWAY);
 
 const static map::MapTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
 
@@ -333,13 +333,16 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
       else
       {
         // Navaid  ==========================================
-        // Get nearest navaid and build entry from it
-        buildEntryForResult(entry, result, lastPos);
+        // Get nearest navaid and build entry from it - converts V and N waypoints to VOR and NDB
+        buildEntryForResult(entry, result, lastPos, true /* resolveWaypoints */);
 
         // Build reference list if required
         if(mapObjectRefs != nullptr)
         {
-          curRef = mapObjectRefFromEntry(entry, result, item);
+          // Build entry from it - do not convert waypoints to VOR or NDB
+          FlightplanEntry entryRef;
+          buildEntryForResult(entryRef, result, lastPos, false /* resolveWaypoints */);
+          curRef = mapObjectRefFromEntry(entryRef, result, item);
 
           if(lastParseEntry != nullptr && lastParseEntry->result.hasAirways())
           {
@@ -428,11 +431,11 @@ map::MapObjectRefExt RouteStringReader::mapObjectRefFromEntry(const FlightplanEn
 }
 
 void RouteStringReader::buildEntryForResult(FlightplanEntry& entry, const MapResult& result,
-                                            const atools::geo::Pos& nearestPos)
+                                            const atools::geo::Pos& nearestPos, bool resolveWaypoints)
 {
   MapResult newResult;
   resultWithClosest(newResult, result, nearestPos, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT);
-  entryBuilder->buildFlightplanEntry(newResult, entry, true);
+  entryBuilder->buildFlightplanEntry(newResult, entry, resolveWaypoints);
 }
 
 void RouteStringReader::resultWithClosest(map::MapResult& resultWithClosest, const map::MapResult& result,

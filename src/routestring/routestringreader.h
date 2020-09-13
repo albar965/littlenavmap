@@ -112,7 +112,7 @@ private:
 
   /* Build flight plan entry for the given search result. */
   void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result,
-                           const atools::geo::Pos& nearestPos);
+                           const atools::geo::Pos& nearestPos, bool resolveWaypoints);
 
   /* Get a result set with the single closest element */
   void resultWithClosest(map::MapResult& resultWithClosest, const map::MapResult& result,
