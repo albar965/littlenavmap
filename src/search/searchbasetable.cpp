@@ -1207,7 +1207,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                             arg(atools::elideTextShort(QFileInfo(logEntry.routeFile).fileName(), 20)));
       }
       else
-        ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(tr("(File not found)")));
+        ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(tr("(file not found)")));
     }
     else
       ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(QString()));
@@ -1222,7 +1222,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                            arg(atools::elideTextShort(QFileInfo(logEntry.perfFile).fileName(), 20)));
       }
       else
-        ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(tr("(File not found)")));
+        ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(tr("(file not found)")));
     }
     else
       ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(QString()));

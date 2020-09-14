@@ -4181,7 +4181,7 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
     link.small(prefix).a(filepath, QString("lnm://show?filepath=%1").arg(filepath), ahtml::LINK_NO_UL | ahtml::SMALL);
   else
     link.small(prefix).small(filepath).
-    text(tr(" (File not found)"), ahtml::SMALL | ahtml::BOLD);
+    text(tr(" (file not found)"), ahtml::SMALL | ahtml::BOLD);
   return link.getHtml();
 }
 

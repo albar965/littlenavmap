@@ -126,31 +126,31 @@ MainWindow::MainWindow()
 
   aboutMessage =
     QObject::tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
-                  "airport search and airport information system<br/>"
+                "airport search and airport information system<br/>"
                 "for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
-                  "<p>"
-                    "<b>"
-                      "If you would like to show your appreciation you can donate&nbsp;"
-                      "<a href=\"%1\">here"
-                      "</a>."
-                    "</b>"
-                  "</p>"
-                  "<p>This software is licensed under "
-                    "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
-                    "</a> or any later version."
-                  "</p>"
-                  "<p>The source code for this application is available at "
-                    "<a href=\"https://github.com/albar965\">Github"
+                "<p>"
+                  "<b>"
+                    "If you would like to show your appreciation you can donate&nbsp;"
+                    "<a href=\"%1\">here"
                     "</a>."
-                  "</p>"
-                  "<p>More about my projects at "
-                    "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
-                    "</a>."
-                  "</p>"
-                  "<p>"
-                    "<b>Copyright 2015-2020 Alexander Barthel"
-                    "</b>"
-                  "</p>").arg(lnm::helpDonateUrl);
+                  "</b>"
+                "</p>"
+                "<p>This software is licensed under "
+                  "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
+                  "</a> or any later version."
+                "</p>"
+                "<p>The source code for this application is available at "
+                  "<a href=\"https://github.com/albar965\">Github"
+                  "</a>."
+                "</p>"
+                "<p>More about my projects at "
+                  "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
+                  "</a>."
+                "</p>"
+                "<p>"
+                  "<b>Copyright 2015-2020 Alexander Barthel"
+                  "</b>"
+                "</p>").arg(lnm::helpDonateUrl);
 
   // Show a dialog on fatal log events like asserts
   atools::logging::LoggingGuiAbortHandler::setGuiAbortFunction(this);
@@ -2950,47 +2950,46 @@ void MainWindow::updateMapHistoryActions(int minIndex, int curIndex, int maxInde
 void MainWindow::resetMessages()
 {
   qDebug() << "resetMessages";
-  Settings& s = Settings::instance();
+  Settings& settings = Settings::instance();
 
   // Show all message dialogs again
-  s.setValue(lnm::ACTIONS_SHOW_DISCONNECT_INFO, true);
-  s.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
-  s.setValue(lnm::ACTIONS_SHOW_QUIT, true);
-  s.setValue(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_RESET_VIEW, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_PARKING_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_WARNING_MULTI, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_ERROR, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_ALTERNATE_ERROR, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
-  s.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
-
-  s.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
-  s.setValue(lnm::ACTIONS_SHOW_SAVE_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_ZOOM_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
-  s.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
-  s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
-  s.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
-  s.setValue(lnm::ACTIONS_SHOW_INSTALL_DIRS, true);
-  s.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
-  s.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
-  s.setValue(lnm::ACTIONS_SHOW_DELETE_MARKS, true);
-  s.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
-  s.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
-  s.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
-  s.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);
-  s.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, true);
-  s.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
-  s.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
-  s.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE, true);
-  s.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
-  s.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK, true);
-  s.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DISCONNECT_INFO, true);
+  settings.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
+  settings.setValue(lnm::ACTIONS_SHOW_QUIT, true);
+  settings.setValue(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_RESET_VIEW, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_PARKING_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_WARNING_MULTI, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_ERROR, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_ALTERNATE_ERROR, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
+  settings.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SAVE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_ZOOM_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
+  settings.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_DIRS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_MARKS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
+  settings.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }
@@ -3119,7 +3118,11 @@ void MainWindow::mainWindowShown()
 
   // Create recommended folder structure if user confirms
   DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
-  dirTool.run();
+  if(!dirTool.hasAllDirs())
+  {
+    NavApp::deleteSplashScreen();
+    dirTool.run();
+  }
 
   DatabaseManager *databaseManager = NavApp::getDatabaseManager();
   if(firstApplicationStart)

@@ -2994,7 +2994,7 @@
              </property>
              <property name="toolTip">
               <string>Departure or destination airport ICAO code.
-Will match any visited airport.</string>
+Matches any visited airport.</string>
              </property>
              <property name="statusTip">
               <string>Departure or destination airport ICAO code. </string>
