@@ -169,7 +169,7 @@ void WindReporter::windDownloadFinished()
         msg = tr("Winds aloft updated from simulator.");
         break;
       case wind::NOAA:
-        msg = tr("NOAA winds aloft download finished.");
+        msg = tr("NOAA winds aloft downloaded.");
         break;
     }
     NavApp::setStatusMessage(msg, true /* addToLog */);

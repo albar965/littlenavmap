@@ -298,6 +298,6 @@ void TrackController::tracksLoaded()
                  arg(num == 0 ? tr("no") : QString::number(num)));
     }
 
-    NavApp::setStatusMessage(tr("Track download finished: %1.").arg(msg.join(tr(", "))), true /* addToLog */);
+    NavApp::setStatusMessage(tr("Tracks downloaded: %1.").arg(msg.join(tr(", "))), true /* addToLog */);
   }
 }
