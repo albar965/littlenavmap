@@ -1140,12 +1140,25 @@ bool DatabaseManager::runInternal()
       QStringList errors;
       if(!NavDatabase::isBasePathValid(databaseDialog->getBasePath(), errors, selectedFsType))
       {
-        // Check if base path is valid - all simulators ========================================================
-        Dialog::warning(databaseDialog,
-                        tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
-                           "Reason:<br/>"
-                           "%2</p>").
-                        arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")));
+        if(selectedFsType == atools::fs::FsPaths::MSFS)
+        {
+          // Check if base path is valid - all simulators ========================================================
+          Dialog::warning(databaseDialog,
+                          tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
+                             "Reason:<br/>"
+                             "%2<br/><br/>"
+                             "Either the \"OneStore\" or the \"Steam\" paths have to exist.<br/>"
+                             "The path \"Community\" is always needed for add-ons.</p>").
+                          arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")));
+        }
+        else
+        {
+          Dialog::warning(databaseDialog,
+                          tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
+                             "Reason:<br/>"
+                             "%2</p>").
+                          arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")));
+        }
         configValid = false;
       }
 
