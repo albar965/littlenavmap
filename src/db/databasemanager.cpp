@@ -1134,43 +1134,59 @@ bool DatabaseManager::runInternal()
 
     if(retval == QDialog::Accepted)
     {
+      using atools::gui::Dialog;
+
       bool configValid = true;
-      QString err;
-      if(!atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err, selectedFsType))
+      QStringList errors;
+      if(!NavDatabase::isBasePathValid(databaseDialog->getBasePath(), errors, selectedFsType))
       {
         // Check if base path is valid - all simulators ========================================================
-        atools::gui::Dialog::warning(databaseDialog, tr("Cannot read base path \"%1\".\nReason:\n%2.").
-                                     arg(databaseDialog->getBasePath()).arg(err));
+        Dialog::warning(databaseDialog,
+                        tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
+                           "Reason:<br/>"
+                           "%2</p>").
+                        arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")));
         configValid = false;
       }
 
-      if(selectedFsType == atools::fs::FsPaths::XPLANE11)
+      // Do further checks if basepath is valid =================
+      if(configValid)
       {
-        // Check scenery_packs.ini for X-Plane ========================================================
-        QString filepath;
-        if(!readInactive && !atools::fs::xp::SceneryPacks::exists(databaseDialog->getBasePath(), err, filepath))
+        if(selectedFsType == atools::fs::FsPaths::XPLANE11)
         {
-          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read scenery configuration \"%1\".\nReason:\n%2.\n\n"
-                                                          "Enable the option \"Read inactive or disabled Scenery Entries\" "
-                                                          "or start X-Plane once to create the file.").
-                                       arg(filepath).arg(err));
-          configValid = false;
+          // Check scenery_packs.ini for X-Plane ========================================================
+          QString filepath;
+          if(!readInactive && !atools::fs::xp::SceneryPacks::exists(databaseDialog->getBasePath(), errors, filepath))
+          {
+            Dialog::warning(databaseDialog,
+                            tr("<p style='white-space:pre'>Cannot read scenery configuration \"%1\".<br/><br/>"
+                               "Reason:<br/>"
+                               "%2<br/><br/>"
+                               "Enable the option \"Read inactive or disabled Scenery Entries\"<br/>"
+                               "or start X-Plane once to create the file.</p>").
+                            arg(filepath).arg(errors.join("<br/>")));
+            configValid = false;
+          }
         }
-      }
-      else if(selectedFsType != atools::fs::FsPaths::MSFS)
-      {
-        // Check scenery.cfg for FSX and P3D ========================================================
-        QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
-                                   selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
-
-        if(!atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
+        else if(selectedFsType != atools::fs::FsPaths::MSFS)
         {
-          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read scenery configuration \"%1\".\nReason:\n%2.").
-                                       arg(databaseDialog->getSceneryConfigFile()).arg(err));
-          configValid = false;
-        }
-      }
+          // Check scenery.cfg for FSX and P3D ========================================================
+          QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
+                                     selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
 
+          if(!NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, errors))
+          {
+            Dialog::warning(databaseDialog,
+                            tr("<p style='white-space:pre'>Cannot read scenery configuration \"%1\".<br/><br/>"
+                               "Reason:<br/>"
+                               "%2</p>").
+                            arg(databaseDialog->getSceneryConfigFile()).arg(errors.join("<br/>")));
+            configValid = false;
+          }
+        }
+      } // if(configValid)
+
+      // Start compilation if all is valid ====================================================
       if(configValid)
       {
         // Compile into a temporary database file
@@ -1241,7 +1257,7 @@ bool DatabaseManager::runInternal()
               qWarning() << "Removing" << journal2.fileName() << "failed";
           }
         }
-      }
+      } // if(configValid)
     }
     else
       // User hit close
@@ -1310,6 +1326,17 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
 
   navDatabaseOpts.setSceneryFile(simulators.value(selectedFsType).sceneryCfg);
   navDatabaseOpts.setBasepath(simulators.value(selectedFsType).basePath);
+
+  if(selectedFsType == atools::fs::FsPaths::MSFS)
+  {
+    navDatabaseOpts.setMsfsCommunityPath(FsPaths::getMsfsCommunityPath());
+    navDatabaseOpts.setMsfsOfficialPath(FsPaths::getMsfsOfficialPath());
+  }
+  else
+  {
+    navDatabaseOpts.setMsfsCommunityPath(QString());
+    navDatabaseOpts.setMsfsOfficialPath(QString());
+  }
 
   QElapsedTimer timer;
   progressTimerElapsed = 0L;
