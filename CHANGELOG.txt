@@ -13,7 +13,7 @@ Highlights:
   as for automatic plan calculation. See `Flight Plan` -> `Download Tracks`.
 * Multi-export: Export more than one flight plan format at once with just one click. Formats and
   paths are configurable. See `File` -> `Multi Export Flight Plan Options`.
-* Many changes to logbook: A log entry now gets track and flight plan attached which can be saved
+* Improvements to logbook: A log entry now gets track and flight plan attached which can be saved
   or shown in preview.
 * Improved flight plan calculation. Can now calculate across regions which are void of airways. Can
   use oceanic tracks, avoid RNAV airways and more options. `Flight Plan` -> `Calculate Flight Plan`.
@@ -28,7 +28,7 @@ Highlights:
   object is below clicked position.
 * Replaced title bar information for mouse hover in elevation profile with tooltip window
   showing more information.
-* User can now select fonts for user interface and map display. Options dialog on pages `User
+* User can now select font for user interface and map display. Options dialog on pages `User
   Interface` and `Map`.
   See https://b612-font.com for an open source font used in aviation.
 * Free user interface language selection (if translation available). Change this in the dialog
@@ -53,9 +53,15 @@ Highlights:
   menu to its own window.
 * SimConnect library is included now. A FSX SP2 SimConnect installation is not required. #544
 
+Important:
+
+* The data exchange protocol has changed. You have to update Little Navconnect (if using
+  remote/network connections) and Little Xpconnect (if using X-Plane) too.
+* Reload the scenery library database to see fixes and improvements.
+
 Limitations:
 
-* Translations are not updated yet. The user interface will be a mix of your local language and
+* Translations are not updated yet. The user interface might be a mix of your local language and
   English.
   Feel free to send me an email or ask in the Avsim forum if you like to contribute a translation
   of the program or the manual.
@@ -79,12 +85,6 @@ MSFS Limitations:
   gate selected. Select these in the simulator after loading the plan.
   Use the dropdown list in MSFS to select a parking position. Selecting a parking position as departure
   will erase the flight plan.
-
-Important:
-
-* The data exchange protocol has changed. You have to update Little Navconnect (if using
-  remote/network connections) and Little Xpconnect (if using X-Plane) too.
-* Reload the scenery library database to see fixes and improvements.
 
 Notes:
 
