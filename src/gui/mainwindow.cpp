@@ -510,10 +510,8 @@ void MainWindow::debugActionTriggered2()
 
 void MainWindow::debugActionTriggered3()
 {
-  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_LAST_CHECKED);
-  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
-
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */,
+                          true /* forceDebug */);
 }
 
 void MainWindow::debugActionTriggered4()
@@ -589,7 +587,8 @@ void MainWindow::loadNavmapLegend()
 /* Check manually for updates as triggered by the action */
 void MainWindow::checkForUpdates()
 {
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), true /* manually triggered */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(),
+                          true /* manually triggered */, false /* forceDebug */);
 }
 
 void MainWindow::showOnlineHelp()
@@ -3199,7 +3198,8 @@ void MainWindow::mainWindowShown()
   weatherUpdateTimer.start();
 
   // Check for updates once main window is visible
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(),
+                          false /* manually triggered */, false /* forceDebug */);
 
   optionsDialog->checkOfficialOnlineUrls();
 

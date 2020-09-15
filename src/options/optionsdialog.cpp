@@ -1255,7 +1255,8 @@ void OptionsDialog::checkUpdateClicked()
   qDebug() << Q_FUNC_INFO;
 
   // Trigger async check and get a dialog even if nothing was found
-  NavApp::checkForUpdates(ui->comboBoxOptionsStartupUpdateChannels->currentIndex(), true /* manually triggered */);
+  NavApp::checkForUpdates(ui->comboBoxOptionsStartupUpdateChannels->currentIndex(),
+                          true /* manually triggered */, false /* forceDebug */);
 }
 
 void OptionsDialog::flightplanProcedureColorClicked()

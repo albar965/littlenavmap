@@ -292,9 +292,9 @@ void NavApp::deInit()
   splashScreen = nullptr;
 }
 
-void NavApp::checkForUpdates(int channelOpts, bool manuallyTriggered)
+void NavApp::checkForUpdates(int channelOpts, bool manuallyTriggered, bool forceDebug)
 {
-  updateHandler->checkForUpdates(static_cast<opts::UpdateChannels>(channelOpts), manuallyTriggered);
+  updateHandler->checkForUpdates(static_cast<opts::UpdateChannels>(channelOpts), manuallyTriggered, forceDebug);
 }
 
 void NavApp::optionsChanged()

@@ -143,7 +143,7 @@ public:
   /* Deletes all aggregated objects */
   static void deInit();
 
-  static void checkForUpdates(int channelOpts, bool manuallyTriggered);
+  static void checkForUpdates(int channelOpts, bool manuallyTriggered, bool forceDebug);
 
   static void optionsChanged();
   static void preDatabaseLoad();

@@ -54,13 +54,15 @@ UpdateHandler::~UpdateHandler()
   delete updateCheck;
 }
 
-void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered)
+void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered, bool force)
 {
-  qDebug() << Q_FUNC_INFO << "channels" << channelOpts << "manual" << manuallyTriggered;
+  qDebug() << Q_FUNC_INFO << "channels" << channelOpts << "manual" << manuallyTriggered
+           << "URL" << updateCheck->getUrl();
+  updateCheck->setForceDebug(force);
 
   manual = manuallyTriggered;
 #ifndef DEBUG_UPDATE
-  if(!manuallyTriggered)
+  if(!manuallyTriggered && !force)
   {
     // Check timestamp if automatically triggered on starup
     qlonglong diff = 0;
@@ -73,7 +75,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
         diff = 24 * 60 * 60 * 7;
         break;
       case opts::NEVER:
-        // Let  use check manually
+        // Let user check manually
         return;
     }
 
@@ -88,7 +90,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
 #endif
 
   QString checked;
-  if(!manuallyTriggered)
+  if(!manuallyTriggered && !force)
     // Get skipped update
     checked = Settings::instance().valueStr(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
 
