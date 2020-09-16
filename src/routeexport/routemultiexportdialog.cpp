@@ -241,7 +241,9 @@ void RouteMultiExportDialog::updateTableColors()
         // Color style path =========================
         if(col == PATH)
         {
-          item->setToolTip(tr("Press F2 or double click to edit"));
+          item->setToolTip(tr("Default file or directory.\n"
+                              "This path depends on the selected simulator scenery library.\n"
+                              "Press F2 or double click to edit."));
           QString errorMessage;
           if(fmt.isSelected() && !fmt.isPathValid(&errorMessage))
           {
@@ -260,6 +262,7 @@ void RouteMultiExportDialog::updateTableColors()
               item->setForeground(QColor(Qt::darkGray));
               if(fmt.isSelected())
                 item->setToolTip(tr("Default file or directory selected for export.\n"
+                                    "This path depends on the selected simulator scenery library.\n"
                                     "Press F2 or double click to edit."));
             }
             else
@@ -268,7 +271,7 @@ void RouteMultiExportDialog::updateTableColors()
               item->setForeground(QApplication::palette().color(QPalette::Text));
               if(fmt.isSelected())
                 item->setToolTip(tr("File or directory selected for export and changed by user.\n"
-                                    "Given path will be used for all simulators.\n"
+                                    "This path will be used for all simulators.\n"
                                     "Press F2 or double click to edit."));
             }
           }
@@ -524,6 +527,7 @@ void RouteMultiExportDialog::resetPathClicked()
     // Reset path button clicked ============================
     resetPath(static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt()),
               button->property(ROW_PROP_NAME).toInt());
+  updateTableColors();
 }
 
 void RouteMultiExportDialog::resetPath(rexp::RouteExportFormatType type, int row)
