@@ -2056,32 +2056,41 @@ void MainWindow::updateWindowTitle()
 
   // Program version and revision ==========================================
   if(version.isStable() || version.isReleaseCandidate() || version.isBeta())
-    newTitle += QString(" %1").arg(version.getVersionString());
+    newTitle += tr(" %1").arg(version.getVersionString());
   else
-    newTitle += QString(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION);
+    newTitle += tr(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION);
 
   // Database information  ==========================================
   if(navDbStatus == dm::NAVDATABASE_ALL)
-    newTitle += " - (" + NavApp::getCurrentSimulatorShortName() + ")";
+    newTitle += tr(" - (%1)").arg(NavApp::getCurrentSimulatorShortName());
   else
-    newTitle += " - " + NavApp::getCurrentSimulatorShortName();
+    newTitle += tr(" - %1").arg(NavApp::getCurrentSimulatorShortName());
+
+  if(!NavApp::getDatabaseAiracCycleSim().isEmpty())
+    newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleSim());
 
   if(navDbStatus == dm::NAVDATABASE_ALL)
-    newTitle += " / N";
+    newTitle += tr(" / N");
   else if(navDbStatus == dm::NAVDATABASE_MIXED)
-    newTitle += " / N";
+    newTitle += tr(" / N");
+
+  if((navDbStatus == dm::NAVDATABASE_ALL || navDbStatus == dm::NAVDATABASE_MIXED) &&
+     !NavApp::getDatabaseAiracCycleNav().isEmpty())
+    newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
 
   // Flight plan name  ==========================================
   if(!routeController->getCurrentRouteFilepath().isEmpty())
-    newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilepath()).fileName() +
-                (routeController->hasChanged() ? tr(" *") : QString());
+    newTitle += tr(" - %1%2").
+                arg(QFileInfo(routeController->getCurrentRouteFilepath()).fileName()).
+                arg(routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
     newTitle += tr(" - *");
 
   // Performance name  ==========================================
   if(!NavApp::getCurrentAircraftPerfFilepath().isEmpty())
-    newTitle += " - " + QFileInfo(NavApp::getCurrentAircraftPerfFilepath()).fileName() +
-                (NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
+    newTitle += tr(" - %1%2").
+                arg(QFileInfo(NavApp::getCurrentAircraftPerfFilepath()).fileName()).
+                arg(NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
   else if(NavApp::getAircraftPerfController()->hasChanged())
     newTitle += tr(" - *");
 
