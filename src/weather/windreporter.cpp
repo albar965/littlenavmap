@@ -159,17 +159,25 @@ void WindReporter::windDownloadFinished()
   updateToolButtonState();
   if(!isWindManual())
   {
-    QString msg;
+    QDateTime from, to;
+    windQuery->getValidity(from, to);
 
+    QString validText = from.isValid() && to.isValid() ? tr(" Forecast from %1 to %2 UTC.").
+                        arg(QLocale().toString(from, QLocale::ShortFormat)).
+                        arg(QLocale().toString(to, QLocale::ShortFormat)) : QString();
+
+    QString msg;
     switch(currentSource)
     {
       case wind::NO_SOURCE:
         break;
+
       case wind::SIMULATOR:
-        msg = tr("Winds aloft updated from simulator.");
+        msg = tr("Winds aloft updated from simulator.%1").arg(validText);
         break;
+
       case wind::NOAA:
-        msg = tr("NOAA winds aloft downloaded.");
+        msg = tr("Winds aloft downloaded from NOAA.%1").arg(validText);
         break;
     }
     NavApp::setStatusMessage(msg, true /* addToLog */);
