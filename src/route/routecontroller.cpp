@@ -1491,6 +1491,9 @@ void RouteController::calculateRoute()
   {
     fromIdx = routeWindow->getRouteRangeFromIndex();
     toIdx = routeWindow->getRouteRangeToIndex();
+
+    // Disable certain optimizations in route finder
+    mode |= atools::routing::MODE_POINT_TO_POINT;
   }
 
   if(calculateRouteInternal(&routeFinder, command, fetchAirways, routeWindow->getCruisingAltitudeFt(),
@@ -3707,20 +3710,25 @@ void RouteController::updateTableModel()
       // Airway ========================
       const map::MapAirway& airway = leg.getAirway();
 
-      QString awname = airway.isValid() && airway.isTrack() ?
-                       tr("Track %1").arg(leg.getAirwayName()) : leg.getAirwayName();
+      QStringList awname;
+
+      awname.append(airway.isValid() &&
+                    airway.isTrack() ? tr("Track %1").arg(leg.getAirwayName()) : leg.getAirwayName());
 
       if(airway.isValid())
       {
+        awname.append(map::airwayTrackTypeToShortString(airway.type));
+
 #ifdef DEBUG_INFORMATION
-        awname += " [" + map::airwayRouteTypeToStringShort(airway.routeType) +
-                  "," + map::airwayTrackTypeToShortString(airway.type) + "]";
+        awname.append("[" + map::airwayRouteTypeToStringShort(airway.routeType) + "]");
 #endif
+
+        awname.removeAll(QString());
         itemRow[rcol::RESTRICTION] =
           new QStandardItem(map::airwayAltTextShort(airway, false /* addUnit */, false /* narrow */));
       }
 
-      itemRow[rcol::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname);
+      itemRow[rcol::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname.join(tr(" / ")));
       // highlightProcedureItems() does error checking
     }
     else
