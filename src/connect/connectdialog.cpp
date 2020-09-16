@@ -327,3 +327,26 @@ void ConnectDialog::restoreState()
 
   updateButtonStates();
 }
+
+int ConnectDialog::execConnectDialog(cd::ConnectSimType connectionType)
+{
+  switch(connectionType)
+  {
+    case cd::UNKNOWN:
+      // Not connected - leave as is
+      break;
+
+    case cd::REMOTE:
+      activateTab(ui->tabConnectRemote);
+      break;
+
+    case cd::FSX_P3D_MSFS:
+      activateTab(ui->tabConnectFsx);
+      break;
+
+    case cd::XPLANE:
+      activateTab(ui->tabConnectXp);
+      break;
+  }
+  return QDialog::exec();
+}

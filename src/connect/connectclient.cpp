@@ -130,8 +130,16 @@ void ConnectClient::connectToServerDialog()
 {
   dialog->setConnected(isConnected());
 
-  // Show dialog
-  int retval = dialog->exec();
+  // Show dialog and determine which tab to open
+  cd::ConnectSimType type = cd::UNKNOWN;
+  if(isConnectedNetwork() && isConnected())
+    type = cd::REMOTE;
+  else if(isSimConnect() && isConnected())
+    type = cd::FSX_P3D_MSFS;
+  else if(isXpConnect() && isConnected())
+    type = cd::XPLANE;
+
+  int retval = dialog->execConnectDialog(type);
   dialog->hide();
 
   if(retval == QDialog::Accepted)
@@ -604,6 +612,11 @@ bool ConnectClient::isConnected() const
 bool ConnectClient::isSimConnect() const
 {
   return dataReader != nullptr && dataReader->isFsxHandler();
+}
+
+bool ConnectClient::isXpConnect() const
+{
+  return dataReader != nullptr && dataReader->isXplaneHandler();
 }
 
 bool ConnectClient::isConnectedNetwork() const

@@ -71,6 +71,9 @@ public:
   /* true if connection is using SimConnect for FSX/P3D */
   bool isSimConnect() const;
 
+  /* true if connection is using Xpconnect to X-Plane */
+  bool isXpConnect() const;
+
   /* Connected to Little Navconnect */
   bool isConnectedNetwork() const;
 

@@ -73,6 +73,8 @@ public:
   unsigned int getUpdateRateMs(cd::ConnectSimType type);
   int getAiFetchRadiusNm(cd::ConnectSimType type);
 
+  int execConnectDialog(cd::ConnectSimType connectionType);
+
 signals:
   void disconnectClicked();
   void autoConnectToggled(bool state);
@@ -93,6 +95,7 @@ private:
 
   Ui::ConnectDialog *ui;
   bool simConnect = false;
+
 };
 
 #endif // LITTLENAVMAP_CONNECTDIALOG_H
