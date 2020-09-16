@@ -72,19 +72,19 @@ void MapPainterIls::render()
           if(context->objCount())
             return;
 
-          drawIlsSymbol(ils);
+          drawIlsSymbol(ils, context->drawFast);
         }
       }
     }
   }
 }
 
-void MapPainterIls::drawIlsSymbol(const map::MapIls& ils)
+void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 {
   atools::util::PainterContextSaver saver(context->painter);
 
   context->painter->setBackgroundMode(Qt::TransparentMode);
-  context->painter->setBrush(mapcolors::ilsFillColor);
+  context->painter->setBrush(fast ? QBrush(Qt::transparent) : QBrush(mapcolors::ilsFillColor));
   context->painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
 
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
@@ -104,11 +104,11 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils)
   else
     context->painter->drawPolygon(QPolygonF({origin, p1, pmid, p2, origin}));
 
-  context->painter->setPen(QPen(mapcolors::ilsCenterPen));
-  context->painter->drawLine(origin, pmid);
-
   if(!context->drawFast)
   {
+    context->painter->setPen(QPen(mapcolors::ilsCenterPen));
+    context->painter->drawLine(origin, pmid);
+
     // Draw ILS text -----------------------------------
     QString text;
     if(context->mapLayer->isIlsInfo())
