@@ -150,7 +150,7 @@ del /S /Q /F "%APROJECTS%\build-littlexpconnect-%CONF_TYPE%"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-littlexpconnect-%CONF_TYPE%"') do rd /s /q "%APROJECTS%\build-littlexpconnect-%CONF_TYPE%\%%f"
 IF ERRORLEVEL 1 goto :err
 
-qmake.exe "%APROJECTS%\littlexpconnect\littlexpconnect.pro" -spec win32-g++ CONFIG+=%CONF_TYPE% DEFINES+=XPLM200=1 DEFINES+=APL=0 DEFINES+=IBM=0 DEFINES+=LIN=1
+qmake.exe "%APROJECTS%\littlexpconnect\littlexpconnect.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 IF ERRORLEVEL 1 goto :err
 mingw32-make.exe -j4
 IF ERRORLEVEL 1 goto :err
