@@ -2358,6 +2358,18 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         plan.getProperties().insert(atools::fs::pln::APPROACHRW, runways->last().primaryName);
     }
   }
+
+  if(plan.getEntries().size() <= 2)
+    // Use only real direct without procedures
+    plan.setRouteType(atools::fs::pln::DIRECT);
+  else
+  {
+    // Use an estimated difference for high/low
+    if(route.getCruisingAltitudeFeet() < 18000.f)
+      plan.setRouteType(atools::fs::pln::LOW_ALTITUDE);
+    else
+      plan.setRouteType(atools::fs::pln::HIGH_ALTITUDE);
+  }
   return route;
 }
 
