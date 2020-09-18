@@ -209,32 +209,34 @@ bool RouteExport::routeExportPlnMsfsMan()
 
 bool RouteExport::routeExportPln(const RouteExportFormat& format)
 {
-  return routeExportInternalPln(false /* annotated */, format);
+  return routeExportInternalPln(format);
 }
 
 bool RouteExport::routeExportPlnMsfs(const RouteExportFormat& format)
 {
-  return routeExportInternalPln(false /* annotated */, format);
+  return routeExportInternalPln(format);
 }
 
 bool RouteExport::routeExportPlnAnnotatedMulti(const RouteExportFormat& format)
 {
-  return routeExportInternalPln(true, format);
+  return routeExportInternalPln(format);
 }
 
-bool RouteExport::routeExportInternalPln(bool annotated, const RouteExportFormat& format)
+bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(routeValidateMulti(format))
   {
+    bool msfs = format.getType() == rexp::PLNMSFS;
+
     QString routeFile = exportFile(format, "Route/Pln" + NavApp::getCurrentSimulatorShortName(),
-                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(".pln"),
+                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(".pln", msfs),
                                    false /* confirm overwrite */);
 
     if(!routeFile.isEmpty())
     {
-      bool msfs = format.getType() == rexp::PLNMSFS;
+      bool annotated = format.getType() == rexp::PLNANNOTATED;
 
       using namespace std::placeholders;
       auto func = msfs ?
@@ -1048,10 +1050,12 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   return save;
 }
 
-QString RouteExport::buildDefaultFilename(const QString& suffix)
+QString RouteExport::buildDefaultFilename(const QString& suffix, bool normalize)
 {
-  return NavApp::getRouteConst().getFlightplan().getFilenamePattern(
+  QString name = NavApp::getRouteConst().getFlightplan().getFilenamePattern(
     OptionData::instance().getFlightplanPattern(), suffix);
+
+  return normalize ? atools::normalizeStr(name) : name;
 }
 
 QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix)

@@ -196,7 +196,7 @@ public:
   bool routeValidateMulti(const RouteExportFormat& format);
 
   /* Build filename according to pattern set in options. */
-  static QString buildDefaultFilename(const QString& suffix = ".lnmpln");
+  static QString buildDefaultFilename(const QString& suffix = ".lnmpln", bool normalize = false);
 
   /* Create a default filename based on departure and destination idents. Suffix includes dot. */
   static QString buildDefaultFilenameShort(const QString& sep, const QString& suffix);
@@ -223,7 +223,7 @@ signals:
   void  optionsUpdated();
 
 private:
-  bool routeExportInternalPln(bool annotated, const RouteExportFormat& format);
+  bool routeExportInternalPln(const RouteExportFormat& format);
   bool routeExportInternalFlp(const RouteExportFormat& format, bool crj);
 
   /* Formats that have no export method in FlightplanIO */
