@@ -267,16 +267,18 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     const atools::fs::scenery::LanguageJson& idx = NavApp::getLanguageIndex();
     if(!idx.isEmpty())
     {
+      // Change user aircraft names
       userAircraft.updateAircraftNames(idx.getName(userAircraft.getAirplaneType()),
                                        idx.getName(userAircraft.getAirplaneAirline()),
                                        idx.getName(userAircraft.getAirplaneTitle()),
                                        idx.getName(userAircraft.getAirplaneModel()));
 
+      // Change AI names
       for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())
-        ac.updateAircraftNames(idx.getName(userAircraft.getAirplaneType()),
-                               idx.getName(userAircraft.getAirplaneAirline()),
-                               idx.getName(userAircraft.getAirplaneTitle()),
-                               idx.getName(userAircraft.getAirplaneModel()));
+        ac.updateAircraftNames(idx.getName(ac.getAirplaneType()),
+                               idx.getName(ac.getAirplaneAirline()),
+                               idx.getName(ac.getAirplaneTitle()),
+                               idx.getName(ac.getAirplaneModel()));
     }
 
     emit dataPacketReceived(dataPacket);

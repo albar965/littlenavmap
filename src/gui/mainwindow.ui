@@ -11031,7 +11031,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Calculate Flight Plan between legs</string>
+    <string>&amp;Calculate Flight Plan between legs ...</string>
    </property>
    <property name="toolTip">
     <string>Calculate flight plan between selected legs</string>
