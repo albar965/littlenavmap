@@ -133,6 +133,7 @@ void MapPainterAirport::render()
   }
 
   textflags::TextFlags apTextFlags = context->airportTextFlags();
+  int symsize = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
 
   // Add airport symbols on top of diagrams ===========================
   for(int i = 0; i < visibleAirports.size(); i++)
@@ -154,11 +155,11 @@ void MapPainterAirport::render()
       drawAirportSymbol(*airport, x, y);
 
       context->szFont(context->textSizeAirport);
+
       symbolPainter->drawAirportText(context->painter, *airport, x, y,
                                      context->dispOptsAirport, apTextFlags,
-                                     context->sz(context->symbolSizeAirport,
-                                                 context->mapLayerEffective->getAirportSymbolSize()),
-                                     context->mapLayerEffective->isAirportDiagramRunway(),
+                                     context->mapLayerEffective->isAirportDiagram() ? symsize * 2 : symsize,
+                                     context->mapLayerEffective->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
     }
   }

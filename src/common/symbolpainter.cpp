@@ -1047,7 +1047,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
     if(flags & textflags::LOG_TEXT)
       atts |= textatt::LOG_BG_COLOR;
 
-    int transparency = diagram ? 130 : 255;
+    int transparency = diagram ? 180 : 255;
     // No background for empty airports except if they are part of the route or log
     if(airport.emptyDraw() && !(flags& textflags::ROUTE_TEXT) && !(flags & textflags::LOG_TEXT))
       transparency = 0;
