@@ -415,8 +415,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       float hdg = rec->valueFloat("longest_runway_heading");
       html.row2(tr("Heading:"), courseTextFromTrue(hdg, airport.magvar) + tr(", ") +
                 courseTextFromTrue(opposedCourseDeg(hdg), airport.magvar), ahtml::NO_ENTITIES);
-      html.row2(tr("Surface:"),
-                map::surfaceName(rec->valueStr("longest_runway_surface")));
+      html.row2If(tr("Surface:"), map::surfaceName(rec->valueStr("longest_runway_surface")));
     }
     html.tableEnd();
   }
@@ -815,8 +814,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
                   tr(" x ") +
                   Unit::distShortFeet(rec.valueFloat("width")));
 
-        html.row2(tr("Surface:"), strJoinVal({map::surfaceName(rec.valueStr("surface")),
-                                              map::smoothnessName(rec.valueFloat("smoothness", -1.f))}));
+        html.row2If(tr("Surface:"), strJoinVal({map::surfaceName(rec.valueStr("surface")),
+                                                map::smoothnessName(rec.valueFloat("smoothness", -1.f))}));
 
         if(rec.valueFloat("pattern_altitude") > 0)
           html.row2(tr("Pattern Altitude:"), Unit::altFeet(rec.valueFloat("pattern_altitude")));
@@ -930,9 +929,9 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           html.row2(tr("Size:"), Unit::distShortFeet(heliRec.valueFloat("width"), false) +
                     tr(" x ") +
                     Unit::distShortFeet(heliRec.valueFloat("length")));
-          html.row2(tr("Surface:"), map::surfaceName(heliRec.valueStr("surface")) +
-                    (heliRec.valueBool("is_transparent") ? tr(" (Transparent)") : QString()));
-          html.row2(tr("Type:"), atools::capString(heliRec.valueStr("type")));
+          html.row2If(tr("Surface:"), map::surfaceName(heliRec.valueStr("surface")) +
+                      (heliRec.valueBool("is_transparent") ? tr(" (Transparent)") : QString()));
+          html.row2If(tr("Type:"), atools::capString(heliRec.valueStr("type")));
           html.row2(tr("Heading:"), courseTextFromTrue(heliRec.valueFloat("heading"), airport.magvar),
                     ahtml::NO_ENTITIES);
           html.row2(tr("Elevation:"), Unit::altFeet(heliRec.valueFloat("altitude")));
@@ -4129,7 +4128,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
       if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
         title = i == 0 ? tr("X-Plane") : QString();
 
-      html.row2If(title, filepathTextShow(rec.valueStr("filepath")), ahtml::NO_ENTITIES);
+      html.row2(title, filepathTextShow(rec.valueStr("filepath")), ahtml::NO_ENTITIES);
       i++;
     }
     html.tableEnd();
