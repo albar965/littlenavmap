@@ -107,6 +107,10 @@ enum Flag
    * ui->checkBoxOptionsStartupLoadperf */
   STARTUP_LOAD_PERF = 1 << 24,
 
+  /* Reload window layout on startup.
+   * ui->checkBoxOptionsStartupLoadLayout */
+  STARTUP_LOAD_LAYOUT = 1 << 25,
+
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);

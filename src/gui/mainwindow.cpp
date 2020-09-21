@@ -2540,7 +2540,7 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
   try
   {
     if(dockHandler->loadWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
-                                    tr("The option \"Allow to undock map window\" in the saved file is "
+                                    tr("The option \"Allow to undock map window\" in the layout file is "
                                        "different than the currently set option.\n"
                                        "The layout might not be restored properly.\n\n"
                                        "Apply the loaded window layout anyway?")))
@@ -3060,6 +3060,9 @@ void MainWindow::mainWindowShown()
 
   // Enable dock handler
   dockHandler->setHandleDockViews(true);
+
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
+    layoutOpenInternal(layoutFileHistory->getTopFile());
 
   // Switch to fullscreen now after applying normal layout to avoid a distorted layout
   enableDelayedFullscreen();
