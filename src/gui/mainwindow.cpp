@@ -2685,7 +2685,7 @@ void MainWindow::mapSaveImageAviTab()
           tr("Save Map as Image for AviTab"),
           tr("AviTab Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE_AVITAB),
           "png", "MainWindow/AviTab",
-          atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
+          NavApp::getCurrentSimulatorBasePath() +
           QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
           QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
           false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);

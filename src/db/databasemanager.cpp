@@ -1337,13 +1337,14 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   delete progressDialog;
   progressDialog = new DatabaseProgressDialog(mainWindow, atools::fs::FsPaths::typeToShortName(selectedFsType));
 
+  QString basePath = simulators.value(selectedFsType).basePath;
   navDatabaseOpts.setSceneryFile(simulators.value(selectedFsType).sceneryCfg);
-  navDatabaseOpts.setBasepath(simulators.value(selectedFsType).basePath);
+  navDatabaseOpts.setBasepath(basePath);
 
   if(selectedFsType == atools::fs::FsPaths::MSFS)
   {
-    navDatabaseOpts.setMsfsCommunityPath(FsPaths::getMsfsCommunityPath());
-    navDatabaseOpts.setMsfsOfficialPath(FsPaths::getMsfsOfficialPath());
+    navDatabaseOpts.setMsfsCommunityPath(FsPaths::getMsfsCommunityPath(basePath));
+    navDatabaseOpts.setMsfsOfficialPath(FsPaths::getMsfsOfficialPath(basePath));
   }
   else
   {
