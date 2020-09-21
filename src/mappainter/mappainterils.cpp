@@ -126,7 +126,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 
       // Rotate to draw the text upwards so it is readable
       float rotate;
-      if(ils.heading > 180)
+      if(ils.heading > 180.f)
         rotate = ils.heading + 90.f - width / 2.f;
       else
         rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + width / 2.f;

@@ -202,7 +202,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"), QString(), optsd::ITEM_AIRPORT_NAME, true);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QString(), optsd::ITEM_AIRPORT_TOWER, true);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("ATIS / ASOS / AWOS Frequency"), QString(), optsd::ITEM_AIRPORT_ATIS, true);
-  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"), tr("Show runway length, width and light inidcator text."), optsd::ITEM_AIRPORT_RUNWAY, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"), tr("Show runway length, width and light indicator text."), optsd::ITEM_AIRPORT_RUNWAY, true);
   // addItem(ap, tr("Wind Pointer"), optsd::ITEM_AIRPORT_WIND_POINTER);
 
   QTreeWidgetItem *airportDetails = addTopItem(root, tr("Airport Details"), tr("Select airport diagram elements."));
@@ -1511,6 +1511,9 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOptionsAirport = optsd::AIRPORT_NONE;
   displayOptWidgetToOptionData(data.displayOptionsAirport, displayOptItemIndexAirport);
 
+  data.displayOptionsRose = optsd::ROSE_NONE;
+  displayOptWidgetToOptionData(data.displayOptionsRose, displayOptItemIndexRose);
+
   data.displayOptionsMeasurement = optsd::MEASUREMNENT_NONE;
   displayOptWidgetToOptionData(data.displayOptionsMeasurement, displayOptItemIndexMeasurement);
 
@@ -1765,6 +1768,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   flightplanActiveColor = data.flightplanActiveColor;
   flightplanPassedColor = data.flightplanPassedColor;
   trailColor = data.trailColor;
+
   displayOptDataToWidget(data.displayOptions, displayOptItemIndex);
   displayOptDataToWidget(data.displayOptionsAirport, displayOptItemIndexAirport);
   displayOptDataToWidget(data.displayOptionsRose, displayOptItemIndexRose);
