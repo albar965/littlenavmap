@@ -2359,8 +2359,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     }
   }
 
-  if(plan.getEntries().size() <= 2)
-    // Use only real direct without procedures
+  if(plan.getEntries().size() <= 2 || plan.getFlightplanType() == atools::fs::pln::VFR)
+    // Use only real direct without procedures or VFR - MSFS accepts only VFR if direct
     plan.setRouteType(atools::fs::pln::DIRECT);
   else
   {
