@@ -1140,7 +1140,7 @@ void InfoController::updateAircraftProgressText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraftConst().isValid())
+    if(lastSimData.getUserAircraftConst().isFullyValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
       {
@@ -1243,7 +1243,7 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
     updateAiAirports(data);
 
     lastSimData = data;
-    if(data.getUserAircraftConst().isValid() && ui->dockWidgetAircraft->isVisible())
+    if(data.getUserAircraftConst().isFullyValid() && ui->dockWidgetAircraft->isVisible())
     {
       if(tabHandlerAircraft->getCurrentTabId() == ic::AIRCRAFT_USER)
         updateUserAircraftText();
@@ -1261,7 +1261,7 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
                             lastSimBearingUpdate, static_cast<qint64>(MIN_SIM_UPDATE_BEARING_TIME_MS)))
   {
     // Last update was more than a second ago
-    if(data.getUserAircraftConst().isValid() && ui->dockWidgetInformation->isVisible())
+    if(data.getUserAircraftConst().isFullyValid() && ui->dockWidgetInformation->isVisible())
     {
       if(tabHandlerAirportInfo->getCurrentTabId() == ic::INFO_AIRPORT_OVERVIEW)
         updateAirportInternal(false /* new */, true /* bearing change*/, false /* scroll to top */,

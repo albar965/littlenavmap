@@ -799,7 +799,7 @@ void MapPaintWidget::showAircraft(bool centerAircraftChecked)
     // Adapt the menu item status if this method was not called by the action
     updateShowAircraftUi(centerAircraftChecked);
 
-    if(centerAircraftChecked && screenIndex->getUserAircraft().isValid())
+    if(centerAircraftChecked && screenIndex->getUserAircraft().isFullyValid())
       centerPosOnMap(screenIndex->getUserAircraft().getPosition());
   }
 }

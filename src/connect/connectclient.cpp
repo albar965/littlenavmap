@@ -238,8 +238,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
   atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
 
   // Workaround for MSFS sending wrong positions around 0/0 while in menu
-  if(userAircraft.isValid() && userAircraft.getGroundSpeedKts() < 1.0f &&
-     userAircraft.getPosition().almostEqual(atools::geo::Pos(0.f, 0.f), 1.f))
+  if(!userAircraft.isFullyValid())
     // Invalidate position at the 0,0 position if no groundspeed
     userAircraft.setCoordinates(atools::geo::EMPTY_POS);
 

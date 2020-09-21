@@ -431,7 +431,7 @@ bool NavApp::isConnectedAndAircraft()
 
 bool NavApp::isUserAircraftValid()
 {
-  return mainWindow->getMapWidget()->getUserAircraft().isValid();
+  return mainWindow->getMapWidget()->getUserAircraft().isFullyValid();
 }
 
 const atools::fs::sc::SimConnectUserAircraft& NavApp::getUserAircraft()
