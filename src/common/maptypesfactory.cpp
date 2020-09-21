@@ -542,7 +542,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
   ils.ident = record.valueStr("ident");
   ils.name = record.valueStr("name");
   ils.region = record.valueStr("region", QString());
-  ils.heading = record.valueFloat("loc_heading");
+  ils.heading = atools::geo::normalizeCourse(record.valueFloat("loc_heading"));
   ils.width = record.isNull("loc_width") ? INVALID_COURSE_VALUE : record.valueFloat("loc_width");
   ils.magvar = record.valueFloat("mag_var");
   ils.slope = record.valueFloat("gs_pitch");

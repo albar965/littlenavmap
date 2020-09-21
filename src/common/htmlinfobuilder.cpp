@@ -1166,7 +1166,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     {
       // The maximum angular offset for a LOC is 3° for FAA and 5° for ICAO.
       // Everything else is named either LDA (FAA) or IGS (ICAO).
-      if(ageo::angleAbsDiff(end.heading, ilsRec->valueFloat("loc_heading")) > 2.5f)
+      if(ageo::angleAbsDiff(end.heading, atools::geo::normalizeCourse(ilsRec->valueFloat("loc_heading"))) > 2.5f)
       {
         // Get airport for consistent magnetic variation =====================
         map::MapAirport airport = airportQuerySim->getAirportByIdent(ilsRec->valueStr("loc_airport_ident"));
