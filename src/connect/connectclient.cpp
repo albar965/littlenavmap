@@ -280,7 +280,8 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
                                idx.getName(ac.getAirplaneModel()));
     }
 
-    emit dataPacketReceived(dataPacket);
+    if(!dataPacket.isEmptyReply())
+      emit dataPacketReceived(dataPacket);
 
     if(!dataPacket.getMetars().isEmpty())
     {
