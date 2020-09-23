@@ -1020,28 +1020,57 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void MapWidget::wheelEvent(QWheelEvent *event)
 {
+  static const int ANGLE_THRESHOLD = 120, PIXEL_THRESHOLD = 200;
+
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
-           << event->source()
-           << "geometry()" << geometry()
-           << "rect()" << rect()
-           << "event->pos()" << event->pos();
+           << "lastWheelAngle" << lastWheelAngle << "lastWheelPixel" << lastWheelPixel
+           << event->source() << "geometry()" << geometry() << "rect()" << rect() << "event->pos()" << event->pos();
 #endif
 
   if(!rect().contains(event->pos()))
     // Ignore wheel events that appear outside of the view and on the scrollbars
     return;
 
-  if(event->timestamp() > lastWheelEventTimestamp + 500)
-    lastWheelPos = 0;
+  // Pixel is null for mouse wheel - otherwise touchpad
+  bool touch = !event->pixelDelta().isNull();
+  int angleDelta = event->angleDelta().y();
+  int pixelDelta = event->pixelDelta().y();
 
-  // Sum up wheel events
-  lastWheelPos += event->angleDelta().y();
+  // Sum up wheel events to start action one threshold is exceeded
+  lastWheelAngle += angleDelta;
+  lastWheelPixel += pixelDelta;
+  bool accepted = false, directionIn = false;
+  if(touch)
+  {
+    if(atools::sign(lastWheelPixel) != atools::sign(pixelDelta))
+    {
+      // User changed direction while moving - reverse direction
+      // to allow immediate scroll direction change
+      lastWheelAngle = ANGLE_THRESHOLD * atools::sign(pixelDelta);
+      lastWheelPixel = PIXEL_THRESHOLD * atools::sign(pixelDelta);
+    }
+
+    accepted = std::abs(lastWheelPixel) >= PIXEL_THRESHOLD;
+    directionIn = lastWheelPixel > 0;
+  }
+  else
+  {
+    accepted = std::abs(lastWheelAngle) >= ANGLE_THRESHOLD;
+    directionIn = lastWheelAngle > 0;
+  }
+
+  if(accepted)
+  {
+    // Reset summed up values if accepted
+    lastWheelAngle = 0;
+    lastWheelPixel = 0;
+  }
 
   if(event->modifiers() == Qt::ControlModifier)
   {
     // Adjust map detail ===================================================================
-    if(std::abs(lastWheelPos) >= 50)
+    if(accepted)
     {
       if(event->angleDelta().y() > 0)
         increaseMapDetail();
@@ -1053,11 +1082,8 @@ void MapWidget::wheelEvent(QWheelEvent *event)
   {
     // Zoom in/out ========================================================================
     // Check for threshold
-    if(std::abs(lastWheelPos) >= 120)
+    if(accepted)
     {
-      bool directionIn = lastWheelPos > 0;
-      lastWheelPos = 0;
-
       qreal lon, lat;
       if(geoCoordinates(event->pos().x(), event->pos().y(), lon, lat, Marble::GeoDataCoordinates::Degree))
       {

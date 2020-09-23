@@ -442,10 +442,7 @@ private:
   JumpBack *jumpBack;
 
   /* Sum up mouse wheel or trackpad movement before zooming */
-  int lastWheelPos = 0;
-
-  /* Reset lastWheelPos in case of no wheel events */
-  ulong lastWheelEventTimestamp = 0L;
+  int lastWheelAngle = 0, lastWheelPixel = 0;
 
   MainWindow *mainWindow;
 
