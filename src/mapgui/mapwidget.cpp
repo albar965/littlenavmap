@@ -1019,11 +1019,11 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void MapWidget::wheelEvent(QWheelEvent *event)
 {
-  static const int ANGLE_THRESHOLD = 120, PIXEL_THRESHOLD = 200;
+  static const int ANGLE_THRESHOLD = 120;
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
-           << "lastWheelAngle" << lastWheelAngle << "lastWheelPixel" << lastWheelPixel
+           << "lastWheelAngle" << lastWheelAngle
            << event->source() << "geometry()" << geometry() << "rect()" << rect() << "event->pos()" << event->pos();
 #endif
 
@@ -1032,57 +1032,36 @@ void MapWidget::wheelEvent(QWheelEvent *event)
     return;
 
   // Pixel is null for mouse wheel - otherwise touchpad
-  bool touch = !event->pixelDelta().isNull();
   int angleDelta = event->angleDelta().y();
-  int pixelDelta = event->pixelDelta().y();
 
   // Sum up wheel events to start action one threshold is exceeded
   lastWheelAngle += angleDelta;
-  lastWheelPixel += pixelDelta;
-  bool accepted = false, directionIn = false;
-  if(touch)
-  {
-    if(atools::sign(lastWheelPixel) != atools::sign(pixelDelta))
-    {
-      // User changed direction while moving - reverse direction
-      // to allow immediate scroll direction change
-      lastWheelAngle = ANGLE_THRESHOLD * atools::sign(pixelDelta);
-      lastWheelPixel = PIXEL_THRESHOLD * atools::sign(pixelDelta);
-    }
 
-    accepted = std::abs(lastWheelPixel) >= PIXEL_THRESHOLD;
-    directionIn = lastWheelPixel > 0;
-  }
-  else
-  {
-    accepted = std::abs(lastWheelAngle) >= ANGLE_THRESHOLD;
-    directionIn = lastWheelAngle > 0;
-  }
+  if(atools::sign(lastWheelAngle) != atools::sign(angleDelta))
+    // User changed direction while moving - reverse direction
+    // to allow immediate scroll direction change
+    lastWheelAngle = ANGLE_THRESHOLD * atools::sign(angleDelta);
+
+  bool accepted = std::abs(lastWheelAngle) >= ANGLE_THRESHOLD;
+  bool directionIn = lastWheelAngle > 0;
 
   if(accepted)
   {
     // Reset summed up values if accepted
     lastWheelAngle = 0;
-    lastWheelPixel = 0;
-  }
 
-  if(event->modifiers() == Qt::ControlModifier)
-  {
-    // Adjust map detail ===================================================================
-    if(accepted)
+    if(event->modifiers() == Qt::ControlModifier)
     {
+      // Adjust map detail ===================================================================
       if(event->angleDelta().y() > 0)
         increaseMapDetail();
       else if(event->angleDelta().y() < 0)
         decreaseMapDetail();
     }
-  }
-  else
-  {
-    // Zoom in/out ========================================================================
-    // Check for threshold
-    if(accepted)
+    else
     {
+      // Zoom in/out ========================================================================
+      // Check for threshold
       qreal lon, lat;
       if(geoCoordinates(event->pos().x(), event->pos().y(), lon, lat, Marble::GeoDataCoordinates::Degree))
       {
