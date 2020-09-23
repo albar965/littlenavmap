@@ -507,7 +507,7 @@ bool ConnectClient::isFetchAiAircraft() const
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)
 {
-  if(dataReader->isFsxHandler() && dataReader->isConnected())
+  if(dataReader->isFsxHandler() && dataReader->isConnected() && dataReader->canFetchWeather())
     dataReader->setWeatherRequest(weatherRequest);
 
   if(socket != nullptr && socket->isOpen() && outstandingReplies.isEmpty())

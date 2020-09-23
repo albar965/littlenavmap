@@ -1104,7 +1104,7 @@ void InfoController::updateUserAircraftText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraftConst().getPosition().isValid())
+    if(NavApp::isUserAircraftValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
       {
@@ -1140,7 +1140,7 @@ void InfoController::updateAircraftProgressText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraftConst().isFullyValid())
+    if(NavApp::isUserAircraftValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
       {
@@ -1176,7 +1176,7 @@ void InfoController::updateAiAircraftText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraftConst().getPosition().isValid())
+    if(NavApp::isUserAircraftValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
       {

@@ -362,8 +362,7 @@ void MapWidget::takeoffLandingTimeout()
   {
     // On ground after status has changed
     qDebug() << Q_FUNC_INFO << "Landing detected takeoffLandingDistanceNm" << takeoffLandingDistanceNm;
-    emit aircraftLanding(aircraft,
-                         static_cast<float>(takeoffLandingDistanceNm),
+    emit aircraftLanding(aircraft, static_cast<float>(takeoffLandingDistanceNm),
                          static_cast<float>(takeoffLandingAverageTasKts));
   }
 }
