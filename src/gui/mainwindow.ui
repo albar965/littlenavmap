@@ -5614,7 +5614,7 @@ relation to shown airport</string>
             </size>
            </property>
            <property name="text">
-            <string>No information.</string>
+            <string/>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -11682,7 +11682,7 @@ Best track will be selected automatically.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

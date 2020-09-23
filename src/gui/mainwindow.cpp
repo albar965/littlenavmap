@@ -152,6 +152,10 @@ MainWindow::MainWindow()
                   "</b>"
                 "</p>").arg(lnm::helpDonateUrl);
 
+  layoutWarnText = tr("The option \"Allow to undock map window\" in the layout file is "
+                      "different than the currently set option.\n"
+                      "The layout might not be restored properly.\n\n"
+                      "Apply the loaded window layout anyway?");
   // Show a dialog on fatal log events like asserts
   atools::logging::LoggingGuiAbortHandler::setGuiAbortFunction(this);
 
@@ -165,6 +169,7 @@ MainWindow::MainWindow()
 
     // Avoid short popping up on startup
     ui->dockWidgetRouteCalc->hide();
+    ui->labelProfileInfo->hide();
 
     // Show tooltips also for inactive windows (e.g. if a floating window is active)
     setAttribute(Qt::WA_AlwaysShowToolTips);
@@ -679,6 +684,7 @@ void MainWindow::setupUi()
 
   // Projection menu items
   actionGroupMapProjection = new QActionGroup(ui->menuViewProjection);
+  actionGroupMapProjection->setObjectName("actionGroupMapProjection");
   ui->actionMapProjectionMercator->setActionGroup(actionGroupMapProjection);
   ui->actionMapProjectionSpherical->setActionGroup(actionGroupMapProjection);
 
@@ -701,12 +707,14 @@ void MainWindow::setupUi()
 
   // Sun shading sub menu
   actionGroupMapSunShading = new QActionGroup(ui->menuSunShading);
+  actionGroupMapSunShading->setObjectName("actionGroupMapSunShading");
   actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingSimulatorTime);
   actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingRealTime);
   actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingUserTime);
 
   // Weather source sub menu
   actionGroupMapWeatherSource = new QActionGroup(ui->menuMapShowAirportWeatherSource);
+  actionGroupMapWeatherSource->setObjectName("actionGroupMapWeatherSource");
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherSimulator);
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherActiveSky);
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherNoaa);
@@ -715,12 +723,14 @@ void MainWindow::setupUi()
 
   // Weather source sub menu
   actionGroupMapWeatherWindSource = new QActionGroup(ui->menuHighAltitudeWindSource);
+  actionGroupMapWeatherWindSource->setObjectName("actionGroupMapWeatherWindSource");
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindDisabled);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindSimulator);
 
   // Theme menu items
   actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
+  actionGroupMapTheme->setObjectName("actionGroupMapTheme");
   ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeOpenStreetMap->setData(map::OPENSTREETMAP);
 
@@ -2540,10 +2550,7 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
   try
   {
     if(dockHandler->loadWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
-                                    tr("The option \"Allow to undock map window\" in the layout file is "
-                                       "different than the currently set option.\n"
-                                       "The layout might not be restored properly.\n\n"
-                                       "Apply the loaded window layout anyway?")))
+                                    layoutWarnText))
     {
       dockHandler->currentStateToWindow();
       setStatusMessage(tr("Window layout loaded and restored."));
@@ -3061,12 +3068,6 @@ void MainWindow::mainWindowShown()
   // Enable dock handler
   dockHandler->setHandleDockViews(true);
 
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
-    layoutOpenInternal(layoutFileHistory->getTopFile());
-
-  // Switch to fullscreen now after applying normal layout to avoid a distorted layout
-  enableDelayedFullscreen();
-
   qDebug() << Q_FUNC_INFO << "UI font" << font();
 
   // Postpone loading of KML etc. until now when everything is set up
@@ -3223,19 +3224,13 @@ void MainWindow::mainWindowShown()
     NavApp::getWebController()->startServer();
   webserverStatusChanged(NavApp::getWebController()->isRunning());
 
-  // Set window flag
-  stayOnTop();
-
-  // Raise all floating docks and focus map widget
-  QTimer::singleShot(10, this, &MainWindow::raiseFloatingWindows);
-
   renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
 
-  // Make sure that window visible is only set after visibility is ensured
-  QTimer::singleShot(100, NavApp::setMainWindowVisible);
+  // Do delayed dock window formatting and fullscreen state after widget layout is done
+  QTimer::singleShot(100, this, &MainWindow::mainWindowShownDelayed);
 
   if(ui->actionRouteDownloadTracks->isChecked())
-    QTimer::singleShot(2000, NavApp::getTrackController(), &TrackController::startDownload);
+    QTimer::singleShot(1000, NavApp::getTrackController(), &TrackController::startDownload);
 
   // Log screen information ==============
   for(QScreen *screen : QGuiApplication::screens())
@@ -3248,24 +3243,22 @@ void MainWindow::mainWindowShown()
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
-void MainWindow::exitFullScreenPressed()
+void MainWindow::mainWindowShownDelayed()
 {
-  qDebug() << Q_FUNC_INFO;
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
+    // Reload last layout file - does not apply state
+    dockHandler->loadWindowState(layoutFileHistory->getTopFile(),
+                                 OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
+                                 layoutWarnText);
+  // else layout was already loaded from settings earlier
 
-  // Let the action pass a signal to toggle fs off
-  ui->actionShowFullscreenMap->setChecked(false);
-}
-
-bool MainWindow::isFullScreen() const
-{
-  return dockHandler->isFullScreen();
-}
-
-void MainWindow::enableDelayedFullscreen()
-{
-  if(dockHandler->isDelayedFullscreen())
+  // Apply layout again to avoid issues with formatting
+  if(!dockHandler->isDelayedFullscreen())
+    dockHandler->normalStateToWindow();
+  else
   {
     // Started with normal screen layout but was saved as fullscreen - restore full now
+    // Switch to fullscreen now after applying normal layout to avoid a distorted layout
     dockHandler->fullscreenStateToWindow();
 
     if(centralWidget() != ui->dockWidgetMap)
@@ -3280,6 +3273,27 @@ void MainWindow::enableDelayedFullscreen()
     mapWidget->addFullScreenExitButton();
     mapWidget->setFocus();
   }
+
+  // Set window flag
+  stayOnTop();
+
+  // Raise all floating docks and focus map widget
+  raiseFloatingWindows();
+
+  NavApp::setMainWindowVisible();
+}
+
+void MainWindow::exitFullScreenPressed()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Let the action pass a signal to toggle fs off
+  ui->actionShowFullscreenMap->setChecked(false);
+}
+
+bool MainWindow::isFullScreen() const
+{
+  return dockHandler->isFullScreen();
 }
 
 void MainWindow::fullScreenOn()
@@ -3324,7 +3338,7 @@ void MainWindow::fullScreenMapToggle()
 void MainWindow::stayOnTop()
 {
   qDebug() << Q_FUNC_INFO;
-  dockHandler->setStayOnTop(ui->actionWindowStayOnTop->isChecked());
+  dockHandler->setStayOnTop(this, ui->actionWindowStayOnTop->isChecked());
 }
 
 void MainWindow::allowDockingWindows()

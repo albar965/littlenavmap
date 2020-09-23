@@ -233,6 +233,7 @@ private:
 
   void connectAllSlots();
   void mainWindowShown();
+  void mainWindowShownDelayed();
   void raiseFloatingWindows();
   void allowDockingWindows();
   void stayOnTop();
@@ -243,9 +244,6 @@ private:
   /* Switches fs on or off */
   void fullScreenOn();
   void fullScreenOff();
-
-  /* Called in window shown to apply full screen layout */
-  void enableDelayedFullscreen();
 
   void saveStateMain();
   void saveActionStates();
@@ -475,7 +473,7 @@ private:
   /* Show database dialog after cleanup of obsolete databases if true */
   bool databasesErased = false;
 
-  QString aboutMessage;
+  QString aboutMessage, layoutWarnText;
   QTimer clockTimer, renderStatusTimer;
   Marble::RenderStatus lastRenderStatus = Marble::Incomplete;
 };
