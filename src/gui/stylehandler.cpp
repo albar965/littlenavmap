@@ -137,7 +137,7 @@ void StyleHandler::insertMenuItems(QMenu *menu)
   int index = 0;
   for(const Style& style : styles)
   {
-    QAction *action = new QAction(style.displayName);
+    QAction *action = new QAction(style.displayName, menu);
     action->setData(index);
     action->setCheckable(true);
     action->setChecked(index == currentStyleIndex);

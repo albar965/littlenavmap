@@ -380,18 +380,18 @@ MainWindow::MainWindow()
 
 #ifdef DEBUG_INFORMATION
 
-  QAction *debugAction1 = new QAction("DEBUG - Dump Route");
+  QAction *debugAction1 = new QAction("DEBUG - Dump Route", ui->menuHelp);
   debugAction1->setShortcut(QKeySequence("Ctrl+F1"));
   debugAction1->setShortcutContext(Qt::ApplicationShortcut);
   this->addAction(debugAction1);
 
-  QAction *debugAction2 = new QAction("DEBUG - Dump Flightplan");
+  QAction *debugAction2 = new QAction("DEBUG - Dump Flightplan", ui->menuHelp);
   this->addAction(debugAction2);
 
-  QAction *debugAction3 = new QAction("DEBUG - Force Check updates");
+  QAction *debugAction3 = new QAction("DEBUG - Force Check updates", ui->menuHelp);
   this->addAction(debugAction3);
 
-  QAction *debugAction4 = new QAction("DEBUG - Reload flight plan");
+  QAction *debugAction4 = new QAction("DEBUG - Reload flight plan", ui->menuHelp);
   this->addAction(debugAction4);
 
   ui->menuHelp->addSeparator();
