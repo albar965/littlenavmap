@@ -430,6 +430,20 @@ Unchecking this will stop all automatic connection attempts immediately.</string
   <zorder>buttonBoxConnect</zorder>
   <zorder>tabWidgetConnect</zorder>
  </widget>
+ <tabstops>
+  <tabstop>tabWidgetConnect</tabstop>
+  <tabstop>spinBoxConnectUpdateRateFsx</tabstop>
+  <tabstop>spinBoxConnectAiFetchRadius</tabstop>
+  <tabstop>checkBoxConnectFetchAiAircraftFsx</tabstop>
+  <tabstop>checkBoxConnectFetchAiShipFsx</tabstop>
+  <tabstop>checkBoxConnectOnStartup</tabstop>
+  <tabstop>spinBoxConnectUpdateRateXp</tabstop>
+  <tabstop>checkBoxConnectFetchAiAircraftXp</tabstop>
+  <tabstop>checkBoxConnectFetchAiShipXp</tabstop>
+  <tabstop>comboBoxConnectHostname</tabstop>
+  <tabstop>pushButtonConnectDeleteHostname</tabstop>
+  <tabstop>spinBoxConnectPort</tabstop>
+ </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>
  </resources>

@@ -161,6 +161,12 @@ This will change the shown map region and might change details.</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>comboBoxResolution</tabstop>
+  <tabstop>spinBoxWidth</tabstop>
+  <tabstop>spinBoxHeight</tabstop>
+  <tabstop>checkBoxAvoidBlurred</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

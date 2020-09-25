@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>1365</height>
+    <width>1261</width>
+    <height>1309</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1280</width>
+     <width>1261</width>
      <height>21</height>
     </rect>
    </property>
@@ -5567,7 +5567,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>42</y>
+              <y>0</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -11543,8 +11543,10 @@ Best track will be selected automatically.</string>
   <tabstop>spinBoxRouteAlt</tabstop>
   <tabstop>comboBoxRouteType</tabstop>
   <tabstop>pushButtonRouteClearSelection</tabstop>
+  <tabstop>pushButtonRouteSettings</tabstop>
   <tabstop>pushButtonRouteHelp</tabstop>
   <tabstop>tableViewRoute</tabstop>
+  <tabstop>plainTextEditRouteRemarks</tabstop>
   <tabstop>checkBoxAircraftPerformanceWindMan</tabstop>
   <tabstop>pushButtonAircraftPerformanceEdit</tabstop>
   <tabstop>pushButtonAircraftPerformanceNew</tabstop>
@@ -11559,6 +11561,30 @@ Best track will be selected automatically.</string>
   <tabstop>pushButtonAircraftPerfCollectMerge</tabstop>
   <tabstop>pushButtonAircraftPerfCollectHelp</tabstop>
   <tabstop>textBrowserAircraftPerformanceCurrent</tabstop>
+  <tabstop>tabWidgetInformation</tabstop>
+  <tabstop>tabWidgetAirport</tabstop>
+  <tabstop>textBrowserAirportInfo</tabstop>
+  <tabstop>textBrowserRunwayInfo</tabstop>
+  <tabstop>textBrowserComInfo</tabstop>
+  <tabstop>textBrowserApproachInfo</tabstop>
+  <tabstop>textBrowserNearestInfo</tabstop>
+  <tabstop>textBrowserWeatherInfo</tabstop>
+  <tabstop>textBrowserNavaidInfo</tabstop>
+  <tabstop>textBrowserAirspaceInfo</tabstop>
+  <tabstop>textBrowserUserpointInfo</tabstop>
+  <tabstop>textBrowserLogbookInfo</tabstop>
+  <tabstop>textBrowserClientInfo</tabstop>
+  <tabstop>textBrowserCenterInfo</tabstop>
+  <tabstop>widgetProfileLabelLeft</tabstop>
+  <tabstop>scrollAreaProfile</tabstop>
+  <tabstop>pushButtonProfileExpand</tabstop>
+  <tabstop>pushButtonProfileHelp</tabstop>
+  <tabstop>verticalSliderProfileZoom</tabstop>
+  <tabstop>horizontalSliderProfileZoom</tabstop>
+  <tabstop>tabWidgetAircraft</tabstop>
+  <tabstop>textBrowserAircraftInfo</tabstop>
+  <tabstop>textBrowserAircraftProgressInfo</tabstop>
+  <tabstop>textBrowserAircraftAiInfo</tabstop>
   <tabstop>tabWidgetSearch</tabstop>
   <tabstop>lineEditAirportIcaoSearch</tabstop>
   <tabstop>lineEditAirportNameSearch</tabstop>
@@ -11579,9 +11605,12 @@ Best track will be selected automatically.</string>
   <tabstop>checkBoxAirportApprSearch</tabstop>
   <tabstop>checkBoxAirportClosedSearch</tabstop>
   <tabstop>checkBoxAirportJetASearch</tabstop>
+  <tabstop>comboBoxAirportGateSearch</tabstop>
   <tabstop>comboBoxAirportHelipadSearch</tabstop>
+  <tabstop>comboBoxAirportRampSearch</tabstop>
   <tabstop>spinBoxAirportRunwaysMinSearch</tabstop>
   <tabstop>spinBoxAirportRunwaysMaxSearch</tabstop>
+  <tabstop>comboBoxAirportSurfaceSearch</tabstop>
   <tabstop>spinBoxAirportAltitudeMinSearch</tabstop>
   <tabstop>spinBoxAirportAltitudeMaxSearch</tabstop>
   <tabstop>checkBoxAirportDistSearch</tabstop>
@@ -11600,6 +11629,8 @@ Best track will be selected automatically.</string>
   <tabstop>pushButtonNavHelpSearch</tabstop>
   <tabstop>toolButtonNavSearch</tabstop>
   <tabstop>comboBoxNavNavAidSearch</tabstop>
+  <tabstop>spinBoxNavMaxRangeSearch</tabstop>
+  <tabstop>comboBoxNavTypeSearch</tabstop>
   <tabstop>checkBoxNavDistSearch</tabstop>
   <tabstop>spinBoxNavDistMinSearch</tabstop>
   <tabstop>spinBoxNavDistMaxSearch</tabstop>
@@ -11627,6 +11658,7 @@ Best track will be selected automatically.</string>
   <tabstop>lineEditUserdataTags</tabstop>
   <tabstop>lineEditUserdataFilepath</tabstop>
   <tabstop>tableViewUserdata</tabstop>
+  <tabstop>lineEditLogdataAirport</tabstop>
   <tabstop>lineEditLogdataAircraftType</tabstop>
   <tabstop>pushButtonLogdataAdd</tabstop>
   <tabstop>pushButtonLogdataEdit</tabstop>
@@ -11635,6 +11667,12 @@ Best track will be selected automatically.</string>
   <tabstop>pushButtonLogdataClearSelection</tabstop>
   <tabstop>pushButtonLogdataHelp</tabstop>
   <tabstop>toolButtonLogdata</tabstop>
+  <tabstop>lineEditLogdataDeparture</tabstop>
+  <tabstop>lineEditLogdataDestination</tabstop>
+  <tabstop>lineEditLogdataAircraftModel</tabstop>
+  <tabstop>lineEditLogdataAircraftRegistration</tabstop>
+  <tabstop>lineEditLogdataSimulator</tabstop>
+  <tabstop>lineEditLogdataDescription</tabstop>
   <tabstop>spinBoxLogdataMinDist</tabstop>
   <tabstop>spinBoxLogdataMaxDist</tabstop>
   <tabstop>tableViewLogdata</tabstop>
@@ -11659,23 +11697,23 @@ Best track will be selected automatically.</string>
   <tabstop>tabWidgetLegend</tabstop>
   <tabstop>textBrowserLegendNavInfo</tabstop>
   <tabstop>textBrowserLegendInfo</tabstop>
-  <tabstop>widgetProfileLabelLeft</tabstop>
-  <tabstop>scrollAreaProfile</tabstop>
-  <tabstop>pushButtonProfileExpand</tabstop>
-  <tabstop>pushButtonProfileHelp</tabstop>
-  <tabstop>verticalSliderProfileZoom</tabstop>
-  <tabstop>horizontalSliderProfileZoom</tabstop>
-  <tabstop>tabWidgetAircraft</tabstop>
-  <tabstop>textBrowserAircraftInfo</tabstop>
-  <tabstop>textBrowserAircraftProgressInfo</tabstop>
-  <tabstop>textBrowserAircraftAiInfo</tabstop>
-  <tabstop>tabWidgetInformation</tabstop>
-  <tabstop>textBrowserNavaidInfo</tabstop>
-  <tabstop>textBrowserAirspaceInfo</tabstop>
-  <tabstop>textBrowserUserpointInfo</tabstop>
-  <tabstop>textBrowserLogbookInfo</tabstop>
-  <tabstop>textBrowserClientInfo</tabstop>
-  <tabstop>textBrowserCenterInfo</tabstop>
+  <tabstop>pushButtonRouteCalcHelp</tabstop>
+  <tabstop>comboBoxRouteCalcMode</tabstop>
+  <tabstop>spinBoxRouteCalcCruiseAltitude</tabstop>
+  <tabstop>pushButtonRouteCalcAdjustAltitude</tabstop>
+  <tabstop>radioButtonRouteCalcAirway</tabstop>
+  <tabstop>radioButtonRouteCalcAirwayAll</tabstop>
+  <tabstop>radioButtonRouteCalcAirwayJet</tabstop>
+  <tabstop>radioButtonRouteCalcAirwayVictor</tabstop>
+  <tabstop>checkBoxRouteCalcAirwayNoRnav</tabstop>
+  <tabstop>checkBoxRouteCalcAirwayTrack</tabstop>
+  <tabstop>pushButtonRouteCalcTrackDownload</tabstop>
+  <tabstop>horizontalSliderRouteCalcAirwayPreference</tabstop>
+  <tabstop>radioButtonRouteCalcRadio</tabstop>
+  <tabstop>checkBoxRouteCalcRadioNdb</tabstop>
+  <tabstop>pushButtonRouteCalcDirect</tabstop>
+  <tabstop>pushButtonRouteCalcReverse</tabstop>
+  <tabstop>pushButtonRouteCalc</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidgetLogbook">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabAircraft">
       <attribute name="title">
@@ -1395,6 +1395,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
   </layout>
  </widget>
  <tabstops>
+  <tabstop>tabWidgetLogbook</tabstop>
   <tabstop>lineEditAircraftName</tabstop>
   <tabstop>checkBoxAircraftName</tabstop>
   <tabstop>lineEditAircraftRegistration</tabstop>
@@ -1422,8 +1423,10 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>pushButtonAttachedPlanAdd</tabstop>
   <tabstop>pushButtonAttachedPlanOpen</tabstop>
   <tabstop>pushButtonAttachedPlanSaveAs</tabstop>
+  <tabstop>pushButtonAttachedPlanClear</tabstop>
   <tabstop>pushButtonAttachedGpxAdd</tabstop>
   <tabstop>pushButtonAttachedGpxSaveAs</tabstop>
+  <tabstop>pushButtonAttachedGpxClear</tabstop>
   <tabstop>lineEditFlightPlanFile</tabstop>
   <tabstop>pushButtonFlightPlanFileSelect</tabstop>
   <tabstop>checkBoxFlightPlanFile</tabstop>
@@ -1432,6 +1435,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>pushButtonAttachedPerfAdd</tabstop>
   <tabstop>pushButtonAttachedPerfOpen</tabstop>
   <tabstop>pushButtonAttachedPerfSaveAs</tabstop>
+  <tabstop>pushButtonAttachedPerfClear</tabstop>
   <tabstop>lineEditFlightPerfFile</tabstop>
   <tabstop>pushButtonFlightPerfFileSelect</tabstop>
   <tabstop>checkBoxFlightPerfFile</tabstop>
@@ -1444,7 +1448,6 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>spinBoxFuelGrossweight</tabstop>
   <tabstop>plainTextEditDescription</tabstop>
   <tabstop>checkBoxAircraftDescription</tabstop>
-  <tabstop>tabWidgetLogbook</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -533,13 +533,17 @@
   <tabstop>listWidgetPrintFlightplanCols</tabstop>
   <tabstop>checkBoxPrintDepartureOverview</tabstop>
   <tabstop>checkBoxPrintDepartureRunways</tabstop>
+  <tabstop>checkBoxPrintDepartureSoftRunways</tabstop>
+  <tabstop>checkBoxPrintDepartureDetailRunways</tabstop>
   <tabstop>checkBoxPrintDepartureCom</tabstop>
   <tabstop>checkBoxPrintDepartureAppr</tabstop>
   <tabstop>checkBoxPrintDepartureWeather</tabstop>
   <tabstop>checkBoxPrintDestinationOverview</tabstop>
   <tabstop>checkBoxPrintDestinationRunways</tabstop>
-  <tabstop>checkBoxPrintDestinationCom</tabstop>
+  <tabstop>checkBoxPrintDestinationSoftRunways</tabstop>
+  <tabstop>checkBoxPrintDestinationDetailRunways</tabstop>
   <tabstop>checkBoxPrintDestinationAppr</tabstop>
+  <tabstop>checkBoxPrintDestinationCom</tabstop>
   <tabstop>checkBoxPrintDestinationWeather</tabstop>
  </tabstops>
  <resources/>

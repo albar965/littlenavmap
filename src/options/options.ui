@@ -6282,39 +6282,70 @@ Changes only settings that can be done with this dialog.</string>
  </widget>
  <tabstops>
   <tabstop>listWidgetOptionPages</tabstop>
+  <tabstop>scrollArea_2</tabstop>
   <tabstop>checkBoxOptionsStartupLoadRoute</tabstop>
   <tabstop>checkBoxOptionsStartupLoadMapSettings</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadPerf</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadInfoContent</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadKml</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadSearch</tabstop>
   <tabstop>checkBoxOptionsStartupLoadTrail</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadLayout</tabstop>
   <tabstop>radioButtonOptionsStartupShowLast</tabstop>
   <tabstop>radioButtonOptionsStartupShowHome</tabstop>
   <tabstop>radioButtonOptionsStartupShowFlightplan</tabstop>
   <tabstop>comboBoxOptionsStartupUpdateRate</tabstop>
   <tabstop>comboBoxOptionsStartupUpdateChannels</tabstop>
   <tabstop>pushButtonOptionsStartupCheckUpdate</tabstop>
+  <tabstop>scrollArea_3</tabstop>
+  <tabstop>comboBoxOptionsGuiLanguage</tabstop>
+  <tabstop>checkBoxOptionsGuiOverrideLocale</tabstop>
+  <tabstop>checkBoxOptionsGuiRaiseWindows</tabstop>
+  <tabstop>checkBoxOptionsGuiRaiseDockWindows</tabstop>
+  <tabstop>checkBoxOptionsGuiRaiseMainWindow</tabstop>
   <tabstop>checkBoxOptionsGuiProposeFilename</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
-  <tabstop>checkBoxOptionsGuiRaiseWindows</tabstop>
+  <tabstop>scrollArea_4</tabstop>
+  <tabstop>pushButtonOptionsGuiSelectFont</tabstop>
+  <tabstop>pushButtonOptionsGuiResetFont</tabstop>
+  <tabstop>checkBoxOptionsGuiHighDpi</tabstop>
+  <tabstop>checkBoxOptionsGuiTooltips</tabstop>
+  <tabstop>spinBoxOptionsGuiRouteText</tabstop>
+  <tabstop>spinBoxOptionsGuiAircraftPerf</tabstop>
+  <tabstop>spinBoxOptionsGuiSearchText</tabstop>
+  <tabstop>spinBoxOptionsGuiInfoText</tabstop>
+  <tabstop>spinBoxOptionsGuiSimInfoText</tabstop>
+  <tabstop>scrollArea</tabstop>
   <tabstop>checkBoxOptionsMapUndock</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports3D</tabstop>
   <tabstop>comboBoxMapScrollDetails</tabstop>
   <tabstop>lineEditOptionsMapRangeRings</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipUserAircraft</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipAiAircraft</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAirport</tabstop>
   <tabstop>checkBoxOptionsMapTooltipNavaid</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAirspace</tabstop>
   <tabstop>checkBoxOptionsMapTooltipWind</tabstop>
+  <tabstop>checkBoxOptionsMapClickUserAircraft</tabstop>
+  <tabstop>checkBoxOptionsMapClickAiAircraft</tabstop>
   <tabstop>checkBoxOptionsMapClickAirport</tabstop>
+  <tabstop>checkBoxOptionsMapClickAirportProcs</tabstop>
   <tabstop>checkBoxOptionsMapClickNavaid</tabstop>
   <tabstop>checkBoxOptionsMapClickAirspace</tabstop>
+  <tabstop>scrollArea_5</tabstop>
   <tabstop>radioButtonOptionsMapNavDragMove</tabstop>
   <tabstop>radioButtonOptionsMapNavClickCenter</tabstop>
   <tabstop>radioButtonOptionsMapNavTouchscreen</tabstop>
   <tabstop>spinBoxOptionsMapNavTouchArea</tabstop>
   <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
-  <tabstop>spinBoxOptionsMapClickRect</tabstop>
   <tabstop>doubleSpinBoxOptionsMapZoomShowMapMenu</tabstop>
-  <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
   <tabstop>checkBoxOptionsMapZoomAvoidBlurred</tabstop>
+  <tabstop>spinBoxOptionsMapClickRect</tabstop>
+  <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
+  <tabstop>scrollAreaMapDisplay</tabstop>
+  <tabstop>pushButtonOptionsDisplaySelectFont</tabstop>
+  <tabstop>pushButtonOptionsDisplayResetFont</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAirport</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirport</tabstop>
   <tabstop>checkBoxOptionsMapAirportText</tabstop>
@@ -6323,6 +6354,9 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsDisplaySymbolSizeNavaid</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeNavaid</tabstop>
   <tabstop>checkBoxOptionsMapNavaidText</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessAirway</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAirway</tabstop>
+  <tabstop>checkBoxOptionsMapAirwayText</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAircraftUser</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAircraftUser</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAircraftAi</tabstop>
@@ -6330,12 +6364,15 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
   <tabstop>checkBoxOptionsMapFlightplanText</tabstop>
+  <tabstop>checkBoxOptionsMapFlightplanDimPassed</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanActiveColor</tabstop>
-  <tabstop>checkBoxOptionsMapFlightplanDimPassed</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanPassedColor</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanProcedureColor</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
+  <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>
+  <tabstop>comboBoxOptionsDisplayTrailType</tabstop>
+  <tabstop>scrollArea_6</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessRangeDistance</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeRangeDistance</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessCompassRose</tabstop>
@@ -6345,6 +6382,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsDisplaySunShadeDarkness</tabstop>
   <tabstop>spinBoxOptionsGuiThemeMapDimming</tabstop>
   <tabstop>treeWidgetOptionsDisplayTextOptions</tabstop>
+  <tabstop>scrollArea_7</tabstop>
   <tabstop>checkBoxDisplayOnlineFileLookup</tabstop>
   <tabstop>checkBoxDisplayOnlineNameLookup</tabstop>
   <tabstop>spinBoxDisplayOnlineObserver</tabstop>
@@ -6363,6 +6401,17 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxDisplayOnlineAreaRange</tabstop>
   <tabstop>spinBoxDisplayOnlineDeparture</tabstop>
   <tabstop>checkBoxDisplayOnlineDepartureRange</tabstop>
+  <tabstop>scrollArea_8</tabstop>
+  <tabstop>comboBoxOptionsUnitDistance</tabstop>
+  <tabstop>comboBoxOptionsUnitShortDistance</tabstop>
+  <tabstop>comboBoxOptionsUnitAlt</tabstop>
+  <tabstop>comboBoxOptionsUnitSpeed</tabstop>
+  <tabstop>comboBoxOptionsUnitVertSpeed</tabstop>
+  <tabstop>comboBoxOptionsUnitFuelWeight</tabstop>
+  <tabstop>checkBoxOptionsUnitFuelOther</tabstop>
+  <tabstop>comboBoxOptionsUnitCoords</tabstop>
+  <tabstop>checkBoxOptionsUnitTrueCourse</tabstop>
+  <tabstop>scrollArea_9</tabstop>
   <tabstop>radioButtonOptionsSimUpdateLow</tabstop>
   <tabstop>radioButtonOptionsSimUpdateMedium</tabstop>
   <tabstop>radioButtonOptionsSimUpdateFast</tabstop>
@@ -6370,16 +6419,22 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsSimUpdatesConstant</tabstop>
   <tabstop>spinBoxOptionsSimUpdateBox</tabstop>
   <tabstop>checkBoxOptionsSimCenterLegTable</tabstop>
+  <tabstop>checkBoxOptionsSimClearSelection</tabstop>
   <tabstop>checkBoxOptionsSimDoNotFollowOnScroll</tabstop>
   <tabstop>spinBoxSimDoNotFollowOnScrollTime</tabstop>
   <tabstop>spinBoxSimMaxTrackPoints</tabstop>
+  <tabstop>scrollArea_10</tabstop>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
   <tabstop>comboBoxOptionsRouteAltitudeRuleType</tabstop>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
   <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
+  <tabstop>lineEditOptionsRouteFilename</tabstop>
+  <tabstop>pushButtonOptionsRouteFilenameShort</tabstop>
+  <tabstop>pushButtonOptionsRouteFilenameLong</tabstop>
   <tabstop>checkBoxOptionsRouteExportUserWpt</tabstop>
   <tabstop>checkBoxOptionsRouteDeclination</tabstop>
+  <tabstop>scrollArea_11</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoAsn</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoNoaa</tabstop>
@@ -6390,6 +6445,22 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsWeatherTooltipNoaa</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipVatsim</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipIvao</tabstop>
+  <tabstop>scrollArea_12</tabstop>
+  <tabstop>lineEditOptionsWeatherXplanePath</tabstop>
+  <tabstop>pushButtonOptionsWeatherXplanePathSelect</tabstop>
+  <tabstop>lineEditOptionsWeatherAsnPath</tabstop>
+  <tabstop>pushButtonOptionsWeatherAsnPathSelect</tabstop>
+  <tabstop>lineEditOptionsWeatherNoaaStationsUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherNoaaTest</tabstop>
+  <tabstop>lineEditOptionsWeatherVatsimUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherVatsimTest</tabstop>
+  <tabstop>lineEditOptionsWeatherIvaoUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherIvaoTest</tabstop>
+  <tabstop>lineEditOptionsWeatherXplaneWind</tabstop>
+  <tabstop>pushButtonOptionsWeatherXplaneWindPathSelect</tabstop>
+  <tabstop>lineEditOptionsWeatherNoaaWindUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherNoaaWindTest</tabstop>
+  <tabstop>scrollArea_13</tabstop>
   <tabstop>radioButtonOptionsOnlineNone</tabstop>
   <tabstop>radioButtonOptionsOnlineVatsim</tabstop>
   <tabstop>radioButtonOptionsOnlineIvao</tabstop>
@@ -6402,6 +6473,13 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>pushButtonOptionsOnlineTestWhazzupUrl</tabstop>
   <tabstop>spinBoxOptionsOnlineUpdate</tabstop>
   <tabstop>comboBoxOptionsOnlineFormat</tabstop>
+  <tabstop>scrollArea_14</tabstop>
+  <tabstop>lineEditOptionsWebDocroot</tabstop>
+  <tabstop>pushButtonOptionsWebSelectDocroot</tabstop>
+  <tabstop>spinBoxOptionsWebPort</tabstop>
+  <tabstop>checkBoxOptionsWebEncrypted</tabstop>
+  <tabstop>pushButtonOptionsWebStart</tabstop>
+  <tabstop>scrollArea_15</tabstop>
   <tabstop>spinBoxOptionsCacheMemorySize</tabstop>
   <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
   <tabstop>spinBoxOptionsCacheDiskSize</tabstop>
@@ -6414,9 +6492,12 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>lineEditCacheUserAirspacePath</tabstop>
   <tabstop>pushButtonCacheUserAirspacePathSelect</tabstop>
   <tabstop>lineEditCacheUserAirspaceExtensions</tabstop>
+  <tabstop>scrollArea_16</tabstop>
+  <tabstop>listWidgetOptionsDatabaseExclude</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddExcludeDir</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddExcludeFile</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveExclude</tabstop>
+  <tabstop>listWidgetOptionsDatabaseAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveAddon</tabstop>
  </tabstops>
