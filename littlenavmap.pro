@@ -619,10 +619,7 @@ unix:!macx {
     $$MARBLE_LIB_PATH/marble/plugins/libLatLonPlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libMapScaleFloatItem.so \
     $$MARBLE_LIB_PATH/marble/plugins/libNavigationFloatItem.so \
-    $$MARBLE_LIB_PATH/marble/plugins/libOsmPlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libOverviewMap.so \
-    $$MARBLE_LIB_PATH/marble/plugins/libPn2Plugin.so \
-    $$MARBLE_LIB_PATH/marble/plugins/libPntPlugin.so \
     $$OUT_PWD/plugins &&
   copydata.commands += mkdir -p $$OUT_PWD/translations &&
   copydata.commands += cp -avfu $$PWD/*.qm $$OUT_PWD/translations &&
@@ -748,10 +745,7 @@ macx {
     $$MARBLE_LIB_PATH/plugins/libLatLonPlugin.so \
     $$MARBLE_LIB_PATH/plugins/libMapScaleFloatItem.so \
     $$MARBLE_LIB_PATH/plugins/libNavigationFloatItem.so \
-    $$MARBLE_LIB_PATH/plugins/libOsmPlugin.so \
     $$MARBLE_LIB_PATH/plugins/libOverviewMap.so \
-    $$MARBLE_LIB_PATH/plugins/libPn2Plugin.so \
-    $$MARBLE_LIB_PATH/plugins/libPntPlugin.so \
     $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCachePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libAtmospherePlugin.so &&
@@ -761,10 +755,7 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libLatLonPlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libMapScaleFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libNavigationFloatItem.so &&
-  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOsmPlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
-  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
-  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so &&
   deploy.commands += macdeployqt littlenavmap.app -always-overwrite &&
   deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $$DEPLOY_APP &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_APP/Contents/MacOS &&
@@ -798,10 +789,7 @@ win32 {
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libLatLonPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libMapScaleFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libNavigationFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libOsmPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libOverviewMap$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libPn2Plugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libPntPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$OUT_PWD/littlenavmap.exe) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&

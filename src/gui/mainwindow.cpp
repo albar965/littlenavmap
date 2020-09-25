@@ -2465,7 +2465,8 @@ void MainWindow::kmlOpen()
     tr("Google Earth KML %1;;All Files (*)").arg(lnm::FILE_PATTERN_KML),
     "Kml/", QString());
 
-  if(!kmlFile.isEmpty())
+  QString errors = atools::checkFileMsg(kmlFile);
+  if(errors.isEmpty())
   {
     if(mapWidget->addKmlFile(kmlFile))
     {
@@ -2477,21 +2478,31 @@ void MainWindow::kmlOpen()
       setStatusMessage(tr("Opening Google Earth KML file failed."));
 
   }
+  else
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
 }
 
 /* Called from menu or toolbar by action */
 void MainWindow::kmlOpenRecent(const QString& kmlFile)
 {
-  if(mapWidget->addKmlFile(kmlFile))
+  QString errors = atools::checkFileMsg(kmlFile);
+  if(errors.isEmpty())
   {
-    updateActionStates();
-    setStatusMessage(tr("Google Earth KML file opened."));
+    if(mapWidget->addKmlFile(kmlFile))
+    {
+      updateActionStates();
+      setStatusMessage(tr("Google Earth KML file opened."));
+    }
+    else
+    {
+      kmlFileHistory->removeFile(kmlFile);
+      setStatusMessage(tr("Opening Google Earth KML file failed."));
+    }
   }
   else
-  {
-    kmlFileHistory->removeFile(kmlFile);
-    setStatusMessage(tr("Opening Google Earth KML file failed."));
-  }
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
 }
 
 void MainWindow::layoutOpen()
