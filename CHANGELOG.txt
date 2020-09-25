@@ -1,6 +1,84 @@
 ﻿Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+===============================================================================
+
+Version 2.6.1.beta
+
+Important:
+
+* Remove the MSFS Community folder from the ignore list in `Options` on page `Scenery Library Database`
+  if you added it. The exclusion is not needed anymore.
+* Update to the latest beta Navigraph navdata update for MSFS if you use it.
+* Reload the scenery library.
+
+Known Issues:
+
+* Little Navmap cannot read SID and STAR from MSFS. Documentation about MSFS format changes are
+  needed in SDK.
+* MSFS multiplayer and realtime AI cannot be displayed. Needs SDK updates or more documentation.
+* Simulator weather cannot be shown for MSFS since SimConnect weather functions are deprecated and
+  do not deliver data. Needs update or documentation in MSFS SDK. Use NOAA weather which gives you
+  the most up-to-date weather reports.
+
+* Dock window layout in Little Navmap can change when resizing or maximizing window and back.
+* The window layout might not be restored precisely on startup in some cases. This is a limitation
+  in the used Qt library.
+* The height of the elevation profile window cannot be reduced in some cases. Rearrange or move the
+  elevation profile window to another position which usually solves this. Save the layout once you
+  have a working one. This is a limitation in the used Qt library.
+* Zooming with touchpad or magic mouse does not work properly on macOS. Use the navigation overlay
+  or one of the other options on page `Map Navigation` in `Options` if you think it is unusable. This
+  is a limitation in the used Qt library.
+* Program hangs on macOS Big Sur. Investigating.
+
+Changes:
+
+MSFS:
+
+* Fixed issue with `NOT NULL constraint failed:tmp_waypoint.ident Unable to fetch...` caused by
+  incomplete waypoints emitted by MSFS BGL compiler. Navids with empty names are now ignored and
+  printed into the log with BGL file name. Do not forget to remove the community folder from
+  exclusion list in Little Navmap.
+* AI aircraft names are now correctly shown instead of the user aircraft name for all AI.
+* Fix for update issues where wrong aircraft positions are emitted while user is in MSFS menu.
+  These caused Little Navmap jumping back to the old position and wrong progress updates. Now
+  omitting wrong positions with an invalid state like no groundspeed and position 0/0.
+* Exporting MSFS flightplan now reverts type to `Direct` if using VFR to avoid MSFS changing plan
+  to IFR.
+* MSFS exported flight plans now have special characters like umlauts or accents replaced or
+  removed. Note that MSFS cannot load flightplans that have special characters in the filename or
+  path.
+* Localizer heading for MSFS now saved correctly in scenery database.
+* Fixed issues where the default instead of changed simulator paths were used in some dialogs.
+* Changed default MSFS Steam flight plan path to base folder `Microsoft Flight Simulator`
+  (`LocalState` on MS installations).
+* Also looking in `...\Official\OneStore` and `...\Official\Steam` folders for purchased add-ons now.
+  These are added with add-on flag to the database and are shown italic and underlined on the map.
+* Updating administrative names like city in airports now. This also corrects missing city and
+  airport names for the Navigraph navdata update.
+* Adapted to Navigraph navdata update 12 for MSFS. Little Navmap only reads required features which
+  are: Airports, COM and ILS. Everything else is ignored and not needed since it can be updated with
+  a more complete dataset directly for Little Navmap.
+* Corrected ILS course for Navigraph update in simulator. Slight variations like for EDDM remain.
+
+Other:
+
+* Added option to restore window layout from last loaded file on startup. This is the file on top
+  of the `Recent Window Layouts` menu. See options dialog on page `Startup`.
+* Improved handling of dock window layout. Now applying dock state after window shown. This might
+  cause a small visible layout change after loading but solves issues when restoring the layout.
+* Fix for blinking aircraft when updating weather over SimConnect. This affected FSX, P3D and MSFS.
+* Better sensitivity and handling for zooming when using touchpad (better, yet limited on macOS).
+* Compass rose settings are now saved again from `Options` on page `Map Display 2`.
+* Fixed issue where magnetic declination was not created correctly for locale which do not have a
+  dot as decimal separator. As a result of the issue declination was 20 degrees off near VORDME STN
+  in X-Plane, for example. #564
+* Updated to world magnetic model 2020. This will be used to calculate X-Plane declination when
+  loading the scenery database or as a fallback if `magdec.bgl` is not available..
+
+===============================================================================
+
 Version 2.6.0.beta
 
 Highlights:
@@ -80,7 +158,7 @@ MSFS Limitations:
 * Airways in MSFS are lacking maximum altitude restrictions, one-way restrictions
   and RNAV attribute. This can result in invalid plans calculated by MSFS.
 * Distinct airways with same name can appear as a single connected airway
-  opposed to real world in LNM due to MSFS format limitations.
+  opposed to real world in Little Navmap due to MSFS format limitations.
 * Flight plans for MSFS cannot be saved with a parking spot like ramp or
   gate selected. Select these in the simulator after loading the plan.
   Use the dropdown list in MSFS to select a parking position. Selecting a parking position as departure
