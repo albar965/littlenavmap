@@ -156,9 +156,8 @@ void RouteCalcWindow::updateWidgets()
   ui->pushButtonRouteCalcAdjustAltitude->setEnabled(canCalcRoute);
   ui->pushButtonRouteCalc->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
 
-  ui->pushButtonRouteCalcDirect->setEnabled(!isCalculateSelection() && canCalcRoute &&
-                                            NavApp::getRouteConst().hasEntries());
-  ui->pushButtonRouteCalcReverse->setEnabled(!isCalculateSelection() && canCalcRoute);
+  ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
+  ui->pushButtonRouteCalcReverse->setEnabled(canCalcRoute);
 
   QString msg = tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
                    "Best track will be selected automatically.\n"
@@ -210,8 +209,9 @@ void RouteCalcWindow::updateHeader()
       title = HtmlBuilder::errorMessage({tr("Cannot calculate flight plan"),
                                          tr("between selected legs."),
                                          tr("Click here for details.")});
-      tooltip = tr("Select a range or two flight plan legs in the flight plan table.\n"
-                   "These must be neither a part of a procedure nor a part of an alternate destination.");
+      tooltip = tr("Select a range of legs or two flight plan legs in the flight plan table.\n"
+                   "The selection may not be part of a procedure or an alternate.\n"
+                   "It can include the end of a departure or the start of an arrival procedure.");
     }
   }
   else

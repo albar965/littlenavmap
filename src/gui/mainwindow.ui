@@ -6485,7 +6485,8 @@ Disabled if a navdatabase does not allow it.</string>
           </sizepolicy>
          </property>
          <property name="toolTip">
-          <string>Calculate a direct flight plan</string>
+          <string>Calculate a direct flight plan.
+Keeps procedures.</string>
          </property>
          <property name="statusTip">
           <string>Calculate a direct flight plan</string>
@@ -6504,10 +6505,11 @@ Disabled if a navdatabase does not allow it.</string>
           </sizepolicy>
          </property>
          <property name="toolTip">
-          <string>Reverse flight plan</string>
+          <string>Reverse the whole flight plan.
+Erases procedures.</string>
          </property>
          <property name="statusTip">
-          <string>Reverse flight plan</string>
+          <string>Reverse whole flight plan</string>
          </property>
          <property name="text">
           <string>&amp;Reverse</string>
@@ -11031,7 +11033,7 @@ Best track will be selected automatically.</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Calculate Flight Plan between legs ...</string>
+    <string>&amp;Calculate Flight Plan between selected ...</string>
    </property>
    <property name="toolTip">
     <string>Calculate flight plan between selected legs</string>

@@ -177,7 +177,7 @@ void MapPainterRoute::paintRoute()
   // Draw procedures ==========================================================================
   // Remember last point across procedures to avoid overlaying text
 
-  if(context->mapLayer->isApproach())
+  if(context->mapLayerEffective->isApproach())
   {
     proc::MapProcedureLeg lastLegPoint;
     if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)

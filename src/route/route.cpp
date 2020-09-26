@@ -1808,21 +1808,16 @@ bool Route::canCalcSelection(int firstIndex, int lastIndex) const
 
   bool ok = true;
 
-  int startIndexAfterProcedure = 0;
-  if(departureProcToRouteLegs(startIndexAfterProcedure) && firstIndex == startIndexAfterProcedure - 1)
-    // Index is on the last departure procedure leg - check for correct leg type
-    ok &= proc::procedureLegFixAtEnd(value(startIndexAfterProcedure - 1).getProcedureLegType());
-  else
-    // Test if index is at or after first route leg or departure airport
-    ok &= firstIndex >= getStartIndexAfterProcedure();
+  if(hasAnyProcedure())
+  {
+    int lastDeparture = getLastIndexOfDepartureProcedure();
+    if(lastDeparture > 0)
+      ok &= firstIndex >= lastDeparture && proc::procedureLegFixAtEnd(value(lastDeparture).getProcedureLegType());
 
-  int arrivaLegsOffset = 0;
-  if(arrivalRouteToProcLegs(arrivaLegsOffset) && lastIndex == arrivaLegsOffset)
-    // Index on first STAR or approach (transition) leg - check for correct leg type
-    ok &= proc::procedureLegFixAtStart(value(arrivaLegsOffset).getProcedureLegType());
-  else
-    // Test if index is at or before first route leg
-    ok &= lastIndex < getArrivaLegsOffset();
+    int firstArrival = getArrivaLegsOffset();
+    if(firstArrival != map::INVALID_INDEX_VALUE)
+      ok &= lastIndex <= firstArrival && proc::procedureLegFixAtStart(value(firstArrival).getProcedureLegType());
+  }
 
   return ok;
 }
