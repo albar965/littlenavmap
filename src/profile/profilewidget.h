@@ -158,8 +158,8 @@ private:
   struct ElevationLeg
   {
     atools::geo::LineString elevation; /* Ground elevation (Pos.altitude) and position */
-    QVector<float> distances; /* Distances along the route for each elevation point.
-                               *  Measured from departure point. Nautical miles. */
+    QVector<double> distances; /* Distances along the route for each elevation point.
+                                *  Measured from departure point. Nautical miles. */
     float maxElevation = 0.f; /* Max ground altitude for this leg */
   };
 

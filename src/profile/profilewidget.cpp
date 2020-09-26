@@ -1386,6 +1386,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
   // qDebug() << "priority" << QThread::currentThread()->priority();
 
   using atools::geo::meterToNm;
+  using atools::geo::nmToMeter;
   using atools::geo::meterToFeet;
 
   legs.totalNumPoints = 0;
@@ -1396,6 +1397,9 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
   if(legs.route.getSizeWithoutAlternates() <= 1)
     // Return empty result
     return ElevationLegList();
+
+  // Total calculated distance across all legs
+  double totalDistanceMeter = 0.;
 
   // Loop over all route legs
   for(int i = 1; i <= legs.route.getDestinationLegIndex(); i++)
@@ -1411,6 +1415,9 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
     const RouteLeg& lastLeg = legs.route.value(i - 1);
     ElevationLeg leg;
 
+    // Used to adapt distances of all legs to total distance due to inaccuracies
+    double scale = 1.;
+
     // Skip for too long segments when using the marble online provider
     if(routeLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM || NavApp::getElevationProvider()->isGlobeOfflineProvider())
     {
@@ -1422,11 +1429,12 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
 
       geometry.removeInvalid();
 
+      // Includes first and last point
       LineString elevations;
       if(!fetchRouteElevations(elevations, geometry))
         return ElevationLegList();
 
-      float dist = legs.totalDistance;
+      double distMeter = totalDistanceMeter;
       // Loop over all elevation points for the current leg
       Pos lastPos;
       for(int j = 0; j < elevations.size(); j++)
@@ -1444,35 +1452,46 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
         if(altFeet > legs.maxElevationFt)
           legs.maxElevationFt = altFeet;
 
-        leg.elevation.append(coord);
         if(j > 0)
           // Update total distance
-          dist += meterToNm(lastPos.distanceMeterTo(coord));
+          distMeter += lastPos.distanceMeterToDouble(coord);
+
+        // Coordinate with elevation
+        leg.elevation.append(coord);
 
         // Distance to elevation point from departure
-        leg.distances.append(dist);
+        leg.distances.append(distMeter);
 
         legs.totalNumPoints++;
         lastPos = coord;
       }
 
-      legs.totalDistance += routeLeg.getDistanceTo();
-      leg.elevation.append(lastPos);
-      leg.distances.append(legs.totalDistance);
+      totalDistanceMeter += nmToMeter(routeLeg.getDistanceTo());
 
+      if(!leg.distances.isEmpty() && atools::almostNotEqual(leg.distances.last(), totalDistanceMeter))
+        // Accumulated distance is different from route total distance - adjust
+        // This can happen with the online elevation provider which does not return all points exactly on the leg
+        scale = totalDistanceMeter / leg.distances.last();
     }
     else
     {
-      float dist = meterToNm(lastLeg.getPosition().distanceMeterTo(routeLeg.getPosition()));
-      leg.distances.append(legs.totalDistance);
-      legs.totalDistance += dist;
-      leg.distances.append(legs.totalDistance);
+      // Skip long segment
+      float distMeter = lastLeg.getPosition().distanceMeterToDouble(routeLeg.getPosition());
+      leg.distances.append(totalDistanceMeter);
+      totalDistanceMeter += distMeter;
+      leg.distances.append(totalDistanceMeter);
       leg.elevation.append(lastLeg.getPosition());
       leg.elevation.append(routeLeg.getPosition());
     }
+
+    // Convert distances to NM and apply correction
+    for(int i = 0; i < leg.distances.size(); i++)
+      leg.distances[i] = meterToNm(leg.distances.at(i) * scale);
+
     legs.elevationLegs.append(leg);
   }
 
+  legs.totalDistance = meterToNm(totalDistanceMeter);
   return legs;
 }
 
@@ -1530,8 +1549,8 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
 
   // Get distance value index for lower and upper bound at cursor position
   int indexLowDist = 0;
-  QVector<float>::const_iterator lowDistIt = std::lower_bound(leg.distances.begin(),
-                                                              leg.distances.end(), distance);
+  QVector<double>::const_iterator lowDistIt = std::lower_bound(leg.distances.begin(),
+                                                               leg.distances.end(), distance);
   if(lowDistIt != leg.distances.end())
   {
     indexLowDist = static_cast<int>(std::distance(leg.distances.begin(), lowDistIt));
@@ -1539,8 +1558,8 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
       indexLowDist = 0;
   }
   int indexUpperDist = 0;
-  QVector<float>::const_iterator upperDistIt = std::upper_bound(leg.distances.begin(),
-                                                                leg.distances.end(), distance);
+  QVector<double>::const_iterator upperDistIt = std::upper_bound(leg.distances.begin(),
+                                                                 leg.distances.end(), distance);
   if(upperDistIt != leg.distances.end())
   {
     indexUpperDist = static_cast<int>(std::distance(leg.distances.begin(), upperDistIt));
