@@ -24,6 +24,7 @@
 #include "query/mapquery.h"
 #include "airspace/airspacecontroller.h"
 #include "navapp.h"
+#include "mapgui/mapscale.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -91,7 +92,13 @@ void MapPainterAirspace::render()
         Marble::GeoDataLinearRing linearRing;
         linearRing.setTessellate(true);
 
-        painter->setPen(mapcolors::penForAirspace(*airspace));
+        QPen pen = mapcolors::penForAirspace(*airspace);
+
+        if(airspace->isOnline())
+          // Make online airpace line thicker
+          pen.setWidthF(pen.widthF() * 2.);
+
+        painter->setPen(pen);
 
         if(!context->drawFast)
           painter->setBrush(mapcolors::colorForAirspaceFill(*airspace));
@@ -104,6 +111,19 @@ void MapPainterAirspace::render()
             linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
 
           painter->drawPolygon(linearRing);
+        }
+
+        if(airspace->isOnline())
+        {
+          // Draw center circle for online airspace with less transparency and darker
+          QBrush brush = painter->brush();
+          QColor color = brush.color();
+          color.setAlphaF(color.alphaF() * 2.f);
+          brush.setColor(color.darker(200));
+          painter->setBrush(brush);
+
+          // Draw circle with 1 NM and at least 3 pixel radius
+          drawCircle(painter, airspace->position, std::max(scale->getPixelForNm(1.f), 3.f));
         }
       }
     }
