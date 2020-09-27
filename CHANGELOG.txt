@@ -7,20 +7,6 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ## Important
 
-### If you decide to go back to Little Navmap 2.4.5 after trying the beta
-
-The scenery databases of the new beta versions are not compatible with Little Navmap 2.4.5. Delete
-the databases files from the settings folder of Little Navmap if you see crashes and exceptions
-containing messages like `no such column`. You can find information  about the folder and the files
-here in the documentation:
-https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/FILES.html#databases
-
-You can safely delete the following files since they can be created again by reloading the scenery library:
-
-`little_navmap_fsx.sqlite`, `little_navmap_fsxse.sqlite`, `little_navmap_p3dv2.sqlite`,
-`little_navmap_p3dv3.sqlite`, `little_navmap_p3dv4.sqlite`, `little_navmap_msfs.sqlite` and
-`little_navmap_xp11.sqlite`
-
 ## Important for MSFS Users
 
 * Remove the MSFS Community folder from the ignore list in _Little Navmap_, `Options`, page `Scenery Library Database`
@@ -55,6 +41,20 @@ You can safely delete the following files since they can be created again by rel
   or one of the other options on page `Map Navigation` in `Options` if you think it is unusable. This
   is a limitation in the used Qt library.
 * Program hangs on macOS Big Sur. Investigating.
+
+### Going back to stable Little Navmap 2.4.5 after trying the beta
+
+The scenery databases of the new beta versions are not compatible with Little Navmap 2.4.5. Delete
+the databases files from the settings folder of Little Navmap if you see crashes and exceptions
+containing messages like `no such column`. You can find information  about the folder and the files
+here in the documentation:
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/FILES.html#databases
+
+You can safely delete the following files since they can be created again by reloading the scenery library:
+
+`little_navmap_fsx.sqlite`, `little_navmap_fsxse.sqlite`, `little_navmap_p3dv2.sqlite`,
+`little_navmap_p3dv3.sqlite`, `little_navmap_p3dv4.sqlite`, `little_navmap_msfs.sqlite` and
+`little_navmap_xp11.sqlite`
 
 ## Changes
 
