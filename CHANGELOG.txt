@@ -3,25 +3,33 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
-Version 2.6.1.beta
+# Version 2.6.1.beta
 
-Important:
+## Important for MSFS Users
 
-* Remove the MSFS Community folder from the ignore list in `Options` on page `Scenery Library Database`
-  if you added it. The exclusion is not needed anymore.
+* Remove the MSFS Community folder from the ignore list in _Little Navmap_, `Options`, page `Scenery Library Database`
+  if you added it. The exclusion to avoid the crash is not needed anymore.
 * Update to the latest beta Navigraph navdata update for MSFS if you use it.
-* Reload the scenery library.
+* Reload the scenery library if you use MSFS.
 
-Known Issues:
+## Known Issues
+
+### MSFS
 
 * Little Navmap cannot read SID and STAR from MSFS. Documentation about MSFS format changes are
   needed in SDK.
-* MSFS multiplayer and realtime AI cannot be displayed. Needs SDK updates or more documentation.
+* MSFS multiplayer and real-time AI cannot be displayed. Needs SDK updates or more documentation.
 * Simulator weather cannot be shown for MSFS since SimConnect weather functions are deprecated and
   do not deliver data. Needs update or documentation in MSFS SDK. Use NOAA weather which gives you
   the most up-to-date weather reports.
+* MSFS has no clear concept of scenery order so far (`Content.xml` seems unreliable) and there is no
+  information in the SDK. Add-ons are loaded by alphabetical order by Little Navmap. To put an
+  add-on to the end of the loading list add a `z_` to the folder name, for example.
+
+### Other
 
 * Dock window layout in Little Navmap can change when resizing or maximizing window and back.
+  Qt limitation.
 * The window layout might not be restored precisely on startup in some cases. This is a limitation
   in the used Qt library.
 * The height of the elevation profile window cannot be reduced in some cases. Rearrange or move the
@@ -32,12 +40,12 @@ Known Issues:
   is a limitation in the used Qt library.
 * Program hangs on macOS Big Sur. Investigating.
 
-Changes:
+## Changes
 
-MSFS:
+### MSFS
 
 * Fixed issue with `NOT NULL constraint failed:tmp_waypoint.ident Unable to fetch...` caused by
-  incomplete waypoints emitted by MSFS BGL compiler. Navids with empty names are now ignored and
+  incomplete waypoints emitted by MSFS BGL compiler. Navaids with empty names are now ignored and
   printed into the log with BGL file name. Do not forget to remove the community folder from
   exclusion list in Little Navmap.
 * AI aircraft names are now correctly shown instead of the user aircraft name for all AI.
@@ -50,7 +58,7 @@ MSFS:
   removed. Note that MSFS cannot load flightplans that have special characters in the filename or
   path.
 * Localizer heading for MSFS now saved correctly in scenery database.
-* Fixed issues where the default instead of changed simulator paths were used in some dialogs.
+* Fixed issues where the default instead of changed simulator paths were used in some dialog windows.
 * Changed default MSFS Steam flight plan path to base folder `Microsoft Flight Simulator`
   (`LocalState` on MS installations).
 * Also looking in `...\Official\OneStore` and `...\Official\Steam` folders for purchased add-ons now.
@@ -59,10 +67,10 @@ MSFS:
   airport names for the Navigraph navdata update.
 * Adapted to Navigraph navdata update 12 for MSFS. Little Navmap only reads required features which
   are: Airports, COM and ILS. Everything else is ignored and not needed since it can be updated with
-  a more complete dataset directly for Little Navmap.
+  a more complete dataset by Navigraph directly for Little Navmap.
 * Corrected ILS course for Navigraph update in simulator. Slight variations like for EDDM remain.
 
-Other:
+### Other
 
 * Added option to restore window layout from last loaded file on startup. This is the file on top
   of the `Recent Window Layouts` menu. See options dialog on page `Startup`.
@@ -72,10 +80,17 @@ Other:
 * Better sensitivity and handling for zooming when using touchpad (better, yet limited on macOS).
 * Compass rose settings are now saved again from `Options` on page `Map Display 2`.
 * Fixed issue where magnetic declination was not created correctly for locale which do not have a
-  dot as decimal separator. As a result of the issue declination was 20 degrees off near VORDME STN
+  dot as decimal separator. Declination was 20 degrees off near VORDME STN
   in X-Plane, for example. #564
 * Updated to world magnetic model 2020. This will be used to calculate X-Plane declination when
-  loading the scenery database or as a fallback if `magdec.bgl` is not available..
+  loading the scenery database or as a fallback if the file `magdec.bgl` is not available.
+* Changed drawing of online airspaces for better visibility. Add center circle.
+* Fixed issue with long route legs causing garbled elevation display when using online elevation.
+* Removed unused Marble OsmPlugin, Pn2 and Pnt Plugins.
+* Added error message when trying to load missing KML file.
+* Corrected route calculation to allow calculation of selected between last leg of a SID and
+  first leg of an arrival procedure.
+* Fixed issue where procedures disappeared with low detail settings.
 
 ===============================================================================
 
