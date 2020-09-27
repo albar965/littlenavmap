@@ -92,11 +92,12 @@ void MapPainterAirspace::render()
         Marble::GeoDataLinearRing linearRing;
         linearRing.setTessellate(true);
 
-        QPen pen = mapcolors::penForAirspace(*airspace);
+        const QPen airpacePen = mapcolors::penForAirspace(*airspace);
+        QPen pen = airpacePen;
 
         if(airspace->isOnline())
           // Make online airpace line thicker
-          pen.setWidthF(pen.widthF() * 2.);
+          pen.setWidthF(airpacePen.widthF() * 1.5);
 
         painter->setPen(pen);
 
@@ -122,8 +123,11 @@ void MapPainterAirspace::render()
           brush.setColor(color.darker(200));
           painter->setBrush(brush);
 
+          pen.setWidthF(airpacePen.widthF() * 2.);
+          painter->setPen(pen);
+
           // Draw circle with 1 NM and at least 3 pixel radius
-          drawCircle(painter, airspace->position, std::max(scale->getPixelForNm(1.f), 3.f));
+          drawCircle(painter, airspace->position, std::max(scale->getPixelForNm(0.5f), 3.f));
         }
       }
     }
