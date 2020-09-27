@@ -15502,10 +15502,14 @@ kHz/MHz</translation>
         <translation type="vanished">&lt;b style=&quot;color:red&quot;&gt;Base de Datos vacía.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="50"/>
         <source>&lt;b style=&quot;color:red&quot;&gt;Database empty&lt;/b&gt;</source>
         <oldsource>The currently selected Scenery Database is empty.</oldsource>
-        <translation type="unfinished">La Base de Datos de escenarios está vacía.</translation>
+        <translation type="obsolete">La Base de Datos de escenarios está vacía.</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapvisible.cpp" line="50"/>
+        <source>Database is empty</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="51"/>

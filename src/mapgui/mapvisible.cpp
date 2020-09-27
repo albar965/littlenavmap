@@ -47,7 +47,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
   if(!NavApp::hasDataInDatabase())
   {
     NavApp::getMainWindow()->setMapObjectsShownMessageText(
-      tr("<b style=\"color:red\">Database empty</b>"),
+      atools::util::HtmlBuilder::errorMessage(tr("Database is empty")),
       tr("<p style='white-space:pre'>The currently selected scenery database for the simulator is empty.<br/>Go to: "
            "Main menu -&gt; \"Scenery Library\" -&gt; \"Load Scenery Library\" "
            "or press <code>Ctrl+Shift+L</code>.<br/>"

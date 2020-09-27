@@ -15829,10 +15829,9 @@ kHz/MHz</translation>
         <translation type="vanished">&lt;b style=&quot;color:red&quot;&gt;Database leeg.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="50"/>
         <source>&lt;b style=&quot;color:red&quot;&gt;Database empty&lt;/b&gt;</source>
         <oldsource>The currently selected Scenery Database is empty.</oldsource>
-        <translation type="unfinished">De geselecteerde Scenery Database is leeg.</translation>
+        <translation type="obsolete">De geselecteerde Scenery Database is leeg.</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="51"/>
@@ -16113,6 +16112,11 @@ kHz/MHz</translation>
         <location filename="src/mapgui/mapvisible.cpp" line="281"/>
         <source>Airspaces: </source>
         <translation>Airspaces: </translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapvisible.cpp" line="50"/>
+        <source>Database is empty</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="243"/>

@@ -15767,6 +15767,11 @@ kHz/MHz</translation>
         <translation> Pista suave (S)</translation>
     </message>
     <message>
+        <location filename="src/mapgui/mapvisible.cpp" line="50"/>
+        <source>Database is empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/mapgui/mapvisible.cpp" line="51"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then choose your simulator and press &quot;Load&quot;.&lt;/p&gt;</source>
         <comment>Keep instructions in sync with translated menus and shortcuts</comment>
@@ -16089,10 +16094,9 @@ kHz/MHz</translation>
         <translation>Especial (SPEC)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="50"/>
         <source>&lt;b style=&quot;color:red&quot;&gt;Database empty&lt;/b&gt;</source>
         <oldsource>The currently selected Scenery Database is empty.</oldsource>
-        <translation type="unfinished">O Banco de Dados do cenário atualmente selecionado está vazio.</translation>
+        <translation type="obsolete">O Banco de Dados do cenário atualmente selecionado está vazio.</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="186"/>

@@ -15260,10 +15260,14 @@ kHz/MHz</translation>
         <translation type="vanished">&lt;b style=&quot;color:red&quot;&gt;数据库是空的。&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="50"/>
         <source>&lt;b style=&quot;color:red&quot;&gt;Database empty&lt;/b&gt;</source>
         <oldsource>The currently selected Scenery Database is empty.</oldsource>
-        <translation type="unfinished">当前选中的地景数据是空的。</translation>
+        <translation type="obsolete">当前选中的地景数据是空的。</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapvisible.cpp" line="50"/>
+        <source>Database is empty</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="51"/>
