@@ -3260,10 +3260,13 @@ void MainWindow::mainWindowShown()
 void MainWindow::mainWindowShownDelayed()
 {
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
+  {
     // Reload last layout file - does not apply state
     dockHandler->loadWindowState(layoutFileHistory->getTopFile(),
                                  OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
                                  layoutWarnText);
+    QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
+  }
   // else layout was already loaded from settings earlier
 
   // Apply layout again to avoid issues with formatting
