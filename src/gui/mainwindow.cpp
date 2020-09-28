@@ -2564,6 +2564,9 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
                                     layoutWarnText))
     {
       dockHandler->currentStateToWindow();
+
+      QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
+
       setStatusMessage(tr("Window layout loaded and restored."));
       return true;
     }

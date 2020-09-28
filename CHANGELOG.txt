@@ -93,6 +93,7 @@ You can safely delete the following files since they can be created again by rel
   of the `Recent Window Layouts` menu. See options dialog on page `Startup`.
 * Improved handling of dock window layout. Now applying dock state after window shown. This might
   cause a small visible layout change after loading but solves issues when restoring the layout.
+* Fixed issue where layout of maximized windows was not restored properly.
 * Fix for blinking aircraft when updating weather over SimConnect. This affected FSX, P3D and MSFS.
 * Better sensitivity and handling for zooming when using touchpad (better, yet limited on macOS).
 * Compass rose settings are now saved again from `Options` on page `Map Display 2`.
