@@ -3438,7 +3438,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         html.tableEnd();
       } // if(route.getSizeWithoutAlternates() > 1 && !alternate) // No TOD display when flying an alternate leg
 
-      // Next leg ====================================================
+      // Next waypoint ====================================================
       QString wpText;
       if(alternate)
         wpText = tr(" - Alternate");
@@ -3938,7 +3938,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   {
     html.hr().pre(
       "distanceToFlightPlan " + QString::number(route.getDistanceToFlightPlan(), 'f', 2) +
-      "distFromStartNm " + QString::number(distFromStartNm, 'f', 2) +
+      " distFromStartNm " + QString::number(distFromStartNm, 'f', 2) +
       " distToDestNm " + QString::number(distToDestNm, 'f', 1) +
       "\nnearestLegDistance " + QString::number(nearestLegDistance, 'f', 2) +
       " crossTrackDistance " + QString::number(crossTrackDistance, 'f', 2) +
@@ -3947,7 +3947,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       (distanceToTod > 0.f ?
        ("\ndistanceToTod " + QString::number(distanceToTod, 'f', 2) +
         " fuelToTodLbs " + QString::number(fuelTime.fuelLbsToTod, 'f', 2) +
-        " fuelToTodGal " + QString::number(fuelTime.fuelGalToTod, 'f', 2)) : QString())
+        " fuelToTodGal " + QString::number(fuelTime.fuelGalToTod, 'f', 2)) : QString()) +
+      (nearestLegDistance > 0.f ?
+       ("\ndistanceToNext " + QString::number(nearestLegDistance, 'f', 2) +
+        " fuelToNextLbs " + QString::number(fuelTime.fuelLbsToNext, 'f', 2) +
+        " fuelToNextGal " + QString::number(fuelTime.fuelGalToNext, 'f', 2)) : QString())
       );
 
     html.pre();

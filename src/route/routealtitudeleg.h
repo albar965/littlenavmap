@@ -43,7 +43,7 @@ public:
   /* Maximum altitude for this leg in feet */
   float getMaxAltitude() const;
 
-  /* Distance from departute in NM */
+  /* Distance from departure to waypoint (i.e. end of leg) in NM */
   float getDistanceFromStart() const;
 
   /* Distance from last leg to this one i.e. this leg's length */
@@ -166,9 +166,13 @@ public:
 
   /* Calculate fuel and time to destination from this leg at position distFromStart
    * fuel in local units (gal or lbs) depending on performance and distFromStart in NM.
-   * distFromStart has to match this leg. */
-  void getFuelFromDistToDestination(float& fuelToDist, float distFromStart) const;
-  void getTimeFromDistToDestination(float& timeToDist, float distFromStart) const;
+   * distFromStart has to match this legs distance from departure. */
+  float getFuelFromDistToDestination(float distFromStart) const;
+  float getTimeFromDistToDestination(float distFromStart) const;
+
+  /* As above but to the end of the leg */
+  float getFuelFromDistToEnd(float distFromStart) const;
+  float getTimeFromDistToEnd(float distFromStart) const;
 
 private:
   friend class RouteAltitude;

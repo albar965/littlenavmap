@@ -110,6 +110,8 @@ You can safely delete the following files since they can be created again by rel
 * Fixed issue where procedures disappeared with low detail settings.
 * Clean up of user interface in flight plan calculation dock window to avoid window resizes due
   to error messages.
+* Fixed error `Bind name "flightplan" does not exist` when importing logfiles from CSV or X-Plane.
+* Display of time to next waypoint and fuel at next waypoint in progress tab corrected.
 
 ===============================================================================
 

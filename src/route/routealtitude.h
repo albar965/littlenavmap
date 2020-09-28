@@ -42,7 +42,8 @@ struct WindAverageRoute;
 
 class Route;
 
-/* Result package of fuel and time calculation or estimate */
+/* Result package of fuel consumption to and time calculation to dest, TOD or next.
+ *  Fuel consumpition might be estimated. */
 struct FuelTimeResult
 {
   float

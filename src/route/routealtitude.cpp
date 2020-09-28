@@ -308,7 +308,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
         if(perf.isFuelFlowValid())
         {
           // calculate fuel and time from this leg
-          leg.getFuelFromDistToDestination(fuelToDest, distFromDeparture);
+          fuelToDest = leg.getFuelFromDistToDestination(distFromDeparture);
 
           // Convert units
           if(perf.useFuelAsVolume())
@@ -324,7 +324,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
         }
 
         if(perf.isSpeedValid())
-          leg.getTimeFromDistToDestination(result.timeToDest, distFromDeparture);
+          result.timeToDest = leg.getTimeFromDistToDestination(distFromDeparture);
 
         // Calculate time and fuel to TOD ===================================================
         int todIdx = getTopOfDescentLegIndex();
@@ -339,7 +339,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
           {
             float fuelTodToDist = 0.f;
             // Calculate fuel and time from TOD to destination
-            value(todIdx).getFuelFromDistToDestination(fuelTodToDist, todDistanceFromDeparture);
+            fuelTodToDist = value(todIdx).getFuelFromDistToDestination(todDistanceFromDeparture);
 
             // Calculate fuel and time from aircraft to TOD
             float fuelToTod = fuelToDest - fuelTodToDist;
@@ -357,11 +357,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
           }
 
           if(perf.isSpeedValid())
-          {
-            float timeTodToDist = 0.f;
-            leg.getTimeFromDistToDestination(timeTodToDist, todDistanceFromDeparture);
-            result.timeToTod = result.timeToDest - timeTodToDist;
-          }
+            result.timeToTod = result.timeToDest - leg.getTimeFromDistToDestination(todDistanceFromDeparture);
         }
       } // if(distanceToDest > 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
     } // if(!alternate)
@@ -369,14 +365,11 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
     // Calculate time and fuel to Next waypoint ============================================
     if(distanceToNext >= 0.f && distanceToNext < map::INVALID_DISTANCE_VALUE)
     {
-      int distNext = leg.getDistanceFromStart() + distanceToNext;
+      int distFromStart = leg.getDistanceFromStart() - distanceToNext;
+
       if(perf.isFuelFlowValid())
       {
-        float fuelCurToDist = 0.f;
-        leg.getFuelFromDistToDestination(fuelCurToDist, distNext);
-
-        // Calculate fuel and time from aircraft to TOD
-        float fuelToNext = fuelToDest - fuelCurToDist;
+        float fuelToNext = leg.getFuelFromDistToEnd(distFromStart);
 
         if(perf.useFuelAsVolume())
         {
@@ -391,10 +384,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
       }
 
       if(perf.isSpeedValid())
-      {
-        float timeCurToDist = 0.f;
-        leg.getTimeFromDistToDestination(timeCurToDist, distNext);
-      }
+        result.timeToNext = leg.getTimeFromDistToEnd(distFromStart);
     } // if(distanceToNext < map::INVALID_DISTANCE_VALUE)
   } // if(isValidProfile())
 
