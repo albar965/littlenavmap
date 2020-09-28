@@ -115,6 +115,7 @@ You can safely delete the following files since they can be created again by rel
   to error messages.
 * Fixed error `Bind name "flightplan" does not exist` when importing logfiles from CSV or X-Plane.
 * Display of time to next waypoint and fuel at next waypoint in progress tab corrected.
+* Added new columns for distance flown and more to logbook search table.
 
 ===============================================================================
 
