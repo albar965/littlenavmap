@@ -189,24 +189,23 @@ const QColor& colorForParkingType(const QString& type)
   static const QColor fuel(Qt::yellow);
   static const QColor unknown("#808080");
 
-  if(type == QLatin1Literal("RM"))
+  if(type == "RM")
     return rampMil;
-  else if(type == QLatin1Literal("RMC"))
+  else if(type == "RMC")
     return rampMilCargo;
-  else if(type == QLatin1Literal("RMCB"))
+  else if(type == "RMCB")
     return rampMilCombat;
-  else if(type.startsWith(QLatin1Literal("G")))
+  else if(type.startsWith("G"))
     return gate;
-  else if(type.startsWith(QLatin1Literal("RGA")) || type.startsWith(QLatin1Literal("DGA")) ||
-          type.startsWith(QLatin1Literal("RE")))
+  else if(type.startsWith("RGA") || type.startsWith("DGA") || type.startsWith("RE"))
     return rampGa;
-  else if(type.startsWith(QLatin1Literal("RC")))
+  else if(type.startsWith("RC"))
     return rampCargo;
-  else if(type.startsWith(QLatin1Literal("FUEL")))
+  else if(type.startsWith("FUEL"))
     return fuel;
-  else if(type == (QLatin1Literal("H")))
+  else if(type == ("H"))
     return hangar;
-  else if(type == (QLatin1Literal("T")))
+  else if(type == ("T"))
     return tiedown;
   else
     return unknown;

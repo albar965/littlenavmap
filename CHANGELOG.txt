@@ -27,6 +27,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * MSFS has no clear concept of scenery order so far (`Content.xml` seems unreliable) and there is no
   information in the SDK. Add-ons are loaded by alphabetical order by Little Navmap. To put an
   add-on to the end of the loading list add a `z_` to the folder name, for example.
+* Country names are missing in MSFS translation tables and are not available in Little Navmap, therefore.
 
 ### Other
 
@@ -107,6 +108,8 @@ You can safely delete the following files since they can be created again by rel
 * Corrected route calculation to allow calculation of selected between last leg of a SID and
   first leg of an arrival procedure.
 * Fixed issue where procedures disappeared with low detail settings.
+* Clean up of user interface in flight plan calculation dock window to avoid window resizes due
+  to error messages.
 
 ===============================================================================
 
