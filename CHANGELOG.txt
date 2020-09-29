@@ -34,7 +34,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Dock window layout in Little Navmap can change when resizing or maximizing window and back.
   Qt limitation.
 * Window is restored in normal state when changing from a maximized window to fullscreen and back.
-  This is Qt limitation.
+  This is a Qt limitation.
 * The window layout might not be restored precisely on startup in some cases. This is a limitation
   in the used Qt library.
 * The height of the elevation profile window cannot be reduced in some cases. Rearrange or move the
@@ -116,6 +116,7 @@ You can safely delete the following files since they can be created again by rel
 * Fixed error `Bind name "flightplan" does not exist` when importing logfiles from CSV or X-Plane.
 * Display of time to next waypoint and fuel at next waypoint in progress tab corrected.
 * Added new columns for distance flown and more to logbook search table.
+* Fixed issue where NOAA weather was not updated despite showing download message.
 
 ===============================================================================
 
