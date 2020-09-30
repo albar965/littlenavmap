@@ -24,9 +24,11 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Simulator weather cannot be shown for MSFS since SimConnect weather functions are deprecated and
   do not deliver data. Needs update or documentation in MSFS SDK. Use NOAA weather which gives you
   the most up-to-date weather reports.
-* MSFS has no clear concept of scenery order so far (`Content.xml` seems unreliable) and there is no
-  information in the SDK. Add-ons are loaded by alphabetical order by Little Navmap. To put an
-  add-on to the end of the loading list add a `z_` to the folder name, for example.
+* MSFS has no clear concept of scenery order as far as I can see (`Content.xml` seems unreliable)
+  and there is no information in the SDK. Add-ons are loaded by alphabetical order by Little Navmap.
+  To put an add-on to the end of the loading list add a `z_` to the folder name, for example.
+* Flight plan loading in MSFS is flawed and does not produce any error messages if it fails. Quite
+  often MSFS cannot load its own plans correctly.
 * Country names are missing in MSFS translation tables and are not available in Little Navmap, therefore.
 
 ### Other
