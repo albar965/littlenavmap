@@ -30,6 +30,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Flight plan loading in MSFS is flawed and does not produce any error messages if it fails. Quite
   often MSFS cannot load its own plans correctly.
 * Country names are missing in MSFS translation tables and are not available in Little Navmap, therefore.
+* Add-ons using the `.fsarchive` encrypted format are not supported and most likely never will.
 
 ### Other
 
