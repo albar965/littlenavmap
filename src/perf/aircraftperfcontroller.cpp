@@ -706,7 +706,16 @@ void AircraftPerfController::updateReport()
     // Display fuel estimates ==========================================================
     const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
     if(altitudeLegs.hasUnflyableLegs())
-      html.p().error(tr("Flight plan has unflyable legs where head wind is larger than cruise speed.")).pEnd();
+      html.p().
+      error(tr("Cannot calculate fuel report.")).br().br().
+      warning(tr("Flight plan has unflyable legs where head wind is larger than cruise speed.")).
+      pEnd();
+    else if(!altitudeLegs.isValidProfile())
+      html.p().
+      error(tr("Cannot calculate fuel report.")).br().br().
+      warning(tr("Flight plan either too short or cruise altitude is too high.<br/>"
+                 "Also check the climb and descent speeds in the aircraft performance data.")).
+      pEnd();
     else
       fuelReport(html);
 
