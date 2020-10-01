@@ -236,6 +236,9 @@ private:
 
   void buildTooltip(int x);
 
+  /* Get either indicated or real */
+  float aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};

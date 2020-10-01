@@ -136,9 +136,16 @@ void ProfileWidget::aircraftTrackPruned()
   update();
 }
 
+float ProfileWidget::aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft)
+{
+  return aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT ?
+         aircraft.getIndicatedAltitudeFt() :
+         aircraft.getPosition().getAltitude();
+}
+
 void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  if(databaseLoadStatus || !simulatorData.getUserAircraftConst().getPosition().isValid())
+  if(databaseLoadStatus || !simulatorData.getUserAircraftConst().isValid())
     return;
 
   bool updateWidget = false;
@@ -150,8 +157,11 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
     {
       simData = simulatorData;
 
-      Pos lastPos = lastSimData.getUserAircraftConst().getPosition();
-      Pos simPos = simData.getUserAircraftConst().getPosition();
+      bool lastPosValid = lastSimData.getUserAircraftConst().isValid();
+      bool simPosValid = simData.getUserAircraftConst().isValid();
+
+      float lastAlt = aircraftAlt(lastSimData.getUserAircraftConst());
+      float simAlt = aircraftAlt(simData.getUserAircraftConst());
 
       aircraftDistanceFromStart = route.getProjectionDistance();
 
@@ -167,10 +177,10 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 #endif
 
         // Get point (NM/ft) for current update
-        QPointF currentPoint(aircraftDistanceFromStart, simPos.getAltitude());
+        QPointF currentPoint(aircraftDistanceFromStart, simAlt);
 
         // Add track point if delta value between last and current update is large enough
-        if(simPos.isValid())
+        if(simPosValid)
         {
           if(aircraftTrackPoints.isEmpty())
             aircraftTrackPoints.append(currentPoint);
@@ -193,14 +203,13 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           using atools::almostNotEqual;
           // Get point (NM/ft) from last update
           QPointF lastPoint;
-          if(lastPos.isValid())
-            lastPoint = QPointF(lastAircraftDistanceFromStart, lastPos.getAltitude());
+          if(lastPosValid)
+            lastPoint = QPointF(lastAircraftDistanceFromStart, lastAlt);
 
           // Update widget if delta value between last and current update is large enough
-          if(!lastPos.isValid() || // No last position
+          if(!lastPosValid || // No last position
              (toScreen(lastPoint) - toScreen(currentPoint)).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
-             almostNotEqual(lastPos.getAltitude(), simPos.getAltitude(),
-                            deltas.altitudeDelta) // Altitude change
+             almostNotEqual(lastAlt, simAlt, deltas.altitudeDelta) // Altitude change
              )
           {
             movingBackwards = (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) &&
@@ -209,7 +218,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
             lastSimData = simData;
             lastAircraftDistanceFromStart = aircraftDistanceFromStart;
 
-            if(simPos.getAltitude() > maxWindowAlt)
+            if(simAlt > maxWindowAlt)
               // Scale up to keep the aircraft visible
               updateScreenCoords();
 
@@ -227,7 +236,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
     else
     {
       // Neither aircraft nor track shown - update simulator data only
-      bool valid = simData.getUserAircraftConst().getPosition().isValid();
+      bool valid = simData.getUserAircraftConst().isValid();
       simData = atools::fs::sc::SimConnectData();
       if(valid)
         updateWidget = true;
@@ -288,9 +297,9 @@ void ProfileWidget::updateScreenCoords()
   flightplanAltFt = routeController->getRoute().getCruisingAltitudeFeet();
   maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
-  if(simData.getUserAircraftConst().getPosition().isValid() &&
+  if(simData.getUserAircraftConst().isValid() &&
      (showAircraft || showAircraftTrack) && !NavApp::getRouteConst().isFlightplanEmpty())
-    maxWindowAlt = std::max(maxWindowAlt, simData.getUserAircraftConst().getPosition().getAltitude());
+    maxWindowAlt = std::max(maxWindowAlt, aircraftAlt(simData.getUserAircraftConst()));
 
   // if(showAircraftTrack)
   // maxWindowAlt = std::max(maxWindowAlt, maxTrackAltitudeFt);
@@ -1166,11 +1175,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw user aircraft =========================================================
-  if(simData.getUserAircraftConst().getPosition().isValid() && showAircraft &&
+  if(simData.getUserAircraftConst().isValid() && showAircraft &&
      aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE && !route.isActiveMissed() && !route.isActiveAlternate())
   {
     float acx = distanceX(aircraftDistanceFromStart);
-    float acy = altitudeY(simData.getUserAircraftConst().getPosition().getAltitude());
+    float acy = altitudeY(aircraftAlt(simData.getUserAircraftConst()));
 
     // Draw aircraft symbol
     int acsize = atools::roundToInt(optData.getDisplaySymbolSizeAircraftUser() / 100. * 32.);
@@ -1199,7 +1208,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       upDown = tr(" ▼");
 
     QStringList texts;
-    texts.append(Unit::altFeet(simData.getUserAircraftConst().getPosition().getAltitude()));
+    texts.append(Unit::altFeet(aircraftAlt(simData.getUserAircraftConst())));
 
     if(vspeed > 10.f || vspeed < -10.f)
       texts.append(Unit::speedVertFpm(vspeed) + upDown);
@@ -1852,7 +1861,7 @@ void ProfileWidget::updateLabel()
 {
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f;
 
-  if(simData.getUserAircraftConst().getPosition().isValid())
+  if(simData.getUserAircraftConst().isValid())
   {
     if(routeController->getRoute().getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance))
     {
@@ -2037,7 +2046,7 @@ void ProfileWidget::jumpBackToAircraftTimeout()
     {
       jumpBack->cancel();
 
-      QPoint pt = toScreen(QPointF(aircraftDistanceFromStart, simData.getUserAircraft().getPosition().getAltitude()));
+      QPoint pt = toScreen(QPointF(aircraftDistanceFromStart, aircraftAlt(simData.getUserAircraft())));
       bool centered = scrollArea->centerAircraft(pt, simData.getUserAircraft().getVerticalSpeedFeetPerMin());
 
       if(centered)

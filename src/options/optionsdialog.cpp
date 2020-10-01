@@ -223,12 +223,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Type"), tr("Show the aircraft type, like B738, B350 or M20T."), optsd::ITEM_USER_AIRCRAFT_TYPE);
   addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Airline"), QString(), optsd::ITEM_USER_AIRCRAFT_AIRLINE);
   addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Flight Number"), QString(), optsd::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Indicated Airspeed"), QString(), optsd::ITEM_USER_AIRCRAFT_IAS);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Ground Speed"), QString(), optsd::ITEM_USER_AIRCRAFT_GS, true);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("True Airspeed"), QString(), optsd::ITEM_USER_AIRCRAFT_TAS);
+  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map"), optsd::ITEM_USER_AIRCRAFT_IAS);
+  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsd::ITEM_USER_AIRCRAFT_GS, true);
+  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map"), optsd::ITEM_USER_AIRCRAFT_TAS);
   addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Climb- and Sinkrate"), QString(), optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Heading"), QString(), optsd::ITEM_USER_AIRCRAFT_HEADING);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Altitude"), QString(), optsd::ITEM_USER_AIRCRAFT_ALTITUDE, true);
+  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Heading"), tr("Aircraft heading prefixed with \"HDG\" on the map"), optsd::ITEM_USER_AIRCRAFT_HEADING);
+  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsd::ITEM_USER_AIRCRAFT_ALTITUDE, false);
+  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE, true);
   addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Track Line"), tr("Show the aircraft track as a black needle protruding from the aircraft nose."), optsd::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
 
   QTreeWidgetItem *aiAircraft = addTopItem(root, tr("AI, Multiplayer and Online Client Aircraft"), tr("Select text labels for the AI, multiplayer and online client aircraft."));

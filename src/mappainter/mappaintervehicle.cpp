@@ -243,13 +243,24 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
   if(!aircraft.isOnGround() && context->dOpt(optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK))
     appendClimbSinkText(texts, aircraft);
 
-  if(!aircraft.isOnGround() && context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE))
+  if(!aircraft.isOnGround() && (context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE) ||
+                                context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE)))
   {
     QString upDown;
     if(!context->dOpt(optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK))
       climbSinkPointer(upDown, aircraft);
 
-    texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
+    if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE) && context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
+    {
+      texts.append(tr("ALT %1 IND %2%3").
+                   arg(Unit::altFeet(aircraft.getPosition().getAltitude())).
+                   arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).
+                   arg(upDown));
+    }
+    else if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE))
+      texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
+    else if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
+      texts.append(tr("IND %1%2").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).arg(upDown));
   }
 
   // Draw text label
