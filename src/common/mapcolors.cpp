@@ -127,6 +127,11 @@ QPen touchMarkBackPen(QColor(0, 0, 0), 4, Qt::SolidLine, Qt::FlatCap);
 QPen touchMarkFillPen(QColor(255, 255, 255), 2, Qt::SolidLine, Qt::FlatCap);
 QColor touchRegionFillColor("#40888888");
 
+QColor aircraftUserLabelColor(0, 0, 0);
+QColor aircraftUserLabelColorBg(255, 255, 150);
+QColor aircraftAiLabelColor(0, 0, 0);
+QColor aircraftAiLabelColorBg(255, 255, 255);
+
 /* Alternating colors */
 static QColor rowBgColor;
 static QColor rowAltBgColor;
@@ -581,6 +586,13 @@ void syncColors()
   QSettings colorSettings(filename, QSettings::IniFormat);
   colorSettings.setValue("Options/Version", QApplication::applicationVersion());
 
+  colorSettings.beginGroup("Aircraft");
+  syncColorArgb(colorSettings, "UserLabelColor", aircraftUserLabelColor);
+  syncColorArgb(colorSettings, "UserLabelBackgroundColor", aircraftUserLabelColorBg);
+  syncColorArgb(colorSettings, "AiLabelColor", aircraftAiLabelColor);
+  syncColorArgb(colorSettings, "AiLabelBackgroundColor", aircraftAiLabelColorBg);
+  colorSettings.endGroup();
+
   colorSettings.beginGroup("Airport");
   syncColor(colorSettings, "DiagramBackgroundColor", airportDetailBackColor);
   syncColor(colorSettings, "EmptyColor", airportEmptyColor);
@@ -589,7 +601,6 @@ void syncColors()
   syncPen(colorSettings, "TaxiwayLinePen", taxiwayLinePen);
   syncColor(colorSettings, "TaxiwayNameColor", taxiwayNameColor);
   syncColor(colorSettings, "TaxiwayNameBackgroundColor", taxiwayNameBackgroundColor);
-
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Navaid");

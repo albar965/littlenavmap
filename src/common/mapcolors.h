@@ -127,6 +127,12 @@ extern QPen touchMarkBackPen;
 extern QPen touchMarkFillPen;
 extern QColor touchRegionFillColor;
 
+extern QColor aircraftUserLabelColor;
+extern QColor aircraftUserLabelColorBg;
+
+extern QColor aircraftAiLabelColor;
+extern QColor aircraftAiLabelColorBg;
+
 // ==========================================================================
 
 /* Web page table background colors */
