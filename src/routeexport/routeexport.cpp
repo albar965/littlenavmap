@@ -261,7 +261,7 @@ bool RouteExport::routeExportFms3Multi(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fms"));
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("-", ".fms"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
@@ -290,7 +290,7 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
     else
       xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
 
-    QString routeFile = exportFile(format, "Route/Fms11", xpBasePath, buildDefaultFilenameShort(QString(), ".fms"),
+    QString routeFile = exportFile(format, "Route/Fms11", xpBasePath, buildDefaultFilenameShort("-", ".fms"),
                                    false /* confirm overwrite */);
 
     if(!routeFile.isEmpty())

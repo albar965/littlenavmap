@@ -223,7 +223,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[FLP         ].defaultPath = documents;
   (*this)[FLPCRJ      ].defaultPath = documents + SEP + "Aerosoft" + SEP + "Digital Aviation CRJ" + SEP + "FlightPlans";
   (*this)[FLIGHTGEAR  ].defaultPath = documents;
-  (*this)[GFP         ].defaultPath = base + SEP + "F1GTN" + SEP + "FPL";
+  (*this)[GFP         ].defaultPath = base + SEP + "F1TGTN" + SEP + "FPL";
   (*this)[TXT         ].defaultPath = base + SEP + "Aircraft";
   (*this)[RTE         ].defaultPath = base + SEP + "PMDG" + SEP + "FLIGHTPLANS";
   (*this)[GPX         ].defaultPath = documents;
