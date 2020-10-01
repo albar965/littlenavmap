@@ -190,7 +190,7 @@
   </action>
   <action name="actionEditPath">
    <property name="text">
-    <string>&amp;EditPath</string>
+    <string>&amp;Edit Path</string>
    </property>
   </action>
   <action name="actionDefaultTextSize">
