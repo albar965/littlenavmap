@@ -261,7 +261,8 @@ void MapPaintLayer::initMapLayerSettings()
          airportMaxTextLength(30)).
 
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
-  append(defLayer.clone(5.f).airportDiagramRunway().airportDiagram().airportSymbolSize(20).airportInfo().
+  append(defLayer.clone(5.f).airportDiagramRunway().airportDiagram().
+         airportSymbolSize(20).airportInfo().
          waypointSymbolSize(10).waypointName().
          windBarbsSymbolSize(18).
          aiAircraftGroundText(false).
@@ -275,7 +276,8 @@ void MapPaintLayer::initMapLayerSettings()
          airportMaxTextLength(30)).
 
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
-  append(defLayer.clone(10.f).airportDiagramRunway().airportSymbolSize(18).airportInfo().
+  append(defLayer.clone(10.f).airportDiagramRunway().
+         airportSymbolSize(18).airportInfo().
          waypointSymbolSize(8).waypointName().
          windBarbsSymbolSize(16).
          aiAircraftGroundText(false).
@@ -289,8 +291,9 @@ void MapPaintLayer::initMapLayerSettings()
          airportMaxTextLength(20)).
 
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
-  append(defLayer.clone(25.f).airportDiagramRunway().airportSymbolSize(18).airportInfo().
-         waypointSymbolSize(8).
+  append(defLayer.clone(25.f).airportDiagramRunway().
+         airportSymbolSize(18).airportInfo().
+         waypointSymbolSize(8).waypointName().
          windBarbsSymbolSize(16).
          aiAircraftGroundText(false).
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
@@ -303,8 +306,9 @@ void MapPaintLayer::initMapLayerSettings()
          airportMaxTextLength(20)).
 
   // airport, large VOR, NDB, ILS, airway
-  append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().
-         waypoint(false).
+  append(defLayer.clone(50.f).
+         airportSymbolSize(18).airportInfo().
+         waypointSymbolSize(8).
          windBarbsSymbolSize(16).
          aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          vorSymbolSize(20).vorIdent().vorInfo().vorLarge().
@@ -316,8 +320,9 @@ void MapPaintLayer::initMapLayerSettings()
          airportMaxTextLength(16)).
 
   // airport, VOR, NDB, ILS, airway
-  append(defLayer.clone(100.f).airportSymbolSize(12).
-         waypoint(false).
+  append(defLayer.clone(100.f).
+         airportSymbolSize(12).
+         waypointSymbolSize(4).
          windBarbsSymbolSize(14).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          vorSymbolSize(16).vorIdent().
@@ -329,14 +334,14 @@ void MapPaintLayer::initMapLayerSettings()
          airportMaxTextLength(16)).
 
   // airport, VOR, NDB, airway
-  append(defLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
+  append(defLayer.clone(150.f).
+         airportSymbolSize(10).minRunwayLength(2500).
          airportOverviewRunway(false).airportName(false).
          windBarbsSymbolSize(14).
          approachText(false).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          waypoint(false).
-         vorSymbolSize(12).
-         ndbSymbolSize(12).
+         vorSymbolSize(12).ndbSymbolSize(12).
          airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpoinSymbolSize(22).userpointMaxTextLength(8).
@@ -352,7 +357,7 @@ void MapPaintLayer::initMapLayerSettings()
          onlineAircraftText(false).
          airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
-         vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false).
+         vorSymbolSize(8).ndbSymbolSize(8).waypoint(false).marker(false).ils(false).
          userpoint().userpointInfo().userpoinSymbolSize(16).userpointMaxTextLength(8).
          airportMaxTextLength(16)).
 
@@ -365,7 +370,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraftText(false).
          trackIdent().trackInfo(false).trackWaypoint().
-         ndb(false).waypoint(false).marker(false).ils(false).
+         vorSymbolSize(6).ndbSymbolSize(4).waypoint(false).marker(false).ils(false).
          trackIdent().trackInfo(false).trackWaypoint().
          airportRouteInfo(false).waypointRouteName(false).
          userpoint().userpointInfo(false).userpoinSymbolSize(16).
@@ -381,7 +386,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraftText(false).
          airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
-         vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         vorSymbolSize(3).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          trackIdent().trackInfo(false).trackWaypoint().
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
          userpoint().userpointInfo(false).userpoinSymbolSize(12).
@@ -406,7 +411,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   // Display only points for airports until the cutoff limit
   // airport > 8000
-  append(defLayer.clone(2400.f).airportSymbolSize(5).
+  append(defLayer.clone(2400.f).airportSymbolSize(4).
          minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          airportWeather(false).airportWeatherDetails(false).
@@ -424,8 +429,8 @@ void MapPaintLayer::initMapLayerSettings()
          userpoint().userpointInfo(false).userpoinSymbolSize(12).
          airportMaxTextLength(16)).
 
-  append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).
-         minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
+  append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT).
+         airportSymbolSize(3).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          airportWeather(false).airportWeatherDetails(false).
          windBarbs(false).
@@ -443,7 +448,8 @@ void MapPaintLayer::initMapLayerSettings()
          airportMaxTextLength(16)).
 
   // Make sure that there is always a layer
-  append(defLayer.clone(100000.f).airportSymbolSize(5).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
+  append(defLayer.clone(100000.f).
+         airportSymbolSize(3).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          airportWeather(false).airportWeatherDetails(false).
          windBarbs(false).
