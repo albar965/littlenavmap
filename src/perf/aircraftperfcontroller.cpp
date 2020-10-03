@@ -713,7 +713,7 @@ void AircraftPerfController::updateReport()
     else if(!altitudeLegs.isValidProfile())
       html.p().
       error(tr("Cannot calculate fuel report.")).br().br().
-      warning(tr("Flight plan either too short or cruise altitude is too high.<br/>"
+      warning(tr("The flight plan is either too short or the cruise altitude is too high.<br/>"
                  "Also check the climb and descent speeds in the aircraft performance data.")).
       pEnd();
     else

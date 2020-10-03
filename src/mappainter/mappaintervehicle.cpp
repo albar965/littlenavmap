@@ -256,15 +256,15 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
 
     if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE) && context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
     {
-      texts.append(tr("ALT %1 IND %2%3").
+      texts.append(tr("ALT %1, IND %2%3").
                    arg(Unit::altFeet(aircraft.getPosition().getAltitude())).
                    arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).
                    arg(upDown));
     }
     else if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE))
-      texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
+      texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
     else if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
-      texts.append(tr("IND %1%2").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).arg(upDown));
+      texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).arg(upDown));
   }
 
   int transparency = context->flags2.testFlag(opts2::MAP_USER_TEXT_BACKGROUND) ? 255 : 0;

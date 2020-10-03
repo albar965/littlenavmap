@@ -760,12 +760,12 @@ void OptionsDialog::checkOfficialOnlineUrls()
 
 void OptionsDialog::onlineTestStatusUrlClicked()
 {
-  onlineTestUrl(ui->lineEditOptionsOnlineStatusUrl->text(), true);
+  onlineTestUrl(ui->lineEditOptionsOnlineStatusUrl->text(), true /* statusFile */);
 }
 
 void OptionsDialog::onlineTestWhazzupUrlClicked()
 {
-  onlineTestUrl(ui->lineEditOptionsOnlineWhazzupUrl->text(), false);
+  onlineTestUrl(ui->lineEditOptionsOnlineWhazzupUrl->text(), false /* statusFile */);
 }
 
 void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
@@ -779,7 +779,7 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
     for(const QString& str : result)
     {
       if(statusFile)
-        ok |= str.simplified().startsWith("url0");
+        ok |= str.simplified().startsWith("url0") || str.simplified().startsWith("url1");
       else
         ok |= str.simplified().startsWith("!GENERAL") || str.simplified().startsWith("!CLIENTS");
     }
