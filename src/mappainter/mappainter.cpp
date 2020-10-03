@@ -36,9 +36,11 @@ using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
 
+
+
 void PaintContext::szFont(float scale) const
 {
-  return mapcolors::scaleFont(painter, scale, &defaultFont);
+    return mapcolors::scaleFont(painter, scale, &defaultFont);
 }
 
 textflags::TextFlags PaintContext::airportTextFlags() const

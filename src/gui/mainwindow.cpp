@@ -1881,14 +1881,13 @@ const ElevationModel *MainWindow::getElevationModel()
 }
 
 /* Called after each query */
-void MainWindow::resultTruncated(int truncatedTo)
+void MainWindow::resultTruncated()
 {
-  if(truncatedTo > 0)
-  {
-    messageLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects")));
-    messageLabel->setToolTip(tr("Reduce map details in the \"View\" menu.",
-                                "Keep menu item in sync with menu translation"));
-  }
+  messageLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects")));
+  messageLabel->setToolTip(tr("Too many objects to show on map.\n"
+                              "Display might be incomplete.\n"
+                              "Reduce map details in the \"View\" menu.",
+                              "Keep menu item in sync with menu translation"));
 }
 
 void MainWindow::distanceChanged()

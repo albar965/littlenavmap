@@ -65,7 +65,7 @@ public:
 
   /* Similar to getAirports */
   const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                              bool lazy);
+                                              bool lazy, bool& overflow);
 
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);

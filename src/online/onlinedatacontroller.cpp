@@ -504,7 +504,8 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
 }
 
 const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircraft(const Marble::GeoDataLatLonBox& rect,
-                                                                                   const MapLayer *mapLayer, bool lazy)
+                                                                                   const MapLayer *mapLayer, bool lazy,
+                                                                                   bool& overflow)
 {
   static const double queryRectInflationFactor = 0.2;
   static const double queryRectInflationIncrement = 0.1;
@@ -554,7 +555,7 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
     }
     simulatorAiRegistrations = curRegistrations;
   }
-  aircraftCache.validate(queryMaxRows);
+  overflow = aircraftCache.validate(queryMaxRows);
   return &aircraftCache.list;
 }
 

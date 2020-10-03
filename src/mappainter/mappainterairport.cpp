@@ -77,10 +77,12 @@ void MapPainterAirport::render()
   // Get airports from cache/database for the bounding rectangle and add them to the map
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirport> *airportCache = nullptr;
+  bool overflow = false;
   if(context->mapLayerEffective->isAirportDiagramRunway())
-    airportCache = mapQuery->getAirports(curBox, context->mapLayerEffective, context->lazyUpdate);
+    airportCache = mapQuery->getAirports(curBox, context->mapLayerEffective, context->lazyUpdate, overflow);
   else
-    airportCache = mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate);
+    airportCache = mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, overflow);
+  context->setQueryOverflow(overflow);
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
   QMargins margins(100, 10, 10, 10);

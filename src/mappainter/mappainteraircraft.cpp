@@ -61,10 +61,13 @@ void MapPainterAircraft::render()
   {
     // Merge simulator aircraft and online aircraft
     QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
+    bool overflow = false;
 
     // Filters duplicates from simulator and user aircraft out
     const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft = NavApp::getOnlinedataController()->getAircraft(
-      context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate);
+      context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate, overflow);
+
+    context->setQueryOverflow(overflow);
 
     for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
       allAircraft.append(&ac);

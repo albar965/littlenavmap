@@ -63,10 +63,11 @@ void MapPainterAirspace::render()
 
   if(context->objectTypes.testFlag(map::AIRSPACE))
   {
-    // qDebug() << Q_FUNC_INFO << "NON ONLINE";
+    bool overflow = false;
     controller->getAirspaces(airspaces, curBox, context->mapLayer, context->airspaceFilterByLayer,
                              context->route->getCruisingAltitudeFeet(),
-                             context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL);
+                             context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL, overflow);
+    context->setQueryOverflow(overflow);
   }
 
   if(!airspaces.isEmpty())

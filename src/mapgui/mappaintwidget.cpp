@@ -1181,8 +1181,17 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     screenIndex->updateAllGeometry(currentViewBoundingBox);
   }
 
-  if(paintLayer->getOverflow() > 0)
-    emit resultTruncated(paintLayer->getOverflow());
+  if(paintLayer->isObjectOverflow() || paintLayer->isQueryOverflow())
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO
+             << "isObjectOverflow" << paintLayer->isObjectOverflow()
+             << "getObjectCount" << paintLayer->getObjectCount()
+             << "isQueryOverflow" << paintLayer->isQueryOverflow();
+#endif
+
+    emit resultTruncated();
+  }
 }
 
 bool MapPaintWidget::loadKml(const QString& filename, bool center)

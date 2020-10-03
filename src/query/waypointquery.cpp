@@ -32,7 +32,7 @@ using map::MapWaypoint;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
-int WaypointQuery::queryMaxRows = 5000;
+int WaypointQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
 WaypointQuery::WaypointQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
   : dbNav(sqlDbNav), trackDatabase(trackDatabaseParam)
@@ -44,8 +44,8 @@ WaypointQuery::WaypointQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRowLimit", 5000).toInt();
+  queryMaxRows =
+    settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "WaypointQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 
   waypointInfoCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "WaypointCache", 100).toInt());
 }
@@ -117,7 +117,7 @@ void WaypointQuery::getWaypointRectNearest(map::MapWaypoint& waypoint, const Pos
 }
 
 const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBox& rect,
-                                                           const MapLayer *mapLayer, bool lazy)
+                                                           const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   waypointCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                             [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -140,7 +140,7 @@ const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBo
       }
     }
   }
-  waypointCache.validate(queryMaxRows);
+  overflow = waypointCache.validate(queryMaxRows);
   return &waypointCache.list;
 }
 

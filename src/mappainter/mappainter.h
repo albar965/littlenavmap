@@ -120,20 +120,34 @@ struct PaintContext
   float textSizeMora = 1.f;
   float transparencyMora = 1.f;
 
-  // Needs to be larger than number of highest level airports
-  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 8000;
   int objectCount = 0;
+  bool queryOverflow = false;
 
   /* Increase drawn object count and return true if exceeded */
   bool objCount()
   {
     objectCount++;
-    return objectCount > MAX_OBJECT_COUNT;
+    return objectCount > map::MAX_MAP_OBJECTS;
   }
 
-  bool isOverflow()
+  bool isObjectOverflow() const
   {
-    return objectCount > MAX_OBJECT_COUNT;
+    return objectCount >= map::MAX_MAP_OBJECTS;
+  }
+
+  int getObjectCount() const
+  {
+    return objectCount;
+  }
+
+  void setQueryOverflow(bool overflow)
+  {
+    queryOverflow |= overflow;
+  }
+
+  bool isQueryOverflow() const
+  {
+    return queryOverflow;
   }
 
   bool  dOpt(optsd::DisplayOption opts) const

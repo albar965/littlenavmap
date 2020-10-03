@@ -166,7 +166,7 @@ public:
   void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
 
   /* Show "Too many objects" label if number of map features was truncated */
-  void resultTruncated(int truncatedTo);
+  void resultTruncated();
 
   void setDatabaseErased(bool value)
   {

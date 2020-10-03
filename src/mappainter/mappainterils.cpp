@@ -51,7 +51,10 @@ void MapPainterIls::render()
   {
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 
-    const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate);
+    bool overflow = false;
+    const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
+    context->setQueryOverflow(overflow);
+
     if(ilsList != nullptr)
     {
       atools::util::PainterContextSaver saver(context->painter);

@@ -102,7 +102,7 @@ public:
 
   /* Get aircraft within bounding rectangle. Objects are cached. */
   const QList<atools::fs::sc::SimConnectAircraft> *getAircraft(const Marble::GeoDataLatLonBox& rect,
-                                                               const MapLayer *mapLayer, bool lazy);
+                                                               const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   /* Get aircraft from last bounding rectangle query from cache. */
   const QList<atools::fs::sc::SimConnectAircraft> *getAircraftFromCache();

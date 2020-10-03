@@ -191,8 +191,6 @@ private:
   void runwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent);
   map::MapRunwayEnd runwayEndByName(int airportId, const QString& runway);
 
-  const int queryRowLimit = 5000;
-
   /* true if third party navdata */
   bool navdata;
 

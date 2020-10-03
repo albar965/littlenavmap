@@ -98,19 +98,22 @@ void WaypointTrackQuery::getWaypointRectNearest(map::MapWaypoint& waypoint, cons
 }
 
 void WaypointTrackQuery::getWaypoints(QList<map::MapWaypoint>& waypoints, const GeoDataLatLonBox& rect,
-                                      const MapLayer *mapLayer, bool lazy)
+                                      const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   const QList<map::MapWaypoint> *wp;
   if(useTracks)
   {
-    wp = trackQuery->getWaypoints(rect, mapLayer, lazy);
+    wp = trackQuery->getWaypoints(rect, mapLayer, lazy, overflow);
     if(wp != nullptr)
       waypoints.append(*wp);
   }
 
-  wp = waypointQuery->getWaypoints(rect, mapLayer, lazy);
-  if(wp != nullptr)
-    copy(*wp, waypoints);
+  if(!overflow)
+  {
+    wp = waypointQuery->getWaypoints(rect, mapLayer, lazy, overflow);
+    if(wp != nullptr)
+      copy(*wp, waypoints);
+  }
 }
 
 const SqlRecord *WaypointTrackQuery::getWaypointInformation(int waypointId)

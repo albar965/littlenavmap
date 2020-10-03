@@ -943,7 +943,7 @@ void AirportQuery::initQueries()
   // Common where clauses
   static const QString whereRect("lonx between :leftx and :rightx and laty between :bottomy and :topy");
   static const QString whereIdentRegion("ident = :ident and region like :region");
-  static const QString whereLimit("limit " + QString::number(queryRowLimit));
+  static const QString whereLimit("limit " + QString::number(map::MAX_MAP_OBJECTS));
 
   QStringList const airportQueryBase = airportColumns(db);
   QStringList const airportQueryBaseOverview = airportOverviewColumns(db);

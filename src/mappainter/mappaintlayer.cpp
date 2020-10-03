@@ -630,7 +630,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       if(mapWidget->distance() < layer::DISTANCE_CUT_OFF_LIMIT)
       {
-        if(!context.isOverflow())
+        if(!context.isObjectOverflow())
           mapPainterAirspace->render();
 
         if(context.mapLayerEffective->isAirportDiagram())
@@ -638,37 +638,40 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           // Put ILS below and navaids on top of airport diagram
           mapPainterIls->render();
 
-          if(!context.isOverflow())
+          if(!context.isObjectOverflow())
             mapPainterAirport->render();
 
-          if(!context.isOverflow())
+          if(!context.isObjectOverflow())
             mapPainterNav->render();
         }
         else
         {
           // Airports on top of all
-          if(!context.isOverflow())
+          if(!context.isObjectOverflow())
             mapPainterIls->render();
 
-          if(!context.isOverflow())
+          if(!context.isObjectOverflow())
             mapPainterNav->render();
 
-          if(!context.isOverflow())
+          if(!context.isObjectOverflow())
             mapPainterAirport->render();
         }
       }
 
-      if(!context.isOverflow())
+      if(!context.isObjectOverflow())
         mapPainterUser->render();
 
-      mapPainterWind->render();
+      if(!context.isObjectOverflow())
+        mapPainterWind->render();
 
       // if(!context.isOverflow()) always paint route even if number of objets is too large
       mapPainterRoute->render();
 
-      mapPainterWeather->render();
+      if(!context.isObjectOverflow())
+        mapPainterWeather->render();
 
-      mapPainterTrack->render();
+      if(!context.isObjectOverflow())
+        mapPainterTrack->render();
 
       // if(!context.isOverflow())
       mapPainterMark->render();
@@ -676,11 +679,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       mapPainterAircraft->render();
 
       mapPainterTop->render();
-
-      if(context.isOverflow())
-        overflow = PaintContext::MAX_OBJECT_COUNT;
-      else
-        overflow = 0;
     }
 
     if(!mapWidget->isPrinting() && mapWidget->isVisibleWidget())

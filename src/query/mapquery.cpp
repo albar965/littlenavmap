@@ -48,7 +48,7 @@ using map::MapUserpoint;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
-int MapQuery::queryMaxRows = 5000;
+int MapQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
   : dbSim(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
@@ -62,8 +62,7 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDa
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRowLimit", 5000).toInt();
+  queryMaxRows = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "MapQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 }
 
 MapQuery::~MapQuery()
@@ -624,7 +623,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
 }
 
 const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
-                                                    const MapLayer *mapLayer, bool lazy)
+                                                    const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   airportCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -636,22 +635,22 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
   {
     case layer::ALL:
       airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */);
+      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, overflow);
 
     case layer::MEDIUM:
       // Airports > 4000 ft
-      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */);
+      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */, overflow);
 
     case layer::LARGE:
       // Airports > 8000 ft
-      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */);
+      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */, overflow);
 
   }
   return nullptr;
 }
 
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                            bool lazy)
+                                            bool lazy, bool& overflow)
 {
   vorCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -674,12 +673,12 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
       }
     }
   }
-  vorCache.validate(queryMaxRows);
+  overflow = vorCache.validate(queryMaxRows);
   return &vorCache.list;
 }
 
 const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                            bool lazy)
+                                            bool lazy, bool& overflow)
 {
   ndbCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -702,7 +701,7 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
       }
     }
   }
-  ndbCache.validate(queryMaxRows);
+  overflow = ndbCache.validate(queryMaxRows);
   return &ndbCache.list;
 }
 
@@ -762,7 +761,7 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
 }
 
 const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                  bool lazy)
+                                                  bool lazy, bool& overflow)
 {
   markerCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -785,11 +784,11 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
       }
     }
   }
-  markerCache.validate(queryMaxRows);
+  overflow = markerCache.validate(queryMaxRows);
   return &markerCache.list;
 }
 
-const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy)
+const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   ilsCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -820,7 +819,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
       }
     }
   }
-  ilsCache.validate(queryMaxRows);
+  overflow = ilsCache.validate(queryMaxRows);
   return &ilsCache.list;
 }
 
@@ -833,7 +832,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
  */
 const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                       atools::sql::SqlQuery *query,
-                                                      bool lazy, bool overview)
+                                                      bool lazy, bool overview, bool& overflow)
 {
   if(airportCache.list.isEmpty() && !lazy)
   {
@@ -858,7 +857,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
       }
     }
   }
-  airportCache.validate(queryMaxRows);
+  overflow = airportCache.validate(queryMaxRows);
   return &airportCache.list;
 }
 

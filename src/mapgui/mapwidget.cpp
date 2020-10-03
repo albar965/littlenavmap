@@ -2875,7 +2875,7 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
-  setShowMapFeatures(map::TRACK, ui->actionMapShowTracks->isChecked());
+  setShowMapFeatures(map::TRACK, ui->actionMapShowTracks->isChecked() && ui->actionMapShowTracks->isEnabled());
 
   setShowMapFeatures(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
                      ui->actionShowAirspaces->isChecked());

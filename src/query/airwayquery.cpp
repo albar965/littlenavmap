@@ -30,7 +30,7 @@ using namespace atools::geo;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
-int AirwayQuery::queryMaxRows = 5000;
+int AirwayQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
 AirwayQuery::AirwayQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
   : dbNav(sqlDbNav), trackDatabase(trackDatabaseParam)
@@ -42,8 +42,8 @@ AirwayQuery::AirwayQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRowLimit", 5000).toInt();
+  queryMaxRows =
+    settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirwayQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 }
 
 AirwayQuery::~AirwayQuery()

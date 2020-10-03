@@ -517,7 +517,7 @@ float WindReporter::getAltitude() const
 }
 
 const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect,
-                                                              const MapLayer *mapLayer, bool lazy)
+                                                              const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   if(windQuery->hasWindData())
   {
@@ -545,7 +545,7 @@ const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoD
         cachedLevel = currentLevel;
       }
     }
-    windPosCache.validate(queryMaxRows);
+    overflow = windPosCache.validate(queryMaxRows);
     return &windPosCache.list;
   }
   return nullptr;

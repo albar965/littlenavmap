@@ -99,10 +99,11 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
     AirspaceVector airspaces;
 
     // Get displayed airspaces ================================
+    bool overflow = false;
     if(!highlights && paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
       controller->getAirspaces(airspaces,
                                curBox, paintLayer->getMapLayer(), mapPaintWidget->getShownAirspaceTypesByLayer(),
-                               NavApp::getRouteConst().getCruisingAltitudeFeet(), false, source);
+                               NavApp::getRouteConst().getCruisingAltitudeFeet(), false, source, overflow);
 
     // Get highlighted airspaces from info window ================================
     for(const map::MapAirspace& airspace : airspaceHighlights)
@@ -200,7 +201,8 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
 
     if(scale->isValid())
     {
-      const QList<map::MapIls> *ilsList = mapQuery->getIls(curBox, paintLayer->getMapLayer(), false);
+      bool overflow = false;
+      const QList<map::MapIls> *ilsList = mapQuery->getIls(curBox, paintLayer->getMapLayer(), false, overflow);
 
       if(ilsList != nullptr)
       {

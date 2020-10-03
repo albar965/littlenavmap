@@ -324,7 +324,7 @@ public:
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
-  void resultTruncated(int truncatedTo);
+  void resultTruncated();
 
   /* Update action state in main window (disabled/enabled) */
   void updateActionStates();
