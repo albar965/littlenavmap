@@ -211,7 +211,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("departure_alt", airport.position.getAltitude()); // integer,
       record.setValue("departure_time", QDateTime::currentDateTime()); // varchar(100),
       record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
-      record.setValue("simulator", NavApp::getCurrentSimulatorName()); // varchar(50),
+      record.setValue("simulator", NavApp::getCurrentSimulatorShortName()); // varchar(50),
       record.setValue("route_string", NavApp::getRouteString()); // varchar(1024),
 
       // Record flight plan and aircraft performance =========================
