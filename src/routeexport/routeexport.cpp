@@ -385,7 +385,7 @@ bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("", ".fpl"));
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsRxpGns(routeFile))
+      if(exportFlighplanAsRxpGns(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
         return true;
     }
   }
@@ -418,7 +418,7 @@ bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".gfp"));
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsRxpGtn(routeFile))
+      if(exportFlighplanAsRxpGtn(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
         return true;
     }
   }
@@ -436,7 +436,7 @@ bool RouteExport::routeExportGfpMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("-", ".gfp"));
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsGfp(routeFile))
+      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
         return true;
     }
   }
@@ -1064,12 +1064,11 @@ QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString
     atools::fs::pln::pattern::DEPARTIDENT + sep + atools::fs::pln::pattern::DESTIDENT, suffix);
 }
 
-bool RouteExport::exportFlighplanAsGfp(const QString& filename)
+bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString gfp = RouteStringWriter().createGfpStringForRoute(
-    buildAdjustedRoute(rf::DEFAULT_OPTS), false /* procedures */,
-    OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
+    buildAdjustedRoute(rf::DEFAULT_OPTS), false /* procedures */, saveAsUserWaypoints);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -1150,20 +1149,15 @@ bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
   }
 }
 
-bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
+bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUserWaypoints)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
   try
   {
-    atools::fs::pln::SaveOptions options = atools::fs::pln::SAVE_NO_OPTIONS;
-
-    if(OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT)
-      options |= atools::fs::pln::SAVE_GNS_USER_WAYPOINTS;
-
     // Regions are required for the export
     NavApp::getRoute().updateAirportRegions();
-    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS).getFlightplan(), filename, options);
+    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS).getFlightplan(), filename, saveAsUserWaypoints);
   }
   catch(atools::Exception& e)
   {
@@ -1178,12 +1172,11 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
   return true;
 }
 
-bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename)
+bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUserWaypoints)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString gfp = RouteStringWriter().createGfpStringForRoute(
-    buildAdjustedRoute(rf::DEFAULT_OPTS), true /* procedures */,
-    OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
+    buildAdjustedRoute(rf::DEFAULT_OPTS), true /* procedures */, saveAsUserWaypoints);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))

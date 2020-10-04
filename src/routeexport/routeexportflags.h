@@ -33,7 +33,8 @@ enum RouteExportType
 
 namespace rexp {
 
-/* Enum for all export formats. Order in multiexport dialog list is defined by order in this enumeration. */
+/* Enum for all export formats. Order in multiexport dialog list is defined by order in this enumeration.
+ *  Do not change ids */
 enum RouteExportFormatType : quint8
 {
   /* Simulators ================ */
@@ -48,8 +49,11 @@ enum RouteExportFormatType : quint8
 
   /* Garmin ================ */
   RXPGNS = 6, /* Reality XP GNS */
+  RXPGNSUWP = 32, /* Reality XP GNS with user defined waypoints */
   RXPGTN = 7, /* Reality XP GTN */
+  RXPGTNUWP = 33, /* Reality XP GTN with user defined waypoints */
   GFP = 8, /* Garmin GFP Format */
+  GFPUWP = 34, /* Garmin GFP Format with user defined waypoints */
 
   /* Online ================ */
   VFP = 9, /* vPilot VATSIM */
@@ -80,6 +84,8 @@ enum RouteExportFormatType : quint8
   EFBR = 27, /* AivlaSoft EFB */
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29 /* Export as HTML page */
+
+         // Next = 35
 };
 
 /* Flags for export format */
@@ -95,7 +101,8 @@ enum RouteExportFormatFlag : quint8
 
   PARKING = 1 << 4, /* Format allows to import parking start position */
   AIRPORTS = 1 << 5, /* Valid departure and destination airports are needed */
-  CYCLE = 1 << 6 /* Format needs a valid AIRAC cycle */
+  CYCLE = 1 << 6, /* Format needs a valid AIRAC cycle */
+  GARMIN_AS_WAYPOINTS = 1 << 7 /* Format to export Garmin as waypoints. */
 };
 
 Q_DECLARE_FLAGS(RouteExportFormatFlags, RouteExportFormatFlag);

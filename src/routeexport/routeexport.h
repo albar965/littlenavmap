@@ -227,14 +227,14 @@ private:
   bool routeExportInternalFlp(const RouteExportFormat& format, bool crj);
 
   /* Formats that have no export method in FlightplanIO */
-  bool exportFlighplanAsGfp(const QString& filename);
+  bool exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints);
   bool exportFlighplanAsTxt(const QString& filename);
   bool exportFlighplanAsCorteIn(const QString& filename);
   bool exportFlighplanAsProSim(const QString& filename);
   bool exportFlighplanAsUFmc(const QString& filename);
   bool exportFlightplanAsGpx(const QString& filename);
-  bool exportFlighplanAsRxpGns(const QString& filename);
-  bool exportFlighplanAsRxpGtn(const QString& filename);
+  bool exportFlighplanAsRxpGns(const QString& filename, bool saveAsUserWaypoints);
+  bool exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUserWaypoints);
 
   /* Generic export using callback and also doing exception handling. */
   bool exportFlighplan(const QString& filename, rf::RouteAdjustOptions options,

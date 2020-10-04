@@ -237,10 +237,10 @@ void RouteMultiExportDialog::updateTableColors()
       QStandardItem *item = itemModel->item(row, col);
       if(item != nullptr)
       {
-        item->setToolTip(QString());
         // Color style path =========================
         if(col == PATH)
         {
+          item->setToolTip(QString());
           item->setToolTip(tr("Default file or directory.\n"
                               "This path depends on the selected simulator scenery library.\n"
                               "Press F2 or double click to edit."));
@@ -387,6 +387,7 @@ void RouteMultiExportDialog::updateModel()
 
     // Description =============================================================
     item = new QStandardItem(format.getComment());
+    item->setToolTip(format.getToolTip());
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     item->setData(userdata, FORMAT_TYPE_ROLE);
     itemModel->setItem(row, DESCRIPTION, item);

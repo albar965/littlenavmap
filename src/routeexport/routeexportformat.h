@@ -74,7 +74,14 @@ public:
   /* Get a filter string for the file dialog. Usually "(*.format)". */
   QString getFilter() const;
 
-  const QString& getComment() const
+  /* Comment is all before first linefeed */
+  QString getComment() const
+  {
+    return comment.section('\n', 0, 0);
+  }
+
+  /* Comment plus all after first linefeed */
+  const QString& getToolTip() const
   {
     return comment;
   }
