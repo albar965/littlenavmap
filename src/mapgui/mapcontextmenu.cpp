@@ -796,17 +796,22 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
 
         bool departure = false, destination = false;
         procedureFlags(&airport, &departure, &destination);
-        if(destination)
+
+        if(departure)
+        {
+          if(base->getType() != map::HELIPAD && base->getType() != map::PARKING)
+          {
+            // Is already departure airport and no parking clicked - disable
+            disable = true;
+            text.append(tr(" (is departure)"));
+          }
+          // else user clicked parking spot
+        }
+        else if(destination)
         {
           // Is already destination - disable
           disable = true;
           text.append(tr(" (is destination)"));
-        }
-        if(departure && base->getType() != map::HELIPAD && base->getType() != map::PARKING)
-        {
-          // Is already departure airport - disable
-          disable = true;
-          text.append(tr(" (is departure)"));
         }
       }
     };
@@ -865,16 +870,16 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
         bool departure = false, destination = false, alternate = false;
         procedureFlags(base, &departure, &destination, &alternate);
 
-        // Do not allow to add as alternate if already part of plane
-        if(destination)
-        {
-          disable = true;
-          text.append(tr(" (is destination)"));
-        }
+        // Do not allow to add as alternate if already part of plan
         if(departure)
         {
           disable = true;
           text.append(tr(" (is departure)"));
+        }
+        if(destination)
+        {
+          disable = true;
+          text.append(tr(" (is destination)"));
         }
         if(alternate)
         {
