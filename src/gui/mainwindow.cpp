@@ -1240,6 +1240,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteTableAppend, &QAction::triggered, this, &MainWindow::routeAppend);
+  connect(ui->actionRouteSaveSelection, &QAction::triggered, this, &MainWindow::routeSaveSelection);
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSaveLnm);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsLnm);
 
@@ -2258,6 +2259,26 @@ void MainWindow::routeOpenFileLnmStr(const QString& string)
   }
 }
 
+bool MainWindow::routeSaveSelection()
+{
+  // Have to get snippet to be able to extract new name
+  atools::fs::pln::Flightplan plan = routeController->getFlightplanForSelection();
+  QString routeFile = routeSaveFileDialogLnm(RouteExport::buildDefaultFilename(plan));
+
+  if(!routeFile.isEmpty())
+  {
+    if(routeController->saveFlightplanLnmAsSelection(routeFile))
+    {
+      routeFileHistory->addFile(routeFile);
+      updateActionStates();
+      setStatusMessage(tr("Flight plan saved."));
+      saveFileHistoryStates();
+      return true;
+    }
+  }
+  return false;
+}
+
 /* Called from menu or toolbar by action - append flight plan to current one */
 void MainWindow::routeAppend()
 {
@@ -2394,7 +2415,7 @@ QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
     tr("Save Flight Plan as LNMPLN Format"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
     "lnmpln", "Route/LnmPln", atools::documentsDir(),
-    filename.isEmpty() ? routeExport->buildDefaultFilename() : filename,
+    filename.isEmpty() ? RouteExport::buildDefaultFilename() : filename,
     false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
 }
 

@@ -281,6 +281,7 @@ private:
   void routeOpen();
   void routeOpenFile(QString filepath);
   void routeAppend();
+  bool routeSaveSelection();
   void routeInsert(int insertBefore);
   void routeOpenRecent(const QString& routeFile);
 

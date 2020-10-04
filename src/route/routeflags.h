@@ -40,8 +40,11 @@ enum RouteAdjustOption
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
 
-  /* LNMPLN save and load format. Do not mangle anything. */
+  /* LNMPLN save and load format. Does not mangle anything. */
   DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT,
+
+  /* LNMPLN save selected legs as plan. */
+  DEFAULT_OPTS_LNMPLN_SAVE_SELECTED = DEFAULT_OPTS_LNMPLN | rf::REMOVE_ALTERNATE,
 
   /* Option for RouteStringWriter used to generate a route description */
   DEFAULT_OPTS_ROUTESTRING = FIX_PROC_ENTRY_EXIT,

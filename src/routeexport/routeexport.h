@@ -197,6 +197,8 @@ public:
 
   /* Build filename according to pattern set in options. */
   static QString buildDefaultFilename(const QString& suffix = ".lnmpln", bool normalize = false);
+  static QString buildDefaultFilename(const atools::fs::pln::Flightplan& plan, const QString& suffix = ".lnmpln",
+                                      bool normalize = false);
 
   /* Create a default filename based on departure and destination idents. Suffix includes dot. */
   static QString buildDefaultFilenameShort(const QString& sep, const QString& suffix);

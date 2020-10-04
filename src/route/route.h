@@ -69,6 +69,9 @@ public:
 
   Route& operator=(const Route& other);
 
+  /* Update navdata properties in flightplan properties for export and save */
+  void updateRouteCycleMetadata();
+
   /* Update positions, distances and try to select next leg*/
   void updateActiveLegAndPos(const map::PosCourse& pos);
   void updateActiveLegAndPos(bool force, bool flying);
@@ -252,6 +255,8 @@ public:
                   map::MapResult& mapobjects,
                   map::MapObjectQueryTypes types) const;
 
+  void eraseAirway(int row);
+
   /* @return true if any leg has an airway name */
   bool hasAirways() const;
 
@@ -289,6 +294,9 @@ public:
 
   /* returns true if a route can be calculated between the selected legs */
   bool canCalcSelection(int firstIndex, int lastIndex) const;
+
+  /* returns true if a route snippet can be saved between the selected legs */
+  bool canSaveSelection(int firstIndex, int lastIndex) const;
 
   /* Get a new number for a user waypoint for automatic naming */
   int getNextUserWaypointNumber() const;
@@ -506,6 +514,9 @@ public:
     flightplan.getEntries().removeAt(i);
   }
 
+  /* Removes all entries in route and flightplan except the ones in the range (including) */
+  void removeAllExceptRange(int from, int to);
+
   /* Removes only route legs and does not touch the flight plan copy */
   void clear() // OK
   {
@@ -530,6 +541,10 @@ public:
    * are not adapted and might have a different size*/
   Route updatedAltitudes() const;
   static Route updatedAltitudes(const Route& routeParam);
+
+  /* As above but sets all altitudes to zero */
+  Route zeroedAltitudes() const;
+  static Route zeroedAltitudes(const Route& routeParam);
 
   /* Loads navaids from database and create all route map objects from flight plan.
    * Flight plan will be corrected if needed. */
@@ -597,6 +612,7 @@ private:
   /* Copy flight plan profile altitudes into entries for FMS and other formats
    *  All following functions have to use setCoords instead of setPosition to avoid overwriting*/
   void assignAltitudes();
+  void zeroAltitudes();
 
   /* Assign index and pointer to flight plan for all objects */
   void updateIndices();

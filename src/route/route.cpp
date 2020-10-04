@@ -28,6 +28,7 @@
 #include "query/airportquery.h"
 #include "weather/windreporter.h"
 #include "navapp.h"
+#include "fs/db/databasemeta.h"
 #include "fs/util/fsutil.h"
 #include "route/routealtitude.h"
 #include "fs/perf/aircraftperf.h"
@@ -75,6 +76,16 @@ Route& Route::operator=(const Route& other)
   copy(other);
 
   return *this;
+}
+
+void Route::updateRouteCycleMetadata()
+{
+  QHash<QString, QString>& properties = getFlightplan().getProperties();
+  // Add metadata for navdata reference =========================
+  properties.insert(atools::fs::pln::SIMDATA, NavApp::getDatabaseMetaSim()->getDataSource());
+  properties.insert(atools::fs::pln::SIMDATACYCLE, NavApp::getDatabaseAiracCycleSim());
+  properties.insert(atools::fs::pln::NAVDATA, NavApp::getDatabaseMetaNav()->getDataSource());
+  properties.insert(atools::fs::pln::NAVDATACYCLE, NavApp::getDatabaseAiracCycleNav());
 }
 
 void Route::resetActive()
@@ -913,6 +924,15 @@ bool Route::isFlightplanEmpty() const
   return getFlightplan().isEmpty();
 }
 
+void Route::eraseAirway(int row)
+{
+  if(0 <= row && row < getFlightplan().getEntries().size())
+  {
+    getFlightplan()[row].setAirway(QString());
+    getFlightplan()[row].setFlag(atools::fs::pln::entry::TRACK, false);
+  }
+}
+
 bool Route::hasAirways() const
 {
   for(const RouteLeg& leg : *this)
@@ -1499,6 +1519,14 @@ int Route::getSizeWithoutAlternates() const
   return QList::size() - getNumAlternateLegs();
 }
 
+void Route::removeAllExceptRange(int from, int to)
+{
+  for(int row = size() - 1; row > to; row--)
+    removeAllAt(row);
+  for(int row = from - 1; row >= 0; row--)
+    removeAllAt(row);
+}
+
 void Route::updateDistancesAndCourse()
 {
   totalDistance = 0.f;
@@ -1822,6 +1850,35 @@ bool Route::canCalcSelection(int firstIndex, int lastIndex) const
   return ok;
 }
 
+bool Route::canSaveSelection(int firstIndex, int lastIndex) const
+{
+  // Check validity of indexes first
+  if(!atools::inRange(*this, firstIndex) || !atools::inRange(*this, lastIndex))
+    return false;
+
+  if(firstIndex >= lastIndex)
+    return false;
+
+  if(value(firstIndex).isAlternate() || value(lastIndex).isAlternate())
+    // First or last are alternate - cannot calculate
+    return false;
+
+  bool ok = true;
+
+  if(hasAnyProcedure())
+  {
+    int lastDeparture = getLastIndexOfDepartureProcedure();
+    if(lastDeparture > 0)
+      ok &= firstIndex > lastDeparture;
+
+    int firstArrival = getArrivaLegsOffset();
+    if(firstArrival != map::INVALID_INDEX_VALUE)
+      ok &= lastIndex < firstArrival;
+  }
+
+  return ok;
+}
+
 // Needs updateIndex called before
 void Route::validateAirways()
 {
@@ -2003,6 +2060,12 @@ void Route::assignAltitudes()
     flightplan.getEntries()[i].setAltitude(altVector.at(i));
 }
 
+void Route::zeroAltitudes()
+{
+  for(int i = 0; i < size(); i++)
+    flightplan.getEntries()[i].setAltitude(0.f);
+}
+
 Route Route::updatedAltitudes() const
 {
   return updatedAltitudes(*this);
@@ -2012,6 +2075,18 @@ Route Route::updatedAltitudes(const Route& routeParam)
 {
   Route route(routeParam);
   route.assignAltitudes();
+  return route;
+}
+
+Route Route::zeroedAltitudes() const
+{
+  return zeroedAltitudes(*this);
+}
+
+Route Route::zeroedAltitudes(const Route& routeParam)
+{
+  Route route(routeParam);
+  route.zeroAltitudes();
   return route;
 }
 

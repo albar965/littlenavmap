@@ -98,6 +98,7 @@ public:
   /* Saves flight plan using the given name and file format and uses file name as new current name */
   bool saveFlightplanLnm();
   bool saveFlightplanLnmAs(const QString& filename);
+  bool saveFlightplanLnmAsSelection(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -208,6 +209,9 @@ public:
 
   /* Same as above but full HTML document for export */
   QString getFlightplanTableAsHtmlDoc(float iconSizePixel) const;
+
+  /* Get flight plan extracted from table selection */
+  atools::fs::pln::Flightplan getFlightplanForSelection() const;
 
   /* Insert a flight plan table as QTextTable object at the cursor position */
   void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;
@@ -326,6 +330,9 @@ private:
   /* Saves flight plan using LNM format */
   bool saveFlightplanLnmInternal();
 
+  /* Saves flight plan sippet using LNM format to given name. Given range must not contains procedures or alternates. */
+  bool saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const;
+
   /* Called by route command */
   void changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan);
 
@@ -353,7 +360,7 @@ private:
   void moveSelectedLegsInternal(MoveDirection direction);
   void deleteSelectedLegs();
   void deleteSelectedLegsInternal(const QList<int>& rows);
-  void getSelectedRows(QList<int>& selectedRows, bool reverseRoute);
+  void getSelectedRows(QList<int>& selectedRows, bool reverseRoute) const;
 
   void selectList(const QList<int>& selectedRows, int offset);
   void selectRange(int from, int to);
@@ -388,7 +395,7 @@ private:
   void updateFlightplanFromWidgets();
 
   /* Insert properties for aircraft performance */
-  void assignFlightplanPerfProperties(atools::fs::pln::Flightplan& flightplan);
+  void assignFlightplanPerfProperties(atools::fs::pln::Flightplan& flightplan) const;
 
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
@@ -414,7 +421,6 @@ private:
   void helpClicked();
 
   void dockVisibilityChanged(bool visible);
-  void eraseAirway(int row);
 
   /* Time for clear selection triggered or scroll active to top */
   void cleanupTableTimeout();
@@ -452,9 +458,7 @@ private:
   void editUserWaypointTriggered();
 
   bool canCalcSelection();
-
-  /* Update navdata properties in flightplan properties for export and save */
-  void updateRouteCycleMetadata();
+  bool canSaveSelection();
 
   /* Move active leg to second top position */
   void scrollToActive();

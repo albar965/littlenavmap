@@ -864,7 +864,7 @@ void RouteController::newFlightplan()
   route.createRouteLegsFromFlightplan();
   route.updateAll();
   route.updateLegAltitudes();
-  updateRouteCycleMetadata();
+  route.updateRouteCycleMetadata();
 
   updateTableModel();
   updateMoveAndDeleteActions();
@@ -968,7 +968,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   fileCruiseAlt = route.getCruisingAltitudeFeet();
 
   route.updateLegAltitudes();
-  updateRouteCycleMetadata();
+  route.updateRouteCycleMetadata();
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -1219,7 +1219,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         atools::fs::pln::copySidProcedureProperties(route.getFlightplan().getProperties(),
                                                     flightplan.getProperties());
 
-        eraseAirway(1);
+        route.eraseAirway(1);
       }
       else if(insertBefore >= route.getSizeWithoutAlternates() - 1)
       {
@@ -1241,7 +1241,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         middleInsert = true;
 
         // No airway at start leg
-        eraseAirway(insertBefore);
+        route.eraseAirway(insertBefore);
 
         // No procedures taken from the loaded plan
       }
@@ -1309,17 +1309,82 @@ bool RouteController::saveFlightplanLnmAs(const QString& filename)
   return saveFlightplanLnmInternal();
 }
 
+pln::Flightplan RouteController::getFlightplanForSelection() const
+{
+  QList<int> rows;
+  getSelectedRows(rows, false /* reverse */);
+
+  Route saveRoute(route);
+  saveRoute.removeAllExceptRange(rows.first(), rows.last());
+  saveRoute.updateIndicesAndOffsets();
+
+  Flightplan saveplan = saveRoute.getFlightplan();
+  saveplan.adjustDepartureAndDestination(true /* force */); // Fill departure and destination fields
+  return saveplan;
+}
+
+bool RouteController::saveFlightplanLnmAsSelection(const QString& filename)
+{
+  // Range must not contains procedures or alternates.
+  QList<int> rows;
+  getSelectedRows(rows, false /* reverse */);
+  qDebug() << Q_FUNC_INFO << filename << rows;
+  return saveFlightplanLnmSelectionAs(filename, rows.first(), rows.last());
+}
+
 bool RouteController::saveFlightplanLnm()
 {
   qDebug() << Q_FUNC_INFO << routeFilename;
   return saveFlightplanLnmInternal();
 }
 
+bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const
+{
+  try
+  {
+    // Create a copy
+    Route saveRoute(route);
+    saveRoute.updateRouteCycleMetadata();
+
+    // Remove all legs except the ones to save
+    saveRoute.removeAllExceptRange(from, to);
+    saveRoute.updateIndicesAndOffsets();
+
+    // Procedures are never saved for a selection
+    saveRoute.removeProcedureLegs();
+
+    // Get plan without alternates and all altitude values erased
+    Flightplan saveplan =
+      saveRoute.zeroedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN_SAVE_SELECTED).getFlightplan();
+    saveplan.adjustDepartureAndDestination(true /* force */);
+
+    // Remove original comment
+    saveplan.setComment(QString());
+
+    // Add performance file type and name ===============
+    assignFlightplanPerfProperties(saveplan);
+
+    // Save LNMPLN - Will throw an exception if something goes wrong
+    flightplanIO->saveLnm(saveplan, filename);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
+}
+
 bool RouteController::saveFlightplanLnmInternal()
 {
   try
   {
-    updateRouteCycleMetadata();
+    route.updateRouteCycleMetadata();
 
     // Create a copy which allows to change altitude
     // Copy altitudes to flight plan entries
@@ -1361,16 +1426,6 @@ bool RouteController::saveFlightplanLnmInternal()
     return false;
   }
   return true;
-}
-
-void RouteController::updateRouteCycleMetadata()
-{
-  QHash<QString, QString>& properties = route.getFlightplan().getProperties();
-  // Add metadata for navdata reference =========================
-  properties.insert(pln::SIMDATA, NavApp::getDatabaseMetaSim()->getDataSource());
-  properties.insert(pln::SIMDATACYCLE, NavApp::getDatabaseAiracCycleSim());
-  properties.insert(pln::NAVDATA, NavApp::getDatabaseMetaNav()->getDataSource());
-  properties.insert(pln::NAVDATACYCLE, NavApp::getDatabaseAiracCycleNav());
 }
 
 void RouteController::calculateDirect()
@@ -1829,7 +1884,7 @@ void RouteController::postDatabaseLoad()
 
   NavApp::updateErrorLabels();
   routeAltChangedDelayed();
-  updateRouteCycleMetadata();
+  route.updateRouteCycleMetadata();
 
   routeWindow->postDatabaseLoad();
 
@@ -2037,6 +2092,15 @@ bool RouteController::canCalcSelection()
   return false;
 }
 
+bool RouteController::canSaveSelection()
+{
+  // Check if selected rows contain a procedure or if a procedure is between first and last selection
+  if(selectedRows.size() > 1)
+    return route.canSaveSelection(selectedRows.first(), selectedRows.last());
+
+  return false;
+}
+
 void RouteController::tableContextMenu(const QPoint& pos)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -2066,7 +2130,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapNavaidRange,
     ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
     ui->actionRouteResetView, ui->actionRouteSetMark,
-    ui->actionRouteInsert, ui->actionRouteTableAppend});
+    ui->actionRouteInsert, ui->actionRouteTableAppend, ui->actionRouteSaveSelection});
 
   QModelIndex index = view->indexAt(pos);
   const RouteLeg *routeLeg = nullptr, *prevRouteLeg = nullptr;
@@ -2191,7 +2255,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteSetMark->setEnabled(false);
   }
 
+  ui->actionRouteSaveSelection->setEnabled(canSaveSelection());
+
   ui->actionRouteTableAppend->setEnabled(!route.isEmpty());
+
   if(insert)
   {
     ui->actionRouteInsert->setEnabled(true);
@@ -2295,6 +2362,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   menu.addAction(ui->actionRouteInsert);
   menu.addAction(ui->actionRouteTableAppend);
+  menu.addAction(ui->actionRouteSaveSelection);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteCalcSelected);
@@ -2721,11 +2789,11 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
       forceDeparturePosition = rows.contains(0);
 
       // Erase airway names at start of the moved block - last is smaller here
-      eraseAirway(lastRow);
-      eraseAirway(lastRow + 1);
+      route.eraseAirway(lastRow);
+      route.eraseAirway(lastRow + 1);
 
       // Erase airway name at end of the moved block
-      eraseAirway(firstRow + 2);
+      route.eraseAirway(firstRow + 2);
     }
     else if(direction == MOVE_UP)
     {
@@ -2734,11 +2802,11 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
       forceDeparturePosition = rows.contains(1);
 
       // Erase airway name at start of the moved block - last is larger here
-      eraseAirway(firstRow - 1);
+      route.eraseAirway(firstRow - 1);
 
       // Erase airway names at end of the moved block
-      eraseAirway(lastRow);
-      eraseAirway(lastRow + 1);
+      route.eraseAirway(lastRow);
+      route.eraseAirway(lastRow + 1);
     }
 
     route.updateAll();
@@ -2765,15 +2833,6 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     postChange(undoCommand);
     emit routeChanged(true);
     NavApp::setStatusMessage(tr("Moved flight plan legs."));
-  }
-}
-
-void RouteController::eraseAirway(int row)
-{
-  if(0 <= row && row < route.getFlightplan().getEntries().size())
-  {
-    route.getFlightplan()[row].setAirway(QString());
-    route.getFlightplan()[row].setFlag(atools::fs::pln::entry::TRACK, false);
   }
 }
 
@@ -2813,7 +2872,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     {
       route.getFlightplan().getEntries().removeAt(row);
 
-      eraseAirway(row);
+      route.eraseAirway(row);
 
       route.removeAt(row);
       model->removeRow(row);
@@ -2866,7 +2925,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 }
 
 /* Get selected row numbers from the table model */
-void RouteController::getSelectedRows(QList<int>& rows, bool reverse)
+void RouteController::getSelectedRows(QList<int>& rows, bool reverse) const
 {
   if(view->selectionModel() != nullptr)
   {
@@ -3365,8 +3424,8 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
 
   Flightplan& flightplan = route.getFlightplan();
   flightplan.getEntries().insert(insertIndex, entry);
-  eraseAirway(insertIndex);
-  eraseAirway(insertIndex + 1);
+  route.eraseAirway(insertIndex);
+  route.eraseAirway(insertIndex + 1);
 
   const RouteLeg *lastLeg = nullptr;
 
@@ -3455,8 +3514,8 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   routeLeg.createFromDatabaseByEntry(legIndex, lastLeg);
 
   route.replace(legIndex, routeLeg);
-  eraseAirway(legIndex);
-  eraseAirway(legIndex + 1);
+  route.eraseAirway(legIndex);
+  route.eraseAirway(legIndex + 1);
 
   if(legIndex == route.getDestinationAirportLegIndex())
     route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
@@ -3615,7 +3674,7 @@ void RouteController::updateFlightplanFromWidgets()
   updateFlightplanFromWidgets(route.getFlightplan());
 }
 
-void RouteController::assignFlightplanPerfProperties(Flightplan& flightplan)
+void RouteController::assignFlightplanPerfProperties(Flightplan& flightplan) const
 {
   const atools::fs::perf::AircraftPerf perf = NavApp::getAircraftPerfController()->getAircraftPerformance();
 

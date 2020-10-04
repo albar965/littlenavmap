@@ -5567,7 +5567,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>27</y>
+              <y>42</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -11113,7 +11113,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Calculate Flight Plan between selected ...</string>
+    <string>&amp;Calculate Flight Plan for selected range ...</string>
    </property>
    <property name="toolTip">
     <string>Calculate flight plan between selected legs</string>
@@ -11618,6 +11618,21 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Shift+F</string>
    </property>
   </action>
+  <action name="actionRouteSaveSelection">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save selected range as Flight Plan ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save the flight plan legs between selected as a new plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Save the flight plan legs between selected as a new plan</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11804,7 +11819,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

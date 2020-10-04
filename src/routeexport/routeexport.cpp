@@ -1050,12 +1050,16 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   return save;
 }
 
+QString RouteExport::buildDefaultFilename(const atools::fs::pln::Flightplan& plan, const QString& suffix,
+                                          bool normalize)
+{
+  QString name = plan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix);
+  return normalize ? atools::normalizeStr(name) : name;
+}
+
 QString RouteExport::buildDefaultFilename(const QString& suffix, bool normalize)
 {
-  QString name = NavApp::getRouteConst().getFlightplan().getFilenamePattern(
-    OptionData::instance().getFlightplanPattern(), suffix);
-
-  return normalize ? atools::normalizeStr(name) : name;
+  return buildDefaultFilename(NavApp::getRouteConst().getFlightplan(), suffix, normalize);
 }
 
 QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix)

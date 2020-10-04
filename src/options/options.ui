@@ -1860,7 +1860,7 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-93</y>
+             <y>0</y>
              <width>572</width>
              <height>559</height>
             </rect>
@@ -4764,8 +4764,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>337</width>
+             <height>368</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -5203,8 +5203,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>283</width>
+             <height>311</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -5490,8 +5490,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>450</width>
+             <height>234</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -5677,7 +5677,7 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
+             <width>491</width>
              <height>470</height>
             </rect>
            </property>
@@ -6450,6 +6450,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>pushButtonOptionsRouteFilenameShort</tabstop>
   <tabstop>pushButtonOptionsRouteFilenameLong</tabstop>
   <tabstop>checkBoxOptionsRouteDeclination</tabstop>
+  <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
   <tabstop>scrollArea_11</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoAsn</tabstop>
@@ -6516,6 +6517,8 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>listWidgetOptionsDatabaseAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveAddon</tabstop>
+  <tabstop>checkBoxOptionsMapUserAircraftText</tabstop>
+  <tabstop>checkBoxOptionsMapAiAircraftText</tabstop>
  </tabstops>
  <resources/>
  <connections/>
