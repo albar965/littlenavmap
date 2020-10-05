@@ -160,8 +160,12 @@ public:
     return currentFsType;
   }
 
+  /* Base paths which might also be changed by the user */
   QString getCurrentSimulatorBasePath() const;
   QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const;
+
+  /* Place to store flight plans */
+  QString getSimulatorFilesPath(atools::fs::FsPaths::SimulatorType type) const;
 
   dm::NavdatabaseStatus getNavDatabaseStatus() const
   {

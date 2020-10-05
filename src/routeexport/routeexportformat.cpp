@@ -209,6 +209,11 @@ void RouteExportFormatMap::updateDefaultPaths()
   else
     xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
 
+  // Get MSFS base path ===========================
+  QString msfsBasePath = NavApp::getSimulatorFilesPath(atools::fs::FsPaths::MSFS);
+  if(msfsBasePath.isEmpty())
+    msfsBasePath = atools::documentsDir();
+
   // Documents path ===========================
   QString documents = atools::documentsDir();
 
@@ -247,7 +252,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   /* *INDENT-OFF* */
   (*this)[LNMPLN      ].defaultPath = lnmplnFiles;
   (*this)[PLN         ].defaultPath = curSimFiles;
-  (*this)[PLNMSFS     ].defaultPath = curSimFiles;
+  (*this)[PLNMSFS     ].defaultPath = msfsBasePath;
   (*this)[PLNANNOTATED].defaultPath = curSimFiles;
   (*this)[FMS3        ].defaultPath = xpBasePath;
   (*this)[FMS11       ].defaultPath = xpBasePath;
@@ -261,7 +266,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[GPX         ].defaultPath = documents;
   (*this)[HTML        ].defaultPath = documents;
   (*this)[FPR         ].defaultPath = base + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "mjc8q400" + SEP + "nav" + SEP + "routes";
-  (*this)[FPL         ].defaultPath = base + SEP + "Aircraft" + SEP + "X-Aviation" + SEP + "IXEG 737 Classic" + SEP + "coroutes";
+  (*this)[FPL         ].defaultPath = xpBasePath + SEP + "Aircraft" + SEP + "X-Aviation" + SEP + "IXEG 737 Classic" + SEP + "coroutes";
   (*this)[CORTEIN     ].defaultPath = base + SEP + "Aircraft" + SEP + "corte.in";
   (*this)[RXPGNS      ].defaultPath = gns;
   (*this)[RXPGNSUWP   ].defaultPath = gns;

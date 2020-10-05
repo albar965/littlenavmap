@@ -593,6 +593,36 @@ QString DatabaseManager::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType
   return simulators.value(type).basePath;
 }
 
+QString DatabaseManager::getSimulatorFilesPath(FsPaths::SimulatorType type) const
+{
+  QString base = getSimulatorBasePath(type);
+
+  switch(type)
+  {
+    // All not depending on installation path
+    case atools::fs::FsPaths::FSX:
+    case atools::fs::FsPaths::FSX_SE:
+    case atools::fs::FsPaths::P3D_V2:
+    case atools::fs::FsPaths::P3D_V3:
+    case atools::fs::FsPaths::P3D_V4:
+    case atools::fs::FsPaths::P3D_V5:
+    case atools::fs::FsPaths::MSFS: // Does not change with base path
+      return FsPaths::getFilesPath(type);
+
+    case atools::fs::FsPaths::XPLANE11:
+      if(!base.isEmpty())
+        return atools::buildPathNoCase({base, "Output", "FMS plans"});
+
+      break;
+
+    case atools::fs::FsPaths::DFD:
+    case atools::fs::FsPaths::ALL_SIMULATORS:
+    case atools::fs::FsPaths::UNKNOWN:
+      break;
+  }
+  return QString();
+}
+
 atools::sql::SqlDatabase *DatabaseManager::getDatabaseOnline() const
 {
   return onlinedataManager->getDatabase();

@@ -555,6 +555,11 @@ QString NavApp::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type)
   return databaseManager->getSimulatorBasePath(type);
 }
 
+QString NavApp::getSimulatorFilesPath(atools::fs::FsPaths::SimulatorType type)
+{
+  return databaseManager->getSimulatorFilesPath(type);
+}
+
 bool NavApp::hasSimulator(atools::fs::FsPaths::SimulatorType type)
 {
   return atools::fs::FsPaths::hasSimulator(type);

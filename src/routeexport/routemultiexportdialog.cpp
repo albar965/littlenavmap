@@ -228,9 +228,9 @@ void RouteMultiExportDialog::updateTableColors()
   changingTable = true;
   for(int row = 0; row < itemModel->rowCount(); row++)
   {
-    RouteExportFormat fmt =
-      formatMap->value(
-        static_cast<rexp::RouteExportFormatType>(itemModel->item(row, CATEGORY)->data(FORMAT_TYPE_ROLE).toInt()));
+    rexp::RouteExportFormatType type =
+      static_cast<rexp::RouteExportFormatType>(itemModel->item(row, CATEGORY)->data(FORMAT_TYPE_ROLE).toInt());
+    const RouteExportFormat& fmt = (*formatMap)[type];
 
     for(int col = FIRST_COL; col <= LAST_COL; col++)
     {
@@ -528,7 +528,6 @@ void RouteMultiExportDialog::resetPathClicked()
     // Reset path button clicked ============================
     resetPath(static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt()),
               button->property(ROW_PROP_NAME).toInt());
-  updateTableColors();
 }
 
 void RouteMultiExportDialog::resetPath(rexp::RouteExportFormatType type, int row)
@@ -537,7 +536,10 @@ void RouteMultiExportDialog::resetPath(rexp::RouteExportFormatType type, int row
   formatMap->clearPath(type);
 
   // Update table item
+  changingTable = true;
   itemModel->item(row, PATH)->setText(formatMap->value(type).getDefaultPath());
+  changingTable = false;
+
   updateTableColors();
 }
 

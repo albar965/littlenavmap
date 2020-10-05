@@ -120,7 +120,7 @@ private:
   RouteExportFormatMap *formatMap = nullptr, /* Map that will be modified in the dialog */
                        *formatMapOrig = nullptr; /* Map backup that will be used to restore in case of cancel */
 
-  /* Avoid updates when filling table */
+  /* Avoid updates in itemChanged() when filling table */
   bool changingTable = false;
 
   /* Avoid sorting of the first column on first startup */
