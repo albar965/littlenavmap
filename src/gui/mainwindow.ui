@@ -181,6 +181,8 @@
     <addaction name="actionHelpFaq"/>
     <addaction name="actionHelpContentsOffline"/>
     <addaction name="separator"/>
+    <addaction name="actionHelpDownloads"/>
+    <addaction name="separator"/>
     <addaction name="actionHelpNavmapLegend"/>
     <addaction name="actionHelpMapLegend"/>
     <addaction name="separator"/>
@@ -11633,6 +11635,21 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Save the flight plan legs between selected as a new plan</string>
    </property>
   </action>
+  <action name="actionHelpDownloads">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Downloads (Online)</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the Little Navmap downloads in the browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the Little Navmap downloads in the browser</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11818,8 +11835,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

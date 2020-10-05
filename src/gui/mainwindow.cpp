@@ -606,6 +606,11 @@ void MainWindow::showOnlineTutorials()
   HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineTutorialsUrl, lnm::helpLanguageOnline());
 }
 
+void MainWindow::showOnlineDownloads()
+{
+  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineDownloadsUrl, lnm::helpLanguageOnline());
+}
+
 void MainWindow::showDonationPage()
 {
   HelpHandler::openUrlWeb(this, lnm::helpDonateUrl);
@@ -1292,6 +1297,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpContents, &QAction::triggered, this, &MainWindow::showOnlineHelp);
   connect(ui->actionHelpTutorials, &QAction::triggered, this, &MainWindow::showOnlineTutorials);
   connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
+  connect(ui->actionHelpDownloads, &QAction::triggered, this, &MainWindow::showOnlineDownloads);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
   connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);

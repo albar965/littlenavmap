@@ -48,6 +48,7 @@ namespace lnm {
 // ======== URLs ================================================================
 extern QString helpOnlineUrl;
 extern QString helpOnlineTutorialsUrl;
+extern QString helpOnlineDownloadsUrl;
 extern QString helpOnlineLegendUrl;
 extern QString helpOnlineInstallRedistUrl;
 extern QString helpOnlineInstallGlobeUrl;

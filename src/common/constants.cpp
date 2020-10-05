@@ -33,6 +33,7 @@ static QString supportedLanguageOnline;
 
 QString helpOnlineUrl;
 QString helpOnlineTutorialsUrl;
+QString helpOnlineDownloadsUrl;
 QString helpOnlineLegendUrl;
 QString helpOnlineInstallRedistUrl;
 QString helpOnlineInstallGlobeUrl;
@@ -89,6 +90,8 @@ void loadHelpUrls()
   helpOnlineInstallDirUrl = settings.value("help/installdir", base + "FOLDERS.html").toString();
   helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
   helpOnlineStartUrl = settings.value("help/start", base + "START.html").toString();
+
+  helpOnlineDownloadsUrl = settings.value("help/downloads", "https://www.littlenavmap.org/downloads/").toString();
 
   // [help] - Other URLs
   helpDonateUrl = settings.value("help/donate", "https://www.littlenavmap.org/donate.html").toString();
