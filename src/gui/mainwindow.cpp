@@ -1256,7 +1256,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsFms11, &QAction::triggered, [ = ]() { routeExport->routeExportFms11Man(); });
   connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, [ = ]() { routeExport->routeExportFlightgearMan(); });
   connect(ui->actionRouteSaveAll, &QAction::triggered, [ = ]() { routeExport->routeMultiExport(); });
-  connect(ui->actionRouteSaveAllOptions, &QAction::triggered, [ = ]() { routeExport->routeMulitExportOptions(); });
+  connect(ui->actionRouteSaveAllOptions, &QAction::triggered, [ = ]() { routeExport->routeMultiExportOptions(); });
 
   connect(ui->actionRouteSaveAsGpx, &QAction::triggered, [ = ]() { routeExport->routeExportGpxMan(); });
   connect(ui->actionRouteSaveAsHtml, &QAction::triggered, [ = ]() { routeExport->routeExportHtmlMan(); });
@@ -2353,6 +2353,18 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
       routeFileHistory->removeFile(routeFile);
     }
   }
+  saveFileHistoryStates();
+}
+
+void MainWindow::routeSaveLnmExported(const QString& filename)
+{
+  // Update filename and undo status
+  routeController->saveFlightplanLnmExported(filename);
+
+  // Add to recent files
+  routeFileHistory->addFile(filename);
+
+  updateActionStates();
   saveFileHistoryStates();
 }
 

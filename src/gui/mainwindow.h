@@ -212,6 +212,9 @@ public:
   /* Show file dialog for opening a flight plan with all supported formats */
   QString routeOpenFileDialog();
 
+  /* Called from the export if LNMPLN was bulk exported */
+  void routeSaveLnmExported(const QString& filename);
+
   /* true if map window is maximized */
   bool isFullScreen() const;
 

@@ -2097,7 +2097,9 @@ Route Route::adjustedToOptions(rf::RouteAdjustOptions options) const
 
 Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions options)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "options" << options;
+#endif
   bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP), saveSidStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
        replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS);
 

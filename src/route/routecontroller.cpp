@@ -1302,6 +1302,22 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
   return true;
 }
 
+void RouteController::saveFlightplanLnmExported(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  // Change name to exported filename
+  routeFilename = filename;
+
+  // Set format to original route since it is saved as LNM now
+  route.getFlightplan().setLnmFormat(true);
+
+  // Set clean undo state index since QUndoStack only returns weird values
+  undoIndexClean = undoIndex;
+  undoStack->setClean();
+  NavApp::updateWindowTitle();
+}
+
 bool RouteController::saveFlightplanLnmAs(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;

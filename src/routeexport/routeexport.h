@@ -21,6 +21,7 @@
 #include "route/routeflags.h"
 #include "routeexport/routeexportflags.h"
 
+#include <QHash>
 #include <QObject>
 #include <functional>
 
@@ -73,9 +74,12 @@ public:
   void routeMultiExport();
 
   /* Open multiexport dialog */
-  void routeMulitExportOptions();
+  void routeMultiExportOptions();
 
   /* Methods called by multiexport or menu actions ========================================================= */
+
+  /* LNMPLN own format */
+  bool routeExportLnm(const RouteExportFormat& format);
 
   /* FSX/P3D XML PLN format */
   /* Also used for manual export */
@@ -274,6 +278,9 @@ private:
   QString exportFile(const RouteExportFormat& format, const QString& settingsPrefix, const QString& path,
                      const QString& filename, bool dontComfirmOverwrite = false);
 
+  /* called for each exported file with format and filename which are collected in "exported" */
+  void formatExportedCallback(const RouteExportFormat& format, const QString& filename);
+
   /* Create a list of backups */
   void rotateFile(const QString& filename);
 
@@ -282,6 +289,9 @@ private:
   RouteMultiExportDialog *exportAllDialog;
   RouteExportFormatMap *exportFormatMap;
   atools::fs::pln::FlightplanIO *flightplanIO;
+
+  /* Filled by "formatExportedCallback" when doing a multi export using routeMultiExport() */
+  QHash<rexp::RouteExportFormatType, QString> exported;
 
   /* true if any formats are selected for multiexport */
   bool selected = false;

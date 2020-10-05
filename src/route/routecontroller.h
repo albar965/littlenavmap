@@ -100,6 +100,9 @@ public:
   bool saveFlightplanLnmAs(const QString& filename);
   bool saveFlightplanLnmAsSelection(const QString& filename);
 
+  /* Called if export dialog saved an LNMPLN file */
+  void saveFlightplanLnmExported(const QString& filename);
+
   /* Save and reload widgets state and current flight plan name */
   void saveState();
   void restoreState();

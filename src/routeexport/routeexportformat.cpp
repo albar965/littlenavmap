@@ -91,6 +91,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
 
   // Assign callbacks from route export instance
   /* *INDENT-OFF* */
+  (*this)[LNMPLN      ].func = bind(&RouteExport::routeExportLnm,               routeExport, _1);
   (*this)[PLN         ].func = bind(&RouteExport::routeExportPln,               routeExport, _1);
   (*this)[PLNMSFS     ].func = bind(&RouteExport::routeExportPlnMsfs,           routeExport, _1);
   (*this)[PLNANNOTATED].func = bind(&RouteExport::routeExportPlnAnnotatedMulti, routeExport, _1);
@@ -143,42 +144,51 @@ void RouteExportFormatMap::init()
 #define INS insert
 
   /* *INDENT-OFF* */
-  //  type            (type          flags             format                   category         comment all after \n also used as tooltip
-  INS(PLN,          RF(PLN,          AIRPORTS|PARKING, tr("pln"),               tr("Simulator"), tr("FSX and Prepar3D")                                            ));
-  INS(PLNMSFS,      RF(PLNMSFS,      AIRPORTS/*|PARKING*/, tr("pln"),           tr("Simulator"), tr("Microsoft Flight Simulator 2020")                             ));
-  INS(PLNANNOTATED, RF(PLNANNOTATED, AIRPORTS|PARKING, tr("pln"),               tr("Simulator"), tr("FSX and Prepar3D annotated\nOnly for old Little Navmap versions.") ));
-  INS(FMS3,         RF(FMS3,         AIRPORTS,         tr("fms"),               tr("Simulator"), tr("X-Plane FMS 3\nOld limited format.")                          ));
-  INS(FMS11,        RF(FMS11,        AIRPORTS|CYCLE,   tr("fms"),               tr("Simulator"), tr("X-Plane FMS 11")                                              ));
-  INS(FLP,          RF(FLP,          AIRPORTS,         tr("flp"),               tr("Aircraft"),  tr("Aerosoft Airbus and others")                                  ));
-  INS(FLPCRJ,       RF(FLPCRJ,       AIRPORTS,         tr("flp"),               tr("Aircraft"),  tr("Aerosoft CRJ")                                                ));
-  INS(FLIGHTGEAR,   RF(FLIGHTGEAR,   AIRPORTS,         tr("fgfp"),              tr("Simulator"), tr("FlightGear")                                                  ));
-  INS(GFP,          RF(GFP,          AIRPORTS,         tr("gfp"),               tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                  ));
-  INS(GFPUWP,       RF(GFPUWP,       AIRPORTS|GARMIN_AS_WAYPOINTS, tr("gfp"),   tr("Garmin"),    tr("Flight1 Garmin GTN 650/750 with user defined waypoints")+rxptooltip));
-  INS(TXT,          RF(TXT,          AIRPORTS,         tr("txt"),               tr("Aircraft"),  tr("Rotate MD-80, JARDesign and others")                          ));
-  INS(RTE,          RF(RTE,          AIRPORTS,         tr("rte"),               tr("Aircraft"),  tr("PMDG aircraft")                                               ));
-  INS(GPX,          RF(GPX,          NONE,             tr("gpx"),               tr("Other"),     tr("Garmin exchange format for Google Earth and others\nExported with aircraft track and flight plan.")          ));
-  INS(HTML,         RF(HTML,         NONE,             tr("html"),              tr("Other"),     tr("HTML flight plan web page")                                   ));
-  INS(FPR,          RF(FPR,          AIRPORTS,         tr("fpr"),               tr("Aircraft"),  tr("Majestic Dash MJC8 Q400")                                     ));
-  INS(FPL,          RF(FPL,          AIRPORTS,         tr("fpl"),               tr("Aircraft"),  tr("IXEG Boeing 737")                                             ));
-  INS(CORTEIN,      RF(CORTEIN,      FILE|AIRPORTS,    tr("corte.in"),          tr("Aircraft"),  tr("Flight Factor Airbus")                                        ));
-  INS(RXPGNS,       RF(RXPGNS,       AIRPORTS,         tr("fpl"),               tr("Garmin"),    tr("Reality XP GNS 530W/430W V2")                                 ));
-  INS(RXPGNSUWP,    RF(RXPGNSUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, tr("fpl"),   tr("Garmin"),    tr("Reality XP GNS 530W/430W V2 with user defined waypoints")+rxptooltip));
-  INS(RXPGTN,       RF(RXPGTN,       AIRPORTS,         tr("gfp"),               tr("Garmin"),    tr("Reality XP GTN 750/650 Touch")                                ));
-  INS(RXPGTNUWP,    RF(RXPGTNUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, tr("gfp"),   tr("Garmin"),    tr("Reality XP GTN 750/650 Touch with user defined waypoints")+rxptooltip));
-  INS(FLTPLAN,      RF(FLTPLAN,      AIRPORTS,         tr("fltplan"),           tr("Aircraft"),  tr("iFly")                                                        ));
-  INS(XFMC,         RF(XFMC,         AIRPORTS,         tr("fpl"),               tr("FMC"),       tr("X-FMC")                                                       ));
-  INS(UFMC,         RF(UFMC,         AIRPORTS,         tr("ufmc"),              tr("FMC"),       tr("UFMC")                                                        ));
-  INS(PROSIM,       RF(PROSIM,       FILE|AIRPORTS,    tr("companyroutes.xml"), tr("Simulator"), tr("ProSim")                                                      ));
-  INS(BBS,          RF(BBS,          AIRPORTS,         tr("pln"),               tr("Aircraft"),  tr("BlackBox Simulations Airbus")                                 ));
-  INS(VFP,          RF(VFP,          AIRPORTS,         tr("vfp"),               tr("Online"),    tr("VATSIM vPilot or SWIFT")                                      ));
-  INS(IVAP,         RF(IVAP,         AIRPORTS,         tr("fpl"),               tr("Online"),    tr("IvAp for IVAO")                                               ));
-  INS(XIVAP,        RF(XIVAP,        AIRPORTS,         tr("fpl"),               tr("Online"),    tr("X-IVAP for IVAO")                                             ));
-  INS(FEELTHEREFPL, RF(FEELTHEREFPL, AIRPORTS,         tr("fpl"),               tr("Aircraft"),  tr("FeelThere or Wilco")                                          ));
-  INS(LEVELDRTE,    RF(LEVELDRTE,    AIRPORTS,         tr("rte"),               tr("Aircraft"),  tr("Level-D")                                                     ));
-  INS(EFBR,         RF(EFBR,         AIRPORTS,         tr("efbr"),              tr("Other"),     tr("AivlaSoft EFB")                                               ));
-  INS(QWRTE,        RF(QWRTE,        AIRPORTS,         tr("rte"),               tr("Aircraft"),  tr("QualityWings")                                                ));
-  INS(MDR,          RF(MDR,          AIRPORTS,         tr("mdr"),               tr("Aircraft"),  tr("Leonardo Maddog X")                                           ));
-  INS(TFDI,         RF(TFDI,         AIRPORTS,         tr("xml"),               tr("Aircraft"),  tr("TFDi Design 717")                                             ));
+  //  type            (type          flags             format                 category          comment all after \n also used as tooltip
+  INS(LNMPLN,       RF(LNMPLN,       NONE,             tr("lnmpln"),          tr("Little Navmap"), tr("Little Navmap native flight plan format\n"
+                                                                                                      "Use this format to save and backup your plans since it covers "
+                                                                                                      "all features like remarks and more.\n"
+                                                                                                      "Note that using this option is the same as using "
+                                                                                                      "\"Save\" or \"Save as\" in the file menu.")                   ));
+  INS(PLN,          RF(PLN,          AIRPORTS|PARKING, tr("pln"),             tr("Simulator"), tr("FSX and Prepar3D")                                                ));
+  INS(PLNMSFS,      RF(PLNMSFS,      AIRPORTS/*|PARKING*/, tr("pln"),         tr("Simulator"), tr("Microsoft Flight Simulator 2020")                                 ));
+  INS(PLNANNOTATED, RF(PLNANNOTATED, AIRPORTS|PARKING, tr("pln"),             tr("Simulator"), tr("FSX and Prepar3D annotated\nOnly for old Little Navmap versions.")));
+  INS(FMS3,         RF(FMS3,         AIRPORTS,         tr("fms"),             tr("Simulator"), tr("X-Plane FMS 3\nOld limited format.")                              ));
+  INS(FMS11,        RF(FMS11,        AIRPORTS|CYCLE,   tr("fms"),             tr("Simulator"), tr("X-Plane FMS 11")                                                  ));
+  INS(FLP,          RF(FLP,          AIRPORTS,         tr("flp"),             tr("Aircraft"),  tr("Aerosoft Airbus and others")                                      ));
+  INS(FLPCRJ,       RF(FLPCRJ,       AIRPORTS,         tr("flp"),             tr("Aircraft"),  tr("Aerosoft CRJ")                                                    ));
+  INS(FLIGHTGEAR,   RF(FLIGHTGEAR,   AIRPORTS,         tr("fgfp"),            tr("Simulator"), tr("FlightGear")                                                      ));
+  INS(GFP,          RF(GFP,          AIRPORTS,         tr("gfp"),             tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                      ));
+  INS(GFPUWP,       RF(GFPUWP,       AIRPORTS|GARMIN_AS_WAYPOINTS, tr("gfp"), tr("Garmin"),    tr("Flight1 Garmin GTN 650/750 with user defined waypoints") +
+                                                                                               rxptooltip                                                            ));
+  INS(TXT,          RF(TXT,          AIRPORTS,         tr("txt"),             tr("Aircraft"),  tr("Rotate MD-80, JARDesign and others")                              ));
+  INS(RTE,          RF(RTE,          AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("PMDG aircraft")                                                   ));
+  INS(GPX,          RF(GPX,          NONE,             tr("gpx"),             tr("Other"),     tr("Garmin exchange format for Google Earth and others\n"
+                                                                                                  "Exported with aircraft track and flight plan.")                   ));
+  INS(HTML,         RF(HTML,         NONE,             tr("html"),            tr("Other"),     tr("HTML flight plan web page")                                       ));
+  INS(FPR,          RF(FPR,          AIRPORTS,         tr("fpr"),             tr("Aircraft"),  tr("Majestic Dash MJC8 Q400")                                         ));
+  INS(FPL,          RF(FPL,          AIRPORTS,         tr("fpl"),             tr("Aircraft"),  tr("IXEG Boeing 737")                                                 ));
+  INS(CORTEIN,      RF(CORTEIN,      FILE|AIRPORTS,    tr("corte.in"),        tr("Aircraft"),  tr("Flight Factor Airbus")                                            ));
+  INS(RXPGNS,       RF(RXPGNS,       AIRPORTS,         tr("fpl"),             tr("Garmin"),    tr("Reality XP GNS 530W/430W V2")                                     ));
+  INS(RXPGNSUWP,    RF(RXPGNSUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, tr("fpl"), tr("Garmin"),    tr("Reality XP GNS 530W/430W V2 with user defined waypoints") +
+                                                                                               rxptooltip                                                            ));
+  INS(RXPGTN,       RF(RXPGTN,       AIRPORTS,         tr("gfp"),             tr("Garmin"),    tr("Reality XP GTN 750/650 Touch")                                    ));
+  INS(RXPGTNUWP,    RF(RXPGTNUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, tr("gfp"), tr("Garmin"),    tr("Reality XP GTN 750/650 Touch with user defined waypoints") +
+                                                                                               rxptooltip                                                            ));
+  INS(FLTPLAN,      RF(FLTPLAN,      AIRPORTS,         tr("fltplan"),         tr("Aircraft"),  tr("iFly")                                                            ));
+  INS(XFMC,         RF(XFMC,         AIRPORTS,         tr("fpl"),             tr("FMC"),       tr("X-FMC")                                                           ));
+  INS(UFMC,         RF(UFMC,         AIRPORTS,         tr("ufmc"),            tr("FMC"),       tr("UFMC")                                                            ));
+  INS(PROSIM,       RF(PROSIM,       FILE|AIRPORTS,    tr("companyroutes.xml"), tr("Simulator"), tr("ProSim")                                                        ));
+  INS(BBS,          RF(BBS,          AIRPORTS,         tr("pln"),             tr("Aircraft"),  tr("BlackBox Simulations Airbus")                                     ));
+  INS(VFP,          RF(VFP,          AIRPORTS,         tr("vfp"),             tr("Online"),    tr("VATSIM vPilot or SWIFT")                                          ));
+  INS(IVAP,         RF(IVAP,         AIRPORTS,         tr("fpl"),             tr("Online"),    tr("IvAp for IVAO")                                                   ));
+  INS(XIVAP,        RF(XIVAP,        AIRPORTS,         tr("fpl"),             tr("Online"),    tr("X-IVAP for IVAO")                                                 ));
+  INS(FEELTHEREFPL, RF(FEELTHEREFPL, AIRPORTS,         tr("fpl"),             tr("Aircraft"),  tr("FeelThere or Wilco")                                              ));
+  INS(LEVELDRTE,    RF(LEVELDRTE,    AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("Level-D")                                                         ));
+  INS(EFBR,         RF(EFBR,         AIRPORTS,         tr("efbr"),            tr("Other"),     tr("AivlaSoft EFB")                                                   ));
+  INS(QWRTE,        RF(QWRTE,        AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("QualityWings")                                                    ));
+  INS(MDR,          RF(MDR,          AIRPORTS,         tr("mdr"),             tr("Aircraft"),  tr("Leonardo Maddog X")                                               ));
+  INS(TFDI,         RF(TFDI,         AIRPORTS,         tr("xml"),             tr("Aircraft"),  tr("TFDi Design 717")                                                 ));
   /* *INDENT-ON* */
 
 #undef RF
@@ -228,10 +238,14 @@ void RouteExportFormatMap::updateDefaultPaths()
   gtn = documents;
 #endif
 
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  QString lnmplnFiles = settings.valueStr("Route/LnmPlnFileDialogDir", documents);
+
   using namespace rexp;
 
   // Fill default paths
   /* *INDENT-OFF* */
+  (*this)[LNMPLN      ].defaultPath = lnmplnFiles;
   (*this)[PLN         ].defaultPath = curSimFiles;
   (*this)[PLNMSFS     ].defaultPath = curSimFiles;
   (*this)[PLNANNOTATED].defaultPath = curSimFiles;

@@ -92,8 +92,15 @@ void RouteExport::exportType(RouteExportFormat format)
     mainWindow->setStatusMessage(tr("Exported flight plan."));
 }
 
+void RouteExport::formatExportedCallback(const RouteExportFormat& format, const QString& filename)
+{
+  exported.insert(format.getType(), filename);
+}
+
 void RouteExport::routeMultiExport()
 {
+  exported.clear();
+
   // First check constraints
   if(routeValidate(exportFormatMap->getSelected(), true /* multi */))
   {
@@ -104,11 +111,20 @@ void RouteExport::routeMultiExport()
       if(fmt.isSelected() && fmt.isPathValid())
         numExported += fmt.callExport();
     }
-    mainWindow->setStatusMessage(tr("Exported %1 flight plans.").arg(numExported));
+    if(numExported == 0)
+      mainWindow->setStatusMessage(tr("No flight plan exported."));
+    else
+      mainWindow->setStatusMessage(tr("Exported %1 flight plans.").arg(numExported));
   }
+
+  // Check if native LNMPLN was exported, update filename and change status of the file if
+  if(exported.contains(rexp::LNMPLN))
+    mainWindow->routeSaveLnmExported(exported.value(rexp::LNMPLN));
+
+  exported.clear();
 }
 
-void RouteExport::routeMulitExportOptions()
+void RouteExport::routeMultiExportOptions()
 {
   int result = exportAllDialog->exec();
 
@@ -212,6 +228,29 @@ bool RouteExport::routeExportPln(const RouteExportFormat& format)
   return routeExportInternalPln(format);
 }
 
+bool RouteExport::routeExportLnm(const RouteExportFormat& format)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(routeValidateMulti(format))
+  {
+    QString routeFile = exportFile(format, "Route/LnmPln",
+                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(),
+                                   false /* dontComfirmOverwrite */);
+
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_LNMPLN, std::bind(&FlightplanIO::saveLnm, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 bool RouteExport::routeExportPlnMsfs(const RouteExportFormat& format)
 {
   return routeExportInternalPln(format);
@@ -232,7 +271,7 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
 
     QString routeFile = exportFile(format, "Route/Pln" + NavApp::getCurrentSimulatorShortName(),
                                    NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(".pln", msfs),
-                                   false /* confirm overwrite */);
+                                   false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
     {
@@ -248,6 +287,7 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
       if(exportFlighplan(routeFile, msfs ? rf::DEFAULT_OPTS_MSFS : rf::DEFAULT_OPTS, func))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").arg(annotated ? tr("annotated ") : QString()));
+        formatExportedCallback(format, routeFile);
         return true;
       }
     }
@@ -266,7 +306,11 @@ bool RouteExport::routeExportFms3Multi(const RouteExportFormat& format)
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS3, std::bind(&FlightplanIO::saveFms3, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved as FMS 3."));
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -291,14 +335,15 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
       xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
 
     QString routeFile = exportFile(format, "Route/Fms11", xpBasePath, buildDefaultFilenameShort("-", ".fms"),
-                                   false /* confirm overwrite */);
+                                   false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS11, std::bind(&FlightplanIO::saveFms11, flightplanIO, _1, _2)))
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FMS."));
+        mainWindow->setStatusMessage(tr("Flight plan saved as FMS 11."));
+        formatExportedCallback(format, routeFile);
         return true;
       }
     }
@@ -330,7 +375,10 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
                          crj ?
                          std::bind(&FlightplanIO::saveCrjFlp, flightplanIO, _1, _2) :
                          std::bind(&FlightplanIO::saveFlp, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -348,13 +396,16 @@ bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
   {
     QString routeFile = exportFile(format, "Route/FlightGear", atools::documentsDir(),
                                    buildDefaultFilename(".fgfp"),
-                                   false /* confirm overwrite */);
+                                   false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFlightGear, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -386,7 +437,10 @@ bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsRxpGns(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -419,7 +473,10 @@ bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsRxpGtn(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -437,7 +494,10 @@ bool RouteExport::routeExportGfpMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -454,7 +514,10 @@ bool RouteExport::routeExportTxtMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsTxt(routeFile))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -471,7 +534,10 @@ bool RouteExport::routeExportRteMulti(const RouteExportFormat& format)
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveRte, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -490,7 +556,10 @@ bool RouteExport::routeExportFprMulti(const RouteExportFormat& format)
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFpr, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -508,7 +577,10 @@ bool RouteExport::routeExportFplMulti(const RouteExportFormat& format)
     {
       // Same format as txt
       if(exportFlighplanAsTxt(routeFile))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -524,7 +596,10 @@ bool RouteExport::routeExportCorteInMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsCorteIn(routeFile))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -544,7 +619,10 @@ bool RouteExport::routeExportFltplanMulti(const RouteExportFormat& format)
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFltplan, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -564,7 +642,10 @@ bool RouteExport::routeExportXFmcMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsTxt(routeFile))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -580,7 +661,10 @@ bool RouteExport::routeExportUFmcMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsUFmc(routeFile))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -597,7 +681,10 @@ bool RouteExport::routeExportProSimMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsProSim(routeFile))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -617,7 +704,10 @@ bool RouteExport::routeExportBbsMulti(const RouteExportFormat& format)
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveBbsPln, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -638,7 +728,10 @@ bool RouteExport::routeExportFeelthereFplMulti(const RouteExportFormat& format)
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS,
                          std::bind(&FlightplanIO::saveFeelthereFpl, flightplanIO, _1, _2, groundSpeed)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -654,7 +747,10 @@ bool RouteExport::routeExportLeveldRteMulti(const RouteExportFormat& format)
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveLeveldRte, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -673,7 +769,10 @@ bool RouteExport::routeExportEfbrMulti(const RouteExportFormat& format)
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS,
                          std::bind(&FlightplanIO::saveEfbr, flightplanIO, _1, _2, route, cycle, QString(), QString())))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -689,7 +788,10 @@ bool RouteExport::routeExportQwRteMulti(const RouteExportFormat& format)
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveQwRte, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -705,7 +807,10 @@ bool RouteExport::routeExportMdrMulti(const RouteExportFormat& format)
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveMdr, flightplanIO, _1, _2)))
+      {
+        formatExportedCallback(format, routeFile);
         return true;
+      }
     }
   }
   return false;
@@ -737,6 +842,7 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
         return false;
       }
 
+      formatExportedCallback(format, routeFile);
       return true;
     }
   }
@@ -761,7 +867,10 @@ bool RouteExport::routeExportVfp(const RouteExportFormat& format)
       if(!routeFile.isEmpty())
       {
         if(exportFlighplanAsVfp(exportData, routeFile))
+        {
+          formatExportedCallback(format, routeFile);
           return true;
+        }
       }
     }
   }
@@ -802,7 +911,10 @@ bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteE
       if(!routeFile.isEmpty())
       {
         if(exportFlighplanAsIvap(exportData, routeFile, type))
+        {
+          formatExportedCallback(format, routeFile);
           return true;
+        }
       }
     }
   }
@@ -881,7 +993,7 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
 
   QString routeFile = exportFile(format, "Route/Gpx", atools::documentsDir(),
                                  buildDefaultFilename(".gpx"),
-                                 false /* confirm overwrite */);
+                                 false /* dontComfirmOverwrite */);
 
   if(!routeFile.isEmpty())
   {
@@ -908,7 +1020,7 @@ bool RouteExport::routeExportHtml(const RouteExportFormat& format)
 
   QString routeFile = exportFile(format, "Route/Html", atools::documentsDir(),
                                  buildDefaultFilename(".html"),
-                                 false /* confirm overwrite */);
+                                 false /* dontComfirmOverwrite */);
 
   if(!routeFile.isEmpty())
   {
@@ -1404,8 +1516,6 @@ bool RouteExport::exportFlighplan(const QString& filename, rf::RouteAdjustOption
                                   std::function<void(const atools::fs::pln::Flightplan& plan,
                                                      const QString& file)> exportFunc)
 {
-  qDebug() << Q_FUNC_INFO << filename;
-
   try
   {
     exportFunc(buildAdjustedRoute(options).getFlightplan(), filename);
