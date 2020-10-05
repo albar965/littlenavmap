@@ -291,7 +291,7 @@ private:
   atools::fs::pln::FlightplanIO *flightplanIO;
 
   /* Filled by "formatExportedCallback" when doing a multi export using routeMultiExport() */
-  QHash<rexp::RouteExportFormatType, QString> exported;
+  QHash<int, QString> exported;
 
   /* true if any formats are selected for multiexport */
   bool selected = false;
