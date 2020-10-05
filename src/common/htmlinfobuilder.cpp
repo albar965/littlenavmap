@@ -679,9 +679,15 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
         html.trEnd();
       }
       html.tableEnd();
+
+      if(info)
+        // Add scenery indicator to clear source - either nav or sim
+        addScenery(nullptr, html, true /* ilsOrCom */);
+
     }
     else
       html.p(tr("Airport has no COM Frequency."));
+
   }
 }
 
@@ -1187,7 +1193,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
 
   if(info && standalone && !approach)
     // Add scenery indicator to clear source - either nav or sim
-    addScenery(nullptr, html, true /* ILS */);
+    addScenery(nullptr, html, true /* ilsOrCom */);
 
 #ifdef DEBUG_INFORMATION
   html.small(QString("Database: ils_id = %1").arg(ilsRec->valueInt("ils_id"))).br();
@@ -4076,9 +4082,9 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool ils) const
+void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool ilsOrCom) const
 {
-  if(ils)
+  if(ilsOrCom)
   {
     head(html, tr("Scenery"));
     html.table();
