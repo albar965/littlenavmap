@@ -688,6 +688,7 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   {
     // Simulator has changed - reload files
     simType = type;
+    resetErrorState();
     updateTimeouts();
     initActiveSkyNext();
     initXplane();
@@ -700,9 +701,17 @@ void WeatherReporter::optionsChanged()
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
 
+  resetErrorState();
   updateTimeouts();
   initActiveSkyNext();
   initXplane();
+}
+
+void WeatherReporter::resetErrorState()
+{
+  vatsimWeather->setErrorStateTimer(false);
+  noaaWeather->setErrorStateTimer(false);
+  ivaoWeather->setErrorStateTimer(false);
 }
 
 void WeatherReporter::updateTimeouts()

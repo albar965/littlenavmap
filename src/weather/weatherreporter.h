@@ -181,9 +181,13 @@ private:
   void createFsWatcher();
   void initXplane();
 
+  /* From download finished signals */
   void noaaWeatherUpdated();
   void ivaoWeatherUpdated();
   void vatsimWeatherUpdated();
+
+  /* Reset the error timer in all weather downloaders */
+  void resetErrorState();
 
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
