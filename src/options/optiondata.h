@@ -501,8 +501,8 @@ enum DisplayOptionRoute
 {
   ROUTE_NONE = 0,
   ROUTE_DISTANCE = 1 << 0,
-  ROUTE_MAG_COURSE_GC = 1 << 3,
-  ROUTE_TRUE_COURSE_GC = 1 << 4
+  ROUTE_MAG_COURSE_GC = 1 << 1,
+  ROUTE_TRUE_COURSE_GC = 1 << 2
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
