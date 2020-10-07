@@ -53,6 +53,8 @@ extern QColor airportDetailBackColor;
 extern QColor airportEmptyColor;
 extern QColor toweredAirportColor;
 extern QColor unToweredAirportColor;
+extern QColor addonAirportBackgroundColor;
+extern QColor addonAirportFrameColor;
 extern QColor vorSymbolColor;
 extern QColor ndbSymbolColor;
 extern QColor markerSymbolColor;

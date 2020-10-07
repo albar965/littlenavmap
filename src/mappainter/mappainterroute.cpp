@@ -1397,7 +1397,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 void MapPainterRoute::paintAirport(int x, int y, const map::MapAirport& obj)
 {
   int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
-  symbolPainter->drawAirportSymbol(context->painter, obj, x, y, size, false, false, true /* map */);
+  symbolPainter->drawAirportSymbol(context->painter, obj, x, y, size, false, false,
+                                   context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
 }
 
 void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& obj, bool drawAsRoute)

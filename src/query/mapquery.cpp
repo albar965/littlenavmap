@@ -623,27 +623,29 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
 }
 
 const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
-                                                    const MapLayer *mapLayer, bool lazy, bool& overflow)
+                                                    const MapLayer *mapLayer, bool lazy, bool addon, bool& overflow)
 {
   airportCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+                           [ = ](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
-    return curLayer->hasSameQueryParametersAirport(newLayer);
+    return curLayer->hasSameQueryParametersAirport(newLayer) && airportCacheAddonFlag == addon;
   });
+
+  airportCacheAddonFlag = addon;
 
   switch(mapLayer->getDataSource())
   {
     case layer::ALL:
       airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, overflow);
+      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addon, overflow);
 
     case layer::MEDIUM:
       // Airports > 4000 ft
-      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */, overflow);
+      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */, addon, overflow);
 
     case layer::LARGE:
       // Airports > 8000 ft
-      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */, overflow);
+      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */, addon, overflow);
 
   }
   return nullptr;
@@ -832,7 +834,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
  */
 const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                       atools::sql::SqlQuery *query,
-                                                      bool lazy, bool overview, bool& overflow)
+                                                      bool lazy, bool overview, bool addon, bool& overflow)
 {
   if(airportCache.list.isEmpty() && !lazy)
   {
@@ -840,6 +842,10 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
+      // Avoid duplicates between both queries
+      QSet<int> ids;
+
+      // Get normal airports ==========
       query::bindRect(r, query);
       query->exec();
       while(query->next())
@@ -853,7 +859,28 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
           mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
                                        NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
 
+        ids.insert(ap.id);
         airportCache.list.append(ap);
+      }
+
+      // Get add-on airports ==========
+      if(addon)
+      {
+        query::bindRect(r, airportAddonByRectQuery);
+        airportAddonByRectQuery->exec();
+        while(airportAddonByRectQuery->next())
+        {
+          map::MapAirport ap;
+          if(overview)
+            // Fill only a part of the object
+            mapTypesFactory->fillAirportForOverview(airportAddonByRectQuery->record(), ap, navdata,
+                                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+          else
+            mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), ap, true /* complete */, navdata,
+                                         NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+          if(!ids.contains(ap.id))
+            airportCache.list.append(ap);
+        }
       }
     }
   }
@@ -1017,6 +1044,10 @@ void MapQuery::initQueries()
     " and longest_runway_length >= :minlength "
     + whereLimit);
 
+  airportAddonByRectQuery = new SqlQuery(dbSim);
+  airportAddonByRectQuery->prepare(
+    "select " + airportQueryBase.join(", ") + " from airport where " + whereRect + " and is_addon = 1 " + whereLimit);
+
   airportMediumByRectQuery = new SqlQuery(dbSim);
   airportMediumByRectQuery->prepare(
     "select " + airportQueryBaseOverview.join(", ") + " from airport_medium where " + whereRect + " " + whereLimit);
@@ -1063,6 +1094,8 @@ void MapQuery::deInitQueries()
 
   delete airportByRectQuery;
   airportByRectQuery = nullptr;
+  delete airportAddonByRectQuery;
+  airportAddonByRectQuery = nullptr;
   delete airportMediumByRectQuery;
   airportMediumByRectQuery = nullptr;
   delete airportLargeByRectQuery;

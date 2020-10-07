@@ -238,6 +238,8 @@ public:
 
   virtual void render() = 0;
 
+  bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
+
 protected:
   /* All wToSBuf() methods receive a margin parameter. Margins are applied to the screen rectangle for an
    * additional visibility check to avoid objects or texts popping out of view at the screen borders */
@@ -315,8 +317,6 @@ protected:
   void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);
   void paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos = 0.5f,
                            float minLengthPx = 0.f);
-
-  static bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
 
   /* Interface method to QPixmapCache*/
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);

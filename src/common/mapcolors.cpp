@@ -43,6 +43,8 @@ QColor airportDetailBackColor(255, 255, 255);
 QColor airportEmptyColor(130, 130, 130);
 QColor toweredAirportColor(15, 70, 130);
 QColor unToweredAirportColor(126, 58, 91);
+QColor addonAirportBackgroundColor(Qt::yellow);
+QColor addonAirportFrameColor(Qt::darkGray);
 QColor vorSymbolColor(Qt::darkBlue);
 QColor ndbSymbolColor(Qt::darkRed);
 QColor markerSymbolColor(Qt::darkMagenta);
@@ -598,6 +600,8 @@ void syncColors()
   syncColor(colorSettings, "EmptyColor", airportEmptyColor);
   syncColor(colorSettings, "ToweredColor", toweredAirportColor);
   syncColor(colorSettings, "UnToweredColor", unToweredAirportColor);
+  syncColor(colorSettings, "AddonBackgroundColor", addonAirportBackgroundColor);
+  syncColor(colorSettings, "AddonFrameColor", addonAirportFrameColor);
   syncPen(colorSettings, "TaxiwayLinePen", taxiwayLinePen);
   syncColor(colorSettings, "TaxiwayNameColor", taxiwayNameColor);
   syncColor(colorSettings, "TaxiwayNameBackgroundColor", taxiwayNameBackgroundColor);

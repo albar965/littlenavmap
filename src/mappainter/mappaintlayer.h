@@ -204,7 +204,7 @@ private:
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
   MapPaintWidget *mapWidget = nullptr;
-  const MapLayer *mapLayer = nullptr, *mapLayerEffective = nullptr;
+  const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
 
 };
 

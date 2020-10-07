@@ -546,7 +546,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   {
     if(!airportIds.contains(entry->departure.id) && wToS(entry->departure.position, x, y))
     {
-      symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast);
+      symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast,
+                                       context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
       symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, size,
                                      context->mapLayer->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
@@ -555,7 +556,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 
     if(!airportIds.contains(entry->destination.id) && wToS(entry->destination.position, x, y))
     {
-      symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast);
+      symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
+                                       context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
       symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, size,
                                      context->mapLayer->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());

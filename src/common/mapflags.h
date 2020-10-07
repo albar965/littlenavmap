@@ -94,7 +94,8 @@ enum MapType
 
   AIRWAY_ALL = AIRWAY | AIRWAYV | AIRWAYJ,
 
-  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
+  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY,
+  AIRPORT_ALL_ADDON = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
 
   /* All navaids */
   NAV_ALL = VOR | NDB | WAYPOINT,
@@ -401,11 +402,12 @@ enum TextAttribute
   ITALIC = 0x0002,
   UNDERLINE = 0x0004,
   OVERLINE = 0x0008,
-  RIGHT = 0x0010, /* Reference point is at the right of the text (left-aligned) */
-  LEFT = 0x0020,
-  CENTER = 0x0040,
-  ROUTE_BG_COLOR = 0x0080, /* Use light yellow background for route objects */
-  LOG_BG_COLOR = 0x0100 /* Use light blue text background for log */
+  STRIKEOUT = 0x0010,
+  RIGHT = 0x0020, /* Reference point is at the right of the text (left-aligned) */
+  LEFT = 0x0040,
+  CENTER = 0x0080,
+  ROUTE_BG_COLOR = 0x0100, /* Use light yellow background for route objects */
+  LOG_BG_COLOR = 0x0200 /* Use light blue text background for log */
 };
 
 Q_DECLARE_FLAGS(TextAttributes, TextAttribute);

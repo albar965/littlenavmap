@@ -85,13 +85,13 @@ public:
 
   /* Airport symbol. For airport diagram use a transparent text background */
   void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, int size,
-                         bool isAirportDiagram, bool fast);
+                         bool isAirportDiagram, bool fast, bool addonHighlight);
   void drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
                        optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, int size, bool diagram,
                        int maxTextLength);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
-  void drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, int size, bool fill);
+  void drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, bool fill);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
   void drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar,

@@ -122,7 +122,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
                           arg(runway);
 
             if(showAddon)
-              apTooltipAddon = tr("Add-on airports with runway length > %1").
+              apTooltipAddon = tr("Add-on airports").
                                arg(Unit::distShortFeet(layer->getMinRunwayLength()));
           }
           else

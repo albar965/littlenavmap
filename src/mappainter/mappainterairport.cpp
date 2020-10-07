@@ -72,11 +72,11 @@ void MapPainterAirport::render()
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver)
 
   // Get airports from cache/database for the bounding rectangle and add them to the map
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
-  const QList<MapAirport> *airportCache = nullptr;
+  bool addon = context->objectTypes.testFlag(map::AIRPORT_ADDON);
+
   bool overflow = false;
   const QList<MapAirport> *airportCache =
     mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, addon, overflow);
@@ -90,7 +90,7 @@ void MapPainterAirport::render()
   for(const MapAirport& airport : *airportCache)
   {
     // Avoid drawing too many airports during animation when zooming out
-    if(airport.longestRunwayLength >= context->mapLayer->getMinRunwayLength())
+    if(airport.longestRunwayLength >= context->mapLayer->getMinRunwayLength() || (addon && airport.addon()))
     {
       float x, y;
       bool hidden;
@@ -105,6 +105,7 @@ void MapPainterAirport::render()
 
         // Either part of the route or enabled in the actions/menus/toolbar
         bool drawAirport = airport.isVisible(context->objectTypes) ||
+                           (addon && airport.addon()) ||
                            context->routeIdMap.contains(airport.getRef());
 
         if(visibleOnMap && drawAirport)
@@ -961,7 +962,8 @@ void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, flo
     }
 
     // Draw small symbol on top to find a clickspot
-    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, 10, false, context->drawFast);
+    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, 10, false, context->drawFast,
+                                     context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
   }
 }
 
@@ -978,7 +980,8 @@ void MapPainterAirport::drawAirportSymbol(const map::MapAirport& ap, float x, fl
     int size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
     bool isAirportDiagram = context->mapLayer->isAirportDiagramRunway();
 
-    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, size, isAirportDiagram, context->drawFast);
+    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, size, isAirportDiagram, context->drawFast,
+                                     context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
   }
 }
 

@@ -1053,7 +1053,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       // Draw all airport except destination and departure
       if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.getDestinationAirportLegIndex())
       {
-        symPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, false, false);
+        symPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, false, false,
+                                     false);
 
         if(routeIndex >= activeRouteLeg - 1)
         {
@@ -1071,7 +1072,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(departureLeg.getMapObjectType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().width(departureLeg.getIdent());
-        symPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), left, flightplanY, airportSize, false, false);
+        symPainter.drawAirportSymbol(&painter,
+                                     departureLeg.getAirport(), left, flightplanY, airportSize, false, false, false);
         symPainter.drawAirportText(&painter, departureLeg.getAirport(), left - textW / 2, flightplanTextY,
                                    optsd::AIRPORT_NONE, flags, 10, false, 16);
       }
@@ -1082,7 +1084,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         int textW = painter.fontMetrics().width(destinationLeg.getIdent());
         symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false,
-                                     false);
+                                     false, false);
         symPainter.drawAirportText(&painter, destinationLeg.getAirport(), left + w - textW / 2, flightplanTextY,
                                    optsd::AIRPORT_NONE, flags, 10, false, 16);
       }

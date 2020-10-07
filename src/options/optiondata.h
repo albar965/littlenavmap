@@ -333,6 +333,9 @@ enum Flag2
 
   /* checkBoxOptionsMapAiAircraftText */
   MAP_AI_TEXT_BACKGROUND = 1 << 27,
+
+  /* checkBoxOptionsMapAirportAddon */
+  MAP_AIRPORT_HIGHLIGHT_ADDON = 1 << 28,
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -1123,12 +1126,13 @@ private:
     optsw::WEATHER_TOOLTIP_ACTIVESKY |
     optsw::WEATHER_TOOLTIP_NOAA;
 
-  opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_ROUTE_TEXT_BACKGROUND |
-                         opts2::MAP_USER_TEXT_BACKGROUND | opts2::MAP_AI_TEXT_BACKGROUND |
-                         opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AVOID_BLURRED_MAP | opts2::ONLINE_AIRSPACE_BY_FILE |
-                         opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS | opts2::MAP_EMPTY_AIRPORTS_3D |
-                         opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |
-                         opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_AUTOZOOM | opts2::ROUTE_NO_FOLLOW_ON_MOVE;
+  opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_AIRPORT_HIGHLIGHT_ADDON |
+                         opts2::MAP_ROUTE_TEXT_BACKGROUND | opts2::MAP_USER_TEXT_BACKGROUND |
+                         opts2::MAP_AI_TEXT_BACKGROUND | opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AVOID_BLURRED_MAP |
+                         opts2::ONLINE_AIRSPACE_BY_FILE | opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS |
+                         opts2::MAP_EMPTY_AIRPORTS_3D | opts2::HIGH_DPI_DISPLAY_SUPPORT |
+                         opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_CENTER_ACTIVE_LEG |
+                         opts2::ROUTE_AUTOZOOM | opts2::ROUTE_NO_FOLLOW_ON_MOVE;
 
   // ui->lineEditOptionsMapRangeRings
   const static QVector<float> MAP_RANGERINGS_DEFAULT;

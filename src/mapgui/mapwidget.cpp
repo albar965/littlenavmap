@@ -1844,7 +1844,7 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
   }
 
   // Count number of all objects
-  int totalSize = result.size(map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);
+  int totalSize = result.size(map::AIRPORT_ALL_ADDON | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);
 
   int id = -1;
   map::MapTypes type = map::NONE;

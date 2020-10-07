@@ -59,7 +59,7 @@ QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawAirportSymbol(&painter, airport, size / 2, size / 2, size * 7 / 10, false, false);
+  SymbolPainter().drawAirportSymbol(&painter, airport, size / 2, size / 2, size * 7 / 10, false, false, false);
   return QIcon(pixmap);
 }
 
@@ -205,7 +205,7 @@ void SymbolPainter::drawHelipadSymbol(QPainter *painter, const map::MapHelipad& 
 }
 
 void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& airport,
-                                      float x, float y, int size, bool isAirportDiagram, bool fast)
+                                      float x, float y, int size, bool isAirportDiagram, bool fast, bool addonHighlight)
 {
   float symsize = atools::roundToInt(size);
 
@@ -217,7 +217,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
 
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  if(airport.addon() && map)
+  if(airport.addon() && addonHighlight)
   {
     float radius = std::max(symsize, 6.f);
     painter->setBrush(mapcolors::addonAirportBackgroundColor);
@@ -228,7 +228,6 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
   QColor apColor = mapcolors::colorForAirport(airport);
 
   float radius = symsize / 2.f;
-  painter->setBackgroundMode(Qt::OpaqueMode);
 
   if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED))
     // Use filled circle
@@ -311,7 +310,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
   }
 }
 
-void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, int size, bool fill)
+void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, bool fill)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -321,30 +320,22 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, flo
     painter->setBrush(Qt::NoBrush);
 
   float lineWidth = std::max(size / 6.f, 1.5f);
-  Qt::PenCapStyle cap = Qt::SquareCap;
 
-  if(size <= 4)
-  {
-    lineWidth = 4;
-    cap = Qt::RoundCap;
-  }
+  QColor color = col.isValid() ? col : mapcolors::waypointSymbolColor;
+  double radius = size / 2.;
 
-  if(col.isValid())
-    painter->setPen(QPen(col, lineWidth, Qt::SolidLine, cap));
-  else
-    painter->setPen(QPen(mapcolors::waypointSymbolColor, lineWidth, Qt::SolidLine, cap));
+  // Draw a triangle
+  QPolygonF polygon;
+  polygon << QPointF(x, y - radius) << QPointF(x + radius, y + radius) << QPointF(x - radius, y + radius);
 
   if(size > 4)
-  {
-    // Draw a triangle
-    double radius = size / 2.;
-    QPolygonF polygon;
-    polygon << QPointF(x, y - radius) << QPointF(x + radius, y + radius) << QPointF(x - radius, y + radius);
-
-    painter->drawConvexPolygon(polygon);
-  }
+    painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
   else
-    painter->drawPoint(QPointF(x, y));
+  {
+    painter->setPen(QPen(color, 1, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    painter->setBrush(color);
+  }
+  painter->drawConvexPolygon(polygon);
 }
 
 void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar, float x, float y,
@@ -778,7 +769,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
   if(size > 4)
   {
     float lineWidth = std::max(size / 16.f, 1.5f);
-    float roseLineWidth = std::max(size / 36.f, 1.f);
+    float roseLineWidth = std::max(size / 36.f, 1.1f);
     painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
     painter->translate(x, y);

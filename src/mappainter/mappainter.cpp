@@ -36,11 +36,9 @@ using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
 
-
-
 void PaintContext::szFont(float scale) const
 {
-    return mapcolors::scaleFont(painter, scale, &defaultFont);
+  return mapcolors::scaleFont(painter, scale, &defaultFont);
 }
 
 textflags::TextFlags PaintContext::airportTextFlags() const
@@ -629,31 +627,33 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
   // returns ​true if the first argument is less than (i.e. is ordered before) the second.
   // ">" puts true behind
   const map::MapAirport *ap1 = pap1.airport, *ap2 = pap2.airport;
+  bool addon = context->objectTypes.testFlag(map::AIRPORT_ADDON);
 
-  if(ap1->emptyDraw(od) == ap2->emptyDraw(od)) // Draw empty on bottom
+  if(!addon || ap1->addon() == ap2->addon()) // no force addon or both are equal - look at more attributes
   {
-    if(ap1->waterOnly() == ap2->waterOnly()) // Then water
+    if(ap1->emptyDraw(od) == ap2->emptyDraw(od)) // Draw empty on bottom
     {
-      if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
+      if(ap1->waterOnly() == ap2->waterOnly()) // Then water
       {
-        if(ap1->softOnly() == ap2->softOnly()) // Soft airports
+        if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
         {
-          // if(ap1->rating == ap2->rating)
-          return ap1->longestRunwayLength < ap2->longestRunwayLength; // Larger value to end of list - drawn on top
-          // else
-          // return ap1->rating < ap2->rating; // Larger value to end of list - drawn on top
+          if(ap1->softOnly() == ap2->softOnly()) // Soft airports
+            return ap1->longestRunwayLength < ap2->longestRunwayLength; // Larger value to end of list - drawn on top
+          else
+            return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
         }
         else
-          return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
+          return ap1->helipadOnly() > ap2->helipadOnly();
       }
       else
-        return ap1->helipadOnly() > ap2->helipadOnly();
+        return ap1->waterOnly() > ap2->waterOnly();
     }
     else
-      return ap1->waterOnly() > ap2->waterOnly();
+      return ap1->emptyDraw(od) > ap2->emptyDraw(od);
   }
   else
-    return ap1->emptyDraw(od) > ap2->emptyDraw(od);
+    // Put addon in front
+    return ap1->addon() < ap2->addon();
 }
 
 void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
