@@ -4323,6 +4323,19 @@ void RouteController::updateModelHighlights()
           }
           else
             item->setToolTip(QString());
+
+          if(leg.getAirport().isValid())
+          {
+            QFont font = item->font();
+            if(leg.getAirport().addon())
+            {
+              font.setItalic(true);
+              font.setUnderline(true);
+            }
+            if(leg.getAirport().closed())
+              font.setStrikeOut(true);
+            item->setFont(font);
+          }
         }
 
         // Airway colum ==========================================

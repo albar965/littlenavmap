@@ -128,7 +128,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
   if(airport.closed())
     titleFlags |= ahtml::STRIKEOUT;
   if(airport.addon())
-    titleFlags |= ahtml::ITALIC;
+    titleFlags |= ahtml::ITALIC | ahtml::UNDERLINE;
 
   if(info)
   {

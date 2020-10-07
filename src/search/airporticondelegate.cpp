@@ -64,10 +64,21 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   // Create a style copy
   QStyleOptionViewItem opt(option);
   opt.displayAlignment = Qt::AlignRight;
+
+  // Check for empty airport and empty selected
   if(!ap.emptyDraw())
     opt.font.setBold(true);
+
+  // Add-on italic underlined
   if(ap.addon())
+  {
     opt.font.setItalic(true);
+    opt.font.setUnderline(true);
+  }
+
+  // Closed - strike out
+  if(ap.closed())
+    opt.font.setStrikeOut(true);
 
   painter->setRenderHint(QPainter::Antialiasing);
   painter->setRenderHint(QPainter::TextAntialiasing);
@@ -78,5 +89,5 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   // Draw the symbol
   int symbolSize = option.rect.height() - 4;
   symbolPainter->drawAirportSymbol(painter, ap, option.rect.x() + symbolSize,
-                                   option.rect.y() + symbolSize / 2.f + 2.f, symbolSize, false, false);
+                                   option.rect.y() + symbolSize / 2.f + 2.f, symbolSize, false, false, false);
 }

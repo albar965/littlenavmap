@@ -214,7 +214,17 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
     symsize = symsize * 4 / 5;
 
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
+
+  painter->setBackgroundMode(Qt::OpaqueMode);
+
+  if(airport.addon() && map)
+  {
+    float radius = std::max(symsize, 6.f);
+    painter->setBrush(mapcolors::addonAirportBackgroundColor);
+    painter->setPen(QPen(mapcolors::addonAirportFrameColor));
+    painter->drawEllipse(QPointF(x, y), radius, radius);
+  }
+
   QColor apColor = mapcolors::colorForAirport(airport);
 
   float radius = symsize / 2.f;
@@ -1059,8 +1069,11 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
   if(!texts.isEmpty())
   {
     textatt::TextAttributes atts = textatt::NONE;
-    if(airport.flags.testFlag(map::AP_ADDON))
+    if(airport.addon())
       atts |= textatt::ITALIC | textatt::UNDERLINE;
+
+    if(airport.closed())
+      atts |= textatt::STRIKEOUT;
 
     if(flags & textflags::ROUTE_TEXT)
       atts |= textatt::ROUTE_BG_COLOR;
@@ -1180,7 +1193,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
   }
 
   if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE) ||
-     atts.testFlag(textatt::OVERLINE))
+     atts.testFlag(textatt::OVERLINE) || atts.testFlag(textatt::STRIKEOUT))
   {
     QFont f = painter->font();
 
@@ -1195,6 +1208,9 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
 
     if(atts.testFlag(textatt::OVERLINE))
       f.setOverline(true);
+
+    if(atts.testFlag(textatt::STRIKEOUT))
+      f.setStrikeOut(true);
 
     painter->setFont(f);
   }
