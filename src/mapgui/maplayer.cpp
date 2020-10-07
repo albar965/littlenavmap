@@ -521,7 +521,7 @@ MapLayer& MapLayer::userpointInfo(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::userpoinSymbolSize(int size)
+MapLayer& MapLayer::userpointSymbolSize(int size)
 {
   layerUserpointSymbolSize = size;
   return *this;

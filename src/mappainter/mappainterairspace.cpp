@@ -52,7 +52,7 @@ void MapPainterAirspace::render()
   if(!context->mapLayer->isAirspace() || !(context->objectTypes.testFlag(map::AIRSPACE)))
     return;
 
-  if(context->mapLayerEffective->isAirportDiagram())
+  if(context->mapLayer->isAirportDiagram())
     return;
 
   AirspaceController *controller = NavApp::getAirspaceController();

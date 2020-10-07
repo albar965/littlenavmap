@@ -352,7 +352,7 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool dra
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+      int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
 
       // If airways are drawn force display of the respecive waypoints
@@ -370,8 +370,8 @@ void MapPainterNav::paintVors(const QList<MapVor> *vors, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
-  int vorSize = context->mapLayerEffective->isVorLarge() ? size * 5 : 0;
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
+  int vorSize = context->mapLayer->isVorLarge() ? size * 5 : 0;
 
   // Use margins for text placed on the left side of the object to avoid disappearing at the right screen border
   // Also consider VOR size
@@ -407,7 +407,7 @@ void MapPainterNav::paintNdbs(const QList<MapNdb> *ndbs, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
 
   // Use margins for text placed on the bottom of the object to avoid disappearing at the top screen border
   QMargins margins(size, std::max(size, 50), size, size);
@@ -441,7 +441,7 @@ void MapPainterNav::paintMarkers(const QList<MapMarker> *markers, bool drawFast)
 {
   int transparency = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
 
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getMarkerSymbolSize());
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getMarkerSymbolSize());
   QMargins margins(size, size, size, size);
 
   for(const MapMarker& marker : *markers)

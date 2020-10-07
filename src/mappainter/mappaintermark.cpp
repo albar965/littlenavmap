@@ -197,9 +197,9 @@ void MapPainterMark::paintHighlights()
   // ====================================================================
   // Draw all highlight rings for positions collected above =============
   GeoPainter *painter = context->painter;
-  if(context->mapLayerEffective->isAirport())
+  if(context->mapLayer->isAirport())
     size = context->sz(context->symbolSizeAirport,
-                       std::max(size, context->mapLayerEffective->getAirportSymbolSize()));
+                       std::max(size, context->mapLayer->getAirportSymbolSize()));
 
   QPen outerPen(mapcolors::highlightBackColor, size / 3. + 2., Qt::SolidLine, Qt::FlatCap);
   QPen innerPen(mapcolors::highlightColor, size / 3., Qt::SolidLine, Qt::FlatCap);
@@ -296,8 +296,8 @@ void MapPainterMark::paintHighlights()
   }
 
   // Draw highlights from the flight plan view =====================================================
-  if(context->mapLayerEffective->isAirport())
-    size = std::max(size, context->mapLayerEffective->getAirportSymbolSize());
+  if(context->mapLayer->isAirport())
+    size = std::max(size, context->mapLayer->getAirportSymbolSize());
 
   const QList<int>& routeHighlightResults = mapPaintWidget->getRouteHighlights();
   positions.clear();
@@ -478,7 +478,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     QPen directPen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen directOutlinePen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap,
                           Qt::RoundJoin);
-    int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
+    int size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
 
     QVector<LineString> geo;
     for(const MapLogbookEntry *entry : visibleLogEntries)
@@ -538,7 +538,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   // Draw airport symbols and text ==========================================================================
   float x, y;
   textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
+  int size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
   context->szFont(context->textSizeFlightplan);
 
   QSet<int> airportIds;
@@ -548,7 +548,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     {
       symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast);
       symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, size,
-                                     context->mapLayerEffective->isAirportDiagram(),
+                                     context->mapLayer->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
       airportIds.insert(entry->departure.id);
     }
@@ -557,7 +557,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     {
       symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast);
       symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, size,
-                                     context->mapLayerEffective->isAirportDiagram(),
+                                     context->mapLayer->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
       airportIds.insert(entry->destination.id);
     }

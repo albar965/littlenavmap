@@ -68,7 +68,7 @@ MapPainterAirport::~MapPainterAirport()
 void MapPainterAirport::render()
 {
   if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
-     (!context->mapLayerEffective->isAirportDiagramRunway()) && context->routeIdMap.isEmpty())
+     (!context->mapLayer->isAirportDiagramRunway()) && context->routeIdMap.isEmpty())
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
@@ -78,10 +78,8 @@ void MapPainterAirport::render()
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirport> *airportCache = nullptr;
   bool overflow = false;
-  if(context->mapLayerEffective->isAirportDiagramRunway())
-    airportCache = mapQuery->getAirports(curBox, context->mapLayerEffective, context->lazyUpdate, overflow);
-  else
-    airportCache = mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, overflow);
+  const QList<MapAirport> *airportCache =
+    mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, addon, overflow);
   context->setQueryOverflow(overflow);
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
@@ -115,17 +113,18 @@ void MapPainterAirport::render()
     }
   }
 
-  std::sort(visibleAirports.begin(), visibleAirports.end(), sortAirportFunction);
+  using namespace std::placeholders;
+  std::sort(visibleAirports.begin(), visibleAirports.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
 
   // In diagram mode draw background first to avoid overwriting other airports ===========================
-  if(context->mapLayerEffective->isAirportDiagramRunway() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_BOUNDARY))
+  if(context->mapLayer->isAirportDiagramRunway() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_BOUNDARY))
   {
     for(const PaintAirportType& airport : visibleAirports)
       drawAirportDiagramBackground(*airport.airport);
   }
 
   // Draw the simple runway diagrams first ===========================
-  if(context->mapLayerEffective->isAirportDiagramRunway())
+  if(context->mapLayer->isAirportDiagramRunway())
   {
     for(const PaintAirportType& airport : visibleAirports)
     {
@@ -135,7 +134,7 @@ void MapPainterAirport::render()
   }
 
   textflags::TextFlags apTextFlags = context->airportTextFlags();
-  int symsize = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
+  int symsize = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
 
   // Add airport symbols on top of diagrams ===========================
   for(int i = 0; i < visibleAirports.size(); i++)
@@ -146,7 +145,7 @@ void MapPainterAirport::render()
     float y = static_cast<float>(pt.y());
 
     // Airport diagram is not influenced by detail level
-    if(!context->mapLayerEffective->isAirportDiagramRunway())
+    if(!context->mapLayer->isAirportDiagramRunway())
       // Draw simplified runway lines
       drawAirportSymbolOverview(*airport, x, y);
 
@@ -160,8 +159,8 @@ void MapPainterAirport::render()
 
       symbolPainter->drawAirportText(context->painter, *airport, x, y,
                                      context->dispOptsAirport, apTextFlags,
-                                     context->mapLayerEffective->isAirportDiagram() ? symsize * 2 : symsize,
-                                     context->mapLayerEffective->isAirportDiagram(),
+                                     context->mapLayer->isAirportDiagram() ? symsize * 2 : symsize,
+                                     context->mapLayer->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
     }
   }
@@ -208,7 +207,7 @@ void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airp
   }
 
   // Taxi only for full diagram and not the runway overview ==================
-  if(context->mapLayerEffective->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
+  if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
   {
     // For taxipaths
     const QList<MapTaxiPath> *taxipaths = airportQuery->getTaxiPaths(airport.id);
@@ -222,7 +221,7 @@ void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airp
   }
 
   // Apron only for full diagram and not the runway overview ==================
-  if(context->mapLayerEffective->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_APRON))
+  if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_APRON))
   {
     // For aprons
     const QList<MapApron> *aprons = airportQuery->getAprons(airport.id);
@@ -279,7 +278,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     // Calculate all runway screen coordinates
     runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
 
-    if(!fast && context->mapLayerEffective->isAirportDiagram())
+    if(!fast && context->mapLayer->isAirportDiagram())
     {
       // Draw runway shoulders (X-Plane) --------------------------------
       painter->setPen(Qt::NoPen);
@@ -297,7 +296,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       }
     }
   }
-  if(context->mapLayerEffective->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_APRON))
+  if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_APRON))
   {
     // Draw aprons ---------------------------------
     painter->setBackground(Qt::transparent);
@@ -327,7 +326,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     }
   }
 
-  if(context->mapLayerEffective->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
+  if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
   {
     // Draw taxiways ---------------------------------
     painter->setBackgroundMode(Qt::OpaqueMode);
@@ -591,7 +590,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     }
   }
 
-  if(context->mapLayerEffective->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_PARKING))
+  if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_PARKING))
   {
     // Approximate needed margings by largest parking diameter to avoid parking circles dissappearing on the screen borders
     float size = scale->getPixelForFeet(200);
@@ -720,9 +719,9 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
               }
               painter->drawText(x - metrics.width(text) / 2, y + metrics.ascent() / 2, text);
             }
-          } // if(context->mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 40)
+          } // if(context->mapLayer->isAirportDiagramDetail2() || parking.radius > 40)
         } // for(const MapParking& parking : *parkings)
-      } // if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
+      } // if(!fast && context->mapLayer->isAirportDiagramDetail())
 
       // Draw tower T -----------------------------
       if(!fast && airport.towerCoords.isValid())
@@ -749,7 +748,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     QFontMetrics rwMetrics = painter->fontMetrics();
 
     painter->setPen(QPen(mapcolors::runwayDimsTextColor, 3, Qt::SolidLine, Qt::FlatCap));
-    if(context->mapLayerEffective->isAirportDiagram())
+    if(context->mapLayer->isAirportDiagram())
     {
       QVector<int> runwayTextLengths;
       // Draw dimensions at runway side
@@ -864,7 +863,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     }
 
     // Draw runway numbers at end
-    int numSize = context->mapLayerEffective->isAirportDiagram() ?
+    int numSize = context->mapLayer->isAirportDiagram() ?
                   RUNWAY_NUMBER_FONT_SIZE : RUNWAY_NUMBER_SMALL_FONT_SIZE;
     rwTextFont.setPixelSize(numSize);
     painter->setFont(rwTextFont);
@@ -923,7 +922,7 @@ void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, flo
   Marble::GeoPainter *painter = context->painter;
 
   if(ap.longestRunwayLength >= RUNWAY_OVERVIEW_MIN_LENGTH_FEET &&
-     context->mapLayerEffective->isAirportOverviewRunway() &&
+     context->mapLayer->isAirportOverviewRunway() &&
      !ap.flags.testFlag(map::AP_CLOSED) && !ap.waterOnly())
   {
     // Draw only for airports with a runway longer than 8000 feet otherwise use symbol
@@ -969,15 +968,15 @@ void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, flo
 /* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
 void MapPainterAirport::drawAirportSymbol(const map::MapAirport& ap, float x, float y)
 {
-  if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(map::AP_CLOSED) ||
+  if(!context->mapLayer->isAirportOverviewRunway() || ap.flags.testFlag(map::AP_CLOSED) ||
      ap.waterOnly() || ap.longestRunwayLength < RUNWAY_OVERVIEW_MIN_LENGTH_FEET ||
-     context->mapLayerEffective->isAirportDiagramRunway())
+     context->mapLayer->isAirportDiagramRunway())
   {
     if(context->objCount())
       return;
 
-    int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
-    bool isAirportDiagram = context->mapLayerEffective->isAirportDiagramRunway();
+    int size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
+    bool isAirportDiagram = context->mapLayer->isAirportDiagramRunway();
 
     symbolPainter->drawAirportSymbol(context->painter, ap, x, y, size, isAirportDiagram, context->drawFast);
   }

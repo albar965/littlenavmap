@@ -127,7 +127,7 @@ public:
   /* User defined points */
   MapLayer& userpoint(bool value = true);
   MapLayer& userpointInfo(bool value = true);
-  MapLayer& userpoinSymbolSize(int size);
+  MapLayer& userpointSymbolSize(int size);
   MapLayer& userpointMaxTextLength(int length);
 
   /* VOR options */
@@ -611,10 +611,10 @@ private:
 
   bool layerAirportWeather = false, layerAirportWeatherDetails = false;
 
-  int layerAirportSymbolSize = 5, layerMinRunwayLength = 0;
+  int layerAirportSymbolSize = 3, layerMinRunwayLength = 0;
 
   bool layerWindBarbs = false;
-  int layerWindBarbsSymbolSize = 5;
+  int layerWindBarbsSymbolSize = 6;
 
   bool layerWaypoint = false, layerWaypointName = false, layerVor = false, layerVorIdent = false, layerVorInfo = false,
        layerVorLarge = false, layerNdb = false, layerNdbIdent = false, layerNdbInfo = false, layerMarker = false,
@@ -628,8 +628,8 @@ private:
   bool layerNdbRouteIdent = false, layerNdbRouteInfo = false;
   bool layerWaypointRouteName = false;
 
-  int layerWaypointSymbolSize = 8, layerVorSymbolSize = 8, layerNdbSymbolSize = 8,
-      layerMarkerSymbolSize = 8, layerUserpointSymbolSize = 16;
+  int layerWaypointSymbolSize = 3, layerVorSymbolSize = 3, layerNdbSymbolSize = 4,
+      layerMarkerSymbolSize = 8, layerUserpointSymbolSize = 12;
 
   int maximumTextLengthAirport = 16;
   int maximumTextLengthUserpoint = 10;
