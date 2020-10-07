@@ -580,9 +580,13 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
 
   if(shownDisplay.testFlag(map::FLIGHTPLAN))
   {
+    map::MapObjectQueryTypes queryTypes = types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS;
+
+    if(shown.testFlag(map::MISSED_APPROACH))
+      queryTypes |= map::QUERY_PROC_MISSED_POINTS | map::QUERY_PROCEDURES_MISSED;
+
     // Get copies from flight plan if visible
-    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result,
-                                       types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS);
+    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, queryTypes);
 
     // Get points of procedure preview
     getNearestProcedureHighlights(xs, ys, maxDistance, result, types);
@@ -680,8 +684,9 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
     insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
     insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
-    if(types & map::QUERY_PROC_POINTS)
+    if(types.testFlag(map::QUERY_PROC_POINTS))
     {
+      // No need to filter missed since this is always shown on highlight
       if(conv.wToS(leg.line.getPos2(), x, y))
       {
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)

@@ -144,10 +144,12 @@ enum MapObjectQueryType
 {
   QUERY_NONE = 0,
   QUERY_PROC_POINTS = 1 << 0, /* Procedure points */
-  QUERY_HOLDS = 1 << 1, /* Holds */
-  QUERY_PATTERNS = 1 << 2, /* Traffic patterns */
-  QUERY_PROCEDURES = 1 << 3, /* Procedures when querying route */
-  QUERY_RANGEMARKER = 1 << 4 /* Range rings */
+  QUERY_PROC_MISSED_POINTS = 1 << 1, /* Missed procedure points */
+  QUERY_HOLDS = 1 << 2, /* Holds */
+  QUERY_PATTERNS = 1 << 3, /* Traffic patterns */
+  QUERY_PROCEDURES = 1 << 4, /* Procedures when querying route */
+  QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedures when querying route */
+  QUERY_RANGEMARKER = 1 << 6 /* Range rings */
 };
 
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);

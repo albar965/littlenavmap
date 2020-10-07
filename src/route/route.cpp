@@ -827,9 +827,17 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
   for(int i = 0; i < size(); i++)
   {
     const RouteLeg& leg = value(i);
-    if(!(types& map::QUERY_PROCEDURES) && leg.isAnyProcedure())
-      // Do not edit procedures
-      continue;
+
+    if(leg.isAnyProcedure())
+    {
+      if(!types.testFlag(map::QUERY_PROCEDURES))
+        // Do not edit procedures
+        continue;
+
+      if(leg.getProcedureLeg().isMissed() && !types.testFlag(map::QUERY_PROCEDURES_MISSED))
+        // Do not edit missed procedures
+        continue;
+    }
 
     // Use fix position to get real navaids from procedures instead of projected or otherwise modified positions
     if(conv.wToS(leg.getFixPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
@@ -889,8 +897,16 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         mapobjects.userpointsRoute.append(up);
       }
 
-      if(types & map::QUERY_PROC_POINTS && leg.isAnyProcedure())
-        mapobjects.procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
+      if(leg.isAnyProcedure() && types.testFlag(map::QUERY_PROC_POINTS))
+      {
+        if(leg.getProcedureLeg().isMissed())
+        {
+          if(types.testFlag(map::QUERY_PROC_MISSED_POINTS))
+            mapobjects.procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
+        }
+        else
+          mapobjects.procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
+      }
     }
   }
 }

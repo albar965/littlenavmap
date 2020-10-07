@@ -438,13 +438,18 @@ bool MapWidget::event(QEvent *event)
     {
       QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
+      map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS |
+                                            map::QUERY_RANGEMARKER;
+
+      if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
+        queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+
       // Load tooltip data into mapSearchResultTooltip
       mapSearchResultTooltip = map::MapResult();
       getScreenIndexConst()->getAllNearest(helpEvent->pos().x(),
                                            helpEvent->pos().y(), screenSearchDistanceTooltip,
                                            mapSearchResultTooltip,
-                                           map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS |
-                                           map::QUERY_RANGEMARKER);
+                                           queryTypes);
 
       NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
                                                                     mapSearchResultTooltip.aiAircraft);
