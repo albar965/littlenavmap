@@ -8101,13 +8101,16 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
    </property>
    <property name="text">
-    <string>Force &amp;Show Addon Airports</string>
+    <string>Force &amp;Show Add-on Airports</string>
    </property>
    <property name="toolTip">
     <string>Force map to show add-on airports</string>
    </property>
    <property name="statusTip">
     <string>Force map to show add-on airports</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+O</string>
    </property>
   </action>
   <action name="actionMapShowGrid">
@@ -11836,7 +11839,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

@@ -353,6 +353,12 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool dra
         return;
 
       int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
+
+      // Use minimum size for airway waypoints if respective airways are shown
+      if((waypoint.hasJetAirways && drawAirwayJ) || (waypoint.hasVictorAirways && drawAirwayV) ||
+         (waypoint.hasTracks && drawTrack))
+        size = std::max(5, size);
+
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
 
       // If airways are drawn force display of the respecive waypoints

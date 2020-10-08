@@ -177,7 +177,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
   append(Column("is_closed", ui->checkBoxAirportClosedSearch, tr("Closed")).hidden()).
   append(Column("is_military", ui->checkBoxAirportMilSearch, tr("Military")).hidden()).
-  append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Addon")).hidden()).
+  append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Add-on")).hidden()).
   append(Column("is_3d", tr("3D")).hidden()).
 
   append(Column("num_runway_soft", ui->comboBoxAirportSurfaceSearch, tr("Soft\nRunways")).
