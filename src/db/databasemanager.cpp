@@ -1520,6 +1520,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
   if(progress.isFirstCall())
   {
     timer.start();
+    progressDialog->setValue(progress.getCurrent());
     progressDialog->setMinimum(0);
     progressDialog->setMaximum(progress.getTotal());
   }
