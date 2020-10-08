@@ -1,6 +1,107 @@
 ﻿Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+================
+
+# Version 2.6.2.beta
+
+## Important
+
+## Important for MSFS Users
+
+* Remove the MSFS Community folder from the ignore list in _Little Navmap_, `Options`, page `Scenery Library Database`
+  if you added it. The exclusion to avoid the crash is not needed anymore.
+* Update to the latest beta Navigraph navdata update for MSFS if you use it.
+* Reload the scenery library if you use MSFS.
+
+## Known Issues
+
+### MSFS
+
+* Little Navmap cannot read SID and STAR from MSFS. Documentation about MSFS format changes are
+  needed in SDK.
+* MSFS multiplayer and real-time AI cannot be displayed. Needs SDK updates or more documentation.
+* Simulator weather cannot be shown for MSFS since SimConnect weather functions are deprecated and
+  do not deliver data. Needs update or documentation in MSFS SDK. Use NOAA weather which gives you
+  the most up-to-date weather reports.
+* MSFS has no clear concept of scenery order as far as I can see (`Content.xml` seems unreliable)
+  and there is no information in the SDK. Add-ons are loaded by alphabetical order by Little Navmap.
+  To put an add-on to the end of the loading list add a `z_` to the folder name, for example.
+* Flight plan loading in MSFS is flawed and does not produce any error messages if it fails. Quite
+  often MSFS cannot load its own plans correctly.
+* Country names are missing in MSFS translation tables and are not available in Little Navmap, therefore.
+* Add-ons using the `.fsarchive` encrypted format are not supported and most likely never will.
+
+### Other
+
+* Dock window layout in Little Navmap can change when resizing or maximizing window and back.
+  Qt limitation.
+* Window is restored in normal state when changing from a maximized window to fullscreen and back.
+  This is a Qt limitation.
+* The window layout might not be restored precisely on startup in some cases. This is a limitation
+  in the used Qt library.
+* The height of the elevation profile window cannot be reduced in some cases. Reset to default window
+  layout which fixes this. Rearrange or move the elevation profile window to another position which
+  usually solves this. Save the layout once you
+  have a working one. This is a limitation in the used Qt library.
+* Zooming with touchpad or magic mouse does not work properly on macOS. Use the navigation overlay
+  or one of the other options on page `Map Navigation` in `Options` if you think it is unusable. This
+  is a limitation in the used Qt library.
+* Program hangs on macOS Big Sur beta. Investigating.
+
+## Changes
+
+### Scenery Library
+
+* Now checking for all paths `Community`, `fs-base` and `fs-base-nav` before recognizing a MSFS installation as valid.
+* Airports in folders prefixed with `asobo-airports-` in `Official\Steam` or `Official\OneStore` are now flagged as add-on.
+* Fixed issue where program could appear frozen while counting files before loading scenery.
+* Fixed detection for military airports in MSFS and extended detection with international phrases like `Militärflugplatz`.
+* Now capitalizing all airport names for FSX, P3D and MSFS to fix wrong designators like `Afb`.
+
+### Map Display
+
+* Changed `force add-on` airport functionality completely. Now keeping add-ons airports visible on map independent of zoom level if this option is selected in the toolbar or the menu `View` -> `Airports` -> `Force Show Add-on Airports`. Add-on airports are now shown highlighted with a yellow ring per default. The colors can be adjusted in configuration file `little_navmap_mapstyle.ini`. Add-on highlighting can be disabled in options dialog on page `Map Display`.
+* Changed display when increasing or decreasing detail level on map. Now also scaling icons, texts and other map object features. Detail level can now be used to show airport diagram earlier.
+* Flight plan waypoints are now shown with higher detail level which results in more text and larger symbols.
+* Flight plan display is now also affected by detail level changes.
+* Resetting label options for flight plan line (options dialog on page `Map Display 2` tree element `Flight Plan`) now to distance and magnetic course on first startup since course was switched off for some.
+* Increased map details for certain zoom factors. Waypoints, VOR and NDB are now shown earlier as small point symbols depending on zoom.
+* Fixed handling of map overflow when showing the maximum number of objects on the map. User now gets a warning `Too Many Objects` in the status bar if a result exceeds the limit. This is needed to avoid program freeze situations.
+* Added missing library file back to fix the broken offline map themes. The hotfix is not needed anymore.
+* Fixed issue where waypoints were queried from the database with tracks not loaded.
+* Fixed issue where context menu item for parking spots was disabled on departure airport.
+* Added option to enable or disable AI and user aircraft background text fill. AI/multiplayer and user aircraft labels are now configurable in `little_navmap_mapstyle.ini`.
+* Fixed issue where ghost tooltips were displayed for hidden missed approaches.
+* Added option to show indicated altitude at user aircraft label on map. This is now the default altitude shown. This can be changed in options on page `Map Display 2` in the tree on the right at `User Aircraft`.
+* The elevation profile now uses indicated altitude for aircraft position to avoid discrepancies in display when flying at flight levels.
+
+### Weather
+
+* Fixed issue with NOAA weather downloads where a missing internet connection or wrong web address flooded the log and caused the program to crash. Now applying a grace period of three minutes after an error which blocks new downloads for METAR requests. Online weather is updated every ten minutes.
+
+### Export and Flight Plan
+
+* Added option to extract flight plan for selected plan range and save it into a new file. Select a range of flight plan legs not touching alterates or procedures. Then right click into the table and choose `Save selected Range as Flight Plan`. This will not replace the current plan but add the saved file to the recent files list.
+* Improved behaviour in multiexport configuration when switching simulators. MSFS files path is now kept when switching simulator to P3D or X-Plane.
+* Added LNMPLN to export formats. Note that using this option will clear the changed flag (the `*` in the window title plus further question dialogs asking to save file) and will also set the current filename to the exported file name. Furthermore, it will add the filename to the recent files list. This way the LNMPLN export option behaves exactly as if the user called `Save` or `Save as`.
+* Moved Garmin export option for waypoints from options dialog to new entries in multiexport dialog instead.
+* Added descriptions with more details in tooltip for multiexport dialog.
+* Changed default F1 GTN export path to `F1TGTN`.
+* X-Plane FMS export file name now using a dash in file name for better readability.
+* Corrected small update issues in table of multiexport dialog.
+
+### User Interface
+
+* Changed default window layout to one where dock windows `Search` and `Simualtor Aircraft` are merged into a tabbed view. This avoids the frozen (not resizable) elevation profile window. Look for tabs `Search` and `Simualtor Aircraft` on the lower right side of the main window.
+* Removed wrong rounding to nearest 0.025 MHz for COM frequencies.
+* Added missing source indicator for COM frequencies in information window. Either Navigraph or Simulator.
+* Now showing add-on and closed airports throughout the whole program in italic underline and strikeout respectively.
+* Route description dialog now properly updates result list in macOS when using user interface style `macintosh`.
+* Fixed issue where fuel report remains active but was not updated due to failed top of descent calculation. Now clearing window and showing orange warning messge if this is the case.
+* Added link to downloads to help menu.
+* Change simulator string in logbook to short string.
+
 ===============================================================================
 
 # Version 2.6.1.beta
