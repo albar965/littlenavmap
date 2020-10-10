@@ -35,7 +35,7 @@ namespace rexp {
 
 /* Enum for all export formats. Order in multiexport dialog list is defined by order in this enumeration.
  *  Do not change ids */
-enum RouteExportFormatType : quint8
+enum RouteExportFormatType : quint16
 {
   /* Simulators ================ */
   NO_TYPE = 255,
@@ -90,21 +90,25 @@ enum RouteExportFormatType : quint8
          // Next = 36
 };
 
-/* Flags for export format */
-enum RouteExportFormatFlag : quint8
+/* Flags for export format. Some flags are saved to the configuration,
+ * some are used in temporary objects and some are hardcoded in configuration. */
+enum RouteExportFormatFlag : quint16
 {
   NONE = 0,
   FILE = 1 << 0, /* Append to file instead of saving to folder.
-                  *  path and default path contain filename instead of directory if this is the case. */
-  SELECTED = 1 << 1, /* Selected for multiexport in dialog. */
-  MANUAL = 1 << 2, /* Format is cloned and selected for manual export from file menu */
+                  * path and default path contain filename instead of directory if this is the case. */
+  SELECTED = 1 << 1, /* Selected for multiexport in dialog. Saved to configuration. */
+
+  MANUAL = 1 << 2, /* Format is cloned and selected for manual export from file menu. Temporary flag. */
   FILEDIALOG = 1 << 3, /* Format is cloned and selected for manual export from file dialog.
-                        *  Forces file dialog to be shown. */
+                        *  Forces file dialog to be shown. Temporary flag. */
 
   PARKING = 1 << 4, /* Format allows to import parking start position */
   AIRPORTS = 1 << 5, /* Valid departure and destination airports are needed */
   CYCLE = 1 << 6, /* Format needs a valid AIRAC cycle */
-  GARMIN_AS_WAYPOINTS = 1 << 7 /* Format to export Garmin as waypoints. */
+  GARMIN_AS_WAYPOINTS = 1 << 7, /* Format to export Garmin as waypoints. */
+
+  SAVED_FLAGS = SELECTED /* Saved to configuration. */
 };
 
 Q_DECLARE_FLAGS(RouteExportFormatFlags, RouteExportFormatFlag);

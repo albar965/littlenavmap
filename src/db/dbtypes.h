@@ -54,10 +54,13 @@ public:
   void fillDefault();
 
   /* Get the latest/newest simulator from all installed ones or databases found */
-  atools::fs::FsPaths::SimulatorType getBest();
+  atools::fs::FsPaths::SimulatorType getBest() const;
 
   /* Get lastest/newest installed simulator */
-  atools::fs::FsPaths::SimulatorType getBestInstalled();
+  atools::fs::FsPaths::SimulatorType getBestInstalled() const;
+
+  /* Get lastest/newest installed simulator in the FSX to P3D range */
+  atools::fs::FsPaths::SimulatorType getBestInstalledFsxP3d() const;
 
   /* Get all installed simulators */
   QList<atools::fs::FsPaths::SimulatorType> getAllInstalled() const;

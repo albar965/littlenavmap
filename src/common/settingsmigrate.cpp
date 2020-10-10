@@ -205,6 +205,13 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "SearchPaneLogdata/WidgetView_tableViewLogdata");
       }
 
+      if(optionsVersion <= Version("2.6.1.beta"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.1.beta";
+        removeAndLog(settings, lnm::ROUTE_EXPORT_FORMATS);
+        removeAndLog(settings, lnm::ROUTE_EXPORT_DIALOG);
+      }
+
       // =====================================================================
       // Adapt update channels if not yet saved
       if(!settings.contains(lnm::OPTIONS_UPDATE_CHANNELS) || (optionsVersion.isStable() && !programVersion.isStable()))

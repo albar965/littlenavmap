@@ -160,7 +160,7 @@
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Export File Now ...</string>
+    <string>&amp;Export Flight Plan Now ...</string>
    </property>
   </action>
   <action name="actionResetView">
@@ -204,6 +204,17 @@
   <action name="actionResetPathsAndSelection">
    <property name="text">
     <string>Reset &amp;Paths and Selection</string>
+   </property>
+  </action>
+  <action name="actionSelect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Enable %1 for Export</string>
+   </property>
+   <property name="toolTip">
+    <string>Select for multi export</string>
    </property>
   </action>
  </widget>

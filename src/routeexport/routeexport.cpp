@@ -67,7 +67,6 @@ RouteExport::~RouteExport()
 
 void RouteExport::saveState()
 {
-  exportAllDialog->saveState();
   exportFormatMap->saveState();
 }
 
@@ -131,6 +130,9 @@ void RouteExport::routeMultiExportOptions()
   if(result == QDialog::Accepted)
   {
     selected = exportFormatMap->hasSelected();
+
+    // Dialog saves its own options
+    saveState();
     emit optionsUpdated();
   }
 }
@@ -160,9 +162,9 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
     // Build filename
     QString name;
     if(format.isExportToFile())
-      name = format.getPathOrDefault();
+      name = format.getPath();
     else
-      name = format.getPathOrDefault() + QDir::separator() + filename;
+      name = format.getPath() + QDir::separator() + filename;
 
     RouteMultiExportDialog::ExportOptions opts = exportAllDialog->getExportOptions();
 
@@ -179,7 +181,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
           tr("%1 Files %2").arg(format.getFormat().toUpper()).arg(format.getFilter()),
           format.getFormat(),
           QString() /* settingsPrefix */,
-          format.getPathOrDefault(), filename, dontComfirmOverwrite, autoNumberFilename);
+          format.getPath(), filename, dontComfirmOverwrite, autoNumberFilename);
         break;
 
       case RouteMultiExportDialog::RENAME_EXISTING:

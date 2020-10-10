@@ -21,6 +21,7 @@
 #include "routeexport/routeexportflags.h"
 
 #include <QDialog>
+#include <QMap>
 #include <functional>
 
 namespace Ui {
@@ -36,6 +37,7 @@ class ItemViewZoomHandler;
 class QAbstractButton;
 class QStandardItem;
 class QStandardItemModel;
+class QCheckBox;
 class TableSortProxyModel;
 class RouteExportFormatMap;
 class RouteExportFormat;
@@ -102,7 +104,8 @@ private:
   void updateModel();
 
   /* Checkbox toggled */
-  void selectToggled();
+  void selectForExportToggled();
+  void selectForExport(rexp::RouteExportFormatType type, bool checked);
 
   void tableContextMenu(const QPoint& pos);
 
@@ -119,6 +122,9 @@ private:
 
   RouteExportFormatMap *formatMap = nullptr, /* Map that will be modified in the dialog */
                        *formatMapOrig = nullptr; /* Map backup that will be used to restore in case of cancel */
+
+  /* Keep index for checkbox in field */
+  QMap<rexp::RouteExportFormatType, QCheckBox *> selectCheckBoxIndex;
 
   /* Avoid updates in itemChanged() when filling table */
   bool changingTable = false;

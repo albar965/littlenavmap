@@ -199,6 +199,7 @@ public:
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
   static QString getSimulatorFilesPath(atools::fs::FsPaths::SimulatorType type);
+  static QString getSimulatorFilesPathBestFsxP3d();
   static bool hasSimulator(atools::fs::FsPaths::SimulatorType type);
   static bool hasAnyMsSimulator();
   static bool hasXplaneSimulator();

@@ -29,10 +29,12 @@ void SimulatorTypeMap::fillDefault()
     fillOneDefault(type);
 }
 
-atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
+atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
 {
-#if defined(Q_OS_WIN32)
-  if(contains(atools::fs::FsPaths::P3D_V5) && value(atools::fs::FsPaths::P3D_V5).hasDatabase)
+#if defined(Q_OS_WIN32) || defined(DEBUG_FS_PATHS)
+  if(contains(atools::fs::FsPaths::MSFS) && value(atools::fs::FsPaths::MSFS).hasDatabase)
+    return atools::fs::FsPaths::MSFS;
+  else if(contains(atools::fs::FsPaths::P3D_V5) && value(atools::fs::FsPaths::P3D_V5).hasDatabase)
     return atools::fs::FsPaths::P3D_V5;
   else if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).hasDatabase)
     return atools::fs::FsPaths::P3D_V4;
@@ -56,10 +58,12 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
 #endif
 }
 
-atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled()
+atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled() const
 {
-#if defined(Q_OS_WIN32)
-  if(contains(atools::fs::FsPaths::P3D_V5) && value(atools::fs::FsPaths::P3D_V5).isInstalled)
+#if defined(Q_OS_WIN32) || defined(DEBUG_FS_PATHS)
+  if(contains(atools::fs::FsPaths::MSFS) && value(atools::fs::FsPaths::MSFS).isInstalled)
+    return atools::fs::FsPaths::MSFS;
+  else if(contains(atools::fs::FsPaths::P3D_V5) && value(atools::fs::FsPaths::P3D_V5).isInstalled)
     return atools::fs::FsPaths::P3D_V5;
   else if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).isInstalled)
     return atools::fs::FsPaths::P3D_V4;
@@ -79,6 +83,30 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled()
 #else
   // macOS and Linux - only X-Plane
   return atools::fs::FsPaths::XPLANE11;
+
+#endif
+}
+
+atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalledFsxP3d() const
+{
+#if defined(Q_OS_WIN32) || defined(DEBUG_FS_PATHS)
+  if(contains(atools::fs::FsPaths::P3D_V5) && value(atools::fs::FsPaths::P3D_V5).isInstalled)
+    return atools::fs::FsPaths::P3D_V5;
+  else if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).isInstalled)
+    return atools::fs::FsPaths::P3D_V4;
+  else if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).isInstalled)
+    return atools::fs::FsPaths::P3D_V3;
+  else if(contains(atools::fs::FsPaths::P3D_V2) && value(atools::fs::FsPaths::P3D_V2).isInstalled)
+    return atools::fs::FsPaths::P3D_V2;
+  else if(contains(atools::fs::FsPaths::FSX_SE) && value(atools::fs::FsPaths::FSX_SE).isInstalled)
+    return atools::fs::FsPaths::FSX_SE;
+  else if(contains(atools::fs::FsPaths::FSX) && value(atools::fs::FsPaths::FSX).isInstalled)
+    return atools::fs::FsPaths::FSX;
+
+  return atools::fs::FsPaths::UNKNOWN;
+
+#else
+  return atools::fs::FsPaths::UNKNOWN;
 
 #endif
 }

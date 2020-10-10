@@ -98,12 +98,6 @@ public:
     return defaultPath;
   }
 
-  /* Get assigned path or default if assinged is empty. Directory or file if isFile is true */
-  const QString& getPathOrDefault() const
-  {
-    return path.isEmpty() ? defaultPath : path;
-  }
-
   /* Get assigned path. Directory or file if isFile is true*/
   const QString& getPath() const
   {
@@ -167,15 +161,36 @@ public:
   /* true if directoy or file exists */
   bool isPathValid(QString *errorMessage = nullptr) const;
 
+  /* Function or method which saves the file */
+  void setExportCallback(const std::function<bool(const RouteExportFormat&)>& value)
+  {
+    func = value;
+  }
+
+  /* Default path for reset */
+  void setDefaultPath(const QString& value)
+  {
+    defaultPath = value;
+  }
+
+  /* Actual path or filename for export */
+  void setPath(const QString& value);
+
+  void setFlag(rexp::RouteExportFormatFlag flag, bool on)
+  {
+    flags.setFlag(flag, on);
+  }
+
+  /* Update error state and message for missing folders and others */
+  void updatePathError();
+
 private:
   friend QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj);
   friend QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormat& obj);
 
-  friend class RouteExportFormatMap;
-
   rexp::RouteExportFormatType type;
 
-  QString format, category, comment, defaultPath, path;
+  QString format, category, comment, defaultPath, path, pathError;
 
   /* Callback function for export */
   std::function<bool(const RouteExportFormat&)> func;
@@ -209,18 +224,12 @@ public:
   QVector<RouteExportFormat> getSelected() const;
 
   /* Clear user selected path and use default again */
-  void clearPath(rexp::RouteExportFormatType type)
-  {
-    (*this)[type].path.clear();
-  }
+  void clearPath(rexp::RouteExportFormatType type);
 
   void updatePath(rexp::RouteExportFormatType type, const QString& path);
 
   /* Enable or disable for multiexport */
-  void setSelected(rexp::RouteExportFormatType type, bool selected)
-  {
-    (*this)[type].flags.setFlag(rexp::SELECTED, selected);
-  }
+  void setSelected(rexp::RouteExportFormatType type, bool selected);
 
   /* Get a clone with flag indicating manually saving */
   RouteExportFormat getForManualSave(rexp::RouteExportFormatType type) const
@@ -231,8 +240,15 @@ public:
   /* Update all callbacks */
   void initCallbacks(RouteExport *routeExport);
 
-  /* Update default paths depending on selected flight simulator */
   void updateDefaultPaths();
+
+  /* Constants to detect correct file format and version */
+  static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x34ABF37C;
+  static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 1;
+
+  /* Needed to avoid exceptions when loading since QSettings reads the bytes even when only
+   * iterating over other keys */
+  static bool exceptionOnReadError;
 
 private:
   /* Initialize format map */

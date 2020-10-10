@@ -167,6 +167,9 @@ public:
   /* Place to store flight plans */
   QString getSimulatorFilesPath(atools::fs::FsPaths::SimulatorType type) const;
 
+  /* Get best installed simulator from FSX, FSX SE and all P3D versions */
+  QString getSimulatorFilesPathBestFsxP3d() const;
+
   dm::NavdatabaseStatus getNavDatabaseStatus() const
   {
     return navDatabaseStatus;

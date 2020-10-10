@@ -560,6 +560,11 @@ QString NavApp::getSimulatorFilesPath(atools::fs::FsPaths::SimulatorType type)
   return databaseManager->getSimulatorFilesPath(type);
 }
 
+QString NavApp::getSimulatorFilesPathBestFsxP3d()
+{
+  return databaseManager->getSimulatorFilesPathBestFsxP3d();
+}
+
 bool NavApp::hasSimulator(atools::fs::FsPaths::SimulatorType type)
 {
   return atools::fs::FsPaths::hasSimulator(type);

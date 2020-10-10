@@ -593,6 +593,11 @@ QString DatabaseManager::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType
   return simulators.value(type).basePath;
 }
 
+QString DatabaseManager::getSimulatorFilesPathBestFsxP3d() const
+{
+  return getSimulatorFilesPath(simulators.getBestInstalledFsxP3d());
+}
+
 QString DatabaseManager::getSimulatorFilesPath(FsPaths::SimulatorType type) const
 {
   QString base = getSimulatorBasePath(type);
