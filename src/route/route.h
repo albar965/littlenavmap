@@ -96,7 +96,8 @@ public:
 
   /* Start from distance but values do not decrease if aircraft is leaving route.
    *  Ignores active and looks for all legs.
-   *  Unreliable.*/
+   *
+   * UNRELIABLE AND DOES NOT CONSIDER HEADING, ALTERNATES MISSED APPROACH LEGS.*/
   float getDistanceFromStart(const atools::geo::Pos& pos) const;
 
   /* Ignores approach objects if ignoreNotEditable is true.

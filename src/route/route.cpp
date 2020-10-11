@@ -299,7 +299,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
   }
 
 #ifdef DEBUG_ACTIVE_LEG
-  qDebug() << "activePos" << activeLegResult;
+  qDebug() << Q_FUNC_INFO << "activePos" << activeLegResult;
 #endif
 
   if(activeLegIndex != map::INVALID_INDEX_VALUE && value(activeLegIndex).isAlternate())
@@ -337,28 +337,28 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
       courseDiff = 360.f - courseDiff;
 
 #ifdef DEBUG_ACTIVE_LEG
-    qDebug() << "ACTIVE" << at(activeLegIndex);
-    qDebug() << "NEXT" << at(nextLeg);
+    qDebug() << Q_FUNC_INFO << "ACTIVE" << at(activeLegIndex);
+    qDebug() << Q_FUNC_INFO << "NEXT" << at(nextLeg);
 #endif
 
     // Test next leg
     atools::geo::LineDistance nextLegResult;
     activePos.pos.distanceMeterToLine(pos1, pos2, nextLegResult);
 #ifdef DEBUG_ACTIVE_LEG
-    qDebug() << "NEXT" << nextLeg << nextLegResult;
+    qDebug() << Q_FUNC_INFO << "NEXT" << nextLeg << nextLegResult;
 #endif
 
     bool switchToNextLeg = false;
     if(value(activeLegIndex).getProcedureLeg().isHold())
     {
 #ifdef DEBUG_ACTIVE_LEG
-      qDebug() << "ACTIVE HOLD";
+      qDebug() << Q_FUNC_INFO << "ACTIVE HOLD";
 #endif
       // Test next leg if we can exit a hold
       if(value(nextLeg).getProcedureLeg().line.getPos1() == value(activeLegIndex).getPosition())
       {
 #ifdef DEBUG_ACTIVE_LEG
-        qDebug() << "HOLD SAME";
+        qDebug() << Q_FUNC_INFO << "HOLD SAME";
 #endif
 
         // hold point is the same as next leg starting point
@@ -373,10 +373,10 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
         atools::geo::LineDistance resultHold;
         value(activeLegIndex).getProcedureLeg().holdLine.distanceMeterToLine(activePos.pos, resultHold);
 #ifdef DEBUG_ACTIVE_LEG
-        qDebug() << "NEXT HOLD" << nextLeg << resultHold;
-        qDebug() << "HOLD DIFFER";
-        qDebug() << "resultHold" << resultHold;
-        qDebug() << "holdLine" << at(activeLegIndex).getProcedureLeg().holdLine;
+        qDebug() << Q_FUNC_INFO << "NEXT HOLD" << nextLeg << resultHold;
+        qDebug() << Q_FUNC_INFO << "HOLD DIFFER";
+        qDebug() << Q_FUNC_INFO << "resultHold" << resultHold;
+        qDebug() << Q_FUNC_INFO << "holdLine" << at(activeLegIndex).getProcedureLeg().holdLine;
 #endif
         // Hold point differs from next leg start - use the helping line
         if(resultHold.status == atools::geo::ALONG_TRACK) // Check if we are outside of the hold
@@ -412,7 +412,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     }
 
 #ifdef DEBUG_ACTIVE_LEG
-    qDebug() << "Next leg" << at(nextLeg);
+    qDebug() << Q_FUNC_INFO << "Next leg" << at(nextLeg);
 #endif
 
     // Check if next leg should be activated =================================================
@@ -424,7 +424,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     if(switchToNextLeg)
     {
 #ifdef DEBUG_ACTIVE_LEG
-      qDebug() << "Switching to next leg";
+      qDebug() << Q_FUNC_INFO << "Switching to next leg";
 #endif
 
       // Either left current leg or closer to next and on courses
@@ -438,7 +438,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     }
   }
 #ifdef DEBUG_ACTIVE_LEG
-  qDebug() << "active" << activeLegIndex << "size" << size()
+  qDebug() << Q_FUNC_INFO << "active" << activeLegIndex << "size" << size()
            << "ident" << at(activeLegIndex).getIdent()
            << "alternate" << at(activeLegIndex).isAlternate()
            << proc::procedureLegTypeStr(at(activeLegIndex).getProcedureLeg().type);
