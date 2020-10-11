@@ -226,6 +226,10 @@ public:
     return *languageIndex;
   }
 
+  /* Checks if size and last modification time have changed on the readonly nav and sim databases.
+   * Shows an error dialog if this is the case */
+  void checkForChangedNavAndSimDatabases();
+
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
    * Recipients have to close all database connections and clear all caches. The database instance itself is not changed
@@ -333,6 +337,8 @@ private:
   *databaseSimAirspace = nullptr /* Airspace database from simulator independent from nav switch */,
   *databaseNavAirspace = nullptr /* Airspace database from navdata independent from nav switch */,
   *databaseOnline = nullptr /* Database for network online data */;
+
+  bool showingDatabaseChangeWarning = false;
 
   MainWindow *mainWindow = nullptr;
   DatabaseProgressDialog *progressDialog = nullptr;

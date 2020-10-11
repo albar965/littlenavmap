@@ -1627,6 +1627,10 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::actionShortcutNavaidInformationTriggered);
   connect(ui->actionShortcutAircraftProgress, &QAction::triggered,
           this, &MainWindow::actionShortcutAircraftProgressTriggered);
+
+  // Check for database file modifications on application activation
+  connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::applicationStateChanged,
+          NavApp::getDatabaseManager(), &DatabaseManager::checkForChangedNavAndSimDatabases);
 }
 
 void MainWindow::actionShortcutMapTriggered()

@@ -1122,6 +1122,43 @@ atools::sql::SqlDatabase *DatabaseManager::getDatabaseNavAirspace()
   return databaseNavAirspace;
 }
 
+void DatabaseManager::checkForChangedNavAndSimDatabases()
+{
+  if(!showingDatabaseChangeWarning)
+  {
+    showingDatabaseChangeWarning = true;
+    if(QGuiApplication::applicationState() & Qt::ApplicationActive)
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO;
+#endif
+
+      QStringList files;
+      if(databaseSim != nullptr && databaseSim->isOpen() && databaseSim->isFileModified())
+        files.append(QDir::toNativeSeparators(databaseSim->databaseName()));
+
+      if(databaseNav != nullptr && databaseNav->isOpen() && databaseNav->isFileModified())
+        files.append(QDir::toNativeSeparators(databaseNav->databaseName()));
+
+      if(!files.isEmpty())
+      {
+        QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                             tr("<p style=\"white-space:pre\">"
+                                  "Detected a modification of one or more database files:<br/><br/>"
+                                  "%1"
+                                  "<br/><br/>"
+                                  "Always close %2 before copying, overwriting or updating scenery library databases.</p>").
+                             arg(files.join(tr("<br/>"))).
+                             arg(QApplication::applicationName()));
+
+        databaseNav->recordFileMetadata();
+        databaseSim->recordFileMetadata();
+      }
+    }
+    showingDatabaseChangeWarning = false;
+  }
+}
+
 void DatabaseManager::run()
 {
   qDebug() << Q_FUNC_INFO;
