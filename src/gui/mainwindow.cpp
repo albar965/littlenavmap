@@ -2395,10 +2395,9 @@ bool MainWindow::routeSaveLnm()
     // Ask before saving file
     int result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_WARNING,
-                                 tr("<p><b>You cannot save this file directly.<br/>"
-                                    "Information might be lost.<br/>"
-                                    "Use the export function instead.</b></p>"
-                                    "<p><b>Save using the new LNMPLN format?</b></p>"),
+                                 tr("<p>You cannot save this file directly.<br/>"
+                                    "Use the export function instead.</p>"
+                                    "<p>Save using the new LNMPLN format now?</p>"),
                                  tr("Do not show this dialog again and save as LNMPLN."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
 
