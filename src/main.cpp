@@ -181,7 +181,9 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
 
     QCommandLineOption settingsDirOpt({"s", "settings-directory"},
-                                      QObject::tr("Use <settings-directory> instead of \"%1\".").
+                                      QObject::tr("Use <settings-directory> instead of \"%1\"."
+                                                  "This does *not* override the full path."
+                                                  "Spaces are replaced with underscores.").
                                       arg(NavApp::organizationName()),
                                       QObject::tr("settings-directory"));
     parser.addOption(settingsDirOpt);
@@ -238,6 +240,8 @@ int main(int argc, char *argv[])
     migrate::checkAndMigrateSettings();
 
     Settings& settings = Settings::instance();
+
+    qInfo() << "Settings dir name" << Settings::instance().getDirName();
 
     int pixmapCache = settings.valueInt(lnm::OPTIONS_PIXMAP_CACHE, -1);
     qInfo() << "QPixmapCache cacheLimit" << QPixmapCache::cacheLimit() << "KB";
@@ -310,7 +314,7 @@ int main(int argc, char *argv[])
 
 #if defined(Q_OS_WIN32)
     // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
-    QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd"); // generated GUID
+    QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd" + Settings::instance().getDirName()); // generated GUID
     if(!shared.create(512, QSharedMemory::ReadWrite))
     {
       NavApp::deleteSplashScreen();
