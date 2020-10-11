@@ -104,7 +104,7 @@ void RouteExportFormatMap::restoreState()
     if(contains(loadedFmt.getType()))
       loadedFmt.copyLoadedData(f);
     else
-      qWarning() << Q_FUNC_INFO << "Type not found in internal list" << loadedFmt.getType();
+      qWarning() << Q_FUNC_INFO << "Type not found in internal list" << loadedFmt.getTypeAsInt();
 
     f.updatePathError();
   }
