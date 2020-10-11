@@ -483,7 +483,7 @@ void RouteMultiExportDialog::selectForExportToggled()
     // Select checkbox clicked ============================
     rexp::RouteExportFormatType type =
       static_cast<rexp::RouteExportFormatType>(checkBox->property(FORMAT_PROP_NAME).toInt());
-    qDebug() << Q_FUNC_INFO << type;
+    qDebug() << Q_FUNC_INFO << static_cast<int>(type);
 
     // Checkbox clicked - update format in map and colors
     // Update user role for sorting
@@ -590,7 +590,7 @@ void RouteMultiExportDialog::saveNowClicked()
     // Save button clicked ============================
     rexp::RouteExportFormatType type =
       static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt());
-    qDebug() << Q_FUNC_INFO << type;
+    qDebug() << Q_FUNC_INFO << << static_cast<int>(type);
     emit saveNowButtonClicked(formatMap->value(type));
   }
 }
