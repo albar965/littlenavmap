@@ -590,7 +590,7 @@ void RouteMultiExportDialog::saveNowClicked()
     // Save button clicked ============================
     rexp::RouteExportFormatType type =
       static_cast<rexp::RouteExportFormatType>(button->property(FORMAT_PROP_NAME).toInt());
-    qDebug() << Q_FUNC_INFO << << static_cast<int>(type);
+    qDebug() << Q_FUNC_INFO << static_cast<int>(type);
     emit saveNowButtonClicked(formatMap->value(type));
   }
 }
