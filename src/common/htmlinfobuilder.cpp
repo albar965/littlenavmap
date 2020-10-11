@@ -2818,7 +2818,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
                     arg(locale.toString(from, QLocale::ShortFormat)).
                     arg(locale.toString(to, QLocale::ShortFormat)).
                     arg(now >= from && now <= to ? tr("<br/><b>Track is now valid.</b>") : QString()),
-                    atools::util::html::NO_ENTITIES);
+                    ahtml::NO_ENTITIES);
         else
           html.row2(tr("Track valid:"), tr("No validity period"));
 
@@ -3644,12 +3644,23 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             else
               html.row2(tr("Cross Track Distance:"), tr("Not along Track"));
           }
-        }
-      }
+        } // if(route.getSizeWithoutAlternates() > 1)
+      } // if(routeLegCorrected != nullptr)
       else
         qWarning() << "Invalid route leg index" << activeLegCorrected;
 
       html.tableEnd();
+
+      if(!routeLegCorrected.getComment().isEmpty())
+      {
+        html.p().b(tr("Waypoint Remarks")).pEnd();
+        html.table(1, 2, 0, 0, html.getRowBackColor());
+        html.tr().td().text(atools::elideTextLinesShort(routeLegCorrected.getComment(), 3, 100,
+                                                        true /* compressEmpty */, false /* ellipseLastLine */),
+                            ahtml::AUTOLINK | ahtml::SMALL).tdEnd().trEnd();
+        html.tableEnd();
+      }
+
     } // if(activeLegCorrected != map::INVALID_INDEX_VALUE && ...
     else
     {
