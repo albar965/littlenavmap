@@ -1139,7 +1139,7 @@ void DatabaseManager::checkForChangedNavAndSimDatabases()
 
       if(databaseNav != nullptr && databaseNav->isOpen() && databaseNav->isFileModified())
         files.append(QDir::toNativeSeparators(databaseNav->databaseName()));
-
+      files.removeDuplicates();
       if(!files.isEmpty())
       {
         QMessageBox::warning(mainWindow, QApplication::applicationName(),
