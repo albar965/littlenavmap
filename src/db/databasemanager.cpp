@@ -896,9 +896,9 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
   catch(atools::sql::SqlException& e)
   {
     QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                          tr("Cannot open %1 database. Reason:\n\n"
-                             "%2\n\n"
-                             "Is another %3 running?\n\n"
+                          tr("Cannot open %1 database. Reason:<br/><br/>"
+                             "%2<br/><br/>"
+                             "Is another instance of <i>%3</i> running?<br/><br/>"
                              "Exiting now.").
                           arg(displayName).
                           arg(e.getSqlError().databaseText()).
@@ -1145,10 +1145,10 @@ void DatabaseManager::checkForChangedNavAndSimDatabases()
         QMessageBox::warning(mainWindow, QApplication::applicationName(),
                              tr("<p style=\"white-space:pre\">"
                                   "Detected a modification of one or more database files:<br/><br/>"
-                                  "%1"
+                                  "&quot;%1&quot;"
                                   "<br/><br/>"
-                                  "Always close %2 before copying, overwriting or updating scenery library databases.</p>").
-                             arg(files.join(tr("<br/>"))).
+                                  "Always close <i>%2</i> before copying, overwriting or updating scenery library databases.</p>").
+                             arg(files.join(tr("&quot;<br/>&quot;"))).
                              arg(QApplication::applicationName()));
 
         databaseNav->recordFileMetadata();

@@ -571,7 +571,7 @@ void LogdataController::exportCsv()
 
     int numSelected = NavApp::getLogdataSearch()->getSelectedRowCount();
     choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
-                             tr("File header will be ignore if this is enabled."), false);
+                             tr("File header will be ignored if this is enabled."), false);
     choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QString(), true,
                              numSelected == 0 /* disabled */);
     choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QString(), false);

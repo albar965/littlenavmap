@@ -784,7 +784,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
 
   if(appendAllowed)
     choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
-                             tr("File header will be ignore if this is enabled."), false);
+                             tr("File header will be ignored if this is enabled."), false);
   else
     // Add a hidden dummy which still allows to save the settings to the same key/variable
     choiceDialog.addCheckBoxHidden(APPEND);

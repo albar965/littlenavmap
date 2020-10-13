@@ -181,8 +181,8 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
 
     QCommandLineOption settingsDirOpt({"s", "settings-directory"},
-                                      QObject::tr("Use <settings-directory> instead of \"%1\"."
-                                                  "This does *not* override the full path."
+                                      QObject::tr("Use <settings-directory> instead of \"%1\".\n"
+                                                  "This does *not* override the full path.\n"
                                                   "Spaces are replaced with underscores.").
                                       arg(NavApp::organizationName()),
                                       QObject::tr("settings-directory"));

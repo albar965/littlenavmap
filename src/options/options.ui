@@ -1279,7 +1279,7 @@ userpoints and logbook entries when hovering the cursor over the map</string>
                     <string>Show procedures in procedure search tab on airport click</string>
                    </property>
                    <property name="text">
-                    <string>Update &amp;procedures on airport click</string>
+                    <string>Show &amp;procedures on airport click</string>
                    </property>
                    <property name="checked">
                     <bool>true</bool>
@@ -2684,7 +2684,7 @@ Afftects map and elevation profile.</string>
                   <string>Draw yellow circle around add-on airport symbols</string>
                  </property>
                  <property name="text">
-                  <string>Highlight add-on airports</string>
+                  <string>&amp;Highlight add-on airports</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -4389,7 +4389,7 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
                 <widget class="QPushButton" name="pushButtonOptionsRouteFilenameShort">
                  <property name="toolTip">
                   <string>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
-Example: &quot;EDDF_LIRF.lnmpln&quot;</string>
+Example: &quot;EDDF LIRF.lnmpln&quot;</string>
                  </property>
                  <property name="text">
                   <string>&amp;Short</string>
@@ -6270,7 +6270,7 @@ You have to reload the scenery library so that the changes take effect.</string>
                <item row="4" column="0" colspan="2">
                 <widget class="QLabel" name="label_7">
                  <property name="text">
-                  <string>&lt;b&gt;You have to re-import the scenery library for the changes to take effect.&lt;/b&gt;</string>
+                  <string>&lt;b&gt;You have to reload the scenery library for the changes to take effect.&lt;/b&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>

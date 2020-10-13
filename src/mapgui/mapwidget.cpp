@@ -2639,7 +2639,7 @@ bool MapWidget::checkPos(const atools::geo::Pos& pos)
                                              tr("<p>Cannot zoom to a position nearby the "
                                                   "poles in Mercator projection.<br/>"
                                                   "Use Spherical instead.</p>"),
-                                             tr("Do not show this dialog again."));
+                                             tr("Do not &show this dialog again."));
     return false;
   }
 

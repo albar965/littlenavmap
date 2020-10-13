@@ -1557,65 +1557,65 @@ QString mapObjectTypeToString(MapTypes type)
     QStringList str;
 
     if(type.testFlag(AIRPORT))
-      str += QObject::tr("Airport");
+      str += "Airport";
     if(type.testFlag(AIRPORT_HARD))
-      str += QObject::tr("AirportHard");
+      str += "AirportHard";
     if(type.testFlag(AIRPORT_SOFT))
-      str += QObject::tr("AirportSoft");
+      str += "AirportSoft";
     if(type.testFlag(AIRPORT_EMPTY))
-      str += QObject::tr("AirportEmpty");
+      str += "AirportEmpty";
     if(type.testFlag(AIRPORT_ADDON))
-      str += QObject::tr("AirportAddon");
+      str += "AirportAddon";
     if(type.testFlag(VOR))
-      str += QObject::tr("VOR");
+      str += "VOR";
     if(type.testFlag(NDB))
-      str += QObject::tr("NDB");
+      str += "NDB";
     if(type.testFlag(ILS))
-      str += QObject::tr("ILS");
+      str += "ILS";
     if(type.testFlag(MARKER))
-      str += QObject::tr("Marker");
+      str += "Marker";
     if(type.testFlag(WAYPOINT))
-      str += QObject::tr("Waypoint");
+      str += "Waypoint";
     if(type.testFlag(AIRWAY))
-      str += QObject::tr("Airway");
+      str += "Airway";
     if(type.testFlag(AIRWAYV))
-      str += QObject::tr("Airwayv");
+      str += "Airwayv";
     if(type.testFlag(AIRWAYJ))
-      str += QObject::tr("Airwayj");
+      str += "Airwayj";
     if(type.testFlag(TRACK))
-      str += QObject::tr("Track");
+      str += "Track";
     if(type.testFlag(AIRCRAFT))
-      str += QObject::tr("Aircraft");
+      str += "Aircraft";
     if(type.testFlag(AIRCRAFT_AI))
-      str += QObject::tr("AircraftAi");
+      str += "AircraftAi";
     if(type.testFlag(AIRCRAFT_AI_SHIP))
-      str += QObject::tr("AircraftAiShip");
+      str += "AircraftAiShip";
     if(type.testFlag(AIRCRAFT_TRACK))
-      str += QObject::tr("AircraftTrack");
+      str += "AircraftTrack";
     if(type.testFlag(USERPOINTROUTE))
-      str += QObject::tr("Userpointroute");
+      str += "Userpointroute";
     if(type.testFlag(PARKING))
-      str += QObject::tr("Parking");
+      str += "Parking";
     if(type.testFlag(RUNWAYEND))
-      str += QObject::tr("Runwayend");
+      str += "Runwayend";
     if(type.testFlag(INVALID))
-      str += QObject::tr("Invalid");
+      str += "Invalid";
     if(type.testFlag(MISSED_APPROACH))
-      str += QObject::tr("Missed_approach");
+      str += "Missed_approach";
     if(type.testFlag(PROCEDURE))
-      str += QObject::tr("Procedure");
+      str += "Procedure";
     if(type.testFlag(AIRSPACE))
-      str += QObject::tr("Airspace");
+      str += "Airspace";
     if(type.testFlag(HELIPAD))
-      str += QObject::tr("Helipad");
+      str += "Helipad";
     if(type.testFlag(USERPOINT))
-      str += QObject::tr("Userpoint");
+      str += "Userpoint";
     if(type.testFlag(AIRCRAFT_ONLINE))
-      str += QObject::tr("AircraftOnline");
+      str += "AircraftOnline";
     if(type.testFlag(LOGBOOK))
-      str += QObject::tr("Logbook");
+      str += "Logbook";
 
-    return str.join(QObject::tr(","));
+    return str.join(",");
   }
 }
 

@@ -80,7 +80,7 @@ Formats above have to be given exactly as shown in the examples.</string>
    <item row="5" column="0">
     <widget class="QLabel" name="labelRouteUserWaypointName">
      <property name="text">
-      <string>&amp;Name</string>
+      <string>&amp;Name:</string>
      </property>
      <property name="buddy">
       <cstring>lineEditRouteUserWaypointName</cstring>

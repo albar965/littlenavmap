@@ -353,7 +353,7 @@ Required for export to X-Plane &quot;user_fix.dat&quot;.</string>
      <item row="6" column="0" colspan="2">
       <widget class="QLabel" name="labelUserdataDescription">
        <property name="text">
-        <string>&amp;Description:</string>
+        <string>&amp;Remarks:</string>
        </property>
        <property name="buddy">
         <cstring>plainTextEditUserdataDescription</cstring>
@@ -402,7 +402,7 @@ Formats above have to be given exactly as shown in the examples.</string>
      <item row="6" column="3">
       <widget class="QCheckBox" name="checkBoxUserdataDescription">
        <property name="toolTip">
-        <string>Check to change description for all selected waypoints</string>
+        <string>Check to change remarks for all selected waypoints</string>
        </property>
        <property name="text">
         <string/>

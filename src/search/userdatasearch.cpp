@@ -75,7 +75,7 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::T
   append(Column("region", ui->lineEditUserdataRegion, tr("Region")).filter()).
   append(Column("name", ui->lineEditUserdataName, tr("Name")).filter()).
   append(Column("tags", ui->lineEditUserdataTags, tr("Tags")).filter()).
-  append(Column("description", ui->lineEditUserdataDescription, tr("Description")).filter()).
+  append(Column("description", ui->lineEditUserdataDescription, tr("Remarks")).filter()).
   append(Column("temp").hidden()).
 
   append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).

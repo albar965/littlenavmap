@@ -2842,7 +2842,7 @@
               </sizepolicy>
              </property>
              <property name="placeholderText">
-              <string>Description</string>
+              <string>Remarks</string>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>
@@ -6249,6 +6249,13 @@ Erases procedures.</string>
        </item>
        <item>
         <widget class="QPushButton" name="pushButtonRouteCalc">
+         <property name="toolTip">
+          <string>Calculate a flight plan using the settings above.
+Keeps procedures.</string>
+         </property>
+         <property name="statusTip">
+          <string>Calculate a flight plan using the settings above</string>
+         </property>
          <property name="text">
           <string>&amp;Calculate</string>
          </property>
@@ -6575,7 +6582,7 @@ Fastest calculation</string>
 Best track will be selected automatically.</string>
           </property>
           <property name="statusTip">
-           <string>Use downloaded NAT, PACOTS or AUSOTS tracks.\nBest track will be selected automatically.</string>
+           <string>Use downloaded NAT, PACOTS or AUSOTS tracks.</string>
           </property>
           <property name="text">
            <string>&amp;Use NAT, PACOTS or AUSOTS tracks</string>
@@ -11492,10 +11499,10 @@ Disabled if a navdatabase does not allow it.</string>
     <string>&amp;Fullscreen Map</string>
    </property>
    <property name="toolTip">
-    <string>Maximize the map and hide all other dock windows, toolbar and menu bar</string>
+    <string>Maximize the map and hide all other dock windows and the toolbar</string>
    </property>
    <property name="statusTip">
-    <string>Maximize the map and hide all other dock windows, toolbar and menu bar</string>
+    <string>Maximize the map and hide all other dock windows and the toolbar</string>
    </property>
    <property name="shortcut">
     <string>Shift+F11</string>
@@ -11611,7 +11618,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight Plan &amp;as MSFS  PLN ...</string>
+    <string>Export Flight Plan &amp;as MSFS 2020 PLN ...</string>
    </property>
    <property name="toolTip">
     <string>Export Flight Plan as PLN for Microsoft Flight Simulator 2020</string>
@@ -11838,8 +11845,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

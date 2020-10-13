@@ -2398,7 +2398,7 @@ bool MainWindow::routeSaveLnm()
                                  tr("<p>You cannot save this file directly.<br/>"
                                     "Use the export function instead.</p>"
                                     "<p>Save using the new LNMPLN format now?</p>"),
-                                 tr("Do not show this dialog again and save as LNMPLN."),
+                                 tr("Do not &show this dialog again and save as LNMPLN."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
 
     if(result == QMessageBox::Cancel)
@@ -2564,7 +2564,7 @@ void MainWindow::layoutSaveAs()
 
   QString layoutFile = dialog->saveFileDialog(
     tr("Window Layout"),
-    tr("Window Layout %1;;All Files (*)").arg(lnm::FILE_PATTERN_LAYOUT),
+    tr("Window Layout Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LAYOUT),
     "lnmlayout", "WindowLayout/", atools::documentsDir(), QString(), false /* confirm overwrite */);
 
   if(!layoutFile.isEmpty())
@@ -3217,9 +3217,9 @@ void MainWindow::mainWindowShown()
         msgBox.setText(
           tr("Could not find a<ul>"
              "<li>Microsoft Flight Simulator X,</li>"
-               "<li>Microsoft Flight Simulator - Steam Edition or</li>"
-                 "<li>Microsoft Flight Simulator 2020 or</li>"
-                   "<li>Prepar3D installation</li></ul>"
+               "<li>Microsoft Flight Simulator - Steam Edition,</li>"
+                 "<li>Prepar3D or</li></ul>"
+                   "<li>Microsoft Flight Simulator 2020 installation</li>"
                      "on this computer. Also, no scenery library databases were found.<br/><br/>"
                      "You can copy a Little Navmap scenery library database from another computer.<br/>"
                      "Press the help button for more information on this.<br/><br/>"

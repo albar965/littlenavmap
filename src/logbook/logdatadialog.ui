@@ -917,7 +917,7 @@ This is only a file path reference and does not attach the file to the logbook e
             <item>
              <widget class="QPushButton" name="pushButtonAttachedGpxAdd">
               <property name="toolTip">
-               <string>Attach a new GPX file to the logbook entry.
+               <string>Attach a GPX file to the logbook entry.
 GPX files contain flight plan points and the flown trail.</string>
               </property>
               <property name="text">

@@ -579,7 +579,7 @@ void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const 
                                            "<p>Continue?</p>").
                                   arg(downloadUrl).
                                   arg(atools::strJoin(errors, tr("<br/>"))),
-                                  tr("Do not show this again and ignore errors in the future"),
+                                  tr("Do not &show this again and ignore errors in the future"),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
 

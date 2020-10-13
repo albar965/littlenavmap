@@ -2384,7 +2384,7 @@ void HtmlInfoBuilder::descriptionText(const QString& description, HtmlBuilder& h
 {
   if(!description.isEmpty())
   {
-    html.p().b(tr("Description")).pEnd();
+    html.p().b(tr("Remarks")).pEnd();
     if(info)
       html.table(1, 2, 0, 100, html.getRowBackColor());
     else
