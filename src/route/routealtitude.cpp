@@ -1274,17 +1274,19 @@ void RouteAltitude::calculateArrival()
                                                      alt.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitide);
         legIndexTopOfDescent = i + 1;
 
-        if(!lastAltLeg->topOfClimb)
-          // Adjust only if not modified by TOC calculation
-          alt.setY2(std::min(newAltitude, cruiseAltitide));
-
         if(lastAltLeg != nullptr)
+        {
+          if(!lastAltLeg->topOfClimb)
+            // Adjust only if not modified by TOC calculation
+            alt.setY2(std::min(newAltitude, cruiseAltitide));
+
           // Adjust neighbor too
           lastAltLeg->setY1(alt.y2());
 
-        // Append point to allow drawing the bend at TOD - TOC position might be already included in leg
-        lastAltLeg->geometry.insert(lastAltLeg->geometry.size() - 1,
-                                    QPointF(distanceTopOfDescent, cruiseAltitide));
+          // Append point to allow drawing the bend at TOD - TOC position might be already included in leg
+          lastAltLeg->geometry.insert(lastAltLeg->geometry.size() - 1,
+                                      QPointF(distanceTopOfDescent, cruiseAltitide));
+        }
 
         // Done here
         if(legIndexTopOfDescent < size())
