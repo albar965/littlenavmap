@@ -941,7 +941,7 @@ Dies dient nur zu Informationszwecken.</translation>
 The fuel report will show a warning if this does not match the simulator aircraft type.</source>
         <oldsource>ICAO aircraft type like B732 or C172. 
 The fuel report will show a warning if this does not match the simulator aircraft type.</oldsource>
-        <translation>ICAO-Flugzeugtyp wie B732 oder C172.
+        <translation>ICAO Flugzeugtyp wie B732 oder C172.
 Der Treibstoffbericht zeigt eine Warnung an, wenn diese nicht mit dem Flugzeugtyp des Simulators übereinstimmt.</translation>
     </message>
     <message>
@@ -3911,7 +3911,7 @@ Die Spalten sind beim Export leer, wenn deaktiviert.</translation>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="361"/>
         <source>Destination airport ICAO code</source>
-        <translation>ICAO-Code Zielflugplatz</translation>
+        <translation>ICAO Code Zielflugplatz</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="229"/>
@@ -3932,7 +3932,7 @@ Die Spalten sind beim Export leer, wenn deaktiviert.</translation>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="268"/>
         <source>Departure airport ICAO code</source>
-        <translation>ICAO-Code Startflugplatz</translation>
+        <translation>ICAO Code Startflugplatz</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="417"/>
@@ -4601,12 +4601,12 @@ Distanz %dist%</translation>
         <location filename="src/gui/mainwindow.ui" line="605"/>
         <location filename="src/gui/mainwindow.ui" line="608"/>
         <source>Airport ICAO code</source>
-        <translation>Flugplatz ICAO-Code</translation>
+        <translation>Flugplatz ICAO Code</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="614"/>
         <source>ICAO Code</source>
-        <translation>ICAO-Code</translation>
+        <translation>ICAO Code</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="636"/>
@@ -5173,7 +5173,7 @@ Distanz %dist%</translation>
         <location filename="src/gui/mainwindow.ui" line="1721"/>
         <location filename="src/gui/mainwindow.ui" line="1724"/>
         <source>Navaid ICAO ident</source>
-        <translation>Navigationshilfe ICAO-Code</translation>
+        <translation>Navigationshilfe ICAO Code</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1730"/>
@@ -5211,12 +5211,12 @@ Distanz %dist%</translation>
         <location filename="src/gui/mainwindow.ui" line="1793"/>
         <location filename="src/gui/mainwindow.ui" line="1796"/>
         <source>Navaid airport ICAO code</source>
-        <translation>Flugplatz ICAO-Code</translation>
+        <translation>Flugplatz ICAO Code</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1802"/>
         <source>Airport ICAO Code</source>
-        <translation>Flugplatz ICAO-Code</translation>
+        <translation>Flugplatz ICAO Code</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1846"/>
@@ -5532,7 +5532,7 @@ Distanz %dist%</translation>
         <location filename="src/gui/mainwindow.ui" line="2616"/>
         <location filename="src/gui/mainwindow.ui" line="2619"/>
         <source>Two-letter code for ICAO region</source>
-        <translation>Zwei-Buchstaben-Code für die ICAO-Region</translation>
+        <translation>Zwei-Buchstaben-Code für die ICAO Region</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2638"/>
@@ -6141,7 +6141,7 @@ Distanz %dist%</translation>
         <location filename="src/gui/mainwindow.ui" line="3024"/>
         <location filename="src/gui/mainwindow.ui" line="3027"/>
         <source>ICAO aircraft type like B732 or C172</source>
-        <translation>ICAO-Flugzeugtyp, wie B732 oder C172</translation>
+        <translation>ICAO Flugzeugtyp, wie B732 oder C172</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3030"/>
@@ -8166,13 +8166,13 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7526"/>
         <source>Show &amp;VOR Stations</source>
-        <translation>Zeige &amp;VOR-Stationen</translation>
+        <translation>Zeige &amp;VOR Stationen</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7529"/>
         <location filename="src/gui/mainwindow.ui" line="7532"/>
         <source>Show VOR stations on map</source>
-        <translation>Zeige VOR-Stationen auf der Karte</translation>
+        <translation>Zeige VOR Stationen auf der Karte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7535"/>
@@ -8182,13 +8182,13 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7550"/>
         <source>Show &amp;NDB Stations</source>
-        <translation>Zeige &amp;NDB-Stationen</translation>
+        <translation>Zeige &amp;NDB Stationen</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7553"/>
         <location filename="src/gui/mainwindow.ui" line="7556"/>
         <source>Show NDB stations on map</source>
-        <translation>Zeige NDB-Stationen auf der Karte</translation>
+        <translation>Zeige NDB Stationen auf der Karte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7559"/>
@@ -8231,7 +8231,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
         <location filename="src/gui/mainwindow.ui" line="7622"/>
         <location filename="src/gui/mainwindow.ui" line="7625"/>
         <source>Show ILS feathers on map</source>
-        <translation>Zeige ILS-Daten auf der Karte</translation>
+        <translation>Zeige ILS Daten auf der Karte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7628"/>
@@ -10034,7 +10034,7 @@ in Relation zum angezeigten Flugplatz</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5217"/>
         <source>VOR, NDB, ILS, waypoint and airway information</source>
-        <translation>VOR-, NDB-, ILS, Wegpunkt- und Nutzerpunkt-Informationen</translation>
+        <translation>VOR-, NDB-, ILS, Wegpunkt- und Nutzerpunktinformationen</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5241"/>
@@ -11121,7 +11121,7 @@ in Relation zum angezeigten Flugplatz</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1849"/>
         <source>Error opening help URL &quot;%1&quot;</source>
-        <translation>Fehler beim Öffnen der URL &quot;%1&quot;</translation>
+        <translation>Fehler beim Öffnen der Webadresse &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1873"/>
@@ -14337,7 +14337,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2679"/>
         <source>ATIS Time:</source>
-        <translation>ATIS-Zeit:</translation>
+        <translation>ATIS Zeit:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2687"/>
@@ -14356,7 +14356,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="2693"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3120"/>
         <source>ATC Rating:</source>
-        <translation>ATC-Bewertung:</translation>
+        <translation>ATC Bewertung:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2695"/>
@@ -17334,7 +17334,7 @@ Versuche in drei Minuten wieder.</translation>
     <message>
         <location filename="src/online/onlinedatacontroller.cpp" line="356"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download online network data:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zum Herunterladen von Online-Netzwerkdaten herzustellen:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Fortsetzen?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zum Herunterladen von Online-Netzwerkdaten herzustellen:&lt;/p&gt;&lt;p&gt;Webadresse: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Fortsetzen?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/online/onlinedatacontroller.cpp" line="362"/>
@@ -18577,7 +18577,7 @@ Süd / Nord: Wie Nord / Süd, nur sind gerade und ungerade vertauscht.</translat
         <location filename="src/options/options.ui" line="4983"/>
         <location filename="src/options/options.ui" line="5113"/>
         <source>No URL set. NOAA weather reports are disabled.</source>
-        <translation>Keine URL gesetzt. NOAA Wetterbericht deaktiviert.</translation>
+        <translation>Keine Webadresse gesetzt. NOAA Wetterbericht deaktiviert.</translation>
     </message>
     <message>
         <source>Complete URL of the VATSIM network weather service.
@@ -18593,7 +18593,7 @@ Süd / Nord: Wie Nord / Süd, nur sind gerade und ungerade vertauscht.</translat
     <message>
         <location filename="src/options/options.ui" line="4898"/>
         <source>No URL set. VATSIM weather reports are disabled.</source>
-        <translation>Keine URL gesetzt. VATSIM Wetterbericht deaktiviert.</translation>
+        <translation>Keine Webadresse gesetzt. VATSIM Wetterbericht deaktiviert.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4932"/>
@@ -18660,12 +18660,12 @@ Wenn das Feld leer ist, wird der Standardpfad zur Wetterdatei von Active Sky ver
     <message>
         <location filename="src/options/options.ui" line="4962"/>
         <source>&amp;VATSIM Weather Service URL:</source>
-        <translation>&amp;VATSIM Wetterdienst URL:</translation>
+        <translation>&amp;VATSIM Wetterdienst Webadresse:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4993"/>
         <source>&amp;NOAA Weather Service URL:</source>
-        <translation>&amp;NOAA Wetterdienst URL:</translation>
+        <translation>&amp;NOAA Wetterdienst Webadresse:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4672"/>
@@ -19013,7 +19013,7 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
     <message>
         <location filename="src/options/options.ui" line="4838"/>
         <source>&amp;IVAO Weather Download URL:</source>
-        <translation>&amp;IVAO Wetterdownload URL:</translation>
+        <translation>&amp;IVAO Wetterdownload Webadresse:</translation>
     </message>
     <message>
         <source>Download URL for the IVAO weather file</source>
@@ -19026,12 +19026,12 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
     <message>
         <location filename="src/options/options.ui" line="4868"/>
         <source>No URL set. IVAO weather reports are disabled.</source>
-        <translation>Keine URL angegeben. IVAO-Wettermeldungen sind deaktiviert.</translation>
+        <translation>Keine Webadresse angegeben. IVAO Wettermeldungen sind deaktiviert.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4922"/>
         <source>Test the IVAO download URL</source>
-        <translation>IVAO Download-URL testen</translation>
+        <translation>IVAO Download-Adresse testen</translation>
     </message>
     <message>
         <source>Online Flying</source>
@@ -19055,12 +19055,12 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
     <message>
         <location filename="src/options/options.ui" line="5276"/>
         <source>Use the VATSIM network pre-defined configuration for online flying</source>
-        <translation>Nutze die vordefinierte VATSIM-Netzwerkkonfiguration zum Onlinefliegen</translation>
+        <translation>Nutze die vordefinierte VATSIM Netzwerkkonfiguration zum Onlinefliegen</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5286"/>
         <source>Use the IVAO network pre-defined configuration for online flying</source>
-        <translation>Nutze die vordefinierte IVAO-Netzwerkkonfiguration zum Onlinefliegen</translation>
+        <translation>Nutze die vordefinierte IVAO Netzwerkkonfiguration zum Onlinefliegen</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5296"/>
@@ -19111,12 +19111,12 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
     <message>
         <location filename="src/options/options.ui" line="5360"/>
         <source>Download &quot;whazzup.txt&quot; file from given URL and check validity</source>
-        <translation>&quot;whazzup.txt&quot;-datei von der angegebenen URL herunterladen und validieren</translation>
+        <translation>&quot;whazzup.txt&quot;-Datei von der angegebenen Webadresse herunterladen und testen</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5370"/>
         <source>&amp;Whazzup File URL:</source>
-        <translation>URL &amp;Whazzup-Datei:</translation>
+        <translation>Webadresse &amp;Whazzup-Datei:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5380"/>
@@ -19131,12 +19131,12 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
     <message>
         <location filename="src/options/options.ui" line="5390"/>
         <source>&amp;Status File URL:</source>
-        <translation>URL &amp;Status-Datei:</translation>
+        <translation>Webadresse &amp;Status-Datei:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5400"/>
         <source>Download &quot;status.txt&quot; file from given URL and check validity</source>
-        <translation>&quot;status.txt&quot;-datei von der angegebenen URL herunterladen und validieren</translation>
+        <translation>&quot;status.txt&quot;-Datei von der angegebenen Webadresse herunterladen und testen</translation>
     </message>
     <message>
         <source>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.
@@ -19212,7 +19212,7 @@ Use Offline GLOBE Elevation Data. Can be downloaded for free.
 Resolution is lower than the online source but updates are very fast.
 Has a 30 arc second grid (approximately 900 meter near the equator).</source>
         <translation>Empfohlen.
-Nutze Offline- GLOBE-Höhendaten. Diese können kostenlos heruntergeladen werden.
+Nutze Offline-GLOBE-Höhendaten. Diese können kostenlos heruntergeladen werden.
 Die Auflösung ist niedriger als bei Onlinequellen, Aktualisierungen sind jedoch sehr schnell.
 Die Daten haben ein Raster von 30 Bogensekunden (ca. 900 Meter nahe des Äquators).</translation>
     </message>
@@ -19499,7 +19499,7 @@ für Garmin GTN und GNS, um gesperrte Wegpunkte zu vermeiden</translation>
 Little Navmap normally uses the station declination when calculating a course to a VOR
 which can result in wrong course values if the calibration of a VOR is very old.
 Check this if you rely on GPS when flying.</source>
-        <translation>Berechnet den magnetischen Kurs basierend auf der Umgebung und ignoriert den VOR-Deklinationswert, wenn aktiviert.
+        <translation>Berechnet den magnetischen Kurs basierend auf der Umgebung und ignoriert den VOR Deklinationswert, wenn aktiviert.
 Little Navmap verwendet normalerweise die Deklination der Station, wenn ein Kurs zu oder von einem VOR berechnet wird,
 was zu falschen Kurswerten führen kann, wenn die Kalibrierung eines VOR sehr alt ist.
 Nutzen Sie dies, wenn Sie sich beim Fliegen nur auf GPS verlassen.</translation>
@@ -19875,9 +19875,9 @@ CRUISEALT: Cruise altitude</oldsource>
 Das Dateisuffix, wie &quot;.lnmpln&quot;, &quot;.pln&quot; or &quot;.fgfp&quot; wird automatisch hinzugefügt.
 
 PLANTYPE: IFR oder VFR
-DEPARTIDENT: ICAO-Code des Startflugplatzes
+DEPARTIDENT: ICAO Code des Startflugplatzes
 DEPARTNAME: Name des Startflugplatzes
-DESTIDENT: ICAO-Code des Zielflugplatzes
+DESTIDENT: ICAO Code des Zielflugplatzes
 DESTNAME: Name des Zielflugplatzes
 CRUISEALT: Reiseflughöhe</translation>
     </message>
@@ -19901,14 +19901,14 @@ CRUISEALT: Reiseflughöhe</translation>
         <location filename="src/options/options.ui" line="4858"/>
         <source>Download URL for the IVAO weather file.
 Default is &quot;http://wx.ivao.aero/metar.php&quot;.</source>
-        <translation>Webadresse für die IVAO-Wetterdatei.
+        <translation>Webadresse für die IVAO Wetterdatei.
 Der Standard is &quot;http://wx.ivao.aero/metar.php&quot;.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4888"/>
         <source>Complete URL of the VATSIM network weather download service.
 Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
-        <translation>Komplette Webadresse des VATSIM-Wetterdienstes.
+        <translation>Komplette Webadresse des VATSIM Wetterdienstes.
 Standard ist &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</translation>
     </message>
     <message>
@@ -19916,8 +19916,8 @@ Standard ist &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</translation
         <source>Complete URL of the NOAA weather service file.
 &quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
 Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT&quot;</source>
-        <translation>Komplette Webadresse des NOAA-Wetterdienstes.
-&quot;%1&quot; ist ein Platzhalter und wird mit der aktuellen UTC-Stunde ersetzt.
+        <translation>Komplette Webadresse des NOAA Wetterdienstes.
+&quot;%1&quot; ist ein Platzhalter und wird mit der aktuellen UTC Stunde ersetzt.
 Standard ist &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT&quot;</translation>
     </message>
     <message>
@@ -19931,7 +19931,7 @@ Standard ist &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading wind reports.
 Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</source>
-        <translation>Basisadresse des NOAA-Wetterdienstes.
+        <translation>Basisadresse des NOAA Wetterdienstes.
 Diese Adresse muss normalerweise nicht geändert werden.
 Ein falscher Wert kann zu Fehlern beim Herunterladen der Höhenwinddaten führen.
 Der Standard ist &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</translation>
@@ -19939,7 +19939,7 @@ Der Standard ist &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&q
     <message>
         <location filename="src/options/options.ui" line="5153"/>
         <source>NOAA &amp;Wind Service Base URL:</source>
-        <translation>NOAA-Wind Basis-URL:</translation>
+        <translation>NOAA &amp;Wind Webadresse:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5416"/>
@@ -21370,7 +21370,7 @@ Dieser Prozess läuft im Hintergrund und kann eine Weile dauern.</translation>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2376"/>
         <source>Error opening help URL &quot;%1&quot;</source>
-        <translation>Fehler beim Öffnen der URL &quot;%1&quot;</translation>
+        <translation>Fehler beim Öffnen der Webadresse &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -25038,7 +25038,7 @@ hh:mm</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="153"/>
         <source>ICAO ident of the navaid or airport.</source>
-        <translation>ICAO-Code des Flugplatzes or der Navigationshilfe.</translation>
+        <translation>ICAO Code des Flugplatzes or der Navigationshilfe.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="154"/>
@@ -25053,7 +25053,7 @@ hh:mm</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="156"/>
         <source>Either SID, SID transition, STAR, STAR transition, transition, approach or missed plus the name of the procedure.</source>
-        <translation>Entweder SID, SID-Übergang, STAR, STAR-Übergang, Übergang, Anflug oder Fehlanflug plus Prozedurname.</translation>
+        <translation>Entweder SID, SID Übergang, STAR, STAR Übergang, Übergang, Anflug oder Fehlanflug plus Prozedurname.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="158"/>
@@ -26868,7 +26868,7 @@ Wirklich fortfahren?</translation>
         <location filename="src/routeexport/routeexport.cpp" line="1115"/>
         <source>The selected scenery database does not contain AIRAC cycle information.
 This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery.</source>
-        <translation>Die ausgewählte Szeneriedatenbank enthält keine AIRAC-Zyklusinformationen.
+        <translation>Die ausgewählte Szeneriedatenbank enthält keine AIRAC Zyklusinformationen.
 Dies kann passieren, wenn Sie einen auf FSX-, Prepar3D- oder MSFS-Szenerie basierenden Flugplan speichern.</translation>
     </message>
     <message>
@@ -27332,7 +27332,7 @@ Dies kann passieren, wenn Sie einen auf FSX-, Prepar3D- oder MSFS-Szenerie basie
 Export navaids and airports as user defined waypoints avoid locked waypoints due to different AIRAC cycles.
 This saves all waypoints as user defined waypoints when exporting flight plans.
 Note that is not possible to export procedures if this is enabled.</source>
-        <translation>Exportieren Sie Navigationshilfen und Flugplätze als benutzerdefinierte Wegpunkte, um gesperrte Wegpunkte aufgrund unterschiedlicher AIRAC-Zyklen zu vermeiden.
+        <translation>Exportieren Sie Navigationshilfen und Flugplätze als benutzerdefinierte Wegpunkte, um gesperrte Wegpunkte aufgrund unterschiedlicher AIRAC Zyklen zu vermeiden.
 Dadurch werden beim Export von Flugplänen alle Wegpunkte als benutzerdefinierte Wegpunkte gespeichert.
 Beachten Sie, dass der Export von Prozeduren nicht möglich ist, wenn dies aktiviert ist.</translation>
     </message>
@@ -28174,7 +28174,7 @@ ETD and ETA Zeitangaben werden ignoriert.</translation>
         <location filename="src/routestring/routestringdialog.cpp" line="94"/>
         <source>Omit departure and destination airport ICAO code.
 Note that the resulting description cannot be read into a flight plan.</source>
-        <translation>ICAO-Code des Abflug- und Zielflughafen weglassen.
+        <translation>ICAO Code des Abflug- und Zielflughafen weglassen.
 Beachten Sie, dass die resultierende Beschreibung nicht in einen Flugplan eingelesen werden kann.</translation>
     </message>
     <message>
@@ -28204,7 +28204,7 @@ zugunsten der aktuell geladenen Flugzeugleistung ignoriert.</translation>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="125"/>
         <source>Add the ICAO code for all alternate airports to the end of the description</source>
-        <translation>ICAO-Codes für alle Ausweichflugplätze an das Ende der Beschreibung anhängen</translation>
+        <translation>ICAO Codes für alle Ausweichflugplätze an das Ende der Beschreibung anhängen</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="138"/>
@@ -28834,7 +28834,7 @@ Klicken Sie mit der rechten Maustaste in die Karte und wählen Sie
     <message>
         <location filename="src/track/trackcontroller.cpp" line="214"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download track information:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zum Herunterladen von Tracks herzustellen:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Fortsetzen?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zum Herunterladen von Tracks herzustellen:&lt;/p&gt;&lt;p&gt;Webadresse: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Fortsetzen?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="220"/>
@@ -29341,7 +29341,7 @@ Empfohlen wird eine kurze Kennung in Großbuchstaben ohne Leerzeichen.</translat
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="93"/>
         <source>Optional two letter ICAO region of the waypoint.</source>
-        <translation>Optionale zweibuchstabige ICAO-Region des Wegpunktes.</translation>
+        <translation>Optionale zweibuchstabige ICAO Region des Wegpunktes.</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="140"/>
@@ -30026,7 +30026,7 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <location filename="src/userdata/userdatadialog.ui" line="158"/>
         <source>Two letter ICAO region code.
 Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
-        <translation>Zwei-Buchstaben-Code der ICAO-Region.
+        <translation>Zwei-Buchstaben-Code der ICAO Region.
 Wird für den Export in X-Plane &quot;user_fix.dat&quot; benötigt.</translation>
     </message>
     <message>
@@ -30399,7 +30399,7 @@ importiert</translation>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="575"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download weather information:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zum Herunterladen von Wetterinformationen herzustellen:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Fortsetzen?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zum Herunterladen von Wetterinformationen herzustellen:&lt;/p&gt;&lt;p&gt;Webadresse: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Fortsetzen?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="581"/>
@@ -30512,7 +30512,7 @@ importiert</translation>
     <message>
         <location filename="src/weather/windreporter.cpp" line="192"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download winds aloft:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zum Herunterladen von Höhenwinden herzustellen:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Fortsetzen?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zum Herunterladen von Höhenwinden herzustellen:&lt;/p&gt;&lt;p&gt;Webadresse: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Fortsetzen?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="198"/>

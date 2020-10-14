@@ -54,6 +54,13 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ## Changes
 
+### Translations
+
+* Italian user interface translation completed. Thanks to Flavio for his work!
+* German program translation completed.
+
+Note that you can change the user interface language in the options dialog on page `User interface`.
+
 ### Scenery Library
 
 * Now checking for all paths `Community`, `fs-base` and `fs-base-nav` before recognizing a MSFS
@@ -115,6 +122,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   Select a range of flight plan legs not touching alternates or procedures.
   Then right click into the table and choose `Save selected Range as Flight Plan`.
   This will not replace the current plan but add the saved file to the recent files list.
+* Fixed crash while calculating elevation profile with cruise altitude below
+  destination airport elevation.
 
 ### Export
 

@@ -1227,7 +1227,7 @@ MHz</translation>
         <location filename="src/search/airportsearch.cpp" line="180"/>
         <source>Add-on</source>
         <oldsource>Addon</oldsource>
-        <translation type="unfinished">Addon-Aggiunto</translation>
+        <translation>Aggiuntivo</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="181"/>
@@ -2256,23 +2256,18 @@ Utile se usi utility che disabilitano o abilitano certi scenari per ogni volo.</
 Is another %3 running?
 
 Exiting now.</oldsource>
-        <translation type="unfinished">Impossibile aprire il database %1. Motivo:
-
-%2
-Un&apos;altra %3 è in esecuzione?
-
-Uscire ora.</translation>
+        <translation>Impossibile aprire il database %1. Motivo:&lt;br/&gt;&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Un&apos;altra istanza di &lt;i&gt;%3&lt;/i&gt; è in esecuzione?&lt;br/&gt;&lt;br/&gt;In uscita ora.</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1146"/>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;Always close &lt;i&gt;%2&lt;/i&gt; before copying, overwriting or updating scenery library databases.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Always close %2 before copying, overwriting or updating scenery library databases.&lt;/p&gt;</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;Rilevata una modifica di uno o più file di database:&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;Chiudi sempre &lt;i&gt;%2&lt;/i&gt; prima di copiare, sovrascrivere o aggiornare i database della libreria scenari.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1151"/>
         <source>&amp;quot;&lt;br/&gt;&amp;quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;quot;&lt;br/&gt;&amp;quot;</translation>
     </message>
     <message>
         <source>&lt;br/&gt;</source>
@@ -3553,7 +3548,7 @@ Le colonne saranno vuote durante l&apos;esportazione se disabilitate.</translati
         <location filename="src/logbook/logdatacontroller.cpp" line="574"/>
         <source>File header will be ignored if this is enabled.</source>
         <oldsource>File header will be ignore if this is enabled.</oldsource>
-        <translation type="unfinished">L&apos;intestazione del file verrà ignorata se abilitata.</translation>
+        <translation>L&apos;intestazione del file verrà ignorata se abilitata.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="575"/>
@@ -4076,7 +4071,7 @@ Questo è solo un riferimento al percorso del file e non aggiunge il file aldiar
 GPX files contain flight plan points and the flown trail.</source>
         <oldsource>Attach a new GPX file to the logbook entry.
 GPX files contain flight plan points and the flown trail.</oldsource>
-        <translation type="unfinished">Allega un nuovo file GPX al diario di bordo.
+        <translation>Allega un nuovo file GPX al diario di bordo.
 I file GPX contengono i punti del piano di volo e la traccia volata.</translation>
     </message>
     <message>
@@ -6063,12 +6058,13 @@ Cancella procedure.</translation>
         <location filename="src/gui/mainwindow.ui" line="6253"/>
         <source>Calculate a flight plan using the settings above.
 Keeps procedures.</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcola un piano di volo utilizzando le impostazioni di cui sopra.
+Mantiene le procedure.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6257"/>
         <source>Calculate a flight plan using the settings above</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcola un piano di volo utilizzando le impostazioni di cui sopra</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6290"/>
@@ -6101,7 +6097,7 @@ Mantieni procedure.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6585"/>
         <source>Use downloaded NAT, PACOTS or AUSOTS tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizza i percorsi NAT, PACOTS o AUSOTS scaricati.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6588"/>
@@ -6516,7 +6512,7 @@ Mantieni procedure.</translation>
         <location filename="src/gui/mainwindow.ui" line="11505"/>
         <source>Maximize the map and hide all other dock windows and the toolbar</source>
         <oldsource>Maximize the map and hide all other dock windows, toolbar and menu bar</oldsource>
-        <translation type="unfinished">Ingrandisci la mappa e nascondi tutte le altre finestre bloccate, la barra degli strumenti e la barra dei menu</translation>
+        <translation>Ingrandisci la mappa e nascondi tutte le altre finestre bloccate e la barra degli strumenti</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11508"/>
@@ -7365,7 +7361,7 @@ Mantieni procedure.</translation>
         <location filename="src/gui/mainwindow.ui" line="11621"/>
         <source>Export Flight Plan &amp;as MSFS 2020 PLN ...</source>
         <oldsource>Export Flight Plan &amp;as MSFS  PLN ...</oldsource>
-        <translation type="unfinished">Esporta Piano di Volo &amp;come MSFS  PLN ...</translation>
+        <translation>Esporta Piano di Volo &amp;come MSFS 2020 PLN ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11624"/>
@@ -7628,7 +7624,7 @@ Mantieni procedure.</translation>
         <location filename="src/gui/mainwindow.ui" line="8111"/>
         <source>Force &amp;Show Add-on Airports</source>
         <oldsource>Force &amp;Show Addon Airports</oldsource>
-        <translation type="unfinished">Forza &amp;Visualizzazione Aeroporti Aggiuntivi</translation>
+        <translation>Forza &amp;Visualizzazione Aeroporti Aggiuntivi</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8114"/>
@@ -11761,13 +11757,13 @@ Applicare comunque il layout della finestra caricato?</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2398"/>
         <source>&lt;p&gt;You cannot save this file directly.&lt;br/&gt;Use the export function instead.&lt;/p&gt;&lt;p&gt;Save using the new LNMPLN format now?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Non puoi salvare direttamente questo file.&lt;br/&gt;Utilizza invece la funzione di esportazione.&lt;/p&gt;&lt;p&gt;Salvare ora utilizzando il nuovo formato LNMPLN?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2401"/>
         <source>Do not &amp;show this dialog again and save as LNMPLN.</source>
         <oldsource>Do not show this dialog again and save as LNMPLN.</oldsource>
-        <translation type="unfinished">Non mostrare più questo messaggio e salva come LNMPLN.</translation>
+        <translation>Non &amp;mostrare più questo messaggio e salva come LNMPLN.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2436"/>
@@ -11855,7 +11851,7 @@ Applicare comunque il layout della finestra caricato?</translation>
         <location filename="src/gui/mainwindow.cpp" line="3218"/>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator - Steam Edition,&lt;/li&gt;&lt;li&gt;Prepar3D or&lt;/li&gt;&lt;/ul&gt;&lt;li&gt;Microsoft Flight Simulator 2020 installation&lt;/li&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
         <oldsource>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator 2020 or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</oldsource>
-        <translation type="unfinished">Impossibile trovare l&apos;installazione di&lt;ul&gt;&lt;li&gt; Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition o&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator 2020 o&lt;/li&gt;&lt;li&gt;Prepar3D&lt;/li&gt;&lt;/ul&gt; su questo computer. Inoltre, non è stato trovato alcun database di librerie di scenari.&lt;br/&gt;&lt;br/&gt; Puoi copiare un database di librerie di scenari di Little Navmap da un altro computer.&lt;br/&gt;Premi il pulsante di aiuto per maggiori informazioni.&lt;br/&gt;&lt;br/&gt;Se hai installato X-Plane 11 puoi andare alla finestra di dialogo di caricamento della libreria di scenari cliccando sul pulsante X-Plane qui sotto.&lt;br/&gt;&lt;br/&gt;</translation>
+        <translation>Impossibile trovare l&apos;installazione di&lt;ul&gt;&lt;li&gt; Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition o&lt;/li&gt;&lt;li&gt;Prepar3D or&lt;/li&gt;&lt;/ul&gt;&lt;li&gt;Microsoft Flight Simulator 2020 o&lt;/li&gt; su questo computer. Inoltre, non è stato trovato alcun database di librerie di scenari.&lt;br/&gt;&lt;br/&gt; Puoi copiare un database di librerie di scenari di Little Navmap da un altro computer.&lt;br/&gt;Premi il pulsante di aiuto per maggiori informazioni.&lt;br/&gt;&lt;br/&gt;Se hai installato X-Plane 11 puoi andare alla finestra di dialogo di caricamento della libreria di scenari cliccando sul pulsante X-Plane qui sotto.&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
@@ -14459,7 +14455,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3656"/>
         <source>Waypoint Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>Nota Punto rotta</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3745"/>
@@ -14525,7 +14521,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2387"/>
         <source>Remarks</source>
-        <translation type="unfinished">Note</translation>
+        <translation>Note</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2477"/>
@@ -16457,7 +16453,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="125"/>
         <source>Add-on airports</source>
-        <translation type="unfinished">Aeroporti aggiuntivi</translation>
+        <translation>Aeroporti aggiuntivi</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="243"/>
@@ -16569,7 +16565,7 @@ kHz/MHz</translation>
         <location filename="src/mapgui/mapwidget.cpp" line="2642"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
-        <translation type="unfinished">Non mostrare più questo messaggio.</translation>
+        <translation>Non &amp;mostrare più questo messaggio.</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3092"/>
@@ -17298,7 +17294,7 @@ Riprovare nuovamente tra tre minuti.</translation>
         <location filename="src/online/onlinedatacontroller.cpp" line="363"/>
         <source>Do not &amp;show this again and ignore errors in the future</source>
         <oldsource>Do not show this again and ignore errors in the future</oldsource>
-        <translation type="unfinished">Non mostrare più questo messaggio e ignora gli errori in futuro</translation>
+        <translation>Non &amp;mostrare più questo messaggio e ignora gli errori in futuro</translation>
     </message>
     <message>
         <location filename="src/online/onlinedatacontroller.cpp" line="371"/>
@@ -18620,7 +18616,7 @@ al prossimo miglior gradino</translation>
         <location filename="src/options/options.ui" line="1282"/>
         <source>Show &amp;procedures on airport click</source>
         <oldsource>Update &amp;procedures on airport click</oldsource>
-        <translation type="unfinished">Aggiorna le &amp;procedure con il click sull&apos;aeroporto</translation>
+        <translation>Aggiorna le &amp;procedure con il click sull&apos;aeroporto</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1951"/>
@@ -18898,13 +18894,13 @@ Tieni presente che alcuni caratteri, soprattutto quelli grandi, possono causare 
     <message>
         <location filename="src/options/options.ui" line="2684"/>
         <source>Draw yellow circle around add-on airport symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>Disegna un cerchio giallo intorno ai simboli degli aeroporti aggiuntivi</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2687"/>
         <source>&amp;Highlight add-on airports</source>
         <oldsource>Highlight add-on airports</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Evidenziare gli aeroporti aggiuntivi</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2757"/>
@@ -19830,7 +19826,7 @@ Esempio: &quot;IFR Francoforte (EDDF) per Fiumicino (LIRF) .lnmpln&quot;</transl
 Example: &quot;EDDF LIRF.lnmpln&quot;</source>
         <oldsource>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
 Example: &quot;EDDF_LIRF.lnmpln&quot;</oldsource>
-        <translation type="unfinished">Imposta il formato del file del piano di volo con il nome breve &quot;DEPARTIDENT DESTIDENT&quot;.
+        <translation>Imposta il formato del file del piano di volo con il nome breve &quot;DEPARTIDENT DESTIDENT&quot;.
 Esempio: &quot;EDDF_LIRF.lnmpln&quot;</translation>
     </message>
     <message>
@@ -20092,7 +20088,7 @@ Devi ricaricare la libreria degli scenari in modo che le modifiche abbiano effet
         <location filename="src/options/options.ui" line="6273"/>
         <source>&lt;b&gt;You have to reload the scenery library for the changes to take effect.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;You have to re-import the scenery library for the changes to take effect.&lt;/b&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Devi reimportare la libreria degli scenari affinché le modifiche abbiano effetto.&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;Devi reimportare la libreria degli scenari affinché le modifiche abbiano effetto.&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6301"/>
@@ -24804,7 +24800,9 @@ Usare veramente?</translation>
 This does *not* override the full path.
 Spaces are replaced with underscores.</source>
         <oldsource>Use &lt;settings-directory&gt; instead of &quot;%1&quot;.This does *not* override the full path.Spaces are replaced with underscores.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>Utilizza&lt;settings-directory&gt; al posto di &quot;%1&quot;.
+Questo *non* annulla il percorso completo.
+Gli spazi vengono sostituiti con le sottolineature.</translation>
     </message>
     <message>
         <location filename="src/main.cpp" line="188"/>
@@ -25219,12 +25217,12 @@ Calcolato in base al profilo delle prestazioni dell&apos;aeromobile.</translatio
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="467"/>
         <source>Error reading multiexport configuration: Invalid magic number. Not a multiexport configuration.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore nella lettura della configurazione multiesportazione: Numero magico non valido. Non è una configurazione multiesportazione.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="477"/>
         <source>Error reading multiexport configuration: Invalid version. Incompatible multiexport configuration.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore nella lettura della configurazione multiesportazione: Versione non valida. Configurazione multiesportazione incompatibile.</translation>
     </message>
 </context>
 <context>
@@ -26820,7 +26818,7 @@ Continuare davvero?</translation>
         <location filename="src/routeexport/routeexport.cpp" line="1148"/>
         <source>Do not &amp;show this dialog again and save Flight Plan in the future.</source>
         <oldsource>Do not show this dialog again and save Flight Plan in the future.</oldsource>
-        <translation type="unfinished">Non mostrare più questo messaggio e salva il Piano di Volo in futuro.</translation>
+        <translation>Non &amp;mostrare più questo messaggio e salva il Piano di Volo in futuro.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1093"/>
@@ -26870,7 +26868,7 @@ Questo può accadere se salvi un piano di volo basato su scenari FSX, Prepar3D o
         <location filename="src/routeexport/routeexport.cpp" line="1074"/>
         <source>Do not &amp;show this dialog again and export all files in the future.</source>
         <oldsource>Do not show this dialog again and export all files in the future.</oldsource>
-        <translation type="unfinished">Non mostrare più questo messaggio e esporta tutti i files in futuro.</translation>
+        <translation>Non &amp;mostrare più questo messaggio e esporta tutti i files in futuro.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="114"/>
@@ -27678,7 +27676,7 @@ Esportato con traccia aereo e piano di volo.</translation>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="163"/>
         <source>&amp;Export Flight Plan Now ...</source>
         <oldsource>&amp;Export File Now ...</oldsource>
-        <translation type="unfinished">&amp;Esporta il File Adesso ...</translation>
+        <translation>&amp;Esporta il Piano di Volo Adesso ...</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="172"/>
@@ -27729,12 +27727,12 @@ Esportato con traccia aereo e piano di volo.</translation>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="214"/>
         <source>&amp;Enable %1 for Export</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Abilita %1 per l&apos;Esportazione</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="217"/>
         <source>Select for multi export</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona per multiesportazione</translation>
     </message>
     <message>
         <source>Press F2 or double click to edit</source>
@@ -27751,25 +27749,28 @@ Reimposta/Salva</translation>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="307"/>
         <source>Error: %1.
 Press F2 or double click to edit path.</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;Errore: %1.
+Premi F2 o fai doppio click per modificare il percorso.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="309"/>
         <source>Format selected for export.
 Press F2 or double click to edit path.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato selezionato per l&apos;esportazione.
+Premi F2 o fai doppio clic per modificare il percorso.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="312"/>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="439"/>
         <source>Press F2 or double click to edit path</source>
-        <translation type="unfinished"></translation>
+        <translation>Premi F2 o fai doppio clic per modificare il percorso</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="335"/>
         <source>Enable / Change path /
 Export now / Reset path</source>
-        <translation type="unfinished"></translation>
+        <translation>Abilita / Cambia percorso /
+Esporta adesso / Ripristina percorso</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="336"/>
@@ -27791,59 +27792,61 @@ o Nome file</translation>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="339"/>
         <source>Export Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Percorso di Esportazione</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="367"/>
         <source>Flight plan format will be exported with multiexport when checked</source>
-        <translation type="unfinished"></translation>
+        <translation>Il formato del piano di volo verrà esportato con multiesportazione se selezionato</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="377"/>
         <source>Select a %1 that will be used to export the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Selezionare un %1 che verrà utilizzato per esportare il piano di volo</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="378"/>
         <source>existing file</source>
-        <translation type="unfinished"></translation>
+        <translation>file esistente</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="378"/>
         <source>directory</source>
-        <translation type="unfinished"></translation>
+        <translation>cartella</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="386"/>
         <source>Export flight plan now</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta adesso il piano di volo</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="394"/>
         <source>Reset path back to default.
 The default path is determined by the current scenery library or simulator selection.
 If not applicable, the best estimate from installed simulators is used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripristina il percorso ai valori predefiniti.
+Il percorso predefinito è determinato dalla libreria scenari corrente o dalla selezione del simulatore.
+Se non è applicabile, viene utilizzata la migliore stima dei simulatori installati.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="432"/>
         <source>Filename</source>
-        <translation type="unfinished">Nome file</translation>
+        <translation>Nome file</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="432"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Estensione file</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="653"/>
         <source>&amp;Enable Export for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Abilita Esportazione per %1</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="656"/>
         <source>&amp;Enable for Export</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Abilita per Esportazione</translation>
     </message>
     <message>
         <source>Default Export Path - can depend on currently selected Simulator</source>
@@ -28907,7 +28910,7 @@ Fai clic con il tasto destro sulla mappa e seleziona
         <location filename="src/track/trackcontroller.cpp" line="221"/>
         <source>Do not &amp;show this again and ignore errors in the future</source>
         <oldsource>Do not show this again and ignore errors in the future</oldsource>
-        <translation type="unfinished">Non mostrare più e ignora gli errori in futuro</translation>
+        <translation>Non &amp;mostrare più e ignora gli errori in futuro</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="238"/>
@@ -29423,7 +29426,7 @@ Si consiglia un nome breve tutto maiuscolo senza spazi.</translation>
         <location filename="src/route/userwaypointdialog.ui" line="83"/>
         <source>&amp;Name:</source>
         <oldsource>&amp;Name</oldsource>
-        <translation type="unfinished">&amp;Nome</translation>
+        <translation>&amp;Nome:</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="133"/>
@@ -29920,7 +29923,7 @@ prima della cancellazione.</translation>
         <location filename="src/userdata/userdatacontroller.cpp" line="787"/>
         <source>File header will be ignored if this is enabled.</source>
         <oldsource>File header will be ignore if this is enabled.</oldsource>
-        <translation type="unfinished">L&apos;intestazione del file verrà ignorata se abilitata.</translation>
+        <translation>L&apos;intestazione del file verrà ignorata se abilitato.</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="792"/>
@@ -30050,7 +30053,7 @@ I formati sopra indicati devono essere inseriti esattamente come mostrato negli 
         <location filename="src/userdata/userdatadialog.ui" line="405"/>
         <source>Check to change remarks for all selected waypoints</source>
         <oldsource>Check to change description for all selected waypoints</oldsource>
-        <translation type="unfinished">Seleziona per cambiare descrizione per tutti i punti rotta selezionati</translation>
+        <translation>Seleziona per cambiare descrizione per tutti i punti rotta selezionati</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="336"/>
@@ -30146,7 +30149,7 @@ Obbligatorio per l&apos;esportazione su X-Plane &quot;user_fix.dat&quot;.</trans
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="356"/>
         <source>&amp;Remarks:</source>
-        <translation type="unfinished">&amp;Note:</translation>
+        <translation>&amp;Note:</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="447"/>
@@ -30425,7 +30428,7 @@ Obbligatorio per l&apos;esportazione su X-Plane &quot;user_fix.dat&quot;.</trans
     <message>
         <location filename="src/search/userdatasearch.cpp" line="78"/>
         <source>Remarks</source>
-        <translation type="unfinished">Note</translation>
+        <translation>Note</translation>
     </message>
     <message>
         <source>Description</source>
@@ -30523,7 +30526,7 @@ dal file</translation>
         <location filename="src/weather/weatherreporter.cpp" line="582"/>
         <source>Do not &amp;show this again and ignore errors in the future</source>
         <oldsource>Do not show this again and ignore errors in the future</oldsource>
-        <translation type="unfinished">Non mostrare più questo messaggio e ignora gli errori in futuro</translation>
+        <translation>Non &amp;mostrare più questo messaggio e ignora gli errori in futuro</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="597"/>
@@ -30676,7 +30679,7 @@ dal file</translation>
         <location filename="src/weather/windreporter.cpp" line="199"/>
         <source>Do not &amp;show this again and ignore errors in the future</source>
         <oldsource>Do not show this again and ignore errors in the future</oldsource>
-        <translation type="unfinished">Non mostrare più questo messaggio e ignora gli errori in futuro</translation>
+        <translation>Non &amp;mostrare più e ignora gli errori in futuro</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="273"/>
