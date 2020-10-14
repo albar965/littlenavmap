@@ -1412,7 +1412,7 @@ void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& 
 
 void MapPainterRoute::paintWaypoint(const QColor& col, int x, int y, bool preview)
 {
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize()) * 1.2f;
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
   size = std::max(size, 8.f);
 
   symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, !preview);
