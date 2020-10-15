@@ -2370,7 +2370,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="73"/>
-        <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files&lt;br/&gt;in your documents folder.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The follwing folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</source>
+        <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files&lt;br/&gt;in your documents folder.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The following folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -26548,43 +26548,43 @@ Exported with aircraft track and flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="336"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="339"/>
         <source>Category</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="337"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="340"/>
         <source>Usage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="338"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="341"/>
         <source>Extension
 or Filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="377"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="380"/>
         <source>Select a %1 that will be used to export the flight plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="378"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="381"/>
         <source>existing file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="432"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="435"/>
         <source>Filename</source>
         <translation type="unfinished">Nombre de archivo</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="432"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="435"/>
         <source>File extension</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="568"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="571"/>
         <source>Reset selection and paths back to default?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -26598,13 +26598,13 @@ Press F2 or double click to edit.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="378"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="381"/>
         <source>directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="312"/>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="439"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="442"/>
         <source>Press F2 or double click to edit path</source>
         <translation type="unfinished"></translation>
     </message>
@@ -26615,55 +26615,55 @@ Press F2 or double click to edit path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="335"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="338"/>
         <source>Enable / Change path /
 Export now / Reset path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="339"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="342"/>
         <source>Export Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="367"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="370"/>
         <source>Flight plan format will be exported with multiexport when checked</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="386"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="389"/>
         <source>Export flight plan now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="394"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="397"/>
         <source>Reset path back to default.
 The default path is determined by the current scenery library or simulator selection.
 If not applicable, the best estimate from installed simulators is used.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="514"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="517"/>
         <source>Select Export File for %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="515"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="518"/>
         <source>Flight Plan Files %1;;All Files (*)</source>
         <translation type="unfinished">Archivos Plan de Vuelo %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="522"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="525"/>
         <source>Select Export Directory for %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="653"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="656"/>
         <source>&amp;Enable Export for %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="656"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="659"/>
         <source>&amp;Enable for Export</source>
         <translation type="unfinished"></translation>
     </message>

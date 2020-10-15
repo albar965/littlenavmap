@@ -73,7 +73,7 @@ void DirTool::run()
   message.append(tr("<p style='white-space:pre'>"
                       "<b><i>Little Navmap</i> can create a recommended directory structure "
                         "to store all your files<br/>in your documents folder.</b></p>"
-                        "<p>The follwing folders will be created:</p>"
+                        "<p>The following folders will be created:</p>"
                           "<p><b>%1</b><br/>"
                           "Top level directory for all files of <i>Little Navmap</i> "
                           "containing the following sub-directories:</p>").

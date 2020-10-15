@@ -161,15 +161,15 @@ MainWindow::MainWindow()
 
   try
   {
-    // Have to handle exceptions here since no message handler is active yet and no
-    // atools::Application method can catch it
+    // Have to handle exceptions here since no message handler is active yet and no atools::Application method can catch it
 
     ui->setupUi(this);
-    setAcceptDrops(true);
 
-    // Avoid short popping up on startup
+    // Try to avoid short popping up on startup
     ui->dockWidgetRouteCalc->hide();
     ui->labelProfileInfo->hide();
+
+    setAcceptDrops(true);
 
     // Show tooltips also for inactive windows (e.g. if a floating window is active)
     setAttribute(Qt::WA_AlwaysShowToolTips);

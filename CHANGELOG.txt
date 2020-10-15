@@ -7,13 +7,14 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ## Important
 
-* All multiexport options now reset back to default due to internal format changes. Please make
-  a screenshot of the dialog before updating Little Navmap.
+* All multiexport options now reset back to default due to internal format changes. Make
+  a screenshot of the dialog before updating Little Navmap if you want to restore your settings.
 
 ## Important for MSFS Users
 
 * Remove the MSFS Community folder from the ignore list in _Little Navmap_, `Options`, page
-  `Scenery Library Database` if you added it. The exclusion to avoid the crash is not needed anymore.
+  `Scenery Library Database` if you added it with Little Navmap 2.6.0.beta.
+  The exclusion  to avoid the crash is not needed anymore.
 * Update to the latest beta Navigraph navdata update for MSFS if you use it.
 * Reload the scenery library if you use MSFS.
 
@@ -43,6 +44,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   This is a Qt limitation.
 * The window layout might not be restored precisely on startup in some cases. This is a limitation
   in the used Qt library.
+* The flight plan calculation might pop up shortly when starting the program. Simply ignore this.
 * The height of the elevation profile window cannot be reduced in some cases. Reset to default window
   layout which fixes this. Rearrange or move the elevation profile window to another position which
   usually solves this. Save the layout once you

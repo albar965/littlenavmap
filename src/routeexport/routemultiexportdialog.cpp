@@ -314,6 +314,9 @@ void RouteMultiExportDialog::updateTableColors()
     }
   }
   changingTable = false;
+
+  // Need to update the whole view since the tooltip change affects only the path cell
+  ui->tableViewRouteExport->viewport()->update();
 }
 
 void RouteMultiExportDialog::updateModel()
