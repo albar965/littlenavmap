@@ -3759,9 +3759,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(userAircaft->getCarbIcePercent() >= 1.f)
       ice.append(tr("Carb. ") + locale.toString(userAircaft->getCarbIcePercent(), 'f', 0) + tr(" %"));
 
-    if(ice.isEmpty())
-      html.row2(tr("Ice:"), tr("None"));
-    else
+    if(!ice.isEmpty())
       html.row2Error(tr("Ice:"), ice.join(tr(", ")));
   } // if(userAircaft != nullptr && info)
   html.tableEnd();
@@ -3929,9 +3927,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         precip.append(tr("Rain"));
       if(userAircaft->inSnow())
         precip.append(tr("Snow"));
-      if(precip.isEmpty())
-        precip.append(tr("None"));
-      html.row2(tr("Conditions:"), precip.join(tr(", ")));
+
+      if(!precip.isEmpty())
+        html.row2(tr("Conditions:"), precip.join(tr(", ")));
 
       if(Unit::distMeterF(userAircaft->getAmbientVisibilityMeter()) > 20.f)
         html.row2(tr("Visibility:"), tr("> 20 ") + Unit::getUnitDistStr());
