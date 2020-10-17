@@ -7,8 +7,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ## Important
 
-* All multiexport options now reset back to default due to internal format changes. Make
-  a screenshot of the dialog before updating Little Navmap if you want to restore your settings.
+* All multiexport options now reset back to default due to internal format changes.
 
 ## Important for MSFS Users
 
@@ -24,7 +23,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 * Little Navmap cannot read SID and STAR from MSFS. Documentation about MSFS format changes are
   needed in SDK.
-* MSFS multiplayer and real-time AI cannot be displayed. Needs SDK updates or more documentation.
+* MSFS multiplayer and real-time AI cannot be displayed.
 * Simulator weather cannot be shown for MSFS since SimConnect weather functions are deprecated and
   do not deliver data. Needs update or documentation in MSFS SDK. Use NOAA weather which gives you
   the most up-to-date weather reports.
@@ -60,6 +59,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 * Italian user interface translation completed. Thanks to Flavio for his work!
 * German program translation completed.
+* Other translations are work in progress.
 
 Note that you can change the user interface language in the options dialog on page `User interface`.
 
@@ -80,7 +80,7 @@ Note that you can change the user interface language in the options dialog on pa
 
 ### Map Display
 
-* Changed `force add-on` airport dislay functionality completely. Now keeping add-ons airports
+* Changed `force add-on` airport display functionality completely. Now keeping add-ons airports
   visible on map independent of zoom level if this option is selected in the toolbar or the
   menu `View` ->  `Airports` -> `Force Show Add-on Airports`. Add-on airports are now shown
   highlighted with a yellow ring per default.
@@ -95,6 +95,7 @@ Note that you can change the user interface language in the options dialog on pa
   some cases.
 * Increased map details for certain zoom factors. Certain navaids are now shown earlier as
   small triangles (waypoint), rectangles (VOR) or points (NDB) symbols depending on zoom.
+* Fixed issue where context menu was all disabled if shown by menu key and mouse not over map.
 * Fixed handling of map overflow when showing the maximum number of objects on the map. User now
   gets a warning `Too Many Objects` in the status bar if a result exceeds the limit. This is needed
   to avoid program freeze situations. This fixes the half filled map without warning message.
@@ -111,6 +112,7 @@ Note that you can change the user interface language in the options dialog on pa
   This can be changed in options on page `Map Display 2` in the tree on the right at `User Aircraft`.
 * The elevation profile now uses indicated altitude for aircraft position to avoid discrepancies in
   display when flying at flight levels.
+* Other display improvements.
 
 ### Weather
 
@@ -126,11 +128,14 @@ Note that you can change the user interface language in the options dialog on pa
   This will not replace the current plan but add the saved file to the recent files list.
 * Fixed crash while calculating elevation profile with cruise altitude below
   destination airport elevation.
+* Corrected wrong distance calculation for an approach where a course intercept leg follows an
+  initial fix. Example EGPB LOC FF09 via D244L.
 
 ### Export
 
 * Export paths now remain unchanged when switching simulator after first initialization.
   Paths can still be adapted to the currently selected simulator by using reset.
+* Now ignoring MSFS path for FSX and P3D aircraft. Best guess for export paths improved.
 * Added descriptions with more details in tooltip for multiexport dialog.
 * Added native LNMPLN flight plan format to multiexport.
   Note that using this option will clear the change flag (the `*` in the window title plus further
@@ -138,11 +143,16 @@ Note that you can change the user interface language in the options dialog on pa
   It will also set the current filename to the exported file name.
   Furthermore, it will add the filename to the recent files list.
   This way the LNMPLN export option behaves exactly as if the user called `Save` or `Save as`.
+* Now stopping export and showing warning dialog if one or more paths are invalid instead of silently
+  ignoring the error.
 * Removed Garmin export option for waypoints from options dialog. Added new entries in multiexport
   dialog instead.
 * X-Plane FMS export file name now using a dash in file name for better readability.
 * Changed default F1 GTN export path to `F1TGTN`.
-* Small improvements in multiexport configuration dialog and context menu.
+* Small improvements and several fixes in multiexport configuration dialog and context menu. Fixed
+  missing update (not switching to bold font) of table when checking for export.
+* Airac cycle was not correctly applied in some cases and resulted in using the current month
+  and warnings in X-Plane.
 
 ### User Interface
 
@@ -161,7 +171,7 @@ Note that you can change the user interface language in the options dialog on pa
 * Now showing an excerpt of the waypoint remarks in the next waypoint section of the progress
   display.
 * Added link to download section to the help menu.
-* More small user interface improvements and fixes.
+* Further user interface improvements and fixes.
 
 ===============================================================================
 
@@ -3075,7 +3085,7 @@ Version 1.3.5.develop
 
 * Added menu item in menu `Map` to reset map settings back to default.
 * Improved statusbar display for shown map features and airspaces. Added empty airports.
-* Flight plan file paths are now remembered for each simulator separately. Fixed error that intially
+* Flight plan file paths are now remembered for each simulator separately. Fixed error that initially
   always used the FSX files path.
 * Moved airway display one layer up for map display. Now shown on higher zoom levels.
 * Added small airport symbol in runway schema display to indicate clickspot for airport.
