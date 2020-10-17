@@ -2092,7 +2092,8 @@ void OptionsDialog::offlineDataSelectClicked()
 
   QString path = atools::gui::Dialog(this).
                  openDirectoryDialog(tr("Open GLOBE data directory"),
-                                     lnm::OPTIONS_DIALOG_GLOBE_FILE_DLG, ui->lineEditCacheOfflineDataPath->text());
+                                     QString() /* lnm::OPTIONS_DIALOG_GLOBE_FILE_DLG */,
+                                     ui->lineEditCacheOfflineDataPath->text());
 
   if(!path.isEmpty())
     ui->lineEditCacheOfflineDataPath->setText(QDir::toNativeSeparators(path));
