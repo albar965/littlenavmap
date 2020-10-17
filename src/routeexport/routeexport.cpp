@@ -100,27 +100,48 @@ void RouteExport::routeMultiExport()
 {
   exported.clear();
 
-  // First check constraints
-  if(routeValidate(exportFormatMap->getSelected(), true /* multi */))
+  // Collect path errors first =======================
+  QStringList errorFormats;
+  for(const RouteExportFormat& fmt : exportFormatMap->getSelected())
   {
-    // Export all button or menu item
-    int numExported = 0;
-    for(const RouteExportFormat& fmt : exportFormatMap->getSelected())
-    {
-      if(fmt.isSelected() && fmt.isPathValid())
-        numExported += fmt.callExport();
-    }
-    if(numExported == 0)
-      mainWindow->setStatusMessage(tr("No flight plan exported."));
-    else
-      mainWindow->setStatusMessage(tr("Exported %1 flight plans.").arg(numExported));
+    if(fmt.isSelected() && !fmt.isPathValid())
+      errorFormats.append(fmt.getComment());
   }
 
-  // Check if native LNMPLN was exported, update filename and change status of the file if
-  if(exported.contains(rexp::LNMPLN))
-    mainWindow->routeSaveLnmExported(exported.value(rexp::LNMPLN));
+  if(!errorFormats.isEmpty())
+  {
+    // One or more paths are not valid - do not export
+    QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                         tr("<p>The following export formats have an invalid path:</p>"
+                              "<ul><li>%1</li></ul>"
+                                "<p>Export stopped.</p>"
+                                  "<p>Go to: Main menu -&gt; &quot;File&quot; -&gt; &quot;Multiexport Flight Plan Options&quot; or "
+                                    "press Ctrl+Alt+Shift+M and correct the path highlighted in red.</p>").
+                         arg(errorFormats.join("</li><li>")));
+  }
+  else
+  {
+    // Export - first check constraints for all formats - also updates AIRAC cycle
+    if(routeValidate(exportFormatMap->getSelected(), true /* multi */))
+    {
+      // Export all button or menu item
+      int numExported = 0;
+      for(const RouteExportFormat& fmt : exportFormatMap->getSelected())
+      {
+        if(fmt.isSelected() && fmt.isPathValid())
+          numExported += fmt.callExport();
+      }
+      if(numExported == 0)
+        mainWindow->setStatusMessage(tr("No flight plan exported."));
+      else
+        mainWindow->setStatusMessage(tr("Exported %1 flight plans.").arg(numExported));
+    }
 
-  exported.clear();
+    // Check if native LNMPLN was exported, update filename and change status of the file if
+    if(exported.contains(rexp::LNMPLN))
+      mainWindow->routeSaveLnmExported(exported.value(rexp::LNMPLN));
+    exported.clear();
+  }
 }
 
 void RouteExport::routeMultiExportOptions()
@@ -1044,7 +1065,7 @@ bool RouteExport::routeExportHtml(const RouteExportFormat& format)
 bool RouteExport::routeValidateMulti(const RouteExportFormat& format)
 {
   if(format.isMulti())
-    // Contraints are validated before running the export loop
+    // Constraints are validated before running the export loop
     return true;
   else
     // Manual export
@@ -1055,6 +1076,8 @@ bool RouteExport::routeValidateMulti(const RouteExportFormat& format)
  *  @return true if route can be saved anyway */
 bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool multi)
 {
+  NavApp::updateRouteCycleMetadata();
+
   bool validateParking = false, validateDepartAndDest = false, validateCycle = false;
   for(const RouteExportFormat& fmt : formats)
   {

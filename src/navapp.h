@@ -183,6 +183,7 @@ public:
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
+  static void updateRouteCycleMetadata();
 
   /* Get a generic route string */
   static QString getRouteString();
@@ -198,8 +199,7 @@ public:
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
-  static QString getSimulatorFilesPath(atools::fs::FsPaths::SimulatorType type);
-  static QString getSimulatorFilesPathBestFsxP3d();
+  static QString getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);
   static bool hasSimulator(atools::fs::FsPaths::SimulatorType type);
   static bool hasAnyMsSimulator();
   static bool hasXplaneSimulator();

@@ -164,11 +164,9 @@ public:
   QString getCurrentSimulatorBasePath() const;
   QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const;
 
-  /* Place to store flight plans */
-  QString getSimulatorFilesPath(atools::fs::FsPaths::SimulatorType type) const;
-
-  /* Get best installed simulator from FSX, FSX SE and all P3D versions */
-  QString getSimulatorFilesPathBestFsxP3d() const;
+  /* Get files path for installed simulators in order of the given list.
+   * Also considers probably changed paths by user */
+  QString getSimulatorFilesPathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
 
   dm::NavdatabaseStatus getNavDatabaseStatus() const
   {

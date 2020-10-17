@@ -243,7 +243,9 @@ int RouteMultiExportDialog::exec()
   // Update table
   updateModel();
 
-  return QDialog::exec();
+  int retval = QDialog::exec();
+  saveDialogState();
+  return retval;
 }
 
 void RouteMultiExportDialog::buttonBoxClicked(QAbstractButton *button)

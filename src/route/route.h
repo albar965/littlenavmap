@@ -227,11 +227,6 @@ public:
     return totalDistance;
   }
 
-  void setTotalDistance(float value)
-  {
-    totalDistance = value;
-  }
-
   /* The flight plan has dummy entries for procedure points that are flagged as no save */
   const atools::fs::pln::Flightplan& getFlightplan() const
   {

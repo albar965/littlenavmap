@@ -504,6 +504,11 @@ Route& NavApp::getRoute()
   return mainWindow->getRouteController()->getRoute();
 }
 
+void NavApp::updateRouteCycleMetadata()
+{
+  getRoute().updateRouteCycleMetadata();
+}
+
 QString NavApp::getRouteString()
 {
   return RouteStringWriter().createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
@@ -555,14 +560,9 @@ QString NavApp::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type)
   return databaseManager->getSimulatorBasePath(type);
 }
 
-QString NavApp::getSimulatorFilesPath(atools::fs::FsPaths::SimulatorType type)
+QString NavApp::getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types)
 {
-  return databaseManager->getSimulatorFilesPath(type);
-}
-
-QString NavApp::getSimulatorFilesPathBestFsxP3d()
-{
-  return databaseManager->getSimulatorFilesPathBestFsxP3d();
+  return databaseManager->getSimulatorFilesPathBest(types);
 }
 
 bool NavApp::hasSimulator(atools::fs::FsPaths::SimulatorType type)

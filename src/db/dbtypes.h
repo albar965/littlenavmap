@@ -59,8 +59,8 @@ public:
   /* Get lastest/newest installed simulator */
   atools::fs::FsPaths::SimulatorType getBestInstalled() const;
 
-  /* Get lastest/newest installed simulator in the FSX to P3D range */
-  atools::fs::FsPaths::SimulatorType getBestInstalledFsxP3d() const;
+  /* Get files path for installed simulators in order of the given list */
+  atools::fs::FsPaths::SimulatorType getBestInstalled(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
 
   /* Get all installed simulators */
   QList<atools::fs::FsPaths::SimulatorType> getAllInstalled() const;

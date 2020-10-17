@@ -193,6 +193,7 @@ public:
   /* End of methods for multiexport ========================================================= */
 
   /* Check if route has valid departure  and destination and departure parking.
+   * Also updates the navdata cycle properties in the global route before checking.
    *  @return true if route can be saved anyway */
   bool routeValidate(const QVector<RouteExportFormat>& formats, bool multi = false);
 

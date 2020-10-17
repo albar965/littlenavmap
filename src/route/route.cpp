@@ -141,7 +141,7 @@ void Route::clearAll()
   getFlightplan().getProperties().clear();
   resetActive();
   clear();
-  setTotalDistance(0.f);
+  totalDistance = 0.f;
 }
 
 int Route::getNextUserWaypointNumber() const
@@ -2458,6 +2458,9 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     else
       plan.setRouteType(atools::fs::pln::HIGH_ALTITUDE);
   }
+
+  route.updateRouteCycleMetadata();
+
   return route;
 }
 

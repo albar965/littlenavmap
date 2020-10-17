@@ -209,7 +209,9 @@ void checkAndMigrateSettings()
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.1.beta";
         removeAndLog(settings, lnm::ROUTE_EXPORT_FORMATS);
-        removeAndLog(settings, lnm::ROUTE_EXPORT_DIALOG);
+        removeAndLog(settings, "RouteExport/RouteExportDialog_tableViewRouteExport");
+        removeAndLog(settings, "RouteExport/RouteExportDialog_RouteMultiExportDialog_size");
+        removeAndLog(settings, "RouteExport/RouteExportDialog_tableViewRouteExport");
       }
 
       // =====================================================================

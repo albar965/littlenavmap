@@ -30,6 +30,7 @@
 #include <exception.h>
 
 using atools::settings::Settings;
+using atools::fs::FsPaths;
 
 // Simply log warnings instead of throwing exceptions on read errors
 bool RouteExportFormatMap::exceptionOnReadError = false;
@@ -239,49 +240,33 @@ void RouteExportFormatMap::init()
 void RouteExportFormatMap::updateDefaultPaths()
 {
   QChar SEP = QDir::separator();
+  FsPaths::SimulatorType curDb = NavApp::getCurrentSimulatorDb();
 
-  // Documents path ===========================
+  // Documents path as fallback or for unknown ===========================
   QString documents = atools::documentsDir();
 
   // Get X-Plane base path ===========================
   // routeExportFms11 and routeExportFms3
-  QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
-  if(xpBasePath.isEmpty())
-    xpBasePath = documents;
-  else
-    xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
+  QString xpFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE11});
+  if(xpFilesPath.isEmpty())
+    xpFilesPath = documents;
 
   // Get MSFS base path ===========================
-  QString msfsBasePath = NavApp::getSimulatorFilesPath(atools::fs::FsPaths::MSFS);
+  QString msfsBasePath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS});
   if(msfsBasePath.isEmpty())
     msfsBasePath = documents;
 
-  // Get base path of best MS simulator except MSFS ===========================
+  // Get base path of best MS simulator except MSFS - FSX and P3D ===========================
   QString fsxP3dBasePath;
-  switch(NavApp::getCurrentSimulatorDb())
-  {
-    case atools::fs::FsPaths::FSX:
-    case atools::fs::FsPaths::FSX_SE:
-    case atools::fs::FsPaths::P3D_V2:
-    case atools::fs::FsPaths::P3D_V3:
-    case atools::fs::FsPaths::P3D_V4:
-    case atools::fs::FsPaths::P3D_V5:
-      // Use file location for currently selected simulator
-      fsxP3dBasePath = NavApp::getSimulatorFilesPath(NavApp::getCurrentSimulatorDb());
-      break;
 
-    case atools::fs::FsPaths::XPLANE11:
-    case atools::fs::FsPaths::NAVIGRAPH:
-    case atools::fs::FsPaths::MSFS:
-    case atools::fs::FsPaths::ALL_SIMULATORS:
-    case atools::fs::FsPaths::UNKNOWN:
-      // Get file location for latest / best installed simulator
-      fsxP3dBasePath = NavApp::getSimulatorFilesPathBestFsxP3d();
-      break;
-  }
+  // Get for current database selection if not X-Plane or MSFS
+  if(curDb != FsPaths::XPLANE11 && curDb != FsPaths::MSFS && curDb != FsPaths::NAVIGRAPH)
+    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({curDb});
 
+  // Get best installed simulator
   if(fsxP3dBasePath.isEmpty())
-    fsxP3dBasePath = msfsBasePath;
+    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3,
+                                                        FsPaths::P3D_V2, FsPaths::FSX_SE, FsPaths::FSX});
   if(fsxP3dBasePath.isEmpty())
     fsxP3dBasePath = documents;
 
@@ -321,8 +306,8 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[PLN         ].DP(fsxP3dBasePath);
   (*this)[PLNMSFS     ].DP(msfsBasePath);
   (*this)[PLNANNOTATED].DP(fsxP3dBasePath);
-  (*this)[FMS3        ].DP(xpBasePath);
-  (*this)[FMS11       ].DP(xpBasePath);
+  (*this)[FMS3        ].DP(xpFilesPath);
+  (*this)[FMS11       ].DP(xpFilesPath);
   (*this)[FLP         ].DP(documents);
   (*this)[FLPCRJ      ].DP(documents + SEP + "Aerosoft" + SEP + "Digital Aviation CRJ" + SEP + "FlightPlans");
   (*this)[FLIGHTGEAR  ].DP(documents);
@@ -333,14 +318,14 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[GPX         ].DP(documents);
   (*this)[HTML        ].DP(documents);
   (*this)[FPR         ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "mjc8q400" + SEP + "nav" + SEP + "routes");
-  (*this)[FPL         ].DP(xpBasePath + SEP + "Aircraft" + SEP + "X-Aviation" + SEP + "IXEG 737 Classic" + SEP + "coroutes");
-  (*this)[CORTEIN     ].DP(xpBasePath + SEP + "Aircraft" + SEP + "corte.in");
+  (*this)[FPL         ].DP(xpFilesPath + SEP + "Aircraft" + SEP + "X-Aviation" + SEP + "IXEG 737 Classic" + SEP + "coroutes");
+  (*this)[CORTEIN     ].DP(xpFilesPath + SEP + "Aircraft" + SEP + "corte.in");
   (*this)[RXPGNS      ].DP(gns);
   (*this)[RXPGNSUWP   ].DP(gns);
   (*this)[RXPGTN      ].DP(gtn);
   (*this)[RXPGTNUWP   ].DP(gtn);
   (*this)[FLTPLAN     ].DP(fsxP3dBasePath + SEP + "iFly" + SEP + "737NG" + SEP + "navdata" + SEP + "FLTPLAN");
-  (*this)[XFMC        ].DP(xpBasePath + SEP + "Resources" + SEP + "plugins" + SEP + "XFMC" + SEP + "FlightPlans");
+  (*this)[XFMC        ].DP(xpFilesPath + SEP + "Resources" + SEP + "plugins" + SEP + "XFMC" + SEP + "FlightPlans");
   (*this)[UFMC        ].DP(documents);
   (*this)[PROSIM      ].DP(documents + SEP + "companyroutes.xml");
   (*this)[BBS         ].DP(fsxP3dBasePath + SEP + "Blackbox Simulation" + SEP + "Company Routes");
