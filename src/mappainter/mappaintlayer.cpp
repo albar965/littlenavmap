@@ -585,20 +585,38 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           const RouteLeg& routeLeg = route.value(i);
           map::MapTypes type = routeLeg.getMapObjectType();
           if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
-            context.routeIdMap.insert(map::MapObjectRef(routeLeg.getId(), routeLeg.getMapObjectType()));
+            context.routeProcIdMap.insert(map::MapObjectRef(routeLeg.getId(), routeLeg.getMapObjectType()));
           else if(type == map::PROCEDURE)
           {
             if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
             {
               const map::MapResult& navaids = routeLeg.getProcedureLeg().navaids;
               if(navaids.hasWaypoints())
-                context.routeIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
+                context.routeProcIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
               if(navaids.hasVor())
-                context.routeIdMap.insert({navaids.vors.first().id, map::VOR});
+                context.routeProcIdMap.insert({navaids.vors.first().id, map::VOR});
               if(navaids.hasNdb())
-                context.routeIdMap.insert({navaids.ndbs.first().id, map::NDB});
+                context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
             }
           }
+        }
+      }
+
+      // ====================================
+      // Get navaids from procedure highlight to avoid duplicate drawing
+
+      if(context.mapLayerRoute->isApproach())
+      {
+        const proc::MapProcedureLegs& procs = mapWidget->getProcedureHighlight();
+        for(int i = 0; i < procs.size(); i++)
+        {
+          const map::MapResult& navaids = procs.at(i).navaids;
+          if(navaids.hasWaypoints())
+            context.routeProcIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
+          if(navaids.hasVor())
+            context.routeProcIdMap.insert({navaids.vors.first().id, map::VOR});
+          if(navaids.hasNdb())
+            context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
         }
       }
 
@@ -608,9 +626,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       for(const map::MapLogbookEntry& entry : highlightResultsSearch.logbookEntries)
       {
         if(entry.departurePos.isValid())
-          context.routeIdMap.insert({entry.departure.id, map::AIRPORT});
+          context.routeProcIdMap.insert({entry.departure.id, map::AIRPORT});
         if(entry.destinationPos.isValid())
-          context.routeIdMap.insert({entry.destination.id, map::AIRPORT});
+          context.routeProcIdMap.insert({entry.destination.id, map::AIRPORT});
       }
 
       // Set render hints depending on context (moving, still) =====================

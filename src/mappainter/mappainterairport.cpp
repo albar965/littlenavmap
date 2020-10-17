@@ -68,7 +68,7 @@ MapPainterAirport::~MapPainterAirport()
 void MapPainterAirport::render()
 {
   if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
-     (!context->mapLayer->isAirportDiagramRunway()) && context->routeIdMap.isEmpty())
+     (!context->mapLayer->isAirportDiagramRunway()) && context->routeProcIdMap.isEmpty())
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
@@ -106,7 +106,7 @@ void MapPainterAirport::render()
         // Either part of the route or enabled in the actions/menus/toolbar
         bool drawAirport = airport.isVisible(context->objectTypes) ||
                            (addon && airport.addon()) ||
-                           context->routeIdMap.contains(airport.getRef());
+                           context->routeProcIdMap.contains(airport.getRef());
 
         if(visibleOnMap && drawAirport)
           visibleAirports.append({&airport, QPointF(x, y)});
@@ -151,7 +151,7 @@ void MapPainterAirport::render()
       drawAirportSymbolOverview(*airport, x, y);
 
     // More detailed symbol will be drawn by the route or log painter - so skip here
-    if(!context->routeIdMap.contains(airport->getRef()))
+    if(!context->routeProcIdMap.contains(airport->getRef()))
     {
       // Symbol will be omitted for runway overview
       drawAirportSymbol(*airport, x, y);

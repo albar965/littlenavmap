@@ -311,14 +311,14 @@ void MapPaintWidget::setShowMapSunShading(bool show)
 
 void MapPaintWidget::weatherUpdated()
 {
-  if(paintLayer->getShownMapObjects() | map::AIRPORT_WEATHER)
+  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::AIRPORT_WEATHER))
     update();
 }
 
 void MapPaintWidget::windUpdated()
 {
-  if(paintLayer->getShownMapObjectDisplayTypes() | map::WIND_BARBS ||
-     paintLayer->getShownMapObjectDisplayTypes() | map::WIND_BARBS_ROUTE)
+  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS) ||
+     paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS_ROUTE))
     update();
 }
 

@@ -86,7 +86,8 @@ struct PaintContext
   const Route *route;
 
   // All waypoints from the route and add them to the map to avoid duplicate drawing
-  QSet<map::MapObjectRef> routeIdMap;
+  // Same for procedure preview
+  QSet<map::MapObjectRef> routeProcIdMap;
 
   optsd::DisplayOptions dispOpts;
   optsd::DisplayOptionsAirport dispOptsAirport;
