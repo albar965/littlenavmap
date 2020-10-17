@@ -1662,7 +1662,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!rect().contains(point))
   {
     menuPos = mapToGlobal(rect().center());
-    point = QPoint();
+    point = rect().center();
   }
 
   if(event->reason() != QContextMenuEvent::Keyboard)
