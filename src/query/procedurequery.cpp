@@ -1368,7 +1368,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       curPos = leg.fixPos;
 
       // Check if first leg position matches distance to navaid - modify entry point to match distance if not
-      if(atools::almostNotEqual(leg.rho, meterToNm(lastPos.distanceMeterTo(leg.recFixPos)), 0.5f))
+      if(lastPos.isValid() && atools::almostNotEqual(leg.rho, meterToNm(lastPos.distanceMeterTo(leg.recFixPos)), 0.5f))
       {
         // Get point at correct distance to navaid between fix and recommended fix
         lastPos = leg.recFixPos.endpoint(nmToMeter(leg.rho), leg.recFixPos.angleDegTo(lastPos));
