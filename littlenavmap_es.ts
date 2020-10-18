@@ -11871,8 +11871,8 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="2186"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2270"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2300"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3847"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4349"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3857"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4359"/>
         <source>-</source>
         <translation>-</translation>
     </message>
@@ -11882,20 +11882,20 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1111"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4332"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4387"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4342"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4397"/>
         <source>:</source>
         <translation>:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3739"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3742"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3745"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3748"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3751"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3754"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3757"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3760"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3749"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3752"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3755"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3758"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3761"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3764"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3767"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3770"/>
         <source> %</source>
         <translation> %</translation>
     </message>
@@ -11930,15 +11930,15 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="2799"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3191"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3342"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3473"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3474"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3548"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3713"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3730"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3763"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3878"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3932"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4382"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4387"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3723"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3740"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3773"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3888"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3942"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4392"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4397"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -11997,8 +11997,8 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="2429"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2580"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2738"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4063"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4349"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4073"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4359"/>
         <source>Map</source>
         <translation>Mapa</translation>
     </message>
@@ -12124,7 +12124,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Duro</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3763"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3773"/>
         <source>Ice:</source>
         <translation>Hielo:</translation>
     </message>
@@ -12149,22 +12149,22 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="338"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="483"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="875"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3880"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3890"/>
         <source>None</source>
         <translation>Ninguno</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4227"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4237"/>
         <source>Pos:</source>
         <translation>Pos:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3927"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3937"/>
         <source>Rain</source>
         <translation>Lluvia</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3929"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3939"/>
         <source>Snow</source>
         <translation>Nieve</translation>
     </message>
@@ -12186,7 +12186,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3837"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3847"/>
         <source>True Airspeed:</source>
         <translation>Velocidad de aire verdadera:</translation>
     </message>
@@ -12209,7 +12209,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="1787"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2684"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3111"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3919"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3929"/>
         <source> inHg</source>
         <translation> en Hg</translation>
     </message>
@@ -12221,17 +12221,17 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="2317"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2698"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3125"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3641"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3651"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4387"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4397"/>
         <source> and </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4395"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4405"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
     </message>
@@ -12259,7 +12259,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Registración:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3935"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3945"/>
         <source>&gt; 20 </source>
         <translation>&gt; 20 </translation>
     </message>
@@ -12329,8 +12329,8 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>NDB: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3845"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3847"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3855"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3857"/>
         <source>Mach:</source>
         <translation>Mach:</translation>
     </message>
@@ -12347,7 +12347,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Tamaño:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3822"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3832"/>
         <source>Speed</source>
         <translation>Velocidad</translation>
     </message>
@@ -12400,7 +12400,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Viento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3806"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3816"/>
         <source>, below &lt;b&gt;▲&lt;/b&gt;</source>
         <translation>, debajo &lt;b&gt;▲&lt;/b&gt;</translation>
     </message>
@@ -12425,7 +12425,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Morse VORTAC:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3699"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3709"/>
         <source>Aircraft</source>
         <translation>Aeronave</translation>
     </message>
@@ -12472,7 +12472,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1824"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3932"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3942"/>
         <source>Conditions:</source>
         <translation>Condiciones:</translation>
     </message>
@@ -12508,7 +12508,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Marcador: %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3808"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3818"/>
         <source>Vertical Path Dev.:</source>
         <translation>Desviación de senda vertical:</translation>
     </message>
@@ -12558,7 +12558,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation> %1 %2</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3908"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3918"/>
         <source>Static Air Temperature:</source>
         <translation>Temperatura de aire estática:</translation>
     </message>
@@ -12575,7 +12575,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="1786"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2683"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3110"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3918"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3928"/>
         <source> hPa, </source>
         <translation> hPa, </translation>
     </message>
@@ -12674,7 +12674,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Hay overlay de GPS</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3774"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3784"/>
         <source>Altitude</source>
         <translation>Altitud</translation>
     </message>
@@ -12798,7 +12798,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Frecuencias COM</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4332"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4342"/>
         <source> METAR:</source>
         <translation> METAR:</translation>
     </message>
@@ -12850,7 +12850,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Tipo ALS:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3739"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3749"/>
         <source>Pitot </source>
         <translation>Pitot </translation>
     </message>
@@ -12911,7 +12911,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Torre de Control:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3718"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3728"/>
         <source>Track:</source>
         <translation>Ruta:</translation>
     </message>
@@ -12980,7 +12980,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Estacionamiento</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3804"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3814"/>
         <source>, above &lt;b&gt;▼&lt;/b&gt;</source>
         <translation>, encima &lt;b&gt;▼&lt;/b&gt;</translation>
     </message>
@@ -12996,7 +12996,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3208"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3945"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3955"/>
         <source>Position</source>
         <translation>Posición</translation>
     </message>
@@ -13054,7 +13054,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Aeronave Militar:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3784"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3794"/>
         <source>Actual:</source>
         <translation>Actual:</translation>
     </message>
@@ -13077,7 +13077,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="151"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3148"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3153"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4008"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4018"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
@@ -13111,7 +13111,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Fuente: %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3791"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3801"/>
         <source>Ground Elevation:</source>
         <translation>Elevación de tierra:</translation>
     </message>
@@ -13137,13 +13137,13 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Región:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3914"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3924"/>
         <source>ISA Deviation:</source>
         <translation>Desviación ISA:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3935"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3937"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3945"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3947"/>
         <source>Visibility:</source>
         <translation>Visibilidad:</translation>
     </message>
@@ -13180,18 +13180,18 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Giro a la Izquierda</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3789"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3799"/>
         <source>Above Ground:</source>
         <translation>Arriba de Tierra:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3872"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3882"/>
         <source>Environment</source>
         <translation>Entorno</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3877"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3880"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3887"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3890"/>
         <source>Wind Direction and Speed:</source>
         <translation>Velocidad y Dirección del Viento:</translation>
     </message>
@@ -13212,7 +13212,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Tipo de Tramo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4027"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4037"/>
         <source>User Vehicle</source>
         <translation>Vehículo de Usuario</translation>
     </message>
@@ -13227,9 +13227,9 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Región e Identificación DME:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4098"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4105"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4140"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4108"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4115"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4150"/>
         <source>Scenery</source>
         <translation>Escenario</translation>
     </message>
@@ -13241,12 +13241,12 @@ Wind speed will be interpolated for climb and descent phases.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2683"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3110"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3918"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3928"/>
         <source>Sea Level Pressure:</source>
         <translation>Presión a Nivel del Mar:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3862"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3872"/>
         <source>Vertical:</source>
         <translation>Vertical:</translation>
     </message>
@@ -13321,7 +13321,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>No se encontraron datos de ILS</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3613"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3623"/>
         <source>Leg Course:</source>
         <translation>Ruta de Tramo:</translation>
     </message>
@@ -13375,7 +13375,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Strobos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3899"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3909"/>
         <source>Total Air Temperature:</source>
         <translation>Temperatura total del Aire:</translation>
     </message>
@@ -13405,7 +13405,8 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Final de Aproximación Fallida:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3784"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3614"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3794"/>
         <source>Altitude:</source>
         <translation>Altitud:</translation>
     </message>
@@ -13456,8 +13457,8 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="416"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="941"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1001"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3624"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3713"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3634"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3723"/>
         <source>Heading:</source>
         <translation>Rumbo:</translation>
     </message>
@@ -13468,8 +13469,8 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Aterrizaje</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3640"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3645"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3650"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3655"/>
         <source>Cross Track Distance:</source>
         <translation>Distancia Campo Traviesa:</translation>
     </message>
@@ -13479,7 +13480,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Presición</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3742"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3752"/>
         <source>Structure </source>
         <translation>Estructura </translation>
     </message>
@@ -13489,7 +13490,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Peso y Combustible</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3636"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3646"/>
         <source>&lt;b&gt;◄&lt;/b&gt;</source>
         <translation>&lt;b&gt;◄&lt;/b&gt;</translation>
     </message>
@@ -13499,7 +13500,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Visibilidad: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3862"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3872"/>
         <source>Vertical Speed:</source>
         <translation>Velocidad Vertical:</translation>
     </message>
@@ -13508,7 +13509,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation type="vanished">Aeronave del Usuario</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3638"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3648"/>
         <source>&lt;b&gt;►&lt;/b&gt;</source>
         <translation>&lt;b&gt;►&lt;/b&gt;</translation>
     </message>
@@ -13523,7 +13524,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Helipuertos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3855"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3865"/>
         <source> &lt;b&gt;▲&lt;/b&gt;</source>
         <translation> &lt;b&gt;▲&lt;/b&gt;</translation>
     </message>
@@ -13534,7 +13535,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Observaciones:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3857"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3867"/>
         <source> &lt;b&gt;▼&lt;/b&gt;</source>
         <translation> &lt;b&gt;▼&lt;/b&gt;</translation>
     </message>
@@ -13569,7 +13570,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Declinación Magnética:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3730"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3740"/>
         <source>Endurance:</source>
         <translation>Autonomía:</translation>
     </message>
@@ -13616,7 +13617,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Sobrepasado:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4224"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4234"/>
         <source>Coordinates:</source>
         <translation>Coordenadas:</translation>
     </message>
@@ -13693,7 +13694,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Sin reporte de visibilidad</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3722"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3732"/>
         <source>Fuel Flow:</source>
         <translation>Flujo de combustible:</translation>
     </message>
@@ -13713,7 +13714,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Canal:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3833"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3843"/>
         <source>Ground:</source>
         <translation>Tierra:</translation>
     </message>
@@ -13728,7 +13729,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Rango VORTAC:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4034"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4044"/>
         <source>AI / Multiplayer Vehicle</source>
         <translation>Vehículo IA/Multijugador</translation>
     </message>
@@ -13745,17 +13746,17 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3132"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3688"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3698"/>
         <source>Flight Plan</source>
         <translation>Plan de Vuelo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3645"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3655"/>
         <source>Not along Track</source>
         <translation>No a lo largo de la Pista</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3833"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3843"/>
         <source>Groundspeed:</source>
         <translation>Velocidad de tierra:</translation>
     </message>
@@ -13780,9 +13781,9 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Tipo de Reporte: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3780"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3827"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3829"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3790"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3837"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3839"/>
         <source>Indicated:</source>
         <translation>Indicado:</translation>
     </message>
@@ -14039,16 +14040,16 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1775"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1780"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3899"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3908"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3909"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3918"/>
         <source> °C, </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1776"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1781"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3900"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3909"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3910"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3919"/>
         <source> °F</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14537,7 +14538,7 @@ kHz/MHz</translation>
         <translation type="vanished">Tope de Descenso</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4032"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4042"/>
         <source>Online Client (%1)</source>
         <translation>Cliente en Línea (%1)</translation>
     </message>
@@ -14883,7 +14884,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3341"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3486"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3487"/>
         <source> - </source>
         <translation type="unfinished"></translation>
     </message>
@@ -14931,109 +14932,109 @@ kHz/MHz</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3481"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3482"/>
         <source> - to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3483"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3484"/>
         <source> - from </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3488"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3489"/>
         <source>Next Waypoint%1%2%3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3656"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3666"/>
         <source>Waypoint Remarks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3668"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3678"/>
         <source>No Active Flight Plan Leg. Too far from flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3670"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3680"/>
         <source>No Active Flight Plan Leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3678"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3688"/>
         <source>No Flight Plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3691"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3701"/>
         <source>Departure:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3692"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3702"/>
         <source>Destination:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3745"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3755"/>
         <source>AOA </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3748"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3758"/>
         <source>Inlet </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3751"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3761"/>
         <source>Prop </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3754"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3764"/>
         <source>Static </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3757"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3767"/>
         <source>Window </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3760"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3770"/>
         <source>Carb. </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3914"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3924"/>
         <source> °C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4002"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4012"/>
         <source>%1 (</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4024"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4034"/>
         <source>User Vehicle / Online Client (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4029"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4039"/>
         <source>AI / Multiplayer / Online Client (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4076"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4080"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4086"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4090"/>
         <source>More</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4076"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4080"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4086"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4090"/>
         <source>Less</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15043,7 +15044,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2349"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4118"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4128"/>
         <source>Files</source>
         <translation type="unfinished">Archivos</translation>
     </message>
@@ -15063,69 +15064,69 @@ kHz/MHz</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4100"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4110"/>
         <source>Navigraph</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4100"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4110"/>
         <source>Simulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4122"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4132"/>
         <source>Path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4126"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4136"/>
         <source>Files:</source>
         <translation type="unfinished">Archivos:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4148"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4158"/>
         <source>X-Plane</source>
         <translation type="unfinished">X-Plane</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4159"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4169"/>
         <source>X-Plane Scenery Gateway</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4171"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4181"/>
         <source>SkyVector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4173"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4183"/>
         <source>FlightAware</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4175"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4185"/>
         <source>OpenNav</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4183"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4193"/>
         <source>Links</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4202"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4212"/>
         <source> (file not found)</source>
         <oldsource> (File not found)</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4322"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4332"/>
         <source>(</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4004"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4324"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4014"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4334"/>
         <source>)</source>
         <translation type="unfinished"></translation>
     </message>
