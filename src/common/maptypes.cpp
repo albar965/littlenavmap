@@ -381,8 +381,8 @@ void initTranslateableTexts()
       {"TWE", QObject::tr("Transcriber Weather Broadcast (TWEB)")},
       {"T", QObject::tr("Tower, Air Traffic Control")},
       {"UAC", QObject::tr("Upper Area Control")},
-      {"UC", QObject::tr("Unicom")},
-      {"VOL", QObject::tr("Volmet")}
+      {"UC", QObject::tr("UNICOM")},
+      {"VOL", QObject::tr("VOLMET")}
     });
 
   airspaceTypeNameMap = QHash<map::MapAirspaceTypes, QString>(

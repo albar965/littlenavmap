@@ -437,7 +437,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     if(airport.asosFrequency > 0)
       html.row2(tr("ASOS:"), locale.toString(roundComFrequency(airport.asosFrequency), 'f', 3) + tr(" MHz"));
     if(airport.unicomFrequency > 0)
-      html.row2(tr("Unicom:"), locale.toString(roundComFrequency(airport.unicomFrequency), 'f', 3) + tr(" MHz"));
+      html.row2(tr("UNICOM:"), locale.toString(roundComFrequency(airport.unicomFrequency), 'f', 3) + tr(" MHz"));
     html.tableEnd();
   }
 
@@ -3293,13 +3293,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(!route.isEmpty() && userAircaft != nullptr && info)
   {
     // The corrected leg will point to an approach leg if we head to the start of a procedure
-    bool isCorrected = false;
-    int activeLegCorrected = route.getActiveLegIndexCorrected(&isCorrected);
-    int activeLeg = route.getActiveLegIndex();
+    bool corrected = false;
+    int activeLegIdxCorrected = route.getActiveLegIndexCorrected(&corrected);
+    int activeLegIdx = route.getActiveLegIndex();
     bool alternate = route.isActiveAlternate();
     bool destination = route.isActiveDestinationAirport();
 
-    if(activeLegCorrected != map::INVALID_INDEX_VALUE &&
+    if(activeLegIdxCorrected != map::INVALID_INDEX_VALUE &&
        route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance))
     {
       if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
@@ -3310,7 +3310,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         distToDestNm = nearestLegDistance;
 
       // Calculates values based on performance profile if valid - otherwise estimated by aircraft fuel flow and speed
-      perfController->calculateFuelAndTimeTo(fuelTime, distToDestNm, nearestLegDistance, activeLeg);
+      perfController->calculateFuelAndTimeTo(fuelTime, distToDestNm, nearestLegDistance, activeLegIdx);
 
       // Print warning messages ===================================================================
       if(route.size() < 2)
@@ -3450,9 +3450,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         wpText = tr(" - Alternate");
       else if(destination)
         wpText = tr(" - Destination");
-      else if(activeLegCorrected != map::INVALID_INDEX_VALUE)
+      else if(activeLegIdxCorrected != map::INVALID_INDEX_VALUE)
       {
-        const RouteLeg& routeLeg = route.value(activeLegCorrected);
+        const RouteLeg& routeLeg = route.value(activeLegIdxCorrected);
 
         if(routeLeg.getProcedureLeg().isApproach())
           wpText = tr(" - Approach");
@@ -3464,9 +3464,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       // Next leg - waypoint data ====================================================
       // If approaching an initial fix use corrected version
-      const RouteLeg& routeLegCorrected = route.value(activeLegCorrected);
+      const RouteLeg& routeLegCorrected = route.value(activeLegIdxCorrected);
+      const RouteAltitudeLeg& routeAltLegCorrected = route.getAltitudeLegAt(activeLegIdxCorrected);
       QString nextName;
-      if(activeLegCorrected != map::INVALID_INDEX_VALUE)
+      if(activeLegIdxCorrected != map::INVALID_INDEX_VALUE)
       {
         if(!routeLegCorrected.getIdent().isEmpty())
           nextName = routeLegCorrected.getIdent() +
@@ -3488,13 +3489,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       head(html, tr("Next Waypoint%1%2%3").arg(wpText).arg(fromTo).arg(nextName));
       html.table();
 
-      if(activeLegCorrected != map::INVALID_INDEX_VALUE)
+      if(activeLegIdxCorrected != map::INVALID_INDEX_VALUE)
       {
         // If approaching an initial fix use corrected version
 
         // For course and distance use not corrected leg
-        const RouteLeg& routeLeg = activeLeg != map::INVALID_INDEX_VALUE &&
-                                   isCorrected ? route.value(activeLeg) : routeLegCorrected;
+        const RouteLeg& routeLeg = activeLegIdx != map::INVALID_INDEX_VALUE &&
+                                   corrected ? route.value(activeLegIdx) : routeLegCorrected;
 
         const proc::MapProcedureLeg& procLeg = routeLegCorrected.getProcedureLeg();
 
@@ -3647,7 +3648,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         } // if(route.getSizeWithoutAlternates() > 1)
       } // if(routeLegCorrected != nullptr)
       else
-        qWarning() << "Invalid route leg index" << activeLegCorrected;
+        qWarning() << "Invalid route leg index" << activeLegIdxCorrected;
 
       html.tableEnd();
 
