@@ -110,6 +110,11 @@ public:
     return mapWidget;
   }
 
+  ProfileWidget *getProfileWidget() const
+  {
+    return profileWidget;
+  }
+
   void updateMap() const;
 
   RouteController *getRouteController() const

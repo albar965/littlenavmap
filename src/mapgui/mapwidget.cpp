@@ -2132,191 +2132,194 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
   // ================================================================================
   // Check if screen has to be updated/scrolled/zoomed
-  if(paintLayer->getShownMapObjects() & map::AIRCRAFT ||
-     paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
-     paintLayer->getShownMapObjects() & map::AIRCRAFT_ONLINE)
+
+  // Do not use this since it can avoid updates when aircraft is not shown
+
+  // if(paintLayer->getShownMapObjects() & map::AIRCRAFT ||
+  // paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
+  // paintLayer->getShownMapObjects() & map::AIRCRAFT_ONLINE)
+  // {
+
+  // Show aircraft is enabled
+  bool centerAircraft = mainWindow->getUi()->actionMapAircraftCenter->isChecked();
+
+  // Get delta values for update rate
+  const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(od.getSimUpdateRate());
+
+  // Limit number of updates per second =================================================
+  if(now - lastSimUpdateMs > deltas.timeDeltaMs)
   {
-    // Show aircraft is enabled
-    bool centerAircraft = mainWindow->getUi()->actionMapAircraftCenter->isChecked();
+    lastSimUpdateMs = now;
 
-    // Get delta values for update rate
-    const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(od.getSimUpdateRate());
-
-    // Limit number of updates per second =================================================
-    if(now - lastSimUpdateMs > deltas.timeDeltaMs)
+    // Check if any AI aircraft are visible
+    bool aiVisible = false;
+    if(paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
+       paintLayer->getShownMapObjects() & map::AIRCRAFT_AI_SHIP ||
+       paintLayer->getShownMapObjects() & map::AIRCRAFT_ONLINE)
     {
-      lastSimUpdateMs = now;
-
-      // Check if any AI aircraft are visible
-      bool aiVisible = false;
-      if(paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
-         paintLayer->getShownMapObjects() & map::AIRCRAFT_AI_SHIP ||
-         paintLayer->getShownMapObjects() & map::AIRCRAFT_ONLINE)
+      for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraftConst())
       {
-        for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraftConst())
+        if(getCurrentViewBoundingBox().contains(
+             Marble::GeoDataCoordinates(ai.getPosition().getLonX(), ai.getPosition().getLatY(), 0,
+                                        Marble::GeoDataCoordinates::Degree)))
         {
-          if(getCurrentViewBoundingBox().contains(
-               Marble::GeoDataCoordinates(ai.getPosition().getLonX(), ai.getPosition().getLatY(), 0,
-                                          Marble::GeoDataCoordinates::Degree)))
-          {
-            aiVisible = true;
-            break;
-          }
+          aiVisible = true;
+          break;
         }
       }
+    }
 
-      using atools::almostNotEqual;
+    using atools::almostNotEqual;
 
-      // Check if position has changed significantly
-      bool posHasChanged = !last.isValid() || // No previous position
-                           diff.manhattanLength() >= deltas.manhattanLengthDelta; // Screen position has changed
+    // Check if position has changed significantly
+    bool posHasChanged = !last.isValid() || // No previous position
+                         diff.manhattanLength() >= deltas.manhattanLengthDelta; // Screen position has changed
 
-      // Check if any data like heading has changed which requires a redraw
-      bool dataHasChanged = posHasChanged ||
-                            almostNotEqual(last.getHeadingDegMag(), aircraft.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
-                            almostNotEqual(last.getIndicatedSpeedKts(),
-                                           aircraft.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
-                            almostNotEqual(last.getPosition().getAltitude(),
-                                           aircraft.getPosition().getAltitude(), deltas.altitudeDelta); // Altitude has changed
+    // Check if any data like heading has changed which requires a redraw
+    bool dataHasChanged = posHasChanged ||
+                          almostNotEqual(last.getHeadingDegMag(), aircraft.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
+                          almostNotEqual(last.getIndicatedSpeedKts(),
+                                         aircraft.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
+                          almostNotEqual(last.getPosition().getAltitude(),
+                                         aircraft.getPosition().getAltitude(), deltas.altitudeDelta); // Altitude has changed
 
-      if(dataHasChanged)
-        getScreenIndex()->updateLastSimData(simulatorData);
+    if(dataHasChanged)
+      getScreenIndex()->updateLastSimData(simulatorData);
 
-      // Option to udpate always
-      bool updateAlways = od.getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY;
+    // Option to udpate always
+    bool updateAlways = od.getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY;
 
-      // Check if centering of leg is reqired =======================================
-      const Route& route = NavApp::getRouteConst();
-      const RouteLeg *activeLeg = route.getActiveLeg();
-      bool centerAircraftAndLeg = isCenterLegAndAircraftActive();
+    // Check if centering of leg is reqired =======================================
+    const Route& route = NavApp::getRouteConst();
+    const RouteLeg *activeLeg = route.getActiveLeg();
+    bool centerAircraftAndLeg = isCenterLegAndAircraftActive();
 
-      // Get position of next waypoint and check visibility
-      Pos nextWpPos;
-      QPoint nextWpPoint;
-      bool nextWpPosVisible = false;
-      if(centerAircraftAndLeg)
+    // Get position of next waypoint and check visibility
+    Pos nextWpPos;
+    QPoint nextWpPoint;
+    bool nextWpPosVisible = false;
+    if(centerAircraftAndLeg)
+    {
+      nextWpPos = activeLeg != nullptr ? route.getActiveLeg()->getPosition() : Pos();
+      nextWpPoint = conv.wToS(nextWpPos, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
+      nextWpPosVisible = widgetRectSmall.contains(nextWpPoint);
+    }
+
+    if(centerAircraft && !contextMenuActive) // centering required by button but not while menu is open
+    {
+      if(!curPosVisible || // Not visible on world map
+         posHasChanged) // Significant change in position might require zooming or re-centering
       {
-        nextWpPos = activeLeg != nullptr ? route.getActiveLeg()->getPosition() : Pos();
-        nextWpPoint = conv.wToS(nextWpPos, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
-        nextWpPosVisible = widgetRectSmall.contains(nextWpPoint);
-      }
-
-      if(centerAircraft && !contextMenuActive) // centering required by button but not while menu is open
-      {
-        if(!curPosVisible || // Not visible on world map
-           posHasChanged) // Significant change in position might require zooming or re-centering
+        // Do not update if user is using drag and drop or scrolling around
+        // No updates while jump back is active and user is moving around
+        if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
         {
-          // Do not update if user is using drag and drop or scrolling around
-          // No updates while jump back is active and user is moving around
-          if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
+          if(centerAircraftAndLeg)
           {
-            if(centerAircraftAndLeg)
-            {
-              // Update four times based on flying time to next waypoint - this is recursive
-              // and will update more often close to the wp
-              int timeToWpUpdateMs =
-                std::max(static_cast<int>(atools::geo::meterToNm(aircraft.getPosition().distanceMeterTo(nextWpPos)) /
-                                          (aircraft.getGroundSpeedKts() + 1.f) * 3600.f / 4.f), 4) * 1000;
+            // Update four times based on flying time to next waypoint - this is recursive
+            // and will update more often close to the wp
+            int timeToWpUpdateMs =
+              std::max(static_cast<int>(atools::geo::meterToNm(aircraft.getPosition().distanceMeterTo(nextWpPos)) /
+                                        (aircraft.getGroundSpeedKts() + 1.f) * 3600.f / 4.f), 4) * 1000;
 
-              // Zoom to rectangle every 15 seconds
-              bool zoomToRect = now - lastCenterAcAndWp > timeToWpUpdateMs;
+            // Zoom to rectangle every 15 seconds
+            bool zoomToRect = now - lastCenterAcAndWp > timeToWpUpdateMs;
+
+#ifdef DEBUG_INFORMATION_SIMUPDATE
+            qDebug() << Q_FUNC_INFO;
+            qDebug() << "curPosVisible" << curPosVisible;
+            qDebug() << "nextWpPosVisible" << nextWpPosVisible;
+            qDebug() << "updateAlways" << updateAlways;
+            qDebug() << "zoomToRect" << zoomToRect;
+#endif
+            if(!curPosVisible || !nextWpPosVisible || updateAlways || zoomToRect)
+            {
+              // Wait 15 seconds after every update
+              lastCenterAcAndWp = now;
+
+              // Postpone screen updates
+              setUpdatesEnabled(false);
+
+              atools::geo::Rect rect(nextWpPos);
+              rect.extend(aircraft.getPosition());
+
+              if(rect.getWidthDegree() > 180.f || rect.getHeightDegree() > 180.f)
+                rect = atools::geo::Rect(nextWpPos);
 
 #ifdef DEBUG_INFORMATION_SIMUPDATE
               qDebug() << Q_FUNC_INFO;
-              qDebug() << "curPosVisible" << curPosVisible;
-              qDebug() << "nextWpPosVisible" << nextWpPosVisible;
-              qDebug() << "updateAlways" << updateAlways;
-              qDebug() << "zoomToRect" << zoomToRect;
+              qDebug() << "curPoint" << curPoint;
+              qDebug() << "nextWpPoint" << nextWpPoint;
+              qDebug() << "widgetRect" << widgetRect;
+              qDebug() << "ac.getPosition()" << aircraft.getPosition();
+              qDebug() << "rect" << rect;
 #endif
-              if(!curPosVisible || !nextWpPosVisible || updateAlways || zoomToRect)
+
+              if(!rect.isPoint(POS_IS_POINT_EPSILON))
               {
-                // Wait 15 seconds after every update
-                lastCenterAcAndWp = now;
+                centerRectOnMap(rect);
 
-                // Postpone screen updates
-                setUpdatesEnabled(false);
+                float altToZoom = aircraft.getAltitudeAboveGroundFt() > 12000.f ? 1400.f : 2800.f;
+                // Minimum zoom depends on flight altitude
+                float minZoomDist = atools::geo::nmToKm(
+                  std::min(std::max(aircraft.getAltitudeAboveGroundFt() / altToZoom, 0.1f), 28.f));
 
-                atools::geo::Rect rect(nextWpPos);
-                rect.extend(aircraft.getPosition());
-
-                if(rect.getWidthDegree() > 180.f || rect.getHeightDegree() > 180.f)
-                  rect = atools::geo::Rect(nextWpPos);
-
-#ifdef DEBUG_INFORMATION_SIMUPDATE
-                qDebug() << Q_FUNC_INFO;
-                qDebug() << "curPoint" << curPoint;
-                qDebug() << "nextWpPoint" << nextWpPoint;
-                qDebug() << "widgetRect" << widgetRect;
-                qDebug() << "ac.getPosition()" << aircraft.getPosition();
-                qDebug() << "rect" << rect;
-#endif
-
-                if(!rect.isPoint(POS_IS_POINT_EPSILON))
+                if(distance() < minZoomDist)
                 {
-                  centerRectOnMap(rect);
-
-                  float altToZoom = aircraft.getAltitudeAboveGroundFt() > 12000.f ? 1400.f : 2800.f;
-                  // Minimum zoom depends on flight altitude
-                  float minZoomDist = atools::geo::nmToKm(
-                    std::min(std::max(aircraft.getAltitudeAboveGroundFt() / altToZoom, 0.1f), 28.f));
-
-                  if(distance() < minZoomDist)
-                  {
 #ifdef DEBUG_INFORMATION
-                    qDebug() << Q_FUNC_INFO << "distance() < minZoom" << distance() << "<" << minZoomDist;
+                  qDebug() << Q_FUNC_INFO << "distance() < minZoom" << distance() << "<" << minZoomDist;
 #endif
-                    // Correct zoom for minimum distance
-                    setDistanceToMap(minZoomDist);
+                  // Correct zoom for minimum distance
+                  setDistanceToMap(minZoomDist);
 #ifdef DEBUG_INFORMATION
-                    qDebug() << Q_FUNC_INFO << "zoom()" << zoom();
+                  qDebug() << Q_FUNC_INFO << "zoom()" << zoom();
 #endif
-                  }
                 }
-                else if(rect.isValid())
-                  centerPosOnMap(aircraft.getPosition());
-              } // if(!curPosVisible || !nextWpPosVisible || updateAlways || rectTooSmall || !centered)
-            } // if(centerAircraftAndLeg)
-            else
-            {
-              // Calculate the amount that has to be substracted from each side of the rectangle
-              float boxFactor = (100.f - od.getSimUpdateBox()) / 100.f / 2.f;
-              int dx = static_cast<int>(width() * boxFactor);
-              int dy = static_cast<int>(height() * boxFactor);
-
-              widgetRect.adjust(dx, dy, -dx, -dy);
-
-              if(!widgetRect.contains(curPoint) || // Aircraft out of box or ...
-                 updateAlways) // ... update always
-              {
-                setUpdatesEnabled(false);
-
-                // Center aircraft only
-                centerPosOnMap(aircraft.getPosition());
               }
+              else if(rect.isValid())
+                centerPosOnMap(aircraft.getPosition());
+            } // if(!curPosVisible || !nextWpPosVisible || updateAlways || rectTooSmall || !centered)
+          } // if(centerAircraftAndLeg)
+          else
+          {
+            // Calculate the amount that has to be subtracted from each side of the rectangle
+            float boxFactor = (100.f - od.getSimUpdateBox()) / 100.f / 2.f;
+            int dx = static_cast<int>(width() * boxFactor);
+            int dy = static_cast<int>(height() * boxFactor);
+
+            widgetRect.adjust(dx, dy, -dx, -dy);
+
+            if(!widgetRect.contains(curPoint) || // Aircraft out of box or ...
+               updateAlways) // ... update always
+            {
+              setUpdatesEnabled(false);
+
+              // Center aircraft only
+              centerPosOnMap(aircraft.getPosition());
             }
           }
         }
       }
-
-      if(!updatesEnabled())
-        setUpdatesEnabled(true);
-
-      if((dataHasChanged || aiVisible) && !contextMenuActive)
-        // Not scrolled or zoomed but needs a redraw
-        update();
     }
-  }
-  else if(paintLayer->getShownMapObjects() & map::AIRCRAFT_TRACK)
-  {
-    // No aircraft but track - update track only
-    if(!last.isValid() || diff.manhattanLength() > 4)
-    {
-      getScreenIndex()->updateLastSimData(simulatorData);
 
-      if(!contextMenuActive)
-        update();
-    }
+    if(!updatesEnabled())
+      setUpdatesEnabled(true);
+
+    if((dataHasChanged || aiVisible) && !contextMenuActive)
+      // Not scrolled or zoomed but needs a redraw
+      update();
   }
+  // }
+  // else if(paintLayer->getShownMapObjects() & map::AIRCRAFT_TRACK)
+  // {
+  //// No aircraft but track - update track only
+  // if(!last.isValid() || diff.manhattanLength() > 4)
+  // {
+  // getScreenIndex()->updateLastSimData(simulatorData);
+  // if(!contextMenuActive)
+  // update();
+  // }
+  // }
 }
 
 void MapWidget::mainWindowShown()

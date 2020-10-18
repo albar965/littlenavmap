@@ -112,6 +112,8 @@ Note that you can change the user interface language in the options dialog on pa
   This can be changed in options on page `Map Display 2` in the tree on the right at `User Aircraft`.
 * The elevation profile now uses indicated altitude for aircraft position to avoid discrepancies in
   display when flying at flight levels.
+* The map is now also centered and updated with disabled aircraft display. The active leg (magenta line)
+  is now correctly updated on the map and elevation profile in this case.
 * Other display improvements.
 
 ### Weather

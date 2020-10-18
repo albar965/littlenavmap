@@ -4204,6 +4204,7 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
           // Use corrected indexes to highlight initial fix
           qDebug() << "new route leg" << previousRouteLeg << routeLeg;
           highlightNextWaypoint(routeLeg);
+          NavApp::updateAllMaps();
         }
       }
       else

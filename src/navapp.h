@@ -168,6 +168,8 @@ public:
   static const atools::fs::sc::SimConnectData& getSimConnectData();
   static const atools::geo::Pos& getUserAircraftPos();
 
+  static void updateAllMaps();
+
   static const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft();
 
   static map::MapTypes getShownMapFeatures();

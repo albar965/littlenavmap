@@ -153,94 +153,94 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
   if(!NavApp::getRouteConst().isFlightplanEmpty())
   {
-    if((showAircraft || showAircraftTrack))
+    // if(showAircraft || showAircraftTrack)
+    // {
+    simData = simulatorData;
+
+    bool lastPosValid = lastSimData.getUserAircraftConst().isValid();
+    bool simPosValid = simData.getUserAircraftConst().isValid();
+
+    float lastAlt = aircraftAlt(lastSimData.getUserAircraftConst());
+    float simAlt = aircraftAlt(simData.getUserAircraftConst());
+
+    aircraftDistanceFromStart = route.getProjectionDistance();
+
+    // Update if new or last distance is/was invalid
+    updateWidget = (aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) !=
+                   (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) && widgetVisible;
+
+    if(aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
     {
-      simData = simulatorData;
-
-      bool lastPosValid = lastSimData.getUserAircraftConst().isValid();
-      bool simPosValid = simData.getUserAircraftConst().isValid();
-
-      float lastAlt = aircraftAlt(lastSimData.getUserAircraftConst());
-      float simAlt = aircraftAlt(simData.getUserAircraftConst());
-
-      aircraftDistanceFromStart = route.getProjectionDistance();
-
-      // Update if new or last distance is/was invalid
-      updateWidget = (aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) !=
-                     (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) && widgetVisible;
-
-      if(aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
-      {
 #ifdef DEBUG_INFORMATION_PROFILE_SIMDATA
-        if(simData.getUserAircraft().isDebug())
-          qDebug() << Q_FUNC_INFO << aircraftDistanceFromStart;
+      if(simData.getUserAircraft().isDebug())
+        qDebug() << Q_FUNC_INFO << aircraftDistanceFromStart;
 #endif
 
-        // Get point (NM/ft) for current update
-        QPointF currentPoint(aircraftDistanceFromStart, simAlt);
+      // Get point (NM/ft) for current update
+      QPointF currentPoint(aircraftDistanceFromStart, simAlt);
 
-        // Add track point if delta value between last and current update is large enough
-        if(simPosValid)
+      // Add track point if delta value between last and current update is large enough
+      if(simPosValid)
+      {
+        if(aircraftTrackPoints.isEmpty())
+          aircraftTrackPoints.append(currentPoint);
+        else
         {
-          if(aircraftTrackPoints.isEmpty())
+          QLineF delta(aircraftTrackPoints.last(), currentPoint);
+
+          if(std::abs(delta.dx()) > 0.1 /* NM */ || std::abs(delta.dy()) > 50. /* ft */)
             aircraftTrackPoints.append(currentPoint);
-          else
-          {
-            QLineF delta(aircraftTrackPoints.last(), currentPoint);
 
-            if(std::abs(delta.dx()) > 0.1 /* NM */ || std::abs(delta.dy()) > 50. /* ft */)
-              aircraftTrackPoints.append(currentPoint);
-
-            if(aircraftTrackPoints.size() > OptionData::instance().getAircraftTrackMaxPoints())
-              aircraftTrackPoints.removeFirst();
-          }
+          if(aircraftTrackPoints.size() > OptionData::instance().getAircraftTrackMaxPoints())
+            aircraftTrackPoints.removeFirst();
         }
+      }
 
-        if(widgetVisible)
+      if(widgetVisible)
+      {
+        const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
+
+        using atools::almostNotEqual;
+        // Get point (NM/ft) from last update
+        QPointF lastPoint;
+        if(lastPosValid)
+          lastPoint = QPointF(lastAircraftDistanceFromStart, lastAlt);
+
+        // Update widget if delta value between last and current update is large enough
+        if(!lastPosValid ||   // No last position
+           (toScreen(lastPoint) - toScreen(currentPoint)).manhattanLength() >= deltas.manhattanLengthDelta ||   // Position change on screen
+           almostNotEqual(lastAlt, simAlt, deltas.altitudeDelta)   // Altitude change
+           )
         {
-          const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
+          movingBackwards = (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) &&
+                            (lastAircraftDistanceFromStart > aircraftDistanceFromStart);
 
-          using atools::almostNotEqual;
-          // Get point (NM/ft) from last update
-          QPointF lastPoint;
-          if(lastPosValid)
-            lastPoint = QPointF(lastAircraftDistanceFromStart, lastAlt);
+          lastSimData = simData;
+          lastAircraftDistanceFromStart = aircraftDistanceFromStart;
 
-          // Update widget if delta value between last and current update is large enough
-          if(!lastPosValid || // No last position
-             (toScreen(lastPoint) - toScreen(currentPoint)).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
-             almostNotEqual(lastAlt, simAlt, deltas.altitudeDelta) // Altitude change
-             )
-          {
-            movingBackwards = (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) &&
-                              (lastAircraftDistanceFromStart > aircraftDistanceFromStart);
+          if(simAlt > maxWindowAlt)
+            // Scale up to keep the aircraft visible
+            updateScreenCoords();
 
-            lastSimData = simData;
-            lastAircraftDistanceFromStart = aircraftDistanceFromStart;
+          // Probably center aircraft on scroll area
+          if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && !jumpBack->isActive())
+            scrollArea->centerAircraft(toScreen(currentPoint),
+                                       simData.getUserAircraftConst().getVerticalSpeedFeetPerMin());
 
-            if(simAlt > maxWindowAlt)
-              // Scale up to keep the aircraft visible
-              updateScreenCoords();
-
-            // Probably center aircraft on scroll area
-            if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && !jumpBack->isActive())
-              scrollArea->centerAircraft(toScreen(currentPoint),
-                                         simData.getUserAircraftConst().getVerticalSpeedFeetPerMin());
-
-            // Aircraft position has changed enough
-            updateWidget = true;
-          }
-        } // if(widgetVisible)
-      } // if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
-    } // if((showAircraft || showAircraftTrack))
-    else
-    {
-      // Neither aircraft nor track shown - update simulator data only
-      bool valid = simData.getUserAircraftConst().isValid();
-      simData = atools::fs::sc::SimConnectData();
-      if(valid)
-        updateWidget = true;
-    }
+          // Aircraft position has changed enough
+          updateWidget = true;
+        }
+      }   // if(widgetVisible)
+    }   // if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
+    // } // if((showAircraft || showAircraftTrack))
+    // else
+    // {
+    //// Neither aircraft nor track shown - update simulator data only
+    // bool valid = simData.getUserAircraftConst().isValid();
+    // simData = atools::fs::sc::SimConnectData();
+    // if(valid)
+    // updateWidget = true;
+    // }
   }
 
   if(updateWidget)

@@ -26,6 +26,7 @@
 #include "db/databasemanager.h"
 #include "fs/db/databasemeta.h"
 #include "mapgui/mapwidget.h"
+#include "profile/profilewidget.h"
 #include "gui/mainwindow.h"
 #include "route/routecontroller.h"
 #include "common/elevationprovider.h"
@@ -447,6 +448,15 @@ const atools::fs::sc::SimConnectData& NavApp::getSimConnectData()
 const atools::geo::Pos& NavApp::getUserAircraftPos()
 {
   return mainWindow->getMapWidget()->getUserAircraft().getPosition();
+}
+
+void NavApp::updateAllMaps()
+{
+  if(mainWindow->getMapWidget() != nullptr)
+    mainWindow->getMapWidget()->update();
+
+  if(mainWindow->getProfileWidget() != nullptr)
+    mainWindow->getProfileWidget()->update();
 }
 
 const QVector<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
