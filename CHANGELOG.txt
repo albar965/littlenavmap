@@ -170,6 +170,7 @@ Note that you can change the user interface language in the options dialog on pa
   calculation. Now clearing window and showing orange warning message if this is the case.
 * Now showing an excerpt of the waypoint remarks in the next waypoint section of the progress
   display.
+* Added calculated altitude for next waypoint to aircraft progress display.
 * Added link to download section to the help menu.
 * Now showing ice and condition column in progress only if not equal to none.
 * Further user interface improvements and fixes.

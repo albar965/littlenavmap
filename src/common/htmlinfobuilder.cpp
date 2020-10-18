@@ -812,7 +812,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         bool closedSec = recSec->valueBool("has_closed_markings");
 
         html.br().text(tr("Runway ") + recPrim->valueStr("name") + ", " + recSec->valueStr("name"),
-                       (closedPrim & closedSec ? ahtml::STRIKEOUT : ahtml::NONE)
+                       ((closedPrim && closedSec) ? ahtml::STRIKEOUT : ahtml::NONE)
                        | ahtml::UNDERLINE | ahtml::BIG | ahtml::BOLD);
         html.table();
 
@@ -3496,7 +3496,6 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         // For course and distance use not corrected leg
         const RouteLeg& routeLeg = activeLegIdx != map::INVALID_INDEX_VALUE &&
                                    corrected ? route.value(activeLegIdx) : routeLegCorrected;
-
         const proc::MapProcedureLeg& procLeg = routeLegCorrected.getProcedureLeg();
 
         // Next leg - approach data ====================================================
@@ -3604,6 +3603,16 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           }
 
         } // if(nearestLegDistance < map::INVALID_DISTANCE_VALUE)
+
+        // Next leg - altitude ====================================================
+        if(NavApp::getAltitudeLegs().isValidProfile())
+        {
+          const RouteAltitudeLeg& routeAltLeg = activeLegIdx != map::INVALID_INDEX_VALUE &&
+                                                corrected ? route.getAltitudeLegAt(activeLegIdx) : routeAltLegCorrected;
+
+          if(!routeAltLeg.isEmpty())
+            html.row2(tr("Altitude:"), Unit::altFeet(routeAltLeg.getWaypointAltitude()));
+        }
 
         // No cross track and course for holds
         if(route.getSizeWithoutAlternates() > 1)
