@@ -223,8 +223,8 @@ void MapPaintLayer::initMapLayerSettings()
          airportSymbolSize(20).airportInfo().
          windBarbsSymbolSize(22).
          waypointSymbolSize(14).waypointName().
-         vorSymbolSize(42).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(42).ndbIdent().ndbInfo().
+         vorSymbolSize(30).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(30).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
@@ -236,8 +236,8 @@ void MapPaintLayer::initMapLayerSettings()
          airportSymbolSize(20).airportInfo().
          windBarbsSymbolSize(20).
          waypointSymbolSize(14).waypointName().
-         vorSymbolSize(40).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(40).ndbIdent().ndbInfo().
+         vorSymbolSize(30).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(30).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
@@ -251,8 +251,8 @@ void MapPaintLayer::initMapLayerSettings()
          windBarbsSymbolSize(20).
          aiAircraftGroundText(false).
          waypointSymbolSize(14).waypointName().
-         vorSymbolSize(38).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(38).ndbIdent().ndbInfo().
+         vorSymbolSize(28).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(28).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
@@ -266,8 +266,8 @@ void MapPaintLayer::initMapLayerSettings()
          waypointSymbolSize(10).waypointName().
          windBarbsSymbolSize(18).
          aiAircraftGroundText(false).
-         vorSymbolSize(32).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(32).ndbIdent().ndbInfo().
+         vorSymbolSize(26).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(26).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
