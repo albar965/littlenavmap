@@ -1051,7 +1051,7 @@ void NavApp::initSplashScreen()
 
   splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
                             arg(Application::applicationVersion()).arg(GIT_REVISION),
-                            Qt::AlignRight | Qt::AlignBottom, Qt::white);
+                            Qt::AlignRight | Qt::AlignBottom, Qt::black);
 
   processEvents(QEventLoop::ExcludeUserInputEvents);
 }
