@@ -94,86 +94,86 @@
         <translation type="vanished">Aktueller Flugabschnitt %1.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="815"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="816"/>
         <source>Fuel</source>
         <translation>Treibstoff</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="817"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="818"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1002"/>
         <source>Fuel Type:</source>
         <translation>Typ:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="817"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="818"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1002"/>
         <source>Avgas</source>
         <translation>Flugbenzin</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="817"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="818"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1002"/>
         <source>Jetfuel</source>
         <translation>Kerosin</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="818"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="819"/>
         <source>Total Fuel Consumed:</source>
         <translation>Verbraucht:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="819"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="820"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1119"/>
         <source>Taxi Fuel:</source>
         <translation>Treibstoff Rollen:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="825"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="826"/>
         <source>Average Performance</source>
         <translation>Durchschn. Leistung</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="825"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="826"/>
         <source>Climb</source>
         <translation>Steigflug</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="827"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="838"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="846"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="828"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="839"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="847"/>
         <source>True Airspeed:</source>
         <translation>Wahre Luftgeschwindigkeit:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="828"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="848"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="829"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="849"/>
         <source>Vertical Speed:</source>
         <translation>Vertikale Geschwindigkeit:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="828"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="829"/>
         <source> &lt;b&gt;▲&lt;/b&gt;</source>
         <translation> &lt;b&gt;▲&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="830"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="839"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="850"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="831"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="840"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="851"/>
         <source>Fuel Flow:</source>
         <translation>Treibstofffluss:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="836"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="837"/>
         <source>Cruise</source>
         <translation>Reiseflug</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="844"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="845"/>
         <source>Descent</source>
         <translation>Sinkflug</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="848"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="849"/>
         <source> &lt;b&gt;▼&lt;/b&gt;</source>
         <translation> &lt;b&gt;▼&lt;/b&gt;</translation>
     </message>
@@ -200,12 +200,12 @@
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="704"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="789"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="790"/>
         <source> - </source>
         <translation> - </translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="952"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="956"/>
         <source>No Flight Plan loaded.</source>
         <translation>Kein Flugplan geladen.</translation>
     </message>
@@ -218,74 +218,74 @@
         <translation type="obsolete">Aktueller Flugabschnitt %1. {1.%2?}</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="865"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="866"/>
         <source>Performance File</source>
         <translation>Datei für Flugzeugleistung</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="880"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="881"/>
         <source>Performance File:</source>
         <translation>Datei für Flugzeugleistung:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="941"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="943"/>
         <source>Aircraft Performance %1 - %2</source>
         <translation>Flugzeugleistung %1 - %2</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="956"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="960"/>
         <source>usable fuel</source>
         <translation>Verwendbarer Treibstoff</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="958"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="962"/>
         <source>reserve fuel</source>
         <translation>Reservetreibstoff</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="960"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="964"/>
         <source>climb fuel flow</source>
         <translation>Treibstofffluss im Steigflug</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="962"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="966"/>
         <source>cruise fuel flow</source>
         <translation>Treibstofffluss im Reiseflug</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="964"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="968"/>
         <source>descent fuel flow</source>
         <translation>Treibstofffluss im Sinkflug</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="966"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="970"/>
         <source>alternate fuel flow</source>
         <translation>Treibstofffluss zum Ausweichflugplatz</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="969"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="973"/>
         <source>Invalid value for %1.</source>
         <translation>Ungültiger Wert für %1.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="969"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="973"/>
         <source>Invalid values for %1.</source>
         <translation>Ungültige Werte für %1.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="806"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="929"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="970"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="807"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="930"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="974"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="976"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="977"/>
         <source>Block fuel exceeds usable of %1.</source>
         <translation>Zu ladender Treibstoff überschreitet verwendbaren %1.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="981"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="980"/>
         <source>Reserve fuel bigger than usable.</source>
         <translation>Reservetreibstoff größer als verwendbarer.</translation>
     </message>
@@ -343,69 +343,69 @@
 Auch die Steig- bzw. Sinkfluggeschwindigkeiten in der Flugzeugleistung überprüfen.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="725"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="726"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1177"/>
         <source>Remarks</source>
         <translation>Anmerkungen</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="791"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="792"/>
         <source>Unknown Aircraft</source>
         <translation>Unbekanntes Flugzeug</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="802"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="803"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="998"/>
         <source>Aircraft</source>
         <translation>Flugzeug</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="804"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="805"/>
         <source>Current flight segment: </source>
         <translation>Aktueller Flugabschnitt:.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="805"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="806"/>
         <source>, &lt;b&gt;Finished.&lt;/b&gt;</source>
         <translation>, &lt;b&gt;Fertig.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="806"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="807"/>
         <source>Aircraft status: </source>
         <translation>Flugzeugstatus: </translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="811"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="812"/>
         <source>No flight detected.</source>
         <translation>Kein Flug erkannt.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="913"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="914"/>
         <source>Hard and soft surface</source>
         <translation>Befestigte und unbefestigte Oberfläche</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="916"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="917"/>
         <source>Hard surface</source>
         <translation>Befestigte Oberfläche</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="919"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="920"/>
         <source>Water</source>
         <translation>Wasser</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="922"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="923"/>
         <source>Amphibian</source>
         <translation>Amphibisch</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="929"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="930"/>
         <source>Minimum runway:</source>
         <translation>Minimum Runway:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="950"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="954"/>
         <source>Flight Plan not valid.</source>
         <translation>Flugplan nicht gültig.</translation>
     </message>
@@ -16297,7 +16297,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="120"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="146"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="145"/>
         <source>Airports (AP) with runway length &gt; %1 and%2</source>
         <translation>Flugplätze (AP) mit Runwaylänge &gt; %1 und%2</translation>
     </message>
@@ -16306,123 +16306,123 @@ kHz/MHz</translation>
         <translation type="vanished">Add-On Flugplatz mit Runwaylänge &gt; %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="133"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="132"/>
         <source>Airports (AP) with%1</source>
         <translation>Flugplätze (AP) mit %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="136"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="135"/>
         <source>Add-on airports (A)</source>
         <translation>Add-On Flugplätze (A)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="142"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="141"/>
         <source>&gt;%1%2</source>
         <translation>&gt;%1%2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="151"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="166"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="150"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="165"/>
         <source>Add-on airports (A) with runway length &gt; %1</source>
         <translation>Add-On Flugplätze (A) mit Runwaylänge &gt; %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="157"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="156"/>
         <source>&gt;%1,H</source>
         <translation>&gt;%1,H</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="162"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="161"/>
         <source>Airports (AP) with runway length &gt; %1 and hard runways (H)</source>
         <translation>Flugplätze (AP) mit Runwaylänge &gt; %1 und befestigten Runway (H)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="179"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="178"/>
         <source>Empty airports (E) with zero rating</source>
         <translation>Leere Flugplätze (E) ohne Bewertung</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="186"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="185"/>
         <source>V</source>
         <translation>V</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="187"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="186"/>
         <source>VOR (V)</source>
         <translation>VOR (V)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="191"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="190"/>
         <source>N</source>
         <translation>N</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="192"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="191"/>
         <source>NDB (N)</source>
         <translation>NDB (N)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="196"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="195"/>
         <source>I</source>
         <translation>I</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="197"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="196"/>
         <source>ILS (I)</source>
         <translation>ILS (I)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="201"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="200"/>
         <source>W</source>
         <translation>W</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="202"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="201"/>
         <source>Waypoints (W)</source>
         <translation>Wegpunkte (W)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="206"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="205"/>
         <source>JA</source>
         <translation>JA</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="207"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="206"/>
         <source>Jet Airways (JA)</source>
         <translation>Jet Luftstraßen (JA)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="211"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="210"/>
         <source>T</source>
         <translation>T</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="212"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="211"/>
         <source>Tracks (T)</source>
         <translation>Tracks (T)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="216"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="215"/>
         <source>VA</source>
         <translation>VA</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="217"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="216"/>
         <source>Victor Airways (VA)</source>
         <translation>Victor Luftstraßen (VA)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="236"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="235"/>
         <source>ICAO</source>
         <translation>ICAO</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="237"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="236"/>
         <source>Class A-E (ICAO)</source>
         <translation>Klasse A-E (ICAO)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="242"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="241"/>
         <source>F,G</source>
         <oldsource>FIR</oldsource>
         <translation>F,G</translation>
@@ -16432,42 +16432,42 @@ kHz/MHz</translation>
         <translation type="vanished">Flight Information Region, Klasse F bzw. G (FIR)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="254"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="253"/>
         <source>RSTR</source>
         <translation>RSTR</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="255"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="254"/>
         <source>Restricted (RSTR)</source>
         <translation>Beschränkt (RSTR)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="260"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="259"/>
         <source>SPEC</source>
         <translation>SPEC</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="261"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="260"/>
         <source>Special (SPEC)</source>
         <translation>Spezial (SPEC)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="266"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="265"/>
         <source>OTR</source>
         <translation>OTR</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="267"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="266"/>
         <source>Centers and others (OTR)</source>
         <translation>Kontrollzentren und Andere (OTR)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="274"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="273"/>
         <source>Navaids: </source>
         <translation>Navigationshilfen: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="276"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="275"/>
         <source>No navaids</source>
         <translation>Keine Navigationshilfen</translation>
     </message>
@@ -16488,28 +16488,28 @@ kHz/MHz</translation>
         <translation type="vanished">Online Centergruppen: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="282"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="281"/>
         <source>Airspace Groups: </source>
         <translation>Luftraumgruppen: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="338"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="337"/>
         <source>%1 Clients / Aircraft</source>
         <translation>%1 Clients / Flugzeuge</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="341"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="340"/>
         <source>AI / Multiplayer / online client: </source>
         <oldsource>AI / multiplayer / online client: </oldsource>
         <translation>KI / Mehrspieler / Online Client: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="343"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="342"/>
         <source>No AI / Multiplayer / online client</source>
         <translation>Kein KI / Mehrspieler / Online Client: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="281"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="280"/>
         <source>Airspaces: </source>
         <translation>Lufträume: </translation>
     </message>
@@ -16524,90 +16524,90 @@ kHz/MHz</translation>
         <translation>Add-On Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="243"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="242"/>
         <source>Class F and/or G</source>
         <translation>Klasse F bzw. G</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="248"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="247"/>
         <source>FIR,UIR</source>
         <translation>FIR,UIR</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="249"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="248"/>
         <source>Flight and/or Upper Information Regions</source>
         <translation>Fluginformationsregionen, Klasse F bzw. G (FIR)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="283"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="282"/>
         <source>Airspace Sources: </source>
         <translation>Luftraumquellen: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="293"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="292"/>
         <source>No airspaces</source>
         <translation>Keine Lufträume</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="306"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="305"/>
         <source>Aircraft &gt; %1 ft</source>
         <translation>Flugzeug &gt; %1 ft</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="311"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="310"/>
         <source>Aircraft</source>
         <translation>Flugzeug</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="317"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="316"/>
         <source> on ground</source>
         <translation> auf dem Boden</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="327"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="326"/>
         <source>Ships &gt; %1 ft</source>
         <translation>Schiffe &gt; %1 ft</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="332"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="331"/>
         <source>Ships</source>
         <translation>Schiffe</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="348"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="347"/>
         <source>Airport weather source: </source>
         <translation>Flugplatzwetter Quelle:</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="352"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="351"/>
         <source>No airport weather shown</source>
         <translation>Kein Flugplatzwetter angezeigt</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="356"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="355"/>
         <source>Wind shown: </source>
         <translation>Angezeigter Wind: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="357"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="356"/>
         <source> Wind source: </source>
         <translation> Wind-Quelle: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="360"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="359"/>
         <source>No wind shown</source>
         <translation>Kein Wind angezeigt</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="362"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="361"/>
         <source>User features: </source>
         <translation>Nutzerobjekte: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="368"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="370"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="372"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="374"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="367"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="369"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="371"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="373"/>
         <source>,</source>
         <translation>,</translation>
     </message>
@@ -16625,43 +16625,43 @@ kHz/MHz</translation>
         <translation>Vorherige Position in der Kartenhistorie.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2639"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2642"/>
         <source>&lt;p&gt;Cannot zoom to a position nearby the poles in Mercator projection.&lt;br/&gt;Use Spherical instead.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Kann in der Mercator-Projektion nicht zu einer Position nahe den Polen zoomen&lt;br/&gt;Nutzen Sie stattdessen die Sphärische Projektion.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2642"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2645"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3092"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3095"/>
         <source>Added hold.</source>
         <translation>Warteschleife hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3103"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3106"/>
         <source>Holding removed from map.</source>
         <translation>Warteschleife von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3125"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3128"/>
         <source>Showing distance search center.</source>
         <translation>Zeige Distanz zum Suchzentrum.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3144"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3147"/>
         <source>Showing home position.</source>
         <translation>Zeige Heimposition.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3155"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3158"/>
         <source>Distance search center position changed.</source>
         <translation>Distanz zur Suchzentrumsposition geändert.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3163"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3166"/>
         <source>Changed home position.</source>
         <translation>Heimposition geändert.</translation>
     </message>
@@ -16782,12 +16782,12 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation type="vanished"> (nicht auf der Karte angezeigt)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3062"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3065"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>Platzrunde für %1 hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3073"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3076"/>
         <source>Traffic pattern removed from map.</source>
         <translation>Platzrunde von der Karte entfernt.</translation>
     </message>
@@ -16827,17 +16827,17 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation type="vanished"> / </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3266"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3269"/>
         <source>Range ring removed from map.</source>
         <translation>Distanzkreise von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3274"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3277"/>
         <source>Measurement line removed from map.</source>
         <translation>Messlinie von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3191"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3194"/>
         <source>Added range rings for %1.</source>
         <translation>Distanzkreise für %1 hinzugefügt.</translation>
     </message>
@@ -16860,9 +16860,9 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <location filename="src/mapgui/mapwidget.cpp" line="1599"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1601"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1608"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3178"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3180"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3181"/>
         <location filename="src/mapgui/mapwidget.cpp" line="3183"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3186"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
@@ -16872,12 +16872,12 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation>Koordinaten in die Zwischenablage kopiert.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3212"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3215"/>
         <source>Added range rings for position.</source>
         <translation>Distanzkreise für Position hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3334"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3337"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Alle Distanzkreise und Messungen von der Karte entfernt.</translation>
     </message>
@@ -16901,17 +16901,17 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation type="vanished">Flugzeugpfad von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3287"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3290"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3294"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3297"/>
         <source>Detail %1</source>
         <translation>Detail %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3295"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3298"/>
         <source>Map detail level changed.</source>
         <translation>Detailgrad der Karte geändert.</translation>
     </message>
@@ -16923,8 +16923,8 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/navapp.cpp" line="338"/>
-        <location filename="src/navapp.cpp" line="344"/>
+        <location filename="src/navapp.cpp" line="339"/>
+        <location filename="src/navapp.cpp" line="345"/>
         <source>While reading magnetic declination from database:</source>
         <translation>Während des Lesens der magnetischen Deklination aus der Datenbank:</translation>
     </message>
@@ -24876,7 +24876,7 @@ Leerzeichen werden durch Unterstriche ersetzt.</translation>
         <translation>%1 läuft bereits.</translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1042"/>
+        <location filename="src/navapp.cpp" line="1052"/>
         <source>Version %5 (revision %6)</source>
         <translation>Version %5 (Revision %6)</translation>
     </message>
@@ -25841,34 +25841,34 @@ Versuchen Sie einen anderen Routentyp oder erstellen Sie den Flugplan manuell.</
         <translation type="obsolete">-</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4487"/>
+        <location filename="src/route/routecontroller.cpp" line="4488"/>
         <source>Depart runway</source>
         <translation>Start-Runway</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4501"/>
-        <location filename="src/route/routecontroller.cpp" line="4541"/>
-        <location filename="src/route/routecontroller.cpp" line="4582"/>
+        <location filename="src/route/routecontroller.cpp" line="4502"/>
+        <location filename="src/route/routecontroller.cpp" line="4542"/>
+        <location filename="src/route/routecontroller.cpp" line="4583"/>
         <source>.</source>
         <translation>.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4517"/>
+        <location filename="src/route/routecontroller.cpp" line="4518"/>
         <source>Arrive via STAR</source>
         <translation>Anflug via STAR</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4529"/>
+        <location filename="src/route/routecontroller.cpp" line="4530"/>
         <source>at runway</source>
         <translation>auf Runway</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4535"/>
+        <location filename="src/route/routecontroller.cpp" line="4536"/>
         <source>(&lt;b&gt;%1&lt;/b&gt;)</source>
         <translation>(&lt;b&gt;%1&lt;/b&gt;)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4561"/>
+        <location filename="src/route/routecontroller.cpp" line="4562"/>
         <source>-%1</source>
         <translation>-%1</translation>
     </message>
@@ -25881,17 +25881,17 @@ Versuchen Sie einen anderen Routentyp oder erstellen Sie den Flugplan manuell.</
         <translation type="vanished">Kein Flugplan geladen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4615"/>
+        <location filename="src/route/routecontroller.cpp" line="4616"/>
         <source>&lt;h2&gt;%1 to %2&lt;/h2&gt;</source>
         <translation>&lt;h2&gt;%1 nach %2&lt;/h2&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4621"/>
+        <location filename="src/route/routecontroller.cpp" line="4622"/>
         <source>&lt;b&gt;No Flight Plan loaded.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Kein Flugplan geladen.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4623"/>
+        <location filename="src/route/routecontroller.cpp" line="4624"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu on the map or the airport search (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;to select departure and destination.&lt;/p&gt;</source>
         <oldsource>Use the right-click context menu on the map or the airport search (F4)
 to select departure and destination.</oldsource>
@@ -26113,7 +26113,7 @@ erstellen Sie den Flugplan manuell.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3056"/>
-        <location filename="src/route/routecontroller.cpp" line="4737"/>
+        <location filename="src/route/routecontroller.cpp" line="4738"/>
         <source>Set Start Position</source>
         <translation>Startposition setzen</translation>
     </message>
@@ -26291,52 +26291,52 @@ erstellen Sie den Flugplan manuell.</translation>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4320"/>
+        <location filename="src/route/routecontroller.cpp" line="4321"/>
         <source>Waypoint &quot;%1&quot; not found.</source>
         <translation>Wegpunkt &quot;%1&quot; nicht gefunden.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4355"/>
+        <location filename="src/route/routecontroller.cpp" line="4356"/>
         <source>
 </source>
         <translation>
 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4388"/>
-        <location filename="src/route/routecontroller.cpp" line="4393"/>
+        <location filename="src/route/routecontroller.cpp" line="4389"/>
+        <location filename="src/route/routecontroller.cpp" line="4394"/>
         <source>Cannot load %1: %2</source>
         <translation>Kann %1 nicht laden: %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4389"/>
+        <location filename="src/route/routecontroller.cpp" line="4390"/>
         <source>procedures</source>
         <translation>Prozeduren</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4389"/>
+        <location filename="src/route/routecontroller.cpp" line="4390"/>
         <source>procedure</source>
         <translation>Prozedur</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4390"/>
-        <location filename="src/route/routecontroller.cpp" line="4395"/>
-        <location filename="src/route/routecontroller.cpp" line="4659"/>
+        <location filename="src/route/routecontroller.cpp" line="4391"/>
+        <location filename="src/route/routecontroller.cpp" line="4396"/>
+        <location filename="src/route/routecontroller.cpp" line="4660"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4394"/>
+        <location filename="src/route/routecontroller.cpp" line="4395"/>
         <source>alternates</source>
         <translation>Ausweichflugplätze</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4394"/>
+        <location filename="src/route/routecontroller.cpp" line="4395"/>
         <source>alternate</source>
         <translation>Ausweichflugplatz</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4398"/>
+        <location filename="src/route/routecontroller.cpp" line="4399"/>
         <source>Download oceanic tracks in menu &quot;Flight Plan&quot;
 or calculate the flight plan again if your plan uses tracks.</source>
         <comment>Keep in sync with menu names</comment>
@@ -26344,121 +26344,121 @@ or calculate the flight plan again if your plan uses tracks.</source>
 oder berechnen Sie den Flugplan neu, falls Sie Tracks benutzen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4402"/>
+        <location filename="src/route/routecontroller.cpp" line="4403"/>
         <source>Errors in flight plan.</source>
         <translation>Fehler im Flugplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4427"/>
+        <location filename="src/route/routecontroller.cpp" line="4428"/>
         <source>Invalid</source>
         <translation>Ungültig</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4436"/>
-        <location filename="src/route/routecontroller.cpp" line="4452"/>
-        <location filename="src/route/routecontroller.cpp" line="4458"/>
-        <location filename="src/route/routecontroller.cpp" line="4460"/>
+        <location filename="src/route/routecontroller.cpp" line="4437"/>
+        <location filename="src/route/routecontroller.cpp" line="4453"/>
+        <location filename="src/route/routecontroller.cpp" line="4459"/>
+        <location filename="src/route/routecontroller.cpp" line="4461"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4444"/>
+        <location filename="src/route/routecontroller.cpp" line="4445"/>
         <source> Helipad %1</source>
         <translation> Helikopterlandeplatz %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4446"/>
+        <location filename="src/route/routecontroller.cpp" line="4447"/>
         <source> Runway %1</source>
         <translation> Runway %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4448"/>
+        <location filename="src/route/routecontroller.cpp" line="4449"/>
         <source> Unknown Start</source>
         <translation> Unbekannter Start</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4482"/>
+        <location filename="src/route/routecontroller.cpp" line="4483"/>
         <source>Depart via SID</source>
         <translation>Abflug via SID</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4489"/>
+        <location filename="src/route/routecontroller.cpp" line="4490"/>
         <source>via SID</source>
         <translation>via SID</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4548"/>
+        <location filename="src/route/routecontroller.cpp" line="4549"/>
         <source>via</source>
         <translation>via</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4548"/>
-        <location filename="src/route/routecontroller.cpp" line="4556"/>
+        <location filename="src/route/routecontroller.cpp" line="4549"/>
+        <location filename="src/route/routecontroller.cpp" line="4557"/>
         <source>Via</source>
         <translation>Via</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4556"/>
+        <location filename="src/route/routecontroller.cpp" line="4557"/>
         <source>and</source>
         <translation>und</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4572"/>
+        <location filename="src/route/routecontroller.cpp" line="4573"/>
         <source>(%1)</source>
         <translation>(%1)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4580"/>
+        <location filename="src/route/routecontroller.cpp" line="4581"/>
         <source>To runway</source>
         <translation>Zum Runway</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4580"/>
+        <location filename="src/route/routecontroller.cpp" line="4581"/>
         <source>to runway</source>
         <translation>zum Runway</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4588"/>
+        <location filename="src/route/routecontroller.cpp" line="4589"/>
         <source>To runway.</source>
         <translation>Zu Runway.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4588"/>
+        <location filename="src/route/routecontroller.cpp" line="4589"/>
         <source>to runway.</source>
         <translation>zu Runway.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4597"/>
+        <location filename="src/route/routecontroller.cpp" line="4598"/>
         <source>Runway mismatch: STAR &quot;%1&quot; ≠ Approach &quot;%2&quot;.</source>
         <translation>Runways passen nicht zueinander: STAR &quot;%1&quot; ≠ Anflug &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4604"/>
+        <location filename="src/route/routecontroller.cpp" line="4605"/>
         <source>&lt;b&gt;</source>
         <translation>&lt;b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4604"/>
+        <location filename="src/route/routecontroller.cpp" line="4605"/>
         <source>&lt;/b&gt;</source>
         <translation>&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4627"/>
+        <location filename="src/route/routecontroller.cpp" line="4628"/>
         <source>Select departure and destination in the map or airport search</source>
         <translation>Zuerst Start und Ziel auf der Karte oder in der Flugplatzsuche auswählen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4653"/>
+        <location filename="src/route/routecontroller.cpp" line="4654"/>
         <source>%1 from departure to top of climb</source>
         <translation>%1 vom Start bis zum Ende des Steigfluges</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4655"/>
+        <location filename="src/route/routecontroller.cpp" line="4656"/>
         <source>%1 from start of descent to destination</source>
         <translation>%1 vom Start des Sinkfluges zum Ziel</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4832"/>
+        <location filename="src/route/routecontroller.cpp" line="4833"/>
         <source>Remarks changed</source>
         <translation>Anmerkungen geändert</translation>
     </message>
@@ -26467,9 +26467,9 @@ oder berechnen Sie den Flugplan neu, falls Sie Tracks benutzen.</translation>
         <translation type="obsolete">&lt;b&gt;%1, %2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4644"/>
-        <location filename="src/route/routecontroller.cpp" line="4647"/>
-        <location filename="src/route/routecontroller.cpp" line="4651"/>
+        <location filename="src/route/routecontroller.cpp" line="4645"/>
+        <location filename="src/route/routecontroller.cpp" line="4648"/>
+        <location filename="src/route/routecontroller.cpp" line="4652"/>
         <source>&lt;b&gt;%1&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
@@ -26478,7 +26478,7 @@ oder berechnen Sie den Flugplan neu, falls Sie Tracks benutzen.</translation>
         <translation type="vanished">Kein Flugplan geladen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4617"/>
+        <location filename="src/route/routecontroller.cpp" line="4618"/>
         <source>&lt;b&gt;%1&lt;/b&gt; to &lt;b&gt;%2&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; nach &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
