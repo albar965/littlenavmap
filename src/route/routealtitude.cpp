@@ -1011,8 +1011,8 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
 #endif
 
   if(!altRestErrors.isEmpty() || distanceTopOfClimb > distanceTopOfDescent ||
-     (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_INDEX_VALUE)) ||
-     (calcTopOfDescent && !(distanceTopOfDescent < map::INVALID_INDEX_VALUE)))
+     (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_DISTANCE_VALUE)) ||
+     (calcTopOfDescent && !(distanceTopOfDescent < map::INVALID_DISTANCE_VALUE)))
   {
     // TOD and TOC overlap or are invalid or restrictions violated  - cruise altitude is too high
     clearAll();

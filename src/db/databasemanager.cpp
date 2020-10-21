@@ -1369,7 +1369,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   bool success = true;
   // Get configuration file path from resources or overloaded path
   QString config = Settings::getOverloadedPath(lnm::DATABASE_NAVDATAREADER_CONFIG);
-  qInfo() << "loadScenery: Config file" << config;
+  qInfo() << Q_FUNC_INFO << "Config file" << config << "Database" << db->databaseName();
 
   QSettings settings(config, QSettings::IniFormat);
 
