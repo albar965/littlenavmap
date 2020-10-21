@@ -54,6 +54,8 @@ const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 10.f;
 
 const static RouteLeg EMPTY_ROUTELEG;
 
+const static QRegularExpression USER_WP_ID("^WP([0-9]+)$");
+
 Route::Route()
 {
   resetActive();
@@ -147,13 +149,11 @@ void Route::clearAll()
 int Route::getNextUserWaypointNumber() const
 {
   /* Get number from user waypoint from user defined waypoint in fs flight plan */
-  static const QRegularExpression USER_WP_ID("^WP([0-9]+)$");
-
   int nextNum = 0;
 
   for(const FlightplanEntry& entry : flightplan.getEntries())
   {
-    if(entry.getWaypointType() == atools::fs::pln::entry::USER)
+    if(entry.getWaypointType() == atools::fs::pln::entry::USER && entry.getIdent().startsWith("WP"))
       nextNum = std::max(QString(USER_WP_ID.match(entry.getIdent()).captured(1)).toInt(), nextNum);
   }
   return nextNum + 1;
@@ -1336,6 +1336,7 @@ void Route::updateAll()
   updateMagvar();
   updateDistancesAndCourse();
   updateBoundingRect();
+  updateWaypointNames();
 
   if(!isEmpty())
   {
@@ -1351,6 +1352,20 @@ void Route::updateAll()
       flightplan.setDestinationName(getDestinationAirportLeg().getName());
     if(!flightplan.getDestinationPosition().isValid())
       flightplan.setDestinationPosition(first().getPosition());
+  }
+}
+
+void Route::updateWaypointNames()
+{
+  int num = 1;
+  for(FlightplanEntry& entry : flightplan.getEntries())
+  {
+    if(entry.getWaypointType() == atools::fs::pln::entry::USER && entry.getIdent().startsWith("WP"))
+    {
+      QRegularExpressionMatch match = USER_WP_ID.match(entry.getIdent());
+      if(match.hasMatch())
+        entry.setIdent(QString("WP%1").arg(num++));
+    }
   }
 }
 

@@ -656,6 +656,9 @@ private:
   bool arrivalRouteToProcLegs(int& arrivaLegsOffset) const;
   bool departureProcToRouteLegs(int& startIndexAfterProcedure) const;
 
+  /* Update waypoint numbers with prefix "WP" automatically in order of plan */
+  void updateWaypointNames();
+
   atools::geo::Rect boundingRect;
 
   /* Nautical miles not including missed approach and alternates */
