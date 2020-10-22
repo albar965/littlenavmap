@@ -189,8 +189,7 @@ void AirportQuery::getAirportByIcao(map::MapAirport& airport, const QString& ica
   }
 }
 
-void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const QString& ident, const QString& icao,
-                                   const atools::geo::Pos& pos)
+void AirportQuery::getAirportFuzzy(map::MapAirport& airport, QString ident, QString icao, atools::geo::Pos pos)
 {
   // airportFrom has to be copied to avoid overwriting
   // Try ident first
