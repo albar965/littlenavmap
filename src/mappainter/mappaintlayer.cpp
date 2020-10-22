@@ -478,7 +478,7 @@ void MapPaintLayer::updateLayers()
   // Get the uncorrected effective layer - route painting is independent of declutter
   mapLayerEffective = layers->getLayer(dist);
   mapLayer = layers->getLayer(dist, detailFactor);
-  mapLayerRoute = layers->getLayer(dist, detailFactor + 2);
+  mapLayerRoute = layers->getLayer(dist, detailFactor + 1);
 }
 
 bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos,

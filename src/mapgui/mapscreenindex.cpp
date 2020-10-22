@@ -600,7 +600,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   mapQuery->getNearestScreenObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram() &&
                                     OptionData::instance().getDisplayOptionsAirport().
                                     testFlag(optsd::ITEM_AIRPORT_DETAIL_PARKING),
-                                    shown & (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
+                                    shown & (map::AIRPORT_ALL_ADDON | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
                                              map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK),
                                     xs, ys, maxDistance, result);
 

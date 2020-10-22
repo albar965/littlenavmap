@@ -1841,7 +1841,7 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
   map::MapResult result;
   getScreenIndexConst()->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result, map::QUERY_NONE);
 
-  // Allow only aiports for alterates
+  // Allow only airports for alternates
   if(point >= 0)
   {
     if(NavApp::getRouteConst().value(point).isAlternate())
@@ -2262,7 +2262,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 float altToZoom = aircraft.getAltitudeAboveGroundFt() > 12000.f ? 1400.f : 2800.f;
                 // Minimum zoom depends on flight altitude
                 float minZoomDist = atools::geo::nmToKm(
-                  std::min(std::max(aircraft.getAltitudeAboveGroundFt() / altToZoom, 0.1f), 28.f));
+                  std::min(std::max(aircraft.getAltitudeAboveGroundFt() / altToZoom, 0.2f), 28.f));
 
                 if(distance() < minZoomDist)
                 {

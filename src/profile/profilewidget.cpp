@@ -207,9 +207,9 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           lastPoint = QPointF(lastAircraftDistanceFromStart, lastAlt);
 
         // Update widget if delta value between last and current update is large enough
-        if(!lastPosValid ||   // No last position
-           (toScreen(lastPoint) - toScreen(currentPoint)).manhattanLength() >= deltas.manhattanLengthDelta ||   // Position change on screen
-           almostNotEqual(lastAlt, simAlt, deltas.altitudeDelta)   // Altitude change
+        if(!lastPosValid || // No last position
+           (toScreen(lastPoint) - toScreen(currentPoint)).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
+           almostNotEqual(lastAlt, simAlt, deltas.altitudeDelta) // Altitude change
            )
         {
           movingBackwards = (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) &&
@@ -230,11 +230,11 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           // Aircraft position has changed enough
           updateWidget = true;
         }
-      }   // if(widgetVisible)
-    }   // if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
-    // } // if((showAircraft || showAircraftTrack))
-    // else
-    // {
+      } // if(widgetVisible)
+    } // if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
+      // } // if((showAircraft || showAircraftTrack))
+      // else
+      // {
     //// Neither aircraft nor track shown - update simulator data only
     // bool valid = simData.getUserAircraftConst().isValid();
     // simData = atools::fs::sc::SimConnectData();
@@ -635,7 +635,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Get a copy of the active route
   Route route = NavApp::getRoute();
 
-  // Alt legs are shared in routes
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
   const OptionData& optData = OptionData::instance();
   setFont(optData.getMapFont());
@@ -839,11 +838,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw ILS or VASI guidance ============================
   mapcolors::scaleFont(&painter, 0.9f);
 
-  if(NavApp::getMainUi()->actionProfileShowIls->isChecked())
-    paintIls(painter, route);
-
   if(NavApp::getMainUi()->actionProfileShowVasi->isChecked())
     paintVasi(painter, route);
+
+  if(NavApp::getMainUi()->actionProfileShowIls->isChecked())
+    paintIls(painter, route);
 
   // Get active route leg but ignore alternate legs
   bool activeValid = route.isActiveValid();

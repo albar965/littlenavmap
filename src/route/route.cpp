@@ -2639,8 +2639,13 @@ int Route::getAdjustedAltitude(int newAltitude) const
 
 void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd *runwayEnd) const
 {
-  if(runwayEnd != nullptr)
-    *runwayEnd = approachLegs.runwayEnd;
+  QList<map::MapRunwayEnd> runwayEnds;
+  NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name,
+                                                 getDestinationAirportLeg().getAirport(),
+                                                 false /* nav data */);
+
+  if(runwayEnd != nullptr && !runwayEnds.isEmpty())
+    *runwayEnd = runwayEnds.first();
 
   ils.clear();
   if(approachLegs.runwayEnd.isValid())
