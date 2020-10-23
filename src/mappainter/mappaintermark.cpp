@@ -714,6 +714,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
 /* Draw all rang rings. This includes the red rings and the radio navaid ranges. */
 void MapPainterMark::paintRangeRings()
 {
+  atools::util::PainterContextSaver saver(context->painter);
   const QList<map::RangeMarker>& rangeRings = mapPaintWidget->getRangeRings();
   GeoPainter *painter = context->painter;
 
@@ -1064,6 +1065,7 @@ void MapPainterMark::paintCompassRose()
 /* Draw great circle line distance measurement lines */
 void MapPainterMark::paintDistanceMarkers()
 {
+  atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
   context->szFont(context->textSizeRangeDistance);
   QFontMetrics metrics = painter->fontMetrics();
@@ -1080,8 +1082,11 @@ void MapPainterMark::paintDistanceMarkers()
     const int SYMBOL_SIZE = 5;
     int x, y;
     if(wToS(m.from, x, y))
+    {
       // Draw ellipse at start point
+      painter->setBrush(Qt::white);
       painter->drawEllipse(QPoint(x, y), SYMBOL_SIZE, SYMBOL_SIZE);
+    }
 
     if(wToS(m.to, x, y))
     {
@@ -1176,7 +1181,6 @@ void MapPainterMark::paintDistanceMarkers()
 
 void MapPainterMark::paintHolds()
 {
-
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
   const QList<Hold>& holds = mapPaintWidget->getHolds();
