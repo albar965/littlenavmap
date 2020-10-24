@@ -568,7 +568,7 @@ void RouteMultiExportDialog::resetPath(rexp::RouteExportFormatType type, int row
 void RouteMultiExportDialog::resetPathsAndSelection()
 {
   // Ask before resetting user data ==============
-  QMessageBox msgBox;
+  QMessageBox msgBox(NavApp::getQMainWidget());
   msgBox.setWindowTitle(QApplication::applicationName());
   msgBox.setText(tr("Reset selection and paths back to default?"));
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);

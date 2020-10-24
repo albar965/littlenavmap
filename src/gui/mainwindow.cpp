@@ -2152,7 +2152,7 @@ bool MainWindow::routeCheckForChanges()
   if(!routeController->hasChanged())
     return true;
 
-  QMessageBox msgBox;
+  QMessageBox msgBox(this);
   msgBox.setWindowTitle(QApplication::applicationName());
   msgBox.setText(tr("Flight Plan has been changed."));
   msgBox.setInformativeText(tr("Save changes?"));

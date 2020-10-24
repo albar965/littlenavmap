@@ -512,7 +512,7 @@ bool AircraftPerfController::checkForChanges()
   if(!changed)
     return true;
 
-  QMessageBox msgBox;
+  QMessageBox msgBox(mainWindow);
   msgBox.setWindowTitle(QApplication::applicationName());
   msgBox.setText(tr("Aircraft Performance has been changed."));
   msgBox.setInformativeText(tr("Save changes?"));

@@ -29,8 +29,6 @@
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
 
-#include <QMessageBox>
-
 /* Limt altitude to this value */
 static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT_METER = 8800.f;
 /* Point removal equality tolerance in meter */
