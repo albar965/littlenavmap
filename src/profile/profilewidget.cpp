@@ -1525,6 +1525,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
       totalDistanceMeter += altLeg.getGeoLineString().lengthMeter();
       leg.distances.append(totalDistanceMeter);
       leg.elevation = altLeg.getGeoLineString();
+      leg.elevation.setAltitude(0.f);
       leg.geometry = altLeg.getGeoLineString();
     }
 
