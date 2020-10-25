@@ -166,7 +166,8 @@ bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *p
   atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text);
 
   if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-    readPos.swapLonXLatY();
+    // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
+    atools::fs::util::maybeSwapOrdinates(readPos, text);
 
   if(pos != nullptr)
     *pos = readPos;
