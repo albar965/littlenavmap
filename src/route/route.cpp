@@ -287,8 +287,12 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     if(activeLegIndex == 0)
       // Reset from point route ====================================
       activeLegIndex = 1;
-    activePos.pos.distanceMeterToLine(getPrevPositionAt(activeLegIndex), getPositionAt(activeLegIndex),
-                                      activeLegResult);
+    const RouteLeg& actLeg = value(activeLegIndex);
+    if(actLeg.getGeometry().size() > 2 && actLeg.isAnyProcedure())
+      actLeg.getGeometry().distanceMeterToLineString(activePos.pos, activeLegResult);
+    else
+      activePos.pos.distanceMeterToLine(getPrevPositionAt(activeLegIndex), getPositionAt(activeLegIndex),
+                                        activeLegResult);
   }
 
   if(isTooFarToFlightPlan())
@@ -299,7 +303,8 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
   }
 
 #ifdef DEBUG_ACTIVE_LEG
-  qDebug() << Q_FUNC_INFO << "activePos" << activeLegResult;
+  qDebug() << Q_FUNC_INFO << "activeLegResult" << activeLegResult;
+  qDebug() << Q_FUNC_INFO << "activeGeometry" << value(activeLegIndex).getGeometry();
 #endif
 
   if(activeLegIndex != map::INVALID_INDEX_VALUE && value(activeLegIndex).isAlternate())

@@ -1072,7 +1072,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   {
     QColor col(255, 0, 0, 50);
 
-    if(leg.fixIdent == "D123M" && leg.type == proc::ARC_TO_FIX)
+    if(leg.fixIdent == "CI29" && leg.type == proc::COURSE_TO_FIX)
       col = QColor(0, 255, 0, 50);
 
     bool hiddenDummy;

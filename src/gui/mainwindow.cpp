@@ -575,7 +575,7 @@ void MainWindow::loadNavmapLegend()
     stream.setCodec("UTF-8");
     QString legendText = stream.readAll();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_LEGEND
     qDebug() << Q_FUNC_INFO << "==========================================";
     qDebug().noquote().nospace() << legendText;
     qDebug() << Q_FUNC_INFO << "==========================================";
