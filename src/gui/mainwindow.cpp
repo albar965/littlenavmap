@@ -194,8 +194,8 @@ MainWindow::MainWindow()
                                           ui->toolBarMapThemeProjection, ui->toolBarTools},
                                          settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
 
-    marbleAbout = new Marble::MarbleAboutDialog(this);
-    marbleAbout->setApplicationTitle(QApplication::applicationName());
+    marbleAboutDialog = new Marble::MarbleAboutDialog(this);
+    marbleAboutDialog->setApplicationTitle(QApplication::applicationName());
 
     currentWeatherContext = new map::WeatherContext;
 
@@ -432,7 +432,7 @@ MainWindow::~MainWindow()
   qDebug() << Q_FUNC_INFO << "delete profileWidget";
   delete profileWidget;
   qDebug() << Q_FUNC_INFO << "delete marbleAbout";
-  delete marbleAbout;
+  delete marbleAboutDialog;
   qDebug() << Q_FUNC_INFO << "delete infoController";
   delete infoController;
   qDebug() << Q_FUNC_INFO << "delete printSupport";
@@ -503,6 +503,9 @@ void MainWindow::debugActionTriggered1()
   qDebug() << Q_FUNC_INFO;
   qDebug() << NavApp::getRouteConst();
   qDebug() << "======================================================================================";
+
+  qDebug() << Q_FUNC_INFO << ui->dockWidgetRouteCalc->windowFlags().testFlag(Qt::WindowStaysOnTopHint);
+
 }
 
 void MainWindow::debugActionTriggered2()
@@ -1530,7 +1533,7 @@ void MainWindow::connectAllSlots()
   // connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
   // mapWidget, &MapWidget::setPropertyValue);
 
-  connect(ui->actionAboutMarble, &QAction::triggered, marbleAbout, &Marble::MarbleAboutDialog::exec);
+  connect(ui->actionAboutMarble, &QAction::triggered, marbleAboutDialog, &Marble::MarbleAboutDialog::exec);
 
   ConnectClient *connectClient = NavApp::getConnectClient();
   connect(ui->actionConnectSimulator, &QAction::triggered, connectClient, &ConnectClient::connectToServerDialog);
@@ -3396,7 +3399,9 @@ void MainWindow::fullScreenMapToggle()
 void MainWindow::stayOnTop()
 {
   qDebug() << Q_FUNC_INFO;
-  dockHandler->setStayOnTop(this, ui->actionWindowStayOnTop->isChecked());
+  dockHandler->setStayOnTop(marbleAboutDialog, ui->actionWindowStayOnTop->isChecked());
+  dockHandler->setStayOnTop(optionsDialog, ui->actionWindowStayOnTop->isChecked());
+  dockHandler->setStayOnTopMain(ui->actionWindowStayOnTop->isChecked());
 }
 
 void MainWindow::allowDockingWindows()

@@ -451,7 +451,7 @@ private:
   bool hasDatabaseLoadStatus = false;
 
   /* Dialog classes and helper classes */
-  Marble::MarbleAboutDialog *marbleAbout = nullptr;
+  Marble::MarbleAboutDialog *marbleAboutDialog = nullptr;
   OptionsDialog *optionsDialog = nullptr;
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
