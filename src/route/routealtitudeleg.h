@@ -152,6 +152,12 @@ public:
     return line;
   }
 
+  /* Geometry for complex procedure legs without TOC and TOD or start and end */
+  const atools::geo::LineString& getGeoLineString() const
+  {
+    return geoLine;
+  }
+
   /* knots */
   float getWindSpeed() const
   {
@@ -235,7 +241,8 @@ private:
   float tocPos() const;
   float todPos() const;
 
-  atools::geo::LineString line;
+  atools::geo::LineString line, /* Simple line with start, probably TOD, TOC and end */
+                          geoLine /* Geometry for complex procedure legs without TOC and TOD or start and end */;
   QString ident, procedureType;
   QPolygonF geometry;
   proc::MapAltRestriction restriction;

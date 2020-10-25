@@ -18,13 +18,15 @@
 #ifndef LITTLENAVMAP_PROFILEWIDGET_H
 #define LITTLENAVMAP_PROFILEWIDGET_H
 
-#include "route/route.h"
 #include "fs/sc/simconnectdata.h"
 
 #include <QFutureWatcher>
 #include <QWidget>
 
 namespace atools {
+namespace geo {
+class LineString;
+}
 namespace fs {
 namespace perf {
 class AircraftPerf;
@@ -42,6 +44,8 @@ class QTimer;
 class QRubberBand;
 class ProfileScrollArea;
 class JumpBack;
+class Route;
+struct ElevationLegList;
 
 /*
  * Loads and displays the flight plan elevation profile. The elevation data is
@@ -154,25 +158,6 @@ signals:
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
 
 private:
-  /* Route leg storing all elevation points */
-  struct ElevationLeg
-  {
-    atools::geo::LineString elevation; /* Ground elevation (Pos.altitude) and position */
-    QVector<double> distances; /* Distances along the route for each elevation point.
-                                *  Measured from departure point. Nautical miles. */
-    float maxElevation = 0.f; /* Max ground altitude for this leg */
-  };
-
-  struct ElevationLegList
-  {
-    Route route; /* Copy from route controller.
-                  * Need a copy to avoid thread synchronization problems. */
-    QList<ElevationLeg> elevationLegs; /* Elevation data for each route leg */
-    float maxElevationFt = 0.f /* Maximum ground elevation for the route */,
-          totalDistance = 0.f /* Total route distance in nautical miles */;
-    int totalNumPoints = 0; /* Number of elevation points in whole flight plan */
-  };
-
   /* Show position at x ordinate on profile on the map */
   void showPosAlongFlightplan(int x, bool doubleClick);
 
@@ -267,7 +252,7 @@ private:
   float aircraftDistanceFromStart;
   float lastAircraftDistanceFromStart;
   bool movingBackwards = false;
-  ElevationLegList legList;
+  ElevationLegList *legList;
 
   RouteController *routeController = nullptr;
   JumpBack *jumpBack = nullptr;

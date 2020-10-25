@@ -23,6 +23,7 @@
 #include "common/constants.h"
 #include "fs/weather/xpweatherreader.h"
 #include "navapp.h"
+#include "atools.h"
 #include "fs/weather/weathernetdownload.h"
 #include "fs/weather/noaaweatherdownloader.h"
 #include "fs/sc/simconnecttypes.h"

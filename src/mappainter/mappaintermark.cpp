@@ -1169,6 +1169,10 @@ void MapPainterMark::paintDistanceMarkers()
       }
     }
 
+#ifdef DEBUG_INFORMATION
+    texts.append("[" + QString::number(distanceMeter, 'f', 0) + " m]");
+#endif
+
     if(m.from != m.to)
     {
       int xt = -1, yt = -1;

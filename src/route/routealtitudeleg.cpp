@@ -232,6 +232,8 @@ QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
       << "time to dest" << obj.timeToDest << endl
       << "wind speed" << obj.windSpeed
       << "wind dir" << obj.windDirection << endl
-      << "geometry" << obj.geometry << "NM/ft";
+      << "geometry" << obj.geometry << "NM/ft" << endl
+      << "line" << obj.line << endl
+      << "geoLine" << obj.geoLine;
   return out;
 }

@@ -27,7 +27,6 @@
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
 #include "route/routecontroller.h"
-#include "perf/aircraftperfcontroller.h"
 #include "route/routealtitude.h"
 #include "common/aircrafttrack.h"
 #include "common/unit.h"
@@ -45,8 +44,6 @@
 
 #include <QPainter>
 #include <QTimer>
-#include <QRubberBand>
-#include <QMouseEvent>
 #include <QtConcurrent/QtConcurrentRun>
 
 #include <marble/ElevationModel.h>
@@ -74,6 +71,31 @@ using Marble::GeoDataLineString;
 using atools::geo::Pos;
 using atools::geo::LineString;
 
+// =======================================================================================
+
+/* Route leg storing all elevation points */
+struct ElevationLeg
+{
+  atools::geo::LineString elevation, /* Ground elevation (Pos.altitude) and position */
+                          geometry; /* Route geometry. Normally only start and endpoint.
+                                     * More complex for procedures. */
+  QVector<double> distances; /* Distances along the route for each elevation point.
+                              *  Measured from departure point. Nautical miles. */
+  float maxElevation = 0.f; /* Max ground altitude for this leg */
+};
+
+struct ElevationLegList
+{
+  Route route; /* Copy from route controller.
+                * Need a copy to avoid thread synchronization problems. */
+  QList<ElevationLeg> elevationLegs; /* Elevation data for each route leg */
+  float maxElevationFt = 0.f /* Maximum ground elevation for the route */,
+        totalDistance = 0.f /* Total route distance in nautical miles */;
+  int totalNumPoints = 0; /* Number of elevation points in whole flight plan */
+};
+
+// =======================================================================================
+
 ProfileWidget::ProfileWidget(QWidget *parent)
   : QWidget(parent)
 {
@@ -82,6 +104,8 @@ ProfileWidget::ProfileWidget(QWidget *parent)
 
   setContextMenuPolicy(Qt::DefaultContextMenu);
   setFocusPolicy(Qt::WheelFocus);
+
+  legList = new ElevationLegList;
 
   ui->labelProfileError->setVisible(false);
 
@@ -125,6 +149,7 @@ ProfileWidget::~ProfileWidget()
   updateTimer->deleteLater();
   terminateThread();
   delete scrollArea;
+  delete legList;
 }
 
 void ProfileWidget::aircraftTrackPruned()
@@ -289,11 +314,11 @@ void ProfileWidget::updateScreenCoords()
   int w = rect().width() - left * 2, h = rect().height() - TOP;
 
   // Need scale to determine track length on screen
-  horizontalScale = w / legList.totalDistance;
+  horizontalScale = w / legList->totalDistance;
 
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
-  minSafeAltitudeFt = calcGroundBuffer(legList.maxElevationFt);
+  minSafeAltitudeFt = calcGroundBuffer(legList->maxElevationFt);
   flightplanAltFt = routeController->getRoute().getCruisingAltitudeFeet();
   maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
@@ -315,8 +340,11 @@ void ProfileWidget::updateScreenCoords()
   // First point
   landPolygon.append(QPoint(left, h + TOP));
 
-  for(const ElevationLeg& leg : legList.elevationLegs)
+  for(const ElevationLeg& leg : legList->elevationLegs)
   {
+    if(leg.distances.isEmpty() || leg.elevation.isEmpty())
+      continue;
+
     waypointX.append(left + static_cast<int>(leg.distances.first() * horizontalScale));
 
     QPoint lastPt;
@@ -379,7 +407,7 @@ int ProfileWidget::getFlightplanAltY() const
 
 bool ProfileWidget::hasValidRouteForDisplay(const Route& route) const
 {
-  return widgetVisible && !legList.elevationLegs.isEmpty() && route.getSizeWithoutAlternates() >= 2 &&
+  return widgetVisible && !legList->elevationLegs.isEmpty() && route.getSizeWithoutAlternates() >= 2 &&
          route.getAltitudeLegs().size() >= 2;
 }
 
@@ -611,15 +639,15 @@ void ProfileWidget::calcLeftMargin()
 {
   QFontMetrics metrics(OptionData::instance().getMapFont());
   left = 30;
-  if(!legList.route.isEmpty())
+  if(!legList->route.isEmpty())
   {
     // Calculate departure altitude text size
-    float departAlt = legList.route.getDepartureAirportLeg().getPosition().getAltitude();
+    float departAlt = legList->route.getDepartureAirportLeg().getPosition().getAltitude();
     if(departAlt < map::INVALID_ALTITUDE_VALUE / 2.f)
       left = std::max(metrics.width(Unit::altFeet(departAlt)), left);
 
     // Calculate destination altitude text size
-    float destAlt = legList.route.getDestinationAirportLeg().getPosition().getAltitude();
+    float destAlt = legList->route.getDestinationAirportLeg().getPosition().getAltitude();
     if(destAlt < map::INVALID_ALTITUDE_VALUE / 2.f)
       left = std::max(metrics.width(Unit::altFeet(destAlt)), left);
     left += 8;
@@ -630,7 +658,7 @@ void ProfileWidget::calcLeftMargin()
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
   // Saved route that was used to create the geometry
-  // const Route& route = legList.route;
+  // const Route& route =   legList->route;
 
   // Get a copy of the active route
   Route route = NavApp::getRoute();
@@ -663,8 +691,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     return;
   }
 
-  if(legList.route.size() != route.size() ||
-     atools::almostNotEqual(legList.route.getTotalDistance(), route.getTotalDistance()))
+  if(legList->route.size() != route.size() ||
+     atools::almostNotEqual(legList->route.getTotalDistance(), route.getTotalDistance()))
     // Do not draw if route is updated to avoid invalid indexes
     return;
 
@@ -710,13 +738,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Draw orange minimum safe altitude lines for each segment ======================================================
   painter.setPen(mapcolors::profileSafeAltLegLinePen);
-  for(int i = 0; i < legList.elevationLegs.size(); i++)
+  for(int i = 0; i < legList->elevationLegs.size(); i++)
   {
     if(waypointX.at(i) == waypointX.at(i + 1))
       // Skip zero length segments to avoid dots on the graph
       continue;
 
-    const ElevationLeg& leg = legList.elevationLegs.at(i);
+    const ElevationLeg& leg = legList->elevationLegs.at(i);
     int lineY = TOP + static_cast<int>(h - calcGroundBuffer(leg.maxElevation) * verticalScale);
     painter.drawLine(waypointX.at(i), lineY, waypointX.at(i + 1), lineY);
   }
@@ -982,19 +1010,27 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         {
           // Labels ========================================================
           int symytxt = std::min(symPt.y() + 14, h);
-          if(type == map::WAYPOINT || leg.getWaypoint().isValid())
-            symPainter.drawWaypointText(&painter, leg.getWaypoint(), symPt.x() - 5, symytxt, flags, 10, true);
-          else if(type == map::USERPOINTROUTE)
-            symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
-                               symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
-          else if(type == map::INVALID)
-            symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
-                               symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
-          else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
-            // Custom approach
-            symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().fixIdent, 6)},
-                               mapcolors::routeUserPointColor,
-                               symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+
+          if(leg.getProcedureLeg().displayText.isEmpty())
+          {
+            if(type == map::WAYPOINT || leg.getWaypoint().isValid())
+              symPainter.drawWaypointText(&painter, leg.getWaypoint(), symPt.x() - 5, symytxt, flags, 10, true);
+            else if(type == map::USERPOINTROUTE)
+              symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
+                                 symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+            else if(type == map::INVALID)
+              symPainter.textBox(&painter, {atools::elideTextShort(
+                                              leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
+                                 symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+            else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
+              // Custom approach
+              symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().fixIdent, 6)},
+                                 mapcolors::routeUserPointColor,
+                                 symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+          }
+          else
+            symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().displayText.join(tr(",")), 15)},
+                               mapcolors::routeUserPointColor, symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
         }
       }
     }
@@ -1152,7 +1188,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     // Departure altitude label =========================================================
     QColor labelColor = mapcolors::profileLabelColor;
-    float departureAlt = legList.route.getDepartureAirportLeg().getPosition().getAltitude();
+    float departureAlt = legList->route.getDepartureAirportLeg().getPosition().getAltitude();
     int departureAltTextY = TOP + atools::roundToInt(h - departureAlt * verticalScale);
     departureAltTextY = std::min(departureAltTextY, TOP + h - painter.fontMetrics().height() / 2);
     QString startAltStr = Unit::altFeet(departureAlt);
@@ -1331,7 +1367,7 @@ void ProfileWidget::updateThreadFinished()
   if(!terminateThreadSignal)
   {
     // Was not terminated in the middle of calculations - get result from the future
-    legList = future.result();
+    *legList = future.result();
     updateScreenCoords();
     updateErrorLabel();
     updateLabel();
@@ -1390,7 +1426,7 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
 }
 
 /* Background thread. Fetches elevation points from Marble elevation model and updates totals. */
-ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs) const
+ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs) const
 {
   QThread::currentThread()->setPriority(QThread::LowestPriority);
   // qDebug() << "priority" << QThread::currentThread()->priority();
@@ -1411,38 +1447,37 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
   // Total calculated distance across all legs
   double totalDistanceMeter = 0.;
 
-  // Loop over all route legs
+  // Loop over all route legs - first is departure airport point
   for(int i = 1; i <= legs.route.getDestinationLegIndex(); i++)
   {
     if(terminateThreadSignal)
       // Return empty result
       return ElevationLegList();
 
-    const RouteLeg& routeLeg = legs.route.value(i);
-    if(routeLeg.getProcedureLeg().isMissed() || routeLeg.isAlternate())
+    const RouteAltitudeLeg& altLeg = legs.route.getAltitudeLegAt(i);
+    if(altLeg.isMissed() || altLeg.isAlternate())
       break;
 
-    const RouteLeg& lastLeg = legs.route.value(i - 1);
     ElevationLeg leg;
 
     // Used to adapt distances of all legs to total distance due to inaccuracies
     double scale = 1.;
 
     // Skip for too long segments when using the marble online provider
-    if(routeLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM || NavApp::getElevationProvider()->isGlobeOfflineProvider())
+    if(altLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM || NavApp::getElevationProvider()->isGlobeOfflineProvider())
     {
-      LineString geometry;
-      if(routeLeg.isAnyProcedure() && routeLeg.getGeometry().size() > 2)
-        geometry = routeLeg.getGeometry();
-      else
-        geometry << lastLeg.getPosition() << routeLeg.getPosition();
+      LineString geometry = altLeg.getGeoLineString();
 
       geometry.removeInvalid();
+      if(geometry.size() == 1)
+        geometry.append(geometry.first());
 
       // Includes first and last point
       LineString elevations;
       if(!fetchRouteElevations(elevations, geometry))
         return ElevationLegList();
+
+      leg.geometry = geometry;
 
       double distMeter = totalDistanceMeter;
       // Loop over all elevation points for the current leg
@@ -1476,7 +1511,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
         lastPos = coord;
       }
 
-      totalDistanceMeter += nmToMeter(routeLeg.getDistanceTo());
+      totalDistanceMeter += nmToMeter(altLeg.getDistanceTo());
 
       if(!leg.distances.isEmpty() && atools::almostNotEqual(leg.distances.last(), totalDistanceMeter))
         // Accumulated distance is different from route total distance - adjust
@@ -1486,12 +1521,11 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
     else
     {
       // Skip long segment
-      float distMeter = lastLeg.getPosition().distanceMeterToDouble(routeLeg.getPosition());
       leg.distances.append(totalDistanceMeter);
-      totalDistanceMeter += distMeter;
+      totalDistanceMeter += altLeg.getGeoLineString().lengthMeter();
       leg.distances.append(totalDistanceMeter);
-      leg.elevation.append(lastLeg.getPosition());
-      leg.elevation.append(routeLeg.getPosition());
+      leg.elevation = altLeg.getGeoLineString();
+      leg.geometry = altLeg.getGeoLineString();
     }
 
     // Convert distances to NM and apply correction
@@ -1550,12 +1584,12 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
     if(routeIndex < 0)
       routeIndex = 0;
   }
-  const ElevationLeg& leg = legList.elevationLegs.at(routeIndex);
+  const ElevationLeg& leg = legList->elevationLegs.at(routeIndex);
 
   // Calculate distance from screen coordinates
   distance = (x - left) / horizontalScale;
-  distance = atools::minmax(0.f, legList.totalDistance, distance);
-  distanceToGo = legList.totalDistance - distance;
+  distance = atools::minmax(0.f, legList->totalDistance, distance);
+  distanceToGo = legList->totalDistance - distance;
 
   // Get distance value index for lower and upper bound at cursor position
   int indexLowDist = 0;
@@ -1590,12 +1624,12 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
   float legdist = leg.distances.last() - leg.distances.first();
 
   // Calculate position along the flight plan
-  pos = leg.elevation.first().interpolate(leg.elevation.last(), legdistpart / legdist);
+  pos = leg.geometry.interpolate(legdistpart / legdist);
 }
 
 void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 {
-  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.route.isEmpty())
+  if(!widgetVisible || legList->elevationLegs.isEmpty() || legList->route.isEmpty())
     return;
 
   if(rubberBand == nullptr)
@@ -1621,7 +1655,11 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 
   // Follow cursor on map if enabled ==========================
   if(NavApp::getMainUi()->actionProfileFollow->isChecked())
-    emit showPos(calculatePos(x), map::INVALID_DISTANCE_VALUE, false);
+  {
+    atools::geo::Pos pos = calculatePos(x);
+    if(pos.isValid())
+      emit showPos(pos, map::INVALID_DISTANCE_VALUE, false);
+  }
 
   // Tell map widget to create a rubberband rectangle on the map
   emit highlightProfilePoint(lastTooltipPos);
@@ -1642,11 +1680,11 @@ void ProfileWidget::buildTooltip(int x)
     lastTooltipX = x;
 
   // Get from/to text
-  // QString fromWaypoint = atools::elideTextShort(legList.route.value(index).getIdent(), 20);
+  // QString fromWaypoint = atools::elideTextShort(  legList->route.value(index).getIdent(), 20);
 
   QString fromTo(tr("to"));
 
-  const RouteLeg& routeLeg = legList.route.value(index + 1);
+  const RouteLeg& routeLeg = legList->route.value(index + 1);
   if(routeLeg.isAnyProcedure() && proc::procedureLegFrom(routeLeg.getProcedureLegType()))
     fromTo = tr("from");
 
@@ -1656,8 +1694,8 @@ void ProfileWidget::buildTooltip(int x)
   atools::util::HtmlBuilder html;
 
   // Header from and to distance, altitude and next waypoint ============
-  float altitude = legList.route.getAltitudeForDistance(distanceToGo);
-  const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.value(index + 1) : nullptr;
+  float altitude = legList->route.getAltitudeForDistance(distanceToGo);
+  const RouteLeg *leg = index < legList->route.size() - 1 ? &legList->route.value(index + 1) : nullptr;
   WindReporter *windReporter = NavApp::getWindReporter();
   atools::grib::Wind wind;
   if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
@@ -1678,7 +1716,7 @@ void ProfileWidget::buildTooltip(int x)
     // Crab angle / heading ========================================
     if(wind.isValid() && !wind.isNull())
     {
-      float tas = legList.route.getSpeedForDistance(distanceToGo);
+      float tas = legList->route.getSpeedForDistance(distanceToGo);
       if(tas < map::INVALID_SPEED_VALUE)
       {
 #ifdef DEBUG_INFORMATION
@@ -1907,7 +1945,7 @@ void ProfileWidget::leaveEvent(QEvent *)
 
 void ProfileWidget::hideRubberBand()
 {
-  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.route.isEmpty())
+  if(!widgetVisible || legList->elevationLegs.isEmpty() || legList->route.isEmpty())
     return;
 
   delete rubberBand;

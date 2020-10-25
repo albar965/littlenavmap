@@ -21,6 +21,7 @@
 #include "gui/widgetstate.h"
 #include "common/constants.h"
 #include "gui/helphandler.h"
+#include "route/route.h"
 
 #include "navapp.h"
 #include "atools.h"
@@ -112,6 +113,7 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
     font.setPointSizeF(font.pointSizeF() * 0.9);
     tooltipLabel->setFont(font);
   }
+  tooltipLabel->hide();
 }
 
 ProfileScrollArea::~ProfileScrollArea()

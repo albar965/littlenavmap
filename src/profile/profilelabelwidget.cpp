@@ -22,6 +22,7 @@
 #include "common/mapcolors.h"
 #include "profile/profilescrollarea.h"
 #include "navapp.h"
+#include "route/route.h"
 #include "common/unit.h"
 
 #include <QContextMenuEvent>

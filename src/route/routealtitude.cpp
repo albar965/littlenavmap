@@ -1340,21 +1340,38 @@ void RouteAltitude::fillGeometry()
     const RouteLeg& routeLeg = route->value(i);
 
     altLeg.line.clear();
+    altLeg.geoLine.clear();
 
     if(altLeg.isAlternate())
     {
       altLeg.line.append(destinationAirportLeg.getPosition());
       altLeg.line.append(routeLeg.getPosition());
+      altLeg.geoLine = altLeg.line;
     }
     else
     {
       if(altLeg.isPoint())
+      {
         altLeg.line.append(routeLeg.getPosition().alt(altLeg.y1()));
+        altLeg.geoLine = altLeg.line;
+      }
       else
       {
+        if(altLeg.isAnyProcedure())
+        {
+          // Get full procedure geometry
+          for(const atools::geo::Pos& pos : routeLeg.getProcedureLeg().geometry)
+            altLeg.geoLine.append(pos.alt(altLeg.y1()));
+        }
+
+        // Build simple line consisting of start and end - might receive TOD and/or TOC position later
         if(i > 0)
           altLeg.line.append(route->value(i - 1).getPosition().alt(altLeg.y1()));
         altLeg.line.append(routeLeg.getPosition().alt(altLeg.y2()));
+
+        if(!altLeg.isAnyProcedure())
+          // Not a procedure - use simple line
+          altLeg.geoLine = altLeg.line;
       }
 
       if(altLeg.topOfClimb)

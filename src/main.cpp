@@ -38,6 +38,7 @@
 #include "common/maptypes.h"
 #include "common/proctypes.h"
 #include "common/unit.h"
+#include "geo/calculations.h"
 #include "fs/weather/metarparser.h"
 #include "userdata/userdataicons.h"
 #include "routeexport/routeexportformat.h"

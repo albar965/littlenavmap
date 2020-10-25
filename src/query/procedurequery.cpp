@@ -1216,8 +1216,15 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
     {
       if(leg.recFixPos.isValid())
       {
-        ageo::calcArcLength(leg.line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance,
-                            &leg.geometry);
+        Line line;
+        if(leg.correctedArc && type == proc::ARC_TO_FIX && prevLeg != nullptr)
+          // Arc entry with stub
+          line = Line(leg.interceptPos, leg.line.getPos2());
+        else
+          line = leg.line;
+
+        ageo::calcArcLength(line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance, &leg.geometry);
+
         leg.calculatedDistance = meterToNm(leg.calculatedDistance);
         leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
 
@@ -1225,7 +1232,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
         {
           // Corrected first position of DME arc - adjust geometry and distance for entry segment
           leg.geometry.prepend(prevLeg->line.getPos2());
-          leg.calculatedDistance += meterToNm(prevLeg->line.getPos2().distanceMeterTo(leg.line.getPos1()));
+          leg.calculatedDistance += meterToNm(prevLeg->line.getPos2().distanceMeterTo(leg.interceptPos));
         }
       }
       else
@@ -1250,7 +1257,8 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
       {
         leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
         leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
-        leg.geometry << leg.line.getPos1() << leg.line.getPos2();
+
+        leg.geometry << prevLeg->line.getPos2() << leg.line.getPos1() << leg.line.getPos2();
       }
     }
     // ===========================================================
@@ -1371,8 +1379,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       if(lastPos.isValid() && atools::almostNotEqual(leg.rho, meterToNm(lastPos.distanceMeterTo(leg.recFixPos)), 0.5f))
       {
         // Get point at correct distance to navaid between fix and recommended fix
-        lastPos = leg.recFixPos.endpoint(nmToMeter(leg.rho), leg.recFixPos.angleDegTo(lastPos));
-        leg.interceptPos = lastPos;
+        leg.interceptPos = leg.recFixPos.endpoint(nmToMeter(leg.rho), leg.recFixPos.angleDegTo(lastPos));
         leg.correctedArc = true;
       }
       else
@@ -1434,7 +1441,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 
         // Check if this is a reversal maneuver which should be connected with a bow instead of an intercept
         // Always intercept if course could not be calculated (e.g. first procedure leg)
-        // Everthing bigger than 150 degree is considered a reversal - draw bow instead of intercept
+        // Everything bigger than 150 degree is considered a reversal - draw bow instead of intercept
         if(courseDiff < 150. || !(courseDiff < map::INVALID_COURSE_VALUE))
         {
           // Try left or right intercept
@@ -1467,7 +1474,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
             {
               float extDist = extended.distanceMeterTo(lastPos);
               if(extDist > nmToMeter(1.f))
-                // Draw large bow to extended postition or allow intercept of leg
+                // Draw large bow to extended position or allow intercept of leg
                 lastPos = extended;
             }
             // else turn
@@ -1488,7 +1495,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
           // No intercept point in reasonable distance found
           float extDist = extended.distanceMeterTo(lastPos);
           if(extDist > nmToMeter(1.f))
-            // Draw large bow to extended postition or allow intercept of leg
+            // Draw large bow to extended position or allow intercept of leg
             lastPos = extended;
         }
       } // if(std::abs(result.distance) > nmToMeter(1.f))

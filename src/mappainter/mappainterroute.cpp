@@ -705,7 +705,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
     return;
   }
 
-  QPointF intersectPoint = wToS(leg.interceptPos, size, &hidden);
+  QPointF interceptPoint = wToS(leg.interceptPos, size, &hidden);
 
   bool showDistance = !leg.noDistanceDisplay();
 
@@ -716,10 +716,15 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
     {
       if(draw)
       {
-        if(leg.correctedArc)
-          drawLine(painter, lastLines.last().p2(), line.p1());
         QPointF point = wToS(leg.recFixPos, size, &hidden);
-        paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
+        if(leg.correctedArc)
+        {
+          // Arc with stub
+          drawLine(painter, line.p1(), interceptPoint);
+          paintArc(context->painter, interceptPoint, line.p2(), point, leg.turnDirection == "L");
+        }
+        else
+          paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
       }
     }
     else
@@ -758,7 +763,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
       if(!lastLines.last().p2().isNull() && lineDist > 2.f)
       {
         // Lines are not connected which can happen if a CF follows after a FD or similar
-        paintProcedureBow(prevLeg, lastLines, painter, line, leg, intersectPoint, draw);
+        paintProcedureBow(prevLeg, lastLines, painter, line, leg, interceptPoint, draw);
 
         if(drawTextLines != nullptr)
         {
@@ -775,7 +780,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
         // Draw a small arc if a turn direction is given
 
         // lastLines gets the full line added and nextLine is the line for text
-        QLineF nextLine = paintProcedureTurn(lastLines, line, leg, painter, intersectPoint, draw);
+        QLineF nextLine = paintProcedureTurn(lastLines, line, leg, painter, interceptPoint, draw);
 
         Pos p1 = sToW(nextLine.p1());
         Pos p2 = sToW(nextLine.p2());
@@ -799,10 +804,10 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
         // Intercept a CF leg
         if(draw)
         {
-          drawLine(painter, line.p1(), intersectPoint);
-          drawLine(painter, intersectPoint, line.p2());
+          drawLine(painter, line.p1(), interceptPoint);
+          drawLine(painter, interceptPoint, line.p2());
         }
-        lastLines.append(QLineF(intersectPoint, line.p2()));
+        lastLines.append(QLineF(interceptPoint, line.p2()));
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line
@@ -971,7 +976,9 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
 
   if(dist < ageo::Pos::INVALID_VALUE)
   {
-    // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
+    // Shorten the next line around 1 NM to get a better curve
+    // Use a value less than 1 nm to avoid flickering on 1 nm legs
+    // This will start the curve after the first point of the next leg
     float oneNmPixel = scale->getPixelForNm(0.95f);
     if(lineDraw.length() > oneNmPixel * 2.f)
       lineDraw.setLength(lineDraw.length() - oneNmPixel);
@@ -1061,53 +1068,65 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   // Debugging code for drawing ================================================
 #ifdef DEBUG_APPROACH_PAINT
-  bool hiddenDummy;
-  QSize size = scale->getScreeenSizeForRect(legs.bounding);
 
-  QLineF line, holdLine;
-  wToS(leg.line, line, size, &hiddenDummy);
-  wToS(leg.holdLine, holdLine, size, &hiddenDummy);
-  QPainter *painter = context->painter;
-
-  if(leg.disabled)
   {
-    painter->setPen(Qt::red);
+    QColor col(255, 0, 0, 50);
+
+    if(leg.fixIdent == "D123M" && leg.type == proc::ARC_TO_FIX)
+      col = QColor(0, 255, 0, 50);
+
+    bool hiddenDummy;
+    QSize size = scale->getScreeenSizeForRect(legs.bounding);
+
+    QLineF line, holdLine;
+    wToS(leg.line, line, size, &hiddenDummy);
+    wToS(leg.holdLine, holdLine, size, &hiddenDummy);
+    QPainter *painter = context->painter;
+
+    if(leg.disabled)
+    {
+      painter->setPen(Qt::red);
+    }
+
+    QPointF intersectPoint = wToS(leg.interceptPos, DEFAULT_WTOS_SIZE, &hiddenDummy);
+
+    painter->save();
+    painter->setPen(QPen(Qt::blue, 3.));
+    painter->drawEllipse(line.p1(), 20, 10);
+    painter->drawEllipse(line.p2(), 10, 20);
+    painter->drawText(line.x1() - 40, line.y1() + 40,
+                      "Start " + proc::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
+
+    painter->drawText(line.x2() - 40, line.y2() + 60,
+                      "End " + proc::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
+    if(!intersectPoint.isNull())
+    {
+      painter->drawEllipse(intersectPoint, 30, 30);
+      painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20,
+                        proc::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
+    }
+
+    painter->setPen(QPen(col, 20));
+    for(int i = 0; i < leg.geometry.size() - 1; i++)
+    {
+      QPoint pt1 = wToS(leg.geometry.at(i), size, &hiddenDummy);
+      QPoint pt2 = wToS(leg.geometry.at(i + 1), size, &hiddenDummy);
+
+      drawLine(painter, pt1, pt2);
+    }
+
+    painter->setPen(QPen(QColor(0, 0, 255, 100), 5));
+    drawLine(painter, holdLine);
+
+    painter->setBackground(Qt::transparent);
+    painter->setPen(QPen(QColor(0, 255, 0, 255), 3, Qt::DotLine));
+    drawLine(painter, line);
+
+    painter->setPen(QPen(col, 10));
+    for(int i = 0; i < leg.geometry.size(); i++)
+      painter->drawPoint(wToS(leg.geometry.at(i)));
+    painter->restore();
   }
-
-  QPointF intersectPoint = wToS(leg.interceptPos, DEFAULT_WTOS_SIZE, &hiddenDummy);
-
-  painter->save();
-  painter->setPen(Qt::black);
-  painter->drawEllipse(line.p1(), 20, 10);
-  painter->drawEllipse(line.p2(), 10, 20);
-  painter->drawText(line.x1() - 40, line.y1() + 40,
-                    "Start " + proctypes::ProcedureLegTypeShortStr(leg.type) + " " + QString::number(index));
-
-  painter->drawText(line.x2() - 40, line.y2() + 60,
-                    "End " + proctypes::ProcedureLegTypeShortStr(leg.type) + " " + QString::number(index));
-  if(!intersectPoint.isNull())
-  {
-    painter->drawEllipse(intersectPoint, 30, 30);
-    painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20,
-                      proctypes::ProcedureLegTypeShortStr(leg.type) + " " + QString::number(index));
-  }
-
-  painter->setPen(QPen(Qt::darkBlue, 2));
-  for(int i = 0; i < leg.geometry.size() - 1; i++)
-  {
-    QPoint pt1 = wToS(leg.geometry.at(i), size, &hiddenDummy);
-    QPoint pt2 = wToS(leg.geometry.at(i + 1), size, &hiddenDummy);
-
-    drawLine(painter, pt1, pt2);
-  }
-
-  painter->setPen(QPen(Qt::darkBlue, 10));
-  drawLine(painter, holdLine);
-
-  painter->setPen(QPen(Qt::darkBlue, 7));
-  for(int i = 0; i < leg.geometry.size(); i++)
-    painter->drawPoint(wToS(leg.geometry.at(i)));
-  painter->restore();
 #endif
 
   if(!preview && leg.isMissed() && !(context->objectTypes & map::MISSED_APPROACH))
@@ -1133,7 +1152,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   if(index < legs.size() - 1 && leg.isTransition() && legs.at(index + 1).isApproach())
   {
-    // Do not draw transtitions from this last transition leg - merge and draw them for the first approach leg
+    // Do not draw transitions from this last transition leg - merge and draw them for the first approach leg
     altRestr = proc::MapAltRestriction();
     speedRestr = proc::MapSpeedRestriction();
   }
@@ -1261,7 +1280,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     texts.append(proc::speedRestrictionTextNarrow(speedRestr));
   }
 
-  // Merge restricions between overlapping fixes across different procedures
+  // Merge restrictions between overlapping fixes across different procedures
   if(lastLegPoint.isValid() && lastLegPoint.fixPos.almostEqual(leg.fixPos) &&
      lastLegPoint.fixIdent == leg.fixIdent && lastLegPoint.fixRegion == leg.fixRegion &&
      // Do not merge text from legs which are labeled at calculated end position
