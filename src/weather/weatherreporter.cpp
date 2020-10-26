@@ -63,8 +63,7 @@ using atools::util::FileSystemWatcher;
 using atools::settings::Settings;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
-  : QObject(parentWindow), simType(type),
-  mainWindow(parentWindow)
+  : QObject(parentWindow), simType(type), mainWindow(parentWindow)
 {
   using namespace std::placeholders;
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);

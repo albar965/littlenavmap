@@ -72,7 +72,7 @@ atools::fs::online::Format convertFormat(opts::OnlineFormat format)
 OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent)
   : manager(onlineManager), mainWindow(parent)
 {
-  // Files use Windows code with emebedded UTF-8 for ATIS text
+  // Files use Windows code with embedded UTF-8 for ATIS text
   codec = QTextCodec::codecForName("Windows-1252");
   if(codec == nullptr)
     codec = QTextCodec::codecForLocale();

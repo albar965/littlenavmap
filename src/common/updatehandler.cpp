@@ -34,7 +34,7 @@ using atools::settings::Settings;
 namespace html = atools::util::html;
 
 UpdateHandler::UpdateHandler(MainWindow *parent)
-  : QObject(parent)
+  : QObject(parent), mainWindow(parent)
 {
 #ifdef DEBUG_UPDATE
   updateCheck = new UpdateCheck(true);
@@ -199,8 +199,8 @@ void UpdateHandler::updateFailed(QString errorString)
                     arg(updateCheck->getUrl().toDisplayString()).arg(errorString);
 
   if(manual)
-    QMessageBox::information(mainWindow, QApplication::applicationName(), message);
+    QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
   else
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message,
+    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message,
                                                    tr("Do not &show this dialog again."));
 }
