@@ -1636,7 +1636,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
     } // if(flags & optsw::WEATHER_INFO_ALL)
     else
-      html.p().b(tr("No weather display selected in options dialog in page \"Weather\"."));
+      html.p().warning(tr("No weather display selected in options dialog in page \"Weather\"."));
   } // if(info)
 }
 

@@ -613,6 +613,7 @@ void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs) const
     legs.bounding.extend(leg.fixPos);
     legs.bounding.extend(leg.interceptPos);
     legs.bounding.extend(leg.line.boundingRect());
+    legs.bounding.extend(leg.geometry);
   }
 }
 
