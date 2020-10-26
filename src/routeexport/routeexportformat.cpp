@@ -111,6 +111,15 @@ void RouteExportFormatMap::restoreState()
   }
 }
 
+void RouteExportFormatMap::updatePathErrors()
+{
+  for(RouteExportFormat& format : *this)
+  {
+    if(format.isSelected())
+      format.updatePathError();
+  }
+}
+
 bool RouteExportFormatMap::hasSelected() const
 {
   for(const RouteExportFormat& fmt : (*this))

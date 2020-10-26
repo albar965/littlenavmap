@@ -201,8 +201,16 @@ RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportForma
 
   // Set up context menu for table ==================================================
   ui->tableViewRouteExport->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(ui->tableViewRouteExport, &QTableView::customContextMenuRequested, this,
-          &RouteMultiExportDialog::tableContextMenu);
+  connect(ui->tableViewRouteExport, &QTableView::customContextMenuRequested,
+          this, &RouteMultiExportDialog::tableContextMenu);
+
+  QItemSelectionModel *selectionModel = ui->tableViewRouteExport->selectionModel();
+  if(selectionModel != nullptr)
+    connect(selectionModel, &QItemSelectionModel::currentChanged,
+            [ = ](const QModelIndex&, const QModelIndex&) -> void {
+      formatMap->updatePathErrors();
+      updateTableColors();
+    });
 
   // Action shortcuts only for table
   ui->actionSelectExportPath->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -236,6 +244,7 @@ int RouteMultiExportDialog::exec()
 
   // Reload default paths which are used by the reset function. Paths can change due to selected simulator.
   formatMap->updateDefaultPaths();
+  formatMap->updatePathErrors();
 
   // Backup options combo box
   exportOptions = getExportOptions();
@@ -496,6 +505,7 @@ void RouteMultiExportDialog::selectForExportToggled()
                        CHECK_STATE_ROLE);
     formatMap->setSelected(type, checkBox->checkState() == Qt::Checked);
     updateTableColors();
+    formatMap->updatePathErrors();
   }
 }
 
@@ -622,6 +632,8 @@ void RouteMultiExportDialog::itemChanged(QStandardItem *item)
 void RouteMultiExportDialog::tableContextMenu(const QPoint& pos)
 {
   qDebug() << Q_FUNC_INFO;
+
+  formatMap->updatePathErrors();
 
   QPoint menuPos = QCursor::pos();
 

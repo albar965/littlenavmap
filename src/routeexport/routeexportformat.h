@@ -240,7 +240,11 @@ public:
   /* Update all callbacks */
   void initCallbacks(RouteExport *routeExport);
 
+  /* Reset all paths back to default using best guess for selected scenery database and installed simulators */
   void updateDefaultPaths();
+
+  /* Update error state and messages for all selected formats */
+  void updatePathErrors();
 
   /* Constants to detect correct file format and version */
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x34ABF37C;
