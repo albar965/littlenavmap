@@ -188,6 +188,8 @@ private:
 
   QTextCodec *codec = nullptr;
 
+  bool verbose = false;
+
   /* Simulator aircraft registrations and positions */
   QHash<QString, atools::geo::Pos> simulatorAiRegistrations;
 

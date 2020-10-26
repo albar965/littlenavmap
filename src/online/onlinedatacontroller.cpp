@@ -32,6 +32,7 @@
 #include "mapgui/maplayer.h"
 #include "fs/sc/simconnectuseraircraft.h"
 #include "navapp.h"
+#include "settings/settings.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -76,7 +77,9 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   if(codec == nullptr)
     codec = QTextCodec::codecForLocale();
 
-  downloader = new atools::util::HttpDownloader(mainWindow, false /* verbose */);
+  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DEBUG, false).toBool();
+
+  downloader = new atools::util::HttpDownloader(mainWindow, verbose);
 
   updateAtcSizes();
 
@@ -160,7 +163,8 @@ void OnlinedataController::startProcessing()
 
 void OnlinedataController::startDownloadInternal()
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
 
   if(downloader->isDownloading() || currentState != NONE)
   {
@@ -225,7 +229,8 @@ atools::sql::SqlDatabase *OnlinedataController::getDatabase()
 
 void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 {
-  qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
 
   if(currentState == DOWNLOADING_STATUS)
   {
@@ -275,7 +280,8 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       // Get all callsigns and positions from online list to allow deduplication
       clientCallsignAndPosMap.clear();
       manager->getClientCallsignAndPosMap(clientCallsignAndPosMap);
-      qDebug() << Q_FUNC_INFO << clientCallsignAndPosMap.size();
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << clientCallsignAndPosMap.size();
 
       QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
       if(!whazzupVoiceUrlFromStatus.isEmpty() &&
@@ -305,7 +311,8 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     }
     else
     {
-      qInfo() << Q_FUNC_INFO << "whazzup.txt is not recent";
+      if(verbose)
+        qInfo() << Q_FUNC_INFO << "whazzup.txt is not recent";
 
       // Done after old update - try again later
       startDownloadTimer();
@@ -687,7 +694,8 @@ void OnlinedataController::startDownloadTimer()
     }
   }
 
-  qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from" << source;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from" << source;
 
 #ifdef DEBUG_ONLINE_DOWNLOAD
   downloadTimer.setInterval(2000);

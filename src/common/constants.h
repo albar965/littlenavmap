@@ -272,6 +272,7 @@ const QLatin1Literal OPTIONS_DOCKHANDLER_DEBUG("Options/DockHandlerDebug");
 const QLatin1Literal OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_WEATHER_DEBUG("Options/WeatherDebug");
+const QLatin1Literal OPTIONS_ONLINE_NETWORK_DEBUG("Options/OnlineNetworkDebug");
 const QLatin1Literal OPTIONS_TRACK_DEBUG("Options/TrackDebug");
 const QLatin1Literal OPTIONS_WEATHER_LEVELS("Options/WeatherLevels");
 const QLatin1Literal OPTIONS_WIND_DEBUG("Options/WindDebug");
