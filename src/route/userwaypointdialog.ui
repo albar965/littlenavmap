@@ -58,7 +58,8 @@ Formats above have to be given exactly as shown in the examples.</string>
       <string>Required ident of the waypoint.
 A short all upper case ident without spaces is recommended.
 
-Idents starting with &quot;WP&quot; followed by a number are automatically renamed to reflect flying order.</string>
+Idents starting with &quot;WP&quot; followed by a number are automatically renamed to reflect flying order.
+Examples: &quot;WP1&quot;, &quot;WP2&quot; or &quot;WP10&quot;.</string>
      </property>
     </widget>
    </item>
