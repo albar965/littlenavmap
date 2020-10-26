@@ -1292,20 +1292,14 @@ void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
   if(!widgetVisible || databaseLoadStatus)
     return;
 
-  updateScreenCoords();
-  update();
-  updateErrorLabel();
-  updateLabel();
+  routeChanged(true, false);
 }
 
 void ProfileWidget::aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf)
 {
   Q_UNUSED(perf);
 
-  updateScreenCoords();
-  scrollArea->routeChanged(false);
-  updateErrorLabel();
-  updateLabel();
+  routeChanged(true, false);
 }
 
 void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
@@ -1321,7 +1315,7 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
   if(geometryChanged)
   {
     // Start thread after short delay to calculate new data
-    // Calls ProfileWidget::updateTimeout
+    // Calls ProfileWidget::updateTimeout()
     updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
                        ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
   }
@@ -1338,8 +1332,6 @@ void ProfileWidget::updateTimeout()
   if(!widgetVisible || databaseLoadStatus)
     return;
 
-  // qDebug() << Q_FUNC_INFO;
-
   // Terminate and wait for thread
   terminateThread();
   terminateThreadSignal = false;
@@ -1352,7 +1344,7 @@ void ProfileWidget::updateTimeout()
   // Start thread
   future = QtConcurrent::run(this, &ProfileWidget::fetchRouteElevationsThread, legs);
 
-  // Watcher will call updateThreadFinished when finished
+  // Watcher will call ProfileWidget::updateThreadFinished() when finished
   watcher.setFuture(future);
 }
 
@@ -1362,8 +1354,6 @@ void ProfileWidget::updateThreadFinished()
   if(!widgetVisible || databaseLoadStatus)
     return;
 
-  // qDebug() << Q_FUNC_INFO;
-
   if(!terminateThreadSignal)
   {
     // Was not terminated in the middle of calculations - get result from the future
@@ -1372,6 +1362,7 @@ void ProfileWidget::updateThreadFinished()
     updateErrorLabel();
     updateLabel();
     update();
+    updateTooltip();
   }
 }
 
@@ -1645,11 +1636,11 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   rubberBand->setGeometry(x - 1, 0, 2, rect().height());
   rubberBand->show();
 
-  buildTooltip(x);
-
+  buildTooltip(x, false /* force */);
+  lastTooltipScreenPos = mouseEvent->globalPos();
   // Show tooltip
   if(!lastTooltipString.isEmpty())
-    scrollArea->showTooltip(mouseEvent->globalPos(), lastTooltipString);
+    scrollArea->showTooltip(lastTooltipScreenPos, lastTooltipString);
 
   // Allow event to propagate to scroll widget
   mouseEvent->ignore();
@@ -1666,16 +1657,23 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   emit highlightProfilePoint(lastTooltipPos);
 }
 
-void ProfileWidget::buildTooltip(int x)
+void ProfileWidget::updateTooltip()
 {
-  int index;
-  float distance, distanceToGo, groundElevation, maxElev;
-  calculateDistancesAndPos(x, lastTooltipPos, index, distance, distanceToGo, groundElevation, maxElev);
+  if(scrollArea->isTooltipVisible())
+  {
+    buildTooltip(lastTooltipX, true /* force */);
+    if(!lastTooltipString.isEmpty())
+      scrollArea->showTooltip(lastTooltipScreenPos, lastTooltipString);
+  }
+}
 
+void ProfileWidget::buildTooltip(int x, bool force)
+{
   if(!NavApp::getMainUi()->actionProfileShowTooltip->isChecked())
     return;
 
-  if(atools::almostEqual(lastTooltipX, x, 3))
+  if(atools::almostEqual(lastTooltipX, x, 3) && !force)
+    // Almost same position - do not update except if forced
     return;
   else
     lastTooltipX = x;
@@ -1684,6 +1682,11 @@ void ProfileWidget::buildTooltip(int x)
   // QString fromWaypoint = atools::elideTextShort(  legList->route.value(index).getIdent(), 20);
 
   QString fromTo(tr("to"));
+
+  // Fetch all parameters =======================
+  int index;
+  float distance, distanceToGo, groundElevation, maxElev;
+  calculateDistancesAndPos(x, lastTooltipPos, index, distance, distanceToGo, groundElevation, maxElev);
 
   const RouteLeg& routeLeg = legList->route.value(index + 1);
   if(routeLeg.isAnyProcedure() && proc::procedureLegFrom(routeLeg.getProcedureLegType()))

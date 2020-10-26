@@ -219,7 +219,9 @@ private:
   void saveAircraftTrack();
   void loadAircraftTrack();
 
-  void buildTooltip(int x);
+  void updateTooltip();
+
+  void buildTooltip(int x, bool force);
 
   /* Get either indicated or real */
   float aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft);
@@ -274,6 +276,7 @@ private:
   int lastTooltipX = -999;
   QString lastTooltipString;
   atools::geo::Pos lastTooltipPos;
+  QPoint lastTooltipScreenPos;
 
   QString fixedLabelText;
 
