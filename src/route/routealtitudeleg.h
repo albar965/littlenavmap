@@ -173,12 +173,12 @@ public:
   /* Calculate fuel and time to destination from this leg at position distFromStart
    * fuel in local units (gal or lbs) depending on performance and distFromStart in NM.
    * distFromStart has to match this legs distance from departure. */
-  float getFuelFromDistToDestination(float distFromStart) const;
-  float getTimeFromDistToDestination(float distFromStart) const;
+  float getFuelFromDistToDestination(float distFromDeparture) const;
+  float getTimeFromDistToDestination(float distFromDeparture) const;
 
   /* As above but to the end of the leg */
-  float getFuelFromDistToEnd(float distFromStart) const;
-  float getTimeFromDistToEnd(float distFromStart) const;
+  float getFuelFromDistToEnd(float distFromDeparture) const;
+  float getTimeFromDistToEnd(float distFromDeparture) const;
 
 private:
   friend class RouteAltitude;

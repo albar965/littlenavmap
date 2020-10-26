@@ -3564,7 +3564,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
              aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT && fuelTime.isTimeToNextValid())
           {
             // Travel time
-            distTimeStr.append(formatter::formatMinutesHoursLong(nearestLegDistance / aircraft.getGroundSpeedKts()));
+            distTimeStr.append(formatter::formatMinutesHoursLong(fuelTime.timeToNext));
             distTimeHeader.append(tr("Time"));
 
             // ETA
