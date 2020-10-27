@@ -367,7 +367,7 @@ Auch die Steig- bzw. Sinkfluggeschwindigkeiten in der Flugzeugleistung überprü
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="809"/>
         <source>Current flight segment: </source>
-        <translation>Aktueller Flugabschnitt:.</translation>
+        <translation>Aktueller Flugabschnitt: </translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="810"/>
@@ -17351,12 +17351,12 @@ Versuche in drei Minuten wieder.</translation>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen und Fehler zukünftig ignorieren</translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="378"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="380"/>
         <source>Connected to %1.</source>
         <translation>Verbunden mit %1.</translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="393"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="397"/>
         <source>Message from downloaded status file:
 
 %2
@@ -17367,22 +17367,22 @@ Versuche in drei Minuten wieder.</translation>
 </translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="464"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="468"/>
         <source>VATSIM</source>
         <translation>VATSIM</translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="467"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="471"/>
         <source>IVAO</source>
         <translation>IVAO</translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="470"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="474"/>
         <source>PilotEdge</source>
         <translation>PilotEdge</translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="474"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="478"/>
         <source>Custom Network</source>
         <translation>Sonstiges Netzwerk</translation>
     </message>

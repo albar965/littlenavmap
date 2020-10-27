@@ -16455,12 +16455,12 @@ Retrying again in three minutes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="378"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="380"/>
         <source>Connected to %1.</source>
         <translation>已连接到 (%1)。</translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="393"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="397"/>
         <source>Message from downloaded status file:
 
 %2
@@ -16471,22 +16471,22 @@ Retrying again in three minutes.</source>
 </translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="464"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="468"/>
         <source>VATSIM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="467"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="471"/>
         <source>IVAO</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="470"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="474"/>
         <source>PilotEdge</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="474"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="478"/>
         <source>Custom Network</source>
         <translation>自定义网络</translation>
     </message>

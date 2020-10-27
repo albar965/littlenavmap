@@ -238,7 +238,7 @@ void MapWidget::historyNext()
   const atools::gui::MapPosHistoryEntry& entry = history.next();
   if(entry.isValid())
   {
-    jumpBackToAircraftStart(true /* save distance too */);
+    jumpBackToAircraftStart(true /* saveDistance */);
 
     // Do not fix zoom - display as is
     setDistanceToMap(entry.getDistance(), false /* Allow adjust zoom */);
@@ -254,7 +254,7 @@ void MapWidget::historyBack()
   const atools::gui::MapPosHistoryEntry& entry = history.back();
   if(entry.isValid())
   {
-    jumpBackToAircraftStart(true /* save distance too */);
+    jumpBackToAircraftStart(true /* saveDistance */);
 
     // Do not fix zoom - display as is
     setDistanceToMap(entry.getDistance(), false /* Allow adjust zoom */);
@@ -676,7 +676,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
   hideTooltip();
 
-  jumpBackToAircraftStart(true /* save distance too */);
+  jumpBackToAircraftStart(true /* saveDistance */);
 
   // Avoid repaints
   resetPaintForDragTimer.stop();
@@ -736,7 +736,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
   hideTooltip();
 
-  jumpBackToAircraftStart(true /* save distance too */);
+  jumpBackToAircraftStart(true /* saveDistance */);
 
   // Avoid repaints
   resetPaintForDragTimer.stop();
@@ -1251,14 +1251,14 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
       if(atools::contains(static_cast<Qt::Key>(keyEvent->key()),
                           {Qt::Key_Left, Qt::Key_Right, Qt::Key_Up, Qt::Key_Down}))
         // Movement starts delay every time
-        jumpBackToAircraftStart(true /* save distance too */);
+        jumpBackToAircraftStart(true /* saveDistance */);
 
       if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus,
                                                                   Qt::Key_Asterisk, Qt::Key_Slash}))
       {
         if(jumpBack->isActive() || isCenterLegAndAircraftActive())
           // Movement starts delay every time
-          jumpBackToAircraftStart(true /* save distance too */);
+          jumpBackToAircraftStart(true /* saveDistance */);
 
         if(!jumpBackWasActive && !isCenterLegAndAircraftActive())
           // Remember and update zoom factor if jump was not active
@@ -1276,7 +1276,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
   {
     if(jumpBack->isActive() || isCenterLegAndAircraftActive())
       // Only delay if already active. Allow zooming and jumpback if autozoom is on
-      jumpBackToAircraftStart(true /* save distance too */);
+      jumpBackToAircraftStart(true /* saveDistance */);
 
     if(!jumpBackWasActive && !isCenterLegAndAircraftActive())
       // Remember and update zoom factor if jump was not active
@@ -1448,7 +1448,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   // Change cursor and keep aircraft from centering if moving in any drag and drop mode ================
   if(mouseState & mw::DRAG_ALL)
   {
-    jumpBackToAircraftStart(true /* save distance too */);
+    jumpBackToAircraftStart(true /* saveDistance */);
 
     // Currently dragging a measurement line
     if(cursor().shape() != Qt::CrossCursor)
@@ -1545,7 +1545,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     } // if(event->buttons() == Qt::NoButton)
     else
       // A mouse button is pressed
-      jumpBackToAircraftStart(true /* save distance too */);
+      jumpBackToAircraftStart(true /* saveDistance */);
   }
 
   if(mouseState & mw::DRAG_ALL)
@@ -3122,7 +3122,7 @@ void MapWidget::showSearchMark()
 
   if(searchMarkPos.isValid())
   {
-    jumpBackToAircraftStart(true /* save distance too */);
+    jumpBackToAircraftStart(true /* saveDistance */);
     centerPosOnMap(searchMarkPos);
     setDistanceToMap(atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF)));
     mainWindow->setStatusMessage(tr("Showing distance search center."));
@@ -3134,7 +3134,7 @@ void MapWidget::showHome()
   qDebug() << Q_FUNC_INFO << homePos;
 
   hideTooltip();
-  jumpBackToAircraftStart(true /* save distance too */);
+  jumpBackToAircraftStart(true /* saveDistance */);
   showAircraft(false);
   if(!atools::almostEqual(homeDistance, 0.))
     // Only center position is valid - Do not fix zoom - display as is
@@ -3142,7 +3142,7 @@ void MapWidget::showHome()
 
   if(homePos.isValid())
   {
-    jumpBackToAircraftStart(true /* save distance too */);
+    jumpBackToAircraftStart(true /* saveDistance */);
     centerPosOnMap(homePos);
     mainWindow->setStatusMessage(tr("Showing home position."));
   }

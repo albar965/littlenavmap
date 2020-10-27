@@ -375,7 +375,11 @@ void OnlinedataController::downloadSslErrors(const QStringList& errors, const QS
 
 void OnlinedataController::statusBarMessage()
 {
-  mainWindow->setOnlineConnectionStatusMessageText(QString(), tr("Connected to %1.").arg(getNetworkTranslated()));
+  QString net = getNetworkTranslated();
+  if(!net.isEmpty())
+    mainWindow->setOnlineConnectionStatusMessageText(QString(), tr("Connected to %1.").arg(net));
+  else
+    mainWindow->setOnlineConnectionStatusMessageText(QString(), QString());
 }
 
 void OnlinedataController::stopAllProcesses()

@@ -16945,12 +16945,12 @@ Voz</translation>
 <context>
     <name>OnlinedataController</name>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="474"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="478"/>
         <source>Custom Network</source>
         <translation>Rede Customizada</translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="467"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="471"/>
         <source>IVAO</source>
         <translation></translation>
     </message>
@@ -16960,7 +16960,7 @@ Voz</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="393"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="397"/>
         <source>Message from downloaded status file:
 
 %2
@@ -17004,17 +17004,17 @@ Tentando novamente em três minutos.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="378"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="380"/>
         <source>Connected to %1.</source>
         <translation>Conectou para %1.</translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="464"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="468"/>
         <source>VATSIM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/online/onlinedatacontroller.cpp" line="470"/>
+        <location filename="src/online/onlinedatacontroller.cpp" line="474"/>
         <source>PilotEdge</source>
         <translation></translation>
     </message>

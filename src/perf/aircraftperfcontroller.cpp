@@ -599,7 +599,7 @@ void AircraftPerfController::flightSegmentChanged(const atools::fs::perf::Flight
   updateActionStates();
   updateReportCurrent();
   NavApp::setStatusMessage(tr("Flight segment %1.").
-                           arg(AircraftPerfHandler::getFlightSegmentString(flightSegment).toLower()),
+                           arg(AircraftPerfHandler::getFlightSegmentString(flightSegment)),
                            true /* addToLog */);
 }
 
