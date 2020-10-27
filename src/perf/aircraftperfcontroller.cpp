@@ -705,7 +705,11 @@ void AircraftPerfController::updateReport()
 
     // Display fuel estimates ==========================================================
     const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
-    if(altitudeLegs.hasUnflyableLegs())
+    if(NavApp::getRouteConst().isEmpty())
+      html.p().
+      warning(tr("No Flight Plan.")).
+      pEnd();
+    else if(altitudeLegs.hasUnflyableLegs())
       html.p().
       error(tr("Cannot calculate fuel report.")).br().br().
       warning(tr("Flight plan has unflyable legs where head wind is larger than cruise speed.")).
@@ -953,7 +957,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       if(NavApp::getRoute().size() == 1)
         html.p().b(tr("Flight Plan not valid.")).pEnd();
       else if(!hasLegs)
-        html.p().b(tr("No Flight Plan loaded.")).pEnd();
+        html.p().b(tr("No Flight Plan.")).pEnd();
 
       QStringList errs;
       if(perf->getUsableFuel() < 0.1f)

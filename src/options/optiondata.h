@@ -1101,6 +1101,9 @@ public:
   /* Get selected font for map. Falls back to GUI font and then back to system font. */
   QFont getMapFont() const;
 
+  /* Get user interface font */
+  QFont getGuiFont() const;
+
 private:
   friend class OptionsDialog;
 

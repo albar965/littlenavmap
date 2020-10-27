@@ -113,6 +113,16 @@ QFont OptionData::getMapFont() const
   return font;
 }
 
+QFont OptionData::getGuiFont() const
+{
+  QFont font;
+  if(!guiFont.isEmpty())
+    font.fromString(guiFont);
+  else
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  return font;
+}
+
 const OptionData& OptionData::instance()
 {
   OptionData& optData = instanceInternal();

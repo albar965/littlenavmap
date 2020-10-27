@@ -244,6 +244,8 @@ int RouteMultiExportDialog::exec()
 
   // Reload default paths which are used by the reset function. Paths can change due to selected simulator.
   formatMap->updateDefaultPaths();
+
+  // Check if selected paths exist
   formatMap->updatePathErrors();
 
   // Backup options combo box
@@ -253,6 +255,7 @@ int RouteMultiExportDialog::exec()
   updateModel();
 
   int retval = QDialog::exec();
+  formatMap->updatePathErrors();
   saveDialogState();
   return retval;
 }

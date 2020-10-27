@@ -309,7 +309,7 @@ void LogdataDialog::airportUpdated(QLineEdit *lineEdit, QLabel *label)
   QString ident = lineEdit->text();
 
   if(ident.isEmpty())
-    label->setText(tr("No airport selected."));
+    label->setText(atools::util::HtmlBuilder::warningMessage(tr("No airport selected.")));
   else
   {
     // Try to get airport for ident

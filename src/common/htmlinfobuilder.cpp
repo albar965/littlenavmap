@@ -3685,7 +3685,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   } // if(!route.isEmpty() && userAircaft != nullptr && info)
   else if(info && userAircaft != nullptr)
   {
-    html.b(tr("No Flight Plan."));
+    html.warning(tr("No Flight Plan."));
     html.table();
     dateAndTime(userAircaft, html);
     html.tableEnd();

@@ -101,6 +101,8 @@ void RouteExport::routeMultiExport()
   exported.clear();
 
   // Collect path errors first =======================
+  // Check if selected paths exist
+  exportFormatMap->updatePathErrors();
   QStringList errorFormats;
   for(const RouteExportFormat& fmt : exportFormatMap->getSelected())
   {

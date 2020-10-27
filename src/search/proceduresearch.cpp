@@ -306,7 +306,10 @@ void ProcedureSearch::updateHeaderLabel()
     ui->labelProcedureSearch->setText("<b>" + map::airportTextShort(airportSim) + "</b><br/>" + procs + "&nbsp;");
   else
   {
-    ui->labelProcedureSearch->setText(tr("<b>No Airport selected.</b><br/>&nbsp;"));
+    atools::util::HtmlBuilder html;
+    html.warning(tr("No Airport selected.")).br().nbsp();
+    ui->labelProcedureSearch->setText(html.getHtml());
+
     tooltip = tr("<p style='white-space:pre'>Use the right-click context menu in the map or<br/>"
                  "the airport search result table (<code>F4</code>)<br/>"
                  "and select \"Show Procedures\" for an airport.</p>");

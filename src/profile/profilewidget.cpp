@@ -665,7 +665,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
   const OptionData& optData = OptionData::instance();
-  setFont(optData.getMapFont());
 
   // Keep margin to left, right and top
   int w = rect().width() - left * 2, h = rect().height() - TOP;
@@ -676,16 +675,18 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Nothing to show label =========================
   if(route.isEmpty())
   {
+    setFont(optData.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-    symPainter.textBox(&painter, {tr("No Flight Plan loaded.")}, QApplication::palette().color(QPalette::Text),
+    symPainter.textBox(&painter, {tr("No Flight Plan.")}, QColor("#ff5000"),
                        left + w / 2, TOP + h / 2, textatt::BOLD | textatt::CENTER, 0);
     scrollArea->updateLabelWidget();
     return;
   }
   else if(!hasValidRouteForDisplay(route))
   {
+    setFont(optData.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-    symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QApplication::palette().color(QPalette::Text),
+    symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QColor("#ff5000"),
                        left + w / 2, TOP + h / 2, textatt::BOLD | textatt::CENTER, 0);
     scrollArea->updateLabelWidget();
     return;
@@ -699,7 +700,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   if(altitudeLegs.size() != route.size())
   {
     // Do not draw if route altitudes are not updated to avoid invalid indexes
-    qWarning() << Q_FUNC_INFO << "Route altitudes not udpated";
+    qWarning() << Q_FUNC_INFO << "Route altitudes not updated";
     return;
   }
 
@@ -711,6 +712,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     qWarning() << Q_FUNC_INFO << "No flight plan elevation";
     return;
   }
+
+  setFont(optData.getMapFont());
 
   // Fill background sky blue ====================================================
   painter.setRenderHint(QPainter::Antialiasing);

@@ -4619,14 +4619,13 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
   }
   else
   {
-    title = tr("<b>No Flight Plan loaded.</b>");
+    title = atools::util::HtmlBuilder::warningMessage(tr("No Flight Plan."));
     if(tooltip != nullptr)
       *tooltip = tr("<p style='white-space:pre'>Use the right-click context menu on the map or the airport search (<code>F4</code>)<br/>"
                     "to select departure and destination.</p>");
 
     if(statustip != nullptr)
       *statustip = tr("Select departure and destination in the map or airport search");
-
   }
 
   if(print)
