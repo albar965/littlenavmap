@@ -3,6 +3,126 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ================
 
+# Version 2.6.3.beta
+
+## Important
+
+* _Little Navmap_ might ask again to create the recommended folder structure for files.
+  This can happen once after updating translations since the folder names depend on the selected language.
+  Let the program create the paths if you like to use them and move your files accordingly.
+* Update to the latest beta Navigraph navdata update for MSFS if you use it.
+* Reload the scenery library.
+
+## Known Issues
+
+### MSFS
+
+* _Little Navmap_ cannot read SID and STAR from MSFS. Documentation about MSFS format changes are
+  needed in SDK.
+* MSFS multiplayer and real-time AI cannot be displayed yet.
+* Simulator weather cannot be shown for MSFS since SimConnect weather functions are deprecated and
+  do not deliver data. Needs update or documentation in MSFS SDK. Use NOAA weather which gives you
+  the most up-to-date weather reports.
+* MSFS seems to have clear concept of scenery order (`Content.xml` seems unreliable)
+  and there is no information in the SDK about this. Add-ons are loaded by alphabetical order by
+  _Little Navmap_. To put an add-on to the end of the loading list add a `z_` to the folder name,
+  for example.
+* Flight plan loading in MSFS is flawed and does not produce any error messages if it fails. Quite
+  often MSFS cannot load its own plans correctly.
+* Country names are missing in MSFS translation tables and are not available in _Little Navmap_,
+  therefore.
+* Add-ons using the `.fsarchive` encrypted format are not supported. _Little Navmap_ will show only
+  the stock airport and not the add-on if a package is locked down like this.
+
+### Other
+
+* Dock window layout in _Little Navmap_ can change when resizing or maximizing window and back.
+  Qt limitation.
+* Window is restored in normal state when changing from a maximized window to fullscreen and back.
+  This is a Qt limitation.
+* The flight plan calculation might pop up shortly or the main window might flicker when starting the
+  program. This can be ignored.
+* The height of the elevation profile window cannot be reduced in some cases. Reset to default window
+  layout which fixes this. Rearrange or move the elevation profile window to another position which
+  usually solves this. Save the layout once you have a working one. This is a limitation in the used Qt library.
+* Zooming with touchpad or magic mouse does not work properly on macOS. Use the navigation overlay
+  or one of the other options on page `Map Navigation` in `Options` if you think it is unusable. This
+  is a limitation in the used Qt library.
+* Program hangs on macOS Big Sur beta. Work in progress.
+
+## Changes
+
+### Translations
+
+* French, German and Italian user interface translation completed.
+  Thanks to Patrick for adding the French translation!
+* Other translations are work in progress.
+
+Note that you can change the user interface language in the options dialog on page `User interface`.
+
+### User Interface
+
+* Added new splash screen image by Günter Steiner.
+* Fixed several problems with dialogs hidden behind main window when using `Keep in Foreground`.
+* Added support for coordinate parsing from Wikipedia which uses special characters to minute and
+  second symbols. Coordinates like `40°41′21″N 74°2′40″W` (note ″ and ′ instead of " and ') can now
+  be directly pasted into _Little Navmap_ dialogs.
+* Corrected parsing of coordinate format longitude/latitude (reversed order compared to usual format).
+  Now swapping coordinates in this format only if no designators N, S, E and W are given. See options
+  dialog on page `Units` and tooltip on coordinate format box.
+
+### Flight Plan
+
+* Corrected wrong calculation of time to next waypoint where time was not affected by wind.
+* Fixed missing aircraft information when elevation profile and preformance data cannot be
+  calculated.
+* Now checking for path validity more often in multiexport dialog to catch path changes done
+  outside _Little Navmap_.
+* Auto renumbering all user flight plan positions (green rectangle) that match default pattern
+  prefixed with `WP` like `WP1`, `WP2` or `WP99` now. Note that positions are already renumbered when
+  loading a plan.
+* Problem with wrong active leg sequencing in some procedures solved.
+* Fixed procedure query for airports which have a different ident in sim and navdata. Procedures
+  were not shown before. Example: Vanderhoof which is AU4 in some simulators vs. CAU4 in Navigraph
+  where procedures are loaded from Navigraph database.
+
+### Map
+
+* Fixed issue where procedure legs like arcs could disappear when zooming in.
+* Improved drawing of procedures with curves and arcs.
+* Reduced size of VOR and NDB symbols in lower zoom levels on map.
+* Flight plan details reduced on map display.
+* Tooltips, map click and menus now working on add-on airports if all other airports are off.
+  Before some menu items like `Set as destination` where disabled although airport was visible.
+
+### Elevation Profile
+
+* Fixed wrong display of mouse hover position and wrong waypoint position in elevation profile for
+  some procedures. Example: Norwich (EGSH), via NWI1 and NDB FN27 (N27) to runway 27.
+* Removed green elevation ramp in profile for legs longer than 2000 NM when using online elevation
+  data. Now filling long legs with zero elevation if maximum length for online data is exceeded.
+* PAPI slope for approaches now shown again on elevation profile.
+* Tooltip in elevation profile not showing up in front of other windows anymore.
+* Set minimum size for elevation profile to avoid corrupted display.
+* Fixed issue with missing update in tooltip data after flight plan altitude change.
+* More improvements in profile.
+
+### Other
+
+* Fixed parsing of the incomplete METAR date which gives only day of month. The error could result
+  in reports having the wrong date one month back.
+* Fixed issue where METAR reports might not be updated in index which could result in old reports
+  shown.
+* Now imitating MSFS if an scenery update like the Navigraph navdata update tries to reuse the
+  ident of an airport for a new one. Example: Boyd Field (54XS) in MSFS which actually Bar C Ranch
+  Airport (54XS) in real life at another location. 54XS is shown in the old and wrong location by
+  MSFS while the Navigraph update assigns the ident to the new and correct position.
+* Fixed issue where military airports were not recognized in add-ons.
+* Limited logging for online network connections to avoid log flooding with high frequency
+  connections.
+
+================
+
 # Version 2.6.2.beta
 
 ## Important
