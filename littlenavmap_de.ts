@@ -26475,6 +26475,26 @@ oder berechnen Sie den Flugplan neu, falls Sie Tracks benutzen.</translation>
         <translation>Anmerkungen geändert</translation>
     </message>
     <message>
+        <location filename="src/route/routecontroller.cpp" line="4848"/>
+        <location filename="src/route/routecontroller.cpp" line="4853"/>
+        <source>Remarks for the flight plan.</source>
+        <translation>Anmerkungen zum Flugplan.</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4847"/>
+        <source>
+
+</source>
+        <translation>
+
+</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4846"/>
+        <source>No flight plan.</source>
+        <translation>Kein Flugplan.</translation>
+    </message>
+    <message>
         <source>&lt;b&gt;%1, %2&lt;/b&gt;</source>
         <translation type="obsolete">&lt;b&gt;%1, %2&lt;/b&gt;</translation>
     </message>

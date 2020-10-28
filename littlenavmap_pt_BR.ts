@@ -25408,6 +25408,24 @@ or calculate the flight plan again if your plan uses tracks.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/route/routecontroller.cpp" line="4848"/>
+        <location filename="src/route/routecontroller.cpp" line="4853"/>
+        <source>Remarks for the flight plan.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4847"/>
+        <source>
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4846"/>
+        <source>No flight plan.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/route/routecontroller.cpp" line="4644"/>
         <location filename="src/route/routecontroller.cpp" line="4647"/>
         <location filename="src/route/routecontroller.cpp" line="4651"/>

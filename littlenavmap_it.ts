@@ -22153,7 +22153,7 @@ Usare veramente?</translation>
         <location filename="src/profile/profilewidget.cpp" line="680"/>
         <source>No Flight Plan.</source>
         <oldsource>No Flight Plan loaded.</oldsource>
-        <translation type="unfinished">Nessun Piano di volo caricato.</translation>
+        <translation>Nessun Piano di volo caricato.</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="689"/>
@@ -22163,7 +22163,7 @@ Usare veramente?</translation>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1035"/>
         <source>,</source>
-        <translation type="unfinished">,</translation>
+        <translation>,</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1158"/>
@@ -26438,7 +26438,7 @@ o calcola di nuovo il piano di volo se il tuop piano utilizza le rotte.</transla
         <location filename="src/route/routecontroller.cpp" line="4622"/>
         <source>No Flight Plan.</source>
         <oldsource>&lt;b&gt;No Flight Plan loaded.&lt;/b&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Nessun Piano di volo caricato.&lt;/b&gt;</translation>
+        <translation>Nessun Piano di volo caricato.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4624"/>
@@ -26473,6 +26473,26 @@ to select departure and destination.</oldsource>
         <location filename="src/route/routecontroller.cpp" line="4832"/>
         <source>Remarks changed</source>
         <translation>Note cambiate</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4848"/>
+        <location filename="src/route/routecontroller.cpp" line="4853"/>
+        <source>Remarks for the flight plan.</source>
+        <translation>Note per il piano di volo.</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4847"/>
+        <source>
+
+</source>
+        <translation>
+
+</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4846"/>
+        <source>No flight plan.</source>
+        <translation>Nessun Piano di Volo.</translation>
     </message>
     <message>
         <source>Low Altitude</source>

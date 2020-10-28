@@ -12771,7 +12771,7 @@ Appliquer quand même la mise en page de la fenêtre chargée?</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="440"/>
         <source>UNICOM:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">UNICOM:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="515"/>
@@ -26642,6 +26642,26 @@ ou recalculer le plan de vol si votre plan utilise des pistes.</translation>
         <translation type="unfinished">Remarques modifiées</translation>
     </message>
     <message>
+        <location filename="src/route/routecontroller.cpp" line="4846"/>
+        <source>No flight plan.</source>
+        <translation type="unfinished">Aucun plan de vol présent.</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4847"/>
+        <source>
+
+</source>
+        <translation type="unfinished">
+
+</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4848"/>
+        <location filename="src/route/routecontroller.cpp" line="4853"/>
+        <source>Remarks for the flight plan.</source>
+        <translation type="unfinished">Remarques concernant le plan de vol.</translation>
+    </message>
+    <message>
         <source>No Flight Plan loaded</source>
         <translation type="vanished">Aucun plan de vol chargé</translation>
     </message>
@@ -29502,7 +29522,11 @@ Examples: &quot;WP1&quot;, &quot;WP2&quot; or &quot;WP10&quot;.</source>
 A short all upper case ident without spaces is recommended.
 
 Idents starting with &quot;WP&quot; followed by a number are automatically renamed to reflect flying order.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Identification requise du waypoint.
+Il est recommandé d&apos;utiliser une identification courte, en majuscules et sans espaces.
+
+Les identifications commençant par &quot;WP&quot; suivi d&apos;un numéro sont automatiquement renommés pour refléter l&apos;ordre de vol.
+Exemples : &quot;WP1&quot;, &quot;WP2&quot; ou &quot;WP10&quot;.</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="158"/>
