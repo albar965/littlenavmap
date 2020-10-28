@@ -444,6 +444,9 @@ protected:
   /* true if real window/widget */
   bool visibleWidget = false;
 
+  /* verbose logging */
+  bool verbose = false;
+
   /* Dummy paint cycle without any navigation stuff. Just used to initialize Marble */
   bool noNavPaint = false;
 

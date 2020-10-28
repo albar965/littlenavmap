@@ -268,6 +268,7 @@ const QLatin1Literal OPTIONS_DIALOG_MAP_FONT("OptionsDialog/MapFont");
 const QLatin1Literal OPTIONS_PIXMAP_CACHE("Options/PixmapCache");
 const QLatin1Literal OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
+const QLatin1Literal OPTIONS_MAPWIDGET_DEBUG("Options/MapWidgetDebug");
 const QLatin1Literal OPTIONS_DOCKHANDLER_DEBUG("Options/DockHandlerDebug");
 const QLatin1Literal OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");

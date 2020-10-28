@@ -22,6 +22,8 @@
 #include "mapgui/mapscale.h"
 #include "common/maptools.h"
 #include "route/route.h"
+#include "settings/settings.h"
+#include "common/constants.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/maplayersettings.h"
 #include "common/unit.h"
@@ -59,6 +61,8 @@ using atools::geo::Pos;
 MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   : Marble::MarbleWidget(parent), visibleWidget(visible)
 {
+  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
+
   aircraftTrack = new AircraftTrack;
 
   // Set the map quality to gain speed while moving
@@ -527,7 +531,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
   double north = rect.north(GeoDataCoordinates::Degree), south = rect.south(GeoDataCoordinates::Degree),
          east = rect.east(GeoDataCoordinates::Degree), west = rect.west(GeoDataCoordinates::Degree);
 
-  if(!visibleWidget)
+  if(verbose)
     qDebug() << Q_FUNC_INFO << "initial zoom" << zoom() << "zoom step" << zoomStep();
 
   // Zoom in deeper
@@ -541,7 +545,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
          !screenCoordinates(east, south, x, y) || !screenCoordinates(west, south, x, y)) &&
         (zoomIterations < 500) && (zoom() < maximumZoom()))
   {
-    if(!visibleWidget)
+    if(verbose)
       qDebug() << Q_FUNC_INFO << "zoom" << zoom()
                << "Viewport" << viewport()->viewLatLonAltBox().toString(GeoDataCoordinates::Degree);
 
@@ -549,7 +553,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
     zoomIterations++;
   }
 
-  if(!visibleWidget)
+  if(verbose)
     qDebug() << Q_FUNC_INFO << "final zoom" << zoom();
 
   // Fix blurryness or zoom one out after correcting by zooming in
@@ -790,7 +794,8 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
 
 void MapPaintWidget::showAircraft(bool centerAircraftChecked)
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
 
   if(!(OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE) || centerAircraftChecked)
   {
@@ -1116,7 +1121,7 @@ const QVector<atools::fs::sc::SimConnectAircraft>& MapPaintWidget::getAiAircraft
 
 void MapPaintWidget::resizeEvent(QResizeEvent *event)
 {
-  if(!visibleWidget)
+  if(verbose)
   {
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << viewport()->viewLatLonAltBox().toString(GeoDataCoordinates::Degree);
@@ -1134,7 +1139,7 @@ void MapPaintWidget::resizeEvent(QResizeEvent *event)
 
 void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
 {
-  if(!visibleWidget)
+  if(verbose)
   {
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << getCurrentViewBoundingBox().toString(GeoDataCoordinates::Degree);

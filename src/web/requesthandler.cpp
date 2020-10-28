@@ -83,7 +83,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
 {
   QString path = QString::fromUtf8(request.getPath());
 
-  qDebug() << Q_FUNC_INFO << "path" << path << request.getMethod()
+  qDebug() << "RequestHandler::service(): path" << path << request.getMethod()
            << "header" << endl << request.getHeaderMap()
            << "parameter" << endl << request.getParameterMap();
 
