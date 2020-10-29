@@ -48,7 +48,6 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Zooming with touchpad or magic mouse does not work properly on macOS. Use the navigation overlay
   or one of the other options on page `Map Navigation` in `Options` if you think it is unusable. This
   is a limitation in the used Qt library.
-* Program hangs on macOS Big Sur beta. Work in progress.
 
 ## Changes
 
@@ -56,6 +55,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 * French, German and Italian user interface translation completed.
   Thanks to Patrick for adding the French translation!
+* Updated Chinese translation. Thanks to John Liu for providing a first draft!
 * Other translations are work in progress.
 
 Note that you can change the user interface language in the options dialog on page `User interface`.
@@ -63,6 +63,7 @@ Note that you can change the user interface language in the options dialog on pa
 ### User Interface
 
 * Added new splash screen image by Günter Steiner.
+* Fixed freezing on startup on macOS Big Sur.
 * Fixed several problems with dialogs hidden behind main window when using `Keep in Foreground`.
 * Added support for coordinate parsing from Wikipedia which uses special characters to minute and
   second symbols. Coordinates like `40°41′21″N 74°2′40″W` (note ″ and ′ instead of " and ') can now
