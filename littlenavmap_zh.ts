@@ -53,7 +53,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="264"/>
         <source>Reset performance collection and lose all current values?</source>
         <oldsource>Reset performance collection and loose all current values?</oldsource>
-        <translation type="unfinished">重置性能收集并丢弃所有现有值？</translation>
+        <translation>重置性能收集并丢弃所有现有值？</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="265"/>
@@ -75,12 +75,12 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="401"/>
         <source>Cannot save file.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法保存文件。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="422"/>
         <source>Aircraft Performance Files %1;;Aircraft Performance Files old Format %2;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能文件 %1;;旧格式航空器性能文件 %2;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="430"/>
@@ -119,13 +119,13 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="710"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="960"/>
         <source>No Flight Plan.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">没有飞行计划。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="714"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="719"/>
         <source>Cannot calculate fuel report.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法计算燃油报告。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="715"/>
@@ -139,13 +139,13 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="720"/>
         <source>The flight plan is either too short or the cruise altitude is too high.&lt;br/&gt;Also check the climb and descent speeds in the aircraft performance data.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划太短或者巡航高度太高。&lt;br/&gt;并检查航空器性能数据中的爬升和下降速度。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="730"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1181"/>
         <source>Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>备注</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="796"/>
@@ -667,7 +667,7 @@ This is for informational purposes only.</source>
 The fuel report will show a warning if this does not match the simulator aircraft type.</source>
         <oldsource>ICAO aircraft type like B732 or C172. 
 The fuel report will show a warning if this does not match the simulator aircraft type.</oldsource>
-        <translation type="unfinished">ICAO航空器型号代码例如 B732或C172. 
+        <translation>ICAO航空器型号代码例如 B732或C172. 
 如同模拟器中的航空器型号不匹配，燃油报告会显示警告。</translation>
     </message>
     <message>
@@ -970,7 +970,7 @@ Default is cruise speed.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="950"/>
         <source>Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>备注</translation>
     </message>
     <message>
         <source>Description or Comments</source>
@@ -1060,7 +1060,8 @@ Default is cruise speed.</source>
         <location filename="src/search/airportsearch.cpp" line="159"/>
         <source>State or
 Province</source>
-        <translation type="unfinished"></translation>
+        <translation>州或
+省</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="160"/>
@@ -1143,7 +1144,7 @@ MHz</source>
         <location filename="src/search/airportsearch.cpp" line="180"/>
         <source>Add-on</source>
         <oldsource>Addon</oldsource>
-        <translation type="unfinished">附加</translation>
+        <translation>附加</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="181"/>
@@ -1434,7 +1435,7 @@ Runway Surface</source>
         <location filename="src/connect/connectclient.cpp" line="203"/>
         <location filename="src/connect/connectclient.cpp" line="776"/>
         <source>Connected to simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>已连接到模拟器。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="216"/>
@@ -1455,7 +1456,7 @@ Runway Surface</source>
     <message>
         <location filename="src/connect/connectclient.cpp" line="179"/>
         <source>FSX, Prepar3D or MSFS</source>
-        <translation type="unfinished"></translation>
+        <translation>FSX, Prepar3D 或 MSFS</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="191"/>
@@ -1466,7 +1467,7 @@ Runway Surface</source>
         <location filename="src/connect/connectclient.cpp" line="227"/>
         <location filename="src/connect/connectclient.cpp" line="722"/>
         <source>Disconnected from simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>已从模拟器断开。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="340"/>
@@ -1481,17 +1482,17 @@ Runway Surface</source>
     <message>
         <location filename="src/connect/connectclient.cpp" line="350"/>
         <source>Update &lt;i&gt;%1&lt;/i&gt; to the latest version.&lt;br/&gt;Your installed version of &lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;is not compatible with this version of &lt;i&gt;Little Navmap&lt;/i&gt;.&lt;br/&gt;&lt;br/&gt;Install the latest version of &lt;i&gt;%1&lt;/i&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>更新&lt;i&gt;%1&lt;/i&gt;到最新版本。&lt;br/&gt;已安装的&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;版本与此版本&lt;i&gt;Little Navmap&lt;/i&gt;不兼容。&lt;br/&gt;&lt;br/&gt;安装&lt;i&gt;%1&lt;/i&gt;的最新版本.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="358"/>
         <source>The connection is not reliable.&lt;br/&gt;&lt;br/&gt;Check your network or installation.</source>
-        <translation type="unfinished"></translation>
+        <translation>连接不可靠&lt;br/&gt;&lt;br/&gt;检查你的网络或者安装。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="364"/>
         <source>&lt;p&gt;Error receiving data from &lt;i&gt;%1&lt;/i&gt;:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;从&lt;i&gt;%1&lt;/i&gt;获取数据出错:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="538"/>
@@ -1502,7 +1503,7 @@ Runway Surface</source>
         <location filename="src/connect/connectclient.cpp" line="581"/>
         <source>Connecting (%1) ...</source>
         <oldsource>Connecting (%1)...</oldsource>
-        <translation type="unfinished">正在连接(%1)...</translation>
+        <translation>正在连接(%1)...</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="582"/>
@@ -1514,7 +1515,7 @@ Runway Surface</source>
         <location filename="src/connect/connectclient.cpp" line="696"/>
         <source>Connecting ...</source>
         <oldsource>Connecting...</oldsource>
-        <translation type="unfinished">正在连接...</translation>
+        <translation>正在连接...</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="601"/>
@@ -1595,7 +1596,7 @@ Will retry.</source>
     <message>
         <location filename="src/connect/connectdialog.ui" line="24"/>
         <source>&amp;FSX, Prepar3D or MSFS</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;FSX, Prepar3D或MSFS</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="56"/>
@@ -1603,12 +1604,14 @@ Will retry.</source>
         <source>Allowed range is 50 up to 5000 milliseconds (5 seconds).
 Little Navmap fetches data from the flight simulator using this time interval.
 Lower values will result in a more fluid aircraft movement but can potentially induce stutters in the simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>允许的范围是50毫秒到5000毫秒(5秒)。
+Little Navmap 每隔相应的时间会向模拟器获取数据。
+更低的值可以让航空器移动更平滑，但有可能导致模拟器卡顿。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="92"/>
         <source>Connect directly to FSX, Prepar3D or MSFS running on the same computer as &lt;i&gt;Little Navmap&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>直接连接到同一台电脑上运行的FSX, Prepar3D或MSFS</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="131"/>
@@ -1620,17 +1623,20 @@ FSX, Prepar3D and MSFS allow a maxium of 105 NM.</source>
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1852 km).
 FSX, Prepar3D and MSFS allow a maxium of 105 NM.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>更改用于包含用户周围AI或多人飞行器的半径。
+在很多AI或多人游戏的时候使用较高的值可能会导致模拟器出现卡顿现象。
+单位始终为海里(1 NM等于1.852 km)。
+FSX，P3D和MSFS允许最大105 NM。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="137"/>
         <source> NM</source>
-        <translation type="unfinished"></translation>
+        <translation> 海里(NM)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="156"/>
         <source>&amp;AI fetch radius:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;AI获取半径:</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="167"/>
@@ -1640,7 +1646,7 @@ FSX, Prepar3D and MSFS allow a maxium of 105 NM.</oldsource>
     <message>
         <location filename="src/connect/connectdialog.ui" line="185"/>
         <source>Connect directly to X-Plane running on the same computer as &lt;i&gt;Little Navmap&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>直接连接到与 &lt;i&gt;Little Navmap&lt;/i&gt;在同一台电脑上运行的 X-Plane模拟器</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="108"/>
@@ -1657,7 +1663,7 @@ FSX, Prepar3D and MSFS allow a maxium of 105 NM.</oldsource>
     <message>
         <location filename="src/connect/connectdialog.ui" line="275"/>
         <source>&amp;Remote / Network</source>
-        <translation type="unfinished"></translation>
+        <translation>远程/网络(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="308"/>
@@ -1669,7 +1675,7 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
     <message>
         <location filename="src/connect/connectdialog.ui" line="360"/>
         <source>Connect to a flight simulator using &lt;i&gt;Little Navconnect&lt;/i&gt; where &lt;i&gt;Little Navconnect&lt;/i&gt; and the simulator are running on the flying computer</source>
-        <translation type="unfinished"></translation>
+        <translation>使用&lt;i&gt;Little Navconnect&lt;/i&gt;连接到同时运行&lt;i&gt;Little Navconnect&lt;/i&gt;和模拟器的飞行电脑上的飞行模拟器</translation>
     </message>
     <message>
         <source>Connect directly to a FSX or a Prepar3D flight simulator on the same computer using SimConnect.</source>
@@ -1766,7 +1772,7 @@ Unchecking this will stop all automatic connection attempts immediately.</source
     <message>
         <location filename="src/connect/connectdialog.cpp" line="51"/>
         <source>SimConnect not found. Your &lt;i&gt;Little Navmap&lt;/i&gt; installation is missing the file &quot;SimConnect.dll&quot;.&lt;br/&gt;Reinstall &lt;i&gt;Little Navmap&lt;/i&gt; or install a FSX SP2 compatible version of SimConnect on your computer.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>SimConnect没有找到。你的&lt;i&gt;Little Navmap&lt;/i&gt;安装缺少文件&quot;SimConnect.dll&quot;。&lt;br/&gt;在你的计算机上重新安装 &lt;i&gt;Little Navmap&lt;/i&gt; 或者FSX SP2 兼容版本的 SimConnect。&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="69"/>
@@ -1886,7 +1892,10 @@ This is the one containing the &quot;scenery&quot; directory and the fsx.exe or 
 For X-Plane this is the path containing the X-Plane executable.
 For MSFS this has to point to the directory containing &amp;quot;Community&amp;quot; and &amp;quot;Official&amp;quot;.&lt;/p&gt;</source>
         <oldsource>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</oldsource>
-        <translation type="unfinished">输入模拟器根目录的路径。&lt;br/&gt;这是包含&quot;scenery&quot;及fsx.exe 或 p3d.exe的目录。&lt;br/&gt;对于X-Plane这是包含X-Plane.exe的路径。</translation>
+        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;输入模拟器根目录的路径。
+这是包含&quot;scenery&quot;及fsx.exe 或 p3d.exe的目录。
+对于X-Plane这是包含X-Plane.exe的路径。
+对于MSFS，这需要指向包含&amp;quot;Community&amp;quot; 及 &amp;quot;Official&amp;quot;的目录&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="102"/>
@@ -2132,19 +2141,13 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
 Is another %3 running?
 
 Exiting now.</oldsource>
-        <translation type="unfinished">无法打开 %1 数据库。原因：
-
-%2
-
-是否有其他的 %3 正在运行？
-
-正在退出。</translation>
+        <translation>无法打开 %1 数据库。原因：&lt;br/&gt;&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;是否有其他的 %3 正在运行？&lt;br/&gt;&lt;br/&gt;正在退出。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1147"/>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;Always close &lt;i&gt;%2&lt;/i&gt; before copying, overwriting or updating scenery library databases.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Always close %2 before copying, overwriting or updating scenery library databases.&lt;/p&gt;</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;检测到一个或更多修改过的数据库文件：&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;在复制、覆盖或更新地景库数据库前总是关闭&lt;i&gt;%2&lt;/i&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1152"/>
@@ -2154,22 +2157,22 @@ Exiting now.</oldsource>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1220"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Either the &quot;OneStore&quot; or the &quot;Steam&quot; paths have to exist.&lt;br/&gt;The path &quot;Community&quot; is always needed for add-ons.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;无法读取路径 &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;原因是：&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;必须有&quot;OneStore&quot; 或 &quot;Steam&quot; 路径。&lt;br/&gt;附加的机场需要&quot;Community&quot;路径&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1230"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;无法读取路径 &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;原因是：&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1248"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Enable the option &quot;Read inactive or disabled Scenery Entries&quot;&lt;br/&gt;or start X-Plane once to create the file.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;无法读取地景配置&quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;原因是：&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;启用“同时读取未激活或禁用的地景条目”选项&lt;br/&gt;或者启动X-Plane一次以创建此文件。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1266"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;无法读取地景配置 “%1” 。原因是：&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Cannot read base path &quot;%1&quot;. Reason: %2.</source>
@@ -2190,7 +2193,7 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/db/databasemanager.cpp" line="1432"/>
         <source>Counting files ...</source>
-        <translation type="unfinished"></translation>
+        <translation>计数文件 ...</translation>
     </message>
     <message>
         <source>%1 - Loading %2</source>
@@ -2269,12 +2272,12 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/db/databaseprogressdialog.ui" line="6"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>对话框</translation>
     </message>
     <message>
         <location filename="src/db/databaseprogressdialog.cpp" line="33"/>
         <source>%1 - Loading %2</source>
-        <translation type="unfinished">%1 - 载入中 %2</translation>
+        <translation>%1 - 载入中 %2</translation>
     </message>
 </context>
 <context>
@@ -2283,48 +2286,49 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
         <location filename="src/common/dirtool.cpp" line="38"/>
         <source>%1 Files</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 文件</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="46"/>
         <source>Flight Plans</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="50"/>
         <source>Aircraft Performance</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="54"/>
         <source>Window Layouts</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>窗口样式</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="58"/>
         <source>User Airspaces</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
-        <translation type="unfinished">用户空域</translation>
+        <translation>用户空域</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="62"/>
         <source>GLOBE Elevation Data</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>GLOBE高程数据</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="66"/>
         <source>Airports</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
-        <translation type="unfinished">机场</translation>
+        <translation>机场</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="73"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files&lt;br/&gt;in your documents folder.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The following folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files&lt;br/&gt;in your documents folder.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The follwing folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</oldsource>
+        <translation type="unfinished">&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt;可以在您的“文档”文件夹里为您创建推荐的文件夹结构以储存您的所有文件&lt;/b&gt;&lt;/p&gt;&lt;p&gt;将会创建以下文件夹：&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;&lt;i&gt;Little Navmap&lt;/i&gt;的最上层目录包含以下子目录：&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="83"/>
@@ -2334,32 +2338,32 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/common/dirtool.cpp" line="84"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;For flight plans in &lt;i&gt;Little Navmap&lt;/i&gt;&apos;s own format &lt;code&gt;.lnmpln&lt;/code&gt;&lt;/li&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;保存&lt;i&gt;Little Navmap&lt;/i&gt;自己格式的飞行计划的&lt;code&gt;.lnmpln&lt;/code&gt;&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="87"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Directory for aircraft performance files (&lt;code&gt;.lnmperf&lt;/code&gt;)&lt;/li&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;保存航空器性能文件(&lt;code&gt;.lnmperf&lt;/code&gt;)&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="90"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;For saved window layouts (&lt;code&gt;.lnmlayout&lt;/code&gt;)&lt;/li&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;保存窗口布局(&lt;code&gt;.lnmlayout&lt;/code&gt;)&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="93"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the aiport information</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;保存PDF，文本文件，图像，或者其他链接到机场信息的文件</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="96"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;User defined airspaces in OpenAir format&lt;/li&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;OpenAir格式的用户定义空域&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="99"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place for the GLOBE data used by the flight plan elevation profile&lt;/li&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;保存用以计算飞行计划立面图的GLOBE数据目录&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="102"/>
@@ -2369,35 +2373,36 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/common/dirtool.cpp" line="104"/>
         <source>&lt;p&gt;This step is optional.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;这一步是可选的。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="107"/>
         <source>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here for more information in the &lt;i&gt;Little Navmap&lt;/i&gt; online manual&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;点击这里以查看 &lt;i&gt;Little Navmap&lt;/i&gt;在线手册中的更多信息&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="110"/>
         <source>&lt;p&gt;Should &lt;i&gt;Little Navmap&lt;/i&gt; create these directories now?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt; &lt;i&gt;Little Navmap&lt;/i&gt;可以现在创建这些目录吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="124"/>
         <source>Errors creating directory structure:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>创建目录结构时出错：
+%1</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="151"/>
         <location filename="src/common/dirtool.cpp" line="167"/>
         <source>Cannot create directory &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>无法创建目录 “%1”</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="156"/>
         <location filename="src/common/dirtool.cpp" line="172"/>
         <source>Cannot create directory &quot;%1&quot;. File with same name already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法创建目录 “%1”。有同名文件。</translation>
     </message>
 </context>
 <context>
@@ -2410,7 +2415,7 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
         <location filename="src/common/elevationprovider.cpp" line="173"/>
         <source>GLOBE elevation data directory is not valid:&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;Go to main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then&lt;br/&gt;to page &quot;Cache and Files&quot;. Then click &quot;Select GLOBE Directory&quot; and&lt;br/&gt;choose the correct place with the GLOBE elevation files.</source>
         <comment>Keep instructions in sync with translated menus</comment>
-        <translation type="unfinished"></translation>
+        <translation>GLOBE 高程数据目录无效：&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;打开主菜单 -&amp;gt; &quot;工具&quot; -&amp;gt; &quot;选项&quot;，&lt;br/&gt;找到页面&quot;缓存及文件&quot;，点击 &quot;选择GLOBE目录&quot; 并&lt;br/&gt;选择有正确GLOBE高程文件的目录。</translation>
     </message>
     <message>
         <location filename="src/common/elevationprovider.cpp" line="190"/>
@@ -2724,7 +2729,8 @@ This will change the shown map region and might change details.</source>
         <location filename="src/info/infocontroller.cpp" line="101"/>
         <source>Little Navmap is connected to a simulator or Little Navconnect.
 Prepare your flight and load your aircraft in the simulator to see progress updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap 已连接到模拟器或Little Navconnect.
+准备飞行并将航空器加载到模拟器中以查看进度更新。</translation>
     </message>
     <message>
         <location filename="src/info/infocontroller.cpp" line="105"/>
@@ -2733,7 +2739,10 @@ Go to the main menu -&gt; &quot;Tools&quot; -&gt; &quot;Flight Simulator Connect
 Then choose your simulator and click &quot;Connect&quot;.
 </source>
         <comment>Keep instructions in sync with translated menus and shortcuts</comment>
-        <translation type="unfinished"></translation>
+        <translation>没有连接到模拟器。
+转到主菜单-&gt;“工具”-&gt;“飞行模拟器连接”，或按“ Ctrl + Shift + C”。
+然后选择您的模拟器并单击“连接”。
+</translation>
     </message>
     <message>
         <location filename="src/info/infocontroller.cpp" line="750"/>
@@ -2788,7 +2797,7 @@ Then choose your simulator and click &quot;Connect&quot;.
     <message>
         <location filename="src/info/infocontroller.cpp" line="955"/>
         <source>Remove Airway and Track Highlights</source>
-        <translation type="unfinished"></translation>
+        <translation>移除航路及航迹高亮</translation>
     </message>
     <message>
         <source>Remove Airway Highlights</source>
@@ -3326,55 +3335,57 @@ This cannot be undone.</source>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="563"/>
         <source> - Logbook Export</source>
-        <translation type="unfinished"></translation>
+        <translation> - 记录表导出</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="565"/>
         <source>Select export options for logbook</source>
-        <translation type="unfinished"></translation>
+        <translation>选择记录本导出的选项</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="568"/>
         <source>Content of attached file will be added to the exported CSV if selected.
 Note that not all programs will be able to read this.
 Columns will be empty on export if disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果选中，附件的内容将添加到导出的CSV中。
+请注意，并非所有程序都可以读取此内容。
+如果禁用，则导出时列将为空。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="573"/>
         <source>&amp;Append to an already present file</source>
-        <translation type="unfinished">追加到已存在的文件(&amp;A)</translation>
+        <translation>追加到已存在的文件(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="574"/>
         <source>File header will be ignored if this is enabled.</source>
         <oldsource>File header will be ignore if this is enabled.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>如果启用此选项，文件头将被忽略。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="575"/>
         <source>Export &amp;selected entries only</source>
-        <translation type="unfinished">只导出选中的条目(&amp;E)</translation>
+        <translation>只导出选中的条目(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="579"/>
         <source>&amp;Flight plan in LNMPLN format</source>
-        <translation type="unfinished"></translation>
+        <translation>LNMPLN格式的飞行计划(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="580"/>
         <source>&amp;Aircraft performance</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="581"/>
         <source>&amp;GPX file containing flight plan points and trail</source>
-        <translation type="unfinished"></translation>
+        <translation>包含飞行计划点和航迹的&amp;GPX文件</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="577"/>
         <source>Add a &amp;header to the first line</source>
-        <translation type="unfinished"></translation>
+        <translation>在第一行添加表头(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="596"/>
@@ -3389,33 +3400,33 @@ Columns will be empty on export if disabled.</source>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="633"/>
         <source>This will convert all userpoints of type &lt;code&gt;Logbook&lt;/code&gt; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &lt;code&gt;Description&lt;/code&gt; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&lt;code&gt;*Converted from userdata*&lt;/code&gt;&lt;br/&gt;in the field &amp;quot;Remarks&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>这将会把所有的&lt;code&gt; 记录本&lt;/code&gt;类型的用户航点转换到记录本条目。&lt;br/&gt;&lt;br/&gt;如您没有在用户航路点中修改&lt;code&gt;描述&lt;/code&gt;字段并且也没有手工插入条目这将会效果最好。&lt;br/&gt;&lt;br/&gt;注意不是所有的字段都会被自动转换。&lt;br/&gt;&lt;br/&gt;创建的记录条目可以在描述字段搜索&lt;br/&gt;&lt;code&gt;;*转换自用户数据*(*Converted from userdata*)&lt;/code&gt;&lt;br/&gt;找到&lt;br/&gt;&lt;br/&gt;继续？</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="793"/>
         <source>Open GPX</source>
-        <translation type="unfinished"></translation>
+        <translation>打开 GPX</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="794"/>
         <location filename="src/logbook/logdatacontroller.cpp" line="840"/>
         <source>GPX Files %1;;All Files (*)</source>
-        <translation type="unfinished">GPX文件 %1;;全部文件 (*)</translation>
+        <translation>GPX文件 %1;;全部文件 (*)</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="813"/>
         <source>Cannot load file.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法载入文件。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="839"/>
         <source>Save GPX</source>
-        <translation type="unfinished"></translation>
+        <translation>保存 GPX</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="857"/>
         <source>Cannot save file.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法保存文件。</translation>
     </message>
     <message>
         <source>This will convert all userpoints of type &lt;code&gt;Logbook&lt;/code&gt; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &lt;code&gt;Description&lt;/code&gt; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&lt;code&gt;*Converted from userdata*&lt;/code&gt;&lt;br/&gt;in the description field.&lt;br/&gt;&lt;br/&gt;Continue?</source>
@@ -3617,13 +3628,13 @@ Columns will be empty on export if disabled.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="176"/>
         <source>Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>出发</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="206"/>
         <location filename="src/logbook/logdatadialog.ui" line="351"/>
         <source>Airport:</source>
-        <translation type="unfinished">机场：</translation>
+        <translation>机场：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="216"/>
@@ -3658,7 +3669,7 @@ Columns will be empty on export if disabled.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="327"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>到达</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="378"/>
@@ -3693,13 +3704,14 @@ Columns will be empty on export if disabled.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="708"/>
         <source>Flight Plan</source>
-        <translation type="unfinished">飞行计划</translation>
+        <translation>飞行计划</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="726"/>
         <source>Select a new flight plan for reference.
 This updates only the path and does not attach the flight plan to the logbook entry.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择一个新的飞行计划以供参考。
+这只会更新路径，并且不会将飞行计划附加到记录表条目。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="730"/>
@@ -3726,7 +3738,7 @@ Does not update distance and cruise altitude when changed.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="676"/>
         <source>Distance &amp;flown:</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行距离(&amp;F)：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="686"/>
@@ -3789,7 +3801,7 @@ Does not update distance and cruise altitude when changed.</source>
         <location filename="src/logbook/logdatadialog.ui" line="746"/>
         <location filename="src/logbook/logdatadialog.ui" line="1034"/>
         <source>&amp;Referenced file:</source>
-        <translation type="unfinished"></translation>
+        <translation>参考文件(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="762"/>
@@ -3801,67 +3813,69 @@ Does not update distance and cruise altitude when changed.</source>
         <source>Used flight plan file for trip.
 Does not update distance and cruise altitude when changed.
 This is only a file path reference and does not attach the file to the logbook entry.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于航程的飞行计划文件。
+更改时不会更新距离和巡航高度。
+这仅是文件路径参考，不会将文件附加到记录表条目。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="783"/>
         <source>Attach a new flight plan to the logbook entry</source>
-        <translation type="unfinished"></translation>
+        <translation>将新的飞行计划航段追加到记录表条目</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="786"/>
         <location filename="src/logbook/logdatadialog.ui" line="924"/>
         <location filename="src/logbook/logdatadialog.ui" line="1076"/>
         <source>&amp;Attach ...</source>
-        <translation type="unfinished"></translation>
+        <translation>追加(&amp;A)...</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="793"/>
         <source>Open the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>打开飞行计划</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="796"/>
         <location filename="src/logbook/logdatadialog.ui" line="1086"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"></translation>
+        <translation>打开(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="803"/>
         <source>Save the attached flight plan into a new file</source>
-        <translation type="unfinished"></translation>
+        <translation>将附加的飞行计划保存到新文件</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="806"/>
         <location filename="src/logbook/logdatadialog.ui" line="935"/>
         <location filename="src/logbook/logdatadialog.ui" line="1096"/>
         <source>&amp;Save as ...</source>
-        <translation type="unfinished"></translation>
+        <translation>另存为(&amp;S) ...</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="826"/>
         <location filename="src/logbook/logdatadialog.ui" line="955"/>
         <location filename="src/logbook/logdatadialog.ui" line="1116"/>
         <source>Removes the attached file</source>
-        <translation type="unfinished"></translation>
+        <translation>移除附加的文件</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="829"/>
         <location filename="src/logbook/logdatadialog.ui" line="958"/>
         <location filename="src/logbook/logdatadialog.ui" line="1119"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>移除(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="844"/>
         <source>Attached &amp;GPX file:</source>
-        <translation type="unfinished"></translation>
+        <translation>附加 &amp;GPX 文件：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="908"/>
         <location filename="src/logbook/logdatadialog.ui" line="1002"/>
         <source>&amp;Attached file:</source>
-        <translation type="unfinished"></translation>
+        <translation>附加的文件(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="920"/>
@@ -3869,45 +3883,49 @@ This is only a file path reference and does not attach the file to the logbook e
 GPX files contain flight plan points and the flown trail.</source>
         <oldsource>Attach a new GPX file to the logbook entry.
 GPX files contain flight plan points and the flown trail.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>将GPX文件附加到记录表条目。
+GPX文件包含飞行计划点和已飞行航迹。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="931"/>
         <source>Save the attached GPX file to a new file.
 GPX files contain flight plan points and the flown trail.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存附加的GPX文件到新文件。
+GPX文件包含飞行计划点和已飞行航迹。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="970"/>
         <source>Aircraft Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="988"/>
         <source>Used aircraft performance file for trip.
 This is only a file path reference and does not attach the file to the logbook entry.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于航程的航空器能文件。
+这仅是文件路径参考，不会将文件附加到日志条目。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="1044"/>
         <source>Select a new aircraft performance file for reference.
 This updates only the path and does not attach the file to the logbook entry.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择一个新的航空器性能文件以供参考。
+这只会更新路径，而不会将文件附加到日志条目。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="1073"/>
         <source>Attach an aircraft performance to the logbook entry</source>
-        <translation type="unfinished"></translation>
+        <translation>附加航空器性能文件到记录表条目</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="1083"/>
         <source>Open the aircraft performance</source>
-        <translation type="unfinished"></translation>
+        <translation>打开航空器性能</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="1093"/>
         <source>Save the attached aircraft performance into a new file</source>
-        <translation type="unfinished"></translation>
+        <translation>保存附加的航空器性能到新文件</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="1145"/>
@@ -3994,7 +4012,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="1349"/>
         <source>Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>备注</translation>
     </message>
     <message>
         <source>Description or Comments</source>
@@ -4111,13 +4129,15 @@ ICAO</translation>
         <location filename="src/search/logdatasearch.cpp" line="69"/>
         <source>Destination
 Real Time</source>
-        <translation type="unfinished"></translation>
+        <translation>到达地
+真实时间</translation>
     </message>
     <message>
         <location filename="src/search/logdatasearch.cpp" line="70"/>
         <source>Destination
 Sim. Time UTC</source>
-        <translation type="unfinished"></translation>
+        <translation>到达地
+模拟时间 UTC</translation>
     </message>
     <message>
         <location filename="src/search/logdatasearch.cpp" line="71"/>
@@ -4174,18 +4194,20 @@ Sim. Time UTC</source>
         <location filename="src/search/logdatasearch.cpp" line="81"/>
         <source>Distance
 Plan %dist%</source>
-        <translation type="unfinished"></translation>
+        <translation>距离
+计划%dist%</translation>
     </message>
     <message>
         <location filename="src/search/logdatasearch.cpp" line="82"/>
         <source>Distance
 Flown %dist%</source>
-        <translation type="unfinished"></translation>
+        <translation>距离
+已飞行%dist%</translation>
     </message>
     <message>
         <location filename="src/search/logdatasearch.cpp" line="84"/>
         <source>Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>备注</translation>
     </message>
     <message>
         <source>Description</source>
@@ -4218,7 +4240,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="53"/>
         <source>E&amp;xport Flight Plan to Other Formats</source>
         <oldsource>E&amp;xport Flight Plan to Garmin Formats</oldsource>
-        <translation type="unfinished">导出飞行计划到Garmin格式(&amp;X)</translation>
+        <translation>导出飞行计划到其他格式(&amp;X)</translation>
     </message>
     <message>
         <source>E&amp;xport Flight Plan to Aircraft Formats</source>
@@ -4241,7 +4263,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="114"/>
         <source>M&amp;ap Overlays</source>
         <oldsource>&amp;Map Overlays</oldsource>
-        <translation type="unfinished">地图图层(&amp;M)</translation>
+        <translation>地图图层(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="123"/>
@@ -4322,7 +4344,7 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="150"/>
         <source>&amp;Recent Window Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>近期窗口样式(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="345"/>
@@ -4818,7 +4840,7 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="64"/>
         <source>Export &amp;Options</source>
-        <translation type="unfinished"></translation>
+        <translation>导出选项(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1246"/>
@@ -5074,7 +5096,7 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2042"/>
         <source>Waypoint - Other</source>
-        <translation type="unfinished"></translation>
+        <translation>航路点-其他</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2072"/>
@@ -5389,17 +5411,18 @@ Flown %dist%</source>
 Matches any visited airport.</source>
         <oldsource>Departure or destination airport ICAO code.
 Will match any visited airport.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>出发地或目的地机场的ICAO代码。
+匹配任何到达过的机场。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3002"/>
         <source>Departure or destination airport ICAO code. </source>
-        <translation type="unfinished"></translation>
+        <translation>出发地或目的地机场的ICAO代码。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3008"/>
         <source>Airport ICAO</source>
-        <translation type="unfinished"></translation>
+        <translation>机场 ICAO</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3217"/>
@@ -5679,7 +5702,7 @@ Will match any visited airport.</oldsource>
         <location filename="src/gui/mainwindow.ui" line="11058"/>
         <location filename="src/gui/mainwindow.ui" line="11061"/>
         <source>Hide or show columns in flight plan table</source>
-        <translation type="unfinished"></translation>
+        <translation>在飞行计划表中显示或隐藏列</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4291"/>
@@ -5695,13 +5718,13 @@ Will match any visited airport.</oldsource>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4400"/>
         <source>Flight Plan Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划备注</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4403"/>
         <location filename="src/gui/mainwindow.ui" line="4430"/>
         <source>Remarks for the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划的备注</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4438"/>
@@ -5862,12 +5885,12 @@ Wind speed will be interpolated for climb and descent phases.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4981"/>
         <source>Overview</source>
-        <translation type="unfinished">概述</translation>
+        <translation>概述</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4984"/>
         <source>Aiport overview</source>
-        <translation type="unfinished"></translation>
+        <translation>机场概述</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5008"/>
@@ -6009,24 +6032,24 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11632"/>
         <source>&amp;Save selected range as Flight Plan ...</source>
-        <translation type="unfinished"></translation>
+        <translation>保存选择的范围为飞行计划(&amp;S)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11635"/>
         <location filename="src/gui/mainwindow.ui" line="11638"/>
         <source>Save the flight plan legs between selected as a new plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将选区范围内的飞行计划航段保存为新的飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11647"/>
         <source>&amp;Downloads (Online)</source>
-        <translation type="unfinished"></translation>
+        <translation>下载(在线&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11650"/>
         <location filename="src/gui/mainwindow.ui" line="11653"/>
         <source>Open the Little Navmap downloads in the browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器中打开Little Navmap下载</translation>
     </message>
     <message>
         <source>No information.</source>
@@ -6035,7 +6058,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5750"/>
         <source>Zoom vertically into the elevation profile (Shift+Mouse Wheel)</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直缩放高程图(Shift+鼠标滚轮)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5753"/>
@@ -6045,7 +6068,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5719"/>
         <source>Zoom horizontally into the elevation profile (Mouse Wheel)</source>
-        <translation type="unfinished"></translation>
+        <translation>水平缩放高程图(鼠标滚轮)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5722"/>
@@ -6142,27 +6165,27 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6163"/>
         <source>Flight Plan Calculation</source>
-        <translation type="unfinished">飞行计划计算</translation>
+        <translation>飞行计划计算</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6416"/>
         <source>Prefer:</source>
-        <translation type="unfinished"></translation>
+        <translation>倾向于：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6437"/>
         <source>Direct</source>
-        <translation type="unfinished">直接/直飞</translation>
+        <translation>直接/直飞</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6447"/>
         <source>Airways</source>
-        <translation type="unfinished"></translation>
+        <translation>航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6457"/>
         <source>Both</source>
-        <translation type="unfinished">全部</translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6467"/>
@@ -6171,202 +6194,213 @@ Move the slider to the right to use direct waypoint connections only.
 Every position in between uses airways and waypoints more or less and
 allows to find a flight plan that can cross areas without an airway network or
 unusable airways (e.g. due to altitude restrictions).</source>
-        <translation type="unfinished"></translation>
+        <translation>滑块移动到最左边以仅使用航路。 这是最快的计算方法。
+滑块移动到最右边可仅使用直接航路点连接。
+两者之间的每个位置或多或少都会使用航路和航路点，
+并允许生成在没有航路网络的情况下，或者
+无法有使用的航路(例如由于高度限制)生成飞跃区域的飞行计划。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6511"/>
         <source>Airways and tracks only.
 Fastest calculation</source>
-        <translation type="unfinished"></translation>
+        <translation>仅航路和轨道。
+最快的计算</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6531"/>
         <location filename="src/gui/mainwindow.ui" line="6534"/>
         <source>Limit route to Victor airways</source>
-        <translation type="unfinished"></translation>
+        <translation>限制路径为低空航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6537"/>
         <source>&amp;Victor airways (low altitude)</source>
-        <translation type="unfinished"></translation>
+        <translation>全向信标航路(&amp;V)(低空)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6684"/>
         <location filename="src/gui/mainwindow.ui" line="6687"/>
         <source>Use both Victor and Jet airways for route</source>
-        <translation type="unfinished"></translation>
+        <translation>为路径同时使用低空和喷气式航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6690"/>
         <source>&amp;All airways</source>
-        <translation type="unfinished"></translation>
+        <translation>所有航路(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6744"/>
         <location filename="src/gui/mainwindow.ui" line="6747"/>
         <source>Cruise altitude that is used to select airways</source>
-        <translation type="unfinished"></translation>
+        <translation>用以选择航路的巡航高度</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6206"/>
         <source>&amp;Direct</source>
-        <translation type="unfinished"></translation>
+        <translation>直接/直飞(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6226"/>
         <source>&amp;Reverse</source>
-        <translation type="unfinished"></translation>
+        <translation>翻转(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6253"/>
         <source>&amp;Calculate</source>
-        <translation type="unfinished"></translation>
+        <translation>计算(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6608"/>
         <location filename="src/gui/mainwindow.ui" line="6611"/>
         <source>Calculate a flight plan using airways and waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>使用航路和航路点计算飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6614"/>
         <source>&amp;Airways:</source>
-        <translation type="unfinished"></translation>
+        <translation>航路(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6627"/>
         <location filename="src/gui/mainwindow.ui" line="6630"/>
         <source>Include NDB stations in plan</source>
-        <translation type="unfinished"></translation>
+        <translation>在计划中包含无方向性信标(NDB)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6633"/>
         <source>Use &amp;NDB</source>
-        <translation type="unfinished"></translation>
+        <translation>使用无方向性信标(&amp;NDB)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6775"/>
         <source>A&amp;djust</source>
-        <translation type="unfinished"></translation>
+        <translation>调整(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6668"/>
         <location filename="src/gui/mainwindow.ui" line="6671"/>
         <source>Limit route to Jet airways</source>
-        <translation type="unfinished"></translation>
+        <translation>限制路径为喷气式航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6674"/>
         <source>&amp;Jet airways (high altitude)</source>
-        <translation type="unfinished"></translation>
+        <translation>喷气式航路(&amp;J)(高空)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6649"/>
         <location filename="src/gui/mainwindow.ui" line="6652"/>
         <source>Calculate a flight plan using radio navaids like VOR and NDB</source>
-        <translation type="unfinished"></translation>
+        <translation>使用例如VOR和NDB的无线电助航设备以计算飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6655"/>
         <source>&amp;Radio Navaids:</source>
-        <translation type="unfinished"></translation>
+        <translation>无线电助航设备(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6734"/>
         <source>&amp;Cruise Altitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航高度(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6588"/>
         <source>Do not use RNAV airways.
 Disabled if a navdatabase does not allow it.</source>
-        <translation type="unfinished"></translation>
+        <translation>不使用RNAV航路。
+如导航数据库不支持则会禁用。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6592"/>
         <source>Do not use RNAV airways</source>
-        <translation type="unfinished"></translation>
+        <translation>不使用RNAV航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6595"/>
         <source>Avoid &amp;RNAV airways</source>
-        <translation type="unfinished"></translation>
+        <translation>避免&amp;RNAV航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6199"/>
         <source>Calculate a direct flight plan.
 Keeps procedures.</source>
-        <translation type="unfinished"></translation>
+        <translation>计算直飞的飞行计划。
+保留程序。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6219"/>
         <source>Reverse the whole flight plan.
 Erases procedures.</source>
-        <translation type="unfinished"></translation>
+        <translation>翻转整个飞行计划。
+移除程序。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6223"/>
         <source>Reverse whole flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>翻转整个飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6246"/>
         <source>Calculate a flight plan using the settings above.
 Keeps procedures.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用以上设置计算飞行计划。
+保留程序。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6250"/>
         <source>Calculate a flight plan using the settings above</source>
-        <translation type="unfinished"></translation>
+        <translation>使用以上设置计算飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6283"/>
         <source>Calculates a flight plan between departure and destination.
 Keeps procedures.</source>
-        <translation type="unfinished"></translation>
+        <translation>计算出发地和目的地之间的飞行计划。
+保留程序。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6287"/>
         <source>Calculates a flight plan between departure and destination</source>
-        <translation type="unfinished"></translation>
+        <translation>计算出发地和目的地之间的飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6290"/>
         <source>Calculate from &amp;departure to destination</source>
-        <translation type="unfinished"></translation>
+        <translation>计算出发地到目的地之间的飞行计划(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6303"/>
         <location filename="src/gui/mainwindow.ui" line="6306"/>
         <source>Calculates a route between the selected legs in the flight plan table</source>
-        <translation type="unfinished"></translation>
+        <translation>计算飞行计划表中选定的航段间的航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6309"/>
         <source>Calculate for &amp;selection in flight plan table</source>
-        <translation type="unfinished"></translation>
+        <translation>计算飞行计划表中选定的航段(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6574"/>
         <source>Use downloaded NAT, PACOTS or AUSOTS tracks.
 Best track will be selected automatically.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用下载的 NAT, PACOTS 或 AUSOTS 航迹。
+将会自动使用最佳航迹。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6578"/>
         <source>Use downloaded NAT, PACOTS or AUSOTS tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用下载的 NAT, PACOTS 或 AUSOTS 航迹。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6581"/>
         <source>&amp;Use NAT, PACOTS or AUSOTS tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>使用 NAT, PACOTS 或 AUSOTS 航迹(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6800"/>
         <source>Tools Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>工具栏</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6818"/>
@@ -6664,17 +6698,17 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7648"/>
         <source>Add Range &amp;Rings</source>
-        <translation type="unfinished"></translation>
+        <translation>添加距离环(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7651"/>
         <source>Add range rings at this position to map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上此位置添加距离环</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7663"/>
         <source>Add &amp;Navaid Range Ring for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>为 %1 添加助航设备范围环(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8113"/>
@@ -6684,55 +6718,55 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8143"/>
         <source>Flight Simulator &amp;Connection ...</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行模拟器连接(&amp;C) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8311"/>
         <location filename="src/gui/mainwindow.ui" line="8314"/>
         <source>Open the Little Navmap database directory in the default file manager</source>
-        <translation type="unfinished"></translation>
+        <translation>在默认的文件管理器里打开Little Navmap的数据库目录</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9899"/>
         <source>Add Airport &amp;Traffic Pattern at %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>在 %1 添加机场起落航线(&amp;T)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10961"/>
         <source>Add &amp;Holding at %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>在 %1 添等待程序(&amp;H)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11004"/>
         <source>&amp;Save Options and Application State</source>
-        <translation type="unfinished"></translation>
+        <translation>保存选项及程序状态(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11103"/>
         <source>&amp;Calculate Flight Plan ...</source>
-        <translation type="unfinished"></translation>
+        <translation>计算飞行计划(&amp;C) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11451"/>
         <source>Show &amp;Top of Climb and Top of Descent</source>
-        <translation type="unfinished"></translation>
+        <translation>显示爬升顶(TOC)及下降顶(TOD)(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11454"/>
         <location filename="src/gui/mainwindow.ui" line="11457"/>
         <source>Show top of descent and top of climb points on the map and in the elevation profile</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图和高程图上显示下降顶(TOD)和爬升顶(TOC)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11468"/>
         <source>&amp;Allow Window docking</source>
-        <translation type="unfinished"></translation>
+        <translation>允许窗口停靠(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11471"/>
         <location filename="src/gui/mainwindow.ui" line="11474"/>
         <source>Allows dock windows to snap back into the main window while moving.</source>
-        <translation type="unfinished"></translation>
+        <translation>允许停靠窗口在移动时重新回到主窗口。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11477"/>
@@ -6742,14 +6776,14 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11492"/>
         <source>&amp;Fullscreen Map</source>
-        <translation type="unfinished"></translation>
+        <translation>全屏地图(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11495"/>
         <location filename="src/gui/mainwindow.ui" line="11498"/>
         <source>Maximize the map and hide all other dock windows and the toolbar</source>
         <oldsource>Maximize the map and hide all other dock windows, toolbar and menu bar</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>最大化地图，并隐藏所有其他停靠窗口及工具栏</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11501"/>
@@ -6759,84 +6793,84 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11510"/>
         <source>Copy %1 to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>复制 %1到剪贴板</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11513"/>
         <location filename="src/gui/mainwindow.ui" line="11516"/>
         <source>Copies the coordinates into the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>复制坐标到剪贴板</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11527"/>
         <source>Show &amp;Tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>显示工具提示(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11530"/>
         <location filename="src/gui/mainwindow.ui" line="11533"/>
         <source>Show a tooltip with elevation and more information when hovering the mouse over the profile</source>
-        <translation type="unfinished"></translation>
+        <translation>当鼠标在立面图上悬停时显示包含高程和更多信息的工具提示</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11538"/>
         <source>&amp;Open Window Layout ...</source>
-        <translation type="unfinished"></translation>
+        <translation>打开窗口样式(&amp;O)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11541"/>
         <location filename="src/gui/mainwindow.ui" line="11544"/>
         <source>Open and restore window layout</source>
-        <translation type="unfinished"></translation>
+        <translation>打开并恢复窗口样式</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11552"/>
         <location filename="src/gui/mainwindow.ui" line="11555"/>
         <source>Remove all recent window layouts from menu</source>
-        <translation type="unfinished"></translation>
+        <translation>将所有最近的窗口样式从菜单中清除</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11560"/>
         <source>Save Window &amp;Layout as ...</source>
-        <translation type="unfinished"></translation>
+        <translation>将窗口样式另存为(&amp;L)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11563"/>
         <source>Save Window Layout as</source>
-        <translation type="unfinished"></translation>
+        <translation>将窗口样式另存为</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11566"/>
         <location filename="src/gui/mainwindow.ui" line="11569"/>
         <source>Save current window layout</source>
-        <translation type="unfinished"></translation>
+        <translation>保存当前窗口样式</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11574"/>
         <source>Open &amp;Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>打开记录表文件(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11577"/>
         <location filename="src/gui/mainwindow.ui" line="11580"/>
         <source>Opens the log file of Little Navmap in the default text editor</source>
-        <translation type="unfinished"></translation>
+        <translation>在默认的文本编辑器器里打开Little Navmap的记录本文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11585"/>
         <source>Open &amp;Configuration File</source>
-        <translation type="unfinished"></translation>
+        <translation>打开配置文件(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11588"/>
         <location filename="src/gui/mainwindow.ui" line="11591"/>
         <source>Opens the configuration file of Little Navmap in the default text editor</source>
-        <translation type="unfinished"></translation>
+        <translation>在默认的文本编辑器器里打开Little Navmap的配置文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11599"/>
         <source>&amp;Keep in Foreground</source>
-        <translation type="unfinished"></translation>
+        <translation>保持在最前(&amp;K)</translation>
     </message>
     <message>
         <source>Status&amp;bar</source>
@@ -6917,57 +6951,57 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9209"/>
         <source>&amp;Reset Window Layout to Default</source>
-        <translation type="unfinished"></translation>
+        <translation>重置窗口样式为默认值(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9497"/>
         <source>&amp;Edit Userpoint(s) ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑用户航点(&amp;E)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9902"/>
         <location filename="src/gui/mainwindow.ui" line="9905"/>
         <source>Show Airport traffic pattern for a runway at this airport</source>
         <oldsource>Display Airport &amp;Traffic Pattern at %1 ...</oldsource>
-        <translation type="unfinished">显示此机场某条跑道的起落航线</translation>
+        <translation>显示此机场某条跑道的起落航线</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9914"/>
         <source>Remove &amp;Traffic Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>移除起落航线(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10726"/>
         <source>&amp;Add Logbook Entry ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加记录本条目(&amp;A)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10860"/>
         <source>Convert Logbook Entries from &amp;Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>从用户航路点转换记录本条目(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10863"/>
         <location filename="src/gui/mainwindow.ui" line="10866"/>
         <source>Convert legacy logbook entries from userpoints to the new logbook</source>
-        <translation type="unfinished"></translation>
+        <translation>将旧的记录表条目从用户航路点转换为新的记录表条目</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10964"/>
         <location filename="src/gui/mainwindow.ui" line="10967"/>
         <source>Display holding at this position or navaid</source>
         <oldsource>Display &amp;Holding at %1 ...</oldsource>
-        <translation type="unfinished">显示此位置或机场的等待程序</translation>
+        <translation>显示此位置或机场的等待程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11055"/>
         <source>&amp;Select visible Columns ...</source>
-        <translation type="unfinished"></translation>
+        <translation>选择可见表头(&amp;S)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11121"/>
         <source>&amp;Calculate Flight Plan for selected range ...</source>
-        <translation type="unfinished"></translation>
+        <translation>计算选定范围的飞行计划(&amp;C)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11270"/>
@@ -6977,142 +7011,142 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11279"/>
         <source>Show &amp;Information for Airport</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场的信息(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11282"/>
         <location filename="src/gui/mainwindow.ui" line="11285"/>
         <source>Show information about the airport</source>
-        <translation type="unfinished"></translation>
+        <translation>显示关于此机场的信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11294"/>
         <source>Show Airport on &amp;Map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示机场(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11311"/>
         <source>Show &amp;direct connection</source>
-        <translation type="unfinished"></translation>
+        <translation>显示直接连接(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11314"/>
         <location filename="src/gui/mainwindow.ui" line="11317"/>
         <source>Show a line between departure and destination for selected entries on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示所选条目的出发地和目的地之间的直线</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11325"/>
         <source>Show &amp;flight plan preview</source>
-        <translation type="unfinished"></translation>
+        <translation>显示飞行计划预览(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11328"/>
         <location filename="src/gui/mainwindow.ui" line="11331"/>
         <source>Show the flight plan shape of the selected entries on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示所选条目的飞行计划形状</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11339"/>
         <source>Show aircraft &amp;trail</source>
-        <translation type="unfinished"></translation>
+        <translation>显示航空器航迹(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11342"/>
         <location filename="src/gui/mainwindow.ui" line="11345"/>
         <source>Show the aircraft trail of selected entries on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示所选条目的航空器航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11350"/>
         <source>&amp;Save attached Flight Plan as ...</source>
-        <translation type="unfinished"></translation>
+        <translation>另存附加的飞行计划为(&amp;S)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11353"/>
         <source>Save flight plan as a new file</source>
-        <translation type="unfinished"></translation>
+        <translation>将飞行计划另存为新文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11356"/>
         <location filename="src/gui/mainwindow.ui" line="11359"/>
         <source>Save attached flight plan as a new file</source>
-        <translation type="unfinished"></translation>
+        <translation>将附加的飞行计划另存为新文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11364"/>
         <source>&amp;Open attached Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>打开附加的飞行计划(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11367"/>
         <source>Open flight plan as current</source>
-        <translation type="unfinished"></translation>
+        <translation>打开飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11370"/>
         <location filename="src/gui/mainwindow.ui" line="11373"/>
         <source>Open attached flight plan as current</source>
-        <translation type="unfinished"></translation>
+        <translation>将附加的飞行计划打开为当前计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11378"/>
         <source>Save attached Aircraft &amp;Perfomance as ...</source>
-        <translation type="unfinished"></translation>
+        <translation>另存番茄的航空器性能文件为(&amp;P) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11381"/>
         <source>Save aircraft perfomance as a new file</source>
-        <translation type="unfinished"></translation>
+        <translation>另存航空器性能文件为新文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11384"/>
         <location filename="src/gui/mainwindow.ui" line="11387"/>
         <source>Save attached aircraft perfomance as a new file</source>
-        <translation type="unfinished"></translation>
+        <translation>保存附加的航空器性能到新文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11392"/>
         <source>Open attached &amp;Aircraft Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>打开附加的航空器性能(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11395"/>
         <source>Open aircraft performance as current</source>
-        <translation type="unfinished"></translation>
+        <translation>打开的航空器性能为当前</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11398"/>
         <location filename="src/gui/mainwindow.ui" line="11401"/>
         <source>Open attached Aircraft Performance as current</source>
-        <translation type="unfinished"></translation>
+        <translation>打开附加的航空器性能为当前</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11406"/>
         <source>Save attached &amp;GPX Trail as ...</source>
-        <translation type="unfinished"></translation>
+        <translation>另存附加的GPX航迹飞行计划为(&amp;G)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11409"/>
         <source>Save aircraft trail into GPX file</source>
-        <translation type="unfinished"></translation>
+        <translation>保存航空器航迹到GPX文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11412"/>
         <location filename="src/gui/mainwindow.ui" line="11415"/>
         <source>Save attached aircraft trail into GPX file</source>
-        <translation type="unfinished"></translation>
+        <translation>保存附加的航空器航迹到GPX文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11430"/>
         <source>&amp;Attach Compass Rose to Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>在航空器周围显示罗盘(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11433"/>
         <location filename="src/gui/mainwindow.ui" line="11436"/>
         <source>Compass rose follows user aircraft if checked</source>
-        <translation type="unfinished"></translation>
+        <translation>如选中，将在航空器周围显示罗盘</translation>
     </message>
     <message>
         <source>Set Center for Distance Search</source>
@@ -7384,7 +7418,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7654"/>
         <source>Add range rings at this position map</source>
         <oldsource>Show range rings on map</oldsource>
-        <translation type="unfinished">在地图上显示距离环</translation>
+        <translation>在地图上显示距离环</translation>
     </message>
     <message>
         <source>Show Navaid Range for %1</source>
@@ -7475,49 +7509,49 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10976"/>
         <source>&amp;Remove Holding</source>
-        <translation type="unfinished"></translation>
+        <translation>移除等待程序(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10993"/>
         <source>&amp;Distance search options</source>
-        <translation type="unfinished"></translation>
+        <translation>距离搜索选项(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11037"/>
         <source>Edit Flight Plan &amp;Position</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑飞行计划位置(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11066"/>
         <source>Export Flight Plan as &amp;X-IvAp FPL ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到&amp;X-IvAp FPL ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11077"/>
         <source>Export Flight Plan as &amp;HTML Page ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到&amp;HTML网页 ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11228"/>
         <source>Export Waypoints for &amp;Airways</source>
-        <translation type="unfinished"></translation>
+        <translation>导出航点供航路使用(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11231"/>
         <location filename="src/gui/mainwindow.ui" line="11234"/>
         <source>Export waypoints instead of airway information</source>
-        <translation type="unfinished"></translation>
+        <translation>导出航点而不是航路信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11243"/>
         <source>&amp;Multiexport Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>多重导出飞行计划(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11246"/>
         <location filename="src/gui/mainwindow.ui" line="11249"/>
         <source>Multiexport Flight Plan into several formats</source>
-        <translation type="unfinished"></translation>
+        <translation>将飞行计划多重导出到多个格式</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11252"/>
@@ -7527,13 +7561,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11261"/>
         <source>Multiexport Flight Plan &amp;Options ...</source>
-        <translation type="unfinished"></translation>
+        <translation>多重导出飞行计划选项(&amp;O)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11264"/>
         <location filename="src/gui/mainwindow.ui" line="11267"/>
         <source>Configure the Export for Flight Plans into several formats</source>
-        <translation type="unfinished"></translation>
+        <translation>配置多重导出飞行计划选项</translation>
     </message>
     <message>
         <source>Save Flight Plan &amp;as PLN ...</source>
@@ -7581,19 +7615,19 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="11602"/>
         <location filename="src/gui/mainwindow.ui" line="11605"/>
         <source>Keeps main window of program on top of others</source>
-        <translation type="unfinished"></translation>
+        <translation>保持程序的主窗口在其他程序上方</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11614"/>
         <source>Export Flight Plan &amp;as MSFS 2020 PLN ...</source>
         <oldsource>Export Flight Plan &amp;as MSFS  PLN ...</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到MSFS 2020 PLN (&amp;A)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11617"/>
         <location filename="src/gui/mainwindow.ui" line="11620"/>
         <source>Export Flight Plan as PLN for Microsoft Flight Simulator 2020</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到PLN文件以供微软飞行模拟2020使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11623"/>
@@ -7799,46 +7833,46 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9547"/>
         <source>Export Waypoints for &amp;Approaches</source>
-        <translation type="unfinished"></translation>
+        <translation>导出航点供进近使用(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9550"/>
         <location filename="src/gui/mainwindow.ui" line="9553"/>
         <source>Export procedure waypoints instead of approach information</source>
-        <translation type="unfinished"></translation>
+        <translation>导出程序航点而不是进近信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9561"/>
         <source>Export Waypoints for &amp;SID and STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>导出航点供&amp;SID 及 STAR 使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9564"/>
         <location filename="src/gui/mainwindow.ui" line="9567"/>
         <source>Export procedure waypoints instead of SID/STAR information</source>
-        <translation type="unfinished"></translation>
+        <translation>导出程序航点而不是SID/STAR信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10278"/>
         <source>Show %1 on &amp;Map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 %1 (&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10481"/>
         <source>Export Flight Plan as Flight&amp;Gear FGFP ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到 Flight&amp;Gear FGFP ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10484"/>
         <location filename="src/gui/mainwindow.ui" line="10487"/>
         <source>Export flight plan as FGFP file for the FlightGear simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到FGFP文件以供FlightGear模拟器使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11106"/>
         <location filename="src/gui/mainwindow.ui" line="11109"/>
         <source>Calculate a flight plan between departure and destination</source>
-        <translation type="unfinished"></translation>
+        <translation>计算出发地和目的地之间的飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7819"/>
@@ -7849,18 +7883,18 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="11124"/>
         <location filename="src/gui/mainwindow.ui" line="11127"/>
         <source>Calculate flight plan between selected legs</source>
-        <translation type="unfinished"></translation>
+        <translation>计算选定的航段间的飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11132"/>
         <source>&amp;Flight Plan Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划计算(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11135"/>
         <location filename="src/gui/mainwindow.ui" line="11138"/>
         <source>Show flight plan calculation window</source>
-        <translation type="unfinished"></translation>
+        <translation>显示飞行计划计算窗口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11141"/>
@@ -7870,40 +7904,40 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11156"/>
         <source>Show &amp;Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>显示航迹(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11159"/>
         <location filename="src/gui/mainwindow.ui" line="11162"/>
         <source>Show tracks on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11170"/>
         <source>Download Tracks on &amp;Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>在启动时下载航迹(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11173"/>
         <location filename="src/gui/mainwindow.ui" line="11176"/>
         <source>Download NAT, PACOTS and AUSOTS tracks on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>在启动时下载 NAT, PACOTS 或 AUSOTS 航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11181"/>
         <source>&amp;Delete Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>删除航迹(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11184"/>
         <location filename="src/gui/mainwindow.ui" line="11187"/>
         <source>Delete all downloaded Tracks from Database</source>
-        <translation type="unfinished"></translation>
+        <translation>从数据库中删除所有下载的航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11196"/>
         <source>Download &amp;Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>下载航迹(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6555"/>
@@ -7911,18 +7945,18 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="11199"/>
         <location filename="src/gui/mainwindow.ui" line="11202"/>
         <source>Download NAT, PACOTS and AUSOTS tracks now</source>
-        <translation type="unfinished"></translation>
+        <translation>立刻下载 NAT, PACOTS 或 AUSOTS 航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11211"/>
         <source>Export Flight Plan &amp;as P3D or FSX  PLN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到 P3D 或 FSX  PLN (&amp;A)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11214"/>
         <location filename="src/gui/mainwindow.ui" line="11217"/>
         <source>Export Flight Plan as PLN for P3D or FSX</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到 P3D 或 FSX  PLN</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11220"/>
@@ -7963,7 +7997,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8104"/>
         <source>Force &amp;Show Add-on Airports</source>
         <oldsource>Force &amp;Show Addon Airports</oldsource>
-        <translation type="unfinished">强制显示附加机场(&amp;S)</translation>
+        <translation>强制显示附加机场(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8107"/>
@@ -8452,57 +8486,57 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="203"/>
         <source>&amp;Files and Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>文件及目录(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1173"/>
         <source>&amp;Runways:</source>
-        <translation type="unfinished">跑道(&amp;R)：</translation>
+        <translation>跑道(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1198"/>
         <source> %distshort% max</source>
-        <translation type="unfinished"></translation>
+        <translation> %distshort% 最大</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1223"/>
         <source> %distshort% min</source>
-        <translation type="unfinished"></translation>
+        <translation> %distshort% 最小</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1321"/>
         <source>&amp;Elevation:</source>
-        <translation type="unfinished"></translation>
+        <translation>标高(&amp;E)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1340"/>
         <source> %alt% min</source>
-        <translation type="unfinished"></translation>
+        <translation> %alt% 最低</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1368"/>
         <source> %alt% max</source>
-        <translation type="unfinished"></translation>
+        <translation> %alt% 最高</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1425"/>
         <location filename="src/gui/mainwindow.ui" line="2138"/>
         <source>&amp;Distance:</source>
-        <translation type="unfinished">距离(&amp;D)：</translation>
+        <translation>距离(&amp;D)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1444"/>
         <location filename="src/gui/mainwindow.ui" line="2157"/>
         <location filename="src/gui/mainwindow.ui" line="3400"/>
         <source> %dist% min</source>
-        <translation type="unfinished"></translation>
+        <translation> %dist% 最小</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1472"/>
         <location filename="src/gui/mainwindow.ui" line="2185"/>
         <location filename="src/gui/mainwindow.ui" line="3422"/>
         <source> %dist% max</source>
-        <translation type="unfinished"></translation>
+        <translation> %dist% 最大</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1501"/>
@@ -8513,78 +8547,78 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2763"/>
         <source>Show help for the userpoints search tab</source>
-        <translation type="unfinished"></translation>
+        <translation>显示用户航路点搜索的帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2845"/>
         <location filename="src/gui/mainwindow.ui" line="3340"/>
         <source>Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>备注</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3381"/>
         <source>Distance:</source>
-        <translation type="unfinished">距离：</translation>
+        <translation>距离：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7178"/>
         <source>&amp;Show Statusbar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示状态栏(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7285"/>
         <location filename="src/gui/mainwindow.ui" line="7300"/>
         <location filename="src/gui/mainwindow.ui" line="9661"/>
         <source>Set Center for &amp;Distance Search</source>
-        <translation type="unfinished"></translation>
+        <translation>设置距离搜索的中心(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7474"/>
         <source>Set Home &amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>设置起始视图(&amp;V)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7681"/>
         <location filename="src/gui/mainwindow.ui" line="7684"/>
         <location filename="src/gui/mainwindow.cpp" line="2008"/>
         <source>Remove all range rings, measurements, traffic patterns and holdings from map</source>
-        <translation type="unfinished"></translation>
+        <translation>从地图上移除所有的距离环、测量、起落航线和等待</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7744"/>
         <source>&amp;Remove Range Ring</source>
-        <translation type="unfinished"></translation>
+        <translation>移除距离环(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7774"/>
         <source>Save Flight Plan &amp;as LNMPLN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为LNMPLN(&amp;A) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7894"/>
         <location filename="src/gui/mainwindow.ui" line="8023"/>
         <source>Set %1 as &amp;Flight Plan Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>将 %1设置为飞行计划出发(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7909"/>
         <source>Set %1 as Flight Plan &amp;Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>将%1设置为飞行计划到达(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7939"/>
         <source>&amp;Delete selected Legs or Procedure</source>
-        <translation type="unfinished"></translation>
+        <translation>删除选中的航段或程序(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7957"/>
         <source>Move selected Legs &amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的航段上移(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7975"/>
         <source>Move selected Legs &amp;Down</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的航段下移(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8050"/>
@@ -8594,24 +8628,24 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10245"/>
         <source>Show &amp;Information for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 %1 的信息(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8396"/>
         <location filename="src/gui/mainwindow.ui" line="8450"/>
         <source>Show on &amp;Map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8414"/>
         <location filename="src/gui/mainwindow.ui" line="8432"/>
         <source>Show &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>显示信息(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8716"/>
         <source>&amp;Copy Flight Plan Route Description to the Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>复制飞行计划路径描述到剪贴板(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8758"/>
@@ -8857,7 +8891,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9052"/>
         <source>&amp;Activate Flight Plan Leg</source>
-        <translation type="unfinished"></translation>
+        <translation>激活飞行计划航段(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9055"/>
@@ -9086,13 +9120,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9280"/>
         <source>Export Flight &amp;Plan as X-Plane FMS 11 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到X-Plane FMS 11(&amp;P) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9283"/>
         <location filename="src/gui/mainwindow.ui" line="9286"/>
         <source>Export flight plan as FMS 11 file usable by X-Plane 11.10 and above</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到 FMS 11文件以供11.10以上版本的 X-Plane 使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9304"/>
@@ -9299,7 +9333,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9515"/>
         <source>&amp;Add Userpoint ...</source>
         <oldsource>&amp;Edit Userpoint %1</oldsource>
-        <translation type="unfinished">编辑用户航点 %1(&amp;E)</translation>
+        <translation>添加用户航点(&amp;A)...</translation>
     </message>
     <message>
         <source>&amp;Move Userpoint %1</source>
@@ -9757,7 +9791,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10263"/>
         <source>Show %1 in &amp;Search</source>
-        <translation type="unfinished"></translation>
+        <translation>在搜索中显示 %1 (&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10266"/>
@@ -10411,7 +10445,10 @@ Best track will be selected automatically.</source>
 The layout might not be restored properly.
 
 Apply the loaded window layout anyway?</source>
-        <translation type="unfinished"></translation>
+        <translation>布局文件中的“允许取消停靠地图窗口”
+选项与当前设置的选项不同。
+布局可能无法正确还原。
+是否仍然要应用载入的窗口布局？</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="213"/>
@@ -10421,7 +10458,7 @@ Apply the loaded window layout anyway?</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="317"/>
         <source>Started.</source>
-        <translation type="unfinished"></translation>
+        <translation>已启动。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="541"/>
@@ -10616,17 +10653,17 @@ Local: %2</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1811"/>
         <source>Map projection changed to %1.</source>
-        <translation type="unfinished">地图投影已更改为 %1.</translation>
+        <translation>地图投影已更改为 %1.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1832"/>
         <source>Map theme changed to %1.</source>
-        <translation type="unfinished">地图主题已更改为  %1.</translation>
+        <translation>地图主题已更改为  %1.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1900"/>
         <source>Too many objects</source>
-        <translation type="unfinished"></translation>
+        <translation>太多对象</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2082"/>
@@ -10665,7 +10702,7 @@ Local: %2</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2401"/>
         <source>&lt;p&gt;You cannot save this file directly.&lt;br/&gt;Use the export function instead.&lt;/p&gt;&lt;p&gt;Save using the new LNMPLN format now?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;您不能直接保存此文件。&lt;br/&gt;请使用导出功能。&lt;/ p&gt; &lt;p&gt;现在使用新的LNMPLN格式保存吗？&lt;/ p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2527"/>
@@ -10673,12 +10710,13 @@ Local: %2</source>
         <source>Cannot load file. Reason:
 
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法载入文件
+原因是： %1</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3084"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Messages:&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;消息：&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3088"/>
@@ -10730,27 +10768,27 @@ Online Network:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1940"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>离线</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1950"/>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>完成</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1953"/>
         <source>Updating</source>
-        <translation type="unfinished"></translation>
+        <translation>正在上传</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1956"/>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>正在载入</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1959"/>
         <source>Incomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>不完整</translation>
     </message>
     <message>
         <source>Offline.</source>
@@ -10831,12 +10869,12 @@ Online Network:
         <location filename="src/gui/mainwindow.cpp" line="2404"/>
         <source>Do not &amp;show this dialog again and save as LNMPLN.</source>
         <oldsource>Do not show this dialog again and save as LNMPLN.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>不要再次显示此对话框并另存为LNMPLN(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2439"/>
         <source>Save Flight Plan as LNMPLN Format</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为LNMPLN格式</translation>
     </message>
     <message>
         <source>Database contains no AIRAC cycle information which is required for the X-Plane FSM 11 flight plan format.&lt;br/&gt;&lt;br/&gt;This can happen if you save a flight plan based on FSX or Prepar3D scenery.&lt;br/&gt;&lt;br/&gt;Really continue?</source>
@@ -11014,12 +11052,13 @@ Simulator might not be able to load the flight plan.</source>
         <location filename="src/gui/mainwindow.cpp" line="2384"/>
         <source>Flight plan cruise altitude is zero.
 A simulator might not be able to load the flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划巡航高度为零。
+模拟器可能无法加载飞行计划。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2394"/>
         <source>Save &amp;as LNMPLN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>另存飞行计划为LNMPLN(&amp;A) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2287"/>
@@ -11086,7 +11125,9 @@ A simulator might not be able to load the flight plan.</source>
 Display might be incomplete.
 Reduce map details in the &quot;View&quot; menu.</source>
         <comment>Keep menu item in sync with menu translation</comment>
-        <translation type="unfinished"></translation>
+        <translation>地图上无法显示太多对象。
+显示可能不完整。
+在“查看”菜单中减少地图详细信息。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2483"/>
@@ -11124,23 +11165,23 @@ Reduce map details in the &quot;View&quot; menu.</source>
         <location filename="src/gui/mainwindow.cpp" line="2554"/>
         <location filename="src/gui/mainwindow.cpp" line="2569"/>
         <source>Window Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>窗口样式</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2555"/>
         <location filename="src/gui/mainwindow.cpp" line="2570"/>
         <source>Window Layout Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>窗口样式文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2579"/>
         <source>Window layout saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>窗口样式已保存。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2614"/>
         <source>Window layout loaded and restored.</source>
-        <translation type="unfinished"></translation>
+        <translation>已载入并恢复窗口样式。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2664"/>
@@ -11200,7 +11241,7 @@ Only JPG, PNG and BMP are allowed.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2745"/>
         <source>LittleNavmap_%1.png</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap 地图 %1.jpg</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2750"/>
@@ -11305,7 +11346,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3105"/>
         <source>No Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>没有消息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3107"/>
@@ -11315,18 +11356,18 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3109"/>
         <source>Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>消息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3109"/>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>消息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3221"/>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator - Steam Edition,&lt;/li&gt;&lt;li&gt;Prepar3D or&lt;/li&gt;&lt;/ul&gt;&lt;li&gt;Microsoft Flight Simulator 2020 installation&lt;/li&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
         <oldsource>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator 2020 or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>在此计算机上找不到&lt;ul&gt; &lt;li&gt; Microsoft Flight Simulator X，&lt;/ li&gt; &lt;li&gt; Microsoft Flight Simulator-Steam版，&lt;/ li&gt; &lt;li&gt; Prepar3D或&lt;/ li&gt; &lt;/ ul&gt; &lt;li&gt; Microsoft Flight Simulator 2020 &lt;/ li&gt;。 另外，没有找到地景数据库。&lt;br/&gt; &lt;br/&gt;您可以从另一台计算机复制Little Navmap地景数据库。&lt;br/&gt;按帮助按钮以获取有关此内容的更多信息。&lt;br/&gt; &lt;br /&gt;如果已安装X-Plane 11，则可以通过单击下面的X-Plane按钮转到地景库加载对话框。&lt;br/&gt; &lt;br/&gt;</translation>
     </message>
     <message>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
@@ -11340,17 +11381,17 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="4370"/>
         <source>Click here for details.</source>
-        <translation type="unfinished"></translation>
+        <translation>点击这里显示详情。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="4390"/>
         <source>Error reading flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取飞行计划时出错。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="4395"/>
         <source>Error calculating profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>计算立面图时出错。</translation>
     </message>
     <message>
         <source>Ready.</source>
@@ -11388,19 +11429,19 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="183"/>
         <source>&amp;Userpoints</source>
-        <translation type="unfinished">用户航点(&amp;U)</translation>
+        <translation>用户航点(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="207"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="472"/>
         <source>&amp;More</source>
-        <translation type="unfinished"></translation>
+        <translation>更多(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="403"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="627"/>
         <source>here</source>
-        <translation type="unfinished">这里</translation>
+        <translation>这里</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="483"/>
@@ -11410,115 +11451,115 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="489"/>
         <source>&amp;Position %1</source>
-        <translation type="unfinished"></translation>
+        <translation>位置 %1(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="503"/>
         <source>&amp;Show Information for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 %1 的信息(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="504"/>
         <source>Show information for airport or navaid</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场或助航设备的信息</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="505"/>
         <source>Click</source>
-        <translation type="unfinished"></translation>
+        <translation>点击</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="523"/>
         <source> (no procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation> (没有程序)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="532"/>
         <source>%1 - Arrival Procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - 进场程序</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="532"/>
         <source>Show Arrival &amp;Procedures for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 %1 的进场程序(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="536"/>
         <source>%1 (no arrival)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (没有进场)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="536"/>
         <source>Show Arrival &amp;Procedures for %1 (no arrival)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示%1的进场程序 (没有进场程序)(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="544"/>
         <source>%1 - Departure &amp;Procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - 离场程序(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="544"/>
         <source>Show Departure &amp;Procedures for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 %1 的离场程序(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="548"/>
         <source>%1 (no departure)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (没有离场)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="548"/>
         <source>Show Departure &amp;Procedures for %1 (no departure)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示%1的离场程序 (没有离场程序)(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="565"/>
         <source>Show &amp;Procedures for %1</source>
-        <translation type="unfinished">显示 %1 的程序(&amp;P)</translation>
+        <translation>显示 %1 的程序(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="566"/>
         <source>Show procedures for this airport</source>
-        <translation type="unfinished">显示此机场的程序</translation>
+        <translation>显示此机场的程序</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="582"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="699"/>
         <source> (no runway)</source>
-        <translation type="unfinished"></translation>
+        <translation> (没有跑道)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="592"/>
         <source>%1 - add to Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - 加入飞行计划</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="592"/>
         <source>&amp;Create Approach to %1 and add to Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>创建到 %1 的进近并加入到飞行计划(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="595"/>
         <source>%1 - use as Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - 设置为目的地</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="595"/>
         <source>&amp;Create Approach and use %1 as Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>创建进近并使用 %1 作为目的地(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="611"/>
         <source>Create &amp;Approach to %1</source>
         <oldsource>Create &amp;Custom Procedure for %1</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>创建到 %1 的进近(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="612"/>
         <source>Add a custom approach to this airport into the flight plan</source>
         <oldsource>Add a custom approach to this airport to the flight plan</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>创建到此机场的自定义进近并插入到飞行计划</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="631"/>
@@ -11527,17 +11568,17 @@ Ensure that the map fills the window completely.</source>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="735"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1171"/>
         <source> (hidden on map)</source>
-        <translation type="unfinished"> (已在地图上隐藏)</translation>
+        <translation> (已在地图上隐藏)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="637"/>
         <source>&amp;Measure Distance from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>测量自 %1的距离(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="638"/>
         <source>Measure great circle distance on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>测量地图上的大圆航程</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="639"/>
@@ -11547,18 +11588,18 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="665"/>
         <source> (no range)</source>
-        <translation type="unfinished"></translation>
+        <translation> (没有范围)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="673"/>
         <source>Add &amp;Navaid Range Ring for %1</source>
         <oldsource>Show &amp;Navaid Range for %1</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>为 %1 添加助航设备范围环(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="674"/>
         <source>Show a ring for the radio navaid range on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示此助航设备的覆盖范围环</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="675"/>
@@ -11569,99 +11610,99 @@ Ensure that the map fills the window completely.</source>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="717"/>
         <source>Add &amp;Traffic Pattern at %1 ...</source>
         <oldsource>Display &amp;Traffic Pattern at %1 ...</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>在 %1 添加机场起落航线(&amp;T)...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="718"/>
         <source>Show a traffic pattern to a runway for this airport</source>
-        <translation type="unfinished"></translation>
+        <translation>显示此机场某条跑道的起落航线</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="732"/>
         <source>Add &amp;Holding here ...</source>
         <oldsource>Display &amp;Holding here ...</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>在这里添等待程序(&amp;H)...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="742"/>
         <source>Add &amp;Holding at %1 ...</source>
         <oldsource>Display &amp;Holding at %1 ...</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>在 %1 添等待程序(&amp;H)...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="743"/>
         <source>Show a holding pattern on the map at a position or a navaid</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示此位置或助航设备的等待程序</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="777"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="789"/>
         <source>Set %1 at %2 as &amp;Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>将%2的%1设置为离场(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="814"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="842"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="882"/>
         <source> (is destination)</source>
-        <translation type="unfinished"></translation>
+        <translation> (是目的地)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="806"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="848"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="877"/>
         <source> (is departure)</source>
-        <translation type="unfinished"></translation>
+        <translation> (是出发地)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="820"/>
         <source>Set %1 as &amp;Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>将%1设置为离场(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="821"/>
         <source>Set airport as departure in the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将机场设置为飞行计划出发地</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="854"/>
         <source>Set %1 as &amp;Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>将%1设置为目的地(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="855"/>
         <source>Set airport as destination in the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将机场设置为飞行计划到达</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="887"/>
         <source> (is alternate)</source>
-        <translation type="unfinished"></translation>
+        <translation> (是备降场)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="893"/>
         <source>&amp;Add %1 as Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>添加 %1 为备降场(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="894"/>
         <source>Add airport as alternate to the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将机场设置为飞行计划备降场</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="908"/>
         <source>Add Position to Flight &amp;Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>添加位置到飞行计划(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="916"/>
         <source>Add %1 to Flight &amp;Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>把 %1 加入飞行计划(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="917"/>
         <source>Add airport, navaid or position to nearest flight plan leg</source>
-        <translation type="unfinished"></translation>
+        <translation>将机场、助航设施或者位置添加到最近的飞行计划的航段</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="918"/>
@@ -11672,17 +11713,17 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="931"/>
         <source>Append Position to &amp;Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>追加位置到飞行计划(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="939"/>
         <source>Append %1 to &amp;Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将 %1 追加到飞行计划(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="940"/>
         <source>Append airport, navaid or position to the end of the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将机场、助航设施或者地图位置追加到飞行计划的最末</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="941"/>
@@ -11694,53 +11735,53 @@ Ensure that the map fills the window completely.</source>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="975"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="984"/>
         <source>&amp;Delete %1 from Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将 %1从飞行计划删除(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="977"/>
         <source>&amp;Delete from Flight Plan (is procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>从飞行计划删除(程序)(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="985"/>
         <source>Delete airport, navaid or position from the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将这个机场、助航设施或者地图位置从飞行计划中删除</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1013"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1024"/>
         <source>Edit Flight Plan &amp;Position %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑飞行计划位置 %1(&amp;P)...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1015"/>
         <source>Edit Flight Plan &amp;Position Remarks for %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑 %1 的飞行计划位置备注(&amp;P)...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1018"/>
         <source>Edit Flight Plan &amp;Position (is procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑飞行计划位置备注(程序)(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1025"/>
         <source>Edit remark, name or coordinate of flight plan position</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑飞行计划位置的备注，名称或坐标</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1039"/>
         <source>Add &amp;Userpoint here ...</source>
-        <translation type="unfinished"></translation>
+        <translation>在这里添加用户航点(&amp;U)...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1047"/>
         <source>Add &amp;Userpoint %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加用户航点 %1 (&amp;U)...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1048"/>
         <source>Add a userpoint at this position</source>
-        <translation type="unfinished"></translation>
+        <translation>在这里添加用户航点</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1049"/>
@@ -11751,52 +11792,52 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1058"/>
         <source>&amp;Edit Userpoint %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑用户航点 %1 (&amp;E)...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1059"/>
         <source>Edit the userpoint at this position</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑这个位置的用户航点</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1067"/>
         <source>&amp;Move Userpoint %1</source>
-        <translation type="unfinished">移动用户航点 %1(&amp;M)</translation>
+        <translation>移动用户航点 %1(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1068"/>
         <source>Move the userpoint to a new position on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的用户航点移动到地图上的新位置</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1076"/>
         <source>&amp;Delete Userpoint %1</source>
-        <translation type="unfinished"></translation>
+        <translation>删除用户航点 %1(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1077"/>
         <source>Remove the userpoint at this position</source>
-        <translation type="unfinished"></translation>
+        <translation>删除这个位置的用户航点</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1085"/>
         <source>Edit &amp;Log Entry %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑记录本条目 %1 (&amp;L)...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1086"/>
         <source>Edit the logbook entry at this position</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑这个位置的记录表条目</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1111"/>
         <source>&amp;Show %1 in Search</source>
-        <translation type="unfinished"></translation>
+        <translation>在搜索中显示 %1 (&amp;S)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1112"/>
         <source>Show the airport, navaid, userpoint or other object in the search window</source>
-        <translation type="unfinished"></translation>
+        <translation>在搜索窗口中显示机场，助航设备，用户航点或其他对象</translation>
     </message>
 </context>
 <context>
@@ -12159,7 +12200,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="160"/>
         <source>Flight Plan Pos. Remarks:</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划位置。备注：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="186"/>
@@ -12167,7 +12208,7 @@ Ensure that the map fills the window completely.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="2436"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2924"/>
         <source>Flight Plan Position:</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划位置：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="201"/>
@@ -12272,11 +12313,6 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="438"/>
         <source>ASOS:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="440"/>
-        <source>UNICOM:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -13244,20 +13280,20 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1978"/>
         <source>Flight Plan Position </source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划位置 </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2352"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2357"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2361"/>
         <source>Attached</source>
-        <translation type="unfinished"></translation>
+        <translation>已附加的</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2353"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2358"/>
         <source>Referenced: </source>
-        <translation type="unfinished"></translation>
+        <translation>参考的： </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2354"/>
@@ -13268,22 +13304,22 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2361"/>
         <source>Aircraft trail:</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器航迹：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2387"/>
         <source>Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>备注</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2477"/>
         <source>Airway</source>
-        <translation type="unfinished"></translation>
+        <translation>航路</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2477"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">航向</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2493"/>
@@ -13305,7 +13341,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="3110"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3928"/>
         <source> hPa, </source>
-        <translation type="unfinished"></translation>
+        <translation> 百帕(hPa), </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1787"/>
@@ -13355,13 +13391,11 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1819"/>
         <source> of in </source>
-        <translatorcomment>待查</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1819"/>
         <source> in </source>
-        <translatorcomment>待查</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -13464,27 +13498,27 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2056"/>
         <source>Range Rings</source>
-        <translation type="unfinished">距离环</translation>
+        <translation>距离环</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2056"/>
         <source>Range Ring</source>
-        <translation type="unfinished"></translation>
+        <translation>距离环</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2061"/>
         <source>No distance</source>
-        <translation type="unfinished"></translation>
+        <translation>没有距离</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2068"/>
         <source>Distances: %1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>距离： %1 %2</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2068"/>
         <source>Distance: %1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>距离： %1 %2</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2077"/>
@@ -13907,12 +13941,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2749"/>
         <source>Route type:</source>
-        <translation type="unfinished"></translation>
+        <translation>路线种类：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2752"/>
         <source>Track type:</source>
-        <translation type="unfinished"></translation>
+        <translation>航向种类：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2764"/>
@@ -13932,27 +13966,27 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2931"/>
         <source>Flight Plan Position: </source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划位置： </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3014"/>
         <source>User %1 / Online Client</source>
-        <translation type="unfinished"></translation>
+        <translation>用户 %1 / 在线客户端</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3016"/>
         <source>User %1</source>
-        <translation type="unfinished"></translation>
+        <translation>用户 %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3018"/>
         <source>AI / Multiplayer %1 / Online Client</source>
-        <translation type="unfinished"></translation>
+        <translation>AI/多人游戏 %1 /在线客户端</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3022"/>
         <source>AI / Multiplayer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AI/多人游戏 %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3033"/>
@@ -13962,17 +13996,17 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3070"/>
         <source>Deck height:</source>
-        <translation type="unfinished"></translation>
+        <translation>甲板高：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3324"/>
         <source>Aircraft performance not valid. Fuel estimated.</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能无效。燃油是估计的。</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3326"/>
         <source>Aircraft performance not valid. Time estimated.</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能无效。时间是估计的。</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3341"/>
@@ -13983,50 +14017,50 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3352"/>
         <source>Distance, Time and Arrival:</source>
-        <translation type="unfinished"></translation>
+        <translation>距离，时间和到达：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3417"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3561"/>
         <source>Distance</source>
-        <translation type="unfinished">距离</translation>
+        <translation>距离</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3422"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3568"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>时间</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3427"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3574"/>
         <source>Arrival</source>
-        <translation type="unfinished">到达</translation>
+        <translation>到达</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3482"/>
         <source> - to </source>
-        <translation type="unfinished"></translation>
+        <translation> - 到 </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3484"/>
         <source> - from </source>
-        <translation type="unfinished"></translation>
+        <translation> - 自 </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3489"/>
         <source>Next Waypoint%1%2%3</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个航路点%1%2%3</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3600"/>
         <source>Course to waypoint:</source>
-        <translation type="unfinished"></translation>
+        <translation>到下个航路点的航向：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4397"/>
         <source> and </source>
-        <translation type="unfinished"></translation>
+        <translation> 及 </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4405"/>
@@ -14041,12 +14075,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1639"/>
         <source>No weather display selected in options dialog in page &quot;Weather&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>选项对话框，页面“气象”中没有选择气象显示。</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2523"/>
         <source>Distance to last flight plan leg:</source>
-        <translation type="unfinished"></translation>
+        <translation>到上个飞行计划航段的距离：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2782"/>
@@ -14061,12 +14095,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2792"/>
         <source>Track levels East:</source>
-        <translation type="unfinished"></translation>
+        <translation>东向航迹层：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2799"/>
         <source>Track levels West:</source>
-        <translation type="unfinished"></translation>
+        <translation>西向航迹层：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2802"/>
@@ -14077,22 +14111,22 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="2817"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2823"/>
         <source>Track valid:</source>
-        <translation type="unfinished"></translation>
+        <translation>航迹有效：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2817"/>
         <source>%1 UTC to&lt;br/&gt;%2 UTC%3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 UTC 至&lt;br/&gt;%2 UTC%3</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2820"/>
         <source>&lt;br/&gt;&lt;b&gt;Track is now valid.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;br/&gt;&lt;b&gt;航迹现在是有效的。&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2825"/>
         <source>Track downloaded:</source>
-        <translation type="unfinished"></translation>
+        <translation>已下载的航迹：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2847"/>
@@ -14591,7 +14625,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3666"/>
         <source>Waypoint Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>航路点备注</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3678"/>
@@ -14717,6 +14751,11 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="3794"/>
         <source>Altitude:</source>
         <translation>高度：</translation>
+    </message>
+    <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="440"/>
+        <source>UNICOM:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3799"/>
@@ -14855,7 +14894,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4034"/>
         <source>User Vehicle / Online Client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>用户载具 / 在线客户端 (%1)</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4037"/>
@@ -14865,7 +14904,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4039"/>
         <source>AI / Multiplayer / Online Client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>AI / 多人游戏 / 在线客户端 (%1)</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4042"/>
@@ -14950,7 +14989,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="4212"/>
         <source> (file not found)</source>
         <oldsource> (File not found)</oldsource>
-        <translation type="unfinished"></translation>
+        <translation> (文件未找到)</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4234"/>
@@ -15243,7 +15282,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="343"/>
         <source>TAS %1</source>
-        <translation type="unfinished"></translation>
+        <translation>真空速(TAS) %1</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="373"/>
@@ -15258,7 +15297,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="385"/>
         <source>No wind</source>
-        <translation type="unfinished">无风</translation>
+        <translation>无风</translation>
     </message>
 </context>
 <context>
@@ -15398,13 +15437,13 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="50"/>
         <source>Database is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库是空的</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="51"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then choose your simulator and press &quot;Load&quot;.&lt;/p&gt;</source>
         <comment>Keep instructions in sync with translated menus and shortcuts</comment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;当前选中的该模拟器的地景数据库是空的&lt;br/&gt;到“主菜单” - “地景库” - “载入地景库”或者按&lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;并选择你模拟器，然后点击“载入”&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="68"/>
@@ -15474,7 +15513,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="125"/>
         <source>Add-on airports</source>
-        <translation type="unfinished">附加机场</translation>
+        <translation>附加机场</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="132"/>
@@ -15525,7 +15564,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="190"/>
         <source>N</source>
-        <translation type="unfinished">北</translation>
+        <translation>北</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="191"/>
@@ -15545,7 +15584,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="200"/>
         <source>W</source>
-        <translation type="unfinished">西</translation>
+        <translation>西</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="201"/>
@@ -15570,7 +15609,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="211"/>
         <source>Tracks (T)</source>
-        <translation type="unfinished"></translation>
+        <translation>航迹 (T)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="215"/>
@@ -15601,17 +15640,17 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="242"/>
         <source>Class F and/or G</source>
-        <translation type="unfinished"></translation>
+        <translation>F及或G类空域</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="247"/>
         <source>FIR,UIR</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行情报区，高空飞行情报区</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="248"/>
         <source>Flight and/or Upper Information Regions</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行情报区及/或高空飞行情报区</translation>
     </message>
     <message>
         <source>Flight Information Region, class F and/or G (FIR)</source>
@@ -15886,12 +15925,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="195"/>
         <source>Exit fullscreen mode</source>
-        <translation type="unfinished"></translation>
+        <translation>退出全屏模式</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="196"/>
         <source>Leave fullscreen mode and restore normal window layout</source>
-        <translation type="unfinished"></translation>
+        <translation>离开全屏模式并回复正常的窗口样式</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1591"/>
@@ -15911,7 +15950,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1703"/>
         <source>Coordinates copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>坐标已复制到剪贴板。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1875"/>
@@ -15941,13 +15980,13 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2642"/>
         <source>&lt;p&gt;Cannot zoom to a position nearby the poles in Mercator projection.&lt;br/&gt;Use Spherical instead.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在墨卡托(平面)投影下无法放大到极点附近。使用球形投影代替。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2645"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
-        <translation type="unfinished">不要再显示此对话框(&amp;S)。</translation>
+        <translation>不要再显示此对话框(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3065"/>
@@ -16423,7 +16462,7 @@ Type</source>
     <message>
         <location filename="src/online/onlinedatacontroller.cpp" line="350"/>
         <source>Online Network Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>在线网络失败</translation>
     </message>
     <message>
         <location filename="src/online/onlinedatacontroller.cpp" line="351"/>
@@ -16441,7 +16480,7 @@ Retrying again in three minutes.</source>
     <message>
         <location filename="src/online/onlinedatacontroller.cpp" line="363"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download online network data:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;尝试建立加密连接以下载在线网络数据时出错：&lt;/p&gt; &lt;p&gt; URL：%1 &lt;/p&gt; &lt;p&gt;错误消息：&lt;br/&gt;%2 &lt;/p&gt; &lt;p&gt;继续吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/online/onlinedatacontroller.cpp" line="369"/>
@@ -16452,7 +16491,7 @@ Retrying again in three minutes.</source>
         <location filename="src/online/onlinedatacontroller.cpp" line="370"/>
         <source>Do not &amp;show this again and ignore errors in the future</source>
         <oldsource>Do not show this again and ignore errors in the future</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示此对话框并在将来忽略错误(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/online/onlinedatacontroller.cpp" line="380"/>
@@ -17013,13 +17052,13 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</source>
     <message>
         <location filename="src/options/options.ui" line="1279"/>
         <source>Show procedures in procedure search tab on airport click</source>
-        <translation type="unfinished"></translation>
+        <translation>点击机场后在程序搜索选项卡中显示程序</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1282"/>
         <source>Show &amp;procedures on airport click</source>
         <oldsource>Update &amp;procedures on airport click</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>点击机场后在程序搜索选项卡中显示程序(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1680"/>
@@ -17819,7 +17858,7 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
     <message>
         <location filename="src/options/options.ui" line="4180"/>
         <source>The user aircraft trail will be pruned if it contains more than this number of points. Lower this value to avoid too long tracks and save performance.</source>
-        <translation>如包含超过这个数量的点，用户航空器航迹将被精简。调低这个值以避免太长的轨迹并保护性能。</translation>
+        <translation>如包含超过这个数量的点，用户航空器航迹将被精简。调低这个值以避免太长的航迹并保护性能。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4186"/>
@@ -18204,82 +18243,85 @@ Entering a wrong value will cause errors when downloading wind reports.</source>
     <message>
         <location filename="src/options/options.ui" line="118"/>
         <source>Load last used &amp;aircraft performance</source>
-        <translation type="unfinished"></translation>
+        <translation>载入上次使用的航空器性能文件(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="191"/>
         <source>Loads the window layout from the last opened window layout file on startup.
 This is the file on top of the list &quot;Recent Window Layouts&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>启动时从上次打开的窗口布局文件加载窗口布局。
+这是“最近的窗口布局”列表顶部的文件。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="195"/>
         <source>Load &amp;window layout from last used file</source>
-        <translation type="unfinished"></translation>
+        <translation>从上次使用的窗口布局文件加载窗口布局(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="430"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>语言(Language)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="451"/>
         <source>&amp;User interface language:</source>
-        <translation type="unfinished"></translation>
+        <translation>用户界面语言(&amp;U)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="467"/>
         <source>&lt;b&gt;A restart is required after changing language or format settings.&lt;/b&gt;&lt;br/&gt;
 Note that some translations might be incomplete.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;更改语言或格式设置后，需要重新启动。&lt;/b&gt; &lt;br/&gt;
+请注意，某些翻译可能不完整。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="489"/>
         <source>Use English &amp;number and date formats
 independent of current computer settings and language selection</source>
-        <translation type="unfinished"></translation>
+        <translation>使用独立于当前系统设置的英文数字和日期格式(Force use English &amp;number and date formats)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="525"/>
         <source>&amp;Raise related windows on actions. Show flight plan after opening file, for example.</source>
-        <translation type="unfinished"></translation>
+        <translation>动作后提升相关窗口。例如，打开文件后显示飞行计划(&amp;R)。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="535"/>
         <source>Raises and activates the dock window below the mouse cursor automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>自动提升并激活鼠标指针下的停靠窗口</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="538"/>
         <source>Raise and activate &amp;docking windows when moving the mouse over it</source>
-        <translation type="unfinished"></translation>
+        <translation>鼠标悬停时提升并激活停靠窗口(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="548"/>
         <source>Raises and activates the main program window below the mouse cursor automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>自动提升并激活鼠标光标下方的主程序窗口</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="551"/>
         <source>Raise and activate the &amp;main program window when moving the mouse over it</source>
-        <translation type="unfinished"></translation>
+        <translation>鼠标悬停时提升并激活主程序窗口(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="664"/>
         <source>User Interface Font</source>
-        <translation type="unfinished"></translation>
+        <translation>用户界面字体</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="685"/>
         <source>Reset font for user interface back to system default.
 Changes are applied immediately. </source>
-        <translation type="unfinished"></translation>
+        <translation>将用户界面的字体重置为系统默认值。
+更改将立即应用。 </translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="689"/>
         <location filename="src/options/options.ui" line="1922"/>
         <source>&amp;Reset Font to Default</source>
-        <translation type="unfinished"></translation>
+        <translation>重置字体为默认值(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="696"/>
@@ -18287,211 +18329,224 @@ Changes are applied immediately. </source>
 Changes are applied immediately. 
 Cancel the dialog to revert back to the old font.
 Font size is limited to 30 points/pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择用户界面的字体。
+更改将立即应用。
+取消对话框以恢复为旧字体。
+字体大小限制为30点/像素。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="702"/>
         <location filename="src/options/options.ui" line="1912"/>
         <source>Select &amp;Font ...</source>
-        <translation type="unfinished"></translation>
+        <translation>选择字体(&amp;F)...</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="728"/>
         <source>&lt;b&gt;A restart is recommended after changing the user interface font.&lt;/b&gt;&lt;br/&gt;Note that not all fonts are suitable for the user interface.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;建议在更改用户界面字体后重新启动。&lt;/b&gt; &lt;br/&gt;请注意，并非所有字体都适用于用户界面。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="772"/>
         <source>Enable high &amp;DPI monitor support</source>
-        <translation type="unfinished"></translation>
+        <translation>启用高DPI显示器支持(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="782"/>
         <source>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;更改高DPI支持后需要重新启动&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="822"/>
         <source>Disables display of tooltips for the whole application.
 Tooltips are small help windows which pop up when hovering the mouse above an object.
 This does not affect the map window which can be changed separately on the options page &quot;Map&quot;. </source>
-        <translation type="unfinished"></translation>
+        <translation>禁用整个应用程序的工具提示显示。
+工具提示是小的帮助窗口，将鼠标悬停在对象上方时会弹出。
+这不会影响可在选项页面“地图”上单独更改的地图窗口。 </translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="827"/>
         <source>Disable &amp;tooltips for whole application</source>
-        <translation type="unfinished"></translation>
+        <translation>全局禁用工具栏提示(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1094"/>
         <source>Map Tooltips</source>
-        <translation type="unfinished"></translation>
+        <translation>地图工具栏提示</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1115"/>
         <source>Show tooltips for the user aircraft when hovering the cursor over the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将光标悬停在地图上时显示用户航空器的工具提示</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1118"/>
         <location filename="src/options/options.ui" line="1228"/>
         <source>&amp;User aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>用户航空器(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1128"/>
         <source>Show tooltips for AI or multiplayer aircraft / ship when hovering the cursor over the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将光标悬停在地图上时显示AI或多人航空器/船舶的工具提示</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1131"/>
         <location filename="src/options/options.ui" line="1241"/>
         <source>AI / multiplayer vehicles</source>
-        <translation type="unfinished"></translation>
+        <translation>AI或多人游戏载具</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1178"/>
         <source>Air&amp;spaces</source>
-        <translation type="unfinished"></translation>
+        <translation>空域(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1191"/>
         <source>High altitude &amp;wind barbs</source>
-        <translation type="unfinished"></translation>
+        <translation>高空风钩(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1204"/>
         <source>Map Information Clicks</source>
-        <translation type="unfinished"></translation>
+        <translation>地图信息点击</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1225"/>
         <source>Show information for the user aircraft when clicking on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上点击时显示用户航空器的信息</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1238"/>
         <source>Show information for AI or multiplayer aircraft / ship when clicking on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上点击时显示AI或多人航空器/船舶的信息</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1355"/>
         <source>&amp;Range ring radii for red range rings (maximum of 10 values from 0.01 to 4,000 %dist%):</source>
         <extracomment>Adjust numbers to you local number format</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>红色范围环的范围环半径(最多为0.01到4,000 %dist% 的10个值)(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1418"/>
         <source>Allow to &amp;undock  the map window</source>
-        <translation type="unfinished"></translation>
+        <translation>允许解锁地图窗口停靠(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1428"/>
         <source>Space separated list of range ring radii.
 A range ring will be added for each radius value which can be between 0.01 and 4000 %dist%.
 Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</source>
-        <translation type="unfinished"></translation>
+        <translation>以空格分隔的范围环半径列表。
+将为每个半径值添加一个范围为0.01到4000 %dist%的范围环。
+如果为空或无效，则回落到50%，100%，200%和500% %dist%。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1481"/>
         <source>&lt;b&gt;A restart is required after changing the map window docking option.&lt;/b&gt;&lt;br/&gt;
 Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to clean up the layout after a restart if necessary.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;更改地图窗口停靠选项后，需要重新启动。&lt;/b&gt; &lt;br/&gt;
+如果需要，在重新启动后使用主菜单中的“窗口”-&gt;“重置窗口样式”来清理布局。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1887"/>
         <source>Map and Elevation Profile Font</source>
-        <translation type="unfinished"></translation>
+        <translation>地图及高程图字体</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1908"/>
         <source>Select a font for the map and the elevation profile.
 Note that some fonts, especially large fonts, can result in display errors on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择地图和高程图的字体。
+请注意，某些字体(尤其是大字体)可能会导致地图显示错误。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1919"/>
         <source>Reset font for the map and the elevation profile back to default</source>
-        <translation type="unfinished"></translation>
+        <translation>重置地图及高程图字体为默认值</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2284"/>
         <source>Air&amp;ways:</source>
-        <translation type="unfinished"></translation>
+        <translation>航路(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2489"/>
         <source>Draw white background for airway text labels</source>
-        <translation type="unfinished"></translation>
+        <translation>为航路文本标签绘制白色背景</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2619"/>
         <source>Draw white background for user aircraft text labels</source>
-        <translation type="unfinished"></translation>
+        <translation>为用户航空器文本标签绘制白色背景</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2648"/>
         <source>Draw white background for AI and multiplayer aircraft labels</source>
-        <translation type="unfinished"></translation>
+        <translation>为AI或多人游戏的航空器标签绘制白色背景</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2684"/>
         <source>Draw yellow circle around add-on airport symbols</source>
-        <translation type="unfinished"></translation>
+        <translation>在附加机场符号外绘制黄色圆圈</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2687"/>
         <source>&amp;Highlight add-on airports</source>
         <oldsource>Highlight add-on airports</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>高亮附加机场(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3588"/>
         <source>Units</source>
-        <translation type="unfinished">单位</translation>
+        <translation>单位</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3826"/>
         <source>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;改变单位后建议重新打开此程序&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4108"/>
         <source>&amp;Allow scrolling and zooming in the map and jump back to aircraft after time below</source>
-        <translation type="unfinished"></translation>
+        <translation>允许在地图上滚动和缩放，并在下面的时间后跳回航空器(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4118"/>
         <source>User can scroll in the flight plan table but the program will  
 put the active leg back on top after the given timeout while flying.</source>
-        <translation type="unfinished"></translation>
+        <translation>用户可以在飞行计划表中滚动，但程序会在
+给定的超时时间后，将激活的航段放到顶部。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4122"/>
         <source>&amp;Scroll flight plan table back to active leg after time below</source>
-        <translation type="unfinished"></translation>
+        <translation>在下面的时间后将飞行计划表滚动回到活动航段(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4132"/>
         <source>Clears selected (blue) rows in the flight plan table 
 after the given timeout while flying.</source>
-        <translation type="unfinished"></translation>
+        <translation>在飞行时，给定的超时时间之后
+清除飞行计划表中的选定(蓝色)行。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4136"/>
         <source>&amp;Clear selection in flight plan table after time below</source>
-        <translation type="unfinished"></translation>
+        <translation>在下面的时间之后清除飞行计划表中的选择(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4341"/>
         <source>Set flight plan file pattern to long name &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)&quot;
 Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>本地化机场名及代码</translatorcomment>
+        <translation>将飞行计划文件模式设置为长名称“ 飞行计划种类 出发机场(出发机场代码)到目的地(目的地代码)”
+示例：“ IFR 广州白云(ZGGG)到北京大兴(ZBAD).lnmpln”</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4345"/>
         <source>&amp;Long</source>
-        <translation type="unfinished"></translation>
+        <translation>长(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4391"/>
@@ -18499,12 +18554,13 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</so
 Example: &quot;EDDF LIRF.lnmpln&quot;</source>
         <oldsource>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
 Example: &quot;EDDF_LIRF.lnmpln&quot;</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>将飞行计划文件模式设置为短名称“出发地代码 到达地代码”。
+示例：“ZGGG ZBAD.Inmpln”</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4395"/>
         <source>&amp;Short</source>
-        <translation type="unfinished"></translation>
+        <translation>短(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4359"/>
@@ -18527,23 +18583,31 @@ DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</oldsource>
         <extracomment>Do not translate the keywords</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>保存LNMPLN，FSX，Prepar3D，FlightGear或MSFS飞行计划时，适用于新文件名。
+文件后缀“ .lnmpln”，“。pln”或“ .fgfp”会自动添加。
+
+PLANTYPE：IFR或VFR
+DEPARTIDENT：出发机场ICAO代码
+DEPARTNAME：出发机场名称
+DESTIDENT：到达机场ICAO代码
+DESTNAME：到达机场名称
+CRUISEALT：巡航高度</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4431"/>
         <source>&amp;Pattern for default flight plan names:</source>
-        <translation type="unfinished"></translation>
+        <translation>默认飞行计划名的规则(&amp;P)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4484"/>
         <source>Elevation Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>高程图</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4619"/>
         <location filename="src/options/options.ui" line="4699"/>
         <source>&amp;Flight Simulator (FSX, P3D and X-Plane)</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行模拟器(&amp;FSX, P3D及X-Plane)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4675"/>
@@ -18554,20 +18618,24 @@ CRUISEALT: Cruise altitude</oldsource>
         <location filename="src/options/options.ui" line="4858"/>
         <source>Download URL for the IVAO weather file.
 Default is &quot;http://wx.ivao.aero/metar.php&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>IVAO气象文件的下载URL
+默认是&quot;http://wx.ivao.aero/metar.php&quot;.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4888"/>
         <source>Complete URL of the VATSIM network weather download service.
 Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>完整的VATSIM网络气象服务地址URL。
+默认值是&quot;https://metar.vatsim.net/metar.php?id=ALL&quot;。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4972"/>
         <source>Complete URL of the NOAA weather service file.
 &quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
 Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>完整的NOAA气象服务地址URL。
+“%1” 是一个占位符，将会被当前的2位UTC小时取代。
+默认值是“https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT”</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5101"/>
@@ -18575,7 +18643,10 @@ Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.T
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading wind reports.
 Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>NOAA气象服务的基础地址URL。
+通常不需要改变这个URL。
+输入错误的值将会导致下载风况报告时候出错。
+默认值是&quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5242"/>
@@ -18805,12 +18876,12 @@ Little Navmap GIT repository.
     <message>
         <location filename="src/options/options.ui" line="5416"/>
         <source>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.</source>
-        <translation type="unfinished"></translation>
+        <translation>定期下载&quot;whazzup.txt&quot; 或&quot;status.txt&quot;文件。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5514"/>
         <source>Web Server</source>
-        <translation type="unfinished">Web服务器</translation>
+        <translation>Web服务器</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5779"/>
@@ -18858,7 +18929,10 @@ Little Navmap GIT repository.
 Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select GLOBE Directory ...&lt;/i&gt; above and choose the directory with the extracted files.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here for more information in the &lt;i&gt;Little Navmap&lt;/i&gt; online manual&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;点击这里在默认浏览器中打开GLOBE高程数据下载页&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
+下载此文件：&lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; 并解压到任意位置例如&lt;i&gt;文档&lt;/i&gt;. 再点击上面的 &lt;i&gt;选择 GLOBE 目录 ...&lt;/i&gt; 并选择包含上述文件的目录。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;点击这里在 &lt;i&gt;Little Navmap&lt;/i&gt; 在线手册中查看更多信息&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5924"/>
@@ -18943,7 +19017,7 @@ Little Navmap当前只能读取OpenAIR文件。 </translation>
     <message>
         <location filename="src/options/options.ui" line="6100"/>
         <source>Scenery Library Database</source>
-        <translation type="unfinished">地景数据库</translation>
+        <translation>地景数据库</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6244"/>
@@ -18980,7 +19054,7 @@ You have to reload the scenery library so that the changes take effect.</source>
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
 You have to reload the scenery library so that the changes take effect.</oldsource>
-        <translation type="unfinished">在此列表里的所有目录包括子目录及文件都将在载入地景到Little Navmap数据库时被忽略。
+        <translation>在此列表里的所有目录包括子目录及文件都将在载入地景到Little Navmap数据库时被忽略。
 如您希望排除不包含机场或助航设备的目录，您也可以用这个列表来加速数据库载入。
 这个路径适用于所有的飞行模拟器(FSX，P3D和X-Plane)。
 您需要重新载入地景库以使更改生效。</translation>
@@ -18997,7 +19071,7 @@ You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
 These paths apply to all Flight Simulators  (FSX, P3D and X-Plane).
 You have to reload the scenery library so that the changes take effect.</oldsource>
-        <translation type="unfinished">所有在默认“scenery”目录外找到的机场会被认为是附加机场。
+        <translation>所有在默认“scenery”目录外找到的机场会被认为是附加机场。
 您可以用这个列表来改变此行为。
 在这些目录及子目录里找到的机场不会被认为是附加机场。
 这个路径适用于所有的飞行模拟器(FSX，P3D和X-Plane)。
@@ -19017,7 +19091,7 @@ You have to reload the scenery library so that the changes take effect.</oldsour
         <location filename="src/options/options.ui" line="6273"/>
         <source>&lt;b&gt;You have to reload the scenery library for the changes to take effect.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;You have to re-import the scenery library for the changes to take effect.&lt;/b&gt;</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;您必须重新加载地景库才能使更改生效。&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6301"/>
@@ -19365,113 +19439,113 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="168"/>
         <source>Select what should be reloaded on startup and change update settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择启动时应重新加载的内容并更改更新设置。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="169"/>
         <source>Change language settings, window options and other user interface behavior.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改语言设置，窗口选项和其他用户界面行为。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="170"/>
         <source>Display and Text</source>
-        <translation type="unfinished"></translation>
+        <translation>显示及文本</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="170"/>
         <source>Change text sizes, user interface font and other display options.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改文本大小，用户界面字体和其他显示选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="173"/>
         <source>Change colors, symbols, texts and font for map display objects.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改地图显示对象的颜色，符号，文本和字体。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="179"/>
         <source>Change weather sources for information and tooltips.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改信息和工具提示的气象来源。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="180"/>
         <source>Weather Files</source>
         <oldsource>Weather URLs</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>气象文件</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="205"/>
         <source>Show runway length, width and light indicator text.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示跑道的长度，宽度和灯光指示器文本。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="208"/>
         <source>Airport Details</source>
-        <translation type="unfinished"></translation>
+        <translation>机场详情</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="208"/>
         <source>Select airport diagram elements.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择机场图元素。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="209"/>
         <source>Runways</source>
-        <translation type="unfinished">跑道</translation>
+        <translation>跑道</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="209"/>
         <source>Show runways.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示跑道。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="210"/>
         <source>Taxiways</source>
-        <translation type="unfinished">滑行道</translation>
+        <translation>滑行道</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="210"/>
         <source>Show taxiway lines and background.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示滑行道线及背景。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="211"/>
         <source>Aprons</source>
-        <translation type="unfinished">机坪</translation>
+        <translation>机坪</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="211"/>
         <source>Display aprons.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机坪。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="212"/>
         <source>Parking</source>
-        <translation type="unfinished">停机位</translation>
+        <translation>停机位</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="212"/>
         <source>Show fuel, tower, helipads, gates and ramp parking.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示燃料，塔台，直升机坪，登机口和机坪停机位。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="213"/>
         <source>Boundary</source>
-        <translation type="unfinished"></translation>
+        <translation>边界</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="213"/>
         <source>Display a white boundary around and below the airport diagram.</source>
-        <translation type="unfinished"></translation>
+        <translation>在机场图表周围绘制白色背景边界。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="218"/>
         <source>Show magnetic great circle start course at flight plan leg.</source>
-        <translation type="unfinished"></translation>
+        <translation>在飞行计划行程中显示大圆起始磁航向。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="219"/>
         <source>Show true great circle start course at flight plan leg.</source>
-        <translation type="unfinished"></translation>
+        <translation>在飞行计划行程中显示大圆起始真航向。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="221"/>
@@ -19527,7 +19601,7 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
         <location filename="src/options/optionsdialog.cpp" line="228"/>
         <location filename="src/options/optionsdialog.cpp" line="242"/>
         <source>True Airspeed</source>
-        <translation type="unfinished"></translation>
+        <translation>真空速</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="229"/>
@@ -19555,42 +19629,42 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="226"/>
         <source>Value prefixed with &quot;IAS&quot; on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;IAS&quot;开头的值</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="227"/>
         <source>Value prefixed with &quot;GS&quot; on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;GS&quot;开头的值</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="228"/>
         <source>Value prefixed with &quot;TAS&quot; on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;TAS&quot;开头的值</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="230"/>
         <source>Aircraft heading prefixed with &quot;HDG&quot; on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;HDS&quot;开头航空器朝向</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="231"/>
         <source>Actual Altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>真高</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="231"/>
         <source>Real aircraft altitude prefixed with &quot;ALT&quot; on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;ALT&quot;开头的航空器真高</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="232"/>
         <source>Indicated Altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>表显高度</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="232"/>
         <source>Indicated aircraft altitude prefixed with &quot;IND&quot; on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;IND&quot;开头的航空器表显高度</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="233"/>
@@ -19715,55 +19789,58 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="259"/>
         <source>Measurement Lines</source>
-        <translation type="unfinished">测量线</translation>
+        <translation>测量线</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="259"/>
         <source>Select display options measurement lines.</source>
-        <translation type="unfinished"></translation>
+        <translation>选择测量线的显示选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="260"/>
         <source>Great circle distance for measurement line.</source>
-        <translation type="unfinished"></translation>
+        <translation>为测量线使用大圆航程。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="261"/>
         <source>Magnetic Course</source>
-        <translation type="unfinished"></translation>
+        <translation>磁航向</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="261"/>
         <source>Show magnetic course for start and end of line.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示测量线起点到终点的磁航向。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="262"/>
         <source>True Course</source>
-        <translation type="unfinished"></translation>
+        <translation>真航向</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="262"/>
         <source>Show true course for start and end of line.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示测量线起点到终点的真航向。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="263"/>
         <source>Navaid or airport ident</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备或机场的代码</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="263"/>
         <source>Show ident if attached to navaid or airport.
 Also show frequency if attached to a radio navaid. </source>
-        <translation type="unfinished"></translation>
+        <translation>如果附加到助航设备或机场，则显示代码。
+如果附加到无线电助航设备，同时显示频率。 </translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="749"/>
         <source>Do not use an update period smaller than %1 seconds for official networks like VATSIM, IVAO or PilotEdge.
 
 Resetting update period back to %1 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>对于VATSIM，IVAO或PilotEdge之类的官方网络，更新时间不得少于 %1 秒。
+
+将更新周期重置为 %1 秒。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="789"/>
@@ -19811,7 +19888,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2541"/>
         <source>Example: &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>例如： &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2545"/>
@@ -19821,12 +19898,12 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2546"/>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.</source>
-        <translation type="unfinished"></translation>
+        <translation>模式包含无效字符，双倍空格或超过%1个字符。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2549"/>
         <source>Not allowed are:  \  /  :  &apos;  *  &amp;amp;  &amp;gt;  &amp;lt;  ?  $  |</source>
-        <translation type="unfinished"></translation>
+        <translation>不允许的有：  \  /  :  &apos;  *  &amp;amp;  &amp;gt;  &amp;lt;  ?  $  |</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2690"/>
@@ -19843,17 +19920,17 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2556"/>
         <source>Pattern is empty. Using default &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>模式为空。 使用默认 &quot;%1&quot;。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="180"/>
         <source>Change web download addresses or file paths of weather sources.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改气象来源的Web下载地址或文件路径。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2593"/>
         <source>%1 - Select font</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - 已选择的字体</translation>
     </message>
     <message>
         <source>&lt;p&gt;Success. Result:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
@@ -20130,7 +20207,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/route/parkingdialog.cpp" line="41"/>
         <source>&lt;b&gt;&amp;Select a start position for departure at&lt;br/&gt;%1:&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;选择出发地&lt;br/&gt;%1:&lt;/b&gt;的起始点(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/route/parkingdialog.cpp" line="88"/>
@@ -20216,7 +20293,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="1375"/>
         <source>New Value</source>
-        <translation type="unfinished"></translation>
+        <translation>新值</translation>
     </message>
     <message>
         <location filename="src/perf/perfmergedialog.ui" line="1391"/>
@@ -20593,7 +20670,9 @@ This process will run in background and can take a while.</source>
         <source>
 
 %1 Version %2 (revision %3) on %4 </source>
-        <translation type="unfinished"></translation>
+        <translation>
+
+%1 版本 %2 (修订 %3) 在 %4 </translation>
     </message>
     <message>
         <location filename="src/print/printsupport.cpp" line="258"/>
@@ -20696,28 +20775,28 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/query/procedurequery.cpp" line="2190"/>
         <source>no runway</source>
-        <translation type="unfinished"></translation>
+        <translation>没有跑道</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="2190"/>
         <source>runway %1</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道 %1</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="2216"/>
         <source>SID %1 from %2</source>
-        <translation type="unfinished"></translation>
+        <translation>标准离场程序(SID) %1 自 %2</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="2272"/>
         <location filename="src/query/procedurequery.cpp" line="2316"/>
         <source>Approach %1 to %2</source>
-        <translation type="unfinished"></translation>
+        <translation>进近 %1 到 %2</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="2350"/>
         <source>STAR %1 to %2</source>
-        <translation type="unfinished"></translation>
+        <translation>标准进场程序(STAR) %1 到 %2</translation>
     </message>
     <message>
         <source>SID %1</source>
@@ -20762,14 +20841,12 @@ This process will run in background and can take a while.</source>
         <location filename="src/search/proceduresearch.cpp" line="313"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu in the map or&lt;br/&gt;the airport search result table (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;and select &quot;Show Procedures&quot; for an airport.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu in the map or&lt;br/&gt;the airport search result table (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;and select &lt;i&gt;Show Procedures&lt;/i&gt; for an airport.&lt;/p&gt;</oldsource>
-        <translation type="unfinished">使用地图上的右键点击菜单
-或机场机场搜索结果表(F4)
-并为机场选择：“显示起降程序”。</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;使用地图上的右键点击菜单&lt;br/&gt;或机场机场搜索结果表(&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;并为机场选择：“显示起降程序”。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="316"/>
         <source>Select &quot;Show Procedures&quot; for an airport to fill this list</source>
-        <translation type="unfinished"></translation>
+        <translation>为某个机场选择“显示起降程序”以填充此列表</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="374"/>
@@ -20879,7 +20956,7 @@ Really use it?</source>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1141"/>
         <source>Departure from %1</source>
-        <translation> %1 的离场</translation>
+        <translation>自 %1 的离场</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1142"/>
@@ -20889,7 +20966,7 @@ Really use it?</source>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1146"/>
         <source>Arrival at %1</source>
-        <translation> %1 的进场</translation>
+        <translation>到 %1 的进场</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1147"/>
@@ -20968,10 +21045,13 @@ Really use it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>No Flight Plan loaded.</source>
+        <translation type="vanished">没有载入飞行计划。</translation>
+    </message>
+    <message>
         <location filename="src/profile/profilewidget.cpp" line="680"/>
         <source>No Flight Plan.</source>
-        <oldsource>No Flight Plan loaded.</oldsource>
-        <translation type="unfinished">没有载入飞行计划。</translation>
+        <translation type="unfinished">没有飞行计划。</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="689"/>
@@ -21006,12 +21086,12 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1687"/>
         <source>to</source>
-        <translation type="unfinished"></translation>
+        <translation>到</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1696"/>
         <source>from</source>
-        <translation type="unfinished"></translation>
+        <translation>自</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1712"/>
@@ -21026,17 +21106,17 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1719"/>
         <source>Course: </source>
-        <translation type="unfinished"></translation>
+        <translation>航向： </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1737"/>
         <source>Heading: </source>
-        <translation type="unfinished"></translation>
+        <translation>朝向： </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1754"/>
         <source>%1 above</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 以上</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1758"/>
@@ -21046,12 +21126,12 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1758"/>
         <source>Ground: </source>
-        <translation type="unfinished"></translation>
+        <translation>地面： </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1762"/>
         <source>Leg Safe Altitude: </source>
-        <translation type="unfinished"></translation>
+        <translation>航段安全高度： </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1772"/>
@@ -21082,7 +21162,7 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1775"/>
         <source>%1Wind: </source>
-        <translation type="unfinished"></translation>
+        <translation>%1 风况： </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1782"/>
@@ -21495,7 +21575,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="103"/>
         <location filename="src/common/maptypes.cpp" line="129"/>
         <source>Ramp Extra</source>
-        <translation type="unfinished"></translation>
+        <translation>额外机坪</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="104"/>
@@ -21561,7 +21641,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="114"/>
         <source>Extra</source>
-        <translation type="unfinished"></translation>
+        <translation>额外</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="115"/>
@@ -21618,12 +21698,12 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="139"/>
         <location filename="src/common/maptypes.cpp" line="165"/>
         <source>Gate Extra</source>
-        <translation type="unfinished"></translation>
+        <translation>额外登机口</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="154"/>
         <source>Ramp GA Extra</source>
-        <translation type="unfinished"></translation>
+        <translation>额外通航机坪</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="175"/>
@@ -22079,7 +22159,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="296"/>
         <location filename="src/common/maptypes.cpp" line="1115"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>航向</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="297"/>
@@ -22107,12 +22187,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="300"/>
         <source>VFR</source>
-        <translation type="unfinished">VFR-目视飞行</translation>
+        <translation>VFR-目视飞行</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="302"/>
         <source>Off Airway</source>
-        <translation type="unfinished"></translation>
+        <translation>偏离跑道</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="310"/>
@@ -22376,11 +22456,13 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="384"/>
         <source>UNICOM</source>
+        <oldsource>Unicom</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="385"/>
         <source>VOLMET</source>
+        <oldsource>Volmet</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -22397,47 +22479,47 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="392"/>
         <source>Class A</source>
-        <translation>A级</translation>
+        <translation>A类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="393"/>
         <source>Class B</source>
-        <translation>B级</translation>
+        <translation>B类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="394"/>
         <source>Class C</source>
-        <translation>C级</translation>
+        <translation>C类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="395"/>
         <source>Class D</source>
-        <translation>D级</translation>
+        <translation>D类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="396"/>
         <source>Class E</source>
-        <translation>E级</translation>
+        <translation>E类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="397"/>
         <source>Class F</source>
-        <translation>F级</translation>
+        <translation>F类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="398"/>
         <source>Class G</source>
-        <translation>G级</translation>
+        <translation>G类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="399"/>
         <source>FIR</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行情报区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="400"/>
         <source>UIR</source>
-        <translation type="unfinished"></translation>
+        <translation>高空情报区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="401"/>
@@ -22654,27 +22736,27 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="718"/>
         <source>Very smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>非常平滑</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="720"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>平滑</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="722"/>
         <source>Normal</source>
-        <translation type="unfinished">普通</translation>
+        <translation>普通</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="724"/>
         <source>Rough</source>
-        <translation type="unfinished"></translation>
+        <translation>剧烈</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="726"/>
         <source>Very rough</source>
-        <translation type="unfinished"></translation>
+        <translation>非常剧烈</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="765"/>
@@ -22743,27 +22825,27 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1094"/>
         <source>Airline</source>
-        <translation type="unfinished">航空公司</translation>
+        <translation>航空公司</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1100"/>
         <source>Direct</source>
-        <translation type="unfinished">直接/直飞</translation>
+        <translation>直接/直飞</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1103"/>
         <source>Helicopter</source>
-        <translation type="unfinished"></translation>
+        <translation>直升机</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1106"/>
         <source>Official</source>
-        <translation type="unfinished"></translation>
+        <translation>官方的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1112"/>
         <source>Undesignated</source>
-        <translation type="unfinished"></translation>
+        <translation>没有指定的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1131"/>
@@ -22828,7 +22910,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1377"/>
         <source>Min </source>
-        <translation type="unfinished"></translation>
+        <translation>最小 </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1383"/>
@@ -22838,7 +22920,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1385"/>
         <source>Max </source>
-        <translation type="unfinished"></translation>
+        <translation>最大 </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1393"/>
@@ -22848,62 +22930,62 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1407"/>
         <source>Airport %1</source>
-        <translation type="unfinished"></translation>
+        <translation>机场 %1</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1994"/>
         <source>Airspace %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>空域 %1 (%2)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2008"/>
         <source> Vehicle</source>
-        <translation type="unfinished"></translation>
+        <translation> 载具</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2012"/>
         <source> Ship</source>
-        <translation type="unfinished"> 船舶</translation>
+        <translation> 船舶</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2015"/>
         <source> Carrier</source>
-        <translation type="unfinished"></translation>
+        <translation> 运营商</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2018"/>
         <source> Frigate</source>
-        <translation type="unfinished"></translation>
+        <translation> 货运门</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2021"/>
         <source> Aircraft</source>
-        <translation type="unfinished"> 航空器</translation>
+        <translation> 航空器</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2024"/>
         <source> Helicopter</source>
-        <translation type="unfinished"> 直升机</translation>
+        <translation> 直升机</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2042"/>
         <source>User %1</source>
-        <translation type="unfinished"></translation>
+        <translation>用户 %1</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2044"/>
         <source>Online Client</source>
-        <translation type="unfinished">在线客户端</translation>
+        <translation>在线客户端</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2046"/>
         <source>AI / Multiplayer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>AI/多人游戏 %1</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2056"/>
         <source>Helipad %1</source>
-        <translation type="unfinished">直升机坪 %1</translation>
+        <translation>直升机坪 %1</translation>
     </message>
     <message>
         <source>Airport %1 (%2)</source>
@@ -23025,7 +23107,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="1405"/>
         <location filename="src/common/maptypes.cpp" line="1413"/>
         <source>Airport</source>
-        <translation type="unfinished">机场</translation>
+        <translation>机场</translation>
     </message>
     <message>
         <source>Marker</source>
@@ -23181,7 +23263,6 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="73"/>
         <source>Custom Fix</source>
-        <translatorcomment>待查 自定义切入点</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23588,7 +23669,7 @@ Really use it?</source>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2020 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2020 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
         <translatorcomment>添加了翻译者姓名、许可证及网站。Added translator name license and website.</translatorcomment>
-        <translation type="unfinished">&lt;p&gt;是一个适用于X-Plane 11, Flight Simulator X 和 Prepar3D的免费的开源飞行计划器，导航工具，动态地图，机场搜索和机场信息系统&lt;/p&gt;&lt;p&gt;&lt;b&gt;如您愿意您可以在&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;这里&lt;/a&gt;捐助.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此软件许可证适用于&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本&lt;/p&gt;&lt;p&gt;此软件的源代码在 &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;。&lt;/p&gt;&lt;p&gt;关于我的更多项目&lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;版权所有 2015-2020 Alexander Barthel&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此版本中文翻译由&lt;a href=&quot;https://github.com/J0hnLiu&quot;&gt;John Liu&lt;/a&gt;提供，适用同样的&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本的许可证。因水平有限，翻译可能存在一些不足，如有发现请&lt;a href=&quot;https://johnliu.info/lnm&quot;&gt;向我指出&lt;/a&gt;。&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;是一个适用于X-Plane 11, Flight Simulator X ，Prepar3D和微软模拟飞行2020的免费的开源飞行计划器，导航工具，动态地图，机场搜索和机场信息系统&lt;/p&gt;&lt;p&gt;&lt;b&gt;如您愿意您可以在&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;这里&lt;/a&gt;捐助.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此软件许可证适用于&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本&lt;/p&gt;&lt;p&gt;此软件的源代码在 &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;。&lt;/p&gt;&lt;p&gt;关于我的更多项目&lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;版权所有 2015-2020 Alexander Barthel&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此版本中文翻译由&lt;a href=&quot;https://github.com/J0hnLiu&quot;&gt;John Liu&lt;/a&gt;提供，适用同样的&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本的许可证。因水平有限，翻译可能存在一些不足，如有发现请&lt;a href=&quot;https://johnliu.info/lnm&quot;&gt;向我指出&lt;/a&gt;。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3145"/>
@@ -23604,7 +23685,7 @@ Really use it?</source>
         <location filename="src/gui/mainwindow.cpp" line="3173"/>
         <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.&lt;br/&gt;Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Go to the main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then to page &quot;Cache and files&quot; to add the GLOBE data.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here for more information in the &lt;i&gt;Little Navmap&lt;/i&gt; online manual&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <comment>Keep instructions in sync with translated menus</comment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;高程图默认使用的在线高程信息是有限制的并有很多错误。&lt;br/&gt;因此，建议下载和使用可以提供全球覆盖的离线GLOBE高程数据。&lt;/p&gt;&lt;p&gt;&lt;b&gt;到主菜单 -&amp;gt; &quot;工具&quot; -&amp;gt; &quot;选项&quot; 打开页面 &quot;缓存及文件&quot; 以添加GLOBE 数据.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;点击这里以在 &lt;i&gt;Little Navmap&lt;/i&gt; 在线手册获取更多信息&lt;/b&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.&lt;br/&gt;Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Options Dialog / Flight Plan Elevation Profile&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
@@ -23620,7 +23701,9 @@ Really use it?</source>
 This does *not* override the full path.
 Spaces are replaced with underscores.</source>
         <oldsource>Use &lt;settings-directory&gt; instead of &quot;%1&quot;.This does *not* override the full path.Spaces are replaced with underscores.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>使用 &lt;settings-directory&gt; 代替 &quot;%1&quot;.
+这 *不会* 替代完整路径
+下划线代替了空格。</translation>
     </message>
     <message>
         <location filename="src/main.cpp" line="189"/>
@@ -23652,7 +23735,7 @@ Spaces are replaced with underscores.</source>
         <location filename="src/main.cpp" line="310"/>
         <source>%1 needs at least macOS Sierra version 10.12 or newer.</source>
         <oldsource>%1 needs at least macOS Yosemite version 10.10 or newer.</oldsource>
-        <translation type="unfinished">%1 需要MacOS Yosemite 10.10或者更新版本。</translation>
+        <translation>%1 至少需要macOS Sierra 10.12或者更新版本。</translation>
     </message>
     <message>
         <location filename="src/main.cpp" line="323"/>
@@ -23819,19 +23902,21 @@ hh:mm</source>
         <location filename="src/route/routecontroller.cpp" line="146"/>
         <source>Wind °M
 %speed%</source>
-        <translation type="unfinished"></translation>
+        <translation>风 °M
+%speed%</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="147"/>
         <source>Head- or Tailwind
 %speed%</source>
-        <translation type="unfinished"></translation>
+        <translation>顺风或逆风
+%speed%</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="148"/>
         <source>Altitude
 %alt%</source>
-        <translation type="unfinished">高度
+        <translation>高度
 %alt%</translation>
     </message>
     <message>
@@ -23947,18 +24032,19 @@ Calculated based on the aircraft performance profile.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="176"/>
         <source>Wind direction and speed at waypoint.</source>
-        <translation type="unfinished"></translation>
+        <translation>航路点的风向和风速。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="177"/>
         <source>Head- or tailwind at waypoint.</source>
-        <translation type="unfinished"></translation>
+        <translation>航路点顺风或逆风。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="178"/>
         <source>Altitude at waypoint
 Calculated based on the aircraft performance profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>航点的高度
+根据航空器性能概况计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="180"/>
@@ -23968,12 +24054,12 @@ Calculated based on the aircraft performance profile.</source>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="461"/>
         <source>Error reading multiexport configuration: Invalid magic number. Not a multiexport configuration.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取多重导出配置时出错：无效的幻数。 不是多重导出配置。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="471"/>
         <source>Error reading multiexport configuration: Invalid version. Incompatible multiexport configuration.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取多重导出配置时出错：无效的版本。 不兼容的多重导出配置。</translation>
     </message>
 </context>
 <context>
@@ -24045,7 +24131,7 @@ Click or reload to continue.</source>
     <message>
         <location filename="src/route/route.cpp" line="882"/>
         <source> (not found)</source>
-        <translation type="unfinished"></translation>
+        <translation> (未找到)</translation>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="2708"/>
@@ -24076,7 +24162,7 @@ Click or reload to continue.</source>
     <message>
         <location filename="src/route/routealtitude.cpp" line="231"/>
         <source>Cannot calculate elevation profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法计算高程图。</translation>
     </message>
     <message>
         <location filename="src/route/routealtitude.cpp" line="544"/>
@@ -24096,9 +24182,9 @@ Also check the climb and descent speeds in the aircraft performance data.</sourc
         <oldsource>Cannot calculate top of climb or top of descent.
 Check the flight plan cruise altitude and the
 climb/descent speeds in the Aircraft Performance.</oldsource>
-        <translation type="unfinished">无法计算爬升顶(TOC)或者降落顶(TOD)
-检查飞行计划巡航高度和航空器性能中的
-爬升/降落速度。</translation>
+        <translation>无法计算爬升顶(TOC)或者降落顶(TOD)
+飞行计划太短或者巡航高度太高。同时检查
+航空器性能中的爬升/下降速度。</translation>
     </message>
     <message>
         <location filename="src/route/routealtitude.cpp" line="862"/>
@@ -24108,7 +24194,7 @@ climb/descent speeds in the Aircraft Performance.</oldsource>
     <message>
         <location filename="src/route/routealtitude.cpp" line="869"/>
         <source>Cruise altitude is too low.</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航高度太低。</translation>
     </message>
     <message>
         <location filename="src/route/routealtitude.cpp" line="878"/>
@@ -24128,26 +24214,30 @@ climb/descent speeds in the Aircraft Performance.</oldsource>
         <source>Airways and tracks only.
 Fastest calculation.</source>
         <oldsource>Airways and tracks only.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>仅航路和轨道。
+最快的计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="41"/>
         <source>More airways and few direct.
 Slower calculation.</source>
         <oldsource>More airways and less direct.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>更多的航路和较少的直飞。
+较慢的计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="42"/>
         <source>More airways and less direct.
 Slower calculation.</source>
-        <translation type="unfinished"></translation>
+        <translation>更多的航路和更少的直飞。
+较慢的计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="43"/>
         <source>Airways and less direct.
 Slower calculation.</source>
-        <translation type="unfinished"></translation>
+        <translation>航路和更少的直飞。
+较慢的计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="44"/>
@@ -24156,32 +24246,37 @@ Slower calculation.</source>
         <source>Airways and direct.
 Slower calculation.</source>
         <oldsource>More airways and direct.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>航路和直飞。
+较慢的计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="47"/>
         <source>Airways and more direct.
 Slower calculation.</source>
         <oldsource>More direct and less airways.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>航路和更多的直飞。
+较慢的计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="48"/>
         <source>Less airways and more direct.
 Slower calculation.</source>
-        <translation type="unfinished"></translation>
+        <translation>更少的航路和更多的直飞。
+较慢的计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="49"/>
         <source>Few airways and more direct.
 Slower calculation.</source>
-        <translation type="unfinished"></translation>
+        <translation>较少的航路和更多的直飞。
+较慢的计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="50"/>
         <source>Direct using waypoints only.
 Slower calculation.</source>
-        <translation type="unfinished"></translation>
+        <translation>仅航路点。
+较慢的计算。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="162"/>
@@ -24189,7 +24284,10 @@ Slower calculation.</source>
 Best track will be selected automatically.
 Ensure to use the correct flight level.
 Otherwise, tracks will not be used.</source>
-        <translation type="unfinished"></translation>
+        <translation>使用下载的 NAT, PACOTS 或 AUSOTS 航迹。
+会自动选择最佳航迹。
+确保选择了正确的飞行高度层。
+否则，航迹不会被使用。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="166"/>
@@ -24198,29 +24296,34 @@ Otherwise, tracks will not be used.</source>
 No tracks available. Press the download button or
 go to &quot;Flight Plan&quot; -&gt; &quot;Download Tracks&quot; to fetch tracks.</source>
         <comment>Keep translation in sync with menu items</comment>
-        <translation type="unfinished"></translation>
+        <translation>
+
+没有可用的航迹。 按下下载按钮或
+转到“飞行计划”-&gt;“下载航迹”以获取航迹。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="205"/>
         <source>&lt;b&gt;Calculate flight plan between legs&lt;br/&gt;%1 and %2&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;计算&lt;br/&gt;%1 及 %2 航段之间的飞行计划&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="211"/>
         <source>Select a range of legs or two flight plan legs in the flight plan table.
 The selection may not be part of a procedure or an alternate.
 It can include the end of a departure or the start of an arrival procedure.</source>
-        <translation type="unfinished"></translation>
+        <translation>在飞行计划表中选择一个范围或两个航段。
+该选择不能是起降程序的一部分，也不能是备降场。
+它可以包括离场程序的结束或到达程序的开始。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="235"/>
         <source>&lt;b&gt;Calculate flight plan from&lt;br/&gt;%1 to %2&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;计算自&lt;br/&gt;%1 到 %2的飞行计划&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="244"/>
         <source>Select departure and destination first</source>
-        <translation type="unfinished"></translation>
+        <translation>先选择出发地及目的地</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="197"/>
@@ -24236,25 +24339,25 @@ It can include the end of a departure or the start of an arrival procedure.</sou
         <location filename="src/route/routecalcwindow.cpp" line="209"/>
         <source>Cannot calculate flight plan between selected legs.</source>
         <oldsource>Cannot calculate flight plan</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>无法计算选定的航段间的飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="210"/>
         <location filename="src/route/routecalcwindow.cpp" line="241"/>
         <source>Click here for details.</source>
-        <translation type="unfinished"></translation>
+        <translation>点击这里显示详情。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="240"/>
         <source>Set departure and destination first.</source>
-        <translation type="unfinished"></translation>
+        <translation>先选择出发地及目的地。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcwindow.cpp" line="242"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu on the map or the airport search (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;to select departure and destination first.&lt;/p&gt;</source>
         <oldsource>Use the right-click context menu on the map or the airport search (F4)
 to select departure and destination first.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;先使用地图的右键菜单或者在机场搜索 (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;中设置出发地和目的地。&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -24297,7 +24400,7 @@ to select departure and destination first.</oldsource>
     <message>
         <location filename="src/route/routecontroller.cpp" line="523"/>
         <source>%1 Version %2 (revision %3) on %4 </source>
-        <translation type="unfinished">%1 版本 %2 (修订 %3) 在 %4 </translation>
+        <translation>%1 版本 %2 (修订 %3) 在 %4 </translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="629"/>
@@ -24380,17 +24483,17 @@ The start position is now set to the longest primary runway of the departure air
     <message>
         <location filename="src/route/routecontroller.cpp" line="1510"/>
         <source>Airway Flight Plan Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation>航路飞行计划计算</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1515"/>
         <source>Low altitude airway Flight Plan Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation>低空航路飞行计划计算</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1520"/>
         <source>High altitude airway Flight Plan Calculation</source>
-        <translation type="unfinished"></translation>
+        <translation>高空航路飞行计划计算</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1543"/>
@@ -24560,22 +24663,22 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1572"/>
         <source>Calculated flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>计算的飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1619"/>
         <source>Calculating Flight Plan ...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在计算飞行计划...</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1619"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1620"/>
         <source>Little Navmap - Calculating Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 计算飞行计划</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1767"/>
@@ -24584,43 +24687,47 @@ Try another routing type or create the flight plan manually.</source>
 Try another calculation type,
 change the cruise altitude or
 create the flight plan manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法计算飞行计划。
+
+尝试其他计算类型，
+更改巡航高度或
+手动创建飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2236"/>
         <source>Show Procedures (airport has no procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示程序 (机场没有程序)</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2240"/>
         <source>Create &amp;Approach to Airport and insert into Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>创建到机场的进近并插入到飞行计划(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2242"/>
         <source>Create &amp;Approach and use Airport as Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>创建进近并用机场作为目的地(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2246"/>
         <source>Show &amp;Procedures</source>
         <oldsource>Create &amp;approach</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>显示程序(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2310"/>
         <source>Edit Flight Plan &amp;Position or Remarks ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑飞行计划位置的备注(&amp;P)...</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2526"/>
         <source>Waypoint Change</source>
-        <translation type="unfinished"></translation>
+        <translation>更改航路点</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2539"/>
         <source>Changed waypoint in flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改飞行计划中的航路点。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2781"/>
@@ -24749,52 +24856,52 @@ create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2247"/>
         <source>Create &amp;Approach to Airport</source>
-        <translation type="unfinished"></translation>
+        <translation>创建到机场的进近(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2293"/>
         <source>Add Airport &amp;Traffic Pattern ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加机场起落航线(&amp;T)...</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2296"/>
         <source>Add &amp;Holding ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加等待程序(&amp;H)...</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2306"/>
         <source>Add &amp;Navaid Range Ring</source>
-        <translation type="unfinished"></translation>
+        <translation>添加助航设备范围环(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2316"/>
         <source>Edit Flight Plan &amp;Position ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑飞行计划位置(&amp;P)...</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2317"/>
         <source>Edit name and coordinates of user defined flight plan position</source>
-        <translation type="unfinished">编辑用户定义飞行计划航点的名称和坐标</translation>
+        <translation>编辑用户定义飞行计划航点的名称和坐标</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2323"/>
         <source>Edit Flight Plan &amp;Position Remarks ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑飞行计划位置的备注(&amp;P)...</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2324"/>
         <source>Edit remarks for selected flight plan leg</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑选中的飞行计划航段的备注</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3774"/>
         <source>Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>出发</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3776"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>到达</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3778"/>
@@ -24804,7 +24911,7 @@ create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3791"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>航向 %1</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3806"/>
@@ -24866,17 +24973,17 @@ create the flight plan manually.</source>
         <location filename="src/route/routecontroller.cpp" line="4389"/>
         <location filename="src/route/routecontroller.cpp" line="4394"/>
         <source>Cannot load %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>无法载入 %1: %2</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4390"/>
         <source>procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>起降程序</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4390"/>
         <source>procedure</source>
-        <translation type="unfinished"></translation>
+        <translation>起降程序</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4391"/>
@@ -24888,24 +24995,25 @@ create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4395"/>
         <source>alternates</source>
-        <translation type="unfinished"></translation>
+        <translation>备降场</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4395"/>
         <source>alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>备降场</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4399"/>
         <source>Download oceanic tracks in menu &quot;Flight Plan&quot;
 or calculate the flight plan again if your plan uses tracks.</source>
         <comment>Keep in sync with menu names</comment>
-        <translation type="unfinished"></translation>
+        <translation>在菜单“飞行计划”中下载海洋航迹
+或者如果您的计划使用航迹，请再次计算飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4403"/>
         <source>Errors in flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划中有错误。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4428"/>
@@ -25046,41 +25154,11 @@ or calculate the flight plan again if your plan uses tracks.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4622"/>
         <source>No Flight Plan.</source>
-        <oldsource>&lt;b&gt;No Flight Plan loaded.&lt;/b&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;没有载入飞行计划。&lt;/b&gt;</translation>
+        <translation type="unfinished">没有飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4624"/>
-        <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu on the map or the airport search (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;to select departure and destination.&lt;/p&gt;</source>
-        <oldsource>Use the right-click context menu on the map or the airport search (F4)
-to select departure and destination.</oldsource>
-        <translation type="unfinished">使用地图上的右键单击菜单或者机场
-搜索(F4)来选择出发地和目的地。</translation>
-    </message>
-    <message>
-        <location filename="src/route/routecontroller.cpp" line="4628"/>
-        <source>Select departure and destination in the map or airport search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/route/routecontroller.cpp" line="4653"/>
-        <source>%1 from departure to top of climb</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/route/routecontroller.cpp" line="4655"/>
-        <source>%1 from start of descent to destination</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/route/routecontroller.cpp" line="4832"/>
-        <source>Remarks changed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/route/routecontroller.cpp" line="4848"/>
-        <location filename="src/route/routecontroller.cpp" line="4853"/>
-        <source>Remarks for the flight plan.</source>
+        <location filename="src/route/routecontroller.cpp" line="4846"/>
+        <source>No flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -25091,9 +25169,42 @@ to select departure and destination.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4846"/>
-        <source>No flight plan.</source>
+        <location filename="src/route/routecontroller.cpp" line="4848"/>
+        <location filename="src/route/routecontroller.cpp" line="4853"/>
+        <source>Remarks for the flight plan.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;No Flight Plan loaded.&lt;/b&gt;</source>
+        <translation type="vanished">&lt;b&gt;没有载入飞行计划。&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4624"/>
+        <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu on the map or the airport search (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;to select departure and destination.&lt;/p&gt;</source>
+        <oldsource>Use the right-click context menu on the map or the airport search (F4)
+to select departure and destination.</oldsource>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;使用地图上的右键单击菜单或者机场
+搜索(&lt;code&gt;F4&lt;/code&gt;)来选择出发地和目的地。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4628"/>
+        <source>Select departure and destination in the map or airport search</source>
+        <translation>在地图或机场搜索中选择出发地和目的地</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4653"/>
+        <source>%1 from departure to top of climb</source>
+        <translation>%1 自离场至爬升顶</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4655"/>
+        <source>%1 from start of descent to destination</source>
+        <translation>%1 下降顶至目的地</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4832"/>
+        <source>Remarks changed</source>
+        <translation>备注已更改</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4644"/>
@@ -25347,7 +25458,7 @@ to select departure and destination.</oldsource>
     </message>
     <message>
         <source>Save Flightplan and Track as GPX Format</source>
-        <translation type="vanished">另存飞行计划和轨迹为GPX格式</translation>
+        <translation type="vanished">另存飞行计划和航迹为GPX格式</translation>
     </message>
     <message>
         <source>GPX Files %1;;All Files (*)</source>
@@ -25361,7 +25472,7 @@ to select departure and destination.</oldsource>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1030"/>
         <source>Flight plan and track saved as GPX.</source>
-        <translation>飞行计划和轨迹已另存为GPX。</translation>
+        <translation>飞行计划和航迹已另存为GPX。</translation>
     </message>
     <message>
         <source>Save Flight Plan as HTML Page</source>
@@ -25374,34 +25485,34 @@ to select departure and destination.</oldsource>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="91"/>
         <source>Exported flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>已导出飞行计划。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="139"/>
         <source>Exported %1 flight plans.</source>
-        <translation type="unfinished"></translation>
+        <translation>已导出 %1飞行计划。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="171"/>
         <location filename="src/routeexport/routeexport.cpp" line="203"/>
         <source>Export for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>导出给 %1</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="172"/>
         <location filename="src/routeexport/routeexport.cpp" line="204"/>
         <source>%1 Files %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 文件 %2</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="314"/>
         <source>Flight plan saved as %1PLN.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已另存为%1PLN。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="314"/>
         <source>annotated </source>
-        <translation type="unfinished"></translation>
+        <translation>带注释的 </translation>
     </message>
     <message>
         <source>Flight plan saved as FMS.</source>
@@ -25417,7 +25528,9 @@ to select departure and destination.</oldsource>
         <source>
 
 Really continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>
+
+真的要继续吗？</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1109"/>
@@ -25434,32 +25547,37 @@ Really continue?</source>
         <location filename="src/routeexport/routeexport.cpp" line="1173"/>
         <source>Do not &amp;show this dialog again and save Flight Plan in the future.</source>
         <oldsource>Do not show this dialog again and save Flight Plan in the future.</oldsource>
-        <translation type="unfinished">不要再显示此对话框并在将来保存飞行计划。</translation>
+        <translation>不要再显示此对话框并在将来保存飞行计划(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1118"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable by the simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划必须有有效的机场作为出发地和到达地，这将可能不能用于模拟器。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1136"/>
         <source>One or more of the selected export formats require a valid AIRAC cycle.
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>所选的一种或多种导出格式需要有效的AIRAC周期。
+
+</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1138"/>
         <source>The export format requires a valid AIRAC cycle.
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>所选的导出格式需要有效的AIRAC周期。
+
+</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1140"/>
         <source>The selected scenery database does not contain AIRAC cycle information.
 This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery.</source>
-        <translation type="unfinished"></translation>
+        <translation>所选的地景数据库不包含AIRAC周期信息。
+如果您保存基于FSX，Prepar3D或MSFS地景的飞行计划，则可能会发生这种情况。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1160"/>
@@ -25473,13 +25591,13 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1115"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable for the selected export formats.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划必须有有效的机场作为出发地和到达地，这将可能不能用于选定的导出格式。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1099"/>
         <source>Do not &amp;show this dialog again and export all files in the future.</source>
         <oldsource>Do not show this dialog again and export all files in the future.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示此对话框并在将来导出所有的飞行计划(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="117"/>
@@ -25489,29 +25607,31 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="137"/>
         <source>No flight plan exported.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有飞行计划导出。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="335"/>
         <source>Flight plan saved as FMS 3.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已另存为FMS 3。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="370"/>
         <source>Flight plan saved as FMS 11.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已另存为FMS 11。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1166"/>
         <source>One or more of the selected export formats support setting a parking spot as a start position.
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>所选的一种或多种导出格式支持将停机位设置为起始位置。
+
+</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1169"/>
         <source>The departure airport has parking spots but no parking was selected for this Flight Plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>起始机场有停机位，但是在飞行计划中没有选择停机位。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1226"/>
@@ -25753,22 +25873,22 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="378"/>
         <source>Expected file but given path is a directory</source>
-        <translation type="unfinished"></translation>
+        <translation>需要一个文件，但给定路径是个目录</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="384"/>
         <source>Expected directory but given path is a file</source>
-        <translation type="unfinished"></translation>
+        <translation>需要一个目录，但给定路径是个文件</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="390"/>
         <source>File does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>文件不存在</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="392"/>
         <source>Directory does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>目录不存在</translation>
     </message>
 </context>
 <context>
@@ -25790,34 +25910,34 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
         <location filename="src/routeexport/routeexportformat.cpp" line="211"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="232"/>
         <source>Simulator</source>
-        <translation type="unfinished">模拟器</translation>
+        <translation>模拟器</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="204"/>
         <source>FSX and Prepar3D</source>
-        <translation type="unfinished"></translation>
+        <translation>FSX 及 Prepar3D</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="205"/>
         <source>Microsoft Flight Simulator 2020</source>
-        <translation type="unfinished"></translation>
+        <translation>微软模拟飞行2020</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="207"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="208"/>
         <source>fms</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="208"/>
         <source>X-Plane FMS 11</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="209"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="210"/>
         <source>flp</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="209"/>
@@ -25835,12 +25955,12 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
         <location filename="src/routeexport/routeexportformat.cpp" line="241"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="242"/>
         <source>Aircraft</source>
-        <translation type="unfinished">航空器</translation>
+        <translation>航空器</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="209"/>
         <source>Aerosoft Airbus and others</source>
-        <translation type="unfinished"></translation>
+        <translation>Aerosoft Airbus 及其他</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="210"/>
@@ -25888,7 +26008,7 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="215"/>
         <source>Rotate MD-80, JARDesign and others</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotate MD-80, JARDesign 及其他</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="216"/>
@@ -25912,7 +26032,7 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
         <location filename="src/routeexport/routeexportformat.cpp" line="219"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="239"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>其他</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="190"/>
@@ -25920,7 +26040,10 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
 Export navaids and airports as user defined waypoints avoid locked waypoints due to different AIRAC cycles.
 This saves all waypoints as user defined waypoints when exporting flight plans.
 Note that is not possible to export procedures if this is enabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>
+将航行点和机场导出为用户定义的航点，以避免由于不同的AIRAC周期而锁定航路点。
+导出飞行计划时，这会将所有航路点保存为用户定义的航点。
+请注意，如果启用此功能，则无法导出起降程序。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="199"/>
@@ -25937,30 +26060,35 @@ Note that is not possible to export procedures if this is enabled.</source>
         <source>Little Navmap native flight plan format
 Use this format to save and backup your plans since it covers all features like remarks and more.
 Note that using this option is the same as using &quot;Save&quot; or &quot;Save as&quot; in the file menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap原生飞行计划格式
+使用此格式可以保存和备份您的计划，因为它涵盖了备注等所有功能。
+请注意，使用此选项与在文件菜单中使用“保存”或“另存为”相同。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="206"/>
         <source>FSX and Prepar3D annotated
 Only for old Little Navmap versions.</source>
-        <translation type="unfinished"></translation>
+        <translation>含备注的FSX 及 Prepar3D 
+只适用于旧版本的 Little Navmap。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="207"/>
         <source>X-Plane FMS 3
 Old limited format.</source>
-        <translation type="unfinished"></translation>
+        <translation>X-Plane FMS 3
+有限制的旧格式。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="213"/>
         <source>Flight1 Garmin GTN 650/750 with user defined waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>包含用户定义航路点的Flight1 Garmin GTN 650/750</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="217"/>
         <source>Garmin exchange format for Google Earth and others
 Exported with aircraft track and flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>Google Earth和其他产品的Garmin交换格式
+随航空器航迹和飞行计划一起导出。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="219"/>
@@ -25970,7 +26098,7 @@ Exported with aircraft track and flight plan.</source>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="219"/>
         <source>HTML flight plan web page</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划HTML网页</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="220"/>
@@ -26084,7 +26212,7 @@ Exported with aircraft track and flight plan.</source>
         <location filename="src/routeexport/routeexportformat.cpp" line="235"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="236"/>
         <source>Online</source>
-        <translation type="unfinished">在线</translation>
+        <translation>在线</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="234"/>
@@ -26212,17 +26340,17 @@ Exported with aircraft track and flight plan.</source>
     <message>
         <location filename="src/route/routeleg.cpp" line="844"/>
         <source>Track or airway</source>
-        <translation type="unfinished"></translation>
+        <translation>航迹或航路</translation>
     </message>
     <message>
         <location filename="src/route/routeleg.cpp" line="844"/>
         <source>Airway</source>
-        <translation type="unfinished"></translation>
+        <translation>航路</translation>
     </message>
     <message>
         <location filename="src/route/routeleg.cpp" line="847"/>
         <source>%1 %2 not found for %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有为  %3 找到%1 %2 。</translation>
     </message>
     <message>
         <source>Airway %1 not found for %2.</source>
@@ -26234,53 +26362,53 @@ Exported with aircraft track and flight plan.</source>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="14"/>
         <source>Little Navmap - Select Flight Plan Formats for Multiexport</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 选择多重导出的飞行计划格式</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="48"/>
         <source>Show file dialog for every exported format</source>
-        <translation type="unfinished"></translation>
+        <translation>为每个导出格式显示文件对话框</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="53"/>
         <source>Do not show file dialog. Backup existing files in case of conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>不要再文件对话框并在有冲突时备份现有文件</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="58"/>
         <source>Do not show file dialog. Overwrite existing files without warning</source>
-        <translation type="unfinished"></translation>
+        <translation>不要再文件对话框并在有冲突时覆盖现有文件</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="66"/>
         <source>&amp;Export options:</source>
-        <translation type="unfinished"></translation>
+        <translation>导出选项(&amp;E)：</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="145"/>
         <source>&amp;Select Export Path ...</source>
-        <translation type="unfinished"></translation>
+        <translation>选择导出路径(&amp;S)...</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="154"/>
         <source>&amp;Reset Export Path</source>
-        <translation type="unfinished"></translation>
+        <translation>重置导出路径(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="163"/>
         <source>&amp;Export Flight Plan Now ...</source>
         <oldsource>&amp;Export File Now ...</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>立刻导出飞行计划(&amp;E)...</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="172"/>
         <source>Reset &amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>重置视图(&amp;V)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="177"/>
         <source>&amp;Increase Text Size</source>
-        <translation type="unfinished"></translation>
+        <translation>增大文字大小(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="180"/>
@@ -26290,7 +26418,7 @@ Exported with aircraft track and flight plan.</source>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="185"/>
         <source>&amp;Decrease Text Size</source>
-        <translation type="unfinished"></translation>
+        <translation>减小文字大小(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="188"/>
@@ -26301,12 +26429,12 @@ Exported with aircraft track and flight plan.</source>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="193"/>
         <source>&amp;Edit Path</source>
         <oldsource>&amp;EditPath</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>编辑路径(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="198"/>
         <source>Default Text &amp;Size</source>
-        <translation type="unfinished"></translation>
+        <translation>默认文字大小(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="201"/>
@@ -26316,59 +26444,60 @@ Exported with aircraft track and flight plan.</source>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="206"/>
         <source>Reset &amp;Paths and Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>重置路径及选择(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="214"/>
         <source>&amp;Enable %1 for Export</source>
         <oldsource>&amp;Select for Export</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>启用 %1 以导出(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.ui" line="217"/>
         <source>Select for multi export</source>
-        <translation type="unfinished"></translation>
+        <translation>选择以多重导出</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="353"/>
         <source>Category</source>
-        <translation type="unfinished"></translation>
+        <translation>分类</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="354"/>
         <source>Usage</source>
-        <translation type="unfinished"></translation>
+        <translation>用途</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="355"/>
         <source>Extension
 or Filename</source>
-        <translation type="unfinished"></translation>
+        <translation>扩展名
+或文件名</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="394"/>
         <source>Select a %1 that will be used to export the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>选择将用于导出飞行计划的 %1</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="395"/>
         <source>existing file</source>
-        <translation type="unfinished"></translation>
+        <translation>已存在的文件</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="449"/>
         <source>Filename</source>
-        <translation type="unfinished">文件名</translation>
+        <translation>文件名</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="449"/>
         <source>File extension</source>
-        <translation type="unfinished"></translation>
+        <translation>文件扩展名</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="586"/>
         <source>Reset selection and paths back to default?</source>
-        <translation type="unfinished"></translation>
+        <translation>重置路径及选择为默认值？</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="323"/>
@@ -26377,77 +26506,82 @@ Press F2 or double click to edit path.</source>
         <oldsource>Default file or directory selected for export.
 This path depends on the selected simulator scenery library.
 Press F2 or double click to edit.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>已选择要导出的格式。
+按F2或双击以编辑路径。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="395"/>
         <source>directory</source>
-        <translation type="unfinished"></translation>
+        <translation>目录</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="326"/>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="456"/>
         <source>Press F2 or double click to edit path</source>
-        <translation type="unfinished"></translation>
+        <translation>按F2或双击以编辑路径</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="321"/>
         <source>Error: %1.
 Press F2 or double click to edit path.</source>
-        <translation type="unfinished"></translation>
+        <translation>错误： %1
+按F2或双击以编辑路径。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="352"/>
         <source>Enable / Change path /
 Export now / Reset path</source>
-        <translation type="unfinished"></translation>
+        <translation>启用/更改路径/
+立即导出/重置路径</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="356"/>
         <source>Export Path</source>
-        <translation type="unfinished"></translation>
+        <translation>导出路径</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="384"/>
         <source>Flight plan format will be exported with multiexport when checked</source>
-        <translation type="unfinished"></translation>
+        <translation>将多重导出选中的飞行计划格式</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="403"/>
         <source>Export flight plan now</source>
-        <translation type="unfinished"></translation>
+        <translation>立刻导出飞行计划</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="411"/>
         <source>Reset path back to default.
 The default path is determined by the current scenery library or simulator selection.
 If not applicable, the best estimate from installed simulators is used.</source>
-        <translation type="unfinished"></translation>
+        <translation>将路径重置为默认值。
+默认路径由当前的地景库或模拟器来确定。
+如果不适用，则使用来自已安装模拟器的最佳估计。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="532"/>
         <source>Select Export File for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>选择 %1 的导出文件</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="533"/>
         <source>Flight Plan Files %1;;All Files (*)</source>
-        <translation type="unfinished">飞行计划文件  %1;;所有文件 (*)</translation>
+        <translation>飞行计划文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="540"/>
         <source>Select Export Directory for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>选择 %1 的导出目录</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="673"/>
         <source>&amp;Enable Export for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>启用导出 %1 (&amp;E)</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="676"/>
         <source>&amp;Enable for Export</source>
-        <translation type="unfinished"></translation>
+        <translation>启用以导出(&amp;E)</translation>
     </message>
 </context>
 <context>
@@ -26475,7 +26609,7 @@ If not applicable, the best estimate from installed simulators is used.</source>
     <message>
         <location filename="src/routestring/routestringreader.cpp" line="195"/>
         <source>Could not determine starting position for first item %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法确定第一个项目%1的起始位置。</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringreader.cpp" line="222"/>
@@ -26541,7 +26675,7 @@ If not applicable, the best estimate from installed simulators is used.</source>
     <message>
         <location filename="src/routestring/routestringreader.cpp" line="838"/>
         <source>First item %1 not found as waypoint, VOR or NDB.</source>
-        <translation type="unfinished"></translation>
+        <translation>第一个项目 %1 不是航路点，甚高频全向信标(VOR)或无方向性信标(NDB)。</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringreader.cpp" line="1096"/>
@@ -26733,24 +26867,26 @@ ETD 及 ETA 将会被忽略。
         <location filename="src/routestring/routestringdialog.cpp" line="94"/>
         <source>Omit departure and destination airport ICAO code.
 Note that the resulting description cannot be read into a flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略起飞和目的地机场的ICAO代码。
+注意，结果描述不能读入飞行计划。</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="102"/>
         <source>Fill direct connections between waypoints with a &quot;DCT&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>使用“ DCT”填充航路点之间的直飞</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="109"/>
         <source>Add cruise speed and altitude to description.
 Speed is ignored in favor to currently loaded aircraft performance
 when reading a description into a flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>在说明中添加巡航速度和高度。
+在载入飞行计划描述时，速度会被忽略，这有利于当前加载的飞机性能。</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="118"/>
         <source>Ignore airways and add all waypoints instead</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略航路并添加所有航路点</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="123"/>
@@ -26760,27 +26896,27 @@ when reading a description into a flight plan.</source>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="125"/>
         <source>Add the ICAO code for all alternate airports to the end of the description</source>
-        <translation type="unfinished"></translation>
+        <translation>在描述末尾添加所有备降场的ICAO代码</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="138"/>
         <source>Write SID, STAR and the respective transitions to the description</source>
-        <translation type="unfinished"></translation>
+        <translation>将SID，STAR和相应的转换写入描述中</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="147"/>
         <source>Add &quot;SID&quot; and &quot;STAR&quot; words only instead of the real procedure names</source>
-        <translation type="unfinished"></translation>
+        <translation>仅添加“SID”和“STAR”字样，而不是实际程序名</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="153"/>
         <source>Write no SID and STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>不写入SID和STAR</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="155"/>
         <source>Add neither SID nor STAR to the description</source>
-        <translation type="unfinished"></translation>
+        <translation>将SID或STAR写入描述中</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="164"/>
@@ -26791,27 +26927,28 @@ when reading a description into a flight plan.</source>
         <location filename="src/routestring/routestringdialog.cpp" line="166"/>
         <source>A list of airports at the end of the description will be read as alternate airports when reading if checked.
 Otherwise airports are added as waypoints.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果选中，则描述末尾的机场列表将被视为备降场。
+否则，机场将被添加为航点。</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="173"/>
         <source>Read first and last item as Navaid</source>
-        <translation type="unfinished"></translation>
+        <translation>将第一个和最后一个项目视为助航设备</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="175"/>
         <source>Does not expect the first and last string item to be a airport ICAO ident if checked</source>
-        <translation type="unfinished"></translation>
+        <translation>如果选中，则第一个和最后一个字符串项都不必是机场ICAO代码</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="180"/>
         <source>Read: Match coordinates to Waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>载入：将坐标匹配到航路点</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="182"/>
         <source>Coordinates will be converted to navaids if nearby</source>
-        <translation type="unfinished"></translation>
+        <translation>坐标将会被转换到附近的助航设备</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="293"/>
@@ -26828,7 +26965,7 @@ Otherwise airports are added as waypoints.</source>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="301"/>
         <source>Flight plan from &lt;b&gt;%1&lt;/b&gt; to &lt;b&gt;%2&lt;/b&gt;.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>从 &lt;b&gt;%1&lt;/b&gt; 到 &lt;b&gt;%2&lt;/b&gt; 的飞行计划&lt;br/&gt;</translation>
     </message>
     <message>
         <source>Flight plan from &lt;b&gt;%1 (%2)&lt;/b&gt; to &lt;b&gt;%3 (%4)&lt;/b&gt;.&lt;br/&gt;</source>
@@ -26978,17 +27115,17 @@ Right-click into the map and select
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1044"/>
         <source>Add &amp;Navaid Range Ring</source>
-        <translation type="unfinished"></translation>
+        <translation>添加助航设备范围环(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1071"/>
         <source>Add Airport &amp;Traffic Pattern ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加机场起落航线(&amp;T)...</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1072"/>
         <source>Add &amp;Holding ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加等待程序(&amp;H)...</translation>
     </message>
     <message>
         <source>Create Approach to Airport and insert into Flight Plan</source>
@@ -27037,72 +27174,72 @@ Right-click into the map and select
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1034"/>
         <source>Create &amp;Approach to Airport and insert into Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>创建到机场的进近并插入到飞行计划(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1036"/>
         <source>Create &amp;Approach and use Airport as Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>创建进近并用机场作为目的地(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1039"/>
         <source>Show &amp;procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>显示程序(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1045"/>
         <source>&amp;Add to Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>加入飞行计划(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1046"/>
         <source>Append to &amp;Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>追加到飞行计划(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1050"/>
         <source>Set as &amp;Flight Plan Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>设为飞行计划出发(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1051"/>
         <source>Set as Flight Plan &amp;Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>设为飞行计划到达(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1052"/>
         <source>Add as Flight Plan &amp;Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>设置为飞行计划备降(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1061"/>
         <source>(Airport not found)</source>
-        <translation type="unfinished"></translation>
+        <translation>(没有找到机场)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1063"/>
         <source>Show &amp;Information for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 %1 的信息(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1064"/>
         <source>Show %1 on &amp;Map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 %1 (&amp;M)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1066"/>
         <source>Set %1 as &amp;Flight Plan Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>将 %1设置为飞行计划出发(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1067"/>
         <source>Set %1 as Flight Plan &amp;Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>将%1设置为飞行计划到达(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1068"/>
         <source>Add %1 as Flight Plan &amp;Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>将 %1 添加为飞行计划备降场(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1081"/>
@@ -27112,27 +27249,27 @@ Right-click into the map and select
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1124"/>
         <source>&amp;Airport</source>
-        <translation type="unfinished"></translation>
+        <translation>机场(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1140"/>
         <source>&amp;Edit Userpoints ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑用户航点(&amp;E)...</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1145"/>
         <source>&amp;Edit Userpoint ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑用户航点(&amp;E)...</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1159"/>
         <source>&amp;Edit Logbook Entries ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑记录本条目(&amp;E)...</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1164"/>
         <source>&amp;Edit Logbook Entry ...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑记录本条目(&amp;E)...</translation>
     </message>
     <message>
         <source>&amp;Edit Userpoints</source>
@@ -27177,24 +27314,24 @@ Right-click into the map and select
         <location filename="src/search/searchbasetable.cpp" line="1191"/>
         <location filename="src/search/searchbasetable.cpp" line="1197"/>
         <source> (no attachment)</source>
-        <translation type="unfinished"></translation>
+        <translation> (没有附件)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1210"/>
         <location filename="src/search/searchbasetable.cpp" line="1225"/>
         <source>(file not found)</source>
         <oldsource>(File not found)</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>(文件未找到)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1231"/>
         <source>&amp;Files</source>
-        <translation type="unfinished"></translation>
+        <translation>文件(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1255"/>
         <source>&amp;View Options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示选项(&amp;V)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1396"/>
@@ -27341,17 +27478,17 @@ Right-click into the map and select
     <message>
         <location filename="src/track/trackcontroller.cpp" line="152"/>
         <source>Track download started.</source>
-        <translation type="unfinished"></translation>
+        <translation>已开始下载航迹。</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="165"/>
         <source>Tracks deleted.</source>
-        <translation type="unfinished"></translation>
+        <translation>已删除航迹。</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="214"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download track information:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;尝试建立加密连接以下载航迹数据时出错：&lt;/p&gt; &lt;p&gt; URL：%1 &lt;/p&gt; &lt;p&gt;错误消息：&lt;br/&gt;%2 &lt;/p&gt; &lt;p&gt;继续吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="220"/>
@@ -27362,27 +27499,27 @@ Right-click into the map and select
         <location filename="src/track/trackcontroller.cpp" line="221"/>
         <source>Do not &amp;show this again and ignore errors in the future</source>
         <oldsource>Do not show this again and ignore errors in the future</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示此对话框并在将来忽略错误(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="238"/>
         <source>&lt;p&gt;Download of track information from&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;failed.&lt;/p&gt;&lt;p&gt;Error: %2 (%3)&lt;/p&gt;&lt;p&gt;Check your track settings or disable track downloads.&lt;/p&gt;&lt;p&gt;Suppressing further messages during this session.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;从&lt;br/&gt;“%1” &lt;br/&gt;下载航迹信息失败。&lt;/ p&gt; &lt;p&gt;错误：%2(%3)&lt;/ p&gt; &lt;p&gt;检查您的航迹设置或禁用航迹下载。&lt;/ p&gt; &lt;p&gt;在此会话期间禁止再次显示此消息。&lt;/ p&gt;</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="243"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation type="unfinished">不要再显示此对话框(&amp;S)。</translation>
+        <translation>不要再显示此对话框(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="255"/>
         <source>Track download failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>航迹下载失败。</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="271"/>
         <source>&lt;li&gt;%1: %2 tracks.&lt;/li&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;li&gt;%1: %2 航迹。&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="273"/>
@@ -27392,12 +27529,12 @@ Right-click into the map and select
     <message>
         <location filename="src/track/trackcontroller.cpp" line="277"/>
         <source>&lt;p&gt;Errors reading tracks.&lt;br/&gt;Make sure to use the latest navdata.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;读取航迹失败。&lt;br/&gt;请确保您使用了最新的导航数据。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="281"/>
         <source>&lt;/li&gt;&lt;li&gt;More ...</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;/li&gt;&lt;li&gt;更多 ...</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="283"/>
@@ -27407,28 +27544,28 @@ Right-click into the map and select
     <message>
         <location filename="src/track/trackcontroller.cpp" line="284"/>
         <source>&lt;p&gt;Tracks downloaded.&lt;/p&gt;&lt;ul&gt;%1&lt;/ul&gt;%2</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;航迹已下载&lt;/p&gt;&lt;ul&gt;%1&lt;/ul&gt;%2</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="288"/>
         <source>Track download finished with errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>航迹已下载完成，但有错误。</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="296"/>
         <source>%1: %2 tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 航迹</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="298"/>
         <source>no</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="301"/>
         <source>Tracks downloaded: %1.</source>
         <oldsource>Track download finished: %1.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>已下载航迹：%1。</translation>
     </message>
     <message>
         <location filename="src/track/trackcontroller.cpp" line="301"/>
@@ -27441,7 +27578,7 @@ Right-click into the map and select
     <message>
         <location filename="src/track/trackmanager.cpp" line="259"/>
         <source>Error when parsing track %1 (%2) with route %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>解析航路 %3 的航迹 %1(%2)时出错。</translation>
     </message>
 </context>
 <context>
@@ -27698,7 +27835,7 @@ Right-click into the map and select
     <message>
         <location filename="src/gui/updatedialog.cpp" line="41"/>
         <source>%1 - Updates Available</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - 有可用的更新</translation>
     </message>
     <message>
         <location filename="src/gui/updatedialog.cpp" line="46"/>
@@ -27796,16 +27933,20 @@ A short all upper case ident without spaces is recommended.
 
 Idents starting with &quot;WP&quot; followed by a number are automatically renamed to reflect flying order.
 Examples: &quot;WP1&quot;, &quot;WP2&quot; or &quot;WP10&quot;.</source>
-        <oldsource>Required ident of the waypoint.
-A short all upper case ident without spaces is recommended.
-
-Idents starting with &quot;WP&quot; followed by a number are automatically renamed to reflect flying order.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="158"/>
         <source>&amp;Region:</source>
-        <translation type="unfinished">区域(&amp;R)：</translation>
+        <translation>区域(&amp;R)：</translation>
+    </message>
+    <message>
+        <source>Required ident of the waypoint.
+A short all upper case ident without spaces is recommended.</source>
+        <oldsource>Required ident of the waypoint. 
+A short all upper case ident without spaces is recommended.</oldsource>
+        <translation type="vanished">航路点的必需标识。
+建议使用无空格全大写的简短代码。</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="85"/>
@@ -27815,28 +27956,28 @@ Idents starting with &quot;WP&quot; followed by a number are automatically renam
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="124"/>
         <source>Optional two letter ICAO region of the waypoint.</source>
-        <translation type="unfinished"></translation>
+        <translation>可选的航路点的ICAO两个字母区域代码。</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="148"/>
         <source>&amp;Ident:</source>
-        <translation type="unfinished">代码(&amp;I)：</translation>
+        <translation>代码(&amp;I)：</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="168"/>
         <source>&amp;Remarks:</source>
-        <translation type="unfinished">备注(&amp;R)：</translation>
+        <translation>备注(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="131"/>
         <source>&amp;Name:</source>
         <oldsource>&amp;Name</oldsource>
-        <translation type="unfinished">名称(&amp;N)：</translation>
+        <translation>名称(&amp;N)：</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="141"/>
         <source>Waypoint name</source>
-        <translation type="unfinished"></translation>
+        <translation>航路点名称</translation>
     </message>
     <message>
         <source>Name of the waypoint. Note that special characters 
@@ -27886,17 +28027,17 @@ Formats above have to be given exactly as shown in the examples.</source>
     <message>
         <location filename="src/route/userwaypointdialog.cpp" line="59"/>
         <source> - Edit Flight Plan Position Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation> - 编辑飞行计划位置的备注</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.cpp" line="60"/>
         <source>&lt;b&gt;%1 %2 region %3&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;%1 %2 区域 %3&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.cpp" line="70"/>
         <source> - Edit Flight Plan Position</source>
-        <translation type="unfinished"></translation>
+        <translation> - 编辑飞行计划位置</translation>
     </message>
 </context>
 <context>
@@ -28157,33 +28298,33 @@ before deleting.</source>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="781"/>
         <source> - Userpoint Export Options</source>
-        <translation type="unfinished"></translation>
+        <translation> - 用户航点导出选项</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="782"/>
         <source>Select export options</source>
-        <translation type="unfinished"></translation>
+        <translation>选择导出选项</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="786"/>
         <source>&amp;Append to an already present file</source>
-        <translation type="unfinished">追加到已存在的文件(&amp;A)</translation>
+        <translation>追加到已存在的文件(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="787"/>
         <source>File header will be ignored if this is enabled.</source>
         <oldsource>File header will be ignore if this is enabled.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>如果启用此选项，文件头将被忽略。</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="792"/>
         <source>Export &amp;selected entries only</source>
-        <translation type="unfinished">只导出选中的条目(&amp;E)</translation>
+        <translation>只导出选中的条目(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="796"/>
         <source>Add a &amp;header to the first line</source>
-        <translation type="unfinished"></translation>
+        <translation>在第一行添加表头(&amp;H)</translation>
     </message>
 </context>
 <context>
@@ -28267,7 +28408,7 @@ Formats above have to be given exactly as shown in the examples.</source>
         <location filename="src/userdata/userdatadialog.ui" line="405"/>
         <source>Check to change remarks for all selected waypoints</source>
         <oldsource>Check to change description for all selected waypoints</oldsource>
-        <translation type="unfinished">选中以更改所有选中的用户航点的描述</translation>
+        <translation>选中以更改所有选中的用户航点的描述</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="336"/>
@@ -28287,7 +28428,7 @@ Formats above have to be given exactly as shown in the examples.</source>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="356"/>
         <source>&amp;Remarks:</source>
-        <translation type="unfinished">备注(&amp;R)：</translation>
+        <translation>备注(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="395"/>
@@ -28393,7 +28534,7 @@ Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
     <message>
         <location filename="src/userdata/userdatadialog.cpp" line="152"/>
         <source>Magnetic declination: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>磁偏角：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.cpp" line="275"/>
@@ -28643,7 +28784,7 @@ Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
     <message>
         <location filename="src/search/userdatasearch.cpp" line="78"/>
         <source>Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>备注</translation>
     </message>
     <message>
         <source>Description</source>
@@ -28686,17 +28827,17 @@ from File</source>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="133"/>
         <source>NOAA weather downloaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>NOAA 气象信息已下载。</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="139"/>
         <source>IVAO weather downloaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>IVAO 气象信息已下载。</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="145"/>
         <source>VATSIM weather downloaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>VATSIM 气象信息已下载。</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="554"/>
@@ -28726,7 +28867,7 @@ from File</source>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="575"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download weather information:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;尝试建立加密连接以下载气象数据时出错：&lt;/p&gt; &lt;p&gt; URL：%1 &lt;/p&gt; &lt;p&gt;错误消息：&lt;br/&gt;%2 &lt;/p&gt; &lt;p&gt;继续吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="581"/>
@@ -28737,18 +28878,18 @@ from File</source>
         <location filename="src/weather/weatherreporter.cpp" line="582"/>
         <source>Do not &amp;show this again and ignore errors in the future</source>
         <oldsource>Do not show this again and ignore errors in the future</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示此对话框并在将来忽略错误(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="597"/>
         <source>Weather download failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>气象信息下载失败。</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="604"/>
         <source>&lt;p&gt;Download of weather from&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;failed.&lt;/p&gt;&lt;p&gt;Error: %2 (%3)&lt;/p&gt;&lt;p&gt;Check your weather settings or disable weather downloads.&lt;/p&gt;&lt;p&gt;Suppressing further messages during this session.&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;Download of weather from&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;failed.&lt;/p&gt;&lt;p&gt;Error: %2 (%3)&lt;/p&gt;&lt;p&gt;Check you weather settings or disable weather downloads.&lt;/p&gt;&lt;p&gt;Suppressing further messages during this session.&lt;/p&gt;</oldsource>
-        <translation type="unfinished">&lt;p&gt;从&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;下载气象失败了。&lt;/p&gt;&lt;p&gt;错误：%2 (%3)&lt;/p&gt;&lt;p&gt;检查气象设置或者禁用气象下载。&lt;/p&gt;&lt;p&gt;此次会话将不会再显示此消息。&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;从&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;下载气象信息失败了。&lt;/p&gt;&lt;p&gt;错误是：%2 (%3)&lt;/p&gt;&lt;p&gt;检查气象设置或者禁用气象下载。&lt;/p&gt;&lt;p&gt;此次会话将不会再显示此消息。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="609"/>
@@ -28858,22 +28999,22 @@ from File</source>
     <message>
         <location filename="src/weather/windreporter.cpp" line="165"/>
         <source> Forecast from %1 to %2 UTC.</source>
-        <translation type="unfinished"></translation>
+        <translation> 从 %1 到 %2 UTC的预报.</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="176"/>
         <source>Winds aloft updated from simulator.%1</source>
-        <translation type="unfinished"></translation>
+        <translation>高空风况已从模拟器更新。%1</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="180"/>
         <source>Winds aloft downloaded from NOAA.%1</source>
-        <translation type="unfinished"></translation>
+        <translation>高空风况已从NOAA下载。%1</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="192"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download winds aloft:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;尝试建立加密连接以下载高空风况时出错：&lt;/p&gt; &lt;p&gt; URL：%1 &lt;/p&gt; &lt;p&gt;错误消息：&lt;br/&gt;%2 &lt;/p&gt; &lt;p&gt;继续吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="198"/>
@@ -28884,7 +29025,7 @@ from File</source>
         <location filename="src/weather/windreporter.cpp" line="199"/>
         <source>Do not &amp;show this again and ignore errors in the future</source>
         <oldsource>Do not show this again and ignore errors in the future</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示此对话框并在将来忽略错误(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="273"/>
