@@ -219,7 +219,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
 
   if(airport.addon() && addonHighlight)
   {
-    float radius = std::max(symsize, 6.f);
+    float radius = std::max(symsize * 0.95f, 5.f);
     painter->setBrush(mapcolors::addonAirportBackgroundColor);
     painter->setPen(QPen(mapcolors::addonAirportFrameColor));
     painter->drawEllipse(QPointF(x, y), radius, radius);

@@ -19,7 +19,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 * _Little Navmap_ cannot read SID and STAR from MSFS. Documentation about MSFS format changes are
   needed in SDK.
-* MSFS multiplayer and real-time AI cannot be displayed yet.
+* MSFS multiplayer and real-time AI cannot be displayed yet. These do not appear in the SimConnect
+  interface.
 * Simulator weather cannot be shown for MSFS since SimConnect weather functions are deprecated and
   do not deliver data. Needs update or documentation in MSFS SDK. Use NOAA weather which gives you
   the most up-to-date weather reports.
@@ -32,7 +33,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Country names are missing in MSFS translation tables and are not available in _Little Navmap_,
   therefore.
 * Add-ons using the `.fsarchive` encrypted format are not supported. _Little Navmap_ will show only
-  the stock airport and not the add-on if a package is locked down like this.
+  the stock airport instead of the add-on if a package is locked down like this.
 
 ### Other
 
@@ -75,7 +76,7 @@ Note that you can change the user interface language in the options dialog on pa
 ### Flight Plan
 
 * Corrected wrong calculation of time to next waypoint where time was not affected by wind.
-* Fixed missing aircraft information when elevation profile and preformance data cannot be
+* Fixed missing aircraft information when elevation profile and performance data cannot be
   calculated.
 * Now checking for path validity more often in multiexport dialog to catch path changes done
   outside _Little Navmap_.
@@ -110,6 +111,7 @@ Note that you can change the user interface language in the options dialog on pa
 
 ### Other
 
+* Adjusted detection of MSFS Navigraph navdata update to avoid all airports being detected as add-on.
 * Fixed parsing of the incomplete METAR date which gives only day of month. The error could result
   in reports having the wrong date one month back.
 * Fixed issue where METAR reports might not be updated in index which could result in old reports
