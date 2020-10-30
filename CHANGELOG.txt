@@ -91,8 +91,8 @@ Note that you can change the user interface language in the options dialog on pa
 
 ### Map
 
-* Fixed issue where procedure legs like arcs could disappear when zooming in.
-* Improved drawing of procedures with curves and arcs.
+* Fixed problem where procedure legs like arcs could disappear when zooming.
+* Improved drawing of procedures with curves and arcs when following in elevation profile.
 * Reduced size of VOR and NDB symbols in lower zoom levels on map.
 * Flight plan details reduced on map display.
 * Tooltips, map click and menus now working on add-on airports if all other airports are off.

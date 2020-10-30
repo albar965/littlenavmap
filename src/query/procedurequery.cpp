@@ -1383,8 +1383,6 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
         leg.interceptPos = leg.recFixPos.endpoint(nmToMeter(leg.rho), leg.recFixPos.angleDegTo(lastPos));
         leg.correctedArc = true;
       }
-      else
-        leg.correctedArc = false;
 
       leg.displayText << leg.recFixIdent + tr("/") + Unit::distNm(leg.rho, true, 20, true) + tr("/") +
         QLocale().toString(leg.theta, 'f', 0) + tr("°M");

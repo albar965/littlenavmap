@@ -302,15 +302,15 @@ struct MapProcedureLeg
         rho /* distance to recommended navaid in NM */,
         magvar /* from navaid or airport */;
 
-  bool missed, flyover, trueCourse,
-       intercept, /* Leg was modified by a previous intercept */
-       disabled, /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */
+  bool missed = false, flyover = false, trueCourse = false,
+       intercept = false, /* Leg was modified by a previous intercept */
+       disabled = false, /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */
 
-       correctedArc, /* Fix of previous leg does not match arc distance. Therefore, p1 is corrected for distance.
-                      * P1 is entry, intercept is start of arc and P2 is end of arc.
-                      * Geometry contains entry stub. */
+       correctedArc = false, /* Fix of previous leg does not match arc distance. Therefore, p1 is corrected for distance.
+                              * P1 is entry, intercept is start of arc and P2 is end of arc.
+                              * Geometry contains entry stub. */
 
-       malteseCross; /* Draw maltese cross for either FAF or FACF depending on ILS altitude restriction */
+       malteseCross = false; /* Draw Maltese cross for either FAF or FACF depending on ILS altitude restriction */
 
   bool isValid() const
   {
