@@ -83,6 +83,7 @@ Note that you can change the user interface language in the options dialog on pa
 * Auto renumbering all user flight plan positions (green rectangle) that match default pattern
   prefixed with `WP` like `WP1`, `WP2` or `WP99` now. Note that positions are already renumbered when
   loading a plan.
+* Waypoint names and positions for user created approaches now correct when exporting plan.
 * Problem with wrong active leg sequencing in some procedures solved.
 * Fixed procedure query for airports which have a different ident in sim and navdata. Procedures
   were not shown before. Example: Vanderhoof which is AU4 in some simulators vs. CAU4 in Navigraph

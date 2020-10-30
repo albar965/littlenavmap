@@ -2214,8 +2214,11 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     route.updateIndicesAndOffsets();
   }
 
+  // Remember value since type is cleared later
+  bool customApproach = route.getApproachLegs().isCustom();
+
   // Replace custom approach with user defined waypoints ==============
-  if(route.getApproachLegs().isCustom() && replaceCustomWp)
+  if(customApproach && replaceCustomWp)
     saveApproachWp = true;
 
   // First remove properties and procedure structures if needed ====================================
@@ -2361,7 +2364,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           entry.setWaypointType(atools::fs::pln::entry::USER);
 
           if((replaceCustomWp || saveApproachWp) &&
-             route.getApproachLegs().isCustom() && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
+             customApproach && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
             entry.setIdent(leg.getProcedureLeg().fixIdent);
           else
             entry.setIdent(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
@@ -2523,9 +2526,6 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
         routeLeg.getFlightplanEntry()->setFlag(atools::fs::pln::entry::TRACK, false);
         continue;
       }
-
-      if(routeLeg.getAirwayName() == "Z")
-        qDebug() << Q_FUNC_INFO;
 
       QList<map::MapAirway> airways;
       NavApp::getAirwayTrackQuery()->getAirwaysByNameAndWaypoint(airways, routeLeg.getAirwayName(), prevLeg.getIdent(),
