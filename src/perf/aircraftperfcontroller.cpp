@@ -190,7 +190,7 @@ void AircraftPerfController::loadStr(const QString& string)
 
 void AircraftPerfController::loadFile(const QString& perfFile)
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << perfFile;
 
   try
   {

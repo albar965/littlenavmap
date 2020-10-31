@@ -88,6 +88,8 @@ Note that you can change the user interface language in the options dialog on pa
 * Fixed procedure query for airports which have a different ident in sim and navdata. Procedures
   were not shown before. Example: Vanderhoof which is AU4 in some simulators vs. CAU4 in Navigraph
   where procedures are loaded from Navigraph database.
+* Fixed crash when loading LNMPLN flight plans with an empty waypoint list.
+* PLN files for FSX, P3D and MSFS now have altitude set for all waypoints.
 
 ### Map
 
