@@ -34,6 +34,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   therefore.
 * Add-ons using the `.fsarchive` encrypted format are not supported. _Little Navmap_ will show only
   the stock airport instead of the add-on if a package is locked down like this.
+* Some aircraft mods do not report correct fuel flow to work around simulator limitations. This
+  cannot be fixed in _Little Navmap_.
 
 ### Other
 
