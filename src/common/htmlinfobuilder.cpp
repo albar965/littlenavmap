@@ -3262,7 +3262,11 @@ void HtmlInfoBuilder::dateAndTime(const SimConnectUserAircraft *userAircraft, Ht
   html.row2(tr("Local Time:"),
             locale.toString(userAircraft->getLocalTime().time(), QLocale::ShortFormat) +
             tr(" ") +
-            userAircraft->getLocalTime().timeZoneAbbreviation());
+            userAircraft->getLocalTime().timeZoneAbbreviation()
+#ifdef DEBUG_INFORMATION
+            + "[" + locale.toString(userAircraft->getLocalTime(), QLocale::ShortFormat) + "]"
+#endif
+            );
 }
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
@@ -4369,7 +4373,7 @@ void HtmlInfoBuilder::routeWindText(HtmlBuilder& html, const Route& route, int i
   if(index >= 0)
   {
     // Wind text is always shown independent of barb status at route
-    if(NavApp::getWindReporter()->hasWindData() && route.hasValidProfile())
+    if(NavApp::getWindReporter()->hasOnlineWindData() && route.hasValidProfile())
     {
       const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
       if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() &&

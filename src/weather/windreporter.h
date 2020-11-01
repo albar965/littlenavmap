@@ -104,13 +104,10 @@ public:
   bool isRouteWindShown() const;
 
   /* True if wind available */
-  bool hasWindData() const;
+  bool hasOnlineWindData() const;
 
   /* true if checkbox "manual" is checked */
   bool isWindManual() const;
-
-  /* true if X-Plane or NOAA wind is enabled. */
-  bool isWindSourceEnabled() const;
 
   /* Get currently shown/selected wind bar altitude level in ft. 0. if none is selected.  */
   float getAltitude() const;
@@ -180,7 +177,7 @@ private:
   void sourceActionTriggered();
 
   /* GRIB wind data query for downloading files and monitoring files- Manual wind if for user setting. */
-  atools::grib::WindQuery *windQuery = nullptr, *windQueryManual = nullptr;
+  atools::grib::WindQuery *windQueryOnline = nullptr, *windQueryManual = nullptr;
 
   /* Toolbar button */
   QToolButton *windlevelToolButton = nullptr;

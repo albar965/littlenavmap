@@ -361,7 +361,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
   drawRouteSymbolText(visibleStartPoints, textPlacement.getStartPoints());
 
   if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) &&
-     (NavApp::getWindReporter()->hasWindData() || NavApp::getWindReporter()->isWindManual()))
+     (NavApp::getWindReporter()->hasOnlineWindData() || NavApp::getWindReporter()->isWindManual()))
     drawWindBarbs(visibleStartPoints, textPlacement.getStartPoints());
 }
 
@@ -1392,7 +1392,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   if(!preview && (leg.isSid() || leg.isStar()))
   {
     if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) &&
-       (NavApp::getWindReporter()->hasWindData() || NavApp::getWindReporter()->isWindManual()))
+       (NavApp::getWindReporter()->hasOnlineWindData() || NavApp::getWindReporter()->isWindManual()))
     {
       int routeIdx = index;
 

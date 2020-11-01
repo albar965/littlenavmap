@@ -1058,7 +1058,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
     WindReporter *windReporter = NavApp::getWindReporter();
 
-    if(!isWindManual() && windReporter->hasWindData() && std::abs(altLegs.getWindSpeedAverage()) >= 1.f)
+    if(!isWindManual() && windReporter->hasOnlineWindData() && std::abs(altLegs.getWindSpeedAverage()) >= 1.f)
     {
       // Display direction and speed if wind is not manually selected and available ====================
       windText.append(tr("%1°T, %2").
@@ -1067,7 +1067,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     }
 
     QString windType;
-    if(isWindManual() || windReporter->hasWindData())
+    if(isWindManual() || windReporter->hasOnlineWindData())
     {
       // Display manual wind - only head- or tailwind =======================
       float headWind = altLegs.getHeadWindAverage();
