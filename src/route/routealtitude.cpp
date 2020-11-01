@@ -280,7 +280,7 @@ QVector<float> RouteAltitude::getAltitudes() const
 void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanceToDest, float distanceToNext,
                                            const atools::fs::perf::AircraftPerf& perf,
                                            float aircraftFuelFlowLbs, float aircraftFuelFlowGal,
-                                           float aircraftGroundSpeed, int activeLeg) const
+                                           float aircraftGroundSpeed, int activeLegIdx) const
 {
   // otherwise estimated using aircraft fuel flow
 
@@ -288,9 +288,9 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
   bool missed = route->isActiveMissed();
 
   // Need a valid profile and valid active leg
-  if(isValidProfile() && activeLeg != map::INVALID_INDEX_VALUE)
+  if(isValidProfile() && activeLegIdx != map::INVALID_INDEX_VALUE)
   {
-    const RouteAltitudeLeg& leg = value(activeLeg);
+    const RouteAltitudeLeg& activeLeg = value(activeLegIdx);
     float fuelToDest = 0.f;
 
     // Copy values from next into destination later if flying an alternate
@@ -308,7 +308,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
         if(perf.isFuelFlowValid())
         {
           // calculate fuel and time from this leg
-          fuelToDest = leg.getFuelFromDistToDestination(distFromDeparture);
+          fuelToDest = activeLeg.getFuelFromDistToDestination(distFromDeparture);
 
           // Convert units
           if(perf.useFuelAsVolume())
@@ -324,7 +324,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
         }
 
         if(perf.isSpeedValid())
-          result.timeToDest = leg.getTimeFromDistToDestination(distFromDeparture);
+          result.timeToDest = activeLeg.getTimeFromDistToDestination(distFromDeparture);
 
         // Calculate time and fuel to TOD ===================================================
         int todIdx = getTopOfDescentLegIndex();
@@ -333,10 +333,12 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
         if(todDistanceFromDeparture >= 0.f && todDistanceFromDeparture < map::INVALID_DISTANCE_VALUE &&
            todIdx != map::INVALID_INDEX_VALUE)
         {
+          const RouteAltitudeLeg& todLeg = value(todIdx);
+
           if(perf.isFuelFlowValid())
           {
             // Calculate fuel and time from TOD to destination
-            float fuelTodToDist = value(todIdx).getFuelFromDistToDestination(todDistanceFromDeparture);
+            float fuelTodToDist = todLeg.getFuelFromDistToDestination(todDistanceFromDeparture);
 
             // Calculate fuel and time from aircraft to TOD
             float fuelToTod = fuelToDest - fuelTodToDist;
@@ -354,7 +356,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
           }
 
           if(perf.isSpeedValid())
-            result.timeToTod = result.timeToDest - leg.getTimeFromDistToDestination(todDistanceFromDeparture);
+            result.timeToTod = result.timeToDest - todLeg.getTimeFromDistToDestination(todDistanceFromDeparture);
         }
       } // if(distanceToDest > 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
     } // if(!alternate)
@@ -362,11 +364,11 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
     // Calculate time and fuel to Next waypoint ============================================
     if(distanceToNext >= 0.f && distanceToNext < map::INVALID_DISTANCE_VALUE)
     {
-      float distFromStart = leg.getDistanceFromStart() - distanceToNext;
+      float distFromStart = activeLeg.getDistanceFromStart() - distanceToNext;
 
       if(perf.isFuelFlowValid())
       {
-        float fuelToNext = leg.getFuelFromDistToEnd(distFromStart);
+        float fuelToNext = activeLeg.getFuelFromDistToEnd(distFromStart);
 
         if(perf.useFuelAsVolume())
         {
@@ -381,7 +383,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
       }
 
       if(perf.isSpeedValid())
-        result.timeToNext = leg.getTimeFromDistToEnd(distFromStart);
+        result.timeToNext = activeLeg.getTimeFromDistToEnd(distFromStart);
     } // if(distanceToNext < map::INVALID_DISTANCE_VALUE)
   } // if(isValidProfile())
 

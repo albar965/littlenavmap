@@ -3384,7 +3384,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
 
       const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
       bool ground = false;
-      float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f, totalFuel = 1000.f;
+      float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f, totalFuel = perf.getUsableFuelLbs();
 
       if(route.size() <= 2)
       {
