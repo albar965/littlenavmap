@@ -318,9 +318,9 @@ void ProfileScrollArea::routeAltitudeChanged()
 void ProfileScrollArea::updateWidgets()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  bool routeEmpty = NavApp::getRoute().getSizeWithoutAlternates() < 2;
+  bool routeValid = profileWidget->hasValidRouteForDisplay();
 
-  if(routeEmpty)
+  if(!routeValid)
   {
     // Reset zoom sliders
     ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
@@ -330,12 +330,12 @@ void ProfileScrollArea::updateWidgets()
   }
 
   // Disable scrolling and zooming
-  ui->labelProfileHorizontalSlider->setDisabled(routeEmpty);
-  ui->labelProfileVerticalSlider->setDisabled(routeEmpty);
-  ui->pushButtonProfileExpand->setDisabled(routeEmpty);
-  ui->actionProfileExpand->setDisabled(routeEmpty);
-  ui->horizontalSliderProfileZoom->setDisabled(routeEmpty);
-  ui->verticalSliderProfileZoom->setDisabled(routeEmpty);
+  ui->labelProfileHorizontalSlider->setEnabled(routeValid);
+  ui->labelProfileVerticalSlider->setEnabled(routeValid);
+  ui->pushButtonProfileExpand->setEnabled(routeValid);
+  ui->actionProfileExpand->setEnabled(routeValid);
+  ui->horizontalSliderProfileZoom->setEnabled(routeValid);
+  ui->verticalSliderProfileZoom->setEnabled(routeValid);
 }
 
 bool ProfileScrollArea::eventFilter(QObject *object, QEvent *event)
@@ -444,13 +444,17 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
 bool ProfileScrollArea::mouseDoubleClickEvent(QMouseEvent *event)
 {
   qDebug() << Q_FUNC_INFO << (event->pos() + getOffset());
+
+  if(!profileWidget->hasValidRouteForDisplay())
+    return false;
+
   emit showPosAlongFlightplan(event->pos().x() + getOffset().x(), true);
   return true;
 }
 
 bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
 {
-  if(NavApp::getRoute().getSizeWithoutAlternates() < 2)
+  if(!profileWidget->hasValidRouteForDisplay())
     return false;
 
   if(!startDragPos.isNull())

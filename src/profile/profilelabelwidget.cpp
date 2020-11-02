@@ -68,7 +68,7 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *event)
   // Fill background white
   painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
 
-  if(profileWidget->hasValidRouteForDisplay(NavApp::getRoute()))
+  if(profileWidget->hasValidRouteForDisplay())
   {
     // Calculate coordinates for local system from scroll widget
     QPoint offset = scrollArea->getOffset();

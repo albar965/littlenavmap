@@ -120,11 +120,6 @@ public:
   /* Widget coordinates for red line */
   int getMinSafeAltitudeY() const;
 
-  float getFlightplanAltFt() const
-  {
-    return flightplanAltFt;
-  }
-
   /* Widget coordinates for flight plan line */
   int getFlightplanAltY() const;
 
@@ -133,7 +128,8 @@ public:
     return maxWindowAlt;
   }
 
-  bool hasValidRouteForDisplay(const Route& route) const;
+  /* true if converted route is valid and can be shown on map. This also includes routes without valid TOC and TOD */
+  bool hasValidRouteForDisplay() const;
 
   bool hasTrackPoints() const
   {
@@ -235,12 +231,12 @@ private:
   const int TOP = 16; /* Top margin inside widget */
 
   /* Thread will start after this delay if route was changed */
-  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 1000;
-  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 200;
+  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 200;
+  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
 
   /* Thread will start after this delay if an elevation update arrives */
-  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_UPDATE_TIMEOUT_MS = 5000;
-  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 200;
+  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS = 5000;
+  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
 
   /* Do not calculate a profile for legs longer than this value */
   static Q_DECL_CONSTEXPR int ELEVATION_MAX_LEG_NM = 2000;
@@ -256,7 +252,6 @@ private:
   bool movingBackwards = false;
   ElevationLegList *legList;
 
-  RouteController *routeController = nullptr;
   JumpBack *jumpBack = nullptr;
   bool contextMenuActive = false;
 
@@ -285,7 +280,6 @@ private:
                            * from airport to runway but not missed legs */
   QPolygon landPolygon; /* Green landmass polygon */
   float minSafeAltitudeFt = 0.f, /* Red line */
-        flightplanAltFt = 0.f, /* Cruise altitude */
         maxWindowAlt = 1.f; /* Maximum altitude at top of widget */
 
   ProfileScrollArea *scrollArea = nullptr;

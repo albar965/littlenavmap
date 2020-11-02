@@ -122,8 +122,6 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   connect(scrollArea, &ProfileScrollArea::jumpBackToAircraftCancel, this, &ProfileWidget::jumpBackToAircraftCancel);
   connect(ui->actionProfileCenterAircraft, &QAction::toggled, this, &ProfileWidget::jumpBackToAircraftCancel);
 
-  routeController = NavApp::getRouteController();
-
   // Create single shot timer that will restart the thread after a delay
   updateTimer = new QTimer(this);
   updateTimer->setSingleShot(true);
@@ -174,12 +172,12 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
     return;
 
   bool updateWidget = false;
-  const Route& route = routeController->getRoute();
 
-  if(!NavApp::getRouteConst().isFlightplanEmpty())
+  // Need route with update active leg and aircraft position
+  const Route& route = NavApp::getRouteConst();
+
+  if(!route.isFlightplanEmpty())
   {
-    // if(showAircraft || showAircraftTrack)
-    // {
     simData = simulatorData;
 
     bool lastPosValid = lastSimData.getUserAircraftConst().isValid();
@@ -254,19 +252,10 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
           // Aircraft position has changed enough
           updateWidget = true;
-        }
+        } // if(!lastPosValid ...
       } // if(widgetVisible)
-    } // if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
-      // } // if((showAircraft || showAircraftTrack))
-      // else
-      // {
-    //// Neither aircraft nor track shown - update simulator data only
-    // bool valid = simData.getUserAircraftConst().isValid();
-    // simData = atools::fs::sc::SimConnectData();
-    // if(valid)
-    // updateWidget = true;
-    // }
-  }
+    } // if(aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
+  } // if(!NavApp::getRouteConst().isFlightplanEmpty())
 
   if(updateWidget)
     update();
@@ -319,8 +308,7 @@ void ProfileWidget::updateScreenCoords()
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
   minSafeAltitudeFt = calcGroundBuffer(legList->maxElevationFt);
-  flightplanAltFt = routeController->getRoute().getCruisingAltitudeFeet();
-  maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
+  maxWindowAlt = std::max(minSafeAltitudeFt, legList->route.getCruisingAltitudeFeet());
 
   if(simData.getUserAircraftConst().isValid() &&
      (showAircraft || showAircraftTrack) && !NavApp::getRouteConst().isFlightplanEmpty())
@@ -402,13 +390,14 @@ int ProfileWidget::getMinSafeAltitudeY() const
 
 int ProfileWidget::getFlightplanAltY() const
 {
-  return altitudeY(flightplanAltFt);
+  return altitudeY(legList->route.getCruisingAltitudeFeet());
 }
 
-bool ProfileWidget::hasValidRouteForDisplay(const Route& route) const
+bool ProfileWidget::hasValidRouteForDisplay() const
 {
-  return widgetVisible && !legList->elevationLegs.isEmpty() && route.getSizeWithoutAlternates() >= 2 &&
-         route.getAltitudeLegs().size() >= 2;
+  return widgetVisible && !legList->elevationLegs.isEmpty() && legList->route.getSizeWithoutAlternates() >= 2 &&
+         legList->route.getAltitudeLegs().size() >= 2 &&
+         legList->route.size() == legList->route.getAltitudeLegs().size();
 }
 
 int ProfileWidget::altitudeY(float altitudeFt) const
@@ -658,10 +647,7 @@ void ProfileWidget::calcLeftMargin()
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
   // Saved route that was used to create the geometry
-  // const Route& route =   legList->route;
-
-  // Get a copy of the active route
-  Route route = NavApp::getRoute();
+  const Route& route = legList->route;
 
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
   const OptionData& optData = OptionData::instance();
@@ -682,7 +668,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     scrollArea->updateLabelWidget();
     return;
   }
-  else if(!hasValidRouteForDisplay(route))
+  else if(!hasValidRouteForDisplay())
   {
     setFont(optData.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
@@ -773,7 +759,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     {
       // Set all points to flight plan cruise altitude if no TOD and TOC wanted
       for(QPointF& pt : geo)
-        pt.setY(flightplanAltFt);
+        pt.setY(legList->route.getCruisingAltitudeFeet());
     }
     altLegs.append(toScreen(geo));
   }
@@ -876,13 +862,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     paintIls(painter, route);
 
   // Get active route leg but ignore alternate legs
-  bool activeValid = route.isActiveValid();
+  const Route& curRoute = NavApp::getRoute();
+  bool activeValid = curRoute.isActiveValid();
 
   // Active normally start at 1 - this will consider all legs as not passed
-  int activeRouteLeg = activeValid ? std::min(route.getActiveLegIndex(), waypointX.size() - 1) : 0;
+  int activeRouteLeg =
+    activeValid ? atools::minmax(0, waypointX.size() - 1, curRoute.getActiveLegIndex()) : 0;
   int passedRouteLeg = optData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
 
-  if(route.isActiveAlternate())
+  if(curRoute.isActiveAlternate())
   {
     // Disable active leg and show all legs as passed if an alternate is enabled
     activeRouteLeg = 0;
@@ -944,7 +932,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     else
       qWarning() << Q_FUNC_INFO;
 
-    if(activeRouteLeg > 0 && activeRouteLeg < map::INVALID_INDEX_VALUE)
+    if(activeRouteLeg > 0 && activeRouteLeg < route.size())
     {
       // Draw active  ======================================================
       painter.setPen(QPen(optData.getFlightplanActiveSegmentColor(), flightplanWidth,
@@ -1141,10 +1129,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         painter.setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
         painter.setBrush(Qt::NoBrush);
 
-        int activeLegIndex = route.getActiveLegIndex();
-
         if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
-           activeLegIndex == map::INVALID_INDEX_VALUE || route.getTopOfClimbLegIndex() > activeLegIndex - 1)
+           activeRouteLeg == map::INVALID_INDEX_VALUE || route.getTopOfClimbLegIndex() > activeRouteLeg - 1)
         {
           if(tocDist > 0.2f)
           {
@@ -1166,7 +1152,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         }
 
         if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
-           activeLegIndex == map::INVALID_INDEX_VALUE || route.getTopOfDescentLegIndex() > activeLegIndex - 1)
+           activeRouteLeg == map::INVALID_INDEX_VALUE || route.getTopOfDescentLegIndex() > activeRouteLeg - 1)
         {
           if(todDist < route.getTotalDistance() - 0.2f)
           {
@@ -1216,7 +1202,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Draw user aircraft =========================================================
   if(simData.getUserAircraftConst().isValid() && showAircraft &&
-     aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE && !route.isActiveMissed() && !route.isActiveAlternate())
+     aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE && !curRoute.isActiveMissed() &&
+     !curRoute.isActiveAlternate())
   {
     float acx = distanceX(aircraftDistanceFromStart);
     float acy = altitudeY(aircraftAlt(simData.getUserAircraftConst()));
@@ -1285,7 +1272,7 @@ void ProfileWidget::elevationUpdateAvailable()
 
   // Start thread after long delay to calculate new data
   updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
-                     ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ELEVATION_CHANGE_UPDATE_TIMEOUT_MS);
+                     ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS);
 }
 
 void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
@@ -1342,7 +1329,7 @@ void ProfileWidget::updateTimeout()
   // Need a copy of the leg list before starting thread to avoid synchronization problems
   // Start the computation in background
   ElevationLegList legs;
-  legs.route = routeController->getRoute();
+  legs.route = NavApp::getRoute();
 
   // Start thread
   future = QtConcurrent::run(this, &ProfileWidget::fetchRouteElevationsThread, legs);
@@ -1435,6 +1422,10 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
   legs.elevationLegs.clear();
 
   if(legs.route.getSizeWithoutAlternates() <= 1)
+    // Return empty result
+    return ElevationLegList();
+
+  if(legs.route.getAltitudeLegs().isEmpty())
     // Return empty result
     return ElevationLegList();
 
@@ -1606,9 +1597,9 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
       indexUpperDist = 0;
   }
 
-  // Get altitude values before and after cursor and interpolate
-  float alt1 = leg.elevation.at(indexLowDist).getAltitude();
-  float alt2 = leg.elevation.at(indexUpperDist).getAltitude();
+  // Get altitude values before and after cursor and interpolate - gives 0 if index is not valid
+  float alt1 = leg.elevation.value(indexLowDist, atools::geo::EMPTY_POS).getAltitude();
+  float alt2 = leg.elevation.value(indexUpperDist, atools::geo::EMPTY_POS).getAltitude();
   groundElevation = (alt1 + alt2) / 2.f;
 
   // Calculate min altitude for this leg
@@ -1672,6 +1663,10 @@ void ProfileWidget::updateTooltip()
 
 void ProfileWidget::buildTooltip(int x, bool force)
 {
+  // Nothing to show label =========================
+  if(!hasValidRouteForDisplay())
+    return;
+
   if(!NavApp::getMainUi()->actionProfileShowTooltip->isChecked())
     return;
 
@@ -1830,8 +1825,6 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   qDebug() << Q_FUNC_INFO << globalPoint;
   contextMenuActive = true;
 
-  bool routeEmpty = NavApp::getRoute().isEmpty();
-
   // Position on the whole map widget
   QPoint mapPoint = mapFromGlobal(globalPoint);
 
@@ -1854,7 +1847,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menuPos += QPoint(3, 3);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->actionProfileShowOnMap->setEnabled(hasPosition && !routeEmpty);
+  ui->actionProfileShowOnMap->setEnabled(hasPosition && hasValidRouteForDisplay());
   ui->actionProfileDeleteAircraftTrack->setEnabled(hasTrackPoints());
 
   QMenu menu;
@@ -1906,23 +1899,23 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
 void ProfileWidget::updateLabel()
 {
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f;
-
+  const Route& curRoute = NavApp::getRoute();
   if(simData.getUserAircraftConst().isValid())
   {
-    if(routeController->getRoute().getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance))
+    if(curRoute.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance))
     {
-      if(routeController->getRoute().isActiveMissed())
+      if(curRoute.isActiveMissed())
         distToDestNm = 0.f;
 
-      if(routeController->getRoute().isActiveAlternate())
+      if(curRoute.isActiveAlternate())
         // Use distance to alternate instead of destination
         fixedLabelText = tr("<b>To Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
       else
       {
         if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
-           routeController->getRoute().getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
+           curRoute.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
         {
-          float toTod = routeController->getRoute().getTopOfDescentDistance() - distFromStartNm;
+          float toTod = curRoute.getTopOfDescentDistance() - distFromStartNm;
 
           fixedLabelText = tr("<b>To Destination: %1, to Top of Descent: %2.</b>&nbsp;&nbsp;").
                            arg(Unit::distNm(distToDestNm)).
@@ -1940,7 +1933,7 @@ void ProfileWidget::updateLabel()
     fixedLabelText.clear();
   }
 
-  NavApp::getMainUi()->labelProfileInfo->setText(fixedLabelText /* + " " + variableLabelText*/);
+  NavApp::getMainUi()->labelProfileInfo->setText(fixedLabelText);
 }
 
 /* Cursor leaves widget. Stop displaying the rubberband */
