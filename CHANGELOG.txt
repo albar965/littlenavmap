@@ -74,6 +74,7 @@ Note that you can change the user interface language in the options dialog on pa
 * Corrected parsing of coordinate format longitude/latitude (reversed order compared to usual format).
   Now swapping coordinates in this format only if no designators N, S, E and W are given. See options
   dialog on page `Units` and tooltip on coordinate format box.
+* Added `Manual Wind` menu item to weather menu which is a clone of the checkbox in the fuel report.
 
 ### Flight Plan
 
@@ -90,8 +91,9 @@ Note that you can change the user interface language in the options dialog on pa
 * Fixed procedure query for airports which have a different ident in sim and navdata. Procedures
   were not shown before. Example: Vanderhoof which is AU4 in some simulators vs. CAU4 in Navigraph
   where procedures are loaded from Navigraph database.
-* Fixed crash when loading LNMPLN flight plans with an empty waypoint list.
+* Fixed crash when loading LNMPLN flight plans with an empty waypoint list and added error message.
 * PLN files for FSX, P3D and MSFS now have altitude set for all waypoints.
+* Removed ICAO region code from MSFS export to improve loading in simulator.
 
 ### Map
 
@@ -101,6 +103,10 @@ Note that you can change the user interface language in the options dialog on pa
 * Flight plan details reduced on map display.
 * Tooltips, map click and menus now working on add-on airports if all other airports are off.
   Before some menu items like `Set as destination` where disabled although airport was visible.
+* Corrected display for manual wind. Map and tooltips now show wind based on manual setting instead
+  of a probably enabled online wind source.
+* Enabled `Set as Destination` and `Set as Departure` in map context menu again to allow round
+  trips where destination is equal to departure.
 
 ### Elevation Profile
 
@@ -112,6 +118,7 @@ Note that you can change the user interface language in the options dialog on pa
 * Tooltip in elevation profile not showing up in front of other windows anymore.
 * Set minimum size for elevation profile to avoid corrupted display.
 * Fixed issue with missing update in tooltip data after flight plan altitude change.
+* Several crashes in elevation profile and context menu fixed.
 * More improvements in profile.
 
 ### Other
@@ -128,6 +135,7 @@ Note that you can change the user interface language in the options dialog on pa
 * Fixed issue where military airports were not recognized in add-ons.
 * Limited logging for online network connections to avoid log flooding with high frequency
   connections.
+* Fixed issues where the wrong UTC time might be sent by _Little Xpconnect_ X-Plane in some cases.
 
 ================
 
