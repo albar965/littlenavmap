@@ -46,7 +46,7 @@ LogStatsDelegate::LogStatsDelegate()
 void LogStatsDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QStyleOptionViewItem opt(option);
-  // Assign aligment copy from Query struct
+  // Assign alignment copy from Query struct
   if(!align.isEmpty())
     opt.displayAlignment = align.at(index.column());
   QStyledItemDelegate::paint(painter, opt, index);

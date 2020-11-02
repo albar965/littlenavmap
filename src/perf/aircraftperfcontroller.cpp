@@ -84,8 +84,9 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
   connect(&windChangeTimer, &QTimer::timeout, this, &AircraftPerfController::windChangedDelayed);
   windChangeTimer.setSingleShot(true);
 
-  connect(ui->checkBoxAircraftPerformanceWindMan, &QCheckBox::toggled,
-          this, &AircraftPerfController::manualWindToggled);
+  connect(ui->checkBoxAircraftPerformanceWindMan, &QCheckBox::toggled, this,
+          &AircraftPerfController::manualWindToggled);
+  connect(ui->actionMapShowWindManual, &QAction::toggled, this, &AircraftPerfController::manualWindToggledAction);
 
   // Widgets are only updated if visible - update on visbility changes of dock or tabs
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &AircraftPerfController::tabVisibilityChanged);
@@ -709,14 +710,19 @@ void AircraftPerfController::updateReport()
       html.p().
       warning(tr("No Flight Plan.")).
       pEnd();
+    else if(altitudeLegs.isEmpty())
+      html.p().
+      warning(tr("Cannot calculate fuel report.")).br().
+      warning(tr("Invalid Flight Plan.")).
+      pEnd();
     else if(altitudeLegs.hasUnflyableLegs())
       html.p().
-      error(tr("Cannot calculate fuel report.")).br().br().
+      warning(tr("Cannot calculate fuel report.")).br().
       warning(tr("Flight plan has unflyable legs where head wind is larger than cruise speed.")).
       pEnd();
     else if(!altitudeLegs.isValidProfile())
       html.p().
-      error(tr("Cannot calculate fuel report.")).br().br().
+      warning(tr("Cannot calculate fuel report.")).br().
       warning(tr("The flight plan is either too short or the cruise altitude is too high.<br/>"
                  "Also check the climb and descent speeds in the aircraft performance data.")).
       pEnd();
@@ -1216,6 +1222,9 @@ void AircraftPerfController::restoreState()
                  ui->spinBoxAircraftPerformanceWindDirection,
                  ui->checkBoxAircraftPerformanceWindMan});
 
+  NavApp::getMainUi()->actionMapShowWindManual->setChecked(
+    NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->isChecked());
+
   perfHandler->setCruiseAltitude(cruiseAlt());
   perfHandler->start();
 
@@ -1311,8 +1320,21 @@ void AircraftPerfController::anchorClicked(const QUrl& url)
     atools::gui::anchorClicked(mainWindow, url);
 }
 
+void AircraftPerfController::manualWindToggledAction()
+{
+  // Let signal propagate from checkbox
+  NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->setChecked(
+    NavApp::getMainUi()->actionMapShowWindManual->isChecked());
+}
+
 void AircraftPerfController::manualWindToggled()
 {
+  // The checkbox drives the action
+  NavApp::getMainUi()->actionMapShowWindManual->blockSignals(true);
+  NavApp::getMainUi()->actionMapShowWindManual->setChecked(
+    NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->isChecked());
+  NavApp::getMainUi()->actionMapShowWindManual->blockSignals(false);
+
   updateActionStates();
   updateReport();
   updateReportCurrent();

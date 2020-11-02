@@ -480,6 +480,8 @@
      <property name="title">
       <string>&amp;Wind source</string>
      </property>
+     <addaction name="actionMapShowWindManual"/>
+     <addaction name="separator"/>
      <addaction name="actionMapShowWindDisabled"/>
      <addaction name="actionMapShowWindSimulator"/>
      <addaction name="actionMapShowWindNOAA"/>
@@ -11651,6 +11653,20 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Open the Little Navmap downloads in the browser</string>
+   </property>
+  </action>
+  <action name="actionMapShowWindManual">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Manual Wind</string>
+   </property>
+   <property name="toolTip">
+    <string>Manual wind in fuel report overrides other</string>
+   </property>
+   <property name="statusTip">
+    <string>Manual wind in fuel report overrides other</string>
    </property>
   </action>
  </widget>
