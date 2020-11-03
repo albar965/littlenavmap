@@ -12,6 +12,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   Let the program create the paths if you like to use them and move your files accordingly.
 * Update to the latest beta Navigraph navdata update for MSFS if you use it.
 * Reload the scenery library.
+* The manual was not updated yet. Neither the English nor the translated
+  version. Help buttons and links are functional but point to placeholder pages.
 
 ## Known Issues
 
