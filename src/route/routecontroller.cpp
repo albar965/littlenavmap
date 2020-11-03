@@ -4231,7 +4231,7 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
 {
   for(int row = 0; row < model->rowCount(); ++row)
   {
-    for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; ++col)
+    for(int col = 0; col < model->columnCount(); col++)
     {
       QStandardItem *item = model->item(row, col);
       if(item != nullptr)
@@ -4255,7 +4255,7 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
       QColor color = NavApp::isCurrentGuiStyleNight() ?
                      mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
 
-      for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; ++col)
+      for(int col = 0; col < model->columnCount(); col++)
       {
         QStandardItem *item = model->item(nearestLegIndex, col);
         if(item != nullptr)
@@ -4283,7 +4283,7 @@ void RouteController::updateModelHighlights()
   flightplanErrors.clear();
   trackErrors = false;
 
-  for(int row = 0; row < model->rowCount(); ++row)
+  for(int row = 0; row < model->rowCount(); row++)
   {
     const RouteLeg& leg = route.value(row);
     if(!leg.isValid())
@@ -4293,7 +4293,7 @@ void RouteController::updateModelHighlights()
       break;
     }
 
-    for(int col = 0; col < model->columnCount(); ++col)
+    for(int col = 0; col < model->columnCount(); col++)
     {
       QStandardItem *item = model->item(row, col);
       if(item != nullptr)
