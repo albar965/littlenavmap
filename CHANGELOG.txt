@@ -14,6 +14,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Reload the scenery library.
 * The manual was not updated yet. Neither the English nor the translated
   version. Help buttons and links are functional but point to placeholder pages.
+* X-Plane users: Update _Little Xpconnect_ to see time related bug fixes.
 
 ## Known Issues
 
