@@ -139,6 +139,8 @@ Note that you can change the user interface language in the options dialog on pa
 * Limited logging for online network connections to avoid log flooding with high frequency
   connections.
 * Fixed issues where the wrong UTC time might be sent by _Little Xpconnect_ X-Plane in some cases.
+* Made display of head- and tailwind consistent. Arrow down `▼` now indicates headwind and
+  arrow up `▲` indicates tailwind in all parts of the program.
 
 ================
 

@@ -1082,12 +1082,12 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
         QString windPtr;
         if(headWind >= 1.f)
         {
-          windPtr = tr("◄");
+          windPtr = tr("▼");
           windType = tr("headwind");
         }
         else if(headWind <= -1.f)
         {
-          windPtr = tr("►");
+          windPtr = tr("▲");
           windType = tr("tailwind");
         }
         windText.append(tr("%1 %2 %3").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))).arg(windType));
