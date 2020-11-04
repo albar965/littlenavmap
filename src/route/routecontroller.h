@@ -391,7 +391,7 @@ private:
                               bool fetchAirways, float altitudeFt, int fromIndex, int toIndex,
                               atools::routing::Modes mode);
 
-  void updateModelRouteTimeFuel();
+  void updateModelTimeFuelWind();
 
   /* Assign type and altitude from GUI */
   void updateFlightplanFromWidgets(atools::fs::pln::Flightplan& flightplan);
@@ -436,7 +436,7 @@ private:
   QString buildFlightplanLabel2(bool print = false) const;
 
   void updateTableHeaders();
-  void highlightNextWaypoint(int nearestLegIndex);
+  void highlightNextWaypoint(int activeLegIdx);
   void updateModelHighlights();
   void loadProceduresFromFlightplan(bool clearOldProcedureProperties);
   void loadAlternateFromFlightplan();
@@ -522,6 +522,9 @@ private:
 
   bool loadingDatabaseState = false;
   qint64 lastSimUpdate = 0;
+
+  /* Currently active leg or -1 if none */
+  int activeLegIndex = -1;
 
   /* Copy of current active aircraft updated every MIN_SIM_UPDATE_TIME_MS */
   atools::fs::sc::SimConnectUserAircraft aircraft;

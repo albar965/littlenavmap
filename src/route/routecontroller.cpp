@@ -639,7 +639,7 @@ void RouteController::aircraftPerformanceChanged()
     updateFlightplanFromWidgets();
     route.updateLegAltitudes();
 
-    updateModelRouteTimeFuel();
+    updateModelTimeFuelWind();
 
     updateModelHighlights();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
@@ -659,7 +659,7 @@ void RouteController::windUpdated()
     // Get type, speed and cruise altitude from widgets
     route.updateLegAltitudes();
 
-    updateModelRouteTimeFuel();
+    updateModelTimeFuelWind();
 
     updateModelHighlights();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
@@ -696,7 +696,7 @@ void RouteController::routeAltChangedDelayed()
   route.updateLegAltitudes();
 
   // Update performance
-  updateModelRouteTimeFuel();
+  updateModelTimeFuelWind();
   updateModelHighlights();
 
   updateWindowLabel();
@@ -2078,7 +2078,7 @@ void RouteController::visibleColumnsTriggered()
   {
     for(int col = rcol::LAST_COLUMN; col >= rcol::FIRST_COLUMN; col--)
       header->setSectionHidden(col, !dialog.isChecked(col));
-    updateModelRouteTimeFuel();
+    updateModelTimeFuelWind();
   }
 }
 
@@ -3939,7 +3939,7 @@ void RouteController::updateTableModel()
     row++;
   }
 
-  updateModelRouteTimeFuel();
+  updateModelTimeFuelWind();
 
   Flightplan& flightplan = route.getFlightplan();
 
@@ -3970,7 +3970,7 @@ void RouteController::updateTableModel()
 }
 
 /* Update travel times in table view model after speed change */
-void RouteController::updateModelRouteTimeFuel()
+void RouteController::updateModelTimeFuelWind()
 {
   using atools::fs::perf::AircraftPerf;
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
@@ -4109,9 +4109,9 @@ void RouteController::updateModelRouteTimeFuel()
         {
           QString ptr;
           if(headWind >= 1.f)
-            ptr = tr("◄");
+            ptr = tr("▼");
           else if(headWind <= -1.f)
-            ptr = tr("►");
+            ptr = tr("▲");
           txt.append(tr("%1 %2").arg(ptr).arg(Unit::speedKts(std::abs(headWind), false /* addUnit */)));
         }
         item = new QStandardItem(txt);
@@ -4192,18 +4192,18 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
       {
         int previousRouteLeg = route.getActiveLegIndexCorrected();
         route.updateActiveLegAndPos(position);
-        int routeLeg = route.getActiveLegIndexCorrected();
+        int activeLegIndex = route.getActiveLegIndexCorrected();
 
         if(!cleanupTableTimer.isActive() &&
            ((hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
             (OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))))
           cleanupTableTimer.start();
 
-        if(routeLeg != previousRouteLeg)
+        if(activeLegIndex != previousRouteLeg)
         {
           // Use corrected indexes to highlight initial fix
-          qDebug() << "new route leg" << previousRouteLeg << routeLeg;
-          highlightNextWaypoint(routeLeg);
+          qDebug() << "new route leg" << previousRouteLeg << activeLegIndex;
+          highlightNextWaypoint(activeLegIndex);
           NavApp::updateAllMaps();
         }
       }
@@ -4227,8 +4227,9 @@ void RouteController::scrollToActive()
 }
 
 /* */
-void RouteController::highlightNextWaypoint(int nearestLegIndex)
+void RouteController::highlightNextWaypoint(int activeLegIdx)
 {
+  activeLegIndex = activeLegIdx;
   for(int row = 0; row < model->rowCount(); ++row)
   {
     for(int col = 0; col < model->columnCount(); col++)
@@ -4250,14 +4251,14 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
 
   if(!route.isEmpty())
   {
-    if(nearestLegIndex >= 0 && nearestLegIndex < route.size())
+    if(activeLegIndex >= 0 && activeLegIndex < route.size())
     {
       QColor color = NavApp::isCurrentGuiStyleNight() ?
                      mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
 
       for(int col = 0; col < model->columnCount(); col++)
       {
-        QStandardItem *item = model->item(nearestLegIndex, col);
+        QStandardItem *item = model->item(activeLegIndex, col);
         if(item != nullptr)
         {
           item->setBackground(color);
@@ -4357,9 +4358,9 @@ void RouteController::updateModelHighlights()
               flightplanErrors.append(airwayErrors);
             }
           }
-          else
+          else if(row != activeLegIndex)
           {
-            // No airway or no errors
+            // No airway or no errors - leave font bold if this is the active
             QFont font = item->font();
             font.setBold(false);
             item->setFont(font);
