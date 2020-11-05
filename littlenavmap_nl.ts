@@ -24526,8 +24526,10 @@ hh:mm</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="146"/>
-        <source>Wind °M
-%speed%</source>
+        <source>Wind
+°M/%speed%</source>
+        <oldsource>Wind °M
+%speed%</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -25699,7 +25701,8 @@ create the flight plan manually.</source>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4097"/>
-        <source>%1, %2</source>
+        <source>%1 / %2</source>
+        <oldsource>%1, %2</oldsource>
         <translation type="unfinished">%1: %2</translation>
     </message>
     <message>

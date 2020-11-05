@@ -21397,7 +21397,7 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="554"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1, %2</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="617"/>
@@ -24165,8 +24165,10 @@ hh:mm</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="146"/>
-        <source>Wind °M
-%speed%</source>
+        <source>Wind
+°M/%speed%</source>
+        <oldsource>Wind °M
+%speed%</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -25271,7 +25273,8 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4097"/>
-        <source>%1, %2</source>
+        <source>%1 / %2</source>
+        <oldsource>%1, %2</oldsource>
         <translation type="unfinished">%1, %2</translation>
     </message>
     <message>

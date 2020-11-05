@@ -25177,8 +25177,10 @@ en %volume%</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="146"/>
-        <source>Wind °M
-%speed%</source>
+        <source>Wind
+°M/%speed%</source>
+        <oldsource>Wind °M
+%speed%</oldsource>
         <translation type="unfinished">Vent °M
 %speed%</translation>
     </message>
@@ -26470,8 +26472,9 @@ créer le plan de vol manuellement.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4097"/>
-        <source>%1, %2</source>
-        <translation type="unfinished">%1, %2</translation>
+        <source>%1 / %2</source>
+        <oldsource>%1, %2</oldsource>
+        <translation type="unfinished">%1 / %2</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4112"/>

@@ -143,7 +143,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("ETA\nhh:mm"),
                                  QObject::tr("Fuel Rem.\n%weight%"),
                                  QObject::tr("Fuel Rem.\n%volume%"),
-                                 QObject::tr("Wind °M\n%speed%"),
+                                 QObject::tr("Wind\n°M/%speed%"),
                                  QObject::tr("Head- or Tailwind\n%speed%"),
                                  QObject::tr("Altitude\n%alt%"),
                                  QObject::tr("Remarks")});
@@ -4094,7 +4094,7 @@ void RouteController::updateModelTimeFuelWind()
           atools::geo::windForCourse(headWind, crossWind, altLeg.getWindSpeed(),
                                      altLeg.getWindDirection(), leg.getCourseToTrue());
 
-          txt = tr("%1, %2").
+          txt = tr("%1 / %2").
                 arg(atools::geo::normalizeCourse(altLeg.getWindDirection() - leg.getMagvar()), 0, 'f', 0).
                 arg(Unit::speedKts(altLeg.getWindSpeed(), false /* addUnit */));
         }
