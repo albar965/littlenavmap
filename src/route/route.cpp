@@ -1930,11 +1930,19 @@ bool Route::canCalcSelection(int firstIndex, int lastIndex) const
   {
     int lastDeparture = getLastIndexOfDepartureProcedure();
     if(lastDeparture > 0)
-      ok &= firstIndex >= lastDeparture && proc::procedureLegFixAtEnd(value(lastDeparture).getProcedureLegType());
+      ok &=
+        // Need a fix at procedure end to calculate from end of SID
+        (firstIndex == lastDeparture && proc::procedureLegFixAtEnd(value(lastDeparture).getProcedureLegType())) ||
+        // Above procedure boundary
+        firstIndex > lastDeparture;
 
     int firstArrival = getArrivaLegsOffset();
     if(firstArrival != map::INVALID_INDEX_VALUE)
-      ok &= lastIndex <= firstArrival && proc::procedureLegFixAtStart(value(firstArrival).getProcedureLegType());
+      ok &=
+        // Need a fix at procedure start to calculate to start of approach or STAR
+        (lastIndex == firstArrival && proc::procedureLegFixAtStart(value(firstArrival).getProcedureLegType())) ||
+        // Below procedure boundary
+        lastIndex < firstArrival;
   }
 
   return ok;
