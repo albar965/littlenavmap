@@ -3,6 +3,16 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ================
 
+# Version 2.6.4.beta
+
+* Fixed MSFS flight plan export missing region codes which resulted in missing waypoints when
+  loading into MSFS.
+* Calculation for selected flight plan legs corrected. Showed `Cannot calculate flight plan between
+  selected legs.` for a correct selection.
+* Context menus now allow correct selection for departure or arrival procedures for round trips.
+
+================
+
 # Version 2.6.3.beta
 
 ## Important
