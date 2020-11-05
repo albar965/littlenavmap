@@ -322,7 +322,13 @@ void MapWidget::handleInfoClick(QPoint point)
 
   if(opts.testFlag(optsd::CLICK_AIRPORT) && opts.testFlag(optsd::CLICK_AIRPORT_PROC) &&
      mapSearchResultInfoClick.hasAirports())
-    emit showProcedures(mapSearchResultInfoClick.airports.first());
+  {
+    bool departureFilter, arrivalFilter;
+    NavApp::getRouteConst().getAirportProcedureFlags(
+      mapSearchResultInfoClick.airports.first(), -1, departureFilter, arrivalFilter);
+
+    emit showProcedures(mapSearchResultInfoClick.airports.first(), departureFilter, arrivalFilter);
+  }
 
   emit showInformation(mapSearchResultInfoClick);
 }
@@ -1687,6 +1693,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
     // Selected map object
     const map::MapBase *base = contextMenu.getSelectedBase();
+    map::MapAirport airport = base != nullptr ? base->asObj<map::MapAirport>(map::AIRPORT) : map::MapAirport();
+
+    bool departureFilter, arrivalFilter;
+    NavApp::getRouteConst().getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter);
 
     // Global position where clicked
     atools::geo::Pos pos = contextMenu.getPos();
@@ -1715,7 +1725,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else
     {
       // No pre-defined action - only type available
-      map::MapAirport airport = base != nullptr ? base->asObj<map::MapAirport>(map::AIRPORT) : map::MapAirport();
       map::MapVor vor = base != nullptr ? base->asObj<map::MapVor>(map::VOR) : map::MapVor();
       map::MapNdb ndb = base != nullptr ? base->asObj<map::MapNdb>(map::NDB) : map::MapNdb();
       map::MapWaypoint waypoint = base != nullptr ? base->asObj<map::MapWaypoint>(map::WAYPOINT) : map::MapWaypoint();
@@ -1739,7 +1748,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::PROCEDURE:
-          emit showProcedures(airport);
+          emit showProcedures(airport, departureFilter, arrivalFilter);
           break;
 
         case mc::CUSTOMPROCEDURE:

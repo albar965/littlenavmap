@@ -2017,8 +2017,13 @@ void RouteController::showProceduresMenu()
   if(index.isValid())
   {
     const RouteLeg& routeLeg = route.value(index.row());
+
     if(routeLeg.isValidWaypoint() && routeLeg.getMapObjectType() == map::AIRPORT)
-      emit showProcedures(routeLeg.getAirport());
+    {
+      bool departureFilter, arrivalFilter;
+      route.getAirportProcedureFlags(routeLeg.getAirport(), index.row(), departureFilter, arrivalFilter);
+      emit showProcedures(routeLeg.getAirport(), departureFilter, arrivalFilter);
+    }
   }
 }
 
@@ -2199,14 +2204,15 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     if(routeLeg->isValidWaypoint() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
-      bool hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(routeLeg->getAirport());
-      bool hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(routeLeg->getAirport());
-      bool airportDeparture = NavApp::getRouteConst().isAirportDeparture(routeLeg->getIdent());
-      bool airportDestination = NavApp::getRouteConst().isAirportDestination(routeLeg->getIdent());
+      bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination,
+           airportRoundTrip;
+
+      route.getAirportProcedureFlags(routeLeg->getAirport(), row, departureFilter, arrivalFilter, hasDeparture,
+                                     hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip);
 
       if(hasAnyArrival || hasDeparture)
       {
-        if(airportDeparture)
+        if(airportDeparture && !airportRoundTrip)
         {
           if(hasDeparture)
           {
@@ -2216,7 +2222,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
           else
             ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no departure procedure)"));
         }
-        else if(airportDestination)
+        else if(airportDestination && !airportRoundTrip)
         {
           if(hasAnyArrival)
           {

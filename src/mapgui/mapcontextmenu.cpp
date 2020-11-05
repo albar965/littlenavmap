@@ -514,9 +514,9 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
     {
       if(base != nullptr && base->objType == map::AIRPORT)
       {
-        bool departure = false, destination = false, arrivalProc = false, departureProc = false;
+        bool departure = false, destination = false, arrivalProc = false, departureProc = false, roundtrip = false;
         disable = false;
-        procedureFlags(base, &departure, &destination, nullptr, &arrivalProc, &departureProc);
+        procedureFlags(base, &departure, &destination, nullptr, &roundtrip, &arrivalProc, &departureProc);
         if(!arrivalProc && !departureProc)
         {
           // No procedures - disable and add remark
@@ -525,7 +525,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
         }
         else
         {
-          if(destination)
+          if(destination && !roundtrip)
           {
             if(arrivalProc)
               // Airport is destination and has approaches/STAR
@@ -537,7 +537,8 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
               disable = true;
             }
           }
-          if(departure)
+
+          if(departure && !roundtrip)
           {
             if(departureProc)
               // Airport is departure and has SID
@@ -551,7 +552,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
           }
         }
 
-        // Do our own text subsitution for the airport to use shorter name
+        // Do our own text substitution for the airport to use shorter name
         if(text.contains("%1"))
           text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
       }
@@ -597,7 +598,7 @@ void MapContextMenu::insertCustomProcedureMenu(QMenu& menu)
           disable = false;
         }
 
-        // Do our own text subsitution for the airport to use shorter name
+        // Do our own text substitution for the airport to use shorter name
         if(text.contains("%1") && base->objType == map::AIRPORT)
           text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
       }
@@ -703,7 +704,7 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
             disable = false;
         }
 
-        // Do our own text subsitution for the airport to use shorter name
+        // Do our own text substitution for the airport to use shorter name
         if(text.contains("%1"))
           text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
       }
@@ -1229,7 +1230,7 @@ QString MapContextMenu::procedureName(const map::MapBase *base) const
 }
 
 void MapContextMenu::procedureFlags(const map::MapBase *base, bool *departure, bool *destination, bool *alternate,
-                                    bool *arrivalProc, bool *departureProc) const
+                                    bool *roundtrip, bool *arrivalProc, bool *departureProc) const
 {
   if(departure != nullptr)
     *departure = false;
@@ -1237,6 +1238,8 @@ void MapContextMenu::procedureFlags(const map::MapBase *base, bool *departure, b
     *destination = false;
   if(alternate != nullptr)
     *alternate = false;
+  if(roundtrip != nullptr)
+    *roundtrip = false;
   if(arrivalProc != nullptr)
     *arrivalProc = false;
   if(departureProc != nullptr)
@@ -1252,6 +1255,8 @@ void MapContextMenu::procedureFlags(const map::MapBase *base, bool *departure, b
       *destination = NavApp::getRouteConst().isAirportDestination(airport->ident);
     if(alternate != nullptr)
       *alternate = NavApp::getRouteConst().isAirportAlternate(airport->ident);
+    if(roundtrip != nullptr)
+      *roundtrip = NavApp::getRouteConst().isAirportRoundTrip(airport->ident);
 
     if(arrivalProc != nullptr)
       *arrivalProc = NavApp::getMapQuery()->hasAnyArrivalProcedures(*airport);

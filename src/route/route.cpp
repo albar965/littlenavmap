@@ -1808,6 +1808,60 @@ bool Route::isAirportAlternate(const QString& ident) const
   return !isEmpty() && getAlternateIdents().contains(ident);
 }
 
+bool Route::isAirportRoundTrip(const QString& ident) const
+{
+  return isAirportDeparture(ident) && isAirportDestination(ident);
+}
+
+void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
+                                     bool& arrivalFilter) const
+{
+  bool hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
+  getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter, hasDeparture,
+                           hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip);
+}
+
+void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
+                                     bool& arrivalFilter, bool& hasDeparture, bool& hasAnyArrival,
+                                     bool& airportDeparture, bool& airportDestination, bool& airportRoundTrip) const
+{
+  departureFilter = arrivalFilter = hasDeparture = hasAnyArrival = airportDeparture = airportDestination =
+    airportRoundTrip = false;
+
+  if(airport.isValid())
+  {
+    hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(airport);
+    hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(airport);
+
+    if(index == -1)
+    {
+      // No index given - select state by ident
+      airportDeparture = isAirportDeparture(airport.ident);
+      airportDestination = isAirportDestination(airport.ident);
+
+      // Can be one airport entry or departure equal to dest
+      airportRoundTrip = isAirportRoundTrip(airport.ident);
+    }
+    else
+    {
+      // Use index to detect state
+      airportDeparture = index == getDepartureAirportLegIndex();
+      airportDestination = index == getDestinationAirportLegIndex();
+
+      // Is only round trip if airport matches and only one leg
+      airportRoundTrip = isAirportRoundTrip(airport.ident) && getSizeWithoutAlternates() == 1;
+    }
+
+    if(hasAnyArrival || hasDeparture)
+    {
+      if(airportDeparture && !airportRoundTrip)
+        departureFilter = hasDeparture;
+      else if(airportDestination && !airportRoundTrip)
+        arrivalFilter = hasAnyArrival;
+    }
+  }
+}
+
 int Route::getStartIndexAfterProcedure() const
 {
   if(hasAnySidProcedure())

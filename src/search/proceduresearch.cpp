@@ -246,7 +246,7 @@ void ProcedureSearch::postDatabaseLoad()
   updateHeaderLabel();
 }
 
-void ProcedureSearch::showProcedures(map::MapAirport airport)
+void ProcedureSearch::showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter)
 {
   NavApp::getMapQuery()->getAirportNavReplace(airport);
 
@@ -256,12 +256,12 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_PROC);
   treeWidget->setFocus();
 
-  if(NavApp::getRouteConst().isAirportDeparture(airport.ident))
+  if(departureFilter)
   {
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_DEPARTURE_PROCEDURES);
     ui->comboBoxProcedureRunwayFilter->setCurrentIndex(FILTER_ALL_RUNWAYS);
   }
-  else if(NavApp::getRouteConst().isAirportDestination(airport.ident))
+  else if(arrivalFilter)
   {
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ARRIVAL_PROCEDURES);
     ui->comboBoxProcedureRunwayFilter->setCurrentIndex(FILTER_ALL_RUNWAYS);
@@ -303,7 +303,15 @@ void ProcedureSearch::updateHeaderLabel()
   QString tooltip, statusTip;
   Ui::MainWindow *ui = NavApp::getMainUi();
   if(airportSim.isValid())
-    ui->labelProcedureSearch->setText("<b>" + map::airportTextShort(airportSim) + "</b><br/>" + procs + "&nbsp;");
+  {
+    atools::util::HtmlBuilder html;
+    html.b(map::airportTextShort(airportSim)).br();
+    if(currentAirportNav.procedure())
+      html.text(procs).nbsp();
+    else
+      html.text(tr("Airport has no procedure.")).nbsp();
+    ui->labelProcedureSearch->setText(html.getHtml());
+  }
   else
   {
     atools::util::HtmlBuilder html;
@@ -410,6 +418,9 @@ void ProcedureSearch::updateFilterBoxes()
     else
       qWarning() << Q_FUNC_INFO << "nothing found for airport id" << currentAirportNav.id;
   }
+
+  ui->comboBoxProcedureSearchFilter->setEnabled(currentAirportNav.isValid() && currentAirportNav.procedure());
+  ui->comboBoxProcedureRunwayFilter->setEnabled(currentAirportNav.isValid() && currentAirportNav.procedure());
 }
 
 void ProcedureSearch::fillApproachTreeWidget()

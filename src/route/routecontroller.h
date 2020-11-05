@@ -311,7 +311,7 @@ signals:
   void showInformation(map::MapResult result);
 
   /* Show approach information about the airport */
-  void showProcedures(map::MapAirport airport);
+  void showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter);
 
   /* Emitted before route calculation to stop any background tasks */
   void preRouteCalc();

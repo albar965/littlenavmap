@@ -241,7 +241,7 @@ signals:
   void moveUserpointFromMap(const map::MapUserpoint& point);
 
   /* Show approaches from context menu */
-  void showProcedures(map::MapAirport airport);
+  void showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter);
   void showProceduresCustom(map::MapAirport airport);
 
   /* Emitted when the user presses the on-screen button */

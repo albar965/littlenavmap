@@ -63,7 +63,7 @@ public:
   virtual ~ProcedureSearch() override;
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
-  void showProcedures(map::MapAirport airport);
+  void showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter);
 
   /* Save tree view state */
   virtual void saveState() override;

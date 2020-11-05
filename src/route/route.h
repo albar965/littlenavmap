@@ -183,6 +183,16 @@ public:
   bool isAirportDestination(const QString& ident) const;
   bool isAirportAlternate(const QString& ident) const;
 
+  /* true if ident is same for departure and destination */
+  bool isAirportRoundTrip(const QString& ident) const;
+
+  /* Get flight plan dependent flags for airport procedures and the given airport. Used to select procedure filter */
+  void getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
+                                bool& arrivalFilter, bool& hasDeparture, bool& hasAnyArrival,
+                                bool& airportDeparture, bool& airportDestination, bool& airportRoundTrip) const;
+  void getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
+                                bool& arrivalFilter) const;
+
   /* Get active leg or null if this is none */
   const RouteLeg *getActiveLeg() const;
 

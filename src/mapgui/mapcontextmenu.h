@@ -257,8 +257,8 @@ private:
                           bool allowNoMapObject = false, const ActionCallback& callback = nullptr);
 
   /* Insert a single action. */
-  QAction *insertAction(QMenu& menu, mc::MenuActionType actionType, const QString& text, const QString& tip, const QString& key,
-                        const QIcon& icon, const map::MapBase *base, bool submenu,
+  QAction *insertAction(QMenu& menu, mc::MenuActionType actionType, const QString& text, const QString& tip,
+                        const QString& key, const QIcon& icon, const map::MapBase *base, bool submenu,
                         bool allowNoMapObject, const ActionCallback& callback);
 
   /* Get corresponding icon for map object. Can be dynamically generated or resource depending on map object type */
@@ -272,7 +272,8 @@ private:
 
   /* Determine various route and procedure related states for the given map object */
   void procedureFlags(const map::MapBase *base, bool *departure = nullptr, bool *destination = nullptr,
-                      bool *alternate = nullptr, bool *arrivalProc = nullptr, bool *departureProc = nullptr) const;
+                      bool *alternate = nullptr, bool *roundtrip = nullptr, bool *arrivalProc = nullptr,
+                      bool *departureProc = nullptr) const;
 
   /* true if route leg can have comment edited */
   bool canEditRouteComment(const map::MapBase *base) const;

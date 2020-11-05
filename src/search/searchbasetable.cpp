@@ -982,8 +982,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowOnMapAirport->setEnabled(airport.isValid());
   ui->actionSearchShowInformationAirport->setEnabled(airport.isValid());
 
-  ui->actionRouteAirportAlternate->setEnabled(airport.isValid() &&
-                                              NavApp::getRouteConst().getSizeWithoutAlternates() > 0);
+  const Route& route = NavApp::getRouteConst();
+  ui->actionRouteAirportAlternate->setEnabled(airport.isValid() && route.getSizeWithoutAlternates() > 0);
   ui->actionMapTrafficPattern->setEnabled(navType == map::AIRPORT && !airport.noRunways());
   ui->actionMapHold->setEnabled(navType == map::VOR || navType == map::NDB || navType == map::WAYPOINT ||
                                 navType == map::USERPOINT || navType == map::AIRPORT);
@@ -993,14 +993,15 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowApproachesCustom->setEnabled(false);
   if(navType == map::AIRPORT && airport.isValid())
   {
-    bool hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(airport);
-    bool hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(airport);
-    bool airportDestination = NavApp::getRouteConst().isAirportDestination(airport.ident);
-    bool airportDeparture = NavApp::getRouteConst().isAirportDeparture(airport.ident);
+    bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination,
+         airportRoundTrip;
+
+    route.getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter, hasDeparture,
+                                   hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip);
 
     if(hasAnyArrival || hasDeparture)
     {
-      if(airportDeparture)
+      if(airportDeparture && !airportRoundTrip)
       {
         if(hasDeparture)
         {
@@ -1010,7 +1011,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
         else
           ui->actionSearchShowApproaches->setText(tr("Show procedures (airport has no departure procedure)"));
       }
-      else if(airportDestination)
+      else if(airportDestination && !airportRoundTrip)
       {
         if(hasAnyArrival)
         {
@@ -1471,7 +1472,12 @@ void SearchBaseTable::showApproaches(bool custom)
       if(custom)
         emit showProceduresCustom(airportQuery->getAirportById(id));
       else
-        emit showProcedures(airportQuery->getAirportById(id));
+      {
+        map::MapAirport airport = airportQuery->getAirportById(id);
+        bool departureFilter, arrivalFilter;
+        NavApp::getRouteConst().getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter);
+        emit showProcedures(airport, departureFilter, arrivalFilter);
+      }
     }
   }
 }
