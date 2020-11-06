@@ -44,6 +44,9 @@ namespace plnentry = atools::fs::pln::entry;
 // Maximum distance to previous waypoint - everything above will be sorted out
 const static float MAX_WAYPOINT_DISTANCE_NM = 5000.f;
 
+// Do not select alternate beyond 1000 NM
+const static float MAX_ALTERNATE_DISTANCE_NM = 1000.f;
+
 // Choose best navaid from a cluster with this distance.
 // Used to prioritize VOR and waypoints before NDB with the same name
 const static float MAX_CLOSE_NAVAIDS_DISTANCE_NM = 5.f;
@@ -122,7 +125,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   qDebug() << "items" << items;
 #endif
 
-  // Remove all unneded adornment like speed and times and also combine waypoint coordinate pairs
+  // Remove all unneeded adornment like speed and times and also combine waypoint coordinate pairs
   // Also extracts speed, altitude, SID and STAR
   float altitude;
   QStringList cleanItems = cleanItemList(items, speedKts, &altitude);
@@ -665,7 +668,9 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan,
         break;
       }
 
-      if(ap.isValid())
+      if(ap.isValid() &&
+         (airports.isEmpty() ||
+          airports.first().position.distanceMeterTo(ap.position) < atools::geo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM)))
       {
         // Found a valid airport, add and continue with previous one
         stars.append(star);
