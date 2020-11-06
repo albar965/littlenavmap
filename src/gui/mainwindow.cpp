@@ -165,6 +165,28 @@ MainWindow::MainWindow()
 
     ui->setupUi(this);
 
+#if defined(Q_OS_MACOS)
+    // Reset menu roles to no role if not manually set to avoid side effects from goofy Qt behavior on macOS
+    QList<QAction *> stack;
+    stack.append(ui->menuBar->actions());
+    while(!stack.isEmpty())
+    {
+      QAction *action = stack.takeFirst();
+      if(action->menuRole() == QAction::TextHeuristicRole)
+      {
+        qDebug() << Q_FUNC_INFO << action->text();
+        action->setMenuRole(QAction::NoRole);
+      }
+
+      QMenu *menu = action->menu();
+      if(menu != nullptr)
+      {
+        for(QAction *sub : menu->actions())
+          stack.append(sub);
+      }
+    }
+#endif
+
     // Try to avoid short popping up on startup
     ui->dockWidgetRouteCalc->hide();
     ui->labelProfileInfo->hide();

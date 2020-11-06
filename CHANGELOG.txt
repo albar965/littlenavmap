@@ -10,6 +10,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Calculation for selected flight plan legs corrected. Showed `Cannot calculate flight plan between
   selected legs.` for a correct selection.
 * Context menus now allow correct selection for departure or arrival procedures for round trips.
+* Fix for missing preferences menu on macOS which happens for some translations.
 
 ================
 
