@@ -5,12 +5,19 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 # Version 2.6.4.beta
 
-* Fixed MSFS flight plan export missing region codes which resulted in missing waypoints when
-  loading into MSFS.
-* Calculation for selected flight plan legs corrected. Showed `Cannot calculate flight plan between
-  selected legs.` for a correct selection.
-* Context menus now allow correct selection for departure or arrival procedures for round trips.
+* Added region codes again to MSFS flight plan export. Missing region codes resulted in empty
+  waypoints when loading into MSFS.
+* Calculation for selected flight plan legs corrected. Showed
+  `Cannot calculate flight plan between selected legs.` for a correct selection between procedures.
+* All context menus now allow correct selection for departure or arrival procedures for round trips
+  where departure is equal to destination.
 * Fix for missing preferences menu on macOS which happens for some translations.
+* Now excluding all alternate airports more than 1000 NM from destination from parsing in route
+  description. Problem was `KYIP METRO2 DUNKS J70 PMM KBIV` read PMM as far alternate airport
+  instead of VOR.
+* Moved menu `Airspace Sources` from view menu to `Scenery Library` -> `Airspace Libraries`.
+* Removed `Scenery Library` -> `Show Database Files` menu item since it is a duplicate of
+  `Tools` -> `Files and Directories` -> `Show Database Files` which is doing the same.
 
 ================
 
