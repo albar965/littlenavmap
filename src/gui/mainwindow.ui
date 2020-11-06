@@ -263,9 +263,19 @@
     <property name="title">
      <string>&amp;Scenery Library</string>
     </property>
-    <addaction name="actionDatabaseFiles"/>
+    <widget class="QMenu" name="menuViewAirspaceSource">
+     <property name="title">
+      <string>&amp;Airspace Libraries</string>
+     </property>
+     <addaction name="actionViewAirspaceSrcSimulator"/>
+     <addaction name="actionViewAirspaceSrcNavigraph"/>
+     <addaction name="actionViewAirspaceSrcUser"/>
+     <addaction name="actionViewAirspaceSrcOnline"/>
+    </widget>
     <addaction name="separator"/>
+    <addaction name="menuViewAirspaceSource"/>
     <addaction name="actionLoadAirspaces"/>
+    <addaction name="separator"/>
     <addaction name="actionReloadScenery"/>
    </widget>
    <widget class="QMenu" name="menuUserdata">
@@ -368,15 +378,6 @@
       <string>Wind levels</string>
      </property>
     </widget>
-    <widget class="QMenu" name="menuViewAirspaceSource">
-     <property name="title">
-      <string>Airspace &amp;Source</string>
-     </property>
-     <addaction name="actionViewAirspaceSrcSimulator"/>
-     <addaction name="actionViewAirspaceSrcNavigraph"/>
-     <addaction name="actionViewAirspaceSrcUser"/>
-     <addaction name="actionViewAirspaceSrcOnline"/>
-    </widget>
     <widget class="QMenu" name="menuViewUserFeatures">
      <property name="title">
       <string>User &amp;Features</string>
@@ -390,7 +391,6 @@
     <addaction name="menuViewNavaids"/>
     <addaction name="separator"/>
     <addaction name="menuViewAirspaces"/>
-    <addaction name="menuViewAirspaceSource"/>
     <addaction name="separator"/>
     <addaction name="menuViewUserFeatures"/>
     <addaction name="separator"/>
@@ -11855,7 +11855,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

@@ -669,10 +669,10 @@ void DatabaseManager::insertSimSwitchActions()
 
   int index = 1;
   for(atools::fs::FsPaths::SimulatorType type : sims)
-    insertSimSwitchAction(type, ui->actionDatabaseFiles, ui->menuDatabase, index++);
+    insertSimSwitchAction(type, ui->menuViewAirspaceSource->menuAction(), ui->menuDatabase, index++);
 
   if(!sims.isEmpty())
-    menuDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
+    menuDbSeparator = ui->menuDatabase->insertSeparator(ui->menuViewAirspaceSource->menuAction());
 
   if(actions.size() == 1)
     // Noting to select if there is only one option
@@ -720,8 +720,8 @@ void DatabaseManager::insertSimSwitchActions()
     navDbActionOff->setActionGroup(navDbGroup);
     navDbSubMenu->addAction(navDbActionOff);
 
-    ui->menuDatabase->insertMenu(ui->actionDatabaseFiles, navDbSubMenu);
-    menuNavDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
+    ui->menuDatabase->insertMenu(ui->menuViewAirspaceSource->menuAction(), navDbSubMenu);
+    menuNavDbSeparator = ui->menuDatabase->insertSeparator(ui->menuViewAirspaceSource->menuAction());
 
     connect(navDbActionAll, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
     connect(navDbActionBlend, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);

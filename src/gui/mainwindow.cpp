@@ -172,17 +172,20 @@ MainWindow::MainWindow()
     while(!stack.isEmpty())
     {
       QAction *action = stack.takeFirst();
+
+      // Reset role to do nothing
       if(action->menuRole() == QAction::TextHeuristicRole)
-      {
-        qDebug() << Q_FUNC_INFO << action->text();
         action->setMenuRole(QAction::NoRole);
-      }
 
       QMenu *menu = action->menu();
       if(menu != nullptr)
       {
+        // Add actions from (sub)menu
         for(QAction *sub : menu->actions())
-          stack.append(sub);
+        {
+          if(sub != nullptr)
+            stack.append(sub);
+        }
       }
     }
 #endif
