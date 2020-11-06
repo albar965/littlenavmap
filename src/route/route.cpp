@@ -1817,7 +1817,7 @@ void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, 
                                      bool& arrivalFilter) const
 {
   bool hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
-  getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter, hasDeparture,
+  getAirportProcedureFlags(airport, index, departureFilter, arrivalFilter, hasDeparture,
                            hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip);
 }
 

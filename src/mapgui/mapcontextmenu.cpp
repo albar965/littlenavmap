@@ -831,8 +831,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
         procedureFlags(base, &departure, &destination);
         if(destination)
           text.append(tr(" (is destination)"));
-
-        if(departure)
+        else if(departure)
           text.append(tr(" (is departure)"));
       }
     };
