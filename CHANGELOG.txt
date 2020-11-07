@@ -5,8 +5,65 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 # Version 2.6.4.beta
 
+## Important
+
+* _Little Navmap_ might ask again to create the recommended folder structure for files.
+  This can happen once after updating translations since the folder names depend on the selected language.
+  Let the program create the paths if you like to use them and move your files accordingly.
+* Update to the latest beta Navigraph navdata update for MSFS if you use it.
+* Reload the scenery library.
+* The manual was not updated yet. Neither the English nor the translated
+  version. Help buttons and links are functional but point to placeholder pages.
+
+## Known Issues
+
+### MSFS
+
+* _Little Navmap_ cannot read SID and STAR from MSFS. Documentation about MSFS format changes are
+  needed in SDK.
+* MSFS multiplayer and real-time AI cannot be displayed yet. These do not appear in the SimConnect
+  interface.
+* Simulator weather cannot be shown for MSFS since SimConnect weather functions are deprecated and
+  do not deliver data. Needs update or documentation in MSFS SDK. Use NOAA weather which gives you
+  the most up-to-date weather reports.
+* MSFS seems to have clear concept of scenery order (`Content.xml` seems unreliable)
+  and there is no information in the SDK about this. Add-ons are loaded by alphabetical order by
+  _Little Navmap_. To put an add-on to the end of the loading list add a `z_` to the folder name,
+  for example.
+* Flight plan loading in MSFS is flawed and does not produce any error messages if it fails. Quite
+  often MSFS cannot load its own plans correctly.
+* Country names are missing in MSFS translation tables and are not available in _Little Navmap_,
+  therefore.
+* Add-ons using the `.fsarchive` encrypted format are not supported. _Little Navmap_ will show only
+  the stock airport instead of the add-on if a package is locked down like this.
+* Some aircraft mods do not report correct fuel flow to work around simulator limitations. This
+  cannot be fixed in _Little Navmap_.
+* Some airports files like `LEMG.bgl` cannot be read due to unknown format. _Little Navmap_ reports
+  `Error: readInt for file "...OMITTED.../LEMG.bgl" failed. Reason 1`.
+  Exclude the airport file from reading in options on page `Scenery Library Database` or simply
+  ignore the message. The stock LEMG and all other airports are not affected by this.
+
+### Other
+
+* Dock window layout in _Little Navmap_ can change when resizing or maximizing window and back.
+  Qt limitation.
+* Window is restored in normal state when changing from a maximized window to fullscreen and back.
+  This is a Qt limitation.
+* The flight plan calculation might pop up shortly or the main window might flicker when starting the
+  program. This can be ignored.
+* The height of the elevation profile window cannot be reduced in some cases. Reset to default window
+  layout which fixes this. Rearrange or move the elevation profile window to another position which
+  usually solves this. Save the layout once you have a working one. This is a limitation in the used Qt library.
+* Zooming with touchpad or magic mouse does not work properly on macOS. Use the navigation overlay
+  or one of the other options on page `Map Navigation` in `Options` if you think it is unusable. This
+  is a limitation in the used Qt library.
+
+## Changes from 2.6.3.beta to 2.6.4.beta
+
 * Added region codes again to MSFS flight plan export. Missing region codes resulted in empty
   waypoints when loading into MSFS.
+* Corrected runway surface for longest runway of airports which was not determined correctly for
+  add-on airports while reading scenery library from MSFS.
 * Calculation for selected flight plan legs corrected. Showed
   `Cannot calculate flight plan between selected legs.` for a correct selection between procedures.
 * All context menus now allow correct selection for departure or arrival procedures for round trips
@@ -15,6 +72,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Now excluding all alternate airports more than 1000 NM from destination from parsing in route
   description. Problem was `KYIP METRO2 DUNKS J70 PMM KBIV` read PMM as far alternate airport
   instead of VOR.
+* Removed runway smoothness indication for all simulators except X-Plane.
 * Moved menu `Airspace Sources` from view menu to `Scenery Library` -> `Airspace Libraries`.
 * Removed `Scenery Library` -> `Show Database Files` menu item since it is a duplicate of
   `Tools` -> `Files and Directories` -> `Show Database Files` which is doing the same.
@@ -57,6 +115,11 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   the stock airport instead of the add-on if a package is locked down like this.
 * Some aircraft mods do not report correct fuel flow to work around simulator limitations. This
   cannot be fixed in _Little Navmap_.
+* Some airports files like `LEMG.bgl` cannot be read due to unknown format. _Little Navmap_ reports
+  `Error: readInt for file
+  "C:/Users/USER/AppData/Local/Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/asobo-airport-lemg-malaga/scenery/LEMG.bgl" failed. Reason 1`. Exclude the airport
+  file from reading in options on page `Scenery Library Database` or simply ignore the message. The
+  stock LEMG and all other airports are not affected by this.
 
 ### Other
 
