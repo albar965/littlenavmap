@@ -709,21 +709,25 @@ const QString& surfaceName(const QString& surface)
   return surfaceMap[surface];
 }
 
-QString smoothnessName(float smoothness)
+QString smoothnessName(QVariant smoothnessVar)
 {
   QString smoothnessStr;
-  if(smoothness >= 0.f)
+  if(!smoothnessVar.isNull())
   {
-    if(smoothness <= 0.2f)
-      smoothnessStr = QObject::tr("Very smooth");
-    else if(smoothness <= 0.4f)
-      smoothnessStr = QObject::tr("Smooth");
-    else if(smoothness <= 0.6f)
-      smoothnessStr = QObject::tr("Normal");
-    else if(smoothness <= 0.8f)
-      smoothnessStr = QObject::tr("Rough");
-    else
-      smoothnessStr = QObject::tr("Very rough");
+    float smooth = smoothnessVar.toFloat();
+    if(smooth >= 0.f)
+    {
+      if(smooth <= 0.2f)
+        smoothnessStr = QObject::tr("Very smooth");
+      else if(smooth <= 0.4f)
+        smoothnessStr = QObject::tr("Smooth");
+      else if(smooth <= 0.6f)
+        smoothnessStr = QObject::tr("Normal");
+      else if(smooth <= 0.8f)
+        smoothnessStr = QObject::tr("Rough");
+      else
+        smoothnessStr = QObject::tr("Very rough");
+    }
   }
   return smoothnessStr;
 }

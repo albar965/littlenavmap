@@ -1095,7 +1095,7 @@ QString patternDirection(const QString& type);
 
 const QString& navName(const QString& type);
 const QString& surfaceName(const QString& surface);
-QString smoothnessName(float smoothness); // X-Plane runway smoothness
+QString smoothnessName(QVariant smoothnessVar); // X-Plane runway smoothness
 const QString& parkingGateName(const QString& gate);
 const QString& parkingRampName(const QString& ramp);
 const QString& parkingTypeName(const QString& type);

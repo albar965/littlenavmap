@@ -821,7 +821,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
                   Unit::distShortFeet(rec.valueFloat("width")));
 
         html.row2If(tr("Surface:"), strJoinVal({map::surfaceName(rec.valueStr("surface")),
-                                                map::smoothnessName(rec.valueFloat("smoothness", -1.f))}));
+                                                map::smoothnessName(rec.value("smoothness",
+                                                                              QVariant(QVariant::Double)))}));
 
         if(rec.valueFloat("pattern_altitude") > 0)
           html.row2(tr("Pattern Altitude:"), Unit::altFeet(rec.valueFloat("pattern_altitude")));
