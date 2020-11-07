@@ -76,6 +76,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Moved menu `Airspace Sources` from view menu to `Scenery Library` -> `Airspace Libraries`.
 * Removed `Scenery Library` -> `Show Database Files` menu item since it is a duplicate of
   `Tools` -> `Files and Directories` -> `Show Database Files` which is doing the same.
+* Saving the LNMPLN flight plan format with multiexport now avoids showing save as dialog
+  when clicking save.
 
 ================
 

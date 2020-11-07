@@ -1309,6 +1309,11 @@ void RouteController::saveFlightplanLnmExported(const QString& filename)
   // Change name to exported filename
   routeFilename = filename;
 
+  fileDepartureIdent = route.getFlightplan().getDepartureIdent();
+  fileDestinationIdent = route.getFlightplan().getDestinationIdent();
+  fileIfrVfr = route.getFlightplan().getFlightplanType();
+  fileCruiseAlt = route.getCruisingAltitudeFeet();
+
   // Set format to original route since it is saved as LNM now
   route.getFlightplan().setLnmFormat(true);
 
