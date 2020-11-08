@@ -78,6 +78,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   `Tools` -> `Files and Directories` -> `Show Database Files` which is doing the same.
 * Saving the LNMPLN flight plan format with multiexport now avoids showing save as dialog
   when clicking save.
+* Added missing fixes (like the inaccurate scalebar) from 2.6.0.beta for map overlays to Linux versions.
 
 ================
 
