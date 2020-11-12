@@ -247,7 +247,7 @@ QString procedureLegFixStr(const MapProcedureLeg& leg)
   {
     if(fix.isEmpty())
       fix = leg.recFixIdent;
-    fix += "+" + QString::number(static_cast<int>(leg.calculatedDistance));
+    fix += "+" + QString::number(atools::roundToInt(leg.calculatedDistance));
   }
 
   QString specialType(proc::proceduresLegSecialTypeShortStr(proc::specialType(leg.arincDescrCode)));

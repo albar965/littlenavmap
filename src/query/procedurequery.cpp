@@ -820,7 +820,7 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
   // Collect leg errors to procedure error
   processLegErrors(legs);
 
-  // Check which leg is used to draw the maltesian cross
+  // Check which leg is used to draw the Maltesian cross
   processLegsFafAndFacf(legs);
 
   // qDebug() << legs;
@@ -1662,14 +1662,14 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       if(leg.fixPos.isValid())
       {
         if(leg.course > 0)
-          // Use an exteneded line from fix with the given course as geometry
+          // Use an extended line from fix with the given course as geometry
           curPos = leg.fixPos.endpoint(nmToMeter(leg.distance > 0.f ? leg.distance : 3.f),
                                        leg.legTrueCourse());
         else
           curPos = leg.fixPos;
       }
       else
-        // Use an exteneded line from last position with the given course as geometry
+        // Use an extended line from last position with the given course as geometry
         curPos = lastPos.endpoint(nmToMeter(leg.distance > 0.f ? leg.distance : 3.f), leg.legTrueCourse());
 
       // Geometry might be changed later in postProcessLegsForRoute()
@@ -1699,6 +1699,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       curPos = leg.fixPos;
       leg.displayText << tr("Manual");
     }
+
+    // Processed later: COURSE_TO_INTERCEPT
 
     if(legs.mapType & proc::PROCEDURE_DEPARTURE && i == 0)
       // First leg of a SID start at runway end
@@ -1779,7 +1781,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
             else if(result.status == ageo::BEFORE_START)
             {
               // Link directly to start of next leg
-              leg.line.setPos2(next->line.getPos2());
+              leg.line.setPos2(next->line.getPos1());
             }
             else if(result.status == ageo::AFTER_END)
             {

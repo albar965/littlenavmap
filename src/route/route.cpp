@@ -50,7 +50,7 @@ using atools::fs::pln::FlightplanEntry;
 using atools::fs::pln::Flightplan;
 
 // Disable leg activation if distance is larger
-const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 10.f;
+const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 40.f;
 
 const static RouteLeg EMPTY_ROUTELEG;
 

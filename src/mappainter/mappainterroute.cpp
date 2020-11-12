@@ -1094,15 +1094,15 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     painter->setPen(QPen(Qt::blue, 3.));
     painter->drawEllipse(line.p1(), 20, 10);
     painter->drawEllipse(line.p2(), 10, 20);
-    painter->drawText(line.x1() - 40, line.y1() + 40,
+    painter->drawText(line.x1() - 60, line.y1() + (index % 3) * 10,
                       "Start " + proc::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
 
-    painter->drawText(line.x2() - 40, line.y2() + 60,
+    painter->drawText(line.x2() - 60, line.y2() + (index % 3) * 10 + 20,
                       "End " + proc::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
     if(!intersectPoint.isNull())
     {
       painter->drawEllipse(intersectPoint, 30, 30);
-      painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20,
+      painter->drawText(intersectPoint.x() - 60, intersectPoint.y() + (index % 3) * 10 + 30,
                         proc::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
     }
 
