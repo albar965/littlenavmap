@@ -1781,7 +1781,9 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
             else if(result.status == ageo::BEFORE_START)
             {
               // Link directly to start of next leg
+              next->intercept = true;
               leg.line.setPos2(next->line.getPos1());
+              leg.displayText << tr("Intercept");
             }
             else if(result.status == ageo::AFTER_END)
             {
