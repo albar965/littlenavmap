@@ -2525,9 +2525,13 @@ void OptionsDialog::flightplanPatterLongClicked()
 
 void OptionsDialog::updateLinks()
 {
-  QString url =
-    atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline()).toString();
-  ui->labelCacheGlobePathDownload->setText(ui->labelCacheGlobePathDownload->text().arg(url));
+  // Check if text was already replaced to avoid warning
+  if(ui->labelCacheGlobePathDownload->text().contains("%1"))
+  {
+    QString url =
+      atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline()).toString();
+    ui->labelCacheGlobePathDownload->setText(ui->labelCacheGlobePathDownload->text().arg(url));
+  }
 }
 
 void OptionsDialog::updateFlightplanExample()
@@ -2677,11 +2681,15 @@ void OptionsDialog::updateFontFromData()
 
 QString OptionsDialog::rangeFloatToString(const QVector<float>& ranges) const
 {
+  QLocale locale;
+  // Do not print group separator - can cause issues if space is used
+  locale.setNumberOptions(QLocale::OmitGroupSeparator);
+
   QStringList txt;
   for(float value : ranges)
   {
     if(value >= MIN_RANGE_RING_SIZE && value <= MAX_RANGE_RING_SIZE)
-      txt.append(QLocale().toString(value, 'g', 6));
+      txt.append(locale.toString(value, 'g', 6));
   }
 
   if(txt.isEmpty())
@@ -2707,6 +2715,8 @@ QVector<float> OptionsDialog::rangeStringToFloat(const QString& rangeStr) const
 
   if(retval.isEmpty())
     retval = OptionData::MAP_RANGERINGS_DEFAULT;
+  else
+    std::sort(retval.begin(), retval.end());
 
   return retval;
 }

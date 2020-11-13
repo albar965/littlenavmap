@@ -276,7 +276,9 @@ int main(int argc, char *argv[])
       QLocale::setDefault(QLocale("en"));
     }
 
-    qDebug() << "Locale after setting to" << OptionsDialog::getLocale() << QLocale();
+    qDebug() << "Locale after setting to" << OptionsDialog::getLocale() << QLocale()
+             << "decimal point" << QString(QLocale().decimalPoint())
+             << "group separator" << QString(QLocale().groupSeparator());
 
     // Add paths here to allow translation =================================
     Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());

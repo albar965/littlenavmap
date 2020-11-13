@@ -1357,6 +1357,9 @@ userpoints and logbook entries when clicking on the map</string>
                  <property name="wordWrap">
                   <bool>true</bool>
                  </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
                  <property name="buddy">
                   <cstring>lineEditOptionsMapRangeRings</cstring>
                  </property>

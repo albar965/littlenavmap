@@ -218,7 +218,7 @@ private:
   void updateFlightplanExample();
   void updateLinks();
 
-  /* Converts range ring string to vector of integers. Falls back to 100 units single ring if nothing is valid.
+  /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
    * Uses current locale to convert numbers and check min and max. */
   QVector<float> rangeStringToFloat(const QString& rangeStr) const;
   QString rangeFloatToString(const QVector<float>& ranges) const;
