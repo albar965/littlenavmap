@@ -568,11 +568,6 @@ MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg, bool previewPar
   position = leg.line.getPos1();
 }
 
-bool MapProcedureLeg::hasInvalidRef() const
-{
-  return (!fixIdent.isEmpty() && !fixPos.isValid()) || (!recFixIdent.isEmpty() && !recFixPos.isValid());
-}
-
 bool MapProcedureLeg::hasErrorRef() const
 {
   // Check for required recommended fix - required as it is used here, not by ARINC definition
@@ -587,6 +582,11 @@ bool MapProcedureLeg::hasErrorRef() const
     return true;
 
   return false;
+}
+
+bool MapProcedureLeg::hasHardErrorRef() const
+{
+  return !line.isValid();
 }
 
 float MapProcedureLeg::legTrueCourse() const

@@ -145,6 +145,9 @@ private:
 
   void assignType(proc::MapProcedureLegs& procedure) const;
 
+  /* Check if procedure has hard errors. Fills error list if any and resets id to -1*/
+  bool procedureValid(const proc::MapProcedureLegs *legs, QStringList& errors);
+
   /* Create artificial legs, i.e. legs which are not official ones */
   proc::MapProcedureLeg createRunwayLeg(const proc::MapProcedureLeg& leg,
                                         const proc::MapProcedureLegs& legs) const;

@@ -1123,9 +1123,12 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs,
 
 void ProcedureQuery::processLegErrors(proc::MapProcedureLegs& legs) const
 {
-  legs.hasError = false;
+  legs.hasError = legs.hasHardError = false;
   for(int i = 1; i < legs.size(); i++)
+  {
     legs.hasError |= legs.at(i).hasErrorRef();
+    legs.hasHardError |= legs.at(i).hasHardErrorRef();
+  }
 }
 
 void ProcedureQuery::processLegsFixRestrictions(proc::MapProcedureLegs& legs) const
@@ -2105,7 +2108,7 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   procedure.approachDistance = distance;
   procedure.approachCustomDistance = distance;
   procedure.approachCustomAltitude = altitude;
-  procedure.gpsOverlay = procedure.hasError = procedure.circleToLand = false;
+  procedure.gpsOverlay = procedure.hasError = procedure.hasHardError = procedure.circleToLand = false;
   procedure.transitionDistance = procedure.missedDistance = 0.f;
   procedure.bounding = Rect(initialFixPos);
   procedure.bounding.extend(runwayEndSim.position);
@@ -2205,7 +2208,9 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   map::MapAirport departureNav = mapQuery->getAirportNav(departure);
   map::MapAirport destinationNav = mapQuery->getAirportNav(destination);
 
+  // Fetch ids by various (fuzzy) queries from database ==========================================================
   int sidApprId = -1, sidTransId = -1, approachId = -1, starId = -1, starTransId = -1, transitionId = -1;
+
   // Get a SID id (approach and transition) =================================================================
   // Get a SID id =================================================================
   if(properties.contains(pln::SIDAPPR))
@@ -2368,10 +2373,12 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
   }
 
+  // Fetch procedure structures by id from database  =============================================
+
   if(sidTransId != -1) // Fetch and copy SID and transition together (here from cache)
   {
     const proc::MapProcedureLegs *legs = getTransitionLegs(departureNav, sidTransId);
-    if(legs != nullptr)
+    if(procedureValid(legs, errors))
     {
       sidLegs = *legs;
       // Assign runway to the legs copy if procedure has parallel or all runway reference
@@ -2383,7 +2390,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   else if(sidApprId != -1) // Fetch and copy SID only from cache
   {
     const proc::MapProcedureLegs *legs = getApproachLegs(departureNav, sidApprId);
-    if(legs != nullptr)
+    if(procedureValid(legs, errors))
     {
       sidLegs = *legs;
       // Assign runway to the legs copy if procedure has parallel or all runway reference
@@ -2396,7 +2403,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   if(transitionId != -1) // Fetch and copy transition together with approach (here from cache)
   {
     const proc::MapProcedureLegs *legs = getTransitionLegs(destinationNav, transitionId);
-    if(legs != nullptr)
+    if(procedureValid(legs, errors))
       arrivalLegs = *legs;
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << transitionId;
@@ -2404,7 +2411,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   else if(approachId != -1 && approachId != CUSTOM_APPROACH_ID) // Fetch and copy approach only from cache
   {
     const proc::MapProcedureLegs *legs = getApproachLegs(destinationNav, approachId);
-    if(legs != nullptr)
+    if(procedureValid(legs, errors))
       arrivalLegs = *legs;
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << approachId;
@@ -2413,7 +2420,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   if(starTransId != -1)
   {
     const proc::MapProcedureLegs *legs = getTransitionLegs(destinationNav, starTransId);
-    if(legs != nullptr)
+    if(procedureValid(legs, errors))
     {
       starLegs = *legs;
       // Assign runway if procedure has parallel or all runway reference
@@ -2425,7 +2432,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   else if(starId != -1)
   {
     const proc::MapProcedureLegs *legs = getApproachLegs(destinationNav, starId);
-    if(legs != nullptr)
+    if(procedureValid(legs, errors))
     {
       starLegs = *legs;
       // Assign runway if procedure has parallel or all runway reference
@@ -2434,6 +2441,22 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << starId;
   }
+}
+
+bool ProcedureQuery::procedureValid(const proc::MapProcedureLegs *legs, QStringList& errors)
+{
+  if(legs != nullptr)
+  {
+    if(legs->hasHardError)
+      errors.append(tr("Procedure %1 %2 in scenery library has errors").
+                    arg(legs->approachType).arg(legs->approachFixIdent));
+    else
+      // Usable
+      return true;
+  }
+  else
+    errors.append(tr("Procedure not found in scenery library"));
+  return false;
 }
 
 QString ProcedureQuery::getSidAndTransition(QHash<QString, QString>& properties)

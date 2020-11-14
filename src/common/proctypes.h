@@ -317,11 +317,12 @@ struct MapProcedureLeg
     return type != INVALID_LEG_TYPE;
   }
 
-  /* Draw red if there is an error in the leg (navaid could not be resolved */
-  bool hasInvalidRef() const;
-
-  /* true if leg is unusable because a required navaid could not be resolved */
+  /* true if leg is probably unusable because a required navaid could not be resolved */
   bool hasErrorRef() const;
+
+  /* true if leg is totally unusable because a required navaid could not be resolved and it
+   * contains no valid coordinates at all */
+  bool hasHardErrorRef() const;
 
   float legTrueCourse() const;
 
@@ -458,6 +459,7 @@ struct MapProcedureLegs
 
   bool gpsOverlay,
        hasError, /* Unusable due to missing navaid */
+       hasHardError, /* Deny usage since geometry is not valid*/
        circleToLand; /* Runway is not part of procedure and was added internally */
 
   /* Anything that needs to display an ILS frequency */

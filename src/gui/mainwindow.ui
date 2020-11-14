@@ -11163,6 +11163,9 @@ Disabled if a navdatabase does not allow it.</string>
    <property name="statusTip">
     <string>Show tracks on the map</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
   </action>
   <action name="actionRouteDownloadTracks">
    <property name="checkable">

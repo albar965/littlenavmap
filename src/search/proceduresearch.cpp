@@ -137,6 +137,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   connect(ui->actionSearchProcedureInformation, &QAction::triggered, this, &ProcedureSearch::showInformationSelected);
   connect(ui->actionSearchProcedureShowOnMap, &QAction::triggered, this, &ProcedureSearch::showOnMapSelected);
   connect(ui->actionInfoApproachAttach, &QAction::triggered, this, &ProcedureSearch::approachAttachSelected);
+  connect(ui->actionInfoApproachClear, &QAction::triggered, this, &ProcedureSearch::clearSelectionTriggered);
 
   connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ProcedureSearch::itemSelectionChanged);
   connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ProcedureSearch::itemDoubleClicked);
@@ -349,13 +350,13 @@ QString ProcedureSearch::approachAndTransitionText(const QTreeWidgetItem *item)
     if(ref.hasApproachOnlyIds())
     {
       // Only approach
-      procs.append(" " + item->text(COL_DESCRIPTION) + " " + item->text(COL_IDENT));
+      procs.append(tr("%1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)));
       if(item->childCount() == 1 && ref.mapType & proc::PROCEDURE_SID)
       {
         // Special SID case that has only transition legs and only one transition
         QTreeWidgetItem *child = item->child(0);
         if(child != nullptr)
-          procs.append(" " + child->text(COL_DESCRIPTION) + " " + child->text(COL_IDENT));
+          procs.append(tr("%1 %2").arg(child->text(COL_DESCRIPTION)).arg(child->text(COL_IDENT)));
       }
     }
     else
@@ -364,9 +365,9 @@ QString ProcedureSearch::approachAndTransitionText(const QTreeWidgetItem *item)
       {
         QTreeWidgetItem *appr = item->parent();
         if(appr != nullptr)
-          procs.append(" " + appr->text(COL_DESCRIPTION) + " " + appr->text(COL_IDENT));
+          procs.append(tr("%1 %2").arg(appr->text(COL_DESCRIPTION)).arg(appr->text(COL_IDENT)));
       }
-      procs.append(" " + item->text(COL_DESCRIPTION) + " " + item->text(COL_IDENT));
+      procs.append(tr("%1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)));
     }
   }
   return procs;
@@ -984,6 +985,8 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       root->child(i)->setExpanded(true);
 #endif
   }
+  else if(action == ui->actionInfoApproachCollapseAll)
+    treeWidget->collapseAll();
   else if(action == ui->actionSearchResetView)
   {
     resetSearch();
@@ -996,36 +999,15 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       treeWidget->resizeColumnToContents(i);
     NavApp::setStatusMessage(tr("Tree view reset to defaults."));
   }
-  else if(action == ui->actionInfoApproachCollapseAll)
-    treeWidget->collapseAll();
-  else if(action == ui->actionInfoApproachClear)
-    clearSelectionTriggered();
   else if(action == ui->actionInfoApproachShow)
     showEntry(item, false /* double click*/, true /* zoom */);
-  else if(action == ui->actionInfoApproachAttach || runwayActions.contains(action))
-  {
-    if(procedureLegs != nullptr)
-    {
-      attachApproach(action->data().toString());
-      treeWidget->clearSelection();
-    }
-    else
-      qDebug() << Q_FUNC_INFO << "legs not found";
-  }
   else if(action == ui->actionSearchProcedureShowInSearch)
   {
     NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_AIRPORT);
     emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airportSim.ident), true /* select */);
   }
-  // Done by the actions themselves
-  // else if(action == ui->actionSearchProcedureInformation)
-  // showInformationSelected();
-  // else if(action == ui->actionSearchProcedureShowOnMap)
-  // emit showOnMapSelected();
 
-  // else if(action == ui->actionInfoApproachShowAppr ||
-  // action == ui->actionInfoApproachShowMissedAppr ||
-  // action == ui->actionInfoApproachShowTrans)
+  // else Other are done by the actions themselves
 }
 
 void ProcedureSearch::showInformationSelected()
@@ -1098,11 +1080,19 @@ void ProcedureSearch::attachApproach(QString runway)
         return;
     }
 
-    if(procedureLegs->hasError)
+    if(procedureLegs->hasHardError)
+    {
+      QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                           tr("Procedure has errors and cannot be added to the flight plan.\n"
+                              "This can happen due to inconsistent navdata, missing waypoints or other reasons."));
+    }
+    else if(procedureLegs->hasError)
     {
       int result = atools::gui::Dialog(mainWindow).
                    showQuestionMsgBox(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING,
                                       tr("Procedure has errors and will not display correctly.\n"
+                                         "This can happen due to inconsistent navdata, "
+                                         "missing waypoints or other reasons.\n\n"
                                          "Really use it?"),
                                       tr("Do not &show this dialog again."),
                                       QMessageBox::Yes | QMessageBox::No,
