@@ -71,6 +71,17 @@ void MapPainterMark::render()
 
   map::MapMarkTypes types = NavApp::getMapMarkHandler()->getMarkTypes();
 
+#ifdef DEBUG_INFORMATION
+  {
+    atools::util::PainterContextSaver saver(context->painter);
+    symbolPainter->textBox(context->painter, {
+      QString("Layer %1").arg(context->mapLayer->getMaxRange()),
+      QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()),
+      QString("Min runway %1").arg(context->mapLayer->getMinRunwayLength())},
+                           mapcolors::routeLogEntryOutlineColor, 0, 50, textatt::ROUTE_BG_COLOR);
+  }
+#endif
+
   paintMark();
   paintHome();
 
