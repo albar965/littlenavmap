@@ -2571,8 +2571,8 @@ void OptionsDialog::updateMapFontLabel()
     // Fall back to GUI font
     font.fromString(guiFont);
   else
-    // Fall back to system font
-    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    // Fall back to application font
+    font = QGuiApplication::font();
 
   atools::gui::fontDescription(font, ui->labelOptionsDisplayFont);
 }
@@ -2584,8 +2584,11 @@ void OptionsDialog::updateGuiFontLabel()
 
 void OptionsDialog::resetMapFontClicked()
 {
-  // Set to GUI font - no matter if this defaults to system or not
-  mapFont = guiFont;
+  // Set to GUI font and add bold - no matter if this defaults to system or not
+  QFont font(QGuiApplication::font());
+  font.setBold(true);
+  mapFont = font.toString();
+
   updateMapFontLabel();
 }
 

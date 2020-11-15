@@ -189,11 +189,6 @@ void checkAndMigrateSettings()
         settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl",
                           QString("https://metar.vatsim.net/metar.php?id=ALL"));
 
-        // Make map font a bold copy of system font
-        QFont font(QGuiApplication::font());
-        font.setBold(true);
-        settings.setValueVar(lnm::OPTIONS_DIALOG_MAP_FONT, font);
-
         // clear allow undock map?
 
         settings.syncSettings();
@@ -240,6 +235,16 @@ void checkAndMigrateSettings()
   {
     qWarning() << Q_FUNC_INFO << "No version information found in settings file. Updating to" << programVersion;
     settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
+    settings.syncSettings();
+  }
+
+  // Always correct map font if missing
+  if(!settings.contains(lnm::OPTIONS_DIALOG_MAP_FONT))
+  {
+    // Make map font a bold copy of system font if no setting present
+    QFont font(QGuiApplication::font());
+    font.setBold(true);
+    settings.setValueVar(lnm::OPTIONS_DIALOG_MAP_FONT, font);
     settings.syncSettings();
   }
 }
