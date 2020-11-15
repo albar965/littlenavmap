@@ -8879,6 +8879,9 @@ Disabled if a navdatabase does not allow it.</string>
    <property name="statusTip">
     <string>Show procedure on the map</string>
    </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
   </action>
   <action name="actionInfoApproachClear">
    <property name="icon">
@@ -11857,8 +11860,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

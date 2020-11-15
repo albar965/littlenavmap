@@ -109,7 +109,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 {
   infoQuery = NavApp::getInfoQuery();
   procedureQuery = NavApp::getProcedureQuery();
-  airportQuery = NavApp::getAirportQueryNav();
+  airportQueryNav = NavApp::getAirportQueryNav();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &ProcedureSearch::fontChanged);
@@ -124,8 +124,10 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   ui->actionSearchProcedureInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchProcedureShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchProcedureShowInSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionInfoApproachShow->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  treeWidget->addActions({ui->actionSearchProcedureSelectNothing, ui->actionInfoApproachAttach});
+  treeWidget->addActions({ui->actionSearchProcedureSelectNothing, ui->actionInfoApproachAttach,
+                          ui->actionInfoApproachShow});
 
   ui->tabProcedureSearch->addActions({ui->actionSearchProcedureInformation, ui->actionSearchProcedureShowOnMap,
                                       ui->actionSearchProcedureShowInSearch});
@@ -138,6 +140,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   connect(ui->actionSearchProcedureShowOnMap, &QAction::triggered, this, &ProcedureSearch::showOnMapSelected);
   connect(ui->actionInfoApproachAttach, &QAction::triggered, this, &ProcedureSearch::approachAttachSelected);
   connect(ui->actionInfoApproachClear, &QAction::triggered, this, &ProcedureSearch::clearSelectionTriggered);
+  connect(ui->actionInfoApproachShow, &QAction::triggered, this, &ProcedureSearch::showApproachTriggered);
 
   connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ProcedureSearch::itemSelectionChanged);
   connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ProcedureSearch::itemDoubleClicked);
@@ -247,9 +250,10 @@ void ProcedureSearch::postDatabaseLoad()
   updateHeaderLabel();
 }
 
-void ProcedureSearch::showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter)
+void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter)
 {
-  NavApp::getMapQuery()->getAirportNavReplace(airport);
+  map::MapAirport navAirport = NavApp::getMapQuery()->getAirportNav(airport);
+  currentAirportSim = airport;
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();
@@ -270,7 +274,7 @@ void ProcedureSearch::showProcedures(map::MapAirport airport, bool departureFilt
   else
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ALL_PROCEDURES);
 
-  if(currentAirportNav.isValid() && currentAirportNav.ident == airport.ident)
+  if(currentAirportNav.isValid() && currentAirportNav.ident == navAirport.ident)
     // Ignore if noting has changed - or jump out of the view mode
     return;
 
@@ -281,7 +285,7 @@ void ProcedureSearch::showProcedures(map::MapAirport airport, bool departureFilt
   if(currentAirportNav.isValid())
     recentTreeState.insert(currentAirportNav.id, saveTreeViewState());
 
-  airportQuery->getAirportByIdent(currentAirportNav, airport.ident);
+  airportQueryNav->getAirportByIdent(currentAirportNav, navAirport.ident);
 
   updateFilterBoxes();
 
@@ -295,18 +299,16 @@ void ProcedureSearch::updateHeaderLabel()
 {
   QString procs;
 
-  map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(currentAirportNav);
-
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
   for(QTreeWidgetItem *item : items)
     procs.append(approachAndTransitionText(item));
 
   QString tooltip, statusTip;
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(airportSim.isValid())
+  if(currentAirportSim.isValid())
   {
     atools::util::HtmlBuilder html;
-    html.b(map::airportTextShort(airportSim)).br();
+    html.b(map::airportTextShort(currentAirportSim)).br();
     if(currentAirportNav.procedure())
       html.text(procs).nbsp();
     else
@@ -393,7 +395,7 @@ void ProcedureSearch::updateFilterBoxes()
 
   if(currentAirportNav.isValid())
   {
-    QStringList runwayNames = airportQuery->getRunwayNames(currentAirportNav.id);
+    QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav.id);
 
     // Add a tree of transitions and approaches
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirportNav.id);
@@ -438,7 +440,7 @@ void ProcedureSearch::fillApproachTreeWidget()
 
     if(recAppVector != nullptr)
     {
-      QStringList runwayNames = airportQuery->getRunwayNames(currentAirportNav.id);
+      QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav.id);
       Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
       SqlRecordVector sorted;
@@ -590,7 +592,8 @@ void ProcedureSearch::saveState()
 
   // Save column order and width
   WidgetState(lnm::APPROACHTREE_WIDGET).save(treeWidget);
-  settings.setValue(lnm::APPROACHTREE_AIRPORT, currentAirportNav.id);
+  settings.setValue(lnm::APPROACHTREE_AIRPORT_NAV, currentAirportNav.id);
+  settings.setValue(lnm::APPROACHTREE_AIRPORT_SIM, currentAirportSim.id);
 }
 
 void ProcedureSearch::restoreState()
@@ -599,7 +602,11 @@ void ProcedureSearch::restoreState()
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
     if(NavApp::hasDataInDatabase())
-      airportQuery->getAirportById(currentAirportNav, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
+    {
+      airportQueryNav->getAirportById(currentAirportNav, settings.valueInt(lnm::APPROACHTREE_AIRPORT_NAV, -1));
+      NavApp::getAirportQuerySim()->getAirportById(currentAirportSim,
+                                                   settings.valueInt(lnm::APPROACHTREE_AIRPORT_SIM, -1));
+    }
   }
 
   updateFilterBoxes();
@@ -855,21 +862,25 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   // Save text which will be changed below
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach,
-                         ui->actionSearchProcedureInformation, ui->actionSearchProcedureShowOnMap,
-                         ui->actionSearchProcedureShowInSearch});
-  Q_UNUSED(saver);
+  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionSearchProcedureFollowSelection,
+                         ui->actionInfoApproachAttach, ui->actionInfoApproachExpandAll,
+                         ui->actionInfoApproachCollapseAll, ui->actionSearchProcedureInformation,
+                         ui->actionSearchProcedureShowOnMap, ui->actionSearchProcedureShowInSearch,
+                         ui->actionInfoApproachExpandAll, ui->actionInfoApproachCollapseAll,
+                         ui->actionSearchResetSearch, ui->actionInfoApproachClear, ui->actionSearchResetView});
 
   ActionStateSaver stateSaver({
-    ui->actionInfoApproachShow, ui->actionInfoApproachAttach, ui->actionInfoApproachExpandAll,
+    ui->actionInfoApproachShow, ui->actionSearchProcedureFollowSelection, ui->actionInfoApproachAttach,
+    ui->actionInfoApproachExpandAll, ui->actionInfoApproachCollapseAll, ui->actionSearchProcedureInformation,
+    ui->actionSearchProcedureShowOnMap, ui->actionSearchProcedureShowInSearch, ui->actionInfoApproachExpandAll,
     ui->actionInfoApproachCollapseAll, ui->actionSearchResetSearch, ui->actionInfoApproachClear,
     ui->actionSearchResetView
   });
-  Q_UNUSED(stateSaver);
 
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
 
   ui->actionInfoApproachClear->setEnabled(treeWidget->selectionModel()->hasSelection());
+  ui->actionSearchResetSearch->setEnabled(treeWidget->topLevelItemCount() > 0);
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
 
   const Route& route = NavApp::getRouteConst();
@@ -963,7 +974,9 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionInfoApproachClear);
   menu.addAction(ui->actionSearchResetView);
 
+  // Execute menu =============================================================
   QAction *action = menu.exec(menuPos);
+
   if(action == ui->actionInfoApproachExpandAll)
   {
 #ifdef DEBUG_INFORMATION
@@ -999,8 +1012,17 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       treeWidget->resizeColumnToContents(i);
     NavApp::setStatusMessage(tr("Tree view reset to defaults."));
   }
-  else if(action == ui->actionInfoApproachShow)
-    showEntry(item, false /* double click*/, true /* zoom */);
+  else if(runwayActions.contains(action))
+  {
+    // User selected a runway for SID or STAR with multiple
+    if(procedureLegs != nullptr)
+    {
+      attachApproach(action->data().toString());
+      treeWidget->clearSelection();
+    }
+    else
+      qDebug() << Q_FUNC_INFO << "legs not found";
+  }
   else if(action == ui->actionSearchProcedureShowInSearch)
   {
     NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_AIRPORT);
@@ -1038,9 +1060,9 @@ const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(ProcData& procData,
   if(item != nullptr && !itemIndex.isEmpty())
   {
     procData = itemIndex.at(item->type());
-    if(procData.procedureRef.isLeg())
+    if(procData.procedureRef.isLeg() && item->parent() != nullptr)
       // Get parent approach data if approach is a leg
-      procData = itemIndex.at(item->type());
+      procData = itemIndex.at(item->parent()->type());
 
     ref = procData.procedureRef;
     // Get transition id too if SID with only transition legs is selected
@@ -1056,20 +1078,28 @@ const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(ProcData& procData,
   return procedureLegs;
 }
 
+void ProcedureSearch::showApproachTriggered()
+{
+  if(treeWidget->selectedItems().isEmpty())
+    return;
+
+  showEntry(treeWidget->selectedItems().first(), false /* double click*/, true /* zoom */);
+}
+
 void ProcedureSearch::attachApproach(QString runway)
 {
   if(treeWidget->selectedItems().isEmpty())
     return;
 
-  QTreeWidgetItem *item = treeWidget->selectedItems().first();
   ProcData procData;
   MapProcedureRef ref;
-  const proc::MapProcedureLegs *procedureLegs = fetchProcData(procData, ref, item);
+  const proc::MapProcedureLegs *procedureLegs = fetchProcData(procData, ref, treeWidget->selectedItems().first());
 
   if(procedureLegs != nullptr)
   {
     if(!procData.sidStarRunways.isEmpty() && runway.isEmpty())
     {
+      // Approach has multiple runways - show menu to select one if this was started by a shortcut
       QMenu menu;
       menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
       QVector<QAction *> runwayActions = buildRunwaySubmenu(menu, procData, false /* only runway items */);
@@ -1077,6 +1107,7 @@ void ProcedureSearch::attachApproach(QString runway)
       if(action != nullptr)
         runway = action->data().toString();
       else
+        // Nothing selected - cancel
         return;
     }
 
@@ -1128,7 +1159,8 @@ QVector<QAction *> ProcedureSearch::buildRunwaySubmenu(QMenu& menu, const ProcDa
   QMenu *sub = nullptr;
   if(submenu)
   {
-    sub = menu.addMenu(ui->actionInfoApproachAttach->text());
+    sub = menu.addMenu(ui->actionInfoApproachAttach->text() + "\t" +
+                       ui->actionInfoApproachAttach->shortcut().toString());
     sub->setIcon(ui->actionInfoApproachAttach->icon());
     sub->setStatusTip(ui->actionInfoApproachAttach->statusTip());
   }

@@ -213,7 +213,8 @@ const QLatin1Literal SETTINGS_DATABASE("Settings/Database");
 const QLatin1Literal APPROACHTREE_WIDGET("ApproachTree/Widget");
 const QLatin1Literal APPROACHTREE_SELECTED_WIDGET("ApproachTree/WidgetSelected");
 const QLatin1Literal APPROACHTREE_STATE("ApproachTree/TreeState");
-const QLatin1Literal APPROACHTREE_AIRPORT("ApproachTree/Airport");
+const QLatin1Literal APPROACHTREE_AIRPORT_NAV("ApproachTree/AirportNav");
+const QLatin1Literal APPROACHTREE_AIRPORT_SIM("ApproachTree/AirportSim");
 const QLatin1Literal APPROACHTREE_SELECTED_APPR("ApproachTree/SeletedApproach");
 
 /* Export settings dialog */
