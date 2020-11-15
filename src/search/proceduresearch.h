@@ -79,9 +79,11 @@ public:
   virtual void postDatabaseLoad() override;
 
   /* No op overrides */
-  virtual void getSelectedMapObjects(map::MapResult& result) const override;
+  virtual void getSelectedMapObjects(map::MapResult&) const override;
   virtual void connectSearchSlots() override;
   virtual void updateUnits() override;
+
+  /* Overrides with implementation */
   virtual void updateTableSelection(bool noFollow) override;
   virtual void clearSelection() override;
   virtual bool hasSelection() const override;

@@ -239,7 +239,7 @@ void ProcedureSearch::preDatabaseLoad()
 
   itemIndex.clear();
   itemLoadedIndex.clear();
-  currentAirportNav = map::MapAirport();
+  currentAirportNav = currentAirportSim = map::MapAirport();
   recentTreeState.clear();
 }
 
@@ -253,7 +253,6 @@ void ProcedureSearch::postDatabaseLoad()
 void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter)
 {
   map::MapAirport navAirport = NavApp::getMapQuery()->getAirportNav(airport);
-  currentAirportSim = airport;
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();
@@ -280,6 +279,8 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
 
   emit procedureLegSelected(proc::MapProcedureRef());
   emit procedureSelected(proc::MapProcedureRef());
+
+  currentAirportSim = airport;
 
   // Put state on stack and update tree
   if(currentAirportNav.isValid())
@@ -587,13 +588,16 @@ void ProcedureSearch::saveState()
 
   // Use current state and update the map too
   QBitArray state = saveTreeViewState();
-  recentTreeState.insert(currentAirportNav.id, state);
+  if(currentAirportNav.isValid())
+    recentTreeState.insert(currentAirportNav.id, state);
   settings.setValueVar(lnm::APPROACHTREE_STATE, state);
 
   // Save column order and width
   WidgetState(lnm::APPROACHTREE_WIDGET).save(treeWidget);
-  settings.setValue(lnm::APPROACHTREE_AIRPORT_NAV, currentAirportNav.id);
-  settings.setValue(lnm::APPROACHTREE_AIRPORT_SIM, currentAirportSim.id);
+  if(currentAirportNav.isValid())
+    settings.setValue(lnm::APPROACHTREE_AIRPORT_NAV, currentAirportNav.id);
+  if(currentAirportSim.isValid())
+    settings.setValue(lnm::APPROACHTREE_AIRPORT_SIM, currentAirportSim.id);
 }
 
 void ProcedureSearch::restoreState()
@@ -907,19 +911,20 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
       ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
 
-      map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(currentAirportNav);
       if((route.hasValidDeparture() &&
-          route.getDepartureAirportLeg().getId() == airportSim.id && ref.mapType & proc::PROCEDURE_DEPARTURE) ||
-         (route.hasValidDestination() && route.getDestinationAirportLeg().getId() == airportSim.id &&
+          route.getDepartureAirportLeg().getId() == currentAirportSim.id && ref.mapType & proc::PROCEDURE_DEPARTURE) ||
+         (route.hasValidDestination() && route.getDestinationAirportLeg().getId() == currentAirportSim.id &&
           ref.mapType & proc::PROCEDURE_ARRIVAL_ALL))
         ui->actionInfoApproachAttach->setText(tr("&Insert %1 into Flight Plan").arg(text));
       else
       {
         if(ref.mapType & proc::PROCEDURE_ARRIVAL_ALL)
-          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Destination").arg(airportSim.ident).arg(text));
+          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Destination").
+                                                arg(currentAirportSim.ident).arg(text));
 
         else if(ref.mapType & proc::PROCEDURE_DEPARTURE)
-          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Departure").arg(airportSim.ident).arg(text));
+          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Departure").
+                                                arg(currentAirportSim.ident).arg(text));
       }
     }
   }
@@ -933,12 +938,11 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   }
 
   // Build airport context menu entries ====================================================
-  map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(currentAirportNav);
-  ui->actionSearchProcedureInformation->setEnabled(airportSim.isValid());
-  ui->actionSearchProcedureShowOnMap->setEnabled(airportSim.isValid());
-  ui->actionSearchProcedureShowInSearch->setEnabled(airportSim.isValid());
+  ui->actionSearchProcedureInformation->setEnabled(currentAirportSim.isValid());
+  ui->actionSearchProcedureShowOnMap->setEnabled(currentAirportSim.isValid());
+  ui->actionSearchProcedureShowInSearch->setEnabled(currentAirportSim.isValid());
 
-  QString airportText = airportSim.isValid() ? map::airportTextShort(airportSim) : tr("Airport");
+  QString airportText = currentAirportSim.isValid() ? map::airportTextShort(currentAirportSim) : tr("Airport");
   ui->actionSearchProcedureInformation->setText(ui->actionSearchProcedureInformation->text().arg(airportText));
   ui->actionSearchProcedureShowOnMap->setText(ui->actionSearchProcedureShowOnMap->text().arg(airportText));
   ui->actionSearchProcedureShowInSearch->setText(ui->actionSearchProcedureShowInSearch->text().arg(airportText));
@@ -1026,7 +1030,8 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   else if(action == ui->actionSearchProcedureShowInSearch)
   {
     NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_AIRPORT);
-    emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airportSim.ident), true /* select */);
+    emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident",
+                                                                    currentAirportSim.ident), true /* select */);
   }
 
   // else Other are done by the actions themselves
@@ -1035,11 +1040,10 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 void ProcedureSearch::showInformationSelected()
 {
   // ui->actionSearchProcedureInformation
-  if(currentAirportNav.isValid())
+  if(currentAirportSim.isValid())
   {
-    map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(currentAirportNav);
     map::MapResult result;
-    result.airports.append(airportSim);
+    result.airports.append(currentAirportSim);
     emit showInformation(result);
   }
 }
@@ -1047,11 +1051,8 @@ void ProcedureSearch::showInformationSelected()
 void ProcedureSearch::showOnMapSelected()
 {
   // ui->actionSearchProcedureShowOnMap
-  if(currentAirportNav.isValid())
-  {
-    map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(currentAirportNav);
-    emit showRect(airportSim.bounding, false);
-  }
+  if(currentAirportSim.isValid())
+    emit showRect(currentAirportSim.bounding, false);
 }
 
 const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(ProcData& procData, MapProcedureRef& ref,
@@ -1518,9 +1519,8 @@ void ProcedureSearch::createFonts()
   invalidLegFont.setBold(true);
 }
 
-void ProcedureSearch::getSelectedMapObjects(map::MapResult& result) const
+void ProcedureSearch::getSelectedMapObjects(map::MapResult&) const
 {
-  Q_UNUSED(result);
 }
 
 void ProcedureSearch::connectSearchSlots()
