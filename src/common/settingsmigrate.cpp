@@ -238,9 +238,18 @@ void checkAndMigrateSettings()
     settings.syncSettings();
   }
 
+  QString vatsimUrl = settings.valueStr("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl");
+  if(vatsimUrl.simplified().compare("http://metar.vatsim.net/metar.php?id=ALL", Qt::CaseInsensitive) == 0)
+  {
+    qInfo() << Q_FUNC_INFO << "Adjusting VATSIM URL from" << vatsimUrl;
+    settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl",
+                      QString("https://metar.vatsim.net/metar.php?id=ALL"));
+  }
+
   // Always correct map font if missing
   if(!settings.contains(lnm::OPTIONS_DIALOG_MAP_FONT))
   {
+    qInfo() << Q_FUNC_INFO << "Adjusting map font";
     // Make map font a bold copy of system font if no setting present
     QFont font(QGuiApplication::font());
     font.setBold(true);
