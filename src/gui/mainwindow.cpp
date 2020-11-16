@@ -3454,12 +3454,7 @@ void MainWindow::raiseFloatingWindows()
 /* Enable or disable actions related to online networks */
 void MainWindow::updateOnlineActionStates()
 {
-  if(NavApp::isOnlineNetworkActive())
-    // Show action in menu and toolbar
-    ui->actionViewAirspaceSrcOnline->setVisible(true);
-  else
-    // Hide action in menu and toolbar
-    ui->actionViewAirspaceSrcOnline->setVisible(false);
+  ui->actionViewAirspaceSrcOnline->setEnabled(NavApp::isOnlineNetworkActive());
 }
 
 /* Enable or disable actions */
