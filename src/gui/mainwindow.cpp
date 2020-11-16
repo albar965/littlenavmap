@@ -3119,6 +3119,10 @@ void MainWindow::setStatusMessage(const QString& message, bool addToLog)
   }
 
   ui->statusBar->showMessage(message);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Message" << message;
+#endif
 }
 
 void MainWindow::statusMessageChanged(const QString& text)

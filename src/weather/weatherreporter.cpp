@@ -723,26 +723,23 @@ void WeatherReporter::updateTimeouts()
   // Disable periodic downloads if feature is not needed
   optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
-  if(flags & optsw::WEATHER_INFO_NOAA ||
-     flags & optsw::WEATHER_TOOLTIP_NOAA ||
+  if(flags & optsw::WEATHER_INFO_NOAA || flags & optsw::WEATHER_TOOLTIP_NOAA ||
      airportWeatherSource == map::WEATHER_SOURCE_NOAA)
     noaaWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     noaaWeather->setUpdatePeriod(-1);
 
-  if(flags & optsw::WEATHER_INFO_IVAO ||
-     flags & optsw::WEATHER_TOOLTIP_IVAO ||
+  if(flags & optsw::WEATHER_INFO_IVAO || flags & optsw::WEATHER_TOOLTIP_IVAO ||
      airportWeatherSource == map::WEATHER_SOURCE_IVAO)
     ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     ivaoWeather->setUpdatePeriod(-1);
 
-  if(flags & optsw::WEATHER_INFO_VATSIM ||
-     flags & optsw::WEATHER_TOOLTIP_VATSIM ||
+  if(flags & optsw::WEATHER_INFO_VATSIM || flags & optsw::WEATHER_TOOLTIP_VATSIM ||
      airportWeatherSource == map::WEATHER_SOURCE_VATSIM)
-    ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
+    vatsimWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
-    ivaoWeather->setUpdatePeriod(-1);
+    vatsimWeather->setUpdatePeriod(-1);
 }
 
 void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
