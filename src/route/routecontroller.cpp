@@ -647,8 +647,7 @@ void RouteController::aircraftPerformanceChanged()
   updateWindowLabel();
 
   // Emit also for empty route to catch performance changes
-  emit routeChanged(false);
-  // emit routeChanged(true);
+  emit routeChanged(true);
 }
 
 void RouteController::windUpdated()
