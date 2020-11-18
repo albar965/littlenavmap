@@ -3975,13 +3975,26 @@ void MainWindow::printShortcuts()
   QString out;
   QTextStream stream(&out, QIODevice::WriteOnly);
   QSet<QKeySequence> keys;
+  QStringList warnings;
 
-  stream << "| Menu | Shortcut |" << endl;
-  stream << "| --- | --- |" << endl;
+  int c1 = 80, c2 = 25;
+
   for(const QAction *mainmenus : ui->menuBar->actions())
   {
     if(mainmenus->menu() != nullptr)
     {
+      QString text = mainmenus->menu()->menuAction()->text().remove("&");
+
+      stream << endl << ".. _shortcuts-main-" << text.toLower() << ":" << endl << endl;
+
+      stream << text << endl;
+      stream << QString("^").repeated(text.size()) << endl << endl;
+
+      stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+      stream << "| " << QString("Menu").leftJustified(c1 - 1)
+             << "| " << QString("Shortcut").leftJustified(c2 - 1) << "|" << endl;
+      stream << "+" << QString("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << endl;
+
       QString mainmenu = mainmenus->text().remove("&");
       for(const QAction *mainAction : mainmenus->menu()->actions())
       {
@@ -3993,10 +4006,15 @@ void MainWindow::printShortcuts()
             if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
             {
               if(keys.contains(subAction->shortcut()))
-                qWarning() << Q_FUNC_INFO << "Duplicate shortcut" << subAction->shortcut();
-              stream << "| " << mainmenu << " -> " << submenu << " -> "
-                     << subAction->text().remove("&")
-                     << " | `" << subAction->shortcut().toString() << "` |" << endl;
+                warnings.append(QString("Duplicate shortcut") + subAction->shortcut().toString());
+
+              stream << "| "
+                     << QString(mainmenu + " -> " + submenu + " -> " +
+                         subAction->text().remove("&")).leftJustified(c1 - 1)
+                     << "| "
+                     << ("``" + subAction->shortcut().toString() + "``").leftJustified(c2 - 1)
+                     << "|" << endl;
+              stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
               keys.insert(subAction->shortcut());
             }
           }
@@ -4007,10 +4025,14 @@ void MainWindow::printShortcuts()
           if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
           {
             if(keys.contains(mainAction->shortcut()))
-              qWarning() << Q_FUNC_INFO << "Duplicate shortcut" << mainAction->shortcut();
-            stream << "| " << mainmenu << " -> "
-                   << mainAction->text().remove("&")
-                   << " | `" << mainAction->shortcut().toString() << "` |" << endl;
+              warnings.append(QString("Duplicate shortcut") + mainAction->shortcut().toString());
+
+            stream << "| "
+                   << QString(mainmenu + " -> " + mainAction->text().remove("&")).leftJustified(c1 - 1)
+                   << "| "
+                   << ("``" + mainAction->shortcut().toString() + "``").leftJustified(c2 - 1)
+                   << "|" << endl;
+            stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
             keys.insert(mainAction->shortcut());
           }
         }
@@ -4018,6 +4040,9 @@ void MainWindow::printShortcuts()
     }
   }
   qDebug().nospace().noquote() << endl << out;
+
+  for(const QString& warning : warnings)
+    qWarning() << Q_FUNC_INFO << warning;
 
   qDebug() << "===============================================================================";
 }
