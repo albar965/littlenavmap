@@ -253,7 +253,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Line"), tr("Show the dashed heading line for user aircraft."), optsd::ROSE_HEADING_LINE, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Line"), tr("Show the solid track line for user aircraft."), optsd::ROSE_TRACK_LINE, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Label"), tr("Show track label for user aircraft."), optsd::ROSE_TRACK_LABEL, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Crab Angle Indicator"), tr("Show the crab angle for the user aircraft as a small magenta circle."), optsd::ROSE_CRAB_ANGLE, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Indicator"), tr("Show the heading for the user aircraft as a small magenta circle."), optsd::ROSE_CRAB_ANGLE, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"), tr("Show the course to next waypoint for the user aircraft as a small magenta line."), optsd::ROSE_NEXT_WAYPOINT, true);
 
   QTreeWidgetItem *measurement = addTopItem(root, tr("Measurement Lines"), tr("Select display options measurement lines."));
