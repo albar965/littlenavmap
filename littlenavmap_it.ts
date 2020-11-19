@@ -311,7 +311,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="711"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="966"/>
         <source>No Flight Plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun Piano di Volo.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="715"/>
@@ -488,6 +488,16 @@
         <translation>%1°T, %2</translation>
     </message>
     <message>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1085"/>
+        <source>▼</source>
+        <translation type="unfinished">▼</translation>
+    </message>
+    <message>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1090"/>
+        <source>▲</source>
+        <translation type="unfinished">▲</translation>
+    </message>
+    <message>
         <source>◄</source>
         <translation type="vanished">◄</translation>
     </message>
@@ -497,15 +507,8 @@
         <translation>vento contrario</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1085"/>
-        <source>▼</source>
-        <oldsource>►</oldsource>
-        <translation type="unfinished">▼</translation>
-    </message>
-    <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1090"/>
-        <source>▲</source>
-        <translation type="unfinished">▲</translation>
+        <source>►</source>
+        <translation type="vanished">►</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1091"/>
@@ -6053,7 +6056,7 @@ La rotta migliore verrà selezionata automaticamente.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="268"/>
         <source>&amp;Airspace Libraries</source>
-        <translation type="unfinished">&amp;Libreria dello spazio aereo</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6201"/>
@@ -22040,11 +22043,6 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
         <translation type="vanished">&lt;b&gt;Nessun Aeroporto selezionato.&lt;/b&gt;&lt;br/&gt;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="316"/>
-        <source>Airport has no procedure.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/search/proceduresearch.cpp" line="325"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu in the map or&lt;br/&gt;the airport search result table (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;and select &quot;Show Procedures&quot; for an airport.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu in the map or&lt;br/&gt;the airport search result table (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;and select &lt;i&gt;Show Procedures&lt;/i&gt; for an airport.&lt;/p&gt;</oldsource>
@@ -22054,14 +22052,6 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
         <location filename="src/search/proceduresearch.cpp" line="328"/>
         <source>Select &quot;Show Procedures&quot; for an airport to fill this list</source>
         <translation>Seleziona &quot;Mostra procedure&quot; per un aeroporto per aggiungere a questa lista</translation>
-    </message>
-    <message>
-        <location filename="src/search/proceduresearch.cpp" line="356"/>
-        <location filename="src/search/proceduresearch.cpp" line="362"/>
-        <location filename="src/search/proceduresearch.cpp" line="371"/>
-        <location filename="src/search/proceduresearch.cpp" line="373"/>
-        <source>%1 %2</source>
-        <translation type="unfinished">%1 %2</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="918"/>
@@ -22099,6 +22089,19 @@ Questo processo verrà eseguito in background e può richiedere un po &apos;di t
 Really use it?</source>
         <translation type="vanished">La procedura contiene errori e non si visualizzerà correttamente.
 Usare veramente?</translation>
+    </message>
+    <message>
+        <location filename="src/search/proceduresearch.cpp" line="316"/>
+        <source>Airport has no procedure.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/search/proceduresearch.cpp" line="356"/>
+        <location filename="src/search/proceduresearch.cpp" line="362"/>
+        <location filename="src/search/proceduresearch.cpp" line="371"/>
+        <location filename="src/search/proceduresearch.cpp" line="373"/>
+        <source>%1 %2</source>
+        <translation type="unfinished">%1 %2</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1118"/>
@@ -26333,22 +26336,16 @@ crea il piano di volo manualmente.</translation>
         <translation>LOC</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4107"/>
-        <source>%1 / %2</source>
-        <oldsource>%1, %2</oldsource>
-        <translation type="unfinished">%1 / %2</translation>
+        <source>%1, %2</source>
+        <translation type="vanished">%1, %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4122"/>
-        <source>▼</source>
-        <oldsource>◄</oldsource>
-        <translation type="unfinished">▼</translation>
+        <source>◄</source>
+        <translation type="vanished">◄</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4124"/>
-        <source>▲</source>
-        <oldsource>►</oldsource>
-        <translation type="unfinished">▲</translation>
+        <source>►</source>
+        <translation type="vanished">►</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4125"/>
@@ -26566,6 +26563,21 @@ to select departure and destination.</oldsource>
         <translation>
 
 </translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4107"/>
+        <source>%1 / %2</source>
+        <translation type="unfinished">%1 / %2</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4122"/>
+        <source>▼</source>
+        <translation type="unfinished">▼</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="4124"/>
+        <source>▲</source>
+        <translation type="unfinished">▲</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4857"/>
@@ -29512,7 +29524,11 @@ Examples: &quot;WP1&quot;, &quot;WP2&quot; or &quot;WP10&quot;.</source>
 A short all upper case ident without spaces is recommended.
 
 Idents starting with &quot;WP&quot; followed by a number are automatically renamed to reflect flying order.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>Identificazione richiesta del puntorotta.
+Si consiglia un nome breve tutto maiuscolo senza spazi.
+
+Gli ID che iniziano con &quot;WP&quot; seguito da un numero vengono automaticamente rinominati per riflettere l&apos;ordine di volo.
+Esempi: &quot;WP1&quot;, &quot;WP2&quot; o &quot;WP10&quot;.</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="158"/>
