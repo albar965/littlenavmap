@@ -1155,11 +1155,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   // Localizer information ==================================================
   float hdgTrue = ilsRec->valueFloat("loc_heading");
 
-  if(ilsRec->isNull("loc_width"))
-    html.row2(prefix + tr("Localizer Heading:"), courseTextFromTrue(hdgTrue, ilsMagvar), ahtml::NO_ENTITIES);
-  else
-    html.row2(prefix + tr("Localizer Heading and Width:"), courseTextFromTrue(hdgTrue, ilsMagvar) +
-              tr(", ") + locale.toString(ilsRec->valueFloat("loc_width"), 'f', 1) + tr("°"), ahtml::NO_ENTITIES);
+  html.row2(prefix + tr("Localizer Heading:"), courseTextFromTrue(hdgTrue, ilsMagvar), ahtml::NO_ENTITIES);
 
   // Check for offset localizer ==================================================
   map::MapRunwayEnd end;
