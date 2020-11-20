@@ -659,10 +659,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         if(!context.isObjectOverflow())
           mapPainterAirspace->render();
 
-        if(context.mapLayerEffective->isAirportDiagram())
+        if(context.mapLayer->isAirportDiagram())
         {
           // Put ILS below and navaids on top of airport diagram
-          mapPainterIls->render();
+          if(!context.isObjectOverflow())
+            mapPainterIls->render();
 
           if(!context.isObjectOverflow())
             mapPainterAirport->render();
@@ -690,7 +691,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       if(!context.isObjectOverflow())
         mapPainterWind->render();
 
-      // if(!context.isOverflow()) always paint route even if number of objets is too large
+      // if(!context.isOverflow()) always paint route even if number of objects is too large
       mapPainterRoute->render();
 
       if(!context.isObjectOverflow())

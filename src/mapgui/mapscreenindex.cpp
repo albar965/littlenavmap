@@ -167,10 +167,11 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
   // First get geometry from highlights
   updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, true);
 
-  if(!paintLayer->getMapLayer()->isAirspace() || !paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
+  if(paintLayer->getMapLayerEffective()->isAirportDiagram())
+    // Airspace appearance is independent of detail settings
     return;
 
-  if(paintLayer->getMapLayerEffective()->isAirportDiagram())
+  if(!paintLayer->getMapLayer()->isAirspace() || !paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
     return;
 
   // Do not put into index if nothing is drawn
@@ -494,7 +495,6 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
 
   CoordinateConverter conv(mapPaintWidget->viewport());
   const MapLayer *mapLayer = paintLayer->getMapLayer();
-  const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
 
   map::MapTypes shown = paintLayer->getShownMapObjects();
   map::MapObjectDisplayTypes shownDisplay = paintLayer->getShownMapObjectDisplayTypes();
@@ -597,11 +597,12 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
 
   // Get objects from cache - already present objects will be skipped
   // Airway included to fetch waypoints
-  mapQuery->getNearestScreenObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram() &&
+  mapQuery->getNearestScreenObjects(conv, mapLayer, mapLayer->isAirportDiagram() &&
                                     OptionData::instance().getDisplayOptionsAirport().
                                     testFlag(optsd::ITEM_AIRPORT_DETAIL_PARKING),
-                                    shown & (map::AIRPORT_ALL_ADDON | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
-                                             map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK),
+                                    shown &
+                                    (map::AIRPORT_ALL_ADDON | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
+                                     map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK),
                                     xs, ys, maxDistance, result);
 
   // Update all incomplete objects, especially from search
