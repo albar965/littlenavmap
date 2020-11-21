@@ -497,8 +497,7 @@ QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent
 
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
                                        bool airportDiagram, map::MapTypes types,
-                                       int xs, int ys, int screenDistance,
-                                       map::MapResult& result)
+                                       int xs, int ys, int screenDistance, map::MapResult& result)
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;

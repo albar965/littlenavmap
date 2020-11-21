@@ -129,10 +129,10 @@ void LogdataController::getFlightStatsAirports(int& numDepartAirports, int& numD
   manager->getFlightStatsAirports(numDepartAirports, numDestAirports);
 }
 
-void LogdataController::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim,
-                                               float& timeAverageSim)
+void LogdataController::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeTotal,
+                                               float& timeMaximumSim, float& timeAverageSim, float& timeTotalSim)
 {
-  manager->getFlightStatsTripTime(timeMaximum, timeAverage, timeMaximumSim, timeAverageSim);
+  manager->getFlightStatsTripTime(timeMaximum, timeAverage, timeTotal, timeMaximumSim, timeAverageSim, timeTotalSim);
 }
 
 void LogdataController::getFlightStatsAircraft(int& numTypes, int& numRegistrations, int& numNames, int& numSimulators)

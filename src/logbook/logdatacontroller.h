@@ -112,7 +112,8 @@ public:
   void getFlightStatsDistance(float& distTotal, float& distMax, float& distAverage);
 
   /* Trip Time in hours */
-  void getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim, float& timeAverageSim);
+  void getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeTotal, float& timeMaximumSim,
+                              float& timeAverageSim, float& timeTotalSim);
 
   /* Various numbers */
   void getFlightStatsAirports(int& numDepartAirports, int& numDestAirports);

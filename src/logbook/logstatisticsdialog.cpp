@@ -274,22 +274,23 @@ void LogStatisticsDialog::updateStatisticsText()
   atools::util::html::Flags right = atools::util::html::ALIGN_RIGHT;
 
   // ======================================================
-  html.p(tr("Departure Times"), header);
-  QDateTime earliest, latest, earliestSim, latestSim;
-  logdataController->getFlightStatsTime(earliest, latest, earliestSim, latestSim);
+  float timeMaximum, timeAverage, timeTotal, timeMaximumSim, timeAverageSim, timeTotalSim;
+  logdataController->getFlightStatsTripTime(timeMaximum, timeAverage, timeTotal,
+                                            timeMaximumSim, timeAverageSim, timeTotalSim);
+
+  // Workaround to avoid translation changes
+  html.p(tr("Flight Time Real"), header);
   html.table();
-  html.row2If(tr("Earliest:"), tr("%1 %2").
-              arg(locale.toString(earliest, QLocale::ShortFormat)).
-              arg(earliest.timeZoneAbbreviation()), right);
-  html.row2If(tr("Earliest in Simulator:"), tr("%1 %2").
-              arg(locale.toString(earliestSim, QLocale::ShortFormat)).
-              arg(earliestSim.timeZoneAbbreviation()), right);
-  html.row2If(tr("Latest:"), tr("%1 %2").
-              arg(locale.toString(latest, QLocale::ShortFormat)).
-              arg(latest.timeZoneAbbreviation()), right);
-  html.row2If(tr("Latest in Simulator:"), tr("%1 %2").
-              arg(locale.toString(latestSim, QLocale::ShortFormat)).
-              arg(latestSim.timeZoneAbbreviation()), right);
+  html.row2(tr("Total:"), formatter::formatMinutesHoursLong(timeTotal), right);
+  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverage), right);
+  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximum), right);
+  html.tableEnd();
+
+  html.p(tr("Flight Time Simulator"), header);
+  html.table();
+  html.row2(tr("Total:"), formatter::formatMinutesHoursLong(timeTotalSim), right);
+  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverageSim), right);
+  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximumSim), right);
   html.tableEnd();
 
   // ======================================================
@@ -307,7 +308,8 @@ void LogStatisticsDialog::updateStatisticsText()
   logdataController->getFlightStatsSimulator(simulators);
   html.table();
   for(const std::pair<int, QString>& sim : simulators)
-    html.row2(tr("%1:").arg(sim.second), tr("%1 flights").arg(locale.toString(sim.first)), right);
+    html.row2(tr("%1:").arg(sim.second.isEmpty() ? tr("Unknown") : sim.second),
+              tr("%1 flights").arg(locale.toString(sim.first)), right);
   html.tableEnd();
 
   // ======================================================
@@ -330,14 +332,22 @@ void LogStatisticsDialog::updateStatisticsText()
   html.tableEnd();
 
   // ======================================================
-  html.p(tr("Flight Time"), header);
-  float timeMaximum, timeAverage, timeMaximumSim, timeAverageSim;
-  logdataController->getFlightStatsTripTime(timeMaximum, timeAverage, timeMaximumSim, timeAverageSim);
+  html.p(tr("Departure Times"), header);
+  QDateTime earliest, latest, earliestSim, latestSim;
+  logdataController->getFlightStatsTime(earliest, latest, earliestSim, latestSim);
   html.table();
-  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximum), right);
-  html.row2(tr("Maximum in simulator:"), formatter::formatMinutesHoursLong(timeMaximumSim), right);
-  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverage), right);
-  html.row2(tr("Average in simulator:"), formatter::formatMinutesHoursLong(timeAverageSim), right);
+  html.row2If(tr("Earliest:"), tr("%1 %2").
+              arg(locale.toString(earliest, QLocale::ShortFormat)).
+              arg(earliest.timeZoneAbbreviation()), right);
+  html.row2If(tr("Earliest in Simulator:"), tr("%1 %2").
+              arg(locale.toString(earliestSim, QLocale::ShortFormat)).
+              arg(earliestSim.timeZoneAbbreviation()), right);
+  html.row2If(tr("Latest:"), tr("%1 %2").
+              arg(locale.toString(latest, QLocale::ShortFormat)).
+              arg(latest.timeZoneAbbreviation()), right);
+  html.row2If(tr("Latest in Simulator:"), tr("%1 %2").
+              arg(locale.toString(latestSim, QLocale::ShortFormat)).
+              arg(latestSim.timeZoneAbbreviation()), right);
   html.tableEnd();
 
   ui->textBrowserLogStatsOverview->setHtml(html.getHtml());
