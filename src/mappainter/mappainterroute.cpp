@@ -33,6 +33,8 @@
 #include "route/routealtitudeleg.h"
 
 #include <QBitArray>
+#include <QPainterPath>
+
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 

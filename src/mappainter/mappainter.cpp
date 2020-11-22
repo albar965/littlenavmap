@@ -31,6 +31,7 @@
 #include <marble/GeoPainter.h>
 
 #include <QPixmapCache>
+#include <QPainterPath>
 
 using namespace Marble;
 using namespace atools::geo;

@@ -25,6 +25,7 @@
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QPushButton>
+#include <QStringList>
 
 ColumnList::ColumnList(const QString& tableName, const QString& idColumnName)
   : table(tableName), idColumn(idColumnName)

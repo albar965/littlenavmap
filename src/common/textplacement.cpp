@@ -23,6 +23,7 @@
 #include "geo/linestring.h"
 
 #include <QPainter>
+#include <QRect>
 
 using atools::geo::Line;
 using atools::geo::Pos;

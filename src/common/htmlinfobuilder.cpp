@@ -57,6 +57,7 @@
 #include "route/routealtitude.h"
 
 #include <QSize>
+#include <QUrl>
 #include <QFileInfo>
 
 using namespace map;

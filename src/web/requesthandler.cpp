@@ -38,6 +38,7 @@
 #include <QBuffer>
 #include <QCoreApplication>
 #include <QDir>
+#include <QUrl>
 #include <QPainter>
 #include <QtWidgets/QApplication>
 

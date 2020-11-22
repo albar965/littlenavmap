@@ -32,6 +32,9 @@
 
 #include <QPainter>
 #include <QJsonDocument>
+#include <QResizeEvent>
+#include <QPaintEvent>
+#include <QFile>
 
 #include <marble/MarbleLocale.h>
 #include <marble/MarbleModel.h>

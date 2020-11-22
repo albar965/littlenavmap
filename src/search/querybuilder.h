@@ -19,6 +19,8 @@
 #define LNM_QUERYBUILDER_H
 
 #include <QVector>
+#include <QStringList>
+
 #include <functional>
 
 class QWidget;

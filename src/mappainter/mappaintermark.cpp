@@ -46,6 +46,8 @@
 #include <marble/GeoDataLinearRing.h>
 #include <marble/GeoPainter.h>
 
+#include <QPainterPath>
+
 const float MAX_COMPASS_ROSE_RADIUS_NM = 500.f;
 const float MIN_COMPASS_ROSE_RADIUS_NM = 2.f;
 const double MIN_VIEW_DISTANCE_COMPASS_ROSE_KM = 6400.;
