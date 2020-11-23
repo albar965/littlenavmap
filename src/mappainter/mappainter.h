@@ -70,6 +70,7 @@ struct PaintContext
   float zoomDistanceMeter;
   bool drawFast; /* true if reduced details should be used */
   bool lazyUpdate; /* postpone reloading until map is still */
+  bool darkMap; /* CartoDark or similar. Not Night mode */
   map::MapTypes objectTypes; /* Object types that should be drawn */
   map::MapObjectDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */

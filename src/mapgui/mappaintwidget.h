@@ -166,6 +166,9 @@ public:
    */
   void setTheme(const QString& theme, int index);
 
+  /* true of map is dark like CartoDark. Night mode does not count */
+  bool isDarkMap() const;
+
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
 

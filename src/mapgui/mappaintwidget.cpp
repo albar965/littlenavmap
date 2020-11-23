@@ -189,6 +189,11 @@ void MapPaintWidget::setTheme(const QString& theme, int index)
   setThemeInternal(theme);
 }
 
+bool MapPaintWidget::isDarkMap() const
+{
+  return currentThemeIndex == map::CARTODARK;
+}
+
 void MapPaintWidget::setThemeInternal(const QString& theme)
 {
   // Ignore any overlay state signals the widget sends while switching theme

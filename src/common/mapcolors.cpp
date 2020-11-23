@@ -82,6 +82,9 @@ QColor weatherVfrColor(QColor("#00b000"));
 QPen minimumAltitudeGridPen(QColor("#a0a0a0"), 1.);
 QColor minimumAltitudeNumberColor(QColor("#70000000"));
 
+QPen minimumAltitudeGridPenDark(QColor("#808080"), 1.);
+QColor minimumAltitudeNumberColorDark(QColor("#70a0a0a0"));
+
 QColor compassRoseColor(Qt::darkRed);
 QColor compassRoseTextColor(Qt::black);
 
@@ -672,6 +675,8 @@ void syncColors()
   colorSettings.beginGroup("AltitudeGrid");
   syncPen(colorSettings, "MinimumAltitudeGridPen", minimumAltitudeGridPen);
   syncColorArgb(colorSettings, "MinimumAltitudeNumberColor", minimumAltitudeNumberColor);
+  syncPen(colorSettings, "MinimumAltitudeGridPenDark", minimumAltitudeGridPenDark);
+  syncColorArgb(colorSettings, "MinimumAltitudeNumberColorDark", minimumAltitudeNumberColorDark);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Profile");

@@ -86,6 +86,10 @@ extern QColor weatherVfrColor;
 extern QPen minimumAltitudeGridPen;
 extern QColor minimumAltitudeNumberColor;
 
+/* For dark map themes */
+extern QPen minimumAltitudeGridPenDark;
+extern QColor minimumAltitudeNumberColorDark;
+
 /* Elevation profile colors and pens */
 extern QColor profileSkyColor;
 extern QColor profileLandColor;
