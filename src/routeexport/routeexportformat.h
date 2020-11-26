@@ -141,20 +141,28 @@ public:
   void copyLoadedData(RouteExportFormat& other) const;
 
   /* Create a clone with manual flag to indicate call from menu items */
-  RouteExportFormat copyForManualSave() const
+  RouteExportFormat copyForManualSave(const QString& curFilepath) const
   {
-    RouteExportFormat other;
-    other = *this;
+    RouteExportFormat other(*this);
     other.flags.setFlag(rexp::MANUAL);
+    other.currentFilepath = curFilepath;
+    return other;
+  }
+
+  /* Create a clone with filename to allow reuse of user chosen name */
+  RouteExportFormat copyForMultiSave(const QString& curFilepath) const
+  {
+    RouteExportFormat other(*this);
+    other.currentFilepath = curFilepath;
     return other;
   }
 
   /* Create a clone with force file dialog flag to indicate call from multi export dialog. */
-  RouteExportFormat copyForManualSaveFileDialog() const
+  RouteExportFormat copyForManualSaveFileDialog(const QString& curFilepath) const
   {
-    RouteExportFormat other;
-    other = *this;
+    RouteExportFormat other(*this);
     other.flags.setFlag(rexp::FILEDIALOG);
+    other.currentFilepath = curFilepath;
     return other;
   }
 
@@ -184,6 +192,13 @@ public:
   /* Update error state and message for missing folders and others */
   void updatePathError();
 
+  /* Current filename set to avoid using the default pattern. Empty for default pattern.
+   *  Only used for manual save. */
+  const QString& getCurrentFilepath() const
+  {
+    return currentFilepath;
+  }
+
 private:
   friend QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj);
   friend QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormat& obj);
@@ -195,6 +210,9 @@ private:
   /* Callback function for export */
   std::function<bool(const RouteExportFormat&)> func;
   rexp::RouteExportFormatFlags flags = rexp::NONE;
+
+  /* Current filename set to avoid using the default pattern. Empty for default pattern. Temporary. */
+  QString currentFilepath;
 };
 
 Q_DECLARE_METATYPE(RouteExportFormat);
@@ -232,9 +250,9 @@ public:
   void setSelected(rexp::RouteExportFormatType type, bool selected);
 
   /* Get a clone with flag indicating manually saving */
-  RouteExportFormat getForManualSave(rexp::RouteExportFormatType type) const
+  RouteExportFormat getForManualSave(rexp::RouteExportFormatType type, const QString& curFilepath = QString()) const
   {
-    return value(type).copyForManualSave();
+    return value(type).copyForManualSave(curFilepath);
   }
 
   /* Update all callbacks */

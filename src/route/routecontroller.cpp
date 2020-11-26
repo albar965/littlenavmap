@@ -501,8 +501,6 @@ void RouteController::flightplanHeaderPrint(atools::util::HtmlBuilder& html, boo
 
 QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
 {
-  QString filename = RouteExport::buildDefaultFilename(".html");
-
   // Embedded style sheet =================================
   QString css("table { border-collapse: collapse; } "
               "th, td { border-right: 1px solid #aaa; padding: 0px 3px 0px 3px; white-space: nowrap; font-size: 0.9em; } "
@@ -514,7 +512,7 @@ QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
                            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />"});
 
   atools::util::HtmlBuilder html(true);
-  html.doc(tr("%1 - %2").arg(QApplication::applicationName()).arg(filename),
+  html.doc(tr("%1 - %2").arg(QApplication::applicationName()).arg(QFileInfo(routeFilename).fileName()),
            css, QString() /* bodyStyle */, headerLines);
   html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, true /* print */),
             atools::util::html::NO_ENTITIES);
