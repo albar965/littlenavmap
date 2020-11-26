@@ -401,24 +401,10 @@ void RouteExportFormat::setPath(const QString& value)
 
 QString RouteExportFormat::getFilter() const
 {
-#if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
   if(isExportToFile())
     return "(" + format + ")";
   else
     return "(*." + format + ")";
-
-#else
-
-  // Create an upper and capped string for Linux
-  QStringList formats;
-  formats << format << atools::capWord(format) << format.toUpper();
-
-  if(isExportToFile())
-    return "(" + formats.join(" ") + ")";
-  else
-    return "(*." + formats.join(" ") + ")";
-
-#endif
 }
 
 void RouteExportFormat::copyLoadedData(RouteExportFormat& other) const

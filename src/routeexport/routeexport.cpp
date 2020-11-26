@@ -169,7 +169,8 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
   if(format.isManual())
     // Called from menu actions ======================================
     routeFile = dialog->saveFileDialog(tr("Export for %1").arg(format.getComment()),
-                                       tr("%1 Files %2").arg(format.getFormat().toUpper()).arg(format.getFilter()),
+                                       tr("%1 Files %2;;All Files (*)").
+                                       arg(format.getFormat().toUpper()).arg(format.getFilter()),
                                        format.getFormat(),
                                        settingsPrefix, path, filename, dontComfirmOverwrite, autoNumberFilename);
   else
@@ -201,7 +202,8 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
       case RouteMultiExportDialog::FILEDIALOG:
         routeFile = dialog->saveFileDialog(
           tr("Export for %1").arg(format.getComment()),
-          tr("%1 Files %2").arg(format.getFormat().toUpper()).arg(format.getFilter()),
+          tr("%1 Files %2;;All Files (*)").
+          arg(format.getFormat().toUpper()).arg(format.getFilter()),
           format.getFormat(),
           QString() /* settingsPrefix */,
           format.getPath(), filename, dontComfirmOverwrite, autoNumberFilename);
