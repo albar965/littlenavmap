@@ -210,7 +210,7 @@ void checkAndMigrateSettings()
       }
 
       // =====================================================================
-      // Adapt update channels if not yet saved
+      // Adapt update channels if not yet saved or previous version is stable and this one is not
       if(!settings.contains(lnm::OPTIONS_UPDATE_CHANNELS) || (optionsVersion.isStable() && !programVersion.isStable()))
       {
         // No channel assigned yet or user moved from a stable to beta or development version

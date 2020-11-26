@@ -1003,7 +1003,9 @@ map::MapAirspaceFilter NavApp::getShownMapAirspaces()
 
 void NavApp::deleteSplashScreen()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   if(splashScreen != nullptr)
     splashScreen->close();

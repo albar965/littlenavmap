@@ -2109,18 +2109,24 @@ void MainWindow::updateWindowTitle()
     newTitle += tr(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION);
 
   // Database information  ==========================================
+  // Simulator database =========
   if(navDbStatus == dm::NAVDATABASE_ALL)
     newTitle += tr(" - (%1)").arg(NavApp::getCurrentSimulatorShortName());
   else
+  {
     newTitle += tr(" - %1").arg(NavApp::getCurrentSimulatorShortName());
 
-  if(!NavApp::getDatabaseAiracCycleSim().isEmpty())
-    newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleSim());
+    if(!NavApp::getDatabaseAiracCycleSim().isEmpty())
+      newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleSim());
+  }
 
+  // Nav database =========
   if(navDbStatus == dm::NAVDATABASE_ALL)
     newTitle += tr(" / N");
   else if(navDbStatus == dm::NAVDATABASE_MIXED)
     newTitle += tr(" / N");
+  else if(navDbStatus == dm::NAVDATABASE_OFF)
+    newTitle += tr(" / (N)");
 
   if((navDbStatus == dm::NAVDATABASE_ALL || navDbStatus == dm::NAVDATABASE_MIXED) &&
      !NavApp::getDatabaseAiracCycleNav().isEmpty())
@@ -2470,7 +2476,7 @@ QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
 
 bool MainWindow::routeSaveAsLnm()
 {
-  QString routeFile = routeSaveFileDialogLnm();
+  QString routeFile = routeSaveFileDialogLnm(routeController->getCurrentRouteFilepath());
 
   if(!routeFile.isEmpty())
   {
