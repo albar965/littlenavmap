@@ -1116,7 +1116,7 @@ private:
   // Defines the defaults used for reset
   opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE |
                       opts::STARTUP_SHOW_LAST | opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE |
-                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
+                      opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
                       opts::CACHE_USE_ONLINE_ELEVATION |
                       opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL;
 
