@@ -353,7 +353,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="716"/>
         <source>Invalid Flight Plan.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plan de vol invalide.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="726"/>
@@ -3162,12 +3162,12 @@ Choisissez ensuite votre simulateur et cliquez sur &quot;Connexion&quot;.
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="282"/>
         <source>Flight Time Real</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Durée de vol réel</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="289"/>
         <source>Flight Time Simulator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Durée de vol en simulateur</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="306"/>
@@ -6299,7 +6299,7 @@ Respecter les procédures.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="268"/>
         <source>&amp;Airspace Libraries</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bibliothèques de l&apos;espace &amp;aérien</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6221"/>
@@ -6717,7 +6717,7 @@ La meilleure piste sera sélectionnée automatiquement.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11170"/>
         <source>Ctrl+T</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl+T</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11640"/>
@@ -6745,7 +6745,7 @@ La meilleure piste sera sélectionnée automatiquement.</translation>
         <location filename="src/gui/mainwindow.ui" line="11672"/>
         <location filename="src/gui/mainwindow.ui" line="11675"/>
         <source>Manual wind in fuel report overrides other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le rapport manuel sur le vent dans le carburant l&apos;emporte sur les autres</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11459"/>
@@ -21146,7 +21146,7 @@ Remettre la période de mise à jour à %1 seconde.</translation>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="256"/>
         <source>Show the heading for the user aircraft as a small magenta circle.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Indiquez le cap de l&apos;aéronef utilisateur sous la forme d&apos;un petit cercle magenta.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2600"/>
@@ -22184,12 +22184,12 @@ Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</t
     <message>
         <location filename="src/query/procedurequery.cpp" line="2451"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La procédure %1 %2 de la bibliothèque de scènes comporte des erreurs</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="2458"/>
         <source>Procedure not found in scenery library</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Procédure non trouvée dans la bibliothèque de scènes</translation>
     </message>
     <message>
         <source>SID %1</source>
@@ -22238,7 +22238,7 @@ Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</t
     <message>
         <location filename="src/search/proceduresearch.cpp" line="316"/>
         <source>Airport has no procedure.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L&apos;aérodrome n&apos;a pas de procédure.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="325"/>
@@ -22355,7 +22355,8 @@ Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</t
         <location filename="src/search/proceduresearch.cpp" line="1118"/>
         <source>Procedure has errors and cannot be added to the flight plan.
 This can happen due to inconsistent navdata, missing waypoints or other reasons.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La procédure comporte des erreurs et ne peut être ajoutée au plan de vol.
+Cela peut être dû à des données de navigation incohérentes, à des waypoints manquants ou à d&apos;autres raisons.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1125"/>
@@ -22363,7 +22364,10 @@ This can happen due to inconsistent navdata, missing waypoints or other reasons.
 This can happen due to inconsistent navdata, missing waypoints or other reasons.
 
 Really use it?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La procédure comporte des erreurs et ne s&apos;affiche pas correctement.
+Cela peut être dû à des données de navigation incohérentes, à des waypoints manquants ou à d&apos;autres raisons.
+
+L&apos;utiliser vraiment ?</translation>
     </message>
     <message>
         <source>Procedure has errors and will not display correctly.
