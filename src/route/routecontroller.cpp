@@ -1565,9 +1565,13 @@ void RouteController::calculateRoute()
     fromIdx = routeWindow->getRouteRangeFromIndex();
     toIdx = routeWindow->getRouteRangeToIndex();
 
-    // Disable certain optimizations in route finder
+    // Disable certain optimizations in route finder - use nearest underlying point as start for departure position
     mode |= atools::routing::MODE_POINT_TO_POINT;
   }
+
+  if(route.hasAnySidProcedure())
+    // Disable certain optimizations in route finder - use nearest underlying point as start for departure position
+    mode |= atools::routing::MODE_POINT_TO_POINT;
 
   if(calculateRouteInternal(&routeFinder, command, fetchAirways, routeWindow->getCruisingAltitudeFt(),
                             fromIdx, toIdx, mode))
