@@ -1,6 +1,112 @@
 ﻿Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+===============================================================================
+
+# Version 2.6.5.rc1
+
+## Important
+
+* _Little Navmap_ might ask again to create the recommended folder structure for files.
+  This can happen once after updating translations since the folder names depend on the selected language.
+  Let the program create the paths if you like to use them and move your files accordingly.
+* Update to the latest beta Navigraph navdata update for MSFS if you use it.
+* Reload the scenery library.
+* The manual was not updated yet. Neither the English nor the translated
+  version. Help buttons and links are functional but point to placeholder pages.
+
+## Known Issues
+
+### MSFS
+
+* _Little Navmap_ cannot read SID and STAR from MSFS. Documentation about MSFS format changes are
+  needed in SDK.
+* MSFS multiplayer and real-time AI cannot be displayed yet. These do not appear in the SimConnect
+  interface.
+* Simulator weather cannot be shown for MSFS since SimConnect weather functions are deprecated and
+  do not deliver data. Needs update or documentation in MSFS SDK. Use NOAA weather which gives you
+  the most up-to-date weather reports.
+* MSFS seems to have no clear concept of scenery order (`Content.xml` seems unreliable)
+  and there is no information in the SDK about this. Add-ons are loaded by alphabetical order by
+  _Little Navmap_. To put an add-on to the end of the loading list add a `z_` to the folder name,
+  for example.
+* Flight plan loading in MSFS is flawed and does not produce any error messages if it fails. Quite
+  often MSFS cannot load its own plans correctly.
+* Country names are missing in MSFS translation tables and are not available in _Little Navmap_,
+  therefore.
+* Add-ons using the `.fsarchive` encrypted format are not supported. _Little Navmap_ will show only
+  the stock airport instead of the add-on if a package is locked down like this.
+* Some aircraft mods do not report correct fuel flow to work around simulator limitations. This
+  cannot be fixed in _Little Navmap_.
+* Some airports files like `LEMG.bgl` cannot be read due to unknown format. _Little Navmap_ reports
+  `Error: readInt for file "...OMITTED.../LEMG.bgl" failed. Reason 1`.
+  Exclude the airport file from reading in options on page `Scenery Library Database` or simply
+  ignore the message. The stock LEMG and all other airports are not affected by this.
+
+### Other
+
+* Dock window layout in _Little Navmap_ can change when resizing or maximizing window and back.
+  Qt limitation.
+* Window is restored in normal state when changing from a maximized window to fullscreen and back.
+  This is a Qt limitation.
+* The flight plan calculation might pop up shortly or the main window might flicker when starting the
+  program. This can be ignored.
+* The height of the elevation profile window cannot be reduced in some cases. Reset to default window
+  layout which fixes this. Rearrange or move the elevation profile window to another position which
+  usually solves this. Save the layout once you have a working one. This is a limitation in the used Qt library.
+* Zooming with touchpad or magic mouse does not work properly on macOS. Use the navigation overlay
+  or one of the other options on page `Map Navigation` in `Options` if you think it is unusable. This
+  is a limitation in the used Qt library.
+
+## Changes from 2.6.4.beta to 2.6.5.rc1
+
+### User Manual
+
+* English online and included PDF user manual finished.
+* English map legend finished and included.
+
+### Other
+
+* Fixed issue where airways were not selected in flight plan calculation after a SID exit point
+  resulting in not optimal flight plans.
+* Maximum distance to flight plan before disabling active leg is now 40 NM.
+* Corrected wrong display of distance in leg ident (e.g. `TAU+4`) in flight plan.
+* Fixed several issues where elevation profile was not updated after merging performance or
+  changing the performance profile.
+* Now all flight plan filenames (only where formats allow) in `Save as`, manual export and
+  multiexport will use the file name given by user in `Save` or `Save as` instead of generating a new
+  file name. #596
+* Added missing `All files` filter in all flight plan file save dialogs.
+* Fixed display and flight plan issues with SID UNIT7K and others at LIMJ.
+* Adjusted MORA number display for dark maps like CartoDark.
+* Corrected rendering order if airport diagram is active when changing detail level. Airspaces are
+  now always disabled at the same zoom distance independent of detail level.
+* Fixed issue where ghost tooltips could appear for airspaces when changing detail level.
+* Limited localizer width to 20 degree to avoid excessive values from FSX and MSFS distorting ILS
+  display.
+* Corrected main window title which showed wrong AIRAC cycle for scenery libraries which do not
+  support one.
+* Fixed issue where VATSIM weather was only downloaded once.
+* Now correcting VATSIM weather URL from http to https on startup to avoid outdated METARs from the
+  wrong address.
+* Fixed regression where procedures with multiple runways could not be added to flight plan.
+* Corrected selection of SID and STAR with multiple runways in procedure search when right clicking
+  on procedure leg.
+* Added keyboard shortcut `Return` for `Show procedure`.
+* Now denying to add or load procedures which are completely broken. This is needed to avoid
+  crashes.
+* Solved issue where warning dialog appeared twice after adding procedure.
+* Fixed inaccessible keyboard shortcuts in procedure search.
+* Now omitting thousands group separator in range ring radius list since it can cause problems with
+  locales using space as a separator. Sorting range ring radii after saving now. #590.
+* Now excluding flights with wrong simulator time (negative duration) from logbook statistics.
+  This can happen if a simulator reports wrong UTC time or a user changes the simulator time during
+  flight.
+* Added the missing total flight time numbers in logbook statistics dialog. Rearranged logbook
+  statistics and put more important tables on top.
+* Fixed issue with missing or wrong longest runway surface for airports read from MSFS.
+* Changed ordinate order in GPX file export to fix Google Maps import issues.
+
 ================
 
 # Version 2.6.4.beta
