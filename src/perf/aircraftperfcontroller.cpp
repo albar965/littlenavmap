@@ -122,8 +122,9 @@ void AircraftPerfController::create()
       changed = true;
 
       updateActionStates();
-      NavApp::setStatusMessage(tr("Aircraft performance created."));
+      updateReport();
       emit aircraftPerformanceChanged(perf);
+      NavApp::setStatusMessage(tr("Aircraft performance created."));
     }
   }
 }
@@ -150,9 +151,10 @@ void AircraftPerfController::edit()
   {
     changed = true;
     windChangeTimer.stop();
-    NavApp::setStatusMessage(tr("Aircraft performance changed."));
     updateActionStates();
+    updateReport();
     emit aircraftPerformanceChanged(perf);
+    NavApp::setStatusMessage(tr("Aircraft performance changed."));
   }
 }
 
@@ -186,6 +188,7 @@ void AircraftPerfController::loadStr(const QString& string)
   }
 
   updateActionStates();
+  updateReport();
   emit aircraftPerformanceChanged(perf);
 }
 
@@ -225,6 +228,7 @@ void AircraftPerfController::loadFile(const QString& perfFile)
   }
 
   updateActionStates();
+  updateReport();
   emit aircraftPerformanceChanged(perf);
 }
 
@@ -249,7 +253,10 @@ void AircraftPerfController::loadAndMerge()
       changed = dialog.hasChanged();
       windChangeTimer.stop();
       updateActionStates();
+      updateReport();
+      updateReportCurrent();
       mainWindow->showAircraftPerformance();
+      emit aircraftPerformanceChanged(perf);
       NavApp::setStatusMessage(tr("Aircraft performance merged."));
     }
   }
@@ -295,6 +302,8 @@ void AircraftPerfController::mergeCollected()
     changed = dialog.hasChanged();
     windChangeTimer.stop();
     updateActionStates();
+    updateReport();
+    emit aircraftPerformanceChanged(perf);
     NavApp::setStatusMessage(tr("Aircraft performance merged."));
   }
 }
@@ -335,6 +344,7 @@ void AircraftPerfController::load()
     noPerfLoaded();
   }
   updateActionStates();
+  updateReport();
   emit aircraftPerformanceChanged(perf);
 }
 
