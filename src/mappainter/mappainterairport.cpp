@@ -79,7 +79,7 @@ void MapPainterAirport::render()
 
   bool overflow = false;
   const QList<MapAirport> *airportCache =
-    mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, addon, overflow);
+    mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border

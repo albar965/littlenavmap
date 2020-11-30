@@ -622,29 +622,37 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
 }
 
 const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
-                                                    const MapLayer *mapLayer, bool lazy, bool addon, bool& overflow)
+                                                    const MapLayer *mapLayer, bool lazy, map::MapTypes types,
+                                                    bool& overflow)
 {
+  // Get flags for running separate queries for add-on and normal airports
+  bool addon = types.testFlag(map::AIRPORT_ADDON);
+  bool normal = types & (map::AIRPORT_HARD | map::AIRPORT_SOFT | map::AIRPORT_EMPTY);
+
   airportCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                            [ = ](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
-    return curLayer->hasSameQueryParametersAirport(newLayer) && airportCacheAddonFlag == addon;
+    return curLayer->hasSameQueryParametersAirport(newLayer) &&
+    // Invalidate cache if settings differ
+    airportCacheAddonFlag == addon && airportCacheNormalFlag == normal;
   });
 
   airportCacheAddonFlag = addon;
+  airportCacheNormalFlag = normal;
 
   switch(mapLayer->getDataSource())
   {
     case layer::ALL:
       airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addon, overflow);
+      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
 
     case layer::MEDIUM:
       // Airports > 4000 ft
-      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */, addon, overflow);
+      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */, addon, normal, overflow);
 
     case layer::LARGE:
       // Airports > 8000 ft
-      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */, addon, overflow);
+      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */, addon, normal, overflow);
 
   }
   return nullptr;
@@ -833,7 +841,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
  */
 const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                       atools::sql::SqlQuery *query,
-                                                      bool lazy, bool overview, bool addon, bool& overflow)
+                                                      bool lazy, bool overview, bool addon, bool normal, bool& overflow)
 {
   if(airportCache.list.isEmpty() && !lazy)
   {
@@ -845,21 +853,24 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
       QSet<int> ids;
 
       // Get normal airports ==========
-      query::bindRect(r, query);
-      query->exec();
-      while(query->next())
+      if(normal)
       {
-        map::MapAirport ap;
-        if(overview)
-          // Fill only a part of the object
-          mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
-                                                  NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
-        else
-          mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
-                                       NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+        query::bindRect(r, query);
+        query->exec();
+        while(query->next())
+        {
+          map::MapAirport ap;
+          if(overview)
+            // Fill only a part of the object
+            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
+                                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+          else
+            mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
+                                         NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
 
-        ids.insert(ap.id);
-        airportCache.list.append(ap);
+          ids.insert(ap.id);
+          airportCache.list.append(ap);
+        }
       }
 
       // Get add-on airports ==========

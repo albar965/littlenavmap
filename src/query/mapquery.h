@@ -149,7 +149,7 @@ public:
    * time than for e.g. one drawing request.
    */
   const QList<map::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
-                                            bool addon, bool& overflow);
+                                            map::MapTypes types, bool& overflow);
 
   /* Similar to getAirports */
   const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
@@ -194,7 +194,7 @@ private:
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,
-                                              bool lazy, bool overview, bool addon, bool& overflow);
+                                              bool lazy, bool overview, bool addon, bool normal, bool& overflow);
   QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway);
 
   void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
@@ -205,6 +205,7 @@ private:
 
   /* Simple bounding rectangle caches */
   bool airportCacheAddonFlag = false; // Keep addon status flag for comparing
+  bool airportCacheNormalFlag = false; // Keep normal (non add-on) status flag for comparing
   query::SimpleRectCache<map::MapAirport> airportCache;
   query::SimpleRectCache<map::MapUserpoint> userpointCache;
   query::SimpleRectCache<map::MapVor> vorCache;
