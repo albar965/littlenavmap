@@ -1111,6 +1111,21 @@ QStringList Route::getAlternateIdents() const
   return alternates;
 }
 
+QVector<map::MapAirport> Route::getAlternateAirports() const
+{
+  QVector<map::MapAirport> alternates;
+  int offset = getAlternateLegsOffset();
+  if(offset != map::INVALID_INDEX_VALUE)
+  {
+    for(int idx = offset; idx < offset + getNumAlternateLegs(); idx++)
+    {
+      if(value(idx).getAirport().isValid())
+        alternates.append(value(idx).getAirport());
+    }
+  }
+  return alternates;
+}
+
 QBitArray Route::getJetAirwayFlags() const
 {
   QBitArray flags(size());

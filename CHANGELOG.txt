@@ -80,6 +80,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Fixed display and flight plan issues with SID UNIT7K and others at LIMJ.
 * Fixed slowdown and freezes in map when showing only add-on airports forced with high detail levels.
 * Adjusted MORA number display for dark maps like CartoDark.
+* Now always drawing approach ILS and airport diagram from flight plan even if these features are disabled in map.
+  Allows to hide all map features and show only the important flight plan related ones.
 * Corrected rendering order if airport diagram is active when changing detail level. Airspaces are
   now always disabled at the same zoom distance independent of detail level.
 * Fixed issue where ghost tooltips could appear for airspaces when changing detail level.

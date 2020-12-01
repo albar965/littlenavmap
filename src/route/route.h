@@ -599,6 +599,7 @@ public:
   /* Get ICAO idents of all alternates */
   QStringList getAlternateIdents() const;
   void updateAlternateProperties();
+  QVector<map::MapAirport> getAlternateAirports() const;
 
   /* Get a bit array which indicates high/low airways - needed for some export formats.
    *  True indicates high airway used towards waypoint at the same index. */

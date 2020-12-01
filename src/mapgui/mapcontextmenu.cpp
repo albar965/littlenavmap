@@ -264,7 +264,7 @@ QString MapContextMenu::mapBaseText(const map::MapBase *base)
         return map::aircraftTextShort(base->asPtr<map::MapOnlineAircraft>()->getAircraft());
 
       case map::USERPOINTROUTE:
-        return map::userpointRouteText(*base->asPtr<map::MapUserpointRoute>());
+        return base->asPtr<map::MapUserpointRoute>()->ident;
 
       case map::AIRSPACE:
         return map::airspaceText(*base->asPtr<map::MapAirspace>());

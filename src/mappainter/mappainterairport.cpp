@@ -78,16 +78,49 @@ void MapPainterAirport::render()
   bool addon = context->objectTypes.testFlag(map::AIRPORT_ADDON);
 
   bool overflow = false;
-  const QList<MapAirport> *airportCache =
-    mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
+  const QList<MapAirport> *airportCache = nullptr;
+
+  // Get airports from map display cache if enabled in toolbar/menu and layer
+  if(context->objectTypes.testFlag(map::AIRPORT) && context->mapLayer->isAirport())
+    airportCache =
+      mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);
+
+  // Collect departure, destination and alternate airports from flight plan for potential diagram painting ================
+  QVector<MapAirport> airports;
+  QSet<int> routeAirportIds;
+  if(context->route->getDepartureAirportLeg().getAirport().isValid())
+  {
+    airports.append(context->route->getDepartureAirportLeg().getAirport());
+    routeAirportIds.insert(airports.last().id);
+  }
+  if(context->route->getDestinationAirportLeg().getAirport().isValid())
+  {
+    airports.append(context->route->getDestinationAirportLeg().getAirport());
+    routeAirportIds.insert(airports.last().id);
+  }
+  for(const map::MapAirport& ap : context->route->getAlternateAirports())
+  {
+    airports.append(ap);
+    routeAirportIds.insert(airports.last().id);
+  }
+
+  // Merge flight plan airports with other visible airports
+  if(airportCache != nullptr)
+  {
+    for(const MapAirport& airport : *airportCache)
+    {
+      if(!routeAirportIds.contains(airport.id))
+        airports.append(airport);
+    }
+  }
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
   QMargins margins(100, 10, 10, 10);
 
   // Collect all airports that are visible ===========================
   QList<PaintAirportType> visibleAirports;
-  for(const MapAirport& airport : *airportCache)
+  for(const MapAirport& airport : airports)
   {
     // Avoid drawing too many airports during animation when zooming out
     if(airport.longestRunwayLength >= context->mapLayer->getMinRunwayLength() || (addon && airport.addon()))
@@ -104,8 +137,7 @@ void MapPainterAirport::render()
           visibleOnMap = airport.bounding.overlaps(context->viewportRect);
 
         // Either part of the route or enabled in the actions/menus/toolbar
-        bool drawAirport = airport.isVisible(context->objectTypes) ||
-                           (addon && airport.addon()) ||
+        bool drawAirport = airport.isVisible(context->objectTypes) || (addon && airport.addon()) ||
                            context->routeProcIdMap.contains(airport.getRef());
 
         if(visibleOnMap && drawAirport)
@@ -128,10 +160,7 @@ void MapPainterAirport::render()
   if(context->mapLayer->isAirportDiagramRunway())
   {
     for(const PaintAirportType& airport : visibleAirports)
-    {
-      // Airport diagram is not influenced by detail level
       drawAirportDiagram(*airport.airport);
-    }
   }
 
   textflags::TextFlags apTextFlags = context->airportTextFlags();
@@ -150,7 +179,7 @@ void MapPainterAirport::render()
       // Draw simplified runway lines
       drawAirportSymbolOverview(*airport, x, y);
 
-    // More detailed symbol will be drawn by the route or log painter - so skip here
+    // More detailed symbol will be drawn by the route or log painter - skip here
     if(!context->routeProcIdMap.contains(airport->getRef()))
     {
       // Symbol will be omitted for runway overview

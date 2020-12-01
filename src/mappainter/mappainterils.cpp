@@ -24,6 +24,8 @@
 #include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"
 #include "util/paintercontextsaver.h"
+#include "route/route.h"
+#include "route/routealtitude.h"
 
 #include <QElapsedTimer>
 
@@ -44,40 +46,64 @@ MapPainterIls::~MapPainterIls()
 
 void MapPainterIls::render()
 {
-  if(!context->objectTypes.testFlag(map::ILS))
-    return;
-
   if(context->mapLayer->isIls())
   {
+    // Get ILS from flight plan which are also painted in the profile
+    QVector<map::MapIls> routeIls;
+    if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
+      routeIls = context->route->getAltitudeLegs().getDestRunwayIls();
+    QSet<int> routeIlsIds;
+    for(const map::MapIls& ils : routeIls)
+      routeIlsIds.insert(ils.id);
+
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 
-    bool overflow = false;
-    const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
-    context->setQueryOverflow(overflow);
-
-    if(ilsList != nullptr)
+    int x, y;
+    if(context->objectTypes.testFlag(map::ILS))
     {
-      atools::util::PainterContextSaver saver(context->painter);
-      Q_UNUSED(saver);
+      bool overflow = false;
+      const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
+      context->setQueryOverflow(overflow);
 
-      for(const MapIls& ils : *ilsList)
+      if(ilsList != nullptr)
       {
-        int x, y;
-        // Need to get the real ILS size on the screen for mercator projection - otherwise feather may vanish
-        bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
+        atools::util::PainterContextSaver saver(context->painter);
+        Q_UNUSED(saver);
 
-        if(!visible)
-          // Check bounding rect for visibility
-          visible = ils.bounding.overlaps(context->viewportRect);
-
-        if(visible)
+        for(const MapIls& ils : *ilsList)
         {
-          if(context->objCount())
-            return;
+          if(routeIlsIds.contains(ils.id))
+            // Part of flight plan - paint later
+            continue;
 
-          drawIlsSymbol(ils, context->drawFast);
+          // Need to get the real ILS size on the screen for Mercator projection - otherwise feather may vanish
+          bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
+
+          if(!visible)
+            // Check bounding rect for visibility
+            visible = ils.bounding.overlaps(context->viewportRect);
+
+          if(visible)
+          {
+            if(context->objCount())
+              return;
+
+            drawIlsSymbol(ils, context->drawFast);
+          }
         }
       }
+    }
+
+    // Paint ILS from approach
+    for(const MapIls& ils : routeIls)
+    {
+      bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
+
+      if(!visible)
+        visible = ils.bounding.overlaps(context->viewportRect);
+
+      if(visible)
+        drawIlsSymbol(ils, context->drawFast);
     }
   }
 }
