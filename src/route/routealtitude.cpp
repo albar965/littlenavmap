@@ -1027,10 +1027,11 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
     if(simplify && (calcTopOfClimb || calcTopOfDescent))
       simplyfyRouteAltitudes();
 
-    // Fetch ILS and VASI at destination
-    calculateApproachIlsAndSlopes();
     validProfile = true;
   }
+
+  // Fetch ILS and VASI at destination
+  calculateApproachIlsAndSlopes();
 
   // Set coordinates into legs
   fillGeometry();
@@ -1312,6 +1313,7 @@ void RouteAltitude::calculateArrival()
 
 void RouteAltitude::calculateApproachIlsAndSlopes()
 {
+  // Get ILS and runway from route
   route->getApproachRunwayEndAndIls(destRunwayIls, &destRunwayEnd);
 
   // Filter out unusable ILS
