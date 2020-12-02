@@ -67,48 +67,65 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ### Other
 
+### Flight Plan and Export
+
 * Fixed issue where airways were not selected in flight plan calculation after a SID exit point
   resulting in not optimal flight plans.
-* Maximum distance to flight plan before disabling active leg is now 40 NM.
-* Corrected wrong display of distance in leg ident (e.g. `TAU+4`) in flight plan.
-* Fixed several issues where elevation profile was not updated after merging performance or
-  changing the performance profile.
+* Corrected wrong display of distance in leg ident (e.g. `TAU+4`) in flight plan which showed too
+  small numbers in some cases.
 * Now all flight plan filenames (only where formats allow) in `Save as`, manual export and
-  multiexport will use the file name given by user in `Save` or `Save as` instead of generating a new
+  multiexport will use the file name given by the user in `Save` or `Save as` instead of generating a new
   file name. #596
 * Added missing `All files` filter in all flight plan file save dialogs.
-* Fixed display and flight plan issues with SID UNIT7K and others at LIMJ.
+
+### Logbook
+
+* Now excluding flights with wrong simulator time (negative duration) from logbook statistics.
+  This can happen if a simulator reports wrong UTC time or a user changes the simulator time during
+  flight. Correct these manually if you see this.
+* Added the missing total flight time numbers in logbook statistics dialog. Rearranged logbook
+  statistics and put more important tables on top.
+* Changed ordinate order in GPX file export to fix Google Maps import issues.
+
+### Procedures
+
+* Corrected selection of SID and STAR with multiple runways in procedure search when right clicking
+  on leg.
+* Added keyboard shortcut `Return` for `Show procedure`.
+* Now denying to add procedures which are completely broken due to missing navaids.
+  This is needed to avoid crashes.
+* Solved issue where warning dialog appeared twice after adding procedure.
+* Fixed inaccessible keyboard shortcuts in procedure search.
+
+### Map
+
 * Fixed slowdown and freezes in map when showing only add-on airports forced with high detail levels.
-* Adjusted MORA number display for dark maps like CartoDark.
+* Adjusted MORA number display for dark maps like CartoDark for better visibility.
+* Fixed several issues where elevation profile was not updated after merging performance or
+  changing the performance profile.
+* Fixed display and flight plan issues with SID UNIT7K and others at LIMJ.
 * Now always drawing approach ILS and airport diagram from flight plan even if these features are disabled in map.
   Allows to hide all map features and show only the important flight plan related ones.
 * Corrected rendering order if airport diagram is active when changing detail level. Airspaces are
-  now always disabled at the same zoom distance independent of detail level.
+  now always disabled at the same zoom distance independent of detail level to keep them from disappearing
+  at higher zoom levels.
 * Fixed issue where ghost tooltips could appear for airspaces when changing detail level.
 * Limited localizer width to 20 degree to avoid excessive values from FSX and MSFS distorting ILS
   display.
+* Fixed issue with missing or wrong longest runway surface for airports read from MSFS.
+
+### User Interface
+
 * Corrected main window title which showed wrong AIRAC cycle for scenery libraries which do not
-  support one.
-* Fixed issue where VATSIM weather was only downloaded once.
+  support one (FSX, P3D and MSFS).
+* Now omitting thousands group separator in range ring radius list in options since it can cause problems with
+  regional settings using space as a separator. Sorting range ring radii after saving now. #590.
+
+### Weather
+
+* Fixed issue where VATSIM weather was only downloaded and updated once after start.
 * Now correcting VATSIM weather URL from http to https on startup to avoid outdated METARs from the
   wrong address.
-* Fixed regression where procedures with multiple runways could not be added to flight plan.
-* Corrected selection of SID and STAR with multiple runways in procedure search when right clicking
-  on procedure leg.
-* Added keyboard shortcut `Return` for `Show procedure`.
-* Now denying to add or load procedures which are completely broken. This is needed to avoid
-  crashes.
-* Solved issue where warning dialog appeared twice after adding procedure.
-* Fixed inaccessible keyboard shortcuts in procedure search.
-* Now omitting thousands group separator in range ring radius list since it can cause problems with
-  locales using space as a separator. Sorting range ring radii after saving now. #590.
-* Now excluding flights with wrong simulator time (negative duration) from logbook statistics.
-  This can happen if a simulator reports wrong UTC time or a user changes the simulator time during
-  flight.
-* Added the missing total flight time numbers in logbook statistics dialog. Rearranged logbook
-  statistics and put more important tables on top.
-* Fixed issue with missing or wrong longest runway surface for airports read from MSFS.
-* Changed ordinate order in GPX file export to fix Google Maps import issues.
 
 ================
 
