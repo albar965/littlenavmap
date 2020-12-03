@@ -4,7 +4,7 @@
     <Header>
       <FlightplanType>IFR</FlightplanType>
       <CruisingAlt>10000</CruisingAlt>
-      <Comment>This flight plan is for the Little Navmap tutorial 
+      <Comment>This flight plan is for the Little Navmap tutorial
 &quot;Building an IFR Flight Plan with Approach Procedures&quot;
 
 https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/TUTORIALIFR.html</Comment>
@@ -14,13 +14,6 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/TUTORIALIFR.htm
       <ProgramVersion>2.6.0.beta</ProgramVersion>
       <Documentation>https://www.littlenavmap.org/lnmpln.html</Documentation>
     </Header>
-    <SimData>MSFS</SimData>
-    <NavData Cycle="2008">NAVIGRAPH</NavData>
-    <AircraftPerformance>
-      <FilePath>/home/alex/Nextcloud/Flight Simulator/Aircraft Performance/Test/Normal Climb and Descent all Equal.lnmperf</FilePath>
-      <Type>MODEL</Type>
-      <Name>Normal Climb and Descent</Name>
-    </AircraftPerformance>
     <Departure>
       <Pos Lon="-1.114792" Lat="50.679806" Alt="55.00"/>
       <Start>12</Start>

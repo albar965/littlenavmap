@@ -13,13 +13,6 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/TUTORIALVFR.htm
       <ProgramVersion>2.6.0.beta</ProgramVersion>
       <Documentation>https://www.littlenavmap.org/lnmpln.html</Documentation>
     </Header>
-    <SimData>MSFS</SimData>
-    <NavData Cycle="2008">NAVIGRAPH</NavData>
-    <AircraftPerformance>
-      <FilePath>/home/alex/Nextcloud/Flight Simulator/Aircraft Performance/Test/Normal Climb and Descent all Equal.lnmperf</FilePath>
-      <Type>MODEL</Type>
-      <Name>Normal Climb and Descent</Name>
-    </AircraftPerformance>
     <Departure>
       <Pos Lon="6.092314" Lat="45.923458" Alt="1520.00"/>
       <Start>04</Start>
