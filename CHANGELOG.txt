@@ -73,9 +73,6 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   resulting in not optimal flight plans.
 * Corrected wrong display of distance in leg ident (e.g. `TAU+4`) in flight plan which showed too
   small numbers in some cases.
-* Now all flight plan filenames (only where formats allow) in `Save as`, manual export and
-  multiexport will use the file name given by the user in `Save` or `Save as` instead of generating a new
-  file name. #596
 * Added missing `All files` filter in all flight plan file save dialogs.
 
 ### Logbook

@@ -87,7 +87,7 @@ void RouteExport::postDatabaseLoad()
 void RouteExport::exportType(RouteExportFormat format)
 {
   // Export only selected type with file dialog - triggered from multiexport dialog
-  if(format.copyForManualSaveFileDialog(NavApp::getCurrentRouteFilepath()).callExport())
+  if(format.copyForManualSaveFileDialog(NavApp::getRouteFilepath()).callExport())
     mainWindow->setStatusMessage(tr("Exported flight plan."));
 }
 
@@ -131,7 +131,7 @@ void RouteExport::routeMultiExport()
       for(const RouteExportFormat& fmt : exportFormatMap->getSelected())
       {
         if(fmt.isSelected() && fmt.isPathValid())
-          numExported += fmt.copyForMultiSave(NavApp::getCurrentRouteFilepath()).callExport();
+          numExported += fmt.copyForMultiSave(NavApp::getRouteFilepath()).callExport();
       }
       if(numExported == 0)
         mainWindow->setStatusMessage(tr("No flight plan exported."));
@@ -239,12 +239,12 @@ void RouteExport::rotateFile(const QString& filename)
 
 bool RouteExport::routeExportPlnMan()
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN, NavApp::getCurrentRouteFilepath()));
+  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN, NavApp::getRouteFilepath()));
 }
 
 bool RouteExport::routeExportPlnMsfsMan()
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS, NavApp::getCurrentRouteFilepath()));
+  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS, NavApp::getRouteFilepath()));
 }
 
 bool RouteExport::routeExportPln(const RouteExportFormat& format)
@@ -410,7 +410,7 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
 
 bool RouteExport::routeExportFlightgearMan()
 {
-  return routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR, NavApp::getCurrentRouteFilepath()));
+  return routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR, NavApp::getRouteFilepath()));
 }
 
 bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
@@ -1008,7 +1008,7 @@ bool RouteExport::routeExportDialog(RouteExportData& exportData, re::RouteExport
 
 bool RouteExport::routeExportGpxMan()
 {
-  return routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX, NavApp::getCurrentRouteFilepath()));
+  return routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX, NavApp::getRouteFilepath()));
 }
 
 bool RouteExport::routeExportGpx(const RouteExportFormat& format)
@@ -1035,7 +1035,7 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
 
 bool RouteExport::routeExportHtmlMan()
 {
-  return routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML, NavApp::getCurrentRouteFilepath()));
+  return routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML, NavApp::getRouteFilepath()));
 }
 
 bool RouteExport::routeExportHtml(const RouteExportFormat& format)
@@ -1188,28 +1188,21 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   return save;
 }
 
-QString RouteExport::buildDefaultFilename(const atools::fs::pln::Flightplan& plan, const QString& suffix,
-                                          bool normalize)
-{
-  QString name = plan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix);
-  return normalize ? atools::normalizeStr(name) : name;
-}
-
 QString RouteExport::buildDefaultFilename(const QString& suffix, bool normalize)
 {
   return buildDefaultFilename(NavApp::getRouteConst().getFlightplan(), suffix, normalize);
 }
 
-QString RouteExport::buildDefaultFilename(const RouteExportFormat& format, const QString& suffix, bool normalize)
+QString RouteExport::buildDefaultFilename(const RouteExportFormat&, const QString& suffix, bool normalize)
 {
-  if( /*format.isManual() &&*/ !format.getCurrentFilepath().isEmpty())
-  {
-    QFileInfo name = format.getCurrentFilepath();
-    QString nameStr = name.completeBaseName() + suffix;
-    return normalize ? atools::normalizeStr(nameStr) : nameStr;
-  }
-  else
-    return buildDefaultFilename(NavApp::getRouteConst().getFlightplan(), suffix, normalize);
+  return buildDefaultFilename(NavApp::getRouteConst().getFlightplan(), suffix, normalize);
+}
+
+QString RouteExport::buildDefaultFilename(const atools::fs::pln::Flightplan& plan, const QString& suffix,
+                                          bool normalize)
+{
+  QString name = plan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix);
+  return normalize ? atools::normalizeStr(name) : name;
 }
 
 QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix)

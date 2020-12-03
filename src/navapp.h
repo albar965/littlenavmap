@@ -344,7 +344,7 @@ public:
   static map::MapWeatherSource getMapWeatherSource();
   static bool isMapWeatherShown();
 
-  static const QString& getCurrentRouteFilepath();
+  static const QString& getRouteFilepath();
   static const QString& getCurrentAircraftPerfFilepath();
 
   static WebController *getWebController();

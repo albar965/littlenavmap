@@ -130,12 +130,6 @@ public:
   /* Has flight plan changed */
   bool hasChanged() const;
 
-  /* Get the current flight plan name or empty if no plan is loaded */
-  const QString& getCurrentRouteFilepath() const
-  {
-    return routeFilename;
-  }
-
   float getRouteDistanceNm() const
   {
     return route.getTotalDistance();

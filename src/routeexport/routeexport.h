@@ -202,7 +202,7 @@ public:
 
   /* Build filename according to pattern set in options. */
   static QString buildDefaultFilename(const QString& suffix = ".lnmpln", bool normalize = false);
-  static QString buildDefaultFilename(const RouteExportFormat& format, const QString& suffix = ".lnmpln", bool normalize = false);
+  static QString buildDefaultFilename(const RouteExportFormat&, const QString& suffix = ".lnmpln", bool normalize = false);
   static QString buildDefaultFilename(const atools::fs::pln::Flightplan& plan, const QString& suffix = ".lnmpln",
                                       bool normalize = false);
 

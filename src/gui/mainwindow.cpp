@@ -2133,9 +2133,9 @@ void MainWindow::updateWindowTitle()
     newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
 
   // Flight plan name  ==========================================
-  if(!routeController->getCurrentRouteFilepath().isEmpty())
+  if(!routeController->getRouteFilepath().isEmpty())
     newTitle += tr(" - %1%2").
-                arg(QFileInfo(routeController->getCurrentRouteFilepath()).fileName()).
+                arg(QFileInfo(routeController->getRouteFilepath()).fileName()).
                 arg(routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
     newTitle += tr(" - *");
@@ -2197,7 +2197,7 @@ bool MainWindow::routeCheckForChanges()
   switch(retval)
   {
     case QMessageBox::Save:
-      if(routeController->getCurrentRouteFilepath().isEmpty())
+      if(routeController->getRouteFilepath().isEmpty())
         return routeSaveAsLnm();
       else
         return routeSaveLnm();
@@ -2445,7 +2445,7 @@ bool MainWindow::routeSaveLnm()
     }
   }
 
-  if(routeController->getCurrentRouteFilepath().isEmpty() || !routeController->doesLnmFilenameMatchRoute() ||
+  if(routeController->getRouteFilepath().isEmpty() || !routeController->doesLnmFilenameMatchRoute() ||
      !routeController->isLnmFormatFlightplan())
     // No filename or plan has changed - save as ================================
     return routeSaveAsLnm();
@@ -2454,7 +2454,7 @@ bool MainWindow::routeSaveLnm()
     // Save as LNMPLN =====================================================
     if(routeController->saveFlightplanLnm())
     {
-      routeFileHistory->addFile(routeController->getCurrentRouteFilepath());
+      routeFileHistory->addFile(routeController->getRouteFilepath());
       updateActionStates();
       setStatusMessage(tr("Flight plan saved."));
       saveFileHistoryStates();
@@ -2476,7 +2476,7 @@ QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
 
 bool MainWindow::routeSaveAsLnm()
 {
-  QString routeFile = routeSaveFileDialogLnm(routeController->getCurrentRouteFilepath());
+  QString routeFile = routeSaveFileDialogLnm();
 
   if(!routeFile.isEmpty())
   {

@@ -177,7 +177,7 @@ void PrintSupport::createFlightplanDocuments()
   if(opts & prt::HEADER)
   {
     html.p().b(tr("Flight Plan File:")).nbsp().nbsp().
-    small(NavApp::getRouteController()->getCurrentRouteFilepath()).pEnd();
+    small(NavApp::getRouteController()->getRouteFilepath()).pEnd();
   }
 
   cursor.insertHtml(html.getHtml());

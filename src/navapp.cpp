@@ -921,9 +921,9 @@ QString NavApp::getMapCopyright()
   return mainWindow->getMapWidget()->getMapCopyright();
 }
 
-const QString& NavApp::getCurrentRouteFilepath()
+const QString& NavApp::getRouteFilepath()
 {
-  return mainWindow->getRouteController()->getCurrentRouteFilepath();
+  return mainWindow->getRouteController()->getRouteFilepath();
 }
 
 const QString& NavApp::getCurrentAircraftPerfFilepath()
