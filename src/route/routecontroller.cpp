@@ -1317,6 +1317,7 @@ void RouteController::saveFlightplanLnmExported(const QString& filename)
   // Set clean undo state index since QUndoStack only returns weird values
   undoIndexClean = undoIndex;
   undoStack->setClean();
+
   NavApp::updateWindowTitle();
 }
 
@@ -2743,7 +2744,7 @@ bool RouteController::doesLnmFilenameMatchRoute()
 {
   if(!routeFilename.isEmpty())
   {
-    if(!(OptionData::instance().getFlags() & opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN))
+    if(!(OptionData::instance().getFlags().testFlag(opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN)))
       // User decided to ignore departure and destination change in flight plan
       return true;
 

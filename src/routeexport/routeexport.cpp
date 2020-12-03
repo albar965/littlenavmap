@@ -164,15 +164,13 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
                                 const QString& path, const QString& filename, bool dontComfirmOverwrite)
 {
   QString routeFile;
-  bool autoNumberFilename = OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME;
 
   if(format.isManual())
     // Called from menu actions ======================================
     routeFile = dialog->saveFileDialog(tr("Export for %1").arg(format.getComment()),
                                        tr("%1 Files %2;;All Files (*)").
                                        arg(format.getFormat().toUpper()).arg(format.getFilter()),
-                                       format.getFormat(),
-                                       settingsPrefix, path, filename, dontComfirmOverwrite, autoNumberFilename);
+                                       format.getFormat(), settingsPrefix, path, filename, dontComfirmOverwrite);
   else
   {
     // Called from multiexport action or multiexport dialog ======================================
@@ -180,7 +178,6 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
     {
       // Append to file
       dontComfirmOverwrite = true;
-      autoNumberFilename = false;
     }
 
     // Build filename
@@ -206,7 +203,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
           arg(format.getFormat().toUpper()).arg(format.getFilter()),
           format.getFormat(),
           QString() /* settingsPrefix */,
-          format.getPath(), filename, dontComfirmOverwrite, autoNumberFilename);
+          format.getPath(), filename, dontComfirmOverwrite);
         break;
 
       case RouteMultiExportDialog::RENAME_EXISTING:

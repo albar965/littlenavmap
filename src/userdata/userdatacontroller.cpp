@@ -695,8 +695,7 @@ void UserdataController::exportBglXml()
       QString file = dialog->saveFileDialog(
         tr("Export XML File for FSX/P3D BGL Compiler"),
         tr("XML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_BGL_XML),
-        ".xml",
-        "Userdata/BglXml", QString(), QString(), false, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+        ".xml", "Userdata/BglXml", QString(), QString(), false);
 
       if(!file.isEmpty())
       {

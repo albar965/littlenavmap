@@ -300,7 +300,7 @@ enum Flag2
   ONLINE_AIRSPACE_BY_FILE = 1 << 15,
 
   /* checkBoxOptionsGuiProposeFilename */
-  PROPOSE_FILENAME = 1 << 16,
+  // PROPOSE_FILENAME = 1 << 16,
 
   /* checkBoxOptionsGuiRaiseWindows */
   RAISE_WINDOWS = 1 << 17,

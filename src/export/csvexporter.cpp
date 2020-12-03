@@ -53,8 +53,7 @@ QString CsvExporter::saveCsvFileDialog()
   return dialog->saveFileDialog(tr("Export CSV Document"),
                                 tr("CSV Documents (*.csv);;All Files (*)"),
                                 "csv", lnm::EXPORT_FILEDIALOG,
-                                QString(), QString(), false,
-                                OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+                                QString(), QString(), false);
 }
 
 #ifdef ENABLE_CSV_EXPORT

@@ -580,21 +580,6 @@ opening files, modifying the flight plan and other operations.</string>
                 <number>2</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="checkBoxOptionsGuiProposeFilename">
-                 <property name="toolTip">
-                  <string>This this option is checked: Little Navmap will suggest a new name
-on all &quot;Save as&quot; or &quot;Export&quot; operations if a file already exists.
-New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already exists, for example.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Propose new name if  file already exists on &quot;Save as&quot; or &quot;Export&quot;</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
                  <property name="toolTip">
                   <string>Does not apply to the KML files loaded after startup.</string>
@@ -6337,7 +6322,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsGuiRaiseWindows</tabstop>
   <tabstop>checkBoxOptionsGuiRaiseDockWindows</tabstop>
   <tabstop>checkBoxOptionsGuiRaiseMainWindow</tabstop>
-  <tabstop>checkBoxOptionsGuiProposeFilename</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
   <tabstop>scrollArea_4</tabstop>
   <tabstop>pushButtonOptionsGuiSelectFont</tabstop>

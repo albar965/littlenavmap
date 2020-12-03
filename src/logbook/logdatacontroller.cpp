@@ -595,8 +595,7 @@ void LogdataController::exportCsv()
       QString file = dialog->saveFileDialog(
         tr("Export Logbook Entry CSV File"),
         tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), ".csv", "Logdata/Csv",
-        QString(), QString(), choiceDialog.isChecked(APPEND),
-        OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+        QString(), QString(), choiceDialog.isChecked(APPEND));
 
       if(!file.isEmpty())
       {
@@ -838,9 +837,7 @@ void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *paren
     QString filename = dialog->saveFileDialog(
       tr("Save GPX"),
       tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
-      "lnmpln", "Route/Gpx", atools::documentsDir(),
-      defFilename,
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+      "lnmpln", "Route/Gpx", atools::documentsDir(), defFilename, false /* confirm overwrite */);
 
     if(!filename.isEmpty())
     {

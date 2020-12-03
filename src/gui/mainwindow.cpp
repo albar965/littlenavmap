@@ -2471,7 +2471,7 @@ QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
     "lnmpln", "Route/LnmPln", atools::documentsDir(),
     filename.isEmpty() ? RouteExport::buildDefaultFilename() : filename,
-    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+    false /* confirm overwrite */);
 }
 
 bool MainWindow::routeSaveAsLnm()
@@ -2784,7 +2784,7 @@ void MainWindow::mapSaveImageAviTab()
           NavApp::getCurrentSimulatorBasePath() +
           QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
           QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
-          false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+          false /* confirm overwrite */);
 
         if(!imageFile.isEmpty())
         {

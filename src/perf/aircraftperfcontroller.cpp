@@ -441,9 +441,7 @@ QString AircraftPerfController::saveAsFileDialog(const QString& filepath, bool *
     tr("Save Aircraft Performance File"),
     nameFilter,
     "lnmperf", "AircraftPerformance/",
-    QString(), filepath,
-    false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME,
-    &nameFilterIndex);
+    QString(), filepath, false /* confirm overwrite */, false /* autoNumberFilename */, &nameFilterIndex);
 
   if(oldFormat != nullptr)
     *oldFormat = nameFilterIndex == 1;
