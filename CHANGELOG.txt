@@ -20,10 +20,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 ### Help
 
 * All help buttons and links are functional now in the program.
-* English online manual is now complete. PDF and other formats are available for download:
+* English online manual is now complete. Available for download in PDF, EPUB and MOBI format:
   https://albar965.github.io/pages/26/littlenavmapmanuals.html
-* PDF Manuals for French, Italian and German are included in download archive but still based on older versions 2.2 or 2.4.
-* Sources for the manuals are committed to Github and can be found on branch `release/2.6`.
 
 #### New Chapters
 
