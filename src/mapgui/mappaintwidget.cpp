@@ -388,6 +388,9 @@ void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, 
   // Update screen coordinate cache if display options have changed
   if(type & map::LOGBOOK_ALL && show != curShow)
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
+
+  if(type.testFlag(map::FLIGHTPLAN) && show != curShow)
+    screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::setShowMapAirspaces(map::MapAirspaceFilter types)
@@ -832,6 +835,7 @@ void MapPaintWidget::routeChanged(bool geometryChanged)
     cancelDragAll();
     screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
   }
+  screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
 

@@ -573,6 +573,9 @@ public:
     return *altitude;
   }
 
+  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL) */
+  const QVector<map::MapIls>& getDestRunwayIls() const;
+
   const RouteAltitudeLeg& getAltitudeLegAt(int i) const;
   bool hasAltitudeLegs() const;
   int getNumAltitudeLegs() const;

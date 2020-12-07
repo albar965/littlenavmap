@@ -25,7 +25,6 @@
 #include "mapgui/mapwidget.h"
 #include "util/paintercontextsaver.h"
 #include "route/route.h"
-#include "route/routealtitude.h"
 
 #include <QElapsedTimer>
 
@@ -50,11 +49,13 @@ void MapPainterIls::render()
   {
     // Get ILS from flight plan which are also painted in the profile
     QVector<map::MapIls> routeIls;
-    if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
-      routeIls = context->route->getAltitudeLegs().getDestRunwayIls();
     QSet<int> routeIlsIds;
-    for(const map::MapIls& ils : routeIls)
-      routeIlsIds.insert(ils.id);
+    if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
+    {
+      routeIls = context->route->getDestRunwayIls();
+      for(const map::MapIls& ils : routeIls)
+        routeIlsIds.insert(ils.id);
+    }
 
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 

@@ -189,50 +189,68 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
   if(paintLayer == nullptr || paintLayer->getMapLayer() == nullptr)
     return;
 
-  if(!paintLayer->getMapLayer()->isIls() || !paintLayer->getShownMapObjects().testFlag(map::ILS))
+  map::MapTypes types = paintLayer->getShownMapObjects();
+
+  if(!paintLayer->getMapLayer()->isIls())
+    // No ILS at this zoom distance
     return;
 
   // Do not put into index if nothing is drawn
   if(mapPaintWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT)
     return;
 
-  if(paintLayer->getShownMapObjects().testFlag(map::ILS))
+  const MapScale *scale = paintLayer->getMapScale();
+  if(!scale->isValid())
+    return;
+
+  QVector<map::MapIls> ilsVector;
+  QSet<int> routeIlsIds;
+  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::FLIGHTPLAN))
   {
-    const MapScale *scale = paintLayer->getMapScale();
+    // Get ILS from flight plan which are also painted in the profile - only if plan is shown
+    ilsVector = NavApp::getRouteConst().getDestRunwayIls();
+    for(const map::MapIls& ils : ilsVector)
+      routeIlsIds.insert(ils.id);
+  }
 
-    if(scale->isValid())
+  if(types.testFlag(map::ILS))
+  {
+    // ILS enabled - add from map cache
+    bool overflow = false;
+    const QList<map::MapIls> *ilsListPtr = mapQuery->getIls(curBox, paintLayer->getMapLayer(), false, overflow);
+    if(ilsListPtr != nullptr)
     {
-      bool overflow = false;
-      const QList<map::MapIls> *ilsList = mapQuery->getIls(curBox, paintLayer->getMapLayer(), false, overflow);
-
-      if(ilsList != nullptr)
+      for(const map::MapIls& ils : *ilsListPtr)
       {
-        CoordinateConverter conv(mapPaintWidget->viewport());
-        for(const map::MapIls& ils : *ilsList)
-        {
-          Marble::GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
-                                          ils.bounding.getEast(), ils.bounding.getWest(),
-                                          Marble::GeoDataCoordinates::Degree);
-
-          if(ilsbox.intersects(curBox))
-          {
-            updateLineScreenGeometry(ilsLines, ils.id, ils.centerLine(), curBox, conv);
-
-            QPolygon polygon;
-            bool hidden;
-            for(const Pos& pos : ils.boundary())
-            {
-              int xs, ys;
-              conv.wToS(pos, xs, ys, CoordinateConverter::DEFAULT_WTOS_SIZE, &hidden);
-              if(!hidden)
-                polygon.append(QPoint(xs, ys));
-            }
-            polygon = polygon.intersected(QPolygon(mapPaintWidget->rect()));
-            if(!polygon.isEmpty())
-              ilsPolygons.append(std::make_pair(ils.id, polygon));
-          }
-        }
+        if(!routeIlsIds.contains(ils.id))
+          ilsVector.append(ils);
       }
+    }
+  }
+
+  CoordinateConverter conv(mapPaintWidget->viewport());
+  for(const map::MapIls& ils : ilsVector)
+  {
+    Marble::GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
+                                    ils.bounding.getEast(), ils.bounding.getWest(),
+                                    Marble::GeoDataCoordinates::Degree);
+
+    if(ilsbox.intersects(curBox))
+    {
+      updateLineScreenGeometry(ilsLines, ils.id, ils.centerLine(), curBox, conv);
+
+      QPolygon polygon;
+      bool hidden;
+      for(const Pos& pos : ils.boundary())
+      {
+        int xs, ys;
+        conv.wToS(pos, xs, ys, CoordinateConverter::DEFAULT_WTOS_SIZE, &hidden);
+        if(!hidden)
+          polygon.append(QPoint(xs, ys));
+      }
+      polygon = polygon.intersected(QPolygon(mapPaintWidget->rect()));
+      if(!polygon.isEmpty())
+        ilsPolygons.append(std::make_pair(ils.id, polygon));
     }
   }
 }
@@ -835,7 +853,8 @@ void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::
 
 void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapResult& result) const
 {
-  if(!paintLayer->getShownMapObjects().testFlag(map::ILS))
+  if(!paintLayer->getShownMapObjects().testFlag(map::ILS) &&
+     !paintLayer->getShownMapObjectDisplayTypes().testFlag(map::FLIGHTPLAN))
     return;
 
   // Get nearest center lines (also considering buffer)

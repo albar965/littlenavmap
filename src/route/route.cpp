@@ -143,6 +143,8 @@ void Route::clearAll()
   getFlightplan().getProperties().clear();
   resetActive();
   clear();
+
+  altitude->clearAll();
   totalDistance = 0.f;
 }
 
@@ -727,6 +729,11 @@ Pos Route::getPositionAtDistance(float distFromStartNm) const
   if(!retval.isValid())
     qWarning() << Q_FUNC_INFO << "position not valid";
   return retval;
+}
+
+const QVector<map::MapIls>& Route::getDestRunwayIls() const
+{
+  return altitude->getDestRunwayIls();
 }
 
 const RouteAltitudeLeg& Route::getAltitudeLegAt(int i) const

@@ -873,9 +873,8 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
     invalid = true;
   }
 
-  const RouteLeg destinationLeg = route->getDestinationLeg();
-  if(!destinationLeg.isValidWaypoint() ||
-     (destinationLeg.getMapObjectType() != map::AIRPORT && destinationLeg.getMapObjectType() != map::PROCEDURE))
+  const RouteLeg destinationLeg = route->getDestinationAirportLeg();
+  if(!destinationLeg.isValidWaypoint() || destinationLeg.getMapObjectType() != map::AIRPORT)
   {
     errors.append(tr("Destination is not valid. Must be an airport."));
     qWarning() << Q_FUNC_INFO << "Destination is not valid or neither airport nor runway";
@@ -883,8 +882,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   }
 
   const RouteLeg departureLeg = route->getDepartureAirportLeg();
-  if(!departureLeg.isValidWaypoint() ||
-     (departureLeg.getMapObjectType() != map::AIRPORT && departureLeg.getMapObjectType() != map::PROCEDURE))
+  if(!departureLeg.isValidWaypoint() || departureLeg.getMapObjectType() != map::AIRPORT)
   {
     errors.append(tr("Departure is not valid. Must be an airport."));
     qWarning() << Q_FUNC_INFO << "Departure is not valid or neither airport nor runway";
