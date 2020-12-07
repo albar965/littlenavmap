@@ -312,7 +312,8 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor shale("#F5DEB3");
   static const QColor tarmac("#909090");
   static const QColor unknown("#ffffff");
-  static const QColor transparent("#88ffffff");
+  static const QColor transparent("#80808080");
+
   if(surface == "A")
     return asphalt;
   else if(surface == "G")

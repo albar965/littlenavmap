@@ -542,8 +542,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
   {
     // Draw black runway outlines --------------------------------
     QMargins margins(2, 2, 2, 2);
-    painter->setPen(QPen(mapcolors::runwayOutlineColor, 1, Qt::SolidLine, Qt::FlatCap));
-    painter->setBrush(mapcolors::runwayOutlineColor);
+    painter->setPen(QPen(mapcolors::runwayOutlineColor, 3, Qt::SolidLine, Qt::FlatCap));
+    painter->setBrush(Qt::NoBrush);
     for(int i = 0; i < runwayCenters.size(); i++)
     {
       if(runways->at(i).surface != "W")
