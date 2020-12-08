@@ -216,18 +216,18 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
   atools::util::PainterContextSaver saver(painter);
 
   painter->setBackgroundMode(Qt::OpaqueMode);
+  float radius = symsize / 2.f;
 
   if(airport.addon() && addonHighlight)
   {
-    float radius = std::max(symsize * 0.95f, 5.f);
+    // Draw addon underlay ==========================
+    float addonRadius = radius + atools::minmax(3.8f, 4.8f, radius * 0.55f);
     painter->setBrush(mapcolors::addonAirportBackgroundColor);
     painter->setPen(QPen(mapcolors::addonAirportFrameColor));
-    painter->drawEllipse(QPointF(x, y), radius, radius);
+    painter->drawEllipse(QPointF(x, y), addonRadius, addonRadius);
   }
 
   QColor apColor = mapcolors::colorForAirport(airport);
-
-  float radius = symsize / 2.f;
 
   if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED))
     // Use filled circle

@@ -24,6 +24,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Replacing more obscure minute signs like apostrophes now before reading coordinate in user interface.
 * Excluding Navigraph manifest file now to avoid error messages with package "navigraph-maintenance"
   when reading MSFS scenery data.
+* Made yellow addon highlight rings smaller.
+* Fixed issue where procedures labels along line disappeared while flying.
 
 ===============================================================================
 # Version 2.6.5.rc1

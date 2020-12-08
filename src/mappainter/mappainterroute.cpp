@@ -509,6 +509,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint,
     }
     else
     {
+      noText = context->drawFast;
       if(legs.at(i).isMissed())
         painter->setPen(missedPen);
       else
