@@ -396,6 +396,8 @@ private:
   void saveStateNow();
   void optionsChanged();
 
+  void openOptionsDialog();
+
 #ifdef DEBUG_INFORMATION
   void debugActionTriggered1();
   void debugActionTriggered2();

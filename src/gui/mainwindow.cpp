@@ -1251,7 +1251,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
 
-  connect(ui->actionOptions, &QAction::triggered, optionsDialog, &QDialog::open);
+  connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
   connect(ui->actionSaveAllNow, &QAction::triggered, this, &MainWindow::saveStateNow);
 
@@ -3048,6 +3048,19 @@ void MainWindow::updateMapHistoryActions(int minIndex, int curIndex, int maxInde
 {
   ui->actionMapBack->setEnabled(curIndex > minIndex);
   ui->actionMapNext->setEnabled(curIndex < maxIndex);
+}
+
+void MainWindow::openOptionsDialog()
+{
+#if defined(Q_OS_MACOS)
+  if(QApplication::activeModalWidget() != nullptr)
+  {
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         tr("Close other dialog boxes before opening preferences"));
+    return;
+  }
+#endif
+  optionsDialog->open();
 }
 
 /* Reset all "do not show this again" message box status values */
