@@ -2184,9 +2184,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     bool posHasChanged = !last.isValid() || // No previous position
                          diff.manhattanLength() >= deltas.manhattanLengthDelta; // Screen position has changed
 
+    using atools::geo::angleAbsDiff;
+
     // Check if any data like heading has changed which requires a redraw
     bool dataHasChanged = posHasChanged ||
-                          almostNotEqual(last.getHeadingDegMag(), aircraft.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
+                          angleAbsDiff(last.getHeadingDegMag(), aircraft.getHeadingDegMag()) > deltas.headingDelta || // Heading has changed
                           almostNotEqual(last.getIndicatedSpeedKts(),
                                          aircraft.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
                           almostNotEqual(last.getPosition().getAltitude(),
@@ -2252,8 +2254,21 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               atools::geo::Rect rect(nextWpPos);
               rect.extend(aircraft.getPosition());
 
-              if(rect.getWidthDegree() > 180.f || rect.getHeightDegree() > 180.f)
+              if(rect.getWidthDegree() > 170.f || rect.getHeightDegree() > 170.f)
                 rect = atools::geo::Rect(nextWpPos);
+
+              if(!rect.isPoint(POS_IS_POINT_EPSILON))
+              {
+                // Not a point but probably a flat rectangle
+
+                if(rect.getWidthDegree() <= POS_IS_POINT_EPSILON * 2.f)
+                  // Expand E/W direction
+                  rect.inflate(POS_IS_POINT_EPSILON, 0.f);
+
+                if(rect.getHeightDegree() <= POS_IS_POINT_EPSILON * 2.f)
+                  // Expand N/S direction
+                  rect.inflate(0.f, POS_IS_POINT_EPSILON);
+              }
 
 #ifdef DEBUG_INFORMATION_SIMUPDATE
               qDebug() << Q_FUNC_INFO;

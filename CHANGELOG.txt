@@ -7,8 +7,13 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ## Important
 
-* Update to the latest beta Navigraph navdata update for MSFS if you use it.
-* Reload the scenery library.
+* The data exchange protocol has changed. You have to update *Little Navconnect* (if using
+  remote/network connections) and *Little Xpconnect* (if using X-Plane) too. Both are included in
+  the *Little Navmap* download package.
+* Reload the scenery library database to see fixes and improvements.
+* *Little Navmap* asks to create a recommended folder structure for files on first start after updating to 2.6 versions.
+  Let the program create the paths if you like to use them and move your files accordingly.
+  Note that this is purely optional. All Files of *Little Navmap* can be stored in any place.
 
 ## Known Issues
 
@@ -25,7 +30,7 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Excluding Navigraph manifest file now to avoid error messages with package "navigraph-maintenance"
   when reading MSFS scenery data.
 * Made yellow addon highlight rings smaller.
-* Fixed issue where procedures labels along line disappeared while flying.
+* Fixed issue where procedure labels along the line disappeared while flying.
 
 ===============================================================================
 # Version 2.6.5.rc1
