@@ -31,6 +31,7 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
   when reading MSFS scenery data.
 * Made yellow addon highlight rings smaller.
 * Fixed issue where procedure labels along the line disappeared while flying.
+* Added Dutch draft translation. Thanks to Eddy Crequie for his work.
 
 ===============================================================================
 # Version 2.6.5.rc1
