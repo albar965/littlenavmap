@@ -16059,7 +16059,7 @@ kHz/MHz</translation>
         <translation type="vanished">Espacio Aéreo</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3286"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3301"/>
         <source>Measurement line removed from map.</source>
         <translation>Línea de medición quitada del mapa.</translation>
     </message>
@@ -16100,9 +16100,9 @@ kHz/MHz</translation>
         <location filename="src/mapgui/mapwidget.cpp" line="1605"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1607"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1614"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3190"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3192"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3195"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3205"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3207"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
         <source>%1 %2</source>
         <translation type="unfinished">%1 %2</translation>
     </message>
@@ -16112,22 +16112,22 @@ kHz/MHz</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3167"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3182"/>
         <source>Distance search center position changed.</source>
         <translation>La distancia desde centro de bísqueda ha cambiado.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3299"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3314"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3156"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3171"/>
         <source>Showing home position.</source>
         <translation>Mostrando la posición de Inicio.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3224"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3239"/>
         <source>Added range rings for position.</source>
         <translation>Agregados anillos de rango para la posición.</translation>
     </message>
@@ -16141,12 +16141,12 @@ kHz/MHz</translation>
         <translation type="vanished">Mostrar procedimientos (%1 que no tienen procedimientos)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3346"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3361"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Todas las líneas de rango de anillos de medición removidas del mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3306"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3321"/>
         <source>Detail %1</source>
         <translation>Detalles %1</translation>
     </message>
@@ -16160,33 +16160,33 @@ kHz/MHz</translation>
         <translation type="obsolete">Dato de &amp;Usuario</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2651"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2666"/>
         <source>&lt;p&gt;Cannot zoom to a position nearby the poles in Mercator projection.&lt;br/&gt;Use Spherical instead.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2654"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2669"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3104"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3119"/>
         <source>Added hold.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3115"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3130"/>
         <source>Holding removed from map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3137"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3152"/>
         <source>Showing distance search center.</source>
         <translation>Mostrando centro de búsqueda de distancia.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3307"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3322"/>
         <source>Map detail level changed.</source>
         <translation>Se cambió el nivel de detalle del mapa.</translation>
     </message>
@@ -16195,12 +16195,12 @@ kHz/MHz</translation>
         <translation type="vanished">Aeronave del Usuario</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3203"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3218"/>
         <source>Added range rings for %1.</source>
         <translation>Agregados anillos de rango para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3175"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3190"/>
         <source>Changed home position.</source>
         <translation>Cambiada la posición de Partida.</translation>
     </message>
@@ -16215,7 +16215,7 @@ kHz/MHz</translation>
         <translation>Próxima posición historial de mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3278"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3293"/>
         <source>Range ring removed from map.</source>
         <translation>Anillos de rango removidos del Mapa.</translation>
     </message>
@@ -16316,12 +16316,12 @@ kHz/MHz</translation>
         <translation type="unfinished">Agregar %1 al plan de vuelo</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3074"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3089"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3085"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3100"/>
         <source>Traffic pattern removed from map.</source>
         <translation type="unfinished"></translation>
     </message>

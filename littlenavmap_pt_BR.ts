@@ -333,7 +333,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="719"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="974"/>
         <source>No Flight Plan.</source>
-        <translation type="unfinished">Nenhum Plano de Voo.</translation>
+        <translation>Nenhum Plano de Voo.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="723"/>
@@ -345,7 +345,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
         <source>Invalid Flight Plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plano de Voo Inválido.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="734"/>
@@ -487,12 +487,12 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1093"/>
         <source>▼</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1098"/>
         <source>▲</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1099"/>
@@ -2461,7 +2461,7 @@ Exiting now.</oldsource>
         <location filename="src/common/dirtool.cpp" line="73"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files&lt;br/&gt;in your documents folder.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The following folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files&lt;br/&gt;in your documents folder.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The follwing folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</oldsource>
-        <translation type="unfinished">&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; pode criar uma estrutura de diretório recomendada para armazenar todos os seus arquivos&lt;br/&gt;na pasta de documentos.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;As seguintes pastas serão criadas:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Diretório de nível superior para todos os arquivos do &lt;i&gt;Little Navmap&lt;/i&gt; contendo o seguintes subdiretórios:&lt;/p&gt;</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; pode criar uma estrutura de diretório recomendada para armazenar todos os seus arquivos&lt;br/&gt;na pasta de documentos.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;As seguintes pastas serão criadas:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Diretório de privilégio superior para todos os arquivos do &lt;i&gt;Little Navmap&lt;/i&gt; contendo o seguintes subdiretórios:&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="83"/>
@@ -2867,7 +2867,7 @@ Isso mudará a região mostrada no mapa e poderá alterar os detalhes.</translat
         <source>Little Navmap is connected to a simulator or Little Navconnect.
 Prepare your flight and load your aircraft in the simulator to see progress updates.</source>
         <translation>Little Navmap está conectado a um simulador ou Little Navconnect.
-Prepare seu voo e carregue sua aeronave no simulador para ver as atualizações de progresso.</translation>
+Prepare seu voo e carregue a sua aeronave no simulador para ver as atualizações de progresso.</translation>
     </message>
     <message>
         <location filename="src/info/infocontroller.cpp" line="105"/>
@@ -2877,7 +2877,7 @@ Then choose your simulator and click &quot;Connect&quot;.
 </source>
         <comment>Keep instructions in sync with translated menus and shortcuts</comment>
         <translation>Não conectado ao simulador.
-Ir para o menu principal -&gt; &quot;Configurações&quot; -&gt; &quot;Conexão com o Simulador de Voo&quot; ou pressione &quot;Ctrl + Shift + C&quot;.
+Ir para o menu principal -&gt; &quot;Configurações&quot; -&gt; &quot;Conexão com o Flight Simulator&quot; ou pressione &quot;Ctrl+Shift+C&quot;.
 Em seguida, escolha seu simulador e clique em &quot;Conectar&quot;.
 </translation>
     </message>
@@ -3087,12 +3087,12 @@ Em seguida, escolha seu simulador e clique em &quot;Conectar&quot;.
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="282"/>
         <source>Flight Time Real</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo de Voo Real</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="289"/>
         <source>Flight Time Simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo de Voo no Simulador</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="306"/>
@@ -3107,7 +3107,7 @@ Em seguida, escolha seu simulador e clique em &quot;Conectar&quot;.
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="311"/>
         <source>Unknown</source>
-        <translation type="unfinished">Desconhecido</translation>
+        <translation>Desconhecido</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="312"/>
@@ -4990,7 +4990,7 @@ Aplicar o layout da janela carregado mesmo assim?</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2129"/>
         <source> / (N)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2137"/>
@@ -7041,7 +7041,7 @@ exibição de vento na linha superior do perfil de elevação.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11170"/>
         <source>Ctrl+T</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11640"/>
@@ -7069,7 +7069,7 @@ exibição de vento na linha superior do perfil de elevação.</translation>
         <location filename="src/gui/mainwindow.ui" line="11672"/>
         <location filename="src/gui/mainwindow.ui" line="11675"/>
         <source>Manual wind in fuel report overrides other</source>
-        <translation type="unfinished"></translation>
+        <translation>Vento manual em relatório de combustível substitui outros</translation>
     </message>
     <message>
         <source>Display Holding at %1</source>
@@ -8113,7 +8113,7 @@ relação ao aeroporto mostrado</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5289"/>
         <source>User defined waypoints</source>
-        <translation>O Usuário definiu os waypoints</translation>
+        <translation>O Usuário defini os waypoints</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5310"/>
@@ -8319,7 +8319,7 @@ Manter procedimentos.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="268"/>
         <source>&amp;Airspace Libraries</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Bibliotecas de Espaços Aéreos</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6221"/>
@@ -8371,7 +8371,7 @@ Manter procedimentos.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6311"/>
         <source>Calculate for &amp;selection in flight plan table</source>
-        <translation>Calcular para &amp;seleção na tabela de plano de voo</translation>
+        <translation>Calcular através de &amp;seleção na tabela de plano de voo</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6576"/>
@@ -8833,7 +8833,7 @@ O melhor track será selecionado automaticamente.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9763"/>
         <source>&amp;User defined Time</source>
-        <translation>&amp;Usuário definiu o horário</translation>
+        <translation>&amp;Tempo definido pelo usuário</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9766"/>
@@ -9958,7 +9958,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7458"/>
         <source>Goto Center for &amp;Distance Search</source>
-        <translation>Voltar para o centro de &amp;Pesquisa de distância</translation>
+        <translation>Voltar para o Centro de &amp;Pesquisa de Distância</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7461"/>
@@ -14417,7 +14417,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="441"/>
         <source>UNICOM:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="516"/>
@@ -16367,12 +16367,12 @@ kHz/MHz</translation>
         <translation type="vanished">Adicionar </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3203"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3218"/>
         <source>Added range rings for %1.</source>
         <translation>Círculos de alcance adicionados para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3224"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3239"/>
         <source>Added range rings for position.</source>
         <translation>Círculos de alcance adicionados para posição.</translation>
     </message>
@@ -16385,7 +16385,7 @@ kHz/MHz</translation>
         <translation type="vanished">Espaço Aéreo</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3346"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3361"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Todos os círculos de alcance e linhas de medição foram removidos do mapa.</translation>
     </message>
@@ -16399,7 +16399,7 @@ kHz/MHz</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3175"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3190"/>
         <source>Changed home position.</source>
         <translation>Mudou a posição inicial.</translation>
     </message>
@@ -16408,12 +16408,12 @@ kHz/MHz</translation>
         <translation type="vanished">Saída </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3306"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3321"/>
         <source>Detail %1</source>
         <translation>Detalhe %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3167"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3182"/>
         <source>Distance search center position changed.</source>
         <translation>A posição do centro de busca de distância mudou.</translation>
     </message>
@@ -16427,7 +16427,7 @@ kHz/MHz</translation>
         <translation>Pulou de volta para a aeronave.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3307"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3322"/>
         <source>Map detail level changed.</source>
         <translation>Nível de detalhe do Mapa mudou.</translation>
     </message>
@@ -16442,33 +16442,33 @@ kHz/MHz</translation>
         <translation>Histórico de posições do mapa em seguida.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2651"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2666"/>
         <source>&lt;p&gt;Cannot zoom to a position nearby the poles in Mercator projection.&lt;br/&gt;Use Spherical instead.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Não é possível aplicar zoom a uma posição próxima aos pólos na projeção de Mercator.&lt;br/&gt;Em vez disso, use o esférico.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2654"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2669"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3104"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3119"/>
         <source>Added hold.</source>
         <translation>Adicionado Orbita.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3115"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3130"/>
         <source>Holding removed from map.</source>
         <translation>Orbita removida do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3286"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3301"/>
         <source>Measurement line removed from map.</source>
         <translation>Linha de medição removida do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3299"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3314"/>
         <source>Normal</source>
         <translation></translation>
     </message>
@@ -16486,7 +16486,7 @@ kHz/MHz</translation>
         <translation>Posição</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3278"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3293"/>
         <source>Range ring removed from map.</source>
         <translation>Faixa de círculo removido do mapa.</translation>
     </message>
@@ -16562,12 +16562,12 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <translation type="vanished"> (escondido no mapa)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3074"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3089"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>Adicionado padrão de tráfego do aeroporto para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3085"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3100"/>
         <source>Traffic pattern removed from map.</source>
         <translation>Padrão de tráfego removido do mapa.</translation>
     </message>
@@ -16600,9 +16600,9 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <location filename="src/mapgui/mapwidget.cpp" line="1605"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1607"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1614"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3190"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3192"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3195"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3205"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3207"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
@@ -16612,12 +16612,12 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <translation>Coordenadas copiadas para a área de transferência.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3137"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3152"/>
         <source>Showing distance search center.</source>
         <translation>Mostrando a distância do centro de buscas.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3156"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3171"/>
         <source>Showing home position.</source>
         <translation>Mostrando posição inicial.</translation>
     </message>
@@ -17925,7 +17925,7 @@ Veja as notas no manual para detalhes sobre essa configuração e como se movime
     <message>
         <location filename="src/options/options.ui" line="3928"/>
         <source>&amp;Low - Aircraft position and label is updated rarely, only for large course or altitude changes.</source>
-        <translation>&amp;A posição e o rótulo Low - Aircraft são atualizadas raramente, apenas para grandes mudanças de curso ou altitude.</translation>
+        <translation>&amp;Baixo - A posição e o rótulo da aeronave raramente são atualizados, apenas para grandes mudanças de curso ou altitude.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5806"/>
@@ -18302,7 +18302,7 @@ Você precisa recarregar a biblioteca de cenários para que as alterações entr
     <message>
         <location filename="src/options/options.ui" line="3626"/>
         <source>&amp;Short Distance:</source>
-        <translation>&amp;Menor Distância (p.ex,Comprimento da Pista):</translation>
+        <translation>&amp;Menor Distância (p. ex.Comprimento da Pista):</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5777"/>
@@ -20307,7 +20307,7 @@ Indicando com &quot;GC&quot; se rumo e o grande círculo estiverem selecionados.
         <location filename="src/options/optionsdialog.cpp" line="256"/>
         <source>Heading Indicator</source>
         <oldsource>Crab Angle Indicator</oldsource>
-        <translation type="unfinished">Indicador de ângulo de caranguejo</translation>
+        <translation>Indicador de Proa</translation>
     </message>
     <message>
         <source>Show the crab angle for the user aircraft as a small magenta circle.</source>
@@ -20821,7 +20821,7 @@ Exibido somente se a opção &quot;Usar áreas do mapa&quot; na página &quot;Na
     <message>
         <location filename="src/options/optionsdialog.cpp" line="256"/>
         <source>Show the heading for the user aircraft as a small magenta circle.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostre a proa da aeronave do usuário como um pequeno círculo na cor magenta.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2111"/>
@@ -21654,12 +21654,13 @@ Exibido somente se a opção &quot;Usar áreas do mapa&quot; na página &quot;Na
     <message>
         <location filename="src/query/procedurequery.cpp" line="2451"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>O procedimento %1 %2 na biblioteca de cenários contém erros</translatorcomment>
+        <translation>Procedure %1 %2 in scenery library has errors</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="2458"/>
         <source>Procedure not found in scenery library</source>
-        <translation type="unfinished"></translation>
+        <translation>Procedimento não encontrado na biblioteca de cenários</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="1685"/>
@@ -21782,7 +21783,8 @@ Exibido somente se a opção &quot;Usar áreas do mapa&quot; na página &quot;Na
         <location filename="src/search/proceduresearch.cpp" line="1118"/>
         <source>Procedure has errors and cannot be added to the flight plan.
 This can happen due to inconsistent navdata, missing waypoints or other reasons.</source>
-        <translation type="unfinished"></translation>
+        <translation>O procedimento tem erros e não pode ser adicionado ao plano de voo.
+Isso pode acontecer devido a dados de navegação (Navdata) inconsistentes, waypoints ausentes ou outros motivos.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1125"/>
@@ -21790,7 +21792,10 @@ This can happen due to inconsistent navdata, missing waypoints or other reasons.
 This can happen due to inconsistent navdata, missing waypoints or other reasons.
 
 Really use it?</source>
-        <translation type="unfinished"></translation>
+        <translation>O procedimento tem erros e não será exibido corretamente.
+Isso pode acontecer devido a dados de navegação (Navdata) inconsistentes, waypoints ausentes ou outros motivos.
+
+Deseja realmente usá-lo?</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1264"/>
@@ -21839,7 +21844,7 @@ Really use it?</source>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="316"/>
         <source>Airport has no procedure.</source>
-        <translation type="unfinished"></translation>
+        <translation>O aeroporto não tem procedimento.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="322"/>
@@ -21852,7 +21857,7 @@ Really use it?</source>
         <location filename="src/search/proceduresearch.cpp" line="371"/>
         <location filename="src/search/proceduresearch.cpp" line="373"/>
         <source>%1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="417"/>
@@ -21993,7 +21998,7 @@ Deseja realmente usá-lo?</translation>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="666"/>
         <source>No Flight Plan.</source>
-        <translation type="unfinished">Nenhum Plano de Voo.</translation>
+        <translation>Nenhum Plano de Voo.</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="675"/>
@@ -22003,7 +22008,7 @@ Deseja realmente usá-lo?</translation>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1023"/>
         <source>,</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1144"/>
@@ -22063,12 +22068,12 @@ Deseja realmente usá-lo?</translation>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1777"/>
         <source>▼</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1779"/>
         <source>▲</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>, %1Wind %2°M, %3</source>
@@ -24294,8 +24299,8 @@ de Procedimento</translation>
 °M/%speed%</source>
         <oldsource>Wind °M
 %speed%</oldsource>
-        <translation type="unfinished">Vento °M
-%speed%</translation>
+        <translation>Vento
+°M/%speed%</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="147"/>
@@ -24771,7 +24776,7 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <location filename="src/common/maptypes.cpp" line="384"/>
         <source>UNICOM</source>
         <oldsource>Unicom</oldsource>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="90"/>
@@ -24864,7 +24869,7 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <location filename="src/common/maptypes.cpp" line="385"/>
         <source>VOLMET</source>
         <oldsource>Volmet</oldsource>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1444"/>
@@ -25570,7 +25575,7 @@ ou calcule o plano de voo novamente se o seu plano usar tracks.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4636"/>
         <source>No Flight Plan.</source>
-        <translation type="unfinished">Nenhum Plano de Voo.</translation>
+        <translation>Nenhum Plano de Voo.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4642"/>
@@ -25595,20 +25600,20 @@ ou calcule o plano de voo novamente se o seu plano usar tracks.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4860"/>
         <source>No flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhum plano de voo.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4861"/>
         <source>
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4862"/>
         <location filename="src/route/routecontroller.cpp" line="4867"/>
         <source>Remarks for the flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>Observações para o plano de voo.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4658"/>
@@ -25946,17 +25951,17 @@ to select departure and destination.</oldsource>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4110"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4125"/>
         <source>▼</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4127"/>
         <source>▲</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4612"/>
@@ -26540,7 +26545,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="117"/>
         <source>&lt;p&gt;The following export formats have an invalid path:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Export stopped.&lt;/p&gt;&lt;p&gt;Go to: Main menu -&amp;gt; &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;Multiexport Flight Plan Options&amp;quot; or press Ctrl+Alt+Shift+M and correct the path highlighted in red.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Os seguintes formatos de exportação têm um caminho inválido: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Exportação interrompida.&lt;/p&gt;&lt;p&gt;Vá para: Menu principal -&amp;gt; &amp;quot;Arquivo&amp;quot; -&amp;gt; &amp;quot;Opções do Plano de Voo Multiexportar&amp;quot; ou pressione Ctrl+Alt+Shift+M e corrija o caminho destacado em vermelho.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="137"/>
@@ -26583,7 +26588,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
 Really continue?</source>
         <translation>
 
-Realmente continue?</translation>
+Deseja continuar?</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1114"/>
@@ -29067,7 +29072,11 @@ A short all upper case ident without spaces is recommended.
 
 Idents starting with &quot;WP&quot; followed by a number are automatically renamed to reflect flying order.
 Examples: &quot;WP1&quot;, &quot;WP2&quot; or &quot;WP10&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Necessário ident(identificação) do waypoint.
+Recomenda-se um curto nome em letras maiúsculas sem espaços.
+
+Os idents que começam com &quot;WP&quot; seguidos por um número são automaticamente renomeados para refletir a ordem de voo.
+Exemplos: &quot;WP1&quot;, &quot;WP2&quot; ou &quot;WP10&quot;.</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="141"/>

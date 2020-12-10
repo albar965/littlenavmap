@@ -15988,9 +15988,9 @@ kHz/MHz</translation>
         <location filename="src/mapgui/mapwidget.cpp" line="1605"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1607"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1614"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3190"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3192"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3195"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3205"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3207"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
         <source>%1 %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16025,93 +16025,93 @@ kHz/MHz</translation>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2651"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2666"/>
         <source>&lt;p&gt;Cannot zoom to a position nearby the poles in Mercator projection.&lt;br/&gt;Use Spherical instead.&lt;/p&gt;</source>
         <translation>&lt;p&gt;在墨卡托(平面)投影下无法放大到极点附近。使用球形投影代替。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2654"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2669"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
         <translation>不要再显示此对话框(&amp;S)。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3074"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3089"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>添加了 %1 的机场起落航线。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3085"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3100"/>
         <source>Traffic pattern removed from map.</source>
         <translation>起落航线已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3104"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3119"/>
         <source>Added hold.</source>
         <translation>添加了等待。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3115"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3130"/>
         <source>Holding removed from map.</source>
         <translation>等待已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3137"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3152"/>
         <source>Showing distance search center.</source>
         <translation>已显示距离搜索的中心。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3156"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3171"/>
         <source>Showing home position.</source>
         <translation>在地图显示初始位置。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3167"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3182"/>
         <source>Distance search center position changed.</source>
         <translation>距离搜索中心位置已更改。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3175"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3190"/>
         <source>Changed home position.</source>
         <translation>初始位置已更改。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3203"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3218"/>
         <source>Added range rings for %1.</source>
         <translation>已为 %1 添加距离环。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3224"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3239"/>
         <source>Added range rings for position.</source>
         <translation>已为此位置添加距离环。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3278"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3293"/>
         <source>Range ring removed from map.</source>
         <translation>距离环已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3286"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3301"/>
         <source>Measurement line removed from map.</source>
         <translation>测量线已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3299"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3314"/>
         <source>Normal</source>
         <translation>普通</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3306"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3321"/>
         <source>Detail %1</source>
         <translation>详情 %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3307"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3322"/>
         <source>Map detail level changed.</source>
         <translation>地图详细级别已更改。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3346"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3361"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>所有的距离环、测量线已从地图上移除。</translation>
     </message>
