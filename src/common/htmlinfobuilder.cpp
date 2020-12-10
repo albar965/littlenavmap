@@ -3577,11 +3577,23 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           }
 
           if(!alternate && !destination)
-          {
             // Distance, time and arrival are already part of the
             // destination information when flying an alternate leg
             html.row2(strJoinHdr(distTimeHeader), strJoinVal(distTimeStr), ahtml::NO_ENTITIES);
 
+          // Next leg - altitude ====================================================
+          if(NavApp::getAltitudeLegs().isValidProfile())
+          {
+            const RouteAltitudeLeg& routeAltLeg = activeLegIdx != map::INVALID_INDEX_VALUE &&
+                                                  corrected ? route.getAltitudeLegAt(activeLegIdx) :
+                                                  routeAltLegCorrected;
+
+            if(!routeAltLeg.isEmpty())
+              html.row2(tr("Altitude:"), Unit::altFeet(routeAltLeg.getWaypointAltitude()));
+          }
+
+          if(!alternate && !destination)
+          {
             // Fuel
             if(!less && fuelTime.isFuelToNextValid())
             {
@@ -3605,16 +3617,6 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           }
 
         } // if(nearestLegDistance < map::INVALID_DISTANCE_VALUE)
-
-        // Next leg - altitude ====================================================
-        if(NavApp::getAltitudeLegs().isValidProfile())
-        {
-          const RouteAltitudeLeg& routeAltLeg = activeLegIdx != map::INVALID_INDEX_VALUE &&
-                                                corrected ? route.getAltitudeLegAt(activeLegIdx) : routeAltLegCorrected;
-
-          if(!routeAltLeg.isEmpty())
-            html.row2(tr("Altitude:"), Unit::altFeet(routeAltLeg.getWaypointAltitude()));
-        }
 
         // No cross track and course for holds
         if(route.getSizeWithoutAlternates() > 1)

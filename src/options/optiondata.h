@@ -1376,8 +1376,7 @@ private:
                                                        optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
                                                        optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND;
   optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRCRAFT_USER | optsd::CLICK_AIRCRAFT_AI |
-                                                   optsd::CLICK_AIRPORT | optsd::CLICK_AIRPORT_PROC |
-                                                   optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
+                                                   optsd::CLICK_AIRPORT | optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
 
   opts::UpdateRate updateRate = opts::DAILY;
   opts::UpdateChannels updateChannels = opts::STABLE;

@@ -1267,7 +1267,7 @@ userpoints and logbook entries when hovering the cursor over the map</string>
                     <string>Show &amp;procedures on airport click</string>
                    </property>
                    <property name="checked">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                   </widget>
                  </item>
