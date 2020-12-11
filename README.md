@@ -32,7 +32,7 @@
 
 ### Little Navmap Donations
 
-[![Donate](https://albar965.github.io/assets/images/donate.png)](dhttps://albar965.github.io/onate.html) 
+[![Donate](https://albar965.github.io/assets/images/donate.png)](https://albar965.github.io/onate.html) 
 
 **Donate to show your appreciation if you like my programs.**
 **Spenden Sie, um Ihre Wertschätzung zu zeigen, wenn Ihnen  meine Programme gefallen.**
