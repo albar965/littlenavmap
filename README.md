@@ -37,7 +37,7 @@
 **Donate to show your appreciation if you like my programs.**
 **Spenden Sie, um Ihre Wertschätzung zu zeigen, wenn Ihnen  meine Programme gefallen.**
 
-## Little Navmap {#littlenavmap}
+## Little Navmap
 
 ![Little Navmap](https://albar965.github.io/assets/images/navroute.png) **_Little Navmap_** is a free open source flight planner, navigation tool, moving map,
 airport search and airport information system for **Flight Simulator X, Prepar3D, Microsoft Flight Simulator 2020 and X-Plane** and is available for **Windows, Apple macOS and Linux**.
