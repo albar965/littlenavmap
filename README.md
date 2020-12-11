@@ -12,46 +12,42 @@
 
 ### Little Navmap Links
 
-[**► Screenshots for _Little Navmap_**](littlenavmapscreens.html)
+[**► Screenshots for _Little Navmap_**](https://albar965.github.io/littlenavmapscreens.html)
 
-[**► User manuals for _Little Navmap_ and _Little Navconnect_**](/manuals.html)
+[**► User manuals for _Little Navmap_ and _Little Navconnect_**](https://albar965.github.io/manuals.html)
 
 -----
 
 [**► Other Downloads** (SimConnect, Aircraft Performance and more)](https://www.littlenavmap.org/downloads)
 
-[**► _Little Navmap_ - Frequently asked Questions**](littlenavmap-faq.html)
+[**► _Little Navmap_ - Frequently asked Questions**](https://albar965.github.io/littlenavmap-faq.html)
 
-[**► _Little Navmap_ - Install Navigraph Updates**](littlenavmap_navigraph.html) Shows how to update the included Navigraph database to the latest cycle.
+[**► _Little Navmap_ - Install Navigraph Updates**](https://albar965.github.io/littlenavmap_navigraph.html) Shows how to update the included Navigraph database to the latest cycle.
 
 [► GitHub Profile](https://github.com/albar965) All my projects, releases, source code, issue lists and more.
 
-[► About Translation Packages](littlenavmaptranslations.html) General information about translation packages.
-
-### Contact and Support
-
-<a href="alex AT littlenavmap DOT org"
-   rel="nofollow"
-   onclick="this.href='mailto:' + 'alex' + '@' + 'little' + 'nav' + 'map' + '.' + 'org'"
-   onmouseleave="this.href='alex AT littlenavmap DOT org'"><span class="bold">► Contact me by email</span></a>,
-<a rel="pgpkey" href="alex@littlenavmap.org.pubkey.asc">PGP Public Key</a> (English / Deutsch).
+[► About Translation Packages](https://albar965.github.io/littlenavmaptranslations.html) General information about translation packages.
 
 [**► Support Forum at _Avsim_**](https://www.avsim.com/forum/780-little-navmap-little-navconnect-little-logbook-support-forum) **Support and help for users.**
 
 ### Little Navmap Donations
 
-|  [![Donate](assets/images/donate.png)](donate.html) | **Donate to show your appreciation if you like my programs.**<br/><br/>**Spenden Sie, um Ihre Wertschätzung zu zeigen, wenn Ihnen  meine Programme gefallen.** |
+[![Donate](https://albar965.github.io/assets/images/donate.png)](dhttps://albar965.github.io/onate.html) 
+
+**Donate to show your appreciation if you like my programs.**
+**Spenden Sie, um Ihre Wertschätzung zu zeigen, wenn Ihnen  meine Programme gefallen.**
 
 ## Little Navmap {#littlenavmap}
 
-![Little Navmap](assets/images/navroute.png) **_Little Navmap_** is a free open source flight planner, navigation tool, moving map,
+![Little Navmap](https://albar965.github.io/assets/images/navroute.png) **_Little Navmap_** is a free open source flight planner, navigation tool, moving map,
 airport search and airport information system for **Flight Simulator X, Prepar3D, Microsoft Flight Simulator 2020 and X-Plane** and is available for **Windows, Apple macOS and Linux**.
 
 _Little Navmap_ comes with a **detailed manual** also including tutorials which is available online as well as in PDF and other formats like EPUB.
 Help buttons in all relevant areas of the program display corresponding chapters in the online manual on click.
 
-| ---- | ---- |
-| [![Little Navmap 2.2.2 spherical map projection and elevation profile with flight plan](assets/images/spherical_small.jpg)](assets/images/spherical.jpg) | [![Little Navmap 2.2.2 sun shadow on globe](assets/images/sunshadow_small.jpg)](assets/images/sunshadow.jpg) |
+[![Little Navmap 2.2.2 spherical map projection and elevation profile with flight plan](https://albar965.github.io/assets/images/spherical_small.jpg)](https://albar965.github.io/assets/images/spherical.jpg)
+
+[![Little Navmap 2.2.2 sun shadow on globe](https://albar965.github.io/assets/images/sunshadow_small.jpg)](https://albar965.github.io/assets/images/sunshadow.jpg) 
 
 A widely configurable **map display** using the OpenStreetMap as a background map which is only one
 option of many online and included offline maps. The map shows airports, navaids, airways,
@@ -60,8 +56,9 @@ taxiways, displaced thresholds, overrun areas, aprons, parking spots and more.
 
 User can place airport traffic patterns or holdings as a visual guidance on the map.
 
-| ---- | ---- |
-| [![Little Navmap 2.4.4 winds aloft](assets/images/user_features_small.jpg)](assets/images/user_features.jpg) | [![Little Navmap 2.4.4 User Features](assets/images/wind_small.jpg)](assets/images/wind.jpg) |
+[![Little Navmap 2.4.4 winds aloft](https://albar965.github.io/assets/images/user_features_small.jpg)](https://albar965.github.io/assets/images/user_features.jpg) 
+
+[![Little Navmap 2.4.4 User Features](https://albar965.github.io/assets/images/wind_small.jpg)](https://albar965.github.io/assets/images/wind.jpg)
 
 It supports **approach and departure procedures like SIDs, STARs, custom final approaches**, offers a
 widely configurable **automatic flight plan calculation** and **several export formats** like GFP \(Reality XP GTN
@@ -94,8 +91,9 @@ GPX files.
 **Oceanic and other tracks** like NAT can be downloaded, shown on the map and can be used for
 automatic flight plan calculation.
 
-| ---- | ---- |
-| [![Little Navmap 2.4.4 Logbook](assets/images/logbook_small.jpg)](assets/images/logbook.jpg) | [![Little Navmap 2.2.2 Airport Weather](assets/images/airportweather_small.jpg)](assets/images/airportweather.jpg) |
+[![Little Navmap 2.4.4 Logbook](https://albar965.github.io/assets/images/logbook_small.jpg)](https://albar965.github.io/assets/images/logbook.jpg)
+
+[![Little Navmap 2.2.2 Airport Weather](https://albar965.github.io/assets/images/airportweather_small.jpg)](https://albar965.github.io/assets/images/airportweather.jpg)
 
 The program can generate an **ATS route description** from flight plans and vice versa where the output
 is widely configurable.
@@ -114,4 +112,4 @@ Prepar3D v2, v3, v4, v5, Microsoft Flight Simulator 2020 and X-Plane 11.
 
 **Supported platforms:** Windows 7/8/10, Apple macOS \(10.12 or newer only\) and Linux \(64 bit only\).
 
-[![Little Navmap](assets/images/Tipp_FSMagazin_D_Neu_2014_50.png)](https://www.facebook.com/FSMAGAZIN/posts/1349379408450042)
+[![Little Navmap](https://albar965.github.io/assets/images/Tipp_FSMagazin_D_Neu_2014_50.png)](https://www.facebook.com/FSMAGAZIN/posts/1349379408450042)
