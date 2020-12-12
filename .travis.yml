@@ -67,13 +67,13 @@ install:
 
 before_script:
     # Clone atools VERSION_NUMBER - atools
-    - git clone --branch=release/3.6 https://github.com/albar965/atools.git ../atools
+    - git clone --branch=master https://github.com/albar965/atools.git ../atools
 
     # Clone littenavconnect (for deployment) VERSION_NUMBER - littenavconnect
-    - git clone --branch=release/2.6 https://github.com/albar965/littlenavconnect.git ../littlenavconnect
+    - git clone --branch=master https://github.com/albar965/littlenavconnect.git ../littlenavconnect
 
     # Clone littexpconnect (for deployment) VERSION_NUMBER - littexpconnect
-    - git clone --branch=release/1.0 https://github.com/albar965/littlexpconnect.git ../littlexpconnect
+    - git clone --branch=master https://github.com/albar965/littlexpconnect.git ../littlexpconnect
 
     # Get X-Plane SDK (for deployment)
     - wget -P '../' "http://developer.x-plane.com/wp-content/plugins/code-sample-generation/sample_templates/XPSDK301.zip"
