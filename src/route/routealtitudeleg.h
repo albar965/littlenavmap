@@ -43,7 +43,7 @@ public:
   /* Maximum altitude for this leg in feet */
   float getMaxAltitude() const;
 
-  /* Distance from departute in NM */
+  /* Distance from departure to waypoint (i.e. end of leg) in NM */
   float getDistanceFromStart() const;
 
   /* Distance from last leg to this one i.e. this leg's length */
@@ -92,11 +92,16 @@ public:
 
   /* First point is equal to last point of previous leg. Last point is position of the waypoint for this leg.
    * Can contain more than two points for TOC and/or TOD legs.
-   * x = distance from start and y = altitude
+   * x = distance from start and y = altitude in feet
    */
   const QPolygonF& getGeometry() const
   {
     return geometry;
+  }
+
+  float getWaypointAltitude() const
+  {
+    return geometry.isEmpty() ? map::INVALID_ALTITUDE_VALUE : geometry.last().y();
   }
 
   bool isTopOfClimb() const
@@ -147,11 +152,19 @@ public:
     return line;
   }
 
+  /* Geometry for complex procedure legs without TOC and TOD or start and end */
+  const atools::geo::LineString& getGeoLineString() const
+  {
+    return geoLine;
+  }
+
+  /* knots */
   float getWindSpeed() const
   {
     return windSpeed;
   }
 
+  /* Degrees true */
   float getWindDirection() const
   {
     return windDirection;
@@ -159,9 +172,13 @@ public:
 
   /* Calculate fuel and time to destination from this leg at position distFromStart
    * fuel in local units (gal or lbs) depending on performance and distFromStart in NM.
-   * distFromStart has to match this leg. */
-  void getFuelFromDistToDestination(float& fuelToDist, float distFromStart) const;
-  void getTimeFromDistToDestination(float& timeToDist, float distFromStart) const;
+   * distFromStart has to match this legs distance from departure. */
+  float getFuelFromDistToDestination(float distFromDeparture) const;
+  float getTimeFromDistToDestination(float distFromDeparture) const;
+
+  /* As above but to the end of the leg */
+  float getFuelFromDistToEnd(float distFromDeparture) const;
+  float getTimeFromDistToEnd(float distFromDeparture) const;
 
 private:
   friend class RouteAltitude;
@@ -224,7 +241,8 @@ private:
   float tocPos() const;
   float todPos() const;
 
-  atools::geo::LineString line;
+  atools::geo::LineString line, /* Simple line with start, probably TOD, TOC and end */
+                          geoLine /* Geometry for complex procedure legs without TOC and TOD or start and end */;
   QString ident, procedureType;
   QPolygonF geometry;
   proc::MapAltRestriction restriction;
@@ -242,7 +260,7 @@ private:
   float fuelToDest = 0.f; /* Fuel from start of this leg to the destination or alternate */
   float timeToDest = 0.f; /* Time from start of this leg to the destination or alternate */
 
-  // Wind at the waypoint (y2)
+  // Wind at the waypoint (y2) degrees true
   float windSpeed = 0.f, windDirection = 0.f;
 
 };

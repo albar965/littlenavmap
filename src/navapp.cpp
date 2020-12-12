@@ -26,6 +26,7 @@
 #include "db/databasemanager.h"
 #include "fs/db/databasemeta.h"
 #include "mapgui/mapwidget.h"
+#include "profile/profilewidget.h"
 #include "gui/mainwindow.h"
 #include "route/routecontroller.h"
 #include "common/elevationprovider.h"
@@ -106,7 +107,7 @@ void NavApp::initApplication()
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
   setOrganizationDomain("littlenavmap.org");
-  setApplicationVersion("2.5.2.develop"); // VERSION_NUMBER - Little Navmap
+  setApplicationVersion("2.6.6"); // VERSION_NUMBER - Little Navmap
 }
 
 NavApp *NavApp::navAppInstance()
@@ -121,6 +122,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   NavApp::mainWindow = mainWindowParam;
   databaseManager = new DatabaseManager(mainWindow);
   databaseManager->openAllDatabases(); // Only readonly databases
+  databaseManager->loadLanguageIndex(); // MSFS translations from table "translation"
 
   userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
   logdataController = new LogdataController(databaseManager->getLogdataManager(), mainWindow);
@@ -291,9 +293,9 @@ void NavApp::deInit()
   splashScreen = nullptr;
 }
 
-void NavApp::checkForUpdates(int channelOpts, bool manuallyTriggered)
+void NavApp::checkForUpdates(int channelOpts, bool manuallyTriggered, bool forceDebug)
 {
-  updateHandler->checkForUpdates(static_cast<opts::UpdateChannels>(channelOpts), manuallyTriggered);
+  updateHandler->checkForUpdates(static_cast<opts::UpdateChannels>(channelOpts), manuallyTriggered, forceDebug);
 }
 
 void NavApp::optionsChanged()
@@ -346,7 +348,9 @@ void NavApp::readMagDecFromDatabase()
   else
   {
     qWarning() << Q_FUNC_INFO << "Empty database falling back to WMM";
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     magDecReader->readFromWmm();
+    QGuiApplication::restoreOverrideCursor();
   }
 
   qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate()
@@ -428,7 +432,7 @@ bool NavApp::isConnectedAndAircraft()
 
 bool NavApp::isUserAircraftValid()
 {
-  return mainWindow->getMapWidget()->getUserAircraft().isValid();
+  return mainWindow->getMapWidget()->getUserAircraft().isFullyValid();
 }
 
 const atools::fs::sc::SimConnectUserAircraft& NavApp::getUserAircraft()
@@ -444,6 +448,15 @@ const atools::fs::sc::SimConnectData& NavApp::getSimConnectData()
 const atools::geo::Pos& NavApp::getUserAircraftPos()
 {
   return mainWindow->getMapWidget()->getUserAircraft().getPosition();
+}
+
+void NavApp::updateAllMaps()
+{
+  if(mainWindow->getMapWidget() != nullptr)
+    mainWindow->getMapWidget()->update();
+
+  if(mainWindow->getProfileWidget() != nullptr)
+    mainWindow->getProfileWidget()->update();
 }
 
 const QVector<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
@@ -501,6 +514,11 @@ Route& NavApp::getRoute()
   return mainWindow->getRouteController()->getRoute();
 }
 
+void NavApp::updateRouteCycleMetadata()
+{
+  getRoute().updateRouteCycleMetadata();
+}
+
 QString NavApp::getRouteString()
 {
   return RouteStringWriter().createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
@@ -550,6 +568,26 @@ QString NavApp::getCurrentSimulatorBasePath()
 QString NavApp::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type)
 {
   return databaseManager->getSimulatorBasePath(type);
+}
+
+QString NavApp::getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types)
+{
+  return databaseManager->getSimulatorFilesPathBest(types);
+}
+
+bool NavApp::hasSimulator(atools::fs::FsPaths::SimulatorType type)
+{
+  return atools::fs::FsPaths::hasSimulator(type);
+}
+
+bool NavApp::hasAnyMsSimulator()
+{
+  return atools::fs::FsPaths::hasAnyMsSimulator();
+}
+
+bool NavApp::hasXplaneSimulator()
+{
+  return atools::fs::FsPaths::hasXplaneSimulator();
 }
 
 bool NavApp::isNavdataAll()
@@ -883,9 +921,9 @@ QString NavApp::getMapCopyright()
   return mainWindow->getMapWidget()->getMapCopyright();
 }
 
-const QString& NavApp::getCurrentRouteFilepath()
+const QString& NavApp::getRouteFilepath()
 {
-  return mainWindow->getRouteController()->getCurrentRouteFilepath();
+  return mainWindow->getRouteController()->getRouteFilepath();
 }
 
 const QString& NavApp::getCurrentAircraftPerfFilepath()
@@ -901,6 +939,11 @@ WebController *NavApp::getWebController()
 DatabaseManager *NavApp::getDatabaseManager()
 {
   return databaseManager;
+}
+
+const atools::fs::scenery::LanguageJson& NavApp::getLanguageIndex()
+{
+  return databaseManager->getLanguageIndex();
 }
 
 ConnectClient *NavApp::getConnectClient()
@@ -960,7 +1003,9 @@ map::MapAirspaceFilter NavApp::getShownMapAirspaces()
 
 void NavApp::deleteSplashScreen()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   if(splashScreen != nullptr)
     splashScreen->close();
@@ -1008,7 +1053,7 @@ void NavApp::initSplashScreen()
 
   splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
                             arg(Application::applicationVersion()).arg(GIT_REVISION),
-                            Qt::AlignRight | Qt::AlignBottom, Qt::white);
+                            Qt::AlignRight | Qt::AlignBottom, Qt::black);
 
   processEvents(QEventLoop::ExcludeUserInputEvents);
 }

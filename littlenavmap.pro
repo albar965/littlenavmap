@@ -157,8 +157,8 @@ win32 {
 macx {
   isEmpty(GIT_PATH) : GIT_PATH=git
 
-  # Compatibility down to OS X 10.10
-  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
+  # Compatibility down to OS X Sierra 10.12 inclusive
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.12
 
   LIBS += -L$$MARBLE_LIB_PATH -lmarblewidget-qt5 -L$$ATOOLS_LIB_PATH -latools  -lz
 }
@@ -203,7 +203,6 @@ message(ATOOLS_INC_PATH: $$ATOOLS_INC_PATH)
 message(ATOOLS_LIB_PATH: $$ATOOLS_LIB_PATH)
 message(MARBLE_INC_PATH: $$MARBLE_INC_PATH)
 message(MARBLE_LIB_PATH: $$MARBLE_LIB_PATH)
-macx : message(MARBLE_BUILD_PATH: $$MARBLE_BUILD_PATH)
 message(DEPLOY_BASE: $$DEPLOY_BASE)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
@@ -264,6 +263,7 @@ SOURCES += \
   src/gui/holddialog.cpp \
   src/gui/mainwindow.cpp \
   src/gui/runwayselection.cpp \
+  src/gui/statusbareventfilter.cpp \
   src/gui/stylehandler.cpp \
   src/gui/textdialog.cpp \
   src/gui/timedialog.cpp \
@@ -426,6 +426,7 @@ HEADERS  += \
   src/gui/holddialog.h \
   src/gui/mainwindow.h \
   src/gui/runwayselection.h \
+  src/gui/statusbareventfilter.h \
   src/gui/stylehandler.h \
   src/gui/textdialog.h \
   src/gui/timedialog.h \
@@ -616,12 +617,10 @@ unix:!macx {
     $$MARBLE_LIB_PATH/marble/plugins/libGraticulePlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libKmlPlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libLatLonPlugin.so \
+    $$MARBLE_LIB_PATH/marble/plugins/libPn2Plugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libMapScaleFloatItem.so \
     $$MARBLE_LIB_PATH/marble/plugins/libNavigationFloatItem.so \
-    $$MARBLE_LIB_PATH/marble/plugins/libOsmPlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libOverviewMap.so \
-    $$MARBLE_LIB_PATH/marble/plugins/libPn2Plugin.so \
-    $$MARBLE_LIB_PATH/marble/plugins/libPntPlugin.so \
     $$OUT_PWD/plugins &&
   copydata.commands += mkdir -p $$OUT_PWD/translations &&
   copydata.commands += cp -avfu $$PWD/*.qm $$OUT_PWD/translations &&
@@ -721,7 +720,7 @@ unix:!macx {
 # Mac specific deploy target
 macx {
 
-INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
+  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
          -change  $$INSTALL_MARBLE_DYLIB \
           @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
 
@@ -732,7 +731,7 @@ INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
   DEPLOY_APP=\"$$PWD/../deploy/Little Navmap.app\"
   DEPLOY_DIR=\"$$PWD/../deploy\"
 
-message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
+  message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
 
   deploy.commands = rm -Rfv $$DEPLOY_APP &&
   deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
@@ -745,12 +744,10 @@ message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
     $$MARBLE_LIB_PATH/plugins/libGraticulePlugin.so \
     $$MARBLE_LIB_PATH/plugins/libKmlPlugin.so \
     $$MARBLE_LIB_PATH/plugins/libLatLonPlugin.so \
+    $$MARBLE_LIB_PATH/plugins/libPn2Plugin.so \
     $$MARBLE_LIB_PATH/plugins/libMapScaleFloatItem.so \
     $$MARBLE_LIB_PATH/plugins/libNavigationFloatItem.so \
-    $$MARBLE_LIB_PATH/plugins/libOsmPlugin.so \
     $$MARBLE_LIB_PATH/plugins/libOverviewMap.so \
-    $$MARBLE_LIB_PATH/plugins/libPn2Plugin.so \
-    $$MARBLE_LIB_PATH/plugins/libPntPlugin.so \
     $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCachePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libAtmospherePlugin.so &&
@@ -758,12 +755,10 @@ message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libGraticulePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libKmlPlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libLatLonPlugin.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libMapScaleFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libNavigationFloatItem.so &&
-  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOsmPlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
-  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
-  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so &&
   deploy.commands += macdeployqt littlenavmap.app -always-overwrite &&
   deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $$DEPLOY_APP &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_APP/Contents/MacOS &&
@@ -795,12 +790,10 @@ win32 {
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libGraticulePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libKmlPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libLatLonPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libPn2Plugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libMapScaleFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libNavigationFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libOsmPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libOverviewMap$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libPn2Plugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libPntPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$OUT_PWD/littlenavmap.exe) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
@@ -813,13 +806,15 @@ win32 {
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/help) $$p($$DEPLOY_BASE/$$TARGET_NAME/help) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/web) $$p($$DEPLOY_BASE/$$TARGET_NAME/web) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/customize) $$p($$DEPLOY_BASE/$$TARGET_NAME/customize) &&
-  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/etc) $$p($$DEPLOY_BASE/$$TARGET_NAME/etc) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/marble/data) $$p($$DEPLOY_BASE/$$TARGET_NAME/data) &&
+  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/etc) $$p($$DEPLOY_BASE/$$TARGET_NAME/etc) &&
+  deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$TARGET_NAME/etc/SimConnect.dll) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../libmarblewidget-qt5$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../libastro$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libgcc*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libstdc*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libwinpthread*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$PWD/etc/SimConnect.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$OPENSSL_PATH\libcrypto-1_1.dll $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$OPENSSL_PATH\libssl-1_1.dll $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5DBus$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&

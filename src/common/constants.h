@@ -48,6 +48,7 @@ namespace lnm {
 // ======== URLs ================================================================
 extern QString helpOnlineUrl;
 extern QString helpOnlineTutorialsUrl;
+extern QString helpOnlineDownloadsUrl;
 extern QString helpOnlineLegendUrl;
 extern QString helpOnlineInstallRedistUrl;
 extern QString helpOnlineInstallGlobeUrl;
@@ -212,7 +213,8 @@ const QLatin1Literal SETTINGS_DATABASE("Settings/Database");
 const QLatin1Literal APPROACHTREE_WIDGET("ApproachTree/Widget");
 const QLatin1Literal APPROACHTREE_SELECTED_WIDGET("ApproachTree/WidgetSelected");
 const QLatin1Literal APPROACHTREE_STATE("ApproachTree/TreeState");
-const QLatin1Literal APPROACHTREE_AIRPORT("ApproachTree/Airport");
+const QLatin1Literal APPROACHTREE_AIRPORT_NAV("ApproachTree/AirportNav");
+const QLatin1Literal APPROACHTREE_AIRPORT_SIM("ApproachTree/AirportSim");
 const QLatin1Literal APPROACHTREE_SELECTED_APPR("ApproachTree/SeletedApproach");
 
 /* Export settings dialog */
@@ -250,13 +252,15 @@ const QLatin1Literal OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR("OptionsDialog/Fligh
 const QLatin1Literal OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR("OptionsDialog/FlightplanPassedColor");
 const QLatin1Literal OPTIONS_DIALOG_TRAIL_COLOR("OptionsDialog/TrailColor");
 const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS("OptionsDialog/DisplayOptions");
+const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS_AIRPORT("OptionsDialog/DisplayOptionsAirport");
 const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE("OptionsDialog/DisplayOptionsCompassRose");
 const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT("OptionsDialog/DisplayOptionsMeasurement");
-const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE("OptionsDialog/DisplayOptionsRoute");
+const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE("OptionsDialog/DisplayOptionsRouteLine");
 const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID("OptionsDialog/DisplayOptionsNavAid");
 const QLatin1Literal OPTIONS_DIALOG_GUI_STYLE_INDEX("OptionsDialog/GuiStyleIndex");
 const QLatin1Literal OPTIONS_DIALOG_WARN_STYLE("OptionsDialog/StyleWarning");
 const QLatin1Literal OPTIONS_DIALOG_WEB_DOCROOT_DLG("OptionsDialog/WebDocroot");
+const QLatin1Literal OPTIONS_DIALOG_RANGE_DISTANCES("OptionsDialog/RangeDistances");
 
 /* Other options that are only accessible in the configuration file */
 const QLatin1Literal OPTIONS_DIALOG_LANGUAGE("OptionsDialog/Language");
@@ -265,10 +269,12 @@ const QLatin1Literal OPTIONS_DIALOG_MAP_FONT("OptionsDialog/MapFont");
 const QLatin1Literal OPTIONS_PIXMAP_CACHE("Options/PixmapCache");
 const QLatin1Literal OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
+const QLatin1Literal OPTIONS_MAPWIDGET_DEBUG("Options/MapWidgetDebug");
 const QLatin1Literal OPTIONS_DOCKHANDLER_DEBUG("Options/DockHandlerDebug");
 const QLatin1Literal OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_WEATHER_DEBUG("Options/WeatherDebug");
+const QLatin1Literal OPTIONS_ONLINE_NETWORK_DEBUG("Options/OnlineNetworkDebug");
 const QLatin1Literal OPTIONS_TRACK_DEBUG("Options/TrackDebug");
 const QLatin1Literal OPTIONS_WEATHER_LEVELS("Options/WeatherLevels");
 const QLatin1Literal OPTIONS_WIND_DEBUG("Options/WindDebug");

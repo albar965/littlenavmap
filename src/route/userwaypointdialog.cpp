@@ -104,9 +104,11 @@ void UserWaypointDialog::buttonBoxClicked(QAbstractButton *button)
       entry->setName(ui->lineEditRouteUserWaypointName->text());
 
       atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
-      if(OptionData::instance().getUnitCoords() == opts::COORDS_LONX_LATY)
+
+      if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
         // Parsing uses lat/lon - swap for lon/lat
-        pos.swapLonXLatY();
+        // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
+        atools::fs::util::maybeSwapOrdinates(pos, ui->lineEditRouteUserWaypointLatLon->text());
 
       if(pos.isValid())
         entry->setPosition(pos);

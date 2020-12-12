@@ -110,6 +110,10 @@ private:
   void perfAddClicked(); /* Attach new performance to logbook entry */
   void perfSaveAsClicked(); /* Save attached performance to file */
 
+  void planClearClicked();
+  void perfClearClicked();
+  void gpxClearClicked();
+
   /* Update status for all widgets */
   void updateWidgets();
   void clearWidgets();

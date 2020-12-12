@@ -967,7 +967,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().arg(filter));
   ui->actionSearchFilterExcluding->setEnabled(!fieldData.isEmpty() && index.isValid() && columnCanFilter);
 
-  ui->actionMapNavaidRange->setEnabled(navType == map::VOR || navType == map::NDB);
+  int range = controller->hasColumn("range") ? controller->getRawData(index.row(), "range").toInt() : 0;
+  ui->actionMapNavaidRange->setEnabled(range > 0 && (navType == map::VOR || navType == map::NDB));
 
   ui->actionRouteAddPos->setEnabled(navType == map::VOR || navType == map::NDB ||
                                     navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERPOINT);
@@ -981,8 +982,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowOnMapAirport->setEnabled(airport.isValid());
   ui->actionSearchShowInformationAirport->setEnabled(airport.isValid());
 
-  ui->actionRouteAirportAlternate->setEnabled(airport.isValid() &&
-                                              NavApp::getRouteConst().getSizeWithoutAlternates() > 0);
+  const Route& route = NavApp::getRouteConst();
+  ui->actionRouteAirportAlternate->setEnabled(airport.isValid() && route.getSizeWithoutAlternates() > 0);
   ui->actionMapTrafficPattern->setEnabled(navType == map::AIRPORT && !airport.noRunways());
   ui->actionMapHold->setEnabled(navType == map::VOR || navType == map::NDB || navType == map::WAYPOINT ||
                                 navType == map::USERPOINT || navType == map::AIRPORT);
@@ -992,14 +993,15 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowApproachesCustom->setEnabled(false);
   if(navType == map::AIRPORT && airport.isValid())
   {
-    bool hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(airport);
-    bool hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(airport);
-    bool airportDestination = NavApp::getRouteConst().isAirportDestination(airport.ident);
-    bool airportDeparture = NavApp::getRouteConst().isAirportDeparture(airport.ident);
+    bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination,
+         airportRoundTrip;
+
+    route.getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter, hasDeparture,
+                                   hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip);
 
     if(hasAnyArrival || hasDeparture)
     {
-      if(airportDeparture)
+      if(airportDeparture && !airportRoundTrip)
       {
         if(hasDeparture)
         {
@@ -1009,7 +1011,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
         else
           ui->actionSearchShowApproaches->setText(tr("Show procedures (airport has no departure procedure)"));
       }
-      else if(airportDestination)
+      else if(airportDestination && !airportRoundTrip)
       {
         if(hasAnyArrival)
         {
@@ -1040,7 +1042,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionMapRangeRings->setEnabled(index.isValid());
   ui->actionSearchSetMark->setEnabled(index.isValid());
 
-  ui->actionMapNavaidRange->setText(tr("Show &Navaid Range"));
+  ui->actionMapNavaidRange->setText(tr("Add &Navaid Range Ring"));
   ui->actionRouteAddPos->setText(tr("&Add to Flight Plan"));
   ui->actionRouteAppendPos->setText(tr("Append to &Flight Plan"));
 
@@ -1067,8 +1069,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ui->actionRouteAirportAlternate->setText(tr("Add %1 as Flight Plan &Alternate").arg(airportText));
   }
 
-  ui->actionMapTrafficPattern->setText(tr("Display Airport &Traffic Pattern ..."));
-  ui->actionMapHold->setText(tr("Display &Holding ..."));
+  ui->actionMapTrafficPattern->setText(tr("Add Airport &Traffic Pattern ..."));
+  ui->actionMapHold->setText(tr("Add &Holding ..."));
 
   ui->actionSearchTableCopy->setEnabled(index.isValid());
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
@@ -1206,7 +1208,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                             arg(atools::elideTextShort(QFileInfo(logEntry.routeFile).fileName(), 20)));
       }
       else
-        ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(tr("(File not found)")));
+        ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(tr("(file not found)")));
     }
     else
       ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(QString()));
@@ -1221,7 +1223,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                            arg(atools::elideTextShort(QFileInfo(logEntry.perfFile).fileName(), 20)));
       }
       else
-        ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(tr("(File not found)")));
+        ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(tr("(file not found)")));
     }
     else
       ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(QString()));
@@ -1356,7 +1358,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     }
     else if(action == ui->actionMapNavaidRange)
     {
-      QString freqChaStr;
+      QString freqChannelStr;
       if(navType == map::VOR)
       {
         int frequency = controller->getRawData(index.row(), "frequency").toInt();
@@ -1364,19 +1366,18 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
         {
           // Use frequency for VOR and VORTAC
           frequency /= 10;
-          freqChaStr = QString::number(frequency);
+          freqChannelStr = QString::number(frequency);
         }
         else
           // Use channel for TACAN
-          freqChaStr = controller->getRawData(index.row(), "channel").toString();
+          freqChannelStr = controller->getRawData(index.row(), "channel").toString();
       }
       else if(navType == map::NDB)
-        freqChaStr = controller->getRawData(index.row(), "frequency").toString();
+        freqChannelStr = controller->getRawData(index.row(), "frequency").toString();
 
       NavApp::getMapWidget()->addNavRangeRing(position, navType,
                                               controller->getRawData(index.row(), "ident").toString(),
-                                              freqChaStr,
-                                              controller->getRawData(index.row(), "range").toInt());
+                                              freqChannelStr, controller->getRawData(index.row(), "range").toInt());
     }
     // else if(action == ui->actionMapHideRangeRings)
     // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly
@@ -1471,7 +1472,12 @@ void SearchBaseTable::showApproaches(bool custom)
       if(custom)
         emit showProceduresCustom(airportQuery->getAirportById(id));
       else
-        emit showProcedures(airportQuery->getAirportById(id));
+      {
+        map::MapAirport airport = airportQuery->getAirportById(id);
+        bool departureFilter, arrivalFilter;
+        NavApp::getRouteConst().getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter);
+        emit showProcedures(airport, departureFilter, arrivalFilter);
+      }
     }
   }
 }

@@ -147,5 +147,7 @@ void ImageExportDialog::currentResolutionIndexChanged()
 {
   ResolutionIndex index = static_cast<ResolutionIndex>(ui->comboBoxResolution->currentIndex());
   ui->spinBoxWidth->setEnabled(index == CUSTOM_RESOLUTION);
+  ui->labelWidth->setEnabled(index == CUSTOM_RESOLUTION);
   ui->spinBoxHeight->setEnabled(index == CUSTOM_RESOLUTION);
+  ui->labelHeight->setEnabled(index == CUSTOM_RESOLUTION);
 }

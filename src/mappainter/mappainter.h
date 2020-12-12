@@ -63,12 +63,14 @@ struct PaintContext
                              *  should be used to visibility of map objects */
   const MapLayer *mapLayerEffective; /* layer for the current zoom distance not affected by detail level.
                                       *  Should be used to determine text visibility and object sizes. */
+  const MapLayer *mapLayerRoute; /* layer for the current zoom distance and details with more details for route. */
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
   float zoomDistanceMeter;
   bool drawFast; /* true if reduced details should be used */
   bool lazyUpdate; /* postpone reloading until map is still */
+  bool darkMap; /* CartoDark or similar. Not Night mode */
   map::MapTypes objectTypes; /* Object types that should be drawn */
   map::MapObjectDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
@@ -85,9 +87,11 @@ struct PaintContext
   const Route *route;
 
   // All waypoints from the route and add them to the map to avoid duplicate drawing
-  QSet<map::MapObjectRef> routeIdMap;
+  // Same for procedure preview
+  QSet<map::MapObjectRef> routeProcIdMap;
 
   optsd::DisplayOptions dispOpts;
+  optsd::DisplayOptionsAirport dispOptsAirport;
   optsd::DisplayOptionsRose dispOptsRose;
   optsd::DisplayOptionsMeasurement dispOptsMeasurement;
   optsd::DisplayOptionsRoute dispOptsRoute;
@@ -119,25 +123,44 @@ struct PaintContext
   float textSizeMora = 1.f;
   float transparencyMora = 1.f;
 
-  // Needs to be larger than number of highest level airports
-  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 8000;
   int objectCount = 0;
+  bool queryOverflow = false;
 
   /* Increase drawn object count and return true if exceeded */
   bool objCount()
   {
     objectCount++;
-    return objectCount > MAX_OBJECT_COUNT;
+    return objectCount > map::MAX_MAP_OBJECTS;
   }
 
-  bool isOverflow()
+  bool isObjectOverflow() const
   {
-    return objectCount > MAX_OBJECT_COUNT;
+    return objectCount >= map::MAX_MAP_OBJECTS;
+  }
+
+  int getObjectCount() const
+  {
+    return objectCount;
+  }
+
+  void setQueryOverflow(bool overflow)
+  {
+    queryOverflow |= overflow;
+  }
+
+  bool isQueryOverflow() const
+  {
+    return queryOverflow;
   }
 
   bool  dOpt(optsd::DisplayOption opts) const
   {
     return dispOpts.testFlag(opts);
+  }
+
+  bool  dOptAp(optsd::DisplayOptionAirport opts) const
+  {
+    return dispOptsAirport.testFlag(opts);
   }
 
   bool  dOptRose(optsd::DisplayOptionRose opts) const
@@ -217,6 +240,8 @@ public:
 
   virtual void render() = 0;
 
+  bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
+
 protected:
   /* All wToSBuf() methods receive a margin parameter. Margins are applied to the screen rectangle for an
    * additional visibility check to avoid objects or texts popping out of view at the screen borders */
@@ -292,9 +317,8 @@ protected:
 
   /* Draw arrow at line position. pos = 0 is beginning and pos = 1 is end of line */
   void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);
-  void paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos = 0.5f);
-
-  static bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
+  void paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos = 0.5f,
+                           float minLengthPx = 0.f);
 
   /* Interface method to QPixmapCache*/
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);

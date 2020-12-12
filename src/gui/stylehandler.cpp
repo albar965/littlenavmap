@@ -74,14 +74,28 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
   // Add stylesheet for better checkbox radio button and toolbutton visibility
   QString nightStyleSheet(
+    // Checkbox images ====================
     QLatin1Literal("QCheckBox::indicator:checked "
                    "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }") +
+    QLatin1Literal("QCheckBox::indicator:checked:!enabled "
+                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png); }") +
+
     QLatin1Literal("QCheckBox::indicator:unchecked "
                    "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }") +
+    QLatin1Literal("QCheckBox::indicator:unchecked:!enabled "
+                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }") +
+
+    // Radio button images ====================
     QLatin1Literal("QRadioButton::indicator:checked "
                    "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }") +
+    QLatin1Literal("QRadioButton::indicator:checked:!enabled "
+                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }") +
+
     QLatin1Literal("QRadioButton::indicator:unchecked "
                    "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }") +
+    QLatin1Literal("QRadioButton::indicator:unchecked:!enabled "
+                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }") +
+
     // Night mode shows bright tab bars with this change in macOS
 #if !defined(Q_OS_MACOS)
     QLatin1Literal("QTabBar::close-button "
@@ -123,7 +137,7 @@ void StyleHandler::insertMenuItems(QMenu *menu)
   int index = 0;
   for(const Style& style : styles)
   {
-    QAction *action = new QAction(style.displayName);
+    QAction *action = new QAction(style.displayName, menu);
     action->setData(index);
     action->setCheckable(true);
     action->setChecked(index == currentStyleIndex);

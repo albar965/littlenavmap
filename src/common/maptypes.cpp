@@ -100,6 +100,7 @@ void initTranslateableTexts()
       {"RGAS", QObject::tr("Ramp GA Small")},
       {"RGAM", QObject::tr("Ramp GA Medium")},
       {"RGAL", QObject::tr("Ramp GA Large")},
+      {"RE", QObject::tr("Ramp Extra")},
       {"RC", QObject::tr("Ramp Cargo")},
       {"RM", QObject::tr("Ramp Mil")},
       {"RMC", QObject::tr("Ramp Mil Cargo")},
@@ -110,6 +111,7 @@ void initTranslateableTexts()
       {"GS", QObject::tr("Small")},
       {"GM", QObject::tr("Medium")},
       {"GH", QObject::tr("Heavy")},
+      {"GE", QObject::tr("Extra")},
       {"DGA", QObject::tr("Dock GA")},
       {"FUEL", QObject::tr("Fuel")},
       {"V", QObject::tr("Vehicles")}
@@ -124,6 +126,7 @@ void initTranslateableTexts()
       {"RGAM", QObject::tr("Medium")},
       {"RGAL", QObject::tr("Large")},
       {"RC", QObject::tr("Ramp Cargo")},
+      {"RE", QObject::tr("Ramp Extra")},
       {"RM", QObject::tr("Ramp Mil")},
       {"RMC", QObject::tr("Ramp Mil Cargo")},
       {"RMCB", QObject::tr("Ramp Mil Combat")},
@@ -133,6 +136,7 @@ void initTranslateableTexts()
       {"GS", QObject::tr("Gate Small")},
       {"GM", QObject::tr("Gate Medium")},
       {"GH", QObject::tr("Gate Heavy")},
+      {"GE", QObject::tr("Gate Extra")},
       {"DGA", QObject::tr("Dock GA")},
       {"FUEL", QObject::tr("Fuel")},
       {"V", QObject::tr("Vehicles")}
@@ -147,6 +151,7 @@ void initTranslateableTexts()
       {"RGAS", QObject::tr("Ramp GA Small")},
       {"RGAM", QObject::tr("Ramp GA Medium")},
       {"RGAL", QObject::tr("Ramp GA Large")},
+      {"RE", QObject::tr("Ramp GA Extra")},
       {"RC", QObject::tr("Ramp Cargo")},
       {"RM", QObject::tr("Ramp Mil")},
       {"RMC", QObject::tr("Ramp Mil Cargo")},
@@ -157,6 +162,7 @@ void initTranslateableTexts()
       {"GS", QObject::tr("Gate Small")},
       {"GM", QObject::tr("Gate Medium")},
       {"GH", QObject::tr("Gate Heavy")},
+      {"GE", QObject::tr("Gate Extra")},
       {"DGA", QObject::tr("Dock GA")},
       {"FUEL", QObject::tr("Fuel")},
       {"V", QObject::tr("Vehicles")}
@@ -290,7 +296,12 @@ void initTranslateableTexts()
       {"WT", QObject::tr("Track")},
       {"WU", QObject::tr("Unnamed")},
       {"V", QObject::tr("VOR")},
-      {"N", QObject::tr("NDB")}
+      {"N", QObject::tr("NDB")},
+      {"VFR", QObject::tr("VFR")},
+      {"RNAV", QObject::tr("RNAV")},
+      {"OA", QObject::tr("Off Airway")},
+      {"IAF", QObject::tr("IAF")},
+      {"FAF", QObject::tr("FAF")}
     });
 
   navTypeNames = QHash<QString, QString>(
@@ -370,8 +381,8 @@ void initTranslateableTexts()
       {"TWE", QObject::tr("Transcriber Weather Broadcast (TWEB)")},
       {"T", QObject::tr("Tower, Air Traffic Control")},
       {"UAC", QObject::tr("Upper Area Control")},
-      {"UC", QObject::tr("Unicom")},
-      {"VOL", QObject::tr("Volmet")}
+      {"UC", QObject::tr("UNICOM")},
+      {"VOL", QObject::tr("VOLMET")}
     });
 
   airspaceTypeNameMap = QHash<map::MapAirspaceTypes, QString>(
@@ -698,21 +709,25 @@ const QString& surfaceName(const QString& surface)
   return surfaceMap[surface];
 }
 
-QString smoothnessName(float smoothness)
+QString smoothnessName(QVariant smoothnessVar)
 {
   QString smoothnessStr;
-  if(smoothness >= 0.f)
+  if(!smoothnessVar.isNull())
   {
-    if(smoothness <= 0.2f)
-      smoothnessStr = QObject::tr("Very smooth");
-    else if(smoothness <= 0.4f)
-      smoothnessStr = QObject::tr("Smooth");
-    else if(smoothness <= 0.6f)
-      smoothnessStr = QObject::tr("Normal");
-    else if(smoothness <= 0.8f)
-      smoothnessStr = QObject::tr("Rough");
-    else
-      smoothnessStr = QObject::tr("Very rough");
+    float smooth = smoothnessVar.toFloat();
+    if(smooth >= 0.f)
+    {
+      if(smooth <= 0.2f)
+        smoothnessStr = QObject::tr("Very smooth");
+      else if(smooth <= 0.4f)
+        smoothnessStr = QObject::tr("Smooth");
+      else if(smooth <= 0.6f)
+        smoothnessStr = QObject::tr("Normal");
+      else if(smooth <= 0.8f)
+        smoothnessStr = QObject::tr("Rough");
+      else
+        smoothnessStr = QObject::tr("Very rough");
+    }
   }
   return smoothnessStr;
 }
@@ -787,11 +802,11 @@ QString parkingNameNumberType(const map::MapParking& parking)
 
 QString startType(const map::MapStart& start)
 {
-  if(start.type == "R")
+  if(start.isRunway())
     return QObject::tr("Runway");
-  else if(start.type == "W")
+  else if(start.isWater())
     return QObject::tr("Water");
-  else if(start.type == "H")
+  else if(start.isHelipad())
     return QObject::tr("Helipad");
   else
     return QString();
@@ -850,11 +865,6 @@ bool MapAirport::als() const
 bool MapAirport::vasi() const
 {
   return flags.testFlag(AP_VASI);
-}
-
-bool MapAirport::fence() const
-{
-  return flags.testFlag(AP_FENCE);
 }
 
 bool MapAirport::closedRunways() const
@@ -1551,65 +1561,65 @@ QString mapObjectTypeToString(MapTypes type)
     QStringList str;
 
     if(type.testFlag(AIRPORT))
-      str += QObject::tr("Airport");
+      str += "Airport";
     if(type.testFlag(AIRPORT_HARD))
-      str += QObject::tr("AirportHard");
+      str += "AirportHard";
     if(type.testFlag(AIRPORT_SOFT))
-      str += QObject::tr("AirportSoft");
+      str += "AirportSoft";
     if(type.testFlag(AIRPORT_EMPTY))
-      str += QObject::tr("AirportEmpty");
+      str += "AirportEmpty";
     if(type.testFlag(AIRPORT_ADDON))
-      str += QObject::tr("AirportAddon");
+      str += "AirportAddon";
     if(type.testFlag(VOR))
-      str += QObject::tr("VOR");
+      str += "VOR";
     if(type.testFlag(NDB))
-      str += QObject::tr("NDB");
+      str += "NDB";
     if(type.testFlag(ILS))
-      str += QObject::tr("ILS");
+      str += "ILS";
     if(type.testFlag(MARKER))
-      str += QObject::tr("Marker");
+      str += "Marker";
     if(type.testFlag(WAYPOINT))
-      str += QObject::tr("Waypoint");
+      str += "Waypoint";
     if(type.testFlag(AIRWAY))
-      str += QObject::tr("Airway");
+      str += "Airway";
     if(type.testFlag(AIRWAYV))
-      str += QObject::tr("Airwayv");
+      str += "Airwayv";
     if(type.testFlag(AIRWAYJ))
-      str += QObject::tr("Airwayj");
+      str += "Airwayj";
     if(type.testFlag(TRACK))
-      str += QObject::tr("Track");
+      str += "Track";
     if(type.testFlag(AIRCRAFT))
-      str += QObject::tr("Aircraft");
+      str += "Aircraft";
     if(type.testFlag(AIRCRAFT_AI))
-      str += QObject::tr("AircraftAi");
+      str += "AircraftAi";
     if(type.testFlag(AIRCRAFT_AI_SHIP))
-      str += QObject::tr("AircraftAiShip");
+      str += "AircraftAiShip";
     if(type.testFlag(AIRCRAFT_TRACK))
-      str += QObject::tr("AircraftTrack");
+      str += "AircraftTrack";
     if(type.testFlag(USERPOINTROUTE))
-      str += QObject::tr("Userpointroute");
+      str += "Userpointroute";
     if(type.testFlag(PARKING))
-      str += QObject::tr("Parking");
+      str += "Parking";
     if(type.testFlag(RUNWAYEND))
-      str += QObject::tr("Runwayend");
+      str += "Runwayend";
     if(type.testFlag(INVALID))
-      str += QObject::tr("Invalid");
+      str += "Invalid";
     if(type.testFlag(MISSED_APPROACH))
-      str += QObject::tr("Missed_approach");
+      str += "Missed_approach";
     if(type.testFlag(PROCEDURE))
-      str += QObject::tr("Procedure");
+      str += "Procedure";
     if(type.testFlag(AIRSPACE))
-      str += QObject::tr("Airspace");
+      str += "Airspace";
     if(type.testFlag(HELIPAD))
-      str += QObject::tr("Helipad");
+      str += "Helipad";
     if(type.testFlag(USERPOINT))
-      str += QObject::tr("Userpoint");
+      str += "Userpoint";
     if(type.testFlag(AIRCRAFT_ONLINE))
-      str += QObject::tr("AircraftOnline");
+      str += "AircraftOnline";
     if(type.testFlag(LOGBOOK))
-      str += QObject::tr("Logbook");
+      str += "Logbook";
 
-    return str.join(QObject::tr(","));
+    return str.join(",");
   }
 }
 
@@ -1795,6 +1805,20 @@ QString runwayBestFit(const QString& procRunwayName, const QStringList& airportR
     }
   }
   return QString();
+}
+
+QString runwayDesignatorLong(const QString& name)
+{
+  if(name.startsWith('L'))
+    return "LEFT";
+  else if(name.startsWith('R'))
+    return "RIGHT";
+  else if(name.startsWith('C'))
+    return "CENTER";
+  else if(name.startsWith('W'))
+    return "WATER";
+
+  return name;
 }
 
 bool runwayNameSplit(const QString& name, int *number, QString *designator)

@@ -24,6 +24,7 @@
 #include <QFontDatabase>
 
 OptionData *OptionData::optionData = nullptr;
+const QVector<float> OptionData::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
 
 /* Default values for well known networks */
 
@@ -106,6 +107,16 @@ QFont OptionData::getMapFont() const
   if(!mapFont.isEmpty())
     font.fromString(mapFont);
   else if(!guiFont.isEmpty())
+    font.fromString(guiFont);
+  else
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  return font;
+}
+
+QFont OptionData::getGuiFont() const
+{
+  QFont font;
+  if(!guiFont.isEmpty())
     font.fromString(guiFont);
   else
     font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);

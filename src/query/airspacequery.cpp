@@ -35,7 +35,7 @@ using namespace atools::geo;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
-int AirspaceQuery::queryMaxRows = 5000;
+int AirspaceQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
 AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSources src)
   : db(sqlDb), source(src)
@@ -54,8 +54,8 @@ AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSources src)
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRowLimit", 5000).toInt();
+  queryMaxRows =
+    settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirspaceQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 }
 
 AirspaceQuery::~AirspaceQuery()
@@ -109,7 +109,7 @@ void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
 
 const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                            map::MapAirspaceFilter filter, float flightPlanAltitude,
-                                                           bool lazy)
+                                                           bool lazy, bool& overflow)
 {
   airspaceCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                             [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -230,7 +230,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
       });
     }
   }
-  airspaceCache.validate(queryMaxRows);
+  overflow = airspaceCache.validate(queryMaxRows);
   return &airspaceCache.list;
 }
 

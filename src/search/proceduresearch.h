@@ -63,7 +63,7 @@ public:
   virtual ~ProcedureSearch() override;
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
-  void showProcedures(map::MapAirport airport);
+  void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
 
   /* Save tree view state */
   virtual void saveState() override;
@@ -79,9 +79,11 @@ public:
   virtual void postDatabaseLoad() override;
 
   /* No op overrides */
-  virtual void getSelectedMapObjects(map::MapResult& result) const override;
+  virtual void getSelectedMapObjects(map::MapResult&) const override;
   virtual void connectSearchSlots() override;
   virtual void updateUnits() override;
+
+  /* Overrides with implementation */
   virtual void updateTableSelection(bool noFollow) override;
   virtual void clearSelection() override;
   virtual bool hasSelection() const override;
@@ -145,6 +147,7 @@ private:
   void showOnMapSelected();
   void approachAttachSelected();
   void attachApproach(QString runway);
+  void showApproachTriggered();
 
   // Save and restore expanded and selected item state
   QBitArray saveTreeViewState();
@@ -208,10 +211,11 @@ private:
 
   InfoQuery *infoQuery = nullptr;
   ProcedureQuery *procedureQuery = nullptr;
-  AirportQuery *airportQuery = nullptr;
+  AirportQuery *airportQueryNav = nullptr;
   QTreeWidget *treeWidget = nullptr;
   QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;
-  map::MapAirport currentAirportNav;
+
+  map::MapAirport currentAirportNav, currentAirportSim;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QBitArray> recentTreeState;

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>725</width>
-    <height>570</height>
+    <width>733</width>
+    <height>587</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -211,6 +211,13 @@
            </widget>
           </item>
           <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEditDepartureRunway">
+            <property name="toolTip">
+             <string>Departure airport runway</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
            <widget class="QDateTimeEdit" name="dateTimeEditDepartureDateTimeSim">
             <property name="toolTip">
              <string>Departure time in simulator (takeoff)</string>
@@ -223,7 +230,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="4">
+          <item row="2" column="0">
            <widget class="QLabel" name="labelDepartureRunway">
             <property name="text">
              <string>&amp;Runway</string>
@@ -233,7 +240,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="labelDepartureDateTimeSim">
             <property name="minimumSize">
              <size>
@@ -244,35 +251,11 @@
             <property name="text">
              <string>Date and time in &amp;simulator UTC:</string>
             </property>
-            <property name="buddy">
-             <cstring>dateTimeEditDepartureDateTimeSim</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QDateTimeEdit" name="dateTimeEditDepartureDateTimeReal">
-            <property name="toolTip">
-             <string>Local departure time in real world (takeoff)</string>
-            </property>
-            <property name="calendarPopup">
+            <property name="wordWrap">
              <bool>true</bool>
             </property>
-            <property name="timeSpec">
-             <enum>Qt::LocalTime</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" colspan="3">
-           <widget class="QLineEdit" name="lineEditDeparture">
-            <property name="toolTip">
-             <string>Departure airport ICAO code</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5">
-           <widget class="QLineEdit" name="lineEditDepartureRunway">
-            <property name="toolTip">
-             <string>Departure airport runway</string>
+            <property name="buddy">
+             <cstring>dateTimeEditDepartureDateTimeSim</cstring>
             </property>
            </widget>
           </item>
@@ -292,7 +275,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
+          <item row="4" column="0">
            <widget class="QLabel" name="labelDepartureDateTimeReal">
             <property name="text">
              <string>&amp;Real local time:</string>
@@ -302,7 +285,27 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="5">
+          <item row="4" column="1">
+           <widget class="QDateTimeEdit" name="dateTimeEditDepartureDateTimeReal">
+            <property name="toolTip">
+             <string>Local departure time in real world (takeoff)</string>
+            </property>
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+            <property name="timeSpec">
+             <enum>Qt::LocalTime</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditDeparture">
+            <property name="toolTip">
+             <string>Departure airport ICAO code</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
            <widget class="QLabel" name="labelDepartureStatus">
             <property name="text">
              <string/>
@@ -339,6 +342,32 @@
           <property name="bottomMargin">
            <number>2</number>
           </property>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelDestinationDateTimeSim">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Date and time in &amp;simulator UTC:</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="buddy">
+             <cstring>dateTimeEditDestinationDateTimeSim</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEditDestinationRunway">
+            <property name="toolTip">
+             <string>Destination airport runway</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="labelDestination">
             <property name="minimumSize">
@@ -352,30 +381,6 @@
             </property>
             <property name="buddy">
              <cstring>lineEditDestination</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" colspan="3">
-           <widget class="QLineEdit" name="lineEditDestination">
-            <property name="toolTip">
-             <string>Destination airport ICAO code</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
-           <widget class="QLabel" name="labelDestinationRunway">
-            <property name="text">
-             <string>&amp;Runway</string>
-            </property>
-            <property name="buddy">
-             <cstring>lineEditDestinationRunway</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5">
-           <widget class="QLineEdit" name="lineEditDestinationRunway">
-            <property name="toolTip">
-             <string>Destination airport runway</string>
             </property>
            </widget>
           </item>
@@ -395,23 +400,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="labelDestinationDateTimeSim">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Date and time in &amp;simulator UTC:</string>
-            </property>
-            <property name="buddy">
-             <cstring>dateTimeEditDestinationDateTimeSim</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QDateTimeEdit" name="dateTimeEditDestinationDateTimeSim">
             <property name="toolTip">
              <string>Arrival time in simulator (touch down)</string>
@@ -424,7 +413,17 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelDestinationRunway">
+            <property name="text">
+             <string>&amp;Runway</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEditDestinationRunway</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
            <widget class="QLabel" name="labelDestinationDateTimeReal">
             <property name="text">
              <string>&amp;Real local time:</string>
@@ -434,7 +433,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="3">
+          <item row="4" column="1">
            <widget class="QDateTimeEdit" name="dateTimeEditDestinationDateTimeReal">
             <property name="toolTip">
              <string>Local arrival time in real world (touch down)</string>
@@ -447,7 +446,14 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="5">
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditDestination">
+            <property name="toolTip">
+             <string>Destination airport ICAO code</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
            <widget class="QLabel" name="labelDestinationStatus">
             <property name="text">
              <string/>
@@ -457,6 +463,9 @@
             </property>
             <property name="margin">
              <number>5</number>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>
@@ -470,8 +479,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -814,11 +823,21 @@ This is only a file path reference and does not attach the file to the logbook e
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
-                <height>20</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonAttachedPlanClear">
+              <property name="toolTip">
+               <string>Removes the attached file</string>
+              </property>
+              <property name="text">
+               <string>&amp;Clear</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -907,7 +926,7 @@ This is only a file path reference and does not attach the file to the logbook e
             <item>
              <widget class="QPushButton" name="pushButtonAttachedGpxAdd">
               <property name="toolTip">
-               <string>Attach a new GPX file to the logbook entry.
+               <string>Attach a GPX file to the logbook entry.
 GPX files contain flight plan points and the flown trail.</string>
               </property>
               <property name="text">
@@ -933,11 +952,21 @@ GPX files contain flight plan points and the flown trail.</string>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
-                <height>20</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonAttachedGpxClear">
+              <property name="toolTip">
+               <string>Removes the attached file</string>
+              </property>
+              <property name="text">
+               <string>&amp;Clear</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -1084,11 +1113,21 @@ This updates only the path and does not attach the file to the logbook entry.</s
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
-                <height>20</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonAttachedPerfClear">
+              <property name="toolTip">
+               <string>Removes the attached file</string>
+              </property>
+              <property name="text">
+               <string>&amp;Clear</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -1102,8 +1141,8 @@ This updates only the path and does not attach the file to the logbook entry.</s
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -1122,8 +1161,8 @@ This updates only the path and does not attach the file to the logbook entry.</s
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -1246,7 +1285,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
         </widget>
        </item>
        <item row="5" column="1" colspan="2">
-        <widget class="Line" name="line_2">
+        <widget class="Line" name="lineFuelWeight">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -1319,6 +1358,9 @@ This updates only the path and does not attach the file to the logbook entry.</s
        <string>Remarks</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>16</number>
+       </property>
        <property name="leftMargin">
         <number>2</number>
        </property>
@@ -1340,6 +1382,12 @@ This updates only the path and does not attach the file to the logbook entry.</s
        </item>
        <item>
         <widget class="QCheckBox" name="checkBoxAircraftDescription">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="toolTip">
           <string>Check to change this field for all selected logbook entries</string>
          </property>
@@ -1365,6 +1413,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
   </layout>
  </widget>
  <tabstops>
+  <tabstop>tabWidgetLogbook</tabstop>
   <tabstop>lineEditAircraftName</tabstop>
   <tabstop>checkBoxAircraftName</tabstop>
   <tabstop>lineEditAircraftRegistration</tabstop>
@@ -1372,15 +1421,11 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>lineEditAircraftType</tabstop>
   <tabstop>checkBoxAircraftType</tabstop>
   <tabstop>lineEditDeparture</tabstop>
-  <tabstop>lineEditDepartureRunway</tabstop>
   <tabstop>checkBoxDeparture</tabstop>
   <tabstop>dateTimeEditDepartureDateTimeSim</tabstop>
-  <tabstop>dateTimeEditDepartureDateTimeReal</tabstop>
   <tabstop>lineEditDestination</tabstop>
-  <tabstop>lineEditDestinationRunway</tabstop>
   <tabstop>checkBoxDestination</tabstop>
   <tabstop>dateTimeEditDestinationDateTimeSim</tabstop>
-  <tabstop>dateTimeEditDestinationDateTimeReal</tabstop>
   <tabstop>lineEditFlightSimulator</tabstop>
   <tabstop>checkBoxFlightSimulator</tabstop>
   <tabstop>lineEditFlightNumber</tabstop>
@@ -1392,8 +1437,10 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>pushButtonAttachedPlanAdd</tabstop>
   <tabstop>pushButtonAttachedPlanOpen</tabstop>
   <tabstop>pushButtonAttachedPlanSaveAs</tabstop>
+  <tabstop>pushButtonAttachedPlanClear</tabstop>
   <tabstop>pushButtonAttachedGpxAdd</tabstop>
   <tabstop>pushButtonAttachedGpxSaveAs</tabstop>
+  <tabstop>pushButtonAttachedGpxClear</tabstop>
   <tabstop>lineEditFlightPlanFile</tabstop>
   <tabstop>pushButtonFlightPlanFileSelect</tabstop>
   <tabstop>checkBoxFlightPlanFile</tabstop>
@@ -1402,6 +1449,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>pushButtonAttachedPerfAdd</tabstop>
   <tabstop>pushButtonAttachedPerfOpen</tabstop>
   <tabstop>pushButtonAttachedPerfSaveAs</tabstop>
+  <tabstop>pushButtonAttachedPerfClear</tabstop>
   <tabstop>lineEditFlightPerfFile</tabstop>
   <tabstop>pushButtonFlightPerfFileSelect</tabstop>
   <tabstop>checkBoxFlightPerfFile</tabstop>
@@ -1413,8 +1461,6 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>spinBoxFuelUsed</tabstop>
   <tabstop>spinBoxFuelGrossweight</tabstop>
   <tabstop>plainTextEditDescription</tabstop>
-  <tabstop>checkBoxAircraftDescription</tabstop>
-  <tabstop>tabWidgetLogbook</tabstop>
  </tabstops>
  <resources/>
  <connections/>

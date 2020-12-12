@@ -129,10 +129,10 @@ void LogdataController::getFlightStatsAirports(int& numDepartAirports, int& numD
   manager->getFlightStatsAirports(numDepartAirports, numDestAirports);
 }
 
-void LogdataController::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim,
-                                               float& timeAverageSim)
+void LogdataController::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeTotal,
+                                               float& timeMaximumSim, float& timeAverageSim, float& timeTotalSim)
 {
-  manager->getFlightStatsTripTime(timeMaximum, timeAverage, timeMaximumSim, timeAverageSim);
+  manager->getFlightStatsTripTime(timeMaximum, timeAverage, timeTotal, timeMaximumSim, timeAverageSim, timeTotalSim);
 }
 
 void LogdataController::getFlightStatsAircraft(int& numTypes, int& numRegistrations, int& numNames, int& numSimulators)
@@ -198,7 +198,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("aircraft_registration", aircraft.getAirplaneRegistration()); // varchar(50),
       record.setValue("flightplan_number", aircraft.getAirplaneFlightnumber()); // varchar(100),
       record.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltFt()); // integer,
-      record.setValue("flightplan_file", NavApp::getCurrentRouteFilepath()); // varchar(1024),
+      record.setValue("flightplan_file", NavApp::getRouteFilepath()); // varchar(1024),
       record.setValue("performance_file", NavApp::getCurrentAircraftPerfFilepath()); // varchar(1024),
       record.setValue("block_fuel", NavApp::getAltitudeLegs().getBlockFuel(NavApp::getAircraftPerformance())); // integer,
       record.setValue("trip_fuel", NavApp::getAltitudeLegs().getTripFuel()); // integer,
@@ -211,7 +211,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("departure_alt", airport.position.getAltitude()); // integer,
       record.setValue("departure_time", QDateTime::currentDateTime()); // varchar(100),
       record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
-      record.setValue("simulator", NavApp::getCurrentSimulatorName()); // varchar(50),
+      record.setValue("simulator", NavApp::getCurrentSimulatorShortName()); // varchar(50),
       record.setValue("route_string", NavApp::getRouteString()); // varchar(1024),
 
       // Record flight plan and aircraft performance =========================
@@ -571,7 +571,7 @@ void LogdataController::exportCsv()
 
     int numSelected = NavApp::getLogdataSearch()->getSelectedRowCount();
     choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
-                             tr("File header will be ignore if this is enabled."), false);
+                             tr("File header will be ignored if this is enabled."), false);
     choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QString(), true,
                              numSelected == 0 /* disabled */);
     choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QString(), false);
@@ -595,8 +595,7 @@ void LogdataController::exportCsv()
       QString file = dialog->saveFileDialog(
         tr("Export Logbook Entry CSV File"),
         tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), ".csv", "Logdata/Csv",
-        QString(), QString(), choiceDialog.isChecked(APPEND),
-        OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+        QString(), QString(), choiceDialog.isChecked(APPEND));
 
       if(!file.isEmpty())
       {
@@ -838,9 +837,7 @@ void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *paren
     QString filename = dialog->saveFileDialog(
       tr("Save GPX"),
       tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
-      "lnmpln", "Route/Gpx", atools::documentsDir(),
-      defFilename,
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+      "lnmpln", "Route/Gpx", atools::documentsDir(), defFilename, false /* confirm overwrite */);
 
     if(!filename.isEmpty())
     {

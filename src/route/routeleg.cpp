@@ -780,7 +780,7 @@ bool RouteLeg::isApproachPoint() const
           procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
-bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors) const
+bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool *trackError) const
 {
   bool invalid = true;
   if(airway.isValid())
@@ -829,9 +829,24 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors) cons
   {
     if(!getAirwayName().isEmpty())
     {
+      QString name = getAirwayName();
+
+      // tracks are most likely one letter names or numbers
+      bool ok;
+      name.toInt(&ok);
+
+      // Assume that all short names might be tracks
+      bool track = isTrack() || name.length() == 1 || ok ||
+                   // AUSOTS like "MY16"
+                   (atools::charAt(name, 0).isLetter() && atools::charAt(name, 1).isLetter() &&
+                    atools::charAt(name, 2).isNumber() && atools::charAt(name, 3).isNumber());
+
+      QString type = track ? tr("Track or airway") : tr("Airway");
       invalid = true;
       if(errors != nullptr)
-        errors->append(tr("Airway %1 not found for %2.").arg(getAirwayName()).arg(getIdent()));
+        errors->append(tr("%1 %2 not found for %3.").arg(type).arg(name).arg(getIdent()));
+      if(trackError != nullptr)
+        *trackError |= track;
     }
   }
 

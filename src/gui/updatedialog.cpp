@@ -38,6 +38,7 @@ UpdateDialog::UpdateDialog(QWidget *parent, bool manualCheck, bool downloadAvail
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
   ui->setupUi(this);
+  setWindowTitle(tr("%1 - Updates Available").arg(QApplication::applicationName()));
 
   if(!manual)
   {

@@ -54,8 +54,12 @@ void MapPainterWeather::render()
   Q_UNUSED(saver)
 
   // Get airports from cache/database for the bounding rectangle and add them to the map
+  bool overflow = false;
+
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
-  const QList<MapAirport> *airportCache = mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate);
+  const QList<MapAirport> *airportCache =
+    mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
+  context->setQueryOverflow(overflow);
 
   if(airportCache == nullptr)
     return;
@@ -90,7 +94,9 @@ void MapPainterWeather::render()
   }
 
   // Sort by airport display order
-  std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(), sortAirportFunction);
+  using namespace std::placeholders;
+  std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(),
+            std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
 
   WeatherReporter *reporter = NavApp::getWeatherReporter();
   for(const PaintAirportType& airportWeather: visibleAirportWeather)
@@ -110,7 +116,7 @@ void MapPainterWeather::render()
 
 void MapPainterWeather::drawAirportWeather(const atools::fs::weather::Metar& metar, float x, float y)
 {
-  float size = context->sz(context->symbolSizeAirportWeather, context->mapLayerEffective->getAirportSymbolSize());
+  float size = context->sz(context->symbolSizeAirportWeather, context->mapLayer->getAirportSymbolSize());
   bool windBarbs = context->mapLayer->isAirportWeatherDetails();
 
   symbolPainter->drawAirportWeather(context->painter, metar, x - size * 4.f / 5.f, y - size * 4.f / 5.f, size,

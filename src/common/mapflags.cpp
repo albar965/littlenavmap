@@ -22,6 +22,12 @@
 
 namespace map {
 
+const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES =
+{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_ONLINE, AIRSPACE_SRC_USER};
+
+const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES =
+{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER};
+
 QDebug operator<<(QDebug out, const map::MapTypes& type)
 {
   QDebugStateSaver saver(out);

@@ -59,10 +59,10 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
   }
 
   // Real wind ==================
-  windQuery = new atools::grib::WindQuery(parent, verbose);
-  connect(windQuery, &atools::grib::WindQuery::windDataUpdated, this, &WindReporter::windDownloadFinished);
-  connect(windQuery, &atools::grib::WindQuery::windDownloadFailed, this, &WindReporter::windDownloadFailed);
-  connect(windQuery, &atools::grib::WindQuery::windDownloadSslErrors, this, &WindReporter::windDownloadSslErrors);
+  windQueryOnline = new atools::grib::WindQuery(parent, verbose);
+  connect(windQueryOnline, &atools::grib::WindQuery::windDataUpdated, this, &WindReporter::windDownloadFinished);
+  connect(windQueryOnline, &atools::grib::WindQuery::windDownloadFailed, this, &WindReporter::windDownloadFailed);
+  connect(windQueryOnline, &atools::grib::WindQuery::windDownloadSslErrors, this, &WindReporter::windDownloadSslErrors);
 
   // Layers from custom settings ==================
   windQueryManual = new atools::grib::WindQuery(parent, verbose);
@@ -76,7 +76,7 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
 
 WindReporter::~WindReporter()
 {
-  delete windQuery;
+  delete windQueryOnline;
   delete windQueryManual;
   delete actionGroup;
   delete windlevelToolButton;
@@ -140,14 +140,14 @@ void WindReporter::updateDataSource()
       path = NavApp::getSimulatorBasePath(NavApp::getCurrentSimulatorDb()) + QDir::separator() + "global_winds.grib";
 
     if(QFileInfo::exists(path))
-      windQuery->initFromFile(path);
+      windQueryOnline->initFromFile(path);
   }
   else if(ui->actionMapShowWindNOAA->isChecked())
     // Download from NOAA - will call windDownloadFinished later
-    windQuery->initFromUrl(OptionData::instance().getWeatherNoaaWindBaseUrl());
+    windQueryOnline->initFromUrl(OptionData::instance().getWeatherNoaaWindBaseUrl());
   else
   {
-    windQuery->deinit();
+    windQueryOnline->deinit();
     updateToolButtonState();
     emit windUpdated();
   }
@@ -159,17 +159,25 @@ void WindReporter::windDownloadFinished()
   updateToolButtonState();
   if(!isWindManual())
   {
-    QString msg;
+    QDateTime from, to;
+    windQueryOnline->getValidity(from, to);
 
+    QString validText = from.isValid() && to.isValid() ? tr(" Forecast from %1 to %2 UTC.").
+                        arg(QLocale().toString(from, QLocale::ShortFormat)).
+                        arg(QLocale().toString(to, QLocale::ShortFormat)) : QString();
+
+    QString msg;
     switch(currentSource)
     {
       case wind::NO_SOURCE:
         break;
+
       case wind::SIMULATOR:
-        msg = tr("Winds aloft updated from simulator.");
+        msg = tr("Winds aloft updated from simulator.%1").arg(validText);
         break;
+
       case wind::NOAA:
-        msg = tr("NOAA winds aloft download finished.");
+        msg = tr("Winds aloft downloaded from NOAA.%1").arg(validText);
         break;
     }
     NavApp::setStatusMessage(msg, true /* addToLog */);
@@ -188,11 +196,11 @@ void WindReporter::windDownloadSslErrors(const QStringList& errors, const QStrin
                                            "<p>Continue?</p>").
                                   arg(downloadUrl).
                                   arg(atools::strJoin(errors, tr("<br/>"))),
-                                  tr("Do not show this again and ignore errors in the future"),
+                                  tr("Do not &show this again and ignore errors in the future"),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
 
-  windQuery->setIgnoreSslErrors(result == QMessageBox::Yes);
+  windQueryOnline->setIgnoreSslErrors(result == QMessageBox::Yes);
 }
 
 void WindReporter::windDownloadFailed(const QString& error, int errorCode)
@@ -312,14 +320,9 @@ bool WindReporter::isRouteWindShown() const
   return showFlightplanWaypoints;
 }
 
-bool WindReporter::isWindSourceEnabled() const
+bool WindReporter::hasOnlineWindData() const
 {
-  return !NavApp::getMainUi()->actionMapShowWindDisabled->isChecked();
-}
-
-bool WindReporter::hasWindData() const
-{
-  return windQuery->hasWindData();
+  return windQueryOnline->hasWindData();
 }
 
 bool WindReporter::isWindManual() const
@@ -358,25 +361,21 @@ void WindReporter::toolbarActionTriggered()
 
 void WindReporter::updateToolButtonState()
 {
-  bool hasRealWind = windQuery->hasWindData();
+  bool onlineWind = windQueryOnline->hasWindData();
   bool manualWind = isWindManual();
 
-  windlevelToolButton->setChecked((!actionNone->isChecked() && hasRealWind) ||
-                                  (actionFlightplanWaypoints->isChecked() && (hasRealWind || manualWind)));
+  // Either selection will show button depressed independent if enabled or not
+  windlevelToolButton->setChecked(!actionNone->isChecked() || actionFlightplanWaypoints->isChecked());
 
-  // Actions that need real wind
-  actionNone->setEnabled(hasRealWind);
-  actionFlightplan->setEnabled(hasRealWind);
-  actionAgl->setEnabled(hasRealWind);
+  // Actions that need real wind or manual wind
+  actionNone->setEnabled(onlineWind || manualWind);
+  actionFlightplan->setEnabled(onlineWind || manualWind);
+  actionAgl->setEnabled(onlineWind || manualWind);
 
   for(QAction *action: actionLevelVector)
-    action->setEnabled(hasRealWind);
+    action->setEnabled(onlineWind || manualWind);
 
-  // Disable button and menu if real wind is disabled and manual wind is not selected
-  // actionFlightplanWaypoints->setEnabled(!NavApp::getRoute().isFlightplanEmpty() && (hasRealWind || manualWind));
-
-  // windlevelToolButton->setEnabled(windEnabled || manualWind);
-  // NavApp::getMainUi()->menuHighAltitudeWindLevels->setEnabled(windEnabled || manualWind);
+  actionFlightplanWaypoints->setEnabled(!NavApp::getRoute().isFlightplanEmpty() && (onlineWind || manualWind));
 }
 
 void WindReporter::valuesToAction()
@@ -509,8 +508,9 @@ float WindReporter::getAltitude() const
 }
 
 const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect,
-                                                              const MapLayer *mapLayer, bool lazy)
+                                                              const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
+  atools::grib::WindQuery *windQuery = isWindManual() ? windQueryManual : windQueryOnline;
   if(windQuery->hasWindData())
   {
     // Update
@@ -537,7 +537,7 @@ const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoD
         cachedLevel = currentLevel;
       }
     }
-    windPosCache.validate(queryMaxRows);
+    overflow = windPosCache.validate(queryMaxRows);
     return &windPosCache.list;
   }
   return nullptr;
@@ -545,6 +545,7 @@ const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoD
 
 atools::grib::WindPos WindReporter::getWindForPos(const atools::geo::Pos& pos, float altFeet)
 {
+  atools::grib::WindQuery *windQuery = isWindManual() ? windQueryManual : windQueryOnline;
   atools::grib::WindPos wp;
   if(windQuery->hasWindData())
   {
@@ -561,13 +562,12 @@ atools::grib::WindPos WindReporter::getWindForPos(const atools::geo::Pos& pos)
 
 atools::grib::Wind WindReporter::getWindForPosRoute(const atools::geo::Pos& pos)
 {
-  return (NavApp::getAircraftPerfController()->isWindManual() ? windQueryManual : windQuery)->getWindForPos(pos);
+  return (isWindManual() ? windQueryManual : windQueryOnline)->getWindForPos(pos);
 }
 
 atools::grib::Wind WindReporter::getWindForLineRoute(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2)
 {
-  return (NavApp::getAircraftPerfController()->isWindManual() ? windQueryManual : windQuery)->
-         getWindAverageForLine(pos1, pos2);
+  return (isWindManual() ? windQueryManual : windQueryOnline)->getWindAverageForLine(pos1, pos2);
 }
 
 atools::grib::Wind WindReporter::getWindForLineRoute(const atools::geo::Line& line)
@@ -577,13 +577,13 @@ atools::grib::Wind WindReporter::getWindForLineRoute(const atools::geo::Line& li
 
 atools::grib::Wind WindReporter::getWindForLineStringRoute(const atools::geo::LineString& line)
 {
-  return (NavApp::getAircraftPerfController()->isWindManual() ? windQueryManual : windQuery)->
-         getWindAverageForLineString(line);
+  return (isWindManual() ? windQueryManual : windQueryOnline)->getWindAverageForLineString(line);
 }
 
 atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos, QVector<int> altitudesFt)
 {
   atools::grib::WindPosVector winds;
+  atools::grib::WindQuery *windQuery = isWindManual() ? windQueryManual : windQueryOnline;
 
   if(windQuery->hasWindData())
   {
@@ -631,6 +631,7 @@ void WindReporter::updateManualRouteWinds()
 #ifdef DEBUG_INFORMATION
 QString WindReporter::getDebug(const atools::geo::Pos& pos)
 {
+  atools::grib::WindQuery *windQuery = isWindManual() ? windQueryManual : windQueryOnline;
   return windQuery->getDebug(pos);
 }
 

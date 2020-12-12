@@ -110,19 +110,18 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
               << "type = 'NH'"  // NDB - H
               << "type = 'NMH'" // NDB - MH
               << "type = 'NCP'" // NDB - Compass Locator
-              << "type = 'WN'"  // Waypoint - Named
-              << "type = 'WU'"  // Waypoint - Unnamed
               << "type = 'V'"   // Waypoint - VOR
-              << "type = 'N'";  // Waypoint - NDB
+              << "type = 'N'"  // Waypoint - NDB
+              << "type in ('WN', 'WU', 'FAF', 'IAF', 'VFR', 'RNAV', 'OA')"; // Waypoint - Other
 
   QStringList navTypeCondMap;
   navTypeCondMap << QString()
                  << "(nav_type like ('V%') or nav_type in ('D', 'TC'))"      // All VOR/VORTAC/TACAN
                  << "(nav_type like ('V%') or nav_type in ('D', 'TC', 'N'))" // All VOR/VORTAC/TACAN/NDB
-                 << "nav_type in ('VD')"                                     // Only VOR-DME
-                 << "nav_type in ('V')"                                      // Only VOR
-                 << "nav_type in ('D')"                                      // Only DME
-                 << "nav_type in ('VT')"                                     // Only VORTAC
+                 << "nav_type = 'VD'"                                        // Only VOR-DME
+                 << "nav_type = 'V'"                                         // Only VOR
+                 << "nav_type = 'D'"                                         // Only DME
+                 << "nav_type = 'VT'"                                        // Only VORTAC
                  << "nav_type in ('TC', 'TCD')"                              // Only TACAN
                  << "nav_type = 'N'"                                         // All NDB
                  << "nav_type = 'W'"                                         // All Waypoints

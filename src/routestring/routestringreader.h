@@ -50,7 +50,7 @@ class FlightplanEntryBuilder;
 class Route;
 
 /*
- * This class implementes the conversion from ATS route descriptions to flight plans, i.e. it reads the strings
+ * This class implements the conversion from ATS route descriptions to flight plans, i.e. it reads the strings
  * and constructs a flight plan.
  *
  * Error and warning messages are collected while parsing and can be extracted afterwards.
@@ -112,7 +112,7 @@ private:
 
   /* Build flight plan entry for the given search result. */
   void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result,
-                           const atools::geo::Pos& nearestPos);
+                           const atools::geo::Pos& nearestPos, bool resolveWaypoints);
 
   /* Get a result set with the single closest element */
   void resultWithClosest(map::MapResult& resultWithClosest, const map::MapResult& result,

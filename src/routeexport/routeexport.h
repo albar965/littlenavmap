@@ -21,6 +21,7 @@
 #include "route/routeflags.h"
 #include "routeexport/routeexportflags.h"
 
+#include <QHash>
 #include <QObject>
 #include <functional>
 
@@ -73,14 +74,19 @@ public:
   void routeMultiExport();
 
   /* Open multiexport dialog */
-  void routeMulitExportOptions();
+  void routeMultiExportOptions();
 
   /* Methods called by multiexport or menu actions ========================================================= */
+
+  /* LNMPLN own format */
+  bool routeExportLnm(const RouteExportFormat& format);
 
   /* FSX/P3D XML PLN format */
   /* Also used for manual export */
   bool routeExportPlnMan(); /* Called by action */
+  bool routeExportPlnMsfsMan(); /* Called by action */
   bool routeExportPln(const RouteExportFormat& format);
+  bool routeExportPlnMsfs(const RouteExportFormat& format);
 
   /* New X-Plane FMS 11 */
   /* Also used for manual export */
@@ -187,14 +193,18 @@ public:
   /* End of methods for multiexport ========================================================= */
 
   /* Check if route has valid departure  and destination and departure parking.
+   * Also updates the navdata cycle properties in the global route before checking.
    *  @return true if route can be saved anyway */
-  bool routeValidate(bool validateParking, bool validateDepartureAndDestination, bool multi = false);
+  bool routeValidate(const QVector<RouteExportFormat>& formats, bool multi = false);
 
   /* Validates only if this is a manual save */
-  bool routeValidateMulti(const RouteExportFormat& format, bool validateParking, bool validateDepartureAndDestination);
+  bool routeValidateMulti(const RouteExportFormat& format);
 
   /* Build filename according to pattern set in options. */
-  static QString buildDefaultFilename(const QString& suffix = ".lnmpln");
+  static QString buildDefaultFilename(const QString& suffix = ".lnmpln", bool normalize = false);
+  static QString buildDefaultFilename(const RouteExportFormat&, const QString& suffix = ".lnmpln", bool normalize = false);
+  static QString buildDefaultFilename(const atools::fs::pln::Flightplan& plan, const QString& suffix = ".lnmpln",
+                                      bool normalize = false);
 
   /* Create a default filename based on departure and destination idents. Suffix includes dot. */
   static QString buildDefaultFilenameShort(const QString& sep, const QString& suffix);
@@ -214,25 +224,25 @@ signals:
   /* Show airport on map to allow parking selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
-  /* Show parking selection dialog */
-  void  selectDepartureParking();
+  /* Show parking selection dialog. Returns true if something was selected. */
+  bool selectDepartureParking();
 
   /* Number of selected has changed */
   void  optionsUpdated();
 
 private:
-  bool routeExportInternalPln(bool annotated, const RouteExportFormat& format);
+  bool routeExportInternalPln(const RouteExportFormat& format);
   bool routeExportInternalFlp(const RouteExportFormat& format, bool crj);
 
   /* Formats that have no export method in FlightplanIO */
-  bool exportFlighplanAsGfp(const QString& filename);
+  bool exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints);
   bool exportFlighplanAsTxt(const QString& filename);
   bool exportFlighplanAsCorteIn(const QString& filename);
   bool exportFlighplanAsProSim(const QString& filename);
   bool exportFlighplanAsUFmc(const QString& filename);
   bool exportFlightplanAsGpx(const QString& filename);
-  bool exportFlighplanAsRxpGns(const QString& filename);
-  bool exportFlighplanAsRxpGtn(const QString& filename);
+  bool exportFlighplanAsRxpGns(const QString& filename, bool saveAsUserWaypoints);
+  bool exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUserWaypoints);
 
   /* Generic export using callback and also doing exception handling. */
   bool exportFlighplan(const QString& filename, rf::RouteAdjustOptions options,
@@ -261,8 +271,6 @@ private:
   void writeIvapLine(QTextStream& stream, const QString& key, int value, re::RouteExportType type);
   void writeIvapLine(QTextStream& stream, const QString& string, re::RouteExportType type);
 
-  bool routeSaveCheckFMS11Warnings();
-
   /* Called by all export functions that are used only in multiexport.
    * Uses all paths, descriptions, etc. from given RouteExportFormat. */
   QString exportFileMulti(const RouteExportFormat& format, const QString& filename);
@@ -272,6 +280,9 @@ private:
   QString exportFile(const RouteExportFormat& format, const QString& settingsPrefix, const QString& path,
                      const QString& filename, bool dontComfirmOverwrite = false);
 
+  /* called for each exported file with format and filename which are collected in "exported" */
+  void formatExportedCallback(const RouteExportFormat& format, const QString& filename);
+
   /* Create a list of backups */
   void rotateFile(const QString& filename);
 
@@ -280,6 +291,9 @@ private:
   RouteMultiExportDialog *exportAllDialog;
   RouteExportFormatMap *exportFormatMap;
   atools::fs::pln::FlightplanIO *flightplanIO;
+
+  /* Filled by "formatExportedCallback" when doing a multi export using routeMultiExport() */
+  QHash<int, QString> exported;
 
   /* true if any formats are selected for multiexport */
   bool selected = false;

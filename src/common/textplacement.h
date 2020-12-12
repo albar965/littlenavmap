@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <QColor>
 #include <QVector>
+#include <QRect>
 
 namespace atools {
 namespace geo {

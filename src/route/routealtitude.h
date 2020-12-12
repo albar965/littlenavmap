@@ -42,7 +42,8 @@ struct WindAverageRoute;
 
 class Route;
 
-/* Result package of fuel and time calculation or estimate */
+/* Result package of fuel consumption to and time calculation to dest, TOD or next.
+ *  Fuel consumpition might be estimated. */
 struct FuelTimeResult
 {
   float
@@ -135,6 +136,9 @@ public:
   /* Get interpolated altitude value in ft for the given distance to destination in NM.
    *  Not for missed and alternate legs. */
   float getAltitudeForDistance(float distanceToDest) const;
+
+  /* Same as above for TAS knots from performance profile */
+  float getSpeedForDistance(float distanceToDest, const atools::fs::perf::AircraftPerf& perf) const;
 
   /* 0 if invalid */
   float getTravelTimeHours() const;
@@ -381,7 +385,7 @@ public:
    * altitude legs are not valid. distanceToDest: Aircraft position distance to destination. */
   void calculateFuelAndTimeTo(FuelTimeResult& calculation, float distanceToDest, float distanceToNext,
                               const atools::fs::perf::AircraftPerf& perf, float aircraftFuelFlowLbs,
-                              float aircraftFuelFlowGal, float aircraftGroundSpeed, int activeLeg) const;
+                              float aircraftFuelFlowGal, float aircraftGroundSpeed, int activeLegIdx) const;
 
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
@@ -389,7 +393,7 @@ private:
   /* Calculate altitudes for all legs. Error list will be filled with altitude restriction violations. */
   void calculate(QStringList& altRestErrors);
 
-  /* Calculate travelling time and fuel consumption based on given performance object and wind */
+  /* Calculate traveling time and fuel consumption based on given performance object and wind */
   void calculateTrip(const atools::fs::perf::AircraftPerf& perf);
 
   /* Adjust the altitude to fit into the restriction. I.e. raise if it is below an at or above restriction */

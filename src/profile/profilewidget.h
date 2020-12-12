@@ -18,13 +18,15 @@
 #ifndef LITTLENAVMAP_PROFILEWIDGET_H
 #define LITTLENAVMAP_PROFILEWIDGET_H
 
-#include "route/route.h"
 #include "fs/sc/simconnectdata.h"
 
 #include <QFutureWatcher>
 #include <QWidget>
 
 namespace atools {
+namespace geo {
+class LineString;
+}
 namespace fs {
 namespace perf {
 class AircraftPerf;
@@ -42,6 +44,8 @@ class QTimer;
 class QRubberBand;
 class ProfileScrollArea;
 class JumpBack;
+class Route;
+struct ElevationLegList;
 
 /*
  * Loads and displays the flight plan elevation profile. The elevation data is
@@ -116,11 +120,6 @@ public:
   /* Widget coordinates for red line */
   int getMinSafeAltitudeY() const;
 
-  float getFlightplanAltFt() const
-  {
-    return flightplanAltFt;
-  }
-
   /* Widget coordinates for flight plan line */
   int getFlightplanAltY() const;
 
@@ -129,7 +128,8 @@ public:
     return maxWindowAlt;
   }
 
-  bool hasValidRouteForDisplay(const Route& route) const;
+  /* true if converted route is valid and can be shown on map. This also includes routes without valid TOC and TOD */
+  bool hasValidRouteForDisplay() const;
 
   bool hasTrackPoints() const
   {
@@ -154,25 +154,6 @@ signals:
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
 
 private:
-  /* Route leg storing all elevation points */
-  struct ElevationLeg
-  {
-    atools::geo::LineString elevation; /* Ground elevation (Pos.altitude) and position */
-    QVector<float> distances; /* Distances along the route for each elevation point.
-                               *  Measured from departure point. Nautical miles. */
-    float maxElevation = 0.f; /* Max ground altitude for this leg */
-  };
-
-  struct ElevationLegList
-  {
-    Route route; /* Copy from route controller.
-                  * Need a copy to avoid thread synchronization problems. */
-    QList<ElevationLeg> elevationLegs; /* Elevation data for each route leg */
-    float maxElevationFt = 0.f /* Maximum ground elevation for the route */,
-          totalDistance = 0.f /* Total route distance in nautical miles */;
-    int totalNumPoints = 0; /* Number of elevation points in whole flight plan */
-  };
-
   /* Show position at x ordinate on profile on the map */
   void showPosAlongFlightplan(int x, bool doubleClick);
 
@@ -191,7 +172,13 @@ private:
   void elevationUpdateAvailable();
   void updateTimeout();
   void updateThreadFinished();
+
+  /* Update all screen coordinates and scale factors */
   void updateScreenCoords();
+
+  /* Calculate the left and right margin based on font size and airport elevation text */
+  void calcLeftMargin();
+
   void terminateThread();
   float calcGroundBuffer(float maxElevation);
 
@@ -228,23 +215,28 @@ private:
   void saveAircraftTrack();
   void loadAircraftTrack();
 
-  void buildTooltip(int x);
+  void updateTooltip();
+
+  void buildTooltip(int x, bool force);
+
+  /* Get either indicated or real */
+  float aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
   /* Scales should be at least this amount of pixels apart */
   static Q_DECL_CONSTEXPR int MIN_SCALE_SCREEN_DISTANCE = 25;
-  const int X0 = 52; // 65; /* Left margin inside widget */
-  const int Y0 = 16; // 14; /* Top margin inside widget */
+  int left = 30; /* Left margin inside widget - calculated depending on font and text size in paint */
+  const int TOP = 16; /* Top margin inside widget */
 
   /* Thread will start after this delay if route was changed */
-  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 1000;
-  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 200;
+  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 200;
+  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
 
   /* Thread will start after this delay if an elevation update arrives */
-  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_UPDATE_TIMEOUT_MS = 5000;
-  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 200;
+  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS = 5000;
+  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
 
   /* Do not calculate a profile for legs longer than this value */
   static Q_DECL_CONSTEXPR int ELEVATION_MAX_LEG_NM = 2000;
@@ -258,9 +250,8 @@ private:
   float aircraftDistanceFromStart;
   float lastAircraftDistanceFromStart;
   bool movingBackwards = false;
-  ElevationLegList legList;
+  ElevationLegList *legList;
 
-  RouteController *routeController = nullptr;
   JumpBack *jumpBack = nullptr;
   bool contextMenuActive = false;
 
@@ -280,6 +271,7 @@ private:
   int lastTooltipX = -999;
   QString lastTooltipString;
   atools::geo::Pos lastTooltipPos;
+  QPoint lastTooltipScreenPos;
 
   QString fixedLabelText;
 
@@ -288,7 +280,6 @@ private:
                            * from airport to runway but not missed legs */
   QPolygon landPolygon; /* Green landmass polygon */
   float minSafeAltitudeFt = 0.f, /* Red line */
-        flightplanAltFt = 0.f, /* Cruise altitude */
         maxWindowAlt = 1.f; /* Maximum altitude at top of widget */
 
   ProfileScrollArea *scrollArea = nullptr;

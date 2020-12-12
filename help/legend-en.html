@@ -21,34 +21,43 @@
     <p>
       <b>Use <code>Ctrl+Mousewheel</code> to change text size.</b>
     </p>
-    <h2 id="legend-little-navmap-legend">
+    <!-- ===================================================================== -->
+    <!-- replace "../images/legend_" with "images/legend/" and "../images/icon_" with "images/icons/"-->
+    <h1 id="legend">
       Legend
-    </h2>
+    </h1>
     <p>
       By default, all speeds are given in knots, distances in nautical miles, altitudes and elevations in feet. The
-      units can be set to imperial or metric in the dialog <code>Options</code> on the tab <code>Units</code>.
+      units can be set to imperial or metric in the dialog <code>Options</code> on <code>Units</code>.
     </p>
     <p>
-      Colors, size and text labels of some map elements can be changed in the dialog <code>Options</code> on the tab
+      Colors, size and text labels of some map elements can be changed in the dialog <code>Options</code> on
       <code>Map Display</code>. This legend shows the default values.
     </p>
     <p>
       Heading and course are suffixed with <code>°T</code> for true course or <code>°M</code> for magnetic course.
     </p>
-    <h3 id="mouse-clicks-mouse-clicks">
+    <h2 id="mouse-clicks">
       Mouse Clicks
-    </h3>
+    </h2>
+    <p>
+      The display of a map feature class will be enabled if you use on of these mouse clicks. A
+      <code>Shift+Click</code> will enable display of range rings, for example. A second <code>Shift+Click</code> into
+      the center (active point) will remove the range rings.
+    </p>
+    <p>
+      You can enable or disable visibility in menu <code>View</code> -&gt; <code>User Features</code> or the toolbar.
+    </p>
     <p>
       A click in the map on the active spot of a feature like a range ring removes it. The cursor changes to a hand
       symbol to indicate an active spot which allows to remove a feature by click or remove/edit it in the context
       menu.
     </p>
-    <p>
-      The display of a map feature class will be enabled if you use on of these mouse clicks. A
-      <code>Shift+Click</code> will enable display of range rings, for example. You can enable or disable visibility in
-      menu <code>View</code> -&gt; <code>User Features</code> or the toolbar.
-    </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -86,21 +95,13 @@
         </tr>
         <tr class="even">
           <td>
-            <code>Ctrl+Click</code>
-          </td>
-          <td>
-            Start rhumb-line measurement or delete a measurement line.
-          </td>
-        </tr>
-        <tr class="odd">
-          <td>
             <code>Alt+Click</code>
           </td>
           <td>
             Start great circle line measurement or delete measurement line.
           </td>
         </tr>
-        <tr class="even">
+        <tr class="odd">
           <td>
             <code>Ctrl+Shift+Click</code>
           </td>
@@ -108,7 +109,7 @@
             Add or edit an userpoint.
           </td>
         </tr>
-        <tr class="odd">
+        <tr class="even">
           <td>
             <code>Ctrl+Alt+Click</code>
           </td>
@@ -116,7 +117,7 @@
             Insert airport, navaid, userpoint or position into the nearest flight plan leg.
           </td>
         </tr>
-        <tr class="even">
+        <tr class="odd">
           <td>
             <code>Shift+Alt+Click</code>
           </td>
@@ -124,7 +125,7 @@
             Append airport, navaid, userpoint or position to flight plan.
           </td>
         </tr>
-        <tr class="odd">
+        <tr class="even">
           <td>
             <code>Wheel</code>
           </td>
@@ -132,7 +133,7 @@
             Zoom in or out.
           </td>
         </tr>
-        <tr class="even">
+        <tr class="odd">
           <td>
             <code>Shift+Wheel</code>
           </td>
@@ -140,16 +141,28 @@
             Zoom in or out in small steps.
           </td>
         </tr>
+        <tr class="even">
+          <td>
+            <code>Ctrl+Wheel</code>
+          </td>
+          <td>
+            Increase or decrease map details.
+          </td>
+        </tr>
       </tbody>
     </table>
-    <h3 id="key-commands-key-commands">
+    <h2 id="key-commands">
       Key Commands
-    </h3>
+    </h2>
     <p>
       You have to activate the map window (i.e. click into it or press the key <code>F2</code>) before you can use the
       keyboard shortcuts.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -219,10 +232,14 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="map-marks-map-marks">
-      Map Marks
-    </h3>
-    <table cellspacing="0">
+    <h2 id="highlights">
+      Highlights and User Features
+    </h2>
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -266,10 +283,7 @@
           <td>
             Flight plan with distance, direction and magnetic course at each leg. Displayed values can be changed in
             dialog <code>Options</code> on tab <code>Map Display 2</code>.
-            <br />
-            <code>°M</code> and <code>°T</code> indicate magnetic or true course, respectively. <code>R</code> and
-            <code>GC</code> indicate rhumb line or great circle line. Suffixes might be hidden if only one type is
-            selected (rhumb or great circle)
+            <code>°M</code> and <code>°T</code> indicate magnetic or true course, respectively.
           </td>
         </tr>
         <tr class="odd">
@@ -293,8 +307,7 @@
             <img src="images/legend/route_wind.png" alt="Wind Barb" />
           </td>
           <td>
-            Wind direction and speed at flight plan waypoint. See chapter <code>High Altitude Winds</code> below for
-            details about wind barbs.
+            Wind direction and speed at flight plan waypoint. See below for details about wind barbs.
           </td>
         </tr>
         <tr class="even">
@@ -310,7 +323,8 @@
             <img src="images/legend/routetoc.png" alt="Top of Climb" />
           </td>
           <td>
-            Top of climb point with distance from departure.
+            Top of climb point with distance from departure. Can be disabled in menu <code>View</code> -&gt;
+            <code>Show Top of Climb and Top of Descent</code>
           </td>
         </tr>
         <tr class="even">
@@ -318,7 +332,8 @@
             <img src="images/legend/routetod.png" alt="Top of Descent" />
           </td>
           <td>
-            Top of descent point with distance to destination.
+            Top of descent point with distance to destination. Can be disabled in menu <code>View</code> -&gt;
+            <code>Show Top of Climb and Top of Descent</code>
           </td>
         </tr>
         <tr class="odd">
@@ -326,7 +341,8 @@
             <img src="images/legend/range_rings.png" alt="Range" />
           </td>
           <td>
-            Range rings labeled with distance.
+            Range rings labeled with distance. The number and distance of the range rings can be changed in the
+            <code>Options</code> dialog on page <code>Map</code>.
           </td>
         </tr>
         <tr class="even">
@@ -340,34 +356,26 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/distance_gc.png" alt="Distance GC" />
+            <img src="images/legend/distance_gc.png" alt="Distance" />
           </td>
           <td>
-            <a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great circle</a> distance and course
-            measurement line indicating length and true heading at start and destination. The two heading values will
-            be equal for small distances. For shorter distances length is also shown in feet or meters.
+            Great circle distance and course measurement line indicating length and true heading at start and destination. The two
+            heading values will be equal for small distances. For shorter distances length is also shown in feet or
+            meters. The width of distance measurement lines can be changed in the dialog <code>Options</code> on page
+            <code>Map Display</code>. The labels can be changed in the tree
+            view on the right side of the same page.
           </td>
         </tr>
         <tr class="even">
-          <td>
-            <img src="images/legend/distance_rhumb.png" alt="Distance Rhumb" />
-          </td>
-          <td>
-            <a href="https://en.wikipedia.org/wiki/Rhumb_line">Rhumb line</a> of equal bearing distance measurement
-            indicating distance and true heading. Rhumb lines are used to approach a VOR or NDB or travel along
-            airways. For shorter distances length is also shown in feet.
-          </td>
-        </tr>
-        <tr class="odd">
           <td>
             <img src="images/legend/distance_vor.png" alt="Distance VOR" />
           </td>
           <td>
             Measurement lines starting from an airport or navaid have the same color and additional ident and frequency
-            labels. Course for rhumb lines will be shown in magnetic if the navaid has a magnetic variation attribute.
+            labels. Course will consider magnetic variation of a navaid.
           </td>
         </tr>
-        <tr class="even">
+        <tr class="odd">
           <td>
             <img src="images/legend/highlight_search.png" alt="Search Highlight" />
           </td>
@@ -375,7 +383,7 @@
             A highlighted airport or navaid selected in the search result table.
           </td>
         </tr>
-        <tr class="odd">
+        <tr class="even">
           <td>
             <img src="images/legend/highlight_route.png" alt="Flight Plan Hightlight" />
           </td>
@@ -383,17 +391,17 @@
             A highlighted airport or navaid selected in the flight plan table.
           </td>
         </tr>
-        <tr class="even">
+        <tr class="odd">
           <td>
             <img src="images/legend/highlightprocfrom.png" alt="Procedure Highlight From" /> <img src=
-            "images/legend/highlightprocto.png" alt="Procedure Highlight From" />
+            "images/legend/highlightprocto.png" alt="Procedure Highlight To" />
           </td>
           <td>
             Highlighted positions of a procedure leg in the preview. Small circle show <em>from</em> and large circle
             <em>to</em> position.
           </td>
         </tr>
-        <tr class="odd">
+        <tr class="even">
           <td>
             <img src="images/legend/highlightprocrec.png" alt="Procedure Highlight Related" />
           </td>
@@ -402,7 +410,7 @@
             approach leg for example.
           </td>
         </tr>
-        <tr class="even">
+        <tr class="odd">
           <td>
             <img src="images/legend/route_profile_mark.png" alt="Elevation Profile Position" />
           </td>
@@ -410,29 +418,64 @@
             This shows the related position on the flight plan when hovering the mouse above the elevation profile.
           </td>
         </tr>
-
+      </tbody>
+    </table>
+    <h2 id="logbook-preview">
+      Logbook Preview
+    </h2>
+    <p>
+      Direct connection between departure and destination as well as flight plan preview and flown trail is shown for
+      selected logbook entries. Any of the above can be disabled in the logbook search context menu.
+    </p>
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <tbody>
         <tr class="odd">
           <td>
             <img src="images/legend/logbook_entry.png" alt="Logbook Entry" />
           </td>
           <td>
-            Airports and great circle path between departure and destination for a logbook entry selected in the
-            search result table. Label shows departure, destination and great circle distance between airports.
+            Airports and great circle path between departure and destination for a logbook entry selected in the search
+            result table. Label shows departure, destination and great circle distance between airports.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/logbook_route.png" alt="Logbook Entry Flight Plan" />
+          </td>
+          <td>
+            Flight plan preview as stored with the logbook entry. Waypoint names and flying direction indicated by
+            arrows. Note that complex procedures are not visible.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/logbook_trail.png" alt="Logbook Entry Trail" />
+          </td>
+          <td>
+            Flown user aircraft trail stored with the logbook entry.
           </td>
         </tr>
       </tbody>
     </table>
-    <h3 id="compass-rose-compass-rose">
+    <h2 id="compass-rose">
       Compass Rose
-    </h3>
+    </h2>
     <p>
-      Line thickness can be changed in dialog <code>Options</code> on the tab <code>Map Display</code>.
+      Line thickness can be changed in dialog <code>Options</code> on the tab <code>Map Display 2</code>.
     </p>
     <p>
-      The colors for flight plan leg course and crab angle indicator depend on settings for active flight plan leg
-      which can be changed in the dialog <code>Options</code> on tab <code>Map</code>.
+      The colors for flight plan leg course and heading indicator depend on settings for active flight plan leg which
+      can be changed in the dialog <code>Options</code> on tab <code>Map</code>.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -470,7 +513,7 @@
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/compass_rose_track.png" alt="Aircraft Track" />
+            <img src="images/legend/compass_rose_track.png" alt="Aircraft Track Rose" />
           </td>
           <td>
             Solid line shows aircraft track in degrees magnetic if connected.
@@ -495,19 +538,23 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/compass_rose_crab.png" alt="Crab Angle" />
+            <img src="images/legend/compass_rose_crab.png" alt="Heading" />
           </td>
           <td>
-            Crab angle indicator. Shows the heading that has to be flown towards the next waypoint of the active flight
+            Heading indicator. Shows the heading that has to be flown towards the next waypoint of the active flight
             plan leg considering cross wind. Hidden if no flight plan loaded.
           </td>
         </tr>
       </tbody>
     </table>
-    <h3 id="aircraft-and-ships-vehicles">
+    <h2 id="vehicles">
       Aircraft and Ships
-    </h3>
-    <table cellspacing="0">
+    </h2>
+    <table>
+      <colgroup>
+        <col style="width: 54%" />
+        <col style="width: 45%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -521,15 +568,14 @@
       <tbody>
         <tr class="odd">
           <td>
-            <img src="images/icons/aircraft_small_user.png" alt="Small GA" /> <img src=
-            "images/icons/aircraft_jet_user.png" alt="Jet" /> <img src=
-            "images/icons/aircraft_helicopter_user.png" alt="Helicopter" />
+            <img src="images/icons/aircraft_small_user.png" alt="Small GA User" /> <img src=
+            "images/icons/aircraft_jet_user.png" alt="Jet User" /> <img src=
+            "images/icons/aircraft_helicopter_user.png" alt="Helicopter User" />
           </td>
           <td>
             Current user vehicle if connected to the flight simulator. Labels vary and can be customized in
-            <code>Options</code> on the tab <code>Map Display</code>. The user aircraft depends on selected aircraft
-            (jet, piston/turboprop or helicopter). Optionally a black needle protruding from the nose can show the
-            current ground track.
+            <code>Options</code> on the page <code>Map Display</code>. The
+            user aircraft depends on selected aircraft (jet, piston/turboprop or helicopter).
           </td>
         </tr>
         <tr class="even">
@@ -545,7 +591,7 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/aircraft_trackneedle.png" alt="Aircraft Track" />
+            <img src="images/legend/aircraft_trackneedle.png" alt="Aircraft Track Needle" />
           </td>
           <td>
             Needle showing the current ground track of the aircraft. Aircraft nose shows heading.
@@ -571,14 +617,15 @@
           <td>
             <img src="images/icons/aircraft_small.png" alt="Small GA" /> <img src="images/icons/aircraft_jet.png"
             alt="Jet" /> <img src="images/icons/aircraft_helicopter.png" alt="Helicopter" /> <img src=
-            "images/icons/aircraft_small_ground.png" alt="Small GA" /> <img src=
-            "images/icons/aircraft_jet_ground.png" alt="Jet" /> <img src=
-            "images/icons/aircraft_helicopter_ground.png" alt="Helicopter" /> <img src=
+            "images/icons/aircraft_small_ground.png" alt="Small GA Ground" /> <img src=
+            "images/icons/aircraft_jet_ground.png" alt="Jet Ground" /> <img src=
+            "images/icons/aircraft_helicopter_ground.png" alt="Helicopter Ground" /> <img src=
             "images/icons/aircraft_boat_ground.png" alt="Ship" />
           </td>
           <td>
-            AI or multiplayer aircraft. Labels vary and can be customized in <code>Options</code> on the tab <code>Map
-            Display</code>. The symbol depends on aircraft type (jet, piston/turboprop, helicopter or ship).
+            AI or multiplayer aircraft. Labels vary and can be customized in <code>Options</code> on the tab
+            <code>Map Display</code>. The symbol depends on aircraft type
+            (jet, piston/turboprop, helicopter or ship).
           </td>
         </tr>
         <tr class="odd">
@@ -592,18 +639,23 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="airports-airports">
+    <h2 id="airports">
       Airports
-    </h3>
+    </h2>
     <p>
       Airports having control towers are shown in dark blue others in magenta. Add-on airport names and idents are
-      shown italic and underlined. Airports that are part of the flight plan have a light yellow text background.
+      shown italic and underlined throughout the whole program. Airports that are part of the flight plan have a light
+      yellow text background.
     </p>
     <p>
       The symbol is shown smaller if an airport has no runways. This is the case for some add-on airports that use
-      another technique like photo scenery to display runways.
+      another techniques like photo scenery to display runways.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -617,12 +669,12 @@
       <tbody>
         <tr class="odd">
           <td>
-            <img src="images/legend/airport_tower_8000.png" alt="Large Airport" /> <img src=
+            <img src="images/legend/airport_tower_8000.png" alt="Large Airport Tower" /> <img src=
             "images/legend/airport_8000.png" alt="Large Airport" />
           </td>
           <td>
-            Airports with hard surface runways longer than 8000 ft or 2400 meters. All runways longer than 4000 ft
-            or about 1200 meters are shown. Only for lower zoom distances.
+            Airports with hard surface runways longer than 8,000 ft or 2,400 m. All runways longer than 4,000 ft or
+            about 1,200 m are shown. Only for lower zoom distances.
           </td>
         </tr>
         <tr class="even">
@@ -698,13 +750,23 @@
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/airport_weather.png" alt="Airport Weather" />
+            <img src="images/legend/addon.png" alt="Add-on Airport" />
           </td>
           <td>
-            Weather at airport. See chapter <code>Airport Weather</code> below.
+            Add-on airports are always highlighted independent of <code>Force Show Addon Airports</code> or not.
+            You can disable this in the options dialog on page
+            <code>Map Display</code> by unchecking <code>Highlight add-on airports</code>.
           </td>
         </tr>
         <tr class="odd">
+          <td>
+            <img src="images/legend/airport_weather.png" alt="Airport Weather" />
+          </td>
+          <td>
+            Weather at airport. See chapter below.
+          </td>
+        </tr>
+        <tr class="even">
           <td>
             <img src="images/legend/airportlabel.png" alt="Airport Text" />
           </td>
@@ -714,7 +776,7 @@
             tab <code>Map Display</code>.
           </td>
         </tr>
-        <tr class="even">
+        <tr class="odd">
           <td>
             <img src="images/legend/airport_overview.png" alt="Airport Overview" />
           </td>
@@ -724,13 +786,17 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="navaids-navaids">
+    <h2 id="navaids">
       Navaids
-    </h3>
+    </h2>
     <p>
       Navaids that are part of the flight plan have a light yellow text background.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -744,21 +810,21 @@
       <tbody>
         <tr class="odd">
           <td>
-            <img src="images/legend/vordme_small.png" alt="VORDME" /> <img src="images/legend/vordme_large.png"
-            alt="VORDME" />
+            <img src="images/legend/vordme_small.png" alt="VORDME Small" /> <img src=
+            "images/legend/vordme_large.png" alt="VORDME Large" />
           </td>
           <td>
             VOR DME including ident, type (High, Low or Terminal) and frequency. Compass rose shows magnetic variation
-            on lower zoom distances.
+            on lower zoom distances. Small blue rectangle at high zoom levels.
           </td>
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/vor_small.png" alt="VOR" /> <img src="images/legend/vor_large.png" alt=
-            "VOR" />
+            <img src="images/legend/vor_small.png" alt="VOR Small" /> <img src="images/legend/vor_large.png" alt=
+            "VOR Large" />
           </td>
           <td>
-            VOR including ident, type and frequency.
+            VOR including ident, type and frequency. Tiny blue rectangle at high zoom levels.
           </td>
         </tr>
         <tr class="odd">
@@ -766,36 +832,37 @@
             <img src="images/legend/dme.png" alt="DME" />
           </td>
           <td>
-            DME including ident, type and frequency.
+            DME including ident, type and frequency. Small blue rectangle at high zoom levels.
           </td>
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/tacan_small.png" alt="TACAN" /> <img src="images/legend/tacan_large.png" alt=
-            "TACAN" />
+            <img src="images/legend/tacan_small.png" alt="TACAN Small" /> <img src=
+            "images/legend/tacan_large.png" alt="TACAN Large" />
           </td>
           <td>
             TACAN including ident, type (High, Low or Terminal) and channel. Compass rose shows magnetic variation on
-            lower zoom distances.
+            lower zoom distances. Small blue rectangle at high zoom levels.
           </td>
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/vortac_small.png" alt="VORTAC" /> <img src="images/legend/vortac_large.png"
-            alt="VORTAC" />
+            <img src="images/legend/vortac_small.png" alt="VORTAC Small" /> <img src=
+            "images/legend/vortac_large.png" alt="VORTAC Large" />
           </td>
           <td>
             VORTAC including ident, type (High, Low or Terminal) and frequency. Compass rose shows magnetic variation
-            on lower zoom distances.
+            on lower zoom distances. Small blue rectangle at high zoom levels.
           </td>
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/ndb_small.png" alt="NDB" /> <img src="images/legend/ndb_large.png" alt=
-            "NDB" />
+            <img src="images/legend/ndb_small.png" alt="NDB Small" /> <img src="images/legend/ndb_large.png" alt=
+            "NDB Large" />
           </td>
           <td>
-            NDB including ident, type (HH, H, MH or CL - compass locator) and frequency.
+            NDB including ident, type (HH, H, MH or CL - compass locator) and frequency. Small dark red circle at high
+            zoom levels.
           </td>
         </tr>
         <tr class="odd">
@@ -803,7 +870,7 @@
             <img src="images/legend/waypoint.png" alt="Waypoint" />
           </td>
           <td>
-            Waypoint with name.
+            Waypoint with name. Small magenta triangle at high zoom levels.
           </td>
         </tr>
         <tr class="even">
@@ -816,7 +883,7 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/waypoint_invalid.png" alt="Waypoint" />
+            <img src="images/legend/waypoint_invalid.png" alt="Waypoint Invalid" />
           </td>
           <td>
             Invalid airport, waypoint, VOR or NDB that is part of the flight plan but could not be found in the Scenery
@@ -825,8 +892,9 @@
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/marker_outer.png" alt="Marker" /> <img src="images/legend/marker_middle.png"
-            alt="Marker" /> <img src="images/legend/marker_inner.png" alt="Marker" />
+            <img src="images/legend/marker_outer.png" alt="Marker Outer" /> <img src=
+            "images/legend/marker_middle.png" alt="Marker Middle" /> <img src="images/legend/marker_inner.png"
+            alt="Marker Inner" />
           </td>
           <td>
             Marker with type and heading indicated by lens shape.
@@ -852,6 +920,23 @@
         </tr>
         <tr class="odd">
           <td>
+            <img src="images/legend/track_east.png" alt="Track East" />
+          </td>
+          <td>
+            Eastbound PACOTS track with flying direction, name <code>2</code> and type. Tracks having no east/west
+            direction are shown in gray color.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/track_west.png" alt="Track West" />
+          </td>
+          <td>
+            Westbound PACOTS track with flying direction, name <code>H</code> and type.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
             <img src="images/legend/ils_gs.png" alt="ILS" />
           </td>
           <td>
@@ -869,13 +954,18 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="procedures-procedures">
+    <h2 id="procedures">
       Procedures
-    </h3>
+    </h2>
     <p>
-      See chapter <a href="APPROACHES.md">Procedures</a> for more detailed information on all the legs.
+      See chapter <code>Procedures</code> for more detailed information on all
+      the legs.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1031,14 +1121,18 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="airport-diagram-airport-diagram">
+    <h2 id="airport-diagram">
       Airport Diagram
-    </h3>
+    </h2>
     <p>
       Runway, taxiway, helipad and apron colors indicate surface type. White is used for an unknown or invalid surface
       type given by an add-on developer.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 57%" />
+        <col style="width: 42%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1108,7 +1202,7 @@
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/apron_transparent.png" alt="Taxiway" />
+            <img src="images/legend/apron_transparent.png" alt="Taxiway Apron" />
           </td>
           <td>
             Semi transparent dotted aprons and taxiways indicate that no surface is drawn. It might use a photo texture
@@ -1117,8 +1211,8 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/tower_active.png" alt="Tower" /> <img src="images/legend/tower_inactive.png"
-            alt="Tower" />
+            <img src="images/legend/tower_active.png" alt="Tower Active" /> <img src=
+            "images/legend/tower_inactive.png" alt="Tower" />
           </td>
           <td>
             Tower. Red if a tower frequency is available. Otherwise just view position.
@@ -1134,7 +1228,7 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/parking_ga_ramp.png" alt="Parking" />
+            <img src="images/legend/parking_ga_ramp.png" alt="Parking GA" />
           </td>
           <td>
             GA ramp with parking number and heading tick mark.
@@ -1142,8 +1236,8 @@
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/parking_gate_no_jetway.png" alt="Parking" /> <img src=
-            "images/legend/parking_gate.png" alt="Parking" />
+            <img src="images/legend/parking_gate_no_jetway.png" alt="Parking Gate no Jetway" /> <img src=
+            "images/legend/parking_gate.png" alt="Parking Gate" />
           </td>
           <td>
             Gate with number and heading tick mark. Second ring indicates availability of jetway.
@@ -1151,7 +1245,7 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/parking_ramp_cargo.png" alt="Parking" />
+            <img src="images/legend/parking_ramp_cargo.png" alt="Parking Cargo" />
           </td>
           <td>
             Cargo ramp
@@ -1159,7 +1253,7 @@
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/parking_mil.png" alt="Parking" />
+            <img src="images/legend/parking_mil.png" alt="Parking Mil" />
           </td>
           <td>
             Military combat parking or cargo ramp.
@@ -1168,7 +1262,7 @@
         <tr class="odd">
           <td>
             <img src="images/legend/helipad.png" alt="Helipad" /> <img src="images/legend/helipadmedical.png"
-            alt="Helipad" /> <img src="images/legend/helipadsquare.png" alt="Helipad" />
+            alt="Helipad Medical" /> <img src="images/legend/helipadsquare.png" alt="Helipad Square" />
           </td>
           <td>
             Helipads. Red text indicates medical helipad. Color indicates surface.
@@ -1176,16 +1270,20 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="elevation-profile-elevation-profile-legend">
+    <h2 id="elevation-profile-legend">
       Elevation Profile
-    </h3>
+    </h2>
     <p>
       The colors and symbols of the elevation profile follow the style of the main map as set in the options dialog on
-      tab <code>Map Display</code>. Colors, patterns and symbols for airports, navaids, procedures, active and passed
-      flight plan legs are the same. The profile display also follows other map settings like visibility of flight plan
-      line, aircraft and aircraft trail.
+      tab <code>Map Display</code>. Colors, patterns and symbols for airports,
+      navaids, procedures, active and passed flight plan legs are the same. The profile display also follows other map
+      settings like visibility of flight plan line, aircraft and aircraft trail.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1216,7 +1314,7 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/profiletoc.png" alt="Top of Climb" />
+            <img src="images/legend/profiletoc.png" alt="Top of Climb Profile" />
           </td>
           <td>
             Top of climb with distance from departure.
@@ -1224,7 +1322,7 @@
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/profiletod.png" alt="Top of Descent" />
+            <img src="images/legend/profiletod.png" alt="Top of Descent Profile" />
           </td>
           <td>
             Top of descent with distance to destination.
@@ -1267,8 +1365,8 @@
             <img src="images/legend/profile_safe_alt.png" alt="Profile Safe Alt" />
           </td>
           <td>
-            Minimum safe altitude for flight plan. This is elevation plus 1000 feet rounded up to the next 500 ft. The
-            1000 feet buffer can be changed in the dialog <code>Options</code> on the tab <code>Flight Plan</code>
+            Minimum safe altitude for flight plan. This is elevation plus 1,000 ft rounded up to the next 500 ft. The
+            1,000 ft buffer can be changed in the dialog <code>Options</code> on the tab <code>Flight Plan</code>
           </td>
         </tr>
         <tr class="even">
@@ -1290,7 +1388,7 @@
         </tr>
         <tr class="even">
           <td>
-            <img src="images/legend/profile_track.png" alt="Trail" />
+            <img src="images/legend/profile_track.png" alt="Trail Profile" />
           </td>
           <td>
             User aircraft trail if connected to the flight simulator.
@@ -1298,7 +1396,7 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/profile_ils.png" alt="ILS" />
+            <img src="images/legend/profile_ils.png" alt="ILS Profile" />
           </td>
           <td>
             ILS slope. Label shows ident, frequency, magnetic heading, glideslope pitch and DME indication if
@@ -1317,13 +1415,17 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="airport-traffic-pattern-airport-traffic-pattern">
+    <h2 id="airport-traffic-pattern">
       Airport Traffic Pattern
-    </h3>
+    </h2>
     <p>
-      Color and indicators depend on user choice in airport traffic pattern dialog.
+      Color and indicators depend on user choice in <code>Holdings</code> dialog.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1348,7 +1450,7 @@
             <img src="images/legend/pattern_runway.png" alt="Final" />
           </td>
           <td>
-            Final leg of airport traffic pattern with with runway and magnetic course.
+            Final leg of airport traffic pattern with runway and magnetic course.
           </td>
         </tr>
         <tr class="odd">
@@ -1369,7 +1471,7 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/patternactive.png" alt="Active Position" />
+            <img src="images/legend/patternactive.png" alt="Active Position Pattern" />
           </td>
           <td>
             White circle is active point at the runway threshold of the pattern. Mouse cursor changes above and allows
@@ -1378,13 +1480,17 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="holding-holding">
+    <h2 id="holding-legend">
       Holding
-    </h3>
+    </h2>
     <p>
       Color depends on user choice in holding dialog.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1416,7 +1522,7 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/holdactive.png" alt="Active Position" />
+            <img src="images/legend/holdactive.png" alt="Active Position Hold" />
           </td>
           <td>
             Active point and holding fix. Mouse cursor changes above and allows to remove the holding in the context
@@ -1425,15 +1531,19 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="mora-grid-mora-grid">
+    <h2 id="mora-grid">
       MORA Grid
-    </h3>
+    </h2>
     <p>
       The minimum off-route altitude grid provides an obstacle clearance altitude within an one degree grid. The
-      altitudes clear all terrain and obstructions by 1000 feet in areas where the highest elevations are 5000 feet MSL
-      or lower. Where the highest elevations are above 5000 feet MSL terrain is cleared by 2000 feet.
+      altitudes clear all terrain and obstructions by 1,000 ft in areas where the highest elevations are 5,000 ft MSL
+      or lower. Where the highest elevations are above 5,000 ft MSL terrain is cleared by 2,000 ft.
     </p>
-    <table cellspacing="0">
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1450,19 +1560,23 @@
             <img src="images/legend/map_mora.png" alt="MORA Grid" />
           </td>
           <td>
-            MORA grid. Large number is 1000 feet and small number 100 feet. Example here: 3300, 4400, 6000, 9900 and
-            10500 feet.
+            MORA grid. Large number is 1,000 ft and small number 100 ft. Example here: 3,300, 4,400, 6,000, 9,900 and
+            10,500 ft.
           </td>
         </tr>
       </tbody>
     </table>
-    <h3 id="airport-weather-airport-weather">
+    <h2 id="airport-weather-legend">
       Airport Weather
-    </h3>
-    <h4 id="flight-rules-airport-weather-flightrules">
+    </h2>
+    <h3 id="airport-weather-flightrules">
       Flight Rules
-    </h4>
-    <table cellspacing="0">
+    </h3>
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1487,7 +1601,7 @@
             <img src="images/legend/weather_mvfr.png" alt="MVFR" />
           </td>
           <td>
-            MVFR. Marginal VFR. Visibility equal or below 5 statue miles or lowest ceiling at or below 3000 ft.
+            MVFR. Marginal VFR. Visibility equal or below 5 statue miles or lowest ceiling at or below 3,000 ft.
           </td>
         </tr>
         <tr class="odd">
@@ -1495,7 +1609,7 @@
             <img src="images/legend/weather_ifr.png" alt="IFR" />
           </td>
           <td>
-            IFR. Instrument flight rules. Visibility below 3 statue miles or lowest ceiling below 1000 ft.
+            IFR. Instrument flight rules. Visibility below 3 statue miles or lowest ceiling below 1,000 ft.
           </td>
         </tr>
         <tr class="even">
@@ -1508,10 +1622,14 @@
         </tr>
       </tbody>
     </table>
-    <h4 id="cloud-cover-airport-weather-cloud">
+    <h3 id="airport-weather-cloud">
       Cloud Cover
-    </h4>
-    <table cellspacing="0">
+    </h3>
+    <table style="width:43%;">
+      <colgroup>
+        <col style="width: 19%" />
+        <col style="width: 23%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1565,10 +1683,14 @@
         </tr>
       </tbody>
     </table>
-    <h4 id="wind-airport-weather-wind">
+    <h3 id="airport-weather-wind">
       Wind
-    </h4>
-    <table cellspacing="0">
+    </h3>
+    <table>
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1646,10 +1768,14 @@
         </tr>
       </tbody>
     </table>
-    <h3 id="high-altitude-wind-high-alt-wind">
-      High Altitude Wind
-    </h3>
-    <table cellspacing="0">
+    <h2 id="high-alt-wind">
+      Winds Aloft
+    </h2>
+    <table style="width:93%;">
+      <colgroup>
+        <col style="width: 33%" />
+        <col style="width: 59%" />
+      </colgroup>
       <thead>
         <tr class="header">
           <th>
@@ -1663,7 +1789,7 @@
       <tbody>
         <tr class="odd">
           <td>
-            <img src="images/legend/wind_none.png" alt="No Wind" />
+            <img src="images/legend/wind_none.png" alt="No Wind Aloft" />
           </td>
           <td>
             No pointer indicates wind below 2 knots.
@@ -1679,7 +1805,7 @@
         </tr>
         <tr class="odd">
           <td>
-            <img src="images/legend/wind_25.png" alt="25 Knots Wind" />
+            <img src="images/legend/wind_25.png" alt="25 Knots Wind Aloft" />
           </td>
           <td>
             Example: 25 knots.

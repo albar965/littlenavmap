@@ -62,9 +62,12 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   columns->
   append(Column("logbook_id").hidden()).
   append(Column("departure_time", tr("Departure\nReal Time")).defaultSort(true).defaultSortOrder(Qt::DescendingOrder)).
+  append(Column("departure_time_sim", tr("Departure\nSim. Time UTC"))).
   append(Column("departure_ident", ui->lineEditLogdataDeparture, tr("Departure\nICAO")).filter()).
   append(Column("departure_name", tr("Departure"))).
   append(Column("departure_runway").hidden()).
+  append(Column("destination_time", tr("Destination\nReal Time"))).
+  append(Column("destination_time_sim", tr("Destination\nSim. Time UTC"))).
   append(Column("destination_ident", ui->lineEditLogdataDestination, tr("Destination\nICAO")).filter()).
   append(Column("destination_name", tr("Destination"))).
   append(Column("destination_runway").hidden()).
@@ -75,8 +78,8 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("simulator", ui->lineEditLogdataSimulator, tr("Simulator")).filter()).
   append(Column("performance_file").hidden()).
   append(Column("flightplan_file").hidden()).
-  append(Column("distance", tr("Distance\n%dist%"))).
-  append(Column("departure_time_sim", tr("Departure\nSim. Time UTC"))).
+  append(Column("distance", tr("Distance\nPlan %dist%"))).
+  append(Column("distance_flown", tr("Distance\nFlown %dist%"))).
   append(Column("route_string").hidden()).
   append(Column("description", ui->lineEditLogdataDescription, tr("Remarks")).filter()).
   append(Column("departure_lonx").hidden()).
@@ -308,7 +311,7 @@ QString LogdataSearch::formatModelData(const Column *col, const QVariant& displa
   // Called directly by the model for export functions
   if(col->getColumnName().startsWith("departure_time") || col->getColumnName().startsWith("destination_time"))
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
-  else if(col->getColumnName() == "distance")
+  else if(col->getColumnName() == "distance" || col->getColumnName() == "distance_flown")
     return Unit::distNm(displayRoleValue.toFloat(), false, 0);
   else if(col->getColumnName() == "description")
     return atools::elideTextShort(displayRoleValue.toString().simplified(), 80);

@@ -83,9 +83,9 @@ public:
   void getAirportByIcao(map::MapAirport& airport, const QString& icao);
   map::MapAirport getAirportByIcao(const QString& icao);
 
-  /* Try to get airport by ident, icao or position as a fallback if pos is valid */
-  void getAirportFuzzy(map::MapAirport& airport, const QString& ident, const QString& icao,
-                       const atools::geo::Pos& pos);
+  /* Try to get airport by ident, icao or position as a fallback if pos is valid,
+   * Need to get ident, icao and pos as copies to avoid overwriting. */
+  void getAirportFuzzy(map::MapAirport& airport, QString ident, QString icao, atools::geo::Pos pos);
 
   atools::geo::Pos getAirportPosByIdent(const QString& ident);
 
@@ -125,7 +125,7 @@ public:
   void getStartById(map::MapStart& start, int startId);
 
   /* Get best start position for an airport. This is the longest preferrably hard surfaced primary runway end */
-  void getBestStartPositionForAirport(map::MapStart& start, int airportId, const QString& runwayName);
+  void getBestStartPositionForAirport(map::MapStart& start, int airportId, const QString& runwayName = QString());
 
   /* Get a completely filled runway list for the airport.
    * runways are sorted to get betters ones (hard surface, longer) at the end of a list */
@@ -190,8 +190,6 @@ private:
                          const atools::geo::Pos& position);
   void runwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent);
   map::MapRunwayEnd runwayEndByName(int airportId, const QString& runway);
-
-  const int queryRowLimit = 5000;
 
   /* true if third party navdata */
   bool navdata;

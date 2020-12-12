@@ -43,6 +43,8 @@ QColor airportDetailBackColor(255, 255, 255);
 QColor airportEmptyColor(130, 130, 130);
 QColor toweredAirportColor(15, 70, 130);
 QColor unToweredAirportColor(126, 58, 91);
+QColor addonAirportBackgroundColor(Qt::yellow);
+QColor addonAirportFrameColor(Qt::darkGray);
 QColor vorSymbolColor(Qt::darkBlue);
 QColor ndbSymbolColor(Qt::darkRed);
 QColor markerSymbolColor(Qt::darkMagenta);
@@ -60,6 +62,8 @@ QColor airwayVictorColor("#969696"); // 1.
 QColor airwayJetColor("#000080"); // 1.
 QColor airwayBothColor("#646464"); // 1.
 QColor airwayTrackColor("#101010"); // 1.5
+QColor airwayTrackColorEast("#a01010"); // 1.5
+QColor airwayTrackColorWest("#1010a0"); // 1.5
 QColor airwayTextColor(80, 80, 80);
 
 QColor rangeRingColor(Qt::red);
@@ -77,6 +81,9 @@ QColor weatherVfrColor(QColor("#00b000"));
 
 QPen minimumAltitudeGridPen(QColor("#a0a0a0"), 1.);
 QColor minimumAltitudeNumberColor(QColor("#70000000"));
+
+QPen minimumAltitudeGridPenDark(QColor("#808080"), 1.);
+QColor minimumAltitudeNumberColorDark(QColor("#70a0a0a0"));
 
 QColor compassRoseColor(Qt::darkRed);
 QColor compassRoseTextColor(Qt::black);
@@ -125,6 +132,11 @@ QPen touchMarkBackPen(QColor(0, 0, 0), 4, Qt::SolidLine, Qt::FlatCap);
 QPen touchMarkFillPen(QColor(255, 255, 255), 2, Qt::SolidLine, Qt::FlatCap);
 QColor touchRegionFillColor("#40888888");
 
+QColor aircraftUserLabelColor(0, 0, 0);
+QColor aircraftUserLabelColorBg(255, 255, 150);
+QColor aircraftAiLabelColor(0, 0, 0);
+QColor aircraftAiLabelColorBg(255, 255, 255);
+
 /* Alternating colors */
 static QColor rowBgColor;
 static QColor rowAltBgColor;
@@ -167,7 +179,8 @@ const QColor& alternatingRowColor(int row, bool isSort)
 const QColor& colorOutlineForParkingType(const QString& type)
 {
   if(type == "RMCB" || type == "RMC" || type.startsWith("G") || type.startsWith("RGA") || type.startsWith("DGA") ||
-     type.startsWith("RC") || type.startsWith("FUEL") || type == ("H") || type == ("T"))
+     type.startsWith("RC") || type.startsWith("FUEL") || type == ("H") || type == ("T") || type == ("RE") ||
+     type == ("GE"))
     return parkingOutlineColor;
   else
     return parkingUnknownOutlineColor;
@@ -186,23 +199,23 @@ const QColor& colorForParkingType(const QString& type)
   static const QColor fuel(Qt::yellow);
   static const QColor unknown("#808080");
 
-  if(type == QLatin1Literal("RM"))
+  if(type == "RM")
     return rampMil;
-  else if(type == QLatin1Literal("RMC"))
+  else if(type == "RMC")
     return rampMilCargo;
-  else if(type == QLatin1Literal("RMCB"))
+  else if(type == "RMCB")
     return rampMilCombat;
-  else if(type.startsWith(QLatin1Literal("G")))
+  else if(type.startsWith("G"))
     return gate;
-  else if(type.startsWith(QLatin1Literal("RGA")) || type.startsWith(QLatin1Literal("DGA")))
+  else if(type.startsWith("RGA") || type.startsWith("DGA") || type.startsWith("RE"))
     return rampGa;
-  else if(type.startsWith(QLatin1Literal("RC")))
+  else if(type.startsWith("RC"))
     return rampCargo;
-  else if(type.startsWith(QLatin1Literal("FUEL")))
+  else if(type.startsWith("FUEL"))
     return fuel;
-  else if(type == (QLatin1Literal("H")))
+  else if(type == ("H"))
     return hangar;
-  else if(type == (QLatin1Literal("T")))
+  else if(type == ("T"))
     return tiedown;
   else
     return unknown;
@@ -216,7 +229,7 @@ const QColor& colorTextForParkingType(const QString& type)
     return mapcolors::brightParkingTextColor;
   else if(type.startsWith("G"))
     return mapcolors::brightParkingTextColor;
-  else if(type.startsWith("RGA") || type.startsWith("DGA"))
+  else if(type.startsWith("RGA") || type.startsWith("DGA") || type.startsWith("RE"))
     return mapcolors::brightParkingTextColor;
   else if(type.startsWith("RC"))
     return mapcolors::brightParkingTextColor;
@@ -230,18 +243,18 @@ const QColor& colorTextForParkingType(const QString& type)
     return brightParkingTextColor;
 }
 
-const QIcon& iconForStartType(const QString& type)
+const QIcon& iconForStart(const map::MapStart& start)
 {
   static const QIcon runway(":/littlenavmap/resources/icons/startrunway.svg");
   static const QIcon helipad(":/littlenavmap/resources/icons/starthelipad.svg");
   static const QIcon water(":/littlenavmap/resources/icons/startwater.svg");
 
   static const QIcon empty;
-  if(type == "R")
+  if(start.isRunway())
     return runway;
-  else if(type == "H")
+  else if(start.isHelipad())
     return helipad;
-  else if(type == "R")
+  else if(start.isWater())
     return water;
   else
     return empty;
@@ -262,7 +275,7 @@ const QIcon& iconForParkingType(const QString& type)
     return mil;
   else if(type.startsWith("G"))
     return gate;
-  else if(type.startsWith("RGA") || type.startsWith("DGA"))
+  else if(type.startsWith("RGA") || type.startsWith("DGA") || type == "RE")
     return ga;
   else if(type.startsWith("RC"))
     return cargo;
@@ -282,7 +295,7 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor grass("#00a000");
   static const QColor water("#808585ff");
   static const QColor asphalt("#707070");
-  static const QColor cement("#d0d0d0");
+  static const QColor cement("#a0a0a0");
   static const QColor clay("#DEB887");
   static const QColor snow("#dbdbdb");
   static const QColor ice("#d0d0ff");
@@ -291,7 +304,7 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor gravel("#c0c0c0");
   static const QColor oilTreated("#2F4F4F");
   static const QColor steelMats("#a0f0ff");
-  static const QColor bituminous("#808080");
+  static const QColor bituminous("#505050");
   static const QColor brick("#A0522D");
   static const QColor macadam("#c8c8c8");
   static const QColor planks("#8B4513");
@@ -299,7 +312,7 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor shale("#F5DEB3");
   static const QColor tarmac("#909090");
   static const QColor unknown("#ffffff");
-  static const QColor transparent("#ffffff");
+  static const QColor transparent("#80808080");
 
   if(surface == "A")
     return asphalt;
@@ -491,6 +504,13 @@ const QColor& colorForAirwayTrack(const map::MapAirway& airway)
 
     case map::TRACK_NAT:
     case map::TRACK_PACOTS:
+      if(airway.westCourse)
+        return airwayTrackColorWest;
+      else if(airway.eastCourse)
+        return airwayTrackColorEast;
+      else
+        return airwayTrackColor;
+
     case map::TRACK_AUSOTS:
       return airwayTrackColor;
 
@@ -572,15 +592,23 @@ void syncColors()
   QSettings colorSettings(filename, QSettings::IniFormat);
   colorSettings.setValue("Options/Version", QApplication::applicationVersion());
 
+  colorSettings.beginGroup("Aircraft");
+  syncColorArgb(colorSettings, "UserLabelColor", aircraftUserLabelColor);
+  syncColorArgb(colorSettings, "UserLabelBackgroundColor", aircraftUserLabelColorBg);
+  syncColorArgb(colorSettings, "AiLabelColor", aircraftAiLabelColor);
+  syncColorArgb(colorSettings, "AiLabelBackgroundColor", aircraftAiLabelColorBg);
+  colorSettings.endGroup();
+
   colorSettings.beginGroup("Airport");
   syncColor(colorSettings, "DiagramBackgroundColor", airportDetailBackColor);
   syncColor(colorSettings, "EmptyColor", airportEmptyColor);
   syncColor(colorSettings, "ToweredColor", toweredAirportColor);
   syncColor(colorSettings, "UnToweredColor", unToweredAirportColor);
+  syncColor(colorSettings, "AddonBackgroundColor", addonAirportBackgroundColor);
+  syncColor(colorSettings, "AddonFrameColor", addonAirportFrameColor);
   syncPen(colorSettings, "TaxiwayLinePen", taxiwayLinePen);
   syncColor(colorSettings, "TaxiwayNameColor", taxiwayNameColor);
   syncColor(colorSettings, "TaxiwayNameBackgroundColor", taxiwayNameBackgroundColor);
-
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Navaid");
@@ -599,6 +627,8 @@ void syncColors()
   syncColor(colorSettings, "JetColor", airwayJetColor);
   syncColor(colorSettings, "BothColor", airwayBothColor);
   syncColor(colorSettings, "TrackColor", airwayTrackColor);
+  syncColor(colorSettings, "TrackColorEast", airwayTrackColorEast);
+  syncColor(colorSettings, "TrackColorWest", airwayTrackColorWest);
   syncColor(colorSettings, "TextColor", airwayTextColor);
   colorSettings.endGroup();
 
@@ -646,6 +676,8 @@ void syncColors()
   colorSettings.beginGroup("AltitudeGrid");
   syncPen(colorSettings, "MinimumAltitudeGridPen", minimumAltitudeGridPen);
   syncColorArgb(colorSettings, "MinimumAltitudeNumberColor", minimumAltitudeNumberColor);
+  syncPen(colorSettings, "MinimumAltitudeGridPenDark", minimumAltitudeGridPenDark);
+  syncColorArgb(colorSettings, "MinimumAltitudeNumberColorDark", minimumAltitudeNumberColorDark);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Profile");

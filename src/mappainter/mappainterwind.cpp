@@ -49,9 +49,11 @@ void MapPainterWind::render()
   atools::util::PainterContextSaver saver(context->painter);
   Q_UNUSED(saver);
 
+  bool overflow = false;
   const atools::grib::WindPosList *windForRect =
     NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(),
-                                              context->mapLayer, context->lazyUpdate);
+                                              context->mapLayer, context->lazyUpdate, overflow);
+  context->setQueryOverflow(overflow);
 
   if(windForRect != nullptr)
   {
@@ -70,7 +72,11 @@ void MapPainterWind::render()
         bool isVisible, isHidden;
         QPoint pos = wToS(windPos.pos, DEFAULT_WTOS_SIZE, &isVisible, &isHidden);
         if(!pos.isNull() && /*isVisible && */ !isHidden)
+        {
           drawWindBarb(windPos.wind.speed, windPos.wind.dir, pos.x(), pos.y());
+          if(context->objCount())
+            break;
+        }
       }
     }
   }

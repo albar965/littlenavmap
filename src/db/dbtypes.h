@@ -54,10 +54,13 @@ public:
   void fillDefault();
 
   /* Get the latest/newest simulator from all installed ones or databases found */
-  atools::fs::FsPaths::SimulatorType getBest();
+  atools::fs::FsPaths::SimulatorType getBest() const;
 
   /* Get lastest/newest installed simulator */
-  atools::fs::FsPaths::SimulatorType getBestInstalled();
+  atools::fs::FsPaths::SimulatorType getBestInstalled() const;
+
+  /* Get files path for installed simulators in order of the given list */
+  atools::fs::FsPaths::SimulatorType getBestInstalled(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
 
   /* Get all installed simulators */
   QList<atools::fs::FsPaths::SimulatorType> getAllInstalled() const;

@@ -104,20 +104,17 @@ public:
   bool isRouteWindShown() const;
 
   /* True if wind available */
-  bool hasWindData() const;
+  bool hasOnlineWindData() const;
 
   /* true if checkbox "manual" is checked */
   bool isWindManual() const;
-
-  /* true if X-Plane or NOAA wind is enabled. */
-  bool isWindSourceEnabled() const;
 
   /* Get currently shown/selected wind bar altitude level in ft. 0. if none is selected.  */
   float getAltitude() const;
 
   /* Get a list of wind positions for the given rectangle for painting. Does not use manual wind setting. */
   const atools::grib::WindPosList *getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                  bool lazy);
+                                                  bool lazy, bool& overflow);
 
   /* Get (interpolated) wind for given position and altitude */
   atools::grib::WindPos getWindForPos(const atools::geo::Pos& pos, float altFeet);
@@ -180,7 +177,7 @@ private:
   void sourceActionTriggered();
 
   /* GRIB wind data query for downloading files and monitoring files- Manual wind if for user setting. */
-  atools::grib::WindQuery *windQuery = nullptr, *windQueryManual = nullptr;
+  atools::grib::WindQuery *windQueryOnline = nullptr, *windQueryManual = nullptr;
 
   /* Toolbar button */
   QToolButton *windlevelToolButton = nullptr;

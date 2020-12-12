@@ -370,7 +370,6 @@ struct MapAirport
   bool parking() const;
   bool als() const;
   bool vasi() const;
-  bool fence() const;
   bool closedRunways() const;
   bool procedure() const;
 
@@ -529,7 +528,23 @@ struct MapStart
   {
   }
 
-  QString type /* RUNWAY, HELIPAD or WATER */, runwayName /* not empty if this is a runway start */;
+  bool isRunway() const
+  {
+    return type == 'R';
+  }
+
+  bool isHelipad() const
+  {
+    return type == 'H';
+  }
+
+  bool isWater() const
+  {
+    return type == 'W';
+  }
+
+  QChar type = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
+  QString runwayName /* not empty if this is a runway start */;
   int airportId /* database id airport.airport_id */;
   int heading, helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
 };
@@ -845,6 +860,7 @@ struct MapAirway
   QVector<quint16> altitudeLevelsEast, altitudeLevelsWest;
   atools::geo::Pos from, to;
   atools::geo::Rect bounding; /* pre calculated using from and to */
+  bool eastCourse, westCourse;
 
 };
 
@@ -1012,7 +1028,7 @@ struct RangeMarker
   }
 
   QString text; /* Text to display like VOR name and frequency */
-  QVector<int> ranges; /* Range ring list (nm) */
+  QVector<float> ranges; /* Range ring list (nm) */
   MapTypes type; /* VOR, NDB, AIRPORT, etc. */
 };
 
@@ -1079,7 +1095,7 @@ QString patternDirection(const QString& type);
 
 const QString& navName(const QString& type);
 const QString& surfaceName(const QString& surface);
-QString smoothnessName(float smoothness); // X-Plane runway smoothness
+QString smoothnessName(QVariant smoothnessVar); // X-Plane runway smoothness
 const QString& parkingGateName(const QString& gate);
 const QString& parkingRampName(const QString& ramp);
 const QString& parkingTypeName(const QString& type);
@@ -1093,6 +1109,7 @@ QString helipadText(const map::MapHelipad& helipad);
 /* Split runway name into parts and return true if name matches a runway number */
 bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr);
 bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr);
+QString runwayDesignatorLong(const QString& name);
 
 /* Get the closes matching runway name from the list of airport runways or empty if none */
 QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames);
@@ -1132,7 +1149,7 @@ QString parkingNameForFlightplan(const MapParking& parking);
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type);
 const QString& airspaceFlagToString(map::MapAirspaceFlags type);
-QString mapObjectTypeToString(MapTypes type); /* For debugging purposes. */
+QString mapObjectTypeToString(MapTypes type); /* For debugging purposes. Not translated */
 const QString& airspaceRemark(map::MapAirspaceTypes type);
 
 int airspaceDrawingOrder(map::MapAirspaceTypes type);

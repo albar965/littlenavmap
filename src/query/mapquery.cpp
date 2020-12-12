@@ -48,7 +48,7 @@ using map::MapUserpoint;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
-int MapQuery::queryMaxRows = 5000;
+int MapQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
   : dbSim(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
@@ -62,8 +62,7 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDa
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRowLimit", 5000).toInt();
+  queryMaxRows = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "MapQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 }
 
 MapQuery::~MapQuery()
@@ -163,7 +162,7 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
 }
 
 map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapTypes type,
-                                                       int maxIls, float maxIlsDist)
+                                                 int maxIls, float maxIlsDist)
 {
   map::MapResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
   if(nearest == nullptr || nearest->size() < 5)
@@ -172,7 +171,7 @@ map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceN
 }
 
 map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapTypes type,
-                                                            int maxIls, float maxIlsDist)
+                                                      int maxIls, float maxIlsDist)
 {
   query::NearestCacheKeyNavaid key = {pos, distanceNm, type};
 
@@ -498,8 +497,7 @@ QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent
 
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
                                        bool airportDiagram, map::MapTypes types,
-                                       int xs, int ys, int screenDistance,
-                                       map::MapResult& result)
+                                       int xs, int ys, int screenDistance, map::MapResult& result)
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
@@ -624,34 +622,44 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
 }
 
 const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
-                                                    const MapLayer *mapLayer, bool lazy)
+                                                    const MapLayer *mapLayer, bool lazy, map::MapTypes types,
+                                                    bool& overflow)
 {
+  // Get flags for running separate queries for add-on and normal airports
+  bool addon = types.testFlag(map::AIRPORT_ADDON);
+  bool normal = types & (map::AIRPORT_HARD | map::AIRPORT_SOFT | map::AIRPORT_EMPTY);
+
   airportCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+                           [ = ](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
-    return curLayer->hasSameQueryParametersAirport(newLayer);
+    return curLayer->hasSameQueryParametersAirport(newLayer) &&
+    // Invalidate cache if settings differ
+    airportCacheAddonFlag == addon && airportCacheNormalFlag == normal;
   });
+
+  airportCacheAddonFlag = addon;
+  airportCacheNormalFlag = normal;
 
   switch(mapLayer->getDataSource())
   {
     case layer::ALL:
       airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */);
+      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
 
     case layer::MEDIUM:
       // Airports > 4000 ft
-      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */);
+      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */, addon, normal, overflow);
 
     case layer::LARGE:
       // Airports > 8000 ft
-      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */);
+      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */, addon, normal, overflow);
 
   }
   return nullptr;
 }
 
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                            bool lazy)
+                                            bool lazy, bool& overflow)
 {
   vorCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -674,12 +682,12 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
       }
     }
   }
-  vorCache.validate(queryMaxRows);
+  overflow = vorCache.validate(queryMaxRows);
   return &vorCache.list;
 }
 
 const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                            bool lazy)
+                                            bool lazy, bool& overflow)
 {
   ndbCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -702,7 +710,7 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
       }
     }
   }
-  ndbCache.validate(queryMaxRows);
+  overflow = ndbCache.validate(queryMaxRows);
   return &ndbCache.list;
 }
 
@@ -762,7 +770,7 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
 }
 
 const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                  bool lazy)
+                                                  bool lazy, bool& overflow)
 {
   markerCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -785,11 +793,11 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
       }
     }
   }
-  markerCache.validate(queryMaxRows);
+  overflow = markerCache.validate(queryMaxRows);
   return &markerCache.list;
 }
 
-const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy)
+const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   ilsCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -820,7 +828,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
       }
     }
   }
-  ilsCache.validate(queryMaxRows);
+  overflow = ilsCache.validate(queryMaxRows);
   return &ilsCache.list;
 }
 
@@ -833,7 +841,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
  */
 const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                       atools::sql::SqlQuery *query,
-                                                      bool lazy, bool overview)
+                                                      bool lazy, bool overview, bool addon, bool normal, bool& overflow)
 {
   if(airportCache.list.isEmpty() && !lazy)
   {
@@ -841,24 +849,52 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindRect(r, query);
-      query->exec();
-      while(query->next())
-      {
-        map::MapAirport ap;
-        if(overview)
-          // Fill only a part of the object
-          mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
-                                                  NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
-        else
-          mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
-                                       NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+      // Avoid duplicates between both queries
+      QSet<int> ids;
 
-        airportCache.list.append(ap);
+      // Get normal airports ==========
+      if(normal)
+      {
+        query::bindRect(r, query);
+        query->exec();
+        while(query->next())
+        {
+          map::MapAirport ap;
+          if(overview)
+            // Fill only a part of the object
+            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
+                                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+          else
+            mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
+                                         NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+
+          ids.insert(ap.id);
+          airportCache.list.append(ap);
+        }
+      }
+
+      // Get add-on airports ==========
+      if(addon)
+      {
+        query::bindRect(r, airportAddonByRectQuery);
+        airportAddonByRectQuery->exec();
+        while(airportAddonByRectQuery->next())
+        {
+          map::MapAirport ap;
+          if(overview)
+            // Fill only a part of the object
+            mapTypesFactory->fillAirportForOverview(airportAddonByRectQuery->record(), ap, navdata,
+                                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+          else
+            mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), ap, true /* complete */, navdata,
+                                         NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+          if(!ids.contains(ap.id))
+            airportCache.list.append(ap);
+        }
       }
     }
   }
-  airportCache.validate(queryMaxRows);
+  overflow = airportCache.validate(queryMaxRows);
   return &airportCache.list;
 }
 
@@ -1018,6 +1054,10 @@ void MapQuery::initQueries()
     " and longest_runway_length >= :minlength "
     + whereLimit);
 
+  airportAddonByRectQuery = new SqlQuery(dbSim);
+  airportAddonByRectQuery->prepare(
+    "select " + airportQueryBase.join(", ") + " from airport where " + whereRect + " and is_addon = 1 " + whereLimit);
+
   airportMediumByRectQuery = new SqlQuery(dbSim);
   airportMediumByRectQuery->prepare(
     "select " + airportQueryBaseOverview.join(", ") + " from airport_medium where " + whereRect + " " + whereLimit);
@@ -1064,6 +1104,8 @@ void MapQuery::deInitQueries()
 
   delete airportByRectQuery;
   airportByRectQuery = nullptr;
+  delete airportAddonByRectQuery;
+  airportAddonByRectQuery = nullptr;
   delete airportMediumByRectQuery;
   airportMediumByRectQuery = nullptr;
   delete airportLargeByRectQuery;

@@ -79,7 +79,9 @@ struct SimpleRectCache
                    bool lazy,
                    LayerCompareFunc funcSameLayer);
   void clear();
-  void validate(int queryMaxRows);
+
+  /* Clears list in case of overflow and returns true */
+  bool validate(int queryMaxRows);
 
   Marble::GeoDataLatLonBox curRect;
   const MapLayer *curMapLayer = nullptr;
@@ -94,14 +96,21 @@ bool SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox& rect, co
                                         double increment, bool lazy, LayerCompareFunc funcSameLayer)
 {
   if(lazy)
-    // Nothing changed11
+    // Nothing changed
     return false;
 
   // Store bounding rectangle and inflate it
-  Marble::GeoDataLatLonBox cur(curRect);
-  query::inflateQueryRect(cur, factor, increment);
+
+  Marble::GeoDataLatLonBox inflatedCur(curRect);
+
+  query::inflateQueryRect(inflatedCur, factor, increment);
+
+  float wFactor = curRect.width() / rect.width();
+  float hFactor = curRect.height() / rect.height();
+
 #ifndef DEBUG_DISABLE_RECT_CACHE
-  if(curRect.isEmpty() || !cur.contains(rect) || !funcSameLayer(curMapLayer, mapLayer))
+  if(curRect.isEmpty() || !inflatedCur.contains(rect) || !funcSameLayer(curMapLayer, mapLayer) ||
+     wFactor > 4.f || hFactor > 4.f)
 #else
   Q_UNUSED(funcSameLayer)
 #endif
@@ -116,13 +125,15 @@ bool SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox& rect, co
 }
 
 template<typename TYPE>
-void SimpleRectCache<TYPE>::validate(int queryMaxRows)
+bool SimpleRectCache<TYPE>::validate(int queryMaxRows)
 {
   if(list.size() >= queryMaxRows)
   {
     curRect.clear();
     curMapLayer = nullptr;
+    return true;
   }
+  return false;
 }
 
 template<typename TYPE>

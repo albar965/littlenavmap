@@ -12,9 +12,9 @@
 *.lib
 *.obj
 *.exe
-*.dll
 *.so
 *~
+.~*#
 *.bak
 *.sqlite
 *.db

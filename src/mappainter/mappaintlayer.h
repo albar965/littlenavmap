@@ -119,11 +119,6 @@ public:
     return mapScale;
   }
 
-  int getOverflow() const
-  {
-    return overflow;
-  }
-
   map::MapWeatherSource getWeatherSource() const
   {
     return weatherSource;
@@ -142,6 +137,21 @@ public:
   void setSunShading(const map::MapSunShading& value)
   {
     sunShading = value;
+  }
+
+  bool isObjectOverflow() const
+  {
+    return context.isObjectOverflow();
+  }
+
+  int getObjectCount() const
+  {
+    return context.getObjectCount();
+  }
+
+  bool isQueryOverflow() const
+  {
+    return context.isQueryOverflow();
   }
 
 private:
@@ -194,8 +204,7 @@ private:
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
   MapPaintWidget *mapWidget = nullptr;
-  const MapLayer *mapLayer = nullptr, *mapLayerEffective = nullptr;
-  int overflow = 0;
+  const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
 
 };
 

@@ -114,7 +114,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
         // Other start position - runway or helipad
         QString text = tr("%1 %2").arg(map::startType(startPos.start)).arg(startPos.start.runwayName);
 
-        new QListWidgetItem(mapcolors::iconForStartType(startPos.start.type), text, ui->listWidgetSelectParking);
+        new QListWidgetItem(mapcolors::iconForStart(startPos.start), text, ui->listWidgetSelectParking);
       }
     }
     ui->listWidgetSelectParking->setEnabled(true);

@@ -46,7 +46,7 @@ using map::MapResultIndex;
 const static int MAX_MENU_ITEMS = 10;
 
 // Truncate map object texts in the middle
-const static int TEXT_ELIDE = 35;
+const static int TEXT_ELIDE = 30;
 const static int TEXT_ELIDE_AIRPORT_NAME = 15;
 
 // Keeps information for each menu, action and sub-menu.
@@ -264,7 +264,7 @@ QString MapContextMenu::mapBaseText(const map::MapBase *base)
         return map::aircraftTextShort(base->asPtr<map::MapOnlineAircraft>()->getAircraft());
 
       case map::USERPOINTROUTE:
-        return map::userpointRouteText(*base->asPtr<map::MapUserpointRoute>());
+        return base->asPtr<map::MapUserpointRoute>()->ident;
 
       case map::AIRSPACE:
         return map::airspaceText(*base->asPtr<map::MapAirspace>());
@@ -514,9 +514,9 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
     {
       if(base != nullptr && base->objType == map::AIRPORT)
       {
-        bool departure = false, destination = false, arrivalProc = false, departureProc = false;
+        bool departure = false, destination = false, arrivalProc = false, departureProc = false, roundtrip = false;
         disable = false;
-        procedureFlags(base, &departure, &destination, nullptr, &arrivalProc, &departureProc);
+        procedureFlags(base, &departure, &destination, nullptr, &roundtrip, &arrivalProc, &departureProc);
         if(!arrivalProc && !departureProc)
         {
           // No procedures - disable and add remark
@@ -525,7 +525,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
         }
         else
         {
-          if(destination)
+          if(destination && !roundtrip)
           {
             if(arrivalProc)
               // Airport is destination and has approaches/STAR
@@ -537,7 +537,8 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
               disable = true;
             }
           }
-          if(departure)
+
+          if(departure && !roundtrip)
           {
             if(departureProc)
               // Airport is departure and has SID
@@ -551,7 +552,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
           }
         }
 
-        // Do our own text subsitution for the airport to use shorter name
+        // Do our own text substitution for the airport to use shorter name
         if(text.contains("%1"))
           text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
       }
@@ -597,7 +598,7 @@ void MapContextMenu::insertCustomProcedureMenu(QMenu& menu)
           disable = false;
         }
 
-        // Do our own text subsitution for the airport to use shorter name
+        // Do our own text substitution for the airport to use shorter name
         if(text.contains("%1") && base->objType == map::AIRPORT)
           text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
       }
@@ -608,8 +609,8 @@ void MapContextMenu::insertCustomProcedureMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::CUSTOMPROCEDURE,
                      MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("Create &Custom Procedure for %1"),
-                     tr("Add a custom approach to this airport to the flight plan"),
+                     tr("Create &Approach to %1"),
+                     tr("Add a custom approach to this airport into the flight plan"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/approachcustom.svg"),
                      false /* allowNoMapObject */,
@@ -670,7 +671,7 @@ void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::NAVAIDRANGE,
                      MapResultIndex().addRef(*result, map::VOR | map::NDB).sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Show &Navaid Range for %1"),
+                     tr("Add &Navaid Range Ring for %1"),
                      tr("Show a ring for the radio navaid range on the map"),
                      tr("Shift+Click"),
                      QIcon(":/littlenavmap/resources/icons/navrange.svg"),
@@ -703,7 +704,7 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
             disable = false;
         }
 
-        // Do our own text subsitution for the airport to use shorter name
+        // Do our own text substitution for the airport to use shorter name
         if(text.contains("%1"))
           text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
       }
@@ -714,7 +715,7 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::PATTERN, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("Display &Traffic Pattern at %1 ..."),
+                     tr("Add &Traffic Pattern at %1 ..."),
                      tr("Show a traffic pattern to a runway for this airport"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/trafficpattern.svg"),
@@ -729,7 +730,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
     {
       disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS);
       if(base == nullptr)
-        text = tr("Display &Holding here ...");
+        text = tr("Add &Holding here ...");
       if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
         // Hidden - add remark and disable
         text.append(tr(" (hidden on map)"));
@@ -739,7 +740,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
                      addRef(*result,
                             map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT | map::USERPOINTROUTE).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Display &Holding at %1 ..."),
+                     tr("Add &Holding at %1 ..."),
                      tr("Show a holding pattern on the map at a position or a navaid"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/hold.svg"),
@@ -796,18 +797,16 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
 
         bool departure = false, destination = false;
         procedureFlags(&airport, &departure, &destination);
-        if(destination)
+
+        if(departure)
         {
-          // Is already destination - disable
-          disable = true;
+          if(base->getType() != map::HELIPAD && base->getType() != map::PARKING)
+            // Is already departure airport and no parking clicked
+            text.append(tr(" (is departure)"));
+          // else user clicked parking spot
+        }
+        else if(destination)
           text.append(tr(" (is destination)"));
-        }
-        if(departure && base->getType() != map::HELIPAD && base->getType() != map::PARKING)
-        {
-          // Is already departure airport - disable
-          disable = true;
-          text.append(tr(" (is departure)"));
-        }
       }
     };
 
@@ -831,17 +830,9 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
         bool departure = false, destination = false;
         procedureFlags(base, &departure, &destination);
         if(destination)
-        {
-          // Is already destination - disable
-          disable = true;
           text.append(tr(" (is destination)"));
-        }
-        if(departure)
-        {
-          // Is already departure airport - disable
-          disable = true;
+        else if(departure)
           text.append(tr(" (is departure)"));
-        }
       }
     };
 
@@ -865,16 +856,16 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
         bool departure = false, destination = false, alternate = false;
         procedureFlags(base, &departure, &destination, &alternate);
 
-        // Do not allow to add as alternate if already part of plane
-        if(destination)
-        {
-          disable = true;
-          text.append(tr(" (is destination)"));
-        }
+        // Do not allow to add as alternate if already part of plan
         if(departure)
         {
           disable = true;
           text.append(tr(" (is departure)"));
+        }
+        if(destination)
+        {
+          disable = true;
+          text.append(tr(" (is destination)"));
         }
         if(alternate)
         {
@@ -1238,7 +1229,7 @@ QString MapContextMenu::procedureName(const map::MapBase *base) const
 }
 
 void MapContextMenu::procedureFlags(const map::MapBase *base, bool *departure, bool *destination, bool *alternate,
-                                    bool *arrivalProc, bool *departureProc) const
+                                    bool *roundtrip, bool *arrivalProc, bool *departureProc) const
 {
   if(departure != nullptr)
     *departure = false;
@@ -1246,6 +1237,8 @@ void MapContextMenu::procedureFlags(const map::MapBase *base, bool *departure, b
     *destination = false;
   if(alternate != nullptr)
     *alternate = false;
+  if(roundtrip != nullptr)
+    *roundtrip = false;
   if(arrivalProc != nullptr)
     *arrivalProc = false;
   if(departureProc != nullptr)
@@ -1261,6 +1254,8 @@ void MapContextMenu::procedureFlags(const map::MapBase *base, bool *departure, b
       *destination = NavApp::getRouteConst().isAirportDestination(airport->ident);
     if(alternate != nullptr)
       *alternate = NavApp::getRouteConst().isAirportAlternate(airport->ident);
+    if(roundtrip != nullptr)
+      *roundtrip = NavApp::getRouteConst().isAirportRoundTrip(airport->ident);
 
     if(arrivalProc != nullptr)
       *arrivalProc = NavApp::getMapQuery()->hasAnyArrivalProcedures(*airport);

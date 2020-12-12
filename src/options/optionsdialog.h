@@ -76,6 +76,9 @@ public:
   /* Test if a public network is used with a too low update rate */
   void checkOfficialOnlineUrls();
 
+  /* Enable or disable tooltips changed */
+  void updateTooltipOption();
+
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();
@@ -178,9 +181,6 @@ private:
   void onlineTestWhazzupUrlClicked();
   void onlineTestUrl(const QString& url, bool statusFile);
 
-  /* Converts range ring string to vector of integers*/
-  QVector<int> ringStrToVector(const QString& string) const;
-
   /* Add a dialog page */
   QListWidgetItem *pageListItem(QListWidget *parent, const QString& text, const QString& tooltip = QString(),
                                 const QString& iconPath = QString());
@@ -218,6 +218,11 @@ private:
   void updateFlightplanExample();
   void updateLinks();
 
+  /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
+   * Uses current locale to convert numbers and check min and max. */
+  QVector<float> rangeStringToFloat(const QString& rangeStr) const;
+  QString rangeFloatToString(const QVector<float>& ranges) const;
+
   QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
@@ -230,6 +235,7 @@ private:
 
   // Maps options flags to items in the tree widget
   QHash<optsd::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
+  QHash<optsd::DisplayOptionsAirport, QTreeWidgetItem *> displayOptItemIndexAirport;
   QHash<optsd::DisplayOptionsNavAid, QTreeWidgetItem *> displayOptItemIndexNavAid;
   QHash<optsd::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
   QHash<optsd::DisplayOptionsMeasurement, QTreeWidgetItem *> displayOptItemIndexMeasurement;
@@ -238,6 +244,7 @@ private:
   UnitStringTool *units = nullptr;
 
   QFontDialog *fontDialog = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

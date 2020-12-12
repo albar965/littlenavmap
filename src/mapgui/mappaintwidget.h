@@ -166,6 +166,9 @@ public:
    */
   void setTheme(const QString& theme, int index);
 
+  /* true of map is dark like CartoDark. Night mode does not count */
+  bool isDarkMap() const;
+
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
 
@@ -324,7 +327,7 @@ public:
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
-  void resultTruncated(int truncatedTo);
+  void resultTruncated();
 
   /* Update action state in main window (disabled/enabled) */
   void updateActionStates();
@@ -444,6 +447,9 @@ protected:
   /* true if real window/widget */
   bool visibleWidget = false;
 
+  /* verbose logging */
+  bool verbose = false;
+
   /* Dummy paint cycle without any navigation stuff. Just used to initialize Marble */
   bool noNavPaint = false;
 
@@ -461,6 +467,12 @@ private:
   virtual void paintEvent(QPaintEvent *paintEvent) override;
 
   void unitsUpdated();
+
+  /*  Add placemark files for offline maps */
+  void addPlacemarks();
+
+  /* Need to remove the placemark files since they are shown randomly on online maps */
+  void removePlacemarks();
 
   /* Keeps geographical objects as index in screen coordinates */
   MapScreenIndex *screenIndex = nullptr;

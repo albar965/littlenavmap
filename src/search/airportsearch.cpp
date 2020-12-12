@@ -177,7 +177,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
   append(Column("is_closed", ui->checkBoxAirportClosedSearch, tr("Closed")).hidden()).
   append(Column("is_military", ui->checkBoxAirportMilSearch, tr("Military")).hidden()).
-  append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Addon")).hidden()).
+  append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Add-on")).hidden()).
   append(Column("is_3d", tr("3D")).hidden()).
 
   append(Column("num_runway_soft", ui->comboBoxAirportSurfaceSearch, tr("Soft\nRunways")).
@@ -221,7 +221,6 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("has_tower_object").hidden()).
   append(Column("num_runway_end_vasi").hidden()).
   append(Column("num_runway_end_als").hidden()).
-  append(Column("num_boundary_fence").hidden()).
 
   append(Column("tower_lonx").hidden()).
   append(Column("tower_laty").hidden()).
@@ -232,8 +231,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("bottom_laty").hidden()).
 
   append(Column("lonx", tr("Longitude")).hidden()).
-  append(Column("laty", tr("Latitude")).hidden())
-  ;
+  append(Column("laty", tr("Latitude")).hidden());
 
   ui->labelAirportSearchOverride->hide();
 

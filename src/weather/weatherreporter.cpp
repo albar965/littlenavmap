@@ -23,6 +23,7 @@
 #include "common/constants.h"
 #include "fs/weather/xpweatherreader.h"
 #include "navapp.h"
+#include "atools.h"
 #include "fs/weather/weathernetdownload.h"
 #include "fs/weather/noaaweatherdownloader.h"
 #include "fs/sc/simconnecttypes.h"
@@ -62,8 +63,7 @@ using atools::util::FileSystemWatcher;
 using atools::settings::Settings;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
-  : QObject(parentWindow), simType(type),
-  mainWindow(parentWindow)
+  : QObject(parentWindow), simType(type), mainWindow(parentWindow)
 {
   using namespace std::placeholders;
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
@@ -181,7 +181,7 @@ void WeatherReporter::createFsWatcher()
   {
     // Watch file for changes
     fsWatcherAsPath = new FileSystemWatcher(this, verbose);
-    fsWatcherAsPath->setMinFileSize(100000);
+    fsWatcherAsPath->setMinFileSize(1000);
     fsWatcherAsPath->connect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
                              &WeatherReporter::activeSkyWeatherFileChanged);
   }
@@ -579,7 +579,7 @@ void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const 
                                            "<p>Continue?</p>").
                                   arg(downloadUrl).
                                   arg(atools::strJoin(errors, tr("<br/>"))),
-                                  tr("Do not show this again and ignore errors in the future"),
+                                  tr("Do not &show this again and ignore errors in the future"),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
 
@@ -603,7 +603,7 @@ void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode,
     atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL,
                                                    tr(
                                                      "<p>Download of weather from<br/>\"%1\"<br/>failed.</p><p>Error: %2 (%3)</p>"
-                                                       "<p>Check you weather settings or disable weather downloads.</p>"
+                                                       "<p>Check your weather settings or disable weather downloads.</p>"
                                                          "<p>Suppressing further messages during this session.</p>").
                                                    arg(url).arg(error).arg(errorCode),
                                                    tr("Do not &show this dialog again."));
@@ -688,6 +688,7 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   {
     // Simulator has changed - reload files
     simType = type;
+    resetErrorState();
     updateTimeouts();
     initActiveSkyNext();
     initXplane();
@@ -700,9 +701,17 @@ void WeatherReporter::optionsChanged()
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
 
+  resetErrorState();
   updateTimeouts();
   initActiveSkyNext();
   initXplane();
+}
+
+void WeatherReporter::resetErrorState()
+{
+  vatsimWeather->setErrorStateTimer(false);
+  noaaWeather->setErrorStateTimer(false);
+  ivaoWeather->setErrorStateTimer(false);
 }
 
 void WeatherReporter::updateTimeouts()
@@ -714,26 +723,23 @@ void WeatherReporter::updateTimeouts()
   // Disable periodic downloads if feature is not needed
   optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
-  if(flags & optsw::WEATHER_INFO_NOAA ||
-     flags & optsw::WEATHER_TOOLTIP_NOAA ||
+  if(flags & optsw::WEATHER_INFO_NOAA || flags & optsw::WEATHER_TOOLTIP_NOAA ||
      airportWeatherSource == map::WEATHER_SOURCE_NOAA)
     noaaWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     noaaWeather->setUpdatePeriod(-1);
 
-  if(flags & optsw::WEATHER_INFO_IVAO ||
-     flags & optsw::WEATHER_TOOLTIP_IVAO ||
+  if(flags & optsw::WEATHER_INFO_IVAO || flags & optsw::WEATHER_TOOLTIP_IVAO ||
      airportWeatherSource == map::WEATHER_SOURCE_IVAO)
     ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     ivaoWeather->setUpdatePeriod(-1);
 
-  if(flags & optsw::WEATHER_INFO_VATSIM ||
-     flags & optsw::WEATHER_TOOLTIP_VATSIM ||
+  if(flags & optsw::WEATHER_INFO_VATSIM || flags & optsw::WEATHER_TOOLTIP_VATSIM ||
      airportWeatherSource == map::WEATHER_SOURCE_VATSIM)
-    ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
+    vatsimWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
-    ivaoWeather->setUpdatePeriod(-1);
+    vatsimWeather->setUpdatePeriod(-1);
 }
 
 void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)

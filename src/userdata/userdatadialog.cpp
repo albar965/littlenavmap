@@ -357,9 +357,11 @@ void UserdataDialog::dialogToRecord()
   if(editMode != ud::EDIT_MULTIPLE)
   {
     atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditUserdataLatLon->text());
-    if(OptionData::instance().getUnitCoords() == opts::COORDS_LONX_LATY)
-      // Parsing uses lat/lon - swap for lon/lat
-      pos.swapLonXLatY();
+
+    if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+      // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
+      atools::fs::util::maybeSwapOrdinates(pos, ui->lineEditUserdataLatLon->text());
+
     record->setValue("lonx", pos.getLonX());
     record->setValue("laty", pos.getLatY());
   }

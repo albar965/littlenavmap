@@ -25,83 +25,94 @@ using atools::fs::FsPaths;
 
 void SimulatorTypeMap::fillDefault()
 {
-  for(atools::fs::FsPaths::SimulatorType type : FsPaths::getAllSimulatorTypes())
+  for(FsPaths::SimulatorType type : FsPaths::getAllSimulatorTypes())
     fillOneDefault(type);
 }
 
-atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
+atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
 {
-#if defined(Q_OS_WIN32)
-  if(contains(atools::fs::FsPaths::P3D_V5) && value(atools::fs::FsPaths::P3D_V5).hasDatabase)
-    return atools::fs::FsPaths::P3D_V5;
-  else if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).hasDatabase)
-    return atools::fs::FsPaths::P3D_V4;
-  else if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).hasDatabase)
-    return atools::fs::FsPaths::P3D_V3;
-  else if(contains(atools::fs::FsPaths::P3D_V2) && value(atools::fs::FsPaths::P3D_V2).hasDatabase)
-    return atools::fs::FsPaths::P3D_V2;
-  else if(contains(atools::fs::FsPaths::FSX_SE) && value(atools::fs::FsPaths::FSX_SE).hasDatabase)
-    return atools::fs::FsPaths::FSX_SE;
-  else if(contains(atools::fs::FsPaths::FSX) && value(atools::fs::FsPaths::FSX).hasDatabase)
-    return atools::fs::FsPaths::FSX;
+#if defined(Q_OS_WIN32) || defined(DEBUG_FS_PATHS)
+  if(contains(FsPaths::MSFS) && value(FsPaths::MSFS).hasDatabase)
+    return FsPaths::MSFS;
+  else if(contains(FsPaths::P3D_V5) && value(FsPaths::P3D_V5).hasDatabase)
+    return FsPaths::P3D_V5;
+  else if(contains(FsPaths::P3D_V4) && value(FsPaths::P3D_V4).hasDatabase)
+    return FsPaths::P3D_V4;
+  else if(contains(FsPaths::P3D_V3) && value(FsPaths::P3D_V3).hasDatabase)
+    return FsPaths::P3D_V3;
+  else if(contains(FsPaths::P3D_V2) && value(FsPaths::P3D_V2).hasDatabase)
+    return FsPaths::P3D_V2;
+  else if(contains(FsPaths::FSX_SE) && value(FsPaths::FSX_SE).hasDatabase)
+    return FsPaths::FSX_SE;
+  else if(contains(FsPaths::FSX) && value(FsPaths::FSX).hasDatabase)
+    return FsPaths::FSX;
 
-  // else if(contains(atools::fs::FsPaths::XPLANE11) && value(atools::fs::FsPaths::XPLANE11).hasDatabase)
+  // else if(contains(FsPaths::XPLANE11) && value(FsPaths::XPLANE11).hasDatabase)
   // If all fails use X-Plane as default
-  return atools::fs::FsPaths::XPLANE11;
+  return FsPaths::XPLANE11;
 
 #else
   // macOS and Linux - only X-Plane
-  return atools::fs::FsPaths::XPLANE11;
+  return FsPaths::XPLANE11;
 
 #endif
 }
 
-atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled()
+FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled() const
 {
-#if defined(Q_OS_WIN32)
-  if(contains(atools::fs::FsPaths::P3D_V5) && value(atools::fs::FsPaths::P3D_V5).isInstalled)
-    return atools::fs::FsPaths::P3D_V5;
-  else if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).isInstalled)
-    return atools::fs::FsPaths::P3D_V4;
-  else if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).isInstalled)
-    return atools::fs::FsPaths::P3D_V3;
-  else if(contains(atools::fs::FsPaths::P3D_V2) && value(atools::fs::FsPaths::P3D_V2).isInstalled)
-    return atools::fs::FsPaths::P3D_V2;
-  else if(contains(atools::fs::FsPaths::FSX_SE) && value(atools::fs::FsPaths::FSX_SE).isInstalled)
-    return atools::fs::FsPaths::FSX_SE;
-  else if(contains(atools::fs::FsPaths::FSX) && value(atools::fs::FsPaths::FSX).isInstalled)
-    return atools::fs::FsPaths::FSX;
+#if defined(Q_OS_WIN32) || defined(DEBUG_FS_PATHS)
 
-  // else if(contains(atools::fs::FsPaths::XPLANE11) && value(atools::fs::FsPaths::XPLANE11).isInstalled)
-  // If all fails use X-Plane as default
-  return atools::fs::FsPaths::XPLANE11;
+  FsPaths::SimulatorType type = getBestInstalled({FsPaths::MSFS, FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3,
+                                                  FsPaths::P3D_V2, FsPaths::FSX_SE, FsPaths::FSX});
+
+  if(type == FsPaths::UNKNOWN)
+    return FsPaths::XPLANE11;
+  else
+    return type;
 
 #else
   // macOS and Linux - only X-Plane
-  return atools::fs::FsPaths::XPLANE11;
+  return FsPaths::XPLANE11;
 
 #endif
 }
 
-QList<atools::fs::FsPaths::SimulatorType> SimulatorTypeMap::getAllInstalled() const
+FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled(const FsPaths::SimulatorTypeVector& types) const
 {
-  QList<atools::fs::FsPaths::SimulatorType> retval;
-  for(atools::fs::FsPaths::SimulatorType simType : keys())
+#if defined(Q_OS_WIN32) || defined(DEBUG_FS_PATHS)
+  for(FsPaths::SimulatorType type : types)
+  {
+    if(contains(type) && (*this)[type].isInstalled)
+      return type;
+  }
+
+  return FsPaths::UNKNOWN;
+
+#else
+  return FsPaths::UNKNOWN;
+
+#endif
+}
+
+QList<FsPaths::SimulatorType> SimulatorTypeMap::getAllInstalled() const
+{
+  QList<FsPaths::SimulatorType> retval;
+  for(FsPaths::SimulatorType simType : keys())
     if(value(simType).isInstalled)
       retval.append(simType);
   return retval;
 }
 
-QList<atools::fs::FsPaths::SimulatorType> SimulatorTypeMap::getAllHavingDatabase() const
+QList<FsPaths::SimulatorType> SimulatorTypeMap::getAllHavingDatabase() const
 {
-  QList<atools::fs::FsPaths::SimulatorType> retval;
-  for(atools::fs::FsPaths::SimulatorType simType : keys())
+  QList<FsPaths::SimulatorType> retval;
+  for(FsPaths::SimulatorType simType : keys())
     if(value(simType).hasDatabase)
       retval.append(simType);
   return retval;
 }
 
-void SimulatorTypeMap::fillOneDefault(atools::fs::FsPaths::SimulatorType type)
+void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type)
 {
   // Simulator is installed - create a new entry or update the present one
   FsPathType& path = (*this)[type];
@@ -114,7 +125,7 @@ void SimulatorTypeMap::fillOneDefault(atools::fs::FsPaths::SimulatorType type)
     path.isInstalled = !path.basePath.isEmpty();
   else
     // If already present or not - this one has a registry entry
-    path.isInstalled = FsPaths::hasSim(type);
+    path.isInstalled = FsPaths::hasSimulator(type);
 }
 
 QDebug operator<<(QDebug out, const FsPathType& record)
@@ -147,13 +158,13 @@ QDataStream& operator>>(QDataStream& in, FsPathType& obj)
 
 QDataStream& operator<<(QDataStream& out, const SimulatorTypeMap& obj)
 {
-  out << static_cast<QHash<atools::fs::FsPaths::SimulatorType, FsPathType> >(obj);
+  out << static_cast<QHash<FsPaths::SimulatorType, FsPathType> >(obj);
   return out;
 }
 
 QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj)
 {
-  QHash<atools::fs::FsPaths::SimulatorType, FsPathType> hash;
+  QHash<FsPaths::SimulatorType, FsPathType> hash;
 
   // Copy all entries to a basic type first
   in >> hash;

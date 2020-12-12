@@ -26,9 +26,11 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
+#include "geo/calculations.h"
 #include "settings/settings.h"
 #include "fs/sc/simconnecthandler.h"
 #include "fs/sc/xpconnecthandler.h"
+#include "fs/scenery/languagejson.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -74,7 +76,8 @@ ConnectClient::ConnectClient(MainWindow *parent)
           &ConnectClient::disconnectedFromSimulatorDirect);
 
   dialog = new ConnectDialog(mainWindow, simConnectHandler->isLoaded());
-  connect(dialog, &ConnectDialog::directUpdateRateChanged, this, &ConnectClient::directUpdateRateChanged);
+  connect(dialog, &ConnectDialog::updateRateChanged, this, &ConnectClient::updateRateChanged);
+  connect(dialog, &ConnectDialog::aiFetchRadiusChanged, this, &ConnectClient::aiFetchRadiusChanged);
   connect(dialog, &ConnectDialog::fetchOptionsChanged, this, &ConnectClient::fetchOptionsChanged);
 
   connect(dialog, &ConnectDialog::disconnectClicked, this, &ConnectClient::disconnectClicked);
@@ -127,8 +130,16 @@ void ConnectClient::connectToServerDialog()
 {
   dialog->setConnected(isConnected());
 
-  // Show dialog
-  int retval = dialog->exec();
+  // Show dialog and determine which tab to open
+  cd::ConnectSimType type = cd::UNKNOWN;
+  if(isConnectedNetwork() && isConnected())
+    type = cd::REMOTE;
+  else if(isSimConnect() && isConnected())
+    type = cd::FSX_P3D_MSFS;
+  else if(isXpConnect() && isConnected())
+    type = cd::XPLANE;
+
+  int retval = dialog->execConnectDialog(type);
   dialog->hide();
 
   if(retval == QDialog::Accepted)
@@ -165,7 +176,7 @@ QString ConnectClient::simName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("X-Plane");
     else if(dataReader->getHandler() == simConnectHandler)
-      return tr("FSX or Prepar3D");
+      return tr("FSX, Prepar3D or MSFS");
   }
   return QString();
 }
@@ -177,7 +188,7 @@ QString ConnectClient::simShortName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("XP");
     else if(dataReader->getHandler() == simConnectHandler)
-      return tr("FSX/P3D");
+      return tr("FSX/P3D/MSFS");
   }
   return QString();
 }
@@ -224,6 +235,13 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 /* Posts data received directly from simconnect or the socket and caches any metar reports */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
+  atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
+
+  // Workaround for MSFS sending wrong positions around 0/0 while in menu
+  if(!userAircraft.isFullyValid())
+    // Invalidate position at the 0,0 position if no groundspeed
+    userAircraft.setCoordinates(atools::geo::EMPTY_POS);
+
   // Modify AI aircraft and set shadow flag if a online network with the same callsign exists
   for(atools::fs::sc::SimConnectAircraft& aircraft : dataPacket.getAiAircraft())
   {
@@ -232,13 +250,38 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
   }
 
   // Same as above for user aircraft
-  atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
   if(NavApp::getOnlinedataController()->isShadowAircraft(userAircraft))
     userAircraft.setFlags(atools::fs::sc::SIM_ONLINE_SHADOW | userAircraft.getFlags());
 
   if(dataPacket.getStatus() == atools::fs::sc::OK)
   {
-    emit dataPacketReceived(dataPacket);
+    // Update the MSFS translated aircraft names and types =============
+    /* Mooney, Boeing, Actually aircraft model. */
+    // const QString& getAirplaneType() const
+    // const QString& getAirplaneAirline() const
+    /* Beech Baron 58 Paint 1 */
+    // const QString& getAirplaneTitle() const
+    /* Short ICAO code MD80, BE58, etc. Actually type designator. */
+    // const QString& getAirplaneModel() const
+    const atools::fs::scenery::LanguageJson& idx = NavApp::getLanguageIndex();
+    if(!idx.isEmpty())
+    {
+      // Change user aircraft names
+      userAircraft.updateAircraftNames(idx.getName(userAircraft.getAirplaneType()),
+                                       idx.getName(userAircraft.getAirplaneAirline()),
+                                       idx.getName(userAircraft.getAirplaneTitle()),
+                                       idx.getName(userAircraft.getAirplaneModel()));
+
+      // Change AI names
+      for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())
+        ac.updateAircraftNames(idx.getName(ac.getAirplaneType()),
+                               idx.getName(ac.getAirplaneAirline()),
+                               idx.getName(ac.getAirplaneTitle()),
+                               idx.getName(ac.getAirplaneModel()));
+    }
+
+    if(!dataPacket.isEmptyReply())
+      emit dataPacketReceived(dataPacket);
 
     if(!dataPacket.getMetars().isEmpty())
     {
@@ -343,29 +386,38 @@ void ConnectClient::restoreState()
   dialog->restoreState();
 
   dataReader->setHandler(handlerByDialogSettings());
-  dataReader->setUpdateRate(dialog->getDirectUpdateRateMs(dialog->getCurrentSimType()));
+  dataReader->setUpdateRate(dialog->getUpdateRateMs(dialog->getCurrentSimType()));
+  dataReader->setAiFetchRadius(atools::geo::nmToKm(dialog->getAiFetchRadiusNm(dialog->getCurrentSimType())));
   fetchOptionsChanged(dialog->getCurrentSimType());
+  aiFetchRadiusChanged(dialog->getCurrentSimType());
 }
 
 atools::fs::sc::ConnectHandler *ConnectClient::handlerByDialogSettings()
 {
-  if(dialog->getCurrentSimType() == cd::FSX_P3D)
+  if(dialog->getCurrentSimType() == cd::FSX_P3D_MSFS)
     return simConnectHandler;
   else
     return xpConnectHandler;
 }
 
-void ConnectClient::directUpdateRateChanged(cd::ConnectSimType type)
+void ConnectClient::aiFetchRadiusChanged(cd::ConnectSimType type)
 {
-  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D) ||
+  if(dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS)
+    // The currently active value has changed
+    dataReader->setAiFetchRadius(atools::geo::nmToKm(dialog->getAiFetchRadiusNm(type)));
+}
+
+void ConnectClient::updateRateChanged(cd::ConnectSimType type)
+{
+  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS) ||
      (dataReader->getHandler() == xpConnectHandler && type == cd::XPLANE))
     // The currently active value has changed
-    dataReader->setUpdateRate(dialog->getDirectUpdateRateMs(type));
+    dataReader->setUpdateRate(dialog->getUpdateRateMs(type));
 }
 
 void ConnectClient::fetchOptionsChanged(cd::ConnectSimType type)
 {
-  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D) ||
+  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS) ||
      (dataReader->getHandler() == xpConnectHandler && type == cd::XPLANE))
   {
     // The currently active value has changed
@@ -456,7 +508,7 @@ bool ConnectClient::isFetchAiAircraft() const
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)
 {
-  if(dataReader->isFsxHandler() && dataReader->isConnected())
+  if(dataReader->isFsxHandler() && dataReader->isConnected() && dataReader->canFetchWeather())
     dataReader->setWeatherRequest(weatherRequest);
 
   if(socket != nullptr && socket->isOpen() && outstandingReplies.isEmpty())
@@ -520,12 +572,13 @@ void ConnectClient::connectInternal()
     dataReader->setHandler(handlerByDialogSettings());
 
     // Copy settings from dialog
-    directUpdateRateChanged(dialog->getCurrentSimType());
+    updateRateChanged(dialog->getCurrentSimType());
     fetchOptionsChanged(dialog->getCurrentSimType());
+    aiFetchRadiusChanged(dialog->getCurrentSimType());
 
     dataReader->start();
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting (%1)...").arg(simShortName()),
+    mainWindow->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
                                                tr("Trying to connect to local flight simulator (%1).").arg(simName()));
   }
   else if(socket == nullptr && !dialog->getRemoteHostname().isEmpty())
@@ -544,7 +597,7 @@ void ConnectClient::connectInternal()
     qDebug() << "Connecting to" << dialog->getRemoteHostname() << ":" << dialog->getRemotePort();
     socket->connectToHost(dialog->getRemoteHostname(), dialog->getRemotePort(), QAbstractSocket::ReadWrite);
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
+    mainWindow->setConnectionStatusMessageText(tr("Connecting ..."),
                                                tr("Trying to connect to remote flight simulator on \"%1\".").
                                                arg(dialog->getRemoteHostname()));
   }
@@ -561,6 +614,11 @@ bool ConnectClient::isConnected() const
 bool ConnectClient::isSimConnect() const
 {
   return dataReader != nullptr && dataReader->isFsxHandler();
+}
+
+bool ConnectClient::isXpConnect() const
+{
+  return dataReader != nullptr && dataReader->isXplaneHandler();
 }
 
 bool ConnectClient::isConnectedNetwork() const
@@ -635,7 +693,7 @@ void ConnectClient::closeSocket(bool allowRestart)
   {
     if(silent)
     {
-      msg = tr("Connecting...");
+      msg = tr("Connecting ...");
       msgTooltip = tr("Error while trying to connect to \"%1\": %2 (%3).\nWill retry.").
                    arg(peer).arg(errorStr).arg(error);
     }

@@ -239,7 +239,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const proc::MapProcedureLeg& l
   else if(leg.navaids.hasNdb())
     entryFromNdb(leg.navaids.ndbs.first(), entry);
   else
-    entryFromUserPos(leg.line.getPos1(), entry, leg.fixIdent, leg.fixRegion, QString());
+    entryFromUserPos(leg.line.getPos2(), entry, leg.fixIdent, leg.fixRegion, QString());
 
   // Do not save procedure legs
   entry.setFlag(atools::fs::pln::entry::PROCEDURE);

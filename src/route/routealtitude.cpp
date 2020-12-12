@@ -31,7 +31,6 @@
 using atools::interpolate;
 namespace ageo = atools::geo;
 
-
 RouteAltitude::RouteAltitude(const Route *routeParam)
   : route(routeParam)
 {
@@ -72,6 +71,22 @@ int RouteAltitude::indexForDistance(float distanceToDest) const
   return map::INVALID_INDEX_VALUE;
 }
 
+float RouteAltitude::getSpeedForDistance(float distanceToDest, const atools::fs::perf::AircraftPerf& perf) const
+{
+  if(isValidProfile())
+  {
+    float distFromStart = route->getTotalDistance() - distanceToDest;
+    if(distFromStart < distanceTopOfClimb)
+      return perf.getClimbSpeed();
+    else if(distFromStart < distanceTopOfDescent)
+      return perf.getCruiseSpeed();
+    else
+      return perf.getDescentSpeed();
+  }
+
+  return map::INVALID_SPEED_VALUE;
+}
+
 float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
 {
   if(isEmpty())
@@ -91,7 +106,7 @@ float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
       std::lower_bound(leg.geometry.begin(), leg.geometry.end(), distFromStart,
                        [](const QPointF& pt, float dist) -> bool
     {
-      // binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
+      // true if first is less than second, i.e. ordered before
       return pt.x() < dist;
     });
 
@@ -265,7 +280,7 @@ QVector<float> RouteAltitude::getAltitudes() const
 void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanceToDest, float distanceToNext,
                                            const atools::fs::perf::AircraftPerf& perf,
                                            float aircraftFuelFlowLbs, float aircraftFuelFlowGal,
-                                           float aircraftGroundSpeed, int activeLeg) const
+                                           float aircraftGroundSpeed, int activeLegIdx) const
 {
   // otherwise estimated using aircraft fuel flow
 
@@ -273,9 +288,9 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
   bool missed = route->isActiveMissed();
 
   // Need a valid profile and valid active leg
-  if(isValidProfile() && activeLeg != map::INVALID_INDEX_VALUE)
+  if(isValidProfile() && activeLegIdx != map::INVALID_INDEX_VALUE)
   {
-    const RouteAltitudeLeg& leg = value(activeLeg);
+    const RouteAltitudeLeg& activeLeg = value(activeLegIdx);
     float fuelToDest = 0.f;
 
     // Copy values from next into destination later if flying an alternate
@@ -293,7 +308,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
         if(perf.isFuelFlowValid())
         {
           // calculate fuel and time from this leg
-          leg.getFuelFromDistToDestination(fuelToDest, distFromDeparture);
+          fuelToDest = activeLeg.getFuelFromDistToDestination(distFromDeparture);
 
           // Convert units
           if(perf.useFuelAsVolume())
@@ -309,22 +324,21 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
         }
 
         if(perf.isSpeedValid())
-          leg.getTimeFromDistToDestination(result.timeToDest, distFromDeparture);
+          result.timeToDest = activeLeg.getTimeFromDistToDestination(distFromDeparture);
 
         // Calculate time and fuel to TOD ===================================================
         int todIdx = getTopOfDescentLegIndex();
         float todDistanceFromDeparture = getTopOfDescentDistance();
-        float todDistanceFromDestination = getTopOfDescentFromDestination();
 
         if(todDistanceFromDeparture >= 0.f && todDistanceFromDeparture < map::INVALID_DISTANCE_VALUE &&
-           todDistanceFromDestination >= 0.f && todDistanceFromDestination < map::INVALID_DISTANCE_VALUE &&
            todIdx != map::INVALID_INDEX_VALUE)
         {
+          const RouteAltitudeLeg& todLeg = value(todIdx);
+
           if(perf.isFuelFlowValid())
           {
-            float fuelTodToDist = 0.f;
             // Calculate fuel and time from TOD to destination
-            value(todIdx).getFuelFromDistToDestination(fuelTodToDist, todDistanceFromDeparture);
+            float fuelTodToDist = todLeg.getFuelFromDistToDestination(todDistanceFromDeparture);
 
             // Calculate fuel and time from aircraft to TOD
             float fuelToTod = fuelToDest - fuelTodToDist;
@@ -342,11 +356,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
           }
 
           if(perf.isSpeedValid())
-          {
-            float timeTodToDist = 0.f;
-            leg.getTimeFromDistToDestination(timeTodToDist, todDistanceFromDeparture);
-            result.timeToTod = result.timeToDest - timeTodToDist;
-          }
+            result.timeToTod = result.timeToDest - todLeg.getTimeFromDistToDestination(todDistanceFromDeparture);
         }
       } // if(distanceToDest > 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
     } // if(!alternate)
@@ -354,14 +364,11 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
     // Calculate time and fuel to Next waypoint ============================================
     if(distanceToNext >= 0.f && distanceToNext < map::INVALID_DISTANCE_VALUE)
     {
-      int distNext = leg.getDistanceFromStart() + distanceToNext;
+      float distFromStart = activeLeg.getDistanceFromStart() - distanceToNext;
+
       if(perf.isFuelFlowValid())
       {
-        float fuelCurToDist = 0.f;
-        leg.getFuelFromDistToDestination(fuelCurToDist, distNext);
-
-        // Calculate fuel and time from aircraft to TOD
-        float fuelToNext = fuelToDest - fuelCurToDist;
+        float fuelToNext = activeLeg.getFuelFromDistToEnd(distFromStart);
 
         if(perf.useFuelAsVolume())
         {
@@ -376,10 +383,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
       }
 
       if(perf.isSpeedValid())
-      {
-        float timeCurToDist = 0.f;
-        leg.getTimeFromDistToDestination(timeCurToDist, distNext);
-      }
+        result.timeToNext = activeLeg.getTimeFromDistToEnd(distFromStart);
     } // if(distanceToNext < map::INVALID_DISTANCE_VALUE)
   } // if(isValidProfile())
 
@@ -832,8 +836,8 @@ void RouteAltitude::collectErrors(const QStringList& altRestrErrors)
   else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
             getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
     errors.append(tr("Cannot calculate top of climb or top of descent.\n"
-                     "Check the flight plan cruise altitude and the\n"
-                     "climb/descent speeds in the Aircraft Performance."));
+                     "The flight plan is either too short or the cruise altitude is too high.\n"
+                     "Also check the climb and descent speeds in the aircraft performance data."));
 }
 
 void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt)
@@ -869,9 +873,8 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
     invalid = true;
   }
 
-  const RouteLeg destinationLeg = route->getDestinationLeg();
-  if(!destinationLeg.isValidWaypoint() ||
-     (destinationLeg.getMapObjectType() != map::AIRPORT && destinationLeg.getMapObjectType() != map::PROCEDURE))
+  const RouteLeg destinationLeg = route->getDestinationAirportLeg();
+  if(!destinationLeg.isValidWaypoint() || destinationLeg.getMapObjectType() != map::AIRPORT)
   {
     errors.append(tr("Destination is not valid. Must be an airport."));
     qWarning() << Q_FUNC_INFO << "Destination is not valid or neither airport nor runway";
@@ -879,8 +882,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   }
 
   const RouteLeg departureLeg = route->getDepartureAirportLeg();
-  if(!departureLeg.isValidWaypoint() ||
-     (departureLeg.getMapObjectType() != map::AIRPORT && departureLeg.getMapObjectType() != map::PROCEDURE))
+  if(!departureLeg.isValidWaypoint() || departureLeg.getMapObjectType() != map::AIRPORT)
   {
     errors.append(tr("Departure is not valid. Must be an airport."));
     qWarning() << Q_FUNC_INFO << "Departure is not valid or neither airport nor runway";
@@ -1006,8 +1008,8 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
 #endif
 
   if(!altRestErrors.isEmpty() || distanceTopOfClimb > distanceTopOfDescent ||
-     (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_INDEX_VALUE)) ||
-     (calcTopOfDescent && !(distanceTopOfDescent < map::INVALID_INDEX_VALUE)))
+     (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_DISTANCE_VALUE)) ||
+     (calcTopOfDescent && !(distanceTopOfDescent < map::INVALID_DISTANCE_VALUE)))
   {
     // TOD and TOC overlap or are invalid or restrictions violated  - cruise altitude is too high
     clearAll();
@@ -1023,10 +1025,11 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
     if(simplify && (calcTopOfClimb || calcTopOfDescent))
       simplyfyRouteAltitudes();
 
-    // Fetch ILS and VASI at destination
-    calculateApproachIlsAndSlopes();
     validProfile = true;
   }
+
+  // Fetch ILS and VASI at destination
+  calculateApproachIlsAndSlopes();
 
   // Set coordinates into legs
   fillGeometry();
@@ -1269,17 +1272,19 @@ void RouteAltitude::calculateArrival()
                                                      alt.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitide);
         legIndexTopOfDescent = i + 1;
 
-        if(!lastAltLeg->topOfClimb)
-          // Adjust only if not modified by TOC calculation
-          alt.setY2(std::min(newAltitude, cruiseAltitide));
-
         if(lastAltLeg != nullptr)
+        {
+          if(!lastAltLeg->topOfClimb)
+            // Adjust only if not modified by TOC calculation
+            alt.setY2(std::min(newAltitude, cruiseAltitide));
+
           // Adjust neighbor too
           lastAltLeg->setY1(alt.y2());
 
-        // Append point to allow drawing the bend at TOD - TOC position might be already included in leg
-        lastAltLeg->geometry.insert(lastAltLeg->geometry.size() - 1,
-                                    QPointF(distanceTopOfDescent, cruiseAltitide));
+          // Append point to allow drawing the bend at TOD - TOC position might be already included in leg
+          lastAltLeg->geometry.insert(lastAltLeg->geometry.size() - 1,
+                                      QPointF(distanceTopOfDescent, cruiseAltitide));
+        }
 
         // Done here
         if(legIndexTopOfDescent < size())
@@ -1306,6 +1311,7 @@ void RouteAltitude::calculateArrival()
 
 void RouteAltitude::calculateApproachIlsAndSlopes()
 {
+  // Get ILS and runway from route
   route->getApproachRunwayEndAndIls(destRunwayIls, &destRunwayEnd);
 
   // Filter out unusable ILS
@@ -1333,21 +1339,38 @@ void RouteAltitude::fillGeometry()
     const RouteLeg& routeLeg = route->value(i);
 
     altLeg.line.clear();
+    altLeg.geoLine.clear();
 
     if(altLeg.isAlternate())
     {
       altLeg.line.append(destinationAirportLeg.getPosition());
       altLeg.line.append(routeLeg.getPosition());
+      altLeg.geoLine = altLeg.line;
     }
     else
     {
       if(altLeg.isPoint())
+      {
         altLeg.line.append(routeLeg.getPosition().alt(altLeg.y1()));
+        altLeg.geoLine = altLeg.line;
+      }
       else
       {
+        if(altLeg.isAnyProcedure())
+        {
+          // Get full procedure geometry
+          for(const atools::geo::Pos& pos : routeLeg.getProcedureLeg().geometry)
+            altLeg.geoLine.append(pos.alt(altLeg.y1()));
+        }
+
+        // Build simple line consisting of start and end - might receive TOD and/or TOC position later
         if(i > 0)
           altLeg.line.append(route->value(i - 1).getPosition().alt(altLeg.y1()));
         altLeg.line.append(routeLeg.getPosition().alt(altLeg.y2()));
+
+        if(!altLeg.isAnyProcedure())
+          // Not a procedure - use simple line
+          altLeg.geoLine = altLeg.line;
       }
 
       if(altLeg.topOfClimb)

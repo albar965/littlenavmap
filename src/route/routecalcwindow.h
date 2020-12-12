@@ -120,6 +120,7 @@ public:
 
 signals:
   /* Use clicked calculate flight plan button */
+  void downloadTrackClicked();
   void calculateClicked();
   void calculateDirectClicked();
   void calculateReverseClicked();

@@ -53,7 +53,7 @@ public:
    * @param manuallyTriggered Ignores timestamp and shows also a dialog if nothing was found.
    * Also ignores the skip list.
    */
-  void checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered);
+  void checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered, bool force);
 
 private:
   void updateFound(atools::util::UpdateList updates);

@@ -97,6 +97,17 @@ InfoController::InfoController(MainWindow *parent)
   ui->textBrowserAircraftProgressInfo->setSearchPaths(paths);
   ui->textBrowserAircraftAiInfo->setSearchPaths(paths);
 
+  // Inactive texts, tooltips and placeholders
+  waitingForUpdateText = tr("Little Navmap is connected to a "
+                            "simulator or Little Navconnect.\n"
+                            "Prepare your flight and load your aircraft in the simulator to see progress updates.");
+
+  notConnectedText = tr("Not connected to simulator.\n"
+                        "Go to the main menu -> \"Tools\" -> \"Flight Simulator Connection\" "
+                        "or press \"Ctrl+Shift+C\".\n"
+                        "Then choose your simulator and click \"Connect\".\n",
+                        "Keep instructions in sync with translated menus and shortcuts");
+
   // Create connections for "Map" links in text browsers
   connect(ui->textBrowserAirportInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
@@ -446,6 +457,7 @@ void InfoController::restoreState()
     atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore(ui->tabWidgetLegend);
   }
   updateTextEditFontSizes();
+  updateAircraftInfo();
 }
 
 void InfoController::updateAirport()
@@ -1008,6 +1020,9 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
     foundNavaid = true;
   }
 
+  if(!foundNavaid)
+    html.clear();
+
   if(foundNavaid || forceUpdate)
     atools::gui::util::updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml(),
                                       scrollToTop, !scrollToTop /* keep selection */);
@@ -1089,7 +1104,7 @@ void InfoController::updateUserAircraftText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraftConst().getPosition().isValid())
+    if(NavApp::isUserAircraftValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
       {
@@ -1100,12 +1115,20 @@ void InfoController::updateUserAircraftText()
         atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml(),
                                           false /* scroll to top*/, true /* keep selection */);
       }
+      ui->textBrowserAircraftInfo->setToolTip(QString());
+      ui->textBrowserAircraftInfo->setStatusTip(QString());
     }
     else
-      ui->textBrowserAircraftInfo->setPlainText(tr("Connected. Waiting for update."));
+    {
+      ui->textBrowserAircraftInfo->clear();
+      ui->textBrowserAircraftInfo->setPlaceholderText(waitingForUpdateText);
+    }
   }
   else
+  {
     ui->textBrowserAircraftInfo->clear();
+    ui->textBrowserAircraftInfo->setPlaceholderText(notConnectedText);
+  }
 }
 
 void InfoController::updateAircraftProgressText()
@@ -1117,7 +1140,7 @@ void InfoController::updateAircraftProgressText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraftConst().isValid())
+    if(NavApp::isUserAircraftValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
       {
@@ -1128,12 +1151,20 @@ void InfoController::updateAircraftProgressText()
         atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(),
                                           false /* scroll to top*/, true /* keep selection */);
       }
+      ui->textBrowserAircraftProgressInfo->setToolTip(QString());
+      ui->textBrowserAircraftProgressInfo->setStatusTip(QString());
     }
     else
-      ui->textBrowserAircraftProgressInfo->setPlainText(tr("Connected. Waiting for update."));
+    {
+      ui->textBrowserAircraftProgressInfo->clear();
+      ui->textBrowserAircraftProgressInfo->setPlaceholderText(waitingForUpdateText);
+    }
   }
   else
+  {
     ui->textBrowserAircraftProgressInfo->clear();
+    ui->textBrowserAircraftProgressInfo->setPlaceholderText(notConnectedText);
+  }
 }
 
 void InfoController::updateAiAircraftText()
@@ -1145,7 +1176,7 @@ void InfoController::updateAiAircraftText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraftConst().getPosition().isValid())
+    if(NavApp::isUserAircraftValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
       {
@@ -1182,12 +1213,20 @@ void InfoController::updateAiAircraftText()
                                             false /* scroll to top*/, true /* keep selection */);
         }
       }
+      ui->textBrowserAircraftAiInfo->setToolTip(QString());
+      ui->textBrowserAircraftAiInfo->setStatusTip(QString());
     }
     else
-      ui->textBrowserAircraftAiInfo->setPlainText(tr("Connected. Waiting for update."));
+    {
+      ui->textBrowserAircraftAiInfo->clear();
+      ui->textBrowserAircraftAiInfo->setPlaceholderText(waitingForUpdateText);
+    }
   }
   else
+  {
     ui->textBrowserAircraftAiInfo->clear();
+    ui->textBrowserAircraftAiInfo->setPlaceholderText(notConnectedText);
+  }
 }
 
 void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
@@ -1204,7 +1243,7 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
     updateAiAirports(data);
 
     lastSimData = data;
-    if(data.getUserAircraftConst().isValid() && ui->dockWidgetAircraft->isVisible())
+    if(data.getUserAircraftConst().isFullyValid() && ui->dockWidgetAircraft->isVisible())
     {
       if(tabHandlerAircraft->getCurrentTabId() == ic::AIRCRAFT_USER)
         updateUserAircraftText();
@@ -1222,7 +1261,7 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
                             lastSimBearingUpdate, static_cast<qint64>(MIN_SIM_UPDATE_BEARING_TIME_MS)))
   {
     // Last update was more than a second ago
-    if(data.getUserAircraftConst().isValid() && ui->dockWidgetInformation->isVisible())
+    if(data.getUserAircraftConst().isFullyValid() && ui->dockWidgetInformation->isVisible())
     {
       if(tabHandlerAirportInfo->getCurrentTabId() == ic::INFO_AIRPORT_OVERVIEW)
         updateAirportInternal(false /* new */, true /* bearing change*/, false /* scroll to top */,

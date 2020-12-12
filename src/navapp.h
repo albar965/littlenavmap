@@ -75,6 +75,10 @@ class Rect;
 
 namespace fs {
 
+namespace scenery {
+class LanguageJson;
+}
+
 namespace perf {
 class AircraftPerf;
 }
@@ -139,7 +143,7 @@ public:
   /* Deletes all aggregated objects */
   static void deInit();
 
-  static void checkForUpdates(int channelOpts, bool manuallyTriggered);
+  static void checkForUpdates(int channelOpts, bool manuallyTriggered, bool forceDebug);
 
   static void optionsChanged();
   static void preDatabaseLoad();
@@ -164,6 +168,8 @@ public:
   static const atools::fs::sc::SimConnectData& getSimConnectData();
   static const atools::geo::Pos& getUserAircraftPos();
 
+  static void updateAllMaps();
+
   static const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft();
 
   static map::MapTypes getShownMapFeatures();
@@ -179,6 +185,7 @@ public:
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
+  static void updateRouteCycleMetadata();
 
   /* Get a generic route string */
   static QString getRouteString();
@@ -194,6 +201,10 @@ public:
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
+  static QString getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);
+  static bool hasSimulator(atools::fs::FsPaths::SimulatorType type);
+  static bool hasAnyMsSimulator();
+  static bool hasXplaneSimulator();
 
   /* Selected navdatabase in menu */
   static bool isNavdataAll();
@@ -264,6 +275,9 @@ public:
 
   static DatabaseManager *getDatabaseManager();
 
+  /* MSFS translations from table "translation" */
+  static const atools::fs::scenery::LanguageJson& getLanguageIndex();
+
   static ConnectClient *getConnectClient();
 
   /* Can be null while compiling database */
@@ -330,7 +344,7 @@ public:
   static map::MapWeatherSource getMapWeatherSource();
   static bool isMapWeatherShown();
 
-  static const QString& getCurrentRouteFilepath();
+  static const QString& getRouteFilepath();
   static const QString& getCurrentAircraftPerfFilepath();
 
   static WebController *getWebController();

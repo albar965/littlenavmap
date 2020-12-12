@@ -31,9 +31,10 @@
 using atools::gui::Dialog;
 using atools::gui::ErrorHandler;
 
-Exporter::Exporter(QWidget *parentWidget, SqlController *controllerObj)
+Exporter::Exporter(QWidget *parentWidgetParam, SqlController *controllerObj)
   : controller(controllerObj)
 {
+  parentWidget = parentWidgetParam;
   dialog = new Dialog(parentWidget);
   errorHandler = new ErrorHandler(parentWidget);
 }

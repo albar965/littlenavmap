@@ -22,6 +22,8 @@
 #include "mapgui/mapscale.h"
 #include "common/maptools.h"
 #include "route/route.h"
+#include "settings/settings.h"
+#include "common/constants.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/maplayersettings.h"
 #include "common/unit.h"
@@ -30,6 +32,9 @@
 
 #include <QPainter>
 #include <QJsonDocument>
+#include <QResizeEvent>
+#include <QPaintEvent>
+#include <QFile>
 
 #include <marble/MarbleLocale.h>
 #include <marble/MarbleModel.h>
@@ -43,6 +48,15 @@ const static double MINIMUM_DISTANCE_KM = 0.1;
 const static double MAXIMUM_DISTANCE_KM = 6000.;
 const static int MAXIMUM_ZOOM = 1120;
 
+// Placemark files to remove or add
+const static QStringList PLACEMARK_FILES_CACHE({
+  "baseplacemarks.cache", "boundaryplacemarks.cache", "cityplacemarks.cache", "elevplacemarks.cache",
+  "otherplacemarks.cache"});
+
+// Additional maps refer to KML files get rid of these too
+const static QStringList PLACEMARK_FILES_KML({
+  "baseplacemarks.kml", "boundaryplacemarks.kml", "cityplacemarks.kml", "elevplacemarks.kml", "otherplacemarks.kml"});
+
 using namespace Marble;
 using atools::geo::Rect;
 using atools::geo::Pos;
@@ -50,6 +64,8 @@ using atools::geo::Pos;
 MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   : Marble::MarbleWidget(parent), visibleWidget(visible)
 {
+  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
+
   aircraftTrack = new AircraftTrack;
 
   // Set the map quality to gain speed while moving
@@ -173,12 +189,20 @@ void MapPaintWidget::setTheme(const QString& theme, int index)
   setThemeInternal(theme);
 }
 
+bool MapPaintWidget::isDarkMap() const
+{
+  return currentThemeIndex == map::CARTODARK;
+}
+
 void MapPaintWidget::setThemeInternal(const QString& theme)
 {
   // Ignore any overlay state signals the widget sends while switching theme
   ignoreOverlayUpdates = true;
 
   updateThemeUi(currentThemeIndex);
+
+  setMapThemeId(theme);
+  setShowClouds(false);
 
   if(currentThemeIndex < map::CUSTOM)
   {
@@ -187,21 +211,19 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
     {
       case map::STAMENTERRAIN:
       case map::OPENSTREETMAP:
+      case map::OPENTOPOMAP:
       case map::CARTODARK:
       case map::CARTOLIGHT:
+      case map::CUSTOM:
+        // Need to remove the placemark files since they are shown randomly on online maps
+        removePlacemarks();
+        break;
+
       case map::SIMPLE:
       case map::PLAIN:
       case map::ATLAS:
-      case map::CUSTOM:
-        setShowClouds(false);
-        break;
-
-      case map::OPENTOPOMAP:
-        // Disable ugly useless ice polygons on OpenTopoMap
-        // This actually does not work until the polygon files are deleted from the configuration
-        setPropertyValue("ice", false);
-        setShowIceLayer(false);
-        setShowClouds(false);
+        // Add placemark files again - ignored if already loaded
+        addPlacemarks();
         break;
 
       case map::INVALID_THEME:
@@ -209,14 +231,33 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
         break;
     }
   }
+  else
+    removePlacemarks();
 
-  setMapThemeId(theme);
   updateMapObjectsShown();
 
   ignoreOverlayUpdates = false;
 
   // Show or hide overlays again
   overlayStateFromMenu();
+}
+
+void MapPaintWidget::removePlacemarks()
+{
+  MarbleModel *m = model();
+  // Need to remove the placemark files since they are shown randomly on online maps
+  for(const QString& file : PLACEMARK_FILES_CACHE)
+    m->removeGeoData(file);
+  for(const QString& file : PLACEMARK_FILES_KML)
+    m->removeGeoData(file);
+}
+
+void MapPaintWidget::addPlacemarks()
+{
+  MarbleModel *m = model();
+  // Add placemark files again - ignored if already loaded
+  for(const QString& file : PLACEMARK_FILES_CACHE)
+    m->addGeoDataFile(file);
 }
 
 void MapPaintWidget::unitsUpdated()
@@ -282,14 +323,14 @@ void MapPaintWidget::setShowMapSunShading(bool show)
 
 void MapPaintWidget::weatherUpdated()
 {
-  if(paintLayer->getShownMapObjects() | map::AIRPORT_WEATHER)
+  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::AIRPORT_WEATHER))
     update();
 }
 
 void MapPaintWidget::windUpdated()
 {
-  if(paintLayer->getShownMapObjectDisplayTypes() | map::WIND_BARBS ||
-     paintLayer->getShownMapObjectDisplayTypes() | map::WIND_BARBS_ROUTE)
+  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS) ||
+     paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS_ROUTE))
     update();
 }
 
@@ -329,13 +370,13 @@ void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
 
   // Update screen coordinate caches if display options have changed
 
-  if(type & map::AIRWAY_ALL && show != curShow)
+  if((type.testFlag(map::AIRWAY_ALL) && show != curShow) || type.testFlag(map::TRACK) /* Update tracks always */)
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type & map::AIRSPACE && show != curShow)
+  if(type.testFlag(map::AIRSPACE) && show != curShow)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type & map::ILS && show != curShow)
+  if(type.testFlag(map::ILS) && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
@@ -347,6 +388,9 @@ void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, 
   // Update screen coordinate cache if display options have changed
   if(type & map::LOGBOOK_ALL && show != curShow)
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
+
+  if(type.testFlag(map::FLIGHTPLAN) && show != curShow)
+    screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::setShowMapAirspaces(map::MapAirspaceFilter types)
@@ -498,8 +542,8 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
   double north = rect.north(GeoDataCoordinates::Degree), south = rect.south(GeoDataCoordinates::Degree),
          east = rect.east(GeoDataCoordinates::Degree), west = rect.west(GeoDataCoordinates::Degree);
 
-  if(!visibleWidget)
-    qDebug() << Q_FUNC_INFO << "intial zoom" << zoom() << "zoom step" << zoomStep();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "initial zoom" << zoom() << "zoom step" << zoomStep();
 
   // Zoom in deeper
   zoomIn();
@@ -512,7 +556,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
          !screenCoordinates(east, south, x, y) || !screenCoordinates(west, south, x, y)) &&
         (zoomIterations < 500) && (zoom() < maximumZoom()))
   {
-    if(!visibleWidget)
+    if(verbose)
       qDebug() << Q_FUNC_INFO << "zoom" << zoom()
                << "Viewport" << viewport()->viewLatLonAltBox().toString(GeoDataCoordinates::Degree);
 
@@ -520,7 +564,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
     zoomIterations++;
   }
 
-  if(!visibleWidget)
+  if(verbose)
     qDebug() << Q_FUNC_INFO << "final zoom" << zoom();
 
   // Fix blurryness or zoom one out after correcting by zooming in
@@ -700,7 +744,7 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
 
   hideTooltip();
   showAircraft(false);
-  jumpBackToAircraftStart(true /* save distance too */);
+  jumpBackToAircraftStart(true /* saveDistance */);
 
   if(distanceKm == 0.f)
     // Use distance depending on double click
@@ -724,7 +768,7 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
 
   hideTooltip();
   showAircraft(false);
-  jumpBackToAircraftStart(true /* save distance too */);
+  jumpBackToAircraftStart(true /* saveDistance */);
 
   float w = rect.getWidthDegree();
   float h = rect.getHeightDegree();
@@ -761,7 +805,8 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
 
 void MapPaintWidget::showAircraft(bool centerAircraftChecked)
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
 
   if(!(OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE) || centerAircraftChecked)
   {
@@ -770,7 +815,7 @@ void MapPaintWidget::showAircraft(bool centerAircraftChecked)
     // Adapt the menu item status if this method was not called by the action
     updateShowAircraftUi(centerAircraftChecked);
 
-    if(centerAircraftChecked && screenIndex->getUserAircraft().isValid())
+    if(centerAircraftChecked && screenIndex->getUserAircraft().isFullyValid())
       centerPosOnMap(screenIndex->getUserAircraft().getPosition());
   }
 }
@@ -790,6 +835,7 @@ void MapPaintWidget::routeChanged(bool geometryChanged)
     cancelDragAll();
     screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
   }
+  screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
 
@@ -1087,7 +1133,7 @@ const QVector<atools::fs::sc::SimConnectAircraft>& MapPaintWidget::getAiAircraft
 
 void MapPaintWidget::resizeEvent(QResizeEvent *event)
 {
-  if(!visibleWidget)
+  if(verbose)
   {
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << viewport()->viewLatLonAltBox().toString(GeoDataCoordinates::Degree);
@@ -1105,7 +1151,7 @@ void MapPaintWidget::resizeEvent(QResizeEvent *event)
 
 void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
 {
-  if(!visibleWidget)
+  if(verbose)
   {
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << getCurrentViewBoundingBox().toString(GeoDataCoordinates::Degree);
@@ -1152,8 +1198,17 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     screenIndex->updateAllGeometry(currentViewBoundingBox);
   }
 
-  if(paintLayer->getOverflow() > 0)
-    emit resultTruncated(paintLayer->getOverflow());
+  if(paintLayer->isObjectOverflow() || paintLayer->isQueryOverflow())
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO
+             << "isObjectOverflow" << paintLayer->isObjectOverflow()
+             << "getObjectCount" << paintLayer->getObjectCount()
+             << "isQueryOverflow" << paintLayer->isQueryOverflow();
+#endif
+
+    emit resultTruncated();
+  }
 }
 
 bool MapPaintWidget::loadKml(const QString& filename, bool center)

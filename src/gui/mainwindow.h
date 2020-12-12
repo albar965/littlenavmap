@@ -110,6 +110,11 @@ public:
     return mapWidget;
   }
 
+  ProfileWidget *getProfileWidget() const
+  {
+    return profileWidget;
+  }
+
   void updateMap() const;
 
   RouteController *getRouteController() const
@@ -166,7 +171,7 @@ public:
   void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
 
   /* Show "Too many objects" label if number of map features was truncated */
-  void resultTruncated(int truncatedTo);
+  void resultTruncated();
 
   void setDatabaseErased(bool value)
   {
@@ -212,6 +217,9 @@ public:
   /* Show file dialog for opening a flight plan with all supported formats */
   QString routeOpenFileDialog();
 
+  /* Called from the export if LNMPLN was bulk exported */
+  void routeSaveLnmExported(const QString& filename);
+
   /* true if map window is maximized */
   bool isFullScreen() const;
 
@@ -233,8 +241,10 @@ private:
 
   void connectAllSlots();
   void mainWindowShown();
+  void mainWindowShownDelayed();
   void raiseFloatingWindows();
   void allowDockingWindows();
+  void stayOnTop();
 
   /* Called by action */
   void fullScreenMapToggle();
@@ -242,9 +252,6 @@ private:
   /* Switches fs on or off */
   void fullScreenOn();
   void fullScreenOff();
-
-  /* Called in window shown to apply full screen layout */
-  void enableDelayedFullscreen();
 
   void saveStateMain();
   void saveActionStates();
@@ -282,6 +289,7 @@ private:
   void routeOpen();
   void routeOpenFile(QString filepath);
   void routeAppend();
+  bool routeSaveSelection();
   void routeInsert(int insertBefore);
   void routeOpenRecent(const QString& routeFile);
 
@@ -332,10 +340,14 @@ private:
   void showOnlineHelp();
   void showOnlineTutorials();
   void showOfflineHelp();
+  void showOnlineDownloads();
   void showNavmapLegend();
   void loadNavmapLegend();
   bool openInSkyVector();
   void clearProcedureCache();
+
+  void openLogFile();
+  void openConfigFile();
 
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
@@ -383,6 +395,8 @@ private:
   void openWebserver();
   void saveStateNow();
   void optionsChanged();
+
+  void openOptionsDialog();
 
 #ifdef DEBUG_INFORMATION
   void debugActionTriggered1();
@@ -439,7 +453,7 @@ private:
   bool hasDatabaseLoadStatus = false;
 
   /* Dialog classes and helper classes */
-  Marble::MarbleAboutDialog *marbleAbout = nullptr;
+  Marble::MarbleAboutDialog *marbleAboutDialog = nullptr;
   OptionsDialog *optionsDialog = nullptr;
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
@@ -471,7 +485,7 @@ private:
   /* Show database dialog after cleanup of obsolete databases if true */
   bool databasesErased = false;
 
-  QString aboutMessage;
+  QString aboutMessage, layoutWarnText;
   QTimer clockTimer, renderStatusTimer;
   Marble::RenderStatus lastRenderStatus = Marble::Incomplete;
 };

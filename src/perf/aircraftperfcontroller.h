@@ -185,6 +185,7 @@ private:
   void helpClickedPerfCollect() const;
 
   void manualWindToggled();
+  void manualWindToggledAction();
 
   /* Wind spin boxes changed */
   void windBoxesChanged();

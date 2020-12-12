@@ -25,6 +25,12 @@
 #include <QObject>
 
 namespace atools {
+namespace fs {
+namespace scenery {
+class LanguageJson;
+}
+
+}
 namespace sql {
 class SqlDatabase;
 }
@@ -97,6 +103,9 @@ public:
    * Only for scenery database */
   void openAllDatabases();
 
+  /* Load MSFS translations for current language */
+  void loadLanguageIndex();
+
   /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
   void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName,
                              bool backup);
@@ -151,8 +160,13 @@ public:
     return currentFsType;
   }
 
+  /* Base paths which might also be changed by the user */
   QString getCurrentSimulatorBasePath() const;
   QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const;
+
+  /* Get files path for installed simulators in order of the given list.
+   * Also considers probably changed paths by user */
+  QString getSimulatorFilesPathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
 
   dm::NavdatabaseStatus getNavDatabaseStatus() const
   {
@@ -203,6 +217,16 @@ public:
 
   /* Create an empty database schema. Boundary option does not use transaction. */
   void createEmptySchema(atools::sql::SqlDatabase *db, bool boundary = false);
+
+  /* MSFS translations from table "translation" */
+  const atools::fs::scenery::LanguageJson& getLanguageIndex() const
+  {
+    return *languageIndex;
+  }
+
+  /* Checks if size and last modification time have changed on the readonly nav and sim databases.
+   * Shows an error dialog if this is the case */
+  void checkForChangedNavAndSimDatabases();
 
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
@@ -263,6 +287,8 @@ private:
   void metaFromFile(QString *cycle, QDateTime *compilationTime, bool *settingsNeedsPreparation, QString *source,
                     const QString& file);
 
+  void clearLanguageIndex();
+
   /* Database name for all loaded from simulators */
   const QString DATABASE_NAME_SIM = "LNMDBSIM";
 
@@ -310,6 +336,8 @@ private:
   *databaseNavAirspace = nullptr /* Airspace database from navdata independent from nav switch */,
   *databaseOnline = nullptr /* Database for network online data */;
 
+  bool showingDatabaseChangeWarning = false;
+
   MainWindow *mainWindow = nullptr;
   DatabaseProgressDialog *progressDialog = nullptr;
 
@@ -344,6 +372,8 @@ private:
   atools::fs::userdata::LogdataManager *logdataManager = nullptr;
   atools::fs::online::OnlinedataManager *onlinedataManager = nullptr;
 
+  /* MSFS translations from table "translation" */
+  atools::fs::scenery::LanguageJson *languageIndex = nullptr;
 };
 
 #endif // LITTLENAVMAP_DATABASEMANAGER_H

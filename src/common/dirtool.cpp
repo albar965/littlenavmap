@@ -68,64 +68,62 @@ DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, c
 
 void DirTool::run()
 {
-  if(!hasAllDirs())
-  {
-    QString message;
+  QString message;
 
-    message.append(tr("<p><i>Little Navmap</i> can create a recommended directory structure to store all your files "
-                        "in your documents folder.</p>"
-                        "<p>The follwing folders will be created:</p>"
+  message.append(tr("<p style='white-space:pre'>"
+                      "<b><i>Little Navmap</i> can create a recommended directory structure "
+                        "to store all your files<br/>in your documents folder.</b></p>"
+                        "<p>The following folders will be created:</p>"
                           "<p><b>%1</b><br/>"
                           "Top level directory for all files of <i>Little Navmap</i> "
                           "containing the following sub-directories:</p>").
-                   arg(QDir::toNativeSeparators(documentsDir + SEP + applicationDir)));
+                 arg(QDir::toNativeSeparators(documentsDir + SEP + applicationDir)));
 
-    // Show list of folders and comment =========
-    message.append(tr("<ul>"));
-    message.append(tr("<li><b>%1</b><br/>"
-                      "For flight plans in <i>Little Navmap</i>'s own format <code>.lnmpln</code></li>").
-                   arg(flightPlanDir));
-    message.append(tr("<li><b>%1</b><br/>"
-                      "Directory for aircraft performance files (<code>.lnmperf</code>)</li>").
-                   arg(perfDir));
-    message.append(tr("<li><b>%1</b><br/>"
-                      "For saved window layouts (<code>.lnmlayout</code>)</li>").
-                   arg(layoutDir));
-    message.append(tr("<li><b>%1</b><br/>"
-                      "A place to store PDF, text, image or other files that are linked in the aiport information").
-                   arg(airportsDir));
-    message.append(tr("<li><b>%1</b><br/>"
-                      "User defined airspaces in OpenAir format</li>").
-                   arg(airspaceDir));
-    message.append(tr("<li><b>%1</b><br/>"
-                      "A place for the GLOBE data used by the flight plan elevation profile</li>").
-                   arg(globeDir));
-    message.append(tr("</li></ul>"));
+  // Show list of folders and comment =========
+  message.append(tr("<ul>"));
+  message.append(tr("<li><b>%1</b><br/>"
+                    "For flight plans in <i>Little Navmap</i>'s own format <code>.lnmpln</code></li>").
+                 arg(flightPlanDir));
+  message.append(tr("<li><b>%1</b><br/>"
+                    "Directory for aircraft performance files (<code>.lnmperf</code>)</li>").
+                 arg(perfDir));
+  message.append(tr("<li><b>%1</b><br/>"
+                    "For saved window layouts (<code>.lnmlayout</code>)</li>").
+                 arg(layoutDir));
+  message.append(tr("<li><b>%1</b><br/>"
+                    "A place to store PDF, text, image or other files that are linked in the aiport information").
+                 arg(airportsDir));
+  message.append(tr("<li><b>%1</b><br/>"
+                    "User defined airspaces in OpenAir format</li>").
+                 arg(airspaceDir));
+  message.append(tr("<li><b>%1</b><br/>"
+                    "A place for the GLOBE data used by the flight plan elevation profile</li>").
+                 arg(globeDir));
+  message.append(tr("</li></ul>"));
 
-    message.append(tr("<p>This step is optional.</p>"));
+  message.append(tr("<p>This step is optional.</p>"));
 
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallDirUrl, lnm::helpLanguageOnline());
-    message.append(tr("<p><a href=\"%1\"><b>Click here for more information in the <i>Little Navmap</i> "
-                        "online manual</b></a></p>").arg(url.toString()));
+  QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallDirUrl, lnm::helpLanguageOnline());
+  message.append(tr("<p><a href=\"%1\"><b>Click here for more information in the <i>Little Navmap</i> "
+                      "online manual</b></a></p>").arg(url.toString()));
 
-    message.append(tr("<p>Should <i>Little Navmap</i> create these directories now?</p>"));
+  message.append(tr("<p>Should <i>Little Navmap</i> create these directories now?</p>"));
 
-    int result = atools::gui::Dialog(parentWidget).showQuestionMsgBox(settingsPrefix, message,
-                                                                      QObject::tr("Do not &show this dialog again."),
-                                                                      QMessageBox::Yes | QMessageBox::No,
-                                                                      QMessageBox::No, QMessageBox::No);
+  int result = atools::gui::Dialog(parentWidget).showQuestionMsgBox(settingsPrefix, message,
+                                                                    QObject::tr("Do not &show this dialog again."),
+                                                                    QMessageBox::Yes | QMessageBox::No,
+                                                                    QMessageBox::No, QMessageBox::No);
 
-    if(result == QMessageBox::Yes)
-    {
-      qDebug() << Q_FUNC_INFO;
-      createAllDirs();
+  if(result == QMessageBox::Yes)
+  {
+    qDebug() << Q_FUNC_INFO;
+    createAllDirs();
 
-      if(!errors.isEmpty())
-        QMessageBox::warning(parentWidget, QApplication::applicationName(),
-                             tr("Errors creating directory structure:\n%1").arg(errors.join("\n")));
-      else
-        updateOptions();
-    }
+    if(!errors.isEmpty())
+      QMessageBox::warning(parentWidget, QApplication::applicationName(),
+                           tr("Errors creating directory structure:\n%1").arg(errors.join("\n")));
+    else
+      updateOptions();
   }
 }
 

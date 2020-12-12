@@ -274,5 +274,13 @@
         <file>resources/icons/fullscreen.svg</file>
         <file>resources/icons/userdata.svg</file>
         <file>resources/icons/coordinate.svg</file>
+        <file>resources/icons/settingsroute.svg</file>
+        <file>resources/icons/airwaytrackdown.svg</file>
+        <file>resources/icons/radiobutton_dark_unchecked_disabled.png</file>
+        <file>resources/icons/radiobutton_dark_checked_disabled.png</file>
+        <file>resources/icons/checkbox_dark_unchecked_disabled.png</file>
+        <file>resources/icons/checkbox_dark_checked_disabled.png</file>
+        <file>resources/icons/lock.svg</file>
+        <file>resources/icons/unlock.svg</file>
     </qresource>
 </RCC>

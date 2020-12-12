@@ -39,13 +39,13 @@ public:
 
   /* Asks user to create directory structure. Creates directories and changes file dialog defaults if user confirms.*/
   void run();
+  bool hasAllDirs();
 
 private:
   /* Fills errors if any */
   bool createAllDirs();
 
   /* true if all folders exist */
-  bool hasAllDirs();
   bool hasDir(const QString& dir);
 
   /* Update file dialog defaults */

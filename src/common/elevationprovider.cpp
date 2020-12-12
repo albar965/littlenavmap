@@ -29,8 +29,6 @@
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
 
-#include <QMessageBox>
-
 /* Limt altitude to this value */
 static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT_METER = 8800.f;
 /* Point removal equality tolerance in meter */
@@ -104,9 +102,18 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
     QVector<GeoDataCoordinates> temp = marbleModel->heightProfile(line.getPos1().getLonX(), line.getPos1().getLatY(),
                                                                   line.getPos2().getLonX(), line.getPos2().getLatY());
 
+    // Limit long legs to a maximum of 2000 points - minimum of 1000 points
+    int divisor = 1;
+    while(temp.size() / divisor > 2000)
+      divisor++;
+
+    int i = 0;
     Pos lastDropped;
     for(const GeoDataCoordinates& c : temp)
     {
+      if((i++ % divisor) != 0)
+        continue;
+
       Pos pos(c.longitude(), c.latitude(), c.altitude());
       pos.toDeg();
 
@@ -163,7 +170,11 @@ void ElevationProvider::updateReader()
     {
       NavApp::deleteSplashScreen();
       atools::gui::Dialog::warning(NavApp::getQMainWidget(),
-                                   tr("GLOBE elevation data directory is not valid:<br/>\"%1\"").arg(path));
+                                   tr("GLOBE elevation data directory is not valid:<br/>\"%1\"<br/><br/>"
+                                      "Go to main menu -&gt; \"Tools\" -&gt; \"Options\" and then<br/>"
+                                      "to page \"Cache and Files\". Then click \"Select GLOBE Directory\" and<br/>"
+                                      "choose the correct place with the GLOBE elevation files.",
+                                      "Keep instructions in sync with translated menus").arg(path));
     }
     else
     {

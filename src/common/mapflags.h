@@ -48,6 +48,9 @@ Q_DECL_CONSTEXPR static float MIN_GROUND_SPEED = 30.f;
 /* Do not draw barbs below this altitude */
 Q_DECL_CONSTEXPR static float MIN_WIND_BARB_ALTITUDE = 4000.f;
 
+/* Maximum number of objects to query and show on map */
+Q_DECL_CONSTEXPR static float MAX_MAP_OBJECTS = 8000;
+
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapType
 {
@@ -91,7 +94,8 @@ enum MapType
 
   AIRWAY_ALL = AIRWAY | AIRWAYV | AIRWAYJ,
 
-  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
+  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY,
+  AIRPORT_ALL_ADDON = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
 
   /* All navaids */
   NAV_ALL = VOR | NDB | WAYPOINT,
@@ -140,10 +144,12 @@ enum MapObjectQueryType
 {
   QUERY_NONE = 0,
   QUERY_PROC_POINTS = 1 << 0, /* Procedure points */
-  QUERY_HOLDS = 1 << 1, /* Holds */
-  QUERY_PATTERNS = 1 << 2, /* Traffic patterns */
-  QUERY_PROCEDURES = 1 << 3, /* Procedures when querying route */
-  QUERY_RANGEMARKER = 1 << 4 /* Range rings */
+  QUERY_PROC_MISSED_POINTS = 1 << 1, /* Missed procedure points */
+  QUERY_HOLDS = 1 << 2, /* Holds */
+  QUERY_PATTERNS = 1 << 3, /* Traffic patterns */
+  QUERY_PROCEDURES = 1 << 4, /* Procedures when querying route */
+  QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedures when querying route */
+  QUERY_RANGEMARKER = 1 << 6 /* Range rings */
 };
 
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
@@ -224,11 +230,8 @@ enum MapAirspaceSource
 Q_DECLARE_FLAGS(MapAirspaceSources, MapAirspaceSource);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources);
 
-static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES =
-{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_ONLINE, AIRSPACE_SRC_USER};
-
-static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES =
-{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER};
+extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES;
+extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 
 /* Airspace filter flags */
 enum MapAirspaceFlag
@@ -319,7 +322,6 @@ enum MapAirportFlag
   AP_PARKING = 1 << 16,
   AP_ALS = 1 << 17, /* Has at least one runway with an approach lighting system */
   AP_VASI = 1 << 18, /* Has at least one runway with a VASI */
-  AP_FENCE = 1 << 19,
   AP_RW_CLOSED = 1 << 20, /* Has at least one closed runway */
   AP_COMPLETE = 1 << 21, /* Struct completely loaded? */
   AP_3D = 1 << 22, /* X-Plane 3D airport */
@@ -402,11 +404,12 @@ enum TextAttribute
   ITALIC = 0x0002,
   UNDERLINE = 0x0004,
   OVERLINE = 0x0008,
-  RIGHT = 0x0010, /* Reference point is at the right of the text (left-aligned) */
-  LEFT = 0x0020,
-  CENTER = 0x0040,
-  ROUTE_BG_COLOR = 0x0080, /* Use light yellow background for route objects */
-  LOG_BG_COLOR = 0x0100 /* Use light blue text background for log */
+  STRIKEOUT = 0x0010,
+  RIGHT = 0x0020, /* Reference point is at the right of the text (left-aligned) */
+  LEFT = 0x0040,
+  CENTER = 0x0080,
+  ROUTE_BG_COLOR = 0x0100, /* Use light yellow background for route objects */
+  LOG_BG_COLOR = 0x0200 /* Use light blue text background for log */
 };
 
 Q_DECLARE_FLAGS(TextAttributes, TextAttribute);

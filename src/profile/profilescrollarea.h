@@ -107,6 +107,7 @@ public:
   /* Show or hide tooltip. Windows will be positioned on the left or right side depending on global mouse position */
   void showTooltip(const QPoint& globalPos, const QString& text);
   void hideTooltip();
+  bool isTooltipVisible() const;
 
 signals:
   /* Show flight plan waypoint or user position on map. x is widget position. */
@@ -184,7 +185,7 @@ private:
   QWidget *viewport;
   ProfileLabelWidget *labelWidget = nullptr;
 
-  /* Label window with tooltip attributes */
+  /* Frameless label widget  */
   QLabel *tooltipLabel = nullptr;
 
   /* Mouse dragging position on button down */

@@ -51,6 +51,9 @@ enum MapProcedureType
   PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
   PROCEDURE_SID_ALL = PROCEDURE_SID | PROCEDURE_SID_TRANSITION,
 
+  /* Approach and transition but no missed */
+  PROCEDURE_APPROACH_ALL = PROCEDURE_APPROACH | PROCEDURE_TRANSITION,
+
   /* All SID, STAR and respective transitions */
   PROCEDURE_SID_STAR_ALL = PROCEDURE_STAR_ALL | PROCEDURE_SID_ALL,
 
@@ -299,22 +302,27 @@ struct MapProcedureLeg
         rho /* distance to recommended navaid in NM */,
         magvar /* from navaid or airport */;
 
-  bool missed, flyover, trueCourse,
-       intercept, /* Leg was modfied by a previous intercept */
-       disabled, /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */
-       correctedArc, /* Fix of previous leg does not match arc distance. Therefore, p1 is corrected for distance */
-       malteseCross; /* Draw maltese cross for either FAF or FACF depending on ILS altitude restriction */
+  bool missed = false, flyover = false, trueCourse = false,
+       intercept = false, /* Leg was modified by a previous intercept */
+       disabled = false, /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */
+
+       correctedArc = false, /* Fix of previous leg does not match arc distance. Therefore, p1 is corrected for distance.
+                              * P1 is entry, intercept is start of arc and P2 is end of arc.
+                              * Geometry contains entry stub. */
+
+       malteseCross = false; /* Draw Maltese cross for either FAF or FACF depending on ILS altitude restriction */
 
   bool isValid() const
   {
     return type != INVALID_LEG_TYPE;
   }
 
-  /* Draw red if there is an error in the leg (navaid could not be resolved */
-  bool hasInvalidRef() const;
-
-  /* true if leg is unusable because a required navaid could not be resolved */
+  /* true if leg is probably unusable because a required navaid could not be resolved */
   bool hasErrorRef() const;
+
+  /* true if leg is totally unusable because a required navaid could not be resolved and it
+   * contains no valid coordinates at all */
+  bool hasHardErrorRef() const;
 
   float legTrueCourse() const;
 
@@ -433,7 +441,8 @@ struct MapProcedureLegs
   MapProcedureRef ref;
   atools::geo::Rect bounding;
 
-  QString approachType, approachSuffix, approachFixIdent, approachArincName, transitionType, transitionFixIdent,
+  QString approachType, approachSuffix, approachFixIdent /* Approach fix or SID/STAR name */,
+          approachArincName, transitionType, transitionFixIdent,
           procedureRunway; /* Runway from the procedure does not have to match the airport runway but is saved */
 
   /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search */
@@ -450,6 +459,7 @@ struct MapProcedureLegs
 
   bool gpsOverlay,
        hasError, /* Unusable due to missing navaid */
+       hasHardError, /* Deny usage since geometry is not valid*/
        circleToLand; /* Runway is not part of procedure and was added internally */
 
   /* Anything that needs to display an ILS frequency */

@@ -28,6 +28,7 @@ class QSpinBox;
 class QComboBox;
 class QCheckBox;
 class QPushButton;
+class QStringList;
 
 /*
  * A list of column descriptors that define behavior and display in the table

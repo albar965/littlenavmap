@@ -101,7 +101,7 @@ QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, fl
     // Nothing in cache - create the apron boundary
     QPainterPath boundaryPath = pathForBoundary(apron.geometry.boundary, fast);
 
-    // Substract holes
+    // subtract holes
     for(atools::fs::common::Boundary hole : apron.geometry.holes)
       boundaryPath = boundaryPath.subtracted(pathForBoundary(hole, fast));
 

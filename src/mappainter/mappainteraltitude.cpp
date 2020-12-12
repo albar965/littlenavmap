@@ -59,9 +59,11 @@ void MapPainterAltitude::render()
     {
       atools::util::PainterContextSaver paintContextSaver(context->painter);
 
-      QColor gridCol = mapcolors::minimumAltitudeGridPen.color();
+      // Use width and style from pen but override transparency
+      QColor gridCol =
+        context->darkMap ? mapcolors::minimumAltitudeGridPenDark.color() : mapcolors::minimumAltitudeGridPen.color();
       gridCol.setAlphaF(1. - context->transparencyMora);
-      QPen pen = mapcolors::minimumAltitudeGridPen;
+      QPen pen = context->darkMap ? mapcolors::minimumAltitudeGridPenDark : mapcolors::minimumAltitudeGridPen;
       pen.setColor(gridCol);
       context->painter->setPen(pen);
 
@@ -130,11 +132,13 @@ void MapPainterAltitude::render()
       // Draw texts =================================================================
       if(!context->drawFast && minWidth > 20.f)
       {
-        // Adjust minmum and maximum font height based on rectangle width
+        // Adjust minimum and maximum font height based on rectangle width
         minWidth = std::max(minWidth * 0.6f, 25.f);
         minWidth = std::min(minWidth * 0.6f, 150.f);
 
-        QColor textCol = mapcolors::minimumAltitudeNumberColor;
+        // Do not use transparency but override from options
+        QColor textCol =
+          context->darkMap ? mapcolors::minimumAltitudeNumberColorDark : mapcolors::minimumAltitudeNumberColor;
         textCol.setAlphaF(1. - context->transparencyMora);
         context->painter->setPen(textCol);
 

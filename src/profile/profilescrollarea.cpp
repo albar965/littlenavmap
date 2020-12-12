@@ -21,6 +21,7 @@
 #include "gui/widgetstate.h"
 #include "common/constants.h"
 #include "gui/helphandler.h"
+#include "route/route.h"
 
 #include "navapp.h"
 #include "atools.h"
@@ -92,9 +93,9 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   scrollArea->viewport()->installEventFilter(this);
 
   // Use a label as top level window styled as a tooltip ====================
-  tooltipLabel = new QLabel(viewport, Qt::ToolTip | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+  tooltipLabel = new QLabel(viewport, Qt::FramelessWindowHint);
 
-  // Keep inactiave
+  // Keep inactive
   tooltipLabel->setAttribute(Qt::WA_ShowWithoutActivating);
   tooltipLabel->setAutoFillBackground(true);
   tooltipLabel->setFrameShape(QFrame::Box); // Black border
@@ -112,6 +113,7 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
     font.setPointSizeF(font.pointSizeF() * 0.9);
     tooltipLabel->setFont(font);
   }
+  tooltipLabel->hide();
 }
 
 ProfileScrollArea::~ProfileScrollArea()
@@ -155,6 +157,7 @@ void ProfileScrollArea::showTooltip(const QPoint& globalPos, const QString& text
       tooltipLabel->adjustSize();
     }
 
+    int cursorX = viewport->mapFromGlobal(globalPos).x();
     if(tooltipLabel->isVisible())
     {
       // Cut off width and/or height if the tooltip is bigger than the viewport
@@ -169,27 +172,30 @@ void ProfileScrollArea::showTooltip(const QPoint& globalPos, const QString& text
       int leftMargin = buffer;
       int rightMargin = viewport->width() - buffer;
 
-      bool tooltipIsLeft = viewport->mapFromGlobal(tooltipLabel->pos()).x() <= 2;
-      int cursorX = viewport->mapFromGlobal(globalPos).x();
+      bool tooltipIsLeft = tooltipLabel->pos().x() <= 2;
       if(!tooltipIsLeft && cursorX >= rightMargin)
         // Tooltip at right side and cursor above right margin - move to left side
-        tooltipLabel->move(viewport->mapToGlobal(QPoint()));
+        tooltipLabel->move(QPoint());
       else if(tooltipIsLeft && cursorX <= leftMargin)
         // Tooltip at left side and cursor below left margin - move to right side
-        tooltipLabel->move(viewport->mapToGlobal(QPoint(viewport->width() - tooltipLabel->width(), 0)));
+        tooltipLabel->move(QPoint(viewport->width() - tooltipLabel->width(), 0));
+      else if(!tooltipIsLeft && tooltipLabel->x() + tooltipLabel->width() > viewport->width())
+        // Tooltip grew above parent width - reposition to be fully visible
+        tooltipLabel->move(QPoint(viewport->width() - tooltipLabel->width(), 0));
     }
     else
     {
       // Not visible yet. Move to either side depending on cursor position
-      if(viewport->mapFromGlobal(globalPos).x() > viewport->width() / 2)
+      if(cursorX > viewport->width() / 2)
         // Cursor right half of window - move tooltip to left side
-        tooltipLabel->move(viewport->mapToGlobal(QPoint()));
+        tooltipLabel->move(QPoint());
       else
         // Cursor left half of window - move tooltip to right side
-        tooltipLabel->move(viewport->mapToGlobal(QPoint(viewport->width() - tooltipLabel->width(), 0)));
+        tooltipLabel->move(QPoint(viewport->width() - tooltipLabel->width(), 0));
 
       // Show it
       tooltipLabel->setVisible(true);
+      tooltipLabel->raise();
     }
   }
   else if(tooltipLabel->isVisible())
@@ -199,6 +205,11 @@ void ProfileScrollArea::showTooltip(const QPoint& globalPos, const QString& text
 void ProfileScrollArea::hideTooltip()
 {
   tooltipLabel->setVisible(false);
+}
+
+bool ProfileScrollArea::isTooltipVisible() const
+{
+  return tooltipLabel->isVisible();
 }
 
 void ProfileScrollArea::splitterMoved(int pos, int index)
@@ -307,9 +318,9 @@ void ProfileScrollArea::routeAltitudeChanged()
 void ProfileScrollArea::updateWidgets()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  bool routeEmpty = NavApp::getRoute().getSizeWithoutAlternates() < 2;
+  bool routeValid = profileWidget->hasValidRouteForDisplay();
 
-  if(routeEmpty)
+  if(!routeValid)
   {
     // Reset zoom sliders
     ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
@@ -319,12 +330,12 @@ void ProfileScrollArea::updateWidgets()
   }
 
   // Disable scrolling and zooming
-  ui->labelProfileHorizontalSlider->setDisabled(routeEmpty);
-  ui->labelProfileVerticalSlider->setDisabled(routeEmpty);
-  ui->pushButtonProfileExpand->setDisabled(routeEmpty);
-  ui->actionProfileExpand->setDisabled(routeEmpty);
-  ui->horizontalSliderProfileZoom->setDisabled(routeEmpty);
-  ui->verticalSliderProfileZoom->setDisabled(routeEmpty);
+  ui->labelProfileHorizontalSlider->setEnabled(routeValid);
+  ui->labelProfileVerticalSlider->setEnabled(routeValid);
+  ui->pushButtonProfileExpand->setEnabled(routeValid);
+  ui->actionProfileExpand->setEnabled(routeValid);
+  ui->horizontalSliderProfileZoom->setEnabled(routeValid);
+  ui->verticalSliderProfileZoom->setEnabled(routeValid);
 }
 
 bool ProfileScrollArea::eventFilter(QObject *object, QEvent *event)
@@ -433,13 +444,17 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
 bool ProfileScrollArea::mouseDoubleClickEvent(QMouseEvent *event)
 {
   qDebug() << Q_FUNC_INFO << (event->pos() + getOffset());
+
+  if(!profileWidget->hasValidRouteForDisplay())
+    return false;
+
   emit showPosAlongFlightplan(event->pos().x() + getOffset().x(), true);
   return true;
 }
 
 bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
 {
-  if(NavApp::getRoute().getSizeWithoutAlternates() < 2)
+  if(!profileWidget->hasValidRouteForDisplay())
     return false;
 
   if(!startDragPos.isNull())

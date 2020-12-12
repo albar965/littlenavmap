@@ -22,6 +22,7 @@
 #include "common/mapcolors.h"
 #include "profile/profilescrollarea.h"
 #include "navapp.h"
+#include "route/route.h"
 #include "common/unit.h"
 
 #include <QContextMenuEvent>
@@ -67,7 +68,7 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *event)
   // Fill background white
   painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
 
-  if(profileWidget->hasValidRouteForDisplay(NavApp::getRoute()))
+  if(profileWidget->hasValidRouteForDisplay())
   {
     // Calculate coordinates for local system from scroll widget
     QPoint offset = scrollArea->getOffset();

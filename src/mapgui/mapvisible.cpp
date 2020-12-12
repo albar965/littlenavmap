@@ -46,8 +46,13 @@ void MapVisible::updateVisibleObjectsStatusBar()
 {
   if(!NavApp::hasDataInDatabase())
   {
-    NavApp::getMainWindow()->setMapObjectsShownMessageText(tr("<b style=\"color:red\">Database empty.</b>"),
-                                                           tr("The currently selected Scenery Database is empty."));
+    NavApp::getMainWindow()->setMapObjectsShownMessageText(
+      atools::util::HtmlBuilder::errorMessage(tr("Database is empty")),
+      tr("<p style='white-space:pre'>The currently selected scenery database for the simulator is empty.<br/>Go to: "
+           "Main menu -&gt; \"Scenery Library\" -&gt; \"Load Scenery Library\" "
+           "or press <code>Ctrl+Shift+L</code>.<br/>"
+           "Then choose your simulator and press \"Load\".</p>",
+         "Keep instructions in sync with translated menus and shortcuts"));
   }
   else
   {
@@ -117,8 +122,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
                           arg(runway);
 
             if(showAddon)
-              apTooltipAddon = tr("Add-on airports with runway length > %1").
-                               arg(Unit::distShortFeet(layer->getMinRunwayLength()));
+              apTooltipAddon = tr("Add-on airports");
           }
           else
           {

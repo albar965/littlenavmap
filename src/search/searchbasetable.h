@@ -152,7 +152,7 @@ signals:
   void showInformation(map::MapResult result);
 
   /* Show approaches in context menu selected */
-  void showProcedures(const map::MapAirport& airport);
+  void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
   void showProceduresCustom(const map::MapAirport& airport);
 
   /* Set airport as flight plan departure (from context menu) */

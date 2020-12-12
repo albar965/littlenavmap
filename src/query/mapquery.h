@@ -133,7 +133,7 @@ public:
    * All sorted by distance to pos with a maximum distance distanceNm
    * Uses distance * 4 and searches again if nothing was found.*/
   map::MapResultIndex *getNearestNavaids(const atools::geo::Pos& pos, float distanceNm,
-                                               map::MapTypes type, int maxIls, float maxIlsDist);
+                                         map::MapTypes type, int maxIls, float maxIlsDist);
 
   /*
    * Fetch airports for a map coordinate rectangle.
@@ -142,23 +142,29 @@ public:
    * if they have to be kept between event loop calls.
    * @param rect bounding rectangle for query
    * @param mapLayer used to find source table
+   * @param addon Force addon display
+   * @param overflow Returns true in case of query overflow
    * @param lazy do not reload from database and return (probably incomplete) result from cache if true
    * @return pointer to airport cache. Create a copy if this is needed for a longer
    * time than for e.g. one drawing request.
    */
-  const QList<map::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                            map::MapTypes types, bool& overflow);
 
   /* Similar to getAirports */
-  const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                    bool& overflow);
 
   /* Similar to getAirports */
-  const QList<map::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                    bool& overflow);
 
   /* Similar to getAirports */
-  const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                          bool& overflow);
 
   /* Similar to getAirports */
-  const QList<map::MapIls> *getIls(Marble::GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapIls> *getIls(Marble::GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   /* Get a partially filled runway list for the overview */
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
@@ -179,7 +185,7 @@ public:
 
 private:
   map::MapResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
-                                                    map::MapTypes type, int maxIls, float maxIlsDist);
+                                              map::MapTypes type, int maxIls, float maxIlsDist);
 
   void mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
@@ -188,7 +194,7 @@ private:
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,
-                                              bool lazy, bool overview);
+                                              bool lazy, bool overview, bool addon, bool normal, bool& overflow);
   QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway);
 
   void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
@@ -198,6 +204,8 @@ private:
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;
 
   /* Simple bounding rectangle caches */
+  bool airportCacheAddonFlag = false; // Keep addon status flag for comparing
+  bool airportCacheNormalFlag = false; // Keep normal (non add-on) status flag for comparing
   query::SimpleRectCache<map::MapAirport> airportCache;
   query::SimpleRectCache<map::MapUserpoint> userpointCache;
   query::SimpleRectCache<map::MapVor> vorCache;
@@ -213,8 +221,8 @@ private:
 
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr,
-                        *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
-                        *airportLargeByRectQuery = nullptr;
+                        *airportByRectQuery = nullptr, *airportAddonByRectQuery = nullptr,
+                        *airportMediumByRectQuery = nullptr, *airportLargeByRectQuery = nullptr;
 
   atools::sql::SqlQuery *vorsByRectQuery = nullptr, *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr,
                         *ilsByRectQuery = nullptr, *userdataPointByRectQuery = nullptr;

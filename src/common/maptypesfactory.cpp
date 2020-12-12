@@ -195,7 +195,6 @@ map::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, 
 
     flags |= airportFlag(record, "num_runway_end_vasi", AP_VASI);
     flags |= airportFlag(record, "num_runway_end_als", AP_ALS);
-    flags |= airportFlag(record, "num_boundary_fence", AP_FENCE);
     flags |= airportFlag(record, "num_runway_end_closed", AP_RW_CLOSED);
 
   }
@@ -452,9 +451,14 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
 
   if(airway.from.isValid() && airway.to.isValid())
   {
-    airway.bounding = Line(airway.from, airway.to).boundingRect();
+    Line line(airway.from, airway.to);
+    airway.bounding = line.boundingRect();
     airway.position = airway.bounding.getCenter();
+    airway.westCourse = line.isWestCourse();
+    airway.eastCourse = line.isEastCourse();
   }
+  else
+    airway.eastCourse = airway.westCourse = false;
 
   if(track)
   {
@@ -538,7 +542,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
   ils.ident = record.valueStr("ident");
   ils.name = record.valueStr("name");
   ils.region = record.valueStr("region", QString());
-  ils.heading = record.valueFloat("loc_heading");
+  ils.heading = atools::geo::normalizeCourse(record.valueFloat("loc_heading"));
   ils.width = record.isNull("loc_width") ? INVALID_COURSE_VALUE : record.valueFloat("loc_width");
   ils.magvar = record.valueFloat("mag_var");
   ils.slope = record.valueFloat("gs_pitch");
@@ -578,7 +582,7 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
 {
   start.id = record.valueInt("start_id");
   start.airportId = record.valueInt("airport_id");
-  start.type = record.valueStr("type");
+  start.type = atools::charAt(record.valueStr("type"), 0);
   start.runwayName = record.valueStr("runway_name");
   start.helipadNumber = record.valueInt("number");
   start.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));

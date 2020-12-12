@@ -153,12 +153,14 @@ void MapPainterTop::paintCopyright(PaintContext *context)
     Marble::GeoPainter *painter = context->painter;
     atools::util::PainterContextSaver saver(painter);
 
+    painter->setFont(OptionData::instance().getGuiFont());
+    mapcolors::scaleFont(painter, 0.9f);
+
     // Move text more into the center for web apps
     int rightOffset = context->visibleWidget ? 0 : 20;
     int bottomOffset = context->visibleWidget ? 0 : 4;
 
     // Draw text
-    context->szFont(0.8f);
     painter->setPen(Qt::black);
     painter->setBackground(QColor("#b0ffffff"));
     painter->setBrush(Qt::NoBrush);

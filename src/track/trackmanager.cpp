@@ -165,6 +165,9 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
         if(ref.objType & map::AIRWAY)
           continue;
 
+        if(ref.id != -1 || !ref.position.isValidRange())
+          qWarning() << Q_FUNC_INFO << "Invalid track ref" << ref;
+
         const map::MapObjectRefExt *refLast2 = i > 1 ? &refs.at(i - 2) : nullptr;
         const map::MapObjectRefExt& refLast1 = refs.at(i - 1);
 

@@ -98,6 +98,10 @@ public:
   /* Saves flight plan using the given name and file format and uses file name as new current name */
   bool saveFlightplanLnm();
   bool saveFlightplanLnmAs(const QString& filename);
+  bool saveFlightplanLnmAsSelection(const QString& filename);
+
+  /* Called if export dialog saved an LNMPLN file */
+  void saveFlightplanLnmExported(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -125,12 +129,6 @@ public:
 
   /* Has flight plan changed */
   bool hasChanged() const;
-
-  /* Get the current flight plan name or empty if no plan is loaded */
-  const QString& getCurrentRouteFilepath() const
-  {
-    return routeFilename;
-  }
 
   float getRouteDistanceNm() const
   {
@@ -202,12 +200,15 @@ public:
   /* UI style changed */
   void styleChanged();
 
-  /* Get the route table as a HTML snipped only containing the table and header.
-   * Uses own colors for table background. */
+  /* Get the route table as a HTML snippet only containing the table and header.
+   * Uses own colors for table background. Used by web server. */
   QString getFlightplanTableAsHtml(float iconSizePixel, bool print) const;
 
-  /* Same as above but full HTML document */
+  /* Same as above but full HTML document for export */
   QString getFlightplanTableAsHtmlDoc(float iconSizePixel) const;
+
+  /* Get flight plan extracted from table selection */
+  atools::fs::pln::Flightplan getFlightplanForSelection() const;
 
   /* Insert a flight plan table as QTextTable object at the cursor position */
   void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;
@@ -304,7 +305,7 @@ signals:
   void showInformation(map::MapResult result);
 
   /* Show approach information about the airport */
-  void showProcedures(map::MapAirport airport);
+  void showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter);
 
   /* Emitted before route calculation to stop any background tasks */
   void preRouteCalc();
@@ -325,6 +326,9 @@ private:
 
   /* Saves flight plan using LNM format */
   bool saveFlightplanLnmInternal();
+
+  /* Saves flight plan sippet using LNM format to given name. Given range must not contains procedures or alternates. */
+  bool saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const;
 
   /* Called by route command */
   void changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan);
@@ -353,7 +357,7 @@ private:
   void moveSelectedLegsInternal(MoveDirection direction);
   void deleteSelectedLegs();
   void deleteSelectedLegsInternal(const QList<int>& rows);
-  void getSelectedRows(QList<int>& selectedRows, bool reverseRoute);
+  void getSelectedRows(QList<int>& selectedRows, bool reverseRoute) const;
 
   void selectList(const QList<int>& selectedRows, int offset);
   void selectRange(int from, int to);
@@ -381,14 +385,14 @@ private:
                               bool fetchAirways, float altitudeFt, int fromIndex, int toIndex,
                               atools::routing::Modes mode);
 
-  void updateModelRouteTimeFuel();
+  void updateModelTimeFuelWind();
 
   /* Assign type and altitude from GUI */
   void updateFlightplanFromWidgets(atools::fs::pln::Flightplan& flightplan);
   void updateFlightplanFromWidgets();
 
   /* Insert properties for aircraft performance */
-  void assignFlightplanPerfProperties(atools::fs::pln::Flightplan& flightplan);
+  void assignFlightplanPerfProperties(atools::fs::pln::Flightplan& flightplan) const;
 
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
@@ -414,19 +418,19 @@ private:
   void helpClicked();
 
   void dockVisibilityChanged(bool visible);
-  void eraseAirway(int row);
 
   /* Time for clear selection triggered or scroll active to top */
   void cleanupTableTimeout();
 
   /* Departure, destination and procedures. */
-  QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr) const;
+  QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr,
+                               QString *statustip = nullptr) const;
 
   /* Distance and time. */
   QString buildFlightplanLabel2(bool print = false) const;
 
   void updateTableHeaders();
-  void highlightNextWaypoint(int nearestLegIndex);
+  void highlightNextWaypoint(int activeLegIdx);
   void updateModelHighlights();
   void loadProceduresFromFlightplan(bool clearOldProcedureProperties);
   void loadAlternateFromFlightplan();
@@ -451,9 +455,7 @@ private:
   void editUserWaypointTriggered();
 
   bool canCalcSelection();
-
-  /* Update navdata properties in flightplan properties for export and save */
-  void updateRouteCycleMetadata();
+  bool canSaveSelection();
 
   /* Move active leg to second top position */
   void scrollToActive();
@@ -515,6 +517,9 @@ private:
   bool loadingDatabaseState = false;
   qint64 lastSimUpdate = 0;
 
+  /* Currently active leg or -1 if none */
+  int activeLegIndex = -1;
+
   /* Copy of current active aircraft updated every MIN_SIM_UPDATE_TIME_MS */
   atools::fs::sc::SimConnectUserAircraft aircraft;
 
@@ -530,7 +535,8 @@ private:
   UnitStringTool *units = nullptr;
 
   // Errors collected when parsing route for model
-  QStringList errors, procedureErrors, alternateErrors;
+  QStringList flightplanErrors, procedureErrors, alternateErrors;
+  bool trackErrors = false;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

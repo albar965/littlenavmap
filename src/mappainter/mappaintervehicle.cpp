@@ -64,7 +64,7 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, bool f
   float x, y;
   if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
   {
-    if(!hidden && x < INVALID_INDEX_VALUE / 2 && y < INVALID_INDEX_VALUE / 2)
+    if(!hidden)
     {
       float rotate = calcRotation(vehicle);
 
@@ -122,7 +122,7 @@ void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAirc
   // Get projection corrected rotation angle
   float rotate = calcRotation(userAircraft);
 
-  if(rotate < map::INVALID_COURSE_VALUE && x < INVALID_INDEX_VALUE / 2 && y < INVALID_INDEX_VALUE / 2)
+  if(rotate < map::INVALID_COURSE_VALUE)
   {
     context->painter->translate(x, y);
     context->painter->rotate(atools::geo::normalizeCourse(rotate));
@@ -214,8 +214,12 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
         texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
       }
     }
+
+    int transparency = context->flags2.testFlag(opts2::MAP_AI_TEXT_BACKGROUND) ? 255 : 0;
+
     // Draw text label
-    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, textatt::NONE, 255);
+    symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftAiLabelColor, x + size / 2.f, y + size / 2.f,
+                            textatt::NONE, transparency, mapcolors::aircraftAiLabelColorBg);
   }
 }
 
@@ -243,18 +247,31 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
   if(!aircraft.isOnGround() && context->dOpt(optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK))
     appendClimbSinkText(texts, aircraft);
 
-  if(!aircraft.isOnGround() && context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE))
+  if(!aircraft.isOnGround() && (context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE) ||
+                                context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE)))
   {
     QString upDown;
     if(!context->dOpt(optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK))
       climbSinkPointer(upDown, aircraft);
 
-    texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
+    if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE) && context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
+    {
+      texts.append(tr("ALT %1, IND %2%3").
+                   arg(Unit::altFeet(aircraft.getPosition().getAltitude())).
+                   arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).
+                   arg(upDown));
+    }
+    else if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE))
+      texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
+    else if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
+      texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).arg(upDown));
   }
 
+  int transparency = context->flags2.testFlag(opts2::MAP_USER_TEXT_BACKGROUND) ? 255 : 0;
+
   // Draw text label
-  symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2.f, y + size / 2.f,
-                          textatt::ROUTE_BG_COLOR, 255);
+  symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftUserLabelColor, x + size / 2.f, y + size / 2.f,
+                          textatt::NONE, transparency, mapcolors::aircraftUserLabelColorBg);
 }
 
 void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircraft& aircraft)

@@ -263,11 +263,6 @@ public:
   /* User defined waypoint */
   bool isUser() const;
 
-  float getGroundAltitude() const
-  {
-    return groundAltitude;
-  }
-
   void setFlightplan(atools::fs::pln::Flightplan *fp)
   {
     flightplan = fp;
@@ -316,7 +311,7 @@ public:
   }
 
   /* true if airway given but not found in database. Also true if one-way direction is violated */
-  bool isAirwaySetAndInvalid(float altitudeFt, QStringList *errors = nullptr) const;
+  bool isAirwaySetAndInvalid(float altitudeFt, QStringList *errors = nullptr, bool *trackError = nullptr) const;
 
   bool isTrack() const
   {
@@ -366,7 +361,6 @@ private:
 
   float distanceTo = 0.f,
         courseTo = 0.f,
-        groundAltitude = 0.f,
         magvar = 0.f, /* Either taken from navaid or average across the route */
         magvarPos = 0.f; /* Calculate environment value */
   atools::geo::LineString geometry;

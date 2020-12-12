@@ -33,6 +33,8 @@
 #include "route/routealtitudeleg.h"
 
 #include <QBitArray>
+#include <QPainterPath>
+
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 
@@ -62,13 +64,13 @@ void MapPainterRoute::render()
 
   // Draw the approach preview if any selected in the search tab
   proc::MapProcedureLeg lastLegPoint;
-  if(context->mapLayer->isApproach())
+  if(context->mapLayerRoute->isApproach())
     paintProcedure(lastLegPoint, mapPaintWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
                    true /* preview */);
 
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN) &&
      context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) &&
-     context->mapLayer->isRouteTextAndDetail())
+     context->mapLayerRoute->isRouteTextAndDetail())
     paintTopOfDescentAndClimb();
 }
 
@@ -117,7 +119,7 @@ void MapPainterRoute::paintRoute()
 
   context->painter->setBrush(Qt::NoBrush);
 
-  if(context->mapLayer->isRouteTextAndDetail())
+  if(context->mapLayerRoute->isRouteTextAndDetail())
     drawStartParking();
 
   // Get active route leg
@@ -177,7 +179,7 @@ void MapPainterRoute::paintRoute()
   // Draw procedures ==========================================================================
   // Remember last point across procedures to avoid overlaying text
 
-  if(context->mapLayer->isApproach())
+  if(context->mapLayerEffective->isApproach())
   {
     proc::MapProcedureLeg lastLegPoint;
     if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
@@ -332,7 +334,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
   painter->setBackground(mapcolors::routeTextBackgroundColor);
   painter->setPen(mapcolors::routeTextColor);
 
-  if(context->mapLayer->isRouteTextAndDetail())
+  if(context->mapLayerRoute->isRouteTextAndDetail())
     textPlacement.drawTextAlongLines();
   painter->restore();
   painter->setBackgroundMode(Qt::OpaqueMode);
@@ -361,7 +363,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
   drawRouteSymbolText(visibleStartPoints, textPlacement.getStartPoints());
 
   if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) &&
-     (NavApp::getWindReporter()->hasWindData() || NavApp::getWindReporter()->isWindManual()))
+     (NavApp::getWindReporter()->hasOnlineWindData() || NavApp::getWindReporter()->isWindManual()))
     drawWindBarbs(visibleStartPoints, textPlacement.getStartPoints());
 }
 
@@ -402,7 +404,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 
           QStringList toc;
           toc.append(tr("TOC"));
-          if(context->mapLayer->isAirportRouteInfo())
+          if(context->mapLayerRoute->isAirportRouteInfo())
             toc.append(Unit::distNm(route->getTopOfClimbDistance()));
 
           symbolPainter->textBoxF(context->painter, toc, QPen(mapcolors::routeTextColor),
@@ -425,7 +427,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 
           QStringList tod;
           tod.append(tr("TOD"));
-          if(context->mapLayer->isAirportRouteInfo())
+          if(context->mapLayerRoute->isAirportRouteInfo())
             tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
 
           symbolPainter->textBoxF(context->painter, tod, QPen(mapcolors::routeTextColor),
@@ -507,6 +509,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint,
     }
     else
     {
+      noText = context->drawFast;
       if(legs.at(i).isMissed())
         painter->setPen(missedPen);
       else
@@ -555,7 +558,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint,
   }
 
   // Draw text along lines only on low zoom factors ========
-  if(context->mapLayer->isApproachText())
+  if(context->mapLayerRoute->isApproachText())
   {
     if(!context->drawFast)
     {
@@ -631,7 +634,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint,
   {
     // No text labels for passed points
     bool drawText = i + 1 >= passedProcLeg || !activeValid || preview;
-    if(!context->mapLayer->isApproachText())
+    if(!context->mapLayerRoute->isApproachText())
       drawText = false;
     paintProcedurePoint(lastLegPoint, legs, i, preview, drawText);
   }
@@ -680,7 +683,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
   QPainter *painter = context->painter;
   // ===========================================================
   // Draw lines simplified if no point is hidden to avoid weird things at high zoom factors in spherical projection
-  if(!context->mapLayer->isApproachDetail())
+  if(!context->mapLayerRoute->isApproachDetail())
   {
     bool visible1, visible2, hidden1, hidden2;
     wToS(leg.line.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
@@ -705,7 +708,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
     return;
   }
 
-  QPointF intersectPoint = wToS(leg.interceptPos, size, &hidden);
+  QPointF interceptPoint = wToS(leg.interceptPos, size, &hidden);
 
   bool showDistance = !leg.noDistanceDisplay();
 
@@ -716,10 +719,15 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
     {
       if(draw)
       {
-        if(leg.correctedArc)
-          drawLine(painter, lastLines.last().p2(), line.p1());
         QPointF point = wToS(leg.recFixPos, size, &hidden);
-        paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
+        if(leg.correctedArc)
+        {
+          // Arc with stub
+          drawLine(painter, line.p1(), interceptPoint);
+          paintArc(context->painter, interceptPoint, line.p2(), point, leg.turnDirection == "L");
+        }
+        else
+          paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
       }
     }
     else
@@ -758,7 +766,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
       if(!lastLines.last().p2().isNull() && lineDist > 2.f)
       {
         // Lines are not connected which can happen if a CF follows after a FD or similar
-        paintProcedureBow(prevLeg, lastLines, painter, line, leg, intersectPoint, draw);
+        paintProcedureBow(prevLeg, lastLines, painter, line, leg, interceptPoint, draw);
 
         if(drawTextLines != nullptr)
         {
@@ -775,7 +783,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
         // Draw a small arc if a turn direction is given
 
         // lastLines gets the full line added and nextLine is the line for text
-        QLineF nextLine = paintProcedureTurn(lastLines, line, leg, painter, intersectPoint, draw);
+        QLineF nextLine = paintProcedureTurn(lastLines, line, leg, painter, interceptPoint, draw);
 
         Pos p1 = sToW(nextLine.p1());
         Pos p2 = sToW(nextLine.p2());
@@ -799,10 +807,10 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
         // Intercept a CF leg
         if(draw)
         {
-          drawLine(painter, line.p1(), intersectPoint);
-          drawLine(painter, intersectPoint, line.p2());
+          drawLine(painter, line.p1(), interceptPoint);
+          drawLine(painter, interceptPoint, line.p2());
         }
-        lastLines.append(QLineF(intersectPoint, line.p2()));
+        lastLines.append(QLineF(interceptPoint, line.p2()));
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line
@@ -971,7 +979,9 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
 
   if(dist < ageo::Pos::INVALID_VALUE)
   {
-    // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
+    // Shorten the next line around 1 NM to get a better curve
+    // Use a value less than 1 nm to avoid flickering on 1 nm legs
+    // This will start the curve after the first point of the next leg
     float oneNmPixel = scale->getPixelForNm(0.95f);
     if(lineDraw.length() > oneNmPixel * 2.f)
       lineDraw.setLength(lineDraw.length() - oneNmPixel);
@@ -1057,57 +1067,69 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
                                           int index, bool preview, bool drawTextFlag)
 {
   const proc::MapProcedureLeg& leg = legs.at(index);
-  bool drawText = context->mapLayer->isApproachText() && drawTextFlag;
+  bool drawText = context->mapLayerRoute->isApproachText() && drawTextFlag;
 
   // Debugging code for drawing ================================================
 #ifdef DEBUG_APPROACH_PAINT
-  bool hiddenDummy;
-  QSize size = scale->getScreeenSizeForRect(legs.bounding);
 
-  QLineF line, holdLine;
-  wToS(leg.line, line, size, &hiddenDummy);
-  wToS(leg.holdLine, holdLine, size, &hiddenDummy);
-  QPainter *painter = context->painter;
-
-  if(leg.disabled)
   {
-    painter->setPen(Qt::red);
+    QColor col(255, 0, 0, 50);
+
+    if(leg.fixIdent == "CI29" && leg.type == proc::COURSE_TO_FIX)
+      col = QColor(0, 255, 0, 50);
+
+    bool hiddenDummy;
+    QSize size = scale->getScreeenSizeForRect(legs.bounding);
+
+    QLineF line, holdLine;
+    wToS(leg.line, line, size, &hiddenDummy);
+    wToS(leg.holdLine, holdLine, size, &hiddenDummy);
+    QPainter *painter = context->painter;
+
+    if(leg.disabled)
+    {
+      painter->setPen(Qt::red);
+    }
+
+    QPointF intersectPoint = wToS(leg.interceptPos, DEFAULT_WTOS_SIZE, &hiddenDummy);
+
+    painter->save();
+    painter->setPen(QPen(Qt::blue, 3.));
+    painter->drawEllipse(line.p1(), 20, 10);
+    painter->drawEllipse(line.p2(), 10, 20);
+    painter->drawText(line.x1() - 60, line.y1() + (index % 3) * 10,
+                      "Start " + proc::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
+
+    painter->drawText(line.x2() - 60, line.y2() + (index % 3) * 10 + 20,
+                      "End " + proc::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
+    if(!intersectPoint.isNull())
+    {
+      painter->drawEllipse(intersectPoint, 30, 30);
+      painter->drawText(intersectPoint.x() - 60, intersectPoint.y() + (index % 3) * 10 + 30,
+                        proc::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
+    }
+
+    painter->setPen(QPen(col, 20));
+    for(int i = 0; i < leg.geometry.size() - 1; i++)
+    {
+      QPoint pt1 = wToS(leg.geometry.at(i), size, &hiddenDummy);
+      QPoint pt2 = wToS(leg.geometry.at(i + 1), size, &hiddenDummy);
+
+      drawLine(painter, pt1, pt2);
+    }
+
+    painter->setPen(QPen(QColor(0, 0, 255, 100), 5));
+    drawLine(painter, holdLine);
+
+    painter->setBackground(Qt::transparent);
+    painter->setPen(QPen(QColor(0, 255, 0, 255), 3, Qt::DotLine));
+    drawLine(painter, line);
+
+    painter->setPen(QPen(col, 10));
+    for(int i = 0; i < leg.geometry.size(); i++)
+      painter->drawPoint(wToS(leg.geometry.at(i)));
+    painter->restore();
   }
-
-  QPointF intersectPoint = wToS(leg.interceptPos, DEFAULT_WTOS_SIZE, &hiddenDummy);
-
-  painter->save();
-  painter->setPen(Qt::black);
-  painter->drawEllipse(line.p1(), 20, 10);
-  painter->drawEllipse(line.p2(), 10, 20);
-  painter->drawText(line.x1() - 40, line.y1() + 40,
-                    "Start " + proctypes::ProcedureLegTypeShortStr(leg.type) + " " + QString::number(index));
-
-  painter->drawText(line.x2() - 40, line.y2() + 60,
-                    "End " + proctypes::ProcedureLegTypeShortStr(leg.type) + " " + QString::number(index));
-  if(!intersectPoint.isNull())
-  {
-    painter->drawEllipse(intersectPoint, 30, 30);
-    painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20,
-                      proctypes::ProcedureLegTypeShortStr(leg.type) + " " + QString::number(index));
-  }
-
-  painter->setPen(QPen(Qt::darkBlue, 2));
-  for(int i = 0; i < leg.geometry.size() - 1; i++)
-  {
-    QPoint pt1 = wToS(leg.geometry.at(i), size, &hiddenDummy);
-    QPoint pt2 = wToS(leg.geometry.at(i + 1), size, &hiddenDummy);
-
-    drawLine(painter, pt1, pt2);
-  }
-
-  painter->setPen(QPen(Qt::darkBlue, 10));
-  drawLine(painter, holdLine);
-
-  painter->setPen(QPen(Qt::darkBlue, 7));
-  for(int i = 0; i < leg.geometry.size(); i++)
-    painter->drawPoint(wToS(leg.geometry.at(i)));
-  painter->restore();
 #endif
 
   if(!preview && leg.isMissed() && !(context->objectTypes & map::MISSED_APPROACH))
@@ -1117,7 +1139,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   if(leg.disabled)
     return;
 
-  int defaultOverflySize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+  int defaultOverflySize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
 
   proc::MapAltRestriction altRestr(leg.altRestriction);
   proc::MapSpeedRestriction speedRestr(leg.speedRestriction);
@@ -1133,7 +1155,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   if(index < legs.size() - 1 && leg.isTransition() && legs.at(index + 1).isApproach())
   {
-    // Do not draw transtitions from this last transition leg - merge and draw them for the first approach leg
+    // Do not draw transitions from this last transition leg - merge and draw them for the first approach leg
     altRestr = proc::MapAltRestriction();
     speedRestr = proc::MapSpeedRestriction();
   }
@@ -1261,7 +1283,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     texts.append(proc::speedRestrictionTextNarrow(speedRestr));
   }
 
-  // Merge restricions between overlapping fixes across different procedures
+  // Merge restrictions between overlapping fixes across different procedures
   if(lastLegPoint.isValid() && lastLegPoint.fixPos.almostEqual(leg.fixPos) &&
      lastLegPoint.fixIdent == leg.fixIdent && lastLegPoint.fixRegion == leg.fixRegion &&
      // Do not merge text from legs which are labeled at calculated end position
@@ -1306,7 +1328,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   texts.removeAll(QString());
 
   const map::MapResult& navaids = leg.navaids;
-  int symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+  int symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
 
   if(!navaids.waypoints.isEmpty() && wToSBuf(navaids.waypoints.first().position, x, y, margins))
   {
@@ -1318,7 +1340,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   }
   else if(!navaids.vors.isEmpty() && wToSBuf(navaids.vors.first().position, x, y, margins))
   {
-    symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
+    symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
     if(drawText)
       paintProcedureUnderlay(leg, x, y, symbolSize);
     paintVor(x, y, navaids.vors.first(), false);
@@ -1327,7 +1349,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   }
   else if(!navaids.ndbs.isEmpty() && wToSBuf(navaids.ndbs.first().position, x, y, margins))
   {
-    symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
+    symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
     if(drawText)
       paintProcedureUnderlay(leg, x, y, symbolSize);
     paintNdb(x, y, false);
@@ -1373,7 +1395,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   if(!preview && (leg.isSid() || leg.isStar()))
   {
     if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) &&
-       (NavApp::getWindReporter()->hasWindData() || NavApp::getWindReporter()->isWindManual()))
+       (NavApp::getWindReporter()->hasOnlineWindData() || NavApp::getWindReporter()->isWindManual()))
     {
       int routeIdx = index;
 
@@ -1396,41 +1418,74 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
 void MapPainterRoute::paintAirport(int x, int y, const map::MapAirport& obj)
 {
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
-  symbolPainter->drawAirportSymbol(context->painter, obj, x, y, size, false, false);
+  int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
+  symbolPainter->drawAirportSymbol(context->painter, obj, x, y, size, false, false,
+                                   context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
 }
 
 void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& obj, bool drawAsRoute)
 {
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
-  symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOpts,
+  int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
+  symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOptsAirport,
                                  context->airportTextFlagsRoute(drawAsRoute, false /* draw as log */), size,
-                                 context->mapLayerEffective->isAirportDiagram(),
-                                 context->mapLayer->getMaxTextLengthAirport());
+                                 context->mapLayerRoute->isAirportDiagram(),
+                                 context->mapLayerRoute->getMaxTextLengthAirport());
+}
+
+void MapPainterRoute::paintWaypoint(const QColor& col, int x, int y, bool preview)
+{
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  size = std::max(size, 8.f);
+
+  symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, !preview);
+}
+
+void MapPainterRoute::paintWaypointText(float x, float y,
+                                        const map::MapWaypoint& obj, bool drawAsRoute,
+                                        const QStringList *additionalText)
+{
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  textflags::TextFlags flags = textflags::NONE;
+
+  if(drawAsRoute)
+    flags |= textflags::ROUTE_TEXT;
+
+  if(context->mapLayerRoute->isWaypointRouteName())
+    flags |= textflags::IDENT;
+
+  bool fill = true;
+  if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
+  {
+    flags |= textflags::NO_BACKGROUND;
+    fill = false;
+  }
+
+  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, fill, additionalText);
 }
 
 void MapPainterRoute::paintVor(int x, int y, const map::MapVor& obj, bool preview)
 {
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
+  size = std::max(size, 8.f);
   symbolPainter->drawVorSymbol(context->painter, obj, x, y,
                                size, !preview, false,
-                               context->mapLayerEffective->isVorLarge() ? size * 5 : 0);
+                               context->mapLayerRoute->isVorLarge() ? size * 5 : 0);
 }
 
 void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, bool drawAsRoute,
                                    const QStringList *additionalText)
 {
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
   textflags::TextFlags flags = textflags::NONE;
 
   if(drawAsRoute)
     flags |= textflags::ROUTE_TEXT;
 
   // Use more more detailed VOR text for flight plan
-  if(context->mapLayer->isVorRouteIdent())
+  if(context->mapLayerRoute->isVorRouteIdent())
     flags |= textflags::IDENT;
 
-  if(context->mapLayer->isVorRouteInfo())
+  if(context->mapLayerRoute->isVorRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   bool fill = true;
@@ -1445,24 +1500,25 @@ void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, boo
 
 void MapPainterRoute::paintNdb(float x, float y, bool preview)
 {
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
+  size = std::max(size, 8.f);
   symbolPainter->drawNdbSymbol(context->painter, x, y, size, !preview, false);
 }
 
 void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& obj, bool drawAsRoute,
                                    const QStringList *additionalText)
 {
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
   textflags::TextFlags flags = textflags::NONE;
 
   if(drawAsRoute)
     flags |= textflags::ROUTE_TEXT;
 
   // Use more more detailed NDB text for flight plan
-  if(context->mapLayer->isNdbRouteIdent())
+  if(context->mapLayerRoute->isNdbRouteIdent())
     flags |= textflags::IDENT;
 
-  if(context->mapLayer->isNdbRouteInfo())
+  if(context->mapLayerRoute->isNdbRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   bool fill = true;
@@ -1475,39 +1531,10 @@ void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& obj, boo
   symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, fill, additionalText);
 }
 
-void MapPainterRoute::paintWaypoint(const QColor& col, int x, int y, bool preview)
-{
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-  symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, !preview);
-}
-
-void MapPainterRoute::paintWaypointText(float x, float y,
-                                        const map::MapWaypoint& obj, bool drawAsRoute,
-                                        const QStringList *additionalText)
-{
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-  textflags::TextFlags flags = textflags::NONE;
-
-  if(drawAsRoute)
-    flags |= textflags::ROUTE_TEXT;
-
-  if(context->mapLayer->isWaypointRouteName())
-    flags |= textflags::IDENT;
-
-  bool fill = true;
-  if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
-  {
-    flags |= textflags::NO_BACKGROUND;
-    fill = false;
-  }
-
-  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, fill, additionalText);
-}
-
 /* paint intermediate approach point */
 void MapPainterRoute::paintProcedurePoint(int x, int y, bool preview)
 {
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
   symbolPainter->drawProcedureSymbol(context->painter, x, y, size + 3, !preview);
 }
 
@@ -1522,7 +1549,8 @@ void MapPainterRoute::paintProcedureUnderlay(const proc::MapProcedureLeg& leg,
 /* Paint user defined waypoint */
 void MapPainterRoute::paintUserpoint(int x, int y, bool preview)
 {
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  size = std::max(size, 8);
   symbolPainter->drawUserpointSymbol(context->painter, x, y, size, !preview);
 }
 
@@ -1530,7 +1558,7 @@ void MapPainterRoute::paintUserpoint(int x, int y, bool preview)
 void MapPainterRoute::paintText(const QColor& color, float x, float y,
                                 const QStringList& texts, bool drawAsRoute, textatt::TextAttributes atts)
 {
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
 
   if(drawAsRoute)
     atts |= textatt::ROUTE_BG_COLOR;
@@ -1539,7 +1567,7 @@ void MapPainterRoute::paintText(const QColor& color, float x, float y,
   if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
     transparency = 0;
 
-  if(!texts.isEmpty() && context->mapLayer->isWaypointRouteName())
+  if(!texts.isEmpty() && context->mapLayerRoute->isWaypointRouteName())
     symbolPainter->textBoxF(context->painter, texts, color, x + size / 2.f + 2.f, y, atts, transparency);
 }
 
@@ -1630,7 +1658,7 @@ void MapPainterRoute::drawRouteSymbolText(const QBitArray& visibleStartPoints, c
           break;
         case map::USERPOINTROUTE:
           paintText(mapcolors::routeUserPointColor, x, y,
-                    {atools::elideTextShort(obj.getIdent(), context->mapLayer->getMaxTextLengthAirport())},
+                    {atools::elideTextShort(obj.getIdent(), context->mapLayerRoute->getMaxTextLengthAirport())},
                     true /* draw as route */);
           break;
         case map::AIRPORT:
@@ -1655,8 +1683,7 @@ void MapPainterRoute::drawStartParking()
 {
   const Route *route = context->route;
 
-  // Use a layer that is independent of the declutter factor
-  if(!route->isEmpty() && context->mapLayerEffective->isAirportDiagram())
+  if(!route->isEmpty() && context->mapLayerRoute->isAirportDiagram())
   {
     // Draw start position or parking circle into the airport diagram
     const RouteLeg& first = route->value(0);
@@ -1699,7 +1726,7 @@ void MapPainterRoute::drawWindBarbAtWaypoint(float windSpeed, float windDir, flo
   if(!context->route->hasAltitudeLegs() || !context->route->hasValidProfile())
     return;
 
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getWindBarbsSymbolSize());
+  int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getWindBarbsSymbolSize());
   symbolPainter->drawWindBarbs(context->painter, windSpeed, 0.f /* gust */, windDir, x - 5, y - 5, size,
                                true /* barbs */, true /* alt wind */, true /* route */, context->drawFast);
 }

@@ -38,6 +38,7 @@
 #include "gui/choicedialog.h"
 
 #include <QDebug>
+#include <QProcessEnvironment>
 #include <QStandardPaths>
 
 using atools::sql::SqlTransaction;
@@ -694,8 +695,7 @@ void UserdataController::exportBglXml()
       QString file = dialog->saveFileDialog(
         tr("Export XML File for FSX/P3D BGL Compiler"),
         tr("XML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_BGL_XML),
-        ".xml",
-        "Userdata/BglXml", QString(), QString(), false, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+        ".xml", "Userdata/BglXml", QString(), QString(), false);
 
       if(!file.isEmpty())
       {
@@ -783,7 +783,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
 
   if(appendAllowed)
     choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
-                             tr("File header will be ignore if this is enabled."), false);
+                             tr("File header will be ignored if this is enabled."), false);
   else
     // Add a hidden dummy which still allows to save the settings to the same key/variable
     choiceDialog.addCheckBoxHidden(APPEND);

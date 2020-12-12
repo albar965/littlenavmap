@@ -46,7 +46,7 @@ LogStatsDelegate::LogStatsDelegate()
 void LogStatsDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QStyleOptionViewItem opt(option);
-  // Assign aligment copy from Query struct
+  // Assign alignment copy from Query struct
   if(!align.isEmpty())
     opt.displayAlignment = align.at(index.column());
   QStyledItemDelegate::paint(painter, opt, index);
@@ -274,22 +274,23 @@ void LogStatisticsDialog::updateStatisticsText()
   atools::util::html::Flags right = atools::util::html::ALIGN_RIGHT;
 
   // ======================================================
-  html.p(tr("Departure Times"), header);
-  QDateTime earliest, latest, earliestSim, latestSim;
-  logdataController->getFlightStatsTime(earliest, latest, earliestSim, latestSim);
+  float timeMaximum, timeAverage, timeTotal, timeMaximumSim, timeAverageSim, timeTotalSim;
+  logdataController->getFlightStatsTripTime(timeMaximum, timeAverage, timeTotal,
+                                            timeMaximumSim, timeAverageSim, timeTotalSim);
+
+  // Workaround to avoid translation changes
+  html.p(tr("Flight Time Real"), header);
   html.table();
-  html.row2If(tr("Earliest:"), tr("%1 %2").
-              arg(locale.toString(earliest, QLocale::ShortFormat)).
-              arg(earliest.timeZoneAbbreviation()), right);
-  html.row2If(tr("Earliest in Simulator:"), tr("%1 %2").
-              arg(locale.toString(earliestSim, QLocale::ShortFormat)).
-              arg(earliestSim.timeZoneAbbreviation()), right);
-  html.row2If(tr("Latest:"), tr("%1 %2").
-              arg(locale.toString(latest, QLocale::ShortFormat)).
-              arg(latest.timeZoneAbbreviation()), right);
-  html.row2If(tr("Latest in Simulator:"), tr("%1 %2").
-              arg(locale.toString(latestSim, QLocale::ShortFormat)).
-              arg(latestSim.timeZoneAbbreviation()), right);
+  html.row2(tr("Total:"), formatter::formatMinutesHoursLong(timeTotal), right);
+  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverage), right);
+  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximum), right);
+  html.tableEnd();
+
+  html.p(tr("Flight Time Simulator"), header);
+  html.table();
+  html.row2(tr("Total:"), formatter::formatMinutesHoursLong(timeTotalSim), right);
+  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverageSim), right);
+  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximumSim), right);
   html.tableEnd();
 
   // ======================================================
@@ -307,7 +308,8 @@ void LogStatisticsDialog::updateStatisticsText()
   logdataController->getFlightStatsSimulator(simulators);
   html.table();
   for(const std::pair<int, QString>& sim : simulators)
-    html.row2(tr("%1:").arg(sim.second), tr("%1 flights").arg(locale.toString(sim.first)), right);
+    html.row2(tr("%1:").arg(sim.second.isEmpty() ? tr("Unknown") : sim.second),
+              tr("%1 flights").arg(locale.toString(sim.first)), right);
   html.tableEnd();
 
   // ======================================================
@@ -330,14 +332,22 @@ void LogStatisticsDialog::updateStatisticsText()
   html.tableEnd();
 
   // ======================================================
-  html.p(tr("Flight Time"), header);
-  float timeMaximum, timeAverage, timeMaximumSim, timeAverageSim;
-  logdataController->getFlightStatsTripTime(timeMaximum, timeAverage, timeMaximumSim, timeAverageSim);
+  html.p(tr("Departure Times"), header);
+  QDateTime earliest, latest, earliestSim, latestSim;
+  logdataController->getFlightStatsTime(earliest, latest, earliestSim, latestSim);
   html.table();
-  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximum), right);
-  html.row2(tr("Maximum in simulator:"), formatter::formatMinutesHoursLong(timeMaximumSim), right);
-  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverage), right);
-  html.row2(tr("Average in simulator:"), formatter::formatMinutesHoursLong(timeAverageSim), right);
+  html.row2If(tr("Earliest:"), tr("%1 %2").
+              arg(locale.toString(earliest, QLocale::ShortFormat)).
+              arg(earliest.timeZoneAbbreviation()), right);
+  html.row2If(tr("Earliest in Simulator:"), tr("%1 %2").
+              arg(locale.toString(earliestSim, QLocale::ShortFormat)).
+              arg(earliestSim.timeZoneAbbreviation()), right);
+  html.row2If(tr("Latest:"), tr("%1 %2").
+              arg(locale.toString(latest, QLocale::ShortFormat)).
+              arg(latest.timeZoneAbbreviation()), right);
+  html.row2If(tr("Latest in Simulator:"), tr("%1 %2").
+              arg(locale.toString(latestSim, QLocale::ShortFormat)).
+              arg(latestSim.timeZoneAbbreviation()), right);
   html.tableEnd();
 
   ui->textBrowserLogStatsOverview->setHtml(html.getHtml());
@@ -402,7 +412,9 @@ void LogStatisticsDialog::initQueries()
       "select cast((strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim)) / 3600. as double), "
       "departure_ident, departure_name, destination_ident, destination_name, "
       "simulator, aircraft_name, aircraft_type, aircraft_registration "
-      "from logbook order by strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) desc limit 250"
+      "from logbook "
+      "where strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) > 0 "
+      "order by strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) desc limit 250"
     },
 
     Query{
@@ -426,9 +438,9 @@ void LogStatisticsDialog::initQueries()
        Qt::AlignLeft},
       "select count(1), simulator, cast(round(sum(distance) * %1) as int), "
       "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double), "
-      "cast(sum((strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim)) / 3600.) as double), "
+      "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double), "
       "aircraft_name, aircraft_type, aircraft_registration "
-      "from logbook group by simulator, aircraft_name, aircraft_type, aircraft_registration order by count(1) desc limit 250"
+      "from logbook group by simulator, aircraft_name, aircraft_type, aircraft_registration order by count(1) desc limit 1000"
     },
 
     Query{
@@ -438,7 +450,7 @@ void LogStatisticsDialog::initQueries()
       {Qt::AlignRight, Qt::AlignLeft, Qt::AlignRight, Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
       "select count(1), simulator, cast(round(sum(distance) * %1) as int), "
       "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double), "
-      "cast(sum((strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim)) / 3600.) as double), "
+      "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double), "
       "aircraft_type "
       "from logbook group by simulator, aircraft_type order by count(1) desc limit 250"
     },
@@ -450,7 +462,7 @@ void LogStatisticsDialog::initQueries()
       {Qt::AlignRight, Qt::AlignLeft, Qt::AlignRight, Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
       "select count(1), simulator, cast(round(sum(distance) * %1) as int), "
       "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double), "
-      "cast(sum((strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim)) / 3600.) as double), "
+      "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double), "
       "aircraft_registration "
       "from logbook group by simulator, aircraft_registration order by count(1) desc limit 250"
     }

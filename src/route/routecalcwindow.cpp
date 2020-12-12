@@ -25,6 +25,7 @@
 #include "atools.h"
 #include "route/route.h"
 #include "util/htmlbuilder.h"
+#include "gui/clicktooltiphandler.h"
 #include "ui_mainwindow.h"
 
 // Factor to put on costs for direct connections. Airways <-> Waypoints
@@ -58,12 +59,13 @@ RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
   connect(ui->pushButtonRouteCalc, &QPushButton::clicked, this, &RouteCalcWindow::calculateClicked);
   connect(ui->pushButtonRouteCalcDirect, &QPushButton::clicked, this, &RouteCalcWindow::calculateDirectClicked);
   connect(ui->pushButtonRouteCalcReverse, &QPushButton::clicked, this, &RouteCalcWindow::calculateReverseClicked);
+  connect(ui->pushButtonRouteCalcTrackDownload, &QPushButton::clicked, this, &RouteCalcWindow::downloadTrackClicked);
   connect(ui->pushButtonRouteCalcHelp, &QPushButton::clicked, this, &RouteCalcWindow::helpClicked);
   connect(ui->pushButtonRouteCalcAdjustAltitude, &QPushButton::clicked, this, &RouteCalcWindow::adjustAltitudePressed);
   connect(ui->radioButtonRouteCalcAirway, &QRadioButton::clicked, this, &RouteCalcWindow::updateWidgets);
   connect(ui->radioButtonRouteCalcRadio, &QRadioButton::clicked, this, &RouteCalcWindow::updateWidgets);
-  connect(ui->comboBoxRouteCalcMode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-          this, &RouteCalcWindow::updateWidgets);
+  connect(ui->radioButtonRouteCalcFull, &QRadioButton::toggled, this, &RouteCalcWindow::updateWidgets);
+  connect(ui->radioButtonRouteCalcSelection, &QRadioButton::toggled, this, &RouteCalcWindow::updateWidgets);
   connect(ui->horizontalSliderRouteCalcAirwayPreference, &QSlider::valueChanged,
           this, &RouteCalcWindow::updatePreferenceLabel);
 
@@ -72,6 +74,9 @@ RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
 
   units = new UnitStringTool();
   units->init({ui->spinBoxRouteCalcCruiseAltitude});
+
+  // Show error messages in tooltip on click ========================================
+  ui->labelRouteCalcHeader->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteCalcHeader));
 
   Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->minimum() == AIRWAY_WAYPOINT_PREF_MIN);
   Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->maximum() == AIRWAY_WAYPOINT_PREF_MAX);
@@ -84,7 +89,7 @@ RouteCalcWindow::~RouteCalcWindow()
 
 void RouteCalcWindow::showForFullCalculation()
 {
-  NavApp::getMainUi()->comboBoxRouteCalcMode->setCurrentIndex(0);
+  NavApp::getMainUi()->radioButtonRouteCalcFull->setChecked(true);
   updateWidgets();
 }
 
@@ -93,7 +98,7 @@ void RouteCalcWindow::showForSelectionCalculation(const QList<int>& selectedRows
   canCalculateSelection = canCalc;
   fromIndex = selectedRows.isEmpty() ? -1 : selectedRows.first();
   toIndex = selectedRows.isEmpty() ? -1 : selectedRows.last();
-  NavApp::getMainUi()->comboBoxRouteCalcMode->setCurrentIndex(canCalculateSelection);
+  NavApp::getMainUi()->radioButtonRouteCalcSelection->setChecked(true);
   updateWidgets();
 }
 
@@ -151,9 +156,21 @@ void RouteCalcWindow::updateWidgets()
   ui->pushButtonRouteCalcAdjustAltitude->setEnabled(canCalcRoute);
   ui->pushButtonRouteCalc->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
 
-  ui->pushButtonRouteCalcDirect->setEnabled(!isCalculateSelection() && canCalcRoute &&
-                                            NavApp::getRouteConst().hasEntries());
-  ui->pushButtonRouteCalcReverse->setEnabled(!isCalculateSelection() && canCalcRoute);
+  ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
+  ui->pushButtonRouteCalcReverse->setEnabled(canCalcRoute);
+
+  QString msg = tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
+                   "Best track will be selected automatically.\n"
+                   "Ensure to use the correct flight level.\n"
+                   "Otherwise, tracks will not be used.");
+  QString err = tr("\n\nNo tracks available. Press the download button or\n"
+                   "go to \"Flight Plan\" -> \"Download Tracks\" to fetch tracks.",
+                   "Keep translation in sync with menu items");
+
+  if(NavApp::hasTracks())
+    ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg);
+  else
+    ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg + err);
 
   updateHeader();
   updatePreferenceLabel();
@@ -169,10 +186,10 @@ void RouteCalcWindow::updateHeader()
 {
   const Route& route = NavApp::getRouteConst();
   const atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
-  QString departure, destination, title, tooltip;
+  QString departure, destination, title, tooltip, statustip;
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  if(ui->comboBoxRouteCalcMode->currentIndex() == 1)
+  if(ui->radioButtonRouteCalcSelection->isChecked())
   {
     // Selection calculation ====================================================
     if(canCalculateSelection)
@@ -189,11 +206,11 @@ void RouteCalcWindow::updateHeader()
     }
     else
     {
-      title = HtmlBuilder::errorMessage({tr("Cannot calculate flight plan"),
-                                         tr("between selected legs."),
-                                         tr("Hover mouse over this message for details.")});
-      tooltip = tr("Select a range or two flight plan legs in the flight plan table.\n"
-                   "These must be neither a part of a procedure nor a part of an alternate destination.");
+      title = HtmlBuilder::errorMessage({tr("Cannot calculate flight plan between selected legs."),
+                                         tr("Click here for details.")});
+      tooltip = tr("Select a range of legs or two flight plan legs in the flight plan table.\n"
+                   "The selection may not be part of a procedure or an alternate.\n"
+                   "It can include the end of a departure or the start of an arrival procedure.");
     }
   }
   else
@@ -215,20 +232,21 @@ void RouteCalcWindow::updateHeader()
                       arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent()).
                       arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getWaypointTypeAsFsxString());
 
-      title = tr("<b>From %1 to %2</b>").arg(departure).arg(destination);
+      title = tr("<b>Calculate flight plan from<br/>%1 to %2</b>").arg(departure).arg(destination);
 
     }
     else
     {
-      title = HtmlBuilder::errorMessage({tr("Invalid flight plan."),
-                                         tr("Set departure and destination first."),
-                                         tr("Hover mouse over this message for details.")});
-      tooltip = tr("Use the right-click context menu on the map or the airport search (F4)\n"
-                   "to select departure and destination first.");
+      title = HtmlBuilder::errorMessage({tr("Set departure and destination first."),
+                                         tr("Click here for details.")});
+      tooltip = tr("<p style='white-space:pre'>Use the right-click context menu on the map or the airport search (<code>F4</code>)<br/>"
+                   "to select departure and destination first.</p>");
+      statustip = tr("Select departure and destination first");
     }
   }
   ui->labelRouteCalcHeader->setText(title);
   ui->labelRouteCalcHeader->setToolTip(tooltip);
+  ui->labelRouteCalcHeader->setStatusTip(statustip);
 }
 
 void RouteCalcWindow::restoreState()
@@ -302,7 +320,7 @@ bool RouteCalcWindow::isRadionavNdb() const
 
 bool RouteCalcWindow::isCalculateSelection() const
 {
-  return NavApp::getMainUi()->comboBoxRouteCalcMode->currentIndex() == 1 && fromIndex != -1 && toIndex != -1;
+  return NavApp::getMainUi()->radioButtonRouteCalcSelection->isChecked();
 }
 
 float RouteCalcWindow::getAirwayPreferenceCostFactor() const

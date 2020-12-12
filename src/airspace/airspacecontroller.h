@@ -72,7 +72,7 @@ public:
   /* Get airspaces from all enabled sources for map display */
   void getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                     map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy,
-                    map::MapAirspaceSources sources);
+                    map::MapAirspaceSources sources, bool& overflow);
 
   /* Get Geometry for any airspace and source database */
   const atools::geo::LineString *getAirspaceGeometry(map::MapAirspaceId id);
@@ -143,7 +143,7 @@ private:
 
   void getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
                             const MapLayer *mapLayer, map::MapAirspaceFilter filter, float flightPlanAltitude,
-                            bool lazy, map::MapAirspaceSources src);
+                            bool lazy, map::MapAirspaceSources src, bool& overflow);
   void preLoadAirpaces();
   void postLoadAirpaces();
 

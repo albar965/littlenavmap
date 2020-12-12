@@ -163,9 +163,9 @@ public:
   /* Add general (red) range ring */
   void addRangeRing(const atools::geo::Pos& pos);
 
-  /* Add radio navaid range ring */
+  /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
   void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& ident,
-                       const QString& frequency, int range);
+                       const QString& frequency, float range);
 
   /* If true stop downloading map data */
   void workOffline(bool offline);
@@ -241,7 +241,7 @@ signals:
   void moveUserpointFromMap(const map::MapUserpoint& point);
 
   /* Show approaches from context menu */
-  void showProcedures(map::MapAirport airport);
+  void showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter);
   void showProceduresCustom(map::MapAirport airport);
 
   /* Emitted when the user presses the on-screen button */
@@ -295,6 +295,9 @@ private:
   void cancelDragDistance();
   void cancelDragRoute();
   void cancelDragUserpoint();
+
+  /* Full redraw after timout when drag and drop to avoid missing objects while moving rubber band */
+  void resetPaintForDrag();
 
   /* Display elevation at mouse cursor after a short timeout */
   void elevationDisplayTimerTimeout();
@@ -389,6 +392,9 @@ private:
   /* Current moving position when dragging a flight plan point or leg */
   QPoint routeDragCur;
 
+  /* Do a full redraw after timout when using drag and drop */
+  QTimer resetPaintForDragTimer;
+
   /* Fixed points of route drag which will not move with the mouse */
   atools::geo::LineString routeDragFixed;
 
@@ -436,10 +442,7 @@ private:
   JumpBack *jumpBack;
 
   /* Sum up mouse wheel or trackpad movement before zooming */
-  int lastWheelPos = 0;
-
-  /* Reset lastWheelPos in case of no wheel events */
-  ulong lastWheelEventTimestamp = 0L;
+  int lastWheelAngle = 0;
 
   MainWindow *mainWindow;
 

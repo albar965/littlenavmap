@@ -330,6 +330,11 @@ void RouteStringDialog::readButtonClicked()
   }
 
   ui->plainTextEditRouteString->setPlainText(rs::cleanRouteString(ui->plainTextEditRouteString->toPlainText()).join(" "));
+
+  // Avoid update issues with macOS and mac style - force repaint
+  ui->textEditRouteStringErrors->repaint();
+  ui->plainTextEditRouteString->repaint();
+
   updateButtonState();
 }
 

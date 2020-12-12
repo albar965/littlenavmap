@@ -32,6 +32,7 @@
 #include "mapgui/maplayer.h"
 #include "fs/sc/simconnectuseraircraft.h"
 #include "navapp.h"
+#include "settings/settings.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -71,12 +72,14 @@ atools::fs::online::Format convertFormat(opts::OnlineFormat format)
 OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent)
   : manager(onlineManager), mainWindow(parent)
 {
-  // Files use Windows code with emebedded UTF-8 for ATIS text
+  // Files use Windows code with embedded UTF-8 for ATIS text
   codec = QTextCodec::codecForName("Windows-1252");
   if(codec == nullptr)
     codec = QTextCodec::codecForLocale();
 
-  downloader = new atools::util::HttpDownloader(mainWindow, false /* verbose */);
+  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DEBUG, false).toBool();
+
+  downloader = new atools::util::HttpDownloader(mainWindow, verbose);
 
   updateAtcSizes();
 
@@ -160,7 +163,8 @@ void OnlinedataController::startProcessing()
 
 void OnlinedataController::startDownloadInternal()
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
 
   if(downloader->isDownloading() || currentState != NONE)
   {
@@ -225,7 +229,8 @@ atools::sql::SqlDatabase *OnlinedataController::getDatabase()
 
 void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 {
-  qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
 
   if(currentState == DOWNLOADING_STATUS)
   {
@@ -275,7 +280,8 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       // Get all callsigns and positions from online list to allow deduplication
       clientCallsignAndPosMap.clear();
       manager->getClientCallsignAndPosMap(clientCallsignAndPosMap);
-      qDebug() << Q_FUNC_INFO << clientCallsignAndPosMap.size();
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << clientCallsignAndPosMap.size();
 
       QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
       if(!whazzupVoiceUrlFromStatus.isEmpty() &&
@@ -305,7 +311,8 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     }
     else
     {
-      qInfo() << Q_FUNC_INFO << "whazzup.txt is not recent";
+      if(verbose)
+        qInfo() << Q_FUNC_INFO << "whazzup.txt is not recent";
 
       // Done after old update - try again later
       startDownloadTimer();
@@ -360,7 +367,7 @@ void OnlinedataController::downloadSslErrors(const QStringList& errors, const QS
                                            "<p>Continue?</p>").
                                   arg(downloadUrl).
                                   arg(atools::strJoin(errors, tr("<br/>"))),
-                                  tr("Do not show this again and ignore errors in the future"),
+                                  tr("Do not &show this again and ignore errors in the future"),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
   downloader->setIgnoreSslErrors(result == QMessageBox::Yes);
@@ -368,7 +375,11 @@ void OnlinedataController::downloadSslErrors(const QStringList& errors, const QS
 
 void OnlinedataController::statusBarMessage()
 {
-  mainWindow->setOnlineConnectionStatusMessageText(QString(), tr("Connected to %1.").arg(getNetworkTranslated()));
+  QString net = getNetworkTranslated();
+  if(!net.isEmpty())
+    mainWindow->setOnlineConnectionStatusMessageText(QString(), tr("Connected to %1.").arg(net));
+  else
+    mainWindow->setOnlineConnectionStatusMessageText(QString(), QString());
 }
 
 void OnlinedataController::stopAllProcesses()
@@ -504,7 +515,8 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
 }
 
 const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircraft(const Marble::GeoDataLatLonBox& rect,
-                                                                                   const MapLayer *mapLayer, bool lazy)
+                                                                                   const MapLayer *mapLayer, bool lazy,
+                                                                                   bool& overflow)
 {
   static const double queryRectInflationFactor = 0.2;
   static const double queryRectInflationIncrement = 0.1;
@@ -554,7 +566,7 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
     }
     simulatorAiRegistrations = curRegistrations;
   }
-  aircraftCache.validate(queryMaxRows);
+  overflow = aircraftCache.validate(queryMaxRows);
   return &aircraftCache.list;
 }
 
@@ -686,7 +698,8 @@ void OnlinedataController::startDownloadTimer()
     }
   }
 
-  qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from" << source;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from" << source;
 
 #ifdef DEBUG_ONLINE_DOWNLOAD
   downloadTimer.setInterval(2000);

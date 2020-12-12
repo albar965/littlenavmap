@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QDir>
 #include <QSettings>
+#include <QFont>
 
 using atools::settings::Settings;
 using  atools::util::Version;
@@ -111,6 +112,7 @@ void checkAndMigrateSettings()
            noaaUrl.toLower() == "http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.txt")
         {
           qInfo() << Q_FUNC_INFO << "Changing NOAA URL to HTTPS";
+          // NOTE: Need to cast to QString to avoid using the overloaded boolean method
           settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherNoaaUrl",
                             QString("https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT"));
           settings.syncSettings();
@@ -175,21 +177,40 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "UserdataExport/ChoiceDialogCheckBoxStates");
         removeAndLog(settings, "Logdata/CsvExportCheckBoxStates");
 
+        // Range rings
+        removeAndLog(settings, lnm::MAP_RANGEMARKERS);
+
         // Marble plugins
         for(const QString& key : settings.childGroups())
           if(key.startsWith("plugin_"))
             removeAndLog(settings, key);
 
         // and vatsim URL,
-        settings.setValue("Widget_lineEditOptionsWeatherVatsimUrl", "https://metar.vatsim.net/metar.php?id=ALL");
+        settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl",
+                          QString("https://metar.vatsim.net/metar.php?id=ALL"));
 
-        // clear allow undock map
+        // clear allow undock map?
 
         settings.syncSettings();
       }
 
+      if(optionsVersion <= Version("2.6.0.beta"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.0.beta";
+        removeAndLog(settings, "SearchPaneLogdata/WidgetView_tableViewLogdata");
+      }
+
+      if(optionsVersion <= Version("2.6.1.beta"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.1.beta";
+        removeAndLog(settings, lnm::ROUTE_EXPORT_FORMATS);
+        removeAndLog(settings, "RouteExport/RouteExportDialog_tableViewRouteExport");
+        removeAndLog(settings, "RouteExport/RouteExportDialog_RouteMultiExportDialog_size");
+        removeAndLog(settings, "RouteExport/RouteExportDialog_tableViewRouteExport");
+      }
+
       // =====================================================================
-      // Adapt update channels if not yet saved
+      // Adapt update channels if not yet saved or previous version is stable and this one is not
       if(!settings.contains(lnm::OPTIONS_UPDATE_CHANNELS) || (optionsVersion.isStable() && !programVersion.isStable()))
       {
         // No channel assigned yet or user moved from a stable to beta or development version
@@ -214,6 +235,25 @@ void checkAndMigrateSettings()
   {
     qWarning() << Q_FUNC_INFO << "No version information found in settings file. Updating to" << programVersion;
     settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
+    settings.syncSettings();
+  }
+
+  QString vatsimUrl = settings.valueStr("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl");
+  if(vatsimUrl.simplified().compare("http://metar.vatsim.net/metar.php?id=ALL", Qt::CaseInsensitive) == 0)
+  {
+    qInfo() << Q_FUNC_INFO << "Adjusting VATSIM URL from" << vatsimUrl;
+    settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl",
+                      QString("https://metar.vatsim.net/metar.php?id=ALL"));
+  }
+
+  // Always correct map font if missing
+  if(!settings.contains(lnm::OPTIONS_DIALOG_MAP_FONT))
+  {
+    qInfo() << Q_FUNC_INFO << "Adjusting map font";
+    // Make map font a bold copy of system font if no setting present
+    QFont font(QGuiApplication::font());
+    font.setBold(true);
+    settings.setValueVar(lnm::OPTIONS_DIALOG_MAP_FONT, font);
     settings.syncSettings();
   }
 }

@@ -27,23 +27,36 @@ enum RouteAdjustOption
 {
   NONE = 0,
   SAVE_APPROACH_WP = 1 << 0, /* Save approach as waypoints and remove approach information. */
-  SAVE_SIDSTAR_WP = 1 << 1, /* Save SID and STAR as waypoints and remove approach information. */
+  SAVE_SIDSTAR_WP = 1 << 1, /* Save SID and STAR as waypoints and remove procedure information. */
   SAVE_AIRWAY_WP = 1 << 2, /* Remove airway information and save waypoints only. */
   REPLACE_CUSTOM_WP = 1 << 3, /* Replace custom approach with user defined waypoints */
   REMOVE_ALTERNATE = 1 << 4, /* Remove all alternate legs. */
   REMOVE_TRACKS = 1 << 5, /* Empty track name to force direct */
   FIX_CIRCLETOLAND = 1 << 7, /* Add a dummy best guess runway for circle-to-land approaches for X-Plane */
   FIX_PROC_ENTRY_EXIT = 1 << 8, /* Add any removed procedure entry and exit points back */
+  SAVE_MSFS = 1 << 9, /* Insert all SID/STAR waypoints and add procedure information for each waypoint.
+                       * Add approach information to last waypoint/destination  */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
 
-  /* Export adjust options for XP11 and old FMS3 */
+  /* LNMPLN save and load format. Does not mangle anything. */
   DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT,
+
+  /* LNMPLN save selected legs as plan. */
+  DEFAULT_OPTS_LNMPLN_SAVE_SELECTED = DEFAULT_OPTS_LNMPLN | rf::REMOVE_ALTERNATE,
+
+  /* Option for RouteStringWriter used to generate a route description */
   DEFAULT_OPTS_ROUTESTRING = FIX_PROC_ENTRY_EXIT,
+
+  /* Microsoft Flight Simulator 2020 */
+  DEFAULT_OPTS_MSFS = DEFAULT_OPTS | SAVE_MSFS,
+
+  /* Export adjust options for XP11 and old FMS3 */
   DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS,
   DEFAULT_OPTS_FMS11 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS,
 
+  /* Garmin GPX */
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SIDSTAR_WP | rf::SAVE_APPROACH_WP
 };
 

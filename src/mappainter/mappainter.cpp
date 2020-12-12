@@ -31,6 +31,7 @@
 #include <marble/GeoPainter.h>
 
 #include <QPixmapCache>
+#include <QPainterPath>
 
 using namespace Marble;
 using namespace atools::geo;
@@ -38,7 +39,7 @@ using atools::roundToInt;
 
 void PaintContext::szFont(float scale) const
 {
-  return mapcolors::scaleFont(painter, scale, &defaultFont);
+  mapcolors::scaleFont(painter, scale, &defaultFont);
 }
 
 textflags::TextFlags PaintContext::airportTextFlags() const
@@ -130,7 +131,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
 {
   QRect vpRect(painter->viewport());
 
-  // Calculate the number of points to use depending in screen resolution
+  // Calculate the number of points to use depending on screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
   int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
 
@@ -153,7 +154,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   bool ringVisible = false, lastVisible = false;
   LineString ellipse;
   // Draw ring segments and collect potential text positions
-  for(int i = 0; i <= 360; i += step)
+  for(int i = step; i <= 360; i += step)
   {
     // Line segment from p1 to p2
     Pos p2 = centerPos.endpoint(radiusMeter, i);
@@ -283,6 +284,10 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
   ls.setTessellate(true);
   for(int i = 1; i < linestring.size(); i++)
   {
+    if(linestring.at(i - 1).almostEqual(linestring.at(i)))
+      // Do not draw  duplicates
+      continue;
+
     // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
     qreal correction = 0.;
     if(atools::almostEqual(linestring.at(i - 1).getLatY(), linestring.at(i).getLatY()))
@@ -582,19 +587,29 @@ QPolygonF MapPainter::buildArrow(float size, bool downwards)
 }
 
 void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow,
-                                     float pos)
+                                     float pos, float minLengthPx)
 {
-  Pos arrowPos = line.interpolate(pos);
-
   bool visible, hidden;
-  QPoint pt = wToS(arrowPos, DEFAULT_WTOS_SIZE, &visible, &hidden);
+  QPointF pt = wToSF(line.interpolate(pos), DEFAULT_WTOS_SIZE, &visible, &hidden);
 
   if(visible && !hidden)
   {
-    painter->translate(pt);
-    painter->rotate(atools::geo::opposedCourseDeg(line.angleDeg()));
-    painter->drawPolygon(arrow);
-    painter->resetTransform();
+    bool draw = true;
+    if(minLengthPx > 0.f)
+    {
+      QLineF lineF;
+      wToS(line, lineF, DEFAULT_WTOS_SIZE, &hidden);
+
+      draw = !hidden && lineF.length() > minLengthPx;
+    }
+
+    if(draw)
+    {
+      painter->translate(pt);
+      painter->rotate(atools::geo::opposedCourseDeg(line.angleDeg()));
+      painter->drawPolygon(arrow);
+      painter->resetTransform();
+    }
   }
 }
 
@@ -613,31 +628,33 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
   // returns ​true if the first argument is less than (i.e. is ordered before) the second.
   // ">" puts true behind
   const map::MapAirport *ap1 = pap1.airport, *ap2 = pap2.airport;
+  bool addon = context->objectTypes.testFlag(map::AIRPORT_ADDON);
 
-  if(ap1->emptyDraw(od) == ap2->emptyDraw(od)) // Draw empty on bottom
+  if(!addon || ap1->addon() == ap2->addon()) // no force addon or both are equal - look at more attributes
   {
-    if(ap1->waterOnly() == ap2->waterOnly()) // Then water
+    if(ap1->emptyDraw(od) == ap2->emptyDraw(od)) // Draw empty on bottom
     {
-      if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
+      if(ap1->waterOnly() == ap2->waterOnly()) // Then water
       {
-        if(ap1->softOnly() == ap2->softOnly()) // Soft airports
+        if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
         {
-          // if(ap1->rating == ap2->rating)
-          return ap1->longestRunwayLength < ap2->longestRunwayLength; // Larger value to end of list - drawn on top
-          // else
-          // return ap1->rating < ap2->rating; // Larger value to end of list - drawn on top
+          if(ap1->softOnly() == ap2->softOnly()) // Soft airports
+            return ap1->longestRunwayLength < ap2->longestRunwayLength; // Larger value to end of list - drawn on top
+          else
+            return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
         }
         else
-          return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
+          return ap1->helipadOnly() > ap2->helipadOnly();
       }
       else
-        return ap1->helipadOnly() > ap2->helipadOnly();
+        return ap1->waterOnly() > ap2->waterOnly();
     }
     else
-      return ap1->waterOnly() > ap2->waterOnly();
+      return ap1->emptyDraw(od) > ap2->emptyDraw(od);
   }
   else
-    return ap1->emptyDraw(od) > ap2->emptyDraw(od);
+    // Put addon in front
+    return ap1->addon() < ap2->addon();
 }
 
 void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)

@@ -168,7 +168,7 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
                                               const MapLayer *mapLayer,
                                               map::MapAirspaceFilter filter,
                                               float flightPlanAltitude, bool lazy,
-                                              map::MapAirspaceSources src)
+                                              map::MapAirspaceSources src, bool& overflow)
 {
   if((src& map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
     // Avoid deadlock while loading user airspaces
@@ -181,7 +181,8 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
     if(query != nullptr)
     {
       // Get airspaces from cache
-      const QList<map::MapAirspace> *airspaces = query->getAirspaces(rect, mapLayer, filter, flightPlanAltitude, lazy);
+      const QList<map::MapAirspace> *airspaces = query->getAirspaces(rect, mapLayer, filter, flightPlanAltitude, lazy,
+                                                                     overflow);
 
       if(airspaces != nullptr)
       {
@@ -196,13 +197,16 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
 void AirspaceController::getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect,
                                       const MapLayer *mapLayer, map::MapAirspaceFilter filter,
                                       float flightPlanAltitude, bool lazy,
-                                      map::MapAirspaceSources sources)
+                                      map::MapAirspaceSources sources, bool& overflow)
 {
   // Merge airspace pointers from all sources/caches into one list
   for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
   {
     if(sources & src)
-      getAirspacesInternal(airspaces, rect, mapLayer, filter, flightPlanAltitude, lazy, src);
+      getAirspacesInternal(airspaces, rect, mapLayer, filter, flightPlanAltitude, lazy, src, overflow);
+
+    if(overflow)
+      break;
   }
 }
 

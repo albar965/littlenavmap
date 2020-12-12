@@ -87,8 +87,6 @@ private:
   void createFlightplanDocuments();
   void deleteFlightplanDocuments();
 
-  void addHeader(atools::util::HtmlBuilder& html);
-
   /* Load weather so it is available for printing */
   void fillWeatherCache();
 

@@ -81,7 +81,7 @@ public:
 
   /* Similar to getAirports */
   void getWaypoints(QList<map::MapWaypoint>& waypoints, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                    bool lazy);
+                    bool lazy, bool& overflow);
 
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
@@ -93,7 +93,7 @@ public:
   void deInitQueries();
 
   /* Tracks loaded - clear caches */
-  void postTrackLoad();
+  void clearCache();
 
   /* Set to false to ignore track database. Create a copy of this before using this method. */
   void setUseTracks(bool value)

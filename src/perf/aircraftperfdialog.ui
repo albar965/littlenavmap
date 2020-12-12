@@ -232,7 +232,7 @@ The fuel report will show a warning if this does not match the simulator aircraf
              <number>1000000</number>
             </property>
             <property name="singleStep">
-             <number>100</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -253,6 +253,9 @@ The fuel report will show a warning if this does not match the simulator aircraf
 above the alternate or at the destination at holding speed if
 an alternate is not required</string>
             </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
             <property name="suffix">
              <string> %fuel%</string>
             </property>
@@ -260,7 +263,7 @@ an alternate is not required</string>
              <number>1000000</number>
             </property>
             <property name="singleStep">
-             <number>100</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -300,7 +303,7 @@ captain or the dispatcher</string>
              <number>1000000</number>
             </property>
             <property name="singleStep">
-             <number>100</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -341,6 +344,9 @@ captain or the dispatcher</string>
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</string>
             </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
             <property name="suffix">
              <string> percent</string>
             </property>
@@ -364,7 +370,7 @@ This will increase the trip fuel by the given percentage.</string>
              <number>1000000</number>
             </property>
             <property name="singleStep">
-             <number>100</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -586,7 +592,7 @@ This will increase the trip fuel by the given percentage.</string>
              <double>10000.000000000000000</double>
             </property>
             <property name="singleStep">
-             <double>100.000000000000000</double>
+             <double>50.000000000000000</double>
             </property>
             <property name="value">
              <double>550.000000000000000</double>
