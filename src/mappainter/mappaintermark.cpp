@@ -1132,8 +1132,9 @@ void MapPainterMark::paintDistanceMarkers()
 #endif
     QString initTrueText = QString::number(initTrue, 'f', precision);
     QString finalTrueText = QString::number(finalTrue, 'f', precision);
-    QString initMagText = QString::number(atools::geo::normalizeCourse(initTrue - m.magvar), 'f', precision);
-    QString finalMagText = QString::number(atools::geo::normalizeCourse(finalTrue - m.magvar), 'f', precision);
+    QString initMagText = QString::number(normalizeCourse(initTrue - m.magvar), 'f', precision);
+    QString finalMagText = QString::number(normalizeCourse(finalTrue -
+                                                           NavApp::getMagVar(m.to, m.magvar)), 'f', precision);
 
 #ifdef DEBUG_ALTERNATE_ARROW
     QString arrowLeft = ">> ";
