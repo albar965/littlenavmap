@@ -646,6 +646,9 @@ void ProfileWidget::calcLeftMargin()
 
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
+  // Show only ident in labels
+  static const textflags::TextFlags TEXTFLAGS = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
+
   // Saved route that was used to create the geometry
   const Route& route = legList->route;
 
@@ -663,7 +666,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   {
     setFont(optData.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-    symPainter.textBox(&painter, {tr("No Flight Plan.")}, QColor("#ff5000"),
+    symPainter.textBox(&painter, {tr("No Flight Plan.")}, QColor(255, 80, 0),
                        left + w / 2, TOP + h / 2, textatt::BOLD | textatt::CENTER, 0);
     scrollArea->updateLabelWidget();
     return;
@@ -672,7 +675,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   {
     setFont(optData.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-    symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QColor("#ff5000"),
+    symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QColor(255, 80, 0),
                        left + w / 2, TOP + h / 2, textatt::BOLD | textatt::CENTER, 0);
     scrollArea->updateLabelWidget();
     return;
@@ -959,9 +962,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     painter.setBackgroundMode(Qt::TransparentMode);
 
-    // Show only ident in labels
-    textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
-
     // Draw the most unimportant symbols and texts first ============================
     mapcolors::scaleFont(&painter, optData.getDisplayTextSizeFlightplan() / 100.f, &painter.font());
     int waypointIndex = waypointX.size();
@@ -1001,27 +1001,40 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         {
           // Labels ========================================================
           int symytxt = std::min(symPt.y() + 14, h);
+          QColor col(mapcolors::routeUserPointColor);
+          QStringList texts;
 
-          if(leg.getProcedureLeg().displayText.isEmpty())
+          if(type == map::WAYPOINT || leg.getWaypoint().isValid())
           {
-            if(type == map::WAYPOINT || leg.getWaypoint().isValid())
-              symPainter.drawWaypointText(&painter, leg.getWaypoint(), symPt.x() - 5, symytxt, flags, 10, true);
-            else if(type == map::USERPOINTROUTE)
-              symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
-                                 symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
-            else if(type == map::INVALID)
-              symPainter.textBox(&painter, {atools::elideTextShort(
-                                              leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
-                                 symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
-            else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
-              // Custom approach
-              symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().fixIdent, 6)},
-                                 mapcolors::routeUserPointColor,
-                                 symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+            texts.append(leg.getIdent());
+            col = mapcolors::waypointSymbolColor;
           }
-          else
-            symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().displayText.join(tr(",")), 15)},
-                               mapcolors::routeUserPointColor, symPt.x() - 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
+          else if(type == map::VOR || leg.getVor().isValid())
+          {
+            texts.append(leg.getIdent());
+            col = mapcolors::vorSymbolColor;
+          }
+          else if(type == map::NDB || leg.getVor().isValid())
+          {
+            texts.append(leg.getIdent());
+            col = mapcolors::ndbSymbolColor;
+          }
+          else if(type == map::USERPOINTROUTE)
+            texts.append(leg.getIdent());
+          else if(type == map::INVALID)
+          {
+            texts.append(leg.getIdent());
+            col = mapcolors::routeInvalidPointColor;
+          }
+          else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
+            // Custom approach
+            texts.append(leg.getIdent());
+
+          texts.append(leg.getProcedureLeg().displayText);
+          texts.removeAll(QString());
+          texts = atools::elideTextShort(texts, 15);
+
+          symPainter.textBox(&painter, texts, col, symPt.x() + 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
         }
       }
     }
@@ -1059,9 +1072,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           // Labels ========================================================
           int symytxt = std::min(symPt.y() + 14, h);
           if(type == map::NDB || leg.getNdb().isValid())
-            symPainter.drawNdbText(&painter, leg.getNdb(), symPt.x() - 5, symytxt, flags, 10, true);
+            symPainter.drawNdbText(&painter, leg.getNdb(), symPt.x() + 5, symytxt, TEXTFLAGS, 10, true);
           else if(type == map::VOR || leg.getVor().isValid())
-            symPainter.drawVorText(&painter, leg.getVor(), symPt.x() - 5, symytxt, flags, 10, true);
+            symPainter.drawVorText(&painter, leg.getVor(), symPt.x() + 5, symytxt, TEXTFLAGS, 10, true);
         }
       }
     }
@@ -1086,7 +1099,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         {
           int symytxt = std::min(symPt.y() + 14, h);
           symPainter.drawAirportText(&painter, leg.getAirport(), symPt.x() - 5, symytxt,
-                                     optsd::AIRPORT_NONE, flags, 10, false, 16);
+                                     optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
         }
       }
     }
@@ -1101,7 +1114,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         symPainter.drawAirportSymbol(&painter,
                                      departureLeg.getAirport(), left, flightplanY, airportSize, false, false, false);
         symPainter.drawAirportText(&painter, departureLeg.getAirport(), left - textW / 2, flightplanTextY,
-                                   optsd::AIRPORT_NONE, flags, 10, false, 16);
+                                   optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
       }
 
       // Draw destination always on the right also if there are approach procedures
@@ -1112,7 +1125,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false,
                                      false, false);
         symPainter.drawAirportText(&painter, destinationLeg.getAirport(), left + w - textW / 2, flightplanTextY,
-                                   optsd::AIRPORT_NONE, flags, 10, false, 16);
+                                   optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
       }
     }
 
