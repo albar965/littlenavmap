@@ -2254,18 +2254,18 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               atools::geo::Rect rect(nextWpPos);
               rect.extend(aircraft.getPosition());
 
-              if(rect.getWidthDegree() > 170.f || rect.getHeightDegree() > 170.f)
+              if(std::abs(rect.getWidthDegree()) > 170.f || std::abs(rect.getHeightDegree()) > 170.f)
                 rect = atools::geo::Rect(nextWpPos);
 
               if(!rect.isPoint(POS_IS_POINT_EPSILON))
               {
                 // Not a point but probably a flat rectangle
 
-                if(rect.getWidthDegree() <= POS_IS_POINT_EPSILON * 2.f)
+                if(std::abs(rect.getWidthDegree()) <= POS_IS_POINT_EPSILON * 2.f)
                   // Expand E/W direction
                   rect.inflate(POS_IS_POINT_EPSILON, 0.f);
 
-                if(rect.getHeightDegree() <= POS_IS_POINT_EPSILON * 2.f)
+                if(std::abs(rect.getHeightDegree()) <= POS_IS_POINT_EPSILON * 2.f)
                   // Expand N/S direction
                   rect.inflate(0.f, POS_IS_POINT_EPSILON);
               }
