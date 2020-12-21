@@ -839,10 +839,8 @@ void MapPaintWidget::routeChanged(bool geometryChanged)
   update();
 }
 
-void MapPaintWidget::routeAltitudeChanged(float altitudeFeet)
+void MapPaintWidget::routeAltitudeChanged(float)
 {
-  Q_UNUSED(altitudeFeet);
-
   if(databaseLoadStatus)
     return;
 
@@ -1069,16 +1067,14 @@ map::MapWeatherSource MapPaintWidget::weatherSourceFromUi()
   return paintLayer->getWeatherSource();
 }
 
-void MapPaintWidget::updateThemeUi(int index)
+void MapPaintWidget::updateThemeUi(int)
 {
   // No-op
-  Q_UNUSED(index);
 }
 
-void MapPaintWidget::updateShowAircraftUi(bool centerAircraftChecked)
+void MapPaintWidget::updateShowAircraftUi(bool)
 {
   // No-op
-  Q_UNUSED(centerAircraftChecked);
 }
 
 const QList<int>& MapPaintWidget::getRouteHighlights() const

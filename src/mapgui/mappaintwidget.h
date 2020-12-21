@@ -93,7 +93,7 @@ public:
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
-  void routeAltitudeChanged(float altitudeFeet);
+  void routeAltitudeChanged(float);
 
   /* Stop showing aircraft position on map */
   void disconnectedFromSimulator();
@@ -388,10 +388,10 @@ protected:
   virtual map::MapWeatherSource weatherSourceFromUi();
 
   /* Update buttons based on current theme - default is no-op */
-  virtual void updateThemeUi(int index);
+  virtual void updateThemeUi(int);
 
   /* Update buttons for show/center aircraft - default is no-op */
-  virtual void updateShowAircraftUi(bool centerAircraftChecked);
+  virtual void updateShowAircraftUi(bool);
 
   /* Update toolbar state for visible features - default is no-op */
   virtual void updateMapVisibleUi() const;

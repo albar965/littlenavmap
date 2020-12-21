@@ -233,7 +233,7 @@ MainWindow::MainWindow()
     optionsChanged();
 
     // Dialog is opened with asynchronous open()
-    connect(optionsDialog, &QDialog::finished, [ = ](int result) {
+    connect(optionsDialog, &QDialog::finished, this, [ = ](int result) {
       if(result == QDialog::Accepted)
         setStatusMessage(tr("Options changed."));
     });
@@ -1279,20 +1279,20 @@ void MainWindow::connectAllSlots()
 
   // Flight plan export actions =====================================================================
   /* *INDENT-OFF* */
-  connect(ui->actionRouteSaveAsPln, &QAction::triggered, [ = ]() { routeExport->routeExportPlnMan(); });
-  connect(ui->actionRouteSaveAsPlnMsfs, &QAction::triggered, [ = ]() { routeExport->routeExportPlnMsfsMan(); });
-  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, [ = ]() { routeExport->routeExportFms11Man(); });
-  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, [ = ]() { routeExport->routeExportFlightgearMan(); });
-  connect(ui->actionRouteSaveAll, &QAction::triggered, [ = ]() { routeExport->routeMultiExport(); });
-  connect(ui->actionRouteSaveAllOptions, &QAction::triggered, [ = ]() { routeExport->routeMultiExportOptions(); });
+  connect(ui->actionRouteSaveAsPln, &QAction::triggered, this, [ = ]() { routeExport->routeExportPlnMan(); });
+  connect(ui->actionRouteSaveAsPlnMsfs, &QAction::triggered, this, [ = ]() { routeExport->routeExportPlnMsfsMan(); });
+  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, [ = ]() { routeExport->routeExportFms11Man(); });
+  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, this, [ = ]() { routeExport->routeExportFlightgearMan(); });
+  connect(ui->actionRouteSaveAll, &QAction::triggered, this, [ = ]() { routeExport->routeMultiExport(); });
+  connect(ui->actionRouteSaveAllOptions, &QAction::triggered, this, [ = ]() { routeExport->routeMultiExportOptions(); });
 
-  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, [ = ]() { routeExport->routeExportGpxMan(); });
-  connect(ui->actionRouteSaveAsHtml, &QAction::triggered, [ = ]() { routeExport->routeExportHtmlMan(); });
+  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, this, [ = ]() { routeExport->routeExportGpxMan(); });
+  connect(ui->actionRouteSaveAsHtml, &QAction::triggered, this, [ = ]() { routeExport->routeExportHtmlMan(); });
 
   // Online export options
-  connect(ui->actionRouteSaveAsVfp, &QAction::triggered, [ = ]() { routeExport->routeExportVfpMan(); });
-  connect(ui->actionRouteSaveAsIvap, &QAction::triggered, [ = ]() { routeExport->routeExportIvapMan(); });
-  connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, [ = ]() { routeExport->routeExportXIvapMan(); });
+  connect(ui->actionRouteSaveAsVfp, &QAction::triggered, this, [ = ]() { routeExport->routeExportVfpMan(); });
+  connect(ui->actionRouteSaveAsIvap, &QAction::triggered, this, [ = ]() { routeExport->routeExportIvapMan(); });
+  connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, this, [ = ]() { routeExport->routeExportXIvapMan(); });
   /* *INDENT-ON* */
 
   connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
@@ -1366,13 +1366,13 @@ void MainWindow::connectAllSlots()
   connect(mapThemeComboBox, indexChangedPtr, this, &MainWindow::changeMapTheme);
 
   // Let projection menus update combo boxes
-  connect(ui->actionMapProjectionMercator, &QAction::triggered, [this](bool checked)
+  connect(ui->actionMapProjectionMercator, &QAction::triggered, this, [ = ](bool checked)
   {
     if(checked)
       mapProjectionComboBox->setCurrentIndex(0);
   });
 
-  connect(ui->actionMapProjectionSpherical, &QAction::triggered, [this](bool checked)
+  connect(ui->actionMapProjectionSpherical, &QAction::triggered, this, [ = ](bool checked)
   {
     if(checked)
       mapProjectionComboBox->setCurrentIndex(1);
@@ -2701,7 +2701,7 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
 
       // Get download job information and update progress text
       int queuedJobs = -1, activeJobs = -1;
-      connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged,
+      connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged, this,
               [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued) -> void
       {
         progress.setLabelText(label.arg(numSeconds) + tr("%1 downloads active and %2 downloads queued.").
@@ -3189,13 +3189,13 @@ void MainWindow::mainWindowShown()
   {
     NavApp::deleteSplashScreen();
 
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallRedistUrl, lnm::helpLanguageOnline());
     QString message = QObject::tr("<p>Error initializing SSL subsystem.</p>"
                                     "<p>The program will not be able to use encrypted network connections<br/>"
                                     "(i.e. HTTPS) that are needed to check for updates or<br/>"
                                     "to load online maps.</p>");
 
 #if defined(Q_OS_WIN32)
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallRedistUrl, lnm::helpLanguageOnline());
     QString message2 = QObject::tr("<p><b>Click the link below for more information:<br/><br/>"
                                    "<a href=\"%1\">Online Manual - Installation</a></b><br/></p>").
                        arg(url.toString());
@@ -3989,7 +3989,6 @@ void MainWindow::printShortcuts()
 {
   // Print all main menu and sub menu shortcuts ==============================================
   qDebug() << "===============================================================================";
-  QList<const QAction *> actions;
 
   QString out;
   QTextStream stream(&out, QIODevice::WriteOnly);
@@ -4432,7 +4431,6 @@ void MainWindow::updateErrorLabels()
   using atools::util::HtmlBuilder;
 
   const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
-  const RouteController& routeController = *NavApp::getRouteController();
 
   QStringList toolTipTxtRoute, toolTipTxtProfile, errRoute, errProfile;
   QString hintText = tr("Click here for details.");
@@ -4441,8 +4439,8 @@ void MainWindow::updateErrorLabels()
   if(NavApp::getRoute().getSizeWithoutAlternates() >= 2 && altitudeLegs.hasErrors())
     errProfile.append(altitudeLegs.getErrorStrings(toolTipTxtProfile));
 
-  if(routeController.hasErrors())
-    errRoute.append(routeController.getErrorStrings(toolTipTxtRoute));
+  if(routeController->hasErrors())
+    errRoute.append(routeController->getErrorStrings(toolTipTxtRoute));
 
   errRoute.append(errProfile);
   toolTipTxtRoute.append(toolTipTxtProfile);

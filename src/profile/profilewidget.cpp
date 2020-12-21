@@ -1298,10 +1298,8 @@ void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
   routeChanged(true, false);
 }
 
-void ProfileWidget::aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf)
+void ProfileWidget::aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *)
 {
-  Q_UNUSED(perf);
-
   routeChanged(true, false);
 }
 
@@ -1528,13 +1526,13 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
     }
 
     // Convert distances to NM and apply correction
-    for(int i = 0; i < leg.distances.size(); i++)
-      leg.distances[i] = meterToNm(leg.distances.at(i) * scale);
+    for(int j = 0; j < leg.distances.size(); j++)
+      leg.distances[j] = meterToNm(leg.distances.at(j) * scale);
 
     legs.elevationLegs.append(leg);
   }
 
-  legs.totalDistance = meterToNm(totalDistanceMeter);
+  legs.totalDistance = static_cast<float>(meterToNm(totalDistanceMeter));
   return legs;
 }
 
@@ -1619,8 +1617,8 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
   maxElev = calcGroundBuffer(leg.maxElevation);
 
   // Get Position for highlight on map
-  float legdistpart = distance - leg.distances.first();
-  float legdist = leg.distances.last() - leg.distances.first();
+  float legdistpart = distance - static_cast<float>(leg.distances.first());
+  float legdist = static_cast<float>(leg.distances.last() - leg.distances.first());
 
   // Calculate position along the flight plan
   pos = leg.geometry.interpolate(legdistpart / legdist);
@@ -1743,7 +1741,7 @@ void ProfileWidget::buildTooltip(int x, bool force)
         if(headingTrue < map::INVALID_COURSE_VALUE &&
            atools::almostNotEqual(headingTrue, routeLeg.getCourseToTrue(), 1.f))
           html.br().b(tr("Heading: ")).
-          text(formatter::courseTextFromTrue(headingTrue, routeLeg.getMagvar(), routeLeg.getCourseToTrue()),
+          text(formatter::courseTextFromTrue(headingTrue, routeLeg.getMagvar()),
                atools::util::html::NO_ENTITIES);
       }
     }

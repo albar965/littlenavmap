@@ -176,7 +176,7 @@ void SymbolPainter::drawHelipadSymbol(QPainter *painter, const map::MapHelipad& 
   painter->setBrush(mapcolors::colorForSurface(helipad.surface));
   painter->setPen(QPen(mapcolors::helipadOutlineColor, 2., Qt::SolidLine, Qt::FlatCap));
 
-  painter->translate(QPoint(x, y));
+  painter->translate(QPointF(x, y));
   painter->rotate(helipad.heading);
 
   if(helipad.type == "SQUARE" || helipad.type == "MEDICAL")
@@ -696,7 +696,6 @@ void SymbolPainter::drawProcedureUnderlay(QPainter *painter, int x, int y, int s
 void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int size)
 {
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
   painter->setBackgroundMode(Qt::OpaqueMode);
 
   float lineWidth = std::max(size / 10.f, 1.5f);
@@ -743,7 +742,6 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, int x, int y, int size)
   poly.translate(-tx + x, -ty + y);
 
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->setBrush(Qt::black);
   painter->setPen(Qt::black);
@@ -755,7 +753,6 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
                                   bool routeFill, bool fast, int largeSize)
 {
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
 
   painter->setBackgroundMode(Qt::TransparentMode);
   if(routeFill)
@@ -1147,7 +1144,6 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
     return;
 
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
 
   QColor backColor(backgroundColor);
   if(!backColor.isValid())

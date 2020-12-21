@@ -2045,7 +2045,7 @@ void RouteController::showProceduresMenuCustom()
   {
     const RouteLeg& routeLeg = route.value(index.row());
     if(routeLeg.isValidWaypoint() && routeLeg.getMapObjectType() == map::AIRPORT)
-      emit showProceduresCustom(routeLeg.getAirport());
+      showProceduresCustom(routeLeg.getAirport());
   }
 }
 
@@ -4205,18 +4205,18 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
       {
         int previousRouteLeg = route.getActiveLegIndexCorrected();
         route.updateActiveLegAndPos(position);
-        int activeLegIndex = route.getActiveLegIndexCorrected();
+        int activeLegIdx = route.getActiveLegIndexCorrected();
 
         if(!cleanupTableTimer.isActive() &&
            ((hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
             (OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))))
           cleanupTableTimer.start();
 
-        if(activeLegIndex != previousRouteLeg)
+        if(activeLegIdx != previousRouteLeg)
         {
           // Use corrected indexes to highlight initial fix
-          qDebug() << "new route leg" << previousRouteLeg << activeLegIndex;
-          highlightNextWaypoint(activeLegIndex);
+          qDebug() << "new route leg" << previousRouteLeg << activeLegIdx;
+          highlightNextWaypoint(activeLegIdx);
           NavApp::updateAllMaps();
         }
       }
