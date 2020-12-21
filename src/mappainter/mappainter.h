@@ -323,13 +323,6 @@ protected:
   /* Interface method to QPixmapCache*/
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);
 
-  /* Paint aircraft track or line string. Optimized for large amount of points */
-  void paintTrack(Marble::GeoPainter *painter, const AircraftTrack& aircraftTrack, bool mercator);
-  void paintTrack(Marble::GeoPainter *painter, const atools::geo::LineString& linestring, bool mercator);
-
-  /* Minimum length in pixel of a track segment to be drawn */
-  static Q_DECL_CONSTEXPR int TRACK_MIN_LINE_LENGTH = 5;
-
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;
   /* Maximum points to use for a circle */
@@ -343,19 +336,6 @@ protected:
   WaypointTrackQuery *waypointQuery;
   AirportQuery *airportQuery;
   MapScale *scale;
-
-private:
-  /* Adapter which allows passing AircraftTrack or a LineString to paintTrackInternal */
-  struct TrackAdapter
-  {
-    virtual const atools::geo::Pos& at(int i) const = 0;
-    virtual int size() const = 0;
-
-  };
-
-  /* Draw a long line with many small segments and optimize drawing */
-  void paintTrackInternal(Marble::GeoPainter *painter, const TrackAdapter& linestring, bool mercator);
-
 };
 
 #endif // LITTLENAVMAP_MAPPAINTER_H

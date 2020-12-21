@@ -57,10 +57,7 @@ public:
   void saveState();
   void restoreState();
 
-  void clearTrack()
-  {
-    clear();
-  }
+  void clearTrack();
 
   /*
    * Add a track position. Accurracy depends on the ground flag which will cause more
@@ -70,6 +67,9 @@ public:
   bool appendTrackPos(const atools::geo::Pos& pos, const QDateTime& timestamp, bool onGround);
 
   float getMaxAltitude() const;
+
+  /* Copies the coordinates from the structs. Slow. */
+  atools::geo::LineString getLineString() const;
 
   /* Pull only needed methods into public space */
   using QList::isEmpty;
@@ -103,9 +103,6 @@ private:
   /* Minimum time difference between recordings */
   static Q_DECL_CONSTEXPR int MIN_POSITION_TIME_DIFF_MS = 1000;
   static Q_DECL_CONSTEXPR int MIN_POSITION_TIME_DIFF_GROUND_MS = 250;
-
-  /* Clear track if aircraft jumps too far */
-  static Q_DECL_CONSTEXPR int MAX_POINT_DISTANCE_NM = 2000;
 
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 

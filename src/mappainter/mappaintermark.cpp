@@ -478,7 +478,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     for(const atools::geo::LineString& geo: visibleTrackGeometries)
     {
       if(geo.isValid())
-        paintTrack(painter, geo, context->viewport->projection() == Marble::Mercator);
+        drawLineString(painter, geo);
     }
   }
 
