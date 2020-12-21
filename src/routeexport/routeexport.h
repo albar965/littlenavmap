@@ -61,7 +61,7 @@ class RouteExport :
 
 public:
   explicit RouteExport(MainWindow *parent = nullptr);
-  virtual ~RouteExport();
+  virtual ~RouteExport() override;
 
   /* Save and restore state of multiexport dialog and format map (custom paths and selection state) */
   void saveState();

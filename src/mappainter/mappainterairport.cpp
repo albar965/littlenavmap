@@ -119,7 +119,7 @@ void MapPainterAirport::render()
   QMargins margins(100, 10, 10, 10);
 
   // Collect all airports that are visible ===========================
-  QList<PaintAirportType> visibleAirports;
+  QVector<PaintAirportType> visibleAirports;
   for(const MapAirport& airport : airports)
   {
     // Avoid drawing too many airports during animation when zooming out

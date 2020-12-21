@@ -52,7 +52,7 @@ class RouteCalcWindow :
 
 public:
   explicit RouteCalcWindow(QWidget *parent);
-  virtual ~RouteCalcWindow();
+  virtual ~RouteCalcWindow() override;
 
   /* Open and set up the dialog for a full flight plan calculation */
   void showForFullCalculation();

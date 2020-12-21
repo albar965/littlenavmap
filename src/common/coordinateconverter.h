@@ -45,7 +45,6 @@ class CoordinateConverter
 {
 public:
   CoordinateConverter(const Marble::ViewportParams *viewportParams);
-  virtual ~CoordinateConverter();
 
   /* Default size (100x100) for the screen object. Needed to find the repeating pattern for the
    *  Mercator projection. */

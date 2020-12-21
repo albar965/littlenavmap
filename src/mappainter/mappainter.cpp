@@ -121,7 +121,7 @@ bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, cons
 
   if(!visible && !hid)
     // Check additional visibility using the extended rectangle only if the object is not hidden behind the globe
-    return context->screenRect.marginsAdded(margins).contains(x, y);
+    return context->screenRect.marginsAdded(margins).contains(atools::roundToInt(x), atools::roundToInt(y));
 
   return visible;
 }

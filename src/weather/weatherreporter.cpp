@@ -244,7 +244,7 @@ void WeatherReporter::initActiveSkyNext()
     QString asnSnapshotPath, asnFlightplanSnapshotPath;
     QString as16SnapshotPath, as16FlightplanSnapshotPath;
     QString asp4SnapshotPath, asp4FlightplanSnapshotPath;
-    QString asp5SnapshotPath, asp5FlightplanSnapshotPath;
+    // QString asp5SnapshotPath, asp5FlightplanSnapshotPath;
     QString asXplSnapshotPath, aspXplFlightplanSnapshotPath;
 
     findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QString());

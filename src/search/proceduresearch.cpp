@@ -201,10 +201,9 @@ void ProcedureSearch::filterIndexChanged(int index)
   fillApproachTreeWidget();
 }
 
-void ProcedureSearch::filterIndexRunwayChanged(int index)
+void ProcedureSearch::filterIndexRunwayChanged(int)
 {
   qDebug() << Q_FUNC_INFO;
-  Q_UNUSED(index);
 
   treeWidget->clearSelection();
   fillApproachTreeWidget();
@@ -758,9 +757,8 @@ void ProcedureSearch::updateApproachItem(QTreeWidgetItem *apprItem, int transiti
   }
 }
 
-void ProcedureSearch::itemDoubleClicked(QTreeWidgetItem *item, int column)
+void ProcedureSearch::itemDoubleClicked(QTreeWidgetItem *item, int)
 {
-  Q_UNUSED(column);
   showEntry(item, true /* double click*/, true /* zoom */);
 }
 
@@ -1103,7 +1101,7 @@ void ProcedureSearch::attachApproach(QString runway)
       // Approach has multiple runways - show menu to select one if this was started by a shortcut
       QMenu menu;
       menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-      QVector<QAction *> runwayActions = buildRunwaySubmenu(menu, procData, false /* only runway items */);
+      buildRunwaySubmenu(menu, procData, false /* only runway items */);
       QAction *action = menu.exec(treeWidget->mapToGlobal(QPoint(0, 0)));
       if(action != nullptr)
         runway = action->data().toString();

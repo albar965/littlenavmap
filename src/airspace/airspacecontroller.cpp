@@ -322,7 +322,7 @@ void AirspaceController::loadAirspaces()
   // Get base path from options dialog ===============================
   QString basePath = OptionData::instance().getCacheUserAirspacePath();
 
-  if(basePath.isEmpty() || !QFileInfo(basePath).exists() || !QFileInfo(basePath).isDir())
+  if(basePath.isEmpty() || !QFileInfo::exists(basePath) || !QFileInfo(basePath).isDir())
   {
     // Path is either empty or not set - allow user to select a (new) folder ==========================
     basePath = NavApp::getOptionsDialog()->selectCacheUserAirspace();

@@ -75,7 +75,7 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
 
   unitsUpdated();
 
-  paintLayer = new MapPaintLayer(this, NavApp::getMapQuery());
+  paintLayer = new MapPaintLayer(this);
   addLayer(paintLayer);
 
   screenIndex = new MapScreenIndex(this, paintLayer);

@@ -34,7 +34,7 @@ class UserIconDelegate :
 
 public:
   UserIconDelegate(const ColumnList *columns, UserdataIcons *userdataIcons);
-  virtual ~UserIconDelegate();
+  virtual ~UserIconDelegate() override;
 
 private:
   const ColumnList *cols;

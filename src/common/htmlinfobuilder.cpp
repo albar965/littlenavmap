@@ -2055,7 +2055,7 @@ void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::H
   if(!marker.text.isEmpty())
     html.brText(marker.text);
 
-  if(marker.ranges.isEmpty() || (marker.ranges.size() == 1 && marker.ranges.first() == 0))
+  if(marker.ranges.isEmpty() || (marker.ranges.size() == 1 && atools::almostEqual(marker.ranges.first(), 0.f)))
     html.brText(tr("No distance"));
   else
   {

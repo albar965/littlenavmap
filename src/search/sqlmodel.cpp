@@ -672,13 +672,9 @@ Qt::SortOrder SqlModel::getSortOrder() const
 }
 
 /* Default data handler - simply returns the value */
-QVariant SqlModel::defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
+QVariant SqlModel::defaultDataHandler(int, int, const Column *, const QVariant&,
                                       const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(colIndex);
-  Q_UNUSED(rowIndex);
-  Q_UNUSED(col);
-  Q_UNUSED(value);
   if(role == Qt::DisplayRole)
     return displayRoleValue;
 

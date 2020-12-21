@@ -26,16 +26,6 @@
 #include <QDateTime>
 #include <QFile>
 
-AircraftTrack::AircraftTrack()
-{
-
-}
-
-AircraftTrack::~AircraftTrack()
-{
-
-}
-
 namespace at {
 
 QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos)

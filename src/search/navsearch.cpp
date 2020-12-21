@@ -64,7 +64,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   };
 
   // Show/hide all search options menu action
-  connect(ui->actionNavSearchShowAllOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionNavSearchShowAllOptions, &QAction::toggled, this, [ = ](bool state)
   {
     for(QAction *a: navSearchMenuActions)
       a->setChecked(state);
@@ -225,20 +225,20 @@ void NavSearch::connectSearchSlots()
                                        ui->actionNavSearchShowSceneryOptions});
 
   // Drop down menu actions
-  connect(ui->actionNavSearchShowTypeOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionNavSearchShowTypeOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->gridLayoutNavSearchType}, state,
                                               {ui->lineNavTypeSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state,
                                               {ui->lineNavDistanceSearch});
     updateButtonMenu();
   });
-  connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state,
                                               {ui->lineNavScenerySearch});
@@ -316,11 +316,9 @@ void NavSearch::restoreViewState(bool distSearchActive)
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
-QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                                      const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(roleValue)
-
   switch(role)
   {
     case Qt::DisplayRole:

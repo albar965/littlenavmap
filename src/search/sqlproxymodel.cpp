@@ -51,10 +51,8 @@ void SqlProxyModel::clearDistanceFilter()
 }
 
 /* Does the filtering by minimum and maximum distance and direction */
-bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
+bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex&) const
 {
-  Q_UNUSED(sourceParent);
-
   if(sourceSqlModel->isOverrideModeActive())
     return true;
 

@@ -49,8 +49,8 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPaintLayer::MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries)
-  : mapQuery(mapQueries), mapWidget(widget)
+MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
+  : mapWidget(widget)
 {
   // Create the layer configuration
   initMapLayerSettings();

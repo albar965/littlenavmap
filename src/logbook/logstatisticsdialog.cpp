@@ -469,18 +469,16 @@ void LogStatisticsDialog::initQueries()
   };
 }
 
-void LogStatisticsDialog::showEvent(QShowEvent *event)
+void LogStatisticsDialog::showEvent(QShowEvent *)
 {
   qDebug() << Q_FUNC_INFO;
-  Q_UNUSED(event);
   setModel();
   updateWidgets();
 }
 
-void LogStatisticsDialog::hideEvent(QHideEvent *event)
+void LogStatisticsDialog::hideEvent(QHideEvent *)
 {
   qDebug() << Q_FUNC_INFO;
-  Q_UNUSED(event);
 
   // Disconnect from database if not shown
   clearModel();

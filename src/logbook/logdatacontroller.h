@@ -70,7 +70,7 @@ class LogdataController :
 
 public:
   LogdataController(atools::fs::userdata::LogdataManager *logdataManager, MainWindow *parent);
-  virtual ~LogdataController();
+  virtual ~LogdataController() override;
 
   /* Show edit dialog and save changes to the database if accepted for the given ids */
   void editLogEntries(const QVector<int>& ids);

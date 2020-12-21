@@ -69,7 +69,6 @@ MapPainterMark::~MapPainterMark()
 void MapPainterMark::render()
 {
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
 
   map::MapMarkTypes types = NavApp::getMapMarkHandler()->getMarkTypes();
 
@@ -451,7 +450,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       }
     }
 
-    painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, (outerlinewidth - innerlinewidth) / 2.f,
+    painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, (outerlinewidth - innerlinewidth) / 2.,
                          Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->setBrush(Qt::white);
     QPolygonF arrow = buildArrow(outerlinewidth);
@@ -812,7 +811,6 @@ void MapPainterMark::paintCompassRose()
   if(context->objectDisplayTypes & map::COMPASS_ROSE && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
   {
     atools::util::PainterContextSaver saver(context->painter);
-    Q_UNUSED(saver);
 
     Marble::GeoPainter *painter = context->painter;
     const atools::fs::sc::SimConnectUserAircraft& aircraft = mapPaintWidget->getUserAircraft();

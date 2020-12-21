@@ -573,11 +573,9 @@ float AircraftPerfController::cruiseAlt()
   return alt;
 }
 
-void AircraftPerfController::routeChanged(bool geometryChanged, bool newFlightplan)
+void AircraftPerfController::routeChanged(bool, bool)
 {
   qDebug() << Q_FUNC_INFO;
-  Q_UNUSED(geometryChanged);
-  Q_UNUSED(newFlightplan);
   perfHandler->setCruiseAltitude(cruiseAlt());
   updateReport();
   updateReportCurrent();
@@ -590,10 +588,9 @@ void AircraftPerfController::updateReports()
   updateReportCurrent();
 }
 
-void AircraftPerfController::routeAltitudeChanged(float altitudeFeet)
+void AircraftPerfController::routeAltitudeChanged(float)
 {
   qDebug() << Q_FUNC_INFO;
-  Q_UNUSED(altitudeFeet);
 
   perfHandler->setCruiseAltitude(cruiseAlt());
   updateReport();

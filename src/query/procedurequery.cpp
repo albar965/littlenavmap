@@ -1756,7 +1756,8 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
             intersect =
               Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(),
                                        // Leg might have no course and calculated is not available yet
-                                       next->course == 0 || next->course == map::INVALID_COURSE_VALUE ?
+                                       atools::almostEqual(next->course, 0.f) ||
+                                       !(next->course < map::INVALID_COURSE_VALUE) ?
                                        next->line.angleDeg() : next->trueCourse);
 
           leg.line.setPos1(start);

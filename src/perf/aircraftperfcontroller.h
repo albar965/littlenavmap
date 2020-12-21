@@ -126,9 +126,9 @@ public:
   bool isWindManual() const;
 
   /* Sent back after aircraftPerformanceChanged was sent from here */
-  void routeChanged(bool geometryChanged, bool newFlightplan = false);
+  void routeChanged(bool, bool = false);
   void updateReports();
-  void routeAltitudeChanged(float altitudeFeet);
+  void routeAltitudeChanged(float);
 
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
 

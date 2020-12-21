@@ -53,7 +53,6 @@ void MapPainterUser::render()
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
 
   context->szFont(context->textSizeNavaid);
 

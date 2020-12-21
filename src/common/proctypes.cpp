@@ -907,7 +907,6 @@ QString procedureTypeText(const proc::MapProcedureLeg& leg)
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type)
 {
   QDebugStateSaver saver(out);
-  Q_UNUSED(saver);
 
   QStringList flags;
   if(type == PROCEDURE_NONE)

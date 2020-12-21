@@ -38,7 +38,7 @@ class TimeDialog :
 
 public:
   explicit TimeDialog(QWidget *parent, const QDateTime& datetime);
-  virtual ~TimeDialog();
+  virtual ~TimeDialog() override;
 
   QDateTime getDateTime() const;
 

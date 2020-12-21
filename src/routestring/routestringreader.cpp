@@ -77,8 +77,8 @@ struct RouteStringReader::ParseEntry
   map::MapResult result;
 };
 
-RouteStringReader::RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder, bool verboseParam)
-  : verbose(verboseParam), entryBuilder(flightplanEntryBuilder)
+RouteStringReader::RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder)
+  : entryBuilder(flightplanEntryBuilder)
 {
   mapQuery = NavApp::getMapQuery();
   airportQuerySim = NavApp::getAirportQuerySim();

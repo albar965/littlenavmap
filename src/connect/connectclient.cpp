@@ -627,9 +627,8 @@ bool ConnectClient::isConnectedNetwork() const
 }
 
 /* Called by signal QAbstractSocket::error */
-void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
+void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
 {
-  Q_UNUSED(error);
   // qDebug() << Q_FUNC_INFO << error;
 
   reconnectNetworkTimer.stop();

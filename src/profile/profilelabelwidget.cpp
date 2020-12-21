@@ -55,10 +55,8 @@ void ProfileLabelWidget::contextMenuEvent(QContextMenuEvent *event)
   profileWidget->showContextMenu(globalpoint);
 }
 
-void ProfileLabelWidget::paintEvent(QPaintEvent *event)
+void ProfileLabelWidget::paintEvent(QPaintEvent *)
 {
-  Q_UNUSED(event);
-
   // qDebug() << Q_FUNC_INFO;
   int w = rect().width(), h = rect().height();
 

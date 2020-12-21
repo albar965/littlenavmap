@@ -161,7 +161,7 @@ public:
   /* Can be used as function pointers for conversion. fromCopy is a dummy returning the same value */
   static float fromUsToMetric(float value, bool fuelAsVolume);
   static float fromMetricToUs(float value, bool fuelAsVolume);
-  static float fromCopy(float value, bool fuelAsVolume);
+  static float fromCopy(float value, bool);
 
   /* Coordinates: Returns either decimal or sexagesimal notation */
   static QString coords(const atools::geo::Pos& pos);

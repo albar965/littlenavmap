@@ -133,8 +133,6 @@ void WebController::startServer()
   if(!listener->isListening())
   {
     // Not listening - display error dialog ====================================================
-    QString localErrorString = listener->errorString();
-
     QMessageBox::warning(parentWidget, QApplication::applicationName(),
                          tr("Unable to start the server. Error:\n%1.").arg(listener->errorString()));
     stopServer();

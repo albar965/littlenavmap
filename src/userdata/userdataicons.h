@@ -67,8 +67,6 @@ public:
 private:
   void loadIcon(const QFileInfo& entry);
 
-  MainWindow *mainWindow;
-
   /* Maps type to filepath */
   QMap<QString, QString> typeMap;
 

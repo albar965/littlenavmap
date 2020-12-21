@@ -817,8 +817,7 @@ float Unit::fromMetricToUs(float value, bool fuelAsVolume)
   return fuelAsVolume ? atools::geo::literToGallon(value) : atools::geo::kgToLbs(value);
 }
 
-float Unit::fromCopy(float value, bool fuelAsVolume)
+float Unit::fromCopy(float value, bool)
 {
-  Q_UNUSED(fuelAsVolume);
   return value;
 }

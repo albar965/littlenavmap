@@ -59,7 +59,7 @@ class UserdataDialog :
 
 public:
   UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, UserdataIcons *userdataIcons);
-  virtual ~UserdataDialog();
+  virtual ~UserdataDialog() override;
 
   /* Get changed data. If mode is EDIT_MULTIPLE only a part of the columns are set */
   const atools::sql::SqlRecord& getRecord() const

@@ -515,7 +515,7 @@ void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId,
   query.exec();
 
   // Get all start positions
-  QList<map::MapStart> starts;
+  QVector<map::MapStart> starts;
   while(query.next())
   {
     map::MapStart s;
@@ -941,7 +941,6 @@ void AirportQuery::initQueries()
 {
   // Common where clauses
   static const QString whereRect("lonx between :leftx and :rightx and laty between :bottomy and :topy");
-  static const QString whereIdentRegion("ident = :ident and region like :region");
   static const QString whereLimit("limit " + QString::number(map::MAX_MAP_OBJECTS));
 
   QStringList const airportQueryBase = airportColumns(db);

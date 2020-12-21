@@ -55,8 +55,8 @@ public:
 
 private:
   virtual void updateButtonMenu() override;
-  virtual void saveViewState(bool distSearchActive) override;
-  virtual void restoreViewState(bool distSearchActive) override;
+  virtual void saveViewState(bool) override;
+  virtual void restoreViewState(bool) override;
   virtual void updatePushButtons() override;
   QAction *followModeAction() override;
 
@@ -64,7 +64,7 @@ private:
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
-  void overrideMode(const QStringList& overrideColumnTitles);
+  void overrideMode(const QStringList&);
 
   QList<QObject *> onlineClientSearchWidgets;
 

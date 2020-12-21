@@ -44,8 +44,8 @@ using atools::gui::ErrorHandler;
 using atools::gui::Dialog;
 using atools::sql::SqlQuery;
 
-HtmlExporter::HtmlExporter(QWidget *parent, SqlController *controller, int rowsPerPage)
-  : Exporter(parent, controller), pageSize(rowsPerPage)
+HtmlExporter::HtmlExporter(QWidget *parent, SqlController *controllerParam, int rowsPerPage)
+  : Exporter(parent, controllerParam), pageSize(rowsPerPage)
 {
 }
 

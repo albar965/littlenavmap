@@ -123,7 +123,7 @@ void UserdataSearch::connectSearchSlots()
   ui->toolButtonUserdata->addActions({ui->actionUserdataSearchShowMoreOptions});
 
   // Drop down menu actions
-  connect(ui->actionUserdataSearchShowMoreOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionUserdataSearchShowMoreOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutUserdataMore}, state,
                                               {ui->lineUserdataMore});
@@ -198,24 +198,20 @@ void UserdataSearch::restoreState()
   }
 }
 
-void UserdataSearch::saveViewState(bool distSearchActive)
+void UserdataSearch::saveViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET).save(NavApp::getMainUi()->tableViewUserdata);
 }
 
-void UserdataSearch::restoreViewState(bool distSearchActive)
+void UserdataSearch::restoreViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewUserdata);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
-QVariant UserdataSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+QVariant UserdataSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                                           const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(roleValue);
-
   switch(role)
   {
     case Qt::DisplayRole:

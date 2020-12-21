@@ -55,16 +55,6 @@ RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
 
 }
 
-RouteLeg::RouteLeg()
-{
-
-}
-
-RouteLeg::~RouteLeg()
-{
-
-}
-
 void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirport, const RouteLeg *prevLeg)
 {
   index = entryIndex;

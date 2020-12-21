@@ -42,7 +42,7 @@ class TrackManager
 
 public:
   explicit TrackManager(atools::sql::SqlDatabase *trackDatabase, atools::sql::SqlDatabase *navDatabase);
-  ~TrackManager();
+  virtual ~TrackManager() override;
 
   /* Clears database and loads the given tracks.
    * onlyValid: Do not load tracks that are currently not valid. */

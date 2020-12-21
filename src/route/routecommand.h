@@ -48,7 +48,7 @@ class RouteCommand :
 public:
   RouteCommand(RouteController *routeController, const atools::fs::pln::Flightplan& flightplanBefore,
                const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
-  virtual ~RouteCommand();
+  virtual ~RouteCommand() override;
 
   virtual void undo() override;
   virtual void redo() override;

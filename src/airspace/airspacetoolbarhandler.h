@@ -36,7 +36,7 @@ class AirspaceToolBarHandler :
 
 public:
   AirspaceToolBarHandler(MainWindow *parent);
-  virtual ~AirspaceToolBarHandler();
+  virtual ~AirspaceToolBarHandler() override;
 
   void createToolButtons();
 

@@ -47,7 +47,6 @@ void MapPainterWind::render()
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
 
   bool overflow = false;
   const atools::grib::WindPosList *windForRect =

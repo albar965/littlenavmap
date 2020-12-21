@@ -50,9 +50,6 @@ class AircraftTrack :
   private QList<at::AircraftTrackPos>
 {
 public:
-  AircraftTrack();
-  ~AircraftTrack();
-
   /* Saves and restores track into a separate file (little_navmap.track) */
   void saveState();
   void restoreState();

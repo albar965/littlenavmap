@@ -53,7 +53,7 @@ class PrintSupport
 
 public:
   PrintSupport(MainWindow *parent);
-  virtual ~PrintSupport();
+  virtual ~PrintSupport() override;
 
   /* Open preview for the current map view */
   void printMap();

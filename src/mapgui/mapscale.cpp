@@ -38,9 +38,9 @@ bool MapScale::update(ViewportParams *viewportParams, double distance)
   viewport = viewportParams;
   CoordinateConverter converter(viewportParams);
 
-  if(distance != lastDistance ||
-     viewportParams->centerLatitude() != lastCenterLatYRad ||
-     viewportParams->centerLongitude() != lastCenterLonXRad ||
+  if(atools::almostNotEqual(distance, lastDistance) ||
+     atools::almostNotEqual(viewportParams->centerLatitude(), lastCenterLatYRad) ||
+     atools::almostNotEqual(viewportParams->centerLongitude(), lastCenterLonXRad) ||
      viewportParams->projection() != lastProjection)
   {
     // zoom, center of projection has changed

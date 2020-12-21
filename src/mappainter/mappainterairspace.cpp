@@ -75,7 +75,6 @@ void MapPainterAirspace::render()
   {
     Marble::GeoPainter *painter = context->painter;
     atools::util::PainterContextSaver saver(painter);
-    Q_UNUSED(saver);
 
     painter->setBackgroundMode(Qt::TransparentMode);
 

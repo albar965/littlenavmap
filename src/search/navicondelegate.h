@@ -33,7 +33,7 @@ class NavIconDelegate :
 
 public:
   NavIconDelegate(const ColumnList *columns);
-  virtual ~NavIconDelegate();
+  virtual ~NavIconDelegate() override;
 
 private:
   const ColumnList *cols;

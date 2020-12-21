@@ -130,7 +130,7 @@ class NavApp :
 
 public:
   NavApp(int& argc, char **argv, int flags = ApplicationFlags);
-  virtual ~NavApp();
+  virtual ~NavApp() override;
 
   static NavApp *navAppInstance();
 

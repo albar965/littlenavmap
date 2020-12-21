@@ -231,8 +231,7 @@ private:
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *vorByWaypointIdQuery = nullptr,
                         *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *ilsQuerySimByName = nullptr,
-                        *vorNearestQuery = nullptr,
-                        *ndbNearestQuery = nullptr, *userdataPointByIdQuery = nullptr;
+                        *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

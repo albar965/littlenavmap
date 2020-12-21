@@ -43,7 +43,7 @@ public:
    * downloadAvailable = download is available
    */
   explicit UpdateDialog(QWidget *parent, bool manualCheck, bool downloadAvailable);
-  ~UpdateDialog();
+  virtual ~UpdateDialog() override;
 
   /* HTML text and URL for the download button */
   void setMessage(const QString& text, const QUrl& url);

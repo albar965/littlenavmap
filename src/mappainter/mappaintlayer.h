@@ -59,7 +59,7 @@ class MapPaintLayer :
   public Marble::LayerInterface
 {
 public:
-  MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries);
+  MapPaintLayer(MapPaintWidget *widget);
   virtual ~MapPaintLayer() override;
 
   void copySettings(const MapPaintLayer& other);
@@ -197,9 +197,6 @@ private:
   MapPainterAltitude *mapPainterAltitude;
   MapPainterWeather *mapPainterWeather;
   MapPainterWind *mapPainterWind;
-
-  /* Database source */
-  MapQuery *mapQuery = nullptr;
 
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;

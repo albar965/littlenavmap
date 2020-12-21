@@ -930,7 +930,6 @@ bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteE
     RouteExportData exportData = createRouteExportData(type);
     if(routeExportDialog(exportData, type))
     {
-      QString typeStr = RouteExportDialog::getRouteTypeAsDisplayString(type);
       QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
       if(!routeFile.isEmpty())
       {
@@ -1103,11 +1102,6 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   // Check for valid airports for departure and destination ================================
   if(validateDepartAndDest && (!route.hasValidDeparture() || !route.hasValidDestination()))
   {
-    const static atools::gui::DialogButtonList BUTTONS({
-      {QString(), QMessageBox::Cancel},
-      {tr("Select Start &Position"), QMessageBox::Yes},
-      {QString(), QMessageBox::Save}
-    });
     QString message;
 
     if(multi)

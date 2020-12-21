@@ -52,7 +52,7 @@ class InfoController :
 
 public:
   InfoController(MainWindow *parent);
-  virtual ~InfoController();
+  virtual ~InfoController() override;
 
   /* Populates all tabs in the information dock with the given results. Only one airport is shown
    * but multiple navaids can be shown in the tab.

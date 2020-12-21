@@ -73,7 +73,7 @@ class OnlinedataController :
 
 public:
   OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent);
-  virtual ~OnlinedataController();
+  virtual ~OnlinedataController() override;
 
   /* Start download and after downloading timer which triggers recurring download */
   void startProcessing();

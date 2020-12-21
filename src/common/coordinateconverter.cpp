@@ -38,10 +38,6 @@ CoordinateConverter::CoordinateConverter(const ViewportParams *viewportParams)
 {
 }
 
-CoordinateConverter::~CoordinateConverter()
-{
-}
-
 bool CoordinateConverter::isHidden(const atools::geo::Pos& coords) const
 {
   qreal xr, yr;
@@ -325,8 +321,8 @@ bool CoordinateConverter::sToW(int x, int y, atools::geo::Pos& pos) const
   qreal lon, lat;
   bool visible = viewport->geoCoordinates(x, y, lon, lat, DEG);
 
-  pos.setLonX(lon);
-  pos.setLatY(lat);
+  pos.setLonX(static_cast<float>(lon));
+  pos.setLatY(static_cast<float>(lat));
   return visible;
 }
 

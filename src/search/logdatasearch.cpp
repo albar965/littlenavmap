@@ -165,13 +165,13 @@ void LogdataSearch::connectSearchSlots()
   ui->toolButtonLogdata->addActions({ui->actionLogdataSearchShowMoreOptions, ui->actionLogdataSearchShowDistOptions});
 
   // Drop down menu actions
-  connect(ui->actionLogdataSearchShowMoreOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionLogdataSearchShowMoreOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->verticalLayoutLogdataMore}, state, {ui->lineLogdataMore});
     updateButtonMenu();
   });
 
-  connect(ui->actionLogdataSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionLogdataSearchShowDistOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutLogdataDist}, state, {ui->lineLogdataMoreDist});
     updateButtonMenu();
@@ -243,24 +243,20 @@ void LogdataSearch::restoreState()
   }
 }
 
-void LogdataSearch::saveViewState(bool distSearchActive)
+void LogdataSearch::saveViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_LOGDATA_VIEW_WIDGET).save(NavApp::getMainUi()->tableViewLogdata);
 }
 
-void LogdataSearch::restoreViewState(bool distSearchActive)
+void LogdataSearch::restoreViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_LOGDATA_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewLogdata);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
-QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                                          const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(roleValue);
-
   switch(role)
   {
     case Qt::DisplayRole:

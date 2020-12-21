@@ -27,7 +27,7 @@ class QDir;
  */
 class DirTool
 {
-  Q_DECLARE_TR_FUNCTIONS(DirTool);
+  Q_DECLARE_TR_FUNCTIONS(DirTool)
 
 public:
   /*

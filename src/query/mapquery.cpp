@@ -994,9 +994,6 @@ void MapQuery::initQueries()
   static const QString ndbQueryBase(
     "ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty ");
 
-  static const QString parkingQueryBase(
-    "parking_id, airport_id, type, name, airline_codes, number, radius, heading, has_jetway, lonx, laty ");
-
   static const QString ilsQueryBase(
     "ils_id, ident, name, region, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
     "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty");

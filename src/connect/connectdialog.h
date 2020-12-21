@@ -47,7 +47,7 @@ class ConnectDialog :
 
 public:
   ConnectDialog(QWidget *parent, bool simConnectAvailable);
-  ~ConnectDialog();
+  virtual ~ConnectDialog() override;
 
   /* Get hostname as entered in the edit field */
   QString getRemoteHostname() const;

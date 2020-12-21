@@ -40,7 +40,7 @@ class ParkingDialog :
 
 public:
   ParkingDialog(QWidget *parent, const map::MapAirport& departureAirport);
-  virtual ~ParkingDialog();
+  virtual ~ParkingDialog() override;
 
   /* Get selected parking spot
    * @return true if parking was selected */

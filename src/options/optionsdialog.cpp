@@ -2428,7 +2428,7 @@ void OptionsDialog::updateWebDocrootStatus()
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Directory does not exist.")));
     else if(!fileinfo.isDir())
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Is not a directory.")));
-    else if(!QFileInfo(path + QDir::separator() + "index.html").exists())
+    else if(!QFileInfo::exists(path + QDir::separator() + "index.html"))
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::warningMessage(tr("Warning: No file \"index.html\" found.")));
     else
       ui->labelOptionWebDocrootStatus->setText(tr("Document root is valid."));
