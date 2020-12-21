@@ -326,9 +326,6 @@ const QLatin1Literal FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 const QLatin1Literal FILE_PATTERN_XPLANE_METAR("(METAR.rwx)");
 const QLatin1Literal FILE_PATTERN_XPLANE_LOGBOOK("(X-Plane*Pilot.txt)"); /* Need * since file dialog fails on spaces */
 
-const QLatin1Literal FILE_PATTERN_IMAGE("(*.jpg *.jpeg *.png *.bmp)");
-const QLatin1Literal FILE_PATTERN_IMAGE_AVITAB("(*.png *.jpeg)");
-
 /* Sqlite database names */
 const QLatin1Literal DATABASE_DIR("little_navmap_db");
 const QLatin1Literal DATABASE_PREFIX("little_navmap_");

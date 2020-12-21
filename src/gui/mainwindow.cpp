@@ -2744,15 +2744,34 @@ void MainWindow::mapSaveImage()
   QPixmap pixmap;
   if(createMapImage(pixmap, tr(" - Save Map as Image"), lnm::IMAGE_EXPORT_DIALOG))
   {
+    int filterIndex = -1;
+
     QString imageFile = dialog->saveFileDialog(
-      tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
+      tr("Save Map as Image"),
+      tr("JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)"),
       "jpg", "MainWindow/",
       atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
-      arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")));
+      arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")),
+      false /* confirm overwrite */,
+      false /* autoNumber */,
+      &filterIndex);
 
     if(!imageFile.isEmpty())
     {
-      if(!pixmap.save(imageFile, nullptr, 95))
+      const char *format = nullptr;
+      if(!imageFile.endsWith("jpg", Qt::CaseInsensitive) && !imageFile.endsWith("jpeg", Qt::CaseInsensitive) &&
+         !imageFile.endsWith("png", Qt::CaseInsensitive) && !imageFile.endsWith("bmp", Qt::CaseInsensitive))
+      {
+        // Did not give file extension - check by looking at selected filter
+        if(filterIndex == 0)
+          format = "jpg";
+        else if(filterIndex == 1)
+          format = "png";
+        else if(filterIndex == 2)
+          format = "bmp";
+      }
+
+      if(!pixmap.save(imageFile, format, 95))
         atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
       else
         setStatusMessage(tr("Map image saved."));
@@ -2775,21 +2794,35 @@ void MainWindow::mapSaveImageAviTab()
         if(routeController->getRoute().isEmpty())
           defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
         else
-          defaultFileName = routeExport->buildDefaultFilenameShort("_", ".png");
+          defaultFileName = routeExport->buildDefaultFilenameShort("_", ".jpg");
+
+        int filterIndex = -1;
 
         QString imageFile = dialog->saveFileDialog(
           tr("Save Map as Image for AviTab"),
-          tr("AviTab Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE_AVITAB),
-          "png", "MainWindow/AviTab",
+          tr("JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;All Files (*)"),
+          "jpg", "MainWindow/AviTab",
           NavApp::getCurrentSimulatorBasePath() +
           QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
           QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
-          false /* confirm overwrite */);
+          false /* confirm overwrite */,
+          false /* autoNumber */,
+          &filterIndex);
 
         if(!imageFile.isEmpty())
         {
+          const char *format = nullptr;
+          if(!imageFile.endsWith("jpg", Qt::CaseInsensitive) && !imageFile.endsWith("jpeg", Qt::CaseInsensitive) &&
+             !imageFile.endsWith("png", Qt::CaseInsensitive))
+          {
+            // Did not give file extension - check by looking at selected filter
+            if(filterIndex == 0)
+              format = "jpg";
+            else if(filterIndex == 1)
+              format = "png";
+          }
 
-          if(!pixmap.save(imageFile, nullptr, 95))
+          if(!pixmap.save(imageFile, format, 95))
             atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
           else
           {
