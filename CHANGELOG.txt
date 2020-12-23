@@ -12,16 +12,25 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 
 ## Changes from 2.6.6 to 2.6.7
 
-* Corrected issue where status bar was hidden on first start after first installation in dock handler.
+* Corrected issue where status bar was hidden on first start after first installation in dock
+  handler.
 * Now forcing status bar to be visible when updating from any older version to 2.6.7.
-* Fix for Windows removing file extensions when hidden in Window explorer. This prevented saving of map images.
+* Fix for Windows removing file extensions when these are hidden in Window explorer. This prevented
+  saving of map images.
 
-* Now also including MSFS scenery with content type `CORE` which kept *Little Navmap* from loading certain add-on airports.
-* Now skipping file `maintenance.bgl` from Navigraph update in MSFS scenery library which causes error messages when loading scenery library.
+* Now also including MSFS scenery with content type `CORE` which kept *Little Navmap* from loading
+  some add-on airports.
+* Now skipping file `maintenance.bgl` from Navigraph update in MSFS scenery library which causes
+  error messages when loading.
 
-* Fixed issue where wrong `Too many objects` message was shown and map performance degraded when enabling tracks.
-* Corrected drawing for several procedure leg types and labels in elevation profile. Removed fix ident for vector legs.
-* Measurement lines now use the declination at the end to calculate magnetic great circle course at end of line.
+* Corrected drawing for several procedure leg types and labels in elevation profile.
+* Fixed cut off altitude labels on the elevation profile left area.
+
+* Measurement lines now use the declination at the end to calculate magnetic great circle course at
+  end of line. The start course is still calculated based on start declination or attached
+  navaid declination.
+* Fixed issue where wrong `Too many objects` message was shown and map performance degraded with
+  tracks enabled.
 * Fixed several issues when centering route or flight plan legs with very long flight plans.
 * Now painting full aircraft track even when jumping long distances.
 * Fixed issues when painting track around the anti-meridian.

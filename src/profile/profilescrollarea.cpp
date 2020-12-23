@@ -48,7 +48,7 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
 
   // Create label widget on the left
   labelWidget = new ProfileLabelWidget(profileWidget, this);
-  labelWidget->setMinimumWidth(65);
+  labelWidget->setMinimumWidth(1); // Setting to 0 hides the widget
   ui->gridLayoutProfileDrawing->replaceWidget(ui->widgetProfileLabelLeft, labelWidget);
 
   // Update splitter icon and color
