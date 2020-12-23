@@ -22,6 +22,7 @@
 #include "navapp.h"
 #include "atools.h"
 #include "common/mapcolors.h"
+#include "common/settingsmigrate.h"
 #include "gui/stylehandler.h"
 #include "util/htmlbuilder.h"
 #include "fs/common/morareader.h"
@@ -2643,6 +2644,11 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
       QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
 
       setStatusMessage(tr("Window layout loaded and restored."));
+
+      ui->actionShowStatusbar->blockSignals(true);
+      ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+      ui->actionShowStatusbar->blockSignals(false);
+
       return true;
     }
   }
@@ -3215,8 +3221,6 @@ void MainWindow::mainWindowShown()
 
   mapWidget->showSavedPosOnStartup();
 
-  atools::gui::Application::sendFontChanged();
-
   // Show a warning if SSL was not intiaized properly. Can happen if the redist packages are not installed.
   if(!QSslSocket::supportsSsl())
   {
@@ -3422,6 +3426,19 @@ void MainWindow::mainWindowShownDelayed()
   // Raise all floating docks and focus map widget
   raiseFloatingWindows();
 
+  ui->actionShowStatusbar->blockSignals(true);
+  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+  ui->actionShowStatusbar->blockSignals(false);
+
+  if(migrate::getOptionsVersion().isValid() &&
+     migrate::getOptionsVersion() <= atools::util::Version("2.6.6") &&
+     atools::util::Version(QApplication::applicationVersion()) == atools::util::Version("2.6.7"))
+  {
+    qDebug() << Q_FUNC_INFO << "Fixing status bar visibility";
+    ui->actionShowStatusbar->setChecked(true);
+    ui->statusBar->setVisible(true);
+  }
+
   NavApp::setMainWindowVisible();
 }
 
@@ -3451,6 +3468,9 @@ void MainWindow::fullScreenOn()
 
   mapWidget->addFullScreenExitButton();
   mapWidget->setFocus();
+  ui->actionShowStatusbar->blockSignals(true);
+  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+  ui->actionShowStatusbar->blockSignals(false);
 }
 
 void MainWindow::fullScreenOff()
@@ -3467,6 +3487,9 @@ void MainWindow::fullScreenOff()
     ui->dockWidgetMap->setTitleBarWidget(nullptr);
     delete oldTitleBar;
   }
+  ui->actionShowStatusbar->blockSignals(true);
+  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+  ui->actionShowStatusbar->blockSignals(false);
 }
 
 void MainWindow::fullScreenMapToggle()
@@ -3532,8 +3555,6 @@ void MainWindow::updateActionStates()
 
   if(NavApp::isShuttingDown())
     return;
-
-  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
@@ -3680,6 +3701,10 @@ void MainWindow::resetWindowLayout()
   ui->actionShowFullscreenMap->blockSignals(true);
   ui->actionShowFullscreenMap->setChecked(false);
   ui->actionShowFullscreenMap->blockSignals(false);
+
+  ui->actionShowStatusbar->setChecked(true);
+  ui->statusBar->setVisible(true);
+  ui->menuBar->setVisible(true);
 }
 
 /* Read settings for all windows, docks, controller and manager classes */
@@ -3688,7 +3713,6 @@ void MainWindow::restoreStateMain()
   qDebug() << Q_FUNC_INFO << "enter";
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.restore(ui->statusBar);
 
   Settings& settings = Settings::instance();
 
@@ -3701,6 +3725,10 @@ void MainWindow::restoreStateMain()
     ui->actionShowFullscreenMap->blockSignals(true);
     ui->actionShowFullscreenMap->setChecked(dockHandler->isFullScreen());
     ui->actionShowFullscreenMap->blockSignals(false);
+
+    ui->actionShowStatusbar->blockSignals(true);
+    ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+    ui->actionShowStatusbar->blockSignals(false);
   }
   else
     // Use default state saved in application
@@ -3985,7 +4013,6 @@ void MainWindow::saveMainWindowStates()
   qDebug() << Q_FUNC_INFO;
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save(ui->statusBar);
 
   Settings& settings = Settings::instance();
   settings.setValueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER, dockHandler->saveState());
