@@ -952,7 +952,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.drawPolyline(altLegs.at(activeRouteLeg));
     }
 
-    // Draw flightplan symbols ======================================================
+    // =============================================================================
+    // Draw flightplan symbols and labels ======================================================
 
     // Calculate symbol sizes
     float sizeScaleSymbol = 1.f;
@@ -961,9 +962,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int airportSize = atools::roundToInt((optData.getDisplaySymbolSizeAirport() * sizeScaleSymbol / 100.) * 10.);
 
     painter.setBackgroundMode(Qt::TransparentMode);
-
-    // Draw the most unimportant symbols and texts first ============================
     mapcolors::scaleFont(&painter, optData.getDisplayTextSizeFlightplan() / 100.f, &painter.font());
+
+    // Draw the most unimportant symbols and texts first - userpoints, invalid and procedure ============================
     int waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
@@ -973,73 +974,91 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
 
-      QPoint symPt(altLegs.at(waypointIndex).last());
-
-      map::MapTypes type = leg.getMapObjectType();
+      QColor color;
+      QStringList texts;
+      bool procSymbol = false;
+      textsAndColorForLeg(texts, color, procSymbol, leg);
 
       // Symbols ========================================================
-      if(type == map::WAYPOINT || leg.getWaypoint().isValid())
-        symPainter.drawWaypointSymbol(&painter, QColor(), symPt.x(), symPt.y(), waypointSize, true);
-      else if(type == map::USERPOINTROUTE)
-        symPainter.drawUserpointSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
-      else if(type == map::INVALID)
-        symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symPt.x(), symPt.y(), 9, true);
-      else if(type == map::PROCEDURE)
-        // Missed is not included
-        symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
+      QPoint symPt(altLegs.at(waypointIndex).last());
+      if(!procSymbol)
+      {
+        // Draw all except airport, waypoint, VOR and NDB
+        map::MapTypes type = leg.getMapObjectType();
+        if(type == map::AIRPORT || leg.getAirport().isValid() ||
+           type == map::WAYPOINT || leg.getWaypoint().isValid() ||
+           type == map::VOR || leg.getVor().isValid() ||
+           type == map::NDB || leg.getNdb().isValid())
+          continue;
+        else if(type == map::USERPOINTROUTE)
+          symPainter.drawUserpointSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
+        else if(type == map::INVALID)
+          symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symPt.x(), symPt.y(), 9, true);
+        else if(type == map::PROCEDURE)
+          // Missed is not included
+          symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
+      }
       else
-        continue;
+        symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
 
       if(routeIndex >= activeRouteLeg - 1)
       {
         // Procedure symbols ========================================================
         if(leg.isAnyProcedure())
-          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, leg.getProcedureLeg().flyover,
-                                           leg.getProcedureLeg().malteseCross);
+          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6,
+                                           leg.getProcedureLeg().flyover, leg.getProcedureLeg().malteseCross);
 
-        if(!leg.getProcedureLeg().noIdentDisplay())
-        {
-          // Labels ========================================================
-          int symytxt = std::min(symPt.y() + 14, h);
-          QColor col(mapcolors::routeUserPointColor);
-          QStringList texts;
-
-          if(type == map::WAYPOINT || leg.getWaypoint().isValid())
-          {
-            texts.append(leg.getIdent());
-            col = mapcolors::waypointSymbolColor;
-          }
-          else if(type == map::VOR || leg.getVor().isValid())
-          {
-            texts.append(leg.getIdent());
-            col = mapcolors::vorSymbolColor;
-          }
-          else if(type == map::NDB || leg.getVor().isValid())
-          {
-            texts.append(leg.getIdent());
-            col = mapcolors::ndbSymbolColor;
-          }
-          else if(type == map::USERPOINTROUTE)
-            texts.append(leg.getIdent());
-          else if(type == map::INVALID)
-          {
-            texts.append(leg.getIdent());
-            col = mapcolors::routeInvalidPointColor;
-          }
-          else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
-            // Custom approach
-            texts.append(leg.getIdent());
-
-          texts.append(leg.getProcedureLeg().displayText);
-          texts.removeAll(QString());
-          texts = atools::elideTextShort(texts, 15);
-
-          symPainter.textBox(&painter, texts, col, symPt.x() + 5, symytxt, textatt::ROUTE_BG_COLOR, 255);
-        }
+        // Labels ========================
+        symPainter.textBox(&painter, texts, color, symPt.x() + 5,
+                           std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
       }
     }
 
-    // Draw the more important radio navaids
+    // Draw waypoints ============================
+    waypointIndex = waypointX.size();
+    for(int routeIndex : indexes)
+    {
+      const RouteLeg& leg = route.value(routeIndex);
+
+      waypointIndex--;
+      if(altLegs.at(waypointIndex).isEmpty())
+        continue;
+
+      QColor color;
+      QStringList texts;
+      bool procSymbol = false;
+      textsAndColorForLeg(texts, color, procSymbol, leg);
+
+      // Symbols ========================================================
+      QPoint symPt(altLegs.at(waypointIndex).last());
+      if(!procSymbol)
+      {
+        // Draw all except airport, VOR, NDB and userpoint
+        map::MapTypes type = leg.getMapObjectType();
+        if(type == map::AIRPORT || leg.getAirport().isValid() ||
+           type == map::VOR || leg.getVor().isValid() ||
+           type == map::NDB || leg.getNdb().isValid() ||
+           type == map::USERPOINTROUTE || type == map::INVALID)
+          continue;
+        else if(type == map::WAYPOINT || leg.getWaypoint().isValid())
+          symPainter.drawWaypointSymbol(&painter, QColor(), symPt.x(), symPt.y(), waypointSize, true);
+      }
+      // else procedure symbols drawn before
+
+      // Labels ========================
+      if(routeIndex >= activeRouteLeg - 1)
+      {
+        // Procedure symbols ========================================================
+        if(leg.isAnyProcedure())
+          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6,
+                                           leg.getProcedureLeg().flyover, leg.getProcedureLeg().malteseCross);
+
+        symPainter.textBox(&painter, texts, color, symPt.x() + 5,
+                           std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
+      }
+    }
+
+    // Draw the more important radio navaids =======================================================
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
@@ -1048,38 +1067,40 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
 
-      QPoint symPt(altLegs.at(waypointIndex).last());
-
-      map::MapTypes type = leg.getMapObjectType();
+      QColor color;
+      QStringList texts;
+      bool procSymbol = false;
+      textsAndColorForLeg(texts, color, procSymbol, leg);
 
       // Symbols ========================================================
-      if(type == map::NDB || leg.getNdb().isValid())
-        symPainter.drawNdbSymbol(&painter, symPt.x(), symPt.y(), navaidSize, true, false);
-      else if(type == map::VOR || leg.getVor().isValid())
-        symPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, true, false, false);
-      else
-        continue;
+      QPoint symPt(altLegs.at(waypointIndex).last());
+      if(!procSymbol)
+      {
+        // Draw all except airport, waypoint and userpoint
+        map::MapTypes type = leg.getMapObjectType();
+        if(type == map::AIRPORT || leg.getAirport().isValid() ||
+           type == map::WAYPOINT || leg.getWaypoint().isValid() ||
+           type == map::USERPOINTROUTE || type == map::INVALID)
+          continue;
+        else if(type == map::NDB || leg.getNdb().isValid())
+          symPainter.drawNdbSymbol(&painter, symPt.x(), symPt.y(), navaidSize, true, false);
+        else if(type == map::VOR || leg.getVor().isValid())
+          symPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, true, false, false);
+      }
 
+      // Labels ========================
       if(routeIndex >= activeRouteLeg - 1)
       {
         // Procedure symbols ========================================================
         if(leg.isAnyProcedure())
-          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, leg.getProcedureLeg().flyover,
-                                           leg.getProcedureLeg().malteseCross);
-
-        if(!leg.getProcedureLeg().noIdentDisplay())
-        {
-          // Labels ========================================================
-          int symytxt = std::min(symPt.y() + 14, h);
-          if(type == map::NDB || leg.getNdb().isValid())
-            symPainter.drawNdbText(&painter, leg.getNdb(), symPt.x() + 5, symytxt, TEXTFLAGS, 10, true);
-          else if(type == map::VOR || leg.getVor().isValid())
-            symPainter.drawVorText(&painter, leg.getVor(), symPt.x() + 5, symytxt, TEXTFLAGS, 10, true);
-        }
+          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6,
+                                           leg.getProcedureLeg().flyover, leg.getProcedureLeg().malteseCross);
+        symPainter.textBox(&painter, texts, color, symPt.x() + 5,
+                           std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
       }
     }
 
-    // Draw the most important airport symbols
+    // Draw the most important airport symbols on top ============================================
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
@@ -1095,12 +1116,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         symPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, false, false,
                                      false);
 
+        // Labels ========================
         if(routeIndex >= activeRouteLeg - 1)
-        {
-          int symytxt = std::min(symPt.y() + 14, h);
-          symPainter.drawAirportText(&painter, leg.getAirport(), symPt.x() - 5, symytxt,
+          symPainter.drawAirportText(&painter, leg.getAirport(), symPt.x() - 5, std::min(symPt.y() + 14, h),
                                      optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
-        }
       }
     }
 
@@ -1273,6 +1292,58 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   mapcolors::darkenPainterRect(painter);
 
   scrollArea->updateLabelWidget();
+}
+
+void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg)
+{
+  map::MapTypes type = leg.getMapObjectType();
+  QString ident;
+  color = mapcolors::routeUserPointColor;
+
+  if(type == map::WAYPOINT || leg.getWaypoint().isValid())
+  {
+    ident = leg.getIdent();
+    color = mapcolors::waypointSymbolColor;
+  }
+  else if(type == map::VOR || leg.getVor().isValid())
+  {
+    ident = leg.getIdent();
+    color = mapcolors::vorSymbolColor;
+  }
+  else if(type == map::NDB || leg.getNdb().isValid())
+  {
+    ident = leg.getIdent();
+    color = mapcolors::ndbSymbolColor;
+  }
+  else if(type == map::USERPOINTROUTE)
+  {
+    ident = leg.getIdent();
+    color = mapcolors::routeUserPointColor;
+  }
+  else if(type == map::INVALID)
+    ident = leg.getIdent();
+  else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
+    // Custom approach
+    ident = leg.getIdent();
+
+  if(!leg.isAnyProcedure() ||
+     (!leg.getProcedureLeg().noIdentDisplay() && proc::procedureLegDrawIdent(leg.getProcedureLegType())))
+    texts.append(ident);
+
+  if(leg.isAnyProcedure())
+  {
+    if(leg.getProcedureLeg().noIdentDisplay() || !proc::procedureLegDrawIdent(leg.getProcedureLegType()))
+      color = mapcolors::routeUserPointColor;
+
+    procSymbol = !proc::procedureLegDrawIdent(leg.getProcedureLegType());
+  }
+  else
+    procSymbol = false;
+
+  if(leg.getProcedureLegType() != proc::START_OF_PROCEDURE)
+    texts.append(leg.getProcedureLeg().displayText);
+  texts.removeAll(QString());
+  texts = atools::elideTextShort(texts, 15);
 }
 
 /* Update signal from Marble elevation model */

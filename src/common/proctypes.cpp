@@ -994,6 +994,41 @@ bool procedureLegFixAtEnd(ProcedureLegType type)
     });
 }
 
+bool procedureLegDrawIdent(ProcedureLegType type)
+{
+  return atools::contains(type, {
+      ARC_TO_FIX,
+      // COURSE_TO_ALTITUDE,
+      // COURSE_TO_DME_DISTANCE,
+      COURSE_TO_FIX,
+      // COURSE_TO_INTERCEPT,
+      // COURSE_TO_RADIAL_TERMINATION,
+      DIRECT_TO_FIX,
+      // FIX_TO_ALTITUDE,
+      // TRACK_FROM_FIX_FROM_DISTANCE,
+      // TRACK_FROM_FIX_TO_DME_DISTANCE,
+      // FROM_FIX_TO_MANUAL_TERMINATION,
+      HOLD_TO_ALTITUDE,
+      HOLD_TO_FIX,
+      HOLD_TO_MANUAL_TERMINATION,
+      INITIAL_FIX,
+      // PROCEDURE_TURN,
+      CONSTANT_RADIUS_ARC,
+      TRACK_TO_FIX,
+      // HEADING_TO_ALTITUDE_TERMINATION,
+      // HEADING_TO_DME_DISTANCE_TERMINATION,
+      // HEADING_TO_INTERCEPT,
+      // HEADING_TO_MANUAL_TERMINATION,
+      // HEADING_TO_RADIAL_TERMINATION,
+
+      // DIRECT_TO_RUNWAY,
+      // CIRCLE_TO_LAND,
+      // STRAIGHT_IN,
+      START_OF_PROCEDURE,
+      // VECTORS
+    });
+}
+
 bool procedureLegFrom(ProcedureLegType type)
 {
   return atools::contains(type, {

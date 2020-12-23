@@ -1047,9 +1047,7 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
 
         vectorLeg.altRestriction.descriptor = proc::MapAltRestriction::NONE;
         // geometry is populated later
-        vectorLeg.fixType = nextLeg.fixType;
-        vectorLeg.fixRegion = nextLeg.fixRegion;
-        vectorLeg.fixIdent = nextLeg.fixIdent;
+
         vectorLeg.fixPos = nextLeg.fixPos;
         vectorLeg.line = Line(prevLeg.line.getPos2(), nextLeg.line.getPos2());
         nextLeg.line.setPos1(nextLeg.line.getPos2());
