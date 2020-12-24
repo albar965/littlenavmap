@@ -391,7 +391,7 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
   if(routeValidateMulti(format))
   {
     // <Documents>/Aerosoft/Airbus/Flightplans.
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".flp"));
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), "01.flp"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
