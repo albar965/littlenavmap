@@ -130,6 +130,7 @@ const QLatin1Literal MAINWINDOW_FIRSTAPPLICATIONSTART("MainWindow/FirstApplicati
 const QLatin1Literal MAINWINDOW_WIDGET("MainWindow/Widget");
 const QLatin1Literal MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler");
 const QLatin1Literal MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
+const QLatin1Literal MAINWINDOW_PLACE_ROUTE_CALC("MainWindow/PlaceRouteCalc");
 const QLatin1Literal MAP_DETAILFACTOR("Map/DetailFactor");
 const QLatin1Literal MAP_DISTANCEMARKERS("Map/DistanceMarkers");
 const QLatin1Literal MAP_TRAFFICPATTERNS("Map/TrafficPatterns");

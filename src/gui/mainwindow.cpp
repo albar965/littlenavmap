@@ -1727,6 +1727,13 @@ void MainWindow::actionShortcutCalcRouteTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetRouteCalc);
+
+  // Place window near cursor for first time show to avoid Qt positioning it randomly elsewhere
+  if(!Settings::instance().valueBool(lnm::MAINWINDOW_PLACE_ROUTE_CALC, false))
+  {
+    Settings::instance().setValue(lnm::MAINWINDOW_PLACE_ROUTE_CALC, true);
+    ui->dockWidgetRouteCalc->move(QCursor::pos() + QPoint(20, 20));
+  }
 }
 
 void MainWindow::actionShortcutAircraftPerformanceTriggered()

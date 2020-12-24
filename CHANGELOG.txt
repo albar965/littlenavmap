@@ -14,18 +14,17 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 
 * Corrected issue where status bar was hidden on first start after first installation in dock
   handler.
+* Flight plan calculation window changed to appear near cursor on first show to avoid random placement.
 * Now forcing status bar to be visible when updating from any older version to 2.6.7.
 * Fix for Windows removing file extensions when these are hidden in Window explorer. This prevented
   saving of map images.
-
+* Winds aloft now scanning for the latest dataset to avoid outdated reports.
 * Now also including MSFS scenery with content type `CORE` which kept *Little Navmap* from loading
   some add-on airports.
 * Now skipping file `maintenance.bgl` from Navigraph update in MSFS scenery library which causes
   error messages when loading.
-
 * Corrected drawing for several procedure leg types and labels in elevation profile.
 * Fixed cut off altitude labels on the elevation profile left area.
-
 * Measurement lines now use the declination at the end to calculate magnetic great circle course at
   end of line. The start course is still calculated based on start declination or attached
   navaid declination.
