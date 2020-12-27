@@ -199,7 +199,9 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &RouteController::fontChanged);
+#endif
 
   entryBuilder = new FlightplanEntryBuilder();
 

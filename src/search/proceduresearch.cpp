@@ -112,7 +112,9 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   airportQueryNav = NavApp::getAirportQueryNav();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &ProcedureSearch::fontChanged);
+#endif
   gridDelegate = new atools::gui::GridDelegate(treeWidget);
 
   treeWidget->setItemDelegate(gridDelegate);
