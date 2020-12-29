@@ -1336,74 +1336,83 @@ bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUs
 
 bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const QString& filename)
 {
-  QFile file(filename);
-  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  // <?xml version="1.0" encoding="utf-8"?>
+  // <FlightPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  // FlightType="IFR"
+  // Equipment="/L"
+  // CruiseAltitude="23000"
+  // CruiseSpeed="275"
+  // DepartureAirport="KBZN"
+  // DestinationAirport="KJAC"
+  // AlternateAirport="KSLC"
+  // Route="DCT 4529N11116W 4527N11114W 4524N11112W 4522N11110W DCT 4520N11110W 4519N11111W/N0276F220 4517N11113W 4516N11115W 4514N11115W/N0275F230 4509N11114W 4505N11113W 4504N11111W 4502N11107W 4500N11105W 4458N11104W 4452N11103W 4450N11105W/N0276F220 4449N11108W 4449N11111W 4449N11113W 4450N11116W 4451N11119W 4450N11119W/N0275F230 4448N11117W 4446N11116W DCT KWYS DCT 4440N11104W 4440N11059W 4439N11055W 4439N11052W 4435N11050W 4430N11050W 4428N11050W 4426N11044W 4427N11041W 4425N11035W 4429N11032W 4428N11031W 4429N11027W 4429N11025W 4432N11024W 4432N11022W 4432N11018W 4428N11017W 4424N11017W 4415N11027W/N0276F220 DCT 4409N11040W 4403N11043W DCT 4352N11039W DCT"
+  // Remarks="PBN/D2 DOF/181102 REG/N012SB PER/B RMK/TCAS SIMBRIEF"
+  // IsHeavy="false"
+  // EquipmentPrefix=""
+  // EquipmentSuffix="L"
+  // DepartureTime="2035"
+  // DepartureTimeAct="0"
+  // EnrouteHours="0"
+  // EnrouteMinutes="53"
+  // FuelHours="2"
+  // FuelMinutes="44"
+  // VoiceType="Full" />
+  QString xmlString;
+  QXmlStreamWriter writer(&xmlString);
+  writer.setCodec("UTF-8");
+
+  writer.writeStartDocument("1.0");
+  writer.writeStartElement("FlightPlan");
+
+  writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+  writer.writeAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+
+  writer.writeAttribute("FlightType", exportData.getFlightRules());
+  writer.writeAttribute("Equipment", exportData.getEquipment());
+  writer.writeAttribute("CruiseAltitude", QString::number(exportData.getCruiseAltitude()));
+  writer.writeAttribute("CruiseSpeed", QString::number(exportData.getSpeed()));
+  writer.writeAttribute("DepartureAirport", exportData.getDeparture());
+  writer.writeAttribute("DestinationAirport", exportData.getDestination());
+  writer.writeAttribute("AlternateAirport", exportData.getAlternate());
+  writer.writeAttribute("Route", exportData.getRoute());
+  writer.writeAttribute("Remarks", exportData.getRemarks());
+  writer.writeAttribute("IsHeavy", exportData.isHeavy() ? "true" : "false");
+  writer.writeAttribute("EquipmentPrefix", exportData.getEquipmentPrefix());
+  writer.writeAttribute("EquipmentSuffix", exportData.getEquipmentSuffix());
+
+  writer.writeAttribute("DepartureTime", exportData.getDepartureTime().toString("HHmm"));
+  writer.writeAttribute("DepartureTimeAct", exportData.getDepartureTimeActual().isNull() ?
+                        "0" : exportData.getDepartureTimeActual().toString("HHmm"));
+  int enrouteHours = exportData.getEnrouteMinutes() / 60;
+  writer.writeAttribute("EnrouteHours", QString::number(enrouteHours));
+  writer.writeAttribute("EnrouteMinutes", QString::number(exportData.getEnrouteMinutes() - enrouteHours * 60));
+  int enduranceHours = exportData.getEnduranceMinutes() / 60;
+  writer.writeAttribute("FuelHours", QString::number(enduranceHours));
+  writer.writeAttribute("FuelMinutes", QString::number(exportData.getEnduranceMinutes() - enduranceHours * 60));
+  writer.writeAttribute("VoiceType", exportData.getVoiceType());
+
+  writer.writeEndElement(); // FlightPlan
+  writer.writeEndDocument();
+
+  xmlString.replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+
+  // VoiceType="Full" />
+  xmlString.replace("\"/>", "\" />");
+
+  // Write XML to file ===================
+  QFile xmlFile(filename);
+  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    // <?xml version="1.0" encoding="utf-8"?>
-    // <FlightPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    // FlightType="IFR"
-    // Equipment="/L"
-    // CruiseAltitude="23000"
-    // CruiseSpeed="275"
-    // DepartureAirport="KBZN"
-    // DestinationAirport="KJAC"
-    // AlternateAirport="KSLC"
-    // Route="DCT 4529N11116W 4527N11114W 4524N11112W 4522N11110W DCT 4520N11110W 4519N11111W/N0276F220 4517N11113W 4516N11115W 4514N11115W/N0275F230 4509N11114W 4505N11113W 4504N11111W 4502N11107W 4500N11105W 4458N11104W 4452N11103W 4450N11105W/N0276F220 4449N11108W 4449N11111W 4449N11113W 4450N11116W 4451N11119W 4450N11119W/N0275F230 4448N11117W 4446N11116W DCT KWYS DCT 4440N11104W 4440N11059W 4439N11055W 4439N11052W 4435N11050W 4430N11050W 4428N11050W 4426N11044W 4427N11041W 4425N11035W 4429N11032W 4428N11031W 4429N11027W 4429N11025W 4432N11024W 4432N11022W 4432N11018W 4428N11017W 4424N11017W 4415N11027W/N0276F220 DCT 4409N11040W 4403N11043W DCT 4352N11039W DCT"
-    // Remarks="PBN/D2 DOF/181102 REG/N012SB PER/B RMK/TCAS SIMBRIEF"
-    // IsHeavy="false"
-    // EquipmentPrefix=""
-    // EquipmentSuffix="L"
-    // DepartureTime="2035"
-    // DepartureTimeAct="0"
-    // EnrouteHours="0"
-    // EnrouteMinutes="53"
-    // FuelHours="2"
-    // FuelMinutes="44"
-    // VoiceType="Full" />
-    QXmlStreamWriter writer(&file);
-    writer.setCodec("UTF-8");
-    writer.setAutoFormatting(true);
-    writer.setAutoFormattingIndent(2);
-
-    writer.writeStartDocument("1.0");
-    writer.writeStartElement("FlightPlan");
-
-    writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-    writer.writeAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
-
-    writer.writeAttribute("FlightType", exportData.getFlightRules());
-    writer.writeAttribute("Equipment", exportData.getEquipment());
-    writer.writeAttribute("CruiseAltitude", QString::number(exportData.getCruiseAltitude()));
-    writer.writeAttribute("CruiseSpeed", QString::number(exportData.getSpeed()));
-    writer.writeAttribute("DepartureAirport", exportData.getDeparture());
-    writer.writeAttribute("DestinationAirport", exportData.getDestination());
-    writer.writeAttribute("AlternateAirport", exportData.getAlternate());
-    writer.writeAttribute("Route", exportData.getRoute());
-    writer.writeAttribute("Remarks", exportData.getRemarks());
-    writer.writeAttribute("IsHeavy", exportData.isHeavy() ? "true" : "false");
-    writer.writeAttribute("EquipmentPrefix", exportData.getEquipmentPrefix());
-    writer.writeAttribute("EquipmentSuffix", exportData.getEquipmentSuffix());
-
-    writer.writeAttribute("DepartureTime", exportData.getDepartureTime().toString("HHmm"));
-    writer.writeAttribute("DepartureTimeAct", exportData.getDepartureTimeActual().isNull() ?
-                          "0" : exportData.getDepartureTimeActual().toString("HHmm"));
-    int enrouteHours = exportData.getEnrouteMinutes() / 60;
-    writer.writeAttribute("EnrouteHours", QString::number(enrouteHours));
-    writer.writeAttribute("EnrouteMinutes", QString::number(exportData.getEnrouteMinutes() - enrouteHours * 60));
-    int enduranceHours = exportData.getEnduranceMinutes() / 60;
-    writer.writeAttribute("FuelHours", QString::number(enduranceHours));
-    writer.writeAttribute("FuelMinutes", QString::number(exportData.getEnduranceMinutes() - enduranceHours * 60));
-    writer.writeAttribute("VoiceType", exportData.getVoiceType());
-
-    writer.writeEndElement(); // FlightPlan
-    writer.writeEndDocument();
-
-    file.close();
+    QTextStream stream(&xmlFile);
+    stream.setCodec("UTF-8");
+    stream.setGenerateByteOrderMark(false);
+    stream << xmlString.toUtf8();
+    xmlFile.close();
     return true;
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving VFP file:"));
+    atools::gui::ErrorHandler(mainWindow).handleIOError(xmlFile, tr("While saving VFP file:"));
     return false;
   }
 }
