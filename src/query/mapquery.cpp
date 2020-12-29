@@ -596,9 +596,8 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
       QHash<int, QList<map::MapParking> > parkingCache = NavApp::getAirportQuerySim()->getParkingCache();
 
       // Also check parking and helipads in airport diagrams
-      for(int id : parkingCache.keys())
+      for(const QList<MapParking>& parkings : parkingCache)
       {
-        const QList<MapParking>& parkings = parkingCache.value(id);
         for(const MapParking& p : parkings)
         {
           if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
@@ -608,9 +607,8 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
 
       QHash<int, QList<map::MapHelipad> > helipadCache = NavApp::getAirportQuerySim()->getHelipadCache();
 
-      for(int id : helipadCache.keys())
+      for(const QList<MapHelipad>& helipads : helipadCache)
       {
-        const QList<MapHelipad>& helipads = helipadCache.value(id);
         for(const MapHelipad& p : helipads)
         {
           if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)

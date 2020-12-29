@@ -48,7 +48,7 @@ static const int RUNWAY_HEADING_FONT_SIZE = 12;
 static const int RUNWAY_TEXT_FONT_SIZE = 16;
 static const int RUNWAY_NUMBER_FONT_SIZE = 20;
 static const int RUNWAY_NUMBER_SMALL_FONT_SIZE = 12;
-static const int TAXIWAY_TEXT_MIN_LENGTH = 20;
+static const int TAXIWAY_TEXT_MIN_LENGTH = 15;
 static const int RUNWAY_OVERVIEW_MIN_LENGTH_FEET = 8000;
 static const float AIRPORT_DIAGRAM_BACKGROUND_METER = 200.f;
 
@@ -452,10 +452,15 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         }
       }
 
+      painter->setBackgroundMode(Qt::OpaqueMode);
+      painter->setBackground(mapcolors::taxiwayNameBackgroundColor);
+
+      QVector<MapTaxiPath> pathsToLabel;
+      QList<MapTaxiPath> paths;
       for(QString taxiname : map.keys())
       {
-        QList<MapTaxiPath> paths = map.values(taxiname);
-        QList<MapTaxiPath> pathsToLabel;
+        paths = map.values(taxiname);
+        pathsToLabel.clear();
 
         // Simplified text placement - take first, last and middle name for a path
         if(!paths.isEmpty())
@@ -475,17 +480,13 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
           int length = atools::geo::simpleDistance(start.x(), start.y(), end.x(), end.y());
           if(length > TAXIWAY_TEXT_MIN_LENGTH)
           {
-            // Only draw if segment is longer than 40 pixels
+            // Only draw if segment is longer than 15 pixels
             int x = ((start.x() + end.x()) / 2) - textrect.width() / 2;
             int y = ((start.y() + end.y()) / 2) + textrect.height() / 2 - taxiMetrics.descent();
-            textrect.moveTo(x, y - textrect.height() + taxiMetrics.descent());
-            textrect.adjust(-1, -1, 1, 1);
-            painter->fillRect(textrect, mapcolors::taxiwayNameBackgroundColor);
             painter->drawText(x, y, taxiname);
           }
         }
       }
-      painter->setBackgroundMode(Qt::OpaqueMode);
     }
   }
 
