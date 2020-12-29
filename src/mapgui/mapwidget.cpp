@@ -2965,8 +2965,11 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeatures(map::VOR, ui->actionMapShowVor->isChecked());
   setShowMapFeatures(map::NDB, ui->actionMapShowNdb->isChecked());
-  setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
   setShowMapFeatures(map::WAYPOINT, ui->actionMapShowWp->isChecked());
+
+  // ILS and marker are shown together
+  setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
+  setShowMapFeatures(map::MARKER, ui->actionMapShowIls->isChecked());
 
   mapVisible->updateVisibleObjectsStatusBar();
 

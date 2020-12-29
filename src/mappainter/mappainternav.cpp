@@ -116,7 +116,8 @@ void MapPainterNav::render()
   }
 
   // Marker -------------------------------------------------
-  if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::ILS) && !context->isObjectOverflow())
+  // Show only with ILS enabled
+  if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::MARKER) && !context->isObjectOverflow())
   {
     bool overflow = false;
     const QList<MapMarker> *markers = mapQuery->getMarkers(curBox, context->mapLayer, context->lazyUpdate, overflow);

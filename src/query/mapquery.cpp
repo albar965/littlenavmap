@@ -1080,7 +1080,7 @@ void MapQuery::initQueries()
                                     "where " + whereRect + " and visible_from > :dist and type like :type " +
                                     whereLimit);
 
-  markersByRectQuery = new SqlQuery(dbNav);
+  markersByRectQuery = new SqlQuery(dbSim);
   markersByRectQuery->prepare(
     "select marker_id, type, ident, heading, lonx, laty "
     "from marker "
