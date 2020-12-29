@@ -35,6 +35,10 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Fixed issues when painting track around the anti-meridian.
 * Exported FLP flight plans `Aerosoft Airbus and others` and `Aerosoft CRJ` now get a suffix `01.flp`
   to avoid import problems in the aircraft. Note that the number is static and is not counted up.
+* Markers are now fetched from simulator database in default scenery mode just like the ILS.
+* Fixed issues where marker tooltips appeared after hiding ILS and markers.
+* Adjustments and optimizations for taxiway label drawing. Map shows more labels now.
+* Attempt to fix vPilot flight plan export issues.
 
 ===============================================================================
 
