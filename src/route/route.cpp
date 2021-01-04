@@ -1354,6 +1354,21 @@ void Route::clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute, bo
   }
 }
 
+void Route::updateDepartureAndDestination()
+{
+  if(!isEmpty())
+  {
+    // Correct departure and destination values
+    flightplan.setDepartureIdent(getDepartureAirportLeg().getIdent());
+    flightplan.setDepartureName(getDepartureAirportLeg().getName());
+    flightplan.setDeparturePosition(first().getPosition());
+
+    flightplan.setDestinationIdent(getDestinationAirportLeg().getIdent());
+    flightplan.setDestinationName(getDestinationAirportLeg().getName());
+    flightplan.setDestinationPosition(first().getPosition());
+  }
+}
+
 void Route::updateAll()
 {
   updateIndicesAndOffsets();
@@ -1364,22 +1379,7 @@ void Route::updateAll()
   updateDistancesAndCourse();
   updateBoundingRect();
   updateWaypointNames();
-
-  if(!isEmpty())
-  {
-    // Correct departure and destination values if missing - can happen after import of FLP or FMS plans
-    flightplan.setDepartureIdent(getDepartureAirportLeg().getIdent());
-    if(flightplan.getDepartureName().isEmpty())
-      flightplan.setDepartureName(getDepartureAirportLeg().getName());
-    if(!flightplan.getDeparturePosition().isValid())
-      flightplan.setDeparturePosition(first().getPosition());
-
-    flightplan.setDestinationIdent(getDestinationAirportLeg().getIdent());
-    if(flightplan.getDestinationName().isEmpty())
-      flightplan.setDestinationName(getDestinationAirportLeg().getName());
-    if(!flightplan.getDestinationPosition().isValid())
-      flightplan.setDestinationPosition(first().getPosition());
-  }
+  updateDepartureAndDestination();
 }
 
 void Route::updateWaypointNames()
@@ -2228,6 +2228,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   atools::fs::pln::Flightplan& plan = route.getFlightplan();
   atools::fs::pln::FlightplanEntryListType& entries = plan.getEntries();
   FlightplanEntryBuilder entryBuilder;
+
+  route.updateDepartureAndDestination();
 
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
   if(options.testFlag(rf::FIX_PROC_ENTRY_EXIT))
