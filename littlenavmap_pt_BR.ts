@@ -15655,9 +15655,9 @@ kHz/MHz</translation>
 <context>
     <name>MapPainter</name>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="807"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="225"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="235"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="808"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="226"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="236"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="109"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="319"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="329"/>
@@ -15665,18 +15665,18 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="799"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="800"/>
         <source> / L</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="794"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="795"/>
         <source> x </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="858"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="868"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="859"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="869"/>
         <source> ◄</source>
         <translation></translation>
     </message>
@@ -15708,8 +15708,8 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainternav.cpp" line="299"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="315"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="300"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="316"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="346"/>
         <source>, </source>
         <translation></translation>
@@ -15735,12 +15735,12 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="717"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="718"/>
         <source>F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="717"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="718"/>
         <source>Fuel</source>
         <translation>Combustível</translation>
     </message>
@@ -15793,7 +15793,7 @@ kHz/MHz</translation>
         <translation>Nenhum vento</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="762"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="763"/>
         <source>T</source>
         <translation></translation>
     </message>
@@ -15803,7 +15803,7 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="762"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="763"/>
         <source>Tower</source>
         <translation>Torre</translation>
     </message>
@@ -15832,14 +15832,14 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="852"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="863"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="313"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="853"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="864"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="314"/>
         <source>► </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainternav.cpp" line="313"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="314"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="875"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="885"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="909"/>
@@ -16375,12 +16375,12 @@ kHz/MHz</translation>
         <translation type="vanished">Adicionar </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3218"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3221"/>
         <source>Added range rings for %1.</source>
         <translation>Círculos de alcance adicionados para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3239"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3242"/>
         <source>Added range rings for position.</source>
         <translation>Círculos de alcance adicionados para posição.</translation>
     </message>
@@ -16393,7 +16393,7 @@ kHz/MHz</translation>
         <translation type="vanished">Espaço Aéreo</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3361"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3364"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Todos os círculos de alcance e linhas de medição foram removidos do mapa.</translation>
     </message>
@@ -16407,7 +16407,7 @@ kHz/MHz</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3190"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3193"/>
         <source>Changed home position.</source>
         <translation>Mudou a posição inicial.</translation>
     </message>
@@ -16416,12 +16416,12 @@ kHz/MHz</translation>
         <translation type="vanished">Saída </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3321"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3324"/>
         <source>Detail %1</source>
         <translation>Detalhe %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3182"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3185"/>
         <source>Distance search center position changed.</source>
         <translation>A posição do centro de busca de distância mudou.</translation>
     </message>
@@ -16435,7 +16435,7 @@ kHz/MHz</translation>
         <translation>Pulou de volta para a aeronave.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3322"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3325"/>
         <source>Map detail level changed.</source>
         <translation>Nível de detalhe do Mapa mudou.</translation>
     </message>
@@ -16461,22 +16461,22 @@ kHz/MHz</translation>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3119"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3122"/>
         <source>Added hold.</source>
         <translation>Adicionado Orbita.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3130"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3133"/>
         <source>Holding removed from map.</source>
         <translation>Orbita removida do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3301"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3304"/>
         <source>Measurement line removed from map.</source>
         <translation>Linha de medição removida do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3314"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3317"/>
         <source>Normal</source>
         <translation></translation>
     </message>
@@ -16494,7 +16494,7 @@ kHz/MHz</translation>
         <translation>Posição</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3293"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3296"/>
         <source>Range ring removed from map.</source>
         <translation>Faixa de círculo removido do mapa.</translation>
     </message>
@@ -16570,12 +16570,12 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <translation type="vanished"> (escondido no mapa)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3089"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3092"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>Adicionado padrão de tráfego do aeroporto para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3100"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3103"/>
         <source>Traffic pattern removed from map.</source>
         <translation>Padrão de tráfego removido do mapa.</translation>
     </message>
@@ -16608,9 +16608,9 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <location filename="src/mapgui/mapwidget.cpp" line="1605"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1607"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1614"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3205"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3207"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3208"/>
         <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3213"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
@@ -16620,12 +16620,12 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <translation>Coordenadas copiadas para a área de transferência.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3152"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3155"/>
         <source>Showing distance search center.</source>
         <translation>Mostrando a distância do centro de buscas.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3171"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3174"/>
         <source>Showing home position.</source>
         <translation>Mostrando posição inicial.</translation>
     </message>
@@ -24453,32 +24453,32 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation>Gire instruções, viaduto ou navaid relacionado para os fixos do procedimento.</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2791"/>
+        <location filename="src/route/route.cpp" line="2793"/>
         <source>%1 %2 %3%4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2798"/>
+        <location filename="src/route/route.cpp" line="2800"/>
         <source>Transition %1</source>
         <translation>Transição %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2800"/>
+        <location filename="src/route/route.cpp" line="2802"/>
         <source>STAR %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2802"/>
+        <location filename="src/route/route.cpp" line="2804"/>
         <source>SID %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2804"/>
+        <location filename="src/route/route.cpp" line="2806"/>
         <source>SID Transition %1</source>
         <translation>Transição SID %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2806"/>
+        <location filename="src/route/route.cpp" line="2808"/>
         <source>STAR Transition %1</source>
         <translation>Transição STAR %1</translation>
     </message>
@@ -25067,17 +25067,17 @@ Clique ou recarregue para continuar.</translation>
         <translation> (não encontrado)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2792"/>
+        <location filename="src/route/route.cpp" line="2794"/>
         <source>Missed</source>
         <translation>Perdida</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2792"/>
+        <location filename="src/route/route.cpp" line="2794"/>
         <source>Approach</source>
         <translation>Aproximação</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2795"/>
+        <location filename="src/route/route.cpp" line="2797"/>
         <source>-</source>
         <translation></translation>
     </message>
@@ -26232,8 +26232,8 @@ A posição inicial está agora configurada para a pista principal mais longa do
 <context>
     <name>RouteExport</name>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1099"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1166"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1103"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1170"/>
         <source>Do not &amp;show this dialog again and save Flight Plan in the future.</source>
         <oldsource>Do not show this dialog again and save Flight Plan in the future.</oldsource>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e guarde o Plano de Voo no futuro.</translation>
@@ -26259,7 +26259,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Plano de voo adicionado a corte.in.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1028"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1032"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>Plano de voo e track salvado em GPX.</translation>
     </message>
@@ -26284,7 +26284,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Plano de voo salvo como GFP.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1026"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1030"/>
         <source>Flight plan saved as GPX.</source>
         <translation>Plano de voo salvo como GPX.</translation>
     </message>
@@ -26397,17 +26397,17 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Arquivos HTML %1;; Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1056"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1060"/>
         <source>Flight plan saved as HTML.</source>
         <translation>Plano de voo salvo como HTML.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1152"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1156"/>
         <source>Select Start &amp;Position</source>
         <translation>Selecione &amp;Posição Inicial</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1097"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1101"/>
         <source>Do not &amp;show this dialog again and export all files in the future.</source>
         <oldsource>Do not show this dialog again and export all files in the future.</oldsource>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e exporte todos os arquivos no futuro.</translation>
@@ -26419,17 +26419,17 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="334"/>
+        <location filename="src/routeexport/routeexport.cpp" line="338"/>
         <source>Flight plan saved as FMS 3.</source>
         <translation>Plano de voo salvo como FMS 3.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="369"/>
+        <location filename="src/routeexport/routeexport.cpp" line="373"/>
         <source>Flight plan saved as FMS 11.</source>
         <translation>Plano de voo salvo como FMS 11.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1153"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1157"/>
         <source>Show &amp;Departure on Map</source>
         <translation>Mostrar &amp;Partida no Mapa</translation>
     </message>
@@ -26446,13 +26446,13 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Arquivos UFMC %1;; Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1675"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1679"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>Durante a leitura do arquivo companyroutes.xml:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1224"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1332"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1228"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1336"/>
         <source>While saving GFP file:</source>
         <translation>Ao salvar o arquivo GFP:</translation>
     </message>
@@ -26570,12 +26570,12 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">%1 Arquivos %2</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="313"/>
+        <location filename="src/routeexport/routeexport.cpp" line="317"/>
         <source>Flight plan saved as %1PLN.</source>
         <translation>Plano de voo salvo como %1 PLN.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="313"/>
+        <location filename="src/routeexport/routeexport.cpp" line="317"/>
         <source>annotated </source>
         <translation>anotado </translation>
     </message>
@@ -26584,7 +26584,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="obsolete">Plano de voo salvo em FMS.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1100"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1104"/>
         <source>
 
 Really continue?</source>
@@ -26593,17 +26593,17 @@ Really continue?</source>
 Deseja continuar?</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1108"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1112"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable for the selected export formats.</source>
         <translation>O plano de voo deve ter um aeroporto válido com partida e destino e pode não ser utilizável para os formatos de exportação selecionados.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1111"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1115"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable by the simulator.</source>
         <translation>O Plano de Voo deve ter um aeroporto válido com partida e destino e pode não ser utilizável pelo simulador.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1129"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1133"/>
         <source>One or more of the selected export formats require a valid AIRAC cycle.
 
 </source>
@@ -26612,7 +26612,7 @@ Deseja continuar?</translation>
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1131"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1135"/>
         <source>The export format requires a valid AIRAC cycle.
 
 </source>
@@ -26621,14 +26621,14 @@ Deseja continuar?</translation>
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1133"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1137"/>
         <source>The selected scenery database does not contain AIRAC cycle information.
 This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery.</source>
         <translation>O banco de dados de cenário selecionado não contém informações sobre o ciclo AIRAC.
 Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Prepar3D ou MSFS.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1159"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1163"/>
         <source>One or more of the selected export formats support setting a parking spot as a start position.
 
 </source>
@@ -26637,37 +26637,37 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1162"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1166"/>
         <source>The departure airport has parking spots but no parking was selected for this Flight Plan.</source>
         <translation>O aeroporto de partida tem vagas de estacionamento, mas nenhum estacionamento foi selecionado para este Plano de Voo.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1245"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1249"/>
         <source>While saving TXT or FPL file:</source>
         <translation>Ao salvar o arquivo TXT ou FPL:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1288"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1292"/>
         <source>While saving UFMC file:</source>
         <translation>Ao salvar o arquivo UFMC:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1415"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1419"/>
         <source>While saving VFP file:</source>
         <translation>Ao salvar o arquivo VFP:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1544"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1548"/>
         <source>While saving FPL file:</source>
         <translation>Ao salvar o arquivo FPL:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1597"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1601"/>
         <source>While reading corte.in file:</source>
         <translation>Ao ler o arquivo corte.in:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1729"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1733"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>Ao salvar no arquivo companyroutes.xml:</translation>
     </message>
@@ -26680,7 +26680,7 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
         <translation type="obsolete">Não &amp;mostre esta caixa de diálogo novamente e salve no futuro.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1629"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1633"/>
         <source>While saving to corte.in file:</source>
         <translation>Ao salvar o arquivo corte.in:</translation>
     </message>

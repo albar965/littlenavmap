@@ -15163,39 +15163,39 @@ kHz/MHz</translation>
 <context>
     <name>MapPainter</name>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="717"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="718"/>
         <source>Fuel</source>
         <translation>燃油</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="717"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="718"/>
         <source>F</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="762"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="763"/>
         <source>Tower</source>
         <translation>塔台</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="762"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="763"/>
         <source>T</source>
         <translation type="unfinished">终</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="794"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="795"/>
         <source> x </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="799"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="800"/>
         <source> / L</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="807"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="225"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="235"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="808"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="226"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="236"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="109"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="319"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="329"/>
@@ -15203,27 +15203,27 @@ kHz/MHz</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="852"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="863"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="313"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="853"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="864"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="314"/>
         <source>► </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="858"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="868"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="859"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="869"/>
         <source> ◄</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainternav.cpp" line="299"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="315"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="300"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="316"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="346"/>
         <source>, </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainternav.cpp" line="313"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="314"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="875"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="885"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="909"/>
@@ -15996,9 +15996,9 @@ kHz/MHz</translation>
         <location filename="src/mapgui/mapwidget.cpp" line="1605"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1607"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1614"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3205"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3207"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3208"/>
         <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3213"/>
         <source>%1 %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16044,82 +16044,82 @@ kHz/MHz</translation>
         <translation>不要再显示此对话框(&amp;S)。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3089"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3092"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>添加了 %1 的机场起落航线。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3100"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3103"/>
         <source>Traffic pattern removed from map.</source>
         <translation>起落航线已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3119"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3122"/>
         <source>Added hold.</source>
         <translation>添加了等待。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3130"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3133"/>
         <source>Holding removed from map.</source>
         <translation>等待已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3152"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3155"/>
         <source>Showing distance search center.</source>
         <translation>已显示距离搜索的中心。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3171"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3174"/>
         <source>Showing home position.</source>
         <translation>在地图显示初始位置。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3182"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3185"/>
         <source>Distance search center position changed.</source>
         <translation>距离搜索中心位置已更改。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3190"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3193"/>
         <source>Changed home position.</source>
         <translation>初始位置已更改。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3218"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3221"/>
         <source>Added range rings for %1.</source>
         <translation>已为 %1 添加距离环。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3239"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3242"/>
         <source>Added range rings for position.</source>
         <translation>已为此位置添加距离环。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3293"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3296"/>
         <source>Range ring removed from map.</source>
         <translation>距离环已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3301"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3304"/>
         <source>Measurement line removed from map.</source>
         <translation>测量线已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3314"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3317"/>
         <source>Normal</source>
         <translation>普通</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3321"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3324"/>
         <source>Detail %1</source>
         <translation>详情 %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3322"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3325"/>
         <source>Map detail level changed.</source>
         <translation>地图详细级别已更改。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3361"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3364"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>所有的距离环、测量线已从地图上移除。</translation>
     </message>
@@ -23838,32 +23838,32 @@ Spaces are replaced with underscores.</source>
         <translation>版本 %5 (修订 %6)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2791"/>
+        <location filename="src/route/route.cpp" line="2793"/>
         <source>%1 %2 %3%4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2798"/>
+        <location filename="src/route/route.cpp" line="2800"/>
         <source>Transition %1</source>
         <translation>过渡 %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2800"/>
+        <location filename="src/route/route.cpp" line="2802"/>
         <source>STAR %1</source>
         <translation>标准进场程序(STAR) %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2802"/>
+        <location filename="src/route/route.cpp" line="2804"/>
         <source>SID %1</source>
         <translation>标准离场程序(SID) %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2804"/>
+        <location filename="src/route/route.cpp" line="2806"/>
         <source>SID Transition %1</source>
         <translation>标准离场程序(SID)过渡 %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2806"/>
+        <location filename="src/route/route.cpp" line="2808"/>
         <source>STAR Transition %1</source>
         <translation>标准进场程序(STAR)过渡 %1</translation>
     </message>
@@ -24226,17 +24226,17 @@ Click or reload to continue.</source>
         <translation> (未找到)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2792"/>
+        <location filename="src/route/route.cpp" line="2794"/>
         <source>Missed</source>
         <translation>错失的(复飞)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2792"/>
+        <location filename="src/route/route.cpp" line="2794"/>
         <source>Approach</source>
         <translation>进近</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2795"/>
+        <location filename="src/route/route.cpp" line="2797"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -25560,12 +25560,12 @@ to select departure and destination.</oldsource>
         <translation type="vanished">GPX文件 %1;;全部文件 (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1026"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1030"/>
         <source>Flight plan saved as GPX.</source>
         <translation>飞行计划已另存为GPX。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1028"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1032"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>飞行计划和航迹已另存为GPX。</translation>
     </message>
@@ -25598,12 +25598,12 @@ to select departure and destination.</oldsource>
         <translation type="vanished">%1 文件 %2</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="313"/>
+        <location filename="src/routeexport/routeexport.cpp" line="317"/>
         <source>Flight plan saved as %1PLN.</source>
         <translation>飞行计划已另存为%1PLN。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="313"/>
+        <location filename="src/routeexport/routeexport.cpp" line="317"/>
         <source>annotated </source>
         <translation>带注释的 </translation>
     </message>
@@ -25612,12 +25612,12 @@ to select departure and destination.</oldsource>
         <translation type="obsolete">飞行计划已另存为FMS。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1056"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1060"/>
         <source>Flight plan saved as HTML.</source>
         <translation>飞行计划已另存为HTML。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1100"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1104"/>
         <source>
 
 Really continue?</source>
@@ -25626,7 +25626,7 @@ Really continue?</source>
 真的要继续吗？</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1152"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1156"/>
         <source>Select Start &amp;Position</source>
         <translation>选择起始位置(&amp;P)</translation>
     </message>
@@ -25635,19 +25635,19 @@ Really continue?</source>
         <translation type="vanished">飞行计划必须有有效的机场作为出发地和到达地，这将对模拟器不可用。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1099"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1166"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1103"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1170"/>
         <source>Do not &amp;show this dialog again and save Flight Plan in the future.</source>
         <oldsource>Do not show this dialog again and save Flight Plan in the future.</oldsource>
         <translation>不要再显示此对话框并在将来保存飞行计划(&amp;S)。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1111"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1115"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable by the simulator.</source>
         <translation>飞行计划必须有有效的机场作为出发地和到达地，这将可能不能用于模拟器。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1129"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1133"/>
         <source>One or more of the selected export formats require a valid AIRAC cycle.
 
 </source>
@@ -25656,7 +25656,7 @@ Really continue?</source>
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1131"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1135"/>
         <source>The export format requires a valid AIRAC cycle.
 
 </source>
@@ -25665,14 +25665,14 @@ Really continue?</source>
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1133"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1137"/>
         <source>The selected scenery database does not contain AIRAC cycle information.
 This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery.</source>
         <translation>所选的地景数据库不包含AIRAC周期信息。
 如果您保存基于FSX，Prepar3D或MSFS地景的飞行计划，则可能会发生这种情况。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1153"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1157"/>
         <source>Show &amp;Departure on Map</source>
         <translation>在地图上显示出发地(&amp;D)</translation>
     </message>
@@ -25681,12 +25681,12 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
         <translation type="vanished">起始机场有停机位，但是在飞行计划中没有选择停机位</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1108"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1112"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable for the selected export formats.</source>
         <translation>飞行计划必须有有效的机场作为出发地和到达地，这将可能不能用于选定的导出格式。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1097"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1101"/>
         <source>Do not &amp;show this dialog again and export all files in the future.</source>
         <oldsource>Do not show this dialog again and export all files in the future.</oldsource>
         <translation>不要再显示此对话框并在将来导出所有的飞行计划(&amp;S)。</translation>
@@ -25708,17 +25708,17 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="334"/>
+        <location filename="src/routeexport/routeexport.cpp" line="338"/>
         <source>Flight plan saved as FMS 3.</source>
         <translation>飞行计划已另存为FMS 3。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="369"/>
+        <location filename="src/routeexport/routeexport.cpp" line="373"/>
         <source>Flight plan saved as FMS 11.</source>
         <translation>飞行计划已另存为FMS 11。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1159"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1163"/>
         <source>One or more of the selected export formats support setting a parking spot as a start position.
 
 </source>
@@ -25727,53 +25727,53 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1162"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1166"/>
         <source>The departure airport has parking spots but no parking was selected for this Flight Plan.</source>
         <translation>起始机场有停机位，但是在飞行计划中没有选择停机位。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1224"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1332"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1228"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1336"/>
         <source>While saving GFP file:</source>
         <translation>在保存GFP文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1245"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1249"/>
         <source>While saving TXT or FPL file:</source>
         <translation>在保存TXT或FLP文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1288"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1292"/>
         <source>While saving UFMC file:</source>
         <translation>在保存UFMC文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1415"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1419"/>
         <source>While saving VFP file:</source>
         <translation>在保存VFP文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1544"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1548"/>
         <source>While saving FPL file:</source>
         <translation>在保存FPL文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1597"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1601"/>
         <source>While reading corte.in file:</source>
         <translation>在读取corte.in文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1629"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1633"/>
         <source>While saving to corte.in file:</source>
         <translation>在保存到corte.in文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1675"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1679"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>在读取 companyroutes.xml 文件时：</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1729"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1733"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>在保存到 companyroutes.xml 文件时：</translation>
     </message>
