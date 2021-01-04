@@ -39,6 +39,12 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Fixed issues where marker tooltips appeared after hiding ILS and markers.
 * Adjustments and optimizations for taxiway label drawing. Map shows more labels now.
 * Attempt to fix vPilot flight plan export issues.
+* Airport names now loaded from base scenery with Navigraph update in MSFS. Were missing previously.
+* Now always adapting departure and destination airport names to the names taken from
+  the selected scenery library. This also affects the proposed files names when saving or exporting
+  flight plans.
+* Folder names are now remembered correctly for MSFS and FSX/P3D manual flight plan export instead of using
+  an arbitrary place depending on scenery library selection.
 
 ===============================================================================
 
