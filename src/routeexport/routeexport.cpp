@@ -247,11 +247,6 @@ bool RouteExport::routeExportPlnMsfsMan()
   return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS, NavApp::getRouteFilepath()));
 }
 
-bool RouteExport::routeExportPln(const RouteExportFormat& format)
-{
-  return routeExportInternalPln(format);
-}
-
 bool RouteExport::routeExportLnm(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -275,6 +270,11 @@ bool RouteExport::routeExportLnm(const RouteExportFormat& format)
   return false;
 }
 
+bool RouteExport::routeExportPln(const RouteExportFormat& format)
+{
+  return routeExportInternalPln(format);
+}
+
 bool RouteExport::routeExportPlnMsfs(const RouteExportFormat& format)
 {
   return routeExportInternalPln(format);
@@ -293,7 +293,11 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
   {
     bool msfs = format.getType() == rexp::PLNMSFS;
 
-    QString routeFile = exportFile(format, "Route/Pln" + NavApp::getCurrentSimulatorShortName(),
+    // Use always same settings prefix for MSFS independent of scenery library selection
+    // Other simulators share same PLN settings prefix also independent of scenery library
+    QString shortName = msfs ? atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS) : "Pln";
+
+    QString routeFile = exportFile(format, "Route/Pln" + shortName,
                                    NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(format, ".pln", msfs),
                                    false /* dontComfirmOverwrite */);
 
