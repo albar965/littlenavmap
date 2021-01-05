@@ -367,6 +367,9 @@ void RouteExportDialog::restoreState()
   atools::gui::WidgetState ws(lnm::FLIGHTPLAN_ONLINE_EXPORT + getRouteTypeAsString(type));
   ws.restore(this);
   ws.restore(widgets);
+
+  if(type == re::VFP)
+    ui->lineEditVoiceType->setText("Full");
 }
 
 void RouteExportDialog::saveState()

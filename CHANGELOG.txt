@@ -45,6 +45,7 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
   flight plans.
 * Folder names are now remembered correctly for MSFS and FSX/P3D manual flight plan export instead of using
   an arbitrary place depending on scenery library selection.
+* Now setting voice type to `Full` as a default for vPilot export since other values produce obscure error messages.
 
 ===============================================================================
 
