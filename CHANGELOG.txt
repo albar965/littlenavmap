@@ -46,6 +46,9 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Folder names are now remembered correctly for MSFS and FSX/P3D manual flight plan export instead of using
   an arbitrary place depending on scenery library selection.
 * Now setting voice type to `Full` as a default for vPilot export since other values produce obscure error messages.
+* Fixed issue where intercept procedure legs were not calculated correctly.
+  Examples: LGKO SID 32 KOPA3A and LILJ SID DOL1W.
+* Small improvements in procedure drawing for turn legs.
 
 ===============================================================================
 

@@ -1756,7 +1756,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
                                        // Leg might have no course and calculated is not available yet
                                        atools::almostEqual(next->course, 0.f) ||
                                        !(next->course < map::INVALID_COURSE_VALUE) ?
-                                       next->line.angleDeg() : next->trueCourse);
+                                       next->line.angleDeg() : next->legTrueCourse());
 
           leg.line.setPos1(start);
 
