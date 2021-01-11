@@ -3569,6 +3569,7 @@ void MainWindow::updateActionStates()
   ui->actionMapShowMinimumAltitude->setEnabled(NavApp::getMoraReader()->isDataAvailable());
 
   bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
+  bool hasTrack = !NavApp::isAircraftTrackEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan /* && routeController->hasChanged()*/);
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
@@ -3576,7 +3577,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsFms11->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsPln->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsPlnMsfs->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan || hasTrack);
   ui->actionRouteSaveAsHtml->setEnabled(hasFlightplan);
   ui->actionRouteSaveAll->setEnabled(hasFlightplan && routeExport->hasSelected());
 

@@ -17,38 +17,39 @@
 
 #include "navapp.h"
 
-#include "query/infoquery.h"
-#include "query/procedurequery.h"
-#include "connect/connectclient.h"
-#include "query/mapquery.h"
-#include "query/waypointtrackquery.h"
-#include "query/airportquery.h"
-#include "db/databasemanager.h"
-#include "fs/db/databasemeta.h"
-#include "mapgui/mapwidget.h"
-#include "profile/profilewidget.h"
-#include "gui/mainwindow.h"
-#include "route/routecontroller.h"
+#include "airspace/airspacecontroller.h"
+#include "common/aircrafttrack.h"
 #include "common/elevationprovider.h"
+#include "common/updatehandler.h"
+#include "common/vehicleicons.h"
+#include "connect/connectclient.h"
+#include "db/databasemanager.h"
+#include "exception.h"
 #include "fs/common/magdecreader.h"
 #include "fs/common/morareader.h"
-#include "common/updatehandler.h"
-#include "userdata/userdatacontroller.h"
-#include "logbook/logdatacontroller.h"
-#include "online/onlinedatacontroller.h"
-#include "search/searchcontroller.h"
-#include "common/vehicleicons.h"
-#include "gui/stylehandler.h"
-#include "weather/weatherreporter.h"
+#include "fs/db/databasemeta.h"
 #include "fs/weather/metar.h"
-#include "perf/aircraftperfcontroller.h"
-#include "web/webcontroller.h"
-#include "exception.h"
 #include "gui/errorhandler.h"
-#include "airspace/airspacecontroller.h"
+#include "gui/mainwindow.h"
+#include "gui/stylehandler.h"
+#include "logbook/logdatacontroller.h"
 #include "mapgui/mapmarkhandler.h"
+#include "mapgui/mapwidget.h"
+#include "online/onlinedatacontroller.h"
+#include "perf/aircraftperfcontroller.h"
+#include "profile/profilewidget.h"
+#include "query/airportquery.h"
+#include "query/infoquery.h"
+#include "query/mapquery.h"
+#include "query/procedurequery.h"
+#include "query/waypointtrackquery.h"
+#include "route/routecontroller.h"
 #include "routestring/routestringwriter.h"
+#include "search/searchcontroller.h"
 #include "track/trackcontroller.h"
+#include "userdata/userdatacontroller.h"
+#include "weather/weatherreporter.h"
+#include "web/webcontroller.h"
 
 #include "query/waypointquery.h"
 #include "ui_mainwindow.h"
@@ -989,6 +990,11 @@ const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMetaNav()
 const AircraftTrack& NavApp::getAircraftTrack()
 {
   return getMapWidget()->getAircraftTrack();
+}
+
+bool NavApp::isAircraftTrackEmpty()
+{
+  return getAircraftTrack().isEmpty();
 }
 
 map::MapTypes NavApp::getShownMapFeatures()

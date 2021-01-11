@@ -293,6 +293,7 @@ public:
   static QString getOnlineNetworkTranslated();
   static bool isOnlineNetworkActive();
 
+  static bool isAircraftTrackEmpty();
   static const AircraftTrack& getAircraftTrack();
 
   static void initSplashScreen();

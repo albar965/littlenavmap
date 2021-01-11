@@ -49,6 +49,11 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Fixed issue where intercept procedure legs were not calculated correctly.
   Examples: LGKO SID 32 KOPA3A and LILJ SID DOL1W.
 * Small improvements in procedure drawing for turn legs.
+* Now omitting scenery library entries which are marked with active=`false` in Content.xml.
+* Applied workaround for XML files with wrong encoding in header (processing instruction). This helps to read
+  wrongly decoded ForeFlight flight plans which are saved in UTF-16 while having a UTF-8 indication in the file header.
+* Fix for GPX export to allow saving of files and trails without flight plan.
+  An empty flight plan does not disable the export menu item now.
 
 ===============================================================================
 
