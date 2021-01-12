@@ -1259,6 +1259,14 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(e);
     if(keyEvent != nullptr)
     {
+      if(keyEvent->key() == Qt::Key_Home)
+      {
+        // Catch useless home event where Marble zooms way out
+        e->accept(); // Do not propagate further
+        event(e); // Call own event handler
+        return true; // Do not process further
+      }
+
       if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus}) &&
          (keyEvent->modifiers() & Qt::ControlModifier))
       {
