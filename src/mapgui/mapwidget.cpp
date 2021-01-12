@@ -531,9 +531,10 @@ void MapWidget::leaveEvent(QEvent *)
 
 void MapWidget::keyPressEvent(QKeyEvent *event)
 {
-  // #ifdef DEBUG_INFORMATION
-  // qDebug() << Q_FUNC_INFO << hex << event->key() << dec << event->modifiers();
-  // #endif
+#ifdef DEBUG_INFORMATION_KEY_INPUT
+  qDebug() << Q_FUNC_INFO << event->text() << hex << event->nativeScanCode() << hex << event->key() << dec <<
+    event->modifiers();
+#endif
 
   // Does not work for key presses that are consumed by the widget
   if(event->key() == Qt::Key_Escape)
@@ -541,17 +542,33 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
     cancelDragAll();
     setContextMenuPolicy(Qt::DefaultContextMenu);
   }
-  else if(event->key() == Qt::Key_Plus && !(event->modifiers() & Qt::ControlModifier))
-    zoomInOut(true /* in */, event->modifiers() & Qt::ShiftModifier /* smooth */);
-  else if(event->key() == Qt::Key_Minus && !(event->modifiers() & Qt::ControlModifier))
-    zoomInOut(false /* in */, event->modifiers() & Qt::ShiftModifier /* smooth */);
+  else if(event->key() == Qt::Key_Menu)
+  {
+    if(mouseState == mw::NONE)
+      // First menu key press after dragging - enable context menu again
+      setContextMenuPolicy(Qt::DefaultContextMenu);
+  }
   else if(event->key() == Qt::Key_Asterisk)
     zoomInOut(true /* in */, true /* smooth */);
   else if(event->key() == Qt::Key_Slash)
     zoomInOut(false /* in */, true /* smooth */);
-  else if(event->key() == Qt::Key_Menu && mouseState == mw::NONE)
-    // First menu key press after dragging - enable context menu again
-    setContextMenuPolicy(Qt::DefaultContextMenu);
+  else if(event->modifiers() & Qt::KeypadModifier)
+  {
+    // Check shift for smooth zooming for keypad input only
+    bool shift = event->modifiers() & Qt::ShiftModifier;
+    if(event->key() == Qt::Key_Plus)
+      zoomInOut(true /* in */, shift /* smooth */);
+    else if(event->key() == Qt::Key_Minus)
+      zoomInOut(false /* in */, shift /* smooth */);
+  }
+  else
+  {
+    // Do not check shift since different keyboard layouts might affect this
+    if(event->key() == Qt::Key_Plus)
+      zoomInOut(true /* in */, false /* smooth */);
+    else if(event->key() == Qt::Key_Minus)
+      zoomInOut(false /* in */, false /* smooth */);
+  }
 }
 
 bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)

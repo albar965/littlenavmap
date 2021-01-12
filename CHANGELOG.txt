@@ -14,7 +14,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 
 * Corrected issue where status bar was hidden on first start after first installation in dock
   handler.
-* Flight plan calculation window changed to appear near cursor on first show to avoid random placement.
+* Flight plan calculation window changed to appear near cursor on first show to avoid random
+  placement.
 * Now forcing status bar to be visible when updating from any older version to 2.6.7.
 * Fix for Windows removing file extensions when these are hidden in Window explorer. This prevented
   saving of map images.
@@ -33,8 +34,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Fixed several issues when centering route or flight plan legs with very long flight plans.
 * Now painting full aircraft track even when jumping long distances.
 * Fixed issues when painting track around the anti-meridian.
-* Exported FLP flight plans `Aerosoft Airbus and others` and `Aerosoft CRJ` now get a suffix `01.flp`
-  to avoid import problems in the aircraft. Note that the number is static and is not counted up.
+* Exported FLP flight plans `Aerosoft Airbus and others` and `Aerosoft CRJ` now get a suffix
+  `01.flp` to avoid import problems in the aircraft. Note that the number is static and is not counted up.
 * Markers are now fetched from simulator database in default scenery mode just like the ILS.
 * Fixed issues where marker tooltips appeared after hiding ILS and markers.
 * Adjustments and optimizations for taxiway label drawing. Map shows more labels now.
@@ -43,17 +44,21 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Now always adapting departure and destination airport names to the names taken from
   the selected scenery library. This also affects the proposed files names when saving or exporting
   flight plans.
-* Folder names are now remembered correctly for MSFS and FSX/P3D manual flight plan export instead of using
-  an arbitrary place depending on scenery library selection.
-* Now setting voice type to `Full` as a default for vPilot export since other values produce obscure error messages.
+* Folder names are now remembered correctly for MSFS and FSX/P3D manual flight plan export instead
+  of using an arbitrary place depending on scenery library selection.
+* Now setting voice type to `Full` as a default for vPilot export since other values produce
+  obscure error messages.
 * Fixed issue where intercept procedure legs were not calculated correctly.
   Examples: LGKO SID 32 KOPA3A and LILJ SID DOL1W.
 * Small improvements in procedure drawing for turn legs.
 * Now omitting scenery library entries which are marked with active=`false` in Content.xml.
-* Applied workaround for XML files with wrong encoding in header (processing instruction). This helps to read
-  wrongly decoded ForeFlight flight plans which are saved in UTF-16 while having a UTF-8 indication in the file header.
+* Applied workaround for XML files with wrong encoding in header (processing instruction). This
+  helps to read wrongly decoded ForeFlight flight plans which are saved in UTF-16 while having a
+  UTF-8 indication in the file header.
 * Fix for GPX export to allow saving of files and trails without flight plan.
   An empty flight plan does not disable the export menu item now.
+* Fixed zooming functions with keyboard input in map where normal zooming was not possible on US
+  and other keyboard layouts.
 
 ===============================================================================
 
