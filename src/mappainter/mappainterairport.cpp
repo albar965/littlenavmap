@@ -165,6 +165,7 @@ void MapPainterAirport::render()
 
   textflags::TextFlags apTextFlags = context->airportTextFlags();
   int symsize = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
+  int apsymsize = context->mapLayer->isAirportDiagram() ? symsize * 2 : symsize;
 
   // Add airport symbols on top of diagrams ===========================
   for(int i = 0; i < visibleAirports.size(); i++)
@@ -176,8 +177,8 @@ void MapPainterAirport::render()
 
     // Airport diagram is not influenced by detail level
     if(!context->mapLayer->isAirportDiagramRunway())
-      // Draw simplified runway lines
-      drawAirportSymbolOverview(*airport, x, y);
+      // Draw simplified runway lines if big enough
+      drawAirportSymbolOverview(*airport, x, y, apsymsize);
 
     // More detailed symbol will be drawn by the route or log painter - skip here
     if(!context->routeProcIdMap.contains(airport->getRef()))
@@ -189,7 +190,7 @@ void MapPainterAirport::render()
 
       symbolPainter->drawAirportText(context->painter, *airport, x, y,
                                      context->dispOptsAirport, apTextFlags,
-                                     context->mapLayer->isAirportDiagram() ? symsize * 2 : symsize,
+                                     apsymsize,
                                      context->mapLayer->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
     }
@@ -948,7 +949,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 }
 
 /* Draw airport runway overview as in VFR maps (runways with white center line) */
-void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y)
+void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, int symsize)
 {
   Marble::GeoPainter *painter = context->painter;
 
@@ -970,14 +971,19 @@ void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, flo
     runwayCoords(rw, &centers, &rects, &innerRects, nullptr, true /* overview */);
 
     // Draw outline in airport color (magenta or green depending on tower)
+    bool runwayDrawn = false; // Use small icon if runways are visible
     painter->setBrush(QBrush(apColor));
     painter->setPen(QPen(QBrush(apColor), 1, Qt::SolidLine, Qt::FlatCap));
     for(int i = 0; i < centers.size(); i++)
     {
-      painter->translate(centers.at(i));
-      painter->rotate(rw->at(i).heading);
-      painter->drawRect(rects.at(i));
-      painter->resetTransform();
+      if(rects.at(i).height() > 10)
+      {
+        painter->translate(centers.at(i));
+        painter->rotate(rw->at(i).heading);
+        painter->drawRect(rects.at(i));
+        painter->resetTransform();
+        runwayDrawn = true;
+      }
     }
 
     // Draw white center lines
@@ -985,14 +991,20 @@ void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, flo
     painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
     for(int i = 0; i < centers.size(); i++)
     {
-      painter->translate(centers.at(i));
-      painter->rotate(rw->at(i).heading);
-      painter->drawRect(innerRects.at(i));
-      painter->resetTransform();
+      if(rects.at(i).height() > 10)
+      {
+        painter->translate(centers.at(i));
+        painter->rotate(rw->at(i).heading);
+        painter->drawRect(innerRects.at(i));
+        painter->resetTransform();
+        runwayDrawn = true;
+      }
     }
 
     // Draw small symbol on top to find a clickspot
-    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, 10, false, context->drawFast,
+    symbolPainter->drawAirportSymbol(context->painter, ap, x, y,
+                                     runwayDrawn ? 10 : symsize, // Draw small icon only if runways are visible
+                                     false /* isAirportDiagram */, context->drawFast,
                                      context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
   }
 }

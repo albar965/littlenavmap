@@ -57,7 +57,7 @@ private:
 
   void drawAirportDiagram(const map::MapAirport& airport);
   void drawAirportDiagramBackground(const map::MapAirport& airport);
-  void drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y);
+  void drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, int symsize);
   void runwayCoords(const QList<map::MapRunway> *runways, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *outlineRects, bool overview);
   void drawFsApron(const map::MapApron& apron);
