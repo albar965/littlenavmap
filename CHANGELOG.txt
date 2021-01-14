@@ -59,6 +59,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
   An empty flight plan does not disable the export menu item now.
 * Fixed zooming functions with keyboard input in map where normal zooming was not possible on US
   and other keyboard layouts.
+* Added recovery if main window gets off screen after changing monitors. Puts window back on top
+  left of main screen if it is not visible.
 
 ===============================================================================
 

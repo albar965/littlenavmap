@@ -3742,17 +3742,6 @@ void MainWindow::restoreStateMain()
     // Use default state saved in application
     resetWindowLayout();
 
-  QRect desktop = QApplication::desktop()->availableGeometry(this);
-
-  // Check if window if off screen
-  qDebug() << "Screen geometry" << desktop << "Win geometry" << frameGeometry();
-  QRect intersected = desktop.intersected(frameGeometry());
-  if(intersected.width() < 10 || intersected.height() < 10)
-  {
-    qDebug() << Q_FUNC_INFO << "Getting window back on screen";
-    move(desktop.topLeft());
-  }
-
 #ifdef DEBUG_MENU_TOOLTIPS
   // Enable tooltips for all menus
   QList<QAction *> stack;
