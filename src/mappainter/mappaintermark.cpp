@@ -167,7 +167,7 @@ void MapPainterMark::paintHighlights()
       logIds.insert(entry.destination.id);
   }
 
-  QList<Pos> positions;
+  QVector<Pos> positions;
   for(const MapAirport& ap : highlightResultsSearch.airports)
   {
     if(!logIds.contains(ap.id))
@@ -1181,11 +1181,11 @@ void MapPainterMark::paintDistanceMarkers()
       }
     }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_DISTANCE
     texts.append("[" + QString::number(distanceMeter, 'f', 0) + " m]");
 #endif
 
-    if(m.from != m.to)
+    if(m.from != m.to && !texts.isEmpty())
     {
       int xt = -1, yt = -1;
       if(textPlacement.findTextPos(m.from, m.to, distanceMeter, metrics.width(texts.at(0)),

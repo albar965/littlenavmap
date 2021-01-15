@@ -120,9 +120,6 @@ void MapPainterAircraft::render()
   {
     if(pos.isValid())
     {
-      if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND_POINTER))
-        paintWindPointer(userAircraft, context->painter->device()->width() / 2, 0);
-
       bool hidden = false;
       float x, y;
       if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
@@ -130,6 +127,9 @@ void MapPainterAircraft::render()
         if(!hidden)
           paintUserAircraft(userAircraft, x, y);
       }
+
+      if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND_POINTER))
+        paintWindPointer(userAircraft, context->painter->device()->width() / 2, 0);
     }
   }
 }

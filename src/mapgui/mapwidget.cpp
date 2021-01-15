@@ -2134,7 +2134,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   QRect widgetRect = rect();
 
   // Used to check if objects are still visible
-  QRect widgetRectSmall = widgetRect.adjusted(10, 10, -10, -10);
+  QRect widgetRectSmall = widgetRect.adjusted(40, 40, -40, -40);
   curPosVisible = widgetRectSmall.contains(curPoint);
 
   bool wasEmpty = aircraftTrack->isEmpty();

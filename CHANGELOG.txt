@@ -61,6 +61,7 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
   and other keyboard layouts.
 * Added recovery if main window gets off screen after changing monitors. Puts window back on top
   left of main screen if it is not visible.
+* Fixed crash when disabling all labels for measurement lines.
 
 ===============================================================================
 

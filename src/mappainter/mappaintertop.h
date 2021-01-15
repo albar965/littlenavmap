@@ -41,7 +41,7 @@ private:
   void drawTouchIcons(int iconSize);
 
   /* Paint message into the right bottom corner */
-  void paintCopyright(PaintContext *context);
+  void paintCopyright();
 
 };
 

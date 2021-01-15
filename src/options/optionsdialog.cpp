@@ -2646,20 +2646,20 @@ void OptionsDialog::selectGuiFontClicked()
   fontDialog->setCurrentFont(font);
   if(fontDialog->exec())
   {
-    QFont font = fontDialog->selectedFont();
+    QFont selfont = fontDialog->selectedFont();
 
     // Limit size to keep the user from messing up the UI without an option to change
-    if(font.pointSizeF() > 30.)
-      font.setPointSizeF(30.);
-    if(font.pixelSize() > 30)
-      font.setPixelSize(30);
+    if(selfont.pointSizeF() > 30.)
+      selfont.setPointSizeF(30.);
+    if(selfont.pixelSize() > 30)
+      selfont.setPixelSize(30);
 
-    guiFont = font.toString();
+    guiFont = selfont.toString();
     qDebug() << Q_FUNC_INFO << guiFont;
 
     // the user clicked OK and font is set to the font the user selected
-    if(QApplication::font() != font)
-      QApplication::setFont(font);
+    if(QApplication::font() != selfont)
+      QApplication::setFont(selfont);
     updateGuiFontLabel();
   }
 }

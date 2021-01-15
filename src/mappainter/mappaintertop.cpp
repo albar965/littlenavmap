@@ -41,7 +41,7 @@ MapPainterTop::~MapPainterTop()
 
 void MapPainterTop::render()
 {
-  paintCopyright(context);
+  paintCopyright();
 
   if(!context->visibleWidget)
     return;
@@ -145,7 +145,7 @@ void MapPainterTop::render()
 #endif
 }
 
-void MapPainterTop::paintCopyright(PaintContext *context)
+void MapPainterTop::paintCopyright()
 {
   QString mapCopyright = NavApp::getMapCopyright();
   if(!mapCopyright.isEmpty())
