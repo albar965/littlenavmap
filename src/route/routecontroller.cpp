@@ -4657,7 +4657,8 @@ QString RouteController::buildFlightplanLabel2(bool print) const
   {
     QStringList texts;
 
-    texts.append(tr("<b>%1</b>").arg(Unit::distNm(route.getTotalDistance())));
+    if(route.getSizeWithoutAlternates() > 1)
+      texts.append(tr("<b>%1</b>").arg(Unit::distNm(route.getTotalDistance())));
 
     if(route.getAltitudeLegs().getTravelTimeHours() > 0.f)
       texts.append(tr("<b>%1</b>").arg(formatter::formatMinutesHoursLong(route.getAltitudeLegs().getTravelTimeHours())));

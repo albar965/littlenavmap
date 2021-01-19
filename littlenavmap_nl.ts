@@ -11097,17 +11097,17 @@ Windsnelheid wordt geinterpoleerd uit de klim-en daalfases.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4503"/>
+        <location filename="src/gui/mainwindow.cpp" line="4493"/>
         <source>Click here for details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4523"/>
+        <location filename="src/gui/mainwindow.cpp" line="4513"/>
         <source>Error reading flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4528"/>
+        <location filename="src/gui/mainwindow.cpp" line="4518"/>
         <source>Error calculating profile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11152,8 +11152,8 @@ Reduce map details in the &quot;View&quot; menu.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1973"/>
-        <location filename="src/gui/mainwindow.cpp" line="4521"/>
-        <location filename="src/gui/mainwindow.cpp" line="4526"/>
+        <location filename="src/gui/mainwindow.cpp" line="4511"/>
+        <location filename="src/gui/mainwindow.cpp" line="4516"/>
         <source> </source>
         <translation type="unfinished"> </translation>
     </message>
@@ -11842,24 +11842,24 @@ Apply the loaded window layout anyway?</source>
         <translation type="vanished">Klaar.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3666"/>
+        <location filename="src/gui/mainwindow.cpp" line="3667"/>
         <source>Reset all Settings </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3667"/>
+        <location filename="src/gui/mainwindow.cpp" line="3668"/>
         <source>&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;User features like range rings or patterns as well as scenery, logbook and userpoint databases are not affected.&lt;br/&gt;&lt;br/&gt;A copy of the settings file&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;which allows you to undo this change.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4169"/>
+        <location filename="src/gui/mainwindow.cpp" line="4159"/>
         <source>Really Quit?</source>
         <translation>Werkelijk Afsluiten?</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2177"/>
         <location filename="src/gui/mainwindow.cpp" line="2524"/>
-        <location filename="src/gui/mainwindow.cpp" line="4170"/>
+        <location filename="src/gui/mainwindow.cpp" line="4160"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Toon deze &amp;dialoog niet meer.</translation>
     </message>
@@ -15687,37 +15687,37 @@ kHz/MHz</translation>
 <context>
     <name>MapPainter</name>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="718"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="719"/>
         <source>Fuel</source>
         <translation>Brandstof</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="718"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="719"/>
         <source>F</source>
         <translation>F</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="763"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="764"/>
         <source>Tower</source>
         <translation>Verkeerstoren</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="763"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="764"/>
         <source>T</source>
         <translation>T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="795"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="796"/>
         <source> x </source>
         <translation> x </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="800"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="801"/>
         <source> / L</source>
         <translation> / L</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="808"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="809"/>
         <location filename="src/mappainter/mappainternav.cpp" line="226"/>
         <location filename="src/mappainter/mappainternav.cpp" line="236"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="109"/>
@@ -15727,15 +15727,15 @@ kHz/MHz</translation>
         <translation> / </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="853"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="864"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="854"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="865"/>
         <location filename="src/mappainter/mappainternav.cpp" line="314"/>
         <source>► </source>
         <translation>► </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="859"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="869"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="860"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="870"/>
         <source> ◄</source>
         <translation> ◄</translation>
     </message>
@@ -16480,43 +16480,43 @@ kHz/MHz</translation>
         <translation>Geschiedenis kaartpositie - vorige.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2666"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2691"/>
         <source>&lt;p&gt;Cannot zoom to a position nearby the poles in Mercator projection.&lt;br/&gt;Use Spherical instead.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2669"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2694"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3122"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3147"/>
         <source>Added hold.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3133"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3158"/>
         <source>Holding removed from map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3155"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3180"/>
         <source>Showing distance search center.</source>
         <translation>Tonen afstand zoekcentrum.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3174"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3199"/>
         <source>Showing home position.</source>
         <translation>Tonen thuis-positie.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3185"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
         <source>Distance search center position changed.</source>
         <translation>Afstand positie zoekcentrum gewijzigd.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3193"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3218"/>
         <source>Changed home position.</source>
         <translation>Thuis-positie gewijzigd.</translation>
     </message>
@@ -16529,7 +16529,7 @@ kHz/MHz</translation>
         <translation type="vanished"> aan Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1995"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2020"/>
         <source>Cancel</source>
         <translation>Cancel</translation>
     </message>
@@ -16558,12 +16558,12 @@ kHz/MHz</translation>
         <translation type="vanished"> en meer</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1987"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2012"/>
         <source>Position</source>
         <translation>Positie</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1884"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1909"/>
         <source>Add %1 to Flight Plan</source>
         <translation>Voeg %1 toe aan Vluchtplan</translation>
     </message>
@@ -16574,12 +16574,12 @@ Ensure that the map fills the window completely.</source>
 Maak dat de kaart het venster volledig vult.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1886"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1911"/>
         <source>Insert %1 to Flight Plan</source>
         <translation>Voeg %1 toe in het Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1888"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1913"/>
         <source>Append %1 to Flight Plan</source>
         <translation>Voeg %1 achteraan het Vluchtplan toe</translation>
     </message>
@@ -16588,7 +16588,7 @@ Maak dat de kaart het venster volledig vult.</translation>
         <translation type="vanished">Airspaces</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1027"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1044"/>
         <source>Showing on map.</source>
         <translation>Getoond op de kaart.</translation>
     </message>
@@ -16625,17 +16625,17 @@ Maak dat de kaart het venster volledig vult.</translation>
         <translation type="vanished">Toon procedures (%1 heeft geen procedure)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3092"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3117"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>Toegevoegd verkeerspatroon voor %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3103"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3128"/>
         <source>Traffic pattern removed from map.</source>
         <translation>Verkeerspatroon verwijderd van de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1000"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1017"/>
         <source>Showing online client aircraft on map.</source>
         <translation>Toon online gebruikers vliegtuig op de kaart.</translation>
     </message>
@@ -16653,7 +16653,7 @@ Maak dat de kaart het venster volledig vult.</translation>
         <translation type="vanished">hier</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1968"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1993"/>
         <source>More ...</source>
         <translation>Meer ...</translation>
     </message>
@@ -16670,17 +16670,17 @@ Maak dat de kaart het venster volledig vult.</translation>
         <translation type="vanished"> / </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3296"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3321"/>
         <source>Range ring removed from map.</source>
         <translation>Ring bereik verwijderd van kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3304"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3329"/>
         <source>Measurement line removed from map.</source>
         <translation>Meetlijn verwijderd van kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3221"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3246"/>
         <source>Added range rings for %1.</source>
         <translation>Ringen bereik voor %1 toegevoegd.</translation>
     </message>
@@ -16695,47 +16695,47 @@ Maak dat de kaart het venster volledig vult.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1597"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1622"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1605"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1607"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1614"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3208"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3213"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1630"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1632"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1639"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3233"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3235"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3238"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1713"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1738"/>
         <source>Coordinates copied to clipboard.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3242"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3267"/>
         <source>Added range rings for position.</source>
         <translation>Ringen bereik van positie toegevoegd.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3364"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3389"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Alle ringen bereik en meetlijnen verwijderd van kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="990"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1007"/>
         <source>Showing user aircraft on map.</source>
         <translation>Tonen vliegtuig gebruiker op de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="995"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1012"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>Tonen AI / multiplayer vliegtuigen op de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1005"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1022"/>
         <source>Showing airport on map.</source>
         <translation>Tonen luchthaven op de kaart.</translation>
     </message>
@@ -16744,17 +16744,17 @@ Maak dat de kaart het venster volledig vult.</translation>
         <translation type="vanished">Spoor vliegtuig verwijderd van de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3317"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3342"/>
         <source>Normal</source>
         <translation>Normaal</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3324"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3349"/>
         <source>Detail %1</source>
         <translation>Detail %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3325"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3350"/>
         <source>Map detail level changed.</source>
         <translation>Niveau kaartdetail is gewijzigd.</translation>
     </message>
@@ -16762,8 +16762,8 @@ Maak dat de kaart het venster volledig vult.</translation>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/navapp.cpp" line="339"/>
-        <location filename="src/navapp.cpp" line="345"/>
+        <location filename="src/navapp.cpp" line="340"/>
+        <location filename="src/navapp.cpp" line="346"/>
         <source>While reading magnetic declination from database:</source>
         <translation>Tijdens het lezen van de magnetische declinatie uit database:</translation>
     </message>
@@ -24544,7 +24544,7 @@ Spaces are replaced with underscores.</source>
         <translation>%1 is reeds gestart.</translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1054"/>
+        <location filename="src/navapp.cpp" line="1060"/>
         <source>Version %5 (revision %6)</source>
         <translation>Versie %5 (revisie %6)</translation>
     </message>
@@ -25673,7 +25673,7 @@ create the flight plan manually.</source>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3071"/>
-        <location filename="src/route/routecontroller.cpp" line="4753"/>
+        <location filename="src/route/routecontroller.cpp" line="4754"/>
         <source>Set Start Position</source>
         <translation>Stel Startpositie in</translation>
     </message>
@@ -25773,20 +25773,20 @@ create the flight plan manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4862"/>
+        <location filename="src/route/routecontroller.cpp" line="4863"/>
         <source>No flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4863"/>
+        <location filename="src/route/routecontroller.cpp" line="4864"/>
         <source>
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4864"/>
-        <location filename="src/route/routecontroller.cpp" line="4869"/>
+        <location filename="src/route/routecontroller.cpp" line="4865"/>
+        <location filename="src/route/routecontroller.cpp" line="4870"/>
         <source>Remarks for the flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -25931,7 +25931,7 @@ create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4407"/>
         <location filename="src/route/routecontroller.cpp" line="4412"/>
-        <location filename="src/route/routecontroller.cpp" line="4675"/>
+        <location filename="src/route/routecontroller.cpp" line="4676"/>
         <source>, </source>
         <translation type="unfinished">, </translation>
     </message>
@@ -26064,24 +26064,24 @@ to select departure and destination.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4660"/>
-        <location filename="src/route/routecontroller.cpp" line="4663"/>
-        <location filename="src/route/routecontroller.cpp" line="4667"/>
+        <location filename="src/route/routecontroller.cpp" line="4661"/>
+        <location filename="src/route/routecontroller.cpp" line="4664"/>
+        <location filename="src/route/routecontroller.cpp" line="4668"/>
         <source>&lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4669"/>
+        <location filename="src/route/routecontroller.cpp" line="4670"/>
         <source>%1 from departure to top of climb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4671"/>
+        <location filename="src/route/routecontroller.cpp" line="4672"/>
         <source>%1 from start of descent to destination</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4848"/>
+        <location filename="src/route/routecontroller.cpp" line="4849"/>
         <source>Remarks changed</source>
         <translation type="unfinished"></translation>
     </message>

@@ -71,7 +71,7 @@
     <message>
         <source>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</oldsource>
-        <translation type="vanished">&lt;p&gt;Daten für die Flugzeugleistung werden während des Flugs automatisch erfasst. &lt;/p&gt;&lt;p&gt;&lt;p&gt;Bitte beachten, dass während dieses Prozesses keine Leistungsdaten, wie Treibstoffschätzungen oder Zeit bis zum nächsten Wegpunkt angezeigt werden.&lt;/p&gt;&lt;p&gt;&lt;p&gt;Endpunkt des Steigfluges und Anfangspunkt des Sinkflugs werden basierend auf einer 3 nm pro 1000 ft Faustregel dargestellt.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;&lt;li&gt;Verbindung zum Simulator herstellen, &lt;/li&gt;&lt;li&gt;&lt;li&gt;einen Flugplan laden,&lt;/li&gt;&lt;li&gt;das Flugzeug am Abflughafen platzieren und&lt;/li&gt;&lt;li&gt;&lt;li&gt;den Flugplan so genau wie möglich abfliegen.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Das Erfassen der Leistungsdaten wird bei der Landung am Zielort beendet.&lt;/p&gt;&lt;p&gt;&lt;p&gt;Die Reiseflughöhe während der Datenerfassung nicht ändern.&lt;/p&gt;&lt;p&gt;&lt;p&gt;&lt;b&gt;Für weitere Informationen auf den untenstehenden Link klicken:&lt;br/&gt;&lt;br/&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;p&gt;&lt;p&gt;&lt;p&gt;&lt;p&gt;&lt;p&gt;&lt;b&gt;Datenerfassung jetzt starten?&lt;/b&gt;&lt;/p&gt;&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;Daten für die Flugzeugleistung werden während des Flugs automatisch erfasst. &lt;/p&gt;&lt;p&gt;&lt;p&gt;Bitte beachten, dass während dieses Prozesses keine Leistungsdaten, wie Treibstoffschätzungen oder Zeit bis zum nächsten Wegpunkt angezeigt werden.&lt;/p&gt;&lt;p&gt;&lt;p&gt;Endpunkt des Steigfluges und Anfangspunkt des Sinkflugs werden basierend auf einer 3 nm pro 1000 ft Faustregel dargestellt.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;&lt;li&gt;Verbindung zum Simulator herstellen, &lt;/li&gt;&lt;li&gt;&lt;li&gt;einen Flugplan laden,&lt;/li&gt;&lt;li&gt;das Flugzeug am Abflugplatz platzieren und&lt;/li&gt;&lt;li&gt;&lt;li&gt;den Flugplan so genau wie möglich abfliegen.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Das Erfassen der Leistungsdaten wird bei der Landung am Zielort beendet.&lt;/p&gt;&lt;p&gt;&lt;p&gt;Die Reiseflughöhe während der Datenerfassung nicht ändern.&lt;/p&gt;&lt;p&gt;&lt;p&gt;&lt;b&gt;Für weitere Informationen auf den untenstehenden Link klicken:&lt;br/&gt;&lt;br/&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;p&gt;&lt;p&gt;&lt;p&gt;&lt;p&gt;&lt;p&gt;&lt;b&gt;Datenerfassung jetzt starten?&lt;/b&gt;&lt;/p&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="607"/>
@@ -6580,7 +6580,7 @@ Erhält Prozeduren.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6311"/>
         <source>Calculate for &amp;selection in flight plan table</source>
-        <translation>Berechne für &amp;Auswahl in der Flugplantabelle</translation>
+        <translation>Berechne Flugplan für &amp;Auswahl</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6576"/>
@@ -7006,7 +7006,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11500"/>
         <source>&amp;Fullscreen Map</source>
-        <translation>&amp;Karte Vollbildschirm</translation>
+        <translation>&amp;Vollbildmodus</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11503"/>
@@ -7062,7 +7062,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11568"/>
         <source>Save Window &amp;Layout as ...</source>
-        <translation>Fensteranordnung &amp;Speichern ...</translation>
+        <translation>Fensteranordnung &amp;speichern ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11571"/>
@@ -7116,7 +7116,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7195"/>
         <source>&amp;Contents (Online)</source>
-        <translation>&amp;Inhalte (Online, Englisch)</translation>
+        <translation>&amp;Inhalte (Online)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7198"/>
@@ -7232,7 +7232,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11126"/>
         <source>&amp;Calculate Flight Plan for selected range ...</source>
-        <translation>Berechne für &amp;Auswahl in der Flugplantabelle ...</translation>
+        <translation>Berechne Flugplan für &amp;Auswahl ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11278"/>
@@ -7258,7 +7258,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11319"/>
         <source>Show &amp;direct connection</source>
-        <translation>&amp;Direkte Verbindung berechnen</translation>
+        <translation>&amp;Direkte Verbindung zeigen</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11322"/>
@@ -7280,7 +7280,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11347"/>
         <source>Show aircraft &amp;trail</source>
-        <translation>Zeige &amp;Flugpfad</translation>
+        <translation>&amp;Flugpfad zeigen</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11350"/>
@@ -7355,7 +7355,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11414"/>
         <source>Save attached &amp;GPX Trail as ...</source>
-        <translation>Speichere den angehängten GPX-Flugpfad als ...</translation>
+        <translation>Angehängten GPX-Flugpfad speichern als ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11417"/>
@@ -7627,7 +7627,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9285"/>
         <source>Export Flight &amp;Plan as X-Plane FMS 11 ...</source>
-        <translation>Speichere Flug&amp;plan als X-Plane FMS 11 ...</translation>
+        <translation>Exportiere Flug&amp;plan als X-Plane FMS 11 ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9288"/>
@@ -7685,7 +7685,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10486"/>
         <source>Export Flight Plan as Flight&amp;Gear FGFP ...</source>
-        <translation>Flug&amp;plan als Flight&amp;Gear FGFP exportieren ...</translation>
+        <translation>Exportiere Flugplan als Flight&amp;Gear FGFP ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10489"/>
@@ -7935,7 +7935,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
         <location filename="src/gui/mainwindow.ui" line="11027"/>
         <location filename="src/gui/mainwindow.ui" line="11030"/>
         <source>Reset flight plan, aircraft trail and more for a new flight</source>
-        <translation>Setze Flugplan, Flugzeugspur und mehr für einen neuen Flug zurück</translation>
+        <translation>Setze Flugplan, Flugzeugpfad und mehr für einen neuen Flug zurück</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11033"/>
@@ -9086,7 +9086,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
         <location filename="src/gui/mainwindow.ui" line="11622"/>
         <source>Export Flight Plan &amp;as MSFS 2020 PLN ...</source>
         <oldsource>Export Flight Plan &amp;as MSFS  PLN ...</oldsource>
-        <translation>Exportiere Flugplan &amp;als MSFS 2020 PLN ...</translation>
+        <translation>Exportiere Flugplan als &amp;MSFS 2020 PLN ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11625"/>
@@ -9308,7 +9308,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11219"/>
         <source>Export Flight Plan &amp;as P3D or FSX  PLN ...</source>
-        <translation>Exportiere Flugplan &amp;als P3D oder FSX  PLN ...</translation>
+        <translation>Exportiere Flugplan als &amp;P3D oder FSX PLN ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11222"/>
@@ -9420,7 +9420,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8214"/>
         <source>Show Aircraft &amp;Trail</source>
-        <translation>Zeige &amp;Flugpfad</translation>
+        <translation>&amp;Flugpfad zeigen</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8217"/>
@@ -10608,7 +10608,7 @@ in Relation zum angezeigten Flugplatz</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8837"/>
         <source>&amp;Contents (Offline, PDF)</source>
-        <translation>&amp;Inhalte (Offline, PDF, Englisch)</translation>
+        <translation>&amp;Inhalte (Offline, PDF)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8840"/>
@@ -10902,7 +10902,7 @@ in Relation zum angezeigten Flugplatz</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9229"/>
         <source>&amp;Tutorials (Online)</source>
-        <translation>&amp;Tutorials (Online, Englisch)</translation>
+        <translation>&amp;Tutorials (Online)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9232"/>
@@ -11197,8 +11197,8 @@ Online Netzwerk:
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1973"/>
-        <location filename="src/gui/mainwindow.cpp" line="4521"/>
-        <location filename="src/gui/mainwindow.cpp" line="4526"/>
+        <location filename="src/gui/mainwindow.cpp" line="4511"/>
+        <location filename="src/gui/mainwindow.cpp" line="4516"/>
         <source> </source>
         <translation> </translation>
     </message>
@@ -11334,12 +11334,12 @@ Online Netzwerk:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2764"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPG-Bilddateien (*.jpg *.jpeg);;PNG-Bilddateien (*.png);;BMP-Bilddateien (*.bmp);;Alle Dateien (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2816"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPG-Bilddateien (*.jpg *.jpeg);;PNG-Bilddateien (*.png);;Alle Dateien (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3105"/>
@@ -11373,17 +11373,17 @@ Online Netzwerk:
         <translation>Kann keine &lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator - Steam Edition,&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator 2020 oder&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;auf diesem Computer finden. Außerdem wurden keine Szeneriedatenbanken gefunden.&lt;br/&gt;&lt;br/&gt;Sie können eine &lt;i&gt;Little Navmap&lt;/i&gt; Szeneriedatenbank von einen anderen Computer kopieren.&lt;br/&gt;Klicken Sie auf die Hilfe-Schaltfäche für mehr Informationen.&lt;br/&gt;&lt;br/&gt;Wenn Sie X-Plane installiert haben, können Sie direkt zum Szenerieladedialog gehen, indem Sie die X-Plane Schaltfäche unten drücken.&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4503"/>
+        <location filename="src/gui/mainwindow.cpp" line="4493"/>
         <source>Click here for details.</source>
         <translation>Hier für Details klicken</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4523"/>
+        <location filename="src/gui/mainwindow.cpp" line="4513"/>
         <source>Error reading flight plan.</source>
         <translation>Fehler beim Lesen des Flugplans.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4528"/>
+        <location filename="src/gui/mainwindow.cpp" line="4518"/>
         <source>Error calculating profile.</source>
         <translation>Fehler beim Berechnen des Profils.</translation>
     </message>
@@ -12032,24 +12032,24 @@ Reduzieren Sie Kartendetails im Menü &quot;Ansicht&quot;.</translation>
         <translation type="vanished">Bereit.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3666"/>
+        <location filename="src/gui/mainwindow.cpp" line="3667"/>
         <source>Reset all Settings </source>
         <translation>Alle Einstellungen zurücksetzen </translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3667"/>
+        <location filename="src/gui/mainwindow.cpp" line="3668"/>
         <source>&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;User features like range rings or patterns as well as scenery, logbook and userpoint databases are not affected.&lt;br/&gt;&lt;br/&gt;A copy of the settings file&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;which allows you to undo this change.</source>
-        <translation>&lt;b&gt;Dadurch werden alle Einstellungen, das Fensterlayout, Dialoglayout, Flugzeugspur, Historie der Kartenpositionen und die Dateiverläufe zurückgesetzt und &lt;i&gt;%1&lt;/i&gt; neu gestartet.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;Nutzerobjekte wie Distanzkreise oder Platzrunden sowie Szenerie-, Logbuch- und Nutzerpunkt-Datenbanken sind davon nicht betroffen.&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt; wird im Verzeichnis&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt; erstellt, wodurch Sie diese Änderung rückgängig machen können.</translation>
+        <translation>&lt;b&gt;Dadurch werden alle Einstellungen, das Fensterlayout, Dialoglayout, Flugzeugpfad, Historie der Kartenpositionen und die Dateiverläufe zurückgesetzt und &lt;i&gt;%1&lt;/i&gt; neu gestartet.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;Nutzerobjekte wie Distanzkreise oder Platzrunden sowie Szenerie-, Logbuch- und Nutzerpunkt-Datenbanken sind davon nicht betroffen.&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt; wird im Verzeichnis&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt; erstellt, wodurch Sie diese Änderung rückgängig machen können.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4169"/>
+        <location filename="src/gui/mainwindow.cpp" line="4159"/>
         <source>Really Quit?</source>
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2177"/>
         <location filename="src/gui/mainwindow.cpp" line="2524"/>
-        <location filename="src/gui/mainwindow.cpp" line="4170"/>
+        <location filename="src/gui/mainwindow.cpp" line="4160"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
@@ -12194,7 +12194,7 @@ Reduzieren Sie Kartendetails im Menü &quot;Ansicht&quot;.</translation>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="611"/>
         <source>Create &amp;Approach to %1</source>
         <oldsource>Create &amp;Custom Procedure for %1</oldsource>
-        <translation>Erstelle &amp;Anflug für %1</translation>
+        <translation>&amp;Anflug für %1 erstellen</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="612"/>
@@ -14075,7 +14075,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="1851"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2925"/>
         <source>Remarks:</source>
-        <translation>Bemerkungen:</translation>
+        <translation>Anmerkungen:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1857"/>
@@ -14500,7 +14500,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2359"/>
         <source>Aircraft trail:</source>
-        <translation>Flugzeugspur:</translation>
+        <translation>Flugzeugpfad:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2783"/>
@@ -15880,37 +15880,37 @@ kHz/MHz</translation>
 <context>
     <name>MapPainter</name>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="718"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="719"/>
         <source>Fuel</source>
         <translation>Tanken</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="718"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="719"/>
         <source>F</source>
         <translation>F</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="763"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="764"/>
         <source>Tower</source>
         <translation>Tower</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="763"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="764"/>
         <source>T</source>
         <translation>T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="795"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="796"/>
         <source> x </source>
         <translation> x </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="800"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="801"/>
         <source> / L</source>
         <translation> / L</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="808"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="809"/>
         <location filename="src/mappainter/mappainternav.cpp" line="226"/>
         <location filename="src/mappainter/mappainternav.cpp" line="236"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="109"/>
@@ -15920,15 +15920,15 @@ kHz/MHz</translation>
         <translation> / </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="853"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="864"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="854"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="865"/>
         <location filename="src/mappainter/mappainternav.cpp" line="314"/>
         <source>► </source>
         <translation>► </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="859"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="869"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="860"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="870"/>
         <source> ◄</source>
         <translation> ◄</translation>
     </message>
@@ -16580,7 +16580,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="50"/>
         <source>Database is empty</source>
-        <translation>Datenbank is leer</translation>
+        <translation>Datenbank ist leer</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="125"/>
@@ -16689,43 +16689,43 @@ kHz/MHz</translation>
         <translation>Vorherige Position in der Kartenhistorie.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2666"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2691"/>
         <source>&lt;p&gt;Cannot zoom to a position nearby the poles in Mercator projection.&lt;br/&gt;Use Spherical instead.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Kann in der Mercator-Projektion nicht zu einer Position nahe den Polen zoomen&lt;br/&gt;Nutzen Sie stattdessen die Sphärische Projektion.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2669"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2694"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3122"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3147"/>
         <source>Added hold.</source>
         <translation>Warteschleife hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3133"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3158"/>
         <source>Holding removed from map.</source>
         <translation>Warteschleife von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3155"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3180"/>
         <source>Showing distance search center.</source>
         <translation>Zeige Distanz zum Suchzentrum.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3174"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3199"/>
         <source>Showing home position.</source>
         <translation>Zeige Heimposition.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3185"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
         <source>Distance search center position changed.</source>
         <translation>Distanz zur Suchzentrumsposition geändert.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3193"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3218"/>
         <source>Changed home position.</source>
         <translation>Heimposition geändert.</translation>
     </message>
@@ -16738,7 +16738,7 @@ kHz/MHz</translation>
         <translation type="vanished"> zum Flugplan</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1995"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2020"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -16767,12 +16767,12 @@ kHz/MHz</translation>
         <translation type="vanished"> und mehr</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1987"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2012"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1884"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1909"/>
         <source>Add %1 to Flight Plan</source>
         <translation>%1 zum Flugplan hinzufügen</translation>
     </message>
@@ -16783,12 +16783,12 @@ Ensure that the map fills the window completely.</source>
 Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1886"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1911"/>
         <source>Insert %1 to Flight Plan</source>
         <translation>%1 in den Flugplan einfügen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1888"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1913"/>
         <source>Append %1 to Flight Plan</source>
         <translation>%1 an den Flugplan anhängen</translation>
     </message>
@@ -16797,7 +16797,7 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation type="vanished">Abflug </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1027"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1044"/>
         <source>Showing on map.</source>
         <translation>Zeige auf Karte.</translation>
     </message>
@@ -16846,17 +16846,17 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation type="vanished"> (nicht auf der Karte angezeigt)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3092"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3117"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>Platzrunde für %1 hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3103"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3128"/>
         <source>Traffic pattern removed from map.</source>
         <translation>Platzrunde von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1000"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1017"/>
         <source>Showing online client aircraft on map.</source>
         <translation>Zeige Online Clientflugzeug auf der Karte.</translation>
     </message>
@@ -16874,7 +16874,7 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation type="vanished">hier</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1968"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1993"/>
         <source>More ...</source>
         <translation>Mehr ...</translation>
     </message>
@@ -16891,17 +16891,17 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation type="vanished"> / </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3296"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3321"/>
         <source>Range ring removed from map.</source>
         <translation>Distanzkreise von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3304"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3329"/>
         <source>Measurement line removed from map.</source>
         <translation>Messlinie von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3221"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3246"/>
         <source>Added range rings for %1.</source>
         <translation>Distanzkreise für %1 hinzugefügt.</translation>
     </message>
@@ -16916,47 +16916,47 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation>Beendet den Vollbildmodus und stellt die normal Fensteranordnung wieder her</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1597"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1622"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1605"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1607"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1614"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3208"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3213"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1630"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1632"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1639"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3233"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3235"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3238"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1713"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1738"/>
         <source>Coordinates copied to clipboard.</source>
         <translation>Koordinaten in die Zwischenablage kopiert.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3242"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3267"/>
         <source>Added range rings for position.</source>
         <translation>Distanzkreise für Position hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3364"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3389"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Alle Distanzkreise und Messungen von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="990"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1007"/>
         <source>Showing user aircraft on map.</source>
         <translation>Zeige Nutzerflugzeug auf der Karte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="995"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1012"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>Zeige KI- / Mehrspielerflugzeuge auf der Karte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1005"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1022"/>
         <source>Showing airport on map.</source>
         <translation>Zeige Flugplatz auf der Karte.</translation>
     </message>
@@ -16965,17 +16965,17 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation type="vanished">Flugzeugpfad von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3317"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3342"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3324"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3349"/>
         <source>Detail %1</source>
         <translation>Detail %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3325"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3350"/>
         <source>Map detail level changed.</source>
         <translation>Detailgrad der Karte geändert.</translation>
     </message>
@@ -16987,8 +16987,8 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/navapp.cpp" line="339"/>
-        <location filename="src/navapp.cpp" line="345"/>
+        <location filename="src/navapp.cpp" line="340"/>
+        <location filename="src/navapp.cpp" line="346"/>
         <source>While reading magnetic declination from database:</source>
         <translation>Während des Lesens der magnetischen Deklination aus der Datenbank:</translation>
     </message>
@@ -17759,7 +17759,7 @@ Sie müssen das Programm neu starten, damit die Änderungen aktiv werden.</trans
         <location filename="src/options/options.ui" line="4369"/>
         <source>&amp;Avoid overwriting Flight Plan with not matching departure and destination</source>
         <oldsource>&amp;Avoid overwriting Flight Plan with non matching departure and destination</oldsource>
-        <translation>Das &amp;Überschreiben von Flugplänen mit veränderten Start und Ziel vermeiden</translation>
+        <translation>Das &amp;Überschreiben von Flugplänen mit veränderten Start oder Ziel vermeiden</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2770"/>
@@ -18996,7 +18996,7 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
     </message>
     <message>
         <source>Aircraft Track</source>
-        <translation type="vanished">Flugzeugspur</translation>
+        <translation type="vanished">Flugzeugpfad</translation>
     </message>
     <message>
         <source>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX, P3D or FlightGear flight plans instead of the long name</source>
@@ -19529,7 +19529,7 @@ Diese Einstellung wird auch im Höhenprofil verwendet.</translation>
     <message>
         <location filename="src/options/options.ui" line="4137"/>
         <source>Aircraft Trail</source>
-        <translation>Flugzeugspur</translation>
+        <translation>Flugzeugpfad</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4158"/>
@@ -19567,7 +19567,7 @@ Nutzen Sie dies, wenn Sie sich beim Fliegen nur auf GPS verlassen.</translation>
     <message>
         <location filename="src/options/options.ui" line="4459"/>
         <source>&amp;Ignore declination of VOR and other radio navaids</source>
-        <translation>&amp;Ignoriere Deklinationswerte von Radio-Navigationshilfen</translation>
+        <translation>&amp;Ignoriere Deklinationswerte von Funknavigationshilfen</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4791"/>
@@ -21213,7 +21213,7 @@ Optionen für die Anzeige von Kurs und Richtung.</translation>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="177"/>
         <source>Update and movement options for the user aircraft and trail.</source>
-        <translation>Aktualisierungs- und Bewegungsoptionen für das Benutzerflugzeug und die Flugzeugspur.</translation>
+        <translation>Aktualisierungs- und Bewegungsoptionen für das Benutzerflugzeug und die Flugzeugpfad.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="179"/>
@@ -22190,7 +22190,7 @@ Dieser Prozess läuft im Hintergrund und kann eine Weile dauern.</translation>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="657"/>
         <source>Remarks</source>
-        <translation>Kommentare</translation>
+        <translation>Anmerkungen</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="908"/>
@@ -25012,7 +25012,7 @@ Leerzeichen werden durch Unterstriche ersetzt.</translation>
         <translation>%1 läuft bereits.</translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1054"/>
+        <location filename="src/navapp.cpp" line="1060"/>
         <source>Version %5 (revision %6)</source>
         <translation>Version %5 (Revision %6)</translation>
     </message>
@@ -25169,7 +25169,7 @@ hh:mm</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="149"/>
         <source>Remarks</source>
-        <translation>Kommentare</translation>
+        <translation>Anmerkungen</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="153"/>
@@ -25208,20 +25208,20 @@ hh:mm</translation>
 localizer approaches on the last runway leg.</source>
         <oldsource>Type of a radio navaid. Shows ILS or LOC for ILS or
 localizer approaches on the last runway leg.</oldsource>
-        <translation>Typ einer Radio-Navigationshilfe. Zeigt ILS oder LOC für
+        <translation>Typ einer Funknavigationshilfe. Zeigt ILS oder LOC für
 Localizer nähert sich auf der letzten Bahnstrecke.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="163"/>
         <source>Frequency or channel of a radio navaid.
 Also shows ILS or localizer frequency for corresponding approaches on the last runway leg.</source>
-        <translation>Frequenz oder Kanal eines Radio-Navigationshilfe.
+        <translation>Frequenz oder Kanal eines Funknavigationshilfe.
 Zeigt auch die ILS- oder Localizer-Frequenz für entsprechende Anflüge auf dem Endabschnitt an.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="165"/>
         <source>Range of a radio navaid if available.</source>
-        <translation>Reichweite eine Radio-Navigationshilfe, wenn verfügbar.</translation>
+        <translation>Reichweite eine Funknavigationshilfe, wenn verfügbar.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="166"/>
@@ -25345,7 +25345,7 @@ Basiert auf der Berechnung mit dem Flugzeugleistungsprofil.</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3243"/>
         <source>&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Installation&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;Für mehr Informationen auf den Link unten klicken:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online-Benutzerhandbuch - Installation (Englisch)&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;Für mehr Informationen auf den Link unten klicken:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online-Benutzerhandbuch - Installation&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3265"/>
@@ -26252,7 +26252,7 @@ erstellen Sie den Flugplan manuell.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3071"/>
-        <location filename="src/route/routecontroller.cpp" line="4753"/>
+        <location filename="src/route/routecontroller.cpp" line="4754"/>
         <source>Set Start Position</source>
         <translation>Startposition setzen</translation>
     </message>
@@ -26342,7 +26342,7 @@ erstellen Sie den Flugplan manuell.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2262"/>
         <source>Create &amp;Approach to Airport</source>
-        <translation>Erstelle &amp;Anflug für Flugplatz</translation>
+        <translation>&amp;Anflug für Flugplatz erstellen</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2308"/>
@@ -26463,7 +26463,7 @@ erstellen Sie den Flugplan manuell.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4407"/>
         <location filename="src/route/routecontroller.cpp" line="4412"/>
-        <location filename="src/route/routecontroller.cpp" line="4675"/>
+        <location filename="src/route/routecontroller.cpp" line="4676"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -26590,28 +26590,28 @@ oder berechnen Sie den Flugplan neu, falls Sie Tracks benutzen.</translation>
         <translation>Zuerst Start und Ziel auf der Karte oder in der Flugplatzsuche auswählen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4669"/>
+        <location filename="src/route/routecontroller.cpp" line="4670"/>
         <source>%1 from departure to top of climb</source>
         <translation>%1 vom Start bis zum Ende des Steigfluges</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4671"/>
+        <location filename="src/route/routecontroller.cpp" line="4672"/>
         <source>%1 from start of descent to destination</source>
         <translation>%1 vom Start des Sinkfluges zum Ziel</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4848"/>
+        <location filename="src/route/routecontroller.cpp" line="4849"/>
         <source>Remarks changed</source>
         <translation>Anmerkungen geändert</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4864"/>
-        <location filename="src/route/routecontroller.cpp" line="4869"/>
+        <location filename="src/route/routecontroller.cpp" line="4865"/>
+        <location filename="src/route/routecontroller.cpp" line="4870"/>
         <source>Remarks for the flight plan.</source>
         <translation>Anmerkungen zum Flugplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4863"/>
+        <location filename="src/route/routecontroller.cpp" line="4864"/>
         <source>
 
 </source>
@@ -26620,7 +26620,7 @@ oder berechnen Sie den Flugplan neu, falls Sie Tracks benutzen.</translation>
 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4862"/>
+        <location filename="src/route/routecontroller.cpp" line="4863"/>
         <source>No flight plan.</source>
         <translation>Kein Flugplan.</translation>
     </message>
@@ -26629,9 +26629,9 @@ oder berechnen Sie den Flugplan neu, falls Sie Tracks benutzen.</translation>
         <translation type="obsolete">&lt;b&gt;%1, %2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4660"/>
-        <location filename="src/route/routecontroller.cpp" line="4663"/>
-        <location filename="src/route/routecontroller.cpp" line="4667"/>
+        <location filename="src/route/routecontroller.cpp" line="4661"/>
+        <location filename="src/route/routecontroller.cpp" line="4664"/>
+        <location filename="src/route/routecontroller.cpp" line="4668"/>
         <source>&lt;b&gt;%1&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
@@ -27198,7 +27198,7 @@ Dies kann passieren, wenn Sie einen auf FSX-, Prepar3D- oder MSFS-Szenerie basie
     <message>
         <location filename="src/routeexport/routeexportdialog.ui" line="160"/>
         <source>&amp;Remarks:</source>
-        <translation>&amp;Bemerkungen:</translation>
+        <translation>&amp;Anmerkungen:</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportdialog.ui" line="176"/>
@@ -28342,7 +28342,7 @@ ETD and ETA Zeitangaben werden ignoriert.</translation>
         <location filename="src/routestring/routestringdialog.cpp" line="94"/>
         <source>Omit departure and destination airport ICAO code.
 Note that the resulting description cannot be read into a flight plan.</source>
-        <translation>ICAO Code des Abflug- und Zielflughafen weglassen.
+        <translation>ICAO Code des Abflug- und Zielflugplatzes weglassen.
 Beachten Sie, dass die resultierende Beschreibung nicht in einen Flugplan eingelesen werden kann.</translation>
     </message>
     <message>
