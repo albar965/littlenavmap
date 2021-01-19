@@ -12,6 +12,9 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 
 ## Changes from 2.6.6 to 2.6.7
 
+* Finished update for German online and included PDF manual.
+* Corrections to English online and PDF manual as well as map legend.
+
 * Corrected issue where status bar was hidden on first start after first installation in dock
   handler.
 * Flight plan calculation window changed to appear near cursor on first show to avoid random
@@ -62,6 +65,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Added recovery if main window gets off screen after changing monitors. Puts window back on top
   left of main screen if it is not visible.
 * Fixed crash when disabling all labels for measurement lines.
+* Fixed issue with X-Plane FMS plans where long airport idents like `XRP0001` could not be loaded.
+  Idents are now truncated.
 
 ===============================================================================
 
