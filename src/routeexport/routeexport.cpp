@@ -1219,7 +1219,7 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserW
   if(file.open(QFile::WriteOnly | QIODevice::Text))
   {
     QByteArray utf8 = gfp.toUtf8();
-    file.write(utf8.data(), utf8.size());
+    file.write(utf8.constData(), utf8.size());
     file.close();
     return true;
   }
@@ -1240,7 +1240,7 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
   if(file.open(QFile::WriteOnly | QIODevice::Text))
   {
     QByteArray utf8 = txt.toUtf8();
-    file.write(utf8.data(), utf8.size());
+    file.write(utf8.constData(), utf8.size());
     file.close();
     return true;
   }
@@ -1327,7 +1327,7 @@ bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUs
   if(file.open(QFile::WriteOnly | QIODevice::Text))
   {
     QByteArray utf8 = gfp.toUtf8();
-    file.write(utf8.data(), utf8.size());
+    file.write(utf8.constData(), utf8.size());
     file.close();
     return true;
   }

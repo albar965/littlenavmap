@@ -7,6 +7,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ## Known Issues
 
+* No SID and STAR yet from MSFS scenery library. This will come with a future update.
+
 See user manual for known problems:
 https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#problems .
 
@@ -17,6 +19,10 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Updated German online and included PDF manual as well as legend for changes in version 2.6.
   https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/de
 * Corrections to English online and PDF manual as well as map legend.
+
+### MSFS
+
+* Added workaround for the issue with simulator crashes that were introduced with the MSFS 1.12.13.0 update.
 
 ### User Interface
 
