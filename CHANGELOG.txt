@@ -8,6 +8,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 ## Known Issues
 
 * No SID and STAR yet from MSFS scenery library. This will come with a future update.
+* MSFS multiplayer traffic is not shown in *Little Navmap*.
 
 See user manual for further known problems:
 https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#problems .
