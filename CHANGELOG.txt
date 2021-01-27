@@ -3,6 +3,15 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 2.6.7 hotfix
+
+Note that the hotfix has the same version number but a different revision.
+
+* Fixed flight plan export for FSX and MSFS which used the wrong coordinates for
+  destination confusing third party programs.
+
+===============================================================================
+
 # Version 2.6.7
 
 ## Known Issues

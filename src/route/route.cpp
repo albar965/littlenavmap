@@ -1359,13 +1359,15 @@ void Route::updateDepartureAndDestination()
   if(!isEmpty())
   {
     // Correct departure and destination values
-    flightplan.setDepartureIdent(getDepartureAirportLeg().getIdent());
-    flightplan.setDepartureName(getDepartureAirportLeg().getName());
-    flightplan.setDeparturePosition(first().getPosition());
+    const RouteLeg& departure = getDepartureAirportLeg();
+    flightplan.setDepartureIdent(departure.getIdent());
+    flightplan.setDepartureName(departure.getName());
+    flightplan.setDeparturePosition(departure.getPosition());
 
-    flightplan.setDestinationIdent(getDestinationAirportLeg().getIdent());
-    flightplan.setDestinationName(getDestinationAirportLeg().getName());
-    flightplan.setDestinationPosition(first().getPosition());
+    const RouteLeg& destination = getDestinationAirportLeg();
+    flightplan.setDestinationIdent(destination.getIdent());
+    flightplan.setDestinationName(destination.getName());
+    flightplan.setDestinationPosition(destination.getPosition());
   }
 }
 
