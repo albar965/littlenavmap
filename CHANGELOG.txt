@@ -10,6 +10,8 @@ Note that the hotfix has the same version number but a different revision.
 * Fixed flight plan export for FSX and MSFS which used the wrong coordinates for
   destination confusing third party programs.
 * Fixed crash on startup which can appear with Mercator projection zoomed far out.
+* Fixed procedure display issues for turn bow after circular legs.
+  Example LGSR VOR-B FD324 transition BINKI.
 
 ===============================================================================
 

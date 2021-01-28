@@ -941,6 +941,7 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
   bool firstMissed = !prevLeg->isMissed() && leg.isMissed() && (prevLeg->isCircleToLand() || prevLeg->isStraightIn());
   Pos prevPos;
   QPointF lastP1, lastP2;
+  bool prevCircle = false;
   if(firstMissed)
   {
     // This is the first missed approach leg after a CTL or straight in
@@ -956,8 +957,24 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
   else
   {
     prevPos = prevLeg->line.getPos2();
-    lastP1 = lastLines.last().p1();
-    lastP2 = lastLines.last().p2();
+    if(prevLeg->isCircular() && prevLeg->geometry.size() > 1)
+    {
+      // Consider circle geometry for legs with a simplified geometry
+      bool visible = false, hidden = false;
+      lastP1 = wToS(prevLeg->geometry.at(prevLeg->geometry.size() - 2), DEFAULT_WTOS_SIZE, &visible, &hidden);
+      if(hidden)
+        // Ignore calculated point behind globe
+        lastP1 = lastLines.last().p1();
+      else
+        prevCircle = true;
+
+      lastP2 = lastLines.last().p2();
+    }
+    else
+    {
+      lastP1 = lastLines.last().p1();
+      lastP2 = lastLines.last().p2();
+    }
   }
 
   Pos nextPos;
@@ -991,9 +1008,27 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
 
     // Calculate bezier control points by extending the last and next line
     QLineF ctrl1(lastP1, lastP2);
-    ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
     QLineF ctrl2(lineDraw.p2(), lineDraw.p1());
-    ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
+    if(prevCircle)
+    {
+      // Use shorter lines if previous leg is circular to get a smoother display
+      ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist / 2.f));
+      ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist / 2.f));
+    }
+    else
+    {
+      ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
+      ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
+    }
+
+#ifdef DEBUG_APPROACH_PAINT
+    {
+      atools::util::PainterContextSaver context(painter);
+      painter->setPen(Qt::black);
+      painter->drawLine(ctrl1);
+      painter->drawLine(ctrl2);
+    }
+#endif
 
     // Draw a bow connecting the two lines
     if(draw)

@@ -1225,6 +1225,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
         else
           line = leg.line;
 
+        // Build geometry
         ageo::calcArcLength(line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance, &leg.geometry);
 
         leg.calculatedDistance = meterToNm(leg.calculatedDistance);
