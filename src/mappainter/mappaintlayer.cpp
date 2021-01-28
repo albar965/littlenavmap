@@ -491,6 +491,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
   {
     // Update map scale for screen distance approximation
     mapScale->update(viewport, mapWidget->distance());
+    updateLayers();
 
     // What to draw while scrolling or zooming map
     opts::MapScrollDetail mapScrollDetail = OptionData::instance().getMapScrollDetail();
@@ -500,8 +501,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
        !(viewport->projection() == Marble::Mercator && // Do not draw if Mercator wraps around whole planet
          viewport->viewLatLonAltBox().width(GeoDataCoordinates::Degree) >= 359.))
     {
-      updateLayers();
-
 #ifdef DEBUG_INFORMATION_PAINT
       qDebug() << Q_FUNC_INFO << "layer" << *mapLayer;
 #endif

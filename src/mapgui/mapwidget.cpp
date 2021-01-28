@@ -442,30 +442,32 @@ bool MapWidget::event(QEvent *event)
 
     if(mouseState == mw::NONE)
     {
-      QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+      const QHelpEvent *helpEvent = dynamic_cast<const QHelpEvent *>(event);
+      if(helpEvent != nullptr)
+      {
+        map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS |
+                                              map::QUERY_RANGEMARKER;
 
-      map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS |
-                                            map::QUERY_RANGEMARKER;
+        if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
+          queryTypes |= map::QUERY_PROC_MISSED_POINTS;
 
-      if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
-        queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+        // Load tooltip data into mapSearchResultTooltip
+        mapSearchResultTooltip = map::MapResult();
+        getScreenIndexConst()->getAllNearest(helpEvent->pos().x(),
+                                             helpEvent->pos().y(), screenSearchDistanceTooltip,
+                                             mapSearchResultTooltip,
+                                             queryTypes);
 
-      // Load tooltip data into mapSearchResultTooltip
-      mapSearchResultTooltip = map::MapResult();
-      getScreenIndexConst()->getAllNearest(helpEvent->pos().x(),
-                                           helpEvent->pos().y(), screenSearchDistanceTooltip,
-                                           mapSearchResultTooltip,
-                                           queryTypes);
+        NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
+                                                                      mapSearchResultTooltip.aiAircraft);
 
-      NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
-                                                                    mapSearchResultTooltip.aiAircraft);
+        tooltipPos = helpEvent->globalPos();
 
-      tooltipPos = helpEvent->globalPos();
-
-      // Build HTML
-      showTooltip(false /* update */);
-      event->accept();
-      return true;
+        // Build HTML
+        showTooltip(false /* update */);
+        event->accept();
+        return true;
+      }
     }
   }
 
@@ -533,7 +535,7 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
 {
 #ifdef DEBUG_INFORMATION_KEY_INPUT
   qDebug() << Q_FUNC_INFO << event->text() << hex << event->nativeScanCode() << hex << event->key() << dec <<
-    event->modifiers();
+  event->modifiers();
 #endif
 
   // Does not work for key presses that are consumed by the widget
