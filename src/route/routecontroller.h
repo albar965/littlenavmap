@@ -364,8 +364,6 @@ private:
 
   void updateMoveAndDeleteActions();
 
-  void routeToFlightPlan();
-
   void routeSetDepartureInternal(const map::MapAirport& airport);
   void routeSetDestinationInternal(const map::MapAirport& airport);
 

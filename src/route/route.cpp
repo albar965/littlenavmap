@@ -1364,11 +1364,34 @@ void Route::updateDepartureAndDestination()
     flightplan.setDepartureName(departure.getName());
     flightplan.setDeparturePosition(departure.getPosition());
 
+    if(hasDepartureParking())
+    {
+      // Get position from parking spot
+      flightplan.setDepartureParkingName(map::parkingNameForFlightplan(departure.getDepartureParking()));
+      flightplan.setDepartureParkingPosition(departure.getDepartureParking().position,
+                                             departure.getPosition().getAltitude());
+    }
+    else if(hasDepartureStart())
+    {
+      // Get position from start
+      flightplan.setDepartureParkingName(departure.getDepartureStart().runwayName);
+      flightplan.setDepartureParkingPosition(departure.getDepartureStart().position,
+                                             departure.getPosition().getAltitude());
+    }
+    else
+    {
+      // No start position and no parking - use airport/navaid position
+      flightplan.setDepartureParkingName(QString());
+      flightplan.setDepartureParkingPosition(departure.getPosition());
+    }
+
     const RouteLeg& destination = getDestinationAirportLeg();
     flightplan.setDestinationIdent(destination.getIdent());
     flightplan.setDestinationName(destination.getName());
     flightplan.setDestinationPosition(destination.getPosition());
   }
+  else
+    flightplan.clear();
 }
 
 void Route::updateAll()

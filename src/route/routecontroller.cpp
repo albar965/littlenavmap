@@ -1149,6 +1149,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
   qDebug() << Q_FUNC_INFO << filename << insertBefore;
 
   Flightplan flightplan;
+  pln::Flightplan& routePlan = route.getFlightplan();
   try
   {
     // Will throw an exception if something goes wrong
@@ -1180,21 +1181,21 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
 
       // Append flight plan to current flightplan object - route is updated later
       for(const FlightplanEntry& entry : flightplan.getEntries())
-        route.getFlightplan().getEntries().append(entry);
+        routePlan.getEntries().append(entry);
 
       // Appended after destination airport
-      route.getFlightplan().setDestinationName(flightplan.getDestinationName());
-      route.getFlightplan().setDestinationIdent(flightplan.getDestinationIdent());
-      route.getFlightplan().setDestinationPosition(flightplan.getDestinationPosition());
+      routePlan.setDestinationName(flightplan.getDestinationName());
+      routePlan.setDestinationIdent(flightplan.getDestinationIdent());
+      routePlan.setDestinationPosition(flightplan.getDestinationPosition());
 
       // Copy any STAR and arrival procedure properties from the loaded plan
-      atools::fs::pln::copyArrivalProcedureProperties(route.getFlightplan().getProperties(),
+      atools::fs::pln::copyArrivalProcedureProperties(routePlan.getProperties(),
                                                       flightplan.getProperties());
-      atools::fs::pln::copyStarProcedureProperties(route.getFlightplan().getProperties(),
+      atools::fs::pln::copyStarProcedureProperties(routePlan.getProperties(),
                                                    flightplan.getProperties());
 
       // Load alternates from appended plan if any
-      atools::fs::pln::copyAlternateProperties(route.getFlightplan().getProperties(),
+      atools::fs::pln::copyAlternateProperties(routePlan.getProperties(),
                                                flightplan.getProperties());
     }
     else
@@ -1209,13 +1210,15 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
         // Added before departure airport
-        route.getFlightplan().setDepartureName(flightplan.getDepartureName());
-        route.getFlightplan().setDepartureIdent(flightplan.getDepartureIdent());
-        route.getFlightplan().setDeparturePosition(flightplan.getDeparturePosition(),
-                                                   flightplan.getEntries().first().getPosition().getAltitude());
+        routePlan.setDepartureName(flightplan.getDepartureName());
+        routePlan.setDepartureIdent(flightplan.getDepartureIdent());
+        routePlan.setDeparturePosition(flightplan.getDeparturePosition(),
+                                       flightplan.getEntries().first().getPosition().getAltitude());
+        routePlan.setDepartureParkingPosition(flightplan.getDepartureParkingPosition());
+        routePlan.setDepartureParkingName(flightplan.getDepartureParkingName());
 
         // Copy SID properties from source
-        atools::fs::pln::copySidProcedureProperties(route.getFlightplan().getProperties(),
+        atools::fs::pln::copySidProcedureProperties(routePlan.getProperties(),
                                                     flightplan.getProperties());
 
         route.eraseAirway(1);
@@ -1247,11 +1250,11 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
 
       // Copy new legs to the flightplan object only - update route later
       for(auto it = flightplan.getEntries().rbegin(); it != flightplan.getEntries().rend(); ++it)
-        route.getFlightplan().getEntries().insert(insertBefore, *it);
+        routePlan.getEntries().insert(insertBefore, *it);
     }
 
     // Clear procedure legs from the flightplan object
-    route.getFlightplan().removeNoSaveEntries();
+    routePlan.removeNoSaveEntries();
 
     // Clear procedure structures
     route.clearProcedures(proc::PROCEDURE_ALL);
@@ -1844,6 +1847,7 @@ void RouteController::reverseRoute()
 
   // Overwrite parking position with airport position
   flightplan.setDeparturePosition(entries.first().getPosition());
+  flightplan.setDepartureParkingPosition(entries.first().getPosition());
   flightplan.setDepartureParkingName(QString());
 
   // Erase all airways to avoid wrong direction travel against one way
@@ -2847,7 +2851,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     // Force update of start if departure airport was moved
     updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
 
-    routeToFlightPlan();
+    route.updateDepartureAndDestination();
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
 
@@ -2937,7 +2941,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     // Force update of start if departure airport was removed
     updateStartPositionBestRunway(rows.contains(0) /* force */, false /* undo */);
 
-    routeToFlightPlan();
+    route.updateDepartureAndDestination();
 
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
@@ -3042,15 +3046,15 @@ void RouteController::routeSetParking(const map::MapParking& parking)
 
   // Update the current airport which is new or the same as the one used by the parking spot
   route.getFlightplan().setDepartureParkingName(map::parkingNameForFlightplan(parking));
-  route.getFlightplan().setDeparturePosition(parking.position,
-                                             route.getDepartureAirportLeg().getPosition().getAltitude());
+  route.getFlightplan().setDepartureParkingPosition(parking.position,
+                                                    route.getDepartureAirportLeg().getPosition().getAltitude());
   route.setDepartureParking(parking);
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
 
-  routeToFlightPlan();
+  route.updateDepartureAndDestination();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
@@ -3087,15 +3091,15 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   // Use helipad number or runway name
   route.getFlightplan().setDepartureParkingName(start.runwayName);
 
-  route.getFlightplan().setDeparturePosition(start.position,
-                                             route.getDepartureAirportLeg().getPosition().getAltitude());
+  route.getFlightplan().setDepartureParkingPosition(start.position,
+                                                    route.getDepartureAirportLeg().getPosition().getAltitude());
   route.setDepartureStart(start);
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
+  route.updateDepartureAndDestination();
 
-  routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
@@ -3122,8 +3126,8 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
+  route.updateDepartureAndDestination();
 
-  routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
@@ -3190,8 +3194,8 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
+  route.updateDepartureAndDestination();
 
-  routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
@@ -3229,8 +3233,8 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
+  route.updateDepartureAndDestination();
 
-  routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
@@ -3417,8 +3421,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
-
-  routeToFlightPlan();
+  route.updateDepartureAndDestination();
 
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -3486,7 +3489,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
 
   // Force update of start if departure airport was added
   updateStartPositionBestRunway(false /* force */, false /* undo */);
-  routeToFlightPlan();
+  route.updateDepartureAndDestination();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
@@ -3561,7 +3564,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   // Force update of start if departure airport was changed
   updateStartPositionBestRunway(legIndex == 0 /* force */, false /* undo */);
 
-  routeToFlightPlan();
+  route.updateDepartureAndDestination();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
@@ -3636,66 +3639,6 @@ void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry&
   airwayQuery->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
   entry.setFlag(atools::fs::pln::entry::TRACK, airway.isTrack());
-}
-
-/* Copy all data from route map objects and widgets to the flight plan */
-void RouteController::routeToFlightPlan()
-{
-  Flightplan& flightplan = route.getFlightplan();
-
-  if(route.isEmpty())
-    flightplan.clear();
-  else
-  {
-    QString departureIcao, destinationIcao;
-
-    const RouteLeg& firstLeg = route.getDepartureAirportLeg();
-    if(firstLeg.getMapObjectType() == map::AIRPORT)
-    {
-      departureIcao = firstLeg.getAirport().ident;
-      flightplan.setDepartureName(firstLeg.getAirport().name);
-      flightplan.setDepartureIdent(departureIcao);
-
-      if(route.hasDepartureParking())
-      {
-        flightplan.setDepartureParkingName(map::parkingNameForFlightplan(firstLeg.getDepartureParking()));
-        flightplan.setDeparturePosition(firstLeg.getDepartureParking().position, firstLeg.getPosition().getAltitude());
-      }
-      else if(route.hasDepartureStart())
-      {
-        // Use runway name or helipad number
-        flightplan.setDepartureParkingName(firstLeg.getDepartureStart().runwayName);
-        flightplan.setDeparturePosition(firstLeg.getDepartureStart().position, firstLeg.getPosition().getAltitude());
-      }
-      else
-        // No start position and no parking - use airport/navaid position
-        flightplan.setDeparturePosition(firstLeg.getPosition());
-    }
-    else
-    {
-      // Invalid departure
-      flightplan.setDepartureName(QString());
-      flightplan.setDepartureIdent(QString());
-      flightplan.setDepartureParkingName(QString());
-      flightplan.setDeparturePosition(Pos(), 0.f);
-    }
-
-    const RouteLeg& lastLeg = route.getDestinationAirportLeg();
-    if(lastLeg.getMapObjectType() == map::AIRPORT)
-    {
-      destinationIcao = lastLeg.getAirport().ident;
-      flightplan.setDestinationName(lastLeg.getAirport().name);
-      flightplan.setDestinationIdent(destinationIcao);
-      flightplan.setDestinationPosition(lastLeg.getPosition());
-    }
-    else
-    {
-      // Invalid destination
-      flightplan.setDestinationName(QString());
-      flightplan.setDestinationIdent(QString());
-      flightplan.setDestinationPosition(Pos());
-    }
-  }
 }
 
 /* Copy type and cruise altitude from widgets to flight plan */
@@ -4754,7 +4697,7 @@ bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
           undoCommand = preChange(tr("Set Start Position"));
 
         route.setDepartureStart(start);
-        routeToFlightPlan();
+        route.updateDepartureAndDestination();
 
         if(undo)
           postChange(undoCommand);

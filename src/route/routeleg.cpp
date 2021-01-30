@@ -225,7 +225,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
             // Get nearest with the same name
             QList<map::MapParking> parkings;
-            airportQuery->getParkingByName(parkings, airport.id, name, flightplan->getDeparturePosition());
+            airportQuery->getParkingByName(parkings, airport.id, name, flightplan->getDepartureParkingPosition());
 
             if(parkings.isEmpty())
             {
@@ -921,7 +921,8 @@ void RouteLeg::assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln:
 
 void RouteLeg::assignRunwayOrHelipad(const QString& name)
 {
-  NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
+  NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name,
+                                                     flightplan->getDepartureParkingPosition());
 
   if(!start.isValid())
   {
