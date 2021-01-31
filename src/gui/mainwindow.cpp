@@ -420,15 +420,26 @@ MainWindow::MainWindow()
   QAction *debugAction4 = new QAction("DEBUG - Reload flight plan", ui->menuHelp);
   this->addAction(debugAction4);
 
+  QAction *debugAction5 = new QAction("DEBUG - Open flight plan in editor", ui->menuHelp);
+  this->addAction(debugAction5);
+
+  QAction *debugAction6 = new QAction("DEBUG - Open perf in editor", ui->menuHelp);
+  this->addAction(debugAction6);
+
   ui->menuHelp->addSeparator();
   ui->menuHelp->addAction(debugAction1);
   ui->menuHelp->addAction(debugAction2);
   ui->menuHelp->addAction(debugAction3);
   ui->menuHelp->addAction(debugAction4);
+  ui->menuHelp->addAction(debugAction5);
+  ui->menuHelp->addAction(debugAction6);
+
   connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
   connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
   connect(debugAction3, &QAction::triggered, this, &MainWindow::debugActionTriggered3);
   connect(debugAction4, &QAction::triggered, this, &MainWindow::debugActionTriggered4);
+  connect(debugAction5, &QAction::triggered, this, &MainWindow::debugActionTriggered5);
+  connect(debugAction6, &QAction::triggered, this, &MainWindow::debugActionTriggered6);
 
 #endif
 
@@ -552,6 +563,16 @@ void MainWindow::debugActionTriggered4()
 {
   QString file = routeController->getRouteFilepath();
   routeController->loadFlightplan(file);
+}
+
+void MainWindow::debugActionTriggered5()
+{
+  helpHandler->openFile(routeController->getRouteFilepath());
+}
+
+void MainWindow::debugActionTriggered6()
+{
+  helpHandler->openFile(NavApp::getAircraftPerfController()->getCurrentFilepath());
 }
 
 #endif
