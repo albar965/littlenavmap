@@ -17,6 +17,9 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Corrected wrong departure position for saved LNMPLN and FSX/P3D PLN flight plans. Now uses
   position from parking, helipad or runway/start for PLN `DepartureLLA` and LNMPLN `Start` element.
   albar965/littlenavmap#608
+* Added error handling for missing layout file on startup if `Load window layout from last used file`
+  in `Options` on page `Startup and Updates` is checked.
+  Removing or renaming the layout file resulted in an unrecoverable crash on startup.
 
 ===============================================================================
 
