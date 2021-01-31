@@ -135,8 +135,6 @@ private:
 
   void helpClicked();
 
-  void dockVisibilityChanged(bool visible);
-
   /* Range/selection */
   int fromIndex = -1, toIndex = -1;
   bool canCalculateSelection = false;

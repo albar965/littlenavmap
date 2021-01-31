@@ -4435,7 +4435,7 @@ Flown %dist%</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="567"/>
-        <location filename="src/gui/mainwindow.cpp" line="2925"/>
+        <location filename="src/gui/mainwindow.cpp" line="2946"/>
         <source>Airports</source>
         <translation>机场</translation>
     </message>
@@ -5024,7 +5024,7 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1671"/>
         <location filename="src/gui/mainwindow.ui" line="5216"/>
-        <location filename="src/gui/mainwindow.cpp" line="2931"/>
+        <location filename="src/gui/mainwindow.cpp" line="2952"/>
         <source>Navaids</source>
         <translation>助航设备</translation>
     </message>
@@ -5341,7 +5341,7 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2555"/>
         <location filename="src/gui/mainwindow.ui" line="5286"/>
-        <location filename="src/gui/mainwindow.cpp" line="2937"/>
+        <location filename="src/gui/mainwindow.cpp" line="2958"/>
         <source>Userpoints</source>
         <translation>用户航点</translation>
     </message>
@@ -5697,10 +5697,8 @@ Will match any visited airport.</oldsource>
         <translation>飞行计划表</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="4187"/>
-        <location filename="src/gui/mainwindow.ui" line="4190"/>
         <source>Flight plan altitude which is also used to calculate a flight plan based on given altitude</source>
-        <translation>计划飞行高度，亦用于计算指定高度的飞行计划</translation>
+        <translation type="vanished">计划飞行高度，亦用于计算指定高度的飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4221"/>
@@ -6355,6 +6353,12 @@ Keeps procedures.</source>
         <location filename="src/gui/mainwindow.ui" line="268"/>
         <source>&amp;Airspace Libraries</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="4187"/>
+        <location filename="src/gui/mainwindow.ui" line="4190"/>
+        <source>Flight plan cruise altitude</source>
+        <translation type="unfinished">飞行计划巡航高度</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6221"/>
@@ -7471,7 +7475,7 @@ Best track will be selected automatically.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7680"/>
-        <location filename="src/gui/mainwindow.cpp" line="2040"/>
+        <location filename="src/gui/mainwindow.cpp" line="2061"/>
         <source>&amp;Remove all Ranges, Measurements, Patterns and Holdings</source>
         <translation>从地图上移除所有的距离环、测量、起落航线和等待(&amp;R)</translation>
     </message>
@@ -8118,7 +8122,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8235"/>
         <location filename="src/gui/mainwindow.ui" line="8238"/>
-        <location filename="src/gui/mainwindow.cpp" line="2033"/>
+        <location filename="src/gui/mainwindow.cpp" line="2054"/>
         <source>Delete simulator aircraft trail from map and elevation profile</source>
         <translation>在地图上移除模拟航空器的位置和数据</translation>
     </message>
@@ -8619,7 +8623,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7683"/>
         <location filename="src/gui/mainwindow.ui" line="7686"/>
-        <location filename="src/gui/mainwindow.cpp" line="2041"/>
+        <location filename="src/gui/mainwindow.cpp" line="2062"/>
         <source>Remove all range rings, measurements, traffic patterns and holdings from map</source>
         <translation>从地图上移除所有的距离环、测量、起落航线和等待</translation>
     </message>
@@ -10501,7 +10505,7 @@ Apply the loaded window layout anyway?</source>
         <translation>已启动。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="567"/>
+        <location filename="src/gui/mainwindow.cpp" line="588"/>
         <source>Day of month and UTC time.
 %1
 Local: %2</source>
@@ -10510,248 +10514,248 @@ Local: %2</source>
 当地： %2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="579"/>
+        <location filename="src/gui/mainwindow.cpp" line="600"/>
         <source>Opened navigation map legend.</source>
         <translation>已打开航图图例。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="585"/>
+        <location filename="src/gui/mainwindow.cpp" line="606"/>
         <source>Opened map legend in browser.</source>
         <translation>已在浏览器中打开地图图例。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="674"/>
+        <location filename="src/gui/mainwindow.cpp" line="695"/>
         <source>Opened map legend.</source>
         <translation>已打开地图图例。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="685"/>
+        <location filename="src/gui/mainwindow.cpp" line="706"/>
         <source>Opened legend link in browser.</source>
         <translation>已在浏览器中打开图例链接。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="712"/>
+        <location filename="src/gui/mainwindow.cpp" line="733"/>
         <source>Select map projection</source>
         <translation>选择地图投影</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="715"/>
+        <location filename="src/gui/mainwindow.cpp" line="736"/>
         <source>Mercator</source>
         <translation>平面</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="716"/>
+        <location filename="src/gui/mainwindow.cpp" line="737"/>
         <source>Spherical</source>
         <translation>球形</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="728"/>
+        <location filename="src/gui/mainwindow.cpp" line="749"/>
         <source>Select map theme</source>
         <translation>选择地图主题</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="732"/>
+        <location filename="src/gui/mainwindow.cpp" line="753"/>
         <source>OpenStreetMap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="733"/>
+        <location filename="src/gui/mainwindow.cpp" line="754"/>
         <source>OpenTopoMap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="734"/>
+        <location filename="src/gui/mainwindow.cpp" line="755"/>
         <source>Stamen Terrain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="735"/>
+        <location filename="src/gui/mainwindow.cpp" line="756"/>
         <source>CARTO Light</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="736"/>
+        <location filename="src/gui/mainwindow.cpp" line="757"/>
         <source>CARTO Dark</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="737"/>
+        <location filename="src/gui/mainwindow.cpp" line="758"/>
         <source>Simple (Offline)</source>
         <translation>简单(离线)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="738"/>
+        <location filename="src/gui/mainwindow.cpp" line="759"/>
         <source>Plain (Offline)</source>
         <translation>平面(离线)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="739"/>
+        <location filename="src/gui/mainwindow.cpp" line="760"/>
         <source>Atlas (Offline)</source>
         <translation>地形图(离线)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="802"/>
+        <location filename="src/gui/mainwindow.cpp" line="823"/>
         <source>* %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="808"/>
+        <location filename="src/gui/mainwindow.cpp" line="829"/>
         <source>Custom (%1)</source>
         <translation>自定义 (%1)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="809"/>
+        <location filename="src/gui/mainwindow.cpp" line="830"/>
         <source>Custom map theme (%1)</source>
         <translation>自定义地图主题 (%1)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="823"/>
+        <location filename="src/gui/mainwindow.cpp" line="844"/>
         <source>Alt+1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="824"/>
-        <location filename="src/gui/mainwindow.cpp" line="830"/>
-        <location filename="src/gui/mainwindow.cpp" line="836"/>
-        <location filename="src/gui/mainwindow.cpp" line="842"/>
-        <location filename="src/gui/mainwindow.cpp" line="849"/>
-        <location filename="src/gui/mainwindow.cpp" line="855"/>
-        <location filename="src/gui/mainwindow.cpp" line="861"/>
+        <location filename="src/gui/mainwindow.cpp" line="845"/>
+        <location filename="src/gui/mainwindow.cpp" line="851"/>
+        <location filename="src/gui/mainwindow.cpp" line="857"/>
+        <location filename="src/gui/mainwindow.cpp" line="863"/>
+        <location filename="src/gui/mainwindow.cpp" line="870"/>
+        <location filename="src/gui/mainwindow.cpp" line="876"/>
+        <location filename="src/gui/mainwindow.cpp" line="882"/>
         <source>Open or show the %1 dock window</source>
         <translation>打开或显示 %1 停靠窗口</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="829"/>
+        <location filename="src/gui/mainwindow.cpp" line="850"/>
         <source>Alt+2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="835"/>
+        <location filename="src/gui/mainwindow.cpp" line="856"/>
         <source>Alt+3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="841"/>
+        <location filename="src/gui/mainwindow.cpp" line="862"/>
         <source>Alt+4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="848"/>
+        <location filename="src/gui/mainwindow.cpp" line="869"/>
         <source>Alt+5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="854"/>
+        <location filename="src/gui/mainwindow.cpp" line="875"/>
         <source>Alt+6</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="860"/>
+        <location filename="src/gui/mainwindow.cpp" line="881"/>
         <source>Alt+7</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="906"/>
+        <location filename="src/gui/mainwindow.cpp" line="927"/>
         <source>Not connected.</source>
         <translation>未连接。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="907"/>
+        <location filename="src/gui/mainwindow.cpp" line="928"/>
         <source>Simulator connection status.</source>
         <translation>模拟器连接状态。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="918"/>
+        <location filename="src/gui/mainwindow.cpp" line="939"/>
         <source>Map detail level.</source>
         <translation>地图详细级别。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="924"/>
+        <location filename="src/gui/mainwindow.cpp" line="945"/>
         <source>Map rendering and download status.</source>
         <translation>地图渲染及下载状态。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="930"/>
+        <location filename="src/gui/mainwindow.cpp" line="951"/>
         <source>Map view distance to ground.</source>
         <translation>地图视图距地面距离。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="936"/>
+        <location filename="src/gui/mainwindow.cpp" line="957"/>
         <source>Coordinates and elevation at cursor position.</source>
         <translation>鼠标指针位置坐标及标高。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="942"/>
+        <location filename="src/gui/mainwindow.cpp" line="963"/>
         <source>Magnetic declination at cursor position.</source>
         <translation>鼠标指针位置磁偏角。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="952"/>
+        <location filename="src/gui/mainwindow.cpp" line="973"/>
         <source>Day of month and UTC time.</source>
         <translation>日及UTC时间。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1844"/>
+        <location filename="src/gui/mainwindow.cpp" line="1865"/>
         <source>Map projection changed to %1.</source>
         <translation>地图投影已更改为 %1.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1865"/>
+        <location filename="src/gui/mainwindow.cpp" line="1886"/>
         <source>Map theme changed to %1.</source>
         <translation>地图主题已更改为  %1.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1933"/>
+        <location filename="src/gui/mainwindow.cpp" line="1954"/>
         <source>Too many objects</source>
         <translation>太多对象</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2115"/>
-        <location filename="src/gui/mainwindow.cpp" line="2128"/>
-        <location filename="src/gui/mainwindow.cpp" line="2141"/>
+        <location filename="src/gui/mainwindow.cpp" line="2136"/>
+        <location filename="src/gui/mainwindow.cpp" line="2149"/>
+        <location filename="src/gui/mainwindow.cpp" line="2162"/>
         <source> %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2117"/>
+        <location filename="src/gui/mainwindow.cpp" line="2138"/>
         <source> %1 (%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2122"/>
+        <location filename="src/gui/mainwindow.cpp" line="2143"/>
         <source> - (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2125"/>
+        <location filename="src/gui/mainwindow.cpp" line="2146"/>
         <source> - %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2133"/>
-        <location filename="src/gui/mainwindow.cpp" line="2135"/>
+        <location filename="src/gui/mainwindow.cpp" line="2154"/>
+        <location filename="src/gui/mainwindow.cpp" line="2156"/>
         <source> / N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2137"/>
+        <location filename="src/gui/mainwindow.cpp" line="2158"/>
         <source> / (N)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2145"/>
-        <location filename="src/gui/mainwindow.cpp" line="2153"/>
+        <location filename="src/gui/mainwindow.cpp" line="2166"/>
+        <location filename="src/gui/mainwindow.cpp" line="2174"/>
         <source> - %1%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2440"/>
+        <location filename="src/gui/mainwindow.cpp" line="2461"/>
         <source>&lt;p&gt;You cannot save this file directly.&lt;br/&gt;Use the export function instead.&lt;/p&gt;&lt;p&gt;Save using the new LNMPLN format now?&lt;/p&gt;</source>
         <translation>&lt;p&gt;您不能直接保存此文件。&lt;br/&gt;请使用导出功能。&lt;/ p&gt; &lt;p&gt;现在使用新的LNMPLN格式保存吗？&lt;/ p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2566"/>
-        <location filename="src/gui/mainwindow.cpp" line="2588"/>
+        <location filename="src/gui/mainwindow.cpp" line="2587"/>
+        <location filename="src/gui/mainwindow.cpp" line="2609"/>
         <source>Cannot load file. Reason:
 
 %1</source>
@@ -10759,27 +10763,27 @@ Local: %2</source>
 原因是： %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2764"/>
+        <location filename="src/gui/mainwindow.cpp" line="2785"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2816"/>
+        <location filename="src/gui/mainwindow.cpp" line="2837"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3105"/>
+        <location filename="src/gui/mainwindow.cpp" line="3126"/>
         <source>Close other dialog boxes before opening preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3174"/>
+        <location filename="src/gui/mainwindow.cpp" line="3195"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Messages:&lt;/b&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;消息：&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3178"/>
+        <location filename="src/gui/mainwindow.cpp" line="3199"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10792,17 +10796,17 @@ Local: %2</source>
         <translation type="vanished">地图主题已更改为  %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1885"/>
+        <location filename="src/gui/mainwindow.cpp" line="1906"/>
         <source>Error opening help URL &quot;%1&quot;</source>
         <translation>打开帮助URL “%1” 时出错</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1909"/>
+        <location filename="src/gui/mainwindow.cpp" line="1930"/>
         <source>%1/%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1914"/>
+        <location filename="src/gui/mainwindow.cpp" line="1935"/>
         <source>Simulator:
 %1
 
@@ -10819,34 +10823,34 @@ Online Network:
         <translation type="vanished">太多对象。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1973"/>
-        <location filename="src/gui/mainwindow.cpp" line="4511"/>
-        <location filename="src/gui/mainwindow.cpp" line="4516"/>
+        <location filename="src/gui/mainwindow.cpp" line="1994"/>
+        <location filename="src/gui/mainwindow.cpp" line="4539"/>
+        <location filename="src/gui/mainwindow.cpp" line="4544"/>
         <source> </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1973"/>
+        <location filename="src/gui/mainwindow.cpp" line="1994"/>
         <source>Offline</source>
         <translation>离线</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1983"/>
+        <location filename="src/gui/mainwindow.cpp" line="2004"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1986"/>
+        <location filename="src/gui/mainwindow.cpp" line="2007"/>
         <source>Updating</source>
         <translation>正在上传</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1989"/>
+        <location filename="src/gui/mainwindow.cpp" line="2010"/>
         <source>Loading</source>
         <translation>正在载入</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1992"/>
+        <location filename="src/gui/mainwindow.cpp" line="2013"/>
         <source>Incomplete</source>
         <translation>不完整</translation>
     </message>
@@ -10871,68 +10875,68 @@ Online Network:
         <translation type="vanished">未完成。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2027"/>
+        <location filename="src/gui/mainwindow.cpp" line="2048"/>
         <source> - Reset for new Flight</source>
         <translation> - 重置以开始新飞行</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2028"/>
+        <location filename="src/gui/mainwindow.cpp" line="2049"/>
         <source>Select items to reset for a new flight</source>
         <translation>选择需要重置以开始新飞行的项目</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2031"/>
+        <location filename="src/gui/mainwindow.cpp" line="2052"/>
         <source>&amp;Create a new and empty flight plan</source>
         <translation>创建一个新的空飞行计划(&amp;C)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2032"/>
+        <location filename="src/gui/mainwindow.cpp" line="2053"/>
         <source>&amp;Delete aircaft trail</source>
         <translation>删除航空器航迹(&amp;D)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2034"/>
+        <location filename="src/gui/mainwindow.cpp" line="2055"/>
         <source>&amp;Reset active flight plan leg</source>
         <translation>重置激活的飞行计划航段(&amp;R)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2035"/>
+        <location filename="src/gui/mainwindow.cpp" line="2056"/>
         <source>Remove the active (magenta) flight plan leg</source>
         <translation>移除激活的(紫红色)飞行计划航段</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2036"/>
+        <location filename="src/gui/mainwindow.cpp" line="2057"/>
         <source>Restart Aircraft &amp;Performance Collection</source>
         <translation>重新开始收集航空器性能(&amp;P)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2037"/>
+        <location filename="src/gui/mainwindow.cpp" line="2058"/>
         <source>Restarts the background aircraft performance collection</source>
         <translation>重新开始后台收集航空器性能</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2038"/>
+        <location filename="src/gui/mainwindow.cpp" line="2059"/>
         <source>Reset flight detection in &amp;logbook</source>
         <translation>在记录本中重置飞行检测(&amp;I)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2039"/>
+        <location filename="src/gui/mainwindow.cpp" line="2060"/>
         <source>Reset the logbook to detect takeoff and landing for new logbook entries</source>
         <translation>重置记录本以为新记录本条目检测起飞和降落</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2068"/>
+        <location filename="src/gui/mainwindow.cpp" line="2089"/>
         <source>Flight plan shown on map.</source>
         <translation>飞行计划已在地图上显示。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2443"/>
+        <location filename="src/gui/mainwindow.cpp" line="2464"/>
         <source>Do not &amp;show this dialog again and save as LNMPLN.</source>
         <oldsource>Do not show this dialog again and save as LNMPLN.</oldsource>
         <translation>不要再次显示此对话框并另存为LNMPLN(&amp;S)。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2478"/>
+        <location filename="src/gui/mainwindow.cpp" line="2499"/>
         <source>Save Flight Plan as LNMPLN Format</source>
         <translation>保存飞行计划为LNMPLN格式</translation>
     </message>
@@ -11005,125 +11009,125 @@ Simulator might not be able to load the flight plan.</source>
         <translation type="vanished">不要再显示此对话框并在将来保存飞行计划为FGFP。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2082"/>
+        <location filename="src/gui/mainwindow.cpp" line="2103"/>
         <source> / </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2100"/>
+        <location filename="src/gui/mainwindow.cpp" line="2121"/>
         <source>No position</source>
         <translation>没有位置</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2147"/>
-        <location filename="src/gui/mainwindow.cpp" line="2155"/>
+        <location filename="src/gui/mainwindow.cpp" line="2168"/>
+        <location filename="src/gui/mainwindow.cpp" line="2176"/>
         <source> *</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2149"/>
-        <location filename="src/gui/mainwindow.cpp" line="2157"/>
+        <location filename="src/gui/mainwindow.cpp" line="2170"/>
+        <location filename="src/gui/mainwindow.cpp" line="2178"/>
         <source> - *</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2176"/>
+        <location filename="src/gui/mainwindow.cpp" line="2197"/>
         <source>Delete aircraft trail?</source>
         <translation>删除航空器航迹？</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2177"/>
-        <location filename="src/gui/mainwindow.cpp" line="2524"/>
-        <location filename="src/gui/mainwindow.cpp" line="4160"/>
+        <location filename="src/gui/mainwindow.cpp" line="2198"/>
+        <location filename="src/gui/mainwindow.cpp" line="2545"/>
+        <location filename="src/gui/mainwindow.cpp" line="4188"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>不要再显示此对话框(&amp;S)。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2186"/>
+        <location filename="src/gui/mainwindow.cpp" line="2207"/>
         <source>Aircraft track removed from map.</source>
         <translation>航空器航迹已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2199"/>
+        <location filename="src/gui/mainwindow.cpp" line="2220"/>
         <source>Flight Plan has been changed.</source>
         <translation>飞行计划已更改。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2200"/>
+        <location filename="src/gui/mainwindow.cpp" line="2221"/>
         <source>Save changes?</source>
         <translation>保存更改？</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2242"/>
+        <location filename="src/gui/mainwindow.cpp" line="2263"/>
         <source>Created new flight plan.</source>
         <translation>创建新飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2259"/>
+        <location filename="src/gui/mainwindow.cpp" line="2280"/>
         <source>Created new empty flight plan.</source>
         <translation>创建新的空飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2272"/>
+        <location filename="src/gui/mainwindow.cpp" line="2293"/>
         <source>Open Flight Plan</source>
         <translation>打开飞行计划</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2273"/>
-        <location filename="src/gui/mainwindow.cpp" line="2339"/>
-        <location filename="src/gui/mainwindow.cpp" line="2362"/>
-        <location filename="src/gui/mainwindow.cpp" line="2479"/>
+        <location filename="src/gui/mainwindow.cpp" line="2294"/>
+        <location filename="src/gui/mainwindow.cpp" line="2360"/>
+        <location filename="src/gui/mainwindow.cpp" line="2383"/>
+        <location filename="src/gui/mainwindow.cpp" line="2500"/>
         <source>Flight Plan Files %1;;All Files (*)</source>
         <translation>飞行计划文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2293"/>
-        <location filename="src/gui/mainwindow.cpp" line="2309"/>
-        <location filename="src/gui/mainwindow.cpp" line="2390"/>
+        <location filename="src/gui/mainwindow.cpp" line="2314"/>
+        <location filename="src/gui/mainwindow.cpp" line="2330"/>
+        <location filename="src/gui/mainwindow.cpp" line="2411"/>
         <source>Flight plan opened.</source>
         <translation>飞行计划已打开。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2338"/>
+        <location filename="src/gui/mainwindow.cpp" line="2359"/>
         <source>Append Flight Plan</source>
         <translation>追加飞行计划</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2351"/>
+        <location filename="src/gui/mainwindow.cpp" line="2372"/>
         <source>Flight plan appended.</source>
         <translation>飞行计划已追加。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2361"/>
+        <location filename="src/gui/mainwindow.cpp" line="2382"/>
         <source>Insert info Flight Plan</source>
         <translation>插入飞行计划</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2372"/>
+        <location filename="src/gui/mainwindow.cpp" line="2393"/>
         <source>Flight plan inserted.</source>
         <translation>飞行计划已插入。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2398"/>
+        <location filename="src/gui/mainwindow.cpp" line="2419"/>
         <source>File &quot;%1&quot; does not exist</source>
         <translation>文件 “%1” 不存在</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2423"/>
+        <location filename="src/gui/mainwindow.cpp" line="2444"/>
         <source>Flight plan cruise altitude is zero.
 A simulator might not be able to load the flight plan.</source>
         <translation>飞行计划巡航高度为零。
 模拟器可能无法加载飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2433"/>
+        <location filename="src/gui/mainwindow.cpp" line="2454"/>
         <source>Save &amp;as LNMPLN ...</source>
         <translation>另存飞行计划为LNMPLN(&amp;A) ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2326"/>
-        <location filename="src/gui/mainwindow.cpp" line="2467"/>
-        <location filename="src/gui/mainwindow.cpp" line="2495"/>
+        <location filename="src/gui/mainwindow.cpp" line="2347"/>
+        <location filename="src/gui/mainwindow.cpp" line="2488"/>
+        <location filename="src/gui/mainwindow.cpp" line="2516"/>
         <source>Flight plan saved.</source>
         <translation>飞行计划已保存。</translation>
     </message>
@@ -11180,7 +11184,7 @@ A simulator might not be able to load the flight plan.</source>
         <translation type="vanished">飞行计划已导出。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1934"/>
+        <location filename="src/gui/mainwindow.cpp" line="1955"/>
         <source>Too many objects to show on map.
 Display might be incomplete.
 Reduce map details in the &quot;View&quot; menu.</source>
@@ -11190,83 +11194,83 @@ Reduce map details in the &quot;View&quot; menu.</source>
 在“查看”菜单中减少地图详细信息。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2522"/>
+        <location filename="src/gui/mainwindow.cpp" line="2543"/>
         <source>Delete all range rings, measurement lines, traffic patterns and holds from map?</source>
         <translation>从地图上移除所有的距离环、测量、起落航线和等待？</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2540"/>
+        <location filename="src/gui/mainwindow.cpp" line="2561"/>
         <source>Google Earth KML files removed from map.</source>
         <translation>Google Earth KML文件已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2547"/>
+        <location filename="src/gui/mainwindow.cpp" line="2568"/>
         <source>Google Earth KML</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2548"/>
+        <location filename="src/gui/mainwindow.cpp" line="2569"/>
         <source>Google Earth KML %1;;All Files (*)</source>
         <translation>Google Earth KML  %1;;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2558"/>
-        <location filename="src/gui/mainwindow.cpp" line="2578"/>
+        <location filename="src/gui/mainwindow.cpp" line="2579"/>
+        <location filename="src/gui/mainwindow.cpp" line="2599"/>
         <source>Google Earth KML file opened.</source>
         <translation>已打开Google Earth KML文件。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2561"/>
-        <location filename="src/gui/mainwindow.cpp" line="2583"/>
+        <location filename="src/gui/mainwindow.cpp" line="2582"/>
+        <location filename="src/gui/mainwindow.cpp" line="2604"/>
         <source>Opening Google Earth KML file failed.</source>
         <translation>打开Google Earth KML文件失败。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2593"/>
-        <location filename="src/gui/mainwindow.cpp" line="2608"/>
+        <location filename="src/gui/mainwindow.cpp" line="2614"/>
+        <location filename="src/gui/mainwindow.cpp" line="2629"/>
         <source>Window Layout</source>
         <translation>窗口样式</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2594"/>
-        <location filename="src/gui/mainwindow.cpp" line="2609"/>
+        <location filename="src/gui/mainwindow.cpp" line="2615"/>
+        <location filename="src/gui/mainwindow.cpp" line="2630"/>
         <source>Window Layout Files %1;;All Files (*)</source>
         <translation>窗口样式文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2618"/>
+        <location filename="src/gui/mainwindow.cpp" line="2639"/>
         <source>Window layout saved.</source>
         <translation>窗口样式已保存。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2653"/>
+        <location filename="src/gui/mainwindow.cpp" line="2674"/>
         <source>Window layout loaded and restored.</source>
         <translation>已载入并恢复窗口样式。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2708"/>
+        <location filename="src/gui/mainwindow.cpp" line="2729"/>
         <source>Waiting up to %1 seconds for map download ...
 </source>
         <translation>为地图下载等待至多 %1 秒...
 </translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2709"/>
+        <location filename="src/gui/mainwindow.cpp" line="2730"/>
         <source>&amp;Ignore Downloads and Continue</source>
         <translation>忽略下载并继续(&amp;I)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2720"/>
+        <location filename="src/gui/mainwindow.cpp" line="2741"/>
         <source>%1 downloads active and %2 downloads queued.</source>
         <translation>%1 个下载进行中，%2 个下载队列中。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2758"/>
+        <location filename="src/gui/mainwindow.cpp" line="2779"/>
         <source> - Save Map as Image</source>
         <translation> - 另存地图为图像</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2763"/>
+        <location filename="src/gui/mainwindow.cpp" line="2784"/>
         <source>Save Map as Image</source>
         <translation>另存地图为图像</translation>
     </message>
@@ -11275,35 +11279,35 @@ Reduce map details in the &quot;View&quot; menu.</source>
         <translation type="vanished">图像文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2766"/>
+        <location filename="src/gui/mainwindow.cpp" line="2787"/>
         <source>Little Navmap Map %1.jpg</source>
         <translation>Little Navmap 地图 %1.jpg</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2788"/>
+        <location filename="src/gui/mainwindow.cpp" line="2809"/>
         <source>Error saving image.
 Only JPG, PNG and BMP are allowed.</source>
         <translation>保存图像失败。
 只允许  JPG, PNG 和 BMP。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2790"/>
-        <location filename="src/gui/mainwindow.cpp" line="2848"/>
+        <location filename="src/gui/mainwindow.cpp" line="2811"/>
+        <location filename="src/gui/mainwindow.cpp" line="2869"/>
         <source>Map image saved.</source>
         <translation>地图图像已保存。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2801"/>
+        <location filename="src/gui/mainwindow.cpp" line="2822"/>
         <source> - Save Map as Image for AviTab</source>
         <translation> - 另存地图为图像以供AviTab使用</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2808"/>
+        <location filename="src/gui/mainwindow.cpp" line="2829"/>
         <source>LittleNavmap_%1.png</source>
         <translation>Little Navmap 地图 %1.jpg</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2815"/>
+        <location filename="src/gui/mainwindow.cpp" line="2836"/>
         <source>Save Map as Image for AviTab</source>
         <translation>另存地图为图像以供AviTab使用</translation>
     </message>
@@ -11312,117 +11316,117 @@ Only JPG, PNG and BMP are allowed.</source>
         <translation type="vanished">AviTab图像文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2839"/>
+        <location filename="src/gui/mainwindow.cpp" line="2860"/>
         <source>Error saving image.
 Only JPG and PNG are allowed.</source>
         <translation>保存图像失败。
 只允许  JPG 和 PNG。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2851"/>
+        <location filename="src/gui/mainwindow.cpp" line="2872"/>
         <source>Error saving JSON.</source>
         <translation>保存JSON出错。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2857"/>
+        <location filename="src/gui/mainwindow.cpp" line="2878"/>
         <source>Map does not cover window.
 Ensure that the map fills the window completely.</source>
         <translation>地图没有覆盖窗口
 确保地图完全充满窗口。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2863"/>
+        <location filename="src/gui/mainwindow.cpp" line="2884"/>
         <source>You have to switch to the Mercator map projection before saving the image.</source>
         <translation>在保存图像前您必须切换到墨卡托(平面)地图投影。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2869"/>
+        <location filename="src/gui/mainwindow.cpp" line="2890"/>
         <source> - Copy Map Image to Clipboard</source>
         <translation> - 复制地图图像到剪贴板</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2875"/>
+        <location filename="src/gui/mainwindow.cpp" line="2896"/>
         <source>Map image copied to clipboard.</source>
         <translation>已复制地图图像到剪贴板。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2921"/>
+        <location filename="src/gui/mainwindow.cpp" line="2942"/>
         <source>%1 of %2 %3 selected, %4 visible.%5</source>
         <translation>%1 共 %2 %3 已选中。 %4 可见。%5</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2944"/>
+        <location filename="src/gui/mainwindow.cpp" line="2965"/>
         <source>Logbook Entries</source>
         <translation>记录本条目</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2950"/>
+        <location filename="src/gui/mainwindow.cpp" line="2971"/>
         <source>Clients</source>
         <translation>客户端</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2951"/>
-        <location filename="src/gui/mainwindow.cpp" line="2961"/>
+        <location filename="src/gui/mainwindow.cpp" line="2972"/>
+        <location filename="src/gui/mainwindow.cpp" line="2982"/>
         <source> Last Update: %1</source>
         <translation> 最后更新：%1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2960"/>
+        <location filename="src/gui/mainwindow.cpp" line="2981"/>
         <source>Centers</source>
         <translation>管制中心</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3077"/>
+        <location filename="src/gui/mainwindow.cpp" line="3098"/>
         <source>Map settings reset.</source>
         <translation>地图设置已重置。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3157"/>
+        <location filename="src/gui/mainwindow.cpp" line="3178"/>
         <source>All message dialogs reset.</source>
         <translation>所有信息对话框已重置。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3181"/>
+        <location filename="src/gui/mainwindow.cpp" line="3202"/>
         <source>%1: %2</source>
         <translation type="unfinished">%1, %2 {1:?}</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3181"/>
+        <location filename="src/gui/mainwindow.cpp" line="3202"/>
         <source>hh:mm:ss</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3183"/>
+        <location filename="src/gui/mainwindow.cpp" line="3204"/>
         <source>&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3183"/>
+        <location filename="src/gui/mainwindow.cpp" line="3204"/>
         <source>&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3199"/>
+        <location filename="src/gui/mainwindow.cpp" line="3220"/>
         <source>No Messages</source>
         <translation>没有消息</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3201"/>
+        <location filename="src/gui/mainwindow.cpp" line="3222"/>
         <source>%1 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3203"/>
+        <location filename="src/gui/mainwindow.cpp" line="3224"/>
         <source>Messages</source>
         <translation>消息</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3203"/>
+        <location filename="src/gui/mainwindow.cpp" line="3224"/>
         <source>Message</source>
         <translation>消息</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3313"/>
+        <location filename="src/gui/mainwindow.cpp" line="3334"/>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator - Steam Edition,&lt;/li&gt;&lt;li&gt;Prepar3D or&lt;/li&gt;&lt;/ul&gt;&lt;li&gt;Microsoft Flight Simulator 2020 installation&lt;/li&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
         <oldsource>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Microsoft Flight Simulator 2020 or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</oldsource>
         <translation>在此计算机上找不到&lt;ul&gt; &lt;li&gt; Microsoft Flight Simulator X，&lt;/ li&gt; &lt;li&gt; Microsoft Flight Simulator-Steam版，&lt;/ li&gt; &lt;li&gt; Prepar3D或&lt;/ li&gt; &lt;/ ul&gt; &lt;li&gt; Microsoft Flight Simulator 2020 &lt;/ li&gt;。 另外，没有找到地景数据库。&lt;br/&gt; &lt;br/&gt;您可以从另一台计算机复制Little Navmap地景数据库。&lt;br/&gt;按帮助按钮以获取有关此内容的更多信息。&lt;br/&gt; &lt;br /&gt;如果已安装X-Plane 11，则可以通过单击下面的X-Plane按钮转到地景库加载对话框。&lt;br/&gt; &lt;br/&gt;</translation>
@@ -11432,22 +11436,22 @@ Ensure that the map fills the window completely.</source>
         <translation type="vanished">在这台电脑上找不到&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition 或&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt; 也没有找到地景文件数据库。&lt;br/&gt;&lt;br/&gt;您可以从其他电脑上复制Little Navmap地景数据库.&lt;br/&gt;点击帮助按钮以获取更多关于此的信息。&lt;br/&gt;&lt;br/&gt;如果您安装了X-Plane 11，您可以先点击下方的X-Plane按钮来打开载入地景对话框&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3326"/>
+        <location filename="src/gui/mainwindow.cpp" line="3347"/>
         <source>X-Plane</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4493"/>
+        <location filename="src/gui/mainwindow.cpp" line="4521"/>
         <source>Click here for details.</source>
         <translation>点击这里显示详情。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4513"/>
+        <location filename="src/gui/mainwindow.cpp" line="4541"/>
         <source>Error reading flight plan.</source>
         <translation>读取飞行计划时出错。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4518"/>
+        <location filename="src/gui/mainwindow.cpp" line="4546"/>
         <source>Error calculating profile.</source>
         <translation>计算立面图时出错。</translation>
     </message>
@@ -11456,17 +11460,17 @@ Ensure that the map fills the window completely.</source>
         <translation type="vanished">已就绪。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3667"/>
+        <location filename="src/gui/mainwindow.cpp" line="3695"/>
         <source>Reset all Settings </source>
         <translation>重置所有设置 </translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3668"/>
+        <location filename="src/gui/mainwindow.cpp" line="3696"/>
         <source>&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;User features like range rings or patterns as well as scenery, logbook and userpoint databases are not affected.&lt;br/&gt;&lt;br/&gt;A copy of the settings file&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;which allows you to undo this change.</source>
         <translation>&lt;b&gt;这将会重置所有选项、窗口布局、对话框布局、航空器航迹、地图位置历史和文件历史到默认值并重新开启。 &lt;i&gt;%1&lt;/i&gt;.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;用户特性例如距离环或者起落航线以及地景文件不会受影响。&lt;br/&gt;&lt;br/&gt;一个设置文件的副本&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;将会在此文件夹中创建&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;这将是您可以在将来撤销这个更改。</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4159"/>
+        <location filename="src/gui/mainwindow.cpp" line="4187"/>
         <source>Really Quit?</source>
         <translation>真的要退出吗？</translation>
     </message>
@@ -15868,27 +15872,27 @@ kHz/MHz</translation>
         <translation>跳回到航空器。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1007"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1009"/>
         <source>Showing user aircraft on map.</source>
         <translation>在地图上显示用户航空器。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1012"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1014"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>已在地图上显示AI或多人游戏航空器。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1017"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1019"/>
         <source>Showing online client aircraft on map.</source>
         <translation>在地图上显示在线客户端航空器。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1022"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1024"/>
         <source>Showing airport on map.</source>
         <translation>已在地图上显示机场。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1044"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1046"/>
         <source>Showing on map.</source>
         <translation>已在地图上显示。</translation>
     </message>
@@ -15933,7 +15937,7 @@ kHz/MHz</translation>
         <translation type="vanished">用户航空器</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2012"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2014"/>
         <source>Position</source>
         <translation>位置</translation>
     </message>
@@ -15988,138 +15992,138 @@ kHz/MHz</translation>
         <translation>离开全屏模式并回复正常的窗口样式</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1622"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1624"/>
         <source>%1 (%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1630"/>
         <location filename="src/mapgui/mapwidget.cpp" line="1632"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1639"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3233"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1634"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1641"/>
         <location filename="src/mapgui/mapwidget.cpp" line="3235"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3238"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3237"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3240"/>
         <source>%1 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1738"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1740"/>
         <source>Coordinates copied to clipboard.</source>
         <translation>坐标已复制到剪贴板。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1909"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1911"/>
         <source>Add %1 to Flight Plan</source>
         <translation>把 %1 加入飞行计划</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1911"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1913"/>
         <source>Insert %1 to Flight Plan</source>
         <translation>把 %1 插入飞行计划</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1913"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1915"/>
         <source>Append %1 to Flight Plan</source>
         <translation>将 %1 追加到飞行计划</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1993"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1995"/>
         <source>More ...</source>
         <translation>更多 ...</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2020"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2022"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2691"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2693"/>
         <source>&lt;p&gt;Cannot zoom to a position nearby the poles in Mercator projection.&lt;br/&gt;Use Spherical instead.&lt;/p&gt;</source>
         <translation>&lt;p&gt;在墨卡托(平面)投影下无法放大到极点附近。使用球形投影代替。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2694"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2696"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
         <translation>不要再显示此对话框(&amp;S)。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3117"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3119"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>添加了 %1 的机场起落航线。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3128"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3130"/>
         <source>Traffic pattern removed from map.</source>
         <translation>起落航线已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3147"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3149"/>
         <source>Added hold.</source>
         <translation>添加了等待。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3158"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3160"/>
         <source>Holding removed from map.</source>
         <translation>等待已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3180"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3182"/>
         <source>Showing distance search center.</source>
         <translation>已显示距离搜索的中心。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3199"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3201"/>
         <source>Showing home position.</source>
         <translation>在地图显示初始位置。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3212"/>
         <source>Distance search center position changed.</source>
         <translation>距离搜索中心位置已更改。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3218"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3220"/>
         <source>Changed home position.</source>
         <translation>初始位置已更改。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3246"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3248"/>
         <source>Added range rings for %1.</source>
         <translation>已为 %1 添加距离环。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3267"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3269"/>
         <source>Added range rings for position.</source>
         <translation>已为此位置添加距离环。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3321"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3323"/>
         <source>Range ring removed from map.</source>
         <translation>距离环已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3329"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3331"/>
         <source>Measurement line removed from map.</source>
         <translation>测量线已从地图上移除。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3342"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3344"/>
         <source>Normal</source>
         <translation>普通</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3349"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3351"/>
         <source>Detail %1</source>
         <translation>详情 %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3350"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3352"/>
         <source>Map detail level changed.</source>
         <translation>地图详细级别已更改。</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3389"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3391"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>所有的距离环、测量线已从地图上移除。</translation>
     </message>
@@ -20771,99 +20775,99 @@ This process will run in background and can take a while.</source>
         <translation>开始</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1388"/>
+        <location filename="src/query/procedurequery.cpp" line="1389"/>
         <source>/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1389"/>
-        <location filename="src/query/procedurequery.cpp" line="1595"/>
-        <location filename="src/query/procedurequery.cpp" line="1613"/>
-        <location filename="src/query/procedurequery.cpp" line="1658"/>
+        <location filename="src/query/procedurequery.cpp" line="1390"/>
+        <location filename="src/query/procedurequery.cpp" line="1596"/>
+        <location filename="src/query/procedurequery.cpp" line="1614"/>
+        <location filename="src/query/procedurequery.cpp" line="1659"/>
         <source>°M</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1390"/>
+        <location filename="src/query/procedurequery.cpp" line="1391"/>
         <source>DME %1</source>
         <translation>测距机(DME) %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1506"/>
-        <location filename="src/query/procedurequery.cpp" line="1776"/>
-        <location filename="src/query/procedurequery.cpp" line="1788"/>
-        <location filename="src/query/procedurequery.cpp" line="1797"/>
-        <location filename="src/query/procedurequery.cpp" line="1811"/>
+        <location filename="src/query/procedurequery.cpp" line="1507"/>
+        <location filename="src/query/procedurequery.cpp" line="1777"/>
+        <location filename="src/query/procedurequery.cpp" line="1789"/>
+        <location filename="src/query/procedurequery.cpp" line="1798"/>
+        <location filename="src/query/procedurequery.cpp" line="1812"/>
         <source>Intercept</source>
         <translation>截获</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1507"/>
+        <location filename="src/query/procedurequery.cpp" line="1508"/>
         <source>Course to Fix</source>
         <translation>到切入点的航线</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1547"/>
-        <location filename="src/query/procedurequery.cpp" line="1689"/>
+        <location filename="src/query/procedurequery.cpp" line="1548"/>
+        <location filename="src/query/procedurequery.cpp" line="1690"/>
         <source>Altitude</source>
         <translation>高度</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1613"/>
-        <location filename="src/query/procedurequery.cpp" line="1658"/>
+        <location filename="src/query/procedurequery.cpp" line="1614"/>
+        <location filename="src/query/procedurequery.cpp" line="1659"/>
         <source>°T</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1683"/>
-        <location filename="src/query/procedurequery.cpp" line="1701"/>
+        <location filename="src/query/procedurequery.cpp" line="1684"/>
+        <location filename="src/query/procedurequery.cpp" line="1702"/>
         <source>Manual</source>
         <translation>人工</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1695"/>
+        <location filename="src/query/procedurequery.cpp" line="1696"/>
         <source>Single</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1781"/>
-        <location filename="src/query/procedurequery.cpp" line="1811"/>
+        <location filename="src/query/procedurequery.cpp" line="1782"/>
+        <location filename="src/query/procedurequery.cpp" line="1812"/>
         <source>Leg</source>
         <translation>航段</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2194"/>
+        <location filename="src/query/procedurequery.cpp" line="2195"/>
         <source>no runway</source>
         <translation>没有跑道</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2194"/>
+        <location filename="src/query/procedurequery.cpp" line="2195"/>
         <source>runway %1</source>
         <translation>跑道 %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2222"/>
+        <location filename="src/query/procedurequery.cpp" line="2223"/>
         <source>SID %1 from %2</source>
         <translation>标准离场程序(SID) %1 自 %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2278"/>
-        <location filename="src/query/procedurequery.cpp" line="2322"/>
+        <location filename="src/query/procedurequery.cpp" line="2279"/>
+        <location filename="src/query/procedurequery.cpp" line="2323"/>
         <source>Approach %1 to %2</source>
         <translation>进近 %1 到 %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2356"/>
+        <location filename="src/query/procedurequery.cpp" line="2357"/>
         <source>STAR %1 to %2</source>
         <translation>标准进场程序(STAR) %1 到 %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2450"/>
+        <location filename="src/query/procedurequery.cpp" line="2451"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2457"/>
+        <location filename="src/query/procedurequery.cpp" line="2458"/>
         <source>Procedure not found in scenery library</source>
         <translation type="unfinished"></translation>
     </message>
@@ -20872,7 +20876,7 @@ This process will run in background and can take a while.</source>
         <translation type="vanished">标准离场程序(SID) %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2236"/>
+        <location filename="src/query/procedurequery.cpp" line="2237"/>
         <source>SID transition %1</source>
         <translation>标准离场程序(SID)过渡 %1</translation>
     </message>
@@ -20881,7 +20885,7 @@ This process will run in background and can take a while.</source>
         <translation type="vanished">进近  %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2344"/>
+        <location filename="src/query/procedurequery.cpp" line="2345"/>
         <source>Transition %1</source>
         <translation>过渡 %1</translation>
     </message>
@@ -20890,7 +20894,7 @@ This process will run in background and can take a while.</source>
         <translation type="vanished">标准进场程序(STAR) %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2371"/>
+        <location filename="src/query/procedurequery.cpp" line="2372"/>
         <source>STAR transition %1</source>
         <translation>标准进场程序(STAR)过渡 %1</translation>
     </message>
@@ -23748,9 +23752,9 @@ Really use it?</source>
     <message>
         <location filename="src/common/dirtool.cpp" line="113"/>
         <location filename="src/db/databasemanager.cpp" line="780"/>
-        <location filename="src/gui/mainwindow.cpp" line="2425"/>
-        <location filename="src/gui/mainwindow.cpp" line="3250"/>
-        <location filename="src/gui/mainwindow.cpp" line="3278"/>
+        <location filename="src/gui/mainwindow.cpp" line="2446"/>
+        <location filename="src/gui/mainwindow.cpp" line="3271"/>
+        <location filename="src/gui/mainwindow.cpp" line="3299"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>不要再显示此对话框(&amp;S)。</translation>
     </message>
@@ -23762,17 +23766,17 @@ Really use it?</source>
         <translation type="unfinished">&lt;p&gt;是一个适用于X-Plane 11, Flight Simulator X ，Prepar3D和微软模拟飞行2020的免费的开源飞行计划器，导航工具，动态地图，机场搜索和机场信息系统&lt;/p&gt;&lt;p&gt;&lt;b&gt;如您愿意您可以在&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;这里&lt;/a&gt;捐助.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此软件许可证适用于&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本&lt;/p&gt;&lt;p&gt;此软件的源代码在 &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;。&lt;/p&gt;&lt;p&gt;关于我的更多项目&lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;版权所有 2015-2021 Alexander Barthel&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此版本中文翻译由&lt;a href=&quot;https://github.com/J0hnLiu&quot;&gt;John Liu&lt;/a&gt;提供，适用同样的&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本的许可证。因水平有限，翻译可能存在一些不足，如有发现请&lt;a href=&quot;https://johnliu.info/lnm&quot;&gt;向我指出&lt;/a&gt;。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3236"/>
+        <location filename="src/gui/mainwindow.cpp" line="3257"/>
         <source>&lt;p&gt;Error initializing SSL subsystem.&lt;/p&gt;&lt;p&gt;The program will not be able to use encrypted network connections&lt;br/&gt;(i.e. HTTPS) that are needed to check for updates or&lt;br/&gt;to load online maps.&lt;/p&gt;</source>
         <translation>&lt;p&gt;初始化SSL子系统失败。&lt;/p&gt;&lt;p&gt;此程序件无法使用加密网络连接&lt;br/&gt;(例如 HTTPS) ，以检查更新和载入在线地图。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3243"/>
+        <location filename="src/gui/mainwindow.cpp" line="3264"/>
         <source>&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Installation&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;点击以下连接以获取更多信息&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Installation&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3265"/>
+        <location filename="src/gui/mainwindow.cpp" line="3286"/>
         <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.&lt;br/&gt;Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Go to the main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then to page &quot;Cache and files&quot; to add the GLOBE data.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here for more information in the &lt;i&gt;Little Navmap&lt;/i&gt; online manual&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <comment>Keep instructions in sync with translated menus</comment>
         <translation>&lt;p&gt;高程图默认使用的在线高程信息是有限制的并有很多错误。&lt;br/&gt;因此，建议下载和使用可以提供全球覆盖的离线GLOBE高程数据。&lt;/p&gt;&lt;p&gt;&lt;b&gt;到主菜单 -&amp;gt; &quot;工具&quot; -&amp;gt; &quot;选项&quot; 打开页面 &quot;缓存及文件&quot; 以添加GLOBE 数据.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;点击这里以在 &lt;i&gt;Little Navmap&lt;/i&gt; 在线手册获取更多信息&lt;/b&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
@@ -23838,32 +23842,32 @@ Spaces are replaced with underscores.</source>
         <translation>版本 %5 (修订 %6)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2793"/>
+        <location filename="src/route/route.cpp" line="2822"/>
         <source>%1 %2 %3%4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2800"/>
+        <location filename="src/route/route.cpp" line="2829"/>
         <source>Transition %1</source>
         <translation>过渡 %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2802"/>
+        <location filename="src/route/route.cpp" line="2831"/>
         <source>STAR %1</source>
         <translation>标准进场程序(STAR) %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2804"/>
+        <location filename="src/route/route.cpp" line="2833"/>
         <source>SID %1</source>
         <translation>标准离场程序(SID) %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2806"/>
+        <location filename="src/route/route.cpp" line="2835"/>
         <source>SID Transition %1</source>
         <translation>标准离场程序(SID)过渡 %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2808"/>
+        <location filename="src/route/route.cpp" line="2837"/>
         <source>STAR Transition %1</source>
         <translation>标准进场程序(STAR)过渡 %1</translation>
     </message>
@@ -24226,17 +24230,17 @@ Click or reload to continue.</source>
         <translation> (未找到)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2794"/>
+        <location filename="src/route/route.cpp" line="2823"/>
         <source>Missed</source>
         <translation>错失的(复飞)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2794"/>
+        <location filename="src/route/route.cpp" line="2823"/>
         <source>Approach</source>
         <translation>进近</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="2797"/>
+        <location filename="src/route/route.cpp" line="2826"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
@@ -24371,7 +24375,7 @@ Slower calculation.</source>
 较慢的计算。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="162"/>
+        <location filename="src/route/routecalcwindow.cpp" line="153"/>
         <source>Use downloaded NAT, PACOTS or AUSOTS tracks.
 Best track will be selected automatically.
 Ensure to use the correct flight level.
@@ -24382,7 +24386,7 @@ Otherwise, tracks will not be used.</source>
 否则，航迹不会被使用。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="166"/>
+        <location filename="src/route/routecalcwindow.cpp" line="157"/>
         <source>
 
 No tracks available. Press the download button or
@@ -24394,12 +24398,12 @@ go to &quot;Flight Plan&quot; -&gt; &quot;Download Tracks&quot; to fetch tracks.
 转到“飞行计划”-&gt;“下载航迹”以获取航迹。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="205"/>
+        <location filename="src/route/routecalcwindow.cpp" line="196"/>
         <source>&lt;b&gt;Calculate flight plan between legs&lt;br/&gt;%1 and %2&lt;/b&gt;</source>
         <translation>&lt;b&gt;计算&lt;br/&gt;%1 及 %2 航段之间的飞行计划&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="211"/>
+        <location filename="src/route/routecalcwindow.cpp" line="202"/>
         <source>Select a range of legs or two flight plan legs in the flight plan table.
 The selection may not be part of a procedure or an alternate.
 It can include the end of a departure or the start of an arrival procedure.</source>
@@ -24408,44 +24412,44 @@ It can include the end of a departure or the start of an arrival procedure.</sou
 它可以包括离场程序的结束或到达程序的开始。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="235"/>
+        <location filename="src/route/routecalcwindow.cpp" line="226"/>
         <source>&lt;b&gt;Calculate flight plan from&lt;br/&gt;%1 to %2&lt;/b&gt;</source>
         <translation>&lt;b&gt;计算自&lt;br/&gt;%1 到 %2的飞行计划&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="244"/>
+        <location filename="src/route/routecalcwindow.cpp" line="235"/>
         <source>Select departure and destination first</source>
         <translation>先选择出发地及目的地</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="197"/>
-        <location filename="src/route/routecalcwindow.cpp" line="201"/>
+        <location filename="src/route/routecalcwindow.cpp" line="188"/>
+        <location filename="src/route/routecalcwindow.cpp" line="192"/>
+        <location filename="src/route/routecalcwindow.cpp" line="213"/>
+        <location filename="src/route/routecalcwindow.cpp" line="215"/>
+        <location filename="src/route/routecalcwindow.cpp" line="220"/>
         <location filename="src/route/routecalcwindow.cpp" line="222"/>
-        <location filename="src/route/routecalcwindow.cpp" line="224"/>
-        <location filename="src/route/routecalcwindow.cpp" line="229"/>
-        <location filename="src/route/routecalcwindow.cpp" line="231"/>
         <source>%1 (%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="209"/>
+        <location filename="src/route/routecalcwindow.cpp" line="200"/>
         <source>Cannot calculate flight plan between selected legs.</source>
         <oldsource>Cannot calculate flight plan</oldsource>
         <translation>无法计算选定的航段间的飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="210"/>
-        <location filename="src/route/routecalcwindow.cpp" line="241"/>
+        <location filename="src/route/routecalcwindow.cpp" line="201"/>
+        <location filename="src/route/routecalcwindow.cpp" line="232"/>
         <source>Click here for details.</source>
         <translation>点击这里显示详情。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="240"/>
+        <location filename="src/route/routecalcwindow.cpp" line="231"/>
         <source>Set departure and destination first.</source>
         <translation>先选择出发地及目的地。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcwindow.cpp" line="242"/>
+        <location filename="src/route/routecalcwindow.cpp" line="233"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu on the map or the airport search (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;to select departure and destination first.&lt;/p&gt;</source>
         <oldsource>Use the right-click context menu on the map or the airport search (F4)
 to select departure and destination first.</oldsource>
@@ -24528,7 +24532,7 @@ to select departure and destination first.</oldsource>
         <location filename="src/route/routecontroller.cpp" line="922"/>
         <location filename="src/route/routecontroller.cpp" line="990"/>
         <location filename="src/route/routecontroller.cpp" line="1123"/>
-        <location filename="src/route/routecontroller.cpp" line="1780"/>
+        <location filename="src/route/routecontroller.cpp" line="1783"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>不要再显示此对话框(&amp;S)。</translation>
     </message>
@@ -24553,42 +24557,42 @@ The start position is now set to the longest primary runway of the departure air
         <translation>FMS 飞行计划没有中间航路点。&lt;br/&gt;&lt;br/&gt;因此无法决定巡航高度。&lt;br/&gt;手工调整巡航高度。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1161"/>
+        <location filename="src/route/routecontroller.cpp" line="1162"/>
         <source>Insert</source>
         <translation>插入</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1161"/>
+        <location filename="src/route/routecontroller.cpp" line="1162"/>
         <source>Append</source>
         <translation>附加</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1459"/>
+        <location filename="src/route/routecontroller.cpp" line="1462"/>
         <source>Direct Calculation</source>
         <translation>计算直飞</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1471"/>
+        <location filename="src/route/routecontroller.cpp" line="1474"/>
         <source>Calculated direct flight plan.</source>
         <translation>计算出的直飞飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1515"/>
+        <location filename="src/route/routecontroller.cpp" line="1518"/>
         <source>Airway Flight Plan Calculation</source>
         <translation>航路飞行计划计算</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1520"/>
+        <location filename="src/route/routecontroller.cpp" line="1523"/>
         <source>Low altitude airway Flight Plan Calculation</source>
         <translation>低空航路飞行计划计算</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1525"/>
+        <location filename="src/route/routecontroller.cpp" line="1528"/>
         <source>High altitude airway Flight Plan Calculation</source>
         <translation>高空航路飞行计划计算</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1548"/>
+        <location filename="src/route/routecontroller.cpp" line="1551"/>
         <source>Radionnav Flight Plan Calculation</source>
         <translation>计算无线电导航的飞行计划</translation>
     </message>
@@ -24597,7 +24601,7 @@ The start position is now set to the longest primary runway of the departure air
         <translation type="vanished">计算出的无线电导航飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1583"/>
+        <location filename="src/route/routecontroller.cpp" line="1586"/>
         <source>No route found.</source>
         <translation>没有找到航线。</translation>
     </message>
@@ -24632,42 +24636,42 @@ Try another routing type or create the flight plan manually.</source>
 尝试其他的航线种类或者人工创建飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1803"/>
+        <location filename="src/route/routecontroller.cpp" line="1806"/>
         <source>Adjust altitude</source>
         <translation>调整高度</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1819"/>
+        <location filename="src/route/routecontroller.cpp" line="1822"/>
         <source>Adjusted flight plan altitude.</source>
         <translation>调整后的飞行计划高度。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1827"/>
+        <location filename="src/route/routecontroller.cpp" line="1830"/>
         <source>Reverse</source>
         <translation>翻转</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1866"/>
+        <location filename="src/route/routecontroller.cpp" line="1870"/>
         <source>Reversed flight plan.</source>
         <translation>翻转的飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2071"/>
+        <location filename="src/route/routecontroller.cpp" line="2075"/>
         <source>Showing airport on map.</source>
         <translation>已在地图上显示此机场。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2073"/>
+        <location filename="src/route/routecontroller.cpp" line="2077"/>
         <source>Showing navaid on map.</source>
         <translation>已在地图上显示助航设备。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2081"/>
+        <location filename="src/route/routecontroller.cpp" line="2085"/>
         <source> - Flight Plan Table</source>
         <translation> - 飞行计划表</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2082"/>
+        <location filename="src/route/routecontroller.cpp" line="2086"/>
         <source>Select columns to show in flight plan table</source>
         <translation>选择在飞行计划表中显示的表头</translation>
     </message>
@@ -24676,27 +24680,27 @@ Try another routing type or create the flight plan manually.</source>
         <translation type="vanished">为选定的航段计算(&amp;S)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2229"/>
+        <location filename="src/route/routecontroller.cpp" line="2233"/>
         <source>Departure </source>
         <translation>离场 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2232"/>
+        <location filename="src/route/routecontroller.cpp" line="2236"/>
         <source>Show procedures (airport has no departure procedure)</source>
         <translation>显示程序 (机场没有离场程序)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2239"/>
+        <location filename="src/route/routecontroller.cpp" line="2243"/>
         <source>Arrival </source>
         <translation>进场 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2242"/>
+        <location filename="src/route/routecontroller.cpp" line="2246"/>
         <source>Show procedures (airport has no arrival procedure)</source>
         <translation>显示程序 (机场没有进场程序)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2247"/>
+        <location filename="src/route/routecontroller.cpp" line="2251"/>
         <source>all </source>
         <translation>全部 </translation>
     </message>
@@ -24713,7 +24717,7 @@ Try another routing type or create the flight plan manually.</source>
         <translation type="vanished">创建进近并用机场作为目的地</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2282"/>
+        <location filename="src/route/routecontroller.cpp" line="2286"/>
         <source>Show procedures</source>
         <translation>显示程序</translation>
     </message>
@@ -24722,7 +24726,7 @@ Try another routing type or create the flight plan manually.</source>
         <translation type="vanished">创建程序</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2301"/>
+        <location filename="src/route/routecontroller.cpp" line="2305"/>
         <source>Insert Flight Plan before ...</source>
         <translation>在此位置前插入飞行计划...</translation>
     </message>
@@ -24739,12 +24743,12 @@ Try another routing type or create the flight plan manually.</source>
         <translation type="vanished">显示助航设备覆盖范围</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2358"/>
+        <location filename="src/route/routecontroller.cpp" line="2362"/>
         <source> (hidden on map)</source>
         <translation> (已在地图上隐藏)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2439"/>
+        <location filename="src/route/routecontroller.cpp" line="2443"/>
         <source>Table view reset to defaults.</source>
         <translation>表格视图已重置为默认值。</translation>
     </message>
@@ -24753,27 +24757,27 @@ Try another routing type or create the flight plan manually.</source>
         <translation type="vanished">更改航路点名称</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1581"/>
+        <location filename="src/route/routecontroller.cpp" line="1584"/>
         <source>Calculated flight plan.</source>
         <translation>计算的飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1628"/>
+        <location filename="src/route/routecontroller.cpp" line="1631"/>
         <source>Calculating Flight Plan ...</source>
         <translation>正在计算飞行计划...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1628"/>
+        <location filename="src/route/routecontroller.cpp" line="1631"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1629"/>
+        <location filename="src/route/routecontroller.cpp" line="1632"/>
         <source>Little Navmap - Calculating Flight Plan</source>
         <translation>Little Navmap - 计算飞行计划</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1776"/>
+        <location filename="src/route/routecontroller.cpp" line="1779"/>
         <source>Cannot calculate flight plan.
 
 Try another calculation type,
@@ -24786,154 +24790,154 @@ create the flight plan manually.</source>
 手动创建飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2251"/>
+        <location filename="src/route/routecontroller.cpp" line="2255"/>
         <source>Show Procedures (airport has no procedure)</source>
         <translation>显示程序 (机场没有程序)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2255"/>
+        <location filename="src/route/routecontroller.cpp" line="2259"/>
         <source>Create &amp;Approach to Airport and insert into Flight Plan</source>
         <translation>创建到机场的进近并插入到飞行计划(&amp;A)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2257"/>
+        <location filename="src/route/routecontroller.cpp" line="2261"/>
         <source>Create &amp;Approach and use Airport as Destination</source>
         <translation>创建进近并用机场作为目的地(&amp;A)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2261"/>
+        <location filename="src/route/routecontroller.cpp" line="2265"/>
         <source>Show &amp;Procedures</source>
         <oldsource>Create &amp;approach</oldsource>
         <translation>显示程序(&amp;P)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2325"/>
+        <location filename="src/route/routecontroller.cpp" line="2329"/>
         <source>Edit Flight Plan &amp;Position or Remarks ...</source>
         <translation>编辑飞行计划位置的备注(&amp;P)...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2541"/>
+        <location filename="src/route/routecontroller.cpp" line="2545"/>
         <source>Waypoint Change</source>
         <translation>更改航路点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2554"/>
+        <location filename="src/route/routecontroller.cpp" line="2558"/>
         <source>Changed waypoint in flight plan.</source>
         <translation>更改飞行计划中的航路点。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2796"/>
+        <location filename="src/route/routecontroller.cpp" line="2800"/>
         <source>Move Waypoints</source>
         <translation>移动航路点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2866"/>
+        <location filename="src/route/routecontroller.cpp" line="2870"/>
         <source>Moved flight plan legs.</source>
         <translation>移动飞行计划航段。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2894"/>
+        <location filename="src/route/routecontroller.cpp" line="2898"/>
         <source>Delete Procedure</source>
         <translation>删除程序</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2894"/>
+        <location filename="src/route/routecontroller.cpp" line="2898"/>
         <source>Delete Waypoints</source>
         <translation>删除航路点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2954"/>
+        <location filename="src/route/routecontroller.cpp" line="2958"/>
         <source>Removed flight plan legs.</source>
         <translation>已移除飞行计划航段。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3031"/>
+        <location filename="src/route/routecontroller.cpp" line="3035"/>
         <source>Set Parking</source>
         <translation>设置停机位</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3062"/>
+        <location filename="src/route/routecontroller.cpp" line="3066"/>
         <source>Departure set to %1 parking %2.</source>
         <translation>出发已设置为 %1 停机位 %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3071"/>
-        <location filename="src/route/routecontroller.cpp" line="4754"/>
+        <location filename="src/route/routecontroller.cpp" line="3075"/>
+        <location filename="src/route/routecontroller.cpp" line="4697"/>
         <source>Set Start Position</source>
         <translation>设置起始位置</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3107"/>
+        <location filename="src/route/routecontroller.cpp" line="3111"/>
         <source>Departure set to %1 start position %2.</source>
         <translation>出发地已设置为 %1 起始位置 %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3115"/>
+        <location filename="src/route/routecontroller.cpp" line="3119"/>
         <source>Set Departure</source>
         <translation>设置出发地</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3136"/>
+        <location filename="src/route/routecontroller.cpp" line="3140"/>
         <source>Departure set to %1.</source>
         <translation>出发地已设置为 %1。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3183"/>
+        <location filename="src/route/routecontroller.cpp" line="3187"/>
         <source>Set Destination</source>
         <translation>设置目的地</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3204"/>
+        <location filename="src/route/routecontroller.cpp" line="3208"/>
         <source>Destination set to %1.</source>
         <translation>目的地已设置为 %1。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3210"/>
+        <location filename="src/route/routecontroller.cpp" line="3214"/>
         <source>Add Alternate</source>
         <translation>添加备降地</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3242"/>
+        <location filename="src/route/routecontroller.cpp" line="3246"/>
         <source>Alternate %1 added.</source>
         <translation>备降地 %1 已添加。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3324"/>
-        <location filename="src/route/routecontroller.cpp" line="3325"/>
         <location filename="src/route/routecontroller.cpp" line="3328"/>
-        <location filename="src/route/routecontroller.cpp" line="3338"/>
-        <location filename="src/route/routecontroller.cpp" line="3339"/>
+        <location filename="src/route/routecontroller.cpp" line="3329"/>
+        <location filename="src/route/routecontroller.cpp" line="3332"/>
         <location filename="src/route/routecontroller.cpp" line="3342"/>
+        <location filename="src/route/routecontroller.cpp" line="3343"/>
+        <location filename="src/route/routecontroller.cpp" line="3346"/>
         <source> *</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3361"/>
+        <location filename="src/route/routecontroller.cpp" line="3365"/>
         <source>Add Procedure</source>
         <translation>添加程序</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3436"/>
+        <location filename="src/route/routecontroller.cpp" line="3439"/>
         <source>Added procedure to flight plan.</source>
         <translation>添加程序到飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3451"/>
+        <location filename="src/route/routecontroller.cpp" line="3454"/>
         <source>Add Waypoint</source>
         <translation>添加航路点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3501"/>
+        <location filename="src/route/routecontroller.cpp" line="3504"/>
         <source>Added waypoint to flight plan.</source>
         <translation>添加航路点到飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3515"/>
+        <location filename="src/route/routecontroller.cpp" line="3518"/>
         <source>Change Waypoint</source>
         <translation>更改航路点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3574"/>
+        <location filename="src/route/routecontroller.cpp" line="3577"/>
         <source>Replaced waypoint in flight plan.</source>
         <translation>替换飞行计划中的航路点。</translation>
     </message>
@@ -24946,159 +24950,159 @@ create the flight plan manually.</source>
         <translation type="vanished">已从飞行计划移除航路点。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2262"/>
+        <location filename="src/route/routecontroller.cpp" line="2266"/>
         <source>Create &amp;Approach to Airport</source>
         <translation>创建到机场的进近(&amp;A)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2308"/>
+        <location filename="src/route/routecontroller.cpp" line="2312"/>
         <source>Add Airport &amp;Traffic Pattern ...</source>
         <translation>添加机场起落航线(&amp;T)...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2311"/>
+        <location filename="src/route/routecontroller.cpp" line="2315"/>
         <source>Add &amp;Holding ...</source>
         <translation>添加等待程序(&amp;H)...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2321"/>
+        <location filename="src/route/routecontroller.cpp" line="2325"/>
         <source>Add &amp;Navaid Range Ring</source>
         <translation>添加助航设备范围环(&amp;N)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2331"/>
+        <location filename="src/route/routecontroller.cpp" line="2335"/>
         <source>Edit Flight Plan &amp;Position ...</source>
         <translation>编辑飞行计划位置(&amp;P)...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2332"/>
+        <location filename="src/route/routecontroller.cpp" line="2336"/>
         <source>Edit name and coordinates of user defined flight plan position</source>
         <translation>编辑用户定义飞行计划航点的名称和坐标</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2338"/>
+        <location filename="src/route/routecontroller.cpp" line="2342"/>
         <source>Edit Flight Plan &amp;Position Remarks ...</source>
         <translation>编辑飞行计划位置的备注(&amp;P)...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2339"/>
+        <location filename="src/route/routecontroller.cpp" line="2343"/>
         <source>Edit remarks for selected flight plan leg</source>
         <translation>编辑选中的飞行计划航段的备注</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3789"/>
+        <location filename="src/route/routecontroller.cpp" line="3732"/>
         <source>Departure</source>
         <translation>出发</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3791"/>
+        <location filename="src/route/routecontroller.cpp" line="3734"/>
         <source>Destination</source>
         <translation>到达</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3793"/>
+        <location filename="src/route/routecontroller.cpp" line="3736"/>
         <source>Alternate</source>
         <translation>备降</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3806"/>
+        <location filename="src/route/routecontroller.cpp" line="3749"/>
         <source>Track %1</source>
         <translation>航向 %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3821"/>
+        <location filename="src/route/routecontroller.cpp" line="3764"/>
         <source> / </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3829"/>
+        <location filename="src/route/routecontroller.cpp" line="3772"/>
         <source>,</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3835"/>
+        <location filename="src/route/routecontroller.cpp" line="3778"/>
         <source>/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3858"/>
+        <location filename="src/route/routecontroller.cpp" line="3801"/>
         <source>ILS</source>
         <translation>盲降(ILS)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3858"/>
+        <location filename="src/route/routecontroller.cpp" line="3801"/>
         <source>LOC</source>
         <translation>信标(LOC)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4112"/>
+        <location filename="src/route/routecontroller.cpp" line="4055"/>
         <source>%1 / %2</source>
         <oldsource>%1, %2</oldsource>
         <translation type="unfinished">%1, %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4127"/>
+        <location filename="src/route/routecontroller.cpp" line="4070"/>
         <source>▼</source>
         <oldsource>◄</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4129"/>
+        <location filename="src/route/routecontroller.cpp" line="4072"/>
         <source>▲</source>
         <oldsource>►</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4130"/>
+        <location filename="src/route/routecontroller.cpp" line="4073"/>
         <source>%1 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4337"/>
+        <location filename="src/route/routecontroller.cpp" line="4280"/>
         <source>Waypoint &quot;%1&quot; not found.</source>
         <translation>航路点 “%1” 没有找到。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4372"/>
+        <location filename="src/route/routecontroller.cpp" line="4315"/>
         <source>
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4405"/>
-        <location filename="src/route/routecontroller.cpp" line="4410"/>
+        <location filename="src/route/routecontroller.cpp" line="4348"/>
+        <location filename="src/route/routecontroller.cpp" line="4353"/>
         <source>Cannot load %1: %2</source>
         <translation>无法载入 %1: %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4406"/>
+        <location filename="src/route/routecontroller.cpp" line="4349"/>
         <source>procedures</source>
         <translation>起降程序</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4406"/>
+        <location filename="src/route/routecontroller.cpp" line="4349"/>
         <source>procedure</source>
         <translation>起降程序</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4407"/>
-        <location filename="src/route/routecontroller.cpp" line="4412"/>
-        <location filename="src/route/routecontroller.cpp" line="4676"/>
+        <location filename="src/route/routecontroller.cpp" line="4350"/>
+        <location filename="src/route/routecontroller.cpp" line="4355"/>
+        <location filename="src/route/routecontroller.cpp" line="4619"/>
         <source>, </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4411"/>
+        <location filename="src/route/routecontroller.cpp" line="4354"/>
         <source>alternates</source>
         <translation>备降场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4411"/>
+        <location filename="src/route/routecontroller.cpp" line="4354"/>
         <source>alternate</source>
         <translation>备降场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4415"/>
+        <location filename="src/route/routecontroller.cpp" line="4358"/>
         <source>Download oceanic tracks in menu &quot;Flight Plan&quot;
 or calculate the flight plan again if your plan uses tracks.</source>
         <comment>Keep in sync with menu names</comment>
@@ -25106,166 +25110,166 @@ or calculate the flight plan again if your plan uses tracks.</source>
 或者如果您的计划使用航迹，请再次计算飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4419"/>
+        <location filename="src/route/routecontroller.cpp" line="4362"/>
         <source>Errors in flight plan.</source>
         <translation>飞行计划中有错误。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4444"/>
+        <location filename="src/route/routecontroller.cpp" line="4387"/>
         <source>Invalid</source>
         <translation>无效</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4453"/>
-        <location filename="src/route/routecontroller.cpp" line="4469"/>
-        <location filename="src/route/routecontroller.cpp" line="4475"/>
-        <location filename="src/route/routecontroller.cpp" line="4477"/>
+        <location filename="src/route/routecontroller.cpp" line="4396"/>
+        <location filename="src/route/routecontroller.cpp" line="4412"/>
+        <location filename="src/route/routecontroller.cpp" line="4418"/>
+        <location filename="src/route/routecontroller.cpp" line="4420"/>
         <source>%1 (%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4461"/>
+        <location filename="src/route/routecontroller.cpp" line="4404"/>
         <source> Helipad %1</source>
         <translation> 直升机坪 %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4463"/>
+        <location filename="src/route/routecontroller.cpp" line="4406"/>
         <source> Runway %1</source>
         <translation> 跑道 %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4465"/>
+        <location filename="src/route/routecontroller.cpp" line="4408"/>
         <source> Unknown Start</source>
         <translation> 未知的起始</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4499"/>
+        <location filename="src/route/routecontroller.cpp" line="4442"/>
         <source>Depart via SID</source>
         <translation>通过标准离场程序(SID)离场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4504"/>
+        <location filename="src/route/routecontroller.cpp" line="4447"/>
         <source>Depart runway</source>
         <translation>离场跑道</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4506"/>
+        <location filename="src/route/routecontroller.cpp" line="4449"/>
         <source>via SID</source>
         <translation>经标准离场程序(SID)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4518"/>
-        <location filename="src/route/routecontroller.cpp" line="4558"/>
-        <location filename="src/route/routecontroller.cpp" line="4599"/>
+        <location filename="src/route/routecontroller.cpp" line="4461"/>
+        <location filename="src/route/routecontroller.cpp" line="4501"/>
+        <location filename="src/route/routecontroller.cpp" line="4542"/>
         <source>.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4534"/>
+        <location filename="src/route/routecontroller.cpp" line="4477"/>
         <source>Arrive via STAR</source>
         <translation>经标准进场程序(STAR)进场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4546"/>
+        <location filename="src/route/routecontroller.cpp" line="4489"/>
         <source>at runway</source>
         <translation>在跑道</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4552"/>
+        <location filename="src/route/routecontroller.cpp" line="4495"/>
         <source>(&lt;b&gt;%1&lt;/b&gt;)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4565"/>
+        <location filename="src/route/routecontroller.cpp" line="4508"/>
         <source>via</source>
         <translation>经</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4565"/>
-        <location filename="src/route/routecontroller.cpp" line="4573"/>
+        <location filename="src/route/routecontroller.cpp" line="4508"/>
+        <location filename="src/route/routecontroller.cpp" line="4516"/>
         <source>Via</source>
         <translation>经</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4573"/>
+        <location filename="src/route/routecontroller.cpp" line="4516"/>
         <source>and</source>
         <translation>及</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4578"/>
+        <location filename="src/route/routecontroller.cpp" line="4521"/>
         <source>-%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4589"/>
+        <location filename="src/route/routecontroller.cpp" line="4532"/>
         <source>(%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4597"/>
+        <location filename="src/route/routecontroller.cpp" line="4540"/>
         <source>To runway</source>
         <translation>到跑道</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4597"/>
+        <location filename="src/route/routecontroller.cpp" line="4540"/>
         <source>to runway</source>
         <translation>到跑道</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4605"/>
+        <location filename="src/route/routecontroller.cpp" line="4548"/>
         <source>To runway.</source>
         <translation>到跑道。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4605"/>
+        <location filename="src/route/routecontroller.cpp" line="4548"/>
         <source>to runway.</source>
         <translation>到跑道。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4614"/>
+        <location filename="src/route/routecontroller.cpp" line="4557"/>
         <source>Runway mismatch: STAR &quot;%1&quot; ≠ Approach &quot;%2&quot;.</source>
         <translation>跑道不匹配：标准进场程序(STAR)“%1” ≠ 进近 &quot;%2&quot;。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4621"/>
+        <location filename="src/route/routecontroller.cpp" line="4564"/>
         <source>&lt;b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4621"/>
+        <location filename="src/route/routecontroller.cpp" line="4564"/>
         <source>&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4632"/>
+        <location filename="src/route/routecontroller.cpp" line="4575"/>
         <source>&lt;h2&gt;%1 to %2&lt;/h2&gt;</source>
         <translation>&lt;h2&gt;%1 到 %2&lt;/h2&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4634"/>
+        <location filename="src/route/routecontroller.cpp" line="4577"/>
         <source>&lt;b&gt;%1&lt;/b&gt; to &lt;b&gt;%2&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; 到 &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4638"/>
+        <location filename="src/route/routecontroller.cpp" line="4581"/>
         <source>No Flight Plan.</source>
         <translation type="unfinished">没有飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4863"/>
+        <location filename="src/route/routecontroller.cpp" line="4806"/>
         <source>No flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4864"/>
+        <location filename="src/route/routecontroller.cpp" line="4807"/>
         <source>
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4865"/>
-        <location filename="src/route/routecontroller.cpp" line="4870"/>
+        <location filename="src/route/routecontroller.cpp" line="4808"/>
+        <location filename="src/route/routecontroller.cpp" line="4813"/>
         <source>Remarks for the flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -25274,7 +25278,7 @@ or calculate the flight plan again if your plan uses tracks.</source>
         <translation type="vanished">&lt;b&gt;没有载入飞行计划。&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4640"/>
+        <location filename="src/route/routecontroller.cpp" line="4583"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu on the map or the airport search (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;to select departure and destination.&lt;/p&gt;</source>
         <oldsource>Use the right-click context menu on the map or the airport search (F4)
 to select departure and destination.</oldsource>
@@ -25282,29 +25286,29 @@ to select departure and destination.</oldsource>
 搜索(&lt;code&gt;F4&lt;/code&gt;)来选择出发地和目的地。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4644"/>
+        <location filename="src/route/routecontroller.cpp" line="4587"/>
         <source>Select departure and destination in the map or airport search</source>
         <translation>在地图或机场搜索中选择出发地和目的地</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4670"/>
+        <location filename="src/route/routecontroller.cpp" line="4613"/>
         <source>%1 from departure to top of climb</source>
         <translation>%1 自离场至爬升顶</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4672"/>
+        <location filename="src/route/routecontroller.cpp" line="4615"/>
         <source>%1 from start of descent to destination</source>
         <translation>%1 下降顶至目的地</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4849"/>
+        <location filename="src/route/routecontroller.cpp" line="4792"/>
         <source>Remarks changed</source>
         <translation>备注已更改</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4661"/>
-        <location filename="src/route/routecontroller.cpp" line="4664"/>
-        <location filename="src/route/routecontroller.cpp" line="4668"/>
+        <location filename="src/route/routecontroller.cpp" line="4604"/>
+        <location filename="src/route/routecontroller.cpp" line="4607"/>
+        <location filename="src/route/routecontroller.cpp" line="4611"/>
         <source>&lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -26730,94 +26734,94 @@ If not applicable, the best estimate from installed simulators is used.</source>
         <translation>没有找到助航设备 %1。已忽略。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="541"/>
+        <location filename="src/routestring/routestringreader.cpp" line="542"/>
         <source>Ignoring time specification for airport %1.</source>
         <translation>已忽略 %1 机场的时间规范。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="543"/>
+        <location filename="src/routestring/routestringreader.cpp" line="544"/>
         <source>Ignoring runway specification for airport %1.</source>
         <translation>已忽略 %1 机场的跑道规范。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="636"/>
+        <location filename="src/routestring/routestringreader.cpp" line="638"/>
         <source>Mandatory departure airport %1 not found.</source>
         <translation>强制的出发机场 %1 没有找到。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="724"/>
+        <location filename="src/routestring/routestringreader.cpp" line="726"/>
         <source>Found alternate %1 &lt;b&gt;%2&lt;/b&gt;.</source>
         <translation>找到备降场 %1 &lt;b&gt;%2&lt;/b&gt;。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="725"/>
+        <location filename="src/routestring/routestringreader.cpp" line="727"/>
         <source>airport</source>
         <translation>机场</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="725"/>
+        <location filename="src/routestring/routestringreader.cpp" line="727"/>
         <source>airports</source>
         <translation>机场</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="726"/>
+        <location filename="src/routestring/routestringreader.cpp" line="728"/>
         <source>, </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="731"/>
-        <location filename="src/routestring/routestringreader.cpp" line="774"/>
+        <location filename="src/routestring/routestringreader.cpp" line="733"/>
+        <location filename="src/routestring/routestringreader.cpp" line="776"/>
         <source>Required destination airport %1 not found.</source>
         <translation>需要的到达机场 %1 没有找到。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="843"/>
+        <location filename="src/routestring/routestringreader.cpp" line="845"/>
         <source>First item %1 not found as waypoint, VOR or NDB.</source>
         <translation>第一个项目 %1 不是航路点，甚高频全向信标(VOR)或无方向性信标(NDB)。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1101"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1103"/>
         <source>No waypoint before airway %1. Ignoring flight plan segment.</source>
         <translation>在航路 %1 前没有航路点。已忽略飞行计划航段。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1110"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1112"/>
         <source>No waypoint after airway %1. Ignoring flight plan segment.</source>
         <translation>在航路 %1 后没有航路点。已忽略飞行计划航段。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1174"/>
-        <location filename="src/routestring/routestringreader.cpp" line="1179"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1176"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1181"/>
         <source>Waypoint %1 not found in airway %2. Ignoring flight plan segment.</source>
         <translation>在航路 %2 没有找到航路点 %1 。已忽略飞行计划航段。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1187"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1189"/>
         <source>No waypoints found for airway %1. Ignoring flight plan segment.</source>
         <translation>在航路 %1 没有找到航路点。已忽略飞行计划航段。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1194"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1196"/>
         <source>No waypoint %1 found at airway %2. Ignoring flight plan segment.</source>
         <translation>在航路 %2 时没有找到航路点 %1 。已忽略飞行计划航段。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1266"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1268"/>
         <source>Replacing plain SID instruction with DCT (direct).</source>
         <translation>已用DCT(直飞)取代标准离场程序(SID)指令。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1272"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1274"/>
         <source>Replacing STAR instruction with DCT (direct).</source>
         <translation>已用DCT(直飞)取代标准进场程序(STAR)指令。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1280"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1282"/>
         <source>Ignoring invalid speed and altitude instruction %1.</source>
         <translation>已忽略无效的速度及高度指令 %1。</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1295"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1297"/>
         <source>Ignoring speed and altitude at waypoint %1.</source>
         <translation>已在航路点 %1 忽略无效的速度及高度指令。</translation>
     </message>
