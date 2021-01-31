@@ -2259,6 +2259,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
   if(options.testFlag(rf::FIX_PROC_ENTRY_EXIT))
   {
+    QVector<float> altVector = route.getAltitudeLegs().getAltitudes();
+
     // Check arrival airway ===========================================================================
     int arrivaLegsOffset = map::INVALID_INDEX_VALUE;
     if(route.arrivalRouteToProcLegs(arrivaLegsOffset))
@@ -2278,6 +2280,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
                                           true /* resolve waypoints to VOR and others*/);
         entry.setAirway(arrivalLeg.getAirwayName());
         entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+        entry.setAltitude(altVector.value(arrivaLegsOffset, 0.f));
 
         RouteLeg newLeg = RouteLeg(&route.flightplan);
         newLeg.createCopyFromProcedureLeg(arrivaLegsOffset, arrivalLeg, &routeLeg);
@@ -2306,6 +2309,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
                                           true /* resolve waypoints to VOR and others*/);
         entry.setAirway(QString());
         entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+        entry.setAltitude(altVector.value(startIndexAfterProcedure - 1, 0.f));
 
         RouteLeg newLeg = RouteLeg(&route.flightplan);
         newLeg.createCopyFromProcedureLeg(startIndexAfterProcedure, departureLeg, &routeLeg);
