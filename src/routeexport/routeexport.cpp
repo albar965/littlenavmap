@@ -1767,12 +1767,16 @@ Route RouteExport::buildAdjustedRoute(rf::RouteAdjustOptions options)
 
 Route RouteExport::buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions options)
 {
-  if(NavApp::getMainUi()->actionRouteSaveApprWaypoints->isChecked())
-    options |= rf::SAVE_APPROACH_WP;
-  if(NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked())
-    options |= rf::SAVE_SIDSTAR_WP;
-  if(NavApp::getMainUi()->actionRouteSaveAirwayWaypoints->isChecked())
-    options |= rf::SAVE_AIRWAY_WP;
+  // Do not convert procedures for LNMPLN - no matter how it is saved
+  if(!options.testFlag(rf::SAVE_LNMPLN))
+  {
+    if(NavApp::getMainUi()->actionRouteSaveApprWaypoints->isChecked())
+      options |= rf::SAVE_APPROACH_WP;
+    if(NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked())
+      options |= rf::SAVE_SIDSTAR_WP;
+    if(NavApp::getMainUi()->actionRouteSaveAirwayWaypoints->isChecked())
+      options |= rf::SAVE_AIRWAY_WP;
+  }
 
   Route rt = route.updatedAltitudes().adjustedToOptions(options);
 

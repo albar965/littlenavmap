@@ -23,6 +23,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Fixed issue where waypoints inserted for procedure endpoints received wrong altitude when saving
   or exporting flight plans right after calculation. This causes error messages when loading the resulting
   LNMPLN files. albar965/littlenavmap#608
+* Fixed issue where LNMPLN flight plan procedures were replaced with waypoints inadvertently
+  if enabled in export options menu. This happened when saving LNMPLN plans with multiexport.
 
 ===============================================================================
 

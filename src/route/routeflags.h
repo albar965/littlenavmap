@@ -36,12 +36,13 @@ enum RouteAdjustOption
   FIX_PROC_ENTRY_EXIT = 1 << 8, /* Add any removed procedure entry and exit points back */
   SAVE_MSFS = 1 << 9, /* Insert all SID/STAR waypoints and add procedure information for each waypoint.
                        * Add approach information to last waypoint/destination  */
+  SAVE_LNMPLN = 1 << 10, /* Ignore menu options to save procedures or airways as waypoints */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
 
   /* LNMPLN save and load format. Does not mangle anything. */
-  DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT,
+  DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT | SAVE_LNMPLN,
 
   /* LNMPLN save selected legs as plan. */
   DEFAULT_OPTS_LNMPLN_SAVE_SELECTED = DEFAULT_OPTS_LNMPLN | rf::REMOVE_ALTERNATE,
