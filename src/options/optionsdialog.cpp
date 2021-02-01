@@ -788,12 +788,22 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
                                tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                                arg(result.mid(0, 6).join("<br/>")));
     else
-      atools::gui::Dialog::warning(this,
-                                   tr(
-                                     "<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
-                                       "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
-                                         "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                                   arg(result.mid(0, 6).join("<br/>")));
+    {
+      if(statusFile)
+        atools::gui::Dialog::warning(this,
+                                     tr(
+                                       "<p>Downloaded successfully but the file does not look like a status.txt file.</p>"
+                                         "<p><b>One of the keys <i>url0</i> and/or <i>url1</i> is missing.</b></p>"
+                                           "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                                     arg(result.mid(0, 6).join("<br/>")));
+      else
+        atools::gui::Dialog::warning(this,
+                                     tr(
+                                       "<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
+                                         "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
+                                           "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                                     arg(result.mid(0, 6).join("<br/>")));
+    }
   }
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
