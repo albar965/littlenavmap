@@ -368,12 +368,16 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 
   // Collect visible feature parts ==========================================================================
   atools::fs::userdata::LogdataManager *logdataManager = NavApp::getLogdataManager();
-  QVector<const MapLogbookEntry *> visibleLogEntries;
+  QVector<const MapLogbookEntry *> visibleLogEntries, allLogEntries;
   QVector<atools::geo::LineString> visibleRouteGeometries;
   QVector<QStringList> visibleRouteTexts;
   QVector<atools::geo::LineString> visibleTrackGeometries;
   for(const MapLogbookEntry& entry : entries)
   {
+    // All selected for airport drawing
+    allLogEntries.append(&entry);
+
+    // All which have visible geometry
     if(context->viewportRect.overlaps(entry.bounding()))
       visibleLogEntries.append(&entry);
 
@@ -443,8 +447,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
             symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
 
             if(context->mapLayer->isWaypointRouteName() && names.size() == geo.size())
-              symbolPainter->textBox(context->painter, {names.at(j)}, mapcolors::routeLogEntryOutlineColor,
-                                     x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
+              symbolPainter->textBoxF(context->painter, {names.at(j)}, mapcolors::routeLogEntryOutlineColor,
+                                      x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
           }
         }
       }
@@ -460,8 +464,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       if(geo.isValid())
       {
         // Draw waypoint symbols and text for route preview =========
-        for(int j = 1; j < geo.size() - 1; j++)
-          paintArrowAlongLine(painter, Line(geo.at(j), geo.at(j - 1)), arrow, 0.5f /* pos*/, 40.f /* minLength */);
+        for(int j = 1; j < geo.size(); j++)
+          paintArrowAlongLine(painter, Line(geo.at(j), geo.at(j - 1)), arrow, 0.5f /* pos*/, 40.f /* minLengthPx */);
       }
     }
   }
@@ -552,11 +556,12 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
   int size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
   context->szFont(context->textSizeFlightplan);
+  QMargins margins(120, 10, 10, 10);
 
   QSet<int> airportIds;
-  for(const MapLogbookEntry *entry : visibleLogEntries)
+  for(const MapLogbookEntry *entry : allLogEntries)
   {
-    if(!airportIds.contains(entry->departure.id) && wToS(entry->departure.position, x, y))
+    if(!airportIds.contains(entry->departure.id) && wToSBuf(entry->departure.position, x, y, margins))
     {
       symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast,
                                        context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
@@ -566,7 +571,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       airportIds.insert(entry->departure.id);
     }
 
-    if(!airportIds.contains(entry->destination.id) && wToS(entry->destination.position, x, y))
+    if(!airportIds.contains(entry->destination.id) && wToSBuf(entry->destination.position, x, y, margins))
     {
       symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
                                        context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));

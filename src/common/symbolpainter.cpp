@@ -669,7 +669,7 @@ void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int siz
   painter->drawEllipse(x - radius, y - radius, size, size);
 }
 
-void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, int x, int y, int size)
+void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, float x, float y, float size)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
