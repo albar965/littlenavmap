@@ -441,8 +441,12 @@ atools::fs::weather::MetarResult ConnectClient::requestWeather(const QString& st
 
   atools::fs::weather::MetarResult retval;
 
-  // Ignore cache if not connected
   if(!isConnected())
+    // Ignore cache if not connected
+    return retval;
+
+  if(isSimConnect() && !dataReader->canFetchWeather())
+    // MSFS cannot fetch weather - disable to avoid stutters
     return retval;
 
   if(onlyStation && notAvailableStations.contains(station))
@@ -508,7 +512,7 @@ bool ConnectClient::isFetchAiAircraft() const
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)
 {
-  if(dataReader->isFsxHandler() && dataReader->isConnected() && dataReader->canFetchWeather())
+  if(dataReader->isConnected() && dataReader->canFetchWeather())
     dataReader->setWeatherRequest(weatherRequest);
 
   if(socket != nullptr && socket->isOpen() && outstandingReplies.isEmpty())

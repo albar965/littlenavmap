@@ -25,6 +25,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   LNMPLN files. albar965/littlenavmap#608
 * Fixed issue where LNMPLN flight plan procedures were replaced with waypoints inadvertently
   if enabled in export options menu. This happened when saving LNMPLN plans with multiexport.
+* Removed extra space to fix flight plan export for iFly (`.FLTPLAN`).
 * Various drawing and user interface corrections.
 
 ===============================================================================
