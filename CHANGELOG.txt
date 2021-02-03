@@ -26,6 +26,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Fixed issue where LNMPLN flight plan procedures were replaced with waypoints inadvertently
   if enabled in export options menu. This happened when saving LNMPLN plans with multiexport.
 * Removed extra space to fix flight plan export for iFly (`.FLTPLAN`).
+* Fixed issue where weather to FSX and P3D was not transferred across networked connections.
 * Various drawing and user interface corrections.
 
 ===============================================================================

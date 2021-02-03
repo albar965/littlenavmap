@@ -515,7 +515,7 @@ void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weather
   if(dataReader->isConnected() && dataReader->canFetchWeather())
     dataReader->setWeatherRequest(weatherRequest);
 
-  if(socket != nullptr && socket->isOpen() && outstandingReplies.isEmpty())
+  if(socket != nullptr && socketConnected && socket->isOpen() && outstandingReplies.isEmpty())
   {
     if(verbose)
       qDebug() << "requestWeather" << weatherRequest.getStation();
