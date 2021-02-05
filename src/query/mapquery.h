@@ -174,6 +174,15 @@ public:
                                                    const QStringList& typesAll,
                                                    bool unknownType, float distance);
 
+  /* Get related airport for navaids from simulator database.
+   * found is true if navaid search was successful and max distance to pos is not exceeded. */
+  QString getAirportIdentSimFromWaypoint(const QString& ident, const QString& region, const atools::geo::Pos& pos,
+                                         bool found);
+  QString getAirportIdentSimFromVor(const QString& ident, const QString& region, const atools::geo::Pos& pos,
+                                    bool found);
+  QString getAirportIdentSimFromNdb(const QString& ident, const QString& region, const atools::geo::Pos& pos,
+                                    bool found);
+
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
 
@@ -199,6 +208,8 @@ private:
 
   void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
                             bool navData);
+  QString airportIdentSimFromQuery(const QString& queryStr, const QString& ident, const QString& region,
+                                   const atools::geo::Pos& pos, bool& found);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;

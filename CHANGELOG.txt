@@ -5,29 +5,46 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 # Version 2.6.8
 
-* Fixed crash on startup which can appear with Mercator projection zoomed far out.
-* Fixed procedure display issues for turn bow after circular legs.
-  Example: LGSR VOR-B transition BINKI.
-* Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
-  This allows to reload the plan in *Little Navmap*.
-* Added verbose logging option for X-Plane compiler based on navdatareader.cfg.
-  Added warnings if rows are not written to the database.
-* Fixed flight plan export for FSX and MSFS which used the wrong coordinates for
-  destination element `DestinationLLA` in flight plan. This confused third party programs.
-* Corrected wrong departure position for saved LNMPLN and FSX/P3D PLN flight plans. Now uses
-  position from parking, helipad or runway/start for PLN `DepartureLLA` and LNMPLN `Start` element.
-  albar965/littlenavmap#613
-* Added error handling for missing layout file on startup if `Load window layout from last used file`
-  in `Options` on page `Startup and Updates` is checked.
-  Removing or renaming the layout file resulted in an unrecoverable crash on startup.
-* Fixed issue where waypoints inserted for procedure endpoints received wrong altitude when saving
-  or exporting flight plans right after calculation. This causes error messages when loading the resulting
-  LNMPLN files. albar965/littlenavmap#608
-* Fixed issue where LNMPLN flight plan procedures were replaced with waypoints inadvertently
-  if enabled in export options menu. This happened when saving LNMPLN plans with multiexport.
-* Removed extra space to fix flight plan export for iFly (`.FLTPLAN`).
+## Known Issues
+
+* No SID and STAR yet from MSFS scenery library. This will come with a future update.
+* MSFS multiplayer traffic is not shown in *Little Navmap*.
+
+See user manual for further known problems:
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#problems .
+
+## Changes from 2.6.7 to 2.6.8
+
+### General
+
+* Fixed unrecoverable crash on startup which can appear with Mercator projection zoomed far out.
+* Added error handling for missing layout file on startup if `Load window layout from last used
+  file` in `Options` on page `Startup and Updates` is checked. Removing or renaming the layout file
+  resulted in an unrecoverable crash on startup.
+* Fixed procedure display issues for turn bow after circular legs. Example: LGSR VOR-B
+  transition  BINKI.
 * Fixed issue where weather to FSX and P3D was not transferred across networked connections.
 * Various drawing and user interface corrections.
+
+### Flight Plan
+
+* Fixed issue where waypoints inserted for procedure endpoints received wrong altitude when saving
+  or exporting flight plans right after calculation. This causes error messages when loading the
+  resulting LNMPLN files. #608
+* Now extracting ICAO airport idents for waypoints, NDB and VOR for MSFS export. PLN element
+  `ICAOAirport` was missing before and caused crashes when loading flight plans in MSFS. #614
+* Added verbose logging option for X-Plane compiler based on navdatareader.cfg. Added warnings if
+  rows are not written to the database when loading scenery library.
+* Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
+  This allows to reload the plan in *Little Navmap*.
+* Fixed flight plan export for FSX and MSFS which used the wrong coordinates for destination
+  element `DestinationLLA` in flight plan. This confused third party programs.
+* Corrected wrong departure position for saved LNMPLN and FSX/P3D PLN flight plans. Now uses
+  position from parking, helipad or runway/start for PLN `DepartureLLA` and LNMPLN `Start` element.
+  #613
+* Fixed issue where LNMPLN flight plan procedures were replaced with waypoints inadvertently if
+  enabled in export options menu. This happened when saving LNMPLN plans with multiexport.
+* Removed extra space to fix flight plan export for iFly (`.FLTPLAN`).
 
 ===============================================================================
 

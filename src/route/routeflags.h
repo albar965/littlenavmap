@@ -35,7 +35,8 @@ enum RouteAdjustOption
   FIX_CIRCLETOLAND = 1 << 7, /* Add a dummy best guess runway for circle-to-land approaches for X-Plane */
   FIX_PROC_ENTRY_EXIT = 1 << 8, /* Add any removed procedure entry and exit points back */
   SAVE_MSFS = 1 << 9, /* Insert all SID/STAR waypoints and add procedure information for each waypoint.
-                       * Add approach information to last waypoint/destination  */
+                       * Add approach information to last waypoint/destination.
+                       * Also adds airport information to waypoints from simulator database.  */
   SAVE_LNMPLN = 1 << 10, /* Ignore menu options to save procedures or airways as waypoints */
 
   /* Export adjust options for most export formats */

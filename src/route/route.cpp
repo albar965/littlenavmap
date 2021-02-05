@@ -2563,6 +2563,43 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     route.createRouteLegsFromFlightplan();
     route.updateAll();
 
+    // Assign airport idents to waypoints where available - for MSFS =======================================
+    if(msfs)
+    {
+      MapQuery *mapQuery = NavApp::getMapQuery();
+      bool found = false;
+      for(FlightplanEntry& entry : entries)
+      {
+        // Get airport for every navaid
+        QString airportIdent;
+        switch(entry.getWaypointType())
+        {
+          case atools::fs::pln::entry::WAYPOINT:
+            airportIdent =
+              mapQuery->getAirportIdentSimFromWaypoint(entry.getIdent(), entry.getRegion(), entry.getPosition(), found);
+            break;
+
+          case atools::fs::pln::entry::VOR:
+            airportIdent =
+              mapQuery->getAirportIdentSimFromVor(entry.getIdent(), entry.getRegion(), entry.getPosition(), found);
+            break;
+
+          case atools::fs::pln::entry::NDB:
+            airportIdent =
+              mapQuery->getAirportIdentSimFromNdb(entry.getIdent(), entry.getRegion(), entry.getPosition(), found);
+            break;
+
+          case atools::fs::pln::entry::UNKNOWN:
+          case atools::fs::pln::entry::AIRPORT:
+          case atools::fs::pln::entry::USER:
+            break;
+        }
+
+        if(!airportIdent.isEmpty())
+          entry.setAirport(airportIdent);
+      }
+    }
+
     // Airways are updated in route controller
 
   } // if(saveApproachWp || saveSidStarWp || msfs)
