@@ -5,9 +5,24 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 # Version 2.6.8
 
+## Notes
+
+Consider the notes below to minimize issues when loading flight plans in MSFS:
+
+* **If you use the Navigraph update for MSFS:** Update the *Little Navmap* database with the FMS
+  Data Manager too to keep the program in sync with the MSFS scenery library. Use the scenery mode
+  `Use Navigraph for Navaids and Procedures` in the menu `Scenery Library` to get access to all
+  procedures in *Little Navmap*.
+* **If you do not use the Navigraph update for MSFS:** I suggest to use the scenery mode `Do not
+  use Navigraph Database` in the menu `Scenery Library`. Keep in mind that SID and STAR are not
+  available.
+
 ## Known Issues
 
 * No SID and STAR yet from MSFS scenery library. This will come with a future update.
+* Navdata updates are not read properly from the MSFS scenery library. This is no issue since you
+  can also update the navdata in *Little Navmap* with the FMS Data Manager to keep the program in
+  sync with MSFS. Read notes above. This will be solved with a future update.
 * MSFS multiplayer traffic is not shown in *Little Navmap*.
 
 See user manual for further known problems:

@@ -785,29 +785,29 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
   return retval;
 }
 
-QString MapQuery::getAirportIdentSimFromWaypoint(const QString& ident, const QString& region, const Pos& pos,
-                                                 bool found)
+QString MapQuery::getAirportIdentFromWaypoint(const QString& ident, const QString& region, const Pos& pos,
+                                              bool found)
 {
-  return airportIdentSimFromQuery(AIRPORTIDENT_FROM_WAYPOINT, ident, region, pos, found);
+  return airportIdentFromQuery(AIRPORTIDENT_FROM_WAYPOINT, ident, region, pos, found);
 }
 
-QString MapQuery::getAirportIdentSimFromVor(const QString& ident, const QString& region, const Pos& pos, bool found)
+QString MapQuery::getAirportIdentFromVor(const QString& ident, const QString& region, const Pos& pos, bool found)
 {
-  return airportIdentSimFromQuery(AIRPORTIDENT_FROM_VOR, ident, region, pos, found);
+  return airportIdentFromQuery(AIRPORTIDENT_FROM_VOR, ident, region, pos, found);
 }
 
-QString MapQuery::getAirportIdentSimFromNdb(const QString& ident, const QString& region, const Pos& pos, bool found)
+QString MapQuery::getAirportIdentFromNdb(const QString& ident, const QString& region, const Pos& pos, bool found)
 {
-  return airportIdentSimFromQuery(AIRPORTIDENT_FROM_NDB, ident, region, pos, found);
+  return airportIdentFromQuery(AIRPORTIDENT_FROM_NDB, ident, region, pos, found);
 }
 
-QString MapQuery::airportIdentSimFromQuery(const QString& queryStr, const QString& ident, const QString& region,
-                                           const Pos& pos, bool& found)
+QString MapQuery::airportIdentFromQuery(const QString& queryStr, const QString& ident, const QString& region,
+                                        const Pos& pos, bool& found)
 {
   found = false;
 
   // Query for nearest navaid
-  SqlQuery query(dbSim);
+  SqlQuery query(dbNav);
   query.prepare(queryStr);
   query.bindValue(":ident", ident);
   query.bindValue(":region", region.isEmpty() ? "%" : region);

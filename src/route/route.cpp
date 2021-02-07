@@ -2572,21 +2572,21 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       {
         // Get airport for every navaid
         QString airportIdent;
+        const QString& ident = entry.getIdent(), region = entry.getRegion();
+        const atools::geo::Pos& pos = entry.getPosition();
+
         switch(entry.getWaypointType())
         {
           case atools::fs::pln::entry::WAYPOINT:
-            airportIdent =
-              mapQuery->getAirportIdentSimFromWaypoint(entry.getIdent(), entry.getRegion(), entry.getPosition(), found);
+            airportIdent = mapQuery->getAirportIdentFromWaypoint(ident, region, pos, found);
             break;
 
           case atools::fs::pln::entry::VOR:
-            airportIdent =
-              mapQuery->getAirportIdentSimFromVor(entry.getIdent(), entry.getRegion(), entry.getPosition(), found);
+            airportIdent = mapQuery->getAirportIdentFromVor(ident, region, pos, found);
             break;
 
           case atools::fs::pln::entry::NDB:
-            airportIdent =
-              mapQuery->getAirportIdentSimFromNdb(entry.getIdent(), entry.getRegion(), entry.getPosition(), found);
+            airportIdent = mapQuery->getAirportIdentFromNdb(ident, region, pos, found);
             break;
 
           case atools::fs::pln::entry::UNKNOWN:
