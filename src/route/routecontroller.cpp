@@ -640,7 +640,6 @@ void RouteController::aircraftPerformanceChanged()
     route.updateLegAltitudes();
 
     updateModelTimeFuelWind();
-
     updateModelHighlights();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
   }
@@ -659,7 +658,6 @@ void RouteController::windUpdated()
     route.updateLegAltitudes();
 
     updateModelTimeFuelWind();
-
     updateModelHighlights();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
   }
@@ -697,6 +695,7 @@ void RouteController::routeAltChangedDelayed()
   // Update performance
   updateModelTimeFuelWind();
   updateModelHighlights();
+  highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
   updateWindowLabel();
 
@@ -2096,7 +2095,10 @@ void RouteController::visibleColumnsTriggered()
   {
     for(int col = rcol::LAST_COLUMN; col >= rcol::FIRST_COLUMN; col--)
       header->setSectionHidden(col, !dialog.isChecked(col));
+
     updateModelTimeFuelWind();
+    updateModelHighlights();
+    highlightNextWaypoint(route.getActiveLegIndexCorrected());
   }
 }
 

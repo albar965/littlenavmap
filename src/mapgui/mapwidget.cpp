@@ -407,8 +407,8 @@ void MapWidget::jumpBackToAircraftTimeout(const QVariantList& values)
      OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE)
   {
 
-    if(mouseState != mw::NONE || viewContext() == Marble::Animation || contextMenuActive)
-      // Restart as long as menu is active or user is dragging around
+    if(mouseState != mw::NONE || viewContext() == Marble::Animation || contextMenuActive || QToolTip::isVisible())
+      // Restart as long as menu is active, user is dragging around or tooltip visible
       jumpBack->restart();
     else
     {
@@ -535,7 +535,7 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
 {
 #ifdef DEBUG_INFORMATION_KEY_INPUT
   qDebug() << Q_FUNC_INFO << event->text() << hex << event->nativeScanCode() << hex << event->key() << dec <<
-  event->modifiers();
+    event->modifiers();
 #endif
 
   // Does not work for key presses that are consumed by the widget
