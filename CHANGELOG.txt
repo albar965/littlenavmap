@@ -52,6 +52,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
   rows are not written to the database when loading scenery library.
 * Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
   This allows to reload the plan in *Little Navmap*.
+* Fixed regression where circle-to-land approaches could not be loaded by X-Plane due to missing
+  destination runway.
 * Fixed flight plan export for FSX and MSFS which used the wrong coordinates for destination
   element `DestinationLLA` in flight plan. This confused third party programs.
 * Corrected wrong departure position for saved LNMPLN and FSX/P3D PLN flight plans. Now uses
