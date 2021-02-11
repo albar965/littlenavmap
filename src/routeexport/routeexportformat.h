@@ -276,6 +276,9 @@ private:
   /* Initialize format map */
   void init();
 
+  /* Same as insert but prints a warning for duplicate enum values */
+  void insertFmt(rexp::RouteExportFormatType type, const RouteExportFormat& fmt);
+
 };
 
 Q_DECLARE_METATYPE(RouteExportFormatMap);

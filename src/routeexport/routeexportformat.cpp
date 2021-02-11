@@ -152,6 +152,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[GFP         ].CB(bind(&RouteExport::routeExportGfpMulti,          routeExport, _1));
   (*this)[GFPUWP      ].CB(bind(&RouteExport::routeExportGfpMulti,          routeExport, _1));
   (*this)[TXT         ].CB(bind(&RouteExport::routeExportTxtMulti,          routeExport, _1));
+  (*this)[TXTJAR      ].CB(bind(&RouteExport::routeExportTxtMulti,          routeExport, _1));
   (*this)[RTE         ].CB(bind(&RouteExport::routeExportRteMulti,          routeExport, _1));
   (*this)[GPX         ].CB(bind(&RouteExport::routeExportGpx,               routeExport, _1));
   (*this)[HTML        ].CB(bind(&RouteExport::routeExportHtml,              routeExport, _1));
@@ -192,7 +193,7 @@ void RouteExportFormatMap::init()
                           "Note that is not possible to export procedures if this is enabled.");
 
 #define RF RouteExportFormat
-#define INS insert
+#define INS insertFmt
 
   /* *INDENT-OFF* */
   //  type            (type          flags             format                 category          comment all after \n also used as tooltip
@@ -212,7 +213,8 @@ void RouteExportFormatMap::init()
   INS(GFP,          RF(GFP,          AIRPORTS,         tr("gfp"),             tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                      ));
   INS(GFPUWP,       RF(GFPUWP,       AIRPORTS|GARMIN_AS_WAYPOINTS, tr("gfp"), tr("Garmin"),    tr("Flight1 Garmin GTN 650/750 with user defined waypoints") +
                                                                                                rxptooltip                                                            ));
-  INS(TXT,          RF(TXT,          AIRPORTS,         tr("txt"),             tr("Aircraft"),  tr("Rotate MD-80, JARDesign and others")                              ));
+  INS(TXT,          RF(TXT,          AIRPORTS,         tr("txt"),             tr("Aircraft"),  tr("Rotate MD-80 and others")                                         ));
+  INS(TXTJAR,       RF(TXTJAR,       AIRPORTS,         tr("txt"),             tr("Aircraft"),  tr("JARDesign aircraft")                                              ));
   INS(RTE,          RF(RTE,          AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("PMDG aircraft")                                                   ));
   INS(GPX,          RF(GPX,          NONE,             tr("gpx"),             tr("Other"),     tr("Garmin exchange format for Google Earth and others\n"
                                                                                                   "Exported with aircraft track and flight plan.")                   ));
@@ -246,6 +248,13 @@ void RouteExportFormatMap::init()
 #undef INS
 }
 
+void RouteExportFormatMap::insertFmt(rexp::RouteExportFormatType type, const RouteExportFormat& fmt)
+{
+  if(contains(type))
+    qWarning() << Q_FUNC_INFO << "Duplicate format" << type << fmt.getComment();
+  insert(type, fmt);
+}
+
 void RouteExportFormatMap::updateDefaultPaths()
 {
   QChar SEP = QDir::separator();
@@ -255,7 +264,9 @@ void RouteExportFormatMap::updateDefaultPaths()
   QString documents = atools::documentsDir();
 
   // Get X-Plane base path ===========================
-  // routeExportFms11 and routeExportFms3
+  QString xpBasePath = NavApp::getSimulatorBasePath(FsPaths::XPLANE11);
+
+  // Files path
   QString xpFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE11});
   if(xpFilesPath.isEmpty())
     xpFilesPath = documents;
@@ -322,13 +333,14 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[FLIGHTGEAR  ].DP(documents);
   (*this)[GFP         ].DP(fsxP3dBasePath + SEP + "F1TGTN" + SEP + "FPL");
   (*this)[GFPUWP      ].DP(fsxP3dBasePath + SEP + "F1TGTN" + SEP + "FPL");
-  (*this)[TXT         ].DP(fsxP3dBasePath + SEP + "Aircraft");
+  (*this)[TXT         ].DP(xpBasePath + SEP + "Aircraft");
+  (*this)[TXTJAR      ].DP(xpBasePath + SEP + "Aircraft");
   (*this)[RTE         ].DP(fsxP3dBasePath + SEP + "PMDG" + SEP + "FLIGHTPLANS");
   (*this)[GPX         ].DP(documents);
   (*this)[HTML        ].DP(documents);
   (*this)[FPR         ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "mjc8q400" + SEP + "nav" + SEP + "routes");
-  (*this)[FPL         ].DP(xpFilesPath + SEP + "Aircraft" + SEP + "X-Aviation" + SEP + "IXEG 737 Classic" + SEP + "coroutes");
-  (*this)[CORTEIN     ].DP(xpFilesPath + SEP + "Aircraft" + SEP + "corte.in");
+  (*this)[FPL         ].DP(xpBasePath + SEP + "Aircraft" + SEP + "X-Aviation" + SEP + "IXEG 737 Classic" + SEP + "coroutes");
+  (*this)[CORTEIN     ].DP(xpBasePath + SEP + "Aircraft" + SEP + "corte.in");
   (*this)[RXPGNS      ].DP(gns);
   (*this)[RXPGNSUWP   ].DP(gns);
   (*this)[RXPGTN      ].DP(gtn);
@@ -350,10 +362,9 @@ void RouteExportFormatMap::updateDefaultPaths()
   /* *INDENT-ON* */
 #undef DP
 
-  for(RouteExportFormatType type: keys())
+  for(RouteExportFormat& format : *this)
   {
-    RouteExportFormat& format = (*this)[type];
-    format.setDefaultPath(QDir::toNativeSeparators(value(type).getDefaultPath()));
+    format.setDefaultPath(QDir::toNativeSeparators(format.getDefaultPath()));
     if(format.getPath().isEmpty())
       format.setPath(format.getDefaultPath());
   }

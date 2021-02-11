@@ -50,6 +50,7 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
   `ICAOAirport` was missing before and caused crashes when loading flight plans in MSFS. #614
 * Added verbose logging option for X-Plane compiler based on navdatareader.cfg. Added warnings if
   rows are not written to the database when loading scenery library.
+* Split up export for JARDesign and Rotate aircraft to allow export for both separately.
 * Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
   This allows to reload the plan in *Little Navmap*.
 * Fixed regression where circle-to-land approaches could not be loaded by X-Plane due to missing
