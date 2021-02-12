@@ -372,8 +372,10 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   QVector<atools::geo::LineString> visibleRouteGeometries;
   QVector<QStringList> visibleRouteTexts;
   QVector<atools::geo::LineString> visibleTrackGeometries;
-  for(const MapLogbookEntry& entry : entries)
+
+  for(int i = 0; i < entries.size(); i++)
   {
+    const MapLogbookEntry& entry = entries.at(i);
     // All selected for airport drawing
     allLogEntries.append(&entry);
 
@@ -381,28 +383,31 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     if(context->viewportRect.overlaps(entry.bounding()))
       visibleLogEntries.append(&entry);
 
-    const atools::fs::userdata::LogEntryGeometry *geometry = logdataManager->getGeometry(entry.id);
-    // Geometry might be null in case of cache overflow
-    if(geometry != nullptr)
+    // Show details only for the first entry
+    if(i == 0)
     {
-      // Geometry has to be copied since cache in LogDataManager might remove it any time
-
-      // Limit number of visible routes
-      if(visibleRouteGeometries.size() < 20 && context->objectDisplayTypes & map::LOGBOOK_ROUTE)
+      const atools::fs::userdata::LogEntryGeometry *geometry = logdataManager->getGeometry(entry.id);
+      // Geometry might be null in case of cache overflow
+      if(geometry != nullptr)
       {
-        if(context->viewportRect.overlaps(geometry->routeRect))
-          visibleRouteGeometries.append(geometry->route);
-        else
-          // Insert null to have it in sync with route texts
-          visibleRouteGeometries.append(atools::geo::EMPTY_LINESTRING);
+        // Geometry has to be copied since cache in LogDataManager might remove it any time
 
-        visibleRouteTexts.append(geometry->names);
+        // Limit number of visible routes
+        if(context->objectDisplayTypes & map::LOGBOOK_ROUTE)
+        {
+          if(context->viewportRect.overlaps(geometry->routeRect))
+            visibleRouteGeometries.append(geometry->route);
+          else
+            // Insert null to have it in sync with route texts
+            visibleRouteGeometries.append(atools::geo::EMPTY_LINESTRING);
+
+          visibleRouteTexts.append(geometry->names);
+        }
+
+        // Limit number of visible tracks
+        if(context->objectDisplayTypes & map::LOGBOOK_TRACK && context->viewportRect.overlaps(geometry->trackRect))
+          visibleTrackGeometries.append(geometry->track);
       }
-
-      // Limit number of visible tracks
-      if(context->objectDisplayTypes & map::LOGBOOK_TRACK && visibleTrackGeometries.size() < 20 &&
-         context->viewportRect.overlaps(geometry->trackRect))
-        visibleTrackGeometries.append(geometry->track);
     }
   }
 
