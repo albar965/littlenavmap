@@ -373,9 +373,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   QVector<QStringList> visibleRouteTexts;
   QVector<atools::geo::LineString> visibleTrackGeometries;
 
-  for(int i = 0; i < entries.size(); i++)
+  for(const MapLogbookEntry& entry : entries)
   {
-    const MapLogbookEntry& entry = entries.at(i);
     // All selected for airport drawing
     allLogEntries.append(&entry);
 
@@ -383,8 +382,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     if(context->viewportRect.overlaps(entry.bounding()))
       visibleLogEntries.append(&entry);
 
-    // Show details only for the first entry
-    if(i == 0)
+    // Show details only if one entry is selected
+    if(entries.size() == 1)
     {
       const atools::fs::userdata::LogEntryGeometry *geometry = logdataManager->getGeometry(entry.id);
       // Geometry might be null in case of cache overflow
@@ -412,7 +411,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw route ==========================================================================
-  if(context->objectDisplayTypes & map::LOGBOOK_ROUTE)
+  if(context->objectDisplayTypes & map::LOGBOOK_ROUTE && !visibleRouteGeometries.isEmpty())
   {
     float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
     float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
@@ -476,7 +475,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw track ==========================================================================
-  if(context->objectDisplayTypes & map::LOGBOOK_TRACK)
+  if(context->objectDisplayTypes & map::LOGBOOK_TRACK && !visibleTrackGeometries.isEmpty())
   {
     // Use a darker pen for the trail but same style as normal trail ======================================
     QPen trackPen = mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2));
@@ -556,7 +555,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     }
   }
 
-  // Draw airport symbols and text ==========================================================================
+  // Draw airport symbols and text always ==========================================================================
   float x, y;
   textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
   int size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());

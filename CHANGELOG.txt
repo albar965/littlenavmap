@@ -33,6 +33,9 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Fixed procedure display issues for turn bow after circular legs. Example: LGSR VOR-B
   transition  BINKI.
 * Fixed issue where weather to FSX and P3D was not transferred across networked connections.
+* Logbook details (route preview and trail) on the map are now only shown if one entry is selected
+  in the logbook search result table. Selecting more than one entry shows only the direct connection lines
+  if enabled. This fixes performance issues when selecting many logbook entries.
 * Various drawing and user interface corrections.
 
 ### Flight Plan
