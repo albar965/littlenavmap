@@ -305,22 +305,39 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
 
 void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line)
 {
-  if(line.isValid())
+  if(line.isValid() && !line.isPoint())
   {
-    // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
-    qreal correction = 0.;
-    if(atools::almostEqual(line.getPos1().getLatY(), line.getPos2().getLatY()))
-      correction = 0.000001;
+    // Split long lines to work around the buggy visibility check in Marble
+    // Do a quick check using Manhattan distance in degree
+    if(line.lengthSimple() > 30.f)
+    {
+      LineString linestring;
+      line.interpolatePoints(line.lengthMeter(), 10, linestring);
+      drawLineString(painter, linestring);
+    }
+    else if(line.lengthSimple() > 5.f)
+    {
+      LineString linestring;
+      line.interpolatePoints(line.lengthMeter(), 2, linestring);
+      drawLineString(painter, linestring);
+    }
+    else
+    {
+      // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
+      qreal correction = 0.;
+      if(atools::almostEqual(line.getPos1().getLatY(), line.getPos2().getLatY()))
+        correction = 0.000001;
 
-    GeoDataLineString ls;
-    ls.setTessellate(true);
-    ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY() - correction, 0, DEG)
-       << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY() + correction, 0, DEG);
+      GeoDataLineString ls;
+      ls.setTessellate(true);
+      ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY() - correction, 0, DEG)
+         << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY() + correction, 0, DEG);
 
-    QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
-    for(GeoDataLineString *corrected : dateLineCorrected)
-      painter->drawPolyline(*corrected);
-    qDeleteAll(dateLineCorrected);
+      QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
+      for(GeoDataLineString *corrected : dateLineCorrected)
+        painter->drawPolyline(*corrected);
+      qDeleteAll(dateLineCorrected);
+    }
   }
 }
 

@@ -36,6 +36,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Logbook details (route preview and trail) on the map are now only shown if one entry is selected
   in the logbook search result table. Selecting more than one entry shows only the direct connection lines
   if enabled. This fixes performance issues when selecting many logbook entries.
+* Added warning dialog when user switches to offline mode.
+* Fixed issues with disappearing flight plan and measurement lines.
 * Various drawing and user interface corrections.
 
 ### Flight Plan

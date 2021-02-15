@@ -225,8 +225,7 @@ void MapPainterRoute::paintRoute()
 
 }
 
-void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> lines,
-                                        int passedRouteLeg)
+void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> lines, int passedRouteLeg)
 {
   const Route *route = context->route;
   Marble::GeoPainter *painter = context->painter;
