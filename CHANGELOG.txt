@@ -37,7 +37,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
   in the logbook search result table. Selecting more than one entry shows only the direct connection lines
   if enabled. This fixes performance issues when selecting many logbook entries.
 * Added warning dialog when user switches to offline mode.
-* Fixed issues with disappearing flight plan and measurement lines.
+* Fixed issues with disappearing flight plan and measurement lines. Lines might still disappear near
+  the poles for long flight plan legs.
 * Various drawing and user interface corrections.
 
 ### Flight Plan

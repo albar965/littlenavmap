@@ -312,13 +312,15 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
     if(line.lengthSimple() > 30.f)
     {
       LineString linestring;
-      line.interpolatePoints(line.lengthMeter(), 10, linestring);
+      line.interpolatePoints(line.lengthMeter(), 20, linestring);
+      linestring.append(line.getPos2());
       drawLineString(painter, linestring);
     }
     else if(line.lengthSimple() > 5.f)
     {
       LineString linestring;
-      line.interpolatePoints(line.lengthMeter(), 2, linestring);
+      line.interpolatePoints(line.lengthMeter(), 5, linestring);
+      linestring.append(line.getPos2());
       drawLineString(painter, linestring);
     }
     else
