@@ -3700,6 +3700,7 @@ void RouteController::updateTableModel()
   int row = 0;
   float cumulatedDistance = 0.f;
 
+  // Create null pointer filled list for all items ==============
   QList<QStandardItem *> itemRow;
   for(int i = rcol::FIRST_COLUMN; i <= rcol::LAST_COLUMN; i++)
     itemRow.append(nullptr);
@@ -3873,16 +3874,18 @@ void RouteController::updateTableModel()
 
     // Travel time, remaining fuel and ETA are updated in updateModelRouteTime
 
-    // Create empty items for missing fields
+    // Create empty items for missing fields ===================
     for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
     {
       if(itemRow[col] == nullptr)
         itemRow[col] = new QStandardItem();
+
+      // Do not allow editing and drag and drop
       itemRow[col]->setFlags(itemRow[col]->flags() &
                              ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled));
     }
 
-    // Align cells to the right - rest is aligned in updateModelRouteTimeFuel
+    // Align cells to the right - rest is aligned in updateModelRouteTimeFuel ===============
     itemRow[rcol::REGION]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::REMAINING_DISTANCE]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::DIST]->setTextAlignment(Qt::AlignRight);
@@ -3891,6 +3894,13 @@ void RouteController::updateTableModel()
     itemRow[rcol::RANGE]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::FREQ]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::RESTRICTION]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::LEG_TIME]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::ETA]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::FUEL_WEIGHT]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::FUEL_VOLUME]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::WIND]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::WIND_HEAD_TAIL]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::ALTITUDE]->setTextAlignment(Qt::AlignRight);
 
     model->appendRow(itemRow);
 
@@ -3965,15 +3975,16 @@ void RouteController::updateModelTimeFuelWind()
     if(!setValues)
     {
       // Do not fill if collecting performance or route altitude is invalid
-      model->setItem(row, rcol::LEG_TIME, new QStandardItem());
-      model->setItem(row, rcol::ETA, new QStandardItem());
-      model->setItem(row, rcol::FUEL_WEIGHT, new QStandardItem());
-      model->setItem(row, rcol::FUEL_VOLUME, new QStandardItem());
-      model->setItem(row, rcol::WIND, new QStandardItem());
-      model->setItem(row, rcol::WIND_HEAD_TAIL, new QStandardItem());
-      model->setItem(row, rcol::ALTITUDE, new QStandardItem());
+      model->item(row, rcol::LEG_TIME)->setText(QString());
+      model->item(row, rcol::ETA)->setText(QString());
+      model->item(row, rcol::FUEL_WEIGHT)->setText(QString());
+      model->item(row, rcol::FUEL_VOLUME)->setText(QString());
+      model->item(row, rcol::WIND)->setText(QString());
+      model->item(row, rcol::WIND_HEAD_TAIL)->setText(QString());
+      model->item(row, rcol::ALTITUDE)->setText(QString());
     }
-    else if(!route.isAirportAfterArrival(row)) // Avoid airport after last procedure leg
+    else // Exclude departure and all after including destination airport
+    if(row > route.getDepartureAirportLegIndex() && row < route.getDestinationAirportLegIndex())
     {
       const RouteLeg& leg = route.value(i);
       const RouteAltitudeLeg& altLeg = altitudeLegs.value(i);
@@ -3981,16 +3992,14 @@ void RouteController::updateModelTimeFuelWind()
       // Leg time =====================================================================
       float travelTime = altLeg.getTime();
       if(row == 0 || !(travelTime < map::INVALID_TIME_VALUE) || leg.getProcedureLeg().isMissed())
-        model->setItem(row, rcol::LEG_TIME, new QStandardItem());
+        model->item(row, rcol::LEG_TIME)->setText((QString()));
       else
       {
         QString txt = formatter::formatMinutesHours(travelTime);
 #ifdef DEBUG_INFORMATION_LEGTIME
         txt += " [" + QString::number(travelTime * 3600., 'f', 0) + "]";
 #endif
-        QStandardItem *item = new QStandardItem(txt);
-        item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rcol::LEG_TIME, item);
+        model->item(row, rcol::LEG_TIME)->setText(txt);
       }
 
       if(!leg.getProcedureLeg().isMissed())
@@ -4005,9 +4014,7 @@ void RouteController::updateModelTimeFuelWind()
 #ifdef DEBUG_INFORMATION_LEGTIME
         txt += " [" + QString::number(cumulatedTravelTime * 3600., 'f', 0) + "]";
 #endif
-        QStandardItem *item = new QStandardItem(txt);
-        item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rcol::ETA, item);
+        model->item(row, rcol::ETA)->setText(txt);
 
         // Fuel at leg =====================================================================
         if(!leg.isAlternate())
@@ -4037,14 +4044,10 @@ void RouteController::updateModelTimeFuelWind()
           weight = 0.f;
 
         txt = perf.isFuelFlowValid() ? Unit::weightLbs(weight, false /* addUnit */) : QString();
-        item = new QStandardItem(txt);
-        item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rcol::FUEL_WEIGHT, item);
+        model->item(row, rcol::FUEL_WEIGHT)->setText(txt);
 
         txt = perf.isFuelFlowValid() ? Unit::volGallon(vol, false /* addUnit */) : QString();
-        item = new QStandardItem(txt);
-        item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rcol::FUEL_VOLUME, item);
+        model->item(row, rcol::FUEL_VOLUME)->setText(txt);
 
         // Wind at waypoint ========================================================
         txt.clear();
@@ -4059,9 +4062,7 @@ void RouteController::updateModelTimeFuelWind()
                 arg(Unit::speedKts(altLeg.getWindSpeed(), false /* addUnit */));
         }
 
-        item = new QStandardItem(txt);
-        item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rcol::WIND, item);
+        model->item(row, rcol::WIND)->setText(txt);
 
         // Head or tailwind at waypoint ========================================================
         txt.clear();
@@ -4074,18 +4075,14 @@ void RouteController::updateModelTimeFuelWind()
             ptr = tr("▲");
           txt.append(tr("%1 %2").arg(ptr).arg(Unit::speedKts(std::abs(headWind), false /* addUnit */)));
         }
-        item = new QStandardItem(txt);
-        item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rcol::WIND_HEAD_TAIL, item);
+        model->item(row, rcol::WIND_HEAD_TAIL)->setText(txt);
 
         // Altitude at waypoint ========================================================
         float alt = altLeg.getWaypointAltitude();
         if(alt < map::INVALID_ALTITUDE_VALUE)
           txt = Unit::altFeet(alt, false /* addUnit */);
-        item = new QStandardItem(txt);
-        item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rcol::ALTITUDE, item);
-      }
+        model->item(row, rcol::ALTITUDE)->setText(txt);
+      } // if(!leg.getProcedureLeg().isMissed())
     } // else if(!route.isAirportAfterArrival(row))
     row++;
   } // for(int i = 0; i < route.size(); i++)
@@ -4189,6 +4186,7 @@ void RouteController::scrollToActive()
 /* */
 void RouteController::highlightNextWaypoint(int activeLegIdx)
 {
+  // Remove background brush for all rows and columns ===============
   activeLegIndex = activeLegIdx;
   for(int row = 0; row < model->rowCount(); ++row)
   {
@@ -4211,6 +4209,7 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
 
   if(!route.isEmpty())
   {
+    // Add magenta brush for all columns in active row ======================
     if(activeLegIndex >= 0 && activeLegIndex < route.size())
     {
       QColor color = NavApp::isCurrentGuiStyleNight() ?
@@ -4232,7 +4231,6 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
       }
     }
   }
-  updateModelHighlights();
 }
 
 /* Set colors for procedures and missing objects like waypoints and airways */
