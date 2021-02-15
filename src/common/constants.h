@@ -106,6 +106,7 @@ const QLatin1Literal ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWar
 
 const QLatin1Literal ACTIONS_SHOW_SAVE_WARNING("Actions/ShowSaveWarning");
 const QLatin1Literal ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
+const QLatin1Literal ACTIONS_OFFLINE_WARNING("Actions/OfflineWarning");
 
 /* Other setting key names */
 const QLatin1Literal DATABASE_BASEPATH("Database/BasePath");

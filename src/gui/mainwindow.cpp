@@ -3152,6 +3152,7 @@ void MainWindow::resetMessages()
   settings.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_SAVE_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ZOOM_WARNING, true);
+  settings.setValue(lnm::ACTIONS_OFFLINE_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
   settings.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
