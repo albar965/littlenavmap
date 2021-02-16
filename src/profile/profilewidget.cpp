@@ -732,13 +732,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.setPen(mapcolors::profileSafeAltLegLinePen);
   for(int i = 0; i < legList->elevationLegs.size(); i++)
   {
-    if(waypointX.at(i) == waypointX.at(i + 1))
+    if(waypointX.value(i, 0) == waypointX.value(i + 1, 0))
       // Skip zero length segments to avoid dots on the graph
       continue;
 
     const ElevationLeg& leg = legList->elevationLegs.at(i);
     int lineY = TOP + static_cast<int>(h - calcGroundBuffer(leg.maxElevation) * verticalScale);
-    painter.drawLine(waypointX.at(i), lineY, waypointX.at(i + 1), lineY);
+    painter.drawLine(waypointX.value(i, 0), lineY, waypointX.value(i + 1, 0), lineY);
   }
 
   // Draw the red minimum safe altitude line ======================================================
@@ -800,7 +800,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         int rectHeight = 16;
 
         // Start and end of line
-        int wpx = waypointX.at(routeIndex);
+        int wpx = waypointX.value(routeIndex, 0);
         int x11 = wpx - rectWidth / 2;
         int x12 = wpx + rectWidth / 2;
         int y1 = altitudeY(restriction.alt1);
@@ -830,14 +830,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
             // Draw diagonal pattern rectangle for below alt1
             painter.fillRect(x11, y1 - rectHeight, rectWidth, rectHeight, diagPatternBrush);
 
-            int x21 = waypointX.at(routeIndex) - rectWidth / 2;
-            int x22 = waypointX.at(routeIndex) + rectWidth / 2;
+            int x21 = waypointX.value(routeIndex, 0) - rectWidth / 2;
+            int x22 = waypointX.value(routeIndex, 0) + rectWidth / 2;
             int y2 = altitudeY(restriction.alt2);
             // Draw diagonal pattern rectangle for above alt2
             painter.fillRect(x21, y2, rectWidth, rectHeight, diagPatternBrush);
 
             // Connect above and below with a thin line
-            painter.drawLine(waypointX.at(routeIndex), y1, waypointX.at(routeIndex), y2);
+            painter.drawLine(waypointX.value(routeIndex, 0), y1, waypointX.value(routeIndex, 0), y2);
             painter.setPen(thickLinePen);
 
             // Draw line for alt2
