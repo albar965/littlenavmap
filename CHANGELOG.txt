@@ -26,6 +26,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 
 ### General
 
+* Reverted change to fix MSFS crash. Now fetching AI destination and departure again.
+  **Note that this will crash MSFS 1.12.13.0. You have to update the simulator to the latest version.**
 * Fixed unrecoverable crash on startup which can appear with Mercator projection zoomed far out.
 * Added error handling for missing layout file on startup if `Load window layout from last used
   file` in `Options` on page `Startup and Updates` is checked. Removing or renaming the layout file
