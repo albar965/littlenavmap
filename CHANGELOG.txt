@@ -22,7 +22,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 
 ### Help and Manuals
 
-* Revised German user manual. Small additions to English manual.
+* Revised German user manual for spelling and grammar errors.
+* Small additions and corrections to English manual.
 
 ### General
 
@@ -40,7 +41,9 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
   if enabled. This fixes performance issues when selecting many logbook entries.
 * Added warning dialog when user switches to offline mode.
 * Fixed issues with disappearing flight plan and measurement lines. Lines might still disappear near
-  the poles for long flight plan legs.
+  the poles for long flight plan legs depending on zoom factor.
+* Navaid resolution when loading flight plans or switching scenery databases is now more tolerant for
+  wrong ICAO regions. Navaids were marked red with an error before if the region did not match.
 * Various drawing and user interface corrections.
 
 ### Flight Plan

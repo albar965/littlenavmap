@@ -89,7 +89,7 @@ public:
                                const map::MapAirport& airport, bool navData);
 
   /*
-   * Get a map object by type, ident and region
+   * Get a map object by type, ident and region. Results are appended.
    * @param result will receive objects based on type
    * @param type AIRPORT, VOR, NDB or WAYPOINT
    * @param ident ICAO ident
