@@ -73,7 +73,7 @@ void MapPainterWeather::render()
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
 
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append({&airport, QPointF(x, y)});
+        visibleAirportWeather.append(PaintAirportType(airport, x, y));
     }
   }
 
@@ -85,20 +85,21 @@ void MapPainterWeather::render()
       const MapAirport& airport = context->route->getDepartureAirportLeg().getAirport();
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append({&airport, QPointF(x, y)});
+        visibleAirportWeather.append(PaintAirportType(airport, x, y));
     }
     if(context->route->getDestinationAirportLeg().getAirport().isValid())
     {
       const MapAirport& airport = context->route->getDestinationAirportLeg().getAirport();
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append({&airport, QPointF(x, y)});
+        visibleAirportWeather.append(PaintAirportType(airport, x, y));
     }
-    for(const map::MapAirport& airport : context->route->getAlternateAirports())
+    QVector<MapAirport> alternates = context->route->getAlternateAirports();
+    for(const map::MapAirport& airport :alternates)
     {
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append({&airport, QPointF(x, y)});
+        visibleAirportWeather.append(PaintAirportType(airport, x, y));
     }
   }
 

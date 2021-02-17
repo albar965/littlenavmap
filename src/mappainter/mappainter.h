@@ -218,9 +218,24 @@ struct PaintContext
 
 };
 
+/* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */
 struct PaintAirportType
 {
-  const map::MapAirport *airport;
+  PaintAirportType(const map::MapAirport& ap, float x, float y);
+  PaintAirportType()
+  {
+  }
+
+  ~PaintAirportType();
+
+  PaintAirportType(const PaintAirportType& other)
+  {
+    this->operator=(other);
+  }
+
+  PaintAirportType& operator=(const PaintAirportType& other);
+
+  map::MapAirport *airport = nullptr;
   QPointF point;
 };
 

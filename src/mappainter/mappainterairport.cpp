@@ -99,7 +99,8 @@ void MapPainterAirport::render()
     airports.append(context->route->getDestinationAirportLeg().getAirport());
     routeAirportIds.insert(airports.last().id);
   }
-  for(const map::MapAirport& ap : context->route->getAlternateAirports())
+  QVector<MapAirport> alternates = context->route->getAlternateAirports();
+  for(const map::MapAirport& ap : alternates)
   {
     airports.append(ap);
     routeAirportIds.insert(airports.last().id);
@@ -141,7 +142,7 @@ void MapPainterAirport::render()
                            context->routeProcIdMap.contains(airport.getRef());
 
         if(visibleOnMap && drawAirport)
-          visibleAirports.append({&airport, QPointF(x, y)});
+          visibleAirports.append(PaintAirportType(airport, x, y));
       }
     }
   }

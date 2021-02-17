@@ -37,6 +37,34 @@ using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
 
+PaintAirportType::PaintAirportType(const map::MapAirport& ap, float x, float y)
+  : airport(new map::MapAirport(ap)), point(x, y)
+{
+
+}
+
+PaintAirportType::~PaintAirportType()
+{
+  delete airport;
+}
+
+PaintAirportType& PaintAirportType::operator=(const PaintAirportType& other)
+{
+  if(airport != nullptr && other.airport != nullptr)
+    *airport = *other.airport;
+  else if(airport == nullptr && other.airport != nullptr)
+    airport = new map::MapAirport(*other.airport);
+  else if(airport != nullptr && other.airport == nullptr)
+  {
+    delete airport;
+    airport = nullptr;
+  }
+  // else both nullptr
+
+  point = other.point;
+  return *this;
+}
+
 void PaintContext::szFont(float scale) const
 {
   mapcolors::scaleFont(painter, scale, &defaultFont);
