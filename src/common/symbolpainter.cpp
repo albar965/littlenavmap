@@ -963,7 +963,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
     if(ndb.type.isEmpty())
       texts.append(ndb.ident);
     else
-      texts.append(ndb.ident + " (" + (ndb.type == "CP" ? tr("CL") : ndb.type) + ")");
+      texts.append(tr("%1 (%2)").arg(ndb.ident).arg(ndb.type == "CP" ? tr("CL") : ndb.type));
   }
   else if(flags & textflags::IDENT)
     texts.append(ndb.ident);
@@ -994,7 +994,12 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::TYPE)
-    texts.append(vor.ident + " (" + vor.type.left(1) + ")");
+  {
+    if(vor.type.isEmpty())
+      texts.append(vor.ident);
+    else
+      texts.append(tr("%1 (%2)").arg(vor.ident).arg(vor.type.at(0)));
+  }
   else if(flags & textflags::IDENT)
     texts.append(vor.ident);
 

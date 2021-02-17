@@ -673,34 +673,29 @@ QString navTypeName(const QString& type)
   return retval;
 }
 
-const QString& navTypeNameVor(const QString& type)
+QString navTypeNameVor(const QString& type)
 {
-  Q_ASSERT(!navTypeNamesVor.isEmpty());
-  return navTypeNamesVor[type];
+  return navTypeNamesVor.value(type);
 }
 
-const QString& navTypeNameVorLong(const QString& type)
+QString navTypeNameVorLong(const QString& type)
 {
-  Q_ASSERT(!navTypeNamesVorLong.isEmpty());
-  return navTypeNamesVorLong[type];
+  return navTypeNamesVorLong.value(type);
 }
 
-const QString& navTypeNameNdb(const QString& type)
+QString navTypeNameNdb(const QString& type)
 {
-  Q_ASSERT(!navTypeNamesNdb.isEmpty());
-  return navTypeNamesNdb[type];
+  return navTypeNamesNdb.value(type);
 }
 
-const QString& navTypeNameWaypoint(const QString& type)
+QString navTypeNameWaypoint(const QString& type)
 {
-  Q_ASSERT(!navTypeNamesWaypoint.isEmpty());
-  return navTypeNamesWaypoint[type];
+  return navTypeNamesWaypoint.value(type);
 }
 
-const QString& navName(const QString& type)
+QString navName(const QString& type)
 {
-  Q_ASSERT(!navTypeNames.isEmpty());
-  return navTypeNames[type];
+  return navTypeNames.value(type);
 }
 
 const QString& surfaceName(const QString& surface)
@@ -1520,22 +1515,37 @@ QString patternDirection(const QString& type)
 
 QString vorFullShortText(const MapVor& vor)
 {
-  QString type = vor.type.startsWith("VT") ? vor.type.at(vor.type.size() - 1) : vor.type.at(0);
-
   if(vor.tacan)
-    return QObject::tr("TACAN").arg(type);
-  else if(vor.vortac)
-    return QObject::tr("VORTAC (%1)").arg(type);
-  else if(vor.dmeOnly)
-    return QObject::tr("DME (%1)").arg(type);
-  else if(vor.hasDme)
-    return QObject::tr("VORDME (%1)").arg(type);
+    return QObject::tr("TACAN");
+  else if(vor.type.isEmpty())
+  {
+    if(vor.vortac)
+      return QObject::tr("VORTAC");
+    else if(vor.dmeOnly)
+      return QObject::tr("DME");
+    else if(vor.hasDme)
+      return QObject::tr("VORDME");
+    else
+      return QObject::tr("VOR");
+  }
   else
-    return QObject::tr("VOR (%1)").arg(type);
+  {
+    QString type = vor.type.startsWith("VT") ? vor.type.at(vor.type.size() - 1) : vor.type.at(0);
+
+    if(vor.vortac)
+      return QObject::tr("VORTAC (%1)").arg(type);
+    else if(vor.dmeOnly)
+      return QObject::tr("DME (%1)").arg(type);
+    else if(vor.hasDme)
+      return QObject::tr("VORDME (%1)").arg(type);
+    else
+      return QObject::tr("VOR (%1)").arg(type);
+  }
 }
 
 QString ndbFullShortText(const MapNdb& ndb)
 {
+  // Compass point vs. compass locator
   QString type = ndb.type == "CP" ? QObject::tr("CL") : ndb.type;
   return type.isEmpty() ? QObject::tr("NDB") : QObject::tr("NDB (%1)").arg(type);
 }
