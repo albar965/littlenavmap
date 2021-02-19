@@ -27,24 +27,26 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 
 ### General
 
-* Reverted change to fix MSFS crash. Now fetching AI destination and departure again.
-  **Note that this will crash MSFS 1.12.13.0. You have to update the simulator to the latest version.**
-* Fixed unrecoverable crash on startup which can appear with Mercator projection zoomed far out.
-* Resolved crashes when showing information for VOR and NDB having no type like ``H`` or ``T``.
+* Reverted change that was needed for work around a MSFS crash which occured when connecting. Now
+  fetching destination and departure for AI aircraft again.
+* Fixed unrecoverable crash on startup which can occur with Mercator projection zoomed far out.
+* Resolved crashes when showing information for VOR and NDB having no type like `High` or
+  `Terminal`.
 * Added error handling for missing layout file on startup if `Load window layout from last used
   file` in `Options` on page `Startup and Updates` is checked. Removing or renaming the layout file
   resulted in an unrecoverable crash on startup.
-* Fixed procedure display issues for turn bow after circular legs. Example: LGSR VOR-B
-  transition  BINKI.
-* Fixed issue where weather to FSX and P3D was not transferred across networked connections.
+* Fixed procedure display issues for turn bow after circular legs.
+  Example: LGSR VOR-B transition BINKI.
+* Fixed issue where weather from FSX and P3D was not transferred across networked connections.
 * Logbook details (route preview and trail) on the map are now only shown if one entry is selected
-  in the logbook search result table. Selecting more than one entry shows only the direct connection lines
-  if enabled. This fixes performance issues when selecting many logbook entries.
+  in the logbook search result table. Selecting more than one entry shows only the direct connection
+  lines if enabled. This fixes performance issues when selecting many logbook entries.
 * Added warning dialog when user switches to offline mode.
-* Fixed issues with disappearing flight plan and measurement lines. Lines might still disappear near
-  the poles for long flight plan legs depending on zoom factor.
-* Navaid resolution when loading flight plans or switching scenery databases is now more tolerant for
-  wrong ICAO regions. Navaids were marked red with an error before if the region did not match.
+* Fixed issues with disappearing flight plan and measurement lines. Lines might still disappear
+  near the poles for long flight plan legs depending on zoom factor.
+* Navaid resolution when loading flight plans or switching scenery databases is now more tolerant
+  for wrong ICAO regions. Navaids were marked red with an error in the flight plan table before if
+  the region did not match.
 * Various drawing and user interface corrections.
 
 ### Flight Plan
@@ -54,9 +56,7 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
   resulting LNMPLN files. #608
 * Now extracting ICAO airport idents for waypoints, NDB and VOR for MSFS export. PLN element
   `ICAOAirport` was missing before and caused crashes when loading flight plans in MSFS. #614
-* Added verbose logging option for X-Plane compiler based on navdatareader.cfg. Added warnings if
-  rows are not written to the database when loading scenery library.
-* Split up export for JARDesign and Rotate aircraft to allow export for both separately.
+* Split up export options for JARDesign and Rotate aircraft to allow export for both separately.
 * Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
   This allows to reload the plan in *Little Navmap*.
 * Fixed regression where circle-to-land approaches could not be loaded by X-Plane due to missing
