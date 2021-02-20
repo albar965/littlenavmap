@@ -47,6 +47,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 * Navaid resolution when loading flight plans or switching scenery databases is now more tolerant
   for wrong ICAO regions. Navaids were marked red with an error in the flight plan table before if
   the region did not match.
+* Fixed issue resulting in degraded drawing performance for airport diagrams. This was most visible
+  on large airports.
 * Various drawing and user interface corrections.
 
 ### Flight Plan
