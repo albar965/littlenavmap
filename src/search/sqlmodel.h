@@ -50,7 +50,7 @@ public:
    * @param columnList column descriptors that will be used to build the SQL queries
    */
   SqlModel(QWidget *parent, atools::sql::SqlDatabase *sqlDb, const ColumnList *columnList);
-  virtual ~SqlModel();
+  virtual ~SqlModel() override;
 
   /* Filter by using query builder callback */
   void filterByBuilder(const QueryBuilder& builder);
@@ -195,7 +195,7 @@ private:
   void clearWhereConditions();
   void filterBy(QModelIndex index, bool exclude);
   QString  sortOrderToSql(Qt::SortOrder order);
-  QVariant defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+  QVariant defaultDataHandler(int, int, const Column *, const QVariant&,
                               const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   void updateTotalCount();
   void buildSqlWhereValue(QVariant& whereValue) const;

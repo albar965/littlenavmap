@@ -43,7 +43,7 @@ class UpdateHandler :
 
 public:
   explicit UpdateHandler(MainWindow *parent = nullptr);
-  virtual ~UpdateHandler();
+  virtual ~UpdateHandler() override;
 
   /*
    * Check asynchronously for updates and call updateFound if anything was found.

@@ -94,6 +94,9 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
   const MapScale *scale = paintLayer->getMapScale();
   AirspaceController *controller = NavApp::getAirspaceController();
 
+  if(paintLayer->getMapLayer() == nullptr)
+    return;
+
   if(scale->isValid() && controller != nullptr && paintLayer != nullptr)
   {
     AirspaceVector airspaces;
@@ -513,6 +516,9 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
 
   CoordinateConverter conv(mapPaintWidget->viewport());
   const MapLayer *mapLayer = paintLayer->getMapLayer();
+
+  if(mapLayer == nullptr)
+    return;
 
   map::MapTypes shown = paintLayer->getShownMapObjects();
   map::MapObjectDisplayTypes shownDisplay = paintLayer->getShownMapObjectDisplayTypes();

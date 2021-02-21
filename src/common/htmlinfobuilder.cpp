@@ -1487,7 +1487,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       }
       else if(vor.vortac)
       {
-        html.row2(tr("VORTAC Type:"), map::navTypeNameVorLong(vor.type));
+        html.row2If(tr("VORTAC Type:"), map::navTypeNameVorLong(vor.type));
         html.row2(tr("VORTAC Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
         if(!vor.channel.isEmpty())
           html.row2(tr("VORTAC Channel:"), vor.channel);
@@ -1497,7 +1497,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       }
       else
       {
-        html.row2(tr("VOR Type:"), map::navTypeNameVorLong(vor.type));
+        html.row2If(tr("VOR Type:"), map::navTypeNameVorLong(vor.type));
         html.row2(tr("VOR Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
         if(vor.range > 0)
           html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
@@ -1523,9 +1523,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
     {
       const MapNdb& ndb = result.ndbs.first();
 
-      if(!ndb.type.isEmpty())
-        html.row2(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
-
+      html.row2If(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
       html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) + tr(" kHz"));
 
       if(ndb.range > 0)
@@ -1912,7 +1910,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
       html.row2(tr("Type:"), tr("DME only"));
   }
   else
-    html.row2(tr("Type:"), map::navTypeNameVorLong(vor.type));
+    html.row2If(tr("Type:"), map::navTypeNameVorLong(vor.type));
 
   if(rec != nullptr && !rec->isNull("airport_id"))
     airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
@@ -1984,8 +1982,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   if(!print)
     bearingToUserText(ndb.position, ndb.magvar, html);
 
-  if(!ndb.type.isEmpty())
-    html.row2(tr("Type:"), map::navTypeNameNdb(ndb.type));
+  html.row2If(tr("Type:"), map::navTypeNameNdb(ndb.type));
 
   if(rec != nullptr && !rec->isNull("airport_id"))
     airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
@@ -2055,7 +2052,7 @@ void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::H
   if(!marker.text.isEmpty())
     html.brText(marker.text);
 
-  if(marker.ranges.isEmpty() || (marker.ranges.size() == 1 && marker.ranges.first() == 0))
+  if(marker.ranges.isEmpty() || (marker.ranges.size() == 1 && atools::almostEqual(marker.ranges.first(), 0.f)))
     html.brText(tr("No distance"));
   else
   {
@@ -2444,7 +2441,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   if(info)
   {
-    html.row2(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
+    html.row2If(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
     if(rec != nullptr && rec->contains("airport_id") && !rec->isNull("airport_id"))
       airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
   }

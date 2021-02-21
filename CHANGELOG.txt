@@ -3,6 +3,179 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 2.6.8
+
+## Notes
+
+Read the linked chapter below to minimize issues when loading flight plans into MSFS:
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/SCENERY.html#load-scenery-library-dialog-msfs-apt-navdata .
+
+## Known Issues
+
+See user manual for general known problems:
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#problems .
+
+See user manual for limitations and issues around Microsoft Flight Simulator 2020:
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#problems-msfs .
+
+## Changes from 2.6.7 to 2.6.8
+
+### Help and Manuals
+
+* Revised German user manual for spelling and grammar errors.
+* Small additions and corrections to English manual.
+
+### General
+
+* Reverted change that was needed for work around a MSFS crash which occured when connecting. Now
+  fetching destination and departure for AI aircraft again.
+* Fixed unrecoverable crash on startup which can occur with Mercator projection zoomed far out.
+* Resolved crashes when showing information for VOR and NDB having no type like `High` or
+  `Terminal`.
+* Added error handling for missing layout file on startup if `Load window layout from last used
+  file` in `Options` on page `Startup and Updates` is checked. Removing or renaming the layout file
+  resulted in an unrecoverable crash on startup.
+* Fixed procedure display issues for turn bow after circular legs.
+  Example: LGSR VOR-B transition BINKI.
+* Fixed issue where weather from FSX and P3D was not transferred across networked connections.
+* Logbook details (route preview and trail) on the map are now only shown if one entry is selected
+  in the logbook search result table. Selecting more than one entry shows only the direct connection
+  lines if enabled. This fixes performance issues when selecting many logbook entries.
+* Added warning dialog when user switches to offline mode.
+* Fixed issues with disappearing flight plan and measurement lines. Lines might still disappear
+  near the poles for long flight plan legs depending on zoom factor.
+* Navaid resolution when loading flight plans or switching scenery databases is now more tolerant
+  for wrong ICAO regions. Navaids were marked red with an error in the flight plan table before if
+  the region did not match.
+* Fixed issue resulting in degraded drawing performance for airport diagrams. This was most visible
+  on large airports.
+* Various drawing and user interface corrections.
+
+### Flight Plan
+
+* Fixed issue where waypoints inserted for procedure endpoints received wrong altitude when saving
+  or exporting flight plans right after calculation. This causes error messages when loading the
+  resulting LNMPLN files. #608
+* Now extracting ICAO airport idents for waypoints, NDB and VOR for MSFS export. PLN element
+  `ICAOAirport` was missing before and caused crashes when loading flight plans in MSFS. #614
+* Split up export options for JARDesign and Rotate aircraft to allow export for both separately.
+* Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
+  This allows to reload the plan in *Little Navmap*.
+* Fixed regression where circle-to-land approaches could not be loaded by X-Plane due to missing
+  destination runway.
+* Fixed flight plan export for FSX and MSFS which used the wrong coordinates for destination
+  element `DestinationLLA` in flight plan. This confused third party programs.
+* Corrected wrong departure position for saved LNMPLN and FSX/P3D PLN flight plans. Now uses
+  position from parking, helipad or runway/start for PLN `DepartureLLA` and LNMPLN `Start` element.
+  #613
+* Fixed issue where LNMPLN flight plan procedures were replaced with waypoints inadvertently if
+  enabled in export options menu. This happened when saving LNMPLN plans with multiexport.
+* Removed extra space to fix flight plan export for iFly (`.FLTPLAN`).
+* Other small corrections for flight plan export.
+
+===============================================================================
+
+# Version 2.6.7
+
+## Known Issues
+
+* No SID and STAR yet from MSFS scenery library. This will come with a future update.
+* MSFS multiplayer traffic is not shown in *Little Navmap*.
+
+See user manual for further known problems:
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#problems .
+
+## Changes from 2.6.6 to 2.6.7
+
+### Help
+
+* Updated German online and included PDF manual as well as legend for changes in version 2.6.
+  https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/de
+* Corrections to English online and PDF manual as well as map legend.
+
+### MSFS
+
+* **Added workaround for the simulator crashes that were introduced with the MSFS 1.12.13.0 update.**
+  This was possible due to a hint in the official forum. The workaround disables the display of departure and
+  destination for AI.
+
+### User Interface
+
+* Corrected issue where status bar was hidden on first start or after first installation.
+  Now forcing status bar to be visible again when updating from any older version to 2.6.7.
+* Flight plan calculation window changed to appear near cursor on first show to avoid random
+  placement off screen.
+* Added recovery if main window gets off screen after changing monitors. Puts window back on top
+  left of main screen if it is not visible.
+* Fix for Windows removing file extensions when these are hidden in Windows Explorer. This prevented
+  saving of map images.
+* Winds aloft now scanning for the latest dataset to avoid outdated reports. Note that reports
+  might still be outdated at times which happens if no newer one is available.
+
+### Map and Elevation Profile
+
+* Fixed cut off altitude labels on the elevation profile left area.
+* Measurement lines now use the declination at the end to calculate magnetic great circle course at
+  end of line. The start course is still calculated based on start declination or attached
+  navaid declination.
+* Fixed issue where wrong `Too many objects` message was shown and map performance degraded with
+  tracks enabled.
+* Fixed several issues when centering route or flight plan legs with very long flight plans.
+* Fixed issues when painting aircraft trail around the anti-meridian.
+* Now painting full aircraft trail even when jumping long distances.
+* Adjustments and optimizations for taxiway label drawing. Map shows more labels now.
+* Markers are now fetched from the simulator database in default scenery mode just like the ILS.
+  Previously markers from add-on sceneries were not visible.
+* Fixed issues where marker tooltips appeared after hiding ILS and markers.
+* Fixed zooming functions with keyboard input in map where normal zooming was not possible on US
+  and other keyboard layouts.
+* Disabled home key which zoomed the map all way out when hit accidentally.
+* Fixed crash when disabling all labels for measurement lines.
+  This caused the program to crash on startup which was hard to recover.
+
+### Procedures
+
+* Fixed issue where intercept procedure legs were not calculated correctly.
+  Examples: LGKO SID 32 KOPA3A and LILJ SID DOL1W.
+* Small improvements in procedure drawing for turn legs to avoid too large course
+  discrepancies between label and line caused by drawing turn.
+* Corrected drawing for several procedure leg types and labels in elevation profile.
+
+### Scenery Library
+
+* Now also including MSFS scenery with content type `CORE` which kept *Little Navmap* from loading
+  some add-on airports.
+* Now skipping file `maintenance.bgl` from Navigraph update in MSFS scenery library which caused
+  warnings when loading.
+* Airport names now loaded from base scenery with Navigraph update in MSFS. Were missing previously.
+* Now omitting scenery library entries which are marked with `active="false"` in `Content.xml`.
+  This lets *Little Navmap* to recognize changes made by scenery management tools now.
+
+### Flight Plan and Export
+
+* Now always adapting departure and destination airport names to the names taken from
+  the selected scenery library. This also affects the proposed files names when saving or exporting
+  flight plans. Behavior before was confusing since it kept an airport name from a previously used
+  simulator scenery database.
+* Flight plan calculation now correctly omits waypoints which are part of a procedure.
+  These should be avoided for en-route navigation and are excluded now from
+  calculation except for airway waypoints.
+* Folder names are now remembered correctly for MSFS and FSX/P3D manual flight plan export instead
+  of using an arbitrary place depending on scenery library selection.
+* Now setting voice type to `Full` as a default for vPilot export since other values produce
+  error messages.
+* Applied workaround for XML files with wrong encoding in header. This
+  helps to read wrongly decoded ForeFlight flight plans which are saved in UTF-16 while having a
+  UTF-8 indication in the file header.
+* Fix for GPX export to allow saving of files and trails without flight plan.
+  An empty flight plan does not disable the export menu item now and allows to save only the trail as GPX.
+* Fixed issue with X-Plane FMS plans where long airport idents like `XRP0001` cannot be loaded by
+  the simulator. Idents are now truncated to six characters.
+* Exported FLP flight plans `Aerosoft Airbus and others` and `Aerosoft CRJ` now get a suffix
+  `01.flp` to avoid import problems in the aircraft. Note that the number is static and is not counted up.
+
+===============================================================================
+
 # Version 2.6.6
 
 ## Important

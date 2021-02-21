@@ -4184,10 +4184,10 @@ Matches any visited airport.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Flight plan altitude which is also used to calculate a flight plan based on given altitude</string>
+              <string>Flight plan cruise altitude</string>
              </property>
              <property name="statusTip">
-              <string>Flight plan altitude which is also used to calculate a flight plan based on given altitude</string>
+              <string>Flight plan cruise altitude</string>
              </property>
              <property name="showGroupSeparator" stdset="0">
               <bool>true</bool>

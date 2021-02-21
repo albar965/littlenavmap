@@ -580,6 +580,9 @@ bool procedureLegFixAtStart(proc::ProcedureLegType type);
 /* true if leg has fix at the end */
 bool procedureLegFixAtEnd(proc::ProcedureLegType type);
 
+/* true if the ident of the leg and a navaid symbol can be drawn - otherwise no ident and generic proc symbol */
+bool procedureLegDrawIdent(ProcedureLegType type);
+
 /* true if flying from waypoint and a "from" indication should be displayed */
 bool procedureLegFrom(proc::ProcedureLegType type);
 

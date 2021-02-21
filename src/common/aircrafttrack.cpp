@@ -26,16 +26,6 @@
 #include <QDateTime>
 #include <QFile>
 
-AircraftTrack::AircraftTrack()
-{
-
-}
-
-AircraftTrack::~AircraftTrack()
-{
-
-}
-
 namespace at {
 
 QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos)
@@ -82,6 +72,11 @@ void AircraftTrack::restoreState()
     else
       qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
   }
+}
+
+void AircraftTrack::clearTrack()
+{
+  clear();
 }
 
 void AircraftTrack::saveToStream(QDataStream& out)
@@ -146,19 +141,11 @@ bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime&
 
     if(!pos.almostEqual(last().pos, epsilon) && !atools::almostEqual(lastTime, time, timeDiff))
     {
-      if(pos.distanceMeterTo(last().pos) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM))
+      if(size() > maxTrackEntries)
       {
-        clear();
+        for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
+          removeFirst();
         pruned = true;
-      }
-      else
-      {
-        if(size() > maxTrackEntries)
-        {
-          for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
-            removeFirst();
-          pruned = true;
-        }
       }
       append({pos, timestamp.toTime_t(), onGround});
     }
@@ -172,4 +159,18 @@ float AircraftTrack::getMaxAltitude() const
   for(const at::AircraftTrackPos& trackPos : *this)
     maxAlt = std::max(maxAlt, trackPos.pos.getAltitude());
   return maxAlt;
+}
+
+atools::geo::LineString AircraftTrack::getLineString() const
+{
+  atools::geo::LineString linestring;
+
+  if(linestring.size() != size())
+  {
+    linestring.clear();
+    for(const at::AircraftTrackPos& tpos : *this)
+      linestring.append(tpos.pos);
+  }
+
+  return linestring;
 }

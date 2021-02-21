@@ -161,8 +161,6 @@ QString capNavString(const QString& str)
 
 bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
 {
-  Q_UNUSED(text);
-
   atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text);
 
   if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)

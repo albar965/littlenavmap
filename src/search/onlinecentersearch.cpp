@@ -86,9 +86,8 @@ OnlineCenterSearch::~OnlineCenterSearch()
 {
 }
 
-void OnlineCenterSearch::overrideMode(const QStringList& overrideColumnTitles)
+void OnlineCenterSearch::overrideMode(const QStringList&)
 {
-  Q_UNUSED(overrideColumnTitles);
 }
 
 void OnlineCenterSearch::connectSearchSlots()
@@ -146,16 +145,14 @@ void OnlineCenterSearch::restoreState()
       NavApp::getMainUi()->tableViewOnlineCenterSearch);
 }
 
-void OnlineCenterSearch::saveViewState(bool distSearchActive)
+void OnlineCenterSearch::saveViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).save(
     NavApp::getMainUi()->tableViewOnlineCenterSearch);
 }
 
-void OnlineCenterSearch::restoreViewState(bool distSearchActive)
+void OnlineCenterSearch::restoreViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).restore(
     NavApp::getMainUi()->tableViewOnlineCenterSearch);
 }

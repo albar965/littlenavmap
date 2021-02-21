@@ -58,9 +58,8 @@ OnlineServerSearch::~OnlineServerSearch()
 {
 }
 
-void OnlineServerSearch::overrideMode(const QStringList& overrideColumnTitles)
+void OnlineServerSearch::overrideMode(const QStringList&)
 {
-  Q_UNUSED(overrideColumnTitles);
 }
 
 void OnlineServerSearch::connectSearchSlots()
@@ -84,25 +83,22 @@ void OnlineServerSearch::restoreState()
       NavApp::getMainUi()->tableViewOnlineServerSearch);
 }
 
-void OnlineServerSearch::saveViewState(bool distSearchActive)
+void OnlineServerSearch::saveViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).save(
     NavApp::getMainUi()->tableViewOnlineServerSearch);
 }
 
-void OnlineServerSearch::restoreViewState(bool distSearchActive)
+void OnlineServerSearch::restoreViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).restore(
     NavApp::getMainUi()->tableViewOnlineServerSearch);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
 
-void OnlineServerSearch::getSelectedMapObjects(map::MapResult& result) const
+void OnlineServerSearch::getSelectedMapObjects(map::MapResult&) const
 {
-  Q_UNUSED(result);
 }
 
 void OnlineServerSearch::postDatabaseLoad()

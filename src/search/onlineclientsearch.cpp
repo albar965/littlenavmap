@@ -84,9 +84,8 @@ OnlineClientSearch::~OnlineClientSearch()
 {
 }
 
-void OnlineClientSearch::overrideMode(const QStringList& overrideColumnTitles)
+void OnlineClientSearch::overrideMode(const QStringList&)
 {
-  Q_UNUSED(overrideColumnTitles);
 }
 
 void OnlineClientSearch::connectSearchSlots()
@@ -145,16 +144,14 @@ void OnlineClientSearch::restoreState()
       NavApp::getMainUi()->tableViewOnlineClientSearch);
 }
 
-void OnlineClientSearch::saveViewState(bool distSearchActive)
+void OnlineClientSearch::saveViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).save(
     NavApp::getMainUi()->tableViewOnlineClientSearch);
 }
 
-void OnlineClientSearch::restoreViewState(bool distSearchActive)
+void OnlineClientSearch::restoreViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).restore(
     NavApp::getMainUi()->tableViewOnlineClientSearch);
 }
@@ -168,7 +165,6 @@ QVariant OnlineClientSearch::modelDataHandler(int colIndex, int rowIndex, const 
     case Qt::DisplayRole:
       return formatModelData(col, displayRoleValue);
 
-      break;
     case Qt::ToolTipRole:
       if(col->getColumnName() == "atis")
         return atools::elideTextLinesShort(displayRoleValue.toString(), 40);

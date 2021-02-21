@@ -55,10 +55,8 @@ void ProfileLabelWidget::contextMenuEvent(QContextMenuEvent *event)
   profileWidget->showContextMenu(globalpoint);
 }
 
-void ProfileLabelWidget::paintEvent(QPaintEvent *event)
+void ProfileLabelWidget::paintEvent(QPaintEvent *)
 {
-  Q_UNUSED(event);
-
   // qDebug() << Q_FUNC_INFO;
   int w = rect().width(), h = rect().height();
 
@@ -74,38 +72,57 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *event)
     QPoint offset = scrollArea->getOffset();
     int safeAltY = profileWidget->getMinSafeAltitudeY() - offset.y();
     int flightplanY = profileWidget->getFlightplanAltY() - offset.y();
+    float routeAlt = NavApp::getRoute().getCruisingAltitudeFeet();
 
     // Draw labels on left side widget ========================================================
 
     // Draw altitude labels ================================
     SymbolPainter symPainter;
-    for(const std::pair<int, int>& scale : profileWidget->calcScaleValues())
+    QVector<std::pair<int, int> > scaleValues = profileWidget->calcScaleValues();
+
+    QFont f = painter.font();
+    f.setBold(true);
+    QFontMetrics metrics(f);
+
+    int maxw = 1;
+    for(const std::pair<int, int>& scale : scaleValues)
     {
       int y = scale.first - offset.y();
       if(y > -5 && y < h + 5)
-        symPainter.textBox(&painter, {QString::number(scale.second, 'f', 0)},
+      {
+        QString str = QLocale().toString(scale.second);
+        symPainter.textBox(&painter, {str},
                            mapcolors::profileElevationScalePen,
                            w - 2, y, textatt::BOLD | textatt::RIGHT, 0);
+        maxw = std::max(metrics.boundingRect(str).width(), maxw);
+      }
     }
 
-    // Draw text labels ========================================================
-    // Safe altitude label
+    // Safe altitude label ===========================
     if(safeAltY > -5 && safeAltY < h + 5)
-      symPainter.textBox(&painter, {Unit::altFeet(profileWidget->getMinSafeAltitudeFt())},
+    {
+      QString str = Unit::altFeet(profileWidget->getMinSafeAltitudeFt());
+      symPainter.textBox(&painter, {str},
                          mapcolors::profileSafeAltLinePen,
                          w - 2, safeAltY, textatt::BOLD | textatt::RIGHT, 255,
                          QApplication::palette().color(QPalette::Base));
+      maxw = std::max(metrics.boundingRect(str).width(), maxw);
+    }
 
+    // Route cruise altitude ==========================
     if(flightplanY > -5 && flightplanY < h + 5)
     {
-      // Route cruise altitude
-      float routeAlt = NavApp::getRoute().getCruisingAltitudeFeet();
-      symPainter.textBox(&painter, {Unit::altFeet(routeAlt)},
+      QString str = Unit::altFeet(routeAlt);
+      symPainter.textBox(&painter, {str},
                          QApplication::palette().color(QPalette::Text),
                          w - 2, flightplanY, textatt::BOLD | textatt::RIGHT, 255,
                          QApplication::palette().color(QPalette::Base));
+      maxw = std::max(metrics.boundingRect(str).width(), maxw);
     }
+    setMinimumWidth(maxw + metrics.width("X"));
   }
+  else
+    setMinimumWidth(1); // Setting to 0 hides the widget
 
   // Dim the whole map for night mode by drawing a half transparent black rectangle
   mapcolors::darkenPainterRect(painter);

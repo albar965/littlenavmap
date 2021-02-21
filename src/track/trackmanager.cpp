@@ -109,7 +109,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
   int trackpointId = atools::track::TRACKPOINT_ID_OFFSET, trackId = atools::track::TRACK_ID_OFFSET, trackmetaId = 1;
 
   FlightplanEntryBuilder builder;
-  RouteStringReader reader(&builder, verbose);
+  RouteStringReader reader(&builder);
   reader.setPlaintextMessages(true);
 
   // Maps trackpoint/waypoint (real or generated with offset) ids to records to insert into table trackpoint

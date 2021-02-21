@@ -37,6 +37,34 @@ using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
 
+PaintAirportType::PaintAirportType(const map::MapAirport& ap, float x, float y)
+  : airport(new map::MapAirport(ap)), point(x, y)
+{
+
+}
+
+PaintAirportType::~PaintAirportType()
+{
+  delete airport;
+}
+
+PaintAirportType& PaintAirportType::operator=(const PaintAirportType& other)
+{
+  if(airport != nullptr && other.airport != nullptr)
+    *airport = *other.airport;
+  else if(airport == nullptr && other.airport != nullptr)
+    airport = new map::MapAirport(*other.airport);
+  else if(airport != nullptr && other.airport == nullptr)
+  {
+    delete airport;
+    airport = nullptr;
+  }
+  // else both nullptr
+
+  point = other.point;
+  return *this;
+}
+
 void PaintContext::szFont(float scale) const
 {
   mapcolors::scaleFont(painter, scale, &defaultFont);
@@ -121,7 +149,7 @@ bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, cons
 
   if(!visible && !hid)
     // Check additional visibility using the extended rectangle only if the object is not hidden behind the globe
-    return context->screenRect.marginsAdded(margins).contains(x, y);
+    return context->screenRect.marginsAdded(margins).contains(atools::roundToInt(x), atools::roundToInt(y));
 
   return visible;
 }
@@ -305,22 +333,41 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
 
 void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line)
 {
-  if(line.isValid())
+  if(line.isValid() && !line.isPoint())
   {
-    // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
-    qreal correction = 0.;
-    if(atools::almostEqual(line.getPos1().getLatY(), line.getPos2().getLatY()))
-      correction = 0.000001;
+    // Split long lines to work around the buggy visibility check in Marble
+    // Do a quick check using Manhattan distance in degree
+    if(line.lengthSimple() > 30.f)
+    {
+      LineString linestring;
+      line.interpolatePoints(line.lengthMeter(), 20, linestring);
+      linestring.append(line.getPos2());
+      drawLineString(painter, linestring);
+    }
+    else if(line.lengthSimple() > 5.f)
+    {
+      LineString linestring;
+      line.interpolatePoints(line.lengthMeter(), 5, linestring);
+      linestring.append(line.getPos2());
+      drawLineString(painter, linestring);
+    }
+    else
+    {
+      // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
+      qreal correction = 0.;
+      if(atools::almostEqual(line.getPos1().getLatY(), line.getPos2().getLatY()))
+        correction = 0.000001;
 
-    GeoDataLineString ls;
-    ls.setTessellate(true);
-    ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY() - correction, 0, DEG)
-       << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY() + correction, 0, DEG);
+      GeoDataLineString ls;
+      ls.setTessellate(true);
+      ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY() - correction, 0, DEG)
+         << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY() + correction, 0, DEG);
 
-    QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
-    for(GeoDataLineString *corrected : dateLineCorrected)
-      painter->drawPolyline(*corrected);
-    qDeleteAll(dateLineCorrected);
+      QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
+      for(GeoDataLineString *corrected : dateLineCorrected)
+        painter->drawPolyline(*corrected);
+      qDeleteAll(dateLineCorrected);
+    }
   }
 }
 
@@ -667,118 +714,4 @@ void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
   }
   else
     pixmap = *pixmapPtr;
-}
-
-void MapPainter::paintTrack(Marble::GeoPainter *painter, const AircraftTrack& aircraftTrack, bool mercator)
-{
-  /* Specialize TrackAdapter for access to AircraftTrack */
-  struct Adapter :
-    public TrackAdapter
-  {
-    virtual const atools::geo::Pos& at(int i) const
-    {
-      return track->at(i).pos;
-    }
-
-    virtual int size() const
-    {
-      return track->size();
-    }
-
-    const AircraftTrack *track;
-  } adapter;
-  adapter.track = &aircraftTrack;
-
-  adapter.track = &aircraftTrack;
-  paintTrackInternal(painter, adapter, mercator);
-}
-
-void MapPainter::paintTrack(Marble::GeoPainter *painter, const atools::geo::LineString& linestring, bool mercator)
-{
-  /* Specialize TrackAdapter for access to LineString */
-  struct Adapter :
-    public TrackAdapter
-  {
-    virtual const atools::geo::Pos& at(int i) const
-    {
-      return track->at(i);
-    }
-
-    virtual int size() const
-    {
-      return track->size();
-    }
-
-    const LineString *track;
-  } adapter;
-
-  adapter.track = &linestring;
-  paintTrackInternal(painter, adapter, mercator);
-}
-
-void MapPainter::paintTrackInternal(Marble::GeoPainter *painter, const TrackAdapter& linestring, bool mercator)
-{
-  if(linestring.size() > 0)
-  {
-    QPolygon polyline;
-
-    bool visible1 = false;
-    int x1, y1;
-    int x2 = -1, y2 = -1;
-    bool hidden1, hidden2;
-    QRect vpRect(painter->viewport());
-    wToS(linestring.at(0), x1, y1, DEFAULT_WTOS_SIZE, &hidden1);
-
-    for(int i = 1; i < linestring.size(); i++)
-    {
-      const Pos& trackPos = linestring.at(i);
-      wToS(trackPos, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
-
-      QRect rect(QPoint(x1, y1), QPoint(x2, y2));
-      rect = rect.normalized();
-      rect.adjust(-1, -1, 1, 1);
-
-      // Current line is visible (most likely) - not if one of the points is hidden behind the globe
-      bool visible2 = false;
-      if(!hidden1 && !hidden2)
-        visible2 = rect.intersects(vpRect);
-
-      if(visible2 && mercator)
-        // Workaround to detect jumping between sides in Mercator projection - do not draw lines from far edges
-        visible2 = QLineF(QPoint(x1, y1), QPoint(x2, y2)).length() < scale->getPixelForNm(1000.f);
-
-      if(visible1 || visible2)
-      {
-        if(!polyline.isEmpty())
-        {
-          const QPoint& lastPt = polyline.last();
-          // Last line or this one are visible add coords
-          if(atools::geo::manhattanDistance(lastPt.x(), lastPt.y(), x2, y2) > TRACK_MIN_LINE_LENGTH)
-            polyline.append(QPoint(x1, y1));
-        }
-        else
-          // Always add first visible point
-          polyline.append(QPoint(x1, y1));
-      }
-
-      if(visible1 && !visible2)
-      {
-        // Not visible anymore draw previous line segment
-        painter->drawPolyline(polyline);
-        polyline.clear();
-      }
-
-      visible1 = visible2;
-      x1 = x2;
-      y1 = y2;
-      hidden1 = hidden2;
-    }
-
-    // Draw rest
-    if(!polyline.isEmpty())
-    {
-      polyline.append(QPoint(x2, y2));
-      painter->drawPolyline(polyline);
-    }
-  }
 }

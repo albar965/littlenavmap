@@ -50,7 +50,7 @@ class UserWaypointDialog :
 
 public:
   UserWaypointDialog(QWidget *parent, const atools::fs::pln::FlightplanEntry& entryParam);
-  virtual ~UserWaypointDialog();
+  virtual ~UserWaypointDialog() override;
 
   /* Entry is copyied. Get changed copy here */
   const atools::fs::pln::FlightplanEntry& getEntry() const
@@ -59,7 +59,7 @@ public:
   }
 
 private:
-  void coordsEdited(const QString& text);
+  void coordsEdited(const QString&);
   void buttonBoxClicked(QAbstractButton *button);
 
   Ui::UserWaypointDialog *ui;

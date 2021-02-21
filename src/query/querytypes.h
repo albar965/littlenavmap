@@ -105,12 +105,12 @@ bool SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox& rect, co
 
   query::inflateQueryRect(inflatedCur, factor, increment);
 
-  float wFactor = curRect.width() / rect.width();
-  float hFactor = curRect.height() / rect.height();
+  qreal wFactor = curRect.width() / rect.width();
+  qreal hFactor = curRect.height() / rect.height();
 
 #ifndef DEBUG_DISABLE_RECT_CACHE
   if(curRect.isEmpty() || !inflatedCur.contains(rect) || !funcSameLayer(curMapLayer, mapLayer) ||
-     wFactor > 4.f || hFactor > 4.f)
+     wFactor > 4. || hFactor > 4.)
 #else
   Q_UNUSED(funcSameLayer)
 #endif

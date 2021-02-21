@@ -83,7 +83,7 @@ public:
   DatabaseManager(MainWindow *parent);
 
   /* Also closes database if not already done */
-  virtual ~DatabaseManager();
+  virtual ~DatabaseManager() override;
 
   /* Opens the dialog that allows to (re)load a new scenery database. */
   void run();

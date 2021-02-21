@@ -57,7 +57,7 @@ class ConnectClient :
 
 public:
   ConnectClient(MainWindow *parent);
-  virtual ~ConnectClient();
+  virtual ~ConnectClient() override;
 
   /* Opens the connect dialog and depending on result connects to the server/agent */
   void connectToServerDialog();
@@ -119,7 +119,7 @@ private:
   const int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
 
   void readFromSocket();
-  void readFromSocketError(QAbstractSocket::SocketError error);
+  void readFromSocketError(QAbstractSocket::SocketError);
   void connectedToServerSocket();
   void closeSocket(bool allowRestart);
   void connectInternal();

@@ -48,7 +48,7 @@ class RouteStringDialog :
 
 public:
   RouteStringDialog(QWidget *parent, RouteController *routeController);
-  virtual ~RouteStringDialog();
+  virtual ~RouteStringDialog() override;
 
   const atools::fs::pln::Flightplan& getFlightplan() const;
 

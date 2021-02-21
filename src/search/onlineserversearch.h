@@ -49,19 +49,19 @@ public:
   virtual void saveState() override;
   virtual void restoreState() override;
 
-  virtual void getSelectedMapObjects(map::MapResult& result) const override;
+  virtual void getSelectedMapObjects(map::MapResult&) const override;
   virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
 
 private:
   virtual void updateButtonMenu() override;
-  virtual void saveViewState(bool distSearchActive) override;
-  virtual void restoreViewState(bool distSearchActive) override;
+  virtual void saveViewState(bool) override;
+  virtual void restoreViewState(bool) override;
   virtual void updatePushButtons() override;
   QAction *followModeAction() override;
 
   void setCallbacks();
-  void overrideMode(const QStringList& overrideColumnTitles);
+  void overrideMode(const QStringList&);
 
 };
 

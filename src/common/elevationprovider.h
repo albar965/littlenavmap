@@ -52,7 +52,7 @@ class ElevationProvider :
 
 public:
   ElevationProvider(QObject *parent, const Marble::ElevationModel *model);
-  virtual ~ElevationProvider();
+  virtual ~ElevationProvider() override;
 
   /* Elevation in meter. Only for offline data. */
   float getElevationMeter(const atools::geo::Pos& pos);

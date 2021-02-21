@@ -1047,9 +1047,7 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
 
         vectorLeg.altRestriction.descriptor = proc::MapAltRestriction::NONE;
         // geometry is populated later
-        vectorLeg.fixType = nextLeg.fixType;
-        vectorLeg.fixRegion = nextLeg.fixRegion;
-        vectorLeg.fixIdent = nextLeg.fixIdent;
+
         vectorLeg.fixPos = nextLeg.fixPos;
         vectorLeg.line = Line(prevLeg.line.getPos2(), nextLeg.line.getPos2());
         nextLeg.line.setPos1(nextLeg.line.getPos2());
@@ -1227,6 +1225,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
         else
           line = leg.line;
 
+        // Build geometry
         ageo::calcArcLength(line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance, &leg.geometry);
 
         leg.calculatedDistance = meterToNm(leg.calculatedDistance);
@@ -1756,8 +1755,9 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
             intersect =
               Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(),
                                        // Leg might have no course and calculated is not available yet
-                                       next->course == 0 || next->course == map::INVALID_COURSE_VALUE ?
-                                       next->line.angleDeg() : next->trueCourse);
+                                       atools::almostEqual(next->course, 0.f) ||
+                                       !(next->course < map::INVALID_COURSE_VALUE) ?
+                                       next->line.angleDeg() : next->legTrueCourse());
 
           leg.line.setPos1(start);
 

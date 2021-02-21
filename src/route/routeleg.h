@@ -43,9 +43,12 @@ class RouteLeg
   Q_DECLARE_TR_FUNCTIONS(RouteLeg)
 
 public:
-  RouteLeg();
+  RouteLeg()
+  {
+
+  }
+
   RouteLeg(atools::fs::pln::Flightplan *parentFlightplan);
-  ~RouteLeg();
 
   /*
    * Creates a route map object from a flight plan entry. Queries the database for existing navaids and airports.

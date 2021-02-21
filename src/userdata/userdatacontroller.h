@@ -70,7 +70,7 @@ class UserdataController :
 
 public:
   UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent);
-  virtual ~UserdataController();
+  virtual ~UserdataController() override;
 
   /* Show add dialog and add to the database if accepted */
   void addUserpoint(int id, const atools::geo::Pos& pos);

@@ -34,7 +34,7 @@ class MapMarkHandler :
 
 public:
   explicit MapMarkHandler(QWidget *parent);
-  virtual ~MapMarkHandler();
+  virtual ~MapMarkHandler() override;
 
   /* Initialize, create actions and add button to toolbar */
   void addToolbarButton();

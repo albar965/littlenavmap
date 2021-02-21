@@ -130,7 +130,7 @@ class NavApp :
 
 public:
   NavApp(int& argc, char **argv, int flags = ApplicationFlags);
-  virtual ~NavApp();
+  virtual ~NavApp() override;
 
   static NavApp *navAppInstance();
 
@@ -293,6 +293,7 @@ public:
   static QString getOnlineNetworkTranslated();
   static bool isOnlineNetworkActive();
 
+  static bool isAircraftTrackEmpty();
   static const AircraftTrack& getAircraftTrack();
 
   static void initSplashScreen();

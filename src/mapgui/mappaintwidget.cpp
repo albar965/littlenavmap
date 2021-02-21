@@ -75,7 +75,7 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
 
   unitsUpdated();
 
-  paintLayer = new MapPaintLayer(this, NavApp::getMapQuery());
+  paintLayer = new MapPaintLayer(this);
   addLayer(paintLayer);
 
   screenIndex = new MapScreenIndex(this, paintLayer);
@@ -616,10 +616,10 @@ void MapPaintWidget::centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool 
 void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
 {
   if(!rect.isPoint(POS_IS_POINT_EPSILON) &&
-     rect.getWidthDegree() < 180.f &&
-     rect.getHeightDegree() < 180.f &&
-     rect.getWidthDegree() > POS_IS_POINT_EPSILON &&
-     rect.getHeightDegree() > POS_IS_POINT_EPSILON)
+     std::abs(rect.getWidthDegree()) < 180.f &&
+     std::abs(rect.getHeightDegree()) < 180.f &&
+     std::abs(rect.getWidthDegree()) > POS_IS_POINT_EPSILON &&
+     std::abs(rect.getHeightDegree()) > POS_IS_POINT_EPSILON)
   {
     // Make rectangle slightly bigger to avoid waypoints hiding at the window corners
     Rect scaled(rect);
@@ -667,8 +667,8 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
     // Rect is a point or otherwise malformed
     centerPosOnMap(rect.getCenter());
 
-    if(rect.getWidthDegree() < 180.f &&
-       rect.getHeightDegree() < 180.f)
+    if(std::abs(rect.getWidthDegree()) < 180.f &&
+       std::abs(rect.getHeightDegree()) < 180.f)
       setDistanceToMap(MINIMUM_DISTANCE_KM, allowAdjust);
     else
       setDistanceToMap(MAXIMUM_DISTANCE_KM, allowAdjust);
@@ -770,8 +770,8 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
   showAircraft(false);
   jumpBackToAircraftStart(true /* saveDistance */);
 
-  float w = rect.getWidthDegree();
-  float h = rect.getHeightDegree();
+  float w = std::abs(rect.getWidthDegree());
+  float h = std::abs(rect.getHeightDegree());
 
   if(!rect.isValid())
   {
@@ -792,7 +792,7 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
       centerRectOnMap(Rect(rect.getWest(), rect.getNorth() + w / 2, rect.getEast(), rect.getSouth() - w / 2));
     else
       // Center on rectangle
-      centerRectOnMap(Rect(rect.getWest(), rect.getNorth(), rect.getEast(), rect.getSouth()));
+      centerRectOnMap(rect);
 
     float distanceKm = atools::geo::nmToKm(Unit::rev(doubleClick ?
                                                      OptionData::instance().getMapZoomShowClick() :
@@ -839,10 +839,8 @@ void MapPaintWidget::routeChanged(bool geometryChanged)
   update();
 }
 
-void MapPaintWidget::routeAltitudeChanged(float altitudeFeet)
+void MapPaintWidget::routeAltitudeChanged(float)
 {
-  Q_UNUSED(altitudeFeet);
-
   if(databaseLoadStatus)
     return;
 
@@ -1069,16 +1067,14 @@ map::MapWeatherSource MapPaintWidget::weatherSourceFromUi()
   return paintLayer->getWeatherSource();
 }
 
-void MapPaintWidget::updateThemeUi(int index)
+void MapPaintWidget::updateThemeUi(int)
 {
   // No-op
-  Q_UNUSED(index);
 }
 
-void MapPaintWidget::updateShowAircraftUi(bool centerAircraftChecked)
+void MapPaintWidget::updateShowAircraftUi(bool)
 {
   // No-op
-  Q_UNUSED(centerAircraftChecked);
 }
 
 const QList<int>& MapPaintWidget::getRouteHighlights() const

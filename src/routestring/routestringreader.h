@@ -60,7 +60,7 @@ class RouteStringReader
   Q_DECLARE_TR_FUNCTIONS(RouteString)
 
 public:
-  RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder, bool verboseParam = false);
+  RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder);
   virtual ~RouteStringReader();
 
   /* Create a flight plan for the given route string and include speed and altitude if given (pointers != null).
@@ -154,7 +154,6 @@ private:
   map::MapAirway extractAirway(const QList<map::MapAirway>& airways, int waypointId1, int waypointId2,
                                const QString& airwayName);
 
-  bool verbose = false;
   MapQuery *mapQuery = nullptr;
   AirwayTrackQuery *airwayQuery = nullptr;
   WaypointTrackQuery *waypointQuery = nullptr;

@@ -69,7 +69,7 @@ class SearchController :
 
 public:
   SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam);
-  virtual ~SearchController();
+  virtual ~SearchController() override;
 
   /* Create the airport search tab */
   void createAirportSearch(QTableView *tableView);

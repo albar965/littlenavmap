@@ -38,8 +38,8 @@ class HtmlExporter :
   Q_DECLARE_TR_FUNCTIONS(HtmlExporter)
 
 public:
-  HtmlExporter(QWidget *parentWidget, SqlController *controller, int rowsPerPage);
-  virtual ~HtmlExporter();
+  HtmlExporter(QWidget *parentWidget, SqlController *controllerParam, int rowsPerPage);
+  virtual ~HtmlExporter() override;
 
   // Disabled unused export functionality since it is not compatible with other classes
 #ifdef ENABLE_HTML_EXPORT

@@ -39,8 +39,8 @@ using atools::gui::Dialog;
 using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 
-CsvExporter::CsvExporter(QWidget *parent, SqlController *controller) :
-  Exporter(parent, controller)
+CsvExporter::CsvExporter(QWidget *parent, SqlController *controllerParam)
+  : Exporter(parent, controllerParam)
 {
 }
 

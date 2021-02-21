@@ -400,7 +400,6 @@ void InfoController::saveState()
   settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
 
   // Save airspaces =====================================================
-  QVector<map::MapAirspaceId> airspaces;
   refList.clear();
   for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
   {

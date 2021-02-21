@@ -49,7 +49,7 @@ void TextPlacement::calculateTextPositions(const atools::geo::LineString& points
   for(int i = 0; i < points.size(); i++)
   {
     int x1 = 0, y1 = 0;
-    bool hidden;
+    bool hidden = false;
     bool visibleStart = points.at(i).isValid() ?
                         converter->wToS(points.at(i), x1, y1, CoordinateConverter::DEFAULT_WTOS_SIZE, &hidden) : false;
 

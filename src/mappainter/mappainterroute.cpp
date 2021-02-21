@@ -225,8 +225,7 @@ void MapPainterRoute::paintRoute()
 
 }
 
-void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> lines,
-                                        int passedRouteLeg)
+void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> lines, int passedRouteLeg)
 {
   const Route *route = context->route;
   Marble::GeoPainter *painter = context->painter;
@@ -941,6 +940,7 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
   bool firstMissed = !prevLeg->isMissed() && leg.isMissed() && (prevLeg->isCircleToLand() || prevLeg->isStraightIn());
   Pos prevPos;
   QPointF lastP1, lastP2;
+  bool prevCircle = false;
   if(firstMissed)
   {
     // This is the first missed approach leg after a CTL or straight in
@@ -956,8 +956,24 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
   else
   {
     prevPos = prevLeg->line.getPos2();
-    lastP1 = lastLines.last().p1();
-    lastP2 = lastLines.last().p2();
+    if(prevLeg->isCircular() && prevLeg->geometry.size() > 1)
+    {
+      // Consider circle geometry for legs with a simplified geometry
+      bool visible = false, hidden = false;
+      lastP1 = wToS(prevLeg->geometry.at(prevLeg->geometry.size() - 2), DEFAULT_WTOS_SIZE, &visible, &hidden);
+      if(hidden)
+        // Ignore calculated point behind globe
+        lastP1 = lastLines.last().p1();
+      else
+        prevCircle = true;
+
+      lastP2 = lastLines.last().p2();
+    }
+    else
+    {
+      lastP1 = lastLines.last().p1();
+      lastP2 = lastLines.last().p2();
+    }
   }
 
   Pos nextPos;
@@ -991,9 +1007,27 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
 
     // Calculate bezier control points by extending the last and next line
     QLineF ctrl1(lastP1, lastP2);
-    ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
     QLineF ctrl2(lineDraw.p2(), lineDraw.p1());
-    ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
+    if(prevCircle)
+    {
+      // Use shorter lines if previous leg is circular to get a smoother display
+      ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist / 2.f));
+      ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist / 2.f));
+    }
+    else
+    {
+      ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
+      ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
+    }
+
+#ifdef DEBUG_APPROACH_PAINT
+    {
+      atools::util::PainterContextSaver context(painter);
+      painter->setPen(Qt::black);
+      painter->drawLine(ctrl1);
+      painter->drawLine(ctrl2);
+    }
+#endif
 
     // Draw a bow connecting the two lines
     if(draw)
@@ -1020,11 +1054,18 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
 
   // The returned value represents the number of degrees you need to add to this
   // line to make it have the same angle as the given line, going counter-clockwise.
-  double angleToLastRev = line.angleTo(QLineF(lastLine.p1(), lastLine.p2()));
+  double angleToLastRev = line.angleTo(lastLine);
+
+  // Calculate the angle difference between last and current line
+  double diff =
+    angleAbsDiff(normalizeCourse(angleFromQt(lastLine.angle())), normalizeCourse(angleFromQt(line.angle())));
+
+  // Use a bigger extension (modify course more) if the course is a 180 (e.g. 90 and returning to 270)
+  float extension = atools::almostEqual(diff, 0., 1.) || atools::almostEqual(diff, 180., 1.) ? 1.f : 0.15f;
 
   // Calculate the start position of the next line and leave space for the arc
-  QLineF arc(line.p1(), QPointF(line.x2(), line.y2() + 100.));
-  arc.setLength(scale->getPixelForNm(1.f));
+  QLineF arc(line.p1(), QPointF(line.x2(), line.y2() /* + 100.*/));
+  arc.setLength(scale->getPixelForNm(extension));
   if(leg.turnDirection == "R")
     arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(),
                                               lastLine.p1()).angle()) + angleToLastRev / 2.) + 180.f);
@@ -1033,8 +1074,8 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
 
   // Calculate bezier control points by extending the last and next line
   QLineF ctrl1(lastLine.p1(), lastLine.p2()), ctrl2(endPos, arc.p2());
-  ctrl1.setLength(ctrl1.length() + scale->getPixelForNm(.5f));
-  ctrl2.setLength(ctrl2.length() + scale->getPixelForNm(.5f));
+  ctrl1.setLength(ctrl1.length() + scale->getPixelForNm(extension / 2.f));
+  ctrl2.setLength(ctrl2.length() + scale->getPixelForNm(extension / 2.f));
 
   // Draw the arc
   if(draw)
@@ -1058,6 +1099,20 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
 
   // Full line for drawing
   lastLines.append(line);
+
+#ifdef DEBUG_APPROACH_PAINT
+  {
+    atools::util::PainterContextSaver saver(context->painter);
+    painter->setPen(QPen(Qt::blue, 4.f, Qt::DashLine));
+    drawLine(painter, nextLine);
+
+    painter->setPen(QPen(Qt::magenta, 4.f, Qt::DashLine));
+    drawLine(painter, line);
+
+    painter->setPen(QPen(Qt::cyan, 4.f, Qt::DashLine));
+    drawLine(painter, arc);
+  }
+#endif
 
   // Line for text
   return nextLine;

@@ -441,8 +441,12 @@ atools::fs::weather::MetarResult ConnectClient::requestWeather(const QString& st
 
   atools::fs::weather::MetarResult retval;
 
-  // Ignore cache if not connected
   if(!isConnected())
+    // Ignore cache if not connected
+    return retval;
+
+  if(isSimConnect() && !dataReader->canFetchWeather())
+    // MSFS cannot fetch weather - disable to avoid stutters
     return retval;
 
   if(onlyStation && notAvailableStations.contains(station))
@@ -508,10 +512,10 @@ bool ConnectClient::isFetchAiAircraft() const
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)
 {
-  if(dataReader->isFsxHandler() && dataReader->isConnected() && dataReader->canFetchWeather())
+  if(dataReader->isConnected() && dataReader->canFetchWeather())
     dataReader->setWeatherRequest(weatherRequest);
 
-  if(socket != nullptr && socket->isOpen() && outstandingReplies.isEmpty())
+  if(socket != nullptr && socketConnected && socket->isOpen() && outstandingReplies.isEmpty())
   {
     if(verbose)
       qDebug() << "requestWeather" << weatherRequest.getStation();
@@ -627,9 +631,8 @@ bool ConnectClient::isConnectedNetwork() const
 }
 
 /* Called by signal QAbstractSocket::error */
-void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
+void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
 {
-  Q_UNUSED(error);
   // qDebug() << Q_FUNC_INFO << error;
 
   reconnectNetworkTimer.stop();

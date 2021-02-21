@@ -69,7 +69,6 @@ void MapPainterIls::render()
       if(ilsList != nullptr)
       {
         atools::util::PainterContextSaver saver(context->painter);
-        Q_UNUSED(saver);
 
         for(const MapIls& ils : *ilsList)
         {

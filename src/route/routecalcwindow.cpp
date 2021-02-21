@@ -69,9 +69,6 @@ RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
   connect(ui->horizontalSliderRouteCalcAirwayPreference, &QSlider::valueChanged,
           this, &RouteCalcWindow::updatePreferenceLabel);
 
-  connect(ui->dockWidgetRouteCalc->toggleViewAction(), &QAction::toggled,
-          this, &RouteCalcWindow::dockVisibilityChanged);
-
   units = new UnitStringTool();
   units->init({ui->spinBoxRouteCalcCruiseAltitude});
 
@@ -127,12 +124,6 @@ void RouteCalcWindow::helpClicked()
 {
   atools::gui::HelpHandler::openHelpUrlWeb(NavApp::getQMainWindow(), lnm::helpOnlineUrl + "ROUTECALC.html",
                                            lnm::helpLanguageOnline());
-}
-
-void RouteCalcWindow::dockVisibilityChanged(bool visible)
-{
-  if(visible)
-    setCruisingAltitudeFt(NavApp::getRouteCruiseAltFt());
 }
 
 void RouteCalcWindow::updateWidgets()

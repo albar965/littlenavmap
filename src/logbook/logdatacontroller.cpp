@@ -381,16 +381,16 @@ void LogdataController::editLogEntryFromMap(int id)
   editLogEntries({id});
 }
 
-void LogdataController::connectDialogSignals(LogdataDialog *dialog)
+void LogdataController::connectDialogSignals(LogdataDialog *dialogParam)
 {
-  connect(dialog, &LogdataDialog::planOpen, this, &LogdataController::planOpen);
-  connect(dialog, &LogdataDialog::planAdd, this, &LogdataController::planAdd);
-  connect(dialog, &LogdataDialog::planSaveAs, this, &LogdataController::planSaveAs);
-  connect(dialog, &LogdataDialog::gpxAdd, this, &LogdataController::gpxAdd);
-  connect(dialog, &LogdataDialog::gpxSaveAs, this, &LogdataController::gpxSaveAs);
-  connect(dialog, &LogdataDialog::perfOpen, this, &LogdataController::perfOpen);
-  connect(dialog, &LogdataDialog::perfAdd, this, &LogdataController::perfAdd);
-  connect(dialog, &LogdataDialog::perfSaveAs, this, &LogdataController::perfSaveAs);
+  connect(dialogParam, &LogdataDialog::planOpen, this, &LogdataController::planOpen);
+  connect(dialogParam, &LogdataDialog::planAdd, this, &LogdataController::planAdd);
+  connect(dialogParam, &LogdataDialog::planSaveAs, this, &LogdataController::planSaveAs);
+  connect(dialogParam, &LogdataDialog::gpxAdd, this, &LogdataController::gpxAdd);
+  connect(dialogParam, &LogdataDialog::gpxSaveAs, this, &LogdataController::gpxSaveAs);
+  connect(dialogParam, &LogdataDialog::perfOpen, this, &LogdataController::perfOpen);
+  connect(dialogParam, &LogdataDialog::perfAdd, this, &LogdataController::perfAdd);
+  connect(dialogParam, &LogdataDialog::perfSaveAs, this, &LogdataController::perfSaveAs);
 }
 
 void LogdataController::editLogEntries(const QVector<int>& ids)
@@ -585,7 +585,7 @@ void LogdataController::exportCsv()
     // Disable/enable header depending on append option
     choiceDialog.getCheckBox(HEADER)->setDisabled(choiceDialog.isChecked(APPEND));
     ChoiceDialog *dlgPtr = &choiceDialog;
-    connect(&choiceDialog, &ChoiceDialog::checkBoxToggled, [dlgPtr](int id, bool checked) {
+    connect(&choiceDialog, &ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
       if(id == APPEND)
         dlgPtr->getCheckBox(HEADER)->setDisabled(checked);
     });

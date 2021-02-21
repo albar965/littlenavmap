@@ -201,12 +201,12 @@ RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportForma
 
   // Set up context menu for table ==================================================
   ui->tableViewRouteExport->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(ui->tableViewRouteExport, &QTableView::customContextMenuRequested,
+  connect(ui->tableViewRouteExport, &QWidget::customContextMenuRequested,
           this, &RouteMultiExportDialog::tableContextMenu);
 
   QItemSelectionModel *selectionModel = ui->tableViewRouteExport->selectionModel();
   if(selectionModel != nullptr)
-    connect(selectionModel, &QItemSelectionModel::currentChanged,
+    connect(selectionModel, &QItemSelectionModel::currentChanged, this,
             [ = ](const QModelIndex&, const QModelIndex&) -> void {
       formatMap->updatePathErrors();
       updateTableColors();

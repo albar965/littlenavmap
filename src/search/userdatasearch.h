@@ -61,13 +61,13 @@ signals:
 
 private:
   virtual void updateButtonMenu() override;
-  virtual void saveViewState(bool distSearchActive) override;
-  virtual void restoreViewState(bool distSearchActive) override;
+  virtual void saveViewState(bool) override;
+  virtual void restoreViewState(bool) override;
   virtual void updatePushButtons() override;
   QAction *followModeAction() override;
 
   void setCallbacks();
-  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
 

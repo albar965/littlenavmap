@@ -60,8 +60,8 @@ public:
 
 private:
   /* Use events to update data and disconnect from database if not visible */
-  virtual void showEvent(QShowEvent *event) override;
-  virtual void hideEvent(QHideEvent *event) override;
+  virtual void showEvent(QShowEvent *) override;
+  virtual void hideEvent(QHideEvent *) override;
 
   /* Save and restore dialog size and tab selection */
   void saveState();

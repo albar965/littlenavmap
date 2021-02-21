@@ -37,11 +37,6 @@ RouteAltitude::RouteAltitude(const Route *routeParam)
 
 }
 
-RouteAltitude::~RouteAltitude()
-{
-
-}
-
 RouteAltitude RouteAltitude::copy(const Route *routeParam)
 {
   RouteAltitude retval(*this);

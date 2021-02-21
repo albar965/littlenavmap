@@ -176,7 +176,7 @@ void SymbolPainter::drawHelipadSymbol(QPainter *painter, const map::MapHelipad& 
   painter->setBrush(mapcolors::colorForSurface(helipad.surface));
   painter->setPen(QPen(mapcolors::helipadOutlineColor, 2., Qt::SolidLine, Qt::FlatCap));
 
-  painter->translate(QPoint(x, y));
+  painter->translate(QPointF(x, y));
   painter->rotate(helipad.heading);
 
   if(helipad.type == "SQUARE" || helipad.type == "MEDICAL")
@@ -669,7 +669,7 @@ void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int siz
   painter->drawEllipse(x - radius, y - radius, size, size);
 }
 
-void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, int x, int y, int size)
+void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, float x, float y, float size)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -696,7 +696,6 @@ void SymbolPainter::drawProcedureUnderlay(QPainter *painter, int x, int y, int s
 void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int size)
 {
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
   painter->setBackgroundMode(Qt::OpaqueMode);
 
   float lineWidth = std::max(size / 10.f, 1.5f);
@@ -743,7 +742,6 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, int x, int y, int size)
   poly.translate(-tx + x, -ty + y);
 
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->setBrush(Qt::black);
   painter->setPen(Qt::black);
@@ -755,7 +753,6 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
                                   bool routeFill, bool fast, int largeSize)
 {
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
 
   painter->setBackgroundMode(Qt::TransparentMode);
   if(routeFill)
@@ -966,7 +963,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
     if(ndb.type.isEmpty())
       texts.append(ndb.ident);
     else
-      texts.append(ndb.ident + " (" + (ndb.type == "CP" ? tr("CL") : ndb.type) + ")");
+      texts.append(tr("%1 (%2)").arg(ndb.ident).arg(ndb.type == "CP" ? tr("CL") : ndb.type));
   }
   else if(flags & textflags::IDENT)
     texts.append(ndb.ident);
@@ -997,7 +994,12 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::TYPE)
-    texts.append(vor.ident + " (" + vor.type.left(1) + ")");
+  {
+    if(vor.type.isEmpty())
+      texts.append(vor.ident);
+    else
+      texts.append(tr("%1 (%2)").arg(vor.ident).arg(vor.type.at(0)));
+  }
   else if(flags & textflags::IDENT)
     texts.append(vor.ident);
 
@@ -1147,7 +1149,6 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
     return;
 
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
 
   QColor backColor(backgroundColor);
   if(!backColor.isValid())

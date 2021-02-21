@@ -67,7 +67,7 @@ class WeatherReporter :
 public:
   /* @param type flight simulator type needed to find Active Sky weather file. */
   WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type);
-  virtual ~WeatherReporter();
+  virtual ~WeatherReporter() override;
 
   /*
    * @return Active Sky metar or empty if Active Sky was not found or the airport has no weather report

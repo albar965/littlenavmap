@@ -47,8 +47,8 @@ class CsvExporter :
   Q_DECLARE_TR_FUNCTIONS(CsvExporter)
 
 public:
-  CsvExporter(QWidget *parentWidget, SqlController *controller);
-  virtual ~CsvExporter();
+  CsvExporter(QWidget *parentWidget, SqlController *controllerParam);
+  virtual ~CsvExporter() override;
 
   // Disabled unused export functionality since it is not compatible with other classes
 #ifdef ENABLE_CSV_EXPORT

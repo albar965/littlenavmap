@@ -129,9 +129,9 @@ public:
   QVector<int> getSelectedIds() const;
 
   /* Default handler */
-  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
-  QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
+  QString formatModelData(const Column *, const QVariant& displayRoleValue) const;
 
   void selectAll();
 
@@ -207,7 +207,7 @@ private:
   void resetView();
   void editStartTimer();
   void doubleClick(const QModelIndex& index);
-  void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+  void tableSelectionChanged(const QItemSelection&, const QItemSelection&);
   void reconnectSelectionModel();
   void getNavTypeAndId(int row, map::MapTypes& navType, int& id);
   void getNavTypeAndId(int row, map::MapTypes& navType, map::MapAirspaceSources& airspaceSource, int& id);
@@ -220,7 +220,7 @@ private:
   void showApproachesCustomTriggered();
   void showOnMapTriggered();
   void contextMenu(const QPoint& pos);
-  void dockVisibilityChanged(bool visible);
+  void dockVisibilityChanged(bool);
   void distanceSearchStateChanged(int state);
   void updateDistanceSearch();
   void updateFromSpinBox(int value, const Column *col);

@@ -2,12 +2,11 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>
       Kartenlegende
     </title>
-   <style type="text/css" media="screen" xml:space="preserve">
+    <style type="text/css" media="screen" xml:space="preserve">
     th { background: lightgray; }
     table { border-width: 1px; border-color: lightgray; border-style: solid; }
     td { padding: 2px; }
@@ -21,867 +20,1819 @@
     <p>
       <b><code>Strg+Mausrad</code> benutzen, um die Textgröße zu ändern.</b>
     </p>
-<h2 id="little-navmap-legend">Kartenlegende</h2>
-<p>Standardmäßig werden alle Geschwindigkeiten in Knoten, Entfernungen in nautischen Meilen und Höhen in Fuß angegeben. Die Einheiten können im Dialog <code>Einstellungen</code> auf der Registerkarte <code>Einheiten</code> auf imperial oder metrisch eingestellt werden.</p>
-<p>Farben, Größen und Textbeschriftungen einiger Kartenelemente können im Dialog <code>Einstellungen</code> auf der Registerkarte <code>Kartendarstellung</code> geändert werden. Diese Legende zeigt die Standardwerte.</p>
-<p>Kurse und Richtungen werden mit <code>°T</code> für den wahren Kurs oder <code>°M</code> für den magnetischen Kurs ergänzt.</p>
-<h3 id="mouse-clicks">Mausklicks</h3>
-<p>Ein Klick in der Karte auf die aktive Stelle eines Objektes wie z.B. eines Entfernungsrings entfernt es. Der Cursor verwandelt sich in ein Handsymbol, um einen aktiven Punkt anzuzeigen, der es ermöglicht, ein Objekt durch Anklicken oder Entfernen bzw. Bearbeiten im Kontextmenü zu entfernen. Die Anzeige einer Kartenfeatureklasse wird aktiviert, wenn Sie diese Mausklicks verwenden. Ein <code>Shift+Klick</code> ermöglicht z.B. die Anzeige von Entfernungsringen.</p>
-<p>Sie können die Anzeige im Menü <code>Ansicht</code> -&gt; <code>Benutzerfunktionen</code> oder in der Symbolleiste aktivieren oder deaktivieren.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Maus</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Einfacher Klick</code></td>
-<td>Zeigt Informationen über alle Objekte rund um die Cursorposition an.</td>
-</tr>
-<tr class="even">
-<td><code>Doppelklick</code></td>
-<td>Zoomt auf das angeklickte Objekt und zeigt Informationen an.</td>
-</tr>
-<tr class="odd">
-<td><code>Umsch+Klick</code></td>
-<td>Hinzufügen oder Entfernen von Entfernungsringen oder Reichweitenringen für Funkfeuer.</td>
-</tr>
-<tr class="even">
-<td><code>Strg+Klick</code></td>
-<td>Startet eine Messung mit Rhumb-Linie oder löscht eine Messung.</td>
-</tr>
-<tr class="odd">
-<td><code>Alt+Klick</code></td>
-<td>Startet eine Messung mit Großkreis oder löscht eine Messung.</td>
-</tr>
-<tr class="even">
-<td><code>Strg+Umsch+Klick</code></td>
-<td>Nutzerpunkt hinzufügen oder bearbeiten.</td>
-</tr>
-<tr class="odd">
-<td><code>Strg+Alt+Klick</code></td>
-<td>Fügt einen Flugplatz, Navigationshilfe, Nutzerpunkt oder Position in den nächstgelegenen Flugplanabschnitt ein.</td>
-</tr>
-<tr class="even">
-<td><code>Umsch+Alt+Klick</code></td>
-<td>Fügt einen Flugplatz, Navigationshilfe, Nutzerpunkt oder Position am Ende des Flugplans an.</td>
-</tr>
-<tr class="odd">
-<td><code>Mausrad</code></td>
-<td>Karte vergrößern oder verkleinern.</td>
-</tr>
-<tr class="even">
-<td><code>Umsch+Mausrad</code></td>
-<td>Karte in kleinen Schritten vergrößern oder verkleinern.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="key-commands">Tastenkombinationen</h3>
-<p>Sie müssen das Kartenfenster aktivieren (d.h. anklicken), bevor Sie die Tastenkombinationen verwenden können.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Tasten</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Pfeiltasten</td>
-<td>Karte rollen bzw. bewegen.</td>
-</tr>
-<tr class="even">
-<td><code>+</code> und <code>-</code></td>
-<td>Karte vergrößern oder verkleinern.</td>
-</tr>
-<tr class="odd">
-<td><code>*</code> und <code>/</code></td>
-<td>Karte in kleinen Schritten vergrößern oder verkleinern.</td>
-</tr>
-<tr class="even">
-<td><code>Alt+Links</code> and <code>Alt+Rechts</code></td>
-<td>In der Kartenpositionshistorie vorwärts oder rückwärts gehen.</td>
-</tr>
-<tr class="odd">
-<td><code>Strg++</code> and <code>Strg+-</code></td>
-<td>Mehr oder weniger Details darstellen.</td>
-</tr>
-<tr class="even">
-<td><code>Strg+Pos 1</code></td>
-<td>Gehe zur Heimposition.</td>
-</tr>
-<tr class="odd">
-<td><code>Strg+Ende</code></td>
-<td>Gehe zum Zentrum der Distanzsuche.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="map-marks">Kartenmarkierungen</h3>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/home.png" alt="Heim-Position" /></td>
-<td>Mittelpunkt der Heim-Position.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/mark.png" alt="Distanzsuche" /></td>
-<td>Mittelpunkt für die Distanzsuche.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/centermark.png" alt="Center" /></td>
-<td>Zeigt die Kartenmitte an. Nützlich für den Navigationsmodus <code>Klick und Zentrieren</code>. Zeigt auch die Klick-/Touch-Bereiche der Kartennavigation an, falls aktiviert.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/route_leg.png" alt="Flight Plan" /></td>
-<td>Flugplan mit Entfernung, Richtung und magnetischem Kurs auf jeder Strecke. Die angezeigten Werte können im Dialog <code>Optionen</code> auf der Registerkarte <code>Kartenanzeige 2</code>.<br/><code>°M</code> und <code>°T</code> können geändert werden, um den magnetischen bzw. wahren Kurs anzuzeigen. <code>R</code> und <code>GC</code> bezeichnen Rhumb-Linie oder Großkreislinie. Suffixe können ausgeblendet werden, wenn nur ein Typ ausgewählt ist (Rhumb oder Großkreis)</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/route_procedure_leg.png" alt="Flight Plan Procedure" /></td>
-<td>Flugplanverfahren mit den gleichen Informationen wie oben.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/activesegment.png" alt="Active Leg" /></td>
-<td>Aktive Flugplanstrecke</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/route_wind.png" alt="Wind Barb" /></td>
-<td>Windrichtung und Geschwindigkeit am Flugplan-Wegpunkt. Siehe Kapitel <code>Winds Aloft</code> weiter unten für Details über Windspitzen.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/route_start.png" alt="Flight Plan Departure Position" /></td>
-<td>Flugplan Abflugposition am Flughafen. Entweder Parken, Treibstofftank, Landeplatz, Wasser oder Start- und Landebahn.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/routetoc.png" alt="Top of Climb" /></td>
-<td>Top of Climb Punkt mit Abstand vom Abflug.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/routetod.png" alt="Top of Descent" /></td>
-<td>Top of Descent Punkt mit Entfernung zum Ziel.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/range_rings.png" alt="Range" /></td>
-<td>Entfernungsringe, die mit dem Abstand gekennzeichnet sind.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/range_vor.png" alt="Range VOR" /> <img src="images/legend/range_ndb.png" alt="Range NDB" /></td>
-<td>VOR- oder NDB-Entfernungsringe mit Kennzeichnung durch Identität und Frequenz. Die Farbe zeigt den Typ Navaid an.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/distance_gc.png" alt="Distance GC" /></td>
-<td><a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great circle</a> Entfernungs- und Kursmesslinie mit Angabe der Länge und des wahren Kurses am Start und Ziel. Die beiden Überschriftenwerte sind bei kleinen Abständen gleich. Für kürzere Strecken wird die Länge auch in Fuß oder Meter angegeben.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/distance_rhumb.png" alt="Distance Rhumb" /></td>
-<td><a href="https://en.wikipedia.org/wiki/Rhumb_line">Rhumb-Linie</a> der gleichen Bearing-Distanzmessung, die Distanz und wahren Kurs anzeigt. Rhumb-Linien werden verwendet, um sich einem VOR oder NDB zu nähern oder entlang der Luftstraßen zu fliegen. Für kürzere Strecken wird die Länge auch in Fuß angegeben.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/distance_vor.png" alt="Distanz VOR" /></td>
-<td>Entfernungsmessungen, die von einen Flugplatz oder Funkfeuer bzw. Wegpunkt starten, erhalten die gleiche Farbe, wie das Symbol und zusätzlich noch die Kennung und Frequenz. Rhumb-Linien erhalten eine magenetische Kursangabe, wenn sie von einen Kartenobjekt aus starten, das eine magnetische Varianz zugewiesen hat.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/highlight_search.png" alt="Suchhervorhebung" /></td>
-<td>Ein Flugplatz oder Navigationspunkt, der in den Suchergebnissen selektiert ist.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/highlight_route.png" alt="Flugplanhervorhebung" /></td>
-<td>Ein Flugplatz oder Navigationspunkt, der in der Flugplantabelle selektiert ist.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/route_profile_mark.png" alt="Elevation Profile Position" /></td>
-<td>Zeigt die entsprechende Position auf dem Flugplan an, wenn Sie mit der Maus über das Höhenprofil fahren.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/logbook_entry.png" alt="Logbook Entry" /></td>
-<td>Flughäfen und Großkreiskreis zwischen Abflug und Ziel für einen in der Suchergebnistabelle ausgewählten Logbucheintrag. Das Label zeigt Abflug, Ziel und Großkreisabstand zwischen den Flughäfen.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="compass-rose">Kompassrose</h3>
-<p>Die Linienstärke kann im Dialog <code>Einstellungen</code> auf der Registerkarte <code>Kartendarstellung</code> geändert werden.</p>
-<p>Die Farben für den Flugplanverlauf und den Schiebewinkel hängen von den Einstellungen für die aktive Flugplanstrecke ab, die im Dialog <code>Einstellunge</code> auf der Registerkarte <code>Karte</code> geändert werden können.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/compass_rose_true_north.png" alt="Geographischer Norden" /></td>
-<td>Geographischer Norden.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/compass_rose_mag_north.png" alt="Magnetic North" /></td>
-<td>Magnetischer Norden.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/compass_rose_dist.png" alt="Distanzringe" /></td>
-<td>Entfernungskreise und Markierungen vom Benutzerflugzeug, falls mit dem Simulator verbunden.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/compass_rose_track.png" alt="Aircraft Track" /></td>
-<td>Die durchgezogene Linie zeigt die Flugbahn in Grad magnetisch an, wenn falls verbunden.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/compass_rose_heading.png" alt="Aircraft Heading" /></td>
-<td>Die gestrichelte Linie zeigt den Kurs des Flugzeugs an, falls verbunden.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/compass_rose_leg.png" alt="Flugplan Leg Course" /></td>
-<td>Das Magenta-Liniensegment zeigt den Kurs zum nächsten Wegpunkt des aktiven Flugplanabschnitts an. Versteckt, wenn kein Flugplan geladen ist.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/compass_rose_crab.png" alt="Crab Angle" /></td>
-<td>Schiebewinkel. Zeigt die Richtung an, die unter Berücksichtigung des Seitenwindes zum nächsten Wegpunkt des aktiven Flugplanabschnitts geflogen werden muss. Versteckt, wenn kein Flugplan geladen ist.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="vehicles">Flugzeuge und Schiffe</h3>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/icons/aircraft_small_user.png" alt="Small GA" /> <img src="images/icons/aircraft_jet_user.png" alt="Jet" /> <img src="images/icons/aircraft_helicopter_user.png" alt="Helicopter" /></td>
-<td>Benutzerflugzeug, wenn das Programm mit dem Flugsimulator verbunden ist. Die Beschriftungen variieren und können unter <code>Einstellungen</code> auf der Registerkarte <code>Kartenanzeige</code> angepasst werden. Das Benutzerflugzeug hängt von dem ausgewählten Flugzeug ab (Jet, Kolben/Turboprop oder Helikopter). Optional kann eine aus der Nase ragende schwarze Nadel die aktuelle Bodenspur anzeigen.</td>
-</tr>
-<tr class="even">
-<td><img src="images/icons/aircraft_small_ground_user.png" alt="Small GA on Ground" /> <img src="images/icons/aircraft_jet_ground_user.png" alt="Jet on Ground" /> <img src="images/icons/aircraft_helicopter_ground_user.png" alt="Helicopter on Ground" /> <img src="images/icons/aircraft_boat_ground_user.png" alt="Ship on Ground" /></td>
-<td>Benutzerflugzeug am Boden.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/aircraft_trackneedle.png" alt="Aircraft Track" /></td>
-<td>Nadel, die die aktuelle Bodenspur des Flugzeugs anzeigt. Die Flugzeugnase zeigt Kurs.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/aircraft_track.png" alt="Trail" /></td>
-<td>Benutzerflugzeugpfad, wenn er mit dem Flugsimulator verbunden ist.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/windpointer.png" alt="Wind" /></td>
-<td>Wind in der Umgebung des Benutzerflugzeugs mit Richtung in magnetischen Grad und Geschwindigkeit.</td>
-</tr>
-<tr class="even">
-<td><img src="images/icons/aircraft_small.png" alt="Small GA" /> <img src="images/icons/aircraft_jet.png" alt="Jet" /> <img src="images/icons/aircraft_helicopter.png" alt="Helicopter" /> <img src="images/icons/aircraft_small_ground.png" alt="Small GA" /> <img src="images/icons/aircraft_jet_ground.png" alt="Jet" /> <img src="images/icons/aircraft_helicopter_ground.png" alt="Helicopter" /> <img src="images/icons/aircraft_boat_ground.png" alt="Ship" /></td>
-<td>KI- oder Mehrspieler-Flugzeug. Die Beschriftungen variieren und können unter <code>Einstellungen</code> auf der Registerkarte <code>Kartenanzeige</code> angepasst werden. Das Symbol hängt vom Flugzeugtyp ab (Jet, Kolben/Turboprop, Helikopter oder Schiff).</td>
-</tr>
-<tr class="odd">
-<td><img src="images/icons/aircraft_online.png" alt="Online on in Flight" /> <img src="images/icons/aircraft_online_ground.png" alt="Online on Ground" /></td>
-<td>Online-Netzwerk-Flugzeug bzw. Client. Die Beschriftung variiert und kann wie oben beschrieben angepasst werden.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="airports">Flugplatzsymbole</h3>
-<p>Flugplätze mit Tower werden in Dunkelblau und andere in Magenta dargestellt. Texte von Add-On-Flugplätzen werden kursiv und unterstrichen hervorgehoben. Flugplätze, die ein Teil eines Flugplanes sind, werden mit der Farbe Hellgelb hervorgehoben.</p>
-<p>Das Symbol wird kleiner gezeichnet, wenn der Flugplatz keine Landebahnen hat. Dies kann bei Add-On-Flugplätzen vorkommen, die andere Techniken benutzen, um Landebahnen zu zeichnen.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/airport_tower_8000.png" alt="Large Airport" /> <img src="images/legend/airport_8000.png" alt="Large Airport" /></td>
-<td>Flugplätze mit festen Landebahnen, die länger als 8.000 Fuß sind. Alle Landebahnen, die länger als 4.000 Fuß sind werden dargestellt. Nur für niedrige Zoomstufen.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/airport_tower.png" alt="Airport with Tower" /> <img src="images/legend/airport.png" alt="Airport" /></td>
-<td>Flugplätze mit festen Landebahnen. Die weiße Linie zeigt die Ausrichtung der längsten Landebahn.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/airport_tower_soft.png" alt="Airport with soft runways and Tower" /> <img src="images/legend/airport_soft.png" alt="Airport with soft Runways" /></td>
-<td>Flugplätze mit weichen Landebahnen.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/airport_empty.png" alt="Airport Empty" /> <img src="images/legend/airport_empty_soft.png" alt="Airport Empty Soft" /></td>
-<td>Leerer Flugplatz ohne Rollbahnen, Parkpositionen und ohne Vorfelder.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/airport_tower_water.png" alt="Seaplane Base with Tower" /> <img src="images/legend/airport_water.png" alt="Seaplane Base" /></td>
-<td>Flugplatz nur für Wasserflugzeuge.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/airport_tower_mil.png" alt="Military Airport with Tower" /> <img src="images/legend/airport_mil.png" alt="Military Airport" /></td>
-<td>Militärischer Flugplatz.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/heliport.png" alt="Heliport" /></td>
-<td>Helikopterflugplatz.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/airport_tower_closed.png" alt="Closed Airport with Tower" /> <img src="images/legend/airport_closed.png" alt="Closed Airport" /></td>
-<td>Geschlossener bzw. aufgegebener Flugplatz. Alle Landebahnen sind geschlossen.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/airport_tower_fuel.png" alt="Airport with Fuel" /> <img src="images/legend/airport_soft_fuel.png" alt="Airport with soft Runways and Fuel" /></td>
-<td>Flugplätze die Treibstoff anbieten.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/airport_weather.png" alt="Airport Weather" /></td>
-<td>Wetter am Flughafen. Siehe Kapitel <code>Flughafenwetter</code> weiter unten.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/airportlabel.png" alt="Airport Text" /></td>
-<td>Flughafen-Label mit Name, Identität, ATIS-Frequenz, Höhe, beleuchteten Pisten (<code>L</code>) und Länge der längsten Piste. Die Textbeschriftungen für einen Flughafen können im Dialog <code>Optionen</code> auf der Registerkarte <code>Kartenanzeige</code> geändert werden.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/airport_overview.png" alt="Airport Overview" /></td>
-<td>Übersicht über die Start- und Landebahnen des Flughafens, die beim Vergrößern der Karte vor dem vollständigen Flughafendiagramm angezeigt wird.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="navaids">Wegpunkte, Funkfeuer und Luftstraßen</h3>
-<p>Navigationspunkte, die Teil eines Flugplanes sind, werden hellgelb hervorgehoben.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/vordme_small.png" alt="VORDME" /> <img src="images/legend/vordme_large.png" alt="VORDME" /></td>
-<td>VOR-DME-Station mit Kennung, Type (High, Low oder Terminal) und Frequenz. Die Kompassrose zeigt die magnetische Varianz auf niedrigen Zoomstufen.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/vor_small.png" alt="VOR" /> <img src="images/legend/vor_large.png" alt="VOR" /></td>
-<td>VOR-Station mit Kennung, Typ und Frequenz.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/dme.png" alt="DME" /></td>
-<td>DME-Station mit Kennung, Typ und Frequenz.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/ndb_small.png" alt="NDB" /> <img src="images/legend/ndb_large.png" alt="NDB" /></td>
-<td>NDB-Station mit Kennung, Typ (HH, H, MH or CL - Compass Locator) und Frequenz.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/waypoint.png" alt="Waypoint" /></td>
-<td>Wegpunkt mit Namen.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/waypoint_invalid.png" alt="Waypoint" /></td>
-<td>Ungültiger Flugplatz oder Navigationspunkt, der ein Teil des Flugplanes ist und nicht in der Szeneriedatenbank gefunden wurde.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/marker_outer.png" alt="Marker" /> <img src="images/legend/marker_middle.png" alt="Marker" /> <img src="images/legend/marker_inner.png" alt="Marker" /></td>
-<td>Einflugmarkierung mit Typ und Kurs.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/userwaypoint.png" alt="User-defined Waypoint" /></td>
-<td>User-defined waypoint with name.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/airway_jet.png" alt="Jet Airway" /></td>
-<td>Jet-Luftstraße mit Namen, Typ (Jet oder Both) und Höhenrestriktion.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/airway_victor.png" alt="Victor Airway" /></td>
-<td>Victor-Luftstraße mit Namen, Typ (Victor oder Both) und Höhenrestriktion.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/ils_gs_small.png" alt="ILS" /> <img src="images/legend/ils_gs.png" alt="ILS" /> ILS mit Gleitpfad. Text zeigt Kennung, Frequenz, magnetischen Kurs, Winkel des Gleitpfades und DME Indikator, falls verfügbar.</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/ils_small.png" alt="ILS" /> <img src="images/legend/ils_large.png" alt="ILS" /> Localizer. Text zeigt Kennung, Frequenz, magnetischen Kurs und DME Indikator, falls verfügbar.</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="procedures">Prozeduren</h3>
-<p>Siehe Kapitel <a href="APPROACHES.md">Prozeduren</a> für detailliertere Informationen über alle Abschnitte.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/proc_flightplan.png" alt="Procedure Leg Flight Plan" /> <img src="images/legend/proc_preview.png" alt="Procedure Leg Preview" /></td>
-<td>SID, STAR, Anflug oder Transition für den Flugplan und in der Vorschau mit Entfernung, Richtung und Magnetkurs auf jeder Strecke.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/proc_missed_flightplan.png" alt="Missed Leg Flight Plan" /> <img src="images/legend/proc_missed_preview.png" alt="Missed Leg Preview" /></td>
-<td>Verpasste Anflugstrecke für Flugplan und Vorschau.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/proc_ctl.png" alt="Circle to Land or Straight in" /></td>
-<td>Gepunktete Linie zeigt Kreis-zu-Land oder geradlinigen Teil eines Verfahrens an, der zu einem Start- und Landebahnende führt. Hier ein Teil des Flugplans.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/procvectors.png" alt="Vectors" /></td>
-<td>Vector Abschnitt zeigt den Kurs zu einem ersten Fix an. Hier ein Teil des Flugplans.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/procmanual.png" alt="Manual" /></td>
-<td>Manueller Abschnitt. Fliegen Sie nach den Anweisungen des ATC. Hier als Vorschau dargestellt.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/routealternate.png" alt="Alternate" /></td>
-<td>Legende zum alternativen Ziel.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/proc_point.png" alt="Procedure Point" /></td>
-<td>Der grau-gelb gefüllte Kreis kennzeichnet einen Prozedurpunkt, der keine Navigationshilfe ist, sondern durch Kurs bzw. Entfernung von einer Navigationshilfe, einer Höhenbeschränkung oder einer manuellen Beendigung definiert ist.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/proc_flyover.png" alt="Procedure Overfly" /></td>
-<td>Ein schwarzer Kreis zeigt einen Wegpunkt an der zwangsweise überflogen werden muss. Dies kann ein Prozedurpunkt oder eine Navigationshilfe sein.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/proc_faf.png" alt="Procedure FAF" /></td>
-<td>Das Malteserkreuz markiert den Endanflug oder den Punkt für den finalen Endanflugkurs.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/proc_ils.png" alt="Procedure GS" /></td>
-<td>Das Prefix <code>GS</code> zeigt keine Höhenrestriktion an sondern ist ein Indikator für den ILS-Gleitpfad. Kann <code>auf</code> oder <code>auf oder höher</code> anzeigen.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/proclegmanual.png" alt="Procedure Manual" /></td>
-<td>Fliegen Sie einen Kurs, eine Spur oder eine Warteschleife, bis er manuell von ATC beendet wird.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/procinterceptleg.png" alt="Procedure Intercept Leg" /></td>
-<td>Den nächsten Abschnitt bei einem Kurs von etwa 45 Grad abfangen.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/procinterceptalt.png" alt="Procedure Altitude" /></td>
-<td>Prozedurabschnitt, der bei Erreichen der vorgegebenen Höhe beendet wird.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/procinterceptcd.png" alt="Procedure Intercept Distance" /></td>
-<td>Ein Punkt, der durch einen Kurs oder eine Richtung und die Entfernung zu einer Navigationshilfe definiert ist.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/procradial.png" alt="Prozedur Intercept Radial" /></td>
-<td>Turn, um ein radio navaid radial zu intercepten.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/procinterceptd.png" alt="Procedure Intercept Course Distance" /></td>
-<td>Dieser Punkt wird durch einen Kurs oder eine Spur definiert, die durch Erreichen einer DME-Distanz beendet wird.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/procinterceptcoursetofix.png" alt="Procedure Intercept Course to Fix" /></td>
-<td>Fangen Sie einen Kurs zum nächsten Punkt in einem Winkel von etwa 45 Grad ab.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="airport-diagram">Flugplatzdiagramm</h3>
-<p>Landebahn-, Rollbahn-, Helikopterlandeplatz- und Vorfeldfarben zeigen den Typ der Oberfläche an. Weiß wird für einen ungültigen Oberflächentyp benutzt.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/runway.png" alt="Runway" /></td>
-<td>Landebahn mit Länge, Breite, Lichtindikator (L) und Oberflächentyp.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/runway_end.png" alt="Runway End" /></td>
-<td>Landebahnende mit Kennung und magnetischem Kurs.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/runway_threshold.png" alt="Runway Threshold" /></td>
-<td>Versetzte Anflugschwelle. Nicht zum Landen benutzen.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/runway_overrun.png" alt="Runway Overrun" /></td>
-<td>Overrun-Bereich. Nicht zum Rollen, Starten oder Landen benutzen.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/runway_blastpad.png" alt="Runway Blastpad" /></td>
-<td>Blast-Pad-Bereich. Nicht zum Rollen, Starten oder Landen benutzen.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/taxiway.png" alt="Taxiway" /></td>
-<td>Rollbahn mit Namen.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/closedtaxi.png" alt="Closed Taxiway" /></td>
-<td>Geschlossene Rollbahn.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/apron_transparent.png" alt="Taxiway" /></td>
-<td>Halbtransparente Vorfelder und Rollbahnen zeigen, dass keine Oberfläche gezeichnet wird.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/tower_active.png" alt="Tower" /> <img src="images/legend/tower_inactive.png" alt="Tower" /></td>
-<td>Tower. Rot, wenn eine Funkfrequenz zugewiesen ist, sonst nur die Sichtposition des Towers.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/parking_fuel.png" alt="Fuel" /></td>
-<td>Tankstelle</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/parking_ga_ramp.png" alt="Parking" /></td>
-<td>Parkposition der allgemeinen Luftfahrt (GA Ramp) mit Nummer und Richtungsanzeiger.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/parking_gate_no_jetway.png" alt="Parking" /> <img src="images/legend/parking_gate.png" alt="Parking" /></td>
-<td>Flugsteig (Gate) mit Nummer und Richtungsanzeiger. Ein zweiter Ring zeigt die Verfügbarkeit einer Fluggastbrücke (Jetway) an.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/parking_ramp_cargo.png" alt="Parking" /></td>
-<td>Frachtrampe</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/parking_mil.png" alt="Parking" /></td>
-<td>Militärische Parkposition oder Frachtrampe.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/helipad.png" alt="Helipad" /></td>
-<td>Helikopterlandeplatz</td>
-</tr>
-</tbody>
-</table>
-<h3 id="elevation-profile-legend">Höhenprofil</h3>
-<p>Die Farben und Symbole des Höhenprofils folgen dem Stil der Hauptkarte, wie er im Einstellungsdialog auf der Registerkarte <code>Kartendarstellung</code> eingestellt ist. Farben, Muster und Symbole für Flughäfen, Navigationshilfen, Prozeduren, aktive und abgeflogene Flugplanabschnitte sind identisch. Die Profilanzeige folgt auch anderen Karteneinstellungen wie der Sichtbarkeit von Flugplanlinie, Flugzeug und Flugzeugpfad.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/profile_start.png" alt="Profile Start" /> <img src="images/legend/profile_end.png" alt="Profile End" /></td>
-<td>Boden mit Abflughöhe auf der linken Seite und Zielflughafenhöhe auf der rechten Seite.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/profile_route.png" alt="Flight Plan Profile" /></td>
-<td>Reiseflughöhe.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/profiletoc.png" alt="Top of Climb" /></td>
-<td>Ende des Steigfluges mit Entfernung vom Start.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/profiletod.png" alt="Top of Descent" /></td>
-<td>Start des Sinkfluges mit Entfernung zum Ziel.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/proc_at.png" alt="At" /></td>
-<td>Höhenbeschränkung einer Prozedur mit Wegpunktname.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/proc_atabove.png" alt="At or above" /></td>
-<td><em>Auf oder höher</em> Höhenbeschränkung einer Prozedur mit Wegpunktname.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/proc_atbelow.png" alt="At or below" /></td>
-<td><em>Auf oder niedriger</em> Höhenbeschränkung einer Prozedur mit Wegpunktname.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/proc_between.png" alt="Between" /></td>
-<td><em>Auf oder höher und auf oder niedriger</em> (zwischen) Höhenbeschränkung einer Prozedur.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/profile_safe_alt.png" alt="Profile Safe Alt" /></td>
-<td>Minimale sichere Höhe für den Flugplan. Dies ist die Bodenhöhe plus 1000 Fuß, aufgerundet auf die nächsten 500 Fuß. Der 1000 Fuß Puffer kann im Dialog <code>Einstellungen</code> auf der Registerkarte <code>Flugplan</code> geändert werden.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/profilesegminalt.png" alt="Profile Segment Safe Alt" /></td>
-<td>Minimale sichere Höhe für ein Flugplansegment. Es gelten die gleichen Regeln wie für die minimale sichere Höhe des Flugplans.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/profile_aircraft.png" alt="Aircraft" /></td>
-<td>Benutzerflugzeug, wenn das Programm mit dem Simulator verbunden ist. Die Beschriftungen zeigen die aktuelle Höhe und die Steig- bzw. Sinkrate an.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/profile_track.png" alt="Trail" /></td>
-<td>Benutzerflugzeugpfad, wenn das Programm mit dem Flugsimulator verbunden ist.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/profile_ils.png" alt="ILS" /></td>
-<td>ILS-Gleitpfad. Die Beschriftung zeigt Kennung, Frequenz, Magnetischen Kurs, Neigung des Gleitpfades und DME-Anzeige, falls vorhanden. Dies wird nur angezeigt, wenn ein Anflug ausgewählt wurde und das Start- und Landebahnende ein ILS hat. Der Öffnungswinkel hat keinen Bezug zur tatsächlichen Genauigkeit.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/profile_vasi.png" alt="VASI" /></td>
-<td>VASI-Pfad. Die Beschriftung zeigt die Neigung und den VASI-Typ an. Dies wird nur angezeigt, wenn ein Anflug ausgewählt wurde und das Start- und Landebahnende ein VASI hat. Der Öffnungswinkel hat keinen Bezug zur tatsächlichen Genauigkeit.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="airport-traffic-pattern">Platzrunde</h3>
-<p>Farbe und Indikatoren hängen von der Wahl des Benutzers im Dialogfeld <code>Platzrunde</code> ab.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/pattern_downwind.png" alt="Downwind" /></td>
-<td>Gegenanflug der Platzrunde mit Höhe und Magnetkurs.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/pattern_runway.png" alt="Final" /></td>
-<td>Endabschnitt der Platzrunde mit Start- und Landebahn sowie magnetischen Kurs.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/pattern_entry.png" alt="Entry Indicator" /></td>
-<td>Pfeil und gestrichelte Linien zeigen den Pfad für den Eintritt in die Platzrunde.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/pattern_exit.png" alt="Exit Indicator" /></td>
-<td>Gestrichelte Linie und Pfeile zeigen den Pfad für den Austritt aus der Platzrunde.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/patternactive.png" alt="Active Position" /></td>
-<td>Weißer Kreis ist aktiver Punkt an der Startbahnschwelle des Musters. Der Mauszeiger ändert sich nach oben und ermöglicht es, das Muster im Kontextmenü zu entfernen.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="holding">Holding</h3>
-<p>Die Farbe hängt von der Wahl des Benutzers im Haltedialog ab.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/holdinbound.png" alt="Inbound to Fix" /></td>
-<td>Holding fix, magnetischer und echter Inbound-Kurs, Zeit für gerades Leg und navaid ident (<code>LBU</code>). Die Identität wird nur angezeigt, wenn das Holding an ein Navaid gekoppelt ist. Die echte Kursanzeige hängt von den Optionen ab.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/holdoutbound.png" alt="outbound from Fix" /></td>
-<td>Magnetischer und echter Outbound-Kurs, Geschwindigkeit und Höhe wie im Dialog angegeben. Die echte Kursanzeige hängt von den Optionen ab.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/holdactive.png" alt="Active Position" /></td>
-<td>Aktivpunkt und Holdingfix. Der Mauszeiger ändert sich nach oben und ermöglicht es, die Haltung im Kontextmenü zu entfernen.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="mora-grid">MORA-Gitter</h3>
-<p>Das minimale Off-Route-Höhenraster stellt eine Hindernisfreigabe innerhalb eines Ein-Grad-Rasters dar. Die Höhe übergeht jegliches Gelände und Hindernisse um 1000 Fuß in Gebieten, in denen die höchsten Lagen 5000 Fuß oder niedriger sind. Wo die Höhen über 5000 Fuß liegen, wird das Gelände um 2000 Fuß übergangen.</p>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/map_mora.png" alt="MORA Grid" /></td>
-<td>MORA-Gitter. Die große Zahl ist 1000 Fuß und kleine Zahl 100 Fuß. Beispiel hier: 3300, 4400, 6000, 9900 und 10500 Fuß.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="airport-weather">Flugplatzwetter</h3>
-<h4 id="airport-weather-flightrules">Flugregeln</h4>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/weather_vfr.png" alt="VFR" /></td>
-<td>VFR. Sichtflugregeln.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/weather_mvfr.png" alt="MVFR" /></td>
-<td>MVFR. Marginale VFR. Sicht gleich oder kleiner als 5 Meilen oder niedrigste Wolkendecke gleich oder kleiner als 3000 Fuß.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/weather_ifr.png" alt="IFR" /></td>
-<td>IFR. Instrumentenflugregeln. Sichtweite unter 3 Meilen oder niedrigste Wolkendecke unter 1000 Fuß.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/weather_lifr.png" alt="LIFR" /></td>
-<td>LIFR. Limitierte IFR. Sichtweite unter einer Meile oder niedrigste Wolkendecke unter 500 Fuß.</td>
-</tr>
-</tbody>
-</table>
-<h4 id="airport-weather-cloud">Wolken</h4>
-<table cellspacing="0">
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/weather_vfr_clear.png" alt="Clear" /></td>
-<td>Keine Wolken</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/weather_vfr_few.png" alt="Few" /></td>
-<td>Vereinzelt</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/weather_vfr_sct.png" alt="Scattered" /></td>
-<td>Verteilt</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/weather_vfr_bkn.png" alt="Broken" /></td>
-<td>Überwiegend bedeckt</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/weather_vfr_ovc.png" alt="Overcast" /></td>
-<td>Bedeckt</td>
-</tr>
-</tbody>
-</table>
-<h4 id="airport-weather-wind">Wind</h4>
-<table cellspacing="0">
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/weather_vfr_clear.png" alt="No Wind" /></td>
-<td>Kein Zeiger bedeutet Wind unter 2 Knoten.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/weather_wind4.png" alt="4 Knots Wind" /></td>
-<td>Zeiger ohne Windfahnen zeigt Wind unter 5 Knoten.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/weather_wind5.png" alt="5 Knots Wind" /></td>
-<td>Kurze Windfahne am Zeiger entspricht 5 Knoten Wind.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/weather_wind10.png" alt="10 Knots Wind" /></td>
-<td>Lange Windfahne entspricht 10 Knoten Wind.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/weather_wind50.png" alt="50 Knots Wind" /></td>
-<td>50 Knoten Wind.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/weather_wind25.png" alt="25 Knots Wind" /></td>
-<td>Beispiel: 25 Knoten.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/weather_wind65.png" alt="65 Knots Wind" /></td>
-<td>Beispiel: 65 Knoten.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/weather_wind_gust.png" alt="15 Knots steady Wind gusting to 30 Knots" /></td>
-<td>Beispiel: 15 Knoten stetiger Wind (schwarz) böen bis 30 Knoten (rot).</td>
-</tr>
-</tbody>
-</table>
-<h4 id="high-alt-wind">Höhenwinde</h4>
-<table cellspacing="0">
-<thead>
-<tr class="header">
-<th>Symbol</th>
-<th>Beschreibung</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/legend/wind_none.png" alt="No Wind" /></td>
-<td>Kein Zeiger zeigt Wind unter 2 Knoten an.</td>
-</tr>
-<tr class="even">
-<td><img src="images/legend/wind_low.png" alt="Wind below 5 Knots" /></td>
-<td>Unter 5 Knoten von Westen.</td>
-</tr>
-<tr class="odd">
-<td><img src="images/legend/wind_25.png" alt="25 Knots Wind" /></td>
-<td>Beispiel: 25 Knoten.</td>
-</tr>
-</tbody>
-</table>
+    <!-- ===================================================================== -->
+    <!-- replace "../images/legend_" with "images/legend/" and "../images/icon_" with "images/icons/"-->
+    <h1 id="kartenlegende">
+      Kartenlegende
+    </h1>
+    <p>
+      Standardmäßig werden alle Geschwindigkeiten in Knoten, Entfernungen in NM und Höhen in Fuß angegeben. Die
+      Einheiten können im Dialog <code>Einstellungen</code> auf der Seite <code>Einheiten</code> auf imperial oder
+      metrisch eingestellt werden.
+    </p>
+    <p>
+      Farben, Größen und Textbeschriftungen einiger Kartenelemente können im Dialog <code>Einstellungen</code> auf der Seite
+      <code>Kartenanzeige</code> geändert werden. Diese Legende zeigt die
+      Standardwerte.
+    </p>
+    <p>
+      Kurse und Richtungen werden mit <code>°T</code> für den wahren Kurs oder <code>°M</code> für den magnetischen
+      Kurs ergänzt.
+    </p>
+    <h2 id="mausklicks">
+      Mausklicks
+    </h2>
+    <p>
+      Die Anzeige einer Kartenfeatureklasse wird aktiviert, wenn Sie diese Mausklicks verwenden. Ein
+      <code>Umschalt+Klick</code> ermöglicht z.B. die Anzeige von Distanzkreisen.
+    </p>
+    <p>
+      Sie können die Anzeige im Menü <code>Ansicht</code> -&gt; <code>Nutzerobjekte</code> oder in der Symbolleiste
+      aktivieren oder deaktivieren.
+    </p>
+    <p>
+      Ein Klick in der Karte auf die aktive Stelle eines Objektes wie z.B. eines Entfernungsrings entfernt es. Der
+      Mauszeiger verwandelt sich in ein Handsymbol, um einen aktiven Punkt anzuzeigen, der es ermöglicht, ein Objekt
+      durch Anklicken oder Entfernen bzw. Bearbeiten im Kontextmenü zu entfernen.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Maus
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <code>Einfacher Klick</code>
+          </td>
+          <td>
+            Zeigt Informationen über alle Objekte rund um die Position des Mauszeigers an.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <code>Doppelklick</code>
+          </td>
+          <td>
+            Zoomt auf das angeklickte Objekt und zeigt Informationen an.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <code>Umsch+Klick</code>
+          </td>
+          <td>
+            Hinzufügen oder Entfernen von Distanzkreisen oder Reichweitenringen für Funkfeuer.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <code>Alt+Klick</code>
+          </td>
+          <td>
+            Startet eine Messung mit Großkreis oder löscht eine Messung.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <code>Strg+Umsch+Klick</code>
+          </td>
+          <td>
+            Nutzerpunkt hinzufügen oder bearbeiten.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <code>Strg+Alt+Klick</code>
+          </td>
+          <td>
+            Fügt einen Flugplatz, Navigationshilfe, Nutzerpunkt oder Position in den nächstgelegenen Flugplanabschnitt
+            ein.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <code>Umsch+Alt+Klick</code>
+          </td>
+          <td>
+            Fügt einen Flugplatz, Navigationshilfe, Nutzerpunkt oder Position am Ende des Flugplans an.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <code>Mausrad</code>
+          </td>
+          <td>
+            Karte vergrößern oder verkleinern.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <code>Umsch+Mausrad</code>
+          </td>
+          <td>
+            Karte in kleinen Schritten vergrößern oder verkleinern.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <code>Ctrl+Mausrad</code>
+          </td>
+          <td>
+            Kartendetails ändern.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="key-commands">
+      Tastenkombinationen
+    </h2>
+    <p>
+      Sie müssen das Kartenfenster aktivieren (d.h. anklicken oder <code>F2</code> drücken), bevor Sie die
+      Tastenkombinationen verwenden können.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Tasten
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            Pfeiltasten
+          </td>
+          <td>
+            Karte rollen bzw. bewegen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <code>+</code> und <code>-</code>
+          </td>
+          <td>
+            Karte vergrößern oder verkleinern.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <code>*</code> und <code>/</code>
+          </td>
+          <td>
+            Karte in kleinen Schritten vergrößern oder verkleinern.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <code>Alt+Links</code> und <code>Alt+Rechts</code>
+          </td>
+          <td>
+            In der Kartenpositionshistorie vorwärts oder rückwärts springen.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <code>Strg++</code> und <code>Strg+-</code>
+          </td>
+          <td>
+            Mehr oder weniger Details darstellen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <code>Strg+Pos 1</code>
+          </td>
+          <td>
+            Gehe zur Heimposition.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <code>Strg+Ende</code>
+          </td>
+          <td>
+            Gehe zum Zentrum der Distanzsuche.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="highlights">
+      Hervorhebungen und Nutzerobjekte
+    </h2>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/home.png" alt="Home" />
+          </td>
+          <td>
+            Mittelpunkt der Heimposition.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/mark.png" alt="Mark" />
+          </td>
+          <td>
+            Mittelpunkt für die Distanzsuche.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/centermark.png" alt="Center" />
+          </td>
+          <td>
+            Zeigt die Kartenmitte an. Nützlich für den Navigationsmodus <code>Klick und Zentrieren</code>. Zeigt auch
+            die Klick-/Touch-Bereiche der Kartennavigation an, falls aktiviert.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/route_leg.png" alt="Flight Plan" />
+          </td>
+          <td>
+            Flugplan mit Entfernung, Richtung und magnetischem Kurs auf jeder Strecke. Die angezeigten Werte können im
+            Dialog <code>Einstellungen</code> auf der Seite <code>Kartenanzeige 2</code> geändert werden. <code>°M</code> und <code>°T</code> zeigen den magnetischen
+            bzw. wahren Kurs an. `
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/route_procedure_leg.png" alt="Flight Plan Procedure" />
+          </td>
+          <td>
+            Flugplanprozedur mit den gleichen Informationen wie oben.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/activesegment.png" alt="Active Leg" />
+          </td>
+          <td>
+            Aktive Flugplanstrecke
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/route_wind.png" alt="Wind Barb" />
+          </td>
+          <td>
+            Windrichtung und Geschwindigkeit am Flugplanwegpunkt. Siehe weiter unten für Details über Windsymbole.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/route_start.png" alt="Flight Plan Departure Position" />
+          </td>
+          <td>
+            Flugplan Abflugposition am Flugplatz. Entweder Parken, Landeplatz, Wasser oder Runway.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/routetoc.png" alt="Top of Climb" />
+          </td>
+          <td>
+            Steigflugende mit Abstand vom Abflug. Kann im Menü <code>Ansicht</code> ausgeschaltet werden.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/routetod.png" alt="Top of Descent" />
+          </td>
+          <td>
+            Sinkflugbeginn mit Entfernung zum Ziel. Kann im Menü <code>Ansicht</code> ausgeschaltet werden.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/range_rings.png" alt="Range" />
+          </td>
+          <td>
+            Distanzkreise, die mit dem Abstand gekennzeichnet sind. Die Anzahl und Distanz der Kreise kann in den
+            Einstellungen auf der Seite <code>Karte</code> geändert werden.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/range_vor.png" alt="Range VOR" /> <img src="images/legend/range_ndb.png" alt=
+            "Range NDB" />
+          </td>
+          <td>
+            VOR- oder NDB-Distanzkreise mit Kennzeichnung der Kennung und Frequenz. Die Farbe zeigt den Typ der
+            Navigationshilfen an.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/distance_gc.png" alt="Distance" />
+          </td>
+          <td>
+            <span class="title-ref">Großkreis &lt;https:// de.wikipedia.org/wiki/ Gro%C3%9Fkreis&gt;</span>__
+            Entfernungs- und Kursmesslinie mit Angabe der Länge und des wahren Kurses am Start und Ziel. Die beiden
+            Werte sind bei kleinen Abständen gleich. Für kürzere Strecken wird die Länge auch in Fuß oder Meter
+            angegeben. Die Breite der Messlinien kann im Dialog <code>Einstellungen</code> auf der Seite <code>Kartenanzeige 2</code> geändert werden. Die Beschriftungen können in der
+            Baumansicht auf der rechten Seite der gleichen Seite geändert werden.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/distance_vor.png" alt="Distance VOR" />
+          </td>
+          <td>
+            Entfernungsmessungen, die von einen Flugplatz oder Funkfeuer bzw. Wegpunkt starten, erhalten die gleiche
+            Farbe, wie das Symbol und zusätzlich noch die Kennung und Frequenz.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/highlight_search.png" alt="Search Highlight" />
+          </td>
+          <td>
+            Ein Flugplatz oder Navigationspunkt, der in den Suchergebnissen ausgewählt ist.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/highlight_route.png" alt="Flight Plan Hightlight" />
+          </td>
+          <td>
+            Ein Flugplatz oder Navigationspunkt, der in der Flugplantabelle selektiert ist.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/highlightprocfrom.png" alt="Procedure Highlight From" /> <img src=
+            "images/legend/highlightprocto.png" alt="Procedure Highlight To" />
+          </td>
+          <td>
+            Hervorgehobene Position eines Prozedurabschnittes in der Vorschau. Der kleine Kreis zeigt die <em>von</em>
+            und der große Kreis die <em>nach</em> Position.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/highlightprocrec.png" alt="Procedure Highlight Related" />
+          </td>
+          <td>
+            Der dünne Kreis zeigt die empfohlenen oder verwandte Navigationshilfe eines Prozedurabschnittes
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/route_profile_mark.png" alt="Elevation Profile Position" />
+          </td>
+          <td>
+            Zeigt die entsprechende Position auf dem Flugplan an, wenn Sie mit der Maus über das Höhenprofil fahren.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="logbuch-vorschau">
+      Logbuch Vorschau
+    </h2>
+    <p>
+      Für ausgewählte Logbucheinträge wird die direkte Verbindung zwischen Start und Ziel sowie Flugplanvorschau und
+      geflogener Pfad angezeigt. Alle oben genannten Optionen können im Kontextmenü der Logbuchsuche deaktiviert
+      werden.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/logbook_entry.png" alt="Logbook Entry" />
+          </td>
+          <td>
+            Flughäfen und Großkreisweg zwischen Start und Ziel für einen in der Suchergebnistabelle ausgewählten
+            Logbucheintrag. Die Beschriftung zeigt Start, Ziel und Großkreisentfernung zwischen Flughäfen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/logbook_route.png" alt="Logbook Entry Flight Plan" />
+          </td>
+          <td>
+            Flugplanvorschau, wie im Logbucheintrag gespeichert. Wegpunktnamen und Flugrichtung sind durch Pfeile
+            angegeben. Beachten Sie, dass komplexe Prozeduren nicht sichtbar sind.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/logbook_trail.png" alt="Logbook Entry Trail" />
+          </td>
+          <td>
+            Geflogener Benutzerflugzeugpfad, der mit dem Logbucheintrag gespeichert ist.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="compass-rose">
+      Kompassrose
+    </h2>
+    <p>
+      Die Linienstärke kann im Dialog <code>Einstellungen</code> auf der Seite <code>Kartenanzeige 2</code> geändert werden.
+    </p>
+    <p>
+      Die Farben für den Flugplanverlauf und die Richtung hängen von den Einstellungen für die aktive Flugplanstrecke
+      ab, die im Dialog <code>Einstellungen</code> auf der Seite <code>Karte</code>
+      geändert werden können.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/compass_rose_true_north.png" alt="True North" />
+          </td>
+          <td>
+            Geographischer Norden.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/compass_rose_mag_north.png" alt="Magnetic North" />
+          </td>
+          <td>
+            Magnetischer Norden.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/compass_rose_dist.png" alt="Distance Circles" />
+          </td>
+          <td>
+            Entfernungskreise und Markierungen vom Benutzerflugzeug, falls mit dem Simulator verbunden.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/compass_rose_track.png" alt="Aircraft Track Rose" />
+          </td>
+          <td>
+            Die durchgezogene Linie zeigt die Flugbahn in Grad magnetisch an, falls verbunden.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/compass_rose_heading.png" alt="Aircraft Heading" />
+          </td>
+          <td>
+            Die gestrichelte Linie zeigt den Kurs des Flugzeugs an, falls verbunden.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/compass_rose_leg.png" alt="Flight Plan Leg Course" />
+          </td>
+          <td>
+            Das Magenta-Liniensegment zeigt den Kurs zum nächsten Wegpunkt des aktiven Flugplanabschnitts an. Nicht
+            angezeigt, wenn kein Flugplan geladen ist.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/compass_rose_crab.png" alt="Heading" />
+          </td>
+          <td>
+            Zeigt die Richtung an, die unter Berücksichtigung des Seitenwindes zum nächsten Wegpunkt des aktiven
+            Flugplanabschnitts geflogen werden muss. Nicht angezeigt, wenn kein Flugplan geladen ist.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="vehicles">
+      Flugzeuge und Schiffe
+    </h2>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/icons/aircraft_small_user.png" alt="Small GA User" /> <img src=
+            "images/icons/aircraft_jet_user.png" alt="Jet User" /> <img src=
+            "images/icons/aircraft_helicopter_user.png" alt="Helicopter User" />
+          </td>
+          <td>
+            Benutzerflugzeug, wenn das Programm mit dem Flugsimulator verbunden ist. Die Beschriftungen variieren und
+            können unter <code>Einstellungen</code> auf der Seite <code>Kartenanzeige</code> angepasst werden. Das Benutzerflugzeug hängt von dem ausgewählten Flugzeug ab
+            (Jet, Kolben/Turboprop oder Helikopter).
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/icons/aircraft_small_ground_user.png" alt="Small GA on Ground" /> <img src=
+            "images/icons/aircraft_jet_ground_user.png" alt="Jet on Ground" /> <img src=
+            "images/icons/aircraft_helicopter_ground_user.png" alt="Helicopter on Ground" /> <img src=
+            "images/icons/aircraft_boat_ground_user.png" alt="Ship on Ground" />
+          </td>
+          <td>
+            Benutzerflugzeug am Boden.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/icons/aircraft_carrier.png" alt="Carrier" /> <img src=
+            "images/icons/aircraft_frigate.png" alt="Frigate" />
+          </td>
+          <td>
+            Flugzeugträger und Fregatte (nur X-Plane)
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/aircraft_trackneedle.png" alt="Aircraft Track Needle" />
+          </td>
+          <td>
+            Nadel, die die aktuelle Bodenpfad des Flugzeugs anzeigt. Die Flugzeugnase zeigt Kurs.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/aircraft_track.png" alt="Trail" />
+          </td>
+          <td>
+            Benutzerflugzeugpfad, wenn mit dem Flugsimulator verbunden.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/windpointer.png" alt="Wind" />
+          </td>
+          <td>
+            Wind in der Umgebung des Benutzerflugzeugs mit Richtung in magnetischen Grad und Geschwindigkeit.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/icons/aircraft_small.png" alt="Small GA" /> <img src="images/icons/aircraft_jet.png"
+            alt="Jet" /> <img src="images/icons/aircraft_helicopter.png" alt="Helicopter" /> <img src=
+            "images/icons/aircraft_small_ground.png" alt="Small GA Ground" /> <img src=
+            "images/icons/aircraft_jet_ground.png" alt="Jet Ground" /> <img src=
+            "images/icons/aircraft_helicopter_ground.png" alt="Helicopter Ground" /> <img src=
+            "images/icons/aircraft_boat_ground.png" alt="Ship" />
+          </td>
+          <td>
+            KI- oder Mehrspielerflugzeug. Die Beschriftungen variieren und können unter <code>Einstellungen</code> auf
+            der Seite <code>Kartenanzeige</code> angepasst werden. Das Symbol
+            hängt vom Flugzeugtyp ab (Jet, Kolben/Turboprop, Helikopter oder Schiff).
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/icons/aircraft_online.png" alt="Online on in Flight" /> <img src=
+            "images/icons/aircraft_online_ground.png" alt="Online on Ground" />
+          </td>
+          <td>
+            Online-Netzwerk-Flugzeug bzw. Client. Die Beschriftung variiert und kann wie oben beschrieben angepasst
+            werden.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="airports">
+      Flugplätze
+    </h2>
+    <p>
+      Flugplätze mit Tower werden in Dunkelblau und andere in Magenta dargestellt. Texte von Add-On-Flugplätzen werden
+      kursiv und unterstrichen hervorgehoben. Flugplätze, die ein Teil eines Flugplanes sind, werden mit der Farbe
+      Hellgelb in der Beschriftung hervorgehoben.
+    </p>
+    <p>
+      Das Symbol wird kleiner gezeichnet, wenn der Flugplatz keine Landebahnen hat. Dies kann bei Add-On-Flugplätzen
+      vorkommen, die andere Techniken benutzen, um Landebahnen zu zeichnen.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/airport_tower_8000.png" alt="Large Airport Tower" /> <img src=
+            "images/legend/airport_8000.png" alt="Large Airport" />
+          </td>
+          <td>
+            Flugplätze mit festen Landebahnen, die länger als 8.000 Fuß sind. Alle Landebahnen, die länger als 4.000
+            Fuß sind, werden dargestellt. Nur für niedrige Zoomstufen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/airport_tower.png" alt="Airport with Tower" /> <img src=
+            "images/legend/airport.png" alt="Airport" />
+          </td>
+          <td>
+            Flugplätze mit befestigten Landebahnen. Die weiße Linie zeigt die Ausrichtung der längsten Landebahn.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/airport_tower_soft.png" alt="Airport with soft runways and Tower" /> <img src=
+            "images/legend/airport_soft.png" alt="Airport with soft Runways" />
+          </td>
+          <td>
+            Flugplätze mit unbefestigten Landebahnen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/airport_empty.png" alt="Airport Empty" /> <img src=
+            "images/legend/airport_empty_soft.png" alt="Airport Empty Soft" />
+          </td>
+          <td>
+            Leerer Flugplatz ohne Rollbahnen, Parkpositionen und ohne Vorfelder.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/airport_tower_water.png" alt="Seaplane Base with Tower" /> <img src=
+            "images/legend/airport_water.png" alt="Seaplane Base" />
+          </td>
+          <td>
+            Flugplatz nur für Wasserflugzeuge.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/airport_tower_mil.png" alt="Military Airport with Tower" /> <img src=
+            "images/legend/airport_mil.png" alt="Military Airport" />
+          </td>
+          <td>
+            Militärischer Flugplatz.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/heliport.png" alt="Heliport" />
+          </td>
+          <td>
+            Helikopterflugplatz.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/airport_tower_closed.png" alt="Closed Airport with Tower" /> <img src=
+            "images/legend/airport_closed.png" alt="Closed Airport" />
+          </td>
+          <td>
+            Geschlossener bzw. aufgegebener Flugplatz. Alle Landebahnen sind geschlossen.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/airport_tower_fuel.png" alt="Airport with Fuel" /> <img src=
+            "images/legend/airport_soft_fuel.png" alt="Airport with soft Runways and Fuel" />
+          </td>
+          <td>
+            Flugplätze, die Treibstoff anbieten.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/addon.png" alt="Add-on Airport" />
+          </td>
+          <td>
+            Zusatzflughäfen werden immer hervorgehoben, unabhängig davon, ob ref:<span class=
+            "title-ref">force-show-addon-airports</span> eingeschaltet ist oder nicht. Sie können dies im
+            Einstellungsdialog auf Seite: ref: <span class="title-ref">map-display</span> deaktivieren, indem Sie
+            <code>Add-on Flugplätze hervorheben</code> deaktivieren.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/airport_weather.png" alt="Airport Weather" />
+          </td>
+          <td>
+            Wetter am Flugplatz. Siehe auch weiter unten.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/airportlabel.png" alt="Airport Text" />
+          </td>
+          <td>
+            Flugplatz-Beschriftung mit Name, Kennung, ATIS-Frequenz, Höhe, beleuchteten Runways (<code>L</code>) und
+            Länge des längsten Runway. Die Textbeschriftungen für einen Flugplatz können im Dialog
+            <code>Einstellungen</code> auf der Seite <code>Kartenanzeige</code>
+            geändert werden.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/airport_overview.png" alt="Airport Overview" />
+          </td>
+          <td>
+            Übersicht über die Start- und Landebahnen des Flugplatzes, die beim Vergrößern der Karte vor dem
+            vollständigen Flugplatzdiagramm angezeigt wird.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="navaids">
+      Navigationshilfen
+    </h2>
+    <p>
+      Navigationshilfen, die Teil eines Flugplanes sind, werden hellgelb hervorgehoben.
+    </p>
+    <p>
+      Auf höheren Zoomleveln werden Objekte nur als kleine farbige Symbole dargestellt.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/vordme_small.png" alt="VORDME Small" /> <img src=
+            "images/legend/vordme_large.png" alt="VORDME Large" />
+          </td>
+          <td>
+            VOR-DME-Station mit Kennung, Typ (High, Low oder Terminal) und Frequenz. Die Kompassrose zeigt die
+            magnetische Varianz auf niedrigen Zoomstufen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/vor_small.png" alt="VOR Small" /> <img src="images/legend/vor_large.png" alt=
+            "VOR Large" />
+          </td>
+          <td>
+            VOR-Station mit Kennung, Typ und Frequenz.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/dme.png" alt="DME" />
+          </td>
+          <td>
+            DME-Station mit Kennung, Typ und Frequenz.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/tacan_small.png" alt="TACAN Small" /> <img src=
+            "images/legend/tacan_large.png" alt="TACAN Large" />
+          </td>
+          <td>
+            TACAN-Station mit Kennung, Typ (High, Low oder Terminal) und Frequenz. Die Kompassrose zeigt die
+            magnetische Varianz auf niedrigen Zoomstufen.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/vortac_small.png" alt="VORTAC Small" /> <img src=
+            "images/legend/vortac_large.png" alt="VORTAC Large" />
+          </td>
+          <td>
+            TACAN-Station mit Kennung, Typ (High, Low oder Terminal) und Frequenz. Die Kompassrose zeigt die
+            magnetische Varianz auf niedrigen Zoomstufen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/ndb_small.png" alt="NDB Small" /> <img src="images/legend/ndb_large.png" alt=
+            "NDB Large" />
+          </td>
+          <td>
+            NDB-Station mit Kennung, Typ (HH, H, MH oder CL - Compass Locator) und Frequenz.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/waypoint.png" alt="Waypoint" />
+          </td>
+          <td>
+            Wegpunkt mit Namen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/userwaypoint.png" alt="User-defined Waypoint" />
+          </td>
+          <td>
+            Nutzerdefinierter Wegpunkt.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/waypoint_invalid.png" alt="Waypoint Invalid" />
+          </td>
+          <td>
+            Ungültiger Flugplatz oder Navigationspunkt, der ein Teil des Flugplanes ist und nicht in der
+            Szeneriedatenbank gefunden wurde.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/marker_outer.png" alt="Marker Outer" /> <img src=
+            "images/legend/marker_middle.png" alt="Marker Middle" /> <img src="images/legend/marker_inner.png"
+            alt="Marker Inner" />
+          </td>
+          <td>
+            Einflugmarkierung mit Typ und Kurs.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/airway_jet.png" alt="Jet Airway" />
+          </td>
+          <td>
+            Jet-Luftstraße mit Namen, Typ (Jet oder Beide/Both) und Höhenrestriktion.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/airway_victor.png" alt="Victor Airway" />
+          </td>
+          <td>
+            Victor-Luftstraße mit Namen, Typ (Victor oder Both) und Höhenrestriktion.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/track_east.png" alt="Track East" />
+          </td>
+          <td>
+            PACOTS Track in östlicher Richtung mit Flugrichtung, Name <code>2</code> und Typ. Tracks ohne Ost /
+            West-Richtung werden in grauer Farbe angezeigt.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/track_west.png" alt="Track West" />
+          </td>
+          <td>
+            PACOTS Track in westlicher Richtung mit Flugrichtung, Name <code>H</code> und Typ.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/ils_gs.png" alt="ILS" />
+          </td>
+          <td>
+            ILS mit Gleitpfad und Markierungen. Die Beschriftung zeigt die Kennung und die Frequenz an, sowie
+            magnetischen Kurs, Gleitpfadwinkel und DME-Anzeige, wenn verfügbar.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/ils_large.png" alt="Localizer" />
+          </td>
+          <td>
+            Localizer. Die Beschriftung zeigt die Kennung, Frequenz, Magnetischer Kurs und DME-Anzeige, falls
+            vorhanden.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="procedures">
+      Prozeduren
+    </h2>
+    <p>
+      Siehe Kapitel Prozeduren für detailliertere Informationen
+      über alle Abschnitte.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/proc_flightplan.png" alt="Procedure Leg Flight Plan" /> <img src=
+            "images/legend/proc_preview.png" alt="Procedure Leg Preview" />
+          </td>
+          <td>
+            SID, STAR, Anflug oder Übergang für den Flugplan und in der Vorschau mit Entfernung, Richtung und
+            Magnetkurs auf jeder Strecke.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/proc_missed_flightplan.png" alt="Missed Leg Flight Plan" /> <img src=
+            "images/legend/proc_missed_preview.png" alt="Missed Leg Preview" />
+          </td>
+          <td>
+            Fehlanflug für Flugplan und Vorschau.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/proc_ctl.png" alt="Circle to Land or Straight in" />
+          </td>
+          <td>
+            Gepunktete Linie zeigt das Manöver <code>Kreisen um zu Landen</code> oder den geradlinigen Teil einer Prozedur an, der zu einem
+            Start- und Landebahnende führt. Hier ein Teil des Flugplans.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/procvectors.png" alt="Vectors" />
+          </td>
+          <td>
+            Vektorabschnitt zeigt den Kurs zu einem ersten Punkt an. Hier ein Teil des Flugplans.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/procmanual.png" alt="Manual" />
+          </td>
+          <td>
+            Manueller Abschnitt. Fliegen Sie nach den Anweisungen des ATC. Hier als Vorschau dargestellt.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/routealternate.png" alt="Alternate" />
+          </td>
+          <td>
+            Flug zum Ausweichflugplatz.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/proc_point.png" alt="Procedure Point" />
+          </td>
+          <td>
+            Der grau-gelb gefüllte Kreis kennzeichnet einen Prozedurpunkt, der keine Navigationshilfe ist, sondern
+            durch Kurs bzw. Entfernung von einer Navigationshilfe, einer Höhenbeschränkung oder einer manuellen
+            Beendigung definiert ist.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/proc_flyover.png" alt="Procedure Overfly" />
+          </td>
+          <td>
+            Ein schwarzer Kreis zeigt einen Wegpunkt an, der zwangsweise überflogen werden muss. Dies kann ein
+            Prozedurpunkt oder eine Navigationshilfe sein.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/proc_faf.png" alt="Procedure FAF" />
+          </td>
+          <td>
+            Das Malteserkreuz markiert den Endanflug oder den Punkt für den finalen Endanflugkurs.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/proc_ils.png" alt="Procedure GS" />
+          </td>
+          <td>
+            Das Präfix <code>GS</code> zeigt keine Höhenrestriktion an, sondern ist ein Indikator für den ILS-Gleitpfad.
+            Kann <code>auf</code> oder <code>auf oder höher</code> anzeigen.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/proclegmanual.png" alt="Procedure Manual" />
+          </td>
+          <td>
+            Fliegen Sie einen Kurs oder eine Warteschleife, bis er manuell von ATC beendet wird.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/procinterceptleg.png" alt="Procedure Intercept Leg" />
+          </td>
+          <td>
+            Den nächsten Abschnitt bei einem Kurs von etwa 45 Grad abfangen.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/procinterceptalt.png" alt="Procedure Altitude" />
+          </td>
+          <td>
+            Prozedurabschnitt, der bei Erreichen der vorgegebenen Höhe beendet wird.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/procinterceptcd.png" alt="Procedure Intercept Distance" />
+          </td>
+          <td>
+            Ein Punkt, der durch einen Kurs oder eine Richtung und die Entfernung zu einer Navigationshilfe definiert
+            ist.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/procradial.png" alt="Procedure Intercept Radial" />
+          </td>
+          <td>
+            Wenden, um ein Radial des Funkfeuers anzuschneiden.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/procinterceptd.png" alt="Procedure Intercept Course Distance" />
+          </td>
+          <td>
+            Dieser Punkt wird durch einen Kurs oder eine Spur definiert, die durch Erreichen einer DME-Distanz beendet
+            wird.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/procinterceptcoursetofix.png" alt="Procedure Intercept Course to Fix" />
+          </td>
+          <td>
+            Fangen Sie einen Kurs zum nächsten Punkt in einem Winkel von etwa 45 Grad ab.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="airport-diagram">
+      Flugplatzdiagramm
+    </h2>
+    <p>
+      Landebahn-, Rollbahn-, Helikopterlandeplatz- und Vorfeldfarben zeigen den Typ der Oberfläche an. Weiß wird für
+      einen ungültigen Oberflächentyp benutzt.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/runway.png" alt="Runway" />
+          </td>
+          <td>
+            Landebahn mit Länge, Breite, Lichtindikator (<code>L</code>) und Oberflächentyp.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/runway_end.png" alt="Runway End" />
+          </td>
+          <td>
+            Landebahnende mit Kennung und magnetischem Kurs.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/runway_threshold.png" alt="Runway Threshold" />
+          </td>
+          <td>
+            Versetzte Anflugschwelle. Nicht zum Landen benutzen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/runway_overrun.png" alt="Runway Overrun" />
+          </td>
+          <td>
+            Overrun-Bereich. Nicht zum Rollen, Starten oder Landen benutzen.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/runway_blastpad.png" alt="Runway Blastpad" />
+          </td>
+          <td>
+            Blast-Pad-Bereich. Nicht zum Rollen, Starten oder Landen benutzen.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/taxiway.png" alt="Taxiway" />
+          </td>
+          <td>
+            Rollbahn mit Namen.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/closedtaxi.png" alt="Closed Taxiway" />
+          </td>
+          <td>
+            Geschlossene Rollbahn.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/apron_transparent.png" alt="Taxiway Apron" />
+          </td>
+          <td>
+            Halbtransparente Vorfelder und Rollbahnen zeigen, dass keine Oberfläche gezeichnet wird.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/tower_active.png" alt="Tower Active" /> <img src=
+            "images/legend/tower_inactive.png" alt="Tower" />
+          </td>
+          <td>
+            Tower. Rot, wenn eine Funkfrequenz zugewiesen ist, sonst nur die Sichtposition des Towers.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/parking_fuel.png" alt="Fuel" />
+          </td>
+          <td>
+            Tankstelle
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/parking_ga_ramp.png" alt="Parking GA" />
+          </td>
+          <td>
+            Parkposition der allgemeinen Luftfahrt (GA Ramp) mit Nummer und Richtungsanzeiger.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/parking_gate_no_jetway.png" alt="Parking Gate no Jetway" /> <img src=
+            "images/legend/parking_gate.png" alt="Parking Gate" />
+          </td>
+          <td>
+            Flugsteig (Gate) mit Nummer und Richtungsanzeiger. Ein zweiter Ring zeigt die Verfügbarkeit einer
+            Fluggastbrücke (Jetway) an.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/parking_ramp_cargo.png" alt="Parking Cargo" />
+          </td>
+          <td>
+            Frachtrampe
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/parking_mil.png" alt="Parking Mil" />
+          </td>
+          <td>
+            Militärische Parkposition oder Frachtrampe.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/helipad.png" alt="Helipad" /> <img src="images/legend/helipadmedical.png"
+            alt="Helipad Medical" /> <img src="images/legend/helipadsquare.png" alt="Helipad Square" />
+          </td>
+          <td>
+            Helikopterlandeplatz
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="elevation-profile-legend">
+      Höhenprofil
+    </h2>
+    <p>
+      Die Farben und Symbole des Höhenprofils folgen dem Stil der Hauptkarte, wie er im Einstellungsdialog auf der
+      Seite <code>Kartenanzeige</code> eingestellt ist. Farben, Platzrunden und
+      Symbole für Flugplätze, Navigationshilfen, Prozeduren, aktive und abgeflogene Flugplanabschnitte sind identisch.
+      Die Profilanzeige folgt auch anderen Karteneinstellungen, wie der Sichtbarkeit von Flugplanlinie, Flugzeug und
+      Flugzeugpfad.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/profile_start.png" alt="Profile Start" /> <img src=
+            "images/legend/profile_end.png" alt="Profile End" />
+          </td>
+          <td>
+            Boden mit Abflughöhe auf der linken Seite und Zielflugplatzhöhe auf der rechten Seite.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/profile_route.png" alt="Flight Plan Profile" />
+          </td>
+          <td>
+            Reiseflughöhe.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/profiletoc.png" alt="Top of Climb Profile" />
+          </td>
+          <td>
+            Ende des Steigfluges mit Entfernung vom Start.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/profiletod.png" alt="Top of Descent Profile" />
+          </td>
+          <td>
+            Start des Sinkfluges mit Entfernung zum Ziel.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/proc_at.png" alt="At" />
+          </td>
+          <td>
+            Höhenbeschränkung einer Prozedur mit Wegpunktname.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/proc_atabove.png" alt="At or above" />
+          </td>
+          <td>
+            <em>Auf oder höher</em> Höhenbeschränkung einer Prozedur mit Wegpunktname.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/proc_atbelow.png" alt="At or below" />
+          </td>
+          <td>
+            <em>Auf oder niedriger</em> Höhenbeschränkung einer Prozedur mit Wegpunktname.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/proc_between.png" alt="Between" />
+          </td>
+          <td>
+            <em>Auf oder höher und auf oder niedriger</em> (zwischen) Höhenbeschränkung einer Prozedur.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/profile_safe_alt.png" alt="Profile Safe Alt" />
+          </td>
+          <td>
+            Minimale sichere Höhe für den Flugplan. Dies ist die Bodenhöhe plus 1.000 Fuß, aufgerundet auf die nächsten
+            500 Fuß. Der 1.000 Fuß Puffer kann im Dialog <code>Einstellungen</code> auf der Seite <code>Flugplan</code> geändert werden.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/profilesegminalt.png" alt="Profile Segment Safe Alt" />
+          </td>
+          <td>
+            Minimale sichere Höhe für ein Flugplansegment. Es gelten die gleichen Regeln wie für die minimale sichere
+            Höhe des Flugplans.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/profile_aircraft.png" alt="Aircraft" />
+          </td>
+          <td>
+            Benutzerflugzeug, wenn das Programm mit dem Simulator verbunden ist. Die Beschriftungen zeigen die aktuelle
+            Höhe und die Steig- bzw. Sinkrate an.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/profile_track.png" alt="Trail Profile" />
+          </td>
+          <td>
+            Benutzerflugzeugpfad, wenn das Programm mit dem Flugsimulator verbunden ist.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/profile_ils.png" alt="ILS Profile" />
+          </td>
+          <td>
+            ILS-Gleitpfad. Die Beschriftung zeigt Kennung, Frequenz, magnetischen Kurs, Neigung des Gleitpfades und
+            DME-Anzeige, falls vorhanden. Dies wird nur angezeigt, wenn ein Anflug ausgewählt wurde und das Start-und
+            Landebahnende ein ILS hat. Der Öffnungswinkel hat keinen Bezug zur tatsächlichen Genauigkeit.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/profile_vasi.png" alt="VASI" />
+          </td>
+          <td>
+            VASI-Pfad. Die Beschriftung zeigt die Neigung und den VASI-Typ an. Dies wird nur angezeigt, wenn ein Anflug
+            ausgewählt wurde und das Start- und Landebahnende ein VASI hat. Der Öffnungswinkel hat keinen Bezug zur
+            tatsächlichen Genauigkeit.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="airport-traffic-pattern">
+      Platzrunde
+    </h2>
+    <p>
+      Farbe und Indikatoren hängen von der Wahl des Benutzers ab.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/pattern_downwind.png" alt="Downwind" />
+          </td>
+          <td>
+            Gegenanflug der Platzrunde mit Höhe und Magnetkurs.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/pattern_runway.png" alt="Final" />
+          </td>
+          <td>
+            Endabschnitt der Platzrunde mit Start- und Landebahn sowie magnetischen Kurs.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/pattern_entry.png" alt="Entry Indicator" />
+          </td>
+          <td>
+            Pfeil und gestrichelte Linien zeigen den Pfad für den Eintritt in die Platzrunde.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/pattern_exit.png" alt="Exit Indicator" />
+          </td>
+          <td>
+            Gestrichelte Linie und Pfeile zeigen den Pfad für den Austritt aus der Platzrunde.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/patternactive.png" alt="Active Position Pattern" />
+          </td>
+          <td>
+            Weißer Kreis ist aktiver Punkt an der Startbahnschwelle der Platzrunde. Der Mauszeiger ändert sich und
+            ermöglicht es, die Platzrunde im Kontextmenü zu entfernen.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="holding-legend">
+      Warteschleife
+    </h2>
+    <p>
+      Die Farbe hängt von der Wahl des Benutzers ab.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/holdinbound.png" alt="Inbound to Fix" />
+          </td>
+          <td>
+            Warteschleifenursprung, magnetischer und echter einwärts-Kurs, Zeit für geraden Abschnitt und Kennung der
+            Navigationshilfe (<code>LBU</code>). Die Kennung wird nur angezeigt, wenn die Warteschleife an eine
+            Navigationshilfe gekoppelt ist. Die echte Kursanzeige hängt von den Einstellungen ab.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/holdoutbound.png" alt="outbound from Fix" />
+          </td>
+          <td>
+            Magnetischer und echter auswärts-Kurs, Geschwindigkeit und Höhe wie im Dialog angegeben. Die echte
+            Kursanzeige hängt von den Optionen ab.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/holdactive.png" alt="Active Position Hold" />
+          </td>
+          <td>
+            Aktiver Punkt und Ursprung der Warteschleife. Der Mauszeiger ändert sich und ermöglicht es, die
+            Warteschleife im Kontextmenü zu entfernen.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="mora-grid">
+      MORA-Gitter
+    </h2>
+    <p>
+      Das minimale Off-Route-Höhenraster stellt eine Hindernisfreigabe innerhalb eines Ein-Grad-Rasters dar. Die Höhe
+      übergeht jegliches Gelände und Hindernisse um 1.000 Fuß in Gebieten, in denen die höchsten Lagen 5.000 Fuß oder
+      niedriger sind. Wo die Höhen über 5.000 Fuß liegen, wird das Gelände um 2.000 Fuß übergangen.
+    </p>
+    <p>
+      Textgröße und Transparenz können im Einstellungsdialog auf der Seite <code>Kartenanzeige</code> eingestellt werden.
+    </p>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 49%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/map_mora.png" alt="MORA Grid" />
+          </td>
+          <td>
+            MORA-Gitter. Die große Zahl ist 1.000 Fuß und kleine Zahl 100 Fuß. Beispiel hier: 3.300, 4.400, 6.000,
+            9.900 und 10.500 Fuß.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="airport-weather-legend">
+      Flugplatzwetter
+    </h2>
+    <h3 id="airport-weather-flightrules">
+      Flugregeln
+    </h3>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/weather_vfr.png" alt="VFR" />
+          </td>
+          <td>
+            VFR. Sichtflugregeln.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/weather_mvfr.png" alt="MVFR" />
+          </td>
+          <td>
+            MVFR. Marginale VFR. Sicht gleich oder kleiner als 5 Meilen oder niedrigste Wolkendecke gleich oder kleiner
+            als 3.000 Fuß.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/weather_ifr.png" alt="IFR" />
+          </td>
+          <td>
+            IFR. Instrumentenflugregeln. Sichtweite unter 3 Meilen oder niedrigste Wolkendecke unter 1.000 Fuß.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/weather_lifr.png" alt="LIFR" />
+          </td>
+          <td>
+            LIFR. Limitierte IFR. Sichtweite unter einer Meile oder niedrigste Wolkendecke unter 500 Fuß.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="airport-weather-cloud">
+      Wolken
+    </h3>
+    <table cellspacing="0">
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/weather_vfr_clear.png" alt="Clear" />
+          </td>
+          <td>
+            Keine Wolken
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/weather_vfr_few.png" alt="Few" />
+          </td>
+          <td>
+            Vereinzelt
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/weather_vfr_sct.png" alt="Scattered" />
+          </td>
+          <td>
+            Verteilt
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/weather_vfr_bkn.png" alt="Broken" />
+          </td>
+          <td>
+            Überwiegend bedeckt
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/weather_vfr_ovc.png" alt="Overcast" />
+          </td>
+          <td>
+            Bedeckt
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 id="airport-weather-wind">
+      Wind
+    </h2>
+    <table cellspacing="0">
+      <colgroup>
+        <col style="width: 50%" />
+        <col style="width: 50%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/weather_vfr_clear.png" alt="No Wind" />
+          </td>
+          <td>
+            Kein Zeiger bedeutet Wind unter 2 Knoten.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/weather_wind4.png" alt="4 Knots Wind" />
+          </td>
+          <td>
+            Zeiger ohne Windfahnen zeigt Wind unter 5 Knoten.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/weather_wind5.png" alt="5 Knots Wind" />
+          </td>
+          <td>
+            Kurze Windfahne am Zeiger entspricht 5 Knoten Wind.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/weather_wind10.png" alt="10 Knots Wind" />
+          </td>
+          <td>
+            Lange Windfahne entspricht 10 Knoten Wind.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/weather_wind50.png" alt="50 Knots Wind" />
+          </td>
+          <td>
+            50 Knoten Wind.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/weather_wind25.png" alt="25 Knots Wind" />
+          </td>
+          <td>
+            Beispiel: 25 Knoten.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/weather_wind65.png" alt="65 Knots Wind" />
+          </td>
+          <td>
+            Beispiel: 65 Knoten.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/weather_wind_gust.png" alt="15 Knots steady Wind gusting to 30 Knots" />
+          </td>
+          <td>
+            Beispiel: 15 Knoten stetiger Wind (schwarz) und Böen bis 30 Knoten (rot).
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="high-alt-wind">
+      Höhenwinde
+    </h3>
+    <table cellspacing="0">
+      <thead>
+        <tr class="header">
+          <th>
+            Symbol
+          </th>
+          <th>
+            Beschreibung
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/wind_none.png" alt="No Wind Aloft" />
+          </td>
+          <td>
+            Kein Zeiger bedeutet Wind unter 2 Knoten.
+          </td>
+        </tr>
+        <tr class="even">
+          <td>
+            <img src="images/legend/wind_low.png" alt="Wind below 5 Knots" />
+          </td>
+          <td>
+            Unter 5 Knoten aus Westen.
+          </td>
+        </tr>
+        <tr class="odd">
+          <td>
+            <img src="images/legend/wind_25.png" alt="25 Knots Wind Aloft" />
+          </td>
+          <td>
+            Beispiel: 25 Knoten.
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </body>
 </html>

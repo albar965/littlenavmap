@@ -135,7 +135,7 @@ private:
 
   void itemSelectionChanged();
   void itemSelectionChangedInternal(bool noFollow);
-  void itemDoubleClicked(QTreeWidgetItem *item, int column);
+  void itemDoubleClicked(QTreeWidgetItem *item, int);
 
   /* Load legs dynamically as approaches or transitions are expanded */
   void itemExpanded(QTreeWidgetItem *item);
@@ -183,7 +183,7 @@ private:
 
   void updateHeaderLabel();
   void filterIndexChanged(int index);
-  void filterIndexRunwayChanged(int index);
+  void filterIndexRunwayChanged(int);
   void clearRunwayFilter();
   void updateFilterBoxes();
   void resetSearch();

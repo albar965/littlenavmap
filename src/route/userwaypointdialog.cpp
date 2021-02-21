@@ -130,10 +130,8 @@ void UserWaypointDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::reject();
 }
 
-void UserWaypointDialog::coordsEdited(const QString& text)
+void UserWaypointDialog::coordsEdited(const QString&)
 {
-  Q_UNUSED(text);
-
   QString message;
   bool valid = formatter::checkCoordinates(message, ui->lineEditRouteUserWaypointLatLon->text());
   ui->buttonBoxRouteUserWaypoint->button(QDialogButtonBox::Ok)->setEnabled(valid);

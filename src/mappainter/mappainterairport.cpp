@@ -48,7 +48,7 @@ static const int RUNWAY_HEADING_FONT_SIZE = 12;
 static const int RUNWAY_TEXT_FONT_SIZE = 16;
 static const int RUNWAY_NUMBER_FONT_SIZE = 20;
 static const int RUNWAY_NUMBER_SMALL_FONT_SIZE = 12;
-static const int TAXIWAY_TEXT_MIN_LENGTH = 20;
+static const int TAXIWAY_TEXT_MIN_LENGTH = 15;
 static const int RUNWAY_OVERVIEW_MIN_LENGTH_FEET = 8000;
 static const float AIRPORT_DIAGRAM_BACKGROUND_METER = 200.f;
 
@@ -99,7 +99,8 @@ void MapPainterAirport::render()
     airports.append(context->route->getDestinationAirportLeg().getAirport());
     routeAirportIds.insert(airports.last().id);
   }
-  for(const map::MapAirport& ap : context->route->getAlternateAirports())
+  QVector<MapAirport> alternates = context->route->getAlternateAirports();
+  for(const map::MapAirport& ap : alternates)
   {
     airports.append(ap);
     routeAirportIds.insert(airports.last().id);
@@ -119,7 +120,7 @@ void MapPainterAirport::render()
   QMargins margins(100, 10, 10, 10);
 
   // Collect all airports that are visible ===========================
-  QList<PaintAirportType> visibleAirports;
+  QVector<PaintAirportType> visibleAirports;
   for(const MapAirport& airport : airports)
   {
     // Avoid drawing too many airports during animation when zooming out
@@ -141,7 +142,7 @@ void MapPainterAirport::render()
                            context->routeProcIdMap.contains(airport.getRef());
 
         if(visibleOnMap && drawAirport)
-          visibleAirports.append({&airport, QPointF(x, y)});
+          visibleAirports.append(PaintAirportType(airport, x, y));
       }
     }
   }
@@ -156,7 +157,7 @@ void MapPainterAirport::render()
       drawAirportDiagramBackground(*airport.airport);
   }
 
-  // Draw the simple runway diagrams first ===========================
+  // Draw diagrams or simple runway diagrams ===========================
   if(context->mapLayer->isAirportDiagramRunway())
   {
     for(const PaintAirportType& airport : visibleAirports)
@@ -165,6 +166,7 @@ void MapPainterAirport::render()
 
   textflags::TextFlags apTextFlags = context->airportTextFlags();
   int symsize = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
+  int apsymsize = context->mapLayer->isAirportDiagram() ? symsize * 2 : symsize;
 
   // Add airport symbols on top of diagrams ===========================
   for(int i = 0; i < visibleAirports.size(); i++)
@@ -176,8 +178,8 @@ void MapPainterAirport::render()
 
     // Airport diagram is not influenced by detail level
     if(!context->mapLayer->isAirportDiagramRunway())
-      // Draw simplified runway lines
-      drawAirportSymbolOverview(*airport, x, y);
+      // Draw simplified runway lines if big enough
+      drawAirportSymbolOverview(*airport, x, y, apsymsize);
 
     // More detailed symbol will be drawn by the route or log painter - skip here
     if(!context->routeProcIdMap.contains(airport->getRef()))
@@ -189,7 +191,7 @@ void MapPainterAirport::render()
 
       symbolPainter->drawAirportText(context->painter, *airport, x, y,
                                      context->dispOptsAirport, apTextFlags,
-                                     context->mapLayer->isAirportDiagram() ? symsize * 2 : symsize,
+                                     apsymsize,
                                      context->mapLayer->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
     }
@@ -326,6 +328,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       }
     }
   }
+
   if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_APRON))
   {
     // Draw aprons ---------------------------------
@@ -452,10 +455,15 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         }
       }
 
+      painter->setBackgroundMode(Qt::OpaqueMode);
+      painter->setBackground(mapcolors::taxiwayNameBackgroundColor);
+
+      QVector<MapTaxiPath> pathsToLabel;
+      QList<MapTaxiPath> paths;
       for(QString taxiname : map.keys())
       {
-        QList<MapTaxiPath> paths = map.values(taxiname);
-        QList<MapTaxiPath> pathsToLabel;
+        paths = map.values(taxiname);
+        pathsToLabel.clear();
 
         // Simplified text placement - take first, last and middle name for a path
         if(!paths.isEmpty())
@@ -475,19 +483,15 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
           int length = atools::geo::simpleDistance(start.x(), start.y(), end.x(), end.y());
           if(length > TAXIWAY_TEXT_MIN_LENGTH)
           {
-            // Only draw if segment is longer than 40 pixels
+            // Only draw if segment is longer than 15 pixels
             int x = ((start.x() + end.x()) / 2) - textrect.width() / 2;
             int y = ((start.y() + end.y()) / 2) + textrect.height() / 2 - taxiMetrics.descent();
-            textrect.moveTo(x, y - textrect.height() + taxiMetrics.descent());
-            textrect.adjust(-1, -1, 1, 1);
-            painter->fillRect(textrect, mapcolors::taxiwayNameBackgroundColor);
             painter->drawText(x, y, taxiname);
           }
         }
-      }
-      painter->setBackgroundMode(Qt::OpaqueMode);
-    }
-  }
+      } // for(QString taxiname : map.keys())
+    } // if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
+  } // if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
 
   if(!fast && runways != nullptr)
   {
@@ -618,15 +622,16 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       }
       painter->setBackgroundMode(Qt::OpaqueMode);
     }
-  }
+  } // if(runways != nullptr)
 
+  // Draw parking, fuel and tower --------------------------------
   if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_PARKING))
   {
-    // Approximate needed margings by largest parking diameter to avoid parking circles dissappearing on the screen borders
-    float size = scale->getPixelForFeet(200);
+    // Approximate needed margins by largest parking diameter to avoid parking circles dissappearing on the screen borders
+    int size = scale->getPixelIntForFeet(200);
     QMargins margins(size, size, size, size);
     QMargins marginsSmall(30, 30, 30, 30);
-    // Draw parking --------------------------------
+
     const QList<MapParking> *parkings = airportQuery->getParkingsForAirport(airport.id);
     for(const MapParking& parking : *parkings)
     {
@@ -654,118 +659,119 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
           painter->resetTransform();
         }
       }
+    } // for(const MapParking& parking : *parkings)
 
-      // Draw helipads ------------------------------------------------
-      const QList<MapHelipad> *helipads = airportQuery->getHelipads(airport.id);
-      if(!helipads->isEmpty())
-      {
-        for(const MapHelipad& helipad : *helipads)
-        {
-          float x, y;
-          if(wToSBuf(helipad.position, x, y, margins))
-          {
-            int w = scale->getPixelIntForFeet(helipad.width, 90) / 2;
-            int h = scale->getPixelIntForFeet(helipad.length, 0) / 2;
-            symbolPainter->drawHelipadSymbol(painter, helipad, x, y, w, h, fast);
-          }
-        }
-      }
-
-      // Draw tower -------------------------------------------------
-      if(airport.towerCoords.isValid())
+    // Draw helipads ------------------------------------------------
+    const QList<MapHelipad> *helipads = airportQuery->getHelipads(airport.id);
+    if(!helipads->isEmpty())
+    {
+      for(const MapHelipad& helipad : *helipads)
       {
         float x, y;
-        if(wToSBuf(airport.towerCoords, x, y, marginsSmall))
+        if(wToSBuf(helipad.position, x, y, margins))
         {
-          if(airport.towerFrequency > 0)
-          {
-            painter->setPen(QPen(mapcolors::activeTowerOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
-            painter->setBrush(mapcolors::activeTowerColor);
-          }
-          else
-          {
-            painter->setPen(QPen(mapcolors::inactiveTowerOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
-            painter->setBrush(mapcolors::inactiveTowerColor);
-          }
-
-          double w = scale->getPixelForMeter(10.f, 90);
-          double h = scale->getPixelForMeter(10.f, 0);
-          painter->drawEllipse(QPointF(x, y), w < 6. ? 6. : w, h < 6. ? 6. : h);
+          int w = scale->getPixelIntForFeet(helipad.width, 90) / 2;
+          int h = scale->getPixelIntForFeet(helipad.length, 0) / 2;
+          symbolPainter->drawHelipadSymbol(painter, helipad, x, y, w, h, fast);
         }
       }
+    }
 
-      painter->setBackgroundMode(Qt::TransparentMode);
-
-      // Draw texts ------------------------------------------------------------------
-
-      // Draw parking and tower texts -------------------------------------------------
-      QFontMetrics metrics = painter->fontMetrics();
-      if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
+    // Draw tower -------------------------------------------------
+    if(airport.towerCoords.isValid())
+    {
+      float x, y;
+      if(wToSBuf(airport.towerCoords, x, y, marginsSmall))
       {
-        for(const MapParking& parking : *parkings)
+        if(airport.towerFrequency > 0)
         {
-          if(context->mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 40)
-          {
-            float x, y;
-            if(wToSBuf(parking.position, x, y, marginsSmall))
-            {
-              // Use different text pen for better readability depending on background
-              painter->setPen(QPen(mapcolors::colorTextForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
+          painter->setPen(QPen(mapcolors::activeTowerOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
+          painter->setBrush(mapcolors::activeTowerColor);
+        }
+        else
+        {
+          painter->setPen(QPen(mapcolors::inactiveTowerOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
+          painter->setBrush(mapcolors::inactiveTowerColor);
+        }
 
-              QString text;
-              if(parking.type.startsWith("FUEL"))
-                text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Fuel") : tr("F");
-              else if(parking.number != -1)
+        double w = scale->getPixelForMeter(10.f, 90);
+        double h = scale->getPixelForMeter(10.f, 0);
+        painter->drawEllipse(QPointF(x, y), w < 6. ? 6. : w, h < 6. ? 6. : h);
+      }
+    }
+
+    painter->setBackgroundMode(Qt::TransparentMode);
+
+    // Draw texts ------------------------------------------------------------------
+
+    // Draw parking, fuel and tower texts -------------------------------------------------
+    painter->setFont(context->defaultFont);
+    QFontMetrics metrics = painter->fontMetrics();
+    if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
+    {
+      for(const MapParking& parking : *parkings)
+      {
+        if(context->mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 40)
+        {
+          float x, y;
+          if(wToSBuf(parking.position, x, y, marginsSmall))
+          {
+            // Use different text pen for better readability depending on background
+            painter->setPen(QPen(mapcolors::colorTextForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
+
+            QString text;
+            if(parking.type.startsWith("FUEL"))
+              text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Fuel") : tr("F");
+            else if(parking.number != -1)
+            {
+              // FSX/P3D style names
+              if(context->mapLayerEffective->isAirportDiagramDetail3())
+                text = map::parkingName(parking.name) + " " + QLocale().toString(parking.number);
+              else
+                text = QLocale().toString(parking.number);
+            }
+            else if(!parking.name.isEmpty())
+            {
+              // X-Plane style names
+              if(parking.name.size() <= 5 || context->mapLayerEffective->isAirportDiagramDetail3())
+                // Use short name or full name when zoomed in enough
+                text = parking.name;
+              else
               {
-                // FSX/P3D style names
-                if(context->mapLayerEffective->isAirportDiagramDetail3())
-                  text = map::parkingName(parking.name) + " " + QLocale().toString(parking.number);
-                else
-                  text = QLocale().toString(parking.number);
-              }
-              else if(!parking.name.isEmpty())
-              {
-                // X-Plane style names
-                if(parking.name.size() <= 5 || context->mapLayerEffective->isAirportDiagramDetail3())
-                  // Use short name or full name when zoomed in enough
-                  text = parking.name;
+                bool ok;
+                int num = parking.name.section(" ", -1, -1).toInt(&ok);
+
+                if(ok)
+                  // Use first character and last number
+                  text = parking.name.at(0) + QString::number(num);
                 else
                 {
-                  bool ok;
-                  int num = parking.name.section(" ", -1, -1).toInt(&ok);
-
-                  if(ok)
-                    // Use first character and last number
-                    text = parking.name.at(0) + QString::number(num);
+                  QString firstWord = parking.name.section(" ", 0, 0);
+                  if(firstWord.size() <= 5)
+                    text = firstWord;
                   else
-                  {
-                    QString firstWord = parking.name.section(" ", 0, 0);
-                    if(firstWord.size() <= 5)
-                      text = firstWord;
-                    else
-                      text = firstWord.left(4) + ".";
-                  }
+                    text = firstWord.left(4) + ".";
                 }
               }
-              painter->drawText(x - metrics.width(text) / 2, y + metrics.ascent() / 2, text);
             }
-          } // if(context->mapLayer->isAirportDiagramDetail2() || parking.radius > 40)
-        } // for(const MapParking& parking : *parkings)
-      } // if(!fast && context->mapLayer->isAirportDiagramDetail())
+            painter->drawText(QPointF(x - metrics.width(text) / 2., y + metrics.ascent() / 2.), text);
+          }
+        } // if(context->mapLayer->isAirportDiagramDetail2() || parking.radius > 40)
+      } // for(const MapParking& parking : *parkings)
 
       // Draw tower T -----------------------------
-      if(!fast && airport.towerCoords.isValid())
+      if(airport.towerCoords.isValid())
       {
         float x, y;
         if(wToSBuf(airport.towerCoords, x, y, marginsSmall))
         {
           QString text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Tower") : tr("T");
           painter->setPen(QPen(mapcolors::towerTextColor, 2, Qt::SolidLine, Qt::FlatCap));
-          painter->drawText(x - metrics.width(text) / 2, y + metrics.ascent() / 2, text);
+          painter->drawText(QPointF(x - metrics.width(text) / 2., y + metrics.ascent() / 2.), text);
         }
       }
-    }
-  }
+    } // if(!fast && context->mapLayer->isAirportDiagramDetail())
+  } // if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_PARKING))
 
   // Draw runway texts --------------------------------
   if(!fast && runways != nullptr)
@@ -947,7 +953,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 }
 
 /* Draw airport runway overview as in VFR maps (runways with white center line) */
-void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y)
+void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, int symsize)
 {
   Marble::GeoPainter *painter = context->painter;
 
@@ -969,14 +975,19 @@ void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, flo
     runwayCoords(rw, &centers, &rects, &innerRects, nullptr, true /* overview */);
 
     // Draw outline in airport color (magenta or green depending on tower)
+    bool runwayDrawn = false; // Use small icon if runways are visible
     painter->setBrush(QBrush(apColor));
     painter->setPen(QPen(QBrush(apColor), 1, Qt::SolidLine, Qt::FlatCap));
     for(int i = 0; i < centers.size(); i++)
     {
-      painter->translate(centers.at(i));
-      painter->rotate(rw->at(i).heading);
-      painter->drawRect(rects.at(i));
-      painter->resetTransform();
+      if(rects.at(i).height() > 10)
+      {
+        painter->translate(centers.at(i));
+        painter->rotate(rw->at(i).heading);
+        painter->drawRect(rects.at(i));
+        painter->resetTransform();
+        runwayDrawn = true;
+      }
     }
 
     // Draw white center lines
@@ -984,14 +995,20 @@ void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, flo
     painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
     for(int i = 0; i < centers.size(); i++)
     {
-      painter->translate(centers.at(i));
-      painter->rotate(rw->at(i).heading);
-      painter->drawRect(innerRects.at(i));
-      painter->resetTransform();
+      if(rects.at(i).height() > 10)
+      {
+        painter->translate(centers.at(i));
+        painter->rotate(rw->at(i).heading);
+        painter->drawRect(innerRects.at(i));
+        painter->resetTransform();
+        runwayDrawn = true;
+      }
     }
 
     // Draw small symbol on top to find a clickspot
-    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, 10, false, context->drawFast,
+    symbolPainter->drawAirportSymbol(context->painter, ap, x, y,
+                                     runwayDrawn ? 10 : symsize, // Draw small icon only if runways are visible
+                                     false /* isAirportDiagram */, context->drawFast,
                                      context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
   }
 }

@@ -89,7 +89,7 @@ public:
                                const map::MapAirport& airport, bool navData);
 
   /*
-   * Get a map object by type, ident and region
+   * Get a map object by type, ident and region. Results are appended.
    * @param result will receive objects based on type
    * @param type AIRPORT, VOR, NDB or WAYPOINT
    * @param ident ICAO ident
@@ -174,6 +174,13 @@ public:
                                                    const QStringList& typesAll,
                                                    bool unknownType, float distance);
 
+  /* Get related airport for navaids from current nav database.
+   * found is true if navaid search was successful and max distance to pos is not exceeded. */
+  QString getAirportIdentFromWaypoint(const QString& ident, const QString& region, const atools::geo::Pos& pos,
+                                      bool found);
+  QString getAirportIdentFromVor(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found);
+  QString getAirportIdentFromNdb(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found);
+
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
 
@@ -199,6 +206,8 @@ private:
 
   void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
                             bool navData);
+  QString airportIdentFromQuery(const QString& queryStr, const QString& ident, const QString& region,
+                                   const atools::geo::Pos& pos, bool& found);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;
@@ -231,8 +240,7 @@ private:
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *vorByWaypointIdQuery = nullptr,
                         *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *ilsQuerySimByName = nullptr,
-                        *vorNearestQuery = nullptr,
-                        *ndbNearestQuery = nullptr, *userdataPointByIdQuery = nullptr;
+                        *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

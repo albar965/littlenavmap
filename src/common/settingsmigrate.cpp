@@ -35,6 +35,8 @@ using  atools::util::Version;
 
 namespace migrate {
 
+static Version optionsVersion;
+
 void removeAndLog(Settings& settings, const QString& key)
 {
   if(settings.contains(key))
@@ -48,7 +50,7 @@ void checkAndMigrateSettings()
 {
   Settings& settings = Settings::instance();
 
-  Version optionsVersion(settings.valueStr(lnm::OPTIONS_VERSION));
+  optionsVersion = Version(settings.valueStr(lnm::OPTIONS_VERSION));
   Version programVersion;
 
   if(optionsVersion.isValid())
@@ -209,6 +211,12 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "RouteExport/RouteExportDialog_tableViewRouteExport");
       }
 
+      if(optionsVersion <= Version("2.6.6"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.6";
+        settings.setValue("MainWindow/Widget_statusBar", true);
+      }
+
       // =====================================================================
       // Adapt update channels if not yet saved or previous version is stable and this one is not
       if(!settings.contains(lnm::OPTIONS_UPDATE_CHANNELS) || (optionsVersion.isStable() && !programVersion.isStable()))
@@ -256,6 +264,11 @@ void checkAndMigrateSettings()
     settings.setValueVar(lnm::OPTIONS_DIALOG_MAP_FONT, font);
     settings.syncSettings();
   }
+}
+
+const Version& getOptionsVersion()
+{
+  return optionsVersion;
 }
 
 } // namespace migrate

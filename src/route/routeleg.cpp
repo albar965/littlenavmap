@@ -37,7 +37,7 @@ using namespace atools::geo;
 /* Extract parking name and number from FS flight plan */
 const QRegularExpression PARKING_TO_NAME_AND_NUM("([A-Za-z_ ]*)([0-9]+)");
 
-/* If region is not set search within this distance (not the read GC distance) for navaids with the same name */
+/* If region is not set search within this distance (not the real GC distance) for navaids with the same name */
 const int MAX_WAYPOINT_DISTANCE_METER = 10000.f;
 
 /* Maximum distance to the predecessor waypoint if position is invalid */
@@ -51,16 +51,6 @@ const static QLatin1Literal PARKING_NO_NUMBER(" NULL");
 
 RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
   : flightplan(parentFlightplan)
-{
-
-}
-
-RouteLeg::RouteLeg()
-{
-
-}
-
-RouteLeg::~RouteLeg()
 {
 
 }
@@ -235,7 +225,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
             // Get nearest with the same name
             QList<map::MapParking> parkings;
-            airportQuery->getParkingByName(parkings, airport.id, name, flightplan->getDeparturePosition());
+            airportQuery->getParkingByName(parkings, airport.id, name, flightplan->getDepartureParkingPosition());
 
             if(parkings.isEmpty())
             {
@@ -302,6 +292,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::AIRPORT,
                                     flightplanEntry->getIdent(), region, /* region is ignored for airports */
                                     QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+
+      if(mapobjectResult.waypoints.isEmpty())
+        // Nothing found for waypoints - try again without region - result is appended
+        mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT, flightplanEntry->getIdent(), QString(),
+                                      QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+
       if(!mapobjectResult.waypoints.isEmpty())
       {
         assignIntersection(mapobjectResult, flightplanEntry);
@@ -326,6 +322,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
     case atools::fs::pln::entry::VOR:
       mapQuery->getMapObjectByIdent(mapobjectResult, map::VOR, flightplanEntry->getIdent(), region,
                                     QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+
+      if(mapobjectResult.vors.isEmpty())
+        // Nothing found for VOR - try again without region
+        mapQuery->getMapObjectByIdent(mapobjectResult, map::VOR, flightplanEntry->getIdent(), QString(),
+                                      QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+
       if(!mapobjectResult.vors.isEmpty())
       {
         assignVor(mapobjectResult, flightplanEntry);
@@ -337,6 +339,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
     case atools::fs::pln::entry::NDB:
       mapQuery->getMapObjectByIdent(mapobjectResult, map::NDB, flightplanEntry->getIdent(), region,
                                     QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+
+      if(mapobjectResult.ndbs.isEmpty())
+        // Nothing found for NDB - try again without region
+        mapQuery->getMapObjectByIdent(mapobjectResult, map::NDB, flightplanEntry->getIdent(), QString(),
+                                      QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+
       if(!mapobjectResult.ndbs.isEmpty())
       {
         assignNdb(mapobjectResult, flightplanEntry);
@@ -506,9 +514,11 @@ QString RouteLeg::getMapObjectTypeName() const
   else if(waypoint.isValid())
     return tr("Waypoint");
   else if(vor.isValid())
-    return map::vorType(vor) + " (" + map::navTypeNameVor(vor.type) + ")";
+    return vor.type.isEmpty() ? map::vorType(vor) :
+           tr("%1 (%2)").arg(map::vorType(vor)).arg(map::navTypeNameVor(vor.type));
   else if(ndb.isValid())
-    return ndb.type.isEmpty() ? tr("NDB") : tr("NDB (%1)").arg(map::navTypeNameNdb(ndb.type));
+    return ndb.type.isEmpty() ? tr("NDB") :
+           tr("NDB (%1)").arg(map::navTypeNameNdb(ndb.type));
   else if(airport.isValid())
     return tr("Airport");
   else if(ils.isValid())
@@ -931,7 +941,8 @@ void RouteLeg::assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln:
 
 void RouteLeg::assignRunwayOrHelipad(const QString& name)
 {
-  NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
+  NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name,
+                                                     flightplan->getDepartureParkingPosition());
 
   if(!start.isValid())
   {

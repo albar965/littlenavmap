@@ -247,11 +247,6 @@ bool RouteExport::routeExportPlnMsfsMan()
   return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS, NavApp::getRouteFilepath()));
 }
 
-bool RouteExport::routeExportPln(const RouteExportFormat& format)
-{
-  return routeExportInternalPln(format);
-}
-
 bool RouteExport::routeExportLnm(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -275,6 +270,11 @@ bool RouteExport::routeExportLnm(const RouteExportFormat& format)
   return false;
 }
 
+bool RouteExport::routeExportPln(const RouteExportFormat& format)
+{
+  return routeExportInternalPln(format);
+}
+
 bool RouteExport::routeExportPlnMsfs(const RouteExportFormat& format)
 {
   return routeExportInternalPln(format);
@@ -293,7 +293,11 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
   {
     bool msfs = format.getType() == rexp::PLNMSFS;
 
-    QString routeFile = exportFile(format, "Route/Pln" + NavApp::getCurrentSimulatorShortName(),
+    // Use always same settings prefix for MSFS independent of scenery library selection
+    // Other simulators share same PLN settings prefix also independent of scenery library
+    QString shortName = msfs ? atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS) : "Pln";
+
+    QString routeFile = exportFile(format, "Route/Pln" + shortName,
                                    NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(format, ".pln", msfs),
                                    false /* dontComfirmOverwrite */);
 
@@ -391,7 +395,7 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
   if(routeValidateMulti(format))
   {
     // <Documents>/Aerosoft/Airbus/Flightplans.
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".flp"));
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), "01.flp"));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
@@ -930,7 +934,6 @@ bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteE
     RouteExportData exportData = createRouteExportData(type);
     if(routeExportDialog(exportData, type))
     {
-      QString typeStr = RouteExportDialog::getRouteTypeAsDisplayString(type);
       QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
       if(!routeFile.isEmpty())
       {
@@ -1103,11 +1106,6 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   // Check for valid airports for departure and destination ================================
   if(validateDepartAndDest && (!route.hasValidDeparture() || !route.hasValidDestination()))
   {
-    const static atools::gui::DialogButtonList BUTTONS({
-      {QString(), QMessageBox::Cancel},
-      {tr("Select Start &Position"), QMessageBox::Yes},
-      {QString(), QMessageBox::Save}
-    });
     QString message;
 
     if(multi)
@@ -1221,7 +1219,7 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserW
   if(file.open(QFile::WriteOnly | QIODevice::Text))
   {
     QByteArray utf8 = gfp.toUtf8();
-    file.write(utf8.data(), utf8.size());
+    file.write(utf8.constData(), utf8.size());
     file.close();
     return true;
   }
@@ -1242,7 +1240,7 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
   if(file.open(QFile::WriteOnly | QIODevice::Text))
   {
     QByteArray utf8 = txt.toUtf8();
-    file.write(utf8.data(), utf8.size());
+    file.write(utf8.constData(), utf8.size());
     file.close();
     return true;
   }
@@ -1329,7 +1327,7 @@ bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUs
   if(file.open(QFile::WriteOnly | QIODevice::Text))
   {
     QByteArray utf8 = gfp.toUtf8();
-    file.write(utf8.data(), utf8.size());
+    file.write(utf8.constData(), utf8.size());
     file.close();
     return true;
   }
@@ -1342,74 +1340,83 @@ bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUs
 
 bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const QString& filename)
 {
-  QFile file(filename);
-  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  // <?xml version="1.0" encoding="utf-8"?>
+  // <FlightPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  // FlightType="IFR"
+  // Equipment="/L"
+  // CruiseAltitude="23000"
+  // CruiseSpeed="275"
+  // DepartureAirport="KBZN"
+  // DestinationAirport="KJAC"
+  // AlternateAirport="KSLC"
+  // Route="DCT 4529N11116W 4527N11114W 4524N11112W 4522N11110W DCT 4520N11110W 4519N11111W/N0276F220 4517N11113W 4516N11115W 4514N11115W/N0275F230 4509N11114W 4505N11113W 4504N11111W 4502N11107W 4500N11105W 4458N11104W 4452N11103W 4450N11105W/N0276F220 4449N11108W 4449N11111W 4449N11113W 4450N11116W 4451N11119W 4450N11119W/N0275F230 4448N11117W 4446N11116W DCT KWYS DCT 4440N11104W 4440N11059W 4439N11055W 4439N11052W 4435N11050W 4430N11050W 4428N11050W 4426N11044W 4427N11041W 4425N11035W 4429N11032W 4428N11031W 4429N11027W 4429N11025W 4432N11024W 4432N11022W 4432N11018W 4428N11017W 4424N11017W 4415N11027W/N0276F220 DCT 4409N11040W 4403N11043W DCT 4352N11039W DCT"
+  // Remarks="PBN/D2 DOF/181102 REG/N012SB PER/B RMK/TCAS SIMBRIEF"
+  // IsHeavy="false"
+  // EquipmentPrefix=""
+  // EquipmentSuffix="L"
+  // DepartureTime="2035"
+  // DepartureTimeAct="0"
+  // EnrouteHours="0"
+  // EnrouteMinutes="53"
+  // FuelHours="2"
+  // FuelMinutes="44"
+  // VoiceType="Full" />
+  QString xmlString;
+  QXmlStreamWriter writer(&xmlString);
+  writer.setCodec("UTF-8");
+
+  writer.writeStartDocument("1.0");
+  writer.writeStartElement("FlightPlan");
+
+  writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+  writer.writeAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+
+  writer.writeAttribute("FlightType", exportData.getFlightRules());
+  writer.writeAttribute("Equipment", exportData.getEquipment());
+  writer.writeAttribute("CruiseAltitude", QString::number(exportData.getCruiseAltitude()));
+  writer.writeAttribute("CruiseSpeed", QString::number(exportData.getSpeed()));
+  writer.writeAttribute("DepartureAirport", exportData.getDeparture());
+  writer.writeAttribute("DestinationAirport", exportData.getDestination());
+  writer.writeAttribute("AlternateAirport", exportData.getAlternate());
+  writer.writeAttribute("Route", exportData.getRoute());
+  writer.writeAttribute("Remarks", exportData.getRemarks());
+  writer.writeAttribute("IsHeavy", exportData.isHeavy() ? "true" : "false");
+  writer.writeAttribute("EquipmentPrefix", exportData.getEquipmentPrefix());
+  writer.writeAttribute("EquipmentSuffix", exportData.getEquipmentSuffix());
+
+  writer.writeAttribute("DepartureTime", exportData.getDepartureTime().toString("HHmm"));
+  writer.writeAttribute("DepartureTimeAct", exportData.getDepartureTimeActual().isNull() ?
+                        "0" : exportData.getDepartureTimeActual().toString("HHmm"));
+  int enrouteHours = exportData.getEnrouteMinutes() / 60;
+  writer.writeAttribute("EnrouteHours", QString::number(enrouteHours));
+  writer.writeAttribute("EnrouteMinutes", QString::number(exportData.getEnrouteMinutes() - enrouteHours * 60));
+  int enduranceHours = exportData.getEnduranceMinutes() / 60;
+  writer.writeAttribute("FuelHours", QString::number(enduranceHours));
+  writer.writeAttribute("FuelMinutes", QString::number(exportData.getEnduranceMinutes() - enduranceHours * 60));
+  writer.writeAttribute("VoiceType", exportData.getVoiceType());
+
+  writer.writeEndElement(); // FlightPlan
+  writer.writeEndDocument();
+
+  xmlString.replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+
+  // VoiceType="Full" />
+  xmlString.replace("\"/>", "\" />");
+
+  // Write XML to file ===================
+  QFile xmlFile(filename);
+  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    // <?xml version="1.0" encoding="utf-8"?>
-    // <FlightPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    // FlightType="IFR"
-    // Equipment="/L"
-    // CruiseAltitude="23000"
-    // CruiseSpeed="275"
-    // DepartureAirport="KBZN"
-    // DestinationAirport="KJAC"
-    // AlternateAirport="KSLC"
-    // Route="DCT 4529N11116W 4527N11114W 4524N11112W 4522N11110W DCT 4520N11110W 4519N11111W/N0276F220 4517N11113W 4516N11115W 4514N11115W/N0275F230 4509N11114W 4505N11113W 4504N11111W 4502N11107W 4500N11105W 4458N11104W 4452N11103W 4450N11105W/N0276F220 4449N11108W 4449N11111W 4449N11113W 4450N11116W 4451N11119W 4450N11119W/N0275F230 4448N11117W 4446N11116W DCT KWYS DCT 4440N11104W 4440N11059W 4439N11055W 4439N11052W 4435N11050W 4430N11050W 4428N11050W 4426N11044W 4427N11041W 4425N11035W 4429N11032W 4428N11031W 4429N11027W 4429N11025W 4432N11024W 4432N11022W 4432N11018W 4428N11017W 4424N11017W 4415N11027W/N0276F220 DCT 4409N11040W 4403N11043W DCT 4352N11039W DCT"
-    // Remarks="PBN/D2 DOF/181102 REG/N012SB PER/B RMK/TCAS SIMBRIEF"
-    // IsHeavy="false"
-    // EquipmentPrefix=""
-    // EquipmentSuffix="L"
-    // DepartureTime="2035"
-    // DepartureTimeAct="0"
-    // EnrouteHours="0"
-    // EnrouteMinutes="53"
-    // FuelHours="2"
-    // FuelMinutes="44"
-    // VoiceType="Full" />
-    QXmlStreamWriter writer(&file);
-    writer.setCodec("UTF-8");
-    writer.setAutoFormatting(true);
-    writer.setAutoFormattingIndent(2);
-
-    writer.writeStartDocument("1.0");
-    writer.writeStartElement("FlightPlan");
-
-    writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-    writer.writeAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
-
-    writer.writeAttribute("FlightType", exportData.getFlightRules());
-    writer.writeAttribute("Equipment", exportData.getEquipment());
-    writer.writeAttribute("CruiseAltitude", QString::number(exportData.getCruiseAltitude()));
-    writer.writeAttribute("CruiseSpeed", QString::number(exportData.getSpeed()));
-    writer.writeAttribute("DepartureAirport", exportData.getDeparture());
-    writer.writeAttribute("DestinationAirport", exportData.getDestination());
-    writer.writeAttribute("AlternateAirport", exportData.getAlternate());
-    writer.writeAttribute("Route", exportData.getRoute());
-    writer.writeAttribute("Remarks", exportData.getRemarks());
-    writer.writeAttribute("IsHeavy", exportData.isHeavy() ? "true" : "false");
-    writer.writeAttribute("EquipmentPrefix", exportData.getEquipmentPrefix());
-    writer.writeAttribute("EquipmentSuffix", exportData.getEquipmentSuffix());
-
-    writer.writeAttribute("DepartureTime", exportData.getDepartureTime().toString("HHmm"));
-    writer.writeAttribute("DepartureTimeAct", exportData.getDepartureTimeActual().isNull() ?
-                          "0" : exportData.getDepartureTimeActual().toString("HHmm"));
-    int enrouteHours = exportData.getEnrouteMinutes() / 60;
-    writer.writeAttribute("EnrouteHours", QString::number(enrouteHours));
-    writer.writeAttribute("EnrouteMinutes", QString::number(exportData.getEnrouteMinutes() - enrouteHours * 60));
-    int enduranceHours = exportData.getEnduranceMinutes() / 60;
-    writer.writeAttribute("FuelHours", QString::number(enduranceHours));
-    writer.writeAttribute("FuelMinutes", QString::number(exportData.getEnduranceMinutes() - enduranceHours * 60));
-    writer.writeAttribute("VoiceType", exportData.getVoiceType());
-
-    writer.writeEndElement(); // FlightPlan
-    writer.writeEndDocument();
-
-    file.close();
+    QTextStream stream(&xmlFile);
+    stream.setCodec("UTF-8");
+    stream.setGenerateByteOrderMark(false);
+    stream << xmlString.toUtf8();
+    xmlFile.close();
     return true;
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving VFP file:"));
+    atools::gui::ErrorHandler(mainWindow).handleIOError(xmlFile, tr("While saving VFP file:"));
     return false;
   }
 }
@@ -1760,12 +1767,16 @@ Route RouteExport::buildAdjustedRoute(rf::RouteAdjustOptions options)
 
 Route RouteExport::buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions options)
 {
-  if(NavApp::getMainUi()->actionRouteSaveApprWaypoints->isChecked())
-    options |= rf::SAVE_APPROACH_WP;
-  if(NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked())
-    options |= rf::SAVE_SIDSTAR_WP;
-  if(NavApp::getMainUi()->actionRouteSaveAirwayWaypoints->isChecked())
-    options |= rf::SAVE_AIRWAY_WP;
+  // Do not convert procedures for LNMPLN - no matter how it is saved
+  if(!options.testFlag(rf::SAVE_LNMPLN))
+  {
+    if(NavApp::getMainUi()->actionRouteSaveApprWaypoints->isChecked())
+      options |= rf::SAVE_APPROACH_WP;
+    if(NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked())
+      options |= rf::SAVE_SIDSTAR_WP;
+    if(NavApp::getMainUi()->actionRouteSaveAirwayWaypoints->isChecked())
+      options |= rf::SAVE_AIRWAY_WP;
+  }
 
   Route rt = route.updatedAltitudes().adjustedToOptions(options);
 

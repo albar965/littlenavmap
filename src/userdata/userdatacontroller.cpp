@@ -800,7 +800,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
 
   choiceDialog.getCheckBox(HEADER)->setDisabled(choiceDialog.isChecked(APPEND));
   ChoiceDialog *dlgPtr = &choiceDialog;
-  connect(&choiceDialog, &ChoiceDialog::checkBoxToggled, [dlgPtr](int id, bool checked) {
+  connect(&choiceDialog, &ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
     if(id == APPEND)
       dlgPtr->getCheckBox(HEADER)->setDisabled(checked);
   });

@@ -138,7 +138,6 @@ void MapContextMenu::clear()
 
 void MapContextMenu::buildMainMenu()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
   menu.clear();
 
   // Inherit tool tip status from well know menu

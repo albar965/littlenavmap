@@ -31,7 +31,6 @@ const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES =
 QDebug operator<<(QDebug out, const map::MapTypes& type)
 {
   QDebugStateSaver saver(out);
-  Q_UNUSED(saver);
 
   QStringList flags;
   if(type == NONE)
@@ -106,7 +105,6 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
 QDebug operator<<(QDebug out, const map::MapObjectDisplayTypes& type)
 {
   QDebugStateSaver saver(out);
-  Q_UNUSED(saver);
 
   QStringList flags;
   if(type == NONE)

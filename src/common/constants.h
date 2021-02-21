@@ -106,6 +106,7 @@ const QLatin1Literal ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWar
 
 const QLatin1Literal ACTIONS_SHOW_SAVE_WARNING("Actions/ShowSaveWarning");
 const QLatin1Literal ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
+const QLatin1Literal ACTIONS_OFFLINE_WARNING("Actions/OfflineWarning");
 
 /* Other setting key names */
 const QLatin1Literal DATABASE_BASEPATH("Database/BasePath");
@@ -130,6 +131,7 @@ const QLatin1Literal MAINWINDOW_FIRSTAPPLICATIONSTART("MainWindow/FirstApplicati
 const QLatin1Literal MAINWINDOW_WIDGET("MainWindow/Widget");
 const QLatin1Literal MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler");
 const QLatin1Literal MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
+const QLatin1Literal MAINWINDOW_PLACE_ROUTE_CALC("MainWindow/PlaceRouteCalc");
 const QLatin1Literal MAP_DETAILFACTOR("Map/DetailFactor");
 const QLatin1Literal MAP_DISTANCEMARKERS("Map/DistanceMarkers");
 const QLatin1Literal MAP_TRAFFICPATTERNS("Map/TrafficPatterns");
@@ -325,9 +327,6 @@ const QLatin1Literal FILE_PATTERN_LAYOUT("(*.lnmlayout)");
 const QLatin1Literal FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 const QLatin1Literal FILE_PATTERN_XPLANE_METAR("(METAR.rwx)");
 const QLatin1Literal FILE_PATTERN_XPLANE_LOGBOOK("(X-Plane*Pilot.txt)"); /* Need * since file dialog fails on spaces */
-
-const QLatin1Literal FILE_PATTERN_IMAGE("(*.jpg *.jpeg *.png *.bmp)");
-const QLatin1Literal FILE_PATTERN_IMAGE_AVITAB("(*.png *.jpeg)");
 
 /* Sqlite database names */
 const QLatin1Literal DATABASE_DIR("little_navmap_db");

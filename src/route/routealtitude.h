@@ -120,7 +120,6 @@ class RouteAltitude
 public:
   /* route used for calculation */
   RouteAltitude(const Route *routeParam);
-  ~RouteAltitude();
 
   /* Create a copy and assign the given route */
   RouteAltitude copy(const Route *routeParam);

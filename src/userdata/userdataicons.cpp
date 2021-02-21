@@ -161,8 +161,6 @@ QString UserdataIcons::getDefaultType(const QString& type)
 void UserdataIcons::loadIcon(const QFileInfo& entry)
 {
   static QRegularExpression typeRegexp("userpoint_(.+)\\.(svg|png|jpg|gif)");
-  QString name = atools::settings::Settings::instance().getOverloadedPath(entry.filePath());
-
   QRegularExpressionMatch match = typeRegexp.match(entry.fileName());
   if(match.hasMatch())
   {

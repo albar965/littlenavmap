@@ -50,6 +50,24 @@ static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
 int MapQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
+// Queries only used for export ================================================
+// Get assigned airport for navaid by name, region and coordinate closest to position
+static QLatin1String AIRPORTIDENT_FROM_WAYPOINT("select a.ident, w.lonx, w.laty "
+                                                "from waypoint w join airport a on a.airport_id = w.airport_id "
+                                                "where w. ident = :ident and w.region like :region "
+                                                "order by (abs(w.lonx - :lonx) + abs(w.laty - :laty)) limit 1");
+
+static QLatin1String AIRPORTIDENT_FROM_VOR("select a.ident, v.lonx, v.laty "
+                                           "from vor v join airport a on a.airport_id = v.airport_id "
+                                           "where v.ident = :ident and v.region like :region "
+                                           "order by (abs(v.lonx - :lonx) + abs(v.laty - :laty)) limit 1");
+
+static QLatin1String AIRPORTIDENT_FROM_NDB("select a.ident, n.lonx, n.laty "
+                                           "from ndb n join airport a on a.airport_id = n.airport_id "
+                                           "where n.ident = :ident and n.region like :region "
+                                           "order by (abs(n.lonx - :lonx) + abs(n.laty - :laty)) limit 1");
+static float MAX_AIRPORT_IDENT_DISTANCE_M = atools::geo::nmToMeter(5.f);
+
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
   : dbSim(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
 {
@@ -596,9 +614,8 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
       QHash<int, QList<map::MapParking> > parkingCache = NavApp::getAirportQuerySim()->getParkingCache();
 
       // Also check parking and helipads in airport diagrams
-      for(int id : parkingCache.keys())
+      for(const QList<MapParking>& parkings : parkingCache)
       {
-        const QList<MapParking>& parkings = parkingCache.value(id);
         for(const MapParking& p : parkings)
         {
           if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
@@ -608,9 +625,8 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
 
       QHash<int, QList<map::MapHelipad> > helipadCache = NavApp::getAirportQuerySim()->getHelipadCache();
 
-      for(int id : helipadCache.keys())
+      for(const QList<MapHelipad>& helipads : helipadCache)
       {
-        const QList<MapHelipad>& helipads = helipadCache.value(id);
         for(const MapHelipad& p : helipads)
         {
           if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
@@ -767,6 +783,52 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
     }
   }
   return retval;
+}
+
+QString MapQuery::getAirportIdentFromWaypoint(const QString& ident, const QString& region, const Pos& pos,
+                                              bool found)
+{
+  return airportIdentFromQuery(AIRPORTIDENT_FROM_WAYPOINT, ident, region, pos, found);
+}
+
+QString MapQuery::getAirportIdentFromVor(const QString& ident, const QString& region, const Pos& pos, bool found)
+{
+  return airportIdentFromQuery(AIRPORTIDENT_FROM_VOR, ident, region, pos, found);
+}
+
+QString MapQuery::getAirportIdentFromNdb(const QString& ident, const QString& region, const Pos& pos, bool found)
+{
+  return airportIdentFromQuery(AIRPORTIDENT_FROM_NDB, ident, region, pos, found);
+}
+
+QString MapQuery::airportIdentFromQuery(const QString& queryStr, const QString& ident, const QString& region,
+                                        const Pos& pos, bool& found)
+{
+  found = false;
+
+  // Query for nearest navaid
+  SqlQuery query(dbNav);
+  query.prepare(queryStr);
+  query.bindValue(":ident", ident);
+  query.bindValue(":region", region.isEmpty() ? "%" : region);
+  query.bindValue(":lonx", pos.getLonX());
+  query.bindValue(":laty", pos.getLatY());
+
+  QString airport;
+  query.exec();
+  if(query.next())
+  {
+    // Check if max distance is not exceeded
+    Pos navaidPos(query.valueFloat("lonx"), query.valueFloat("laty"));
+    if(pos.distanceMeterTo(pos) < MAX_AIRPORT_IDENT_DISTANCE_M)
+    {
+      // Get airport ident and record that a navaid was found
+      found = true;
+      airport = query.valueStr("ident");
+    }
+  }
+  query.finish();
+  return airport;
 }
 
 const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
@@ -994,9 +1056,6 @@ void MapQuery::initQueries()
   static const QString ndbQueryBase(
     "ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty ");
 
-  static const QString parkingQueryBase(
-    "parking_id, airport_id, type, name, airline_codes, number, radius, heading, has_jetway, lonx, laty ");
-
   static const QString ilsQueryBase(
     "ils_id, ident, name, region, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
     "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty");
@@ -1083,7 +1142,7 @@ void MapQuery::initQueries()
                                     "where " + whereRect + " and visible_from > :dist and type like :type " +
                                     whereLimit);
 
-  markersByRectQuery = new SqlQuery(dbNav);
+  markersByRectQuery = new SqlQuery(dbSim);
   markersByRectQuery->prepare(
     "select marker_id, type, ident, heading, lonx, laty "
     "from marker "

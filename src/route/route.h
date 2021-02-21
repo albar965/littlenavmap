@@ -618,6 +618,9 @@ public:
    * This is needed since attached transitions can change procedures. */
   void reloadProcedures(proc::MapProcedureTypes procs);
 
+  /* Copies departure and destination names and positions from Route to Flightplan */
+  void updateDepartureAndDestination();
+
 private:
   /* Copy flight plan profile altitudes into entries for FMS and other formats
    *  All following functions have to use setCoords instead of setPosition to avoid overwriting*/

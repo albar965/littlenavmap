@@ -48,7 +48,6 @@ void MapPainterShip::render()
     if(context->objectTypes & map::AIRCRAFT_AI_SHIP && context->mapLayer->isAiShipLarge())
     {
       atools::util::PainterContextSaver saver(context->painter);
-      Q_UNUSED(saver);
 
       for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
       {

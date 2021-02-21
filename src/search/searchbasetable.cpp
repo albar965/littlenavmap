@@ -131,7 +131,9 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   airportQuery = NavApp::getAirportQuerySim();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &SearchBaseTable::fontChanged);
+#endif
 
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -325,7 +327,7 @@ void SearchBaseTable::connectSearchWidgets()
 
       if(lineEdit != nullptr)
       {
-        connect(lineEdit, &QLineEdit::textChanged, [ = ](const QString& text)
+        connect(lineEdit, &QLineEdit::textChanged, this, [ = ](const QString& text)
         {
           Q_UNUSED(text)
           controller->filterByBuilder(columns->getQueryBuilder());
@@ -341,7 +343,7 @@ void SearchBaseTable::connectSearchWidgets()
   {
     if(col->getLineEditWidget() != nullptr)
     {
-      connect(col->getLineEditWidget(), &QLineEdit::textChanged, [ = ](const QString& text)
+      connect(col->getLineEditWidget(), &QLineEdit::textChanged, this, [ = ](const QString& text)
       {
         controller->filterByLineEdit(col, text);
         updateButtonMenu();
@@ -353,13 +355,12 @@ void SearchBaseTable::connectSearchWidgets()
       if(col->getComboBoxWidget()->isEditable())
       {
         // Treat editable combo boxes like line edits
-        connect(col->getComboBoxWidget(), &QComboBox::editTextChanged, [ = ](const QString& text)
+        connect(col->getComboBoxWidget(), &QComboBox::editTextChanged, this, [ = ](const QString& text)
         {
           QComboBox *box = col->getComboBoxWidget();
 
           {
             QSignalBlocker blocker(box);
-            Q_UNUSED(blocker);
 
             // Reset index if entered word does not match
             QString txt = box->currentText();
@@ -374,7 +375,7 @@ void SearchBaseTable::connectSearchWidgets()
       }
       else
       {
-        connect(col->getComboBoxWidget(), curIndexChangedPtr, [ = ](int index)
+        connect(col->getComboBoxWidget(), curIndexChangedPtr, this, [ = ](int index)
         {
           controller->filterByComboBox(col, index, index == 0);
           updateButtonMenu();
@@ -384,7 +385,7 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getCheckBoxWidget() != nullptr)
     {
-      connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged, [ = ](int state)
+      connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged, this, [ = ](int state)
       {
         controller->filterByCheckbox(col, state, col->getCheckBoxWidget()->isTristate());
         updateButtonMenu();
@@ -393,7 +394,7 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getSpinBoxWidget() != nullptr)
     {
-      connect(col->getSpinBoxWidget(), valueChangedPtr, [ = ](int value)
+      connect(col->getSpinBoxWidget(), valueChangedPtr, this, [ = ](int value)
       {
         updateFromSpinBox(value, col);
         updateButtonMenu();
@@ -402,14 +403,14 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getMinSpinBoxWidget() != nullptr && col->getMaxSpinBoxWidget() != nullptr)
     {
-      connect(col->getMinSpinBoxWidget(), valueChangedPtr, [ = ](int value)
+      connect(col->getMinSpinBoxWidget(), valueChangedPtr, this, [ = ](int value)
       {
         updateFromMinSpinBox(value, col);
         updateButtonMenu();
         editStartTimer();
       });
 
-      connect(col->getMaxSpinBoxWidget(), valueChangedPtr, [ = ](int value)
+      connect(col->getMaxSpinBoxWidget(), valueChangedPtr, this, [ = ](int value)
       {
         updateFromMaxSpinBox(value, col);
         updateButtonMenu();
@@ -429,7 +430,7 @@ void SearchBaseTable::connectSearchWidgets()
     // If all distance widgets are present connect them
     connect(distanceCheckBox, &QCheckBox::stateChanged, this, &SearchBaseTable::distanceSearchStateChanged);
 
-    connect(minDistanceWidget, valueChangedPtr, [ = ](int value)
+    connect(minDistanceWidget, valueChangedPtr, this, [ = ](int value)
     {
       controller->filterByDistanceUpdate(
         static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
@@ -441,7 +442,7 @@ void SearchBaseTable::connectSearchWidgets()
       editStartTimer();
     });
 
-    connect(maxDistanceWidget, valueChangedPtr, [ = ](int value)
+    connect(maxDistanceWidget, valueChangedPtr, this, [ = ](int value)
     {
       controller->filterByDistanceUpdate(
         static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
@@ -452,7 +453,7 @@ void SearchBaseTable::connectSearchWidgets()
       editStartTimer();
     });
 
-    connect(distanceDirWidget, curIndexChangedPtr, [ = ](int index)
+    connect(distanceDirWidget, curIndexChangedPtr, this, [ = ](int index)
     {
       controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
                                          Unit::rev(minDistanceWidget->value(), Unit::distNmF),
@@ -614,19 +615,14 @@ void SearchBaseTable::reconnectSelectionModel()
 }
 
 /* Slot for table selection changed */
-void SearchBaseTable::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void SearchBaseTable::tableSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
-  Q_UNUSED(selected);
-  Q_UNUSED(deselected);
-
   tableSelectionChangedInternal(false /* follow selection */);
 }
 
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
-void SearchBaseTable::dockVisibilityChanged(bool visible)
+void SearchBaseTable::dockVisibilityChanged(bool)
 {
-  Q_UNUSED(visible);
-
   tableSelectionChangedInternal(true /* do not follow selection */);
 }
 
@@ -1201,7 +1197,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ui->actionLogdataRouteOpen->setEnabled(false);
     if(!logEntry.routeFile.isEmpty())
     {
-      if(QFileInfo(logEntry.routeFile).exists())
+      if(QFileInfo::exists(logEntry.routeFile))
       {
         ui->actionLogdataRouteOpen->setEnabled(true);
         ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().
@@ -1216,7 +1212,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ui->actionLogdataPerfLoad->setEnabled(false);
     if(!logEntry.perfFile.isEmpty())
     {
-      if(QFileInfo(logEntry.perfFile).exists())
+      if(QFileInfo::exists(logEntry.perfFile))
       {
         ui->actionLogdataPerfLoad->setEnabled(true);
         ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().
@@ -1619,11 +1615,9 @@ void SearchBaseTable::tabDeactivated()
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
-QVariant SearchBaseTable::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+QVariant SearchBaseTable::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                                            const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(roleValue);
-
   switch(role)
   {
     case Qt::DisplayRole:
@@ -1651,10 +1645,8 @@ QVariant SearchBaseTable::modelDataHandler(int colIndex, int rowIndex, const Col
 }
 
 /* Formats the QVariant to a QString depending on column name */
-QString SearchBaseTable::formatModelData(const Column *col, const QVariant& displayRoleValue) const
+QString SearchBaseTable::formatModelData(const Column *, const QVariant& displayRoleValue) const
 {
-  Q_UNUSED(col);
-
   // Called directly by the model for export functions
   if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
     return QLocale().toString(displayRoleValue.toInt());

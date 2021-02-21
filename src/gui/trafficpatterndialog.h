@@ -45,7 +45,7 @@ class TrafficPatternDialog :
 
 public:
   explicit TrafficPatternDialog(QWidget *parent, const map::MapAirport& mapAirport);
-  virtual ~TrafficPatternDialog();
+  virtual ~TrafficPatternDialog() override;
 
   void fillTrafficPattern(map::TrafficPattern& pattern);
 

@@ -218,9 +218,24 @@ struct PaintContext
 
 };
 
+/* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */
 struct PaintAirportType
 {
-  const map::MapAirport *airport;
+  PaintAirportType(const map::MapAirport& ap, float x, float y);
+  PaintAirportType()
+  {
+  }
+
+  ~PaintAirportType();
+
+  PaintAirportType(const PaintAirportType& other)
+  {
+    this->operator=(other);
+  }
+
+  PaintAirportType& operator=(const PaintAirportType& other);
+
+  map::MapAirport *airport = nullptr;
   QPointF point;
 };
 
@@ -268,15 +283,15 @@ protected:
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,
                    float radiusNm, bool fast, int& xtext, int& ytext);
 
-  /* Drawing functions for simple geometry */
   void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
   void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line);
-  void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, int radius);
 
   /* Draw simple text with current settings. Corners are the text corners pointing to the position */
   void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner,
                 bool leftCorner);
 
+  /* Drawing functions for simple geometry */
+  void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, int radius);
   void drawCross(Marble::GeoPainter *painter, int x, int y, int size);
 
   /* No GC and no rhumb */
@@ -323,13 +338,6 @@ protected:
   /* Interface method to QPixmapCache*/
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);
 
-  /* Paint aircraft track or line string. Optimized for large amount of points */
-  void paintTrack(Marble::GeoPainter *painter, const AircraftTrack& aircraftTrack, bool mercator);
-  void paintTrack(Marble::GeoPainter *painter, const atools::geo::LineString& linestring, bool mercator);
-
-  /* Minimum length in pixel of a track segment to be drawn */
-  static Q_DECL_CONSTEXPR int TRACK_MIN_LINE_LENGTH = 5;
-
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;
   /* Maximum points to use for a circle */
@@ -343,19 +351,6 @@ protected:
   WaypointTrackQuery *waypointQuery;
   AirportQuery *airportQuery;
   MapScale *scale;
-
-private:
-  /* Adapter which allows passing AircraftTrack or a LineString to paintTrackInternal */
-  struct TrackAdapter
-  {
-    virtual const atools::geo::Pos& at(int i) const = 0;
-    virtual int size() const = 0;
-
-  };
-
-  /* Draw a long line with many small segments and optimize drawing */
-  void paintTrackInternal(Marble::GeoPainter *painter, const TrackAdapter& linestring, bool mercator);
-
 };
 
 #endif // LITTLENAVMAP_MAPPAINTER_H

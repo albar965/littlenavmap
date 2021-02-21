@@ -36,7 +36,7 @@ public:
   virtual ~ProfileLabelWidget() override;
 
 private:
-  virtual void paintEvent(QPaintEvent *event) override;
+  virtual void paintEvent(QPaintEvent *) override;
 
   /* Pass context menu to the profile widget */
   virtual void contextMenuEvent(QContextMenuEvent *event) override;

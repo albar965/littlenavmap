@@ -407,8 +407,8 @@ void MapWidget::jumpBackToAircraftTimeout(const QVariantList& values)
      OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE)
   {
 
-    if(mouseState != mw::NONE || viewContext() == Marble::Animation || contextMenuActive)
-      // Restart as long as menu is active or user is dragging around
+    if(mouseState != mw::NONE || viewContext() == Marble::Animation || contextMenuActive || QToolTip::isVisible())
+      // Restart as long as menu is active, user is dragging around or tooltip visible
       jumpBack->restart();
     else
     {
@@ -442,30 +442,32 @@ bool MapWidget::event(QEvent *event)
 
     if(mouseState == mw::NONE)
     {
-      QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+      const QHelpEvent *helpEvent = dynamic_cast<const QHelpEvent *>(event);
+      if(helpEvent != nullptr)
+      {
+        map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS |
+                                              map::QUERY_RANGEMARKER;
 
-      map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS |
-                                            map::QUERY_RANGEMARKER;
+        if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
+          queryTypes |= map::QUERY_PROC_MISSED_POINTS;
 
-      if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
-        queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+        // Load tooltip data into mapSearchResultTooltip
+        mapSearchResultTooltip = map::MapResult();
+        getScreenIndexConst()->getAllNearest(helpEvent->pos().x(),
+                                             helpEvent->pos().y(), screenSearchDistanceTooltip,
+                                             mapSearchResultTooltip,
+                                             queryTypes);
 
-      // Load tooltip data into mapSearchResultTooltip
-      mapSearchResultTooltip = map::MapResult();
-      getScreenIndexConst()->getAllNearest(helpEvent->pos().x(),
-                                           helpEvent->pos().y(), screenSearchDistanceTooltip,
-                                           mapSearchResultTooltip,
-                                           queryTypes);
+        NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
+                                                                      mapSearchResultTooltip.aiAircraft);
 
-      NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
-                                                                    mapSearchResultTooltip.aiAircraft);
+        tooltipPos = helpEvent->globalPos();
 
-      tooltipPos = helpEvent->globalPos();
-
-      // Build HTML
-      showTooltip(false /* update */);
-      event->accept();
-      return true;
+        // Build HTML
+        showTooltip(false /* update */);
+        event->accept();
+        return true;
+      }
     }
   }
 
@@ -531,9 +533,10 @@ void MapWidget::leaveEvent(QEvent *)
 
 void MapWidget::keyPressEvent(QKeyEvent *event)
 {
-  // #ifdef DEBUG_INFORMATION
-  // qDebug() << Q_FUNC_INFO << hex << event->key() << dec << event->modifiers();
-  // #endif
+#ifdef DEBUG_INFORMATION_KEY_INPUT
+  qDebug() << Q_FUNC_INFO << event->text() << hex << event->nativeScanCode() << hex << event->key() << dec <<
+    event->modifiers();
+#endif
 
   // Does not work for key presses that are consumed by the widget
   if(event->key() == Qt::Key_Escape)
@@ -541,17 +544,33 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
     cancelDragAll();
     setContextMenuPolicy(Qt::DefaultContextMenu);
   }
-  else if(event->key() == Qt::Key_Plus && !(event->modifiers() & Qt::ControlModifier))
-    zoomInOut(true /* in */, event->modifiers() & Qt::ShiftModifier /* smooth */);
-  else if(event->key() == Qt::Key_Minus && !(event->modifiers() & Qt::ControlModifier))
-    zoomInOut(false /* in */, event->modifiers() & Qt::ShiftModifier /* smooth */);
+  else if(event->key() == Qt::Key_Menu)
+  {
+    if(mouseState == mw::NONE)
+      // First menu key press after dragging - enable context menu again
+      setContextMenuPolicy(Qt::DefaultContextMenu);
+  }
   else if(event->key() == Qt::Key_Asterisk)
     zoomInOut(true /* in */, true /* smooth */);
   else if(event->key() == Qt::Key_Slash)
     zoomInOut(false /* in */, true /* smooth */);
-  else if(event->key() == Qt::Key_Menu && mouseState == mw::NONE)
-    // First menu key press after dragging - enable context menu again
-    setContextMenuPolicy(Qt::DefaultContextMenu);
+  else if(event->modifiers() & Qt::KeypadModifier)
+  {
+    // Check shift for smooth zooming for keypad input only
+    bool shift = event->modifiers() & Qt::ShiftModifier;
+    if(event->key() == Qt::Key_Plus)
+      zoomInOut(true /* in */, shift /* smooth */);
+    else if(event->key() == Qt::Key_Minus)
+      zoomInOut(false /* in */, shift /* smooth */);
+  }
+  else
+  {
+    // Do not check shift since different keyboard layouts might affect this
+    if(event->key() == Qt::Key_Plus)
+      zoomInOut(true /* in */, false /* smooth */);
+    else if(event->key() == Qt::Key_Minus)
+      zoomInOut(false /* in */, false /* smooth */);
+  }
 }
 
 bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
@@ -1242,6 +1261,14 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(e);
     if(keyEvent != nullptr)
     {
+      if(keyEvent->key() == Qt::Key_Home)
+      {
+        // Catch useless home event where Marble zooms way out
+        e->accept(); // Do not propagate further
+        event(e); // Call own event handler
+        return true; // Do not process further
+      }
+
       if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus}) &&
          (keyEvent->modifiers() & Qt::ControlModifier))
       {
@@ -2109,7 +2136,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   QRect widgetRect = rect();
 
   // Used to check if objects are still visible
-  QRect widgetRectSmall = widgetRect.adjusted(10, 10, -10, -10);
+  QRect widgetRectSmall = widgetRect.adjusted(40, 40, -40, -40);
   curPosVisible = widgetRectSmall.contains(curPoint);
 
   bool wasEmpty = aircraftTrack->isEmpty();
@@ -2254,18 +2281,18 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               atools::geo::Rect rect(nextWpPos);
               rect.extend(aircraft.getPosition());
 
-              if(rect.getWidthDegree() > 170.f || rect.getHeightDegree() > 170.f)
+              if(std::abs(rect.getWidthDegree()) > 170.f || std::abs(rect.getHeightDegree()) > 170.f)
                 rect = atools::geo::Rect(nextWpPos);
 
               if(!rect.isPoint(POS_IS_POINT_EPSILON))
               {
                 // Not a point but probably a flat rectangle
 
-                if(rect.getWidthDegree() <= POS_IS_POINT_EPSILON * 2.f)
+                if(std::abs(rect.getWidthDegree()) <= POS_IS_POINT_EPSILON * 2.f)
                   // Expand E/W direction
                   rect.inflate(POS_IS_POINT_EPSILON, 0.f);
 
-                if(rect.getHeightDegree() <= POS_IS_POINT_EPSILON * 2.f)
+                if(std::abs(rect.getHeightDegree()) <= POS_IS_POINT_EPSILON * 2.f)
                   // Expand N/S direction
                   rect.inflate(0.f, POS_IS_POINT_EPSILON);
               }
@@ -2965,8 +2992,11 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeatures(map::VOR, ui->actionMapShowVor->isChecked());
   setShowMapFeatures(map::NDB, ui->actionMapShowNdb->isChecked());
-  setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
   setShowMapFeatures(map::WAYPOINT, ui->actionMapShowWp->isChecked());
+
+  // ILS and marker are shown together
+  setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
+  setShowMapFeatures(map::MARKER, ui->actionMapShowIls->isChecked());
 
   mapVisible->updateVisibleObjectsStatusBar();
 
@@ -3243,6 +3273,17 @@ void MapWidget::workOffline(bool offline)
 {
   qDebug() << "Work offline" << offline;
   model()->setWorkOffline(offline);
+
+  if(NavApp::isMainWindowVisible() && offline)
+  {
+    // User changed option manually after startup - this is not triggerd by restore state
+    atools::gui::Dialog(this).showWarnMsgBox(lnm::ACTIONS_OFFLINE_WARNING,
+                                             tr("<p><b>Note that online map themes like the OpenStreetMap "
+                                                  "cannot be used in offline mode.</b><br/><br/>"
+                                                  "You might see fuzzy or blocky maps.</p>"
+                                                  "<p>Use an offline map theme or disable <code>Work Offline<code/>.</p>"),
+                                             tr("Do not &show this dialog again."));
+  }
 
   mainWindow->renderStatusUpdateLabel(Marble::RenderStatus::Complete, true /* forceUpdate */);
 

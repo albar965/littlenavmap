@@ -18,10 +18,19 @@
 #ifndef LITTLENAVMAP_SETTINGSMIGRATE_H
 #define LITTLENAVMAP_SETTINGSMIGRATE_H
 
+namespace atools {
+namespace util {
+class Version;
+}
+}
+
 namespace migrate {
 
 /* Delete incompatible settings if an older settings file was found. */
 void checkAndMigrateSettings();
+
+/* Return the version found in the options file. Can be used for late migration actions */
+const atools::util::Version& getOptionsVersion();
 
 } // namespace migrate
 

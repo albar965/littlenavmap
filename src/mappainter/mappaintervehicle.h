@@ -49,9 +49,9 @@ class MapPainterVehicle :
 
 public:
   MapPainterVehicle(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
-  virtual ~MapPainterVehicle();
+  virtual ~MapPainterVehicle() override;
 
-  virtual void render() = 0;
+  virtual void render() override = 0;
 
 protected:
   void paintAircraftTrack();

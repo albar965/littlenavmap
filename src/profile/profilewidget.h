@@ -45,6 +45,7 @@ class QRubberBand;
 class ProfileScrollArea;
 class JumpBack;
 class Route;
+class RouteLeg;
 struct ElevationLegList;
 
 /*
@@ -142,7 +143,7 @@ public:
   /* From center button */
   void jumpBackToAircraftCancel();
 
-  void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);
+  void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *);
 
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
@@ -221,6 +222,9 @@ private:
 
   /* Get either indicated or real */
   float aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
+  /* Get text and text color for a leg. procSymbol is true if only the generic procedure waypoint should be drawn */
+  void textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg);
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;

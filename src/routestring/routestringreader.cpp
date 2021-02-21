@@ -77,8 +77,8 @@ struct RouteStringReader::ParseEntry
   map::MapResult result;
 };
 
-RouteStringReader::RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder, bool verboseParam)
-  : verbose(verboseParam), entryBuilder(flightplanEntryBuilder)
+RouteStringReader::RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder)
+  : entryBuilder(flightplanEntryBuilder)
 {
   mapQuery = NavApp::getMapQuery();
   airportQuerySim = NavApp::getAirportQuerySim();
@@ -392,6 +392,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     fp->setDepartureName(entries.first().getIdent());
     fp->setDepartureIdent(entries.first().getIdent());
     fp->setDeparturePosition(entries.first().getPosition());
+    fp->setDepartureParkingPosition(entries.first().getPosition());
 
     fp->setDestinationName(entries.last().getIdent());
     fp->setDestinationIdent(entries.last().getIdent());
@@ -559,6 +560,7 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
     flightplan->setDepartureName(departure.name);
     flightplan->setDepartureIdent(departure.ident);
     flightplan->setDeparturePosition(departure.position);
+    flightplan->setDepartureParkingPosition(departure.position);
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(departure, entry, false /* alternate */);

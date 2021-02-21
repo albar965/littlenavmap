@@ -674,7 +674,8 @@ struct MapUserAircraft
   }
 
   explicit MapUserAircraft(const atools::fs::sc::SimConnectUserAircraft& aircraftParam)
-    : MapBase(map::AIRCRAFT, aircraftParam.getObjectId(), aircraftParam.getPosition()), aircraft(aircraftParam)
+    : MapBase(map::AIRCRAFT, static_cast<int>(aircraftParam.getObjectId()), aircraftParam.getPosition()),
+    aircraft(aircraftParam)
   {
   }
 
@@ -704,7 +705,8 @@ struct MapAiAircraft
   }
 
   explicit MapAiAircraft(const atools::fs::sc::SimConnectAircraft& aircraftParam)
-    : MapBase(map::AIRCRAFT_AI, aircraftParam.getObjectId(), aircraftParam.getPosition()), aircraft(aircraftParam)
+    : MapBase(map::AIRCRAFT_AI, static_cast<int>(aircraftParam.getObjectId()),
+              aircraftParam.getPosition()), aircraft(aircraftParam)
   {
   }
 
@@ -726,7 +728,8 @@ struct MapOnlineAircraft
   }
 
   explicit MapOnlineAircraft(const atools::fs::sc::SimConnectAircraft& aircraftParam)
-    : MapBase(map::AIRCRAFT_ONLINE, aircraftParam.getObjectId(), aircraftParam.getPosition()), aircraft(aircraftParam)
+    : MapBase(map::AIRCRAFT_ONLINE, static_cast<int>(aircraftParam.getObjectId()),
+              aircraftParam.getPosition()), aircraft(aircraftParam)
   {
   }
 
@@ -1080,10 +1083,10 @@ QDebug operator<<(QDebug out, const map::WeatherContext& record);
 // =====================================================================================
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
-const QString& navTypeNameVor(const QString& type);
-const QString& navTypeNameVorLong(const QString& type);
-const QString& navTypeNameNdb(const QString& type);
-const QString& navTypeNameWaypoint(const QString& type);
+QString navTypeNameVor(const QString& type);
+QString navTypeNameVorLong(const QString& type);
+QString navTypeNameNdb(const QString& type);
+QString navTypeNameWaypoint(const QString& type);
 
 QString ilsText(const map::MapIls& ils);
 QString ilsType(const MapIls& ils);
@@ -1093,7 +1096,7 @@ QString ilsTextShort(QString ident, QString name, bool gs, bool dme);
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
 
-const QString& navName(const QString& type);
+QString navName(const QString& type);
 const QString& surfaceName(const QString& surface);
 QString smoothnessName(QVariant smoothnessVar); // X-Plane runway smoothness
 const QString& parkingGateName(const QString& gate);

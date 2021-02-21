@@ -19,6 +19,7 @@
 
 #include "common/maptools.h"
 #include "query/waypointquery.h"
+#include "mapgui/maplayer.h"
 
 using namespace Marble;
 using namespace atools::sql;
@@ -101,14 +102,14 @@ void WaypointTrackQuery::getWaypoints(QList<map::MapWaypoint>& waypoints, const 
                                       const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   const QList<map::MapWaypoint> *wp;
-  if(useTracks)
+  if(useTracks && mapLayer->isTrackWaypoint())
   {
     wp = trackQuery->getWaypoints(rect, mapLayer, lazy, overflow);
     if(wp != nullptr)
       waypoints.append(*wp);
   }
 
-  if(!overflow)
+  if(!overflow && mapLayer->isAirwayWaypoint())
   {
     wp = waypointQuery->getWaypoints(rect, mapLayer, lazy, overflow);
     if(wp != nullptr)

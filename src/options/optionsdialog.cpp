@@ -788,12 +788,22 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
                                tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                                arg(result.mid(0, 6).join("<br/>")));
     else
-      atools::gui::Dialog::warning(this,
-                                   tr(
-                                     "<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
-                                       "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
-                                         "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                                   arg(result.mid(0, 6).join("<br/>")));
+    {
+      if(statusFile)
+        atools::gui::Dialog::warning(this,
+                                     tr(
+                                       "<p>Downloaded successfully but the file does not look like a status.txt file.</p>"
+                                         "<p><b>One of the keys <i>url0</i> and/or <i>url1</i> is missing.</b></p>"
+                                           "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                                     arg(result.mid(0, 6).join("<br/>")));
+      else
+        atools::gui::Dialog::warning(this,
+                                     tr(
+                                       "<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
+                                         "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
+                                           "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                                     arg(result.mid(0, 6).join("<br/>")));
+    }
   }
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
@@ -2428,7 +2438,7 @@ void OptionsDialog::updateWebDocrootStatus()
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Directory does not exist.")));
     else if(!fileinfo.isDir())
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Is not a directory.")));
-    else if(!QFileInfo(path + QDir::separator() + "index.html").exists())
+    else if(!QFileInfo::exists(path + QDir::separator() + "index.html"))
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::warningMessage(tr("Warning: No file \"index.html\" found.")));
     else
       ui->labelOptionWebDocrootStatus->setText(tr("Document root is valid."));
@@ -2646,20 +2656,20 @@ void OptionsDialog::selectGuiFontClicked()
   fontDialog->setCurrentFont(font);
   if(fontDialog->exec())
   {
-    QFont font = fontDialog->selectedFont();
+    QFont selfont = fontDialog->selectedFont();
 
     // Limit size to keep the user from messing up the UI without an option to change
-    if(font.pointSizeF() > 30.)
-      font.setPointSizeF(30.);
-    if(font.pixelSize() > 30)
-      font.setPixelSize(30);
+    if(selfont.pointSizeF() > 30.)
+      selfont.setPointSizeF(30.);
+    if(selfont.pixelSize() > 30)
+      selfont.setPixelSize(30);
 
-    guiFont = font.toString();
+    guiFont = selfont.toString();
     qDebug() << Q_FUNC_INFO << guiFont;
 
     // the user clicked OK and font is set to the font the user selected
-    if(QApplication::font() != font)
-      QApplication::setFont(font);
+    if(QApplication::font() != selfont)
+      QApplication::setFont(selfont);
     updateGuiFontLabel();
   }
 }
