@@ -3,6 +3,33 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 2.6.9
+
+This is a bugfix release which addresses an unrecoverable crash on startup when downloading tracks.
+
+## Notes
+
+Read the linked chapter below to minimize issues when loading flight plans into MSFS:
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/SCENERY.html#load-scenery-library-dialog-msfs-apt-navdata .
+
+## Known Issues
+
+See user manual for general known problems:
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#problems .
+
+See user manual for limitations and issues around Microsoft Flight Simulator 2020:
+https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#problems-msfs .
+
+## Changes from 2.6.8 to 2.6.9
+
+* Fixed unrecoverable error when downloading PACOTS tracks.
+* Improved error handling for unreadable track information. Program now logs an error message
+  instead of crashing.
+* Fixed error when reading procedures with invalid or unknown approach types from FSX, P3D and MSFS.
+  Now logging error instead.
+
+===============================================================================
+
 # Version 2.6.8
 
 ## Notes
