@@ -3,6 +3,13 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 2.6.10
+
+* Fixed message in progress tab which gave the wrong impression that program is already connected.
+
+
+===============================================================================
+
 # Version 2.6.9
 
 This is a bugfix release which addresses an unrecoverable crash on startup when downloading tracks.

@@ -1100,7 +1100,7 @@ void InfoController::updateUserAircraftText()
 #ifdef DEBUG_MOVING_AIRPLANE
   if( /* DISABLES CODE */ (true))
 #else
-  if(NavApp::isConnected())
+  if(NavApp::isConnectedActive())
 #endif
   {
     if(NavApp::isUserAircraftValid())
