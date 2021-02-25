@@ -9006,7 +9006,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Add a custom approach to the flight plan</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+C</string>
+    <string>Alt+Shift+R</string>
    </property>
   </action>
   <action name="actionSearchShowApproachesCustom">
@@ -9024,7 +9024,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Add a custom approach to the flight plan</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+C</string>
+    <string>Alt+Shift+R</string>
    </property>
   </action>
   <action name="actionInfoApproachAttach">
