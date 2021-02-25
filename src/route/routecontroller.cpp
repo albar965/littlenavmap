@@ -3983,8 +3983,7 @@ void RouteController::updateModelTimeFuelWind()
       model->item(row, rcol::WIND_HEAD_TAIL)->setText(QString());
       model->item(row, rcol::ALTITUDE)->setText(QString());
     }
-    else // Exclude departure and all after including destination airport
-    if(row > route.getDepartureAirportLegIndex() && row < route.getDestinationAirportLegIndex())
+    else
     {
       const RouteLeg& leg = route.value(i);
       const RouteAltitudeLeg& altLeg = altitudeLegs.value(i);
@@ -4050,32 +4049,36 @@ void RouteController::updateModelTimeFuelWind()
         model->item(row, rcol::FUEL_VOLUME)->setText(txt);
 
         // Wind at waypoint ========================================================
-        txt.clear();
-        float headWind = 0.f, crossWind = 0.f;
-        if(altLeg.getWindSpeed() >= 1.f)
+        // Exclude departure and all after including destination airport
+        if(row > route.getDepartureAirportLegIndex() && row < route.getDestinationAirportLegIndex())
         {
-          atools::geo::windForCourse(headWind, crossWind, altLeg.getWindSpeed(),
-                                     altLeg.getWindDirection(), leg.getCourseToTrue());
+          txt.clear();
+          float headWind = 0.f, crossWind = 0.f;
+          if(altLeg.getWindSpeed() >= 1.f)
+          {
+            atools::geo::windForCourse(headWind, crossWind, altLeg.getWindSpeed(),
+                                       altLeg.getWindDirection(), leg.getCourseToTrue());
 
-          txt = tr("%1 / %2").
-                arg(atools::geo::normalizeCourse(altLeg.getWindDirection() - leg.getMagvar()), 0, 'f', 0).
-                arg(Unit::speedKts(altLeg.getWindSpeed(), false /* addUnit */));
+            txt = tr("%1 / %2").
+                  arg(atools::geo::normalizeCourse(altLeg.getWindDirection() - leg.getMagvar()), 0, 'f', 0).
+                  arg(Unit::speedKts(altLeg.getWindSpeed(), false /* addUnit */));
+          }
+
+          model->item(row, rcol::WIND)->setText(txt);
+
+          // Head or tailwind at waypoint ========================================================
+          txt.clear();
+          if(std::abs(headWind) >= 1.f)
+          {
+            QString ptr;
+            if(headWind >= 1.f)
+              ptr = tr("▼");
+            else if(headWind <= -1.f)
+              ptr = tr("▲");
+            txt.append(tr("%1 %2").arg(ptr).arg(Unit::speedKts(std::abs(headWind), false /* addUnit */)));
+          }
+          model->item(row, rcol::WIND_HEAD_TAIL)->setText(txt);
         }
-
-        model->item(row, rcol::WIND)->setText(txt);
-
-        // Head or tailwind at waypoint ========================================================
-        txt.clear();
-        if(std::abs(headWind) >= 1.f)
-        {
-          QString ptr;
-          if(headWind >= 1.f)
-            ptr = tr("▼");
-          else if(headWind <= -1.f)
-            ptr = tr("▲");
-          txt.append(tr("%1 %2").arg(ptr).arg(Unit::speedKts(std::abs(headWind), false /* addUnit */)));
-        }
-        model->item(row, rcol::WIND_HEAD_TAIL)->setText(txt);
 
         // Altitude at waypoint ========================================================
         float alt = altLeg.getWaypointAltitude();

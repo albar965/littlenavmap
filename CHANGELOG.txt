@@ -7,7 +7,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 * Fixed message in progress tab which gave the wrong impression that program is already connected.
 * Removed wrong warning dialog about start position when loading MSFS flight plans.
-
+* Fixed missing time, fuel and altitude values for departure and destination in flight plan table.
 
 ===============================================================================
 
