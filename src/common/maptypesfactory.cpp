@@ -582,9 +582,9 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
   {
     // Look at name components
     QStringList texts = parking.name.split(" ");
+    QStringList textsShort;
     bool ok = false;
-    QString num;
-    for(QString& txt : texts)
+    for(const QString& txt : texts)
     {
       // Try to extract number
       txt.toInt(&ok);
@@ -602,16 +602,17 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
         ok = txt.size() == 1 && txt.at(0) >= 'A' && txt.at(0) <= 'Z';
 
       if(ok)
-      {
         // Found one number with or without suffix or prefix to build short text
-        num = txt;
-        break;
-      }
+        textsShort.append(txt);
     }
+    textsShort.removeAll(QString());
 
-    if(ok)
-      // Use first character and last number
-      parking.nameShort = texts.first().at(0) + QString(" ") + num;
+    if(!textsShort.isEmpty())
+    {
+      // Use first character and last numbers
+      textsShort.prepend(texts.first().at(0));
+      parking.nameShort = textsShort.join(" ");
+    }
   }
 }
 
