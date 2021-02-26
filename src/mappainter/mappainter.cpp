@@ -686,7 +686,14 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
         if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
         {
           if(ap1->softOnly() == ap2->softOnly()) // Soft airports
-            return ap1->longestRunwayLength < ap2->longestRunwayLength; // Larger value to end of list - drawn on top
+          {
+            if(ap1->longestRunwayLength == ap2->longestRunwayLength)
+              // Use id to get a fixed order and avoid flickering
+              return ap1->id < ap2->id;
+            else
+              return ap1->longestRunwayLength < ap2->longestRunwayLength;
+            // Larger value to end of list - drawn on top
+          }
           else
             return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
         }
