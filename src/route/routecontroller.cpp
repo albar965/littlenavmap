@@ -388,6 +388,10 @@ void RouteController::tableCopyClipboard()
 void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols,
                                                  float fontPointSize) const
 {
+  // Check if model is already initailized
+  if(model->rowCount() == 0)
+    return;
+
   int numCols = selectedCols.count(true);
 
   // Prepare table format ===================================
@@ -532,6 +536,11 @@ QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
 QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool print) const
 {
   qDebug() << Q_FUNC_INFO;
+
+  // Check if model is already initailized
+  if(model->rowCount() == 0)
+    return QString();
+
   using atools::util::HtmlBuilder;
 
   atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
@@ -976,18 +985,11 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   bool forceUpdate = format != atools::fs::pln::LNM_PLN && format != atools::fs::pln::FSX_PLN;
 
   // Do not create an entry on the undo stack since this plan file type does not support it
+  bool showWarning = false;
   if(updateStartPositionBestRunway(forceUpdate /* force */, false /* undo */))
   {
     if(forceUpdate ? false : !quiet)
-    {
-      NavApp::deleteSplashScreen();
-
-      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_START_CHANGED,
-                                                     tr("The flight plan had no valid start position.\n"
-                                                        "The start position is now set to the longest "
-                                                        "primary runway of the departure airport."),
-                                                     tr("Do not &show this dialog again."));
-    }
+      showWarning = true;
   }
 
   remarksFlightPlanToWidget();
@@ -1000,6 +1002,18 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 #endif
 
   emit routeChanged(true /* geometry changed */, true /* new flight plan */);
+
+  if(showWarning)
+  {
+    NavApp::deleteSplashScreen();
+    QTimer::singleShot(0, this, [ = ](void) -> void {
+      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_START_CHANGED,
+                                                     tr("The flight plan had no valid start position.\n"
+                                                        "The start position is now set to the longest "
+                                                        "primary runway of the departure airport."),
+                                                     tr("Do not &show this dialog again."));
+    });
+  }
 }
 
 /* Appends alternates to the end of the flight plan */
@@ -2989,6 +3003,10 @@ void RouteController::getSelectedRows(QList<int>& rows, bool reverse) const
 /* Select all columns of the given rows adding offset to each row index */
 void RouteController::selectList(const QList<int>& rows, int offset)
 {
+  // Check if model is already initailized
+  if(model->rowCount() == 0)
+    return;
+
   QItemSelection newSel;
 
   for(int row : rows)
@@ -3001,6 +3019,10 @@ void RouteController::selectList(const QList<int>& rows, int offset)
 
 void RouteController::selectRange(int from, int to)
 {
+  // Check if model is already initailized
+  if(model->rowCount() == 0)
+    return;
+
   QItemSelection newSel;
 
   int maxRows = view->model()->rowCount();
@@ -3942,6 +3964,10 @@ void RouteController::updateTableModel()
 /* Update travel times in table view model after speed change */
 void RouteController::updateModelTimeFuelWind()
 {
+  // Check if model is already initailized
+  if(model->rowCount() == 0)
+    return;
+
   using atools::fs::perf::AircraftPerf;
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
   if(altitudeLegs.isEmpty())
@@ -3972,6 +3998,12 @@ void RouteController::updateModelTimeFuelWind()
 
   for(int i = 0; i < route.size(); i++)
   {
+    if(i >= model->rowCount())
+    {
+      qWarning() << Q_FUNC_INFO << "Route size exceeds model size" << i << model->rowCount() - 1;
+      break;
+    }
+
     if(!setValues)
     {
       // Do not fill if collecting performance or route altitude is invalid
@@ -4180,6 +4212,10 @@ void RouteController::scrollToActive()
   {
     int routeLeg = route.getActiveLegIndexCorrected();
 
+    // Check if model is already initailized
+    if(model->rowCount() == 0)
+      return;
+
     if(routeLeg != map::INVALID_INDEX_VALUE && routeLeg >= 0 &&
        OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
       view->scrollTo(model->index(std::max(routeLeg - 1, 0), 0), QAbstractItemView::PositionAtTop);
@@ -4189,6 +4225,10 @@ void RouteController::scrollToActive()
 /* */
 void RouteController::highlightNextWaypoint(int activeLegIdx)
 {
+  // Check if model is already initailized
+  if(model->rowCount() == 0)
+    return;
+
   // Remove background brush for all rows and columns ===============
   activeLegIndex = activeLegIdx;
   for(int row = 0; row < model->rowCount(); ++row)
@@ -4239,6 +4279,10 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
 /* Set colors for procedures and missing objects like waypoints and airways */
 void RouteController::updateModelHighlights()
 {
+  // Check if model is already initailized
+  if(model->rowCount() == 0)
+    return;
+
   bool night = NavApp::isCurrentGuiStyleNight();
   const QColor defaultColor = QApplication::palette().color(QPalette::Normal, QPalette::Text);
   const QColor invalidColor = night ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor;
@@ -4822,10 +4866,13 @@ QStringList RouteController::getRouteColumns() const
   QStringList colums;
   QHeaderView *header = view->horizontalHeader();
 
-  // Get column names from header and remove line feeds
-  for(int col = 0; col < model->columnCount(); col++)
-    colums.append(model->headerData(header->logicalIndex(col), Qt::Horizontal).toString().
-                  replace("-\n", "-").replace("\n", " "));
+  if(header != nullptr)
+  {
+    // Get column names from header and remove line feeds
+    for(int col = 0; col < model->columnCount(); col++)
+      colums.append(model->headerData(header->logicalIndex(col), Qt::Horizontal).toString().
+                    replace("-\n", "-").replace("\n", " "));
+  }
 
   return colums;
 }

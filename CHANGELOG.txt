@@ -5,9 +5,11 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 # Version 2.6.10
 
-* Fixed message in progress tab which gave the wrong impression that program is already connected.
+* Fixed crash that occurs when showing the dialog `The flight plan had no valid start position` on startup.
 * Removed wrong warning dialog about start position when loading MSFS flight plans.
+* Fixed message in progress tab which gave the wrong impression that program is already connected.
 * Fixed missing time, fuel and altitude values for departure and destination in flight plan table.
+* More small user interface and map display improvements.
 
 ===============================================================================
 
