@@ -1355,6 +1355,7 @@ void ProfileWidget::elevationUpdateAvailable()
   // Do not terminate thread here since this can lead to starving updates
 
   // Start thread after long delay to calculate new data
+  // Calls ProfileWidget::updateTimeout()
   updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
                      ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS);
 }
@@ -1435,6 +1436,9 @@ void ProfileWidget::updateThreadFinished()
     updateLabel();
     update();
     updateTooltip();
+
+    // Update scroll bars
+    scrollArea->routeChanged(true);
   }
 }
 
@@ -1616,6 +1620,7 @@ void ProfileWidget::showEvent(QShowEvent *)
 
   widgetVisible = true;
   // Start update immediately
+  // Calls ProfileWidget::updateTimeout()
   updateTimer->start(ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
 }
 
