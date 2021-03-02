@@ -714,7 +714,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     {
       for(const MapParking& parking : *parkings)
       {
-        if(mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 40)
+        if(mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 20)
         {
           float x, y;
           if(wToSBuf(parking.position, x, y, marginsSmall))
@@ -738,25 +738,35 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
               // X-Plane style names =========
               text = parking.name;
 
-              // Try to use shorter name except for lowest zoomt
+              // Calculate string length based on zery character to have all the same criteria
+
+              // Try to use shorter name except for lowest zoom - lowest uses full name
               if(!mapLayerEffective->isAirportDiagramDetail3())
               {
-                float parkingSize = scale->getPixelForFeet(parking.radius) * 2.5f;
-                if(painter->fontMetrics().boundingRect(text).width() > parkingSize)
+                float parkingSize = scale->getPixelForFeet(parking.radius);
+                if(painter->fontMetrics().boundingRect(QString(text.size(), '0')).width() > parkingSize * 2.5f)
                 {
                   // Name does not fit in circle
                   if(parking.nameShort.isEmpty())
                   {
-                    // Elide text until it fits
+                    // No short name available - elide text until it fits
                     int elide = parking.name.size();
-                    while(painter->fontMetrics().boundingRect(text).width() > parkingSize && elide > 2)
+                    while(painter->fontMetrics().boundingRect(QString(text.size(), '0')).width() > parkingSize * 2.5f &&
+                          elide > 2)
                       text = atools::elideTextShort(text, --elide);
                   }
                   else
-                    // Use pre-calculated short name with first character and a number
-                    text = parking.nameShort;
+                  {
+                    if(painter->fontMetrics().boundingRect(QString(parking.nameShort.size(), '0')).width() >
+                       parkingSize * 3.f && parking.nameShort.splitRef(' ').size() == 2)
+                      // Use only number part
+                      text = parking.nameShort.section(' ', 1, 1);
+                    else
+                      // Use pre-calculated short name with first character and a number
+                      text = parking.nameShort;
+                  }
                 }
-                // else name fits in circle
+                // else name fits in circle - use full name
               }
             }
 
