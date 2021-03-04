@@ -595,7 +595,11 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
 
       // Try suffixed number like 1C, 23D
       if(!ok)
-        txt.chopped(1).toInt(&ok);
+      {
+        QString temp(txt);
+        temp.chop(1);
+        temp.toInt(&ok);
+      }
 
       // Any single upper case letter
       if(!ok)
