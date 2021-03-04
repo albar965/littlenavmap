@@ -20,12 +20,21 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 
 ## Changes from 2.6.9 to 2.6.10
 
-* Fixed crash that occurs when showing the dialog `The flight plan had no valid start position` on startup.
-* Removed wrong warning dialog about start position when loading MSFS flight plans.
-* Fixed message in progress tab which gave the wrong impression that program is already connected when using a network connection.
-* Fixed missing time, fuel and altitude values for departure and destination rows in flight plan table.
-* Changed keyboard shortcut for `Create Approach` in context menus to `Alt+Shift+R` to avoid overlap  with `Calculate Flight Plan`.
-* Fixed issue where minimum zoom was wrongly set in the elevation profile in some cases. As a result the user could not zoom in to the minimum of around 4 NM.
+* Fixed crash that occurs when showing the dialog `The flight plan had no valid start position` on
+  startup. This kept the user from starting *Little Navmap*.
+* Removed wrong warning dialog about start position when loading MSFS flight plans. MSFS cannot
+  load start positions like gates from a flight plan file.
+* Fixed missing time, fuel and altitude values for departure and destination legs in flight plan
+  table.
+* Corrected message in progress tab which gave the wrong impression that program is already
+  connected when using a network connection.
+* Fixed issue where minimum zoom was wrongly set in the elevation profile in some cases. As a
+  result the user could not zoom in to the minimum of around 4 NM and was stuck at much higher levels.
+* Changed keyboard shortcut for `Create Approach` in context menus to `Alt+Shift+R` to avoid
+  overlap  with `Calculate Flight Plan`.
+* Added new sub menu `Track Sources` in menu `Flight Plan` which allows to enable or disable the
+  different track systems to load. Note that AUSOTS is disabled per default since there are no flex
+  tracks available for almost one year and the service is unreliable causing download errors.
 * More small user interface and map display improvements.
 
 ===============================================================================

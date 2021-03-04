@@ -240,6 +240,14 @@
     <property name="title">
      <string>Flight &amp;Plan</string>
     </property>
+    <widget class="QMenu" name="menuTrackSources">
+     <property name="title">
+      <string>Track &amp;Sources</string>
+     </property>
+     <addaction name="actionTrackSourcesNat"/>
+     <addaction name="actionTrackSourcesPacots"/>
+     <addaction name="actionTrackSourcesAusots"/>
+    </widget>
     <addaction name="actionShortcutFlightPlan"/>
     <addaction name="actionShortcutAircraftPerformance"/>
     <addaction name="separator"/>
@@ -258,6 +266,7 @@
     <addaction name="actionRouteDownloadTracks"/>
     <addaction name="actionRouteDownloadTracksNow"/>
     <addaction name="actionRouteDeleteTracks"/>
+    <addaction name="menuTrackSources"/>
    </widget>
    <widget class="QMenu" name="menuDatabase">
     <property name="title">
@@ -11675,6 +11684,54 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Manual wind in fuel report overrides other</string>
    </property>
   </action>
+  <action name="actionTrackSourcesNat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;NAT</string>
+   </property>
+   <property name="toolTip">
+    <string>Download North Atlantic Tracks</string>
+   </property>
+   <property name="statusTip">
+    <string>Download North Atlantic Tracks</string>
+   </property>
+  </action>
+  <action name="actionTrackSourcesPacots">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;PACOTS</string>
+   </property>
+   <property name="toolTip">
+    <string>Download tracks for Pacific Organized Track System</string>
+   </property>
+   <property name="statusTip">
+    <string>Download tracks for Pacific Organized Track System</string>
+   </property>
+  </action>
+  <action name="actionTrackSourcesAusots">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;AUSOTS</string>
+   </property>
+   <property name="toolTip">
+    <string>Download tracks for Australian Organised Track Structure</string>
+   </property>
+   <property name="statusTip">
+    <string>Download tracks for Australian Organised Track Structure</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11860,8 +11917,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

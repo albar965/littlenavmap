@@ -83,6 +83,7 @@ private:
   void trackDownloadFailed(const QString& error, int errorCode, QString downloadUrl, atools::track::TrackType type);
   void trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
   void tracksLoaded();
+  QVector<atools::track::TrackType> enabledTracks();
 
   /* Avoid multiple error reports. */
   bool errorReported = false;
