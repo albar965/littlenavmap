@@ -651,7 +651,7 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
       if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
         // X-Plane weather file
         return Metar(getXplaneMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
-      else if(NavApp::getConnectClient()->isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
+      else if(NavApp::isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
       {
         atools::fs::weather::MetarResult res =
           NavApp::getConnectClient()->requestWeather(airportIcao, airportPos, true);

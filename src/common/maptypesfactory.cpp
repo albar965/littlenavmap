@@ -576,6 +576,48 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
 
   parking.heading = static_cast<int>(std::round(record.valueFloat("heading")));
   parking.radius = static_cast<int>(std::round(record.valueFloat("radius")));
+
+  // Calculate a short text if using X-Plane parking names
+  if(parking.number == -1)
+  {
+    // Look at name components
+    QStringList texts = parking.name.split(" ");
+    QStringList textsShort;
+    bool ok = false;
+    for(const QString& txt : texts)
+    {
+      // Try to extract number
+      txt.toInt(&ok);
+
+      // Try to extract prefixed number like B1, A101
+      if(!ok)
+        txt.midRef(1).toInt(&ok);
+
+      // Try suffixed number like 1C, 23D
+      if(!ok)
+      {
+        QString temp(txt);
+        temp.chop(1);
+        temp.toInt(&ok);
+      }
+
+      // Any single upper case letter
+      if(!ok)
+        ok = txt.size() == 1 && txt.at(0) >= 'A' && txt.at(0) <= 'Z';
+
+      if(ok)
+        // Found one number with or without suffix or prefix to build short text
+        textsShort.append(txt);
+    }
+    textsShort.removeAll(QString());
+
+    if(!textsShort.isEmpty())
+    {
+      // Use first character and last numbers
+      textsShort.prepend(texts.first().at(0));
+      parking.nameShort = textsShort.join(" ");
+    }
+  }
 }
 
 void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)

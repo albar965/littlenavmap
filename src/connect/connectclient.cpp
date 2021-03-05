@@ -607,12 +607,16 @@ void ConnectClient::connectInternal()
   }
 }
 
+bool ConnectClient::isConnectedActive() const
+{
+  return (socket != nullptr && socket->isOpen() && socketConnected) ||
+         (dataReader != nullptr && dataReader->isConnected());
+}
+
 bool ConnectClient::isConnected() const
 {
-  if(dataReader != nullptr)
-    return (socket != nullptr && socket->isOpen()) || dataReader->isConnected();
-  else
-    return socket != nullptr && socket->isOpen();
+  // socket or SimConnect or Xpconnect
+  return (socket != nullptr && socket->isOpen()) || (dataReader != nullptr && dataReader->isConnected());
 }
 
 bool ConnectClient::isSimConnect() const

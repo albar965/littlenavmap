@@ -32,6 +32,7 @@
 #include "ui_mainwindow.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
+#include "ui_mainwindow.h"
 
 #include <QDebug>
 
@@ -108,12 +109,20 @@ TrackController::~TrackController()
 void TrackController::restoreState()
 {
   atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS, false /* visibility */, true /* block signals */);
-  state.restore(NavApp::getMainUi()->actionRouteDownloadTracks);
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  state.restore({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots,
+                 ui->actionRouteDownloadTracks});
 }
 
 void TrackController::saveState()
 {
-  atools::gui::WidgetState(lnm::AIRSPACE_CONTROLLER_WIDGETS).save(NavApp::getMainUi()->actionRouteDownloadTracks);
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS);
+
+  state.save({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots,
+              ui->actionRouteDownloadTracks});
 }
 
 void TrackController::optionsChanged()
@@ -143,11 +152,14 @@ void TrackController::startDownload()
 {
   qDebug() << Q_FUNC_INFO;
 
-  cancelDownload();
+  deleteTracks();
 
   // Append all to queue and start
-  downloadQueue.append(atools::track::ALL_TRACK_TYPES);
-  downloader->startAllDownloads();
+  QVector<atools::track::TrackType> trackTypes = enabledTracks();
+  downloadQueue.append(trackTypes);
+
+  for(atools::track::TrackType trackType: trackTypes)
+    downloader->startDownload(trackType);
 
   NavApp::setStatusMessage(tr("Track download started."));
 }
@@ -167,7 +179,7 @@ void TrackController::deleteTracks()
 
 void TrackController::downloadToggled(bool checked)
 {
-  if(checked)
+  if(checked && !hasTracks())
     startDownload();
 }
 
@@ -234,11 +246,14 @@ void TrackController::trackDownloadFailed(const QString& error, int errorCode, Q
   {
     // Show an error dialog for any failed downloads but only once per session
     errorReported = true;
+    QString typeStr = atools::track::typeToString(type);
+
     atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL,
-                                                   tr("<p>Download of track information from<br/>\"%1\"<br/>"
-                                                      "failed.</p><p>Error: %2 (%3)</p>"
+                                                   tr("<p>Download of %1 track information from<br/>\"%2\"<br/>"
+                                                      "failed.</p><p>Error: %3 (%4)</p>"
                                                       "<p>Check your track settings or disable track downloads.</p>"
                                                         "<p>Suppressing further messages during this session.</p>").
+                                                   arg(typeStr).
                                                    arg(downloadUrl).arg(error).arg(errorCode),
                                                    tr("Do not &show this dialog again."));
   }
@@ -300,4 +315,17 @@ void TrackController::tracksLoaded()
 
     NavApp::setStatusMessage(tr("Tracks downloaded: %1.").arg(msg.join(tr(", "))), true /* addToLog */);
   }
+}
+
+QVector<atools::track::TrackType> TrackController::enabledTracks()
+{
+  QVector<atools::track::TrackType> retval;
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(ui->actionTrackSourcesNat->isChecked())
+    retval.append(atools::track::NAT);
+  if(ui->actionTrackSourcesPacots->isChecked())
+    retval.append(atools::track::PACOTS);
+  if(ui->actionTrackSourcesAusots->isChecked())
+    retval.append(atools::track::AUSOTS);
+  return retval;
 }

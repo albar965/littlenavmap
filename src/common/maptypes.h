@@ -511,7 +511,7 @@ struct MapParking
   {
   }
 
-  QString type, name, airlineCodes /* Comma separated list of airline codes */;
+  QString type, name, nameShort, airlineCodes /* Comma separated list of airline codes */;
   int airportId /* database id airport.airport_id */;
   int number, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
       radius, heading;

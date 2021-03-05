@@ -406,19 +406,24 @@ bool NavApp::isFetchAiShip()
   return connectClient->isFetchAiShip();
 }
 
+bool NavApp::isConnectedActive()
+{
+  return connectClient->isConnectedActive();
+}
+
 bool NavApp::isConnected()
 {
-  return NavApp::getConnectClient()->isConnected();
+  return connectClient->isConnected();
 }
 
 bool NavApp::isConnectedNetwork()
 {
-  return NavApp::getConnectClient()->isConnectedNetwork();
+  return connectClient->isConnectedNetwork();
 }
 
 bool NavApp::isSimConnect()
 {
-  return NavApp::getConnectClient()->isSimConnect();
+  return connectClient->isSimConnect();
 }
 
 bool NavApp::isConnectedAndAircraftFlying()

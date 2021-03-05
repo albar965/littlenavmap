@@ -68,6 +68,9 @@ public:
   /* true if connected to Little Navconnect or the simulator */
   bool isConnected() const;
 
+  /* true if connected to Xpconnect, SimConnect or socket is really connected */
+  bool isConnectedActive() const;
+
   /* true if connection is using SimConnect for FSX/P3D */
   bool isSimConnect() const;
 
@@ -148,7 +151,7 @@ private:
   bool silent = false, manualDisconnect = false;
   ConnectDialog *dialog = nullptr;
 
-  /* Does automatic reconnect */
+  /* Does automatic reconnect. Reads SimConnect or Xpconnect. */
   atools::fs::sc::DataReaderThread *dataReader = nullptr;
   atools::fs::sc::SimConnectHandler *simConnectHandler = nullptr;
   atools::fs::sc::XpConnectHandler *xpConnectHandler = nullptr;

@@ -1672,26 +1672,27 @@ void MapPainterRoute::drawWindBarbs(const QBitArray& visibleStartPoints, const Q
     return;
 
   QPointF lastPt;
-  int i = 0;
+  int routeIndex = 0;
   for(const QPointF& pt : startPoints)
   {
-    if(i > route->getNumAltitudeLegs() - 1)
+    if(routeIndex > route->getNumAltitudeLegs() - 1)
       break;
 
-    if(visibleStartPoints.testBit(i))
+    if(visibleStartPoints.testBit(routeIndex))
     {
       bool distOk = lastPt.isNull() || (pt - lastPt).manhattanLength() > 50;
 
-      const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(i);
+      const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(routeIndex);
       if(altLeg.getLineString().getPos2().getAltitude() > map::MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() &&
-         !altLeg.isAlternate() && distOk)
+         !altLeg.isAlternate() && distOk &&
+         routeIndex > route->getDepartureAirportLegIndex() && routeIndex < route->getDestinationAirportLegIndex())
       {
         drawWindBarbAtWaypoint(altLeg.getWindSpeed(), altLeg.getWindDirection(),
                                static_cast<float>(pt.x()), static_cast<float>(pt.y()));
         lastPt = pt;
       }
     }
-    i++;
+    routeIndex++;
   }
 }
 
