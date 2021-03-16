@@ -341,11 +341,6 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
   mainWindow->setStatusMessage(tr("Userpoint moved."));
 }
 
-void UserdataController::backup()
-{
-  manager->backup();
-}
-
 void UserdataController::clearTemporary()
 {
   manager->clearTemporary();
@@ -733,6 +728,7 @@ void UserdataController::clearDatabase()
 
   if(retval == QMessageBox::Yes)
   {
+    manager->backupTableToCsv();
     manager->clearData();
     emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
   }

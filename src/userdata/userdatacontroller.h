@@ -144,9 +144,6 @@ public:
   /* Needed for export */
   void setMagDecReader(atools::fs::common::MagDecReader *magDecReader);
 
-  /* Create CSV backup in the settings directory */
-  void backup();
-
   /* Remove all data from the table which has the temporary flag set. */
   void clearTemporary();
 
