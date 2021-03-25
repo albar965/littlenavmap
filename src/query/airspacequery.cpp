@@ -101,9 +101,8 @@ void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
   airspaceByIdQuery->bindValue(":id", airspaceId);
   airspaceByIdQuery->exec();
   if(airspaceByIdQuery->next())
-  {
     mapTypesFactory->fillAirspace(airspaceByIdQuery->record(), airspace, source);
-  }
+
   airspaceByIdQuery->finish();
 }
 

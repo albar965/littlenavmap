@@ -165,7 +165,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
         if(ref.objType & map::AIRWAY)
           continue;
 
-        if(ref.id != -1 || !ref.position.isValidRange())
+        if(ref.id == -1 || !ref.position.isValidRange())
           qWarning() << Q_FUNC_INFO << "Invalid track ref" << ref;
 
         const map::MapObjectRefExt *refLast2 = i > 1 ? &refs.at(i - 2) : nullptr;
@@ -264,16 +264,17 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
     }
   }
 
-  qWarning() << errorMessages;
+  if(!errorMessages.isEmpty())
+    qWarning() << errorMessages;
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << "after loading tracks" << timer.restart();
 
   // Write collected trackpoints into database
-  insertRecords(trackpoints.values().toVector(), "trackpoint");
+  insertRecords(trackpoints.values(), "trackpoint");
 
   // Write collected metadata into database
-  insertRecords(trackmeta.values().toVector(), "trackmeta");
+  insertRecords(trackmeta.values(), "trackmeta");
 
   transaction.commit();
   deInitQueries();

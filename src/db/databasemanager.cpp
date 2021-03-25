@@ -949,7 +949,8 @@ void DatabaseManager::clearLanguageIndex()
 
 void DatabaseManager::loadLanguageIndex()
 {
-  languageIndex->readFromDb(databaseSim, OptionData::instance().getLanguage());
+  if(SqlUtil(databaseSim).hasTableAndRows("translation"))
+    languageIndex->readFromDb(databaseSim, OptionData::instance().getLanguage());
 }
 
 void DatabaseManager::openAllDatabases()
