@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,12 @@
 
 #include "logbook/logdataconverter.h"
 
-#include "sql/sqldatabase.h"
-#include "sql/sqlquery.h"
+#include "common/maptypes.h"
+#include "query/airportquery.h"
 #include "sql/sqlrecord.h"
 #include "fs/userdata/logdatamanager.h"
-#include "geo/pos.h"
 #include "common/formatter.h"
 #include "geo/calculations.h"
-#include "query/airportquery.h"
 #include "sql/sqltransaction.h"
 #include "userdata/userdatacontroller.h"
 #include "common/unit.h"
@@ -45,7 +43,7 @@ LogdataConverter::LogdataConverter(atools::sql::SqlDatabase *userDbParam,
   : userDb(userDbParam), logManager(logManagerParam), airportQuery(airportQueryParam)
 {
   localeEn = QLocale::English;
-  locale = QLocale::system();
+  locale = QLocale();
 
   qDebug() << Q_FUNC_INFO;
   qDebug() << "locale" << locale << "localeEn" << localeEn;
@@ -84,7 +82,6 @@ int LogdataConverter::convertFromUserdata()
   Type lasttype = NONE;
   while(query.next())
   {
-    int id = query.valueInt("userdata_id");
     QString ident = query.valueStr("ident");
     QString name = query.valueStr("name");
     QString region = query.valueStr("region");
@@ -176,15 +173,6 @@ int LogdataConverter::convertFromUserdata()
                                      "==== Original departure description:\n") + descriptionSrc);
     else
       rec.setValue("description", descriptionTo + tr("\n\n==== Original arrival description:\n") + descriptionSrc);
-
-#ifdef DEBUG_INFORMATION
-    qDebug() << rec;
-
-    if(type == DEPARTURE)
-      rec.setValue("description", QString("DEPARTURE userdata_id=%1\n").arg(id) + rec.valueStr("description"));
-    else
-      rec.setValue("description", QString("DESTINATION userdata_id=%1\n").arg(id) + rec.valueStr("description"));
-#endif
 
     lasttype = type;
 

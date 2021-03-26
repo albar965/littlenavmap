@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "online/onlinedatacontroller.h"
-#include "mapgui/maplayer.h"
 #include "mapgui/mapfunctions.h"
 #include "util/paintercontextsaver.h"
 #include "geo/calculations.h"
@@ -34,8 +33,8 @@ const int NUM_CLOSEST_AI_LABELS = 5;
 const float DIST_METER_CLOSEST_AI_LABELS = atools::geo::nmToMeter(20);
 const float DIST_FT_CLOSEST_AI_LABELS = 5000;
 
-MapPainterAircraft::MapPainterAircraft(MapPaintWidget* mapWidget, MapScale *mapScale)
-  : MapPainterVehicle(mapWidget, mapScale)
+MapPainterAircraft::MapPainterAircraft(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainterVehicle(mapWidget, mapScale, paintContext)
 {
 
 }
@@ -45,17 +44,14 @@ MapPainterAircraft::~MapPainterAircraft()
 
 }
 
-void MapPainterAircraft::render(PaintContext *context)
+void MapPainterAircraft::render()
 {
-  if(!(context->objectTypes & map::AIRCRAFT_ALL) && !context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
+  if(!(context->objectTypes & map::AIRCRAFT_ALL))
     // If actions are unchecked return
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
-
-  if(context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
-    paintTrack(context);
+  Q_UNUSED(saver)
 
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
   const atools::geo::Pos& pos = userAircraft.getPosition();
@@ -65,10 +61,13 @@ void MapPainterAircraft::render(PaintContext *context)
   {
     // Merge simulator aircraft and online aircraft
     QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
+    bool overflow = false;
 
     // Filters duplicates from simulator and user aircraft out
     const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft = NavApp::getOnlinedataController()->getAircraft(
-      context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate);
+      context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate, overflow);
+
+    context->setQueryOverflow(overflow);
 
     for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
       allAircraft.append(&ac);
@@ -77,7 +76,7 @@ void MapPainterAircraft::render(PaintContext *context)
     {
       for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
       {
-        if(ac.getCategory() != atools::fs::sc::BOAT)
+        if(!ac.isAnyBoat())
           allAircraft.append(&ac);
       }
     }
@@ -109,8 +108,7 @@ void MapPainterAircraft::render(PaintContext *context)
       const SimConnectAircraft& ac = *adt.aircraft;
       if(mapfunc::aircraftVisible(ac, context->mapLayer))
       {
-        paintAiVehicle(context, ac,
-                       --num < NUM_CLOSEST_AI_LABELS &&
+        paintAiVehicle(ac, --num < NUM_CLOSEST_AI_LABELS &&
                        adt.distanceLateralMeter < DIST_METER_CLOSEST_AI_LABELS &&
                        adt.distanceVerticalFt < DIST_FT_CLOSEST_AI_LABELS);
       }
@@ -122,16 +120,16 @@ void MapPainterAircraft::render(PaintContext *context)
   {
     if(pos.isValid())
     {
-      if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND_POINTER))
-        paintWindPointer(context, userAircraft, context->painter->device()->width() / 2, 0);
-
       bool hidden = false;
       float x, y;
       if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
       {
         if(!hidden)
-          paintUserAircraft(context, userAircraft, x, y);
+          paintUserAircraft(userAircraft, x, y);
       }
+
+      if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND_POINTER))
+        paintWindPointer(userAircraft, context->painter->device()->width() / 2, 0);
     }
   }
 }

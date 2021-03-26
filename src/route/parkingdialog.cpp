@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
   ui->setupUi(this);
 
   // Update label with airport name/ident
-  ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(map::airportText(departureAirport)));
+  ui->labelSelectParking->setText(tr("<b>&Select a start position for departure at<br/>%1:</b>").
+                                  arg(map::airportText(departureAirport)));
 
   const QList<map::MapStart> *startCache =
     NavApp::getAirportQuerySim()->getStartPositionsForAirport(departureAirport.id);
@@ -113,7 +114,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
         // Other start position - runway or helipad
         QString text = tr("%1 %2").arg(map::startType(startPos.start)).arg(startPos.start.runwayName);
 
-        new QListWidgetItem(mapcolors::iconForStartType(startPos.start.type), text, ui->listWidgetSelectParking);
+        new QListWidgetItem(mapcolors::iconForStart(startPos.start), text, ui->listWidgetSelectParking);
       }
     }
     ui->listWidgetSelectParking->setEnabled(true);

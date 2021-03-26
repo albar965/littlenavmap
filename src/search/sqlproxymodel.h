@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ class SqlProxyModel :
 
 public:
   SqlProxyModel(QObject *parent, SqlModel *sqlModel);
-  virtual ~SqlProxyModel();
+  virtual ~SqlProxyModel() override;
 
   /*
    * Sets new distance search parameters.
@@ -75,7 +75,7 @@ public:
 private:
   virtual QVariant data(const QModelIndex& index, int role) const override;
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-  virtual bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
+  virtual bool filterAcceptsRow(int sourceRow, const QModelIndex&) const override;
   virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
 
   bool matchDistance(const atools::geo::Pos& pos) const;

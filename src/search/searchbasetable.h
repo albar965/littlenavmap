@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class Rect;
 namespace map {
 struct MapAirport;
 
-struct MapSearchResult;
+struct MapResult;
 
 }
 
@@ -129,9 +129,9 @@ public:
   QVector<int> getSelectedIds() const;
 
   /* Default handler */
-  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
-  QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
+  QString formatModelData(const Column *, const QVariant& displayRoleValue) const;
 
   void selectAll();
 
@@ -149,10 +149,10 @@ signals:
   void selectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
 
   /* Show information in context menu selected */
-  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
+  void showInformation(map::MapResult result);
 
   /* Show approaches in context menu selected */
-  void showProcedures(const map::MapAirport& airport);
+  void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
   void showProceduresCustom(const map::MapAirport& airport);
 
   /* Set airport as flight plan departure (from context menu) */
@@ -165,7 +165,7 @@ signals:
   void routeAddAlternate(const map::MapAirport& airport);
 
   /* Add airport or navaid to flight plan. Leg will be selected automatically */
-  void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
+  void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Load flight plan or load aircraft performance file triggered from logbook */
   void loadRouteFile(const QString& filepath);
@@ -207,10 +207,10 @@ private:
   void resetView();
   void editStartTimer();
   void doubleClick(const QModelIndex& index);
-  void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+  void tableSelectionChanged(const QItemSelection&, const QItemSelection&);
   void reconnectSelectionModel();
-  void getNavTypeAndId(int row, map::MapObjectTypes& navType, int& id);
-  void getNavTypeAndId(int row, map::MapObjectTypes& navType, map::MapAirspaceSources& airspaceSource, int& id);
+  void getNavTypeAndId(int row, map::MapTypes& navType, int& id);
+  void getNavTypeAndId(int row, map::MapTypes& navType, map::MapAirspaceSources& airspaceSource, int& id);
   void editTimeout();
 
   void loadAllRowsIntoView();
@@ -220,7 +220,7 @@ private:
   void showApproachesCustomTriggered();
   void showOnMapTriggered();
   void contextMenu(const QPoint& pos);
-  void dockVisibilityChanged(bool visible);
+  void dockVisibilityChanged(bool);
   void distanceSearchStateChanged(int state);
   void updateDistanceSearch();
   void updateFromSpinBox(int value, const Column *col);

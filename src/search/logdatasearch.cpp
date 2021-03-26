@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,9 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   logdataSearchWidgets =
   {
     ui->horizontalLayoutLogdata,
-    ui->horizontalLayoutLogdataMore,
     ui->horizontalLayoutLogdataDist,
+    ui->horizontalLayoutAircraftSim,
+    ui->horizontalLayoutLogdataDepartDest,
     ui->lineLogdataMore,
     ui->lineLogdataMoreDist,
     ui->actionLogdataSearchShowMoreOptions,
@@ -61,9 +62,12 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   columns->
   append(Column("logbook_id").hidden()).
   append(Column("departure_time", tr("Departure\nReal Time")).defaultSort(true).defaultSortOrder(Qt::DescendingOrder)).
+  append(Column("departure_time_sim", tr("Departure\nSim. Time UTC"))).
   append(Column("departure_ident", ui->lineEditLogdataDeparture, tr("Departure\nICAO")).filter()).
   append(Column("departure_name", tr("Departure"))).
   append(Column("departure_runway").hidden()).
+  append(Column("destination_time", tr("Destination\nReal Time"))).
+  append(Column("destination_time_sim", tr("Destination\nSim. Time UTC"))).
   append(Column("destination_ident", ui->lineEditLogdataDestination, tr("Destination\nICAO")).filter()).
   append(Column("destination_name", tr("Destination"))).
   append(Column("destination_runway").hidden()).
@@ -74,16 +78,21 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("simulator", ui->lineEditLogdataSimulator, tr("Simulator")).filter()).
   append(Column("performance_file").hidden()).
   append(Column("flightplan_file").hidden()).
-  append(Column("distance", tr("Distance\n%dist%"))).
-  append(Column("departure_time_sim", tr("Departure\nSim. Time UTC"))).
+  append(Column("distance", tr("Distance\nPlan %dist%"))).
+  append(Column("distance_flown", tr("Distance\nFlown %dist%"))).
   append(Column("route_string").hidden()).
-  append(Column("description", ui->lineEditLogdataDescription, tr("Description")).filter()).
+  append(Column("description", ui->lineEditLogdataDescription, tr("Remarks")).filter()).
   append(Column("departure_lonx").hidden()).
   append(Column("departure_laty").hidden()).
   append(Column("departure_alt").hidden()).
   append(Column("destination_lonx").hidden()).
   append(Column("destination_laty").hidden()).
   append(Column("destination_alt").hidden());
+
+  // Assign the callback which builds the where clause for the airport search ======================
+  using namespace std::placeholders;
+  columns->setQueryBuilder(QueryBuilder(std::bind(&LogdataSearch::airportQueryBuilderFunc, this, _1),
+                                        {ui->lineEditLogdataAirport}, {"departure_ident", "destination_ident"}));
 
   SearchBaseTable::initViewAndController(NavApp::getDatabaseLogbook());
 
@@ -93,6 +102,39 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
 LogdataSearch::~LogdataSearch()
 {
+}
+
+QString LogdataSearch::airportQueryBuilderFunc(const QVector<QWidget *> widgets)
+{
+  if(!widgets.isEmpty())
+  {
+    // Widget list is always one line edit
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widgets.first());
+    if(lineEdit != nullptr)
+    {
+      QString text = lineEdit->text().simplified();
+
+      // Adjust the query string to SQL
+      // Replace "*" with "%" for SQL
+      if(text.contains("*"))
+        text = text.replace("*", "%");
+      else if(!text.isEmpty())
+        text = text + "%";
+
+      // Exclude if prefixed with "-"
+      bool exclude = false;
+      if(text.startsWith('-'))
+      {
+        text = text.mid(1);
+        exclude = true;
+      }
+
+      if(!text.isEmpty())
+        return QString("(departure_ident %2like '%1' or destination_ident %2like '%1')").
+               arg(text).arg(exclude ? "not " : QString());
+    }
+  }
+  return QString();
 }
 
 void LogdataSearch::connectSearchSlots()
@@ -107,6 +149,7 @@ void LogdataSearch::connectSearchSlots()
   connect(ui->pushButtonLogdataReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
   // Install filter for cursor down action
+  installEventFilterForWidget(ui->lineEditLogdataAirport);
   installEventFilterForWidget(ui->lineEditLogdataDeparture);
   installEventFilterForWidget(ui->lineEditLogdataDestination);
   installEventFilterForWidget(ui->lineEditLogdataAircraftType);
@@ -122,13 +165,13 @@ void LogdataSearch::connectSearchSlots()
   ui->toolButtonLogdata->addActions({ui->actionLogdataSearchShowMoreOptions, ui->actionLogdataSearchShowDistOptions});
 
   // Drop down menu actions
-  connect(ui->actionLogdataSearchShowMoreOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionLogdataSearchShowMoreOptions, &QAction::toggled, this, [ = ](bool state)
   {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutLogdataMore}, state, {ui->lineLogdataMore});
+    atools::gui::util::showHideLayoutElements({ui->verticalLayoutLogdataMore}, state, {ui->lineLogdataMore});
     updateButtonMenu();
   });
 
-  connect(ui->actionLogdataSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionLogdataSearchShowDistOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutLogdataDist}, state, {ui->lineLogdataMoreDist});
     updateButtonMenu();
@@ -171,7 +214,7 @@ void LogdataSearch::saveState()
   widgetState.save(logdataSearchWidgets);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.save({ui->horizontalLayoutLogdata, ui->horizontalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
+  widgetState.save({ui->horizontalLayoutLogdata, ui->verticalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
                     ui->actionSearchLogdataFollowSelection});
 }
 
@@ -187,7 +230,7 @@ void LogdataSearch::restoreState()
 
     // Need to block signals here to avoid unwanted behavior
     widgetState.setBlockSignals(true);
-    widgetState.restore({ui->horizontalLayoutLogdata, ui->horizontalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
+    widgetState.restore({ui->horizontalLayoutLogdata, ui->verticalLayoutLogdataMore, ui->horizontalLayoutLogdataDist,
                          ui->actionSearchLogdataFollowSelection});
   }
   else
@@ -200,24 +243,20 @@ void LogdataSearch::restoreState()
   }
 }
 
-void LogdataSearch::saveViewState(bool distSearchActive)
+void LogdataSearch::saveViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_LOGDATA_VIEW_WIDGET).save(NavApp::getMainUi()->tableViewLogdata);
 }
 
-void LogdataSearch::restoreViewState(bool distSearchActive)
+void LogdataSearch::restoreViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_LOGDATA_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewLogdata);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
-QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                                          const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(roleValue);
-
   switch(role)
   {
     case Qt::DisplayRole:
@@ -268,7 +307,7 @@ QString LogdataSearch::formatModelData(const Column *col, const QVariant& displa
   // Called directly by the model for export functions
   if(col->getColumnName().startsWith("departure_time") || col->getColumnName().startsWith("destination_time"))
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
-  else if(col->getColumnName() == "distance")
+  else if(col->getColumnName() == "distance" || col->getColumnName() == "distance_flown")
     return Unit::distNm(displayRoleValue.toFloat(), false, 0);
   else if(col->getColumnName() == "description")
     return atools::elideTextShort(displayRoleValue.toString().simplified(), 80);
@@ -282,7 +321,7 @@ QString LogdataSearch::formatModelData(const Column *col, const QVariant& displa
   return displayRoleValue.toString();
 }
 
-void LogdataSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void LogdataSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;
@@ -336,7 +375,7 @@ void LogdataSearch::updateButtonMenu()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   atools::gui::util::changeStarIndication(ui->actionLogdataSearchShowMoreOptions,
-                                          atools::gui::util::anyWidgetChanged({ui->horizontalLayoutLogdataMore}));
+                                          atools::gui::util::anyWidgetChanged({ui->verticalLayoutLogdataMore}));
   atools::gui::util::changeStarIndication(ui->actionLogdataSearchShowDistOptions,
                                           atools::gui::util::anyWidgetChanged({ui->horizontalLayoutLogdataDist}));
 }

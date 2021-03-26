@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
 
 using atools::fs::sc::SimConnectAircraft;
 
-MapPainterShip::MapPainterShip(MapPaintWidget* mapWidget, MapScale *mapScale)
-  : MapPainterVehicle(mapWidget, mapScale)
+MapPainterShip::MapPainterShip(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainterVehicle(mapWidget, mapScale, paintContext)
 {
 
 }
@@ -36,7 +36,7 @@ MapPainterShip::~MapPainterShip()
 {
 }
 
-void MapPainterShip::render(PaintContext *context)
+void MapPainterShip::render()
 {
   if(!context->objectTypes.testFlag(map::AIRCRAFT_AI_SHIP))
     // If actions are unchecked return
@@ -48,13 +48,12 @@ void MapPainterShip::render(PaintContext *context)
     if(context->objectTypes & map::AIRCRAFT_AI_SHIP && context->mapLayer->isAiShipLarge())
     {
       atools::util::PainterContextSaver saver(context->painter);
-      Q_UNUSED(saver);
 
       for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
       {
-        if(ac.getCategory() == atools::fs::sc::BOAT &&
+        if(ac.isAnyBoat() &&
            (ac.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))
-          paintAiVehicle(context, ac, false /* force label */);
+          paintAiVehicle(ac, false /* force label */);
       }
     }
   }

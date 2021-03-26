@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 class QTcpSocket;
 class ConnectDialog;
 class MainWindow;
+class QMessageBox;
 
 namespace atools {
 namespace fs {
@@ -56,7 +57,7 @@ class ConnectClient :
 
 public:
   ConnectClient(MainWindow *parent);
-  virtual ~ConnectClient();
+  virtual ~ConnectClient() override;
 
   /* Opens the connect dialog and depending on result connects to the server/agent */
   void connectToServerDialog();
@@ -66,6 +67,15 @@ public:
 
   /* true if connected to Little Navconnect or the simulator */
   bool isConnected() const;
+
+  /* true if connected to Xpconnect, SimConnect or socket is really connected */
+  bool isConnectedActive() const;
+
+  /* true if connection is using SimConnect for FSX/P3D */
+  bool isSimConnect() const;
+
+  /* true if connection is using Xpconnect to X-Plane */
+  bool isXpConnect() const;
 
   /* Connected to Little Navconnect */
   bool isConnectedNetwork() const;
@@ -112,14 +122,14 @@ private:
   const int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
 
   void readFromSocket();
-  void readFromSocketError(QAbstractSocket::SocketError error);
+  void readFromSocketError(QAbstractSocket::SocketError);
   void connectedToServerSocket();
   void closeSocket(bool allowRestart);
   void connectInternal();
+  void connectInternalAuto();
   void writeReplyToSocket(atools::fs::sc::SimConnectReply& reply);
   void disconnectClicked();
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
-  void postLogMessage(QString message, bool warning);
   void connectedToSimulatorDirect();
   void disconnectedFromSimulatorDirect();
   void autoConnectToggled(bool state);
@@ -131,12 +141,17 @@ private:
 
   /* Options in ConnectDialog have changed */
   void fetchOptionsChanged(cd::ConnectSimType type);
-  void directUpdateRateChanged(cd::ConnectSimType type);
+  void updateRateChanged(cd::ConnectSimType type);
+  void aiFetchRadiusChanged(cd::ConnectSimType type);
+
+  void handleError(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network);
+
+  void statusPosted(atools::fs::sc::SimConnectStatus status, QString statusText);
 
   bool silent = false, manualDisconnect = false;
   ConnectDialog *dialog = nullptr;
 
-  /* Does automatic reconnect */
+  /* Does automatic reconnect. Reads SimConnect or Xpconnect. */
   atools::fs::sc::DataReaderThread *dataReader = nullptr;
   atools::fs::sc::SimConnectHandler *simConnectHandler = nullptr;
   atools::fs::sc::XpConnectHandler *xpConnectHandler = nullptr;
@@ -161,8 +176,12 @@ private:
   /* Cache holding all weather stations that do not allow a direct report but rather interpolated or nearest */
   atools::util::TimedCache<QString, QString> notAvailableStations;
 
+  QMessageBox *errorMessageBox = nullptr;
+
   // have to remember state separately to avoid sending signals when autoconnect fails
   bool socketConnected = false;
+
+  bool errorState = false;
 };
 
 #endif // LITTLENAVMAP_CONNECTCLIENT_H

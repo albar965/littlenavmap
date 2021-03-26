@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,21 +27,21 @@ class MapPainterTop :
   public MapPainter
 {
 public:
-  MapPainterTop(MapPaintWidget *mapWidgetParam, MapScale *mapScale);
+  MapPainterTop(MapPaintWidget *mapWidgetParam, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterTop() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
   /* Highlight click/touch areas */
-  void drawTouchMarks(const PaintContext *context, int lineSize, int areaSize);
-  void drawTouchRegions(const PaintContext *context, int areaSize);
+  void drawTouchMarks(int lineSize, int areaSize);
+  void drawTouchRegions(int areaSize);
 
   /* Draw navigation icons into the corners */
-  void drawTouchIcons(const PaintContext *context, int iconSize);
+  void drawTouchIcons(int iconSize);
 
   /* Paint message into the right bottom corner */
-  void paintCopyright(PaintContext *context);
+  void paintCopyright();
 
 };
 

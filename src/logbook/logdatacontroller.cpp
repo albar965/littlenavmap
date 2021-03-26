@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,13 @@
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
 #include "gui/textdialog.h"
+#include "perf/aircraftperfcontroller.h"
 #include "search/searchcontroller.h"
 #include "logbook/logdataconverter.h"
+#include "common/aircrafttrack.h"
 #include "logbook/logdatadialog.h"
 #include "logbook/logstatisticsdialog.h"
+#include "zip/gzip.h"
 #include "navapp.h"
 #include "query/airportquery.h"
 #include "route/route.h"
@@ -43,6 +46,10 @@
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
 #include "options/optiondata.h"
+#include "fs/pln/flightplanio.h"
+#include "fs/perf/aircraftperf.h"
+#include "gui/choicedialog.h"
+#include "gui/errorhandler.h"
 
 #include <QDebug>
 #include <QStandardPaths>
@@ -50,6 +57,7 @@
 using atools::sql::SqlTransaction;
 using atools::sql::SqlRecord;
 using atools::geo::Pos;
+using atools::fs::pln::FlightplanIO;
 
 LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logdataManager, MainWindow *parent)
   : manager(logdataManager), mainWindow(parent)
@@ -121,10 +129,10 @@ void LogdataController::getFlightStatsAirports(int& numDepartAirports, int& numD
   manager->getFlightStatsAirports(numDepartAirports, numDestAirports);
 }
 
-void LogdataController::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim,
-                                               float& timeAverageSim)
+void LogdataController::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeTotal,
+                                               float& timeMaximumSim, float& timeAverageSim, float& timeTotalSim)
 {
-  manager->getFlightStatsTripTime(timeMaximum, timeAverage, timeMaximumSim, timeAverageSim);
+  manager->getFlightStatsTripTime(timeMaximum, timeAverage, timeTotal, timeMaximumSim, timeAverageSim, timeTotalSim);
 }
 
 void LogdataController::getFlightStatsAircraft(int& numTypes, int& numRegistrations, int& numNames, int& numSimulators)
@@ -190,7 +198,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("aircraft_registration", aircraft.getAirplaneRegistration()); // varchar(50),
       record.setValue("flightplan_number", aircraft.getAirplaneFlightnumber()); // varchar(100),
       record.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltFt()); // integer,
-      record.setValue("flightplan_file", NavApp::getCurrentRouteFilepath()); // varchar(1024),
+      record.setValue("flightplan_file", NavApp::getRouteFilepath()); // varchar(1024),
       record.setValue("performance_file", NavApp::getCurrentAircraftPerfFilepath()); // varchar(1024),
       record.setValue("block_fuel", NavApp::getAltitudeLegs().getBlockFuel(NavApp::getAircraftPerformance())); // integer,
       record.setValue("trip_fuel", NavApp::getAltitudeLegs().getTripFuel()); // integer,
@@ -203,8 +211,11 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("departure_alt", airport.position.getAltitude()); // integer,
       record.setValue("departure_time", QDateTime::currentDateTime()); // varchar(100),
       record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
-      record.setValue("simulator", NavApp::getCurrentSimulatorName()); // varchar(50),
+      record.setValue("simulator", NavApp::getCurrentSimulatorShortName()); // varchar(50),
       record.setValue("route_string", NavApp::getRouteString()); // varchar(1024),
+
+      // Record flight plan and aircraft performance =========================
+      recordFlightplanAndPerf(record);
 
       // Determine fuel type =========================
       float weightVolRatio = 0.f;
@@ -217,12 +228,12 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       manager->insertByRecord(record, &logEntryId);
       transaction.commit();
 
-      emit refreshLogSearch(false /* load all */, true /* keep selection */);
-      emit logDataChanged();
+      logChanged(false /* load all */, true /* keep selection */);
+
       mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 added.").
                                    arg(departureArrivalText).
                                    arg(airport.ident).
-                                   arg(runwayText));
+                                   arg(runwayText), true /* addToLog */);
     }
     else if(logEntryId >= 0)
     {
@@ -241,25 +252,35 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("destination_time", QDateTime::currentDateTime()); // varchar(100),
       record.setValue("destination_time_sim", aircraft.getZuluTime()); // varchar(100),
 
+      // Update flight plan and aircraft performance =========================
+      recordFlightplanAndPerf(record);
+
+      // Save GPX with simplified flight plan and trail =========================
+      atools::geo::LineString track;
+      QVector<quint32> timestamps;
+      NavApp::getAircraftTrack().convert(&track, &timestamps);
+      record.setValue("aircraft_trail",
+                      FlightplanIO().saveGpxGz(NavApp::getRoute().
+                                               updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).getFlightplan(),
+                                               track, timestamps,
+                                               static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
+
       // Determine fuel type again =========================
       float weightVolRatio = 0.f;
       bool jetfuel = aircraft.isJetfuel(weightVolRatio);
       if(weightVolRatio > 0.f)
         record.setValue("is_jetfuel", jetfuel); // integer,
 
-      // record.setValue("plan_geometry", dummy); // blob,
-      // record.setValue("trail_geometry", dummy); // blob
-
       SqlTransaction transaction(manager->getDatabase());
       manager->updateByRecord(record, {logEntryId});
       transaction.commit();
 
-      emit refreshLogSearch(false /* load all */, false /* keep selection */);
-      emit logDataChanged();
+      logChanged(false /* load all */, false /* keep selection */);
+
       mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 updated.").
                                    arg(departureArrivalText).
                                    arg(airport.ident).
-                                   arg(runwayText));
+                                   arg(runwayText), true /* addToLog */);
 
       logEntryId = -1;
     }
@@ -273,16 +294,103 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
     aircraftAtTakeoff = new atools::fs::sc::SimConnectUserAircraft(aircraft);
 }
 
+void LogdataController::logChanged(bool loadAll, bool keepSelection)
+{
+  // Clear cache and update map screen index
+  manager->clearGeometryCache();
+  emit logDataChanged();
+
+  // Reload search
+  emit refreshLogSearch(loadAll, keepSelection);
+}
+
+void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
+{
+  atools::fs::pln::Flightplan fp = NavApp::getRoute().
+                                   updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
+  record.setValue("flightplan", FlightplanIO().saveLnmGz(fp)); // blob
+  record.setValue("aircraft_perf", NavApp::getAircraftPerformance().saveXmlGz()); // blob
+}
+
 void LogdataController::resetTakeoffLandingDetection()
 {
   delete aircraftAtTakeoff;
   aircraftAtTakeoff = nullptr;
 }
 
+bool LogdataController::isDirectPreviewShown()
+{
+  return NavApp::getMainUi()->actionSearchLogdataShowDirect->isChecked();
+}
+
+bool LogdataController::isRoutePreviewShown()
+{
+  return NavApp::getMainUi()->actionSearchLogdataShowRoute->isChecked();
+}
+
+bool LogdataController::isTrackPreviewShown()
+{
+  return NavApp::getMainUi()->actionSearchLogdataShowTrack->isChecked();
+}
+
+bool LogdataController::hasRouteAttached(int id)
+{
+  return manager->hasRouteAttached(id);
+}
+
+bool LogdataController::hasPerfAttached(int id)
+{
+  return manager->hasPerfAttached(id);
+}
+
+bool LogdataController::hasTrackAttached(int id)
+{
+  return manager->hasTrackAttached(id);
+}
+
+void LogdataController::preDatabaseLoad()
+{
+  // no-op
+}
+
+void LogdataController::postDatabaseLoad()
+{
+  manager->clearGeometryCache();
+}
+
+void LogdataController::displayOptionsChanged()
+{
+  manager->clearGeometryCache();
+}
+
+const atools::geo::LineString *LogdataController::getRouteGeometry(int id)
+{
+  const atools::fs::userdata::LogEntryGeometry *entry = manager->getGeometry(id);
+  return entry != nullptr ? &entry->route : nullptr;
+}
+
+const atools::geo::LineString *LogdataController::getTrackGeometry(int id)
+{
+  const atools::fs::userdata::LogEntryGeometry *entry = manager->getGeometry(id);
+  return entry != nullptr ? &entry->track : nullptr;
+}
+
 void LogdataController::editLogEntryFromMap(int id)
 {
   qDebug() << Q_FUNC_INFO;
   editLogEntries({id});
+}
+
+void LogdataController::connectDialogSignals(LogdataDialog *dialogParam)
+{
+  connect(dialogParam, &LogdataDialog::planOpen, this, &LogdataController::planOpen);
+  connect(dialogParam, &LogdataDialog::planAdd, this, &LogdataController::planAdd);
+  connect(dialogParam, &LogdataDialog::planSaveAs, this, &LogdataController::planSaveAs);
+  connect(dialogParam, &LogdataDialog::gpxAdd, this, &LogdataController::gpxAdd);
+  connect(dialogParam, &LogdataDialog::gpxSaveAs, this, &LogdataController::gpxSaveAs);
+  connect(dialogParam, &LogdataDialog::perfOpen, this, &LogdataController::perfOpen);
+  connect(dialogParam, &LogdataDialog::perfAdd, this, &LogdataController::perfAdd);
+  connect(dialogParam, &LogdataDialog::perfSaveAs, this, &LogdataController::perfSaveAs);
 }
 
 void LogdataController::editLogEntries(const QVector<int>& ids)
@@ -293,6 +401,7 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
   if(!rec.isEmpty())
   {
     LogdataDialog dlg(mainWindow, ids.size() == 1 ? ld::EDIT_ONE : ld::EDIT_MULTIPLE);
+    connectDialogSignals(&dlg);
     dlg.restoreState();
 
     dlg.setRecord(rec);
@@ -304,8 +413,7 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
       manager->updateByRecord(dlg.getRecord(), ids);
       transaction.commit();
 
-      emit refreshLogSearch(false /* load all */, true /* keep selection */);
-      emit logDataChanged();
+      logChanged(false /* load all */, true /* keep selection */);
 
       mainWindow->setStatusMessage(tr("%1 logbook %2 updated.").
                                    arg(ids.size()).arg(ids.size() == 1 ? tr("entry") : tr("entries")));
@@ -325,6 +433,7 @@ void LogdataController::addLogEntry()
   qDebug() << Q_FUNC_INFO << rec;
 
   LogdataDialog dlg(mainWindow, ld::ADD);
+  connectDialogSignals(&dlg);
   dlg.restoreState();
 
   dlg.setRecord(rec);
@@ -338,8 +447,8 @@ void LogdataController::addLogEntry()
     manager->insertByRecord(dlg.getRecord());
     transaction.commit();
 
-    emit refreshLogSearch(false /* load all */, false /* keep selection */);
-    emit logDataChanged();
+    logChanged(false /* load all */, false /* keep selection */);
+
     mainWindow->setStatusMessage(tr("Logbook entry added."));
   }
   dlg.saveState();
@@ -361,8 +470,8 @@ void LogdataController::deleteLogEntries(const QVector<int>& ids)
     manager->removeRows(ids);
     transaction.commit();
 
-    emit refreshLogSearch(false /* load all */, false /* keep selection */);
-    emit logDataChanged();
+    logChanged(false /* load all */, false /* keep selection */);
+
     mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
   }
 }
@@ -374,7 +483,7 @@ void LogdataController::importXplane()
   {
     QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
     if(xpBasePath.isEmpty())
-      xpBasePath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+      xpBasePath = atools::documentsDir();
     else
       xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "logbooks"});
 
@@ -389,8 +498,8 @@ void LogdataController::importXplane()
       numImported += manager->importXplane(file, fetchAirportCoordinates);
       mainWindow->setStatusMessage(tr("Imported %1 %2 X-Plane logbook.").arg(numImported).
                                    arg(numImported == 1 ? tr("entry") : tr("entries")));
-      emit refreshLogSearch(false /* load all */, false /* keep selection */);
-      emit logDataChanged();
+
+      logChanged(false /* load all */, false /* keep selection */);
 
       /*: The text "Imported from X-Plane logbook" has to match the one in atools::fs::userdata::LogdataManager::importXplane */
       emit showInSearch(map::LOGBOOK,
@@ -425,7 +534,7 @@ void LogdataController::importCsv()
       mainWindow->setStatusMessage(tr("Imported %1 %2 from CSV file.").arg(numImported).
                                    arg(numImported == 1 ? tr("entry") : tr("entries")));
       mainWindow->showLogbookSearch();
-      emit refreshLogSearch(false /* load all */, false /* keep selection */);
+      logChanged(false /* load all */, false /* keep selection */);
     }
   }
   catch(atools::Exception& e)
@@ -440,21 +549,69 @@ void LogdataController::importCsv()
 
 void LogdataController::exportCsv()
 {
+
   qDebug() << Q_FUNC_INFO;
   try
   {
-    QString file = dialog->saveFileDialog(
-      tr("Export Logbook Entry CSV File"),
-      tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
-      ".csv",
-      "Logdata/Csv",
-      QString(), QString(), false, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!file.isEmpty())
+    // Checkbox ids
+    enum
     {
-      int numExported = manager->exportCsv(file);
-      mainWindow->setStatusMessage(tr("%1 logbook %2 exported.").
-                                   arg(numExported).arg(numExported == 1 ? tr("entry") : tr("entries")));
+      SELECTED, APPEND, HEADER, EXPORTPLAN, EXPORTPERF, EXPORTGPX
+    };
+
+    // Build a choice dialog with several checkboxes =========================
+    ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Logbook Export"),
+                              QString(),
+                              tr("Select export options for logbook"),
+                              lnm::LOGDATA_EXPORT_CSV, "LOGBOOK.html#import-and-export");
+
+    QString attachmentToolTip = tr("Content of attached file will be added to the exported CSV if selected.\n"
+                                   "Note that not all programs will be able to read this.\n"
+                                   "Columns will be empty on export if disabled.");
+
+    int numSelected = NavApp::getLogdataSearch()->getSelectedRowCount();
+    choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
+                             tr("File header will be ignored if this is enabled."), false);
+    choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QString(), true,
+                             numSelected == 0 /* disabled */);
+    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QString(), false);
+    choiceDialog.addLine();
+    choiceDialog.addCheckBox(EXPORTPLAN, tr("&Flight plan in LNMPLN format"), attachmentToolTip, false);
+    choiceDialog.addCheckBox(EXPORTPERF, tr("&Aircraft performance"), attachmentToolTip, false);
+    choiceDialog.addCheckBox(EXPORTGPX, tr(
+                               "&GPX file containing flight plan points and trail"), attachmentToolTip, false);
+    choiceDialog.restoreState();
+
+    // Disable/enable header depending on append option
+    choiceDialog.getCheckBox(HEADER)->setDisabled(choiceDialog.isChecked(APPEND));
+    ChoiceDialog *dlgPtr = &choiceDialog;
+    connect(&choiceDialog, &ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
+      if(id == APPEND)
+        dlgPtr->getCheckBox(HEADER)->setDisabled(checked);
+    });
+
+    if(choiceDialog.exec() == QDialog::Accepted)
+    {
+      QString file = dialog->saveFileDialog(
+        tr("Export Logbook Entry CSV File"),
+        tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), ".csv", "Logdata/Csv",
+        QString(), QString(), choiceDialog.isChecked(APPEND));
+
+      if(!file.isEmpty())
+      {
+        QVector<int> ids;
+        if(choiceDialog.isChecked(SELECTED))
+          ids = NavApp::getLogdataSearch()->getSelectedIds();
+
+        int numExported = manager->exportCsv(file, ids,
+                                             choiceDialog.isChecked(EXPORTPLAN),
+                                             choiceDialog.isChecked(EXPORTPERF),
+                                             choiceDialog.isChecked(EXPORTGPX),
+                                             choiceDialog.isChecked(HEADER) && !choiceDialog.isChecked(APPEND),
+                                             choiceDialog.isChecked(APPEND));
+        mainWindow->setStatusMessage(tr("%1 logbook %2 exported.").
+                                     arg(numExported).arg(numExported == 1 ? tr("entry") : tr("entries")));
+      }
     }
   }
   catch(atools::Exception& e)
@@ -480,7 +637,7 @@ void LogdataController::convertUserdata()
                                                "Note that not all fields can be converted automatically.<br/><br/>"
                                                "The created log entries can be found by searching"
                                                "for<br/><code>*Converted from userdata*</code><br/>"
-                                               "in the description field.<br/><br/>"
+                                               "in the field &quot;Remarks&quot;.<br/><br/>"
                                                "Continue?"),
                                           tr("Do not &show this dialog again and run the conversion in the future."),
                                           QMessageBox::Yes | QMessageBox::No | QMessageBox::Help,
@@ -528,8 +685,8 @@ void LogdataController::convertUserdata()
     }
 
     mainWindow->showLogbookSearch();
-    emit refreshLogSearch(false /* load all */, false /* keep selection */);
-    emit logDataChanged();
+
+    logChanged(false /* load all */, false /* keep selection */);
 
     /*: The text "Converted from userdata" has to match the one in LogdataConverter::convertFromUserdata */
     emit showInSearch(map::LOGBOOK,
@@ -549,5 +706,226 @@ void LogdataController::fetchAirportCoordinates(atools::geo::Pos& pos, QString& 
   {
     pos = airport.position;
     name = airport.name;
+  }
+}
+
+void LogdataController::planOpen(atools::sql::SqlRecord *record, QWidget *parent)
+{
+  try
+  {
+    qDebug() << Q_FUNC_INFO;
+    // Open flight plan in table replacing the current plan - attachement is always LNMPLN
+    mainWindow->routeOpenFileLnmStr(
+      QString(atools::zip::gzipDecompress(record->value("flightplan").toByteArray())));
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(parent).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(parent).handleUnknownException();
+  }
+}
+
+void LogdataController::planAdd(atools::sql::SqlRecord *record, QWidget *parent)
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    // Store a new flight plan as logbook entry attachement - loaded plan can be any supported format
+    // Plan is always attached in LNMPLN format
+    QString filename = mainWindow->routeOpenFileDialog();
+    if(!filename.isEmpty())
+    {
+      // Load flight plan in any supported format
+      atools::fs::pln::Flightplan flightplan;
+      atools::fs::pln::FlightplanIO().load(flightplan, filename);
+
+      // Store in LNMPLN format
+      SqlTransaction transaction(manager->getDatabase());
+      record->setValue("flightplan", atools::fs::pln::FlightplanIO().saveLnmGz(flightplan));
+      transaction.commit();
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(parent).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(parent).handleUnknownException();
+  }
+}
+
+void LogdataController::planSaveAs(atools::sql::SqlRecord *record, QWidget *parent)
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    // Load LNMPLN into flight plan
+    atools::fs::pln::Flightplan flightplan;
+    atools::fs::pln::FlightplanIO().loadLnmGz(flightplan, record->value("flightplan").toByteArray());
+
+    // Build filename
+    QString defFilename = flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), ".lnmpln");
+    QString filename = mainWindow->routeSaveFileDialogLnm(defFilename);
+    if(!filename.isEmpty())
+      atools::fs::pln::FlightplanIO().saveLnm(flightplan, filename);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(parent).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(parent).handleUnknownException();
+  }
+}
+
+void LogdataController::gpxAdd(atools::sql::SqlRecord *record, QWidget *parent)
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    QString filename = dialog->openFileDialog(
+      tr("Open GPX"),
+      tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
+      "Route/Gpx", atools::documentsDir());
+
+    if(!filename.isEmpty())
+    {
+      QFile file(filename);
+      if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+      {
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+
+        // Decompress GPX and save as is into the database
+        SqlTransaction transaction(manager->getDatabase());
+        record->setValue("aircraft_trail", atools::zip::gzipCompress(stream.readAll().toUtf8()));
+        transaction.commit();
+
+        file.close();
+      }
+      else
+        atools::gui::ErrorHandler(parent).handleIOError(file, tr("Cannot load file."));
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(parent).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(parent).handleUnknownException();
+  }
+}
+
+void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *parent)
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    // Get flight plan for file name building =========
+    QString plan = QString(atools::zip::gzipDecompress(record->value("flightplan").toByteArray()));
+    atools::fs::pln::Flightplan flightplan;
+    atools::fs::pln::FlightplanIO().loadLnmStr(flightplan, plan);
+
+    QString defFilename = flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), ".gpx");
+
+    QString filename = dialog->saveFileDialog(
+      tr("Save GPX"),
+      tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
+      "lnmpln", "Route/Gpx", atools::documentsDir(), defFilename, false /* confirm overwrite */);
+
+    if(!filename.isEmpty())
+    {
+      QFile file(filename);
+      if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+      {
+        // Decompress and save track as is ==============
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+        stream << QString(atools::zip::gzipDecompress(record->value("aircraft_trail").toByteArray())).toUtf8();
+        file.close();
+      }
+      else
+        atools::gui::ErrorHandler(parent).handleIOError(file, tr("Cannot save file."));
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(parent).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(parent).handleUnknownException();
+  }
+}
+
+void LogdataController::perfAdd(atools::sql::SqlRecord *record, QWidget *parent)
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    QString filename = NavApp::getAircraftPerfController()->openFileDialog();
+
+    if(!filename.isEmpty())
+    {
+      // Load aircraft performance in any format (INI or XML) ===================
+      atools::fs::perf::AircraftPerf perf;
+      perf.load(filename);
+
+      // Save in new XML format ============
+      SqlTransaction transaction(manager->getDatabase());
+      record->setValue("aircraft_perf", perf.saveXmlGz());
+      transaction.commit();
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(parent).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(parent).handleUnknownException();
+  }
+}
+
+void LogdataController::perfOpen(atools::sql::SqlRecord *record, QWidget *parent)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  try
+  {
+    NavApp::getAircraftPerfController()->loadStr(
+      QString(atools::zip::gzipDecompress(record->value("aircraft_perf").toByteArray())));
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(parent).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+  }
+}
+
+void LogdataController::perfSaveAs(atools::sql::SqlRecord *record, QWidget *parent)
+{
+  qDebug() << Q_FUNC_INFO;
+  try
+  {
+    NavApp::getAircraftPerfController()->saveAsStr(
+      QString(atools::zip::gzipDecompress(record->value("aircraft_perf").toByteArray())));
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(parent).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }

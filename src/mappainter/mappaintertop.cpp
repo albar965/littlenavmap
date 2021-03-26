@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
 
 #include <marble/GeoPainter.h>
 
-MapPainterTop::MapPainterTop(MapPaintWidget *mapWidgetParam, MapScale *mapScale)
-  : MapPainter(mapWidgetParam, mapScale)
+MapPainterTop::MapPainterTop(MapPaintWidget *mapWidgetParam, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidgetParam, mapScale, paintContext)
 {
 
 }
@@ -39,9 +39,9 @@ MapPainterTop::~MapPainterTop()
 
 }
 
-void MapPainterTop::render(PaintContext *context)
+void MapPainterTop::render()
 {
-  paintCopyright(context);
+  paintCopyright();
 
   if(!context->visibleWidget)
     return;
@@ -62,10 +62,10 @@ void MapPainterTop::render(PaintContext *context)
     int y = vp.center().y();
 
     painter->setPen(mapcolors::touchMarkBackPen);
-    drawCross(context, x, y, size);
+    drawCross(painter, x, y, size);
 
     painter->setPen(mapcolors::touchMarkFillPen);
-    drawCross(context, x, y, size2);
+    drawCross(painter, x, y, size2);
   }
 
   // Screen navigation areas =====================================
@@ -74,15 +74,15 @@ void MapPainterTop::render(PaintContext *context)
   {
     int areaSize = OptionData::instance().getMapNavTouchArea();
     if(opts & optsd::NAVAIDS_TOUCHSCREEN_REGIONS)
-      drawTouchRegions(context, areaSize);
+      drawTouchRegions(areaSize);
 
     if(opts & optsd::NAVAIDS_TOUCHSCREEN_AREAS)
     {
       painter->setPen(mapcolors::touchMarkBackPen);
-      drawTouchMarks(context, size, areaSize);
+      drawTouchMarks(size, areaSize);
 
       painter->setPen(mapcolors::touchMarkFillPen);
-      drawTouchMarks(context, size2, areaSize);
+      drawTouchMarks(size2, areaSize);
     }
 
     // Navigation icons in the corners
@@ -90,7 +90,7 @@ void MapPainterTop::render(PaintContext *context)
     {
       // Make icon size dependent on screen size but limit min and max
       int iconSize = std::max(painter->viewport().height(), painter->viewport().width()) / 20;
-      drawTouchIcons(context, std::max(std::min(iconSize, 30), 10));
+      drawTouchIcons(std::max(std::min(iconSize, 30), 10));
     }
   }
 
@@ -105,47 +105,47 @@ void MapPainterTop::render(PaintContext *context)
     if(leg.geometry.isValid())
     {
       painter->setPen(QPen(Qt::red, 6));
-      drawLineString(context, leg.geometry);
+      drawLineString(painter, leg.geometry);
     }
     if(leg.line.isValid())
     {
       painter->setPen(QPen(Qt::yellow, 3));
-      drawLine(context, leg.line);
-      drawText(context, leg.line.getPos1(), "P1", false, false);
-      drawText(context, leg.line.getPos2(), QString("P2,%1°,%2nm").
+      drawLine(painter, leg.line);
+      drawText(painter, leg.line.getPos1(), "P1", false, false);
+      drawText(painter, leg.line.getPos2(), QString("P2,%1°,%2nm").
                arg(leg.course, 0, 'f', 1).arg(leg.distance, 0, 'f', 1), false, false);
 
     }
     if(leg.holdLine.isValid())
     {
       painter->setPen(QPen(Qt::blue, 3));
-      drawLine(context, leg.line);
+      drawLine(painter, leg.line);
     }
     if(leg.procedureTurnPos.isValid())
     {
       painter->setPen(QPen(Qt::blue, 2));
-      drawText(context, leg.procedureTurnPos, "PTFIX", false, false);
+      drawText(painter, leg.procedureTurnPos, "PTFIX", false, false);
     }
     if(leg.interceptPos.isValid())
     {
       painter->setPen(QPen(Qt::yellow, 2));
-      drawText(context, leg.interceptPos, "ICPT", true, false);
+      drawText(painter, leg.interceptPos, "ICPT", true, false);
     }
     if(leg.recFixPos.isValid())
     {
       painter->setPen(QPen(Qt::lightGray, 2));
-      drawText(context, leg.recFixPos, leg.recFixIdent.isEmpty() ? "RECFIX" : leg.recFixIdent, false, true);
+      drawText(painter, leg.recFixPos, leg.recFixIdent.isEmpty() ? "RECFIX" : leg.recFixIdent, false, true);
     }
     if(leg.fixPos.isValid())
     {
       painter->setPen(QPen(Qt::white, 2));
-      drawText(context, leg.fixPos, leg.fixIdent.isEmpty() ? "FIX" : leg.fixIdent, true, true);
+      drawText(painter, leg.fixPos, leg.fixIdent.isEmpty() ? "FIX" : leg.fixIdent, true, true);
     }
   }
 #endif
 }
 
-void MapPainterTop::paintCopyright(PaintContext *context)
+void MapPainterTop::paintCopyright()
 {
   QString mapCopyright = NavApp::getMapCopyright();
   if(!mapCopyright.isEmpty())
@@ -153,15 +153,14 @@ void MapPainterTop::paintCopyright(PaintContext *context)
     Marble::GeoPainter *painter = context->painter;
     atools::util::PainterContextSaver saver(painter);
 
+    painter->setFont(OptionData::instance().getGuiFont());
+    mapcolors::scaleFont(painter, 0.9f);
+
     // Move text more into the center for web apps
     int rightOffset = context->visibleWidget ? 0 : 20;
     int bottomOffset = context->visibleWidget ? 0 : 4;
 
     // Draw text
-    context->szFont(0.8f);
-    QFont font = painter->font();
-    font.setBold(false);
-    painter->setFont(font);
     painter->setPen(Qt::black);
     painter->setBackground(QColor("#b0ffffff"));
     painter->setBrush(Qt::NoBrush);
@@ -171,7 +170,7 @@ void MapPainterTop::paintCopyright(PaintContext *context)
   }
 }
 
-void MapPainterTop::drawTouchIcons(const PaintContext *context, int iconSize)
+void MapPainterTop::drawTouchIcons(int iconSize)
 {
   Marble::GeoPainter *painter = context->painter;
   QRect vp = painter->viewport();
@@ -206,7 +205,7 @@ void MapPainterTop::drawTouchIcons(const PaintContext *context, int iconSize)
   painter->drawPixmap(QPoint(w - iconSize - borderDist, h - iconSize - borderDist), pixmap);
 }
 
-void MapPainterTop::drawTouchRegions(const PaintContext *context, int areaSize)
+void MapPainterTop::drawTouchRegions(int areaSize)
 {
   Marble::GeoPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(painter);
@@ -232,7 +231,7 @@ void MapPainterTop::drawTouchRegions(const PaintContext *context, int areaSize)
   painter->drawPolygon(poly);
 }
 
-void MapPainterTop::drawTouchMarks(const PaintContext *context, int lineSize, int areaSize)
+void MapPainterTop::drawTouchMarks(int lineSize, int areaSize)
 {
   QRect vp = context->painter->viewport();
   int w = vp.width() * areaSize / 100;
@@ -256,11 +255,11 @@ void MapPainterTop::drawTouchMarks(const PaintContext *context, int lineSize, in
   painter->drawLine(vp.width() - lineSize, vp.height() - h, vp.width(), vp.height() - h);
 
   // Top-left
-  drawCross(context, w, h, lineSize);
+  drawCross(painter, w, h, lineSize);
   // Top-right
-  drawCross(context, vp.width() - w, h, lineSize);
+  drawCross(painter, vp.width() - w, h, lineSize);
   // Bottom-right
-  drawCross(context, vp.width() - w, vp.height() - h, lineSize);
+  drawCross(painter, vp.width() - w, vp.height() - h, lineSize);
   // Bottom-left
-  drawCross(context, w, vp.height() - h, lineSize);
+  drawCross(painter, w, vp.height() - h, lineSize);
 }

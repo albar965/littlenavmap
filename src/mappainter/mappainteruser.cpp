@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterUser::MapPainterUser(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterUser::MapPainterUser(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -48,31 +48,30 @@ MapPainterUser::~MapPainterUser()
 {
 }
 
-void MapPainterUser::render(PaintContext *context)
+void MapPainterUser::render()
 {
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
 
   context->szFont(context->textSizeNavaid);
 
   // Always call paint to fill cache
-  paintUserpoints(context,
-                  mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
-                                              context->userPointTypeUnknown,
-                                              context->distance), context->drawFast);
+  paintUserpoints(mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
+                                              context->userPointTypeUnknown, context->distance), context->drawFast);
 }
 
-void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserpoint>& userpoints, bool drawFast)
+void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
   UserdataIcons *icons = NavApp::getUserdataIcons();
 
+  // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
+  QMargins margins(100, 10, 10, 10);
   for(const MapUserpoint& userpoint : userpoints)
   {
     float x, y;
-    bool visible = wToS(userpoint.position, x, y);
+    bool visible = wToSBuf(userpoint.position, x, y, margins);
 
     if(visible)
     {
@@ -82,7 +81,7 @@ void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserp
       if(icons->hasType(userpoint.type) || context->userPointTypeUnknown)
       {
 
-        float size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getUserPointSymbolSize());
+        float size = context->sz(context->symbolSizeNavaid, context->mapLayer->getUserPointSymbolSize());
         if(userpoint.type == "Logbook")
         {
           x += size / 2.f;

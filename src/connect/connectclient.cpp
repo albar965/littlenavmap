@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,11 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
+#include "geo/calculations.h"
 #include "settings/settings.h"
 #include "fs/sc/simconnecthandler.h"
 #include "fs/sc/xpconnecthandler.h"
+#include "fs/scenery/languagejson.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -44,6 +46,9 @@ ConnectClient::ConnectClient(MainWindow *parent)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
+
+  errorMessageBox = new QMessageBox(QMessageBox::Critical, QApplication::applicationName(),
+                                    QString(), QMessageBox::Ok, mainWindow);
 
   // Create FSX/P3D handler for SimConnect
   simConnectHandler = new atools::fs::sc::SimConnectHandler(verbose);
@@ -65,20 +70,21 @@ ConnectClient::ConnectClient(MainWindow *parent)
   dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
 
   connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
-  connect(dataReader, &DataReaderThread::postLogMessage, this, &ConnectClient::postLogMessage);
+  connect(dataReader, &DataReaderThread::postStatus, this, &ConnectClient::statusPosted);
   connect(dataReader, &DataReaderThread::connectedToSimulator, this, &ConnectClient::connectedToSimulatorDirect);
   connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this,
           &ConnectClient::disconnectedFromSimulatorDirect);
 
   dialog = new ConnectDialog(mainWindow, simConnectHandler->isLoaded());
-  connect(dialog, &ConnectDialog::directUpdateRateChanged, this, &ConnectClient::directUpdateRateChanged);
+  connect(dialog, &ConnectDialog::updateRateChanged, this, &ConnectClient::updateRateChanged);
+  connect(dialog, &ConnectDialog::aiFetchRadiusChanged, this, &ConnectClient::aiFetchRadiusChanged);
   connect(dialog, &ConnectDialog::fetchOptionsChanged, this, &ConnectClient::fetchOptionsChanged);
 
   connect(dialog, &ConnectDialog::disconnectClicked, this, &ConnectClient::disconnectClicked);
   connect(dialog, &ConnectDialog::autoConnectToggled, this, &ConnectClient::autoConnectToggled);
 
   reconnectNetworkTimer.setSingleShot(true);
-  connect(&reconnectNetworkTimer, &QTimer::timeout, this, &ConnectClient::connectInternal);
+  connect(&reconnectNetworkTimer, &QTimer::timeout, this, &ConnectClient::connectInternalAuto);
 
   flushQueuedRequestsTimer.setInterval(FLUSH_QUEUE_MS);
   connect(&flushQueuedRequestsTimer, &QTimer::timeout, this, &ConnectClient::flushQueuedRequests);
@@ -105,6 +111,9 @@ ConnectClient::~ConnectClient()
 
   qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
+
+  qDebug() << Q_FUNC_INFO << "delete errorMessage";
+  delete errorMessageBox;
 }
 
 void ConnectClient::flushQueuedRequests()
@@ -121,12 +130,21 @@ void ConnectClient::connectToServerDialog()
 {
   dialog->setConnected(isConnected());
 
-  // Show dialog
-  int retval = dialog->exec();
+  // Show dialog and determine which tab to open
+  cd::ConnectSimType type = cd::UNKNOWN;
+  if(isConnectedNetwork() && isConnected())
+    type = cd::REMOTE;
+  else if(isSimConnect() && isConnected())
+    type = cd::FSX_P3D_MSFS;
+  else if(isXpConnect() && isConnected())
+    type = cd::XPLANE;
+
+  int retval = dialog->execConnectDialog(type);
   dialog->hide();
 
   if(retval == QDialog::Accepted)
   {
+    errorState = false;
     silent = false;
     closeSocket(false /* allow restart */);
 
@@ -158,7 +176,7 @@ QString ConnectClient::simName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("X-Plane");
     else if(dataReader->getHandler() == simConnectHandler)
-      return tr("FSX or Prepar3D");
+      return tr("FSX, Prepar3D or MSFS");
   }
   return QString();
 }
@@ -170,7 +188,7 @@ QString ConnectClient::simShortName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("XP");
     else if(dataReader->getHandler() == simConnectHandler)
-      return tr("FSX/P3D");
+      return tr("FSX/P3D/MSFS");
   }
   return QString();
 }
@@ -182,6 +200,7 @@ void ConnectClient::connectedToSimulatorDirect()
   mainWindow->setConnectionStatusMessageText(tr("Connected (%1)").arg(simShortName()),
                                              tr("Connected to local flight simulator (%1).").arg(simName()));
   dialog->setConnected(isConnected());
+  mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
   emit connectedToSimulator();
   emit weatherUpdated();
 }
@@ -191,7 +210,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   qDebug() << Q_FUNC_INFO;
 
   // Try to reconnect if it was not unlinked by using the disconnect button
-  if(dialog->isAutoConnect() && dialog->isAnyConnectDirect() && !manualDisconnect)
+  if(!errorState && dialog->isAutoConnect() && dialog->isAnyConnectDirect() && !manualDisconnect)
     connectInternal();
   else
     mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
@@ -205,6 +224,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 
   if(!NavApp::isShuttingDown())
   {
+    mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
     emit disconnectedFromSimulator();
     emit weatherUpdated();
   }
@@ -215,6 +235,13 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 /* Posts data received directly from simconnect or the socket and caches any metar reports */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
+  atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
+
+  // Workaround for MSFS sending wrong positions around 0/0 while in menu
+  if(!userAircraft.isFullyValid())
+    // Invalidate position at the 0,0 position if no groundspeed
+    userAircraft.setCoordinates(atools::geo::EMPTY_POS);
+
   // Modify AI aircraft and set shadow flag if a online network with the same callsign exists
   for(atools::fs::sc::SimConnectAircraft& aircraft : dataPacket.getAiAircraft())
   {
@@ -223,54 +250,130 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
   }
 
   // Same as above for user aircraft
-  atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
   if(NavApp::getOnlinedataController()->isShadowAircraft(userAircraft))
     userAircraft.setFlags(atools::fs::sc::SIM_ONLINE_SHADOW | userAircraft.getFlags());
 
-  emit dataPacketReceived(dataPacket);
-
-  if(!dataPacket.getMetars().isEmpty())
+  if(dataPacket.getStatus() == atools::fs::sc::OK)
   {
-    if(verbose)
-      qDebug() << "Metars number" << dataPacket.getMetars().size();
-
-    for(atools::fs::weather::MetarResult metar : dataPacket.getMetars())
+    // Update the MSFS translated aircraft names and types =============
+    /* Mooney, Boeing, Actually aircraft model. */
+    // const QString& getAirplaneType() const
+    // const QString& getAirplaneAirline() const
+    /* Beech Baron 58 Paint 1 */
+    // const QString& getAirplaneTitle() const
+    /* Short ICAO code MD80, BE58, etc. Actually type designator. */
+    // const QString& getAirplaneModel() const
+    const atools::fs::scenery::LanguageJson& idx = NavApp::getLanguageIndex();
+    if(!idx.isEmpty())
     {
-      QString ident = metar.requestIdent;
-      if(verbose)
-      {
-        qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
-                 << ident << "pos" << metar.requestPos.toString();
-        qDebug() << "Station" << metar.metarForStation;
-        qDebug() << "Nearest" << metar.metarForNearest;
-        qDebug() << "Interpolated" << metar.metarForInterpolated;
-      }
+      // Change user aircraft names
+      userAircraft.updateAircraftNames(idx.getName(userAircraft.getAirplaneType()),
+                                       idx.getName(userAircraft.getAirplaneAirline()),
+                                       idx.getName(userAircraft.getAirplaneTitle()),
+                                       idx.getName(userAircraft.getAirplaneModel()));
 
-      if(metar.metarForStation.isEmpty())
-      {
-        if(verbose)
-          qDebug() << "Station" << metar.requestIdent << "not available";
-
-        // Remember airports that have no station reports to avoid recurring requests by airport weather
-        notAvailableStations.insert(metar.requestIdent, metar.requestIdent);
-      }
-      else if(notAvailableStations.contains(metar.requestIdent))
-        // Remove from blacklist since it now has a station report
-        notAvailableStations.remove(metar.requestIdent);
-
-      metar.simulator = true;
-      metarIdentCache.insert(ident, metar);
+      // Change AI names
+      for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())
+        ac.updateAircraftNames(idx.getName(ac.getAirplaneType()),
+                               idx.getName(ac.getAirplaneAirline()),
+                               idx.getName(ac.getAirplaneTitle()),
+                               idx.getName(ac.getAirplaneModel()));
     }
 
+    if(!dataPacket.isEmptyReply())
+      emit dataPacketReceived(dataPacket);
+
     if(!dataPacket.getMetars().isEmpty())
-      emit weatherUpdated();
+    {
+      if(verbose)
+        qDebug() << "Metars number" << dataPacket.getMetars().size();
+
+      for(atools::fs::weather::MetarResult metar : dataPacket.getMetars())
+      {
+        QString ident = metar.requestIdent;
+        if(verbose)
+        {
+          qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
+                   << ident << "pos" << metar.requestPos.toString();
+          qDebug() << "Station" << metar.metarForStation;
+          qDebug() << "Nearest" << metar.metarForNearest;
+          qDebug() << "Interpolated" << metar.metarForInterpolated;
+        }
+
+        if(metar.metarForStation.isEmpty())
+        {
+          if(verbose)
+            qDebug() << "Station" << metar.requestIdent << "not available";
+
+          // Remember airports that have no station reports to avoid recurring requests by airport weather
+          notAvailableStations.insert(metar.requestIdent, metar.requestIdent);
+        }
+        else if(notAvailableStations.contains(metar.requestIdent))
+          // Remove from blacklist since it now has a station report
+          notAvailableStations.remove(metar.requestIdent);
+
+        metar.simulator = true;
+        metarIdentCache.insert(ident, metar);
+      }
+
+      if(!dataPacket.getMetars().isEmpty())
+        emit weatherUpdated();
+    }
+  } // if(dataPacket.getStatus() == atools::fs::sc::OK)
+  else
+  {
+    bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isConnectedNetwork();
+    atools::fs::sc::SimConnectStatus status = dataPacket.getStatus();
+    QString statusText = simConnectData->getStatusText();
+
+    disconnectClicked();
+    handleError(status, statusText, xplane, network);
   }
 }
 
-void ConnectClient::postLogMessage(QString message, bool warning)
+void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const QString& error,
+                                bool xplane, bool network)
 {
-  if(warning)
-    mainWindow->setConnectionStatusMessageText(tr("Warning"), message);
+  QString hint, program;
+
+  if(xplane)
+    program = tr("Little Xpconnect");
+  if(network)
+    program = tr("Little Navconnect");
+
+  switch(status)
+  {
+    case atools::fs::sc::OK:
+      break;
+    case atools::fs::sc::INVALID_MAGIC_NUMBER:
+    case atools::fs::sc::VERSION_MISMATCH:
+      hint = tr("Update <i>%1</i> to the latest version.<br/>"
+                "Your installed version of <i>%1</i><br/>"
+                "is not compatible with this version of <i>Little Navmap</i>.<br/><br/>"
+                "Install the latest version of <i>%1</i>.").arg(program);
+      errorState = true;
+      break;
+    case atools::fs::sc::INSUFFICIENT_WRITE:
+    case atools::fs::sc::WRITE_ERROR:
+      hint = tr("The connection is not reliable.<br/><br/>"
+                "Check your network or installation.");
+      errorState = true;
+      break;
+  }
+
+  errorMessageBox->setText(tr("<p>Error receiving data from <i>%1</i>:</p>"
+                                "<p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
+  errorMessageBox->show();
+}
+
+void ConnectClient::statusPosted(atools::fs::sc::SimConnectStatus status, QString statusText)
+{
+  qDebug() << Q_FUNC_INFO << status << statusText;
+
+  if(status != atools::fs::sc::OK)
+    handleError(status, statusText, dataReader->isXplaneHandler(), isConnectedNetwork());
+  else
+    mainWindow->setConnectionStatusMessageText(QString(), statusText);
 }
 
 void ConnectClient::saveState()
@@ -283,29 +386,38 @@ void ConnectClient::restoreState()
   dialog->restoreState();
 
   dataReader->setHandler(handlerByDialogSettings());
-  dataReader->setUpdateRate(dialog->getDirectUpdateRateMs(dialog->getCurrentSimType()));
+  dataReader->setUpdateRate(dialog->getUpdateRateMs(dialog->getCurrentSimType()));
+  dataReader->setAiFetchRadius(atools::geo::nmToKm(dialog->getAiFetchRadiusNm(dialog->getCurrentSimType())));
   fetchOptionsChanged(dialog->getCurrentSimType());
+  aiFetchRadiusChanged(dialog->getCurrentSimType());
 }
 
 atools::fs::sc::ConnectHandler *ConnectClient::handlerByDialogSettings()
 {
-  if(dialog->getCurrentSimType() == cd::FSX_P3D)
+  if(dialog->getCurrentSimType() == cd::FSX_P3D_MSFS)
     return simConnectHandler;
   else
     return xpConnectHandler;
 }
 
-void ConnectClient::directUpdateRateChanged(cd::ConnectSimType type)
+void ConnectClient::aiFetchRadiusChanged(cd::ConnectSimType type)
 {
-  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D) ||
+  if(dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS)
+    // The currently active value has changed
+    dataReader->setAiFetchRadius(atools::geo::nmToKm(dialog->getAiFetchRadiusNm(type)));
+}
+
+void ConnectClient::updateRateChanged(cd::ConnectSimType type)
+{
+  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS) ||
      (dataReader->getHandler() == xpConnectHandler && type == cd::XPLANE))
     // The currently active value has changed
-    dataReader->setUpdateRate(dialog->getDirectUpdateRateMs(type));
+    dataReader->setUpdateRate(dialog->getUpdateRateMs(type));
 }
 
 void ConnectClient::fetchOptionsChanged(cd::ConnectSimType type)
 {
-  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D) ||
+  if((dataReader->getHandler() == simConnectHandler && type == cd::FSX_P3D_MSFS) ||
      (dataReader->getHandler() == xpConnectHandler && type == cd::XPLANE))
   {
     // The currently active value has changed
@@ -329,8 +441,12 @@ atools::fs::weather::MetarResult ConnectClient::requestWeather(const QString& st
 
   atools::fs::weather::MetarResult retval;
 
-  // Ignore cache if not connected
   if(!isConnected())
+    // Ignore cache if not connected
+    return retval;
+
+  if(isSimConnect() && !dataReader->canFetchWeather())
+    // MSFS cannot fetch weather - disable to avoid stutters
     return retval;
 
   if(onlyStation && notAvailableStations.contains(station))
@@ -396,10 +512,10 @@ bool ConnectClient::isFetchAiAircraft() const
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)
 {
-  if(dataReader->isFsxHandler() && dataReader->isConnected())
+  if(dataReader->isConnected() && dataReader->canFetchWeather())
     dataReader->setWeatherRequest(weatherRequest);
 
-  if(socket != nullptr && socket->isOpen() && outstandingReplies.isEmpty())
+  if(socket != nullptr && socketConnected && socket->isOpen() && outstandingReplies.isEmpty())
   {
     if(verbose)
       qDebug() << "requestWeather" << weatherRequest.getStation();
@@ -431,6 +547,7 @@ void ConnectClient::autoConnectToggled(bool state)
 void ConnectClient::disconnectClicked()
 {
   qDebug() << Q_FUNC_INFO;
+  errorState = false;
 
   reconnectNetworkTimer.stop();
 
@@ -444,6 +561,12 @@ void ConnectClient::disconnectClicked()
   closeSocket(false);
 }
 
+void ConnectClient::connectInternalAuto()
+{
+  if(!errorState)
+    connectInternal();
+}
+
 void ConnectClient::connectInternal()
 {
   if(dialog->isAnyConnectDirect())
@@ -453,12 +576,13 @@ void ConnectClient::connectInternal()
     dataReader->setHandler(handlerByDialogSettings());
 
     // Copy settings from dialog
-    directUpdateRateChanged(dialog->getCurrentSimType());
+    updateRateChanged(dialog->getCurrentSimType());
     fetchOptionsChanged(dialog->getCurrentSimType());
+    aiFetchRadiusChanged(dialog->getCurrentSimType());
 
     dataReader->start();
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting (%1)...").arg(simShortName()),
+    mainWindow->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
                                                tr("Trying to connect to local flight simulator (%1).").arg(simName()));
   }
   else if(socket == nullptr && !dialog->getRemoteHostname().isEmpty())
@@ -477,18 +601,32 @@ void ConnectClient::connectInternal()
     qDebug() << "Connecting to" << dialog->getRemoteHostname() << ":" << dialog->getRemotePort();
     socket->connectToHost(dialog->getRemoteHostname(), dialog->getRemotePort(), QAbstractSocket::ReadWrite);
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
+    mainWindow->setConnectionStatusMessageText(tr("Connecting ..."),
                                                tr("Trying to connect to remote flight simulator on \"%1\".").
                                                arg(dialog->getRemoteHostname()));
   }
 }
 
+bool ConnectClient::isConnectedActive() const
+{
+  return (socket != nullptr && socket->isOpen() && socketConnected) ||
+         (dataReader != nullptr && dataReader->isConnected());
+}
+
 bool ConnectClient::isConnected() const
 {
-  if(dataReader != nullptr)
-    return (socket != nullptr && socket->isOpen()) || dataReader->isConnected();
-  else
-    return socket != nullptr && socket->isOpen();
+  // socket or SimConnect or Xpconnect
+  return (socket != nullptr && socket->isOpen()) || (dataReader != nullptr && dataReader->isConnected());
+}
+
+bool ConnectClient::isSimConnect() const
+{
+  return dataReader != nullptr && dataReader->isFsxHandler();
+}
+
+bool ConnectClient::isXpConnect() const
+{
+  return dataReader != nullptr && dataReader->isXplaneHandler();
 }
 
 bool ConnectClient::isConnectedNetwork() const
@@ -497,9 +635,8 @@ bool ConnectClient::isConnectedNetwork() const
 }
 
 /* Called by signal QAbstractSocket::error */
-void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
+void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
 {
-  Q_UNUSED(error);
   // qDebug() << Q_FUNC_INFO << error;
 
   reconnectNetworkTimer.stop();
@@ -563,7 +700,7 @@ void ConnectClient::closeSocket(bool allowRestart)
   {
     if(silent)
     {
-      msg = tr("Connecting...");
+      msg = tr("Connecting ...");
       msgTooltip = tr("Error while trying to connect to \"%1\": %2 (%3).\nWill retry.").
                    arg(peer).arg(errorStr).arg(error);
     }
@@ -589,6 +726,7 @@ void ConnectClient::closeSocket(bool allowRestart)
 
     if(!NavApp::isShuttingDown())
     {
+      mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
       emit disconnectedFromSimulator();
       emit weatherUpdated();
     }
@@ -642,6 +780,7 @@ void ConnectClient::connectedToServerSocket()
   dialog->setConnected(isConnected());
 
   // Let other program parts know about the new connection
+  mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
   emit connectedToSimulator();
   emit weatherUpdated();
 }
@@ -663,10 +802,13 @@ void ConnectClient::readFromSocket()
       if(simConnectData->getStatus() != atools::fs::sc::OK)
       {
         // Something went wrong - shutdown
-        QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                              QString(tr("Error reading data from Little Navconnect: %1.")).
-                              arg(simConnectData->getStatusText()));
+
+        bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isConnectedNetwork();
+        atools::fs::sc::SimConnectStatus status = simConnectData->getStatus();
+        QString statusText = simConnectData->getStatusText();
+
         closeSocket(false);
+        handleError(status, statusText, xplane, network);
         return;
       }
 

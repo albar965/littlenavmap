@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include "sql/sqlrecord.h"
 #include "sql/sqlquery.h"
+#include "common/maptypes.h"
 
 #include <QList>
 
@@ -40,6 +41,7 @@ class SqlQuery;
 class MapLayer;
 
 namespace query {
+
 void bindRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query, const QString& prefix = QString());
 void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, const QString& prefix = QString());
 
@@ -47,8 +49,8 @@ void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, const
 void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
                          std::function<void(atools::sql::SqlQuery *query)> callback);
 
-QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor,
-                                                    double increment);
+QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor = 0.,
+                                                    double increment = 0.);
 
 /* Inflate rect by width and height in degrees. If it crosses the poles or date line it will be limited */
 void inflateQueryRect(Marble::GeoDataLatLonBox& rect, double factor, double increment);
@@ -77,7 +79,9 @@ struct SimpleRectCache
                    bool lazy,
                    LayerCompareFunc funcSameLayer);
   void clear();
-  void validate(int queryMaxRows);
+
+  /* Clears list in case of overflow and returns true */
+  bool validate(int queryMaxRows);
 
   Marble::GeoDataLatLonBox curRect;
   const MapLayer *curMapLayer = nullptr;
@@ -92,14 +96,24 @@ bool SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox& rect, co
                                         double increment, bool lazy, LayerCompareFunc funcSameLayer)
 {
   if(lazy)
-    // Nothing changed11
+    // Nothing changed
     return false;
 
   // Store bounding rectangle and inflate it
-  Marble::GeoDataLatLonBox cur(curRect);
-  query::inflateQueryRect(cur, factor, increment);
 
-  if(curRect.isEmpty() || !cur.contains(rect) || !funcSameLayer(curMapLayer, mapLayer))
+  Marble::GeoDataLatLonBox inflatedCur(curRect);
+
+  query::inflateQueryRect(inflatedCur, factor, increment);
+
+  qreal wFactor = curRect.width() / rect.width();
+  qreal hFactor = curRect.height() / rect.height();
+
+#ifndef DEBUG_DISABLE_RECT_CACHE
+  if(curRect.isEmpty() || !inflatedCur.contains(rect) || !funcSameLayer(curMapLayer, mapLayer) ||
+     wFactor > 4. || hFactor > 4.)
+#else
+  Q_UNUSED(funcSameLayer)
+#endif
   {
     // Rectangle not covered by loaded data or new layer selected
     list.clear();
@@ -111,13 +125,15 @@ bool SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox& rect, co
 }
 
 template<typename TYPE>
-void SimpleRectCache<TYPE>::validate(int queryMaxRows)
+bool SimpleRectCache<TYPE>::validate(int queryMaxRows)
 {
   if(list.size() >= queryMaxRows)
   {
     curRect.clear();
     curMapLayer = nullptr;
+    return true;
   }
+  return false;
 }
 
 template<typename TYPE>
@@ -197,6 +213,30 @@ const atools::sql::SqlRecordVector *cachedRecordVector(QCache<ID, atools::sql::S
   return nullptr;
 }
 
+/* Key for nearestCache combining all query parameters */
+struct NearestCacheKeyNavaid
+{
+  atools::geo::Pos pos;
+  float distanceNm;
+  map::MapTypes type;
+
+  bool operator==(const query::NearestCacheKeyNavaid& other) const
+  {
+    return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01 && type == other.type;
+  }
+
+  bool operator!=(const query::NearestCacheKeyNavaid& other) const
+  {
+    return !operator==(other);
+  }
+
+};
+
+inline uint qHash(const query::NearestCacheKeyNavaid& key)
+{
+  return qHash(key.pos) ^ qHash(key.type) ^ ::qHash(key.distanceNm);
 }
+
+} // namespace query
 
 #endif // LNM_QUERYTYPES_H

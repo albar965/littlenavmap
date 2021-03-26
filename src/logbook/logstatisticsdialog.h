@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -60,8 +60,8 @@ public:
 
 private:
   /* Use events to update data and disconnect from database if not visible */
-  virtual void showEvent(QShowEvent *event) override;
-  virtual void hideEvent(QHideEvent *event) override;
+  virtual void showEvent(QShowEvent *) override;
+  virtual void hideEvent(QHideEvent *) override;
 
   /* Save and restore dialog size and tab selection */
   void saveState();

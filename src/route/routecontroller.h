@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,17 @@
 #define LITTLENAVMAP_ROUTECONTROLLER_H
 
 #include "route/routecommand.h"
+#include "routing/routenetworktypes.h"
 #include "route/route.h"
 #include "common/tabindexes.h"
 
-#include <QIcon>
-#include <QObject>
 #include <QTimer>
 
 namespace atools {
+namespace routing {
+class RouteFinder;
+class RouteNetwork;
+}
 namespace gui {
 class ItemViewZoomHandler;
 class TabWidgetHandler;
@@ -51,13 +54,13 @@ class QMainWindow;
 class QTableView;
 class QStandardItemModel;
 class QItemSelection;
-class RouteNetwork;
-class RouteFinder;
 class FlightplanEntryBuilder;
 class SymbolPainter;
 class AirportQuery;
+class AirwayTrackQuery;
 class UnitStringTool;
 class QTextCursor;
+class RouteCalcWindow;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -81,8 +84,11 @@ public:
   /* Loads flight plan from FSX PLN file, checks for proper start position (shows notification dialog)
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
-  void loadFlightplan(atools::fs::pln::Flightplan flightplan,
+  void loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
                       const QString& filename, bool quiet, bool changed, bool adjustAltitude);
+
+  /* Load the plan from a string in LNMPLN format */
+  bool loadFlightplanLnmStr(const QString& string);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
    * Use -1 for insertBefore to append.
@@ -90,12 +96,12 @@ public:
   bool insertFlightplan(const QString& filename, int insertBefore);
 
   /* Saves flight plan using the given name and file format and uses file name as new current name */
-  bool saveFlighplanAs(const QString& filename, atools::fs::pln::FileFormat targetFileFormat);
+  bool saveFlightplanLnm();
+  bool saveFlightplanLnmAs(const QString& filename);
+  bool saveFlightplanLnmAsSelection(const QString& filename);
 
-  /* Saves flight plan using current name and current format */
-  bool saveFlightplan(bool cleanExport);
-
-  bool exportFlighplanAsClean(const QString& filename);
+  /* Called if export dialog saved an LNMPLN file */
+  void saveFlightplanLnmExported(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -124,12 +130,6 @@ public:
   /* Has flight plan changed */
   bool hasChanged() const;
 
-  /* Get the current flight plan name or empty if no plan is loaded */
-  const QString& getCurrentRouteFilepath() const
-  {
-    return routeFilename;
-  }
-
   float getRouteDistanceNm() const
   {
     return route.getTotalDistance();
@@ -138,7 +138,7 @@ public:
   /* get altitude in feet as set in the widget */
   float getCruiseAltitudeWidget() const;
 
-  bool  doesFilenameMatchRoute(atools::fs::pln::FileFormat format);
+  bool  doesLnmFilenameMatchRoute();
 
   /* Clear routing network cache and disconnect all queries */
   void preDatabaseLoad();
@@ -160,13 +160,13 @@ public:
    * @param type Type of object to insert. maptypes::USER if userPos is set.
    * @param legIndex Insert after the leg with this index. Will use nearest leg if index is -1.
    */
-  void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
+  void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
   void routeAddProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
 
   /* Same as above but replaces waypoint at legIndex */
-  void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
+  void routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Delete waypoint at the given index. Will also delete departure or destination */
   void routeDelete(int index);
@@ -183,42 +183,38 @@ public:
   /* "Calculate" a direct flight plan that has no waypoints. */
   void calculateDirect();
 
-  /* Calculate a flight plan from radio navaid to radio navaid */
-  void calculateRadionav(int fromIndex, int toIndex);
-  void calculateRadionav();
-
-  /* Calculate a flight plan along high altitude (Jet) airways */
-  void calculateHighAlt(int fromIndex, int toIndex);
-  void calculateHighAlt();
-
-  /* Calculate a flight plan along low altitude (Victor) airways */
-  void calculateLowAlt(int fromIndex, int toIndex);
-  void calculateLowAlt();
-
-  /* Calculate a flight plan along low and high altitude airways that have the given altitude from
-   *  the spin box as minimum altitude */
-  void calculateSetAlt(int fromIndex, int toIndex);
-  void calculateSetAlt();
+  /* Open flight plan calculation window. */
+  void calculateRouteWindowFull();
+  void calculateRouteWindowSelection();
 
   /* Reverse order of all waypoints, swap departure and destination and automatically
    * select a new start position (best runway) */
   void reverseRoute();
 
+  /* Change in options dialog */
   void optionsChanged();
+
+  /* Tracks downloaded or deleted */
+  void tracksChanged();
+
+  /* UI style changed */
   void styleChanged();
 
-  /* Get the route table as a HTML snipped only containing the table and header.
-   * Uses own colors for table background. */
+  /* Get the route table as a HTML snippet only containing the table and header.
+   * Uses own colors for table background. Used by web server. */
   QString getFlightplanTableAsHtml(float iconSizePixel, bool print) const;
 
-  /* Same as above but full HTML document */
+  /* Same as above but full HTML document for export */
   QString getFlightplanTableAsHtmlDoc(float iconSizePixel) const;
+
+  /* Get flight plan extracted from table selection */
+  atools::fs::pln::Flightplan getFlightplanForSelection() const;
 
   /* Insert a flight plan table as QTextTable object at the cursor position */
   void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;
 
   /* Get header for print report */
-  void flightplanHeader(atools::util::HtmlBuilder& html, bool titleOnly) const;
+  void flightplanHeaderPrint(atools::util::HtmlBuilder& html, bool titleOnly) const;
 
   /* Copy the route as a string to the clipboard */
   void routeStringToClipboard() const;
@@ -237,7 +233,7 @@ public:
 
   void editUserWaypointName(int index);
 
-  void shownMapFeaturesChanged(map::MapObjectTypes types);
+  void shownMapFeaturesChanged(map::MapTypes types);
 
   void activateLegManually(int index);
   void resetActiveLeg();
@@ -245,9 +241,9 @@ public:
 
   QString procedureTypeText(const RouteLeg& leg);
 
-  void clearSelection();
+  void clearTableSelection();
 
-  bool hasSelection();
+  bool hasTableSelection();
 
   void aircraftPerformanceChanged();
   void windUpdated();
@@ -272,6 +268,21 @@ public:
     return tabHandlerRoute;
   }
 
+  /* Clear network, so it will be reloaded before next flight plan calculation. */
+  void clearAirwayNetworkCache();
+
+#ifdef DEBUG_NETWORK_INFORMATION
+  void debugNetworkClick(const atools::geo::Pos& pos);
+
+#endif
+
+  /* true if flight plan was loaded in LNMPLN format. Otherwise imported from PLN, FMS, etc. */
+  bool isLnmFormatFlightplan();
+
+  /* Get error messages from route parsing */
+  bool hasErrors() const;
+  QString getErrorStrings(QStringList& toolTip) const;
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -291,10 +302,10 @@ signals:
   void routeAltitudeChanged(float altitudeFeet);
 
   /* Show information about the airports or navaids in the search result */
-  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
+  void showInformation(map::MapResult result);
 
   /* Show approach information about the airport */
-  void showProcedures(map::MapAirport airport);
+  void showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter);
 
   /* Emitted before route calculation to stop any background tasks */
   void preRouteCalc();
@@ -312,6 +323,12 @@ private:
     MOVE_DOWN = 1,
     MOVE_UP = -1
   };
+
+  /* Saves flight plan using LNM format */
+  bool saveFlightplanLnmInternal();
+
+  /* Saves flight plan sippet using LNM format to given name. Given range must not contains procedures or alternates. */
+  bool saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const;
 
   /* Called by route command */
   void changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan);
@@ -339,14 +356,13 @@ private:
   void moveSelectedLegsUp();
   void moveSelectedLegsInternal(MoveDirection direction);
   void deleteSelectedLegs();
-  void selectedRows(QList<int>& rows, bool reverseRoute);
+  void deleteSelectedLegsInternal(const QList<int>& rows);
+  void getSelectedRows(QList<int>& selectedRows, bool reverseRoute) const;
 
-  void selectList(const QList<int>& rows, int offset);
+  void selectList(const QList<int>& selectedRows, int offset);
   void selectRange(int from, int to);
 
   void updateMoveAndDeleteActions();
-
-  void routeToFlightPlan();
 
   void routeSetDepartureInternal(const map::MapAirport& airport);
   void routeSetDestinationInternal(const map::MapAirport& airport);
@@ -360,18 +376,21 @@ private:
 
   void clearRoute();
 
-  bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
+  /* Calculate flight plan pressed in dock window */
+  void calculateRoute();
+  bool calculateRouteInternal(atools::routing::RouteFinder *routeFinder,
                               const QString& commandName,
-                              bool fetchAirways, bool useSetAltitude, int fromIndex, int toIndex);
+                              bool fetchAirways, float altitudeFt, int fromIndex, int toIndex,
+                              atools::routing::Modes mode);
 
-  void updateModelRouteTimeFuel();
+  void updateModelTimeFuelWind();
 
   /* Assign type and altitude from GUI */
   void updateFlightplanFromWidgets(atools::fs::pln::Flightplan& flightplan);
   void updateFlightplanFromWidgets();
 
   /* Insert properties for aircraft performance */
-  void assignAircraftPerformance(atools::fs::pln::Flightplan& flightplan);
+  void assignFlightplanPerfProperties(atools::fs::pln::Flightplan& flightplan) const;
 
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
@@ -383,31 +402,43 @@ private:
   void showProceduresMenuCustom();
   void showOnMapMenu();
 
+  /* Enable or disable remarks widget */
+  void updateRemarkWidget();
+
+  /* Remarks changed */
+  void remarksTextChanged();
+
+  void remarksFlightPlanToWidget();
+
   void undoTriggered();
   void redoTriggered();
   bool updateStartPositionBestRunway(bool force, bool undo);
   void helpClicked();
 
   void dockVisibilityChanged(bool visible);
-  void eraseAirway(int row);
 
-  QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr) const;
-  QString buildFlightplanLabel2() const;
+  /* Time for clear selection triggered or scroll active to top */
+  void cleanupTableTimeout();
+
+  /* Departure, destination and procedures. */
+  QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr,
+                               QString *statustip = nullptr) const;
+
+  /* Distance and time. */
+  QString buildFlightplanLabel2(bool print = false) const;
 
   void updateTableHeaders();
-  void highlightNextWaypoint(int nearestLegIndex);
+  void highlightNextWaypoint(int activeLegIdx);
   void updateModelHighlights();
-  void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet, QStringList *procedureLoadingErrors);
-  void loadAlternateFromFlightplan(bool quiet);
+  void loadProceduresFromFlightplan(bool clearOldProcedureProperties);
+  void loadAlternateFromFlightplan();
 
   void beforeRouteCalc();
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
   QIcon iconForLeg(const RouteLeg& leg, int size) const;
 
-  void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
-  void reportProcedureErrors(const QStringList& procedureLoadingErrors);
 
   void selectAllTriggered();
 
@@ -418,12 +449,25 @@ private:
   void contextMenu(const QPoint& pos);
 
   void updateUnits();
-  void updateErrorLabel();
 
   void editUserWaypointTriggered();
 
+  bool canCalcSelection();
+  bool canSaveSelection();
+
+  /* Move active leg to second top position */
+  void scrollToActive();
+
+  void viewScrolled(int);
+
+  /* Remove all errors from lists */
+  void clearAllErrors();
+
+  /* Selected rows in table. Updated on selection change. */
+  QList<int> selectedRows;
+
   /* If route distance / direct distance if bigger than this value fail routing */
-  static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
+  static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 2.0f;
 
   static Q_DECL_CONSTEXPR int ROUTE_UNDO_LIMIT = 50;
 
@@ -435,7 +479,7 @@ private:
   int undoIndexClean = 0;
 
   /* Network cache for flight plan calculation */
-  RouteNetwork *routeNetworkRadio = nullptr, *routeNetworkAirway = nullptr;
+  atools::routing::RouteNetwork *routeNetworkRadio = nullptr, *routeNetworkAirway = nullptr;
 
   /* Flightplan and route objects */
   Route route; /* real route containing all segments */
@@ -443,18 +487,26 @@ private:
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
   QString routeFilename, fileDepartureIdent, fileDestinationIdent;
 
+  /* Same as above for cruise altitude */
+  float fileCruiseAlt;
+
   /* Current loaded or saved format since the plans in the undo stack have different values */
-  atools::fs::pln::FileFormat routeFileFormat = atools::fs::pln::PLN_FSX;
   atools::fs::pln::FlightplanType fileIfrVfr;
+
+  bool contextMenuOpen = false;
 
   QMainWindow *mainWindow;
   QTableView *view;
   MapQuery *mapQuery;
+  AirwayTrackQuery *airwayQuery;
   AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
   atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
+
+  /* Route calculation dock window controller */
+  RouteCalcWindow *routeWindow = nullptr;
 
   /* Do not update aircraft information more than every 0.1 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;
@@ -462,18 +514,27 @@ private:
 
   bool loadingDatabaseState = false;
   qint64 lastSimUpdate = 0;
+
+  /* Currently active leg or -1 if none */
+  int activeLegIndex = -1;
+
+  /* Copy of current active aircraft updated every MIN_SIM_UPDATE_TIME_MS */
   atools::fs::sc::SimConnectUserAircraft aircraft;
 
   SymbolPainter *symbolPainter = nullptr;
 
   atools::gui::TabWidgetHandler *tabHandlerRoute = nullptr;
 
-  /* Calls RouteController::routeAltChangedDelayed */
-  QTimer routeAltDelayTimer;
+  /* Timers for updating altitude delayer, clear selection while flying and moving active to top */
+  QTimer routeAltDelayTimer, cleanupTableTimer;
 
   // Route table colum headings
   QStringList routeColumns, routeColumnTooltips;
   UnitStringTool *units = nullptr;
+
+  // Errors collected when parsing route for model
+  QStringList flightplanErrors, procedureErrors, alternateErrors;
+  bool trackErrors = false;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

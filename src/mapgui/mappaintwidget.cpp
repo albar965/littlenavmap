@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 #include "mapgui/mapscale.h"
 #include "common/maptools.h"
 #include "route/route.h"
+#include "settings/settings.h"
+#include "common/constants.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/maplayersettings.h"
 #include "common/unit.h"
@@ -30,6 +32,9 @@
 
 #include <QPainter>
 #include <QJsonDocument>
+#include <QResizeEvent>
+#include <QPaintEvent>
+#include <QFile>
 
 #include <marble/MarbleLocale.h>
 #include <marble/MarbleModel.h>
@@ -41,6 +46,16 @@ const float POS_IS_POINT_EPSILON = 0.0001f;
 // KM
 const static double MINIMUM_DISTANCE_KM = 0.1;
 const static double MAXIMUM_DISTANCE_KM = 6000.;
+const static int MAXIMUM_ZOOM = 1120;
+
+// Placemark files to remove or add
+const static QStringList PLACEMARK_FILES_CACHE({
+  "baseplacemarks.cache", "boundaryplacemarks.cache", "cityplacemarks.cache", "elevplacemarks.cache",
+  "otherplacemarks.cache"});
+
+// Additional maps refer to KML files get rid of these too
+const static QStringList PLACEMARK_FILES_KML({
+  "baseplacemarks.kml", "boundaryplacemarks.kml", "cityplacemarks.kml", "elevplacemarks.kml", "otherplacemarks.kml"});
 
 using namespace Marble;
 using atools::geo::Rect;
@@ -49,6 +64,8 @@ using atools::geo::Pos;
 MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   : Marble::MarbleWidget(parent), visibleWidget(visible)
 {
+  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
+
   aircraftTrack = new AircraftTrack;
 
   // Set the map quality to gain speed while moving
@@ -56,16 +73,19 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   setMapQualityForViewContext(LowQuality, Animation);
   setAnimationsEnabled(false);
 
-  // All nautical miles and feet internally
-  MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
+  unitsUpdated();
 
-  paintLayer = new MapPaintLayer(this, NavApp::getMapQuery());
+  paintLayer = new MapPaintLayer(this);
   addLayer(paintLayer);
 
   screenIndex = new MapScreenIndex(this, paintLayer);
 
-  setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
-  avoidBlurredMap = OptionData::instance().getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
+  const OptionData& options = OptionData::instance();
+
+  setSunShadingDimFactor(static_cast<double>(options.getDisplaySunShadingDimFactor()) / 100.);
+  avoidBlurredMap = options.getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
+
+  setFont(options.getMapFont());
 
   // Initialize the X-Plane apron geometry cache
   apronGeometryCache = new ApronGeometryCache();
@@ -169,12 +189,20 @@ void MapPaintWidget::setTheme(const QString& theme, int index)
   setThemeInternal(theme);
 }
 
+bool MapPaintWidget::isDarkMap() const
+{
+  return currentThemeIndex == map::CARTODARK;
+}
+
 void MapPaintWidget::setThemeInternal(const QString& theme)
 {
   // Ignore any overlay state signals the widget sends while switching theme
   ignoreOverlayUpdates = true;
 
   updateThemeUi(currentThemeIndex);
+
+  setMapThemeId(theme);
+  setShowClouds(false);
 
   if(currentThemeIndex < map::CUSTOM)
   {
@@ -183,19 +211,19 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
     {
       case map::STAMENTERRAIN:
       case map::OPENSTREETMAP:
+      case map::OPENTOPOMAP:
       case map::CARTODARK:
       case map::CARTOLIGHT:
+      case map::CUSTOM:
+        // Need to remove the placemark files since they are shown randomly on online maps
+        removePlacemarks();
+        break;
+
       case map::SIMPLE:
       case map::PLAIN:
       case map::ATLAS:
-      case map::CUSTOM:
-        break;
-
-      case map::OPENTOPOMAP:
-        // Disable ugly useless ice polygons on OpenTopoMap
-        // This actually does not work until the polygon files are deleted from the configuration
-        setPropertyValue("ice", false);
-        setShowIceLayer(false);
+        // Add placemark files again - ignored if already loaded
+        addPlacemarks();
         break;
 
       case map::INVALID_THEME:
@@ -203,8 +231,9 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
         break;
     }
   }
+  else
+    removePlacemarks();
 
-  setMapThemeId(theme);
   updateMapObjectsShown();
 
   ignoreOverlayUpdates = false;
@@ -213,12 +242,52 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
   overlayStateFromMenu();
 }
 
+void MapPaintWidget::removePlacemarks()
+{
+  MarbleModel *m = model();
+  // Need to remove the placemark files since they are shown randomly on online maps
+  for(const QString& file : PLACEMARK_FILES_CACHE)
+    m->removeGeoData(file);
+  for(const QString& file : PLACEMARK_FILES_KML)
+    m->removeGeoData(file);
+}
+
+void MapPaintWidget::addPlacemarks()
+{
+  MarbleModel *m = model();
+  // Add placemark files again - ignored if already loaded
+  for(const QString& file : PLACEMARK_FILES_CACHE)
+    m->addGeoDataFile(file);
+}
+
+void MapPaintWidget::unitsUpdated()
+{
+  switch(OptionData::instance().getUnitDist())
+  {
+    case opts::DIST_NM:
+      MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
+      break;
+    case opts::DIST_KM:
+      MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::MetricSystem);
+      break;
+    case opts::DIST_MILES:
+      MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::ImperialSystem);
+      break;
+  }
+}
+
 void MapPaintWidget::optionsChanged()
 {
+  const OptionData& options = OptionData::instance();
+
+  setFont(options.getMapFont());
+
+  unitsUpdated();
+
   // Updated sun shadow and force a tile refresh by changing the show status again
-  setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
+  setSunShadingDimFactor(static_cast<double>(options.getDisplaySunShadingDimFactor()) / 100.);
   setShowSunShading(showSunShading());
-  avoidBlurredMap = OptionData::instance().getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
+  avoidBlurredMap = options.getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
 
   // reloadMap();
   updateCacheSizes();
@@ -254,14 +323,14 @@ void MapPaintWidget::setShowMapSunShading(bool show)
 
 void MapPaintWidget::weatherUpdated()
 {
-  if(paintLayer->getShownMapObjects() | map::AIRPORT_WEATHER)
+  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::AIRPORT_WEATHER))
     update();
 }
 
 void MapPaintWidget::windUpdated()
 {
-  if(paintLayer->getShownMapObjectDisplayTypes() | map::WIND_BARBS ||
-     paintLayer->getShownMapObjectDisplayTypes() | map::WIND_BARBS_ROUTE)
+  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS) ||
+     paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS_ROUTE))
     update();
 }
 
@@ -294,23 +363,34 @@ void MapPaintWidget::setShowMapPois(bool show)
   setShowTerrain(show);
 }
 
-void MapPaintWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
+void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
 {
+  bool curShow = (paintLayer->getShownMapObjects() & type) == type;
   paintLayer->setShowMapObjects(type, show);
 
-  if(type & map::AIRWAYV || type & map::AIRWAYJ)
+  // Update screen coordinate caches if display options have changed
+
+  if((type.testFlag(map::AIRWAY_ALL) && show != curShow) || type.testFlag(map::TRACK) /* Update tracks always */)
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type & map::AIRSPACE)
+  if(type.testFlag(map::AIRSPACE) && show != curShow)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type & map::ILS)
+  if(type.testFlag(map::ILS) && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show)
 {
+  bool curShow = (paintLayer->getShownMapObjectDisplayTypes() & type) == type;
   paintLayer->setShowMapObjectsDisplay(type, show);
+
+  // Update screen coordinate cache if display options have changed
+  if(type & map::LOGBOOK_ALL && show != curShow)
+    screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
+
+  if(type.testFlag(map::FLIGHTPLAN) && show != curShow)
+    screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::setShowMapAirspaces(map::MapAirspaceFilter types)
@@ -330,7 +410,13 @@ void MapPaintWidget::updateMapObjectsShown()
   // No-op
 }
 
-map::MapObjectTypes MapPaintWidget::getShownMapFeatures() const
+bool MapPaintWidget::checkPos(const atools::geo::Pos&)
+{
+  return true;
+  // No-op
+}
+
+map::MapTypes MapPaintWidget::getShownMapFeatures() const
 {
   return paintLayer->getShownMapObjects();
 }
@@ -372,6 +458,7 @@ QString MapPaintWidget::getMapCopyright() const
     case map::CARTODARK:
       return OSM;
 
+    // Pubic domain, none or other open licenses
     case map::SIMPLE:
     case map::PLAIN:
     case map::ATLAS:
@@ -455,8 +542,8 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
   double north = rect.north(GeoDataCoordinates::Degree), south = rect.south(GeoDataCoordinates::Degree),
          east = rect.east(GeoDataCoordinates::Degree), west = rect.west(GeoDataCoordinates::Degree);
 
-  if(!visibleWidget)
-    qDebug() << Q_FUNC_INFO << "intial zoom" << zoom() << "zoom step" << zoomStep();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "initial zoom" << zoom() << "zoom step" << zoomStep();
 
   // Zoom in deeper
   zoomIn();
@@ -469,7 +556,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
          !screenCoordinates(east, south, x, y) || !screenCoordinates(west, south, x, y)) &&
         (zoomIterations < 500) && (zoom() < maximumZoom()))
   {
-    if(!visibleWidget)
+    if(verbose)
       qDebug() << Q_FUNC_INFO << "zoom" << zoom()
                << "Viewport" << viewport()->viewLatLonAltBox().toString(GeoDataCoordinates::Degree);
 
@@ -477,7 +564,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
     zoomIterations++;
   }
 
-  if(!visibleWidget)
+  if(verbose)
     qDebug() << Q_FUNC_INFO << "final zoom" << zoom();
 
   // Fix blurryness or zoom one out after correcting by zooming in
@@ -529,10 +616,10 @@ void MapPaintWidget::centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool 
 void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
 {
   if(!rect.isPoint(POS_IS_POINT_EPSILON) &&
-     rect.getWidthDegree() < 180.f &&
-     rect.getHeightDegree() < 180.f &&
-     rect.getWidthDegree() > POS_IS_POINT_EPSILON &&
-     rect.getHeightDegree() > POS_IS_POINT_EPSILON)
+     std::abs(rect.getWidthDegree()) < 180.f &&
+     std::abs(rect.getHeightDegree()) < 180.f &&
+     std::abs(rect.getWidthDegree()) > POS_IS_POINT_EPSILON &&
+     std::abs(rect.getHeightDegree()) > POS_IS_POINT_EPSILON)
   {
     // Make rectangle slightly bigger to avoid waypoints hiding at the window corners
     Rect scaled(rect);
@@ -580,12 +667,19 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
     // Rect is a point or otherwise malformed
     centerPosOnMap(rect.getCenter());
 
-    if(rect.getWidthDegree() < 180.f &&
-       rect.getHeightDegree() < 180.f)
+    if(std::abs(rect.getWidthDegree()) < 180.f &&
+       std::abs(rect.getHeightDegree()) < 180.f)
       setDistanceToMap(MINIMUM_DISTANCE_KM, allowAdjust);
     else
       setDistanceToMap(MAXIMUM_DISTANCE_KM, allowAdjust);
   }
+
+  if(zoom() < MAXIMUM_ZOOM)
+    setZoom(MAXIMUM_ZOOM);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "distance NM" << atools::geo::kmToNm(distance()) << "zoom" << zoom();
+#endif
 }
 
 void MapPaintWidget::adjustMapDistance()
@@ -626,12 +720,14 @@ void MapPaintWidget::setDistanceToMap(double distanceKm, bool allowAdjust)
 
 void MapPaintWidget::showPosNotAdjusted(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
 {
-  showPosInternal(pos, distanceKm, doubleClick, false /* allow adjust */);
+  if(checkPos(pos))
+    showPosInternal(pos, distanceKm, doubleClick, false /* allow adjust */);
 }
 
 void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
 {
-  showPosInternal(pos, distanceKm, doubleClick, true /* allow adjust */);
+  if(checkPos(pos))
+    showPosInternal(pos, distanceKm, doubleClick, true /* allow adjust */);
 }
 
 void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distanceKm, bool doubleClick, bool allowAdjust)
@@ -639,6 +735,7 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
 #if DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << pos << distanceKm << doubleClick;
 #endif
+
   if(!pos.isValid())
   {
     qWarning() << Q_FUNC_INFO << "Invalid position";
@@ -647,7 +744,7 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
 
   hideTooltip();
   showAircraft(false);
-  jumpBackToAircraftStart(true /* save distance too */);
+  jumpBackToAircraftStart(true /* saveDistance */);
 
   if(distanceKm == 0.f)
     // Use distance depending on double click
@@ -666,12 +763,15 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
   qDebug() << Q_FUNC_INFO << rect << doubleClick;
 #endif
 
+  if(!checkPos(rect.getCenter()))
+    return;
+
   hideTooltip();
   showAircraft(false);
-  jumpBackToAircraftStart(true /* save distance too */);
+  jumpBackToAircraftStart(true /* saveDistance */);
 
-  float w = rect.getWidthDegree();
-  float h = rect.getHeightDegree();
+  float w = std::abs(rect.getWidthDegree());
+  float h = std::abs(rect.getHeightDegree());
 
   if(!rect.isValid())
   {
@@ -692,7 +792,7 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
       centerRectOnMap(Rect(rect.getWest(), rect.getNorth() + w / 2, rect.getEast(), rect.getSouth() - w / 2));
     else
       // Center on rectangle
-      centerRectOnMap(Rect(rect.getWest(), rect.getNorth(), rect.getEast(), rect.getSouth()));
+      centerRectOnMap(rect);
 
     float distanceKm = atools::geo::nmToKm(Unit::rev(doubleClick ?
                                                      OptionData::instance().getMapZoomShowClick() :
@@ -705,7 +805,8 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
 
 void MapPaintWidget::showAircraft(bool centerAircraftChecked)
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
 
   if(!(OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE) || centerAircraftChecked)
   {
@@ -714,7 +815,7 @@ void MapPaintWidget::showAircraft(bool centerAircraftChecked)
     // Adapt the menu item status if this method was not called by the action
     updateShowAircraftUi(centerAircraftChecked);
 
-    if(centerAircraftChecked && screenIndex->getUserAircraft().isValid())
+    if(centerAircraftChecked && screenIndex->getUserAircraft().isFullyValid())
       centerPosOnMap(screenIndex->getUserAircraft().getPosition());
   }
 }
@@ -734,13 +835,12 @@ void MapPaintWidget::routeChanged(bool geometryChanged)
     cancelDragAll();
     screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
   }
+  screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
 
-void MapPaintWidget::routeAltitudeChanged(float altitudeFeet)
+void MapPaintWidget::routeAltitudeChanged(float)
 {
-  Q_UNUSED(altitudeFeet);
-
   if(databaseLoadStatus)
     return;
 
@@ -794,7 +894,7 @@ const atools::geo::Pos& MapPaintWidget::getProfileHighlight() const
 
 void MapPaintWidget::clearSearchHighlights()
 {
-  screenIndex->changeSearchHighlights(map::MapSearchResult());
+  screenIndex->changeSearchHighlights(map::MapResult());
 
   screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
   screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
@@ -826,7 +926,7 @@ bool MapPaintWidget::hasTrackPoints() const
   return !aircraftTrack->isEmpty();
 }
 
-const map::MapSearchResult& MapPaintWidget::getSearchHighlights() const
+const map::MapResult& MapPaintWidget::getSearchHighlights() const
 {
   return screenIndex->getSearchHighlights();
 }
@@ -879,11 +979,19 @@ void MapPaintWidget::changeAirwayHighlights(const QList<QList<map::MapAirway> >&
   update();
 }
 
-void MapPaintWidget::changeSearchHighlights(const map::MapSearchResult& newHighlights)
+void MapPaintWidget::updateLogEntryScreenGeometry()
+{
+  screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
+}
+
+void MapPaintWidget::changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace,
+                                            bool updateLogEntries)
 {
   screenIndex->changeSearchHighlights(newHighlights);
-  screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
-  screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
+  if(updateLogEntries)
+    screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
+  if(updateAirspace)
+    screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
 
@@ -959,16 +1067,14 @@ map::MapWeatherSource MapPaintWidget::weatherSourceFromUi()
   return paintLayer->getWeatherSource();
 }
 
-void MapPaintWidget::updateThemeUi(int index)
+void MapPaintWidget::updateThemeUi(int)
 {
   // No-op
-  Q_UNUSED(index);
 }
 
-void MapPaintWidget::updateShowAircraftUi(bool centerAircraftChecked)
+void MapPaintWidget::updateShowAircraftUi(bool)
 {
   // No-op
-  Q_UNUSED(centerAircraftChecked);
 }
 
 const QList<int>& MapPaintWidget::getRouteHighlights() const
@@ -1011,6 +1117,11 @@ const atools::fs::sc::SimConnectUserAircraft& MapPaintWidget::getUserAircraft() 
   return screenIndex->getUserAircraft();
 }
 
+const atools::fs::sc::SimConnectData& MapPaintWidget::getSimConnectData() const
+{
+  return screenIndex->getSimConnectData();
+}
+
 const QVector<atools::fs::sc::SimConnectAircraft>& MapPaintWidget::getAiAircraft() const
 {
   return screenIndex->getAiAircraft();
@@ -1018,7 +1129,7 @@ const QVector<atools::fs::sc::SimConnectAircraft>& MapPaintWidget::getAiAircraft
 
 void MapPaintWidget::resizeEvent(QResizeEvent *event)
 {
-  if(!visibleWidget)
+  if(verbose)
   {
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << viewport()->viewLatLonAltBox().toString(GeoDataCoordinates::Degree);
@@ -1036,7 +1147,7 @@ void MapPaintWidget::resizeEvent(QResizeEvent *event)
 
 void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
 {
-  if(!visibleWidget)
+  if(verbose)
   {
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << getCurrentViewBoundingBox().toString(GeoDataCoordinates::Degree);
@@ -1083,8 +1194,17 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     screenIndex->updateAllGeometry(currentViewBoundingBox);
   }
 
-  if(paintLayer->getOverflow() > 0)
-    emit resultTruncated(paintLayer->getOverflow());
+  if(paintLayer->isObjectOverflow() || paintLayer->isQueryOverflow())
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO
+             << "isObjectOverflow" << paintLayer->isObjectOverflow()
+             << "getObjectCount" << paintLayer->getObjectCount()
+             << "isQueryOverflow" << paintLayer->isQueryOverflow();
+#endif
+
+    emit resultTruncated();
+  }
 }
 
 bool MapPaintWidget::loadKml(const QString& filename, bool center)

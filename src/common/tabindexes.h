@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,12 @@ namespace rc {
 enum TabRouteId
 {
   ROUTE = 0,
-  AIRCRAFT = 1,
-  COLLECTION = 2
+  REMARKS = 1,
+  AIRCRAFT = 2,
+  COLLECTION = 3
 };
 
-const QVector<int> TabRouteIds = {ROUTE, AIRCRAFT, COLLECTION};
+const QVector<int> TabRouteIds = {ROUTE, REMARKS, AIRCRAFT, COLLECTION};
 
 }
 
@@ -39,22 +40,32 @@ namespace ic {
 enum TabInfoId
 {
   INFO_AIRPORT = 0,
-  INFO_RUNWAYS = 1,
-  INFO_COM = 2,
-  INFO_APPROACHES = 3,
-  INFO_NEAREST = 4,
-  INFO_WEATHER = 5,
-  INFO_NAVAID = 6,
-  INFO_AIRSPACE = 7,
-  INFO_USERPOINT = 8,
-  INFO_LOGBOOK = 9,
-  INFO_ONLINE_CLIENT = 10,
-  INFO_ONLINE_CENTER = 11
+  INFO_NAVAID = 1,
+  INFO_AIRSPACE = 2,
+  INFO_USERPOINT = 3,
+  INFO_LOGBOOK = 4,
+  INFO_ONLINE_CLIENT = 5,
+  INFO_ONLINE_CENTER = 6
 };
 
 const QVector<int> TabInfoIds = {
-  INFO_AIRPORT, INFO_RUNWAYS, INFO_COM, INFO_APPROACHES, INFO_NEAREST, INFO_WEATHER, INFO_NAVAID, INFO_AIRSPACE,
-  INFO_USERPOINT, INFO_LOGBOOK, INFO_ONLINE_CLIENT, INFO_ONLINE_CENTER};
+  INFO_AIRPORT, INFO_NAVAID, INFO_AIRSPACE, INFO_USERPOINT, INFO_LOGBOOK, INFO_ONLINE_CLIENT, INFO_ONLINE_CENTER};
+
+/* Info controller tabs - subwindow for airport */
+enum TabAirportInfoId
+{
+  INFO_AIRPORT_OVERVIEW = 0,
+  INFO_AIRPORT_RUNWAYS = 1,
+  INFO_AIRPORT_COM = 2,
+  INFO_AIRPORT_APPROACHES = 3,
+  INFO_AIRPORT_NEAREST = 4,
+  INFO_AIRPORT_WEATHER = 5
+};
+
+const QVector<int> TabAirportInfoIds = {
+  INFO_AIRPORT_OVERVIEW, INFO_AIRPORT_RUNWAYS, INFO_AIRPORT_COM, INFO_AIRPORT_APPROACHES, INFO_AIRPORT_NEAREST,
+  INFO_AIRPORT_WEATHER
+};
 
 /* Info controller aircraft progress tabs */
 enum TabAircraftId

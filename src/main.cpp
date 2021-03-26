@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,11 @@
 #include "common/maptypes.h"
 #include "common/proctypes.h"
 #include "common/unit.h"
+#include "geo/calculations.h"
 #include "fs/weather/metarparser.h"
 #include "userdata/userdataicons.h"
+#include "routeexport/routeexportformat.h"
+#include "gui/dockwidgethandler.h"
 
 #include <QCommandLineParser>
 #include <QDebug>
@@ -50,9 +53,9 @@
 #include <QMessageBox>
 #include <QLibrary>
 #include <QPixmapCache>
-#include <QFontDatabase>
 #include <QSettings>
 #include <QScreen>
+#include <QProcess>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -71,14 +74,13 @@ int main(int argc, char *argv[])
   Q_INIT_RESOURCE(atools);
 
   // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
-  qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
+  atools::geo::registerMetaTypes();
+  atools::fs::sc::registerMetaTypes();
+  atools::gui::MapPosHistory::registerMetaTypes();
+  atools::gui::DockWidgetHandler::registerMetaTypes();
+
   qRegisterMetaTypeStreamOperators<FsPathType>();
-
-  qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
   qRegisterMetaTypeStreamOperators<SimulatorTypeMap>();
-
-  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
-  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
 
   qRegisterMetaTypeStreamOperators<map::DistanceMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::DistanceMarker> >();
@@ -95,12 +97,14 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<at::AircraftTrackPos>();
   qRegisterMetaTypeStreamOperators<QList<at::AircraftTrackPos> >();
 
-  qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
+  qRegisterMetaTypeStreamOperators<RouteExportFormat>();
+  qRegisterMetaTypeStreamOperators<RouteExportFormatMap>();
 
-  // Needed to send SimConnectData through queued connections
-  qRegisterMetaType<atools::fs::sc::SimConnectData>();
-  qRegisterMetaType<atools::fs::sc::SimConnectReply>();
-  qRegisterMetaType<atools::fs::sc::WeatherRequest>();
+  qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
+  qRegisterMetaTypeStreamOperators<map::MapObjectRef>();
+
+  // Register types and load process environment
+  atools::fs::FsPaths::intitialize();
 
   // Tasks that have to be done before creating the application object and logging system =================
   QStringList messages;
@@ -115,15 +119,15 @@ int main(int argc, char *argv[])
     // QT_OPENGL does not work - so do this ourselves
     if(renderOpt == "desktop")
     {
-      QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, false);
+      QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
       QApplication::setAttribute(Qt::AA_UseOpenGLES, false);
-      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
+      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, false);
     }
     else if(renderOpt == "angle")
     {
       QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, false);
-      QApplication::setAttribute(Qt::AA_UseOpenGLES, false);
-      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
+      QApplication::setAttribute(Qt::AA_UseOpenGLES, true);
+      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, false);
     }
     else if(renderOpt == "software")
     {
@@ -178,7 +182,9 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
 
     QCommandLineOption settingsDirOpt({"s", "settings-directory"},
-                                      QObject::tr("Use <settings-directory> instead of \"%1\".").
+                                      QObject::tr("Use <settings-directory> instead of \"%1\".\n"
+                                                  "This does *not* override the full path.\n"
+                                                  "Spaces are replaced with underscores.").
                                       arg(NavApp::organizationName()),
                                       QObject::tr("settings-directory"));
     parser.addOption(settingsDirOpt);
@@ -214,10 +220,8 @@ int main(int argc, char *argv[])
     qInfo() << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
             << "SimConnectReply Version" << atools::fs::sc::SimConnectReply::getReplyVersion();
 
-    atools::fs::FsPaths::logAllPaths();
-
-    qInfo() << "QT_OPENGL" << QString::fromLocal8Bit(qgetenv("QT_OPENGL").constData());
-    qInfo() << "QT_SCALE_FACTOR" << QString::fromLocal8Bit(qgetenv("QT_SCALE_FACTOR").constData());
+    qInfo() << "QT_OPENGL" << QProcessEnvironment::systemEnvironment().value("QT_OPENGL");
+    qInfo() << "QT_SCALE_FACTOR" << QProcessEnvironment::systemEnvironment().value("QT_SCALE_FACTOR");
     if(app.testAttribute(Qt::AA_UseDesktopOpenGL))
       qInfo() << "Using Qt desktop renderer";
     if(app.testAttribute(Qt::AA_UseOpenGLES))
@@ -238,14 +242,8 @@ int main(int argc, char *argv[])
 
     Settings& settings = Settings::instance();
 
-    // Forcing the English locale if the user has chosen it this way
-    if(OptionsDialog::isOverrideLocale())
-    {
-      qInfo() << "Overriding locale";
-      QLocale::setDefault(QLocale("en"));
-    }
+    qInfo() << "Settings dir name" << Settings::instance().getDirName();
 
-    // Load local and Qt system translations from various places
     int pixmapCache = settings.valueInt(lnm::OPTIONS_PIXMAP_CACHE, -1);
     qInfo() << "QPixmapCache cacheLimit" << QPixmapCache::cacheLimit() << "KB";
     if(pixmapCache != -1)
@@ -254,46 +252,35 @@ int main(int argc, char *argv[])
       QPixmapCache::setCacheLimit(pixmapCache);
     }
 
-    // Load font file from the configuration if desired
-    QString fontfile = settings.valueStr(lnm::OPTIONS_FONT_FILE, QString());
-    if(!fontfile.isEmpty())
+    // Load font from options settings ========================================
+    QString fontStr = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QString());
+    QFont font;
+    if(!fontStr.isEmpty())
     {
-      int id = QFontDatabase::addApplicationFont(fontfile);
-      qInfo() << "Loaded font" << fontfile << "result" << id;
+      font.fromString(fontStr);
+
+      if(font != QApplication::font())
+        app.setFont(font);
+    }
+    qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
+
+    // Load available translations ============================================
+    qInfo() << "Loading translations for" << OptionsDialog::getLocale();
+    Translator::load(OptionsDialog::getLocale());
+
+    // Load region override ============================================
+    // Forcing the English locale if the user has chosen it this way
+    if(OptionsDialog::isOverrideRegion())
+    {
+      qInfo() << "Overriding region settings";
+      QLocale::setDefault(QLocale("en"));
     }
 
-    // Set font family from configuration if given
-    QString fontfamily = settings.valueStr(lnm::OPTIONS_FONT_FAMILY, QString());
-    if(!fontfamily.isEmpty())
-    {
-      QFont font(fontfamily);
-      app.setFont(font);
-      qInfo() << "Set font" << font.family();
-    }
+    qDebug() << "Locale after setting to" << OptionsDialog::getLocale() << QLocale()
+             << "decimal point" << QString(QLocale().decimalPoint())
+             << "group separator" << QString(QLocale().groupSeparator());
 
-    // Set default font size since manually selected families are too large
-    int fontSize = settings.valueInt(lnm::OPTIONS_FONT_PIXEL_SIZE, 0);
-    if(fontSize > 0)
-    {
-      QFont font = app.font();
-      font.setPixelSize(fontSize);
-      app.setFont(font);
-      qInfo() << "Set font size" << fontSize;
-    }
-
-    // Load local and Qt system translations from various places
-    QString lang = settings.valueStr(lnm::OPTIONS_LANGUAGE, QString());
-    if(lang.isEmpty())
-    {
-      qInfo() << "Overriding language";
-      // Checkbox in options dialog
-      lang = OptionsDialog::isOverrideLanguage() ? "en" : lang;
-    }
-
-    qInfo() << "Loading translations for" << lang;
-    Translator::load(lang);
-
-    // Add paths here to allow translation
+    // Add paths here to allow translation =================================
     Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
 
     Application::addReportPath(QObject::tr("Database directory:"),
@@ -301,10 +288,14 @@ int main(int argc, char *argv[])
     Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
     Application::setEmailAddresses({"alex@littlenavmap.org"});
 
-    // Load help URLs from urls.cfg
+    // Load help URLs from urls.cfg =================================
     lnm::loadHelpUrls();
 
-    /* Avoid static translations and load these dynamically now */
+    // Load simulator paths =================================
+    atools::fs::FsPaths::loadAllPaths();
+    atools::fs::FsPaths::logAllPaths();
+
+    // Avoid static translations and load these dynamically now  =================================
     Unit::initTranslateableTexts();
     UserdataIcons::initTranslateableTexts();
     map::initTranslateableTexts();
@@ -313,12 +304,12 @@ int main(int argc, char *argv[])
     formatter::initTranslateableTexts();
 
 #if defined(Q_OS_MACOS)
-    // Check for minimum macOS version 10.10
-    if(QSysInfo::macVersion() != QSysInfo::MV_None && QSysInfo::macVersion() < QSysInfo::MV_10_10)
+    // Check for minimum macOS version  macOS Sierra 10.12
+    if(QSysInfo::macVersion() != QSysInfo::MV_None && QSysInfo::macVersion() < QSysInfo::MV_10_12)
     {
       NavApp::deleteSplashScreen();
       QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
-                            QObject::tr("%1 needs at least macOS Yosemite version 10.10 or newer.").
+                            QObject::tr("%1 needs at least macOS Sierra version 10.12 or newer.").
                             arg(QApplication::applicationName()));
       return 1;
     }
@@ -326,7 +317,7 @@ int main(int argc, char *argv[])
 
 #if defined(Q_OS_WIN32)
     // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
-    QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd"); // generated GUID
+    QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd" + Settings::instance().getDirName()); // generated GUID
     if(!shared.create(512, QSharedMemory::ReadWrite))
     {
       NavApp::deleteSplashScreen();
@@ -370,6 +361,10 @@ int main(int argc, char *argv[])
     // Disable tooltip effects since these do not work well with tooltip updates while displaying
     QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false);
     QApplication::setEffectEnabled(Qt::UI_AnimateTooltip, false);
+
+#if QT_VERSION > QT_VERSION_CHECK(5, 10, 0)
+    QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+#endif
 
     // Check if database is compatible and ask the user to erase all incompatible ones
     // If erasing databases is refused exit application

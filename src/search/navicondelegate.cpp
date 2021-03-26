@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
 
   // Get nav type from SQL model
   QString navtype = sqlModel->getSqlRecord(idx.row()).valueStr("nav_type");
-  map::MapObjectTypes type = map::navTypeToMapObjectType(navtype);
+  map::MapTypes type = map::navTypeToMapObjectType(navtype);
 
   int symbolSize = option.rect.height() - 4;
   int x = option.rect.x() + symbolSize;

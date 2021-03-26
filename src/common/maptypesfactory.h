@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -93,10 +93,10 @@ public:
 
   void fillNdb(const atools::sql::SqlRecord& record, map::MapNdb& ndb);
 
-  void fillWaypoint(const atools::sql::SqlRecord& record, map::MapWaypoint& waypoint);
+  void fillWaypoint(const atools::sql::SqlRecord& record, map::MapWaypoint& waypoint, bool track);
   void fillWaypointFromNav(const atools::sql::SqlRecord& record, map::MapWaypoint& waypoint);
 
-  void fillAirway(const atools::sql::SqlRecord& record, map::MapAirway& airway);
+  void fillAirwayOrTrack(const atools::sql::SqlRecord& record, map::MapAirway& airway, bool track);
   void fillMarker(const atools::sql::SqlRecord& record, map::MapMarker& marker);
   void fillIls(const atools::sql::SqlRecord& record, map::MapIls& ils);
 

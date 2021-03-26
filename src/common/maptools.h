@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -134,9 +134,9 @@ void sortByDistance(QVector<TYPE>& list, const atools::geo::Pos& pos)
 
   std::sort(list.begin(), list.end(),
             [ = ](const TYPE& t1, const TYPE& t2) -> bool
-  {
-    return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
-  });
+    {
+      return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
+    });
 }
 
 /* Functions will stop adding of number of elements exceeds this value */
@@ -229,6 +229,24 @@ void removeById(QList<TYPE>& list, int id)
 
   if(it != list.end())
     list.erase(it, list.end());
+}
+
+template<typename TYPE>
+void removeDuplicatesById(QList<TYPE>& list)
+{
+  std::sort(list.begin(), list.end(), [](const TYPE& obj1, const TYPE& obj2) {
+      return obj1.getId() < obj2.getId();
+    });
+  list.erase(std::unique(list.begin(), list.end()), list.end());
+}
+
+template<typename TYPE>
+void removeDuplicatesById(QVector<TYPE>& vector)
+{
+  std::sort(vector.begin(), vector.end(), [](const TYPE& obj1, const TYPE& obj2) {
+      return obj1.getId() < obj2.getId();
+    });
+  vector.erase(std::unique(vector.begin(), vector.end()), vector.end());
 }
 
 // ==============================================================================

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -320,14 +320,14 @@ float Unit::speedVertFpmF(float value)
   return 0.f;
 }
 
-QString Unit::altMeter(float value, bool addUnit, bool narrow)
+QString Unit::altMeter(float value, bool addUnit, bool narrow, float round)
 {
-  return u(altMeterF(value), unitAltStr, addUnit, narrow);
+  return u(atools::roundToNearest(altMeterF(value), round), unitAltStr, addUnit, narrow);
 }
 
-QString Unit::altFeet(float value, bool addUnit, bool narrow)
+QString Unit::altFeet(float value, bool addUnit, bool narrow, float round)
 {
-  return altMeter(atools::geo::feetToMeter(value), addUnit, narrow);
+  return altMeter(atools::geo::feetToMeter(value), addUnit, narrow, round);
 }
 
 float Unit::altMeterF(float value)
@@ -817,8 +817,7 @@ float Unit::fromMetricToUs(float value, bool fuelAsVolume)
   return fuelAsVolume ? atools::geo::literToGallon(value) : atools::geo::kgToLbs(value);
 }
 
-float Unit::fromCopy(float value, bool fuelAsVolume)
+float Unit::fromCopy(float value, bool)
 {
-  Q_UNUSED(fuelAsVolume);
   return value;
 }

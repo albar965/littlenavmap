@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public:
    * @param pathMap which might be changed by the dialog
    */
   DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap);
-  virtual ~DatabaseDialog();
+  virtual ~DatabaseDialog() override;
 
   /* Get the base path of the currently selected simulator in the combo box */
   QString getBasePath() const;
@@ -75,7 +75,7 @@ public:
   void setCurrentFsType(atools::fs::FsPaths::SimulatorType value);
 
 signals:
-  /* Emitted if the user changed the fligh simulator in the combo box */
+  /* Emitted if the user changed the flight simulator in the combo box */
   void simulatorChanged(atools::fs::FsPaths::SimulatorType value);
 
 private:

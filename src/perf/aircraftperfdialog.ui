@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>490</width>
-    <height>730</height>
+    <height>732</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,7 +101,7 @@ This is for informational purposes only.</string>
          <item row="1" column="1">
           <widget class="QLineEdit" name="lineEditType">
            <property name="toolTip">
-            <string>ICAO aircraft type like B732 or C172. 
+            <string>ICAO aircraft type like B732 or C172.
 The fuel report will show a warning if this does not match the simulator aircraft type.</string>
            </property>
           </widget>
@@ -180,7 +180,10 @@ The fuel report will show a warning if this does not match the simulator aircraf
        <item>
         <widget class="QLabel" name="label">
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
          </property>
          <property name="text">
           <string>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.</string>
@@ -229,7 +232,7 @@ The fuel report will show a warning if this does not match the simulator aircraf
              <number>1000000</number>
             </property>
             <property name="singleStep">
-             <number>100</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -250,6 +253,9 @@ The fuel report will show a warning if this does not match the simulator aircraf
 above the alternate or at the destination at holding speed if
 an alternate is not required</string>
             </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
             <property name="suffix">
              <string> %fuel%</string>
             </property>
@@ -257,7 +263,7 @@ an alternate is not required</string>
              <number>1000000</number>
             </property>
             <property name="singleStep">
-             <number>100</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -297,7 +303,7 @@ captain or the dispatcher</string>
              <number>1000000</number>
             </property>
             <property name="singleStep">
-             <number>100</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -338,6 +344,9 @@ captain or the dispatcher</string>
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</string>
             </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
             <property name="suffix">
              <string> percent</string>
             </property>
@@ -361,7 +370,7 @@ This will increase the trip fuel by the given percentage.</string>
              <number>1000000</number>
             </property>
             <property name="singleStep">
-             <number>100</number>
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -583,7 +592,7 @@ This will increase the trip fuel by the given percentage.</string>
              <double>10000.000000000000000</double>
             </property>
             <property name="singleStep">
-             <double>100.000000000000000</double>
+             <double>50.000000000000000</double>
             </property>
             <property name="value">
              <double>550.000000000000000</double>
@@ -938,7 +947,7 @@ Default is cruise speed.</string>
      </widget>
      <widget class="QWidget" name="tabDescription">
       <attribute name="title">
-       <string>Description or Comments</string>
+       <string>Remarks</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
@@ -957,20 +966,8 @@ Default is cruise speed.</string>
         <number>2</number>
        </property>
        <item>
-        <widget class="QTextBrowser" name="textBrowserDescription">
-         <property name="readOnly">
-          <bool>false</bool>
-         </property>
-         <property name="acceptRichText">
-          <bool>false</bool>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::TextEditorInteraction</set>
-         </property>
-         <property name="placeholderText">
-          <string/>
-         </property>
-         <property name="openExternalLinks">
+        <widget class="QPlainTextEdit" name="plainTextEditDescription">
+         <property name="tabChangesFocus">
           <bool>true</bool>
          </property>
         </widget>
@@ -1027,7 +1024,7 @@ Default is cruise speed.</string>
   <tabstop>spinBoxAlternateSpeed</tabstop>
   <tabstop>spinBoxAlternateFuelFlow</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>textBrowserDescription</tabstop>
+  <tabstop>plainTextEditDescription</tabstop>
  </tabstops>
  <resources/>
  <connections/>

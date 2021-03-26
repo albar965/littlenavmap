@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 class RouteLeg;
 class MapQuery;
 class AirportQuery;
+class WaypointTrackQuery;
 class InfoQuery;
 class WeatherReporter;
 class Route;
@@ -53,9 +54,10 @@ struct MapProcedureRef;
 struct MapUserpoint;
 struct MapLogbookEntry;
 struct MapBase;
-struct MapSearchResultIndex;
+struct MapResultIndex;
 struct Hold;
 struct TrafficPattern;
+struct RangeMarker;
 }
 
 namespace atools {
@@ -274,6 +276,7 @@ public:
 
   void holdText(const map::Hold& hold, atools::util::HtmlBuilder& html) const;
   void trafficPatternText(const map::TrafficPattern& pattern, atools::util::HtmlBuilder& html) const;
+  void rangeMarkerText(const map::RangeMarker& marker, atools::util::HtmlBuilder& html) const;
 
   void setSymbolSize(const QSize& value)
   {
@@ -294,7 +297,7 @@ private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
   bool nearestMapObjectsText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
-                             const map::MapSearchResultIndex *nearest, const QString& header, bool frequencyCol,
+                             const map::MapResultIndex *nearest, const QString& header, bool frequencyCol,
                              bool airportCol,
                              int maxRows) const;
   void nearestMapObjectsTextRow(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const QString& type,
@@ -303,7 +306,7 @@ private:
                                 float magVar, bool frequencyCol, bool airportCol) const;
 
   /* Add scenery entries and links into table */
-  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool ils = false) const;
+  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool ilsOrCom = false) const;
   void addAirportSceneryAndLinks(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addAirportFolder(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
@@ -312,7 +315,10 @@ private:
   void addCoordinates(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
 
   /* Bearing to simulator aircraft if connected */
-  void bearingText(const atools::geo::Pos& pos, float magVar, atools::util::HtmlBuilder& html) const;
+  void bearingToUserText(const atools::geo::Pos& pos, float magVar, atools::util::HtmlBuilder& html) const;
+
+  /* Distance to last flight plan waypoint */
+  void distanceToRouteText(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
 
   void navaidTitle(atools::util::HtmlBuilder& html, const QString& text) const;
 
@@ -358,10 +364,9 @@ private:
   void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach,
                bool standalone) const;
 
-  QString filepathTextShow(const QString& filepath) const;
+  QString filepathTextShow(const QString& filepath, const QString& prefix = QString()) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;
 
-  QString airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const;
   void airportRow(const map::MapAirport& ap, atools::util::HtmlBuilder& html) const;
 
   void addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,
@@ -372,8 +377,8 @@ private:
                       const QString& name = QString()) const;
 
   /* Adds text for preferred runways */
-  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, float windSpeed,
-                       float windDirectionDeg, int max, bool details) const;
+  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
+                       const atools::fs::weather::MetarParser& parsed, int max, bool details) const;
   void descriptionText(const QString& descriptionText, atools::util::HtmlBuilder& html) const;
 
   /* Add morse code row2line */
@@ -381,6 +386,15 @@ private:
 
   /* Add wind text for flight plan waypoints */
   void routeWindText(atools::util::HtmlBuilder& html, const Route& route, int index) const;
+
+  QString identRegionText(const QString& ident, const QString& region) const;
+
+  /* Add remarks from a routeleg at the given index to a table */
+  void flightplanWaypointRemarks(atools::util::HtmlBuilder& html, int index) const;
+
+  /* Join values and header with default values */
+  QString strJoinVal(const QStringList& list) const;
+  QString strJoinHdr(const QStringList& list) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
@@ -393,6 +407,7 @@ private:
 
   QWidget *parentWidget = nullptr;
   MapQuery *mapQuery;
+  WaypointTrackQuery *waypointQuery;
   AirportQuery *airportQuerySim, *airportQueryNav;
   InfoQuery *infoQuery;
   atools::fs::util::MorseCode *morse;

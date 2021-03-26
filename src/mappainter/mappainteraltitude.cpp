@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ using namespace Marble;
 using namespace atools::geo;
 using map::MapIls;
 
-MapPainterAltitude::MapPainterAltitude(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterAltitude::MapPainterAltitude(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -45,7 +45,7 @@ MapPainterAltitude::~MapPainterAltitude()
 {
 }
 
-void MapPainterAltitude::render(PaintContext *context)
+void MapPainterAltitude::render()
 {
   using atools::fs::common::MoraReader;
 
@@ -59,9 +59,11 @@ void MapPainterAltitude::render(PaintContext *context)
     {
       atools::util::PainterContextSaver paintContextSaver(context->painter);
 
-      QColor gridCol = mapcolors::minimumAltitudeGridPen.color();
+      // Use width and style from pen but override transparency
+      QColor gridCol =
+        context->darkMap ? mapcolors::minimumAltitudeGridPenDark.color() : mapcolors::minimumAltitudeGridPen.color();
       gridCol.setAlphaF(1. - context->transparencyMora);
-      QPen pen = mapcolors::minimumAltitudeGridPen;
+      QPen pen = context->darkMap ? mapcolors::minimumAltitudeGridPenDark : mapcolors::minimumAltitudeGridPen;
       pen.setColor(gridCol);
       context->painter->setPen(pen);
 
@@ -90,7 +92,6 @@ void MapPainterAltitude::render(PaintContext *context)
       QVector<GeoDataCoordinates> centers;
 
       // Draw rectangles and collect other values for text placement ================================
-      Marble::GeoDataLineString line(Marble::Tessellate | Marble::RespectLatitudeCircle);
       for(int laty = south; laty <= north + 1; laty++)
       {
         // Iterate over anti-meridian split
@@ -103,13 +104,12 @@ void MapPainterAltitude::render(PaintContext *context)
                moraFt100 != MoraReader::ERROR)
             {
               // Build rectangle
-              line.clear();
-              line.append(GeoDataCoordinates(lonx, laty, 0, DEG));
-              line.append(GeoDataCoordinates(lonx + 1, laty, 0, DEG));
-              line.append(GeoDataCoordinates(lonx + 1, laty - 1, 0, DEG));
-              line.append(GeoDataCoordinates(lonx, laty - 1, 0, DEG));
-              line.append(GeoDataCoordinates(lonx, laty, 0, DEG));
-              context->painter->drawPolyline(line);
+              float lonxF = static_cast<float>(lonx);
+              float latyF = static_cast<float>(laty);
+              drawLine(context->painter, Line(lonxF, latyF, lonxF + 1.f, latyF));
+              drawLine(context->painter, Line(lonxF + 1.f, latyF, lonxF + 1, latyF - 1.f));
+              drawLine(context->painter, Line(lonxF + 1.f, latyF - 1, lonxF, latyF - 1.f));
+              drawLine(context->painter, Line(lonxF, latyF - 1.f, lonxF, latyF));
 
               if(!context->drawFast)
               {
@@ -132,11 +132,13 @@ void MapPainterAltitude::render(PaintContext *context)
       // Draw texts =================================================================
       if(!context->drawFast && minWidth > 20.f)
       {
-        // Adjust minmum and maximum font height based on rectangle width
+        // Adjust minimum and maximum font height based on rectangle width
         minWidth = std::max(minWidth * 0.6f, 25.f);
         minWidth = std::min(minWidth * 0.6f, 150.f);
 
-        QColor textCol = mapcolors::minimumAltitudeNumberColor;
+        // Do not use transparency but override from options
+        QColor textCol =
+          context->darkMap ? mapcolors::minimumAltitudeNumberColorDark : mapcolors::minimumAltitudeNumberColor;
         textCol.setAlphaF(1. - context->transparencyMora);
         context->painter->setPen(textCol);
 

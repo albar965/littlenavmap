@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,62 @@ struct WindAverageRoute;
 
 class Route;
 
+/* Result package of fuel consumption to and time calculation to dest, TOD or next.
+ *  Fuel consumpition might be estimated. */
+struct FuelTimeResult
+{
+  float
+  /* To destination */
+    fuelLbsToDest = map::INVALID_WEIGHT_VALUE,
+    fuelGalToDest = map::INVALID_VOLUME_VALUE,
+    timeToDest = map::INVALID_TIME_VALUE,
+
+  /* To top of descent */
+    fuelLbsToTod = map::INVALID_WEIGHT_VALUE,
+    fuelGalToTod = map::INVALID_VOLUME_VALUE,
+    timeToTod = map::INVALID_TIME_VALUE,
+
+  /* To next waypoint */
+    fuelLbsToNext = map::INVALID_WEIGHT_VALUE,
+    fuelGalToNext = map::INVALID_VOLUME_VALUE,
+    timeToNext = map::INVALID_TIME_VALUE;
+
+  bool estimatedFuel = false, estimatedTime = false;
+
+  bool isTimeToDestValid() const
+  {
+    return timeToDest < map::INVALID_TIME_VALUE;
+  }
+
+  bool isTimeToTodValid() const
+  {
+    return timeToTod < map::INVALID_TIME_VALUE;
+  }
+
+  bool isTimeToNextValid() const
+  {
+    return timeToNext < map::INVALID_TIME_VALUE;
+  }
+
+  bool isFuelToDestValid() const
+  {
+    return fuelLbsToDest < map::INVALID_WEIGHT_VALUE && fuelGalToDest < map::INVALID_VOLUME_VALUE;
+  }
+
+  bool isFuelToTodValid() const
+  {
+    return fuelLbsToTod < map::INVALID_WEIGHT_VALUE && fuelGalToTod < map::INVALID_VOLUME_VALUE;
+  }
+
+  bool isFuelToNextValid() const
+  {
+    return fuelLbsToNext < map::INVALID_WEIGHT_VALUE && fuelGalToNext < map::INVALID_VOLUME_VALUE;
+  }
+
+};
+
+QDebug operator<<(QDebug out, const FuelTimeResult& obj);
+
 /*
  * This class calculates altitudes for all route legs. This covers top of climb/descent
  * and sticks to all altitude restrictions of procedures while calculating.
@@ -64,7 +120,9 @@ class RouteAltitude
 public:
   /* route used for calculation */
   RouteAltitude(const Route *routeParam);
-  ~RouteAltitude();
+
+  /* Create a copy and assign the given route */
+  RouteAltitude copy(const Route *routeParam);
 
   /* Calculate altitudes for all legs. TOD and TOC are INVALID_DISTANCE_VALUE if these could not be calculated which
    * can happen for short routes with too high cruise altitude.
@@ -77,6 +135,9 @@ public:
   /* Get interpolated altitude value in ft for the given distance to destination in NM.
    *  Not for missed and alternate legs. */
   float getAltitudeForDistance(float distanceToDest) const;
+
+  /* Same as above for TAS knots from performance profile */
+  float getSpeedForDistance(float distanceToDest, const atools::fs::perf::AircraftPerf& perf) const;
 
   /* 0 if invalid */
   float getTravelTimeHours() const;
@@ -218,7 +279,7 @@ public:
 
   /* True if result is not valid and error messages exist */
   bool hasErrors() const;
-  QString getErrorStrings(QString& toolTip, QString& statusTip) const;
+  QString getErrorStrings(QStringList& toolTip) const;
 
   /* Get an array for all altitudes in feet. Includes procedure points. */
   QVector<float> getAltitudes() const;
@@ -321,10 +382,9 @@ public:
 
   /* Calculates needed fuel to destination and TOD. Falls back to current aircraft consumption values if profile or
    * altitude legs are not valid. distanceToDest: Aircraft position distance to destination. */
-  bool calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest, float& fuelLbsToTod, float& fuelGalToTod,
-                              float& timeToDest, float& timeToTod, float distanceToDest,
+  void calculateFuelAndTimeTo(FuelTimeResult& calculation, float distanceToDest, float distanceToNext,
                               const atools::fs::perf::AircraftPerf& perf, float aircraftFuelFlowLbs,
-                              float aircraftFuelFlowGal, float aircraftGroundSpeed, int activeLeg) const;
+                              float aircraftFuelFlowGal, float aircraftGroundSpeed, int activeLegIdx) const;
 
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
@@ -332,7 +392,7 @@ private:
   /* Calculate altitudes for all legs. Error list will be filled with altitude restriction violations. */
   void calculate(QStringList& altRestErrors);
 
-  /* Calculate travelling time and fuel consumption based on given performance object and wind */
+  /* Calculate traveling time and fuel consumption based on given performance object and wind */
   void calculateTrip(const atools::fs::perf::AircraftPerf& perf);
 
   /* Adjust the altitude to fit into the restriction. I.e. raise if it is below an at or above restriction */
@@ -407,7 +467,7 @@ private:
   int legIndexTopOfClimb = map::INVALID_INDEX_VALUE,
       legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
 
-  const Route *route;
+  const Route *route = nullptr;
 
   /* Configuration options */
   bool simplify = true, calcTopOfDescent = true, calcTopOfClimb = true;
@@ -416,7 +476,7 @@ private:
   bool validProfile = false;
 
   /* From aircraft performance */
-  /* Climb and descent are corrected for tail/head wind duringfor second iteration in significant wind */
+  /* Climb and descent are corrected for tail/head wind for second iteration in significant wind */
   float climbRateWindFtPerNm = 333.f, descentRateWindFtPerNm = 333.f, cruiseAltitide = 0.f;
 
   /* Set by calculate */

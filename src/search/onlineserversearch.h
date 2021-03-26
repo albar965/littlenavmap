@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,19 +49,19 @@ public:
   virtual void saveState() override;
   virtual void restoreState() override;
 
-  virtual void getSelectedMapObjects(map::MapSearchResult& result) const override;
+  virtual void getSelectedMapObjects(map::MapResult&) const override;
   virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
 
 private:
   virtual void updateButtonMenu() override;
-  virtual void saveViewState(bool distSearchActive) override;
-  virtual void restoreViewState(bool distSearchActive) override;
+  virtual void saveViewState(bool) override;
+  virtual void restoreViewState(bool) override;
   virtual void updatePushButtons() override;
   QAction *followModeAction() override;
 
   void setCallbacks();
-  void overrideMode(const QStringList& overrideColumnTitles);
+  void overrideMode(const QStringList&);
 
 };
 

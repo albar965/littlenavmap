@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include "db/databasemanager.h"
 
 #include "gui/textdialog.h"
-#include "gui/application.h"
+#include "sql/sqldatabase.h"
 #include "options/optiondata.h"
 #include "common/constants.h"
 #include "fs/db/databasemeta.h"
@@ -27,7 +27,6 @@
 #include "fs/navdatabaseoptions.h"
 #include "fs/navdatabaseprogress.h"
 #include "common/formatter.h"
-#include "fs/fspaths.h"
 #include "fs/xp/scenerypacks.h"
 #include "gui/helphandler.h"
 #include "fs/navdatabase.h"
@@ -43,21 +42,17 @@
 #include "fs/online/onlinedatamanager.h"
 #include "io/fileroller.h"
 #include "atools.h"
+#include "db/databaseprogressdialog.h"
 #include "sql/sqlexception.h"
+#include "track/trackmanager.h"
+#include "util/version.h"
+#include "fs/navdatabaseerrors.h"
+#include "options/optionsdialog.h"
+#include "fs/scenery/languagejson.h"
 
-#include <QDebug>
 #include <QElapsedTimer>
-#include <QLabel>
-#include <QProgressDialog>
-#include <QApplication>
-#include <QFileInfo>
-#include <QList>
-#include <QMenu>
 #include <QDir>
-#include <QMessageBox>
-#include <QAbstractButton>
 #include <QSettings>
-#include <QSplashScreen>
 
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;
@@ -131,7 +126,8 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
                                  );
 
   databaseTimeText = QObject::tr(
-    "<b>%1</b><br/><br/><br/>"
+    "<b>%1</b><br/>" // Scenery:
+    "<br/><br/>" // File:
     "<b>Time:</b> %2<br/>%3%4"
       "<b>Errors:</b> %5<br/><br/>"
       "<big>Found:</big></br>"
@@ -144,6 +140,9 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     "<b>Errors:</b> %5<br/><br/>"
     "<big>Found:</big></br>"
     ) + databaseInfoText;
+
+  // Keeps MSFS translations from table "translation" in memory
+  languageIndex = new atools::fs::scenery::LanguageJson;
 
   // Also loads list of simulators
   restoreState();
@@ -194,6 +193,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   {
     // Open only for instantiation in main window and not in main function
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TRACK);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_LOGBOOK);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
 
@@ -204,6 +204,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
     // Variable databases (user can edit or program downloads data)
     databaseUser = new SqlDatabase(DATABASE_NAME_USER);
+    databaseTrack = new SqlDatabase(DATABASE_NAME_TRACK);
     databaseLogbook = new SqlDatabase(DATABASE_NAME_LOGBOOK);
     databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
 
@@ -240,6 +241,12 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
       transaction.commit();
     }
 
+    // Open track database =================================
+    openWriteableDatabase(databaseTrack, "track", "track", false /* backup */);
+    trackManager = new TrackManager(databaseTrack, databaseNav);
+    trackManager->createSchema();
+    // trackManager->initQueries();
+
     // Open online network database ==============================
     atools::settings::Settings& settings = atools::settings::Settings::instance();
     bool verbose = settings.getAndStoreValue(lnm::OPTIONS_WHAZZUP_PARSER_DEBUG, false).toBool();
@@ -259,11 +266,13 @@ DatabaseManager::~DatabaseManager()
   delete databaseDialog;
   delete progressDialog;
   delete userdataManager;
+  delete trackManager;
   delete logdataManager;
   delete onlinedataManager;
 
   closeAllDatabases();
   closeUserDatabase();
+  closeTrackDatabase();
   closeLogDatabase();
   closeUserAirspaceDatabase();
   closeOnlineDatabase();
@@ -272,16 +281,19 @@ DatabaseManager::~DatabaseManager()
   delete databaseNav;
   delete databaseMora;
   delete databaseUser;
+  delete databaseTrack;
   delete databaseLogbook;
   delete databaseOnline;
   delete databaseUserAirspace;
   delete databaseSimAirspace;
   delete databaseNavAirspace;
+  delete languageIndex;
 
   SqlDatabase::removeDatabase(DATABASE_NAME_SIM);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
   SqlDatabase::removeDatabase(DATABASE_NAME_MORA);
   SqlDatabase::removeDatabase(DATABASE_NAME_USER);
+  SqlDatabase::removeDatabase(DATABASE_NAME_TRACK);
   SqlDatabase::removeDatabase(DATABASE_NAME_LOGBOOK);
   SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
@@ -375,12 +387,16 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         ok = false;
       else if(result == QMessageBox::Yes)
       {
-        QMessageBox *dialog = showSimpleProgressDialog(tr("Deleting ..."));
+        NavApp::deleteSplashScreen();
+        QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Deleting ..."));
+        atools::gui::Application::processEventsExtended();
 
         int i = 0;
         for(const QString& dbfile : databaseFiles)
         {
           dialog->setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
+          atools::gui::Application::processEventsExtended();
+          dialog->repaint();
           atools::gui::Application::processEventsExtended();
 
           if(QFile::remove(dbfile))
@@ -406,36 +422,11 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
           }
           i++;
         }
-        QGuiApplication::restoreOverrideCursor();
-
-        deleteSimpleProgressDialog(dialog);
+        atools::gui::Dialog::deleteSimpleProgressDialog(dialog);
       }
     }
   }
   return ok;
-}
-
-void DatabaseManager::deleteSimpleProgressDialog(QMessageBox *messageBox)
-{
-  messageBox->close();
-  messageBox->deleteLater();
-
-  QGuiApplication::restoreOverrideCursor();
-}
-
-QMessageBox *DatabaseManager::showSimpleProgressDialog(const QString& message)
-{
-  // Avoid the splash screen hiding the dialog
-  NavApp::deleteSplashScreen();
-
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-  QMessageBox *progressBox = new QMessageBox(QMessageBox::NoIcon, QApplication::applicationName(), message);
-  progressBox->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
-  progressBox->setStandardButtons(QMessageBox::NoButton);
-  progressBox->show();
-  atools::gui::Application::processEventsExtended();
-  return progressBox;
 }
 
 void DatabaseManager::checkCopyAndPrepareDatabases()
@@ -481,7 +472,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       if(hasSettings)
       {
         NavApp::deleteSplashScreen();
-        result = atools::gui::Dialog(nullptr).showQuestionMsgBox(
+        result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(
           lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
           tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
              "Overwrite your current navdata file with the new one?"
@@ -507,8 +498,10 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       if(result == QMessageBox::Yes)
       {
         // We have a database in the application folder and it is newer than the one in the settings folder
-        QMessageBox *dialog =
-          showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+        QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow,
+                                                                            tr("Preparing %1 Database ...").
+                                                                            arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+        atools::gui::Application::processEventsExtended();
 
         bool resultRemove = true, resultCopy = false;
         // Remove target
@@ -523,6 +516,8 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         {
           dialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
+          dialog->repaint();
+          atools::gui::Application::processEventsExtended();
           resultCopy = QFile(appDb).copy(settingsDb);
           qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
         }
@@ -534,15 +529,19 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
           openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
           dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
+          dialog->repaint();
+          atools::gui::Application::processEventsExtended();
           NavDatabase::runPreparationScript(tempDb);
 
           dialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          atools::gui::Application::processEventsExtended();
+          dialog->repaint();
           atools::gui::Application::processEventsExtended();
           tempDb.analyze();
           closeDatabaseFile(&tempDb);
           settingsNeedsPreparation = false;
         }
-        deleteSimpleProgressDialog(dialog);
+        atools::gui::Dialog::deleteSimpleProgressDialog(dialog);
 
         if(!resultRemove)
           atools::gui::Dialog::warning(nullptr,
@@ -559,16 +558,28 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
   if(settingsNeedsPreparation && hasSettings)
   {
-    QMessageBox *dialog =
-      showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+    NavApp::deleteSplashScreen();
+    QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Preparing %1 Database ...").
+                                                                        arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+    atools::gui::Application::processEventsExtended();
+    dialog->repaint();
+    atools::gui::Application::processEventsExtended();
 
     SqlDatabase tempDb(DATABASE_NAME_TEMP);
     openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
+
+    // Delete all tables that are not used in Little Navmap versions > 2.4.5
+    if(atools::util::Version(QApplication::applicationVersion()) > atools::util::Version(2, 4, 5))
+      NavDatabase::runPreparationPost245(tempDb);
+
+    // Executes all statements like create index in the table script and deletes it afterwards
     NavDatabase::runPreparationScript(tempDb);
+
+    tempDb.vacuum();
     tempDb.analyze();
     closeDatabaseFile(&tempDb);
 
-    deleteSimpleProgressDialog(dialog);
+    atools::gui::Dialog::deleteSimpleProgressDialog(dialog);
   }
 }
 
@@ -580,6 +591,42 @@ QString DatabaseManager::getCurrentSimulatorBasePath() const
 QString DatabaseManager::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const
 {
   return simulators.value(type).basePath;
+}
+
+QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeVector& types) const
+{
+  FsPaths::SimulatorType type = simulators.getBestInstalled(types);
+  switch(type)
+  {
+    // All not depending on installation path which might be changed by the user
+    case atools::fs::FsPaths::FSX:
+    case atools::fs::FsPaths::FSX_SE:
+    case atools::fs::FsPaths::P3D_V2:
+    case atools::fs::FsPaths::P3D_V3:
+    case atools::fs::FsPaths::P3D_V4:
+    case atools::fs::FsPaths::P3D_V5:
+      return FsPaths::getFilesPath(type);
+
+    // Ignore user changes of path for now
+    case atools::fs::FsPaths::MSFS:
+      // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState
+      // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
+      return FsPaths::getFilesPath(type);
+
+    // Might change with base path by user
+    case atools::fs::FsPaths::XPLANE11:
+      {
+        QString base = getSimulatorBasePath(type);
+        if(!base.isEmpty())
+          return atools::buildPathNoCase({base, "Output", "FMS plans"});
+      }
+
+    case atools::fs::FsPaths::DFD:
+    case atools::fs::FsPaths::ALL_SIMULATORS:
+    case atools::fs::FsPaths::UNKNOWN:
+      break;
+  }
+  return QString();
 }
 
 atools::sql::SqlDatabase *DatabaseManager::getDatabaseOnline() const
@@ -601,7 +648,9 @@ void DatabaseManager::insertSimSwitchActions()
   // Sort keys to avoid random order
   QList<FsPaths::SimulatorType> keys = simulators.keys();
   QList<FsPaths::SimulatorType> sims;
-  std::sort(keys.begin(), keys.end());
+  std::sort(keys.begin(), keys.end(), [](FsPaths::SimulatorType t1, FsPaths::SimulatorType t2) {
+    return FsPaths::typeToShortName(t1) < FsPaths::typeToShortName(t2);
+  });
 
   // Add real simulators first
   for(atools::fs::FsPaths::SimulatorType type : keys)
@@ -620,10 +669,10 @@ void DatabaseManager::insertSimSwitchActions()
 
   int index = 1;
   for(atools::fs::FsPaths::SimulatorType type : sims)
-    insertSimSwitchAction(type, ui->actionDatabaseFiles, ui->menuDatabase, index++);
+    insertSimSwitchAction(type, ui->menuViewAirspaceSource->menuAction(), ui->menuDatabase, index++);
 
   if(!sims.isEmpty())
-    menuDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
+    menuDbSeparator = ui->menuDatabase->insertSeparator(ui->menuViewAirspaceSource->menuAction());
 
   if(actions.size() == 1)
     // Noting to select if there is only one option
@@ -646,6 +695,7 @@ void DatabaseManager::insertSimSwitchActions()
 
     QString dbname = FsPaths::typeToName(FsPaths::NAVIGRAPH);
     navDbSubMenu = new QMenu("&" + QString::number(index) + " " + dbname + cycle);
+    navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
     navDbGroup = new QActionGroup(navDbSubMenu);
 
     navDbActionAll = new QAction(tr("Use %1 for &all Features").arg(dbname), navDbSubMenu);
@@ -670,8 +720,8 @@ void DatabaseManager::insertSimSwitchActions()
     navDbActionOff->setActionGroup(navDbGroup);
     navDbSubMenu->addAction(navDbActionOff);
 
-    ui->menuDatabase->insertMenu(ui->actionDatabaseFiles, navDbSubMenu);
-    menuNavDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
+    ui->menuDatabase->insertMenu(ui->menuViewAirspaceSource->menuAction(), navDbSubMenu);
+    menuNavDbSeparator = ui->menuDatabase->insertSeparator(ui->menuViewAirspaceSource->menuAction());
 
     connect(navDbActionAll, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
     connect(navDbActionBlend, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
@@ -699,7 +749,7 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
   if(type == currentFsType)
   {
     QSignalBlocker blocker(action);
-    Q_UNUSED(blocker);
+    Q_UNUSED(blocker)
     action->setChecked(true);
   }
 
@@ -726,8 +776,8 @@ void DatabaseManager::switchNavFromMainMenu()
           "<p><b>Click the link below for more information:<br/><br/>"
           "<a href=\"%1\">Online Manual - Navigation Databases</a></b><br/></p>").arg(url.toString());
 
-    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
-                                                QObject::tr("Do not &show this dialog again."));
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
+                                                   QObject::tr("Do not &show this dialog again."));
   }
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
@@ -735,6 +785,7 @@ void DatabaseManager::switchNavFromMainMenu()
   // Disconnect all queries
   emit preDatabaseLoad();
 
+  clearLanguageIndex();
   closeAllDatabases();
 
   QString text;
@@ -756,6 +807,7 @@ void DatabaseManager::switchNavFromMainMenu()
   qDebug() << Q_FUNC_INFO << "usingNavDatabase" << navDatabaseStatus;
 
   openAllDatabases();
+  loadLanguageIndex();
 
   QGuiApplication::restoreOverrideCursor();
 
@@ -780,11 +832,13 @@ void DatabaseManager::switchSimFromMainMenu()
     // Disconnect all queries
     emit preDatabaseLoad();
 
+    clearLanguageIndex();
     closeAllDatabases();
 
     // Set new simulator
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
     openAllDatabases();
+    loadLanguageIndex();
 
     QGuiApplication::restoreOverrideCursor();
 
@@ -800,7 +854,7 @@ void DatabaseManager::switchSimFromMainMenu()
   for(QAction *act : actions)
   {
     QSignalBlocker blocker(act);
-    Q_UNUSED(blocker);
+    Q_UNUSED(blocker)
     act->setChecked(act->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
   }
 }
@@ -843,9 +897,9 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
   catch(atools::sql::SqlException& e)
   {
     QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                          tr("Cannot open %1 database. Reason:\n\n"
-                             "%2\n\n"
-                             "Is another %3 running?\n\n"
+                          tr("Cannot open %1 database. Reason:<br/><br/>"
+                             "%2<br/><br/>"
+                             "Is another instance of <i>%3</i> running?<br/><br/>"
                              "Exiting now.").
                           arg(displayName).
                           arg(e.getSqlError().databaseText()).
@@ -868,6 +922,11 @@ void DatabaseManager::closeUserDatabase()
   closeDatabaseFile(databaseUser);
 }
 
+void DatabaseManager::closeTrackDatabase()
+{
+  closeDatabaseFile(databaseTrack);
+}
+
 void DatabaseManager::closeUserAirspaceDatabase()
 {
   closeDatabaseFile(databaseUserAirspace);
@@ -881,6 +940,16 @@ void DatabaseManager::closeLogDatabase()
 void DatabaseManager::closeOnlineDatabase()
 {
   closeDatabaseFile(databaseOnline);
+}
+
+void DatabaseManager::clearLanguageIndex()
+{
+  languageIndex->clear();
+}
+
+void DatabaseManager::loadLanguageIndex()
+{
+  languageIndex->readFromDb(databaseSim, OptionData::instance().getLanguage());
 }
 
 void DatabaseManager::openAllDatabases()
@@ -1054,6 +1123,43 @@ atools::sql::SqlDatabase *DatabaseManager::getDatabaseNavAirspace()
   return databaseNavAirspace;
 }
 
+void DatabaseManager::checkForChangedNavAndSimDatabases()
+{
+  if(!showingDatabaseChangeWarning)
+  {
+    showingDatabaseChangeWarning = true;
+    if(QGuiApplication::applicationState() & Qt::ApplicationActive)
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO;
+#endif
+
+      QStringList files;
+      if(databaseSim != nullptr && databaseSim->isOpen() && databaseSim->isFileModified())
+        files.append(QDir::toNativeSeparators(databaseSim->databaseName()));
+
+      if(databaseNav != nullptr && databaseNav->isOpen() && databaseNav->isFileModified())
+        files.append(QDir::toNativeSeparators(databaseNav->databaseName()));
+      files.removeDuplicates();
+      if(!files.isEmpty())
+      {
+        QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                             tr("<p style=\"white-space:pre\">"
+                                  "Detected a modification of one or more database files:<br/><br/>"
+                                  "&quot;%1&quot;"
+                                  "<br/><br/>"
+                                  "Always close <i>%2</i> before copying, overwriting or updating scenery library databases.</p>").
+                             arg(files.join(tr("&quot;<br/>&quot;"))).
+                             arg(QApplication::applicationName()));
+
+        databaseNav->recordFileMetadata();
+        databaseSim->recordFileMetadata();
+      }
+    }
+    showingDatabaseChangeWarning = false;
+  }
+}
+
 void DatabaseManager::run()
 {
   qDebug() << Q_FUNC_INFO;
@@ -1101,38 +1207,72 @@ bool DatabaseManager::runInternal()
 
     if(retval == QDialog::Accepted)
     {
+      using atools::gui::Dialog;
+
       bool configValid = true;
-      QString err;
-      if(!atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err, selectedFsType))
+      QStringList errors;
+      if(!NavDatabase::isBasePathValid(databaseDialog->getBasePath(), errors, selectedFsType))
       {
-        atools::gui::Dialog::warning(databaseDialog, tr("Cannot read base path \"%1\". Reason: %2.").
-                                     arg(databaseDialog->getBasePath()).arg(err));
+        if(selectedFsType == atools::fs::FsPaths::MSFS)
+        {
+          // Check if base path is valid - all simulators ========================================================
+          Dialog::warning(databaseDialog,
+                          tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
+                             "Reason:<br/>"
+                             "%2<br/><br/>"
+                             "Either the \"OneStore\" or the \"Steam\" paths have to exist.<br/>"
+                             "The path \"Community\" is always needed for add-ons.</p>").
+                          arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")));
+        }
+        else
+        {
+          Dialog::warning(databaseDialog,
+                          tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
+                             "Reason:<br/>"
+                             "%2</p>").
+                          arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")));
+        }
         configValid = false;
       }
 
-      if(selectedFsType == atools::fs::FsPaths::XPLANE11)
+      // Do further checks if basepath is valid =================
+      if(configValid)
       {
-        QString filepath;
-        if(!readInactive && !atools::fs::xp::SceneryPacks::exists(databaseDialog->getBasePath(), err, filepath))
+        if(selectedFsType == atools::fs::FsPaths::XPLANE11)
         {
-          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read scenery configuration \"%1\". Reason: %2.\n\n"
-                                                          "Enable the option \"Read inactive or disabled Scenery Entries\" "
-                                                          "or start X-Plane once to create the file.").
-                                       arg(filepath).arg(err));
-          configValid = false;
+          // Check scenery_packs.ini for X-Plane ========================================================
+          QString filepath;
+          if(!readInactive && !atools::fs::xp::SceneryPacks::exists(databaseDialog->getBasePath(), errors, filepath))
+          {
+            Dialog::warning(databaseDialog,
+                            tr("<p style='white-space:pre'>Cannot read scenery configuration \"%1\".<br/><br/>"
+                               "Reason:<br/>"
+                               "%2<br/><br/>"
+                               "Enable the option \"Read inactive or disabled Scenery Entries\"<br/>"
+                               "or start X-Plane once to create the file.</p>").
+                            arg(filepath).arg(errors.join("<br/>")));
+            configValid = false;
+          }
         }
-      }
-      else
-      {
-        QString sceneryCfgCodec = selectedFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
-        if(!atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
+        else if(selectedFsType != atools::fs::FsPaths::MSFS)
         {
-          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read scenery configuration \"%1\". Reason: %2.").
-                                       arg(databaseDialog->getSceneryConfigFile()).arg(err));
-          configValid = false;
-        }
-      }
+          // Check scenery.cfg for FSX and P3D ========================================================
+          QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
+                                     selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
 
+          if(!NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, errors))
+          {
+            Dialog::warning(databaseDialog,
+                            tr("<p style='white-space:pre'>Cannot read scenery configuration \"%1\".<br/><br/>"
+                               "Reason:<br/>"
+                               "%2</p>").
+                            arg(databaseDialog->getSceneryConfigFile()).arg(errors.join("<br/>")));
+            configValid = false;
+          }
+        }
+      } // if(configValid)
+
+      // Start compilation if all is valid ====================================================
       if(configValid)
       {
         // Compile into a temporary database file
@@ -1161,6 +1301,7 @@ bool DatabaseManager::runInternal()
           // Successfully loaded
           reopenDialog = false;
 
+          clearLanguageIndex();
           closeDatabaseFile(&tempDb);
 
           emit preDatabaseLoad();
@@ -1182,6 +1323,7 @@ bool DatabaseManager::runInternal()
           currentFsType = selectedFsType;
 
           openAllDatabases();
+          loadLanguageIndex();
           emit postDatabaseLoad(currentFsType);
         }
         else
@@ -1201,7 +1343,7 @@ bool DatabaseManager::runInternal()
               qWarning() << "Removing" << journal2.fileName() << "failed";
           }
         }
-      }
+      } // if(configValid)
     }
     else
       // User hit close
@@ -1227,7 +1369,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   bool success = true;
   // Get configuration file path from resources or overloaded path
   QString config = Settings::getOverloadedPath(lnm::DATABASE_NAVDATAREADER_CONFIG);
-  qInfo() << "loadScenery: Config file" << config;
+  qInfo() << Q_FUNC_INFO << "Config file" << config << "Database" << db->databaseName();
 
   QSettings settings(config, QSettings::IniFormat);
 
@@ -1236,6 +1378,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
 
   navDatabaseOpts.setReadInactive(readInactive);
   navDatabaseOpts.setReadAddOnXml(readAddOnXml);
+  navDatabaseOpts.setLanguage(OptionsDialog::getLocale());
 
   // Add exclude paths from option dialog
   const OptionData& optionData = OptionData::instance();
@@ -1265,44 +1408,43 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   navDatabaseOpts.setSimulatorType(selectedFsType);
 
   delete progressDialog;
-  progressDialog = new QProgressDialog(mainWindow);
-  progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
-  progressDialog->setWindowModality(Qt::ApplicationModal);
+  progressDialog = new DatabaseProgressDialog(mainWindow, atools::fs::FsPaths::typeToShortName(selectedFsType));
 
-  progressDialog->setWindowTitle(tr("%1 - Loading %2").
-                                 arg(QApplication::applicationName()).
-                                 arg(atools::fs::FsPaths::typeToShortName(selectedFsType)));
-
-  // Label will be owned by progress
-  QLabel *label = new QLabel(progressDialog);
-  label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-  label->setIndent(10);
-  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-  label->setMinimumWidth(800);
-
-  progressDialog->setLabel(label);
-  progressDialog->setAutoClose(false);
-  progressDialog->setAutoReset(false);
-  progressDialog->setMinimumDuration(0);
-
+  QString basePath = simulators.value(selectedFsType).basePath;
   navDatabaseOpts.setSceneryFile(simulators.value(selectedFsType).sceneryCfg);
-  navDatabaseOpts.setBasepath(simulators.value(selectedFsType).basePath);
+  navDatabaseOpts.setBasepath(basePath);
+
+  if(selectedFsType == atools::fs::FsPaths::MSFS)
+  {
+    navDatabaseOpts.setMsfsCommunityPath(FsPaths::getMsfsCommunityPath(basePath));
+    navDatabaseOpts.setMsfsOfficialPath(FsPaths::getMsfsOfficialPath(basePath));
+  }
+  else
+  {
+    navDatabaseOpts.setMsfsCommunityPath(QString());
+    navDatabaseOpts.setMsfsOfficialPath(QString());
+  }
 
   QElapsedTimer timer;
   progressTimerElapsed = 0L;
 
   progressDialog->setLabelText(
-    databaseTimeText.arg(QString()).
+    databaseTimeText.arg(tr("Counting files ...")).
     arg(QString()).
     arg(QString()).arg(QString()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0));
 
+  // Dialog does not close when clicking cancel
   progressDialog->show();
+
+  atools::gui::Application::processEventsExtended();
+  progressDialog->repaint();
+  atools::gui::Application::processEventsExtended();
 
   navDatabaseOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this,
                                                 std::placeholders::_1, timer));
 
   // Let the dialog close and show the busy pointer
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  QApplication::processEvents();
   atools::fs::NavDatabaseErrors errors;
 
   qInfo() << Q_FUNC_INFO << navDatabaseOpts;
@@ -1310,7 +1452,8 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   try
   {
     atools::fs::NavDatabase nd(&navDatabaseOpts, db, &errors, GIT_REVISION);
-    QString sceneryCfgCodec = selectedFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
+    QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
+                               selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
     nd.create(sceneryCfgCodec);
   }
   catch(atools::Exception& e)
@@ -1328,7 +1471,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
     success = false;
   }
 
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  QApplication::processEvents();
 
   // Show errors that occured during loading, if any
   if(errors.getTotalErrors() > 0)
@@ -1387,11 +1530,11 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
     errorDialog.exec();
   }
 
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  QApplication::processEvents();
   if(!progressDialog->wasCanceled() && success)
   {
     // Show results and wait until user selects ok
-    progressDialog->setCancelButtonText(tr("&OK"));
+    progressDialog->setOkButton();
     progressDialog->exec();
   }
   else
@@ -1420,6 +1563,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
   if(progress.isFirstCall())
   {
     timer.start();
+    progressDialog->setValue(progress.getCurrent());
     progressDialog->setMinimum(0);
     progressDialog->setMaximum(progress.getTotal());
   }
@@ -1491,7 +1635,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
         arg(progress.getNumBoundaries()));
     }
 
-    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    QApplication::processEvents();
     progressTimerElapsed = timer.elapsed();
   }
 

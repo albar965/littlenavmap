@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ public:
   /* Will create a copy of AircraftPerf for editing */
   explicit AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance,
                               const QString& modeText);
-  virtual ~AircraftPerfDialog();
+  virtual ~AircraftPerfDialog() override;
 
   /* Get edited performance data */
   atools::fs::perf::AircraftPerf getAircraftPerf() const;

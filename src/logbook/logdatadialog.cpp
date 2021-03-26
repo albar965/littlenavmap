@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #include "logbook/logdatadialog.h"
 #include "ui_logdatadialog.h"
 
+#include "common/maptypes.h"
 #include "common/constants.h"
 #include "common/dialogrecordhelper.h"
 #include "geo/calculations.h"
@@ -30,9 +31,11 @@
 #include "util/htmlbuilder.h"
 #include "fs/pln/flightplanio.h"
 #include "gui/dialog.h"
-#include "perf/aircraftperfcontroller.h"
 #include "common/unit.h"
 #include "gui/signalblocker.h"
+#include "gui/errorhandler.h"
+#include "exception.h"
+#include "perf/aircraftperfcontroller.h"
 
 #include <QFileInfo>
 
@@ -94,6 +97,24 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
     ui->labelFuelUsed->setVisible(false);
     ui->labelFuelUnits->setVisible(false);
     ui->labelFuelGrossweight->setVisible(false);
+    ui->lineFuelWeight->setVisible(false);
+
+    ui->labelAttachedPlan->setVisible(false);
+    ui->pushButtonAttachedPlanOpen->setVisible(false);
+    ui->pushButtonAttachedPlanAdd->setVisible(false);
+    ui->pushButtonAttachedPlanSaveAs->setVisible(false);
+    ui->pushButtonAttachedPlanClear->setVisible(false);
+
+    ui->labelAttachedGpx->setVisible(false);
+    ui->pushButtonAttachedGpxAdd->setVisible(false);
+    ui->pushButtonAttachedGpxSaveAs->setVisible(false);
+    ui->pushButtonAttachedGpxClear->setVisible(false);
+
+    ui->labelAttachedPerf->setVisible(false);
+    ui->pushButtonAttachedPerfOpen->setVisible(false);
+    ui->pushButtonAttachedPerfAdd->setVisible(false);
+    ui->pushButtonAttachedPerfSaveAs->setVisible(false);
+    ui->pushButtonAttachedPerfClear->setVisible(false);
   }
 
   // Update units in widgets
@@ -153,6 +174,20 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
 
   connect(ui->comboBoxFuelUnits, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &LogdataDialog::fuelUnitsChanged);
+
+  connect(ui->pushButtonAttachedPlanOpen, &QPushButton::clicked, this, &LogdataDialog::planOpenClicked);
+  connect(ui->pushButtonAttachedPlanAdd, &QPushButton::clicked, this, &LogdataDialog::planAddClicked);
+  connect(ui->pushButtonAttachedPlanSaveAs, &QPushButton::clicked, this, &LogdataDialog::planSaveAsClicked);
+  connect(ui->pushButtonAttachedPlanClear, &QPushButton::clicked, this, &LogdataDialog::planClearClicked);
+
+  connect(ui->pushButtonAttachedGpxAdd, &QPushButton::clicked, this, &LogdataDialog::gpxAddClicked);
+  connect(ui->pushButtonAttachedGpxSaveAs, &QPushButton::clicked, this, &LogdataDialog::gpxSaveAsClicked);
+  connect(ui->pushButtonAttachedGpxClear, &QPushButton::clicked, this, &LogdataDialog::gpxClearClicked);
+
+  connect(ui->pushButtonAttachedPerfOpen, &QPushButton::clicked, this, &LogdataDialog::perfOpenClicked);
+  connect(ui->pushButtonAttachedPerfAdd, &QPushButton::clicked, this, &LogdataDialog::perfAddClicked);
+  connect(ui->pushButtonAttachedPerfSaveAs, &QPushButton::clicked, this, &LogdataDialog::perfSaveAsClicked);
+  connect(ui->pushButtonAttachedPerfClear, &QPushButton::clicked, this, &LogdataDialog::perfClearClicked);
 }
 
 LogdataDialog::~LogdataDialog()
@@ -275,7 +310,7 @@ void LogdataDialog::airportUpdated(QLineEdit *lineEdit, QLabel *label)
   QString ident = lineEdit->text();
 
   if(ident.isEmpty())
-    label->setText(tr("No airport selected."));
+    label->setText(atools::util::HtmlBuilder::warningMessage(tr("No airport selected.")));
   else
   {
     // Try to get airport for ident
@@ -331,37 +366,48 @@ void LogdataDialog::perfFileClicked()
 
 void LogdataDialog::fileUpdated(QLineEdit *lineEdit, QLabel *label, bool perf)
 {
-  QString filepath = lineEdit->text();
-
-  if(filepath.isEmpty())
-    label->setText(tr("No file selected."));
-  else
+  try
   {
-    QFileInfo fi(filepath);
-    if(fi.exists())
+    QString filepath = lineEdit->text();
+
+    if(filepath.isEmpty())
+      label->setText(tr("No file selected."));
+    else
     {
-      if(fi.isDir())
-        label->setText(atools::util::HtmlBuilder::errorMessage(tr("File or directory.")));
-      else
+      QFileInfo fi(filepath);
+      if(fi.exists())
       {
-        if(perf)
-        {
-          if(AircraftPerfController::isPerformanceFile(filepath))
-            label->setText(tr("Valid aircraft performance file."));
-          else
-            label->setText(tr("File is not an aircraft performance file."));
-        }
+        if(fi.isDir())
+          label->setText(atools::util::HtmlBuilder::errorMessage(tr("File or directory.")));
         else
         {
-          if(atools::fs::pln::FlightplanIO::detectFormat(filepath) != atools::fs::pln::NONE)
-            label->setText(tr("Valid flight plan file."));
+          if(perf)
+          {
+            if(AircraftPerfController::isPerformanceFile(filepath))
+              label->setText(tr("Valid aircraft performance file."));
+            else
+              label->setText(tr("File is not an aircraft performance file."));
+          }
           else
-            label->setText(tr("File is not a supported flight plan."));
+          {
+            if(atools::fs::pln::FlightplanIO::detectFormat(filepath) != atools::fs::pln::NONE)
+              label->setText(tr("Valid flight plan file."));
+            else
+              label->setText(tr("File is not a supported flight plan."));
+          }
         }
       }
+      else
+        label->setText(atools::util::HtmlBuilder::errorMessage(tr("File not found.")));
     }
-    else
-      label->setText(atools::util::HtmlBuilder::errorMessage(tr("File not found.")));
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
   }
 }
 
@@ -406,7 +452,7 @@ void LogdataDialog::recordToDialog()
   ui->labelDestinationStatus->setText(record->valueStr("destination_name")); // varchar(200) collate nocase
   ui->lineEditDestinationRunway->setText(record->valueStr("destination_runway")); // varchar(10) collate nocase
 
-  ui->textEditDescription->setText(record->valueStr("description")); // varchar(2048) collate nocase
+  ui->plainTextEditDescription->setPlainText(record->valueStr("description")); // varchar(2048) collate nocase
   ui->lineEditFlightSimulator->setText(record->valueStr("simulator")); // varchar(2048) collate nocase
   ui->lineEditRouteString->setText(record->valueStr("route_string")); // varchar(2048) collate nocase
 
@@ -438,7 +484,7 @@ void LogdataDialog::dialogToRecord()
   helper.dialogToRecordStr(ui->lineEditAircraftRegistration, "aircraft_registration", ui->checkBoxAircraftRegistration);
   helper.dialogToRecordStr(ui->lineEditAircraftType, "aircraft_type", ui->checkBoxAircraftType);
 
-  helper.dialogToRecordStr(ui->textEditDescription, "description", ui->checkBoxAircraftDescription);
+  helper.dialogToRecordStr(ui->plainTextEditDescription, "description", ui->checkBoxAircraftDescription);
   helper.dialogToRecordStr(ui->lineEditFlightSimulator, "simulator", ui->checkBoxFlightSimulator);
   helper.dialogToRecordStr(ui->lineEditRouteString, "route_string", ui->checkBoxRouteString);
 
@@ -549,7 +595,7 @@ void LogdataDialog::clearWidgets()
   ui->lineEditAircraftName->clear();
   ui->lineEditAircraftRegistration->clear();
   ui->lineEditAircraftType->clear();
-  ui->textEditDescription->clear();
+  ui->plainTextEditDescription->clear();
   ui->lineEditFlightSimulator->clear();
   ui->lineEditRouteString->clear();
   ui->lineEditDeparture->clear();
@@ -581,7 +627,7 @@ void LogdataDialog::updateWidgets()
     ui->lineEditAircraftName->setEnabled(ui->checkBoxAircraftName->isChecked());
     ui->lineEditAircraftRegistration->setEnabled(ui->checkBoxAircraftRegistration->isChecked());
     ui->lineEditAircraftType->setEnabled(ui->checkBoxAircraftType->isChecked());
-    ui->textEditDescription->setEnabled(ui->checkBoxAircraftDescription->isChecked());
+    ui->plainTextEditDescription->setEnabled(ui->checkBoxAircraftDescription->isChecked());
     ui->lineEditFlightSimulator->setEnabled(ui->checkBoxFlightSimulator->isChecked());
     ui->lineEditRouteString->setEnabled(ui->checkBoxRouteString->isChecked());
     ui->lineEditDestination->setEnabled(ui->checkBoxDestination->isChecked());
@@ -601,10 +647,31 @@ void LogdataDialog::updateWidgets()
     ui->buttonBoxLogdata->button(QDialogButtonBox::Ok)->setEnabled(enable);
   }
 
+  updateAttachementWidgets();
   departureAirportUpdated();
   destAirportUpdated();
   flightplanFileUpdated();
   perfFileUpdated();
+}
+
+void LogdataDialog::updateAttachementWidgets()
+{
+  if(editMode != ld::EDIT_MULTIPLE)
+  {
+    bool hasPln = !record->isNull("flightplan") && !record->valueBytes("flightplan").isEmpty();
+    ui->pushButtonAttachedPlanOpen->setEnabled(hasPln);
+    ui->pushButtonAttachedPlanSaveAs->setEnabled(hasPln);
+    ui->pushButtonAttachedPlanClear->setEnabled(hasPln);
+
+    bool hasTrail = !record->isNull("aircraft_trail") && !record->valueBytes("aircraft_trail").isEmpty();
+    ui->pushButtonAttachedGpxSaveAs->setEnabled(hasTrail);
+    ui->pushButtonAttachedGpxClear->setEnabled(hasTrail);
+
+    bool hasPerf = !record->isNull("aircraft_perf") && !record->valueBytes("aircraft_perf").isEmpty();
+    ui->pushButtonAttachedPerfOpen->setEnabled(hasPerf);
+    ui->pushButtonAttachedPerfSaveAs->setEnabled(hasPerf);
+    ui->pushButtonAttachedPerfClear->setEnabled(hasPerf);
+  }
 }
 
 void LogdataDialog::saveState()
@@ -615,4 +682,65 @@ void LogdataDialog::saveState()
 void LogdataDialog::restoreState()
 {
   atools::gui::WidgetState(lnm::LOGDATA_EDIT_ADD_DIALOG).restore({this, ui->tabWidgetLogbook});
+}
+
+void LogdataDialog::planOpenClicked()
+{
+  emit planOpen(record, this);
+}
+
+void LogdataDialog::planAddClicked()
+{
+  emit planAdd(record, this);
+  updateAttachementWidgets();
+}
+
+void LogdataDialog::planSaveAsClicked()
+{
+  emit planSaveAs(record, this);
+}
+
+void LogdataDialog::gpxAddClicked()
+{
+  emit gpxAdd(record, this);
+  updateAttachementWidgets();
+}
+
+void LogdataDialog::gpxSaveAsClicked()
+{
+  emit gpxSaveAs(record, this);
+}
+
+void LogdataDialog::perfOpenClicked()
+{
+  emit perfOpen(record, this);
+}
+
+void LogdataDialog::perfAddClicked()
+{
+  emit perfAdd(record, this);
+  updateAttachementWidgets();
+}
+
+void LogdataDialog::perfSaveAsClicked()
+{
+  emit perfSaveAs(record, this);
+}
+
+void LogdataDialog::planClearClicked()
+{
+  record->setNull("flightplan");
+  updateWidgets();
+}
+
+void LogdataDialog::perfClearClicked()
+{
+  record->setNull("aircraft_perf");
+  updateWidgets();
+}
+
+void LogdataDialog::gpxClearClicked()
+{
+  record->setNull("aircraft_trail");
+  updateWidgets();
 }

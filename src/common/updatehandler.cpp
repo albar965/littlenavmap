@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ using atools::settings::Settings;
 namespace html = atools::util::html;
 
 UpdateHandler::UpdateHandler(MainWindow *parent)
-  : QObject(parent)
+  : QObject(parent), mainWindow(parent)
 {
 #ifdef DEBUG_UPDATE
   updateCheck = new UpdateCheck(true);
@@ -54,13 +54,15 @@ UpdateHandler::~UpdateHandler()
   delete updateCheck;
 }
 
-void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered)
+void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered, bool force)
 {
-  qDebug() << Q_FUNC_INFO << "channels" << channelOpts << "manual" << manuallyTriggered;
+  qDebug() << Q_FUNC_INFO << "channels" << channelOpts << "manual" << manuallyTriggered
+           << "URL" << updateCheck->getUrl();
+  updateCheck->setForceDebug(force);
 
   manual = manuallyTriggered;
 #ifndef DEBUG_UPDATE
-  if(!manuallyTriggered)
+  if(!manuallyTriggered && !force)
   {
     // Check timestamp if automatically triggered on starup
     qlonglong diff = 0;
@@ -73,7 +75,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
         diff = 24 * 60 * 60 * 7;
         break;
       case opts::NEVER:
-        // Let  use check manually
+        // Let user check manually
         return;
     }
 
@@ -88,7 +90,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
 #endif
 
   QString checked;
-  if(!manuallyTriggered)
+  if(!manuallyTriggered && !force)
     // Get skipped update
     checked = Settings::instance().valueStr(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
 
@@ -197,8 +199,8 @@ void UpdateHandler::updateFailed(QString errorString)
                     arg(updateCheck->getUrl().toDisplayString()).arg(errorString);
 
   if(manual)
-    QMessageBox::information(mainWindow, QApplication::applicationName(), message);
+    QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
   else
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message,
+    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message,
                                                    tr("Do not &show this dialog again."));
 }

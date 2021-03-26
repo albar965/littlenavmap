@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ class UserdataManager;
 }
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 
 struct MapUserpoint;
 
@@ -70,7 +70,7 @@ class UserdataController :
 
 public:
   UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent);
-  virtual ~UserdataController();
+  virtual ~UserdataController() override;
 
   /* Show add dialog and add to the database if accepted */
   void addUserpoint(int id, const atools::geo::Pos& pos);
@@ -136,8 +136,8 @@ public:
   }
 
   /* Add userpoint from map and prefill with result data */
-  void addUserpointFromMap(const map::MapSearchResult& result, atools::geo::Pos pos);
-  void editUserpointFromMap(const map::MapSearchResult& result);
+  void addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos);
+  void editUserpointFromMap(const map::MapResult& result);
   void deleteUserpointFromMap(int id);
   void moveUserpointFromMap(const map::MapUserpoint& userpoint);
 
@@ -168,7 +168,7 @@ private:
   void typesToActions();
   void actionsToTypes();
   void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefill);
-  bool exportSelectedQuestion(bool& exportSelected, bool& append, bool appendAllowed);
+  bool exportSelectedQuestion(bool& selected, bool& append, bool& header, bool appendAllowed, bool headerAllowed);
 
   /* Get default X-Plane path to user_fix.dat file */
   QString xplaneUserWptDatPath();

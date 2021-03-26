@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@ class MapPainterAircraft :
   public MapPainterVehicle
 {
 public:
-  MapPainterAircraft(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterAircraft(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterAircraft() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 };
 

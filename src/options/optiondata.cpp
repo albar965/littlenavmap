@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,11 @@
 #include "exception.h"
 
 #include <QDebug>
+#include <QFont>
+#include <QFontDatabase>
 
 OptionData *OptionData::optionData = nullptr;
+const QVector<float> OptionData::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
 
 /* Default values for well known networks */
 
@@ -96,6 +99,28 @@ QString OptionData::getOnlineWhazzupUrl() const
       return QString();
   }
   return QString();
+}
+
+QFont OptionData::getMapFont() const
+{
+  QFont font;
+  if(!mapFont.isEmpty())
+    font.fromString(mapFont);
+  else if(!guiFont.isEmpty())
+    font.fromString(guiFont);
+  else
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  return font;
+}
+
+QFont OptionData::getGuiFont() const
+{
+  QFont font;
+  if(!guiFont.isEmpty())
+    font.fromString(guiFont);
+  else
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  return font;
 }
 
 const OptionData& OptionData::instance()

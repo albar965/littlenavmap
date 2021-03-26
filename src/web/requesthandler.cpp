@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
 #include <QBuffer>
 #include <QCoreApplication>
 #include <QDir>
+#include <QUrl>
 #include <QPainter>
 #include <QtWidgets/QApplication>
 
@@ -83,7 +84,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
 {
   QString path = QString::fromUtf8(request.getPath());
 
-  qDebug() << Q_FUNC_INFO << "path" << path << request.getMethod()
+  qDebug() << "RequestHandler::service(): path" << path << request.getMethod()
            << "header" << endl << request.getHeaderMap()
            << "parameter" << endl << request.getParameterMap();
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 #ifndef LITTLENAVMAP_DATABASEMANAGER_H
 #define LITTLENAVMAP_DATABASEMANAGER_H
 
-#include "sql/sqldatabase.h"
 #include "fs/fspaths.h"
 #include "db/dbtypes.h"
 
@@ -26,6 +25,15 @@
 #include <QObject>
 
 namespace atools {
+namespace fs {
+namespace scenery {
+class LanguageJson;
+}
+
+}
+namespace sql {
+class SqlDatabase;
+}
 namespace fs {
 class NavDatabaseProgress;
 
@@ -41,12 +49,13 @@ class OnlinedataManager;
 }
 }
 
-class QProgressDialog;
 class QElapsedTimer;
 class DatabaseDialog;
 class MainWindow;
 class QSplashScreen;
 class QMessageBox;
+class TrackManager;
+class DatabaseProgressDialog;
 
 namespace dm {
 enum NavdatabaseStatus
@@ -74,7 +83,7 @@ public:
   DatabaseManager(MainWindow *parent);
 
   /* Also closes database if not already done */
-  virtual ~DatabaseManager();
+  virtual ~DatabaseManager() override;
 
   /* Opens the dialog that allows to (re)load a new scenery database. */
   void run();
@@ -94,11 +103,15 @@ public:
    * Only for scenery database */
   void openAllDatabases();
 
+  /* Load MSFS translations for current language */
+  void loadLanguageIndex();
+
   /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
   void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName,
                              bool backup);
   void closeLogDatabase();
   void closeUserDatabase();
+  void closeTrackDatabase();
   void closeUserAirspaceDatabase();
   void closeOnlineDatabase();
 
@@ -147,8 +160,13 @@ public:
     return currentFsType;
   }
 
+  /* Base paths which might also be changed by the user */
   QString getCurrentSimulatorBasePath() const;
   QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const;
+
+  /* Get files path for installed simulators in order of the given list.
+   * Also considers probably changed paths by user */
+  QString getSimulatorFilesPathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
 
   dm::NavdatabaseStatus getNavDatabaseStatus() const
   {
@@ -158,6 +176,11 @@ public:
   atools::fs::userdata::UserdataManager *getUserdataManager() const
   {
     return userdataManager;
+  }
+
+  TrackManager *getTrackManager() const
+  {
+    return trackManager;
   }
 
   atools::fs::userdata::LogdataManager *getLogdataManager() const
@@ -175,6 +198,11 @@ public:
     return databaseUser;
   }
 
+  atools::sql::SqlDatabase *getDatabaseTrack() const
+  {
+    return databaseTrack;
+  }
+
   atools::sql::SqlDatabase *getDatabaseLogbook() const
   {
     return databaseLogbook;
@@ -189,6 +217,16 @@ public:
 
   /* Create an empty database schema. Boundary option does not use transaction. */
   void createEmptySchema(atools::sql::SqlDatabase *db, bool boundary = false);
+
+  /* MSFS translations from table "translation" */
+  const atools::fs::scenery::LanguageJson& getLanguageIndex() const
+  {
+    return *languageIndex;
+  }
+
+  /* Checks if size and last modification time have changed on the readonly nav and sim databases.
+   * Shows an error dialog if this is the case */
+  void checkForChangedNavAndSimDatabases();
 
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
@@ -244,12 +282,12 @@ private:
   void updateSimulatorPathsFromDialog();
   bool loadScenery(atools::sql::SqlDatabase *db);
   void correctSimulatorType();
-  QMessageBox *showSimpleProgressDialog(const QString& message);
-  void deleteSimpleProgressDialog(QMessageBox *messageBox);
 
   /* Get cycle metadata from a database file */
   void metaFromFile(QString *cycle, QDateTime *compilationTime, bool *settingsNeedsPreparation, QString *source,
                     const QString& file);
+
+  void clearLanguageIndex();
 
   /* Database name for all loaded from simulators */
   const QString DATABASE_NAME_SIM = "LNMDBSIM";
@@ -262,6 +300,9 @@ private:
 
   /* Userpoint database */
   const QString DATABASE_NAME_USER = "LNMDBUSER";
+
+  /* NAT, PACOTS, AUSOTS */
+  const QString DATABASE_NAME_TRACK = "LNMDBTRACK";
 
   /* Logbook database */
   const QString DATABASE_NAME_LOGBOOK = "LNMDBLOG";
@@ -288,14 +329,17 @@ private:
   *databaseNav = nullptr /* Database for third party navigation data */,
   *databaseMora = nullptr /* Database for MORA data - always nav */,
   *databaseUser = nullptr /* Database for user data */,
+  *databaseTrack = nullptr /* Database for tracks like NAT, PACOTS and AUSOTS */,
   *databaseLogbook = nullptr /* Database for logbook */,
   *databaseUserAirspace = nullptr /* Database for user airspaces */,
   *databaseSimAirspace = nullptr /* Airspace database from simulator independent from nav switch */,
   *databaseNavAirspace = nullptr /* Airspace database from navdata independent from nav switch */,
   *databaseOnline = nullptr /* Database for network online data */;
 
+  bool showingDatabaseChangeWarning = false;
+
   MainWindow *mainWindow = nullptr;
-  QProgressDialog *progressDialog = nullptr;
+  DatabaseProgressDialog *progressDialog = nullptr;
 
   /* Switch simulator actions */
   QActionGroup *simDbGroup = nullptr, *navDbGroup = nullptr;
@@ -323,10 +367,13 @@ private:
           databaseTimeText;
 
   /* Also keep the database-close manager classes here */
+  TrackManager *trackManager = nullptr;
   atools::fs::userdata::UserdataManager *userdataManager = nullptr;
   atools::fs::userdata::LogdataManager *logdataManager = nullptr;
   atools::fs::online::OnlinedataManager *onlinedataManager = nullptr;
 
+  /* MSFS translations from table "translation" */
+  atools::fs::scenery::LanguageJson *languageIndex = nullptr;
 };
 
 #endif // LITTLENAVMAP_DATABASEMANAGER_H

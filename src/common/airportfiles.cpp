@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "common/airportfiles.h"
+#include "atools.h"
 
 #include <QApplication>
 #include <QDir>
@@ -43,7 +44,7 @@ QStringList AirportFiles::getAirportFilesBase(const QString& airportIdent)
 
   /*: Important path parts "Files/Airports" to airport and files (".../Documents/Litte Navmap Files/Airports").
    *  Do not change after initial translation to avoid breaking the file lookup. */
-  QFileInfo translatedPath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
+  QFileInfo translatedPath = atools::documentsDir() +
                              QDir::separator() + QApplication::applicationName() +
                              tr(" Files") +
                              QDir::separator() +
@@ -52,7 +53,7 @@ QStringList AirportFiles::getAirportFilesBase(const QString& airportIdent)
   if(translatedPath.exists() && translatedPath.isDir())
     retval.insert(translatedPath.canonicalFilePath());
 
-  QFileInfo path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
+  QFileInfo path = atools::documentsDir() +
                    QDir::separator() + QApplication::applicationName() +
                    " Files" +
                    QDir::separator() +

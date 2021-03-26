@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@ enum RouteCmdType
   DELETE = 0, /* Waypoint(s) deleted in table */
   MOVE = 1, /* Waypoint(s) moved in table */
   ALTITUDE = 2, /* Altitude changed in spin box */
-  REVERSE = 4 /* Route reverse action */
+  REVERSE = 4, /* Route reverse action */
+  REMARKS = 5 /* Route remarks edited */
 };
 
 }
@@ -47,7 +48,7 @@ class RouteCommand :
 public:
   RouteCommand(RouteController *routeController, const atools::fs::pln::Flightplan& flightplanBefore,
                const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
-  virtual ~RouteCommand();
+  virtual ~RouteCommand() override;
 
   virtual void undo() override;
   virtual void redo() override;

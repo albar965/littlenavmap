@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,13 @@ class MapPainterUser :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterUser(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterUser(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterUser() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
-  void paintUserpoints(PaintContext *context, const QList<map::MapUserpoint>& userpoints, bool drawFast);
+  void paintUserpoints(const QList<map::MapUserpoint>& userpoints, bool drawFast);
 
 };
 

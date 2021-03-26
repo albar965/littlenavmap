@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ public:
   void showAircraft(bool centerAircraftChecked);
 
   /* Update hightlighted objects */
-  void changeSearchHighlights(const map::MapSearchResult& newHighlights);
+  void changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries);
   void changeRouteHighlights(const QList<int>& routeHighlight);
   void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
 
@@ -93,7 +93,7 @@ public:
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
-  void routeAltitudeChanged(float altitudeFeet);
+  void routeAltitudeChanged(float);
 
   /* Stop showing aircraft position on map */
   void disconnectedFromSimulator();
@@ -118,7 +118,7 @@ public:
   }
 
   /* Getters used by the painters */
-  const map::MapSearchResult& getSearchHighlights() const;
+  const map::MapResult& getSearchHighlights() const;
   const proc::MapProcedureLeg& getProcedureLegHighlights() const;
   const proc::MapProcedureLegs& getProcedureHighlight() const;
 
@@ -166,6 +166,9 @@ public:
    */
   void setTheme(const QString& theme, int index);
 
+  /* true of map is dark like CartoDark. Night mode does not count */
+  bool isDarkMap() const;
+
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
 
@@ -175,17 +178,18 @@ public:
   QDateTime getSunShadingDateTime() const;
 
   /* Define which airport or navaid types are shown on the map. Updates screen index on demand. */
-  void setShowMapFeatures(map::MapObjectTypes type, bool show);
+  void setShowMapFeatures(map::MapTypes type, bool show);
   void setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show);
   void setShowMapAirspaces(map::MapAirspaceFilter types);
 
-  map::MapObjectTypes getShownMapFeatures() const;
+  map::MapTypes getShownMapFeatures() const;
   map::MapObjectDisplayTypes getShownMapFeaturesDisplay() const;
   map::MapAirspaceFilter getShownAirspaces() const;
   map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
 
   /* User aircraft as shown on the map */
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const;
+  const atools::fs::sc::SimConnectData& getSimConnectData() const;
 
   /* AI aircraft as shown on the map */
   const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const;
@@ -304,9 +308,26 @@ public:
 
   QString getMapCopyright() const;
 
+  map::MapThemeComboIndex getCurrentThemeIndex() const
+  {
+    return currentThemeIndex;
+  }
+
+  /* Logbook display options have changed or new or edited logbook entry */
+  void updateLogEntryScreenGeometry();
+
+  /* For debugging functions */
+  MapScreenIndex *getScreenIndex()
+  {
+    return screenIndex;
+  }
+
+  /* Saved bounding box from last zoom or scroll operation. Needed to detect view changes. */
+  const Marble::GeoDataLatLonBox& getCurrentViewBoundingBox() const;
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
-  void resultTruncated(int truncatedTo);
+  void resultTruncated();
 
   /* Update action state in main window (disabled/enabled) */
   void updateActionStates();
@@ -314,7 +335,7 @@ signals:
   /* Aircraft track was pruned and needs to be updated */
   void aircraftTrackPruned();
 
-  void shownMapFeaturesChanged(map::MapObjectTypes types);
+  void shownMapFeaturesChanged(map::MapTypes types);
 
   /* Search center has changed by context menu */
   void searchMarkChanged(const atools::geo::Pos& mark);
@@ -326,15 +347,7 @@ protected:
   void centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust = true);
   void centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool allowAdjust);
 
-  /* Saved bounding box from last zoom or scroll operation. Needed to detect view changes. */
-  const Marble::GeoDataLatLonBox& getCurrentViewBoundingBox() const;
-
   const MapScreenIndex *getScreenIndexConst() const
-  {
-    return screenIndex;
-  }
-
-  MapScreenIndex *getScreenIndex()
   {
     return screenIndex;
   }
@@ -375,16 +388,22 @@ protected:
   virtual map::MapWeatherSource weatherSourceFromUi();
 
   /* Update buttons based on current theme - default is no-op */
-  virtual void updateThemeUi(int index);
+  virtual void updateThemeUi(int);
 
   /* Update buttons for show/center aircraft - default is no-op */
-  virtual void updateShowAircraftUi(bool centerAircraftChecked);
+  virtual void updateShowAircraftUi(bool);
 
   /* Update toolbar state for visible features - default is no-op */
   virtual void updateMapVisibleUi() const;
 
   /* Update internal values for visible map objects based on menus - default is no-op */
   virtual void updateMapObjectsShown();
+
+  /* Check if position can be displayed and show a warning if not (near poles in Mercator, e.g.).
+   * returns true if position is ok. */
+  virtual bool checkPos(const atools::geo::Pos&);
+
+  virtual void resizeEvent(QResizeEvent *event) override;
 
   /* Caches complex X-Plane apron geometry as objects in screen coordinates for faster painting. */
   ApronGeometryCache *apronGeometryCache;
@@ -428,6 +447,9 @@ protected:
   /* true if real window/widget */
   bool visibleWidget = false;
 
+  /* verbose logging */
+  bool verbose = false;
+
   /* Dummy paint cycle without any navigation stuff. Just used to initialize Marble */
   bool noNavPaint = false;
 
@@ -443,7 +465,14 @@ private:
 
   /* Override widget events */
   virtual void paintEvent(QPaintEvent *paintEvent) override;
-  virtual void resizeEvent(QResizeEvent *event) override;
+
+  void unitsUpdated();
+
+  /*  Add placemark files for offline maps */
+  void addPlacemarks();
+
+  /* Need to remove the placemark files since they are shown randomly on online maps */
+  void removePlacemarks();
 
   /* Keeps geographical objects as index in screen coordinates */
   MapScreenIndex *screenIndex = nullptr;
@@ -453,7 +482,6 @@ private:
 
   /* Avoids dark background when printing in night mode */
   bool printing = false;
-
 };
 
 #endif // LITTLENAVMAP_NAVMAPPAINTWIDGET_H

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,19 @@
 #ifndef LITTLENAVMAP_SETTINGSMIGRATE_H
 #define LITTLENAVMAP_SETTINGSMIGRATE_H
 
+namespace atools {
+namespace util {
+class Version;
+}
+}
+
 namespace migrate {
 
 /* Delete incompatible settings if an older settings file was found. */
 void checkAndMigrateSettings();
+
+/* Return the version found in the options file. Can be used for late migration actions */
+const atools::util::Version& getOptionsVersion();
 
 } // namespace migrate
 

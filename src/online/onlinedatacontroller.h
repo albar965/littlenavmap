@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ class OnlinedataManager;
 }
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 
 }
 
@@ -73,7 +73,7 @@ class OnlinedataController :
 
 public:
   OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent);
-  virtual ~OnlinedataController();
+  virtual ~OnlinedataController() override;
 
   /* Start download and after downloading timer which triggers recurring download */
   void startProcessing();
@@ -102,7 +102,7 @@ public:
 
   /* Get aircraft within bounding rectangle. Objects are cached. */
   const QList<atools::fs::sc::SimConnectAircraft> *getAircraft(const Marble::GeoDataLatLonBox& rect,
-                                                               const MapLayer *mapLayer, bool lazy);
+                                                               const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   /* Get aircraft from last bounding rectangle query from cache. */
   const QList<atools::fs::sc::SimConnectAircraft> *getAircraftFromCache();
@@ -112,9 +112,9 @@ public:
 
   static void fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
 
-  /* Removes the online aircraft from the result which also have a simulator shadow in the result */
-  void filterOnlineShadowAircraft(QList<atools::fs::sc::SimConnectAircraft>& onlineAircraft,
-                                  const QList<atools::fs::sc::SimConnectAircraft>& simAircraft);
+  /* Removes the online aircraft from onlineAircraft which also have a simulator shadow in simAircraft */
+  void filterOnlineShadowAircraft(QList<map::MapOnlineAircraft>& onlineAircraft,
+                                  const QList<map::MapAiAircraft>& simAircraft);
 
   /* Get client record with all field values */
   atools::sql::SqlRecord getClientRecordById(int clientId);
@@ -128,7 +128,7 @@ public:
   int getNumClients() const;
 
   /* Get an online network aircraft that has the same registration as the simulator aircraft and is close by */
-  bool getShadowAircraft(atools::fs::sc::SimConnectAircraft& aircraft,
+  bool getShadowAircraft(atools::fs::sc::SimConnectAircraft& onlineClient,
                          const atools::fs::sc::SimConnectAircraft& simAircraft);
 
   /* True if there is an online network aircraft that has the same registration as the simulator aircraft and is close.
@@ -147,6 +147,7 @@ private:
   /* HTTP download signal slots */
   void downloadFinished(const QByteArray& data, QString url);
   void downloadFailed(const QString& error, int errorCode, QString url);
+  void downloadSslErrors(const QStringList& errors, const QString& downloadUrl);
   void statusBarMessage();
 
   void startDownloadInternal();
@@ -186,6 +187,8 @@ private:
   bool whazzupGzipped = false;
 
   QTextCodec *codec = nullptr;
+
+  bool verbose = false;
 
   /* Simulator aircraft registrations and positions */
   QHash<QString, atools::geo::Pos> simulatorAiRegistrations;

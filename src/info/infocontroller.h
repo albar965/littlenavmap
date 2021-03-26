@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define LITTLENAVMAP_INFOCONTROLLER_H
 
 #include "fs/sc/simconnectdata.h"
-#include "common/maptypes.h"
+#include "common/mapresult.h"
 #include "common/tabindexes.h"
 
 #include <QObject>
@@ -52,12 +52,12 @@ class InfoController :
 
 public:
   InfoController(MainWindow *parent);
-  virtual ~InfoController();
+  virtual ~InfoController() override;
 
   /* Populates all tabs in the information dock with the given results. Only one airport is shown
    * but multiple navaids can be shown in the tab.
    *  Raises all related windows and tabs and scrolls to top. */
-  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType);
+  void showInformation(map::MapResult result);
 
   /* Update the currently shown airport information if weather data or connection status has changed.
    * Does not raise windows and does not scroll to top. */
@@ -85,6 +85,7 @@ public:
   void postDatabaseLoad();
 
   void styleChanged();
+  void tracksChanged();
 
   /* Update aircraft and aircraft progress tab */
   void simDataChanged(atools::fs::sc::SimConnectData data);
@@ -99,6 +100,7 @@ public:
   QStringList getAirportTextFull(const QString& ident) const;
 
   void setCurrentInfoTabIndex(ic::TabInfoId tabId);
+  void setCurrentAirportInfoTabIndex(ic::TabAirportInfoId tabId);
   void setCurrentAircraftTabIndex(ic::TabAircraftId tabId);
 
   void resetWindowLayout();
@@ -116,14 +118,15 @@ private:
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_BEARING_TIME_MS = 1000;
 
   void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop, bool forceWeatherUpdate);
-  bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
-  bool updateUserpointInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
+  bool updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop,
+                            bool forceUpdate);
+  bool updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
-  void showInformationInternal(map::MapSearchResult result, map::MapObjectTypes preferredType,
+  void showInformationInternal(map::MapResult result,
                                bool showWindows, bool scrollToTop, bool forceUpdate);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateUserAircraftText();
@@ -134,10 +137,13 @@ private:
   /* QTabWidget::currentChanged - update content when visible */
   void currentAircraftTabChanged(int id);
   void currentInfoTabChanged(int id);
+  void currentAirportInfoTabChanged(int id);
 
   /* QDockWidget::visibilityChanged - update when shown */
   void visibilityChangedAircraft(bool visible);
   void visibilityChangedInfo(bool visible);
+
+  QString waitingForUpdateText, notConnectedText;
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
@@ -145,7 +151,7 @@ private:
   qint64 lastSimBearingUpdate = 0;
 
   /* Airport and navaids that are currently shown in the tabs */
-  map::MapSearchResult currentSearchResult;
+  map::MapResult currentSearchResult;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;
@@ -156,7 +162,8 @@ private:
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
   bool lessAircraftProgress = false;
 
-  atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAircraft = nullptr;
+  atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAirportInfo = nullptr,
+                                *tabHandlerAircraft = nullptr;
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

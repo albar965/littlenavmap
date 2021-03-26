@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,36 +20,37 @@
 
 #include "fs/fspaths.h"
 #include "common/mapflags.h"
-#include "fs/pln/flightplanconstants.h"
 
 #include <QMainWindow>
-#include <QUrl>
 #include <QFileInfoList>
 #include <QTimer>
+#include <QDateTime>
 #include <marble/MarbleGlobal.h>
 
-class SearchController;
-class RouteController;
-class QComboBox;
-class QLabel;
-class QToolButton;
-class SearchBaseTable;
-class DatabaseManager;
-class WeatherReporter;
-class WindReporter;
 class ConnectClient;
-class ProfileWidget;
+class DatabaseManager;
 class InfoController;
 class OptionsDialog;
-class QActionGroup;
 class PrintSupport;
 class ProcedureSearch;
+class ProfileWidget;
+class QActionGroup;
+class QComboBox;
+class QLabel;
+class QPushButton;
+class QToolButton;
 class Route;
+class RouteController;
 class RouteExport;
+class SearchBaseTable;
+class SearchController;
+class WeatherReporter;
+class WindReporter;
 
 namespace Marble {
 class LegendWidget;
 class MarbleAboutDialog;
+class RenderState;
 class ElevationModel;
 }
 
@@ -109,6 +110,11 @@ public:
     return mapWidget;
   }
 
+  ProfileWidget *getProfileWidget() const
+  {
+    return profileWidget;
+  }
+
   void updateMap() const;
 
   RouteController *getRouteController() const
@@ -146,7 +152,8 @@ public:
   void setOnlineConnectionStatusMessageText(const QString& text, const QString& tooltipText);
 
   /* Sets a general status bar message which is shared with all widgets/actions status text */
-  void setStatusMessage(const QString& message);
+  void setStatusMessage(const QString& message, bool addToLog = false);
+  void statusMessageChanged(const QString& text);
 
   void setDetailLabelText(const QString& text);
 
@@ -154,10 +161,17 @@ public:
   void buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
   void buildWeatherContextForTooltip(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
 
-  /* Render status from marble widget */
-  void renderStatusChanged(Marble::RenderStatus status);
+  /* Render state from marble widget. Get the more detailed state since it updates more often */
+  void renderStatusChanged(const Marble::RenderState& state);
 
-  void resultTruncated(int truncatedTo);
+  /* Clear render status if no updates appear */
+  void renderStatusReset();
+
+  /* Update label */
+  void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
+
+  /* Show "Too many objects" label if number of map features was truncated */
+  void resultTruncated();
 
   void setDatabaseErased(bool value)
   {
@@ -192,6 +206,25 @@ public:
   void showAircraftPerformance();
   void showLogbookSearch();
   void showUserpointSearch();
+  void showRouteCalc();
+
+  /* Load a flight plan in LNMPLN format from a string */
+  void routeOpenFileLnmStr(const QString& string);
+
+  /* Open file dialog for saving a LNMPLN flight plan. Filename will be built if empty. */
+  QString routeSaveFileDialogLnm(const QString& filename = QString());
+
+  /* Show file dialog for opening a flight plan with all supported formats */
+  QString routeOpenFileDialog();
+
+  /* Called from the export if LNMPLN was bulk exported */
+  void routeSaveLnmExported(const QString& filename);
+
+  /* true if map window is maximized */
+  bool isFullScreen() const;
+
+  /* Push button in map pressed */
+  void exitFullScreenPressed();
 
 signals:
   /* Emitted when window is shown the first time */
@@ -208,7 +241,17 @@ private:
 
   void connectAllSlots();
   void mainWindowShown();
+  void mainWindowShownDelayed();
   void raiseFloatingWindows();
+  void allowDockingWindows();
+  void stayOnTop();
+
+  /* Called by action */
+  void fullScreenMapToggle();
+
+  /* Switches fs on or off */
+  void fullScreenOn();
+  void fullScreenOff();
 
   void saveStateMain();
   void saveActionStates();
@@ -246,18 +289,13 @@ private:
   void routeOpen();
   void routeOpenFile(QString filepath);
   void routeAppend();
+  bool routeSaveSelection();
   void routeInsert(int insertBefore);
   void routeOpenRecent(const QString& routeFile);
 
   /* Flight plan save functions */
-  bool routeSave();
-  bool routeSaveAsPln();
-  bool routeSaveAsFlp();
-  bool routeSaveAsFlightGear();
-  bool routeSaveAsFms(atools::fs::pln::FileFormat format);
-  bool routeSaveAsFms3();
-  bool routeSaveAsFms11();
-  bool routeExportClean();
+  bool routeSaveLnm();
+  bool routeSaveAsLnm();
 
   void routeCenter();
   bool routeCheckForChanges();
@@ -278,9 +316,17 @@ private:
   void showDonationPage();
   void showFaqPage();
 
+  /* Loading of KML files */
   void kmlOpenRecent(const QString& kmlFile);
   void kmlOpen();
   void kmlClear();
+
+  /* Loading and saving of window layout files */
+  void layoutOpen();
+  void layoutSaveAs();
+  void layoutOpenRecent(const QString& layoutFile);
+  void layoutOpenDrag(const QString& layoutFile); /* Open from drag and drop event */
+  bool layoutOpenInternal(const QString& layoutFile);
 
   void legendAnchorClicked(const QUrl& url);
 
@@ -294,10 +340,14 @@ private:
   void showOnlineHelp();
   void showOnlineTutorials();
   void showOfflineHelp();
+  void showOnlineDownloads();
   void showNavmapLegend();
   void loadNavmapLegend();
   bool openInSkyVector();
   void clearProcedureCache();
+
+  void openLogFile();
+  void openConfigFile();
 
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
@@ -305,9 +355,6 @@ private:
   void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
   void updateAirspaceTypes(map::MapAirspaceFilter types);
   void resetWindowLayout();
-
-  bool routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat);
-  bool routeSaveCheckFMS11Warnings();
 
   /* Question dialog and then delete map and profile trail */
   void deleteAircraftTrack(bool quiet = false);
@@ -321,8 +368,8 @@ private:
   /* Set user defined time for sun shading */
   void sunShadingTimeSet();
 
-  /* From menu action - remove all measurment lines, patterns, holds, etc. */
-  void clearRangeRingsAndDistanceMarkers();
+  /* From menu action - remove all measurement lines, patterns, holds, etc. */
+  void clearRangeRingsAndDistanceMarkers(bool quiet = false);
 
   /* Reset flight plan and other for new flight */
   void routeResetAll();
@@ -335,6 +382,7 @@ private:
   void actionShortcutUserpointSearchTriggered();
   void actionShortcutLogbookSearchTriggered();
   void actionShortcutFlightPlanTriggered();
+  void actionShortcutCalcRouteTriggered();
   void actionShortcutAircraftPerformanceTriggered();
   void actionShortcutAirportInformationTriggered();
   void actionShortcutAirportWeatherTriggered();
@@ -346,11 +394,27 @@ private:
   void webserverStatusChanged(bool running);
   void openWebserver();
   void saveStateNow();
+  void optionsChanged();
+
+  void openOptionsDialog();
 
 #ifdef DEBUG_INFORMATION
   void debugActionTriggered1();
   void debugActionTriggered2();
   void debugActionTriggered3();
+  void debugActionTriggered4();
+  void debugActionTriggered5();
+  void debugActionTriggered6();
+
+#endif
+
+#ifdef DEBUG_DUMP_SHORTCUTS
+  void printShortcuts();
+
+#endif
+
+#ifdef DEBUG_SIZE_INFORMATION
+  virtual void resizeEvent(QResizeEvent *event) override;
 
 #endif
 
@@ -358,7 +422,7 @@ private:
   QString mainWindowTitle;
   SearchController *searchController = nullptr;
   RouteController *routeController = nullptr;
-  atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
+  atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr, *layoutFileHistory = nullptr;
 
   /* Filepath of the inline nav map legend */
   QString legendFile;
@@ -378,14 +442,20 @@ private:
   /* Connection field and tooltip in statusbar */
   QString connectionStatus, connectionStatusTooltip, onlineConnectionStatus, onlineConnectionStatusTooltip;
 
-  /* List of status bar messages (currently only one) */
-  QStringList statusMessages;
+  /* List of status bar messages. First is shown and others are shown in tooltip. */
+  struct StatusMessage
+  {
+    QDateTime timestamp;
+    QString message;
+  };
+
+  QVector<StatusMessage> statusMessages;
 
   /* true if database is currently switched off (i.e. the scenery library loading is open) */
   bool hasDatabaseLoadStatus = false;
 
   /* Dialog classes and helper classes */
-  Marble::MarbleAboutDialog *marbleAbout = nullptr;
+  Marble::MarbleAboutDialog *marbleAboutDialog = nullptr;
   OptionsDialog *optionsDialog = nullptr;
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
@@ -417,9 +487,9 @@ private:
   /* Show database dialog after cleanup of obsolete databases if true */
   bool databasesErased = false;
 
-  QString aboutMessage;
-  QTimer clockTimer;
-
+  QString aboutMessage, layoutWarnText;
+  QTimer clockTimer, renderStatusTimer;
+  Marble::RenderStatus lastRenderStatus = Marble::Incomplete;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

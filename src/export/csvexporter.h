@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,9 +44,11 @@ class SqlExport;
 class CsvExporter :
   public Exporter
 {
+  Q_DECLARE_TR_FUNCTIONS(CsvExporter)
+
 public:
-  CsvExporter(QWidget *parentWidget, SqlController *controller);
-  virtual ~CsvExporter();
+  CsvExporter(QWidget *parentWidget, SqlController *controllerParam);
+  virtual ~CsvExporter() override;
 
   // Disabled unused export functionality since it is not compatible with other classes
 #ifdef ENABLE_CSV_EXPORT

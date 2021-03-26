@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   ui->checkBoxAirportAvgasSearch->setCheckState(Qt::PartiallyChecked);
 
   // Show/hide all search options menu action
-  connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled, this, [ = ](bool state)
   {
     for(QAction *a: airportSearchMenuActions)
       a->setChecked(state);
@@ -156,7 +156,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
 
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
-  append(Column("state", ui->lineEditAirportStateSearch, tr("State")).filter()).
+  append(Column("state", ui->lineEditAirportStateSearch, tr("State or\nProvince")).filter()).
   append(Column("country", ui->lineEditAirportCountrySearch, tr("Country or\nArea Code")).filter()).
 
   append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).includesName().indexCondMap(ratingCondMap)).
@@ -177,7 +177,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
   append(Column("is_closed", ui->checkBoxAirportClosedSearch, tr("Closed")).hidden()).
   append(Column("is_military", ui->checkBoxAirportMilSearch, tr("Military")).hidden()).
-  append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Addon")).hidden()).
+  append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Add-on")).hidden()).
   append(Column("is_3d", tr("3D")).hidden()).
 
   append(Column("num_runway_soft", ui->comboBoxAirportSurfaceSearch, tr("Soft\nRunways")).
@@ -221,7 +221,6 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("has_tower_object").hidden()).
   append(Column("num_runway_end_vasi").hidden()).
   append(Column("num_runway_end_als").hidden()).
-  append(Column("num_boundary_fence").hidden()).
 
   append(Column("tower_lonx").hidden()).
   append(Column("tower_laty").hidden()).
@@ -232,8 +231,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("bottom_laty").hidden()).
 
   append(Column("lonx", tr("Longitude")).hidden()).
-  append(Column("laty", tr("Latitude")).hidden())
-  ;
+  append(Column("laty", tr("Latitude")).hidden());
 
   ui->labelAirportSearchOverride->hide();
 
@@ -311,42 +309,42 @@ void AirportSearch::connectSearchSlots()
                                            ui->actionAirportSearchShowSceneryOptions});
 
   // Drop down menu actions
-  connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state,
                                               {ui->lineAirportExtSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportSearchParking}, state,
                                               {ui->lineAirportFuelParkSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportSearchRunway}, state,
                                               {ui->lineAirportRunwaySearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state,
                                               {ui->lineAirportAltSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state,
                                               {ui->lineAirportDistSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state,
                                               {ui->lineAirportScenerySearch});
@@ -428,11 +426,9 @@ void AirportSearch::restoreViewState(bool distSearchActive)
 
 /* Callback for the controller. Is called for each table cell and should return a formatted value. */
 QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col,
-                                         const QVariant& roleValue, const QVariant& displayRoleValue,
+                                         const QVariant&, const QVariant& displayRoleValue,
                                          Qt::ItemDataRole role) const
 {
-  Q_UNUSED(roleValue);
-
   switch(role)
   {
     case Qt::DisplayRole:
@@ -502,7 +498,7 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
   return displayRoleValue.toString();
 }
 
-void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;

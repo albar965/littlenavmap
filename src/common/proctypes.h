@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,7 @@
 #ifndef LITTLENAVMAP_PROCTYPES_H
 #define LITTLENAVMAP_PROCTYPES_H
 
-#include "common/maptypes.h"
-#include "geo/pos.h"
-#include "geo/line.h"
-#include "geo/linestring.h"
+#include "common/mapresult.h"
 
 #include <QColor>
 #include <QRegularExpression>
@@ -53,6 +50,9 @@ enum MapProcedureType
   /* SID, STAR and respective transitions */
   PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
   PROCEDURE_SID_ALL = PROCEDURE_SID | PROCEDURE_SID_TRANSITION,
+
+  /* Approach and transition but no missed */
+  PROCEDURE_APPROACH_ALL = PROCEDURE_APPROACH | PROCEDURE_TRANSITION,
 
   /* All SID, STAR and respective transitions */
   PROCEDURE_SID_STAR_ALL = PROCEDURE_STAR_ALL | PROCEDURE_SID_ALL,
@@ -185,8 +185,10 @@ enum LegSpecialType
 
 /* Reduced procedure leg type for map index, tooltips and similar */
 struct MapProcedurePoint
+  : public map::MapBase
 {
   MapProcedurePoint()
+    : MapBase(map::NONE)
   {
   }
 
@@ -206,24 +208,6 @@ struct MapProcedurePoint
   proc::ProcedureLegType type;
 
   bool missed, flyover, preview;
-
-  atools::geo::Pos position;
-
-  bool isValid() const
-  {
-    return position.isValid();
-  }
-
-  const atools::geo::Pos& getPosition() const
-  {
-    return position;
-  }
-
-  int getId() const
-  {
-    return -1;
-  }
-
 };
 
 struct MapProcedureRef
@@ -299,7 +283,7 @@ struct MapProcedureLeg
   atools::geo::LineString geometry; /* Same as line or geometry approximation for intercept or arcs for distance to leg calculation */
 
   /* Navaids resolved by approach query class */
-  map::MapSearchResult navaids;
+  map::MapResult navaids;
 
   MapAltRestriction altRestriction;
   MapSpeedRestriction speedRestriction;
@@ -310,29 +294,35 @@ struct MapProcedureLeg
   int approachId = -1, transitionId = -1, legId = -1, navId = -1, recNavId = -1;
 
   float course, /* magnetic from ARINC */
-        distance /* Distance from source in nm */,
-        calculatedDistance /* Calculated distance closer to the real one in nm */,
+        distance /* Distance from source in NM */,
+        calculatedDistance /* Calculated distance closer to the real one in NM */,
         calculatedTrueCourse /* Calculated distance closer to the real one - great circle line */,
         time /* Only for holds in minutes */,
         theta /* magnetic course to recommended navaid */,
-        rho /* distance to recommended navaid */,
+        rho /* distance to recommended navaid in NM */,
         magvar /* from navaid or airport */;
 
-  bool missed, flyover, trueCourse,
-       intercept, /* Leg was modfied by a previous intercept */
-       disabled, /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */
-       malteseCross; /* Draw maltese cross for either FAF or FACF depending on ILS altitude restriction */
+  bool missed = false, flyover = false, trueCourse = false,
+       intercept = false, /* Leg was modified by a previous intercept */
+       disabled = false, /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */
+
+       correctedArc = false, /* Fix of previous leg does not match arc distance. Therefore, p1 is corrected for distance.
+                              * P1 is entry, intercept is start of arc and P2 is end of arc.
+                              * Geometry contains entry stub. */
+
+       malteseCross = false; /* Draw Maltese cross for either FAF or FACF depending on ILS altitude restriction */
 
   bool isValid() const
   {
     return type != INVALID_LEG_TYPE;
   }
 
-  /* Draw red if there is an error in the leg (navaid could not be resolved */
-  bool hasInvalidRef() const;
-
-  /* true if leg is unusable because a required navaid could not be resolved */
+  /* true if leg is probably unusable because a required navaid could not be resolved */
   bool hasErrorRef() const;
+
+  /* true if leg is totally unusable because a required navaid could not be resolved and it
+   * contains no valid coordinates at all */
+  bool hasHardErrorRef() const;
 
   float legTrueCourse() const;
 
@@ -416,13 +406,19 @@ struct MapProcedureLeg
   bool isFinalEndpointFix() const;
 
   bool isHold() const;
+  bool isProcedureTurn() const;
   bool isCircular() const;
+
+  bool isInitialFix() const;
 
   /* Do not display distance e.g. for course to altitude */
   bool noDistanceDisplay() const;
 
   /* No course display for e.g. arc legs */
   bool noCourseDisplay() const;
+
+  /* No ident at end of manual legs */
+  bool noIdentDisplay() const;
 
 };
 
@@ -445,7 +441,8 @@ struct MapProcedureLegs
   MapProcedureRef ref;
   atools::geo::Rect bounding;
 
-  QString approachType, approachSuffix, approachFixIdent, approachArincName, transitionType, transitionFixIdent,
+  QString approachType, approachSuffix, approachFixIdent /* Approach fix or SID/STAR name */,
+          approachArincName, transitionType, transitionFixIdent,
           procedureRunway; /* Runway from the procedure does not have to match the airport runway but is saved */
 
   /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search */
@@ -462,6 +459,7 @@ struct MapProcedureLegs
 
   bool gpsOverlay,
        hasError, /* Unusable due to missing navaid */
+       hasHardError, /* Deny usage since geometry is not valid*/
        circleToLand; /* Runway is not part of procedure and was added internally */
 
   /* Anything that needs to display an ILS frequency */
@@ -575,6 +573,18 @@ QString procedureLegTypeShortStr(ProcedureLegType type);
 QString procedureLegTypeFullStr(ProcedureLegType type);
 QString procedureLegRemarks(proc::ProcedureLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
+
+/* true if leg has fix at the start */
+bool procedureLegFixAtStart(proc::ProcedureLegType type);
+
+/* true if leg has fix at the end */
+bool procedureLegFixAtEnd(proc::ProcedureLegType type);
+
+/* true if the ident of the leg and a navaid symbol can be drawn - otherwise no ident and generic proc symbol */
+bool procedureLegDrawIdent(ProcedureLegType type);
+
+/* true if flying from waypoint and a "from" indication should be displayed */
+bool procedureLegFrom(proc::ProcedureLegType type);
 
 /* IAF, FAF, MAP */
 QString proceduresLegSecialTypeShortStr(proc::LegSpecialType type);

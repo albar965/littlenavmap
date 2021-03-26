@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 #include "common/constants.h"
 #include "fs/weather/xpweatherreader.h"
 #include "navapp.h"
+#include "atools.h"
 #include "fs/weather/weathernetdownload.h"
 #include "fs/weather/noaaweatherdownloader.h"
 #include "fs/sc/simconnecttypes.h"
 #include "fs/util/fsutil.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
-#include "fs/weather/weathernetsingle.h"
 #include "fs/weather/metar.h"
 #include "util/filesystemwatcher.h"
 #include "connect/connectclient.h"
@@ -47,6 +47,7 @@
 #include <QRegularExpression>
 #include <QEventLoop>
 #include <functional>
+#include <QProcess>
 
 // Checks the first line of an ASN file if it has valid content
 static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
@@ -56,36 +57,32 @@ static const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|Destinat
 using atools::fs::FsPaths;
 using atools::fs::weather::NoaaWeatherDownloader;
 using atools::fs::weather::WeatherNetDownload;
-using atools::fs::weather::WeatherNetSingle;
 using atools::fs::weather::MetarResult;
 using atools::fs::weather::Metar;
 using atools::util::FileSystemWatcher;
 using atools::settings::Settings;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
-  : QObject(parentWindow), simType(type),
-  mainWindow(parentWindow)
+  : QObject(parentWindow), simType(type), mainWindow(parentWindow)
 {
   using namespace std::placeholders;
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
   verbose = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
-  // Use a large index size so, that all METARs fit in for whole file downloads
-  int indexSize = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_INDEX_SIZE, 100000).toInt();
-
-  xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, indexSize, verbose);
-
-  noaaWeather = new NoaaWeatherDownloader(parentWindow, indexSize, verbose);
-  noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
-
   auto coordFunc = std::bind(&WeatherReporter::fetchAirportCoordinates, this, _1);
+
+  xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, verbose);
+
+  noaaWeather = new NoaaWeatherDownloader(parentWindow, verbose);
+  noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   noaaWeather->setFetchAirportCoords(coordFunc);
 
-  vatsimWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
+  vatsimWeather = new WeatherNetDownload(parentWindow, atools::fs::weather::FLAT, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
+  vatsimWeather->setFetchAirportCoords(coordFunc);
 
-  ivaoWeather = new WeatherNetDownload(parentWindow, indexSize, verbose);
+  ivaoWeather = new WeatherNetDownload(parentWindow, atools::fs::weather::FLAT, verbose);
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
   // Set callback so the reader can build an index for nearest airports
   ivaoWeather->setFetchAirportCoords(coordFunc);
@@ -103,14 +100,22 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
           this, &WeatherReporter::xplaneWeatherFileChanged);
 
   // Forward signals from clients for updates
-  connect(noaaWeather, &NoaaWeatherDownloader::weatherUpdated, this, &WeatherReporter::weatherUpdated);
-  connect(vatsimWeather, &WeatherNetSingle::weatherUpdated, this, &WeatherReporter::weatherUpdated);
-  connect(ivaoWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::weatherUpdated);
+  connect(noaaWeather, &NoaaWeatherDownloader::weatherUpdated, this, &WeatherReporter::noaaWeatherUpdated);
+  connect(vatsimWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::vatsimWeatherUpdated);
+  connect(ivaoWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::ivaoWeatherUpdated);
 
   // Forward signals from clients for errors
   connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
-  connect(vatsimWeather, &WeatherNetSingle::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
+  connect(vatsimWeather, &WeatherNetDownload::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
   connect(ivaoWeather, &WeatherNetDownload::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
+
+  // Forward signals from clients for SSL errors
+  connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadSslErrors,
+          this, &WeatherReporter::weatherDownloadSslErrors);
+  connect(vatsimWeather, &WeatherNetDownload::weatherDownloadSslErrors,
+          this, &WeatherReporter::weatherDownloadSslErrors);
+  connect(ivaoWeather, &WeatherNetDownload::weatherDownloadSslErrors,
+          this, &WeatherReporter::weatherDownloadSslErrors);
 }
 
 WeatherReporter::~WeatherReporter()
@@ -121,6 +126,24 @@ WeatherReporter::~WeatherReporter()
   delete ivaoWeather;
 
   delete xpWeatherReader;
+}
+
+void WeatherReporter::noaaWeatherUpdated()
+{
+  mainWindow->setStatusMessage(tr("NOAA weather downloaded."), true /* addToLog */);
+  emit weatherUpdated();
+}
+
+void WeatherReporter::ivaoWeatherUpdated()
+{
+  mainWindow->setStatusMessage(tr("IVAO weather downloaded."), true /* addToLog */);
+  emit weatherUpdated();
+}
+
+void WeatherReporter::vatsimWeatherUpdated()
+{
+  mainWindow->setStatusMessage(tr("VATSIM weather downloaded."), true /* addToLog */);
+  emit weatherUpdated();
 }
 
 atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airportIdent)
@@ -158,10 +181,11 @@ void WeatherReporter::createFsWatcher()
   {
     // Watch file for changes
     fsWatcherAsPath = new FileSystemWatcher(this, verbose);
-    fsWatcherAsPath->setMinFileSize(100000);
+    fsWatcherAsPath->setMinFileSize(1000);
     fsWatcherAsPath->connect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
                              &WeatherReporter::activeSkyWeatherFileChanged);
   }
+  activeSkyWeatherFileChanged(asPath);
   fsWatcherAsPath->setFilenameAndStart(asPath);
 
   if(fsWatcherAsFlightplanPath == nullptr)
@@ -220,6 +244,7 @@ void WeatherReporter::initActiveSkyNext()
     QString asnSnapshotPath, asnFlightplanSnapshotPath;
     QString as16SnapshotPath, as16FlightplanSnapshotPath;
     QString asp4SnapshotPath, asp4FlightplanSnapshotPath;
+    // QString asp5SnapshotPath, asp5FlightplanSnapshotPath;
     QString asXplSnapshotPath, aspXplFlightplanSnapshotPath;
 
     findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QString());
@@ -228,12 +253,18 @@ void WeatherReporter::initActiveSkyNext()
     findActiveSkyFiles(as16SnapshotPath, as16FlightplanSnapshotPath, "AS16_", QString());
     qInfo() << "AS16 snapshot" << as16SnapshotPath << "flight plan weather" << as16FlightplanSnapshotPath;
 
-    if(simType == atools::fs::FsPaths::P3D_V4)
+    if(simType == atools::fs::FsPaths::P3D_V4 || simType == atools::fs::FsPaths::P3D_V5)
     {
       // C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv4
       findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv4");
       qInfo() << "ASP4 snapshot" << asp4SnapshotPath << "flight plan weather" << asp4FlightplanSnapshotPath;
     }
+    // else if(simType == atools::fs::FsPaths::P3D_V5)
+    // {
+    //// C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv5
+    // findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv5");
+    // qInfo() << "ASP5 snapshot" << asp5SnapshotPath << "flight plan weather" << asp5FlightplanSnapshotPath;
+    // }
     else if(simType == atools::fs::FsPaths::XPLANE11)
     {
       // C:\Users\USER\AppData\Roaming\Hifi\AS_XPL
@@ -450,7 +481,7 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
 {
  #if defined(Q_OS_WIN32)
   // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
-  QString appdata = QString(qgetenv("APPDATA"));
+  QString appdata = QProcessEnvironment::systemEnvironment().value("APPDATA");
 #else
   // Use $HOME/.config for testing
   QString appdata = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
@@ -469,6 +500,8 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
     else if(simType == atools::fs::FsPaths::P3D_V3)
       simPathComponent = activeSkyPrefix + "P3D";
     else if(simType == atools::fs::FsPaths::P3D_V4)
+      simPathComponent = activeSkyPrefix + "P3D";
+    else if(simType == atools::fs::FsPaths::P3D_V5)
       simPathComponent = activeSkyPrefix + "P3D";
     else if(simType == atools::fs::FsPaths::XPLANE11)
       simPathComponent = activeSkyPrefix + "XP";
@@ -535,8 +568,34 @@ void WeatherReporter::updateAirportWeather()
   updateTimeouts();
 }
 
+void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
+{
+  int result = atools::gui::Dialog(mainWindow).
+               showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER,
+                                  tr("<p>Errors while trying to establish an encrypted "
+                                       "connection to download weather information:</p>"
+                                       "<p>URL: %1</p>"
+                                         "<p>Error messages:<br/>%2</p>"
+                                           "<p>Continue?</p>").
+                                  arg(downloadUrl).
+                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  tr("Do not &show this again and ignore errors in the future"),
+                                  QMessageBox::Cancel | QMessageBox::Yes,
+                                  QMessageBox::Cancel, QMessageBox::Yes);
+
+  atools::fs::weather::WeatherDownloadBase *downloader =
+    dynamic_cast<atools::fs::weather::WeatherDownloadBase *>(sender());
+
+  if(downloader != nullptr)
+    downloader->setIgnoreSslErrors(result == QMessageBox::Yes);
+  else
+    qWarning() << Q_FUNC_INFO << "Downloader is null";
+}
+
 void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode, QString url)
 {
+  mainWindow->setStatusMessage(tr("Weather download failed."), true /* addToLog */);
+
   if(!errorReported)
   {
     // Show an error dialog for any failed downloads but only once per session
@@ -544,7 +603,7 @@ void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode,
     atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL,
                                                    tr(
                                                      "<p>Download of weather from<br/>\"%1\"<br/>failed.</p><p>Error: %2 (%3)</p>"
-                                                       "<p>Check you weather settings or disable weather downloads.</p>"
+                                                       "<p>Check your weather settings or disable weather downloads.</p>"
                                                          "<p>Suppressing further messages during this session.</p>").
                                                    arg(url).arg(error).arg(errorCode),
                                                    tr("Do not &show this dialog again."));
@@ -571,10 +630,10 @@ atools::fs::weather::MetarResult WeatherReporter::getNoaaMetar(const QString& ai
   return noaaWeather->getMetar(airportIcao, pos);
 }
 
-QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
+atools::fs::weather::MetarResult WeatherReporter::getVatsimMetar(const QString& airportIcao,
+                                                                 const atools::geo::Pos& pos)
 {
-  // VATSIM does not use nearest station
-  return vatsimWeather->getMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation;
+  return vatsimWeather->getMetar(airportIcao, pos);
 }
 
 atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos)
@@ -592,7 +651,7 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
       if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
         // X-Plane weather file
         return Metar(getXplaneMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
-      else if(NavApp::getConnectClient()->isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
+      else if(NavApp::isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
       {
         atools::fs::weather::MetarResult res =
           NavApp::getConnectClient()->requestWeather(airportIcao, airportPos, true);
@@ -610,7 +669,7 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
       return Metar(getNoaaMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
 
     case map::WEATHER_SOURCE_VATSIM:
-      return Metar(getVatsimMetar(airportIcao));
+      return Metar(getVatsimMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
 
     case map::WEATHER_SOURCE_IVAO:
       return Metar(getIvaoMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
@@ -629,12 +688,10 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   {
     // Simulator has changed - reload files
     simType = type;
+    resetErrorState();
     updateTimeouts();
     initActiveSkyNext();
     initXplane();
-
-    noaaWeather->updateIndex();
-    ivaoWeather->updateIndex();
   }
 }
 
@@ -644,9 +701,17 @@ void WeatherReporter::optionsChanged()
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
 
+  resetErrorState();
   updateTimeouts();
   initActiveSkyNext();
   initXplane();
+}
+
+void WeatherReporter::resetErrorState()
+{
+  vatsimWeather->setErrorStateTimer(false);
+  noaaWeather->setErrorStateTimer(false);
+  ivaoWeather->setErrorStateTimer(false);
 }
 
 void WeatherReporter::updateTimeouts()
@@ -658,34 +723,38 @@ void WeatherReporter::updateTimeouts()
   // Disable periodic downloads if feature is not needed
   optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
-  if(flags & optsw::WEATHER_INFO_NOAA ||
-     flags & optsw::WEATHER_TOOLTIP_NOAA ||
+  if(flags & optsw::WEATHER_INFO_NOAA || flags & optsw::WEATHER_TOOLTIP_NOAA ||
      airportWeatherSource == map::WEATHER_SOURCE_NOAA)
     noaaWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     noaaWeather->setUpdatePeriod(-1);
 
-  if(flags & optsw::WEATHER_INFO_IVAO ||
-     flags & optsw::WEATHER_TOOLTIP_IVAO ||
+  if(flags & optsw::WEATHER_INFO_IVAO || flags & optsw::WEATHER_TOOLTIP_IVAO ||
      airportWeatherSource == map::WEATHER_SOURCE_IVAO)
     ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     ivaoWeather->setUpdatePeriod(-1);
+
+  if(flags & optsw::WEATHER_INFO_VATSIM || flags & optsw::WEATHER_TOOLTIP_VATSIM ||
+     airportWeatherSource == map::WEATHER_SOURCE_VATSIM)
+    vatsimWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
+  else
+    vatsimWeather->setUpdatePeriod(-1);
 }
 
 void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
 {
-  Q_UNUSED(path);
   qDebug() << Q_FUNC_INFO << "file" << path << "changed";
+
   loadActiveSkySnapshot(asPath);
   loadActiveSkyFlightplanSnapshot(asFlightplanPath);
-  mainWindow->setStatusMessage(tr("Active Sky weather information updated."));
+  mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
 
   emit weatherUpdated();
 }
 
 void WeatherReporter::xplaneWeatherFileChanged()
 {
-  mainWindow->setStatusMessage(tr("X-Plane weather information updated."));
+  mainWindow->setStatusMessage(tr("X-Plane weather information updated."), true /* addToLog */);
   emit weatherUpdated();
 }

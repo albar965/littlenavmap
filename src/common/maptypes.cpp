@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,11 @@
 #include "atools.h"
 #include "geo/calculations.h"
 #include "common/unit.h"
-#include "options/optiondata.h"
 #include "navapp.h"
-#include "common/proctypes.h"
+#include "common/formatter.h"
+#include "fs/util/fsutil.h"
 
 #include <QDataStream>
-#include <QHash>
-#include <QObject>
 #include <QRegularExpression>
 
 namespace map {
@@ -102,6 +100,7 @@ void initTranslateableTexts()
       {"RGAS", QObject::tr("Ramp GA Small")},
       {"RGAM", QObject::tr("Ramp GA Medium")},
       {"RGAL", QObject::tr("Ramp GA Large")},
+      {"RE", QObject::tr("Ramp Extra")},
       {"RC", QObject::tr("Ramp Cargo")},
       {"RM", QObject::tr("Ramp Mil")},
       {"RMC", QObject::tr("Ramp Mil Cargo")},
@@ -112,6 +111,7 @@ void initTranslateableTexts()
       {"GS", QObject::tr("Small")},
       {"GM", QObject::tr("Medium")},
       {"GH", QObject::tr("Heavy")},
+      {"GE", QObject::tr("Extra")},
       {"DGA", QObject::tr("Dock GA")},
       {"FUEL", QObject::tr("Fuel")},
       {"V", QObject::tr("Vehicles")}
@@ -126,6 +126,7 @@ void initTranslateableTexts()
       {"RGAM", QObject::tr("Medium")},
       {"RGAL", QObject::tr("Large")},
       {"RC", QObject::tr("Ramp Cargo")},
+      {"RE", QObject::tr("Ramp Extra")},
       {"RM", QObject::tr("Ramp Mil")},
       {"RMC", QObject::tr("Ramp Mil Cargo")},
       {"RMCB", QObject::tr("Ramp Mil Combat")},
@@ -135,6 +136,7 @@ void initTranslateableTexts()
       {"GS", QObject::tr("Gate Small")},
       {"GM", QObject::tr("Gate Medium")},
       {"GH", QObject::tr("Gate Heavy")},
+      {"GE", QObject::tr("Gate Extra")},
       {"DGA", QObject::tr("Dock GA")},
       {"FUEL", QObject::tr("Fuel")},
       {"V", QObject::tr("Vehicles")}
@@ -149,6 +151,7 @@ void initTranslateableTexts()
       {"RGAS", QObject::tr("Ramp GA Small")},
       {"RGAM", QObject::tr("Ramp GA Medium")},
       {"RGAL", QObject::tr("Ramp GA Large")},
+      {"RE", QObject::tr("Ramp GA Extra")},
       {"RC", QObject::tr("Ramp Cargo")},
       {"RM", QObject::tr("Ramp Mil")},
       {"RMC", QObject::tr("Ramp Mil Cargo")},
@@ -159,6 +162,7 @@ void initTranslateableTexts()
       {"GS", QObject::tr("Gate Small")},
       {"GM", QObject::tr("Gate Medium")},
       {"GH", QObject::tr("Gate Heavy")},
+      {"GE", QObject::tr("Gate Extra")},
       {"DGA", QObject::tr("Dock GA")},
       {"FUEL", QObject::tr("Fuel")},
       {"V", QObject::tr("Vehicles")}
@@ -289,9 +293,15 @@ void initTranslateableTexts()
     {
       {"INVALID", QObject::tr("Invalid")},
       {"WN", QObject::tr("Named")},
+      {"WT", QObject::tr("Track")},
       {"WU", QObject::tr("Unnamed")},
       {"V", QObject::tr("VOR")},
-      {"N", QObject::tr("NDB")}
+      {"N", QObject::tr("NDB")},
+      {"VFR", QObject::tr("VFR")},
+      {"RNAV", QObject::tr("RNAV")},
+      {"OA", QObject::tr("Off Airway")},
+      {"IAF", QObject::tr("IAF")},
+      {"FAF", QObject::tr("FAF")}
     });
 
   navTypeNames = QHash<QString, QString>(
@@ -371,8 +381,8 @@ void initTranslateableTexts()
       {"TWE", QObject::tr("Transcriber Weather Broadcast (TWEB)")},
       {"T", QObject::tr("Tower, Air Traffic Control")},
       {"UAC", QObject::tr("Upper Area Control")},
-      {"UC", QObject::tr("Unicom")},
-      {"VOL", QObject::tr("Volmet")}
+      {"UC", QObject::tr("UNICOM")},
+      {"VOL", QObject::tr("VOLMET")}
     });
 
   airspaceTypeNameMap = QHash<map::MapAirspaceTypes, QString>(
@@ -386,6 +396,8 @@ void initTranslateableTexts()
       {map::CLASS_E, QObject::tr("Class E")},
       {map::CLASS_F, QObject::tr("Class F")},
       {map::CLASS_G, QObject::tr("Class G")},
+      {map::FIR, QObject::tr("FIR")},
+      {map::UIR, QObject::tr("UIR")},
       {map::TOWER, QObject::tr("Tower")},
       {map::CLEARANCE, QObject::tr("Clearance")},
       {map::GROUND, QObject::tr("Ground")},
@@ -429,6 +441,8 @@ void initTranslateableTexts()
       {map::CLASS_E, QObject::tr("Controlled, IFR and VFR, ATC clearance required for IFR only.")},
       {map::CLASS_F, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
       {map::CLASS_G, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
+      {map::FIR, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
+      {map::UIR, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
       {map::TOWER, QString()},
       {map::CLEARANCE, QString()},
       {map::GROUND, QString()},
@@ -536,6 +550,8 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"CE", map::CLASS_E},
     {"CF", map::CLASS_F},
     {"CG", map::CLASS_G},
+    {"FIR", map::FIR}, // New FIR region that replaces certain centers
+    {"UIR", map::UIR}, // As above for UIR
     {"T", map::TOWER},
     {"CL", map::CLEARANCE},
     {"G", map::GROUND},
@@ -554,7 +570,7 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"TR", map::TRAINING},
     {"GP", map::GLIDERPROHIBITED},
     {"WW", map::WAVEWINDOW},
-    {"OBS", map::ONLINE_OBSERVER}, /* No database type */
+    {"OBS", map::ONLINE_OBSERVER} /* No database type */
   });
 
 static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
@@ -568,6 +584,8 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
     {map::CLASS_E, "CE"},
     {map::CLASS_F, "CF"},
     {map::CLASS_G, "CG"},
+    {map::FIR, "FIR"},
+    {map::UIR, "UIR"},
     {map::TOWER, "T"},
     {map::CLEARANCE, "CL"},
     {map::GROUND, "G"},
@@ -598,12 +616,13 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
     {map::ONLINE_OBSERVER, 2},
     {map::CENTER, 3},
 
-    {map::CLASS_A, 10},
+    {map::FIR, 4},
+    {map::UIR, 5},
 
+    {map::CLASS_A, 10},
     {map::CLASS_B, 11},
     {map::CLASS_C, 12},
     {map::CLASS_D, 13},
-
     {map::CLASS_E, 14},
 
     {map::CLASS_F, 20},
@@ -628,15 +647,10 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
     {map::DANGER, 62},
 
     {map::NATIONAL_PARK, 2},
-    {map::MODEC, 5},
-    {map::RADAR, 6},
+    {map::MODEC, 6},
+    {map::RADAR, 7},
     {map::TRAINING, 59},
   });
-
-int qHash(const map::MapObjectRef& type)
-{
-  return type.id ^ static_cast<int>(type.type);
-}
 
 void updateUnits()
 {
@@ -659,40 +673,58 @@ QString navTypeName(const QString& type)
   return retval;
 }
 
-const QString& navTypeNameVor(const QString& type)
+QString navTypeNameVor(const QString& type)
 {
-  Q_ASSERT(!navTypeNamesVor.isEmpty());
-  return navTypeNamesVor[type];
+  return navTypeNamesVor.value(type);
 }
 
-const QString& navTypeNameVorLong(const QString& type)
+QString navTypeNameVorLong(const QString& type)
 {
-  Q_ASSERT(!navTypeNamesVorLong.isEmpty());
-  return navTypeNamesVorLong[type];
+  return navTypeNamesVorLong.value(type);
 }
 
-const QString& navTypeNameNdb(const QString& type)
+QString navTypeNameNdb(const QString& type)
 {
-  Q_ASSERT(!navTypeNamesNdb.isEmpty());
-  return navTypeNamesNdb[type];
+  return navTypeNamesNdb.value(type);
 }
 
-const QString& navTypeNameWaypoint(const QString& type)
+QString navTypeNameWaypoint(const QString& type)
 {
-  Q_ASSERT(!navTypeNamesWaypoint.isEmpty());
-  return navTypeNamesWaypoint[type];
+  return navTypeNamesWaypoint.value(type);
 }
 
-const QString& navName(const QString& type)
+QString navName(const QString& type)
 {
-  Q_ASSERT(!navTypeNames.isEmpty());
-  return navTypeNames[type];
+  return navTypeNames.value(type);
 }
 
 const QString& surfaceName(const QString& surface)
 {
   Q_ASSERT(!surfaceMap.isEmpty());
   return surfaceMap[surface];
+}
+
+QString smoothnessName(QVariant smoothnessVar)
+{
+  QString smoothnessStr;
+  if(!smoothnessVar.isNull())
+  {
+    float smooth = smoothnessVar.toFloat();
+    if(smooth >= 0.f)
+    {
+      if(smooth <= 0.2f)
+        smoothnessStr = QObject::tr("Very smooth");
+      else if(smooth <= 0.4f)
+        smoothnessStr = QObject::tr("Smooth");
+      else if(smooth <= 0.6f)
+        smoothnessStr = QObject::tr("Normal");
+      else if(smooth <= 0.8f)
+        smoothnessStr = QObject::tr("Rough");
+      else
+        smoothnessStr = QObject::tr("Very rough");
+    }
+  }
+  return smoothnessStr;
 }
 
 int surfaceQuality(const QString& surface)
@@ -717,6 +749,19 @@ const QString& parkingTypeName(const QString& type)
 {
   Q_ASSERT(!parkingTypeMap.isEmpty());
   return parkingTypeMap[type];
+}
+
+QString parkingText(const MapParking& parking)
+{
+  QStringList retval;
+
+  if(parking.type.isEmpty())
+    retval.append(QObject::tr("Parking"));
+
+  retval.append(map::parkingName(parking.name));
+
+  retval.append(parking.number != -1 ? " " + QLocale().toString(parking.number) : QString());
+  return atools::strJoin(retval, QObject::tr(" "));
 }
 
 const QString& parkingName(const QString& name)
@@ -745,21 +790,18 @@ QString parkingNameNumberType(const map::MapParking& parking)
   else
     name.append(map::parkingName(parking.name));
 
-  const QString typeName = map::parkingTypeName(parking.type);
+  name.append(map::parkingTypeName(parking.type));
 
-  if(!typeName.isEmpty())
-    name.append(typeName);
-
-  return name.join(", ");
+  return atools::strJoin(name, QObject::tr(", "));
 }
 
 QString startType(const map::MapStart& start)
 {
-  if(start.type == "R")
+  if(start.isRunway())
     return QObject::tr("Runway");
-  else if(start.type == "W")
+  else if(start.isWater())
     return QObject::tr("Water");
-  else if(start.type == "H")
+  else if(start.isHelipad())
     return QObject::tr("Helipad");
   else
     return QString();
@@ -820,11 +862,6 @@ bool MapAirport::vasi() const
   return flags.testFlag(AP_VASI);
 }
 
-bool MapAirport::fence() const
-{
-  return flags.testFlag(AP_FENCE);
-}
-
 bool MapAirport::closedRunways() const
 {
   return flags.testFlag(AP_RW_CLOSED);
@@ -843,7 +880,7 @@ bool MapAirport::emptyDraw(const OptionData& od) const
   if(NavApp::isNavdataAll())
     return false;
 
-  if(od.getFlags() & opts::MAP_EMPTY_AIRPORTS)
+  if(od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS))
   {
     if(od.getFlags2() & opts2::MAP_EMPTY_AIRPORTS_3D && xplane)
       return !is3d() && !addon() && !waterOnly();
@@ -929,7 +966,7 @@ bool MapAirport::noRunways() const
   return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER);
 }
 
-bool MapAirport::isVisible(map::MapObjectTypes objectTypes) const
+bool MapAirport::isVisible(map::MapTypes objectTypes) const
 {
   if(addon() && objectTypes.testFlag(map::AIRPORT_ADDON))
     return true;
@@ -947,9 +984,9 @@ bool MapAirport::isVisible(map::MapObjectTypes objectTypes) const
 }
 
 /* Convert nav_search type */
-map::MapObjectTypes navTypeToMapObjectType(const QString& navType)
+map::MapTypes navTypeToMapObjectType(const QString& navType)
 {
-  map::MapObjectTypes type = NONE;
+  map::MapTypes type = NONE;
   if(navType.startsWith("V") || navType == "D" || navType.startsWith("TC"))
     type = map::VOR;
   else if(navType == "N")
@@ -969,81 +1006,195 @@ bool navTypeVortac(const QString& navType)
   return navType == "VT" || navType == "VTD";
 }
 
-QString airwayTypeToShortString(MapAirwayType type)
+QString airwayTrackTypeToShortString(MapAirwayTrackType type)
 {
   switch(type)
   {
     case map::NO_AIRWAY:
       break;
-    case map::VICTOR:
+
+    case map::TRACK_NAT:
+      return QObject::tr("N");
+
+    case map::TRACK_PACOTS:
+      return QObject::tr("P");
+
+    case map::TRACK_AUSOTS:
+      return QObject::tr("A");
+
+    case map::AIRWAY_VICTOR:
       return QObject::tr("V");
 
-    case map::JET:
+    case map::AIRWAY_JET:
       return QObject::tr("J");
 
-    case map::BOTH:
+    case map::AIRWAY_BOTH:
       return QObject::tr("B");
 
   }
   return QString();
 }
 
-QString airwayTypeToString(MapAirwayType type)
+QString airwayTrackTypeToString(MapAirwayTrackType type)
 {
   switch(type)
   {
     case map::NO_AIRWAY:
       break;
-    case map::VICTOR:
+
+    case map::TRACK_NAT:
+      return QObject::tr("NAT");
+
+    case map::TRACK_PACOTS:
+      return QObject::tr("PACOTS");
+
+    case map::TRACK_AUSOTS:
+      return QObject::tr("AUSOTS");
+
+    case map::AIRWAY_VICTOR:
       return QObject::tr("Victor");
 
-    case map::JET:
+    case map::AIRWAY_JET:
       return QObject::tr("Jet");
 
-    case map::BOTH:
+    case map::AIRWAY_BOTH:
       return QObject::tr("Both");
 
   }
   return QString();
 }
 
-MapAirwayType airwayTypeFromString(const QString& typeStr)
+MapAirwayTrackType airwayTrackTypeFromString(const QString& typeStr)
 {
   if(typeStr.startsWith("V"))
-    return map::VICTOR;
+    return map::AIRWAY_VICTOR;
   else if(typeStr.startsWith("J"))
-    return map::JET;
+    return map::AIRWAY_JET;
   else if(typeStr.startsWith("B"))
-    return map::BOTH;
+    return map::AIRWAY_BOTH;
+  else if(typeStr.startsWith("N"))
+    return map::TRACK_NAT;
+  else if(typeStr.startsWith("P"))
+    return map::TRACK_PACOTS;
+  else if(typeStr.startsWith("A"))
+    return map::TRACK_AUSOTS;
   else
     return map::NO_AIRWAY;
+}
+
+QString airwayRouteTypeToString(map::MapAirwayRouteType type)
+{
+  switch(type)
+  {
+    case map::RT_NONE:
+      break;
+
+    case map::RT_AIRLINE:
+      return QObject::tr("Airline");
+
+    case map::RT_CONTROL:
+      return QObject::tr("Control");
+
+    case map::RT_DIRECT:
+      return QObject::tr("Direct");
+
+    case map::RT_HELICOPTER:
+      return QObject::tr("Helicopter");
+
+    case map::RT_OFFICIAL:
+      return QObject::tr("Official");
+
+    case map::RT_RNAV:
+      return QObject::tr("RNAV");
+
+    case map::RT_UNDESIGNATED:
+      return QObject::tr("Undesignated");
+
+    case map::RT_TRACK:
+      return QObject::tr("Track");
+  }
+  return QString();
+}
+
+QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type)
+{
+  switch(type)
+  {
+    case map::RT_NONE:
+      break;
+
+    case map::RT_AIRLINE:
+      return QObject::tr("A");
+
+    case map::RT_CONTROL:
+      return QObject::tr("C");
+
+    case map::RT_DIRECT:
+      return QObject::tr("D");
+
+    case map::RT_HELICOPTER:
+      return QObject::tr("H");
+
+    case map::RT_OFFICIAL:
+      return QObject::tr("O");
+
+    case map::RT_RNAV:
+      return QObject::tr("R");
+
+    case map::RT_UNDESIGNATED:
+      return QObject::tr("S");
+
+    case map::RT_TRACK:
+      return QObject::tr("T");
+  }
+  return QString();
+}
+
+MapAirwayRouteType airwayRouteTypeFromString(const QString& typeStr)
+{
+  if(typeStr == "A")
+    return RT_AIRLINE; /* A Airline Airway (Tailored Data) */
+  else if(typeStr == "C")
+    return RT_CONTROL; /* C Control */
+  else if(typeStr == "D")
+    return RT_DIRECT; /* D Direct Route */
+  else if(typeStr == "H")
+    return RT_HELICOPTER; /* H Helicopter Airways */
+  else if(typeStr == "O")
+    return RT_OFFICIAL; /* O Officially Designated Airways, except RNAV, Helicopter Airways */
+  else if(typeStr == "R")
+    return RT_RNAV; /* R RNAV Airways */
+  else if(typeStr == "S")
+    return RT_UNDESIGNATED; /* S Undesignated ATS Route */
+  else
+    return RT_NONE;
 }
 
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj)
 {
   qint32 types;
-  dataStream >> obj.text >> obj.ranges >> obj.center >> types;
-  obj.type = static_cast<map::MapObjectTypes>(types);
+  dataStream >> obj.text >> obj.ranges >> obj.position >> types;
+  obj.type = static_cast<map::MapTypes>(types);
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj)
 {
-  dataStream << obj.text << obj.ranges << obj.center << static_cast<qint32>(obj.type);
+  dataStream << obj.text << obj.ranges << obj.position << static_cast<qint32>(obj.type);
   return dataStream;
 }
 
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
 {
   bool dummy = true; // Value was removed
-  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> obj.isRhumbLine >> dummy;
+  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> dummy >> dummy;
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 {
-  bool dummyMagvar = true; // Value was removed
-  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << obj.isRhumbLine << dummyMagvar;
+  bool dummy = false; // Value was removed
+  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << dummy << dummy;
   return dataStream;
 }
 
@@ -1122,6 +1273,20 @@ QDataStream& operator<<(QDataStream& dataStream, const Hold& obj)
   return dataStream;
 }
 
+QDataStream& operator>>(QDataStream& dataStream, MapObjectRef& obj)
+{
+  quint32 type;
+  dataStream >> obj.id >> type;
+  obj.objType = static_cast<map::MapType>(type);
+  return dataStream;
+}
+
+QDataStream& operator<<(QDataStream& dataStream, const MapObjectRef& obj)
+{
+  dataStream << obj.id << static_cast<quint32>(obj.objType);
+  return dataStream;
+}
+
 QString vorType(const MapVor& vor)
 {
   return vorType(vor.dmeOnly, vor.hasDme, vor.tacan, vor.vortac);
@@ -1192,7 +1357,7 @@ QString logEntryText(const MapLogbookEntry& logEntry)
 
 QString userpointRouteText(const MapUserpointRoute& userpoint)
 {
-  return QObject::tr("Position %1").arg(userpoint.name);
+  return QObject::tr("Position %1").arg(userpoint.ident);
 }
 
 QString airwayText(const MapAirway& airway)
@@ -1235,28 +1400,26 @@ QString airwayAltTextShort(const MapAirway& airway, bool addUnit, bool narrow)
 
 QString airportText(const MapAirport& airport, int elideName)
 {
-  return QObject::tr("Airport %1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.ident);
+  if(!airport.isValid())
+    return QObject::tr("Airport");
+  else
+    return QObject::tr("Airport %1").arg(airportTextShort(airport, elideName));
 }
 
-QString airportTextShort(const MapAirport& airport)
+QString airportTextShort(const MapAirport& airport, int elideName)
 {
-  return QObject::tr("%1 (%2)").arg(airport.name).arg(airport.ident);
+  if(!airport.isValid())
+    return QObject::tr("Airport");
+  else if(airport.name.isEmpty())
+    return QObject::tr("%1").arg(airport.ident);
+  else
+    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.ident);
 }
 
 QString comTypeName(const QString& type)
 {
   Q_ASSERT(!comTypeNames.isEmpty());
   return comTypeNames.value(type);
-}
-
-bool MapObjectRef::operator==(const MapObjectRef& other) const
-{
-  return id == other.id && type == other.type;
-}
-
-bool MapObjectRef::operator!=(const MapObjectRef& other) const
-{
-  return !operator==(other);
 }
 
 QString magvarText(float magvar, bool shortText)
@@ -1328,403 +1491,6 @@ QString parkingShortName(const QString& name)
     return QString();
 }
 
-void MapSearchResult::clear(const MapObjectTypes& types)
-{
-  if(types & map::AIRPORT)
-  {
-    airports.clear();
-    airportIds.clear();
-  }
-
-  if(types & map::WAYPOINT)
-  {
-    waypoints.clear();
-    waypointIds.clear();
-  }
-
-  if(types & map::VOR)
-  {
-    vors.clear();
-    vorIds.clear();
-  }
-
-  if(types & map::NDB)
-  {
-    ndbs.clear();
-    ndbIds.clear();
-  }
-
-  if(types & map::AIRWAY)
-    airways.clear();
-
-  if(types & map::AIRSPACE)
-    airspaces.clear();
-
-  if(types & map::RUNWAYEND)
-    runwayEnds.clear();
-
-  if(types & map::ILS)
-    ils.clear();
-
-  if(types & map::AIRSPACE)
-    airspaces.clear();
-
-  if(types & map::USERPOINTROUTE)
-    userPointsRoute.clear();
-
-  if(types & map::USERPOINT)
-  {
-    userpoints.clear();
-    userpointIds.clear();
-  }
-
-  if(types & map::LOGBOOK)
-    logbookEntries.clear();
-
-  if(types & map::AIRCRAFT_AI)
-    aiAircraft.clear();
-
-  if(types & map::AIRCRAFT)
-    userAircraft = atools::fs::sc::SimConnectUserAircraft();
-
-  if(types & map::AIRCRAFT_ONLINE)
-  {
-    onlineAircraft.clear();
-    onlineAircraftIds.clear();
-  }
-}
-
-template<typename T>
-void MapSearchResult::clearAllButFirst(QList<T>& list)
-{
-  while(list.size() > 1)
-    list.removeLast();
-}
-
-void MapSearchResult::clearAllButFirst(const MapObjectTypes& types)
-{
-  if(types & map::AIRPORT)
-  {
-    clearAllButFirst(airports);
-    airportIds.clear();
-  }
-
-  if(types & map::WAYPOINT)
-  {
-    clearAllButFirst(waypoints);
-    waypointIds.clear();
-  }
-
-  if(types & map::VOR)
-  {
-    clearAllButFirst(vors);
-    vorIds.clear();
-  }
-
-  if(types & map::NDB)
-  {
-    clearAllButFirst(ndbs);
-    ndbIds.clear();
-  }
-
-  if(types & map::AIRWAY)
-    clearAllButFirst(airways);
-
-  if(types & map::RUNWAYEND)
-    clearAllButFirst(runwayEnds);
-
-  if(types & map::ILS)
-    clearAllButFirst(ils);
-
-  if(types & map::AIRSPACE)
-    clearAllButFirst(airspaces);
-
-  if(types & map::USERPOINTROUTE)
-    clearAllButFirst(userPointsRoute);
-
-  if(types & map::USERPOINT)
-  {
-    clearAllButFirst(userpoints);
-    userpointIds.clear();
-  }
-
-  if(types & map::LOGBOOK)
-    clearAllButFirst(logbookEntries);
-
-  if(types & map::AIRCRAFT_AI)
-    clearAllButFirst(aiAircraft);
-
-  if(types & map::AIRCRAFT)
-    userAircraft = atools::fs::sc::SimConnectUserAircraft();
-
-  if(types & map::AIRCRAFT_ONLINE)
-  {
-    clearAllButFirst(onlineAircraft);
-    onlineAircraftIds.clear();
-  }
-}
-
-void MapSearchResult::moveOnlineAirspacesToFront()
-{
-  QList<MapAirspace> list;
-  for(const MapAirspace& a: airspaces)
-  {
-    if(a.isOnline())
-      list.append(a);
-  }
-  for(const MapAirspace& a: airspaces)
-  {
-    if(!a.isOnline())
-      list.append(a);
-  }
-  airspaces = list;
-}
-
-MapSearchResult MapSearchResult::moveOnlineAirspacesToFront() const
-{
-  MapSearchResult retval(*this);
-  retval.moveOnlineAirspacesToFront();
-  return retval;
-}
-
-bool MapSearchResult::hasSimNavUserAirspaces() const
-{
-  for(const map::MapAirspace& airspace : airspaces)
-  {
-    if(!airspace.isOnline())
-      return true;
-  }
-  return false;
-}
-
-bool MapSearchResult::hasOnlineAirspaces() const
-{
-  for(const map::MapAirspace& airspace : airspaces)
-  {
-    if(airspace.isOnline())
-      return true;
-  }
-  return false;
-}
-
-map::MapAirspace *MapSearchResult::firstSimNavUserAirspace()
-{
-  QList<map::MapAirspace>::iterator it =
-    std::find_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& a) -> bool
-    {
-      return !a.isOnline();
-    });
-
-  if(it != airspaces.end())
-    return &(*it);
-
-  return nullptr;
-}
-
-map::MapAirspace *MapSearchResult::firstOnlineAirspace()
-{
-  QList<map::MapAirspace>::iterator it =
-    std::find_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& a) -> bool
-    {
-      return a.isOnline();
-    });
-
-  if(it != airspaces.end())
-    return &(*it);
-
-  return nullptr;
-}
-
-int MapSearchResult::numSimNavUserAirspaces() const
-{
-  int num = 0;
-  for(const map::MapAirspace& airspace : airspaces)
-    num += !airspace.isOnline();
-  return num;
-}
-
-int MapSearchResult::numOnlineAirspaces() const
-{
-  int num = 0;
-  for(const map::MapAirspace& airspace : airspaces)
-    num += airspace.isOnline();
-  return num;
-}
-
-QList<map::MapAirspace> MapSearchResult::getSimNavUserAirspaces() const
-{
-  QList<map::MapAirspace> retval;
-  for(const map::MapAirspace& airspace : airspaces)
-  {
-    if(!airspace.isOnline())
-      retval.append(airspace);
-  }
-  return retval;
-}
-
-QList<map::MapAirspace> MapSearchResult::getOnlineAirspaces() const
-{
-  QList<map::MapAirspace> retval;
-  for(const map::MapAirspace& airspace : airspaces)
-  {
-    if(airspace.isOnline())
-      retval.append(airspace);
-  }
-  return retval;
-}
-
-void MapSearchResult::clearNavdataAirspaces()
-{
-  QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
-                                                        [](const map::MapAirspace& airspace) -> bool
-    {
-      return !airspace.isOnline();
-    });
-  if(it != airspaces.end())
-    airspaces.erase(it, airspaces.end());
-}
-
-void MapSearchResult::clearOnlineAirspaces()
-{
-  QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
-                                                        [](const map::MapAirspace& airspace) -> bool
-    {
-      return airspace.isOnline();
-    });
-  if(it != airspaces.end())
-    airspaces.erase(it, airspaces.end());
-}
-
-bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
-{
-  bool filled = false;
-  filled |= types & map::AIRPORT && !airports.isEmpty();
-  filled |= types & map::WAYPOINT && !waypoints.isEmpty();
-  filled |= types & map::VOR && !vors.isEmpty();
-  filled |= types & map::NDB && !ndbs.isEmpty();
-  filled |= types & map::AIRWAY && !airways.isEmpty();
-  filled |= types & map::RUNWAYEND && !runwayEnds.isEmpty();
-  filled |= types & map::ILS && !ils.isEmpty();
-  filled |= types & map::AIRSPACE && !airspaces.isEmpty();
-  filled |= types & map::USERPOINTROUTE && !userPointsRoute.isEmpty();
-  filled |= types & map::USERPOINT && !userpoints.isEmpty();
-  filled |= types & map::LOGBOOK && !logbookEntries.isEmpty();
-  filled |= types & map::AIRCRAFT_AI && !aiAircraft.isEmpty();
-  filled |= types & map::AIRCRAFT_ONLINE && !onlineAircraft.isEmpty();
-  return !filled;
-}
-
-bool MapSearchResult::getIdAndType(int& id, MapObjectTypes& type, const QVector<MapObjectTypes>& types) const
-{
-  id = -1;
-  type = NONE;
-
-  for(const MapObjectTypes& t : types)
-  {
-    if(!isEmpty(t))
-    {
-      if(t == map::AIRPORT)
-      {
-        id = airports.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::WAYPOINT)
-      {
-        id = waypoints.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::VOR)
-      {
-        id = vors.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::NDB)
-      {
-        id = ndbs.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::AIRWAY)
-      {
-        id = airways.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::RUNWAYEND)
-      {
-        id = runwayEnds.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::ILS)
-      {
-        id = ils.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::AIRSPACE)
-      {
-        id = airspaces.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::USERPOINTROUTE)
-      {
-        id = userPointsRoute.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::USERPOINT)
-      {
-        id = userpoints.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::LOGBOOK)
-      {
-        id = logbookEntries.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::AIRCRAFT_AI)
-      {
-        id = aiAircraft.first().getId();
-        type = t;
-        break;
-      }
-      else if(t == map::AIRCRAFT_ONLINE)
-      {
-        id = onlineAircraft.first().getId();
-        type = t;
-        break;
-      }
-    }
-  }
-  return id != -1;
-}
-
-int MapSearchResult::getTotalSize(const MapObjectTypes& types) const
-{
-  int totalSize = 0;
-  totalSize += types & map::AIRPORT ? airports.size() : 0;
-  totalSize += types & map::WAYPOINT ? waypoints.size() : 0;
-  totalSize += types & map::VOR ? vors.size() : 0;
-  totalSize += types & map::NDB ? ndbs.size() : 0;
-  totalSize += types & map::AIRWAY ? airways.size() : 0;
-  totalSize += types & map::RUNWAYEND ? runwayEnds.size() : 0;
-  totalSize += types & map::ILS ? ils.size() : 0;
-  totalSize += types & map::AIRSPACE ? airspaces.size() : 0;
-  totalSize += types & map::USERPOINTROUTE ? userPointsRoute.size() : 0;
-  totalSize += types & map::USERPOINT ? userpoints.size() : 0;
-  totalSize += types & map::LOGBOOK ? logbookEntries.size() : 0;
-  totalSize += types & map::AIRCRAFT_AI ? aiAircraft.size() : 0;
-  totalSize += types & map::AIRCRAFT_ONLINE ? onlineAircraft.size() : 0;
-  return totalSize;
-}
-
 QString edgeLights(const QString& type)
 {
   if(type == "L")
@@ -1749,22 +1515,37 @@ QString patternDirection(const QString& type)
 
 QString vorFullShortText(const MapVor& vor)
 {
-  QString type = vor.type.startsWith("VT") ? vor.type.at(vor.type.size() - 1) : vor.type.at(0);
-
   if(vor.tacan)
-    return QObject::tr("TACAN").arg(type);
-  else if(vor.vortac)
-    return QObject::tr("VORTAC (%1)").arg(type);
-  else if(vor.dmeOnly)
-    return QObject::tr("DME (%1)").arg(type);
-  else if(vor.hasDme)
-    return QObject::tr("VORDME (%1)").arg(type);
+    return QObject::tr("TACAN");
+  else if(vor.type.isEmpty())
+  {
+    if(vor.vortac)
+      return QObject::tr("VORTAC");
+    else if(vor.dmeOnly)
+      return QObject::tr("DME");
+    else if(vor.hasDme)
+      return QObject::tr("VORDME");
+    else
+      return QObject::tr("VOR");
+  }
   else
-    return QObject::tr("VOR (%1)").arg(type);
+  {
+    QString type = vor.type.startsWith("VT") ? vor.type.at(vor.type.size() - 1) : vor.type.at(0);
+
+    if(vor.vortac)
+      return QObject::tr("VORTAC (%1)").arg(type);
+    else if(vor.dmeOnly)
+      return QObject::tr("DME (%1)").arg(type);
+    else if(vor.hasDme)
+      return QObject::tr("VORDME (%1)").arg(type);
+    else
+      return QObject::tr("VOR (%1)").arg(type);
+  }
 }
 
 QString ndbFullShortText(const MapNdb& ndb)
 {
+  // Compass point vs. compass locator
   QString type = ndb.type == "CP" ? QObject::tr("CL") : ndb.type;
   return type.isEmpty() ? QObject::tr("NDB") : QObject::tr("NDB (%1)").arg(type);
 }
@@ -1779,6 +1560,77 @@ const QString& airspaceFlagToString(map::MapAirspaceFlags type)
 {
   Q_ASSERT(!airspaceFlagNameMap.isEmpty());
   return airspaceFlagNameMap[type];
+}
+
+QString mapObjectTypeToString(MapTypes type)
+{
+  if(type == NONE)
+    return QObject::tr("None");
+  else
+  {
+    QStringList str;
+
+    if(type.testFlag(AIRPORT))
+      str += "Airport";
+    if(type.testFlag(AIRPORT_HARD))
+      str += "AirportHard";
+    if(type.testFlag(AIRPORT_SOFT))
+      str += "AirportSoft";
+    if(type.testFlag(AIRPORT_EMPTY))
+      str += "AirportEmpty";
+    if(type.testFlag(AIRPORT_ADDON))
+      str += "AirportAddon";
+    if(type.testFlag(VOR))
+      str += "VOR";
+    if(type.testFlag(NDB))
+      str += "NDB";
+    if(type.testFlag(ILS))
+      str += "ILS";
+    if(type.testFlag(MARKER))
+      str += "Marker";
+    if(type.testFlag(WAYPOINT))
+      str += "Waypoint";
+    if(type.testFlag(AIRWAY))
+      str += "Airway";
+    if(type.testFlag(AIRWAYV))
+      str += "Airwayv";
+    if(type.testFlag(AIRWAYJ))
+      str += "Airwayj";
+    if(type.testFlag(TRACK))
+      str += "Track";
+    if(type.testFlag(AIRCRAFT))
+      str += "Aircraft";
+    if(type.testFlag(AIRCRAFT_AI))
+      str += "AircraftAi";
+    if(type.testFlag(AIRCRAFT_AI_SHIP))
+      str += "AircraftAiShip";
+    if(type.testFlag(AIRCRAFT_TRACK))
+      str += "AircraftTrack";
+    if(type.testFlag(USERPOINTROUTE))
+      str += "Userpointroute";
+    if(type.testFlag(PARKING))
+      str += "Parking";
+    if(type.testFlag(RUNWAYEND))
+      str += "Runwayend";
+    if(type.testFlag(INVALID))
+      str += "Invalid";
+    if(type.testFlag(MISSED_APPROACH))
+      str += "Missed_approach";
+    if(type.testFlag(PROCEDURE))
+      str += "Procedure";
+    if(type.testFlag(AIRSPACE))
+      str += "Airspace";
+    if(type.testFlag(HELIPAD))
+      str += "Helipad";
+    if(type.testFlag(USERPOINT))
+      str += "Userpoint";
+    if(type.testFlag(AIRCRAFT_ONLINE))
+      str += "AircraftOnline";
+    if(type.testFlag(LOGBOOK))
+      str += "Logbook";
+
+    return str.join(",");
+  }
 }
 
 const QString& airspaceRemark(map::MapAirspaceTypes type)
@@ -1814,16 +1666,16 @@ QString airspaceSourceText(MapAirspaceSources src)
     retval.append(QObject::tr("All"));
   else
   {
-    if(src & AIRSPACE_SRC_SIM)
+    if(src.testFlag(AIRSPACE_SRC_SIM))
       retval.append(QObject::tr("Simulator"));
 
-    if(src & AIRSPACE_SRC_NAV)
+    if(src.testFlag(AIRSPACE_SRC_NAV))
       retval.append(QObject::tr("Navigraph"));
 
-    if(src & AIRSPACE_SRC_ONLINE)
+    if(src.testFlag(AIRSPACE_SRC_ONLINE))
       retval.append(QObject::tr("Online"));
 
-    if(src & AIRSPACE_SRC_USER)
+    if(src.testFlag(AIRSPACE_SRC_USER))
       retval.append(QObject::tr("User"));
   }
 
@@ -1965,6 +1817,20 @@ QString runwayBestFit(const QString& procRunwayName, const QStringList& airportR
   return QString();
 }
 
+QString runwayDesignatorLong(const QString& name)
+{
+  if(name.startsWith('L'))
+    return "LEFT";
+  else if(name.startsWith('R'))
+    return "RIGHT";
+  else if(name.startsWith('C'))
+    return "CENTER";
+  else if(name.startsWith('W'))
+    return "WATER";
+
+  return name;
+}
+
 bool runwayNameSplit(const QString& name, int *number, QString *designator)
 {
   // Extract runway number and designator
@@ -1997,87 +1863,41 @@ bool runwayNameSplit(const QString& name, QString *number, QString *designator)
   return retval;
 }
 
-QDebug operator<<(QDebug out, const map::MapSearchResult& record)
+QDebug operator<<(QDebug out, const MapBase& obj)
 {
   QDebugStateSaver saver(out);
+  out.noquote().nospace() << "MapBase["
+                          << "id " << obj.id
+                          << ", type " << mapObjectTypeToString(obj.objType)
+                          << ", " << obj.position
+                          << "]";
+  return out;
+}
 
-  if(!record.airports.isEmpty())
-  {
-    out << "Airport";
-    for(const map::MapAirport& obj :  record.airports)
-      out << obj.id << obj.ident << ",";
-    out << endl;
-  }
-  if(!record.runwayEnds.isEmpty())
-  {
-    out << "RunwayEnd";
-    for(const map::MapRunwayEnd& obj :  record.runwayEnds)
-      out << obj.name << ",";
-    out << endl;
-  }
-  if(!record.parkings.isEmpty())
-  {
-    out << "Parking";
-    for(const map::MapParking& obj :  record.parkings)
-      out << obj.id << obj.name << obj.number << obj.type << ",";
-    out << endl;
-  }
-  if(!record.waypoints.isEmpty())
-  {
-    out << "Waypoint";
-    for(const map::MapWaypoint& obj :  record.waypoints)
-      out << obj.id << obj.ident << obj.region << ",";
-    out << endl;
-  }
-  if(!record.vors.isEmpty())
-  {
-    out << "VOR";
-    for(const map::MapVor& obj :  record.vors)
-      out << obj.id << obj.ident << obj.region << ",";
-    out << endl;
-  }
-  if(!record.ndbs.isEmpty())
-  {
-    out << "NDB";
-    for(const map::MapNdb& obj :  record.ndbs)
-      out << obj.id << obj.ident << obj.region << ",";
-    out << endl;
-  }
-  if(!record.ils.isEmpty())
-  {
-    out << "ILS";
-    for(const map::MapIls& obj :  record.ils)
-      out << obj.id << obj.ident << ",";
-    out << endl;
-  }
-  if(!record.airways.isEmpty())
-  {
-    out << "Airway";
-    for(const map::MapAirway& obj :  record.airways)
-      out << obj.id << obj.name << ",";
-    out << endl;
-  }
-  if(!record.airspaces.isEmpty())
-  {
-    out << "Airspace";
-    for(const map::MapAirspace& obj :  record.airspaces)
-      out << obj.id << obj.name << ",";
-    out << endl;
-  }
-  if(!record.userPointsRoute.isEmpty())
-  {
-    out << "UserpointRoute";
-    for(const map::MapUserpointRoute& obj :  record.userPointsRoute)
-      out << obj.id << obj.name << ",";
-    out << endl;
-  }
-  if(!record.userpoints.isEmpty())
-  {
-    out << "Userpoint";
-    for(const map::MapUserpoint& obj :  record.userpoints)
-      out << obj.id << obj.name << ",";
-    out << endl;
-  }
+QDebug operator<<(QDebug out, const MapObjectRef& ref)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace() << "MapObjectRef["
+                          << "id " << ref.id
+                          << ", type " << mapObjectTypeToString(ref.objType)
+                          << "]";
+  return out;
+}
+
+QDebug operator<<(QDebug out, const MapObjectRefExt& ref)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace() << "MapObjectRefExt["
+                          << "id " << ref.id
+                          << ", type " << mapObjectTypeToString(ref.objType);
+
+  if(!ref.name.isEmpty())
+    out.noquote().nospace() << ", name " << ref.name;
+
+  if(ref.position.isValid())
+    out.noquote().nospace() << ", " << ref.position;
+
+  out.noquote().nospace() << "]";
   return out;
 }
 
@@ -2178,112 +1998,121 @@ atools::geo::LineString MapIls::boundary() const
     return atools::geo::LineString({position, pos1, posmid, pos2, position});
 }
 
-void MapSearchResultIndex::addFromResult(const MapSearchResult& resultParm, const MapObjectTypes& types)
+QString airspaceName(const MapAirspace& airspace)
 {
-  if(types & AIRPORT)
-  {
-    result.airports.append(resultParm.airports);
-    addAll(result.airports);
-  }
-  if(types & RUNWAYEND)
-  {
-    result.runwayEnds.append(resultParm.runwayEnds);
-    addAll(result.runwayEnds);
-  }
-  if(types & TOWER)
-  {
-    result.towers.append(resultParm.towers);
-    addAll(result.towers);
-  }
-  if(types & PARKING)
-  {
-    result.parkings.append(resultParm.parkings);
-    addAll(result.parkings);
-  }
-  if(types & HELIPAD)
-  {
-    result.helipads.append(resultParm.helipads);
-    addAll(result.helipads);
-  }
-  if(types & WAYPOINT)
-  {
-    result.waypoints.append(resultParm.waypoints);
-    addAll(result.waypoints);
-  }
-  if(types & VOR)
-  {
-    result.vors.append(resultParm.vors);
-    addAll(result.vors);
-  }
-  if(types & NDB)
-  {
-    result.ndbs.append(resultParm.ndbs);
-    addAll(result.ndbs);
-  }
-  if(types & MARKER)
-  {
-    result.markers.append(resultParm.markers);
-    addAll(result.markers);
-  }
-  if(types & ILS)
-  {
-    result.ils.append(resultParm.ils);
-    addAll(result.ils);
-  }
-  if(types & AIRWAY)
-  {
-    result.airways.append(resultParm.airways);
-    addAll(result.airways);
-  }
-  if(types & AIRSPACE)
-  {
-    result.airspaces.append(resultParm.airspaces);
-    addAll(result.airspaces);
-  }
-  if(types & USERPOINTROUTE)
-  {
-    result.userPointsRoute.append(resultParm.userPointsRoute);
-    addAll(result.userPointsRoute);
-  }
-  if(types & USERPOINT)
-  {
-    result.userpoints.append(resultParm.userpoints);
-    addAll(result.userpoints);
-  }
-  if(types & LOGBOOK)
-  {
-    result.logbookEntries.append(resultParm.logbookEntries);
-    addAll(result.logbookEntries);
-  }
+  return airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name);
 }
 
-void MapSearchResultIndex::sortByDistance(const atools::geo::Pos& pos, bool sortNearToFar)
+QString airspaceText(const MapAirspace& airspace)
 {
-  if(isEmpty() || !pos.isValid())
-    return;
-
-  std::sort(begin(), end(),
-            [ = ](const MapBase *obj1, const MapBase *obj2) -> bool
-    {
-      bool res = obj1->getPosition().distanceMeterTo(pos) < obj2->getPosition().distanceMeterTo(pos);
-      return sortNearToFar ? res : !res;
-    });
+  return QObject::tr("Airspace %1 (%2)").arg(airspaceName(airspace)).arg(airspaceTypeToString(airspace.type));
 }
 
-void MapSearchResultIndex::removeByDistance(const atools::geo::Pos& pos, float maxDistanceNm)
+QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft)
 {
-  if(isEmpty() || !pos.isValid())
-    return;
+  if(!aircraft.getAirplaneType().isEmpty())
+    return aircraft.getAirplaneType();
+  else
+    // Convert model ICAO code to a name
+    return atools::fs::util::aircraftTypeForCode(aircraft.getAirplaneModel());
+}
 
-  float maxMeter = atools::geo::nmToMeter(maxDistanceNm);
+QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft)
+{
+  QString type(QObject::tr(" Vehicle"));
+  switch(aircraft.getCategory())
+  {
+    case atools::fs::sc::BOAT:
+      type = QObject::tr(" Ship");
+      break;
+    case atools::fs::sc::CARRIER:
+      type = QObject::tr(" Carrier");
+      break;
+    case atools::fs::sc::FRIGATE:
+      type = QObject::tr(" Frigate");
+      break;
+    case atools::fs::sc::AIRPLANE:
+      type = QObject::tr(" Aircraft");
+      break;
+    case atools::fs::sc::HELICOPTER:
+      type = QObject::tr(" Helicopter");
+      break;
+    case atools::fs::sc::UNKNOWN:
+    case atools::fs::sc::GROUNDVEHICLE:
+    case atools::fs::sc::CONTROLTOWER:
+    case atools::fs::sc::SIMPLEOBJECT:
+    case atools::fs::sc::VIEWER:
+      break;
+  }
+  return type;
+}
 
-  auto it = std::remove_if(begin(), end(), [ = ](const MapBase *obj) -> bool
-    {
-      return obj->position.distanceMeterTo(pos) > maxMeter;
-    });
+QString aircraftTextShort(const atools::fs::sc::SimConnectAircraft& aircraft)
+{
+  QStringList text;
+  QString typeName = aircraftTypeString(aircraft);
 
-  if(it != end())
-    erase(it, end());
+  if(aircraft.isUser())
+    text.append(QObject::tr("User %1").arg(typeName));
+  else if(aircraft.isOnline())
+    text.append(QObject::tr("Online Client"));
+  else
+    text.append(QObject::tr("AI / Multiplayer %1").arg(typeName));
+
+  text.append(aircraft.getAirplaneRegistration());
+  text.append(aircraft.getAirplaneModel());
+
+  return atools::strJoin(text, QObject::tr(", "));
+}
+
+QString helipadText(const MapHelipad& helipad)
+{
+  return QObject::tr("Helipad %1").arg(helipad.runwayName);
+}
+
+int routeIndex(const map::MapBase *base)
+{
+  if(base != nullptr)
+  {
+    map::MapTypes type = base->getType();
+    if(type == map::AIRPORT)
+      return base->asPtr<map::MapAirport>()->routeIndex;
+    else if(type == map::VOR)
+      return base->asPtr<map::MapVor>()->routeIndex;
+    else if(type == map::NDB)
+      return base->asPtr<map::MapNdb>()->routeIndex;
+    else if(type == map::WAYPOINT)
+      return base->asPtr<map::MapWaypoint>()->routeIndex;
+    else if(type == map::USERPOINTROUTE)
+      return base->asPtr<map::MapUserpointRoute>()->routeIndex;
+  }
+  return -1;
+}
+
+bool isAircraftShadow(const map::MapBase *base)
+{
+  if(base != nullptr)
+  {
+    map::MapTypes type = base->getType();
+    if(type == map::AIRCRAFT)
+      return base->asPtr<map::MapUserAircraft>()->getAircraft().isOnlineShadow();
+    else if(type == map::AIRCRAFT_AI)
+      return base->asPtr<map::MapAiAircraft>()->getAircraft().isOnlineShadow();
+    else if(type == map::AIRCRAFT_ONLINE)
+      return base->asPtr<map::MapOnlineAircraft>()->getAircraft().isOnlineShadow();
+  }
+  return false;
+}
+
+map::MapAirspaceSources airspaceSource(const map::MapBase *base)
+{
+  if(base != nullptr)
+  {
+    map::MapTypes type = base->getType();
+    if(type == map::AIRSPACE)
+      return base->asPtr<map::MapAirspace>()->src;
+  }
+  return map::MapAirspaceSource::AIRSPACE_SRC_NONE;
 }
 
 } // namespace types

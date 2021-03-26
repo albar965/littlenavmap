@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,16 @@
 
 namespace Marble {
 class ViewportParams;
+class GeoDataLineString;
+class GeoDataLatLonBox;
 }
 
 namespace atools {
 namespace geo {
 class Pos;
 class Line;
+class Rect;
+class LineString;
 }
 }
 
@@ -41,7 +45,6 @@ class CoordinateConverter
 {
 public:
   CoordinateConverter(const Marble::ViewportParams *viewportParams);
-  ~CoordinateConverter();
 
   /* Default size (100x100) for the screen object. Needed to find the repeating pattern for the
    *  Mercator projection. */
@@ -60,6 +63,18 @@ public:
   /* @return true if position is hidden behind globe */
   bool isHidden(const atools::geo::Pos& coords) const;
 
+  /* Conversion from Marble coordinates to atools coordinates and back.
+   * Do not transfer or convert altitude */
+  Marble::GeoDataCoordinates toGdc(const atools::geo::Pos& coords) const;
+  Marble::GeoDataLatLonBox toGdc(const atools::geo::Rect& coords) const;
+  Marble::GeoDataLineString toGdcStr(const atools::geo::Line& coords) const;
+  Marble::GeoDataLineString toGdcStr(const atools::geo::LineString& coords) const;
+  Marble::GeoDataLineString toGdcStr(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
+
+  atools::geo::Rect fromGdc(const Marble::GeoDataLatLonBox& coords) const;
+  atools::geo::Pos fromGdc(const Marble::GeoDataCoordinates& coords) const;
+  atools::geo::LineString fromGdcStr(const Marble::GeoDataLineString& coords) const;
+
   /*
    * Convert world to screen coordinates
    * @param coords world coordinates
@@ -71,7 +86,14 @@ public:
   QPoint wToS(const Marble::GeoDataCoordinates& coords,
               const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr, bool *isHidden = nullptr) const;
   QPointF wToSF(const Marble::GeoDataCoordinates& coords,
-              const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr, bool *isHidden = nullptr) const;
+                const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr, bool *isHidden = nullptr) const;
+
+  /* Reliable world to screen conversion. Polygons are already divided into segments.
+   *  Result might contain duplicates for Mercator projection. */
+  QVector<QPolygonF> wToS(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
+  QVector<QPolygonF> wToS(const atools::geo::Line& line) const;
+  QVector<QPolygonF> wToS(const atools::geo::LineString& line) const;
+  QVector<QPolygonF> wToS(const Marble::GeoDataLineString& line) const;
 
   /*
    * Convert world to screen coordinates for GeoDataCoordinates
@@ -105,6 +127,7 @@ public:
   bool wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size = DEFAULT_WTOS_SIZE,
             bool *isHidden = nullptr) const;
 
+  bool sToW(int x, int y, atools::geo::Pos& pos) const;
   bool sToW(int x, int y, Marble::GeoDataCoordinates& coords) const;
 
   /* Converte screen to world coordinates */

@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name='viewport' content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/assets/styles.css" />
     <title>
@@ -19,20 +19,22 @@
       border-collapse: collapse;
     }
 
-    tr {
-      border: none;
-    }
-
-    td {
-      border-right: solid 1px #c0c0c0;
-      border-left: solid 1px #c0c0c0;
+    th, td {
+      border-right: 1px solid #aaa;
+      padding: 0px 3px 0px 3px;
+      white-space: nowrap;
+      font-size: 0.85em;
     }
 
     th {
-      border-right: solid 1px black;
-      border-left: solid 1px black;
+      white-space: normal;
+      padding: 3px 3px 3px 3px;
+      font-size: 0.9em;
     }
 
+    tr:hover {
+      background-color: #c8c8c8;
+    }
     /*]]>*/
     </style>
     <script type="text/javascript" src="/assets/scripts.js" xml:space="preserve">

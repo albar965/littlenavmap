@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <QColor>
 #include <QVector>
+#include <QRect>
 
 namespace atools {
 namespace geo {
@@ -43,7 +44,7 @@ class TextPlacement
   Q_DECLARE_TR_FUNCTIONS(TextPlacement)
 
 public:
-  TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter);
+  TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter, const QRect& screenRectParam);
 
   /* Prepare for drawTextAlongLines and also fills data for getVisibleStartPoints and getStartPoints.
    * Lines do not have to form a connected linestring. */
@@ -77,15 +78,6 @@ public:
    */
   bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
                    float distanceMeter, int textWidth, int textHeight, int& x, int& y, float *bearing);
-
-  /* Find text position along a rhumb line route
-   *  @param x,y resulting text position
-   *  @param pos1,pos2 start and end coordinates of the line
-   *  @param distanceMeter distance between points
-   */
-  bool findTextPosRhumb(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
-                        float distanceMeter, int textWidth, int textHeight,
-                        int& x, int& y);
 
   /* Bit array indicating which start point is visible or not.  Filled by calculateTextAlongLines */
   const QBitArray& getVisibleStartPoints() const
@@ -156,6 +148,8 @@ private:
   float lineWidth = 10.f;
   QVector<QColor> colors;
   QVector<QColor> colors2;
+
+  QRect screenRect;
 };
 
 #endif // LITTLENAVMAP_TEXTPLACEMENT_H

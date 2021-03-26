@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ class WeatherReporter :
 public:
   /* @param type flight simulator type needed to find Active Sky weather file. */
   WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type);
-  virtual ~WeatherReporter();
+  virtual ~WeatherReporter() override;
 
   /*
    * @return Active Sky metar or empty if Active Sky was not found or the airport has no weather report
@@ -90,7 +90,7 @@ public:
    * @return VATSIM metar from cache or empty if not entry was found in the cache. Once the request was
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
    */
-  QString getVatsimMetar(const QString& airportIcao);
+  atools::fs::weather::MetarResult getVatsimMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /*
    * @return IVAO metar from downloaded file or empty if airport has not report.
@@ -165,6 +165,7 @@ signals:
 
 private:
   void weatherDownloadFailed(const QString& error, int errorCode, QString url);
+  void weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
   void activeSkyWeatherFileChanged(const QString& path);
   void xplaneWeatherFileChanged();
@@ -180,13 +181,21 @@ private:
   void createFsWatcher();
   void initXplane();
 
+  /* From download finished signals */
+  void noaaWeatherUpdated();
+  void ivaoWeatherUpdated();
+  void vatsimWeatherUpdated();
+
+  /* Reset the error timer in all weather downloaders */
+  void resetErrorState();
+
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
   /* Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used */
   void updateTimeouts();
 
   atools::fs::weather::NoaaWeatherDownloader *noaaWeather = nullptr;
-  atools::fs::weather::WeatherNetSingle *vatsimWeather = nullptr;
+  atools::fs::weather::WeatherNetDownload *vatsimWeather = nullptr;
   atools::fs::weather::WeatherNetDownload *ivaoWeather = nullptr;
 
   QHash<QString, QString> activeSkyMetars;

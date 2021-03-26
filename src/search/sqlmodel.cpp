@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 
 #include "gui/application.h"
 #include "gui/errorhandler.h"
-#include "search/columnlist.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "exception.h"
 #include "search/column.h"
+#include "search/columnlist.h"
 #include "sql/sqlrecord.h"
 
 #include <QLineEdit>
@@ -48,6 +48,13 @@ SqlModel::SqlModel(QWidget *parent, SqlDatabase *sqlDb, const ColumnList *column
 
 SqlModel::~SqlModel()
 {
+}
+
+void SqlModel::filterByBuilder(const QueryBuilder& builder)
+{
+  qDebug() << Q_FUNC_INFO;
+  queryBuilder = builder;
+  buildQuery();
 }
 
 void SqlModel::filterIncluding(QModelIndex index)
@@ -577,6 +584,19 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
       queryWhere += buildWhereValue(cond);
   }
 
+  // Add where clause from callback ======================
+  if(queryBuilder.isValid())
+  {
+    QString sql = queryBuilder.build();
+    if(!sql.isEmpty())
+    {
+      if(numCond > 0)
+        queryWhere += " " + WHERE_OPERATOR + " ";
+      queryWhere += queryBuilder.build();
+      numCond++;
+    }
+  }
+
   if(boundingRect.isValid() && !overrideModeActive)
   {
 #ifdef DEBUG_INFORMATION
@@ -652,13 +672,9 @@ Qt::SortOrder SqlModel::getSortOrder() const
 }
 
 /* Default data handler - simply returns the value */
-QVariant SqlModel::defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
+QVariant SqlModel::defaultDataHandler(int, int, const Column *, const QVariant&,
                                       const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(colIndex);
-  Q_UNUSED(rowIndex);
-  Q_UNUSED(col);
-  Q_UNUSED(value);
   if(role == Qt::DisplayRole)
     return displayRoleValue;
 

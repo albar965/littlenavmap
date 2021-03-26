@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ class GeoDataLineString;
 }
 
 class MapWidget;
-class Route;
 
 /*
  * Paints all airspaces/boundaries.
@@ -34,13 +33,11 @@ class MapPainterAirspace :
   public MapPainter
 {
 public:
-  MapPainterAirspace(MapPaintWidget *mapPaintWidget, MapScale *mapScale, const Route *routeParam);
+  MapPainterAirspace(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterAirspace() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
-private:
-  const Route *route;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERAIRSPACE_H

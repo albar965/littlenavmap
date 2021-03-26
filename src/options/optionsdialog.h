@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "options/optiondata.h"
 
 #include <QDialog>
+#include <QLocale>
 
 namespace Ui {
 class Options;
@@ -37,6 +38,7 @@ class QSpinBox;
 class UnitStringTool;
 class QListWidgetItem;
 class QListWidget;
+class QFontDialog;
 
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
@@ -63,10 +65,19 @@ public:
   /* Show the dialog */
   virtual void open() override;
 
-  static bool isOverrideLanguage();
-  static bool isOverrideLocale();
+  /* Get override region settings options directly from settings file*/
+  static bool isOverrideRegion();
+
+  /* Get locale name like "en_US" or "de" directly from settings file */
+  static QString getLocale();
 
   QString selectCacheUserAirspace();
+
+  /* Test if a public network is used with a too low update rate */
+  void checkOfficialOnlineUrls();
+
+  /* Enable or disable tooltips changed */
+  void updateTooltipOption();
 
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
@@ -120,7 +131,6 @@ private:
   void testWeatherVatsimUrlClicked();
   void testWeatherIvaoUrlClicked();
   void testWeatherNoaaWindUrlClicked();
-  void testWeatherUrl(const QString& url);
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);
   void flightplanColorClicked();
@@ -151,6 +161,9 @@ private:
   template<typename TYPE>
   void displayOptWidgetToOptionData(TYPE& type, const QHash<TYPE, QTreeWidgetItem *>& index) const;
 
+  void updateFontFromData();
+  void updateMapFontLabel();
+  void updateGuiFontLabel();
   void updateButtonColors();
   void updateCacheElevationStates();
   void updateCacheUserAirspaceStates();
@@ -158,16 +171,17 @@ private:
   void userAirspacePathSelectClicked();
   void checkUpdateClicked();
   void mapEmptyAirportsClicked(bool state);
-  void updateOnlineWidgetStatus();
-  void onlineTestStatusUrlClicked();
-  void onlineTestWhazzupUrlClicked();
-  void onlineTestUrl(const QString& url, bool statusFile);
   int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);
   void displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value);
   void updateNavOptions();
 
-  QVector<int> ringStrToVector(const QString& string) const;
+  /* Online networks */
+  void updateOnlineWidgetStatus();
+  void onlineTestStatusUrlClicked();
+  void onlineTestWhazzupUrlClicked();
+  void onlineTestUrl(const QString& url, bool statusFile);
 
+  /* Add a dialog page */
   QListWidgetItem *pageListItem(QListWidget *parent, const QString& text, const QString& tooltip = QString(),
                                 const QString& iconPath = QString());
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
@@ -186,6 +200,30 @@ private:
   /* Update web server with saved parameters */
   void updateWebOptionsFromData();
 
+  void mapClickAirportProcsToggled();
+
+  /* Fill combo box with available languages and select best match. English, otherwise.*/
+  void udpdateLanguageComboBox(const QString& guiLanguage);
+  void languageChanged(int);
+
+  /* Font selection for map and GUI */
+  void selectGuiFontClicked();
+  void resetGuiFontClicked();
+  void selectMapFontClicked();
+  void resetMapFontClicked();
+  void buildFontDialog();
+
+  void flightplanPatterShortClicked();
+  void flightplanPatterLongClicked();
+  void updateFlightplanExample();
+  void updateLinks();
+
+  /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
+   * Uses current locale to convert numbers and check min and max. */
+  QVector<float> rangeStringToFloat(const QString& rangeStr) const;
+  QString rangeFloatToString(const QVector<float>& ranges) const;
+
+  QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
   Ui::Options *ui;
@@ -197,11 +235,16 @@ private:
 
   // Maps options flags to items in the tree widget
   QHash<optsd::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
+  QHash<optsd::DisplayOptionsAirport, QTreeWidgetItem *> displayOptItemIndexAirport;
   QHash<optsd::DisplayOptionsNavAid, QTreeWidgetItem *> displayOptItemIndexNavAid;
   QHash<optsd::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
+  QHash<optsd::DisplayOptionsMeasurement, QTreeWidgetItem *> displayOptItemIndexMeasurement;
   QHash<optsd::DisplayOptionsRoute, QTreeWidgetItem *> displayOptItemIndexRoute;
 
   UnitStringTool *units = nullptr;
+
+  QFontDialog *fontDialog = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

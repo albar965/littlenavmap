@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RouteStringDialog</class>
+ <widget class="QDialog" name="RouteStringDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>685</width>
+    <height>344</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>2</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Little Navmap - New Flight Plan from Route Description</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_5">
+   <item>
+    <widget class="QSplitter" name="splitterRouteString">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="handleWidth">
+      <number>6</number>
+     </property>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayoutRouteStringTop">
+       <item>
+        <widget class="QPlainTextEdit" name="plainTextEditRouteString">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Format is: FROM[ETD] [SPEEDALT] [SID][.TRANS] [ENROUTE] [STAR][.TRANS] TO[ETA] [ALTERNATES]
+FROM and TO airports are required, everything else is optional.
+SPEEDALT describes flight plan cruise altitude and speed.
+ENROUTE is a space separated list of navaids, airway/navaid combinations or user defined waypoints.
+ALTERNATES is a list of alternate airports.
+ETD and ETA are ignored.
+</string>
+         </property>
+         <property name="tabChangesFocus">
+          <bool>true</bool>
+         </property>
+         <property name="plainText">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>Enter flight plan route description.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonRouteStringToClipboard">
+           <property name="toolTip">
+            <string>Copy the flight plan route description to the clipboard.</string>
+           </property>
+           <property name="text">
+            <string>&amp;To Clipboard</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonRouteStringFromClipboard">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Paste flight plan route description from clipboard.</string>
+           </property>
+           <property name="text">
+            <string>&amp;From Clipboard</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonRouteStringUpdate">
+           <property name="toolTip">
+            <string>Update the string from the current flight plan after option changes.</string>
+           </property>
+           <property name="text">
+            <string>Update from Flight &amp;Plan</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonRouteStringRead">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Read the flight plan route description.</string>
+           </property>
+           <property name="text">
+            <string>&amp;Read Route Description</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="comboBoxRouteStringFlightplanType">
+           <property name="toolTip">
+            <string>Create a VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) flight plan</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>IFR</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>VFR</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="toolButtonRouteStringOptions">
+           <property name="toolTip">
+            <string>Options for generated route string</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../littlenavmap.qrc">
+             <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_2">
+      <layout class="QVBoxLayout" name="verticalLayoutRouteStringBottom">
+       <item>
+        <widget class="QTextEdit" name="textEditRouteStringErrors">
+         <property name="acceptDrops">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Display messages, warnings or errors when reading the route description.</string>
+         </property>
+         <property name="tabChangesFocus">
+          <bool>true</bool>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+         <property name="placeholderText">
+          <string>Flight plan route description not read.</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBoxRouteString">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>plainTextEditRouteString</tabstop>
+  <tabstop>pushButtonRouteStringToClipboard</tabstop>
+  <tabstop>pushButtonRouteStringFromClipboard</tabstop>
+  <tabstop>pushButtonRouteStringUpdate</tabstop>
+  <tabstop>pushButtonRouteStringRead</tabstop>
+  <tabstop>comboBoxRouteStringFlightplanType</tabstop>
+  <tabstop>toolButtonRouteStringOptions</tabstop>
+  <tabstop>textEditRouteStringErrors</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../littlenavmap.qrc"/>
+ </resources>
+ <connections/>
+</ui>

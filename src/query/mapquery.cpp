@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,22 +21,17 @@
 #include "common/maptypesfactory.h"
 #include "common/maptools.h"
 #include "common/proctypes.h"
-#include "fs/common/binarygeometry.h"
+#include "mapgui/maplayer.h"
 #include "online/onlinedatacontroller.h"
 #include "airspace/airspacecontroller.h"
 #include "logbook/logdatacontroller.h"
 #include "userdata/userdatacontroller.h"
-#include "sql/sqlquery.h"
-#include "sql/sqlrecord.h"
 #include "query/airportquery.h"
+#include "query/airwaytrackquery.h"
+#include "query/waypointtrackquery.h"
 #include "navapp.h"
-#include "common/maptools.h"
 #include "settings/settings.h"
-#include "fs/common/xpgeometry.h"
 #include "db/databasemanager.h"
-
-#include <QDataStream>
-#include <QRegularExpression>
 
 using namespace Marble;
 using namespace atools::sql;
@@ -51,14 +46,27 @@ using map::MapParking;
 using map::MapHelipad;
 using map::MapUserpoint;
 
-inline uint qHash(const MapQuery::NearestCacheKeyNavaid& key)
-{
-  return qHash(key.pos) ^ qHash(key.type) ^ qHash(key.distanceNm);
-}
-
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
-int MapQuery::queryMaxRows = 5000;
+int MapQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
+
+// Queries only used for export ================================================
+// Get assigned airport for navaid by name, region and coordinate closest to position
+static QLatin1String AIRPORTIDENT_FROM_WAYPOINT("select a.ident, w.lonx, w.laty "
+                                                "from waypoint w join airport a on a.airport_id = w.airport_id "
+                                                "where w. ident = :ident and w.region like :region "
+                                                "order by (abs(w.lonx - :lonx) + abs(w.laty - :laty)) limit 1");
+
+static QLatin1String AIRPORTIDENT_FROM_VOR("select a.ident, v.lonx, v.laty "
+                                           "from vor v join airport a on a.airport_id = v.airport_id "
+                                           "where v.ident = :ident and v.region like :region "
+                                           "order by (abs(v.lonx - :lonx) + abs(v.laty - :laty)) limit 1");
+
+static QLatin1String AIRPORTIDENT_FROM_NDB("select a.ident, n.lonx, n.laty "
+                                           "from ndb n join airport a on a.airport_id = n.airport_id "
+                                           "where n.ident = :ident and n.region like :region "
+                                           "order by (abs(n.lonx - :lonx) + abs(n.laty - :laty)) limit 1");
+static float MAX_AIRPORT_IDENT_DISTANCE_M = atools::geo::nmToMeter(5.f);
 
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
   : dbSim(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
@@ -72,8 +80,7 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDa
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRowLimit", 5000).toInt();
+  queryMaxRows = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "MapQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 }
 
 MapQuery::~MapQuery()
@@ -105,7 +112,7 @@ map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport)
   if(airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.position);
     return retval;
   }
   return airport;
@@ -116,7 +123,7 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
   if(!airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.position);
     return retval;
   }
   return airport;
@@ -125,13 +132,13 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
 void MapQuery::getAirportSimReplace(map::MapAirport& airport)
 {
   if(airport.navdata)
-    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.position);
 }
 
 void MapQuery::getAirportNavReplace(map::MapAirport& airport)
 {
   if(!airport.navdata)
-    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.position);
 }
 
 void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)
@@ -172,25 +179,25 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
   ndbNearestQuery->finish();
 }
 
-map::MapSearchResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapObjectTypes type,
-                                                       int maxIls, float maxIlsDist)
+map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapTypes type,
+                                                 int maxIls, float maxIlsDist)
 {
-  map::MapSearchResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
+  map::MapResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
   if(nearest == nullptr || nearest->size() < 5)
     nearest = nearestNavaidsInternal(pos, distanceNm * 4.f, type, maxIls, maxIlsDist);
   return nearest;
 }
 
-map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapObjectTypes type,
-                                                            int maxIls, float maxIlsDist)
+map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapTypes type,
+                                                      int maxIls, float maxIlsDist)
 {
-  NearestCacheKeyNavaid key = {pos, distanceNm, type};
+  query::NearestCacheKeyNavaid key = {pos, distanceNm, type};
 
-  map::MapSearchResultIndex *result = nearestNavaidCache.object(key);
+  map::MapResultIndex *result = nearestNavaidCache.object(key);
 
   if(result == nullptr)
   {
-    map::MapSearchResult res;
+    map::MapResult res;
 
     // Create a rectangle that roughly covers the requested region
     atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm));
@@ -215,11 +222,22 @@ map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, floa
 
     if(type & map::WAYPOINT)
     {
-      query::fetchObjectsForRect(rect, waypointsByRectQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQuery()->getWaypointsByRectQueryTrack(),
+                                 [ =, &res](atools::sql::SqlQuery *query) -> void {
         map::MapWaypoint obj;
-        mapTypesFactory->fillWaypoint(query->record(), obj);
+        mapTypesFactory->fillWaypoint(query->record(), obj, true /* track database */);
         res.waypoints.append(obj);
       });
+
+      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQuery()->getWaypointsByRectQuery(),
+                                 [ =, &res](atools::sql::SqlQuery *query) -> void {
+        map::MapWaypoint obj;
+        mapTypesFactory->fillWaypoint(query->record(), obj, false /* track database */);
+
+        if(!res.waypoints.contains(obj))
+          res.waypoints.append(obj);
+      });
+      maptools::removeDuplicatesById(res.waypoints);
     }
 
     if(type & map::ILS)
@@ -236,143 +254,21 @@ map::MapSearchResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, floa
       res.ils.append(ilsRes.mid(0, maxIls));
     }
 
-    result = new map::MapSearchResultIndex;
-    result->addFromResult(res);
+    result = new map::MapResultIndex;
+    result->add(res);
 
     // Remove all that are too far away
-    result->removeByDistance(pos, distanceNm);
+    result->remove(pos, distanceNm);
 
     // Sort the rest by distance
-    result->sortByDistance(pos, true /* sortNearToFar */);
+    result->sort(pos, true /* sortNearToFar */);
 
     nearestNavaidCache.insert(key, result);
   }
   return result;
 }
 
-void MapQuery::getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId)
-{
-  airwayByWaypointIdQuery->bindValue(":id", waypointId);
-  airwayByWaypointIdQuery->exec();
-  while(airwayByWaypointIdQuery->next())
-  {
-    map::MapAirway airway;
-    mapTypesFactory->fillAirway(airwayByWaypointIdQuery->record(), airway);
-    airways.append(airway);
-  }
-}
-
-void MapQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
-                                     const QString& waypointIdent)
-{
-  airwayWaypointByIdentQuery->bindValue(":waypoint", waypointIdent.isEmpty() ? "%" : waypointIdent);
-  airwayWaypointByIdentQuery->bindValue(":airway", airwayName.isEmpty() ? "%" : airwayName);
-  airwayWaypointByIdentQuery->exec();
-  while(airwayWaypointByIdentQuery->next())
-  {
-    map::MapWaypoint waypoint;
-    mapTypesFactory->fillWaypoint(airwayWaypointByIdentQuery->record(), waypoint);
-    waypoints.append(waypoint);
-  }
-}
-
-void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName)
-{
-  airwayWaypointsQuery->bindValue(":name", airwayName);
-  airwayWaypointsQuery->exec();
-
-  // Collect records first
-  SqlRecordVector records;
-  while(airwayWaypointsQuery->next())
-    records.append(airwayWaypointsQuery->record());
-
-  for(int i = 0; i < records.size(); i++)
-  {
-    const SqlRecord& rec = records.at(i);
-
-    int fragment = rec.valueInt("airway_fragment_no");
-    // Check if the next fragment is different
-    int nextFragment = i < records.size() - 1 ?
-                       records.at(i + 1).valueInt("airway_fragment_no") : -1;
-
-    map::MapAirwayWaypoint aw;
-    aw.airwayFragmentId = fragment;
-    aw.seqNum = rec.valueInt("sequence_no");
-    aw.airwayId = rec.valueInt("airway_id");
-
-    // Add from waypoint
-    map::MapSearchResult result;
-    int fromId = rec.valueInt("from_waypoint_id");
-    getMapObjectById(result, map::WAYPOINT, map::AIRSPACE_SRC_NONE, fromId, false /* airport from nav database */);
-    if(!result.waypoints.isEmpty())
-      aw.waypoint = result.waypoints.first();
-    else
-      qWarning() << "getWaypointListForAirwayName: no waypoint for" << airwayName << "wp id" << fromId;
-    waypoints.append(aw);
-
-    if(i == records.size() - 1 || fragment != nextFragment)
-    {
-      // Add to waypoint if this is the last one or if the fragment is about to change
-      result.waypoints.clear();
-      int toId = rec.valueInt("to_waypoint_id");
-      getMapObjectById(result, map::WAYPOINT, map::AIRSPACE_SRC_NONE, toId, false /* airport from nav database */);
-      if(!result.waypoints.isEmpty())
-        aw.waypoint = result.waypoints.first();
-      else
-        qWarning() << "getWaypointListForAirwayName: no waypoint for" << airwayName << "wp id" << toId;
-      waypoints.append(aw);
-    }
-  }
-}
-
-void MapQuery::getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding, const QString& airwayName,
-                             int fragment)
-{
-  airwayFullQuery->bindValue(":name", airwayName);
-  airwayFullQuery->bindValue(":fragment", fragment);
-  airwayFullQuery->exec();
-  while(airwayFullQuery->next())
-  {
-    map::MapAirway airway;
-    mapTypesFactory->fillAirway(airwayFullQuery->record(), airway);
-    bounding.extend(airway.bounding);
-    airways.append(airway);
-  }
-}
-
-map::MapAirway MapQuery::getAirwayById(int airwayId)
-{
-  map::MapAirway airway;
-  getAirwayById(airway, airwayId);
-  return airway;
-}
-
-void MapQuery::getAirwayById(map::MapAirway& airway, int airwayId)
-{
-  airwayByIdQuery->bindValue(":id", airwayId);
-  airwayByIdQuery->exec();
-  if(airwayByIdQuery->next())
-    mapTypesFactory->fillAirway(airwayByIdQuery->record(), airway);
-  airwayByIdQuery->finish();
-
-}
-
-void MapQuery::getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName, const QString& waypoint1,
-                                          const QString& waypoint2)
-{
-  if(airwayName.isEmpty() || waypoint1.isEmpty() || waypoint2.isEmpty())
-    return;
-
-  airwayByNameAndWaypointQuery->bindValue(":airway", airwayName);
-  airwayByNameAndWaypointQuery->bindValue(":ident1", waypoint1);
-  airwayByNameAndWaypointQuery->bindValue(":ident2", waypoint2);
-  airwayByNameAndWaypointQuery->exec();
-  if(airwayByNameAndWaypointQuery->next())
-    mapTypesFactory->fillAirway(airwayByNameAndWaypointQuery->record(), airway);
-  airwayByNameAndWaypointQuery->finish();
-}
-
-void MapQuery::getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
+void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
                                    const QString& ident, const QString& region, const QString& airport,
                                    const Pos& sortByDistancePos, float maxDistance, bool airportFromNavDatabase)
 {
@@ -380,14 +276,14 @@ void MapQuery::getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectT
                            airportFromNavDatabase);
 }
 
-void MapQuery::getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type, const QString& ident,
+void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
                                    const QString& region, const QString& airport, bool airportFromNavDatabase)
 {
   mapObjectByIdentInternal(result, type, ident, region, airport, EMPTY_POS, map::INVALID_DISTANCE_VALUE,
                            airportFromNavDatabase);
 }
 
-void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapObjectTypes type, const QString& ident,
+void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type, const QString& ident,
                                         const QString& region, const QString& airport, const Pos& sortByDistancePos,
                                         float maxDistance, bool airportFromNavDatabase)
 {
@@ -399,6 +295,15 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
       NavApp::getAirportQueryNav()->getAirportByIdent(ap, ident);
     else
       NavApp::getAirportQuerySim()->getAirportByIdent(ap, ident);
+
+    if(!ap.isValid())
+    {
+      // Try to query using the real ICAO ident vs. X-Plane artifical ids
+      if(airportFromNavDatabase)
+        NavApp::getAirportQueryNav()->getAirportByIcao(ap, ident);
+      else
+        NavApp::getAirportQuerySim()->getAirportByIcao(ap, ident);
+    }
 
     if(ap.isValid())
     {
@@ -440,15 +345,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
 
   if(type & map::WAYPOINT)
   {
-    waypointByIdentQuery->bindValue(":ident", ident);
-    waypointByIdentQuery->bindValue(":region", region.isEmpty() ? "%" : region);
-    waypointByIdentQuery->exec();
-    while(waypointByIdentQuery->next())
-    {
-      map::MapWaypoint wp;
-      mapTypesFactory->fillWaypoint(waypointByIdentQuery->record(), wp);
-      result.waypoints.append(wp);
-    }
+    NavApp::getWaypointTrackQuery()->getWaypointByIdent(result.waypoints, ident, region);
     maptools::sortByDistance(result.waypoints, sortByDistancePos);
     maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistance);
   }
@@ -477,19 +374,10 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
   }
 
   if(type & map::AIRWAY)
-  {
-    airwayByNameQuery->bindValue(":name", ident);
-    airwayByNameQuery->exec();
-    while(airwayByNameQuery->next())
-    {
-      map::MapAirway airway;
-      mapTypesFactory->fillAirway(airwayByNameQuery->record(), airway);
-      result.airways.append(airway);
-    }
-  }
+    NavApp::getAirwayTrackQuery()->getAirwaysByName(result.airways, ident);
 }
 
-void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, map::MapAirspaceSources src,
+void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src,
                                 int id, bool airportFromNavDatabase)
 {
   if(type == map::AIRPORT)
@@ -514,7 +402,7 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
   }
   else if(type == map::WAYPOINT)
   {
-    map::MapWaypoint waypoint = getWaypointById(id);
+    map::MapWaypoint waypoint = NavApp::getWaypointTrackQuery()->getWaypointById(id);
     if(waypoint.isValid())
       result.waypoints.append(waypoint);
   }
@@ -555,11 +443,11 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
     atools::fs::sc::SimConnectAircraft aircraft;
     NavApp::getOnlinedataController()->getClientAircraftById(aircraft, id);
     if(aircraft.isValid())
-      result.onlineAircraft.append(aircraft);
+      result.onlineAircraft.append(map::MapOnlineAircraft(aircraft));
   }
   else if(type == map::AIRWAY)
   {
-    map::MapAirway airway = getAirwayById(id);
+    map::MapAirway airway = NavApp::getAirwayTrackQuery()->getAirwayById(id);
     if(airway.isValid())
       result.airways.append(airway);
   }
@@ -625,21 +513,9 @@ QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent
   return ilsList;
 }
 
-map::MapWaypoint MapQuery::getWaypointById(int id)
-{
-  map::MapWaypoint wp;
-  waypointByIdQuery->bindValue(":id", id);
-  waypointByIdQuery->exec();
-  if(waypointByIdQuery->next())
-    mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
-  waypointByIdQuery->finish();
-  return wp;
-}
-
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                       bool airportDiagram, map::MapObjectTypes types,
-                                       int xs, int ys, int screenDistance,
-                                       map::MapSearchResult& result)
+                                       bool airportDiagram, map::MapTypes types,
+                                       int xs, int ys, int screenDistance, map::MapResult& result)
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
@@ -690,17 +566,6 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     }
   }
 
-  if(mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT))
-  {
-    for(int i = waypointCache.list.size() - 1; i >= 0; i--)
-    {
-      const MapWaypoint& wp = waypointCache.list.at(i);
-      if(conv.wToS(wp.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
-    }
-  }
-
   // No flag since visibility is defined by type
   if(mapLayer->isUserpoint())
   {
@@ -714,18 +579,10 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   }
 
   // Add waypoints that displayed together with airways =================================
-  if(mapLayer->isAirwayWaypoint() && (types.testFlag(map::AIRWAYV) || types.testFlag(map::AIRWAYJ)))
-  {
-    for(int i = waypointCache.list.size() - 1; i >= 0; i--)
-    {
-      const MapWaypoint& wp = waypointCache.list.at(i);
-      if((wp.hasVictorAirways && types.testFlag(map::AIRWAYV)) ||
-         (wp.hasJetAirways && types.testFlag(map::AIRWAYJ)))
-        if(conv.wToS(wp.position, x, y))
-          if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-            insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
-    }
-  }
+  if((mapLayer->isAirwayWaypoint() && (types.testFlag(map::AIRWAYV) || types.testFlag(map::AIRWAYJ))) ||
+     (mapLayer->isTrackWaypoint() && types.testFlag(map::TRACK)) ||
+     (mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT)))
+    NavApp::getWaypointTrackQuery()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
 
   if(mapLayer->isMarker() && types.testFlag(map::MARKER))
   {
@@ -757,9 +614,8 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
       QHash<int, QList<map::MapParking> > parkingCache = NavApp::getAirportQuerySim()->getParkingCache();
 
       // Also check parking and helipads in airport diagrams
-      for(int id : parkingCache.keys())
+      for(const QList<MapParking>& parkings : parkingCache)
       {
-        const QList<MapParking>& parkings = parkingCache.value(id);
         for(const MapParking& p : parkings)
         {
           if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
@@ -769,9 +625,8 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
 
       QHash<int, QList<map::MapHelipad> > helipadCache = NavApp::getAirportQuerySim()->getHelipadCache();
 
-      for(int id : helipadCache.keys())
+      for(const QList<MapHelipad>& helipads : helipadCache)
       {
-        const QList<MapHelipad>& helipads = helipadCache.value(id);
         for(const MapHelipad& p : helipads)
         {
           if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
@@ -783,62 +638,44 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
 }
 
 const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
-                                                    const MapLayer *mapLayer, bool lazy)
+                                                    const MapLayer *mapLayer, bool lazy, map::MapTypes types,
+                                                    bool& overflow)
 {
+  // Get flags for running separate queries for add-on and normal airports
+  bool addon = types.testFlag(map::AIRPORT_ADDON);
+  bool normal = types & (map::AIRPORT_HARD | map::AIRPORT_SOFT | map::AIRPORT_EMPTY);
+
   airportCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+                           [ = ](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
-    return curLayer->hasSameQueryParametersAirport(newLayer);
+    return curLayer->hasSameQueryParametersAirport(newLayer) &&
+    // Invalidate cache if settings differ
+    airportCacheAddonFlag == addon && airportCacheNormalFlag == normal;
   });
+
+  airportCacheAddonFlag = addon;
+  airportCacheNormalFlag = normal;
 
   switch(mapLayer->getDataSource())
   {
     case layer::ALL:
       airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */);
+      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
 
     case layer::MEDIUM:
       // Airports > 4000 ft
-      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */);
+      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */, addon, normal, overflow);
 
     case layer::LARGE:
       // Airports > 8000 ft
-      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */);
+      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */, addon, normal, overflow);
 
   }
   return nullptr;
 }
 
-const QList<map::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect,
-                                                      const MapLayer *mapLayer, bool lazy)
-{
-  waypointCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
-  {
-    return curLayer->hasSameQueryParametersWaypoint(newLayer);
-  });
-
-  if(waypointCache.list.isEmpty() && !lazy)
-  {
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
-    {
-      query::bindRect(r, waypointsByRectQuery);
-      waypointsByRectQuery->exec();
-      while(waypointsByRectQuery->next())
-      {
-        map::MapWaypoint wp;
-        mapTypesFactory->fillWaypoint(waypointsByRectQuery->record(), wp);
-        waypointCache.list.append(wp);
-      }
-    }
-  }
-  waypointCache.validate(queryMaxRows);
-  return &waypointCache.list;
-}
-
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                            bool lazy)
+                                            bool lazy, bool& overflow)
 {
   vorCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -861,12 +698,12 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
       }
     }
   }
-  vorCache.validate(queryMaxRows);
+  overflow = vorCache.validate(queryMaxRows);
   return &vorCache.list;
 }
 
 const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                            bool lazy)
+                                            bool lazy, bool& overflow)
 {
   ndbCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -889,7 +726,7 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
       }
     }
   }
-  ndbCache.validate(queryMaxRows);
+  overflow = ndbCache.validate(queryMaxRows);
   return &ndbCache.list;
 }
 
@@ -948,8 +785,54 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
   return retval;
 }
 
+QString MapQuery::getAirportIdentFromWaypoint(const QString& ident, const QString& region, const Pos& pos,
+                                              bool found)
+{
+  return airportIdentFromQuery(AIRPORTIDENT_FROM_WAYPOINT, ident, region, pos, found);
+}
+
+QString MapQuery::getAirportIdentFromVor(const QString& ident, const QString& region, const Pos& pos, bool found)
+{
+  return airportIdentFromQuery(AIRPORTIDENT_FROM_VOR, ident, region, pos, found);
+}
+
+QString MapQuery::getAirportIdentFromNdb(const QString& ident, const QString& region, const Pos& pos, bool found)
+{
+  return airportIdentFromQuery(AIRPORTIDENT_FROM_NDB, ident, region, pos, found);
+}
+
+QString MapQuery::airportIdentFromQuery(const QString& queryStr, const QString& ident, const QString& region,
+                                        const Pos& pos, bool& found)
+{
+  found = false;
+
+  // Query for nearest navaid
+  SqlQuery query(dbNav);
+  query.prepare(queryStr);
+  query.bindValue(":ident", ident);
+  query.bindValue(":region", region.isEmpty() ? "%" : region);
+  query.bindValue(":lonx", pos.getLonX());
+  query.bindValue(":laty", pos.getLatY());
+
+  QString airport;
+  query.exec();
+  if(query.next())
+  {
+    // Check if max distance is not exceeded
+    Pos navaidPos(query.valueFloat("lonx"), query.valueFloat("laty"));
+    if(pos.distanceMeterTo(pos) < MAX_AIRPORT_IDENT_DISTANCE_M)
+    {
+      // Get airport ident and record that a navaid was found
+      found = true;
+      airport = query.valueStr("ident");
+    }
+  }
+  query.finish();
+  return airport;
+}
+
 const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                  bool lazy)
+                                                  bool lazy, bool& overflow)
 {
   markerCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -972,11 +855,11 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
       }
     }
   }
-  markerCache.validate(queryMaxRows);
+  overflow = markerCache.validate(queryMaxRows);
   return &markerCache.list;
 }
 
-const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy)
+const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   ilsCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -1007,40 +890,8 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
       }
     }
   }
-  ilsCache.validate(queryMaxRows);
+  overflow = ilsCache.validate(queryMaxRows);
   return &ilsCache.list;
-}
-
-const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
-{
-  airwayCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                          [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
-  {
-    return curLayer->hasSameQueryParametersAirway(newLayer);
-  });
-
-  if(airwayCache.list.isEmpty() && !lazy)
-  {
-    QSet<int> ids;
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
-    {
-      query::bindRect(r, airwayByRectQuery);
-      airwayByRectQuery->exec();
-      while(airwayByRectQuery->next())
-      {
-        if(ids.contains(airwayByRectQuery->valueInt("airway_id")))
-          continue;
-
-        map::MapAirway airway;
-        mapTypesFactory->fillAirway(airwayByRectQuery->record(), airway);
-        airwayCache.list.append(airway);
-        ids.insert(airway.id);
-      }
-    }
-  }
-  airwayCache.validate(queryMaxRows);
-  return &airwayCache.list;
 }
 
 /*
@@ -1052,7 +903,7 @@ const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, 
  */
 const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                       atools::sql::SqlQuery *query,
-                                                      bool lazy, bool overview)
+                                                      bool lazy, bool overview, bool addon, bool normal, bool& overflow)
 {
   if(airportCache.list.isEmpty() && !lazy)
   {
@@ -1060,24 +911,52 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindRect(r, query);
-      query->exec();
-      while(query->next())
-      {
-        map::MapAirport ap;
-        if(overview)
-          // Fill only a part of the object
-          mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
-                                                  NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
-        else
-          mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
-                                       NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+      // Avoid duplicates between both queries
+      QSet<int> ids;
 
-        airportCache.list.append(ap);
+      // Get normal airports ==========
+      if(normal)
+      {
+        query::bindRect(r, query);
+        query->exec();
+        while(query->next())
+        {
+          map::MapAirport ap;
+          if(overview)
+            // Fill only a part of the object
+            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
+                                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+          else
+            mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
+                                         NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+
+          ids.insert(ap.id);
+          airportCache.list.append(ap);
+        }
+      }
+
+      // Get add-on airports ==========
+      if(addon)
+      {
+        query::bindRect(r, airportAddonByRectQuery);
+        airportAddonByRectQuery->exec();
+        while(airportAddonByRectQuery->next())
+        {
+          map::MapAirport ap;
+          if(overview)
+            // Fill only a part of the object
+            mapTypesFactory->fillAirportForOverview(airportAddonByRectQuery->record(), ap, navdata,
+                                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+          else
+            mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), ap, true /* complete */, navdata,
+                                         NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+          if(!ids.contains(ap.id))
+            airportCache.list.append(ap);
+        }
       }
     }
   }
-  airportCache.validate(queryMaxRows);
+  overflow = airportCache.validate(queryMaxRows);
   return &airportCache.list;
 }
 
@@ -1121,7 +1000,7 @@ void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const 
                                     const map::MapAirport& airport, bool navData)
 {
   AirportQuery *aquery = navData ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
-  map::MapSearchResult result;
+  map::MapResult result;
 
   if(!name.isEmpty())
   {
@@ -1171,22 +1050,11 @@ void MapQuery::initQueries()
   QStringList const airportQueryBase = AirportQuery::airportColumns(dbSim);
   QStringList const airportQueryBaseOverview = AirportQuery::airportOverviewColumns(dbSim);
 
-  static const QString airwayQueryBase(
-    "airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
-    "direction, minimum_altitude, maximum_altitude, from_lonx, from_laty, to_lonx, to_laty ");
-
-  static const QString waypointQueryBase(
-    "waypoint_id, ident, region, type, num_victor_airway, num_jet_airway, "
-    "mag_var, lonx, laty ");
-
   static const QString vorQueryBase(
     "vor_id, ident, name, region, type, name, frequency, channel, range, dme_only, dme_altitude, "
     "mag_var, altitude, lonx, laty ");
   static const QString ndbQueryBase(
     "ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty ");
-
-  static const QString parkingQueryBase(
-    "parking_id, airport_id, type, name, airline_codes, number, radius, heading, has_jetway, lonx, laty ");
 
   static const QString ilsQueryBase(
     "ils_id, ident, name, region, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
@@ -1199,9 +1067,6 @@ void MapQuery::initQueries()
 
   ndbByIdentQuery = new SqlQuery(dbNav);
   ndbByIdentQuery->prepare("select " + ndbQueryBase + " from ndb where " + whereIdentRegion);
-
-  waypointByIdentQuery = new SqlQuery(dbNav);
-  waypointByIdentQuery->prepare("select " + waypointQueryBase + " from waypoint where " + whereIdentRegion);
 
   ilsByIdentQuery = new SqlQuery(dbSim);
   ilsByIdentQuery->prepare("select " + ilsQueryBase +
@@ -1235,9 +1100,6 @@ void MapQuery::initQueries()
   ndbNearestQuery->prepare(
     "select " + ndbQueryBase + " from ndb order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
 
-  waypointByIdQuery = new SqlQuery(dbNav);
-  waypointByIdQuery->prepare("select " + waypointQueryBase + " from waypoint where waypoint_id = :id");
-
   ilsByIdQuery = new SqlQuery(dbSim);
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
 
@@ -1250,6 +1112,10 @@ void MapQuery::initQueries()
     "select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
     " and longest_runway_length >= :minlength "
     + whereLimit);
+
+  airportAddonByRectQuery = new SqlQuery(dbSim);
+  airportAddonByRectQuery->prepare(
+    "select " + airportQueryBase.join(", ") + " from airport where " + whereRect + " and is_addon = 1 " + whereLimit);
 
   airportMediumByRectQuery = new SqlQuery(dbSim);
   airportMediumByRectQuery->prepare(
@@ -1265,10 +1131,6 @@ void MapQuery::initQueries()
     "select length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
     "from runway where airport_id = :airportId and length > 4000 " + whereLimit);
 
-  waypointsByRectQuery = new SqlQuery(dbNav);
-  waypointsByRectQuery->prepare(
-    "select " + waypointQueryBase + " from waypoint where " + whereRect + " " + whereLimit);
-
   vorsByRectQuery = new SqlQuery(dbNav);
   vorsByRectQuery->prepare("select " + vorQueryBase + " from vor where " + whereRect + " " + whereLimit);
 
@@ -1280,7 +1142,7 @@ void MapQuery::initQueries()
                                     "where " + whereRect + " and visible_from > :dist and type like :type " +
                                     whereLimit);
 
-  markersByRectQuery = new SqlQuery(dbNav);
+  markersByRectQuery = new SqlQuery(dbSim);
   markersByRectQuery->prepare(
     "select marker_id, type, ident, heading, lonx, laty "
     "from marker "
@@ -1288,66 +1150,21 @@ void MapQuery::initQueries()
 
   ilsByRectQuery = new SqlQuery(dbSim);
   ilsByRectQuery->prepare("select " + ilsQueryBase + " from ils where " + whereRect + " " + whereLimit);
-
-  // Get all that are crossing the anti meridian too and filter them out from the query result
-  airwayByRectQuery = new SqlQuery(dbNav);
-  airwayByRectQuery->prepare(
-    "select " + airwayQueryBase + ", right_lonx, left_lonx, bottom_laty, top_laty from airway where " +
-    "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) "
-    "or right_lonx < left_lonx");
-
-  airwayByWaypointIdQuery = new SqlQuery(dbNav);
-  airwayByWaypointIdQuery->prepare(
-    "select " + airwayQueryBase + " from airway where from_waypoint_id = :id or to_waypoint_id = :id");
-
-  airwayByNameAndWaypointQuery = new SqlQuery(dbNav);
-  airwayByNameAndWaypointQuery->prepare(
-    "select " + airwayQueryBase +
-    " from airway a join waypoint wf on a.from_waypoint_id = wf.waypoint_id "
-    "join waypoint wt on a.to_waypoint_id = wt.waypoint_id "
-    "where a.airway_name = :airway and ((wf.ident = :ident1 and wt.ident = :ident2) or "
-    " (wt.ident = :ident1 and wf.ident = :ident2))");
-
-  airwayByIdQuery = new SqlQuery(dbNav);
-  airwayByIdQuery->prepare("select " + airwayQueryBase + " from airway where airway_id = :id");
-
-  airwayWaypointByIdentQuery = new SqlQuery(dbNav);
-  airwayWaypointByIdentQuery->prepare("select " + waypointQueryBase +
-                                      " from waypoint w "
-                                      " join airway a on w.waypoint_id = a.from_waypoint_id "
-                                      "where w.ident = :waypoint and a.airway_name = :airway"
-                                      " union "
-                                      "select " + waypointQueryBase +
-                                      " from waypoint w "
-                                      " join airway a on w.waypoint_id = a.to_waypoint_id "
-                                      "where w.ident = :waypoint and a.airway_name = :airway");
-
-  airwayByNameQuery = new SqlQuery(dbNav);
-  airwayByNameQuery->prepare("select " + airwayQueryBase + " from airway where airway_name = :name");
-
-  airwayWaypointsQuery = new SqlQuery(dbNav);
-  airwayWaypointsQuery->prepare("select " + airwayQueryBase + " from airway where airway_name = :name "
-                                                              " order by airway_fragment_no, sequence_no");
-
-  airwayFullQuery = new SqlQuery(dbNav);
-  airwayFullQuery->prepare("select " + airwayQueryBase +
-                           " from airway where airway_fragment_no = :fragment and airway_name = :name");
-
 }
 
 void MapQuery::deInitQueries()
 {
   airportCache.clear();
-  waypointCache.clear();
   vorCache.clear();
   ndbCache.clear();
   markerCache.clear();
   ilsCache.clear();
-  airwayCache.clear();
   runwayOverwiewCache.clear();
 
   delete airportByRectQuery;
   airportByRectQuery = nullptr;
+  delete airportAddonByRectQuery;
+  airportAddonByRectQuery = nullptr;
   delete airportMediumByRectQuery;
   airportMediumByRectQuery = nullptr;
   delete airportLargeByRectQuery;
@@ -1356,8 +1173,6 @@ void MapQuery::deInitQueries()
   delete runwayOverviewQuery;
   runwayOverviewQuery = nullptr;
 
-  delete waypointsByRectQuery;
-  waypointsByRectQuery = nullptr;
   delete vorsByRectQuery;
   vorsByRectQuery = nullptr;
   delete ndbsByRectQuery;
@@ -1366,25 +1181,14 @@ void MapQuery::deInitQueries()
   markersByRectQuery = nullptr;
   delete ilsByRectQuery;
   ilsByRectQuery = nullptr;
-  delete airwayByRectQuery;
-  airwayByRectQuery = nullptr;
 
   delete userdataPointByRectQuery;
   userdataPointByRectQuery = nullptr;
-
-  delete airwayByWaypointIdQuery;
-  airwayByWaypointIdQuery = nullptr;
-  delete airwayByNameAndWaypointQuery;
-  airwayByNameAndWaypointQuery = nullptr;
-  delete airwayByIdQuery;
-  airwayByIdQuery = nullptr;
 
   delete vorByIdentQuery;
   vorByIdentQuery = nullptr;
   delete ndbByIdentQuery;
   ndbByIdentQuery = nullptr;
-  delete waypointByIdentQuery;
-  waypointByIdentQuery = nullptr;
   delete ilsByIdentQuery;
   ilsByIdentQuery = nullptr;
 
@@ -1403,24 +1207,9 @@ void MapQuery::deInitQueries()
   delete ndbNearestQuery;
   ndbNearestQuery = nullptr;
 
-  delete waypointByIdQuery;
-  waypointByIdQuery = nullptr;
-
   delete ilsByIdQuery;
   ilsByIdQuery = nullptr;
 
   delete ilsQuerySimByName;
   ilsQuerySimByName = nullptr;
-
-  delete airwayWaypointByIdentQuery;
-  airwayWaypointByIdentQuery = nullptr;
-
-  delete airwayByNameQuery;
-  airwayByNameQuery = nullptr;
-
-  delete airwayWaypointsQuery;
-  airwayWaypointsQuery = nullptr;
-
-  delete airwayFullQuery;
-  airwayFullQuery = nullptr;
 }

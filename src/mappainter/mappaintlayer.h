@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ class MapPainterMark;
 class MapPainterTop;
 class MapPainterRoute;
 class MapPainterAircraft;
+class MapPainterTrack;
 class MapPainterShip;
 class MapPainterUser;
 class MapPainterAltitude;
@@ -58,7 +59,7 @@ class MapPaintLayer :
   public Marble::LayerInterface
 {
 public:
-  MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries);
+  MapPaintLayer(MapPaintWidget *widget);
   virtual ~MapPaintLayer() override;
 
   void copySettings(const MapPaintLayer& other);
@@ -80,15 +81,20 @@ public:
   }
 
   /* Set the flags for map objects on or off depending on value show. Does not repaint */
-  void setShowMapObjects(map::MapObjectTypes type, bool show);
+  void setShowMapObjects(map::MapTypes type, bool show);
   void setShowMapObjectsDisplay(map::MapObjectDisplayTypes type, bool show);
   void setShowAirspaces(map::MapAirspaceFilter types);
 
   /* Changes the detail factor (range 5-15 default is 10 */
   void setDetailFactor(int factor);
 
+  int getDetailFactor() const
+  {
+    return detailFactor;
+  }
+
   /* Get all shown map objects like airports, VOR, NDB, etc. */
-  map::MapObjectTypes getShownMapObjects() const
+  map::MapTypes getShownMapObjects() const
   {
     return objectTypes;
   }
@@ -113,11 +119,6 @@ public:
     return mapScale;
   }
 
-  int getOverflow() const
-  {
-    return overflow;
-  }
-
   map::MapWeatherSource getWeatherSource() const
   {
     return weatherSource;
@@ -138,6 +139,21 @@ public:
     sunShading = value;
   }
 
+  bool isObjectOverflow() const
+  {
+    return context.isObjectOverflow();
+  }
+
+  int getObjectCount() const
+  {
+    return context.getObjectCount();
+  }
+
+  bool isQueryOverflow() const
+  {
+    return context.isQueryOverflow();
+  }
+
 private:
   void initMapLayerSettings();
   void updateLayers();
@@ -153,7 +169,7 @@ private:
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
   /* Map objects currently shown */
-  map::MapObjectTypes objectTypes = map::NONE;
+  map::MapTypes objectTypes = map::NONE;
   map::MapObjectDisplayTypes objectDisplayTypes = map::DISPLAY_TYPE_NONE;
   map::MapAirspaceFilter airspaceTypes;
   map::MapWeatherSource weatherSource = map::WEATHER_SOURCE_SIMULATOR;
@@ -164,6 +180,8 @@ private:
 
   bool databaseLoadStatus = false;
 
+  PaintContext context;
+
   /* All painters */
   MapPainterAirport *mapPainterAirport;
   MapPainterAirspace *mapPainterAirspace;
@@ -172,6 +190,7 @@ private:
   MapPainterMark *mapPainterMark;
   MapPainterRoute *mapPainterRoute;
   MapPainterAircraft *mapPainterAircraft;
+  MapPainterTrack *mapPainterTrack;
   MapPainterTop *mapPainterTop;
   MapPainterShip *mapPainterShip;
   MapPainterUser *mapPainterUser;
@@ -179,14 +198,10 @@ private:
   MapPainterWeather *mapPainterWeather;
   MapPainterWind *mapPainterWind;
 
-  /* Database source */
-  MapQuery *mapQuery = nullptr;
-
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
   MapPaintWidget *mapWidget = nullptr;
-  const MapLayer *mapLayer = nullptr, *mapLayerEffective = nullptr;
-  int overflow = 0;
+  const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
 
 };
 

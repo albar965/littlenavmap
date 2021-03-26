@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@
 class AircraftPerfController;
 class AircraftTrack;
 class AirportQuery;
+class AirwayTrackQuery;
+class WaypointTrackQuery;
+class TrackController;
 class AirspaceController;
 class AirspaceQuery;
 class ConnectClient;
@@ -58,6 +61,7 @@ class WeatherReporter;
 class WebController;
 class WindReporter;
 class MapMarkHandler;
+class TrackManager;
 
 namespace atools {
 namespace gui {
@@ -71,6 +75,10 @@ class Rect;
 
 namespace fs {
 
+namespace scenery {
+class LanguageJson;
+}
+
 namespace perf {
 class AircraftPerf;
 }
@@ -80,6 +88,7 @@ class Metar;
 namespace sc {
 class SimConnectUserAircraft;
 class SimConnectAircraft;
+class SimConnectData;
 }
 
 namespace userdata {
@@ -117,9 +126,11 @@ class MainWindow;
 class NavApp :
   public atools::gui::Application
 {
+  Q_DECLARE_TR_FUNCTIONS(NavApp)
+
 public:
   NavApp(int& argc, char **argv, int flags = ApplicationFlags);
-  virtual ~NavApp();
+  virtual ~NavApp() override;
 
   static NavApp *navAppInstance();
 
@@ -132,7 +143,7 @@ public:
   /* Deletes all aggregated objects */
   static void deInit();
 
-  static void checkForUpdates(int channelOpts, bool manuallyTriggered);
+  static void checkForUpdates(int channelOpts, bool manuallyTriggered, bool forceDebug);
 
   static void optionsChanged();
   static void preDatabaseLoad();
@@ -140,18 +151,29 @@ public:
 
   static Ui::MainWindow *getMainUi();
 
+  /* true if startup is completed and main window is visible */
+  static bool isMainWindowVisible();
+  static void setMainWindowVisible();
+
   static bool isFetchAiAircraft();
   static bool isFetchAiShip();
   static bool isConnected();
+  static bool isConnectedActive();
+  static bool isConnectedNetwork();
+  static bool isSimConnect();
   static bool isConnectedAndAircraft();
+  static bool isConnectedAndAircraftFlying();
   static bool isUserAircraftValid();
 
   static const atools::fs::sc::SimConnectUserAircraft& getUserAircraft();
+  static const atools::fs::sc::SimConnectData& getSimConnectData();
   static const atools::geo::Pos& getUserAircraftPos();
+
+  static void updateAllMaps();
 
   static const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft();
 
-  static map::MapObjectTypes getShownMapFeatures();
+  static map::MapTypes getShownMapFeatures();
   static map::MapAirspaceFilter getShownMapAirspaces();
 
   static AirportQuery *getAirportQuerySim();
@@ -164,6 +186,7 @@ public:
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
+  static void updateRouteCycleMetadata();
 
   /* Get a generic route string */
   static QString getRouteString();
@@ -179,6 +202,10 @@ public:
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
+  static QString getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);
+  static bool hasSimulator(atools::fs::FsPaths::SimulatorType type);
+  static bool hasAnyMsSimulator();
+  static bool hasXplaneSimulator();
 
   /* Selected navdatabase in menu */
   static bool isNavdataAll();
@@ -195,6 +222,7 @@ public:
   static QString getCurrentSimulatorShortName();
   static QString getCurrentSimulatorName();
   static bool hasSidStarInDatabase();
+  static bool hasRouteTypeInDatabase();
   static bool hasDataInDatabase();
 
   /* Simulator scenery data */
@@ -213,6 +241,8 @@ public:
   static atools::fs::userdata::LogdataManager *getLogdataManager();
   static LogdataSearch *getLogdataSearch();
 
+  static atools::sql::SqlDatabase *getDatabaseTrack();
+
   static atools::sql::SqlDatabase *getDatabaseUser();
   static atools::sql::SqlDatabase *getDatabaseUserAirspace();
   static atools::sql::SqlDatabase *getDatabaseLogbook();
@@ -227,12 +257,15 @@ public:
 
   static void updateWindowTitle();
   static void updateErrorLabels();
-  static void setStatusMessage(const QString& message);
+  static void setStatusMessage(const QString& message, bool addToLog = false);
 
   /* Get main window in different variations to avoid including it */
   static QWidget *getQMainWidget();
   static QMainWindow *getQMainWindow();
   static MainWindow *getMainWindow();
+
+  /* true if tooltips in menus are visible */
+  static bool isMenuToolTipsVisible();
 
   static MapWidget *getMapWidget();
   static MapPaintWidget *getMapPaintWidget();
@@ -242,6 +275,9 @@ public:
   static QString getMapCopyright();
 
   static DatabaseManager *getDatabaseManager();
+
+  /* MSFS translations from table "translation" */
+  static const atools::fs::scenery::LanguageJson& getLanguageIndex();
 
   static ConnectClient *getConnectClient();
 
@@ -258,6 +294,7 @@ public:
   static QString getOnlineNetworkTranslated();
   static bool isOnlineNetworkActive();
 
+  static bool isAircraftTrackEmpty();
   static const AircraftTrack& getAircraftTrack();
 
   static void initSplashScreen();
@@ -269,6 +306,9 @@ public:
   static bool isShuttingDown();
   static void setShuttingDown(bool value);
 
+  /* true if map window is maximized */
+  static bool isFullScreen();
+
   static float getMagVar(const atools::geo::Pos& pos, float defaultValue = 0.f);
 
   static UpdateHandler *getUpdateHandler();
@@ -279,6 +319,12 @@ public:
   static AircraftPerfController *getAircraftPerfController();
   static SearchController *getSearchController();
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
+
+  static TrackController *getTrackController();
+  static bool hasTracks();
+  static TrackManager *getTrackManager();
+  static AirwayTrackQuery *getAirwayTrackQuery();
+  static WaypointTrackQuery *getWaypointTrackQuery();
 
   static AirspaceController *getAirspaceController();
   static bool hasAnyAirspaces();
@@ -300,7 +346,7 @@ public:
   static map::MapWeatherSource getMapWeatherSource();
   static bool isMapWeatherShown();
 
-  static const QString& getCurrentRouteFilepath();
+  static const QString& getRouteFilepath();
   static const QString& getCurrentAircraftPerfFilepath();
 
   static WebController *getWebController();
@@ -308,6 +354,7 @@ public:
   static MapMarkHandler *getMapMarkHandler();
 
   static void showFlightPlan();
+  static void showRouteCalc();
   static void showAircraftPerformance();
   static void showLogbookSearch();
   static void showUserpointSearch();
@@ -334,6 +381,7 @@ private:
   static MapMarkHandler *mapMarkHandler;
   static LogdataController *logdataController;
   static OnlinedataController *onlinedataController;
+  static TrackController *trackController;
   static AircraftPerfController *aircraftPerfController;
   static AirspaceController *airspaceController;
 
@@ -352,6 +400,7 @@ private:
 
   static bool loadingDatabase;
   static bool shuttingDown;
+  static bool mainWindowVisible;
 };
 
 #endif // NAVAPPLICATION_H

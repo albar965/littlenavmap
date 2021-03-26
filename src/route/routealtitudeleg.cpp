@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -73,79 +73,108 @@ float RouteAltitudeLeg::cruiseDist() const
   return getDistanceTo() - descentDist() - climbDist();
 }
 
-void RouteAltitudeLeg::getFuelAndTimeFromDistToDestination(float& fuelToDist, float& timeToDist,
-                                                           float distFromStart) const
+float RouteAltitudeLeg::getFuelFromDistToEnd(float distFromDeparture) const
 {
-  // Time of all legs after this one
-  timeToDist = timeToDest - getTime();
-
-  // Fuel of all legs after this one
-  fuelToDist = fuelToDest - getFuel();
-
   // Length of given distance to end of this leg
-  float legRemainingLength = x2() - distFromStart;
+  float legRemainingLength = x2() - distFromDeparture;
 
+  float fuelToEnd = 0.f;
   if(topOfClimb && topOfDescent)
   {
     // TOC and TOC leg =========================================================
-    if(distFromStart < tocPos())
-    {
+    if(distFromDeparture < tocPos())
       // Before TOC
-      fuelToDist += climbFuel / climbDist() * (tocPos() - distFromStart) + cruiseFuel + descentFuel;
-      timeToDist += climbTime / climbDist() * (tocPos() - distFromStart) + cruiseTime + descentTime;
-    }
-    else if(distFromStart < todPos())
-    {
+      fuelToEnd = climbFuel / climbDist() * (tocPos() - distFromDeparture) + cruiseFuel + descentFuel;
+    else if(distFromDeparture < todPos())
       // After TOC - part is cruise and all descent
-      fuelToDist += cruiseFuel / cruiseDist() * (todPos() - distFromStart) + descentFuel;
-      timeToDist += cruiseTime / cruiseDist() * (todPos() - distFromStart) + descentTime;
-    }
+      fuelToEnd = cruiseFuel / cruiseDist() * (todPos() - distFromDeparture) + descentFuel;
     else
-    {
       // After TOD - part is descent
-      fuelToDist += descentFuel / descentDist() * legRemainingLength;
-      timeToDist += descentTime / descentDist() * legRemainingLength;
-    }
+      fuelToEnd = descentFuel / descentDist() * legRemainingLength;
   }
   else if(topOfClimb)
   {
     // TOC leg =========================================================
-    if(distFromStart < tocPos())
-    {
+    if(distFromDeparture < tocPos())
       // Before TOC - part of climb and full cruise
-      fuelToDist += climbFuel / climbDist() * (tocPos() - distFromStart) + cruiseFuel;
-      timeToDist += climbTime / climbDist() * (tocPos() - distFromStart) + cruiseTime;
-    }
+      fuelToEnd = climbFuel / climbDist() * (tocPos() - distFromDeparture) + cruiseFuel;
     else
-    {
       // After TOC - all is cruise
-      fuelToDist += cruiseFuel / cruiseDist() * legRemainingLength;
-      timeToDist += cruiseTime / cruiseDist() * legRemainingLength;
-    }
+      fuelToEnd = cruiseFuel / cruiseDist() * legRemainingLength;
   }
   else if(topOfDescent)
   {
     // TOD leg =========================================================
-    if(distFromStart < todPos())
-    {
+    if(distFromDeparture < todPos())
       // Part of cruise and full descent
-      fuelToDist += cruiseFuel / cruiseDist() * (todPos() - distFromStart) + descentFuel;
-      timeToDist += cruiseTime / cruiseDist() * (todPos() - distFromStart) + descentTime;
-    }
+      fuelToEnd = cruiseFuel / cruiseDist() * (todPos() - distFromDeparture) + descentFuel;
     else
-    {
       // After TOD - all is descent
-      fuelToDist += descentFuel / descentDist() * legRemainingLength;
-      timeToDist += descentTime / descentDist() * legRemainingLength;
-    }
+      fuelToEnd = descentFuel / descentDist() * legRemainingLength;
   }
   else
-  {
     // Normal leg =========================================================
     // All is either climb, cruise, descent or alternate
-    fuelToDist += getFuel() / getDistanceTo() * legRemainingLength;
-    timeToDist += getTime() / getDistanceTo() * legRemainingLength;
+    fuelToEnd = getFuel() / getDistanceTo() * legRemainingLength;
+
+  return fuelToEnd;
+}
+
+float RouteAltitudeLeg::getFuelFromDistToDestination(float distFromDeparture) const
+{
+  return fuelToDest - getFuel() + getFuelFromDistToEnd(distFromDeparture);
+}
+
+float RouteAltitudeLeg::getTimeFromDistToEnd(float distFromDeparture) const
+{
+  // Length of given distance to end of this leg
+  float legRemainingLength = x2() - distFromDeparture;
+
+  float timeToEnd = 0.f;
+  if(topOfClimb && topOfDescent)
+  {
+    // TOC and TOC leg =========================================================
+    if(distFromDeparture < tocPos())
+      // Before TOC
+      timeToEnd = climbTime / climbDist() * (tocPos() - distFromDeparture) + cruiseTime + descentTime;
+    else if(distFromDeparture < todPos())
+      // After TOC - part is cruise and all descent
+      timeToEnd = cruiseTime / cruiseDist() * (todPos() - distFromDeparture) + descentTime;
+    else
+      // After TOD - part is descent
+      timeToEnd = descentTime / descentDist() * legRemainingLength;
   }
+  else if(topOfClimb)
+  {
+    // TOC leg =========================================================
+    if(distFromDeparture < tocPos())
+      // Before TOC - part of climb and full cruise
+      timeToEnd = climbTime / climbDist() * (tocPos() - distFromDeparture) + cruiseTime;
+    else
+      // After TOC - all is cruise
+      timeToEnd = cruiseTime / cruiseDist() * legRemainingLength;
+  }
+  else if(topOfDescent)
+  {
+    // TOD leg =========================================================
+    if(distFromDeparture < todPos())
+      // Part of cruise and full descent
+      timeToEnd = cruiseTime / cruiseDist() * (todPos() - distFromDeparture) + descentTime;
+    else
+      // After TOD - all is descent
+      timeToEnd = descentTime / descentDist() * legRemainingLength;
+  }
+  else
+    // Normal leg =========================================================
+    // All is either climb, cruise, descent or alternate
+    timeToEnd = getTime() / getDistanceTo() * legRemainingLength;
+
+  return timeToEnd;
+}
+
+float RouteAltitudeLeg::getTimeFromDistToDestination(float distFromStart) const
+{
+  return timeToDest - getTime() + getTimeFromDistToEnd(distFromStart);
 }
 
 void RouteAltitudeLeg::setAlt(float alt)
@@ -203,6 +232,8 @@ QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
       << "time to dest" << obj.timeToDest << endl
       << "wind speed" << obj.windSpeed
       << "wind dir" << obj.windDirection << endl
-      << "geometry" << obj.geometry << "NM/ft";
+      << "geometry" << obj.geometry << "NM/ft" << endl
+      << "line" << obj.line << endl
+      << "geoLine" << obj.geoLine;
   return out;
 }

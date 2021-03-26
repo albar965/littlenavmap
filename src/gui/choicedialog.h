@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define LNM_CHOICEDIALOG_H
 
 #include <QDialog>
+#include <QSet>
 
 namespace Ui {
 class ChoiceDialog;
@@ -36,25 +37,41 @@ class ChoiceDialog :
 public:
   /* settingsPrefixParam is used to save the dialog and checkbox state.
    * helpBaseUrlParam is the base URL of the help system. Help button will be hidden if empty.*/
-  ChoiceDialog(QWidget *parent, const QString& title, const QString& header, const QString& settingsPrefixParam,
-               const QString& helpBaseUrlParam);
+  ChoiceDialog(QWidget *parent, const QString& title, const QString& description,
+               const QString& header, const QString& settingsPrefixParam, const QString& helpBaseUrlParam);
   virtual ~ChoiceDialog() override;
 
   /* Add a checkbox with the given id, text and tooltip */
-  void add(int id, const QString& text, const QString& tooltip = QString(), bool checked = false);
+  void addCheckBox(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
+                   bool disabled = false, bool hidden = false);
+
+  /* Add a separator line */
+  void addLine();
+
+  /* Shortcut to add a disabled widget */
+  void addCheckBoxDisabled(int id, const QString& text, const QString& tooltip, bool checked);
+
+  /* Shortcut to add a hidden, disabled and unchecked widget.
+   * Useful if different configurations are saved in the same setting variable. */
+  void addCheckBoxHidden(int id);
 
   /* Call after adding all buttons to restore button state */
   void restoreState();
 
-  /* Get the ids of the checked checkboxes after calling exec */
-  QVector<int> getCheckedIds() const;
-
-  /* true if box for id is checked */
+  /* true if box for id is checked and enabled */
   bool isChecked(int id) const;
+
+  /* Get checkbox for given id */
+  QCheckBox *getCheckBox(int id);
+
+signals:
+  /* Emitted when a checkbox is toggled */
+  void checkBoxToggled(int id, bool checked);
 
 private:
   QVector<std::pair<int, bool> > getCheckState() const;
   void buttonBoxClicked(QAbstractButton *button);
+  void checkBoxToggledInternal(bool checked);
   void saveState();
 
   Ui::ChoiceDialog *ui;

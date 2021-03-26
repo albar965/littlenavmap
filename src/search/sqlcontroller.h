@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ class SqlDatabase;
 class QWidget;
 class QTableView;
 class ColumnList;
+class QueryBuilder;
 
 /*
  * Combines all functionality around the table SQL model, view, view header and
@@ -55,6 +56,9 @@ public:
 
   /* Clear search and erase all text in search widgets */
   void resetSearch();
+
+  /* Filter by using query builder callback */
+  void filterByBuilder(const QueryBuilder& builder);
 
   /* Filter by text at the given index */
   void filterIncluding(const QModelIndex& index);

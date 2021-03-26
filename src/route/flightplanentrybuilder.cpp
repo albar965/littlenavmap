@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,6 @@ FlightplanEntryBuilder::FlightplanEntryBuilder()
   mapQuery = NavApp::getMapQuery();
 }
 
-FlightplanEntryBuilder::~FlightplanEntryBuilder()
-{
-
-}
-
 /* Copy airport attributes to flight plan entry */
 void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry,
                                                   bool alternate) const
@@ -45,21 +40,27 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport
 
 /* create a flight plan entry from object id/type or user position */
 void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos& userPos,
-                                                  map::MapObjectTypes type, FlightplanEntry& entry,
+                                                  map::MapTypes type, FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
-  map::MapSearchResult result;
+  map::MapResult result;
   mapQuery->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id, false /* airport from nav database */);
   buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
 
 /* create a flight plan entry from object id/type or user position */
-void FlightplanEntryBuilder::entryFromUserPos(const atools::geo::Pos& userPos, FlightplanEntry& entry)
+void FlightplanEntryBuilder::entryFromUserPos(const atools::geo::Pos& userPos, FlightplanEntry& entry,
+                                              const QString& ident, const QString& region, const QString& name)
 {
   entry.setPosition(userPos);
   entry.setWaypointType(atools::fs::pln::entry::USER);
-  entry.setIcaoIdent(QString());
-  entry.setWaypointId("WP" + QString::number(curUserpointNumber++));
+
+  if(ident.isEmpty())
+    entry.setIdent("WP" + QString::number(curUserpointNumber++));
+  else
+    entry.setIdent(ident);
+  entry.setName(name);
+  entry.setRegion(region);
   entry.setMagvar(NavApp::getMagVar(userPos));
 }
 
@@ -70,20 +71,23 @@ void FlightplanEntryBuilder::entryFromUserpoint(const map::MapUserpoint& userpoi
   entry.setWaypointType(atools::fs::pln::entry::USER);
 
   if(!userpoint.ident.isEmpty())
-    entry.setWaypointId(atools::fs::util::adjustFsxUserWpName(userpoint.ident, 10));
+    entry.setIdent(userpoint.ident);
   else
-    entry.setWaypointId(atools::fs::util::adjustFsxUserWpName(userpoint.name, 10));
+    entry.setIdent("WP" + QString::number(curUserpointNumber++));
+
+  entry.setName(userpoint.name);
+  entry.setRegion(userpoint.region);
+  entry.setComment(userpoint.description);
 
   entry.setMagvar(NavApp::getMagVar(userpoint.position));
 }
 
 void FlightplanEntryBuilder::entryFromNdb(const map::MapNdb& ndb, FlightplanEntry& entry) const
 {
-  entry.setIcaoIdent(ndb.ident);
+  entry.setIdent(ndb.ident);
   entry.setPosition(ndb.position);
-  entry.setIcaoRegion(ndb.region);
+  entry.setRegion(ndb.region);
   entry.setWaypointType(atools::fs::pln::entry::NDB);
-  entry.setWaypointId(entry.getIcaoIdent());
   entry.setName(ndb.name);
   entry.setMagvar(ndb.magvar);
   entry.setFrequency(ndb.frequency);
@@ -91,11 +95,10 @@ void FlightplanEntryBuilder::entryFromNdb(const map::MapNdb& ndb, FlightplanEntr
 
 void FlightplanEntryBuilder::entryFromVor(const map::MapVor& vor, FlightplanEntry& entry) const
 {
-  entry.setIcaoIdent(vor.ident);
+  entry.setIdent(vor.ident);
   entry.setPosition(vor.position);
-  entry.setIcaoRegion(vor.region);
+  entry.setRegion(vor.region);
   entry.setWaypointType(atools::fs::pln::entry::VOR);
-  entry.setWaypointId(entry.getIcaoIdent());
   entry.setName(vor.name);
   entry.setMagvar(vor.magvar);
   entry.setFrequency(vor.frequency);
@@ -104,10 +107,9 @@ void FlightplanEntryBuilder::entryFromVor(const map::MapVor& vor, FlightplanEntr
 void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, FlightplanEntry& entry,
                                               bool alternate) const
 {
-  entry.setIcaoIdent(airport.ident);
+  entry.setIdent(airport.ident);
   entry.setPosition(airport.position);
   entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
-  entry.setWaypointId(entry.getIcaoIdent());
   entry.setName(airport.name);
   entry.setMagvar(airport.magvar);
   entry.setFlag(atools::fs::pln::entry::ALTERNATE, alternate);
@@ -170,22 +172,21 @@ void FlightplanEntryBuilder::entryFromWaypoint(const map::MapWaypoint& waypoint,
 
   if(useWaypoint)
   {
-    entry.setIcaoIdent(waypoint.ident);
+    entry.setIdent(waypoint.ident);
     entry.setPosition(waypoint.position);
-    entry.setIcaoRegion(waypoint.region);
-    entry.setWaypointType(atools::fs::pln::entry::INTERSECTION);
-    entry.setWaypointId(entry.getIcaoIdent());
+    entry.setRegion(waypoint.region);
+    entry.setWaypointType(atools::fs::pln::entry::WAYPOINT);
     entry.setMagvar(waypoint.magvar);
   }
 }
 
 void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPos,
-                                                  const map::MapSearchResult& result,
+                                                  const map::MapResult& result,
                                                   FlightplanEntry& entry,
                                                   bool resolveWaypoints,
-                                                  map::MapObjectTypes type)
+                                                  map::MapTypes type)
 {
-  map::MapObjectTypes moType = type;
+  map::MapTypes moType = type;
 
   if(moType == map::NONE)
   {
@@ -215,12 +216,12 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
   else if(moType == map::USERPOINT)
     entryFromUserpoint(result.userpoints.first(), entry);
   else if(moType == map::USERPOINTROUTE)
-    entryFromUserPos(userPos, entry);
+    entryFromUserPos(userPos, entry, QString(), QString(), QString());
   else
     qWarning() << "Unknown Map object type" << moType;
 }
 
-void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapSearchResult& result,
+void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapResult& result,
                                                   atools::fs::pln::FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
@@ -238,7 +239,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const proc::MapProcedureLeg& l
   else if(leg.navaids.hasNdb())
     entryFromNdb(leg.navaids.ndbs.first(), entry);
   else
-    entryFromUserPos(leg.line.getPos1(), entry);
+    entryFromUserPos(leg.line.getPos2(), entry, leg.fixIdent, leg.fixRegion, QString());
 
   // Do not save procedure legs
   entry.setFlag(atools::fs::pln::entry::PROCEDURE);

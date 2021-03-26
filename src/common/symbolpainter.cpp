@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawAirportSymbol(&painter, airport, size / 2, size / 2, size * 7 / 10, false, false);
+  SymbolPainter().drawAirportSymbol(&painter, airport, size / 2, size / 2, size * 7 / 10, false, false, false);
   return QIcon(pixmap);
 }
 
@@ -94,6 +94,20 @@ QIcon SymbolPainter::createNdbIcon(int size)
   prepareForIcon(painter);
 
   SymbolPainter().drawNdbSymbol(&painter, size / 2, size / 2, size * 8 / 10, false, false);
+  return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createAirwayIcon(const map::MapAirway& airway, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(QColor(Qt::transparent));
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  painter.setPen(QPen(mapcolors::colorForAirwayTrack(airway), 1.5));
+
+  painter.drawLine(0, 0, size, size);
+
   return QIcon(pixmap);
 }
 
@@ -144,8 +158,54 @@ QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int si
   return QIcon(pixmap);
 }
 
+QIcon SymbolPainter::createHelipadIcon(const MapHelipad& helipad, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(QColor(Qt::transparent));
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  painter.setBackgroundMode(Qt::TransparentMode);
+  drawHelipadSymbol(&painter, helipad, size / 2, size / 2, size * 0.40f, size * 0.40f, false);
+  return QIcon(pixmap);
+}
+
+void SymbolPainter::drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y,
+                                      float w, float h, bool fast)
+{
+  painter->setBrush(mapcolors::colorForSurface(helipad.surface));
+  painter->setPen(QPen(mapcolors::helipadOutlineColor, 2., Qt::SolidLine, Qt::FlatCap));
+
+  painter->translate(QPointF(x, y));
+  painter->rotate(helipad.heading);
+
+  if(helipad.type == "SQUARE" || helipad.type == "MEDICAL")
+    painter->drawRect(QRectF(-w, -h, w * 2., h * 2.));
+  else
+    painter->drawEllipse(QRectF(-w, -h, w * 2., h * 2.));
+
+  if(!fast)
+  {
+    if(helipad.type == "MEDICAL")
+      painter->setPen(QPen(mapcolors::helipadMedicalOutlineColor, 3, Qt::SolidLine, Qt::FlatCap));
+
+    // Draw the H symbol
+    painter->drawLine(QPointF(-w / 3., -h / 2.), QPointF(-w / 3., h / 2.));
+    painter->drawLine(QPointF(-w / 3, 0.), QPointF(w / 3., 0.));
+    painter->drawLine(QPointF(w / 3., -h / 2.), QPointF(w / 3., h / 2.));
+
+    if(helipad.closed)
+    {
+      // Cross out
+      painter->drawLine(QPointF(-w, -w), QPointF(w, w));
+      painter->drawLine(QPointF(-w, w), QPointF(w, -w));
+    }
+  }
+  painter->resetTransform();
+}
+
 void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& airport,
-                                      float x, float y, int size, bool isAirportDiagram, bool fast)
+                                      float x, float y, int size, bool isAirportDiagram, bool fast, bool addonHighlight)
 {
   float symsize = atools::roundToInt(size);
 
@@ -154,11 +214,20 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
     symsize = symsize * 4 / 5;
 
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
-  QColor apColor = mapcolors::colorForAirport(airport);
 
-  float radius = symsize / 2.f;
   painter->setBackgroundMode(Qt::OpaqueMode);
+  float radius = symsize / 2.f;
+
+  if(airport.addon() && addonHighlight)
+  {
+    // Draw addon underlay ==========================
+    float addonRadius = radius + atools::minmax(3.8f, 4.8f, radius * 0.55f);
+    painter->setBrush(mapcolors::addonAirportBackgroundColor);
+    painter->setPen(QPen(mapcolors::addonAirportFrameColor));
+    painter->drawEllipse(QPointF(x, y), addonRadius, addonRadius);
+  }
+
+  QColor apColor = mapcolors::colorForAirport(airport);
 
   if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED))
     // Use filled circle
@@ -241,7 +310,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
   }
 }
 
-void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size, bool fill)
+void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, bool fill)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -252,22 +321,21 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, int
 
   float lineWidth = std::max(size / 6.f, 1.5f);
 
-  if(col.isValid())
-    painter->setPen(QPen(col, lineWidth, Qt::SolidLine, Qt::SquareCap));
-  else
-    painter->setPen(QPen(mapcolors::waypointSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+  QColor color = col.isValid() ? col : mapcolors::waypointSymbolColor;
+  double radius = size / 2.;
+
+  // Draw a triangle
+  QPolygonF polygon;
+  polygon << QPointF(x, y - radius) << QPointF(x + radius, y + radius) << QPointF(x - radius, y + radius);
 
   if(size > 4)
-  {
-    // Draw a triangle
-    int radius = size / 2;
-    QPolygon polygon;
-    polygon << QPoint(x, y - radius) << QPoint(x + radius, y + radius) << QPoint(x - radius, y + radius);
-
-    painter->drawConvexPolygon(polygon);
-  }
+    painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
   else
-    painter->drawPoint(x, y);
+  {
+    painter->setPen(QPen(color, 1, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+    painter->setBrush(color);
+  }
+  painter->drawConvexPolygon(polygon);
 }
 
 void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar, float x, float y,
@@ -601,6 +669,19 @@ void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int siz
   painter->drawEllipse(x - radius, y - radius, size, size);
 }
 
+void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, float x, float y, float size)
+{
+  atools::util::PainterContextSaver saver(painter);
+  painter->setBackgroundMode(Qt::TransparentMode);
+  painter->setBrush(Qt::white);
+
+  float lineWidth = std::max(size / 5.f, 2.0f);
+  painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+
+  int radius = size / 2;
+  painter->drawEllipse(x - radius, y - radius, size, size);
+}
+
 void SymbolPainter::drawProcedureUnderlay(QPainter *painter, int x, int y, int size, bool flyover, bool faf)
 {
   if(flyover)
@@ -615,7 +696,6 @@ void SymbolPainter::drawProcedureUnderlay(QPainter *painter, int x, int y, int s
 void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int size)
 {
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
   painter->setBackgroundMode(Qt::OpaqueMode);
 
   float lineWidth = std::max(size / 10.f, 1.5f);
@@ -662,7 +742,6 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, int x, int y, int size)
   poly.translate(-tx + x, -ty + y);
 
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->setBrush(Qt::black);
   painter->setPen(Qt::black);
@@ -670,11 +749,10 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, int x, int y, int size)
   painter->drawPolygon(poly);
 }
 
-void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int x, int y, int size,
+void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size,
                                   bool routeFill, bool fast, int largeSize)
 {
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
 
   painter->setBackgroundMode(Qt::TransparentMode);
   if(routeFill)
@@ -682,133 +760,141 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
   else
     painter->setBrush(Qt::NoBrush);
 
-  float lineWidth = std::max(size / 16.f, 1.5f);
-  float roseLineWidth = std::max(size / 36.f, 1.f);
-  painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+  // Use double to avoid type conversions
+  double sizeD = static_cast<double>(size);
 
-  painter->translate(x, y);
-
-  if(largeSize > 0 && !vor.dmeOnly)
-    // If compass ticks are drawn rotate center symbol too
-    painter->rotate(vor.magvar);
-
-  float sizeF = static_cast<float>(size);
-  float radius = sizeF / 2.f;
-
-  if(vor.tacan || vor.vortac)
+  if(size > 4)
   {
-    // Draw TACAN symbol or VORTAC outline
-    // Coordinates taken from SVG graphics
-    sizeF += 2.f;
+    float lineWidth = std::max(size / 16.f, 1.5f);
+    float roseLineWidth = std::max(size / 36.f, 1.1f);
+    painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
-    QPolygonF polygon;
-    polygon
-      << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
-      << QPointF((439. - 438.) * sizeF / 94., (527. - 583.) * sizeF / 81.)
-      << QPointF((425. - 438.) * sizeF / 94., (503. - 583.) * sizeF / 81.)
-      << QPointF((406. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
-      << QPointF((378. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
-      << QPointF((359. - 438.) * sizeF / 94., (502. - 583.) * sizeF / 81.)
-      << QPointF((345. - 438.) * sizeF / 94., (526. - 583.) * sizeF / 81.)
-      << QPointF((364. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
-      << QPointF((378. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
-      << QPointF((378. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
-      << QPointF((406. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
-      << QPointF((406. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
-      << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.);
-    double tx = polygon.boundingRect().width() / 2.;
-    double ty = polygon.boundingRect().height() / 2. + 1.;
-    polygon.translate(tx, ty);
-    painter->drawConvexPolygon(polygon);
+    painter->translate(x, y);
 
-    if(vor.vortac)
+    if(largeSize > 0 && !vor.dmeOnly)
+      // If compass ticks are drawn rotate center symbol too
+      painter->rotate(vor.magvar);
+
+    double radiusD = sizeD / 2.;
+
+    if(vor.tacan || vor.vortac)
     {
-      // Draw the filled VORTAC blocks
-      painter->setBrush(mapcolors::vorSymbolColor);
-      painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+      // Draw TACAN symbol or VORTAC outline
+      // Coordinates taken from SVG graphics
+      sizeD += 2.;
 
-      polygon.clear();
-      polygon
-        << QPointF((378. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
-        << QPointF((359. - 438.) * sizeF / 94., (502. - 583.) * sizeF / 81.)
-        << QPointF((345. - 438.) * sizeF / 94., (526. - 583.) * sizeF / 81.)
-        << QPointF((364. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.);
-      polygon.translate(tx, ty);
-      painter->drawConvexPolygon(polygon);
-
-      polygon.clear();
-      polygon
-        << QPointF((439. - 438.) * sizeF / 94., (527. - 583.) * sizeF / 81.)
-        << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
-        << QPointF((406. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
-        << QPointF((424. - 438.) * sizeF / 94., (503. - 583.) * sizeF / 81.);
-      polygon.translate(tx, ty);
-      painter->drawConvexPolygon(polygon);
-
-      polygon.clear();
-      polygon
-        << QPointF((406. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
-        << QPointF((406. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
-        << QPointF((378. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
-        << QPointF((378. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.);
-      polygon.translate(tx, ty);
-      painter->drawConvexPolygon(polygon);
-    }
-  }
-  else
-  {
-    if(vor.hasDme)
-      // DME rectangle
-      painter->drawRect(QRectF(-sizeF / 2.f, -sizeF / 2.f, sizeF, sizeF));
-
-    if(!vor.dmeOnly)
-    {
-      // Draw VOR symbol
-      float corner = 2.f;
       QPolygonF polygon;
-      polygon << QPointF(-radius / corner, -radius)
-              << QPointF(radius / corner, -radius)
-              << QPointF(radius, 0.f)
-              << QPointF(radius / corner, radius)
-              << QPointF(-radius / corner, radius)
-              << QPointF(-radius, 0.f);
-
+      polygon
+        << QPointF((420. - 438.) * sizeD / 94., (538. - 583.) * sizeD / 81.)
+        << QPointF((439. - 438.) * sizeD / 94., (527. - 583.) * sizeD / 81.)
+        << QPointF((425. - 438.) * sizeD / 94., (503. - 583.) * sizeD / 81.)
+        << QPointF((406. - 438.) * sizeD / 94., (513. - 583.) * sizeD / 81.)
+        << QPointF((378. - 438.) * sizeD / 94., (513. - 583.) * sizeD / 81.)
+        << QPointF((359. - 438.) * sizeD / 94., (502. - 583.) * sizeD / 81.)
+        << QPointF((345. - 438.) * sizeD / 94., (526. - 583.) * sizeD / 81.)
+        << QPointF((364. - 438.) * sizeD / 94., (538. - 583.) * sizeD / 81.)
+        << QPointF((378. - 438.) * sizeD / 94., (562. - 583.) * sizeD / 81.)
+        << QPointF((378. - 438.) * sizeD / 94., (583. - 583.) * sizeD / 81.)
+        << QPointF((406. - 438.) * sizeD / 94., (583. - 583.) * sizeD / 81.)
+        << QPointF((406. - 438.) * sizeD / 94., (562. - 583.) * sizeD / 81.)
+        << QPointF((420. - 438.) * sizeD / 94., (538. - 583.) * sizeD / 81.);
+      double tx = polygon.boundingRect().width() / 2.;
+      double ty = polygon.boundingRect().height() / 2. + 1.;
+      polygon.translate(tx, ty);
       painter->drawConvexPolygon(polygon);
+
+      if(vor.vortac)
+      {
+        // Draw the filled VORTAC blocks
+        painter->setBrush(mapcolors::vorSymbolColor);
+        painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+
+        polygon.clear();
+        polygon
+          << QPointF((378. - 438.) * sizeD / 94., (513. - 583.) * sizeD / 81.)
+          << QPointF((359. - 438.) * sizeD / 94., (502. - 583.) * sizeD / 81.)
+          << QPointF((345. - 438.) * sizeD / 94., (526. - 583.) * sizeD / 81.)
+          << QPointF((364. - 438.) * sizeD / 94., (538. - 583.) * sizeD / 81.);
+        polygon.translate(tx, ty);
+        painter->drawConvexPolygon(polygon);
+
+        polygon.clear();
+        polygon
+          << QPointF((439. - 438.) * sizeD / 94., (527. - 583.) * sizeD / 81.)
+          << QPointF((420. - 438.) * sizeD / 94., (538. - 583.) * sizeD / 81.)
+          << QPointF((406. - 438.) * sizeD / 94., (513. - 583.) * sizeD / 81.)
+          << QPointF((424. - 438.) * sizeD / 94., (503. - 583.) * sizeD / 81.);
+        polygon.translate(tx, ty);
+        painter->drawConvexPolygon(polygon);
+
+        polygon.clear();
+        polygon
+          << QPointF((406. - 438.) * sizeD / 94., (562. - 583.) * sizeD / 81.)
+          << QPointF((406. - 438.) * sizeD / 94., (583. - 583.) * sizeD / 81.)
+          << QPointF((378. - 438.) * sizeD / 94., (583. - 583.) * sizeD / 81.)
+          << QPointF((378. - 438.) * sizeD / 94., (562. - 583.) * sizeD / 81.);
+        polygon.translate(tx, ty);
+        painter->drawConvexPolygon(polygon);
+      }
     }
-  }
-
-  if(!fast && largeSize > 0 && !vor.dmeOnly)
-  {
-    // Draw compass circle and ticks
-    painter->setBrush(Qt::NoBrush);
-    painter->setPen(QPen(mapcolors::vorSymbolColor, roseLineWidth, Qt::SolidLine, Qt::SquareCap));
-    painter->drawEllipse(QPointF(0.f, 0.f), radius * 5.f, radius * 5.f);
-
-    for(int i = 0; i < 360; i += 10)
+    else
     {
-      if(i == 0)
-        painter->drawLine(QLineF(0.f, 0.f, 0.f, -radius * 5.f));
-      else if((i % 90) == 0)
-        painter->drawLine(QLineF(0.f, static_cast<int>(-radius * 4.f), 0.f, -radius * 5.f));
-      else
-        painter->drawLine(QLineF(0.f, static_cast<int>(-radius * 4.5f), 0.f, -radius * 5.f));
-      painter->rotate(10.f);
-    }
-  }
-  painter->resetTransform();
+      if(vor.hasDme)
+        // DME rectangle
+        painter->drawRect(QRectF(-sizeD / 2., -sizeD / 2., sizeD, sizeD));
 
-  // Draw dot in center
-  if(size > 14)
-    painter->setPen(QPen(mapcolors::vorSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
+      if(!vor.dmeOnly)
+      {
+        // Draw VOR symbol
+        double corner = 2.;
+
+        QPolygonF polygon;
+        polygon << QPointF(-radiusD / corner, -radiusD)
+                << QPointF(radiusD / corner, -radiusD)
+                << QPointF(radiusD, 0.)
+                << QPointF(radiusD / corner, radiusD)
+                << QPointF(-radiusD / corner, radiusD)
+                << QPointF(-radiusD, 0.);
+
+        painter->drawConvexPolygon(polygon);
+      }
+    }
+
+    if(!fast && largeSize > 0 && !vor.dmeOnly)
+    {
+      // Draw compass circle and ticks
+      painter->setBrush(Qt::NoBrush);
+      painter->setPen(QPen(mapcolors::vorSymbolColor, roseLineWidth, Qt::SolidLine, Qt::SquareCap));
+      painter->drawEllipse(QPointF(0., 0.), radiusD * 5., radiusD * 5.);
+
+      for(int i = 0; i < 360; i += 10)
+      {
+        if(i == 0)
+          painter->drawLine(QLineF(0., 0., 0., -radiusD * 5.));
+        else if((i % 90) == 0)
+          painter->drawLine(QLineF(0., -radiusD * 4., 0., -radiusD * 5.));
+        else
+          painter->drawLine(QLineF(0., -radiusD * 4.5, 0., -radiusD * 5.));
+        painter->rotate(10.);
+      }
+    }
+    painter->resetTransform();
+
+    // Draw dot in center
+    if(size > 14)
+      painter->setPen(QPen(mapcolors::vorSymbolColor, sizeD / 4., Qt::SolidLine, Qt::RoundCap));
+    else
+      painter->setPen(QPen(mapcolors::vorSymbolColor, sizeD / 3., Qt::SolidLine, Qt::RoundCap));
+  }
   else
-    painter->setPen(QPen(mapcolors::vorSymbolColor, size / 3, Qt::SolidLine, Qt::RoundCap));
-  painter->drawPoint(x, y);
+    painter->setPen(QPen(mapcolors::vorSymbolColor, sizeD, Qt::SolidLine, Qt::SquareCap));
+
+  painter->drawPoint(QPointF(x, y));
 }
 
-void SymbolPainter::drawNdbSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
+void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast)
 {
   atools::util::PainterContextSaver saver(painter);
-  float sizeF = static_cast<float>(size);
 
   painter->setBackgroundMode(Qt::TransparentMode);
   if(routeFill)
@@ -816,31 +902,37 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, int x, int y, int size, boo
   else
     painter->setBrush(Qt::NoBrush);
 
-  float lineWidth = std::max(size / 16.f, 1.5f);
+  if(size > 4)
+  {
 
-  // Use dotted or solid line depending on size
-  painter->setPen(QPen(mapcolors::ndbSymbolColor, lineWidth,
-                       (sizeF > 12.f && !fast) ? Qt::DotLine : Qt::SolidLine, Qt::SquareCap));
+    float lineWidth = std::max(size / 16.f, 1.5f);
 
-  float radius = sizeF / 2.f;
+    // Use dotted or solid line depending on size
+    painter->setPen(QPen(mapcolors::ndbSymbolColor, lineWidth,
+                         (size > 12.f && !fast) ? Qt::DotLine : Qt::SolidLine, Qt::SquareCap));
 
-  // Draw outer dotted/solid circle
-  painter->drawEllipse(QPointF(x, y), radius, radius);
+    double radius = size / 2.;
 
-  if(sizeF > 12.f && !fast)
-    // If big enought draw inner dotted circle
-    painter->drawEllipse(QPointF(x, y), radius * 2.f / 3.f, radius * 2.f / 3.f);
+    // Draw outer dotted/solid circle
+    painter->drawEllipse(QPointF(x, y), radius, radius);
 
-  float pointSize = sizeF > 12 ? sizeF / 4.f : sizeF / 3.f;
-  painter->setPen(QPen(mapcolors::ndbSymbolColor, pointSize, Qt::SolidLine, Qt::RoundCap));
-  painter->drawPoint(x, y);
+    if(size > 12.f && !fast)
+      // If big enought draw inner dotted circle
+      painter->drawEllipse(QPointF(x, y), radius * 2. / 3., radius * 2. / 3.);
+
+    double pointSize = size > 12 ? size / 4. : size / 3.;
+    painter->setPen(QPen(mapcolors::ndbSymbolColor, pointSize, Qt::SolidLine, Qt::RoundCap));
+  }
+  else
+    painter->setPen(QPen(mapcolors::ndbSymbolColor, size, Qt::SolidLine, Qt::RoundCap));
+
+  painter->drawPoint(QPointF(x, y));
 }
 
-void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, int x, int y,
+void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y,
                                      int size, bool fast)
 {
   atools::util::PainterContextSaver saver(painter);
-  int radius = size / 2;
 
   painter->setBackgroundMode(Qt::TransparentMode);
   painter->setBrush(Qt::NoBrush);
@@ -849,20 +941,20 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& ma
   if(!fast && size > 5)
   {
     // Draw rotated lens / ellipse
+    double radius = size / 2.;
     painter->translate(x, y);
     painter->rotate(marker.heading);
-    painter->drawEllipse(QPoint(0, 0), radius, radius / 2);
+    painter->drawEllipse(QPointF(0., 0.), radius, radius / 2.);
     painter->resetTransform();
   }
 
-  painter->setPen(QPen(mapcolors::markerSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
+  painter->setPen(QPen(mapcolors::markerSymbolColor, size / 4., Qt::SolidLine, Qt::RoundCap));
 
-  painter->drawPoint(x, y);
+  painter->drawPoint(QPointF(x, y));
 }
 
-void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, int x, int y,
-                                textflags::TextFlags flags, int size, bool fill,
-                                const QStringList *addtionalText)
+void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y,
+                                textflags::TextFlags flags, int size, bool fill, const QStringList *addtionalText)
 {
   QStringList texts;
 
@@ -871,7 +963,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, int x
     if(ndb.type.isEmpty())
       texts.append(ndb.ident);
     else
-      texts.append(ndb.ident + " (" + (ndb.type == "CP" ? tr("CL") : ndb.type) + ")");
+      texts.append(tr("%1 (%2)").arg(ndb.ident).arg(ndb.type == "CP" ? tr("CL") : ndb.type));
   }
   else if(flags & textflags::IDENT)
     texts.append(ndb.ident);
@@ -879,13 +971,13 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, int x
   if(flags & textflags::FREQ)
     texts.append(QString::number(ndb.frequency / 100., 'f', 1));
 
-  textatt::TextAttributes textAttrs = textatt::BOLD;
+  textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
-    y += size / 2 + painter->fontMetrics().ascent();
+    y += size / 2.f + painter->fontMetrics().ascent();
     textAttrs |= textatt::CENTER;
   }
 
@@ -893,17 +985,21 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, int x
     texts.append(*addtionalText);
 
   int transparency = fill ? 255 : 0;
-  textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
+  textBoxF(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
 }
 
-void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, int x, int y,
-                                textflags::TextFlags flags, int size, bool fill,
-                                const QStringList *addtionalText)
+void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y,
+                                textflags::TextFlags flags, int size, bool fill, const QStringList *addtionalText)
 {
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::TYPE)
-    texts.append(vor.ident + " (" + vor.type.left(1) + ")");
+  {
+    if(vor.type.isEmpty())
+      texts.append(vor.ident);
+    else
+      texts.append(tr("%1 (%2)").arg(vor.ident).arg(vor.type.at(0)));
+  }
   else if(flags & textflags::IDENT)
     texts.append(vor.ident);
 
@@ -915,13 +1011,13 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, int x
       texts.append(vor.channel);
   }
 
-  textatt::TextAttributes textAttrs = textatt::BOLD;
+  textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
-    x -= size / 2 + 2;
+    x -= size / 2.f + 2.f;
     textAttrs |= textatt::RIGHT;
   }
 
@@ -929,10 +1025,10 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, int x
     texts.append(*addtionalText);
 
   int transparency = fill ? 255 : 0;
-  textBox(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, transparency);
+  textBoxF(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, transparency);
 }
 
-void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, int x, int y,
+void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,
                                      textflags::TextFlags flags, int size, bool fill,
                                      const QStringList *addtionalText)
 {
@@ -941,13 +1037,13 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
   if(flags & textflags::IDENT)
     texts.append(wp.ident);
 
-  textatt::TextAttributes textAttrs = textatt::BOLD;
+  textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
-    x += size / 2 + 2;
+    x += size / 2.f + 2.f;
     textAttrs |= textatt::LEFT;
   }
 
@@ -955,19 +1051,22 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
     texts.append(*addtionalText);
 
   int transparency = fill ? 255 : 0;
-  textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
+  textBoxF(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
 }
 
 void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
-                                    optsd::DisplayOptions dispOpts, textflags::TextFlags flags, int size,
+                                    optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, int size,
                                     bool diagram, int maxTextLength)
 {
   QStringList texts = airportTexts(dispOpts, flags, airport, maxTextLength);
   if(!texts.isEmpty())
   {
-    textatt::TextAttributes atts = textatt::BOLD;
-    if(airport.flags.testFlag(map::AP_ADDON))
+    textatt::TextAttributes atts = textatt::NONE;
+    if(airport.addon())
       atts |= textatt::ITALIC | textatt::UNDERLINE;
+
+    if(airport.closed())
+      atts |= textatt::STRIKEOUT;
 
     if(flags & textflags::ROUTE_TEXT)
       atts |= textatt::ROUTE_BG_COLOR;
@@ -975,7 +1074,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
     if(flags & textflags::LOG_TEXT)
       atts |= textatt::LOG_BG_COLOR;
 
-    int transparency = diagram ? 130 : 255;
+    int transparency = diagram ? 180 : 255;
     // No background for empty airports except if they are part of the route or log
     if(airport.emptyDraw() && !(flags& textflags::ROUTE_TEXT) && !(flags & textflags::LOG_TEXT))
       transparency = 0;
@@ -990,7 +1089,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
   }
 }
 
-QStringList SymbolPainter::airportTexts(optsd::DisplayOptions dispOpts, textflags::TextFlags flags,
+QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags,
                                         const map::MapAirport& airport, int maxTextLength)
 {
   QStringList texts;
@@ -1050,7 +1149,6 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
     return;
 
   atools::util::PainterContextSaver saver(painter);
-  Q_UNUSED(saver);
 
   QColor backColor(backgroundColor);
   if(!backColor.isValid())
@@ -1087,13 +1185,25 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
   }
 
   if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE) ||
-     atts.testFlag(textatt::OVERLINE))
+     atts.testFlag(textatt::OVERLINE) || atts.testFlag(textatt::STRIKEOUT))
   {
     QFont f = painter->font();
-    f.setBold(atts.testFlag(textatt::BOLD));
-    f.setItalic(atts.testFlag(textatt::ITALIC));
-    f.setUnderline(atts.testFlag(textatt::UNDERLINE));
-    f.setOverline(atts.testFlag(textatt::OVERLINE));
+
+    if(atts.testFlag(textatt::BOLD))
+      f.setBold(true);
+
+    if(atts.testFlag(textatt::ITALIC))
+      f.setItalic(true);
+
+    if(atts.testFlag(textatt::UNDERLINE))
+      f.setUnderline(true);
+
+    if(atts.testFlag(textatt::OVERLINE))
+      f.setOverline(true);
+
+    if(atts.testFlag(textatt::STRIKEOUT))
+      f.setStrikeOut(true);
+
     painter->setFont(f);
   }
 

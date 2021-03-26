@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -46,8 +46,13 @@ void MapVisible::updateVisibleObjectsStatusBar()
 {
   if(!NavApp::hasDataInDatabase())
   {
-    NavApp::getMainWindow()->setMapObjectsShownMessageText(tr("<b style=\"color:red\">Database empty.</b>"),
-                                                           tr("The currently selected Scenery Database is empty."));
+    NavApp::getMainWindow()->setMapObjectsShownMessageText(
+      atools::util::HtmlBuilder::errorMessage(tr("Database is empty")),
+      tr("<p style='white-space:pre'>The currently selected scenery database for the simulator is empty.<br/>Go to: "
+           "Main menu -&gt; \"Scenery Library\" -&gt; \"Load Scenery Library\" "
+           "or press <code>Ctrl+Shift+L</code>.<br/>"
+           "Then choose your simulator and press \"Load\".</p>",
+         "Keep instructions in sync with translated menus and shortcuts"));
   }
   else
   {
@@ -55,7 +60,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
     if(layer != nullptr)
     {
-      map::MapObjectTypes shown = paintLayer->getShownMapObjects();
+      map::MapTypes shown = paintLayer->getShownMapObjects();
       map::MapObjectDisplayTypes shownDispTypes = paintLayer->getShownMapObjectDisplayTypes();
 
       QStringList airportLabel;
@@ -117,8 +122,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
                           arg(runway);
 
             if(showAddon)
-              apTooltipAddon = tr("Add-on airports with runway length > %1").
-                               arg(Unit::distShortFeet(layer->getMinRunwayLength()));
+              apTooltipAddon = tr("Add-on airports");
           }
           else
           {
@@ -201,6 +205,11 @@ void MapVisible::updateVisibleObjectsStatusBar()
         navaidLabel.append(tr("JA"));
         navaidsTooltip.append(tr("Jet Airways (JA)"));
       }
+      if(layer->isTrack() && shown & map::TRACK)
+      {
+        navaidLabel.append(tr("T"));
+        navaidsTooltip.append(tr("Tracks (T)"));
+      }
       if(layer->isAirway() && shown & map::AIRWAYV)
       {
         navaidLabel.append(tr("VA"));
@@ -221,16 +230,22 @@ void MapVisible::updateVisibleObjectsStatusBar()
         }
         std::sort(airspacesTooltip.begin(), airspacesTooltip.end());
 
-        if(airspaceFilter.types & map::AIRSPACE_ICAO)
+        if(airspaceFilter.types & map::AIRSPACE_CLASS_ICAO)
         {
           airspaceGroupLabel.append(tr("ICAO"));
           airspaceGroupTooltip.append(tr("Class A-E (ICAO)"));
         }
 
-        if(airspaceFilter.types & map::AIRSPACE_FIR)
+        if(airspaceFilter.types & map::AIRSPACE_CLASS_FG)
         {
-          airspaceGroupLabel.append(tr("FIR"));
-          airspaceGroupTooltip.append(tr("Flight Information Region, class F and/or G (FIR)"));
+          airspaceGroupLabel.append(tr("F,G"));
+          airspaceGroupTooltip.append(tr("Class F and/or G"));
+        }
+
+        if(airspaceFilter.types & map::AIRSPACE_FIR_UIR)
+        {
+          airspaceGroupLabel.append(tr("FIR,UIR"));
+          airspaceGroupTooltip.append(tr("Flight and/or Upper Information Regions"));
         }
 
         if(airspaceFilter.types & map::AIRSPACE_RESTRICTED)

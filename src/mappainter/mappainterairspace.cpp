@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "query/mapquery.h"
 #include "airspace/airspacecontroller.h"
 #include "navapp.h"
+#include "mapgui/mapscale.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -36,9 +37,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirspace::MapPainterAirspace(MapPaintWidget *mapWidget, MapScale *mapScale,
-                                       const Route *routeParam)
-  : MapPainter(mapWidget, mapScale), route(routeParam)
+MapPainterAirspace::MapPainterAirspace(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -47,12 +47,13 @@ MapPainterAirspace::~MapPainterAirspace()
 
 }
 
-void MapPainterAirspace::render(PaintContext *context)
+void MapPainterAirspace::render()
 {
   if(!context->mapLayer->isAirspace() || !(context->objectTypes.testFlag(map::AIRSPACE)))
     return;
 
   if(context->mapLayerEffective->isAirportDiagram())
+    // Airspace appearance is independent of detail settings
     return;
 
   AirspaceController *controller = NavApp::getAirspaceController();
@@ -63,17 +64,17 @@ void MapPainterAirspace::render(PaintContext *context)
 
   if(context->objectTypes.testFlag(map::AIRSPACE))
   {
-    // qDebug() << Q_FUNC_INFO << "NON ONLINE";
+    bool overflow = false;
     controller->getAirspaces(airspaces, curBox, context->mapLayer, context->airspaceFilterByLayer,
-                             route->getCruisingAltitudeFeet(),
-                             context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL);
+                             context->route->getCruisingAltitudeFeet(),
+                             context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL, overflow);
+    context->setQueryOverflow(overflow);
   }
 
   if(!airspaces.isEmpty())
   {
     Marble::GeoPainter *painter = context->painter;
     atools::util::PainterContextSaver saver(painter);
-    Q_UNUSED(saver);
 
     painter->setBackgroundMode(Qt::TransparentMode);
 
@@ -92,7 +93,14 @@ void MapPainterAirspace::render(PaintContext *context)
         Marble::GeoDataLinearRing linearRing;
         linearRing.setTessellate(true);
 
-        painter->setPen(mapcolors::penForAirspace(*airspace));
+        const QPen airpacePen = mapcolors::penForAirspace(*airspace);
+        QPen pen = airpacePen;
+
+        if(airspace->isOnline())
+          // Make online airpace line thicker
+          pen.setWidthF(airpacePen.widthF() * 1.5);
+
+        painter->setPen(pen);
 
         if(!context->drawFast)
           painter->setBrush(mapcolors::colorForAirspaceFill(*airspace));
@@ -105,6 +113,22 @@ void MapPainterAirspace::render(PaintContext *context)
             linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
 
           painter->drawPolygon(linearRing);
+        }
+
+        if(airspace->isOnline())
+        {
+          // Draw center circle for online airspace with less transparency and darker
+          QBrush brush = painter->brush();
+          QColor color = brush.color();
+          color.setAlphaF(color.alphaF() * 2.f);
+          brush.setColor(color.darker(200));
+          painter->setBrush(brush);
+
+          pen.setWidthF(airpacePen.widthF() * 2.);
+          painter->setPen(pen);
+
+          // Draw circle with 1 NM and at least 3 pixel radius
+          drawCircle(painter, airspace->position, std::max(scale->getPixelForNm(0.5f), 3.f));
         }
       }
     }

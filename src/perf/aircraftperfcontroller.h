@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ class AircraftPerfHandler;
 }
 
 class MainWindow;
+struct FuelTimeResult;
 
 /*
  * Takes care of aircraft performance managment, loading, saving, generating the report on the flight plan dock.
@@ -58,8 +59,20 @@ public:
   explicit AircraftPerfController(MainWindow *parent);
   virtual ~AircraftPerfController() override;
 
-  /* Load a new performance file from file history after asking to save currently unchanged */
+  /* Load a new performance file after asking to save currently unchanged */
   void loadFile(const QString& perfFile);
+
+  /* Load into current from an XML string */
+  void loadStr(const QString& string);
+
+  /* Opens save as dialog to save the content in the string into a performance file
+   * Does not affect current */
+  bool saveAsStr(const QString& string) const;
+
+  /* Default file dialogs for opening and saving.
+   *  Offers the INI format as alternative if oldFormat is not null. */
+  QString saveAsFileDialog(const QString& filepath, bool *oldFormat = nullptr) const;
+  QString openFileDialog() const;
 
   /* Ask user if data can be deleted when quitting.
    * @return true continue with new, exit, etc. */
@@ -85,6 +98,12 @@ public:
   /* Update background colors in report */
   void optionsChanged();
 
+  /* Connection was established */
+  void connectedToSimulator();
+
+  /* Disconnected manually or due to error */
+  void disconnectedFromSimulator();
+
   /* Get currently loaded performance data */
   const atools::fs::perf::AircraftPerf& getAircraftPerformance() const
   {
@@ -107,9 +126,9 @@ public:
   bool isWindManual() const;
 
   /* Sent back after aircraftPerformanceChanged was sent from here */
-  void routeChanged(bool geometryChanged, bool newFlightplan = false);
+  void routeChanged(bool, bool = false);
   void updateReports();
-  void routeAltitudeChanged(float altitudeFeet);
+  void routeAltitudeChanged(float);
 
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
 
@@ -132,9 +151,7 @@ public:
   void restartCollection(bool quiet = false);
 
   /* Calculates values based on performance profile if valid - otherwise estimated by aircraft fuel flow and speed */
-  bool calculateFuelAndTimeTo(float& fuelLbsToDest, float& fuelGalToDest, float& fuelLbsToTod, float& fuelGalToTod,
-                              float& timeToDest, float& timeToTod,
-                              float distanceToDest, int activeLeg) const;
+  void calculateFuelAndTimeTo(FuelTimeResult& result, float distanceToDest, float distanceToNext, int activeLeg) const;
 
 signals:
   /* Sent if performance or wind has changed */
@@ -168,6 +185,7 @@ private:
   void helpClickedPerfCollect() const;
 
   void manualWindToggled();
+  void manualWindToggledAction();
 
   /* Wind spin boxes changed */
   void windBoxesChanged();
@@ -219,11 +237,11 @@ private:
   atools::gui::FileHistoryHandler *fileHistory = nullptr;
 
   /* Last update of report when collecting data */
-  qint64 reportLastSampleTimeMs = 0L;
+  qint64 currentReportLastSampleTimeMs = 0L, reportLastSampleTimeMs = 0L;
 
   /* Timer to delay wind updates */
   QTimer windChangeTimer;
-
+  atools::fs::sc::SimConnectData *lastSimData;
 };
 
 #endif // LNM_AIRCRAFTPERFCONTROLLER_H

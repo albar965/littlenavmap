@@ -13,7 +13,7 @@
    width="300"
    height="300"
    id="svg2"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="airwayjet.svg">
   <metadata
      id="metadata17">
@@ -41,8 +41,8 @@
      id="namedview15"
      showgrid="true"
      inkscape:zoom="1.5733333"
-     inkscape:cx="-28.890957"
-     inkscape:cy="86.764814"
+     inkscape:cx="-54.978827"
+     inkscape:cy="102.05082"
      inkscape:window-x="44"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -62,6 +62,30 @@
   </sodipodi:namedview>
   <defs
      id="defs4" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#494aa5;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 21.077845,150.1976 180.000005,60 86.52542,-83.98305"
+     id="path12697"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#494aa5;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 21.077845,20.1976 180.000005,190 81.90678,-198.898305"
+     id="path12691"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#494aa5;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 286.67107,289.09591 201.07785,210.1976 10.908353,287.18913"
+     id="path12693"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#494aa5;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 201.07785,210.1976 10.27276,232.73997"
+     id="path12695"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc" />
   <rect
      style="opacity:1;fill:#dedede;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:53.04660416;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect843"
@@ -69,26 +93,6 @@
      height="176.35593"
      x="2.1795259"
      y="5.1128588" />
-  <path
-     style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-     d="m 21.077845,150.1976 180.000005,60 70,-70"
-     id="path12697"
-     inkscape:connector-curvature="0" />
-  <path
-     style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-     d="m 21.077845,20.1976 180.000005,190 80,-190"
-     id="path12691"
-     inkscape:connector-curvature="0" />
-  <path
-     style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-     d="m 251.07785,280.1976 -50,-70 -180.000005,70"
-     id="path12693"
-     inkscape:connector-curvature="0" />
-  <path
-     style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-     d="m 201.07785,210.1976 -180.000005,20"
-     id="path12695"
-     inkscape:connector-curvature="0" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:244.27645874px;line-height:125%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"

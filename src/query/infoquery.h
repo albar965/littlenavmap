@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ namespace sql {
 class SqlDatabase;
 class SqlQuery;
 class SqlRecord;
-class SqlRecordVector;
+typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
 }
 }
 
@@ -40,7 +40,7 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  InfoQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav);
+  InfoQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack);
   ~InfoQuery();
 
   /* Get record for joined tables airport, bgl_file and scenery_area */
@@ -56,16 +56,6 @@ public:
 
   /* Get record for joined tables ndb, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getNdbInformation(int ndbId);
-
-  /* Get record for joined tables waypoint, bgl_file and scenery_area */
-  const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
-
-  /* Get record for table airway */
-  const atools::sql::SqlRecord *getAirwayInformation(int airwayId);
-
-  /* Get records with pairs of from/to waypoints (ident and region) for an airway.
-   * The records are ordered as they appear in the airway. */
-  const atools::sql::SqlRecordVector *getAirwayWaypointInformation(const QString& name, int fragment);
 
   /* Get record list for table runway of an airport */
   const atools::sql::SqlRecordVector *getRunwayInformation(int airportId);
@@ -91,6 +81,9 @@ public:
   /* Get record for table transition */
   const atools::sql::SqlRecordVector *getTransitionInformation(int approachId);
 
+  /* Get a record from table trackmeta for given track id */
+  atools::sql::SqlRecord getTrackMetadata(int trackId);
+
   /* Create all queries */
   void initQueries();
 
@@ -98,15 +91,11 @@ public:
   void deInitQueries();
 
 private:
-  /* Airway name and fragment ID */
-  typedef std::pair<QString, int> AirwayKey;
   const atools::sql::SqlRecordVector *ilsInformationSimByName(const QString& airportIdent, const QString& runway);
 
   /* Caches */
-  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, waypointCache, airwayCache, runwayEndCache,
+  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, runwayEndCache,
                                       ilsCacheNav, ilsCacheSim;
-
-  QCache<AirwayKey, atools::sql::SqlRecordVector> airwayWaypointCache;
 
   QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache, helipadCache, startCache, approachCache,
                                             transitionCache;
@@ -114,17 +103,14 @@ private:
 
   QCache<QString, atools::sql::SqlRecordVector> airportSceneryCache;
 
-  atools::sql::SqlDatabase *dbSim, *dbNav;
+  atools::sql::SqlDatabase *dbSim, *dbNav, *dbTrack;
 
   /* Prepared database queries */
-  atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr,
-                        *vorQuery = nullptr, *ndbQuery = nullptr,
-                        *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
-                        *runwayQuery = nullptr, *runwayEndQuery = nullptr, *helipadQuery = nullptr,
-                        *startQuery = nullptr, *ilsQuerySim = nullptr, *ilsQueryNav = nullptr,
+  atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr, *vorQuery = nullptr,
+                        *ndbQuery = nullptr, *comQuery = nullptr, *runwayQuery = nullptr, *runwayEndQuery = nullptr,
+                        *helipadQuery = nullptr, *startQuery = nullptr, *ilsQuerySim = nullptr, *ilsQueryNav = nullptr,
                         *ilsQuerySimByName = nullptr, *ilsQueryNavById = nullptr, *ilsQuerySimById = nullptr,
-                        *airwayWaypointQuery = nullptr, *vorIdentRegionQuery = nullptr, *approachQuery = nullptr,
-                        *transitionQuery = nullptr;
+                        *vorIdentRegionQuery = nullptr, *approachQuery = nullptr, *transitionQuery = nullptr;
 
 };
 

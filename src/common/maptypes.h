@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,7 @@
 #ifndef LITTLENAVMAP_MAPTYPES_H
 #define LITTLENAVMAP_MAPTYPES_H
 
-#include "geo/pos.h"
-#include "geo/rect.h"
 #include "geo/line.h"
-#include "fs/fspaths.h"
 #include "common/mapflags.h"
 #include "geo/linestring.h"
 #include "fs/sc/simconnectuseraircraft.h"
@@ -77,23 +74,116 @@ struct PosCourse
 };
 
 // =====================================================================
-/* Primitive id type combo that is hashable */
+/* Primitive id type combo that is hashable and comparable */
 struct MapObjectRef
 {
-  int id;
-  map::MapObjectTypes type;
+  MapObjectRef()
+    : id(-1), objType(NONE)
+  {
 
-  bool operator==(const map::MapObjectRef& other) const;
-  bool operator!=(const map::MapObjectRef& other) const;
+  }
+
+  MapObjectRef(int idParam, map::MapType typeParam)
+    : id(idParam), objType(typeParam)
+  {
+  }
+
+  MapObjectRef(int idParam, map::MapTypes typeParam)
+    : id(idParam), objType(static_cast<map::MapType>(typeParam.operator unsigned int()))
+  {
+  }
+
+  /* Database id or -1 if not applicable */
+  int id;
+
+  /* Use simple type information to avoid vtable and RTTI overhead. Avoid QFlags wrapper here. */
+  map::MapType objType;
+
+  bool operator==(const map::MapObjectRef& other) const
+  {
+    return objType == other.objType && id == other.id;
+  }
+
+  bool operator!=(const map::MapObjectRef& other) const
+  {
+    return !operator==(other);
+  }
 
 };
 
-int qHash(const map::MapObjectRef& type);
+QDataStream& operator>>(QDataStream& dataStream, map::MapObjectRef& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::MapObjectRef& obj);
 
-typedef QVector<MapObjectRef> MapObjectRefList;
+QDebug operator<<(QDebug out, const map::MapObjectRef& ref);
 
+inline uint qHash(const map::MapObjectRef& type)
+{
+  return static_cast<uint>(type.id) ^ static_cast<uint>(type.objType);
+}
+
+typedef QVector<MapObjectRef> MapObjectRefVector;
+
+// =====================================================================
+/* Extended reference type that also covers coordinates and name.
+ *  Hashable and comparable.*/
+struct MapObjectRefExt
+  : public MapObjectRef
+{
+  MapObjectRefExt()
+  {
+  }
+
+  MapObjectRefExt(int idParam, map::MapType typeParam)
+    : MapObjectRef(idParam, typeParam)
+  {
+  }
+
+  MapObjectRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam)
+    : MapObjectRef(idParam, typeParam), position(posParam)
+  {
+  }
+
+  MapObjectRefExt(int idParam, map::MapType typeParam, const QString& nameParam)
+    : MapObjectRef(idParam, typeParam), name(nameParam)
+  {
+  }
+
+  MapObjectRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam, const QString& nameParam)
+    : MapObjectRef(idParam, typeParam), position(posParam), name(nameParam)
+  {
+  }
+
+  /* Always valid for USERPOINTROUTE and always filled for all types in results of RouteStringReader. */
+  atools::geo::Pos position;
+
+  /* Original name or coordinate format string for user points */
+  QString name;
+
+  bool operator==(const map::MapObjectRefExt& other) const
+  {
+    return objType == map::USERPOINT || objType == map::USERPOINTROUTE ?
+           position == other.position : MapObjectRef::operator==(other);
+  }
+
+  bool operator!=(const map::MapObjectRefExt& other) const
+  {
+    return !operator==(other);
+  }
+
+};
+
+QDebug operator<<(QDebug out, const map::MapObjectRefExt& ref);
+
+inline uint qHash(const map::MapObjectRefExt& type)
+{
+  return qHash(static_cast<map::MapObjectRef>(type)) ^ qHash(type.position);
+}
+
+typedef QVector<MapObjectRefExt> MapObjectRefExtVector;
+
+// =====================================================================
 /* Convert type from nav_search table to enum */
-map::MapObjectTypes navTypeToMapObjectType(const QString& navType);
+map::MapTypes navTypeToMapObjectType(const QString& navType);
 bool navTypeTacan(const QString& navType);
 bool navTypeVortac(const QString& navType);
 
@@ -108,16 +198,26 @@ bool isSoftSurface(const QString& surface);
  * Object type can be NONE if no polymorphism is needed */
 struct MapBase
 {
-  MapBase(map::MapObjectType type)
+  explicit MapBase(map::MapType type)
     : objType(type)
+  {
+  }
+
+  explicit MapBase(map::MapType type, int idParam)
+    : id(idParam), objType(type)
+  {
+  }
+
+  explicit MapBase(map::MapType type, int idParam, const atools::geo::Pos& positionParam)
+    : id(idParam), position(positionParam), objType(type)
   {
   }
 
   int id;
   atools::geo::Pos position;
 
-  /* Use simple type information to avoid vtable and RTTI overhead. Avoid QFlags here. */
-  map::MapObjectType objType;
+  /* Use simple type information to avoid vtable and RTTI overhead. Avoid QFlags wrapper here. */
+  map::MapType objType;
 
   bool isValid() const
   {
@@ -136,11 +236,22 @@ struct MapBase
 
   map::MapObjectRef getRef() const
   {
-    return {id, objType};
+    return map::MapObjectRef(id, objType);
   }
 
+  map::MapObjectRefExt getRefExt() const
+  {
+    return map::MapObjectRefExt(id, position, objType);
+  }
+
+  map::MapObjectRefExt getRefExt(const QString& name) const
+  {
+    return map::MapObjectRefExt(id, position, objType, name);
+  }
+
+  /* Returns object cast to concrete object or null if type does not match */
   template<typename TYPE>
-  const TYPE *asType(map::MapObjectTypes type) const
+  const TYPE *asPtr(map::MapTypes type) const
   {
     if(objType == type)
       return static_cast<const TYPE *>(this);
@@ -148,7 +259,62 @@ struct MapBase
       return nullptr;
   }
 
+  /* As above. Ensure that type matches template parameter */
+  template<typename TYPE>
+  const TYPE *asPtr() const
+  {
+    return asPtr<TYPE>(objType);
+  }
+
+  /* Returns object cast to concrete object or default constructed value if type does not match */
+  template<typename TYPE>
+  TYPE asObj(map::MapTypes type) const
+  {
+    const TYPE *obj = asPtr<TYPE>(type);
+
+    if(obj != nullptr)
+      return *obj;
+    else
+      return TYPE();
+  }
+
+  /* As above. Ensure that type matches template parameter */
+  template<typename TYPE>
+  TYPE asObj() const
+  {
+    return asObj<TYPE>(objType);
+  }
+
+  bool operator==(const map::MapBase& other) const
+  {
+    return id == other.id && objType == other.objType;
+  }
+
+  bool operator!=(const map::MapBase& other) const
+  {
+    return !operator==(other);
+  }
+
+  /* Set type using QFlags wrapper */
+  void setType(map::MapTypes type)
+  {
+    objType = static_cast<map::MapType>(type.operator unsigned int());
+  }
+
+  /* Get type using QFlags wrapper */
+  map::MapTypes getType() const
+  {
+    return objType;
+  }
+
+  map::MapType getTypeEnum() const
+  {
+    return objType;
+  }
+
 };
+
+QDebug operator<<(QDebug out, const map::MapBase& obj);
 
 // =====================================================================
 /* Airport type not including runways (have to queried separately) */
@@ -163,10 +329,11 @@ struct MapAirport
   QString ident, /* Ident in simulator mostly ICAO */
            icao, /* Real ICAO ident */
            iata, /* IATA ident */
+           xpident, /* X-Plane internal unique ident - mostly ICAO */
            name, /* Full name */
            region; /* Two letter region code */
-  int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0;
-  int rating = -1;
+  int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0, rating = -1,
+      flatten /* X-Plane flatten flag. -1 if not set */;
   map::MapAirportFlags flags = AP_NONE;
   float magvar = 0; /* Magnetic variance - positive is east, negative is west */
   bool navdata, /* true if source is third party nav database, false if source is simulator data */
@@ -203,7 +370,6 @@ struct MapAirport
   bool parking() const;
   bool als() const;
   bool vasi() const;
-  bool fence() const;
   bool closedRunways() const;
   bool procedure() const;
 
@@ -218,7 +384,7 @@ struct MapAirport
    * @param objectTypes Map display configuration flags
    * @return true if this airport is visible on map
    */
-  bool isVisible(map::MapObjectTypes objectTypes) const;
+  bool isVisible(map::MapTypes objectTypes) const;
 
 };
 
@@ -234,7 +400,8 @@ struct MapRunway
 
   QString surface, shoulder, primaryName, secondaryName, edgeLight;
   int length /* ft */, primaryEndId, secondaryEndId;
-  float heading, patternAlt;
+  float heading, patternAlt,
+        smoothness /* 0 (smooth) to 1 (very rough). Default is 0.25. X-Plane only. -1.f if not set */;
   int width,
       primaryOffset, secondaryOffset, /* part of the runway length */
       primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
@@ -344,7 +511,7 @@ struct MapParking
   {
   }
 
-  QString type, name, airlineCodes /* Comma separated list of airline codes */;
+  QString type, name, nameShort, airlineCodes /* Comma separated list of airline codes */;
   int airportId /* database id airport.airport_id */;
   int number, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
       radius, heading;
@@ -361,7 +528,23 @@ struct MapStart
   {
   }
 
-  QString type /* RUNWAY, HELIPAD or WATER */, runwayName /* not empty if this is a runway start */;
+  bool isRunway() const
+  {
+    return type == 'R';
+  }
+
+  bool isHelipad() const
+  {
+    return type == 'H';
+  }
+
+  bool isWater() const
+  {
+    return type == 'W';
+  }
+
+  QChar type = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
+  QString runwayName /* not empty if this is a runway start */;
   int airportId /* database id airport.airport_id */;
   int heading, helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
 };
@@ -442,7 +625,8 @@ struct MapWaypoint
   QString ident, region, type /* NAMED, UNAMED, etc. *//*, airportIdent*/;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
 
-  bool hasVictorAirways = false, hasJetAirways = false;
+  bool hasVictorAirways = false, hasJetAirways = false, hasTracks = false;
+  int artificial = 0;
 };
 
 /* Waypoint or intersection */
@@ -454,7 +638,7 @@ struct MapAirwayWaypoint
 
 // =====================================================================
 /* User defined waypoint of a flight plan */
-/* Id is Sequence number as it was added to the flight plan */
+/* Id is equal to routeIndex and sequence number as it was added to the flight plan */
 struct MapUserpointRoute
   : public MapBase
 {
@@ -462,13 +646,13 @@ struct MapUserpointRoute
   {
   }
 
-  QString name;
+  QString ident, region, name, comment;
   float magvar;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
 };
 
 // =====================================================================
-/* User defined waypoint from the user database */
+/* User defined waypoint from the user database - id is valid a database id */
 struct MapUserpoint
   : public MapBase
 {
@@ -478,6 +662,85 @@ struct MapUserpoint
 
   QString name, ident, region, type, description, tags;
   bool temp = false;
+};
+
+// =====================================================================
+/* User aircraft wrapper */
+struct MapUserAircraft
+  : public MapBase
+{
+  MapUserAircraft() : MapBase(map::AIRCRAFT)
+  {
+  }
+
+  explicit MapUserAircraft(const atools::fs::sc::SimConnectUserAircraft& aircraftParam)
+    : MapBase(map::AIRCRAFT, static_cast<int>(aircraftParam.getObjectId()), aircraftParam.getPosition()),
+    aircraft(aircraftParam)
+  {
+  }
+
+  void clear()
+  {
+    aircraft = atools::fs::sc::SimConnectUserAircraft();
+    position = atools::geo::EMPTY_POS;
+    id = -1;
+  }
+
+  /* Encapsulate it to avoid changes */
+  const atools::fs::sc::SimConnectAircraft& getAircraft() const
+  {
+    return aircraft;
+  }
+
+private:
+  atools::fs::sc::SimConnectUserAircraft aircraft;
+};
+
+/* AI aircraft wrapper */
+struct MapAiAircraft
+  : public MapBase
+{
+  MapAiAircraft() : MapBase(map::AIRCRAFT_AI)
+  {
+  }
+
+  explicit MapAiAircraft(const atools::fs::sc::SimConnectAircraft& aircraftParam)
+    : MapBase(map::AIRCRAFT_AI, static_cast<int>(aircraftParam.getObjectId()),
+              aircraftParam.getPosition()), aircraft(aircraftParam)
+  {
+  }
+
+  /* Encapsulate it to avoid changes */
+  const atools::fs::sc::SimConnectAircraft& getAircraft() const
+  {
+    return aircraft;
+  }
+
+private:
+  atools::fs::sc::SimConnectAircraft aircraft;
+};
+/* Online aircraft wrapper */
+struct MapOnlineAircraft
+  : public MapBase
+{
+  MapOnlineAircraft() : MapBase(map::AIRCRAFT_ONLINE)
+  {
+  }
+
+  explicit MapOnlineAircraft(const atools::fs::sc::SimConnectAircraft& aircraftParam)
+    : MapBase(map::AIRCRAFT_ONLINE, static_cast<int>(aircraftParam.getObjectId()),
+              aircraftParam.getPosition()), aircraft(aircraftParam)
+  {
+  }
+
+  /* Encapsulate it to avoid changes */
+  const atools::fs::sc::SimConnectAircraft& getAircraft() const
+  {
+    return aircraft;
+  }
+
+private:
+  atools::fs::sc::SimConnectAircraft aircraft;
 };
 
 // =====================================================================
@@ -505,6 +768,18 @@ struct MapLogbookEntry
     return l;
   }
 
+  atools::geo::Line line() const
+  {
+    if(departurePos.isValid() && destinationPos.isValid())
+      return atools::geo::Line(departurePos, destinationPos);
+    else if(departurePos.isValid())
+      return atools::geo::Line(departurePos);
+    else if(destinationPos.isValid())
+      return atools::geo::Line(destinationPos);
+
+    return atools::geo::Line();
+  }
+
   atools::geo::Rect bounding() const
   {
     atools::geo::Rect rect(departurePos);
@@ -525,13 +800,16 @@ struct MapLogbookEntry
 };
 
 // Airways =====================================================================
-/* Airway type */
-enum MapAirwayType
+/* Airway and track type */
+enum MapAirwayTrackType
 {
   NO_AIRWAY,
-  VICTOR,
-  JET,
-  BOTH
+  AIRWAY_VICTOR,
+  AIRWAY_JET,
+  AIRWAY_BOTH,
+  TRACK_NAT,
+  TRACK_PACOTS,
+  TRACK_AUSOTS
 };
 
 enum MapAirwayDirection
@@ -542,7 +820,20 @@ enum MapAirwayDirection
   DIR_BACKWARD = 2
 };
 
-/* Airway segment */
+enum MapAirwayRouteType
+{
+  RT_NONE,
+  RT_AIRLINE, /* A Airline Airway (Tailored Data) */
+  RT_CONTROL, /* C Control (appears in DFD) */
+  RT_DIRECT, /* D Direct Route */
+  RT_HELICOPTER, /* H Helicopter Airways */
+  RT_OFFICIAL, /* O Officially Designated Airways, except RNAV, Helicopter Airways (appears in DFD) */
+  RT_RNAV, /* R RNAV Airways (appears in DFD) */
+  RT_UNDESIGNATED, /* S Undesignated ATS Route */
+  RT_TRACK /* S Undesignated ATS Route */
+};
+
+/* Airway segment or part of NAT, PACOTS or AUSOTS track */
 struct MapAirway
   : public MapBase
 {
@@ -550,15 +841,29 @@ struct MapAirway
   {
   }
 
+  bool isTrack() const
+  {
+    return routeType == RT_TRACK;
+  }
+
+  bool isAirway() const
+  {
+    return !isTrack();
+  }
+
   QString name;
-  map::MapAirwayType type;
-  int fromWaypointId, toWaypointId /* all database ids */;
+  map::MapAirwayTrackType type;
+  map::MapAirwayRouteType routeType;
+  int fromWaypointId, toWaypointId /* all database ids */,
+      airwayId /* Mirrored from underlying airways for tracks */;
   MapAirwayDirection direction;
   int minAltitude, maxAltitude /* feet */,
       sequence /* segment sequence in airway */,
       fragment /* fragment number of disconnected airways with the same name */;
+  QVector<quint16> altitudeLevelsEast, altitudeLevelsWest;
   atools::geo::Pos from, to;
   atools::geo::Rect bounding; /* pre calculated using from and to */
+  bool eastCourse, westCourse;
 
 };
 
@@ -693,7 +998,7 @@ struct Hold
   }
 
   QString navIdent; /* Only for display purposes */
-  map::MapObjectTypes navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
+  map::MapTypes navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
   bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
   QColor color;
 
@@ -717,196 +1022,17 @@ QDataStream& operator>>(QDataStream& dataStream, map::Hold& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::Hold& obj);
 
 // =====================================================================
-/* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
-struct MapSearchResult
-{
-  QList<MapAirport> airports;
-  QSet<int> airportIds; /* Ids used to deduplicate when merging highlights and nearest */
-
-  QList<MapRunwayEnd> runwayEnds;
-  QList<MapAirport> towers;
-  QList<MapParking> parkings;
-  QList<MapHelipad> helipads;
-
-  QList<MapWaypoint> waypoints;
-  QSet<int> waypointIds; /* Ids used to deduplicate */
-
-  QList<MapVor> vors;
-  QSet<int> vorIds; /* Ids used to deduplicate */
-
-  QList<MapNdb> ndbs;
-  QSet<int> ndbIds; /* Ids used to deduplicate */
-
-  QList<MapMarker> markers;
-  QList<MapIls> ils;
-
-  QList<MapAirway> airways;
-  QList<MapAirspace> airspaces;
-
-  /* User defined route points */
-  QList<MapUserpointRoute> userPointsRoute;
-
-  /* User defined waypoints */
-  QList<MapUserpoint> userpoints;
-  QSet<int> userpointIds; /* Ids used to deduplicate */
-
-  /* Logbook entries */
-  QList<MapLogbookEntry> logbookEntries;
-
-  QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
-  atools::fs::sc::SimConnectUserAircraft userAircraft;
-
-  QList<atools::fs::sc::SimConnectAircraft> onlineAircraft;
-  QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
-
-  atools::geo::Pos windPos;
-  QList<map::Hold> holds;
-  QList<map::TrafficPattern> trafficPatterns;
-
-  QList<proc::MapProcedurePoint> procPoints;
-
-  /* true if none of the types exists in this result */
-  bool isEmpty(const map::MapObjectTypes& types = map::ALL) const;
-
-  /* Number of map objects for the given types */
-  int getTotalSize(const map::MapObjectTypes& types = map::ALL) const;
-
-  /* Get id and type from the result. Vector of types defines priority. true if something was found.
-   * id is set to -1 if nothing was found. */
-  bool getIdAndType(int& id, MapObjectTypes& type, const QVector<MapObjectTypes>& types) const;
-
-  /* Remove the given types only */
-  void clear(const MapObjectTypes& types = map::ALL);
-
-  void clearAllButFirst(const MapObjectTypes& types = map::ALL);
-
-  /* Give online airspaces/centers priority */
-  void moveOnlineAirspacesToFront();
-  map::MapSearchResult moveOnlineAirspacesToFront() const;
-
-  bool hasAirports() const
-  {
-    return !airports.isEmpty();
-  }
-
-  bool hasAirways() const
-  {
-    return !airways.isEmpty();
-  }
-
-  bool hasVor() const
-  {
-    return !vors.isEmpty();
-  }
-
-  bool hasNdb() const
-  {
-    return !ndbs.isEmpty();
-  }
-
-  bool hasUserpoints() const
-  {
-    return !userpoints.isEmpty();
-  }
-
-  bool hasIls() const
-  {
-    return !ils.isEmpty();
-  }
-
-  bool hasRunwayEnd() const
-  {
-    return !runwayEnds.isEmpty();
-  }
-
-  bool hasWaypoints() const
-  {
-    return !waypoints.isEmpty();
-  }
-
-  bool hasAirspaces() const
-  {
-    return !airspaces.isEmpty();
-  }
-
-  /* Special methods for the online and navdata airspaces which are stored mixed */
-  bool hasSimNavUserAirspaces() const;
-  bool hasOnlineAirspaces() const;
-  void clearNavdataAirspaces();
-  void clearOnlineAirspaces();
-  MapAirspace *firstSimNavUserAirspace();
-  MapAirspace *firstOnlineAirspace();
-  int numSimNavUserAirspaces() const;
-  int numOnlineAirspaces() const;
-
-  QList<MapAirspace> getSimNavUserAirspaces() const;
-
-  QList<MapAirspace> getOnlineAirspaces() const;
-
-private:
-  template<typename T>
-  void clearAllButFirst(QList<T>& list);
-
-};
-
-QDebug operator<<(QDebug out, const map::MapSearchResult& record);
-
-// =====================================================================
-/* Mixed search result using inherited objects, Does not support aircraft objects */
-/* Maintains only pointers to the original objects and creates a copy the MapSearchResult. */
-struct MapSearchResultIndex
-  : public QVector<const map::MapBase *>
-{
-  /* Add all result objects to list. Result and all objects are copied. */
-  void addFromResult(const map::MapSearchResult& resultParm, const MapObjectTypes& types = map::ALL);
-
-  /* Sort objects by distance to given position from closest to farthest */
-  void sortByDistance(const atools::geo::Pos& pos, bool sortNearToFar);
-
-  /* Remove all objects which are more far away  from pos than max distance */
-  void removeByDistance(const atools::geo::Pos& pos, float maxDistanceNm);
-
-  void clearAll()
-  {
-    clear();
-    result.clear();
-  }
-
-  const map::MapSearchResult& getResult() const
-  {
-    return result;
-  }
-
-private:
-  template<typename TYPE>
-  void addAll(const QList<TYPE>& list)
-  {
-    for(const TYPE& obj : list)
-      append(&obj);
-  }
-
-  map::MapSearchResult result;
-};
-
-// =====================================================================
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker
+  : public MapBase
 {
+  RangeMarker() : MapBase(map::NONE)
+  {
+  }
+
   QString text; /* Text to display like VOR name and frequency */
-  QVector<int> ranges; /* Range ring list (nm) */
-  atools::geo::Pos center;
-  MapObjectTypes type; /* VOR, NDB, AIRPORT, etc. */
-
-  bool isValid() const
-  {
-    return center.isValid();
-  }
-
-  const atools::geo::Pos& getPosition() const
-  {
-    return center;
-  }
-
+  QVector<float> ranges; /* Range ring list (nm) */
+  MapTypes type; /* VOR, NDB, AIRPORT, etc. */
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
@@ -920,8 +1046,6 @@ struct DistanceMarker
   QColor color; /* Line color depends on origin (airport or navaid type */
   atools::geo::Pos from, to;
   float magvar;
-
-  bool isRhumbLine;
 
   bool isValid() const
   {
@@ -942,9 +1066,9 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 /* Stores last METARs to avoid unneeded updates in widget */
 struct WeatherContext
 {
-  atools::fs::weather::MetarResult fsMetar, ivaoMetar, noaaMetar;
+  atools::fs::weather::MetarResult fsMetar, ivaoMetar, noaaMetar, vatsimMetar;
   bool isAsDeparture = false, isAsDestination = false;
-  QString asMetar, asType, vatsimMetar, ident;
+  QString asMetar, asType, ident;
 
   bool isEmpty() const
   {
@@ -959,10 +1083,10 @@ QDebug operator<<(QDebug out, const map::WeatherContext& record);
 // =====================================================================================
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
-const QString& navTypeNameVor(const QString& type);
-const QString& navTypeNameVorLong(const QString& type);
-const QString& navTypeNameNdb(const QString& type);
-const QString& navTypeNameWaypoint(const QString& type);
+QString navTypeNameVor(const QString& type);
+QString navTypeNameVorLong(const QString& type);
+QString navTypeNameNdb(const QString& type);
+QString navTypeNameWaypoint(const QString& type);
 
 QString ilsText(const map::MapIls& ils);
 QString ilsType(const MapIls& ils);
@@ -972,18 +1096,23 @@ QString ilsTextShort(QString ident, QString name, bool gs, bool dme);
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
 
-const QString& navName(const QString& type);
+QString navName(const QString& type);
 const QString& surfaceName(const QString& surface);
+QString smoothnessName(QVariant smoothnessVar); // X-Plane runway smoothness
 const QString& parkingGateName(const QString& gate);
 const QString& parkingRampName(const QString& ramp);
 const QString& parkingTypeName(const QString& type);
 const QString& parkingName(const QString& name);
+QString parkingText(const map::MapParking& parking);
 QString parkingNameNumberType(const map::MapParking& parking);
 QString startType(const map::MapStart& start);
+
+QString helipadText(const map::MapHelipad& helipad);
 
 /* Split runway name into parts and return true if name matches a runway number */
 bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr);
 bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr);
+QString runwayDesignatorLong(const QString& name);
 
 /* Get the closes matching runway name from the list of airport runways or empty if none */
 QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames);
@@ -1006,6 +1135,12 @@ bool runwayAlmostEqual(const QString& name1, const QString& name2);
 /* Compare runway numbers by ignoring leading zero */
 bool runwayEqual(QString name1, QString name2);
 
+/* Route index from base type */
+int routeIndex(const map::MapBase *base);
+
+/* Airspace source from base type */
+map::MapAirspaceSources airspaceSource(const map::MapBase *base);
+
 /* Parking name from PLN to database name */
 const QString& parkingDatabaseName(const QString& name);
 
@@ -1017,20 +1152,32 @@ QString parkingNameForFlightplan(const MapParking& parking);
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type);
 const QString& airspaceFlagToString(map::MapAirspaceFlags type);
+QString mapObjectTypeToString(MapTypes type); /* For debugging purposes. Not translated */
 const QString& airspaceRemark(map::MapAirspaceTypes type);
+
 int airspaceDrawingOrder(map::MapAirspaceTypes type);
 QString airspaceSourceText(map::MapAirspaceSources src);
+QString airspaceName(const map::MapAirspace& airspace);
+QString airspaceText(const map::MapAirspace& airspace);
+
+QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft); /* Helicopter, etc. */
+QString aircraftTextShort(const atools::fs::sc::SimConnectAircraft& aircraft);
+QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft);
+bool isAircraftShadow(const map::MapBase *base);
 
 map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
 const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);
 
-QString airwayTypeToShortString(map::MapAirwayType type);
-QString airwayTypeToString(map::MapAirwayType type);
-MapAirwayType  airwayTypeFromString(const QString& typeStr);
+QString airwayTrackTypeToShortString(map::MapAirwayTrackType type); /* Also used when writing to db for tracks */
+QString airwayTrackTypeToString(map::MapAirwayTrackType type);
+QString airwayRouteTypeToString(map::MapAirwayRouteType type);
+QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type); /* Also used when writing to db for tracks */
+map::MapAirwayTrackType  airwayTrackTypeFromString(const QString& typeStr);
+map::MapAirwayRouteType  airwayRouteTypeFromString(const QString& typeStr);
 QString comTypeName(const QString& type);
 
 QString airportText(const map::MapAirport& airport, int elideName = 1000);
-QString airportTextShort(const map::MapAirport& airport);
+QString airportTextShort(const map::MapAirport& airport, int elideName = 1000);
 QString vorFullShortText(const map::MapVor& vor);
 QString vorText(const map::MapVor& vor);
 QString vorTextShort(const MapVor& vor);
@@ -1058,10 +1205,9 @@ int surfaceQuality(const QString& surface);
 
 void updateUnits();
 
-} // namespace types
+} // namespace map
 
-Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);
-
+/* Type info */
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunwayEnd, Q_MOVABLE_TYPE);
@@ -1078,17 +1224,23 @@ Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapSearchResult, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
 
+/* Type info and serializable objects */
+Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(map::MapObjectRef);
+
 Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::RangeMarker);
+
 Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::DistanceMarker);
+
 Q_DECLARE_TYPEINFO(map::TrafficPattern, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::TrafficPattern);
+
 Q_DECLARE_TYPEINFO(map::Hold, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::Hold);
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
 
 using namespace atools::geo;
 
-MapPainterWind::MapPainterWind(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterWind::MapPainterWind(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -39,7 +39,7 @@ MapPainterWind::~MapPainterWind()
 {
 }
 
-void MapPainterWind::render(PaintContext *context)
+void MapPainterWind::render()
 {
   bool drawWeather = context->objectDisplayTypes.testFlag(map::WIND_BARBS) && context->mapLayer->isWindBarbs();
 
@@ -47,11 +47,12 @@ void MapPainterWind::render(PaintContext *context)
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
 
+  bool overflow = false;
   const atools::grib::WindPosList *windForRect =
     NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(),
-                                              context->mapLayer, context->lazyUpdate);
+                                              context->mapLayer, context->lazyUpdate, overflow);
+  context->setQueryOverflow(overflow);
 
   if(windForRect != nullptr)
   {
@@ -70,13 +71,17 @@ void MapPainterWind::render(PaintContext *context)
         bool isVisible, isHidden;
         QPoint pos = wToS(windPos.pos, DEFAULT_WTOS_SIZE, &isVisible, &isHidden);
         if(!pos.isNull() && /*isVisible && */ !isHidden)
-          drawWindBarb(context, windPos.wind.speed, windPos.wind.dir, pos.x(), pos.y());
+        {
+          drawWindBarb(windPos.wind.speed, windPos.wind.dir, pos.x(), pos.y());
+          if(context->objCount())
+            break;
+        }
       }
     }
   }
 }
 
-void MapPainterWind::drawWindBarb(PaintContext *context, float speed, float direction, float x, float y)
+void MapPainterWind::drawWindBarb(float speed, float direction, float x, float y)
 {
   float size = context->sz(context->symbolSizeWindBarbs, context->mapLayer->getWindBarbsSymbolSize());
   symbolPainter->drawWindBarbs(context->painter, speed, 0.f, direction, x, y, size,

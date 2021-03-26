@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,9 @@ ImageExportDialog::ImageExportDialog(QWidget *parent, const QString& titleParam,
 
   ui->setupUi(this);
   setWindowTitle(QApplication::applicationName() + titleParam);
+
+  ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+  ui->comboBoxResolution->setFocus();
 
   // Put current map size into current map view option
   ui->comboBoxResolution->setItemText(CURRENT_MAP_VIEW, ui->comboBoxResolution->itemText(CURRENT_MAP_VIEW).
@@ -144,5 +147,7 @@ void ImageExportDialog::currentResolutionIndexChanged()
 {
   ResolutionIndex index = static_cast<ResolutionIndex>(ui->comboBoxResolution->currentIndex());
   ui->spinBoxWidth->setEnabled(index == CUSTOM_RESOLUTION);
+  ui->labelWidth->setEnabled(index == CUSTOM_RESOLUTION);
   ui->spinBoxHeight->setEnabled(index == CUSTOM_RESOLUTION);
+  ui->labelHeight->setEnabled(index == CUSTOM_RESOLUTION);
 }

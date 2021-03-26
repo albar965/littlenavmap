@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class UpdateHandler :
 
 public:
   explicit UpdateHandler(MainWindow *parent = nullptr);
-  virtual ~UpdateHandler();
+  virtual ~UpdateHandler() override;
 
   /*
    * Check asynchronously for updates and call updateFound if anything was found.
@@ -53,7 +53,7 @@ public:
    * @param manuallyTriggered Ignores timestamp and shows also a dialog if nothing was found.
    * Also ignores the skip list.
    */
-  void checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered);
+  void checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered, bool force);
 
 private:
   void updateFound(atools::util::UpdateList updates);

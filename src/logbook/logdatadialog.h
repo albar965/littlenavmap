@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -83,11 +83,36 @@ public:
   void saveState();
   void restoreState();
 
+signals:
+  /* File attachements - push buttons redirected */
+  void planOpen(atools::sql::SqlRecord *record, QWidget *parent); /* Open as current */
+  void planAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new plan to logbook entry */
+  void planSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached LNMPLN plan to file */
+  void gpxAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new GPX to logbook entry */
+  void gpxSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached GPX plan to file */
+  void perfOpen(atools::sql::SqlRecord *record, QWidget *parent); /* Open as current */
+  void perfAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new performance to logbook entry */
+  void perfSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached performance to file */
+
 private:
   /* Button box click handlers */
   void acceptClicked();
   void helpClicked();
   void resetClicked();
+
+  /* Buttons clicked */
+  void planOpenClicked(); /* Open as current */
+  void planAddClicked(); /* Attach new plan to logbook entry */
+  void planSaveAsClicked(); /* Save attached LNMPLN plan to file */
+  void gpxAddClicked(); /* Attach new GPX to logbook entry */
+  void gpxSaveAsClicked(); /* Save attached GPX plan to file */
+  void perfOpenClicked(); /* Open as current */
+  void perfAddClicked(); /* Attach new performance to logbook entry */
+  void perfSaveAsClicked(); /* Save attached performance to file */
+
+  void planClearClicked();
+  void perfClearClicked();
+  void gpxClearClicked();
 
   /* Update status for all widgets */
   void updateWidgets();
@@ -122,6 +147,8 @@ private:
 
   /* Remove airport including ident */
   void removeAirport(const QString& prefix);
+
+  void updateAttachementWidgets();
 
   /* Remember fuel unit to detect changes in widget */
   bool volumeCurrent = false;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "gui/widgetstate.h"
 #include "common/constants.h"
 #include "gui/helphandler.h"
+#include "route/route.h"
 
 #include "navapp.h"
 #include "atools.h"
@@ -32,6 +33,7 @@
 #include <QSlider>
 #include <QTimer>
 #include <QWidget>
+#include <QToolTip>
 #include "ui_mainwindow.h"
 
 ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollAreaParam)
@@ -46,7 +48,7 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
 
   // Create label widget on the left
   labelWidget = new ProfileLabelWidget(profileWidget, this);
-  labelWidget->setMinimumWidth(65);
+  labelWidget->setMinimumWidth(1); // Setting to 0 hides the widget
   ui->gridLayoutProfileDrawing->replaceWidget(ui->widgetProfileLabelLeft, labelWidget);
 
   // Update splitter icon and color
@@ -78,22 +80,47 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   connect(ui->pushButtonProfileHelp, &QPushButton::clicked, this, &ProfileScrollArea::helpClicked);
   connect(ui->actionProfileExpand, &QAction::triggered, this, &ProfileScrollArea::expandWidget);
 
-  connect(ui->actionProfileShowLabels, &QAction::toggled, this, &ProfileScrollArea::showLabels);
-  connect(ui->actionProfileShowScrollbars, &QAction::toggled, this, &ProfileScrollArea::showScrollbars);
-  connect(ui->actionProfileShowZoom, &QAction::toggled, this, &ProfileScrollArea::showZoom);
+  connect(ui->actionProfileShowLabels, &QAction::toggled, this, &ProfileScrollArea::showLabelsToggled);
+  connect(ui->actionProfileShowScrollbars, &QAction::toggled, this, &ProfileScrollArea::showScrollbarsToggled);
+  connect(ui->actionProfileShowTooltip, &QAction::toggled, this, &ProfileScrollArea::showTooltipToggled);
+  connect(ui->actionProfileShowZoom, &QAction::toggled, this, &ProfileScrollArea::showZoomToggled);
 
   // Need to resize scroll area
   connect(ui->splitterProfile, &QSplitter::splitterMoved, this, &ProfileScrollArea::splitterMoved);
 
-  // Install event filter to area and viewport widgets avoid subclassing
+  // Install event filter to area and viewport widgets avoid subclassing ====================
   scrollArea->installEventFilter(this);
   scrollArea->viewport()->installEventFilter(this);
+
+  // Use a label as top level window styled as a tooltip ====================
+  tooltipLabel = new QLabel(viewport, Qt::FramelessWindowHint);
+
+  // Keep inactive
+  tooltipLabel->setAttribute(Qt::WA_ShowWithoutActivating);
+  tooltipLabel->setAutoFillBackground(true);
+  tooltipLabel->setFrameShape(QFrame::Box); // Black border
+  tooltipLabel->setMargin(0);
+
+  // Use tooltip palette
+  tooltipLabel->setPalette(QToolTip::palette());
+  tooltipLabel->setForegroundRole(QPalette::ToolTipText);
+  tooltipLabel->setBackgroundRole(QPalette::ToolTipBase);
+
+  // Shrink font a bit
+  QFont font = tooltipLabel->font();
+  if(font.pointSizeF() > 1.)
+  {
+    font.setPointSizeF(font.pointSizeF() * 0.9);
+    tooltipLabel->setFont(font);
+  }
+  tooltipLabel->hide();
 }
 
 ProfileScrollArea::~ProfileScrollArea()
 {
   scrollArea->removeEventFilter(this);
   scrollArea->viewport()->removeEventFilter(this);
+  delete tooltipLabel;
   delete labelWidget;
 }
 
@@ -117,6 +144,72 @@ void ProfileScrollArea::expandWidget()
   ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
   ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
   scrollArea->setWidgetResizable(false);
+}
+
+void ProfileScrollArea::showTooltip(const QPoint& globalPos, const QString& text)
+{
+  if(NavApp::getMainUi()->actionProfileShowTooltip->isChecked())
+  {
+    // Set text if changed and adjust window size
+    if(text != tooltipLabel->text())
+    {
+      tooltipLabel->setText(text);
+      tooltipLabel->adjustSize();
+    }
+
+    int cursorX = viewport->mapFromGlobal(globalPos).x();
+    if(tooltipLabel->isVisible())
+    {
+      // Cut off width and/or height if the tooltip is bigger than the viewport
+      if(tooltipLabel->height() > viewport->height())
+        tooltipLabel->resize(tooltipLabel->width(), viewport->height());
+
+      if(tooltipLabel->width() > viewport->width())
+        tooltipLabel->resize(viewport->width(), tooltipLabel->height());
+
+      // Check if tooltip has to jump to other side
+      int buffer = std::min(tooltipLabel->width() * 5 / 4, viewport->width() / 3);
+      int leftMargin = buffer;
+      int rightMargin = viewport->width() - buffer;
+
+      bool tooltipIsLeft = tooltipLabel->pos().x() <= 2;
+      if(!tooltipIsLeft && cursorX >= rightMargin)
+        // Tooltip at right side and cursor above right margin - move to left side
+        tooltipLabel->move(QPoint());
+      else if(tooltipIsLeft && cursorX <= leftMargin)
+        // Tooltip at left side and cursor below left margin - move to right side
+        tooltipLabel->move(QPoint(viewport->width() - tooltipLabel->width(), 0));
+      else if(!tooltipIsLeft && tooltipLabel->x() + tooltipLabel->width() > viewport->width())
+        // Tooltip grew above parent width - reposition to be fully visible
+        tooltipLabel->move(QPoint(viewport->width() - tooltipLabel->width(), 0));
+    }
+    else
+    {
+      // Not visible yet. Move to either side depending on cursor position
+      if(cursorX > viewport->width() / 2)
+        // Cursor right half of window - move tooltip to left side
+        tooltipLabel->move(QPoint());
+      else
+        // Cursor left half of window - move tooltip to right side
+        tooltipLabel->move(QPoint(viewport->width() - tooltipLabel->width(), 0));
+
+      // Show it
+      tooltipLabel->setVisible(true);
+      tooltipLabel->raise();
+    }
+  }
+  else if(tooltipLabel->isVisible())
+    tooltipLabel->setVisible(false);
+}
+
+void ProfileScrollArea::hideTooltip()
+{
+  tooltipLabel->setVisible(false);
+}
+
+bool ProfileScrollArea::isTooltipVisible() const
+{
+  return tooltipLabel->isVisible();
 }
 
 void ProfileScrollArea::splitterMoved(int pos, int index)
@@ -225,9 +318,9 @@ void ProfileScrollArea::routeAltitudeChanged()
 void ProfileScrollArea::updateWidgets()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  bool routeEmpty = NavApp::getRoute().getSizeWithoutAlternates() < 2;
+  bool routeValid = profileWidget->hasValidRouteForDisplay();
 
-  if(routeEmpty)
+  if(!routeValid)
   {
     // Reset zoom sliders
     ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
@@ -237,12 +330,12 @@ void ProfileScrollArea::updateWidgets()
   }
 
   // Disable scrolling and zooming
-  ui->labelProfileHorizontalSlider->setDisabled(routeEmpty);
-  ui->labelProfileVerticalSlider->setDisabled(routeEmpty);
-  ui->pushButtonProfileExpand->setDisabled(routeEmpty);
-  ui->actionProfileExpand->setDisabled(routeEmpty);
-  ui->horizontalSliderProfileZoom->setDisabled(routeEmpty);
-  ui->verticalSliderProfileZoom->setDisabled(routeEmpty);
+  ui->labelProfileHorizontalSlider->setEnabled(routeValid);
+  ui->labelProfileVerticalSlider->setEnabled(routeValid);
+  ui->pushButtonProfileExpand->setEnabled(routeValid);
+  ui->actionProfileExpand->setEnabled(routeValid);
+  ui->horizontalSliderProfileZoom->setEnabled(routeValid);
+  ui->verticalSliderProfileZoom->setEnabled(routeValid);
 }
 
 bool ProfileScrollArea::eventFilter(QObject *object, QEvent *event)
@@ -351,13 +444,17 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
 bool ProfileScrollArea::mouseDoubleClickEvent(QMouseEvent *event)
 {
   qDebug() << Q_FUNC_INFO << (event->pos() + getOffset());
+
+  if(!profileWidget->hasValidRouteForDisplay())
+    return false;
+
   emit showPosAlongFlightplan(event->pos().x() + getOffset().x(), true);
   return true;
 }
 
 bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
 {
-  if(NavApp::getRoute().getSizeWithoutAlternates() < 2)
+  if(!profileWidget->hasValidRouteForDisplay())
     return false;
 
   if(!startDragPos.isNull())
@@ -551,7 +648,13 @@ QPoint ProfileScrollArea::getOffset() const
   return profileWidget->pos() * -1;
 }
 
-void ProfileScrollArea::showZoom(bool show)
+void ProfileScrollArea::showTooltipToggled(bool show)
+{
+  if(!show)
+    hideTooltip();
+}
+
+void ProfileScrollArea::showZoomToggled(bool show)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -563,14 +666,14 @@ void ProfileScrollArea::showZoom(bool show)
   resizeEvent();
 }
 
-void ProfileScrollArea::showScrollbars(bool show)
+void ProfileScrollArea::showScrollbarsToggled(bool show)
 {
   scrollArea->setVerticalScrollBarPolicy(show ? Qt::ScrollBarAlwaysOn : Qt::ScrollBarAlwaysOff);
   scrollArea->setHorizontalScrollBarPolicy(show ? Qt::ScrollBarAlwaysOn : Qt::ScrollBarAlwaysOff);
   resizeEvent();
 }
 
-void ProfileScrollArea::showLabels(bool show)
+void ProfileScrollArea::showLabelsToggled(bool show)
 {
   labelWidget->setVisible(show);
 
@@ -588,6 +691,7 @@ void ProfileScrollArea::saveState()
     ui->actionProfileFollow,
     ui->actionProfileShowLabels,
     ui->actionProfileShowScrollbars,
+    ui->actionProfileShowTooltip,
     ui->actionProfileShowZoom,
     ui->actionProfileShowIls,
     ui->actionProfileShowVasi
@@ -604,6 +708,7 @@ void ProfileScrollArea::restoreState()
     ui->actionProfileFollow,
     ui->actionProfileShowLabels,
     ui->actionProfileShowScrollbars,
+    ui->actionProfileShowTooltip,
     ui->actionProfileShowZoom,
     ui->actionProfileShowIls,
     ui->actionProfileShowVasi
@@ -662,6 +767,8 @@ bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint, float vertical
 
 void ProfileScrollArea::styleChanged()
 {
+  // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
+#ifndef Q_OS_LINUX
   // Make the elevation profile splitter handle better visible - update background color
   NavApp::getMainUi()->splitterProfile->setStyleSheet(
     QString("QSplitter::handle { "
@@ -669,6 +776,7 @@ void ProfileScrollArea::styleChanged()
             "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png);"
             " }").
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+#endif
 }
 
 void ProfileScrollArea::setMaxVertZoom()

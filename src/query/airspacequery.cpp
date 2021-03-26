@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,22 +19,15 @@
 
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
-#include "common/maptools.h"
-#include "fs/common/binarygeometry.h"
-#include "sql/sqlquery.h"
-#include "sql/sqlrecord.h"
+#include "mapgui/maplayer.h"
 #include "sql/sqlutil.h"
-#include "query/airportquery.h"
+#include "sql/sqldatabase.h"
 #include "fs/common/binarygeometry.h"
-#include "navapp.h"
 #include "common/maptools.h"
 #include "settings/settings.h"
-#include "fs/common/xpgeometry.h"
 #include "db/databasemanager.h"
 
-#include <QDataStream>
 #include <QFileInfo>
-#include <QRegularExpression>
 
 using namespace Marble;
 using namespace atools::sql;
@@ -42,7 +35,7 @@ using namespace atools::geo;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
-int AirspaceQuery::queryMaxRows = 5000;
+int AirspaceQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
 AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSources src)
   : db(sqlDb), source(src)
@@ -61,8 +54,8 @@ AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSources src)
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRowLimit", 5000).toInt();
+  queryMaxRows =
+    settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirspaceQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 }
 
 AirspaceQuery::~AirspaceQuery()
@@ -116,7 +109,7 @@ void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
 
 const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                            map::MapAirspaceFilter filter, float flightPlanAltitude,
-                                                           bool lazy)
+                                                           bool lazy, bool& overflow)
 {
   airspaceCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                             [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -212,6 +205,14 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
             if(ids.contains(query->valueInt("boundary_id")))
               continue;
 
+            if(hasFirUir)
+            {
+              // Database has new FIR/UIR types - filter out the old deprecated centers
+              QString name = query->valueStr("name");
+              if(name.contains("(FIR)") || name.contains("(UIR)") || name.contains("(FIR/UIR)"))
+                continue;
+            }
+
             map::MapAirspace airspace;
             mapTypesFactory->fillAirspace(query->record(), airspace, source);
             airspaceCache.list.append(airspace);
@@ -229,7 +230,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
       });
     }
   }
-  airspaceCache.validate(queryMaxRows);
+  overflow = airspaceCache.validate(queryMaxRows);
   return &airspaceCache.list;
 }
 
@@ -353,6 +354,16 @@ void AirspaceQuery::updateAirspaceStatus()
     hasAirspaces = SqlUtil(db).hasTableAndRows("atc");
   else
     hasAirspaces = SqlUtil(db).hasTableAndRows("boundary");
+
+  if(source & map::AIRSPACE_SRC_NAV && hasAirspaces)
+  {
+    // Check if the database contains the new FIR/UIR types which are preferred before FIR/UIR center types
+    SqlQuery query("select count(1) from boundary where type in ('FIR', 'UIR')", db);
+    query.exec();
+    hasFirUir = query.next() && query.valueInt(0) > 0;
+  }
+  else
+    hasFirUir = false;
 }
 
 void AirspaceQuery::initQueries()

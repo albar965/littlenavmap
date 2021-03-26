@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -104,20 +104,17 @@ public:
   bool isRouteWindShown() const;
 
   /* True if wind available */
-  bool hasWindData() const;
+  bool hasOnlineWindData() const;
 
   /* true if checkbox "manual" is checked */
   bool isWindManual() const;
-
-  /* true if X-Plane or NOAA wind is enabled. */
-  bool isWindSourceEnabled() const;
 
   /* Get currently shown/selected wind bar altitude level in ft. 0. if none is selected.  */
   float getAltitude() const;
 
   /* Get a list of wind positions for the given rectangle for painting. Does not use manual wind setting. */
   const atools::grib::WindPosList *getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                  bool lazy);
+                                                  bool lazy, bool& overflow);
 
   /* Get (interpolated) wind for given position and altitude */
   atools::grib::WindPos getWindForPos(const atools::geo::Pos& pos, float altFeet);
@@ -171,6 +168,7 @@ private:
 
   /* Download failed.  Only for void init(). */
   void windDownloadFailed(const QString& error, int errorCode);
+  void windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
   /* Copy GUI action state to fields and vice versa */
   void actionToValues();
@@ -179,7 +177,7 @@ private:
   void sourceActionTriggered();
 
   /* GRIB wind data query for downloading files and monitoring files- Manual wind if for user setting. */
-  atools::grib::WindQuery *windQuery = nullptr, *windQueryManual = nullptr;
+  atools::grib::WindQuery *windQueryOnline = nullptr, *windQueryManual = nullptr;
 
   /* Toolbar button */
   QToolButton *windlevelToolButton = nullptr;
@@ -214,6 +212,8 @@ private:
   /* Wind positions as a result of querying the rectangle for caching */
   query::SimpleRectCache<atools::grib::WindPos> windPosCache;
   int cachedLevel = wind::NONE;
+
+  bool downloadErrorReported = false;
 };
 
 #endif // LNM_WINDREPORTER_H

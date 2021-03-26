@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 #include <QColorDialog>
 #include <navapp.h>
 
-HoldDialog::HoldDialog(QWidget *parent, const map::MapSearchResult& resultParam, const atools::geo::Pos& positionParam)
+HoldDialog::HoldDialog(QWidget *parent, const map::MapResult& resultParam, const atools::geo::Pos& positionParam)
   : QDialog(parent), ui(new Ui::HoldDialog), color(Qt::darkBlue)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -44,7 +44,7 @@ HoldDialog::HoldDialog(QWidget *parent, const map::MapSearchResult& resultParam,
   ui->setupUi(this);
 
   // Copy result
-  result = new map::MapSearchResult;
+  result = new map::MapResult;
   *result = resultParam;
 
   // Remove duplicates
@@ -55,6 +55,9 @@ HoldDialog::HoldDialog(QWidget *parent, const map::MapSearchResult& resultParam,
 
   position = new atools::geo::Pos;
   *position = positionParam;
+
+  ui->buttonBoxHold->button(QDialogButtonBox::Ok)->setDefault(true);
+  ui->comboBoxHoldTurnDirection->setFocus();
 
   connect(ui->buttonBoxHold, &QDialogButtonBox::clicked, this, &HoldDialog::buttonBoxClicked);
   connect(ui->pushButtonHoldColor, &QPushButton::clicked, this, &HoldDialog::colorButtonClicked);

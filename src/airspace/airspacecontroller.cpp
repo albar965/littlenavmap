@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
                                               const MapLayer *mapLayer,
                                               map::MapAirspaceFilter filter,
                                               float flightPlanAltitude, bool lazy,
-                                              map::MapAirspaceSources src)
+                                              map::MapAirspaceSources src, bool& overflow)
 {
   if((src& map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
     // Avoid deadlock while loading user airspaces
@@ -181,7 +181,8 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
     if(query != nullptr)
     {
       // Get airspaces from cache
-      const QList<map::MapAirspace> *airspaces = query->getAirspaces(rect, mapLayer, filter, flightPlanAltitude, lazy);
+      const QList<map::MapAirspace> *airspaces = query->getAirspaces(rect, mapLayer, filter, flightPlanAltitude, lazy,
+                                                                     overflow);
 
       if(airspaces != nullptr)
       {
@@ -196,13 +197,16 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
 void AirspaceController::getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect,
                                       const MapLayer *mapLayer, map::MapAirspaceFilter filter,
                                       float flightPlanAltitude, bool lazy,
-                                      map::MapAirspaceSources src)
+                                      map::MapAirspaceSources sources, bool& overflow)
 {
   // Merge airspace pointers from all sources/caches into one list
-  for(map::MapAirspaceSources s : map::MAP_AIRSPACE_SRC_VALUES)
+  for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
   {
-    if(src & s)
-      getAirspacesInternal(airspaces, rect, mapLayer, filter, flightPlanAltitude, lazy, s);
+    if(sources & src)
+      getAirspacesInternal(airspaces, rect, mapLayer, filter, flightPlanAltitude, lazy, src, overflow);
+
+    if(overflow)
+      break;
   }
 }
 
@@ -318,7 +322,7 @@ void AirspaceController::loadAirspaces()
   // Get base path from options dialog ===============================
   QString basePath = OptionData::instance().getCacheUserAirspacePath();
 
-  if(basePath.isEmpty() || !QFileInfo(basePath).exists() || !QFileInfo(basePath).isDir())
+  if(basePath.isEmpty() || !QFileInfo::exists(basePath) || !QFileInfo(basePath).isDir())
   {
     // Path is either empty or not set - allow user to select a (new) folder ==========================
     basePath = NavApp::getOptionsDialog()->selectCacheUserAirspace();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include "settings/settings.h"
 #include "ui_connectdialog.h"
 #include "fs/sc/datareaderthread.h"
+#include "util/htmlbuilder.h"
+#include "navapp.h"
 
 #include <QDebug>
 #include <QUrl>
@@ -40,29 +42,39 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
 
   ui->setupUi(this);
 
+#ifdef Q_OS_WIN32
   if(!simConnect)
   {
-    // Hide the FSX and P3D controls
-    ui->checkBoxConnectFetchAiAircraftFsx->hide();
-    ui->checkBoxConnectFetchAiShipFsx->hide();
-    ui->radioButtonConnectDirectFsx->hide();
-    ui->spinBoxConnectUpdateRateFsx->hide();
-    ui->labelConnectUpdateRateFsx->hide();
+    // Disable the FSX and P3D controls if no simconnect
+    ui->tabConnectFsx->setDisabled(true);
+    ui->labelConnectFsx->setText(atools::util::HtmlBuilder::warningMessage(
+                                   tr("SimConnect not found. Your <i>Little Navmap</i> "
+                                      "installation is missing the file \"SimConnect.dll\".<br/>"
+                                      "Reinstall <i>Little Navmap</i> or "
+                                      "install a FSX SP2 compatible version of SimConnect on your computer.<br/>")) +
+                                 ui->labelConnectFsx->text());
   }
+#else
+  // Remove FSX/P3D tab for non Windows systems
+  int idx = ui->tabWidgetConnect->indexOf(ui->tabConnectFsx);
+  if(idx != -1)
+    ui->tabWidgetConnect->removeTab(idx);
+#endif
 
   ui->comboBoxConnectHostname->setAutoCompletion(true);
   ui->comboBoxConnectHostname->setAutoCompletionCaseSensitivity(Qt::CaseInsensitive);
 
   // Change button texts
-  ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setText(tr("&Connect"));
-  ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->
-  setToolTip(tr("Connect to a local or remote simulator.\n"
-                "Will retry to connect if \"Connect automatically\" "
-                "is checked."));
+  QPushButton *okButton = ui->buttonBoxConnect->button(QDialogButtonBox::Ok);
+  okButton->setText(tr("&Connect"));
+  okButton->setToolTip(tr("Connect to a local or remote simulator.\n"
+                          "Will retry to connect if \"Connect automatically\" "
+                          "is checked."));
+  okButton->setDefault(true);
 
-  ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->setText(tr("&Disconnect"));
-  ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->
-  setToolTip(tr("Disconnect from a local or remote simulator and stop all reconnect attempts."));
+  QPushButton *resetButton = ui->buttonBoxConnect->button(QDialogButtonBox::Reset);
+  resetButton->setText(tr("&Disconnect"));
+  resetButton->setToolTip(tr("Disconnect from a local or remote simulator and stop all reconnect attempts."));
 
   ui->buttonBoxConnect->button(QDialogButtonBox::Close)->
   setToolTip(tr("Close the dialog without changing the current connection status."));
@@ -76,16 +88,18 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   connect(ui->checkBoxConnectFetchAiAircraftXp, &QCheckBox::toggled, this, &ConnectDialog::fetchOptionsClicked);
   connect(ui->checkBoxConnectFetchAiAircraftFsx, &QCheckBox::toggled, this, &ConnectDialog::fetchOptionsClicked);
   connect(ui->checkBoxConnectFetchAiShipFsx, &QCheckBox::toggled, this, &ConnectDialog::fetchOptionsClicked);
+  connect(ui->checkBoxConnectFetchAiShipXp, &QCheckBox::toggled, this, &ConnectDialog::fetchOptionsClicked);
 
-  connect(ui->radioButtonConnectDirectFsx, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
-  connect(ui->radioButtonConnectDirectXp, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
+  connect(ui->tabWidgetConnect, &QTabWidget::currentChanged, this, &ConnectDialog::updateButtonStates);
 
   connect(ui->comboBoxConnectHostname, &QComboBox::editTextChanged, this, &ConnectDialog::updateButtonStates);
 
   connect(ui->spinBoxConnectUpdateRateFsx, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &ConnectDialog::directUpdateRateClicked);
+          this, &ConnectDialog::updateRateHasChanged);
   connect(ui->spinBoxConnectUpdateRateXp, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &ConnectDialog::directUpdateRateClicked);
+          this, &ConnectDialog::updateRateHasChanged);
+  connect(ui->spinBoxConnectAiFetchRadius, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this, &ConnectDialog::aiFetchRadiusHasChanged);
 }
 
 ConnectDialog::~ConnectDialog()
@@ -143,19 +157,13 @@ void ConnectDialog::deleteClicked()
 
 void ConnectDialog::updateButtonStates()
 {
-  if(!simConnect && ui->radioButtonConnectDirectFsx->isChecked())
-  {
-    // Change FSX selection to network which is always available
-    ui->radioButtonConnectRemote->setChecked(true);
-    ui->radioButtonConnectDirectFsx->setChecked(false);
-    ui->radioButtonConnectDirectXp->setChecked(false);
-  }
-
-  if(ui->radioButtonConnectRemote->isChecked())
-    ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->
-    setDisabled(ui->comboBoxConnectHostname->currentText().isEmpty());
+  QPushButton *okButton = ui->buttonBoxConnect->button(QDialogButtonBox::Ok);
+  if(getCurrentSimType() == cd::REMOTE)
+    // Disable connect if hostname is empty
+    okButton->setDisabled(ui->comboBoxConnectHostname->currentText().isEmpty());
   else
-    ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setDisabled(false);
+    // Disable connect button for disabled tabs (no SimConnect in windows)
+    okButton->setEnabled(ui->tabWidgetConnect->currentWidget()->isEnabled());
 }
 
 void ConnectDialog::setConnected(bool connected)
@@ -171,12 +179,12 @@ bool ConnectDialog::isAutoConnect() const
 
 bool ConnectDialog::isAnyConnectDirect() const
 {
-  return ui->radioButtonConnectDirectFsx->isChecked() || ui->radioButtonConnectDirectXp->isChecked();
+  return getCurrentSimType() == cd::FSX_P3D_MSFS || getCurrentSimType() == cd::XPLANE;
 }
 
 bool ConnectDialog::isFetchAiAircraft(cd::ConnectSimType type) const
 {
-  if(type == cd::FSX_P3D)
+  if(type == cd::FSX_P3D_MSFS)
     return ui->checkBoxConnectFetchAiAircraftFsx->isChecked();
   else if(type == cd::XPLANE)
     return ui->checkBoxConnectFetchAiAircraftXp->isChecked();
@@ -187,10 +195,10 @@ bool ConnectDialog::isFetchAiAircraft(cd::ConnectSimType type) const
 
 bool ConnectDialog::isFetchAiShip(cd::ConnectSimType type) const
 {
-  if(type == cd::FSX_P3D)
+  if(type == cd::FSX_P3D_MSFS)
     return ui->checkBoxConnectFetchAiShipFsx->isChecked();
   else if(type == cd::XPLANE)
-    return false;
+    return ui->checkBoxConnectFetchAiShipXp->isChecked();
 
   // Not relevant for remote connections since Little Navconnect decides
   return true;
@@ -198,19 +206,20 @@ bool ConnectDialog::isFetchAiShip(cd::ConnectSimType type) const
 
 cd::ConnectSimType ConnectDialog::getCurrentSimType() const
 {
-  if(ui->radioButtonConnectDirectFsx->isChecked())
-    return cd::FSX_P3D;
-  else if(ui->radioButtonConnectDirectXp->isChecked())
+  const QWidget *widget = ui->tabWidgetConnect->currentWidget();
+  if(widget == ui->tabConnectXp)
     return cd::XPLANE;
-  else if(ui->radioButtonConnectRemote->isChecked())
+  else if(widget == ui->tabConnectFsx)
+    return cd::FSX_P3D_MSFS;
+  else if(widget == ui->tabConnectRemote)
     return cd::REMOTE;
   else
     return cd::UNKNOWN;
 }
 
-unsigned int ConnectDialog::getDirectUpdateRateMs(cd::ConnectSimType type)
+unsigned int ConnectDialog::getUpdateRateMs(cd::ConnectSimType type)
 {
-  if(type == cd::FSX_P3D)
+  if(type == cd::FSX_P3D_MSFS)
     return static_cast<unsigned int>(ui->spinBoxConnectUpdateRateFsx->value());
   else if(type == cd::XPLANE)
     return static_cast<unsigned int>(ui->spinBoxConnectUpdateRateXp->value());
@@ -218,14 +227,27 @@ unsigned int ConnectDialog::getDirectUpdateRateMs(cd::ConnectSimType type)
   return 500;
 }
 
-void ConnectDialog::directUpdateRateClicked()
+int ConnectDialog::getAiFetchRadiusNm(cd::ConnectSimType type)
+{
+  if(type == cd::FSX_P3D_MSFS)
+    return ui->spinBoxConnectAiFetchRadius->value();
+  else
+    return 200;
+}
+
+void ConnectDialog::aiFetchRadiusHasChanged()
+{
+  emit aiFetchRadiusChanged(cd::FSX_P3D_MSFS);
+}
+
+void ConnectDialog::updateRateHasChanged()
 {
   QSpinBox *spinBox = dynamic_cast<QSpinBox *>(sender());
 
   if(spinBox == ui->spinBoxConnectUpdateRateFsx)
-    emit directUpdateRateChanged(cd::FSX_P3D);
+    emit updateRateChanged(cd::FSX_P3D_MSFS);
   else if(spinBox == ui->spinBoxConnectUpdateRateXp)
-    emit directUpdateRateChanged(cd::XPLANE);
+    emit updateRateChanged(cd::XPLANE);
 }
 
 void ConnectDialog::fetchOptionsClicked()
@@ -233,8 +255,8 @@ void ConnectDialog::fetchOptionsClicked()
   QCheckBox *checkBox = dynamic_cast<QCheckBox *>(sender());
 
   if(checkBox == ui->checkBoxConnectFetchAiAircraftFsx || checkBox == ui->checkBoxConnectFetchAiShipFsx)
-    emit fetchOptionsChanged(cd::FSX_P3D);
-  else if(checkBox == ui->checkBoxConnectFetchAiAircraftXp)
+    emit fetchOptionsChanged(cd::FSX_P3D_MSFS);
+  else if(checkBox == ui->checkBoxConnectFetchAiAircraftXp || checkBox == ui->checkBoxConnectFetchAiShipXp)
     emit fetchOptionsChanged(cd::XPLANE);
 }
 
@@ -251,13 +273,10 @@ quint16 ConnectDialog::getRemotePort() const
 void ConnectDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
-  widgetState.save({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort,
-                    ui->spinBoxConnectUpdateRateFsx, ui->spinBoxConnectUpdateRateXp,
-                    ui->checkBoxConnectOnStartup,
-                    ui->radioButtonConnectRemote,
-                    ui->radioButtonConnectDirectFsx, ui->radioButtonConnectDirectXp,
-                    ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
-                    ui->checkBoxConnectFetchAiShipFsx});
+  widgetState.save({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
+                    ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
+                    ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
+                    ui->checkBoxConnectFetchAiShipFsx, ui->checkBoxConnectFetchAiShipXp});
 
   // Save combo entries separately
   QStringList entries;
@@ -265,6 +284,13 @@ void ConnectDialog::saveState()
     entries.append(ui->comboBoxConnectHostname->itemText(i));
 
   Settings::instance().setValue(lnm::NAVCONNECT_REMOTEHOSTS, entries);
+}
+
+void ConnectDialog::activateTab(QWidget *tabWidget)
+{
+  int idx = ui->tabWidgetConnect->indexOf(tabWidget);
+  if(idx != -1)
+    ui->tabWidgetConnect->setCurrentIndex(idx);
 }
 
 void ConnectDialog::restoreState()
@@ -277,14 +303,50 @@ void ConnectDialog::restoreState()
       ui->comboBoxConnectHostname->addItem(entry);
 
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
+  if(!widgetState.contains(ui->tabWidgetConnect))
+  {
+    // Tab state not saved - set reasonable initial value
+#ifdef Q_OS_WIN32
+    if(NavApp::hasAnyMsSimulator())
+      // Activate FSX/P3D tab for Windows systems if any MS simulator was found
+      activateTab(ui->tabConnectFsx);
+    else
+#endif
+    if(NavApp::hasXplaneSimulator())
+      // X - Plane
+      activateTab(ui->tabConnectXp);
+    else
+      activateTab(ui->tabConnectRemote);
+  }
 
-  widgetState.restore({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort,
-                       ui->spinBoxConnectUpdateRateFsx, ui->spinBoxConnectUpdateRateXp,
-                       ui->checkBoxConnectOnStartup,
-                       ui->radioButtonConnectRemote,
-                       ui->radioButtonConnectDirectFsx, ui->radioButtonConnectDirectXp,
-                       ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
-                       ui->checkBoxConnectFetchAiShipFsx});
+  widgetState.restore({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
+                       ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
+                       ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp,
+                       ui->checkBoxConnectFetchAiAircraftFsx, ui->checkBoxConnectFetchAiShipFsx,
+                       ui->checkBoxConnectFetchAiShipXp});
 
   updateButtonStates();
+}
+
+int ConnectDialog::execConnectDialog(cd::ConnectSimType connectionType)
+{
+  switch(connectionType)
+  {
+    case cd::UNKNOWN:
+      // Not connected - leave as is
+      break;
+
+    case cd::REMOTE:
+      activateTab(ui->tabConnectRemote);
+      break;
+
+    case cd::FSX_P3D_MSFS:
+      activateTab(ui->tabConnectFsx);
+      break;
+
+    case cd::XPLANE:
+      activateTab(ui->tabConnectXp);
+      break;
+  }
+  return QDialog::exec();
 }

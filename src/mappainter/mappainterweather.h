@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,14 +39,13 @@ class MapPainterWeather :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterWeather(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  MapPainterWeather(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterWeather() override;
 
-  virtual void render(PaintContext *context) override;
+  virtual void render() override;
 
 private:
-  void drawAirportWeather(PaintContext *context, const atools::fs::weather::Metar& metar,
-                          float x, float y);
+  void drawAirportWeather(const atools::fs::weather::Metar& metar, float x, float y);
 
 };
 

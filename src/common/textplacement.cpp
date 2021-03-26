@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,19 @@
 using atools::geo::Line;
 using atools::geo::Pos;
 
-TextPlacement::TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter)
-  : painter(painterParam), converter(coordinateConverter), arrowRight(tr(" ►")), arrowLeft(tr("◄ "))
+TextPlacement::TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter,
+                             const QRect& screenRectParam)
+  : painter(painterParam), converter(coordinateConverter)
 {
+#ifdef DEBUG_ALTERNATE_ARROW
+  arrowRight = " >>";
+  arrowLeft = "<< ";
+#else
+  arrowRight = tr(" ►");
+  arrowLeft = tr("◄ ");
+#endif
 
+  screenRect = screenRectParam;
 }
 
 void TextPlacement::calculateTextPositions(const atools::geo::LineString& points)
@@ -40,7 +49,14 @@ void TextPlacement::calculateTextPositions(const atools::geo::LineString& points
   for(int i = 0; i < points.size(); i++)
   {
     int x1 = 0, y1 = 0;
-    bool visibleStart = points.at(i).isValid() ? converter->wToS(points.at(i), x1, y1) : false;
+    bool hidden = false;
+    bool visibleStart = points.at(i).isValid() ?
+                        converter->wToS(points.at(i), x1, y1, CoordinateConverter::DEFAULT_WTOS_SIZE, &hidden) : false;
+
+    if(!visibleStart && !screenRect.isNull() && !hidden)
+      // Not visible - try the (extended) screen rectangle if not hidden behind the globe
+      visibleStart = screenRect.contains(x1, y1);
+
     visibleStartPoints.setBit(i, visibleStart);
     startPoints.append(QPointF(x1, y1));
   }
@@ -246,37 +262,6 @@ bool TextPlacement::findTextPos(const Pos& pos1, const Pos& pos2, float distance
         y = y2;
         return true;
       }
-    }
-  }
-  return false;
-}
-
-bool TextPlacement::findTextPosRhumb(const Pos& pos1, const Pos& pos2,
-                                     float distanceMeter, int textWidth, int textHeight, int& x, int& y)
-{
-  if(!pos1.isValid() || !pos2.isValid())
-    return false;
-
-  Pos center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5);
-  bool visible = converter->wToS(center, x, y);
-  if(visible && painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))
-    return true;
-  else
-  {
-    // Check for 50 positions along the line starting below and above the center position
-    for(float i = 0.; i <= 0.5; i += FIND_TEXT_POS_STEP)
-    {
-      center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5f - i);
-      visible = converter->wToS(center, x, y);
-      if(visible &&
-         painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))
-        return true;
-
-      center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5f + i);
-      visible = converter->wToS(center, x, y);
-      if(visible &&
-         painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))
-        return true;
     }
   }
   return false;

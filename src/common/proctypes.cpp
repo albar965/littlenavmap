@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -247,7 +247,7 @@ QString procedureLegFixStr(const MapProcedureLeg& leg)
   {
     if(fix.isEmpty())
       fix = leg.recFixIdent;
-    fix += "+" + QString::number(static_cast<int>(leg.calculatedDistance));
+    fix += "+" + QString::number(atools::roundToInt(leg.calculatedDistance));
   }
 
   QString specialType(proc::proceduresLegSecialTypeShortStr(proc::specialType(leg.arincDescrCode)));
@@ -542,6 +542,7 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 }
 
 MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg, bool previewParam)
+  : map::MapBase(map::NONE)
 {
   preview = previewParam;
   calculatedDistance = leg.calculatedDistance;
@@ -567,11 +568,6 @@ MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg, bool previewPar
   position = leg.line.getPos1();
 }
 
-bool MapProcedureLeg::hasInvalidRef() const
-{
-  return (!fixIdent.isEmpty() && !fixPos.isValid()) || (!recFixIdent.isEmpty() && !recFixPos.isValid());
-}
-
 bool MapProcedureLeg::hasErrorRef() const
 {
   // Check for required recommended fix - required as it is used here, not by ARINC definition
@@ -588,9 +584,17 @@ bool MapProcedureLeg::hasErrorRef() const
   return false;
 }
 
+bool MapProcedureLeg::hasHardErrorRef() const
+{
+  return !line.isValid();
+}
+
 float MapProcedureLeg::legTrueCourse() const
 {
-  return trueCourse ? course : atools::geo::normalizeCourse(course + magvar);
+  if(course < map::INVALID_COURSE_VALUE / 2.f)
+    return trueCourse ? course : atools::geo::normalizeCourse(course + magvar);
+
+  return map::INVALID_COURSE_VALUE;
 }
 
 bool MapProcedureLeg::isFinalApproachFix() const
@@ -610,8 +614,17 @@ bool MapProcedureLeg::isFinalEndpointFix() const
 
 bool MapProcedureLeg::isHold() const
 {
-  return atools::contains(type,
-                          {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION});
+  return atools::contains(type, {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION});
+}
+
+bool MapProcedureLeg::isProcedureTurn() const
+{
+  return type == proc::PROCEDURE_TURN;
+}
+
+bool MapProcedureLeg::isInitialFix() const
+{
+  return type == proc::INITIAL_FIX;
 }
 
 bool MapProcedureLeg::isCircular() const
@@ -629,7 +642,7 @@ bool MapProcedureLeg::noDistanceDisplay() const
 
 proc::LegSpecialType specialType(const QString& arincDescrCode)
 {
-  QChar idx3(atools::strAt(arincDescrCode, 3));
+  QChar idx3(atools::charAt(arincDescrCode, 3));
   if(idx3 == 'A' /* IAF */ || idx3 == 'C' /* IAF and hold */ || idx3 == 'D' /* IAF with final approach course fix */)
     return proc::IAF;
 
@@ -653,6 +666,11 @@ proc::LegSpecialType specialType(const QString& arincDescrCode)
 bool MapProcedureLeg::noCourseDisplay() const
 {
   return type == /*proctypes::INITIAL_FIX ||*/ isCircular();
+}
+
+bool MapProcedureLeg::noIdentDisplay() const
+{
+  return type == proc::FROM_FIX_TO_MANUAL_TERMINATION || type == proc::HEADING_TO_MANUAL_TERMINATION;
 }
 
 const MapProcedureLeg *MapProcedureLegs::transitionLegById(int legId) const
@@ -889,7 +907,6 @@ QString procedureTypeText(const proc::MapProcedureLeg& leg)
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type)
 {
   QDebugStateSaver saver(out);
-  Q_UNUSED(saver);
 
   QStringList flags;
   if(type == PROCEDURE_NONE)
@@ -916,6 +933,134 @@ QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type)
 
   return out;
 
+}
+
+bool procedureLegFixAtStart(ProcedureLegType type)
+{
+  return atools::contains(type, {
+      proc::START_OF_PROCEDURE,
+      // ARC_TO_FIX,
+      // COURSE_TO_ALTITUDE,
+      // COURSE_TO_DME_DISTANCE,
+      // COURSE_TO_FIX,
+      // COURSE_TO_INTERCEPT,
+      // COURSE_TO_RADIAL_TERMINATION,
+      // DIRECT_TO_FIX,
+      FIX_TO_ALTITUDE,
+      TRACK_FROM_FIX_FROM_DISTANCE,
+      TRACK_FROM_FIX_TO_DME_DISTANCE,
+      FROM_FIX_TO_MANUAL_TERMINATION,
+      HOLD_TO_ALTITUDE,
+      HOLD_TO_FIX,
+      HOLD_TO_MANUAL_TERMINATION,
+      INITIAL_FIX,
+      // PROCEDURE_TURN,
+      // CONSTANT_RADIUS_ARC,
+      // TRACK_TO_FIX,
+      // HEADING_TO_ALTITUDE_TERMINATION,
+      // HEADING_TO_DME_DISTANCE_TERMINATION,
+      // HEADING_TO_INTERCEPT,
+      // HEADING_TO_MANUAL_TERMINATION,
+      // HEADING_TO_RADIAL_TERMINATION,
+    });
+}
+
+bool procedureLegFixAtEnd(ProcedureLegType type)
+{
+  return atools::contains(type, {
+      ARC_TO_FIX,
+      // COURSE_TO_ALTITUDE,
+      // COURSE_TO_DME_DISTANCE,
+      COURSE_TO_FIX,
+      // COURSE_TO_INTERCEPT,
+      // COURSE_TO_RADIAL_TERMINATION,
+      DIRECT_TO_FIX,
+      // FIX_TO_ALTITUDE,
+      // TRACK_FROM_FIX_FROM_DISTANCE,
+      // TRACK_FROM_FIX_TO_DME_DISTANCE,
+      // FROM_FIX_TO_MANUAL_TERMINATION,
+      HOLD_TO_ALTITUDE,
+      HOLD_TO_FIX,
+      HOLD_TO_MANUAL_TERMINATION,
+      INITIAL_FIX,
+      // PROCEDURE_TURN,
+      CONSTANT_RADIUS_ARC,
+      TRACK_TO_FIX,
+      // HEADING_TO_ALTITUDE_TERMINATION,
+      // HEADING_TO_DME_DISTANCE_TERMINATION,
+      // HEADING_TO_INTERCEPT,
+      // HEADING_TO_MANUAL_TERMINATION,
+      // HEADING_TO_RADIAL_TERMINATION,
+    });
+}
+
+bool procedureLegDrawIdent(ProcedureLegType type)
+{
+  return atools::contains(type, {
+      ARC_TO_FIX,
+      // COURSE_TO_ALTITUDE,
+      // COURSE_TO_DME_DISTANCE,
+      COURSE_TO_FIX,
+      // COURSE_TO_INTERCEPT,
+      // COURSE_TO_RADIAL_TERMINATION,
+      DIRECT_TO_FIX,
+      // FIX_TO_ALTITUDE,
+      // TRACK_FROM_FIX_FROM_DISTANCE,
+      // TRACK_FROM_FIX_TO_DME_DISTANCE,
+      // FROM_FIX_TO_MANUAL_TERMINATION,
+      HOLD_TO_ALTITUDE,
+      HOLD_TO_FIX,
+      HOLD_TO_MANUAL_TERMINATION,
+      INITIAL_FIX,
+      // PROCEDURE_TURN,
+      CONSTANT_RADIUS_ARC,
+      TRACK_TO_FIX,
+      // HEADING_TO_ALTITUDE_TERMINATION,
+      // HEADING_TO_DME_DISTANCE_TERMINATION,
+      // HEADING_TO_INTERCEPT,
+      // HEADING_TO_MANUAL_TERMINATION,
+      // HEADING_TO_RADIAL_TERMINATION,
+
+      // DIRECT_TO_RUNWAY,
+      // CIRCLE_TO_LAND,
+      // STRAIGHT_IN,
+      START_OF_PROCEDURE,
+      // VECTORS
+    });
+}
+
+bool procedureLegFrom(ProcedureLegType type)
+{
+  return atools::contains(type, {
+      // ARC_TO_FIX,
+      // COURSE_TO_ALTITUDE,
+      COURSE_TO_DME_DISTANCE,
+      // COURSE_TO_FIX,
+      COURSE_TO_INTERCEPT,
+      COURSE_TO_RADIAL_TERMINATION,
+      // DIRECT_TO_FIX,
+      // FIX_TO_ALTITUDE,
+      TRACK_FROM_FIX_FROM_DISTANCE,
+      TRACK_FROM_FIX_TO_DME_DISTANCE,
+      FROM_FIX_TO_MANUAL_TERMINATION,
+      // HOLD_TO_ALTITUDE,
+      // HOLD_TO_FIX,
+      // HOLD_TO_MANUAL_TERMINATION,
+      // INITIAL_FIX,
+      // PROCEDURE_TURN,
+      // CONSTANT_RADIUS_ARC,
+      // TRACK_TO_FIX,
+      // HEADING_TO_ALTITUDE_TERMINATION,
+      HEADING_TO_DME_DISTANCE_TERMINATION,
+      HEADING_TO_INTERCEPT,
+      HEADING_TO_MANUAL_TERMINATION,
+      HEADING_TO_RADIAL_TERMINATION,
+      // DIRECT_TO_RUNWAY,
+      // CIRCLE_TO_LAND,
+      // STRAIGHT_IN,
+      // START_OF_PROCEDURE,
+      // VECTORS
+    });
 }
 
 } // namespace types

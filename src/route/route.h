@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_ROUTE_H
 
 #include "route/routeleg.h"
+#include "route/routeflags.h"
 
 #include "fs/pln/flightplan.h"
 
@@ -40,7 +41,7 @@ class RouteAltitudeLeg;
  * Leg methods return invalid legs if unusable index.
  *
  * Example layout of the list:
- *  0	DEPARTURE (AIRPORT)
+ *  0	DEPARTURE (AIRPORT), distanceTo 0
  *  1	SID Leg 1 (RW)
  *  2	SID Leg 2
  *  3	WPT 1
@@ -49,10 +50,10 @@ class RouteAltitudeLeg;
  *  5	STAR Leg 1
  *  6	STAR Leg 2
  *  7	APPR Leg 1
- *  8	APPR Leg 2 (RW)
- *  9	MISSED Leg 1 (excluded from total distance)
- * 10	MISSED Leg 2              "
- * 11	DESTINATION (AIRPORT)
+ *  8	APPR Leg 2 (RW), distanceTo = totalDistance
+ *  9	MISSED Leg 1, (excluded from total distance), distanceTo = distance to end of missed
+ * 10	MISSED Leg 2,              "
+ * 11	DESTINATION (AIRPORT), distanceTo = distance from "APPR Leg 2 (RW)"
  * 12	ALTERNATE 1 (distance calculated from dest airport)
  * 13	ALTERNATE 2               "
  */
@@ -67,6 +68,9 @@ public:
   virtual ~Route();
 
   Route& operator=(const Route& other);
+
+  /* Update navdata properties in flightplan properties for export and save */
+  void updateRouteCycleMetadata();
 
   /* Update positions, distances and try to select next leg*/
   void updateActiveLegAndPos(const map::PosCourse& pos);
@@ -92,7 +96,8 @@ public:
 
   /* Start from distance but values do not decrease if aircraft is leaving route.
    *  Ignores active and looks for all legs.
-   *  Unreliable.*/
+   *
+   * UNRELIABLE AND DOES NOT CONSIDER HEADING, ALTERNATES MISSED APPROACH LEGS.*/
   float getDistanceFromStart(const atools::geo::Pos& pos) const;
 
   /* Ignores approach objects if ignoreNotEditable is true.
@@ -100,9 +105,13 @@ public:
   int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
                                bool ignoreNotEditable) const;
 
-  /* First route leg after departure procedure */
+  /* First route leg after departure procedure or 0 for departure airport */
   int getStartIndexAfterProcedure() const;
   const RouteLeg& getStartAfterProcedure() const;
+
+  /* Last leg of departure procedure or 0 for departure airport */
+  int getLastIndexOfDepartureProcedure() const;
+  const RouteLeg& getLastLegOfDepartureProcedure() const;
 
   /* Last route leg before STAR, transition or approach */
   int getDestinationIndexBeforeProcedure() const;
@@ -130,8 +139,11 @@ public:
   /* true if active leg is valid. false for special one airport case */
   bool isActiveValid() const;
 
-  /* true if active leg is an alternate leg*/
+  /* true if active leg is an alternate leg */
   bool isActiveAlternate() const;
+
+  /* true if active leg is destination airport. false if not or any arrival procedure is used. */
+  bool isActiveDestinationAirport() const;
 
   /* Set departure parking information. Parking clears start and vice versa. */
   void setDepartureParking(const map::MapParking& departureParking);
@@ -169,6 +181,17 @@ public:
   /* true if flight plan is not empty and airport is departure or destination */
   bool isAirportDeparture(const QString& ident) const;
   bool isAirportDestination(const QString& ident) const;
+  bool isAirportAlternate(const QString& ident) const;
+
+  /* true if ident is same for departure and destination */
+  bool isAirportRoundTrip(const QString& ident) const;
+
+  /* Get flight plan dependent flags for airport procedures and the given airport. Used to select procedure filter */
+  void getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
+                                bool& arrivalFilter, bool& hasDeparture, bool& hasAnyArrival,
+                                bool& airportDeparture, bool& airportDestination, bool& airportRoundTrip) const;
+  void getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
+                                bool& arrivalFilter) const;
 
   /* Get active leg or null if this is none */
   const RouteLeg *getActiveLeg() const;
@@ -178,6 +201,9 @@ public:
 
   /* Currently flying missed approach */
   bool isActiveMissed() const;
+
+  /* Currently flying procedure including missed */
+  bool isActiveProcedure() const;
 
   /* Corrected methods replace the current leg with the initial fix
    * if one follows between route and transition/approach.  */
@@ -189,25 +215,26 @@ public:
 
   /* Distance from TOD to destination in nm */
   float getTopOfDescentFromDestination() const;
+
+  /* Distance TOD from departure in NM or INVALID_DISTANCE_VALUE if it could not be calculated. */
   float getTopOfDescentDistance() const;
   int getTopOfDescentLegIndex() const;
 
-  /* Distance from TOC to destination in nm */
+  /* Distance TOC from departure in NM or INVALID_DISTANCE_VALUE if it could not be calculated. */
   float getTopOfClimbDistance() const;
   int getTopOfClimbLegIndex() const;
 
-  /* Above or below planned descent */
+  /* Get interpolated altitude value in ft for the given distance to destination in NM.
+   *  Not for missed and alternate legs. */
   float getAltitudeForDistance(float currentDistToDest) const;
+
+  /* Same as above for TAS knots from performance profile */
+  float getSpeedForDistance(float currentDistToDest) const;
 
   /* Total route distance in nautical miles */
   float getTotalDistance() const
   {
     return totalDistance;
-  }
-
-  void setTotalDistance(float value)
-  {
-    totalDistance = value;
   }
 
   /* The flight plan has dummy entries for procedure points that are flagged as no save */
@@ -231,8 +258,10 @@ public:
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                  map::MapSearchResult& mapobjects,
+                  map::MapResult& mapobjects,
                   map::MapObjectQueryTypes types) const;
+
+  void eraseAirway(int row);
 
   /* @return true if any leg has an airway name */
   bool hasAirways() const;
@@ -269,23 +298,37 @@ public:
   /* @return true if it has at least two waypoints */
   bool canCalcRoute() const;
 
+  /* returns true if a route can be calculated between the selected legs */
+  bool canCalcSelection(int firstIndex, int lastIndex) const;
+
+  /* returns true if a route snippet can be saved between the selected legs */
+  bool canSaveSelection(int firstIndex, int lastIndex) const;
+
   /* Get a new number for a user waypoint for automatic naming */
   int getNextUserWaypointNumber() const;
 
   /* Index from 0 (departure) to size() -1 */
   bool canEditLeg(int index) const;
 
-  /* Index from 0 (departure) to size() -1 */
+  /* Index from 0 (departure) to size() -1. true if point can be moved around or deleted in the flight plan */
   bool canEditPoint(int index) const;
+
+  /* Index from 0 (departure) to size() -1. true if a comment can be attached to the waypoint of the leg */
+  bool canEditComment(int index) const;
 
   bool hasAnyProcedure() const
   {
-    return hasAnyArrivalProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
+    return hasAnyApproachProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
+  }
+
+  bool hasAnyApproachProcedure() const
+  {
+    return !approachLegs.isEmpty();
   }
 
   bool hasAnyArrivalProcedure() const
   {
-    return !approachLegs.isEmpty();
+    return hasAnyApproachProcedure() || hasAnyStarProcedure();
   }
 
   bool hasTransitionProcedure() const
@@ -350,12 +393,8 @@ public:
   void removeProcedureLegs();
   void removeProcedureLegs(proc::MapProcedureTypes type);
 
-  /* Removes duplicate waypoints when transitioning from route to procedure and vice versa.
-   * Used after route calculation. */
-  void removeDuplicateRouteLegs();
-
   /* Needed to activate missed approach sequencing or not depending on visibility state */
-  void setShownMapFeatures(map::MapObjectTypes types)
+  void setShownMapFeatures(map::MapTypes types)
   {
     shownTypes = types;
   }
@@ -411,6 +450,9 @@ public:
   {
     return approachLegsOffset;
   }
+
+  /* Index of first transition and/or approach/STAR leg in the route or INVALID_INDEX_VALUE if no procedures */
+  int getArrivaLegsOffset() const;
 
   /* Index of first SID leg in the route */
   int getSidLegsOffset() const
@@ -471,6 +513,16 @@ public:
     QList::removeAt(i);
   }
 
+  /* Removes the shadowed flight plan entry too */
+  void removeAllAt(int i) // OK
+  {
+    QList::removeAt(i);
+    flightplan.getEntries().removeAt(i);
+  }
+
+  /* Removes all entries in route and flightplan except the ones in the range (including) */
+  void removeAllExceptRange(int from, int to);
+
   /* Removes only route legs and does not touch the flight plan copy */
   void clear() // OK
   {
@@ -481,12 +533,24 @@ public:
   void clearAll();
 
   /* Removes approaches and SID/STAR depending on save options, deletes duplicates and returns a copy.
-   *  All procedure legs are converted to normal flight plan (user) legs.  */
-  Route adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp, bool replaceCustomWp,
-                                   bool removeAlternate) const;
+   * All procedure legs are converted to normal flight plan (user) legs if requested.
+   * Used for flight plan export.
+   *
+   * Does not adapt RouteAltitude legs. */
+  Route adjustedToOptions(rf::RouteAdjustOptions options) const;
+  static Route adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions options);
 
-  /* Update user defined waypoint */
-  void changeUserAndPosition(int index, const QString& name, const atools::geo::Pos& pos);
+  /* Copy flight plan profile altitudes into entries for FMS and other formats
+   *  All following functions have to use setCoords instead of setPosition to avoid overwriting.
+   *
+   * This has to be called before adjustedToOptions() since the RouteAltitude legs
+   * are not adapted and might have a different size*/
+  Route updatedAltitudes() const;
+  static Route updatedAltitudes(const Route& routeParam);
+
+  /* As above but sets all altitudes to zero */
+  Route zeroedAltitudes() const;
+  static Route zeroedAltitudes(const Route& routeParam);
 
   /* Loads navaids from database and create all route map objects from flight plan.
    * Flight plan will be corrected if needed. */
@@ -496,8 +560,10 @@ public:
    *  has parking or helipad as start position */
   bool hasValidParking() const;
 
-  void updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteType);
-  int adjustAltitude(int newAltitude) const;
+  /* Fetch airways by waypoint and name and adjust route altititude if needed */
+  /* Uses airway by name cache in query which is called often. */
+  void updateAirwaysAndAltitude(bool adjustRouteAltitude);
+  int getAdjustedAltitude(int newAltitude) const;
 
   /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
   atools::geo::Pos getPositionAtDistance(float distFromStartNm) const;
@@ -506,6 +572,9 @@ public:
   {
     return *altitude;
   }
+
+  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL) */
+  const QVector<map::MapIls>& getDestRunwayIls() const;
 
   const RouteAltitudeLeg& getAltitudeLegAt(int i) const;
   bool hasAltitudeLegs() const;
@@ -525,15 +594,15 @@ public:
   /* SID RAMY6, Approach ILS 12, etc. */
   QString getProcedureLegText(proc::MapProcedureTypes mapType) const;
 
-  /* Assign index and pointer to flight plan for all objects */
+  /* Assign index and pointer to flight plan for all objects and also update all procedure and alternate offsets */
   void updateIndicesAndOffsets();
-  void updateAlternateIndicesAndOffsets();
 
   void clearFlightplanAlternateProperties();
 
   /* Get ICAO idents of all alternates */
   QStringList getAlternateIdents() const;
   void updateAlternateProperties();
+  QVector<map::MapAirport> getAlternateAirports() const;
 
   /* Get a bit array which indicates high/low airways - needed for some export formats.
    *  True indicates high airway used towards waypoint at the same index. */
@@ -549,11 +618,31 @@ public:
    * This is needed since attached transitions can change procedures. */
   void reloadProcedures(proc::MapProcedureTypes procs);
 
+  /* Copies departure and destination names and positions from Route to Flightplan */
+  void updateDepartureAndDestination();
+
 private:
+  /* Copy flight plan profile altitudes into entries for FMS and other formats
+   *  All following functions have to use setCoords instead of setPosition to avoid overwriting*/
+  void assignAltitudes();
+  void zeroAltitudes();
+
+  /* Assign index and pointer to flight plan for all objects */
+  void updateIndices();
+  void updateAlternateIndicesAndOffsets();
+
+  /* Removes duplicate waypoints when transitioning from route to procedure and vice versa.
+   * Used after route calculation. */
+  void removeDuplicateRouteLegs();
+
+  /* Corrects the airways at the procedure entry and exit points as well as first leg */
+  void validateAirways();
+
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
    * no procedure legs. CPU intense do not use often. */
   void cleanupFlightPlanForProcedures();
 
+  /* Removes related properies in the flight plan only */
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
   /* Calculate all distances and courses for route map objects */
@@ -580,6 +669,13 @@ private:
   /* Calculated distance for aircraft projection in profile */
   float projectedDistance(const atools::geo::LineDistance& result, float legFromStart, int legIndex) const;
 
+  /* get offsets for procedure entry/exit points and return true if a valid one was found */
+  bool arrivalRouteToProcLegs(int& arrivaLegsOffset) const;
+  bool departureProcToRouteLegs(int& startIndexAfterProcedure) const;
+
+  /* Update waypoint numbers with prefix "WP" automatically in order of plan */
+  void updateWaypointNames();
+
   atools::geo::Rect boundingRect;
 
   /* Nautical miles not including missed approach and alternates */
@@ -587,7 +683,7 @@ private:
 
   atools::fs::pln::Flightplan flightplan;
   proc::MapProcedureLegs approachLegs, starLegs, sidLegs;
-  map::MapObjectTypes shownTypes;
+  map::MapTypes shownTypes;
 
   int activeLegIndex = map::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;
@@ -598,7 +694,7 @@ private:
       alternateLegsOffset = map::INVALID_INDEX_VALUE; /* First alternate airport*/
   int numAlternateLegs = 0;
 
-  RouteAltitude *altitude;
+  RouteAltitude *altitude = nullptr;
 };
 
 QDebug operator<<(QDebug out, const Route& route);

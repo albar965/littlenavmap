@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::T
   append(Column("region", ui->lineEditUserdataRegion, tr("Region")).filter()).
   append(Column("name", ui->lineEditUserdataName, tr("Name")).filter()).
   append(Column("tags", ui->lineEditUserdataTags, tr("Tags")).filter()).
-  append(Column("description", ui->lineEditUserdataDescription, tr("Description")).filter()).
+  append(Column("description", ui->lineEditUserdataDescription, tr("Remarks")).filter()).
   append(Column("temp").hidden()).
 
   append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).
@@ -123,7 +123,7 @@ void UserdataSearch::connectSearchSlots()
   ui->toolButtonUserdata->addActions({ui->actionUserdataSearchShowMoreOptions});
 
   // Drop down menu actions
-  connect(ui->actionUserdataSearchShowMoreOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionUserdataSearchShowMoreOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutUserdataMore}, state,
                                               {ui->lineUserdataMore});
@@ -198,24 +198,20 @@ void UserdataSearch::restoreState()
   }
 }
 
-void UserdataSearch::saveViewState(bool distSearchActive)
+void UserdataSearch::saveViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET).save(NavApp::getMainUi()->tableViewUserdata);
 }
 
-void UserdataSearch::restoreViewState(bool distSearchActive)
+void UserdataSearch::restoreViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewUserdata);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
-QVariant UserdataSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+QVariant UserdataSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                                           const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(roleValue);
-
   switch(role)
   {
     case Qt::DisplayRole:
@@ -273,7 +269,7 @@ QString UserdataSearch::formatModelData(const Column *col, const QVariant& displ
   return displayRoleValue.toString();
 }
 
-void UserdataSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void UserdataSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "common/tabindexes.h"
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 
 }
 
@@ -42,7 +42,7 @@ class AbstractSearch :
 
 public:
   AbstractSearch(QMainWindow *parent, si::TabSearchId tabWidgetIndex);
-  virtual ~AbstractSearch();
+  virtual ~AbstractSearch() override;
 
   /* Disconnect and reconnect queries on database change */
   virtual void preDatabaseLoad() = 0;
@@ -53,7 +53,7 @@ public:
   virtual void restoreState() = 0;
 
   /* Get all selected map objects (MapAirport will be only partially filled */
-  virtual void getSelectedMapObjects(map::MapSearchResult& result) const = 0;
+  virtual void getSelectedMapObjects(map::MapResult& result) const = 0;
 
   /* Options dialog has changed some options */
   virtual void optionsChanged() = 0;

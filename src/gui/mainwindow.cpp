@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "navapp.h"
 #include "atools.h"
 #include "common/mapcolors.h"
+#include "common/settingsmigrate.h"
 #include "gui/stylehandler.h"
 #include "util/htmlbuilder.h"
 #include "fs/common/morareader.h"
@@ -56,7 +57,8 @@
 #include "options/optionsdialog.h"
 #include "print/printsupport.h"
 #include "exception.h"
-#include "route/routestringdialog.h"
+#include "routestring/routestringdialog.h"
+#include "routestring/routestringwriter.h"
 #include "common/unit.h"
 #include "fs/pln/flightplanio.h"
 #include "query/procedurequery.h"
@@ -66,7 +68,7 @@
 #include "search/onlineclientsearch.h"
 #include "search/onlinecentersearch.h"
 #include "search/onlineserversearch.h"
-#include "route/routeexport.h"
+#include "routeexport/routeexport.h"
 #include "gui/timedialog.h"
 #include "util/version.h"
 #include "perf/aircraftperfcontroller.h"
@@ -80,6 +82,10 @@
 #include "mapgui/mapmarkhandler.h"
 #include "gui/choicedialog.h"
 #include "gui/dockwidgethandler.h"
+#include "track/trackcontroller.h"
+#include "common/dirtool.h"
+#include "gui/statusbareventfilter.h"
+#include "gui/clicktooltiphandler.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -106,9 +112,7 @@
 
 static const int WEATHER_UPDATE_MS = 15000;
 
-// All known map themes
-static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "opentopomap", "plain",
-                                           "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
+static const int MAX_STATUS_MESSAGES = 10;
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -122,52 +126,102 @@ MainWindow::MainWindow()
   qDebug() << Q_FUNC_INFO << "constructor";
 
   aboutMessage =
-    QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
-                  "airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.</p>"
-                  "<p>"
-                    "<b>"
-                      "If you would like to show your appreciation you can donate&nbsp;"
-                      "<a href=\"%1\">here"
-                      "</a>."
-                    "</b>"
-                  "</p>"
-                  "<p>This software is licensed under "
-                    "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
-                    "</a> or any later version."
-                  "</p>"
-                  "<p>The source code for this application is available at "
-                    "<a href=\"https://github.com/albar965\">Github"
+    QObject::tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
+                "airport search and airport information system<br/>"
+                "for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
+                "<p>"
+                  "<b>"
+                    "If you would like to show your appreciation you can donate&nbsp;"
+                    "<a href=\"%1\">here"
                     "</a>."
-                  "</p>"
-                  "<p>More about my projects at "
-                    "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
-                    "</a>."
-                  "</p>"
-                  "<p>"
-                    "<b>Copyright 2015-2019 Alexander Barthel"
-                    "</b>"
-                  "</p>").arg(lnm::helpDonateUrl);
+                  "</b>"
+                "</p>"
+                "<p>This software is licensed under "
+                  "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
+                  "</a> or any later version."
+                "</p>"
+                "<p>The source code for this application is available at "
+                  "<a href=\"https://github.com/albar965\">Github"
+                  "</a>."
+                "</p>"
+                "<p>More about my projects at "
+                  "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
+                  "</a>."
+                "</p>"
+                "<p>"
+                  "<b>Copyright 2015-2021 Alexander Barthel"
+                  "</b>"
+                "</p>").arg(lnm::helpDonateUrl);
 
+  layoutWarnText = tr("The option \"Allow to undock map window\" in the layout file is "
+                      "different than the currently set option.\n"
+                      "The layout might not be restored properly.\n\n"
+                      "Apply the loaded window layout anyway?");
   // Show a dialog on fatal log events like asserts
   atools::logging::LoggingGuiAbortHandler::setGuiAbortFunction(this);
 
   try
   {
-    // Have to handle exceptions here since no message handler is active yet and no
-    // atools::Application method can catch it
+    // Have to handle exceptions here since no message handler is active yet and no atools::Application method can catch it
 
     ui->setupUi(this);
+
+#if defined(Q_OS_MACOS)
+    // Reset menu roles to no role if not manually set to avoid side effects from goofy Qt behavior on macOS
+    QList<QAction *> stack;
+    stack.append(ui->menuBar->actions());
+    while(!stack.isEmpty())
+    {
+      QAction *action = stack.takeFirst();
+
+      // Reset role to do nothing
+      if(action->menuRole() == QAction::TextHeuristicRole)
+        action->setMenuRole(QAction::NoRole);
+
+      QMenu *menu = action->menu();
+      if(menu != nullptr)
+      {
+        // Add actions from (sub)menu
+        for(QAction *sub : menu->actions())
+        {
+          if(sub != nullptr)
+            stack.append(sub);
+        }
+      }
+    }
+#endif
+
+    // Try to avoid short popping up on startup
+    ui->dockWidgetRouteCalc->hide();
+    ui->labelProfileInfo->hide();
+
     setAcceptDrops(true);
 
+    // Show tooltips also for inactive windows (e.g. if a floating window is active)
+    setAttribute(Qt::WA_AlwaysShowToolTips);
+
+    // Create misc GUI handlers ============================================
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
     helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
-    dockHandler = new atools::gui::DockWidgetHandler(this, {ui->dockWidgetLegend, ui->dockWidgetAircraft,
-                                                            ui->dockWidgetSearch, ui->dockWidgetProfile,
-                                                            ui->dockWidgetInformation, ui->dockWidgetRoute});
 
-    marbleAbout = new Marble::MarbleAboutDialog(this);
-    marbleAbout->setApplicationTitle(QApplication::applicationName());
+    // Create dock and mainwindow handler ============================================
+    atools::settings::Settings& settings = atools::settings::Settings::instance();
+    dockHandler =
+      new atools::gui::DockWidgetHandler(this,
+                                         // Add all available dock widgets here ==========================
+                                         {ui->dockWidgetLegend, ui->dockWidgetAircraft,
+                                          ui->dockWidgetSearch, ui->dockWidgetProfile,
+                                          ui->dockWidgetInformation, ui->dockWidgetRoute,
+                                          ui->dockWidgetRouteCalc},
+                                         // Add all available toolbars  here =============================
+                                         {ui->toolBarMain, ui->toolBarMap, ui->toolbarMapOptions,
+                                          ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces,
+                                          ui->toolBarMapThemeProjection, ui->toolBarTools},
+                                         settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
+
+    marbleAboutDialog = new Marble::MarbleAboutDialog(this);
+    marbleAboutDialog->setApplicationTitle(QApplication::applicationName());
 
     currentWeatherContext = new map::WeatherContext;
 
@@ -177,9 +231,10 @@ MainWindow::MainWindow()
     optionsDialog = new OptionsDialog(this);
     // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();
+    optionsChanged();
 
     // Dialog is opened with asynchronous open()
-    connect(optionsDialog, &QDialog::finished, [ = ](int result) {
+    connect(optionsDialog, &QDialog::finished, this, [ = ](int result) {
       if(result == QDialog::Accepted)
         setStatusMessage(tr("Options changed."));
     });
@@ -193,7 +248,7 @@ MainWindow::MainWindow()
     // centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     // centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
     // setCentralWidget(centralWidget);
-    if(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK)
+    if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
       centralWidget()->hide();
 
     setupUi();
@@ -228,15 +283,19 @@ MainWindow::MainWindow()
     windReporter->addToolbarButton();
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for flight plans";
-    routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,
+    routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMES_RECENT, ui->menuRecentRoutes,
                                               ui->actionRecentRoutesClear);
 
     qDebug() << Q_FUNC_INFO << "Creating RouteController";
     routeController = new RouteController(this, ui->tableViewRoute);
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for KML files";
-    kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
+    kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKML_RECENT, ui->menuRecentKml,
                                             ui->actionClearKmlMenu);
+
+    qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for layout files";
+    layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent,
+                                               ui->actionWindowLayoutClearRecent);
 
     // Create map widget and replace dummy widget in window
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
@@ -281,6 +340,8 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Creating PrintSupport";
     printSupport = new PrintSupport(this);
 
+    setStatusMessage(tr("Started."));
+
     qDebug() << Q_FUNC_INFO << "Connecting slots";
     connectAllSlots();
     NavApp::getAircraftPerfController()->connectAllSlots();
@@ -295,6 +356,7 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Reading settings";
     restoreStateMain();
 
+    allowDockingWindows();
     updateActionStates();
     updateMarkActionStates();
     updateHighlightActionStates();
@@ -317,9 +379,18 @@ MainWindow::MainWindow()
     updateLegend();
     updateWindowTitle();
 
+    // Enable or disable tooltips - call later since it needs the map window
+    optionsDialog->updateTooltipOption();
+
+    // Update clock every second =====================
     clockTimer.setInterval(1000);
     connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);
     clockTimer.start();
+
+    // Reset render status - change to done after ten seconds =====================
+    renderStatusTimer.setInterval(5000);
+    renderStatusTimer.setSingleShot(true);
+    connect(&renderStatusTimer, &QTimer::timeout, this, &MainWindow::renderStatusReset);
 
     qDebug() << Q_FUNC_INFO << "Constructor done";
   }
@@ -335,24 +406,40 @@ MainWindow::MainWindow()
 
 #ifdef DEBUG_INFORMATION
 
-  QAction *debugAction1 = new QAction("Debug Action");
+  QAction *debugAction1 = new QAction("DEBUG - Dump Route", ui->menuHelp);
   debugAction1->setShortcut(QKeySequence("Ctrl+F1"));
   debugAction1->setShortcutContext(Qt::ApplicationShortcut);
   this->addAction(debugAction1);
 
-  QAction *debugAction2 = new QAction("Debug Action 2");
+  QAction *debugAction2 = new QAction("DEBUG - Dump Flightplan", ui->menuHelp);
   this->addAction(debugAction2);
 
-  QAction *debugAction3 = new QAction("Debug Action 3");
+  QAction *debugAction3 = new QAction("DEBUG - Force Check updates", ui->menuHelp);
   this->addAction(debugAction3);
+
+  QAction *debugAction4 = new QAction("DEBUG - Reload flight plan", ui->menuHelp);
+  this->addAction(debugAction4);
+
+  QAction *debugAction5 = new QAction("DEBUG - Open flight plan in editor", ui->menuHelp);
+  this->addAction(debugAction5);
+
+  QAction *debugAction6 = new QAction("DEBUG - Open perf in editor", ui->menuHelp);
+  this->addAction(debugAction6);
 
   ui->menuHelp->addSeparator();
   ui->menuHelp->addAction(debugAction1);
   ui->menuHelp->addAction(debugAction2);
   ui->menuHelp->addAction(debugAction3);
+  ui->menuHelp->addAction(debugAction4);
+  ui->menuHelp->addAction(debugAction5);
+  ui->menuHelp->addAction(debugAction6);
+
   connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
   connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
   connect(debugAction3, &QAction::triggered, this, &MainWindow::debugActionTriggered3);
+  connect(debugAction4, &QAction::triggered, this, &MainWindow::debugActionTriggered4);
+  connect(debugAction5, &QAction::triggered, this, &MainWindow::debugActionTriggered5);
+  connect(debugAction6, &QAction::triggered, this, &MainWindow::debugActionTriggered6);
 
 #endif
 
@@ -382,7 +469,7 @@ MainWindow::~MainWindow()
   qDebug() << Q_FUNC_INFO << "delete profileWidget";
   delete profileWidget;
   qDebug() << Q_FUNC_INFO << "delete marbleAbout";
-  delete marbleAbout;
+  delete marbleAboutDialog;
   qDebug() << Q_FUNC_INFO << "delete infoController";
   delete infoController;
   qDebug() << Q_FUNC_INFO << "delete printSupport";
@@ -391,6 +478,8 @@ MainWindow::~MainWindow()
   delete routeFileHistory;
   qDebug() << Q_FUNC_INFO << "delete kmlFileHistory";
   delete kmlFileHistory;
+  qDebug() << Q_FUNC_INFO << "delete layoutFileHistory";
+  delete layoutFileHistory;
   qDebug() << Q_FUNC_INFO << "delete optionsDialog";
   delete optionsDialog;
   qDebug() << Q_FUNC_INFO << "delete mapWidget";
@@ -415,10 +504,8 @@ MainWindow::~MainWindow()
   delete actionGroupMapWeatherSource;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherWindSource";
   delete actionGroupMapWeatherWindSource;
-
   qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
   delete currentWeatherContext;
-
   qDebug() << Q_FUNC_INFO << "delete routeExport";
   delete routeExport;
 
@@ -453,20 +540,39 @@ void MainWindow::debugActionTriggered1()
   qDebug() << Q_FUNC_INFO;
   qDebug() << NavApp::getRouteConst();
   qDebug() << "======================================================================================";
+
+  qDebug() << Q_FUNC_INFO << ui->dockWidgetRouteCalc->windowFlags().testFlag(Qt::WindowStaysOnTopHint);
+
 }
 
 void MainWindow::debugActionTriggered2()
 {
+  qDebug() << "======================================================================================";
   qDebug() << Q_FUNC_INFO;
-
-  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_LAST_CHECKED);
-  atools::settings::Settings::instance().remove(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
-
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
+  qDebug() << NavApp::getRouteConst().getFlightplan();
+  qDebug() << "======================================================================================";
 }
 
 void MainWindow::debugActionTriggered3()
 {
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */,
+                          true /* forceDebug */);
+}
+
+void MainWindow::debugActionTriggered4()
+{
+  QString file = routeController->getRouteFilepath();
+  routeController->loadFlightplan(file);
+}
+
+void MainWindow::debugActionTriggered5()
+{
+  helpHandler->openFile(routeController->getRouteFilepath());
+}
+
+void MainWindow::debugActionTriggered6()
+{
+  helpHandler->openFile(NavApp::getAircraftPerfController()->getCurrentFilepath());
 }
 
 #endif
@@ -506,8 +612,7 @@ void MainWindow::loadNavmapLegend()
 {
   qDebug() << Q_FUNC_INFO;
 
-  legendFile = HelpHandler::getHelpFile(lnm::helpLegendLocalFile,
-                                        OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE);
+  legendFile = HelpHandler::getHelpFile(lnm::helpLegendLocalFile, OptionData::instance().getLanguage());
   qDebug() << "legendUrl" << legendFile;
 
   QFile legend(legendFile);
@@ -517,7 +622,7 @@ void MainWindow::loadNavmapLegend()
     stream.setCodec("UTF-8");
     QString legendText = stream.readAll();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_LEGEND
     qDebug() << Q_FUNC_INFO << "==========================================";
     qDebug().noquote().nospace() << legendText;
     qDebug() << Q_FUNC_INFO << "==========================================";
@@ -537,7 +642,8 @@ void MainWindow::loadNavmapLegend()
 /* Check manually for updates as triggered by the action */
 void MainWindow::checkForUpdates()
 {
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), true /* manually triggered */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(),
+                          true /* manually triggered */, false /* forceDebug */);
 }
 
 void MainWindow::showOnlineHelp()
@@ -548,6 +654,11 @@ void MainWindow::showOnlineHelp()
 void MainWindow::showOnlineTutorials()
 {
   HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineTutorialsUrl, lnm::helpLanguageOnline());
+}
+
+void MainWindow::showOnlineDownloads()
+{
+  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineDownloadsUrl, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showDonationPage()
@@ -562,9 +673,18 @@ void MainWindow::showFaqPage()
 
 void MainWindow::showOfflineHelp()
 {
-  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::helpOfflineFile,
-                                                       OptionData::instance().getFlags() &
-                                                       opts::GUI_OVERRIDE_LANGUAGE));
+  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::instance().getLanguage()));
+}
+
+void MainWindow::openLogFile()
+{
+  for(const QString& log : atools::logging::LoggingHandler::getLogFiles())
+    HelpHandler::openFile(this, log);
+}
+
+void MainWindow::openConfigFile()
+{
+  HelpHandler::openFile(this, Settings::getFilename());
 }
 
 /* Show marble legend */
@@ -619,6 +739,7 @@ void MainWindow::setupUi()
 
   // Projection menu items
   actionGroupMapProjection = new QActionGroup(ui->menuViewProjection);
+  actionGroupMapProjection->setObjectName("actionGroupMapProjection");
   ui->actionMapProjectionMercator->setActionGroup(actionGroupMapProjection);
   ui->actionMapProjectionSpherical->setActionGroup(actionGroupMapProjection);
 
@@ -641,12 +762,14 @@ void MainWindow::setupUi()
 
   // Sun shading sub menu
   actionGroupMapSunShading = new QActionGroup(ui->menuSunShading);
+  actionGroupMapSunShading->setObjectName("actionGroupMapSunShading");
   actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingSimulatorTime);
   actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingRealTime);
   actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingUserTime);
 
   // Weather source sub menu
   actionGroupMapWeatherSource = new QActionGroup(ui->menuMapShowAirportWeatherSource);
+  actionGroupMapWeatherSource->setObjectName("actionGroupMapWeatherSource");
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherSimulator);
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherActiveSky);
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherNoaa);
@@ -655,12 +778,14 @@ void MainWindow::setupUi()
 
   // Weather source sub menu
   actionGroupMapWeatherWindSource = new QActionGroup(ui->menuHighAltitudeWindSource);
+  actionGroupMapWeatherWindSource->setObjectName("actionGroupMapWeatherWindSource");
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindDisabled);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindSimulator);
 
   // Theme menu items
   actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
+  actionGroupMapTheme->setObjectName("actionGroupMapTheme");
   ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeOpenStreetMap->setData(map::OPENSTREETMAP);
 
@@ -727,27 +852,33 @@ void MainWindow::setupUi()
                                                       arg(ui->dockWidgetRoute->windowTitle()));
   ui->dockWidgetRoute->toggleViewAction()->setStatusTip(ui->dockWidgetRoute->toggleViewAction()->toolTip());
 
+  ui->dockWidgetRouteCalc->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/routecalcdock.svg"));
+  ui->dockWidgetRouteCalc->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+3")));
+  ui->dockWidgetRouteCalc->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                          arg(ui->dockWidgetRouteCalc->windowTitle()));
+  ui->dockWidgetRouteCalc->toggleViewAction()->setStatusTip(ui->dockWidgetRouteCalc->toggleViewAction()->toolTip());
+
   ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
-  ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+3")));
+  ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
   ui->dockWidgetInformation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                             arg(ui->dockWidgetInformation->windowTitle().
                                                                 toLower()));
   ui->dockWidgetInformation->toggleViewAction()->setStatusTip(ui->dockWidgetInformation->toggleViewAction()->toolTip());
 
   ui->dockWidgetProfile->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
-  ui->dockWidgetProfile->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
+  ui->dockWidgetProfile->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
   ui->dockWidgetProfile->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                         arg(ui->dockWidgetProfile->windowTitle()));
   ui->dockWidgetProfile->toggleViewAction()->setStatusTip(ui->dockWidgetProfile->toggleViewAction()->toolTip());
 
   ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
-  ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
+  ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+6")));
   ui->dockWidgetAircraft->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                          arg(ui->dockWidgetAircraft->windowTitle()));
   ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(ui->dockWidgetAircraft->toggleViewAction()->toolTip());
 
   ui->dockWidgetLegend->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/legenddock.svg"));
-  ui->dockWidgetLegend->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+6")));
+  ui->dockWidgetLegend->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+7")));
   ui->dockWidgetLegend->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                        arg(ui->dockWidgetLegend->windowTitle()));
   ui->dockWidgetLegend->toggleViewAction()->setStatusTip(ui->dockWidgetLegend->toggleViewAction()->toolTip());
@@ -759,6 +890,7 @@ void MainWindow::setupUi()
   ui->menuView->insertActions(ui->actionShowStatusbar,
                               {ui->dockWidgetSearch->toggleViewAction(),
                                ui->dockWidgetRoute->toggleViewAction(),
+                               ui->dockWidgetRouteCalc->toggleViewAction(),
                                ui->dockWidgetInformation->toggleViewAction(),
                                ui->dockWidgetProfile->toggleViewAction(),
                                ui->dockWidgetAircraft->toggleViewAction(),
@@ -774,17 +906,20 @@ void MainWindow::setupUi()
                                ui->toolBarMapThemeProjection->toggleViewAction(),
                                ui->toolBarRoute->toggleViewAction(),
                                ui->toolBarAirspaces->toggleViewAction(),
-                               ui->toolBarView->toggleViewAction()});
+                               ui->toolBarView->toggleViewAction(),
+                               ui->toolBarTools->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
   // Add toobar actions to toolbar
   ui->toolBarView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetRoute->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetRouteCalc->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetProfile->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetLegend->toggleViewAction());
 
+  // ==============================================================
   // Create labels for the statusbar
   connectStatusLabel = new QLabel();
   connectStatusLabel->setAlignment(Qt::AlignCenter);
@@ -837,6 +972,15 @@ void MainWindow::setupUi()
 #endif
   timeLabel->setToolTip(tr("Day of month and UTC time."));
   ui->statusBar->addPermanentWidget(timeLabel);
+
+  // Status bar takes ownership of filter which handles tooltip on click
+  ui->statusBar->installEventFilter(new StatusBarEventFilter(ui->statusBar, connectStatusLabel));
+
+  connect(ui->statusBar, &QStatusBar::messageChanged, this, &MainWindow::statusMessageChanged);
+
+  // Show error messages in tooltip on click ========================================
+  ui->labelRouteError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteError));
+  ui->labelProfileError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelProfileError));
 }
 
 void MainWindow::clearProcedureCache()
@@ -884,7 +1028,10 @@ void MainWindow::connectAllSlots()
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
+          NavApp::getTrackController(), &TrackController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::saveStateNow);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::optionsChanged);
 
   // Updated manually in dialog
   // connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);
@@ -921,6 +1068,7 @@ void MainWindow::connectAllSlots()
           perfController, &AircraftPerfController::routeAltitudeChanged);
 
   // Route export signals =======================================================
+  connect(routeExport, &RouteExport::optionsUpdated, this, &MainWindow::updateActionStates);
   connect(routeExport, &RouteExport::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(routeExport, &RouteExport::selectDepartureParking, routeController, &RouteController::selectDepartureParking);
 
@@ -944,6 +1092,10 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
   connect(routeController, &RouteController::routeInsert, this, &MainWindow::routeInsert);
+
+  connect(routeController, &RouteController::routeChanged, NavApp::updateErrorLabels);
+  connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
+  connect(routeController, &RouteController::routeAltitudeChanged, NavApp::updateErrorLabels);
 
   // Airport search ===================================================================================
   AirportSearch *airportSearch = searchController->getAirportSearch();
@@ -983,6 +1135,9 @@ void MainWindow::connectAllSlots()
   connect(logSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(logSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(logSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(logSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
+  connect(logSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
+  connect(logSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
 
   // User data ===================================================================================
   UserdataController *userdataController = NavApp::getUserdataController();
@@ -1016,6 +1171,7 @@ void MainWindow::connectAllSlots()
   // Logbook ===================================================================================
   LogdataController *logdataController = NavApp::getLogdataController();
   connect(logdataController, &LogdataController::refreshLogSearch, logSearch, &LogdataSearch::refreshData);
+  connect(logdataController, &LogdataController::logDataChanged, mapWidget, &MapWidget::updateLogEntryScreenGeometry);
   connect(logdataController, &LogdataController::logDataChanged, this, &MainWindow::updateMapObjectsShown);
   connect(logdataController, &LogdataController::logDataChanged, infoController,
           &InfoController::updateAllInformation);
@@ -1117,12 +1273,15 @@ void MainWindow::connectAllSlots()
   connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
 
-  connect(ui->actionOptions, &QAction::triggered, optionsDialog, &QDialog::open);
+  connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
   connect(ui->actionSaveAllNow, &QAction::triggered, this, &MainWindow::saveStateNow);
 
   // Windows menu ============================================================
   connect(ui->actionShowFloatingWindows, &QAction::triggered, this, &MainWindow::raiseFloatingWindows);
+  connect(ui->actionWindowStayOnTop, &QAction::toggled, this, &MainWindow::stayOnTop);
+  connect(ui->actionShowAllowDocking, &QAction::toggled, this, &MainWindow::allowDockingWindows);
+  connect(ui->actionShowFullscreenMap, &QAction::toggled, this, &MainWindow::fullScreenMapToggle);
 
   // File menu ============================================================
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
@@ -1136,44 +1295,29 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteTableAppend, &QAction::triggered, this, &MainWindow::routeAppend);
-  connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
-  connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsPln);
-  connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
-  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, this, &MainWindow::routeSaveAsFlightGear);
-  connect(ui->actionRouteSaveAsFms3, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
-  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, &MainWindow::routeSaveAsFms11);
-  connect(ui->actionRouteSaveAsClean, &QAction::triggered, this, &MainWindow::routeExportClean);
+  connect(ui->actionRouteSaveSelection, &QAction::triggered, this, &MainWindow::routeSaveSelection);
+  connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSaveLnm);
+  connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsLnm);
 
   // Flight plan export actions =====================================================================
-  connect(ui->actionRouteSaveAsGfp, &QAction::triggered, routeExport, &RouteExport::routeExportGfp);
-  connect(ui->actionRouteSaveAsTxt, &QAction::triggered, routeExport, &RouteExport::routeExportTxt);
-  connect(ui->actionRouteSaveAsRte, &QAction::triggered, routeExport, &RouteExport::routeExportRte);
-  connect(ui->actionRouteSaveAsFpr, &QAction::triggered, routeExport, &RouteExport::routeExportFpr);
-  connect(ui->actionRouteSaveAsFpl, &QAction::triggered, routeExport, &RouteExport::routeExportFpl);
-  connect(ui->actionRouteSaveAsCorteIn, &QAction::triggered, routeExport, &RouteExport::routeExportCorteIn);
-  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, routeExport, &RouteExport::routeExportGpx);
-  connect(ui->actionRouteSaveAsHtml, &QAction::triggered, routeExport, &RouteExport::routeExportHtml);
-  connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
+  /* *INDENT-OFF* */
+  connect(ui->actionRouteSaveAsPln, &QAction::triggered, this, [ = ]() { routeExport->routeExportPlnMan(); });
+  connect(ui->actionRouteSaveAsPlnMsfs, &QAction::triggered, this, [ = ]() { routeExport->routeExportPlnMsfsMan(); });
+  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, [ = ]() { routeExport->routeExportFms11Man(); });
+  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, this, [ = ]() { routeExport->routeExportFlightgearMan(); });
+  connect(ui->actionRouteSaveAll, &QAction::triggered, this, [ = ]() { routeExport->routeMultiExport(); });
+  connect(ui->actionRouteSaveAllOptions, &QAction::triggered, this, [ = ]() { routeExport->routeMultiExportOptions(); });
 
-  connect(ui->actionRouteSaveAsRxpGns, &QAction::triggered, routeExport, &RouteExport::routeExportRxpGns);
-  connect(ui->actionRouteSaveAsRxpGtn, &QAction::triggered, routeExport, &RouteExport::routeExportRxpGtn);
-
-  connect(ui->actionRouteSaveAsIFly, &QAction::triggered, routeExport, &RouteExport::routeExportFltplan);
-  connect(ui->actionRouteSaveAsXFmc, &QAction::triggered, routeExport, &RouteExport::routeExportXFmc);
-  connect(ui->actionRouteSaveAsUfmc, &QAction::triggered, routeExport, &RouteExport::routeExportUFmc);
-  connect(ui->actionRouteSaveAsProSim, &QAction::triggered, routeExport, &RouteExport::routeExportProSim);
-  connect(ui->actionRouteSaveAsBbsAirbus, &QAction::triggered, routeExport, &RouteExport::routeExportBbs);
-  connect(ui->actionRouteSaveAsLeveldRte, &QAction::triggered, routeExport, &RouteExport::routeExportLeveldRte);
-  connect(ui->actionRouteSaveAsFeelthereFpl, &QAction::triggered, routeExport, &RouteExport::routeExportFeelthereFpl);
-  connect(ui->actionRouteSaveAsEfbr, &QAction::triggered, routeExport, &RouteExport::routeExportEfbr);
-  connect(ui->actionRouteSaveAsQwRte, &QAction::triggered, routeExport, &RouteExport::routeExportQwRte);
-  connect(ui->actionRouteSaveAsMdr, &QAction::triggered, routeExport, &RouteExport::routeExportMdr);
-  connect(ui->actionRouteSaveAsTfdi, &QAction::triggered, routeExport, &RouteExport::routeExportTfdi);
+  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, this, [ = ]() { routeExport->routeExportGpxMan(); });
+  connect(ui->actionRouteSaveAsHtml, &QAction::triggered, this, [ = ]() { routeExport->routeExportHtmlMan(); });
 
   // Online export options
-  connect(ui->actionRouteSaveAsVfp, &QAction::triggered, routeExport, &RouteExport::routeExportVfp);
-  connect(ui->actionRouteSaveAsIvap, &QAction::triggered, routeExport, &RouteExport::routeExportIvap);
-  connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, routeExport, &RouteExport::routeExportXIvap);
+  connect(ui->actionRouteSaveAsVfp, &QAction::triggered, this, [ = ]() { routeExport->routeExportVfpMan(); });
+  connect(ui->actionRouteSaveAsIvap, &QAction::triggered, this, [ = ]() { routeExport->routeExportIvapMan(); });
+  connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, this, [ = ]() { routeExport->routeExportXIvapMan(); });
+  /* *INDENT-ON* */
+
+  connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
 
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
@@ -1186,20 +1330,12 @@ void MainWindow::connectAllSlots()
   // KML actions
   connect(ui->actionLoadKml, &QAction::triggered, this, &MainWindow::kmlOpen);
   connect(ui->actionClearKml, &QAction::triggered, this, &MainWindow::kmlClear);
-
   connect(kmlFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::kmlOpenRecent);
 
   // Flight plan calculation
   connect(ui->actionRouteCalcDirect, &QAction::triggered, routeController, &RouteController::calculateDirect);
 
-  connect(ui->actionRouteCalcRadionav, &QAction::triggered,
-          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateRadionav));
-  connect(ui->actionRouteCalcHighAlt, &QAction::triggered,
-          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateHighAlt));
-  connect(ui->actionRouteCalcLowAlt, &QAction::triggered,
-          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateLowAlt));
-  connect(ui->actionRouteCalcSetAlt, &QAction::triggered,
-          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateSetAlt));
+  connect(ui->actionRouteCalc, &QAction::triggered, routeController, &RouteController::calculateRouteWindowFull);
   connect(ui->actionRouteReverse, &QAction::triggered, routeController, &RouteController::reverseRoute);
 
   connect(ui->actionRouteCopyString, &QAction::triggered, routeController, &RouteController::routeStringToClipboard);
@@ -1211,17 +1347,20 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpContents, &QAction::triggered, this, &MainWindow::showOnlineHelp);
   connect(ui->actionHelpTutorials, &QAction::triggered, this, &MainWindow::showOnlineTutorials);
   connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
+  connect(ui->actionHelpDownloads, &QAction::triggered, this, &MainWindow::showOnlineDownloads);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
   connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);
   connect(ui->actionHelpDonate, &QAction::triggered, this, &MainWindow::showDonationPage);
   connect(ui->actionHelpFaq, &QAction::triggered, this, &MainWindow::showFaqPage);
+  connect(ui->actionHelpOpenLogFile, &QAction::triggered, this, &MainWindow::openLogFile);
+  connect(ui->actionHelpOpenConfigFile, &QAction::triggered, this, &MainWindow::openConfigFile);
 
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
   // Connect the map widget to the position label.
   connect(mapWidget, &MapPaintWidget::distanceChanged, this, &MainWindow::distanceChanged);
-  connect(mapWidget, &MapPaintWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
+  connect(mapWidget, &MapPaintWidget::renderStateChanged, this, &MainWindow::renderStatusChanged);
   connect(mapWidget, &MapPaintWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
   connect(mapWidget, &MapWidget::showProcedures,
@@ -1240,6 +1379,8 @@ void MainWindow::connectAllSlots()
 
   connect(mapWidget, &MapWidget::editLogEntryFromMap,
           NavApp::getLogdataController(), &LogdataController::editLogEntryFromMap);
+  connect(mapWidget, &MapWidget::exitFullScreenPressed,
+          this, &MainWindow::exitFullScreenPressed);
 
   // Connect toolbar combo boxes
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
@@ -1247,17 +1388,22 @@ void MainWindow::connectAllSlots()
   connect(mapThemeComboBox, indexChangedPtr, this, &MainWindow::changeMapTheme);
 
   // Let projection menus update combo boxes
-  connect(ui->actionMapProjectionMercator, &QAction::triggered, [this](bool checked)
+  connect(ui->actionMapProjectionMercator, &QAction::triggered, this, [ = ](bool checked)
   {
     if(checked)
       mapProjectionComboBox->setCurrentIndex(0);
   });
 
-  connect(ui->actionMapProjectionSpherical, &QAction::triggered, [this](bool checked)
+  connect(ui->actionMapProjectionSpherical, &QAction::triggered, this, [ = ](bool checked)
   {
     if(checked)
       mapProjectionComboBox->setCurrentIndex(1);
   });
+
+  // Window menu ======================================
+  connect(layoutFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::layoutOpenRecent);
+  connect(ui->actionWindowLayoutOpen, &QAction::triggered, this, &MainWindow::layoutOpen);
+  connect(ui->actionWindowLayoutSaveAs, &QAction::triggered, this, &MainWindow::layoutSaveAs);
 
   // Let theme menus update combo boxes
   connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
@@ -1288,13 +1434,27 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowTracks, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowTocTod, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapHideRangeRings, &QAction::triggered, this, &MainWindow::clearRangeRingsAndDistanceMarkers);
+
+  // Logbook view options ============================================
+  connect(ui->actionSearchLogdataShowDirect, &QAction::toggled,
+          logdataController, &LogdataController::displayOptionsChanged);
+  connect(ui->actionSearchLogdataShowRoute, &QAction::toggled,
+          logdataController, &LogdataController::displayOptionsChanged);
+  connect(ui->actionSearchLogdataShowTrack, &QAction::toggled,
+          logdataController, &LogdataController::displayOptionsChanged);
+
+  connect(ui->actionSearchLogdataShowDirect, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionSearchLogdataShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionSearchLogdataShowTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   connect(ui->actionMapShowAirportWeather, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
 
   // Clear selection and highlights
-  connect(ui->actionMapClearAllHighlights, &QAction::triggered, routeController, &RouteController::clearSelection);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, routeController, &RouteController::clearTableSelection);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, searchController, &SearchController::clearSelection);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearSearchHighlights);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearAirspaceHighlights);
@@ -1304,6 +1464,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   connect(ui->actionMapShowCompassRose, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowCompassRoseAttach, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1330,14 +1491,25 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
 
-  // Weather source
+  // Airway/tracks =======================================================
+  TrackController *trackController = NavApp::getTrackController();
+  connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::clearAirwayNetworkCache);
+  connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::tracksChanged);
+  connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
+  connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
+
+  connect(ui->actionRouteDownloadTracks, &QAction::toggled, trackController, &TrackController::downloadToggled);
+  connect(ui->actionRouteDownloadTracksNow, &QAction::triggered, trackController, &TrackController::startDownload);
+  connect(ui->actionRouteDeleteTracks, &QAction::triggered, trackController, &TrackController::deleteTracks);
+
+  // Weather source =======================================================
   connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
-  // Update map weather source hightlights
+  // Update map weather source hightlights =======================================================
   connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
   connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
   connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
@@ -1353,7 +1525,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
 
-  // Sun shading
+  // Sun shading =======================================================
   connect(ui->actionMapShowSunShading, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowSunShadingSimulatorTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
   connect(ui->actionMapShowSunShadingRealTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
@@ -1383,8 +1555,6 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapLessDetails, &QAction::triggered, mapWidget, &MapWidget::decreaseMapDetail);
   connect(ui->actionMapDefaultDetails, &QAction::triggered, mapWidget, &MapWidget::defaultMapDetail);
 
-  connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
-
   connect(mapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateMapHistoryActions);
 
   connect(routeController, &RouteController::routeSelectionChanged, this, &MainWindow::routeSelectionChanged);
@@ -1410,7 +1580,7 @@ void MainWindow::connectAllSlots()
   // connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
   // mapWidget, &MapWidget::setPropertyValue);
 
-  connect(ui->actionAboutMarble, &QAction::triggered, marbleAbout, &Marble::MarbleAboutDialog::exec);
+  connect(ui->actionAboutMarble, &QAction::triggered, marbleAboutDialog, &Marble::MarbleAboutDialog::exec);
 
   ConnectClient *connectClient = NavApp::getConnectClient();
   connect(ui->actionConnectSimulator, &QAction::triggered, connectClient, &ConnectClient::connectToServerDialog);
@@ -1422,12 +1592,12 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived, profileWidget, &ProfileWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simDataChanged);
 
-  connect(connectClient, &ConnectClient::connectedToSimulator,
-          NavApp::getAircraftPerfController(), &AircraftPerfController::updateReports);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          NavApp::getAircraftPerfController(), &AircraftPerfController::updateReports);
   connect(connectClient, &ConnectClient::dataPacketReceived,
           NavApp::getAircraftPerfController(), &AircraftPerfController::simDataChanged);
+  connect(connectClient, &ConnectClient::connectedToSimulator,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
           &RouteController::disconnectedFromSimulator);
@@ -1495,6 +1665,8 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::actionShortcutLogbookSearchTriggered);
   connect(ui->actionShortcutFlightPlan, &QAction::triggered,
           this, &MainWindow::actionShortcutFlightPlanTriggered);
+  connect(ui->actionShortcutRouteCalc, &QAction::triggered,
+          this, &MainWindow::actionShortcutCalcRouteTriggered);
   connect(ui->actionShortcutAircraftPerformance, &QAction::triggered,
           this, &MainWindow::actionShortcutAircraftPerformanceTriggered);
   connect(ui->actionShortcutAirportInformation, &QAction::triggered,
@@ -1505,6 +1677,10 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::actionShortcutNavaidInformationTriggered);
   connect(ui->actionShortcutAircraftProgress, &QAction::triggered,
           this, &MainWindow::actionShortcutAircraftProgressTriggered);
+
+  // Check for database file modifications on application activation
+  connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::applicationStateChanged,
+          NavApp::getDatabaseManager(), &DatabaseManager::checkForChangedNavAndSimDatabases);
 }
 
 void MainWindow::actionShortcutMapTriggered()
@@ -1557,7 +1733,7 @@ void MainWindow::actionShortcutLogbookSearchTriggered()
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_LOG);
-  ui->lineEditLogdataDeparture->setFocus();
+  ui->lineEditLogdataAirport->setFocus();
 }
 
 void MainWindow::actionShortcutFlightPlanTriggered()
@@ -1566,6 +1742,19 @@ void MainWindow::actionShortcutFlightPlanTriggered()
   dockHandler->activateWindow(ui->dockWidgetRoute);
   NavApp::getRouteTabHandler()->setCurrentTab(rc::ROUTE);
   ui->tableViewRoute->setFocus();
+}
+
+void MainWindow::actionShortcutCalcRouteTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->activateWindow(ui->dockWidgetRouteCalc);
+
+  // Place window near cursor for first time show to avoid Qt positioning it randomly elsewhere
+  if(!Settings::instance().valueBool(lnm::MAINWINDOW_PLACE_ROUTE_CALC, false))
+  {
+    Settings::instance().setValue(lnm::MAINWINDOW_PLACE_ROUTE_CALC, true);
+    ui->dockWidgetRouteCalc->move(QCursor::pos() + QPoint(20, 20));
+  }
 }
 
 void MainWindow::actionShortcutAircraftPerformanceTriggered()
@@ -1581,6 +1770,7 @@ void MainWindow::actionShortcutAirportInformationTriggered()
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetInformation);
   infoController->setCurrentInfoTabIndex(ic::INFO_AIRPORT);
+  infoController->setCurrentAirportInfoTabIndex(ic::INFO_AIRPORT_OVERVIEW);
   ui->textBrowserAirportInfo->setFocus();
 }
 
@@ -1588,7 +1778,8 @@ void MainWindow::actionShortcutAirportWeatherTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetInformation);
-  infoController->setCurrentInfoTabIndex(ic::INFO_WEATHER);
+  infoController->setCurrentInfoTabIndex(ic::INFO_AIRPORT);
+  infoController->setCurrentAirportInfoTabIndex(ic::INFO_AIRPORT_WEATHER);
   ui->textBrowserWeatherInfo->setFocus();
 }
 
@@ -1633,7 +1824,7 @@ void MainWindow::findCustomMaps(QFileInfoList& customDgmlFiles)
   // Look for new map themes
   for(const QFileInfo& info : entries)
   {
-    if(!STOCK_MAP_THEMES.contains(info.baseName(), Qt::CaseInsensitive))
+    if(!map::STOCK_MAP_THEMES.contains(info.baseName(), Qt::CaseInsensitive))
     {
       // Found a new directory
       qDebug() << "Custom theme" << info.absoluteFilePath();
@@ -1671,7 +1862,7 @@ void MainWindow::changeMapProjection(int index)
   ui->actionMapProjectionMercator->setChecked(proj == Marble::Mercator);
   ui->actionMapProjectionSpherical->setChecked(proj == Marble::Spherical);
 
-  setStatusMessage(tr("Map projection changed to %1").arg(mapProjectionComboBox->currentText()));
+  setStatusMessage(tr("Map projection changed to %1.").arg(mapProjectionComboBox->currentText()));
 }
 
 /* Called by the toolbar combo box */
@@ -1692,7 +1883,7 @@ void MainWindow::changeMapTheme()
 
   updateLegend();
 
-  setStatusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
+  setStatusMessage(tr("Map theme changed to %1.").arg(mapThemeComboBox->currentText()));
 }
 
 void MainWindow::updateLegend()
@@ -1718,7 +1909,8 @@ void MainWindow::showDatabaseFiles()
 /* Updates label and tooltip for connection status */
 void MainWindow::setConnectionStatusMessageText(const QString& text, const QString& tooltipText)
 {
-  connectionStatus = text;
+  if(!text.isEmpty())
+    connectionStatus = text;
   connectionStatusTooltip = tooltipText;
   updateConnectionStatusMessageText();
 }
@@ -1757,10 +1949,13 @@ const ElevationModel *MainWindow::getElevationModel()
 }
 
 /* Called after each query */
-void MainWindow::resultTruncated(int truncatedTo)
+void MainWindow::resultTruncated()
 {
-  if(truncatedTo > 0)
-    messageLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects.")));
+  messageLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects")));
+  messageLabel->setToolTip(tr("Too many objects to show on map.\n"
+                              "Display might be incomplete.\n"
+                              "Reduce map details in the \"View\" menu.",
+                              "Keep menu item in sync with menu translation"));
 }
 
 void MainWindow::distanceChanged()
@@ -1785,26 +1980,54 @@ void MainWindow::distanceChanged()
   mapDistanceLabel->setText(text);
 }
 
-void MainWindow::renderStatusChanged(RenderStatus status)
+void MainWindow::renderStatusReset()
 {
-  QString prefix =
-    mapWidget->model()->workOffline() ? atools::util::HtmlBuilder::errorMessage(tr("Offline.")) : QString();
+  // Force reset to complete to avoid forever "Waiting"
+  renderStatusUpdateLabel(Marble::Complete, false /* forceUpdate */);
+}
 
-  switch(status)
+void MainWindow::renderStatusUpdateLabel(RenderStatus status, bool forceUpdate)
+{
+  if(status != lastRenderStatus || forceUpdate)
   {
-    case Marble::Complete:
-      renderStatusLabel->setText(prefix + tr("Done."));
-      break;
-    case Marble::WaitingForUpdate:
-      renderStatusLabel->setText(prefix + tr("Waiting for Update ..."));
-      break;
-    case Marble::WaitingForData:
-      renderStatusLabel->setText(prefix + tr("Waiting for Data ..."));
-      break;
-    case Marble::Incomplete:
-      renderStatusLabel->setText(prefix + tr("Incomplete."));
-      break;
+    QString suffix = mapWidget->model()->workOffline() ?
+                     tr(" ") + atools::util::HtmlBuilder::errorMessage(tr("Offline")) :
+                     QString();
+
+    if(mapWidget->getCurrentThemeIndex() >= map::CUSTOM)
+      renderStatusLabel->setText(suffix);
+    else
+    {
+      switch(status)
+      {
+        case Marble::Complete:
+          renderStatusLabel->setText(tr("Done") + suffix);
+          break;
+        case Marble::WaitingForUpdate:
+          renderStatusLabel->setText(tr("Updating") + suffix);
+          break;
+        case Marble::WaitingForData:
+          renderStatusLabel->setText(tr("Loading") + suffix);
+          break;
+        case Marble::Incomplete:
+          renderStatusLabel->setText(tr("Incomplete") + suffix);
+          break;
+      }
+    }
+    lastRenderStatus = status;
   }
+}
+
+void MainWindow::renderStatusChanged(const RenderState& state)
+{
+  RenderStatus status = state.status();
+  renderStatusUpdateLabel(status, false /* forceUpdate */);
+
+  if(status == Marble::WaitingForUpdate || status == Marble::WaitingForData)
+    // Reset forever lasting waiting status if Marble cannot fetch tiles
+    renderStatusTimer.start();
+  else if(status == Marble::Complete || status == Marble::Incomplete)
+    renderStatusTimer.stop();
 }
 
 void MainWindow::routeResetAll()
@@ -1815,50 +2038,45 @@ void MainWindow::routeResetAll()
     DELETE_TRAIL,
     DELETE_ACTIVE_LEG,
     RESTART_PERF,
-    RESTART_LOGBOOK
+    RESTART_LOGBOOK,
+    REMOVE_MARKS
   };
 
   qDebug() << Q_FUNC_INFO;
 
   // Create a dialog with four checkboxes
-  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"),
+  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"), QString(),
                             tr("Select items to reset for a new flight"),
                             lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
 
-  choiceDialog.add(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
-  choiceDialog.add(DELETE_TRAIL, tr("&Delete aircaft trail"),
-                   tr("Delete simulator aircraft trail from map and elevation profile"), true);
-  choiceDialog.add(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
-                   tr("Remove the active (magenta) flight plan leg"), true);
-  choiceDialog.add(RESTART_PERF, tr("Restart Aircraft &Performance Collection"),
-                   tr("Restarts the background aircraft performance collection"), true);
-  choiceDialog.add(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
-                   tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
+  choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
+  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircaft trail"),
+                           tr("Delete simulator aircraft trail from map and elevation profile"), true);
+  choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
+                           tr("Remove the active (magenta) flight plan leg"), true);
+  choiceDialog.addCheckBox(RESTART_PERF, tr("Restart Aircraft &Performance Collection"),
+                           tr("Restarts the background aircraft performance collection"), true);
+  choiceDialog.addCheckBox(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
+                           tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
+  choiceDialog.addCheckBox(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns and Holdings"),
+                           tr("Remove all range rings, measurements, traffic patterns and holdings from map"), false);
+
   choiceDialog.restoreState();
 
   if(choiceDialog.exec() == QDialog::Accepted)
   {
-    for(int choice :  choiceDialog.getCheckedIds())
-    {
-      switch(static_cast<Choice>(choice))
-      {
-        case EMPTY_FLIGHT_PLAN:
-          routeNew();
-          break;
-        case DELETE_TRAIL:
-          deleteAircraftTrack(true /* do not ask questions */);
-          break;
-        case DELETE_ACTIVE_LEG:
-          NavApp::getRouteController()->resetActiveLeg();
-          break;
-        case RESTART_PERF:
-          NavApp::getAircraftPerfController()->restartCollection(true /* do not ask questions */);
-          break;
-        case RESTART_LOGBOOK:
-          NavApp::getLogdataController()->resetTakeoffLandingDetection();
-          break;
-      }
-    }
+    if(choiceDialog.isChecked(EMPTY_FLIGHT_PLAN))
+      routeNew();
+    if(choiceDialog.isChecked(DELETE_TRAIL))
+      deleteAircraftTrack(true /* do not ask questions */);
+    if(choiceDialog.isChecked(DELETE_ACTIVE_LEG))
+      NavApp::getRouteController()->resetActiveLeg();
+    if(choiceDialog.isChecked(RESTART_PERF))
+      NavApp::getAircraftPerfController()->restartCollection(true /* do not ask questions */);
+    if(choiceDialog.isChecked(RESTART_LOGBOOK))
+      NavApp::getLogdataController()->resetTakeoffLandingDetection();
+    if(choiceDialog.isChecked(REMOVE_MARKS))
+      clearRangeRingsAndDistanceMarkers(true /* quiet */);
   }
 }
 
@@ -1870,202 +2088,6 @@ void MainWindow::routeCenter()
     mapWidget->showRect(routeController->getBoundingRect(), false);
     setStatusMessage(tr("Flight plan shown on map."));
   }
-}
-
-bool MainWindow::routeSaveCheckFMS11Warnings()
-{
-  if(NavApp::getDatabaseAiracCycleNav().isEmpty() &&
-     NavApp::getRouteConst().getFlightplan().getFileFormat() == atools::fs::pln::FMS11)
-  {
-    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING,
-                                            tr(
-                                              "Database contains no AIRAC cycle information which is "
-                                              "required for the X-Plane FSM 11 flight plan format.<br/><br/>"
-                                              "This can happen if you save a flight plan based on FSX or Prepar3D scenery.<br/><br/>"
-                                              "Really continue?"),
-                                            tr("Do not &show this dialog again and save in the future."),
-                                            QMessageBox::Yes | QMessageBox::No,
-                                            QMessageBox::No, QMessageBox::Yes);
-
-    if(result == QMessageBox::No)
-      return false;
-  }
-  return true;
-}
-
-/* Display warning dialogs depending on format to save and allow to cancel out or save as */
-bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat)
-{
-  // Show a simple warning for the rare case that altitude is null
-  if(atools::almostEqual(NavApp::getRoute().getCruisingAltitudeFeet(), 0.f, 1.f))
-  {
-    QString message = tr("Flight plan cruise altitude is zero.\nSimulator might not be able to load the flight plan.");
-
-    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, message,
-                                                QObject::tr("Do not &show this dialog again."));
-  }
-
-  // Use a button box including a save as button
-  atools::gui::DialogButtonList buttonList =
-  {
-    {QString(), QMessageBox::Cancel},
-    // {tr("Save &as PLN instead ..."), QMessageBox::SaveAll},
-    // {QString(), QMessageBox::Save},
-    {QString(), QMessageBox::Help}
-  };
-
-  bool airways = routeController->getRoute().hasAirways();
-  bool userWaypoints = routeController->getRoute().hasUserWaypoints();
-  bool procedures = routeController->getRoute().hasAnyProcedure();
-  bool parking = routeController->getRoute().hasDepartureParking();
-  QString routeFilename = routeController->getCurrentRouteFilepath();
-  int result = QMessageBox::Save;
-
-  // Build button text depending if this is a "save as" or plain save
-  QString saveAsButtonText = tr("Save%1%3%2").
-                             arg(saveAs ? tr(" as") : QString()).
-                             arg(saveAs ? tr(" ...") : QString());
-
-  if(QFileInfo::exists(routeFilename) &&
-     (fileFormat == atools::fs::pln::PLN_FS9 || fileFormat == atools::fs::pln::PLN_FSC))
-  {
-    // Warn before overwriting FS9 with FSX format
-    buttonList.append({saveAsButtonText.arg(tr(" &FSX/P3D PLN")), QMessageBox::Save});
-
-    QString fmt;
-    if(fileFormat == atools::fs::pln::PLN_FS9)
-      fmt = tr("FS9");
-    else if(fileFormat == atools::fs::pln::PLN_FSC)
-      fmt = tr("FSC");
-
-    // We can load FS9 but saving does not make sense anymore
-    // Ask before overwriting file
-    result = atools::gui::Dialog(this).
-             showQuestionMsgBox(lnm::ACTIONS_SHOW_FS9_FSC_WARNING,
-                                tr("Overwrite %1 flight plan with the FSX/P3D PLN flight plan format?\n").arg(fmt),
-                                tr("Do not show this dialog again and overwrite the Flight Plan in the future."),
-                                buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-  else if(fileFormat == atools::fs::pln::FMS3 && (airways || procedures || parking))
-  {
-    buttonList.append({saveAsButtonText.arg(tr(" &FMS 3")), QMessageBox::Save});
-    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
-
-    // Ask before saving file
-    result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS3_WARNING,
-                                 tr("<p>The old X-Plane FMS format version 3 does not allow saving of:</p>"
-                                      "<ul>"
-                                        "<li>Procedures</li>"
-                                          "<li>Airways</li>"
-                                            "<li>Ground Speed</li>"
-                                              "<li>Departure parking position</li>"
-                                                "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                  "<li>Alternate destination airports</li>"
-                                                    "<li>User defined/custom approaches</li>"
-                                                    "</ul>"
-                                                    "<p>This information or parts of it can be lost when reloading the file.</p>"
-                                                      "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
-                                                        "<p>Really save as FMS file?</p>"
-                                    ),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future as FMS 3."),
-                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-  else if(fileFormat == atools::fs::pln::FMS11 /* && parking*/) // Always warn
-  {
-    buttonList.append({saveAsButtonText.arg(tr(" &FMS 11")), QMessageBox::Save});
-    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
-
-    // Ask before saving file
-    result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS11_WARNING,
-                                 tr("<p>This format can only be loaded from "
-                                      "X-Plane 11.10 and above.<br/>"
-                                      "It does not allow saving of:</p>"
-                                      "<ul>"
-                                        "<li>Ground Speed</li>"
-                                          "<li>Departure parking position</li>"
-                                            "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                              "<li>Alternate destination airports</li>"
-                                                "<li>User defined/custom approaches</li>"
-                                                "</ul>"
-                                                "<p>This information or parts of it can be lost when reloading the file.</p>"
-                                                  "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
-                                                    "<p>Really save as FMS file?</p>"
-                                    ),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future as FMS 11."),
-                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-  else if(fileFormat == atools::fs::pln::FLP && (procedures || userWaypoints || parking))
-  {
-    buttonList.append({saveAsButtonText.arg(tr(" &FLP")), QMessageBox::Save});
-    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
-
-    // Ask before saving file
-    result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLP_WARNING,
-                                 tr("<p>The FLP format does not allow saving of:</p>"
-                                      "<ul>"
-                                        "<li>Procedures (limited, can result in mismatches)</li>"
-                                          "<li>Position names</li>"
-                                            "<li>Cruise Altitude</li>"
-                                              "<li>Ground Speed</li>"
-                                                "<li>Departure parking position</li>"
-                                                  "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                    "<li>Alternate destination airports</li>"
-                                                      "<li>User defined/custom approaches</li>"
-                                                      "</ul>"
-                                                      "<p>This information or parts of it can be lost when reloading the file.</p>"
-                                                        "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
-                                                          "<p>Really save as FLP file?</p>"
-                                    ),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future as FLP."),
-                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-  else if(fileFormat == atools::fs::pln::FLIGHTGEAR && (procedures || userWaypoints || parking))
-  {
-    buttonList.append({saveAsButtonText.arg(tr(" &FGFP")), QMessageBox::Save});
-    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
-
-    // Ask before saving file
-    result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLIGHTGEAR_WARNING,
-                                 tr("<p>The FlightGear format does not allow saving of:</p>"
-                                      "<ul>"
-                                        "<li>Procedures (only SID, STAR and the respective transitions)</li>"
-                                          "<li>Position names</li>"
-                                            "<li>Cruise Altitude</li>"
-                                              "<li>Ground Speed</li>"
-                                                "<li>Departure parking position</li>"
-                                                  "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                    "<li>Alternate destination airports</li>"
-                                                      "<li>User defined/custom approaches</li>"
-                                                      "</ul>"
-                                                      "<p>This information or parts of it can be lost when reloading the file.</p>"
-                                                        "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
-                                                          "<p>Really save as FGFP file?</p>"
-                                    ),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future as FGFP."),
-                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
-  }
-
-  if(result == QMessageBox::SaveAll)
-  {
-    saveAs = true;
-    return true;
-  }
-  else if(result == QMessageBox::Save)
-  {
-    saveAs = false;
-    return true;
-  }
-  else if(result == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "FLIGHTPLANFMT.html",
-                                             lnm::helpLanguageOnline());
-  // else cancel
-
-  saveAs = false;
-  return false;
 }
 
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
@@ -2111,34 +2133,53 @@ void MainWindow::updateWindowTitle()
 
   // Program version and revision ==========================================
   if(version.isStable() || version.isReleaseCandidate() || version.isBeta())
-    newTitle += QString(" %1").arg(version.getVersionString());
+    newTitle += tr(" %1").arg(version.getVersionString());
   else
-    newTitle += QString(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION);
+    newTitle += tr(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION);
 
   // Database information  ==========================================
+  // Simulator database =========
   if(navDbStatus == dm::NAVDATABASE_ALL)
-    newTitle += " - (" + NavApp::getCurrentSimulatorShortName() + ")";
+    newTitle += tr(" - (%1)").arg(NavApp::getCurrentSimulatorShortName());
   else
-    newTitle += " - " + NavApp::getCurrentSimulatorShortName();
+  {
+    newTitle += tr(" - %1").arg(NavApp::getCurrentSimulatorShortName());
 
+    if(!NavApp::getDatabaseAiracCycleSim().isEmpty())
+      newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleSim());
+  }
+
+  // Nav database =========
   if(navDbStatus == dm::NAVDATABASE_ALL)
-    newTitle += " / N";
+    newTitle += tr(" / N");
   else if(navDbStatus == dm::NAVDATABASE_MIXED)
-    newTitle += " / N";
+    newTitle += tr(" / N");
+  else if(navDbStatus == dm::NAVDATABASE_OFF)
+    newTitle += tr(" / (N)");
+
+  if((navDbStatus == dm::NAVDATABASE_ALL || navDbStatus == dm::NAVDATABASE_MIXED) &&
+     !NavApp::getDatabaseAiracCycleNav().isEmpty())
+    newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
 
   // Flight plan name  ==========================================
-  if(!routeController->getCurrentRouteFilepath().isEmpty())
-    newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilepath()).fileName() +
-                (routeController->hasChanged() ? tr(" *") : QString());
+  if(!routeController->getRouteFilepath().isEmpty())
+    newTitle += tr(" - %1%2").
+                arg(QFileInfo(routeController->getRouteFilepath()).fileName()).
+                arg(routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
     newTitle += tr(" - *");
 
   // Performance name  ==========================================
   if(!NavApp::getCurrentAircraftPerfFilepath().isEmpty())
-    newTitle += " - " + QFileInfo(NavApp::getCurrentAircraftPerfFilepath()).fileName() +
-                (NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
+    newTitle += tr(" - %1%2").
+                arg(QFileInfo(NavApp::getCurrentAircraftPerfFilepath()).fileName()).
+                arg(NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
   else if(NavApp::getAircraftPerfController()->hasChanged())
     newTitle += tr(" - *");
+
+#ifndef QT_NO_DEBUG
+  newTitle += " - DEBUG";
+#endif
 
   // Add a star to the flight plan tab if changed
   routeController->updateRouteTabChangedStatus();
@@ -2174,7 +2215,7 @@ bool MainWindow::routeCheckForChanges()
   if(!routeController->hasChanged())
     return true;
 
-  QMessageBox msgBox;
+  QMessageBox msgBox(this);
   msgBox.setWindowTitle(QApplication::applicationName());
   msgBox.setText(tr("Flight Plan has been changed."));
   msgBox.setInformativeText(tr("Save changes?"));
@@ -2185,10 +2226,10 @@ bool MainWindow::routeCheckForChanges()
   switch(retval)
   {
     case QMessageBox::Save:
-      if(routeController->getCurrentRouteFilepath().isEmpty())
-        return routeSaveAsPln();
+      if(routeController->getRouteFilepath().isEmpty())
+        return routeSaveAsLnm();
       else
-        return routeSave();
+        return routeSaveLnm();
 
     case QMessageBox::No:
       // ok to erase flight plan
@@ -2213,7 +2254,7 @@ void MainWindow::routeNewFromString()
     {
       if(routeCheckForChanges())
       {
-        routeController->loadFlightplan(routeStringDialog.getFlightplan(), QString(),
+        routeController->loadFlightplan(routeStringDialog.getFlightplan(), atools::fs::pln::LNM_PLN, QString(),
                                         true /*quiet*/, true /*changed*/,
                                         !routeStringDialog.isAltitudeIncluded() /*adjust alt*/);
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
@@ -2246,16 +2287,21 @@ void MainWindow::routeOpen()
   routeOpenFile(QString());
 }
 
+QString MainWindow::routeOpenFileDialog()
+{
+  return dialog->openFileDialog(
+    tr("Open Flight Plan"),
+    tr("Flight Plan Files %1;;All Files (*)").
+    arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+    "Route/LnmPln", atools::documentsDir());
+}
+
 void MainWindow::routeOpenFile(QString filepath)
 {
   if(routeCheckForChanges())
   {
     if(filepath.isEmpty())
-      filepath = dialog->openFileDialog(
-        tr("Open Flight Plan"),
-        tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-        "Route/" + NavApp::getCurrentSimulatorShortName(),
-        NavApp::getCurrentSimulatorFilesPath());
+      filepath = routeOpenFileDialog();
 
     if(!filepath.isEmpty())
     {
@@ -2272,14 +2318,47 @@ void MainWindow::routeOpenFile(QString filepath)
   saveFileHistoryStates();
 }
 
+void MainWindow::routeOpenFileLnmStr(const QString& string)
+{
+  if(routeCheckForChanges())
+  {
+    if(routeController->loadFlightplanLnmStr(string))
+    {
+      if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+        routeCenter();
+      showFlightPlan();
+      setStatusMessage(tr("Flight plan opened."));
+    }
+  }
+}
+
+bool MainWindow::routeSaveSelection()
+{
+  // Have to get snippet to be able to extract new name
+  atools::fs::pln::Flightplan plan = routeController->getFlightplanForSelection();
+  QString routeFile = routeSaveFileDialogLnm(RouteExport::buildDefaultFilename(plan));
+
+  if(!routeFile.isEmpty())
+  {
+    if(routeController->saveFlightplanLnmAsSelection(routeFile))
+    {
+      routeFileHistory->addFile(routeFile);
+      updateActionStates();
+      setStatusMessage(tr("Flight plan saved."));
+      saveFileHistoryStates();
+      return true;
+    }
+  }
+  return false;
+}
+
 /* Called from menu or toolbar by action - append flight plan to current one */
 void MainWindow::routeAppend()
 {
   QString routeFile = dialog->openFileDialog(
     tr("Append Flight Plan"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/" + NavApp::getCurrentSimulatorShortName(),
-    NavApp::getCurrentSimulatorFilesPath());
+    "Route/LnmPln", atools::documentsDir());
 
   if(!routeFile.isEmpty())
   {
@@ -2302,8 +2381,7 @@ void MainWindow::routeInsert(int insertBefore)
   QString routeFile = dialog->openFileDialog(
     tr("Insert info Flight Plan"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/" + NavApp::getCurrentSimulatorShortName(),
-    NavApp::getCurrentSimulatorFilesPath());
+    "Route/LnmPln", atools::documentsDir());
 
   if(!routeFile.isEmpty())
   {
@@ -2345,212 +2423,99 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
   saveFileHistoryStates();
 }
 
-/* Called from menu or toolbar by action */
-bool MainWindow::routeSave()
+void MainWindow::routeSaveLnmExported(const QString& filename)
 {
-  atools::fs::pln::FileFormat format = NavApp::getRouteConst().getFlightplan().getFileFormat();
+  // Update filename and undo status
+  routeController->saveFlightplanLnmExported(filename);
 
-  if(!routeSaveCheckFMS11Warnings())
-    return false;
+  // Add to recent files
+  routeFileHistory->addFile(filename);
 
-  if(routeController->getCurrentRouteFilepath().isEmpty() || !routeController->doesFilenameMatchRoute(format))
+  updateActionStates();
+  saveFileHistoryStates();
+}
+
+/* Called from menu or toolbar by action */
+bool MainWindow::routeSaveLnm()
+{
+  // Show a simple warning for the rare case that altitude is null ===============
+  if(atools::almostEqual(NavApp::getRoute().getCruisingAltitudeFeet(), 0.f, 10.f))
+    atools::gui::Dialog(this).showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING,
+                                             tr("Flight plan cruise altitude is zero.\n"
+                                                "A simulator might not be able to load the flight plan."),
+                                             QObject::tr("Do not &show this dialog again."));
+
+  if(!routeController->isLnmFormatFlightplan())
   {
-    // No filename or plan has changed - save as
-    if(format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11)
-      return routeSaveAsFms(format);
-    else if(format == atools::fs::pln::FLP)
-      return routeSaveAsFlp();
-    else if(format == atools::fs::pln::FLIGHTGEAR)
-      return routeSaveAsFlightGear();
-    else
-      return routeSaveAsPln();
+    // Forbid saving of other formats than LNMPLN directly =========================================
+    atools::gui::DialogButtonList buttonList =
+    {
+      {QString(), QMessageBox::Cancel},
+      {tr("Save &as LNMPLN ..."), QMessageBox::Save},
+      {QString(), QMessageBox::Help}
+    };
+
+    // Ask before saving file
+    int result =
+      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_WARNING,
+                                 tr("<p>You cannot save this file directly.<br/>"
+                                    "Use the export function instead.</p>"
+                                    "<p>Save using the new LNMPLN format now?</p>"),
+                                 tr("Do not &show this dialog again and save as LNMPLN."),
+                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
+
+    if(result == QMessageBox::Cancel)
+      return false;
+    else if(result == QMessageBox::Help)
+    {
+      atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "FLIGHTPLANFMT.html",
+                                               lnm::helpLanguageOnline());
+      return false;
+    }
   }
+
+  if(routeController->getRouteFilepath().isEmpty() || !routeController->doesLnmFilenameMatchRoute() ||
+     !routeController->isLnmFormatFlightplan())
+    // No filename or plan has changed - save as ================================
+    return routeSaveAsLnm();
   else
   {
-    bool saveAs = false;
-    bool save = routeSaveCheckWarnings(saveAs, routeController->getRoute().getFlightplan().getFileFormat());
-
-    if(saveAs)
-      return routeSaveAsPln();
-    else if(save)
+    // Save as LNMPLN =====================================================
+    if(routeController->saveFlightplanLnm())
     {
-
-      bool validate = format == atools::fs::pln::PLN_FSX || format == atools::fs::pln::PLN_FS9 ||
-                      format == atools::fs::pln::PLN_FSC;
-      if(routeExport->routeValidate(validate /* validate parking */, validate /* validate departure and destination */))
-      {
-        // Save in loaded format PLN, FLP or FMS
-        if(routeController->saveFlightplan(false /* clean */))
-        {
-          routeFileHistory->addFile(routeController->getCurrentRouteFilepath());
-          updateActionStates();
-          setStatusMessage(tr("Flight plan saved."));
-          saveFileHistoryStates();
-          return true;
-        }
-      }
+      routeFileHistory->addFile(routeController->getRouteFilepath());
+      updateActionStates();
+      setStatusMessage(tr("Flight plan saved."));
+      saveFileHistoryStates();
+      return true;
     }
   }
   return false;
 }
 
-/* Called from menu or toolbar by action */
-bool MainWindow::routeSaveAsPln()
+QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
 {
-  if(routeExport->routeValidate(true /* validate parking */, true /* validate departure and destination */))
+  return dialog->saveFileDialog(
+    tr("Save Flight Plan as LNMPLN Format"),
+    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
+    "lnmpln", "Route/LnmPln", atools::documentsDir(),
+    filename.isEmpty() ? RouteExport::buildDefaultFilename() : filename,
+    false /* confirm overwrite */);
+}
+
+bool MainWindow::routeSaveAsLnm()
+{
+  QString routeFile = routeSaveFileDialogLnm();
+
+  if(!routeFile.isEmpty())
   {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as PLN Format"),
-      tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
-      "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
-      NavApp::getCurrentSimulatorFilesPath(), routeExport->buildDefaultFilename(),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
+    if(routeController->saveFlightplanLnmAs(routeFile))
     {
-      if(routeController->saveFlighplanAs(routeFile, atools::fs::pln::PLN_FSX))
-      {
-        routeFileHistory->addFile(routeFile);
-        updateActionStates();
-        setStatusMessage(tr("Flight plan saved."));
-        saveFileHistoryStates();
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeSaveAsFlp()
-{
-  // <Documents>/Aerosoft/Airbus/Flightplans.
-  bool saveAs = true;
-  bool save = routeSaveCheckWarnings(saveAs, atools::fs::pln::FLP);
-
-  if(saveAs)
-    return routeSaveAsPln();
-  else if(save)
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as FLP Format"),
-      tr("FLP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLP),
-      "flp", "Route/Flp", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      routeExport->buildDefaultFilenameShort(QString(), ".flp"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->saveFlighplanAs(routeFile, atools::fs::pln::FLP))
-      {
-        routeFileHistory->addFile(routeFile);
-        updateActionStates();
-        setStatusMessage(tr("Flight plan saved as FLP."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeSaveAsFlightGear()
-{
-  bool saveAs = true;
-  bool save = routeSaveCheckWarnings(saveAs, atools::fs::pln::FLIGHTGEAR);
-
-  if(saveAs)
-    return routeSaveAsPln();
-  else if(save)
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as FlightGear Format"),
-      tr("FlightGear Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTGEAR),
-      "fgfp", "Route/FlightGear", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      routeExport->buildDefaultFilename("_", ".fgfp"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->saveFlighplanAs(routeFile, atools::fs::pln::FLIGHTGEAR))
-      {
-        routeFileHistory->addFile(routeFile);
-        updateActionStates();
-        setStatusMessage(tr("Flight plan saved for FlightGear."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeSaveAsFms3()
-{
-  return routeSaveAsFms(atools::fs::pln::FMS3);
-}
-
-bool MainWindow::routeSaveAsFms11()
-{
-  return routeSaveAsFms(atools::fs::pln::FMS11);
-}
-
-bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
-{
-  bool saveAs = true;
-
-  if(!routeSaveCheckFMS11Warnings())
-    return false;
-
-  bool save = routeSaveCheckWarnings(saveAs, format);
-
-  if(saveAs)
-    return routeSaveAsPln();
-  else if(save)
-  {
-    // Try to get X-Plane default output directory for flight plans
-    QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
-    if(xpBasePath.isEmpty())
-      xpBasePath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
-    else
-      xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
-
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as X-Plane FMS Format"),
-      tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
-      "fms", "Route/Fms", xpBasePath, routeExport->buildDefaultFilenameShort(QString(), ".fms"),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->saveFlighplanAs(routeFile, format))
-      {
-        routeFileHistory->addFile(routeFile);
-        updateActionStates();
-        setStatusMessage(tr("Flight plan saved as FMS."));
-        saveFileHistoryStates();
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeExportClean()
-{
-  if(routeExport->routeValidate(true /* validate parking */, true /* validate departure and destination */))
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Clean Flight Plan without Annotations"),
-      tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
-      "pln", "Route/Clean" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
-      routeExport->buildDefaultFilename("_", ".pln", tr(" Clean")),
-      false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlighplanAsClean(routeFile))
-      {
-        setStatusMessage(tr("Flight plan exported."));
-        return true;
-      }
+      routeFileHistory->addFile(routeFile);
+      updateActionStates();
+      setStatusMessage(tr("Flight plan saved."));
+      saveFileHistoryStates();
+      return true;
     }
   }
   return false;
@@ -2561,24 +2526,30 @@ bool MainWindow::openInSkyVector()
   // https://skyvector.com/?fpl=%20EDDH%20AMLU7C%20AMLUH%20M852%20POVEL%20GALMA%20UM736%20DOSEL%20DETSA%20NIKMA%20T369%20RITEB%20RITE4B%20LIRF
 
   QString route =
-    RouteString::createStringForRoute(NavApp::getRoute(),
-                                      NavApp::getRouteCruiseSpeedKts(),
-                                      rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
+    RouteStringWriter().createStringForRoute(NavApp::getRoute(),
+                                             NavApp::getRouteCruiseSpeedKts(),
+                                             rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
 
   HelpHandler::openUrlWeb(this, "https://skyvector.com/?fpl=" + route);
   return true;
 }
 
-void MainWindow::clearRangeRingsAndDistanceMarkers()
+void MainWindow::clearRangeRingsAndDistanceMarkers(bool quiet)
 {
-  int result = atools::gui::Dialog(this).
-               showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS,
-                                  tr("Delete all range rings, measurement lines, traffic patterns and holds from map?"),
-                                  tr("Do not &show this dialog again."),
-                                  QMessageBox::Yes | QMessageBox::No,
-                                  QMessageBox::No, QMessageBox::Yes);
+  if(!quiet)
+  {
+    int result = atools::gui::Dialog(this).
+                 showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS,
+                                    tr(
+                                      "Delete all range rings, measurement lines, traffic patterns and holds from map?"),
+                                    tr("Do not &show this dialog again."),
+                                    QMessageBox::Yes | QMessageBox::No,
+                                    QMessageBox::No, QMessageBox::Yes);
 
-  if(result == QMessageBox::Yes)
+    if(result == QMessageBox::Yes)
+      mapWidget->clearRangeRingsAndDistanceMarkers();
+  }
+  else
     mapWidget->clearRangeRingsAndDistanceMarkers();
 }
 
@@ -2598,7 +2569,8 @@ void MainWindow::kmlOpen()
     tr("Google Earth KML %1;;All Files (*)").arg(lnm::FILE_PATTERN_KML),
     "Kml/", QString());
 
-  if(!kmlFile.isEmpty())
+  QString errors = atools::checkFileMsg(kmlFile);
+  if(errors.isEmpty())
   {
     if(mapWidget->addKmlFile(kmlFile))
     {
@@ -2610,21 +2582,109 @@ void MainWindow::kmlOpen()
       setStatusMessage(tr("Opening Google Earth KML file failed."));
 
   }
+  else
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
 }
 
 /* Called from menu or toolbar by action */
 void MainWindow::kmlOpenRecent(const QString& kmlFile)
 {
-  if(mapWidget->addKmlFile(kmlFile))
+  QString errors = atools::checkFileMsg(kmlFile);
+  if(errors.isEmpty())
   {
-    updateActionStates();
-    setStatusMessage(tr("Google Earth KML file opened."));
+    if(mapWidget->addKmlFile(kmlFile))
+    {
+      updateActionStates();
+      setStatusMessage(tr("Google Earth KML file opened."));
+    }
+    else
+    {
+      kmlFileHistory->removeFile(kmlFile);
+      setStatusMessage(tr("Opening Google Earth KML file failed."));
+    }
   }
   else
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
+}
+
+void MainWindow::layoutOpen()
+{
+  QString layoutFile = dialog->openFileDialog(tr("Window Layout"),
+                                              tr("Window Layout Files %1;;All Files (*)").
+                                              arg(lnm::FILE_PATTERN_LAYOUT), "WindowLayout/", QString());
+
+  if(!layoutFile.isEmpty())
   {
-    kmlFileHistory->removeFile(kmlFile);
-    setStatusMessage(tr("Opening Google Earth KML file failed."));
+    if(layoutOpenInternal(layoutFile))
+      layoutFileHistory->addFile(layoutFile);
   }
+}
+
+void MainWindow::layoutSaveAs()
+{
+
+  QString layoutFile = dialog->saveFileDialog(
+    tr("Window Layout"),
+    tr("Window Layout Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LAYOUT),
+    "lnmlayout", "WindowLayout/", atools::documentsDir(), QString(), false /* confirm overwrite */);
+
+  if(!layoutFile.isEmpty())
+  {
+    try
+    {
+      dockHandler->saveWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK));
+      layoutFileHistory->addFile(layoutFile);
+      setStatusMessage(tr("Window layout saved."));
+    }
+    catch(atools::Exception& e)
+    {
+      atools::gui::ErrorHandler(this).handleException(e);
+    }
+  }
+}
+
+/* Called from menu or toolbar by action */
+void MainWindow::layoutOpenRecent(const QString& layoutFile)
+{
+  if(!layoutOpenInternal(layoutFile))
+    layoutFileHistory->removeFile(layoutFile);
+}
+
+void MainWindow::layoutOpenDrag(const QString& layoutFile)
+{
+  if(layoutOpenInternal(layoutFile))
+    layoutFileHistory->addFile(layoutFile);
+  else
+    layoutFileHistory->removeFile(layoutFile);
+}
+
+bool MainWindow::layoutOpenInternal(const QString& layoutFile)
+{
+  try
+  {
+    if(dockHandler->loadWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
+                                    layoutWarnText))
+    {
+      dockHandler->currentStateToWindow();
+
+      QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
+
+      setStatusMessage(tr("Window layout loaded and restored."));
+
+      ui->actionShowStatusbar->blockSignals(true);
+      ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+      ui->actionShowStatusbar->blockSignals(false);
+
+      return true;
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  return false;
 }
 
 bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json)
@@ -2675,7 +2735,7 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
 
       // Get download job information and update progress text
       int queuedJobs = -1, activeJobs = -1;
-      connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged,
+      connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged, this,
               [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued) -> void
       {
         progress.setLabelText(label.arg(numSeconds) + tr("%1 downloads active and %2 downloads queued.").
@@ -2718,15 +2778,34 @@ void MainWindow::mapSaveImage()
   QPixmap pixmap;
   if(createMapImage(pixmap, tr(" - Save Map as Image"), lnm::IMAGE_EXPORT_DIALOG))
   {
+    int filterIndex = -1;
+
     QString imageFile = dialog->saveFileDialog(
-      tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
+      tr("Save Map as Image"),
+      tr("JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)"),
       "jpg", "MainWindow/",
       atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
-      arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")));
+      arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")),
+      false /* confirm overwrite */,
+      false /* autoNumber */,
+      &filterIndex);
 
     if(!imageFile.isEmpty())
     {
-      if(!pixmap.save(imageFile, nullptr, 95))
+      const char *format = nullptr;
+      if(!imageFile.endsWith("jpg", Qt::CaseInsensitive) && !imageFile.endsWith("jpeg", Qt::CaseInsensitive) &&
+         !imageFile.endsWith("png", Qt::CaseInsensitive) && !imageFile.endsWith("bmp", Qt::CaseInsensitive))
+      {
+        // Did not give file extension - check by looking at selected filter
+        if(filterIndex == 0)
+          format = "jpg";
+        else if(filterIndex == 1)
+          format = "png";
+        else if(filterIndex == 2)
+          format = "bmp";
+      }
+
+      if(!pixmap.save(imageFile, format, 95))
         atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
       else
         setStatusMessage(tr("Map image saved."));
@@ -2749,21 +2828,35 @@ void MainWindow::mapSaveImageAviTab()
         if(routeController->getRoute().isEmpty())
           defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
         else
-          defaultFileName = routeExport->buildDefaultFilenameShort("_", ".png");
+          defaultFileName = routeExport->buildDefaultFilenameShort("_", ".jpg");
+
+        int filterIndex = -1;
 
         QString imageFile = dialog->saveFileDialog(
           tr("Save Map as Image for AviTab"),
-          tr("AviTab Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE_AVITAB),
-          "png", "MainWindow/AviTab",
-          atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
+          tr("JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;All Files (*)"),
+          "jpg", "MainWindow/AviTab",
+          NavApp::getCurrentSimulatorBasePath() +
           QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
           QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
-          false /* confirm overwrite */, OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+          false /* confirm overwrite */,
+          false /* autoNumber */,
+          &filterIndex);
 
         if(!imageFile.isEmpty())
         {
+          const char *format = nullptr;
+          if(!imageFile.endsWith("jpg", Qt::CaseInsensitive) && !imageFile.endsWith("jpeg", Qt::CaseInsensitive) &&
+             !imageFile.endsWith("png", Qt::CaseInsensitive))
+          {
+            // Did not give file extension - check by looking at selected filter
+            if(filterIndex == 0)
+              format = "jpg";
+            else if(filterIndex == 1)
+              format = "png";
+          }
 
-          if(!pixmap.save(imageFile, nullptr, 95))
+          if(!pixmap.save(imageFile, format, 95))
             atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
           else
           {
@@ -2845,6 +2938,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 /* Selection in one of the search result tables has changed */
 void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total)
 {
+  bool updateAirspace = false, updateLogEntries = false;
   QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.%5");
   QString type;
   if(source->getTabIndex() == si::SEARCH_AIRPORT)
@@ -2867,6 +2961,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
   }
   else if(source->getTabIndex() == si::SEARCH_LOG)
   {
+    updateLogEntries = true;
     type = tr("Logbook Entries");
     ui->labelLogdata->setText(selectionLabelText.
                               arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
@@ -2875,24 +2970,25 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
   {
     type = tr("Clients");
     QString lastUpdate = tr(" Last Update: %1").
-                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::SystemLocaleShortDate));
+                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::DefaultLocaleShortDate));
     ui->labelOnlineClientSearchStatus->setText(selectionLabelText.
                                                arg(selected).arg(total).arg(type).arg(visible).
                                                arg(lastUpdate));
   }
   else if(source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
   {
+    updateAirspace = true;
     type = tr("Centers");
     QString lastUpdate = tr(" Last Update: %1").
-                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::SystemLocaleShortDate));
+                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::DefaultLocaleShortDate));
     ui->labelOnlineCenterSearchStatus->setText(selectionLabelText.
                                                arg(selected).arg(total).arg(type).arg(visible).
                                                arg(lastUpdate));
   }
 
-  map::MapSearchResult result;
+  map::MapResult result;
   searchController->getSelectedMapObjects(result);
-  mapWidget->changeSearchHighlights(result);
+  mapWidget->changeSearchHighlights(result, updateAirspace, updateLogEntries);
   updateHighlightActionStates();
 }
 
@@ -3021,61 +3117,113 @@ void MainWindow::updateMapHistoryActions(int minIndex, int curIndex, int maxInde
   ui->actionMapNext->setEnabled(curIndex < maxIndex);
 }
 
+void MainWindow::openOptionsDialog()
+{
+#if defined(Q_OS_MACOS)
+  if(QApplication::activeModalWidget() != nullptr)
+  {
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         tr("Close other dialog boxes before opening preferences"));
+    return;
+  }
+#endif
+  optionsDialog->open();
+}
+
 /* Reset all "do not show this again" message box status values */
 void MainWindow::resetMessages()
 {
   qDebug() << "resetMessages";
-  Settings& s = Settings::instance();
+  Settings& settings = Settings::instance();
 
   // Show all message dialogs again
-  s.setValue(lnm::ACTIONS_SHOW_DISCONNECT_INFO, true);
-  s.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
-  s.setValue(lnm::ACTIONS_SHOW_QUIT, true);
-  s.setValue(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_RESET_VIEW, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_PARKING_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_ERROR, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_PROC_ERROR, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_ALTERNATE_ERROR, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
-  s.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
-
-  s.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
-  s.setValue(lnm::ACTIONS_SHOW_FS9_FSC_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_FLP_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_FMS3_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_FMS11_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_FLIGHTGEAR_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
-  s.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
-  s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
-  s.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
-  s.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
-  s.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
-  s.setValue(lnm::ACTIONS_SHOW_DELETE_MARKS, true);
-  s.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
-  s.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
-  s.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
-  s.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
-  s.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DISCONNECT_INFO, true);
+  settings.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
+  settings.setValue(lnm::ACTIONS_SHOW_QUIT, true);
+  settings.setValue(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_RESET_VIEW, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_PARKING_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_WARNING_MULTI, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_ERROR, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_ALTERNATE_ERROR, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
+  settings.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SAVE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_ZOOM_WARNING, true);
+  settings.setValue(lnm::ACTIONS_OFFLINE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
+  settings.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_DIRS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_MARKS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
+  settings.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }
 
 /* Set a general status message */
-void MainWindow::setStatusMessage(const QString& message)
+void MainWindow::setStatusMessage(const QString& message, bool addToLog)
 {
-  if(statusMessages.isEmpty() || statusMessages.last() != message)
-    statusMessages.append(message);
+  if(addToLog && !message.isEmpty())
+  {
+    statusMessages.append({QDateTime::currentDateTime(), message});
 
-  if(statusMessages.size() > 1)
-    statusMessages.removeAt(0);
+    bool removed = false;
+    while(statusMessages.size() > MAX_STATUS_MESSAGES)
+    {
+      statusMessages.removeFirst();
+      removed = true;
+    }
 
-  ui->statusBar->showMessage(statusMessages.join(" "));
+    QStringList msg(tr("<p style='white-space:pre'><b>Messages:</b>"));
+
+    if(removed)
+      // Indicate overflow
+      msg.append(tr("..."));
+
+    for(int i = 0; i < statusMessages.size(); i++)
+      msg.append(tr("%1: %2").arg(QLocale().toString(statusMessages.at(i).timestamp.time(), tr("hh:mm:ss"))).
+                 arg(statusMessages.at(i).message));
+    ui->statusBar->setToolTip(msg.join(tr("<br/>")) + tr("</p>"));
+  }
+
+  ui->statusBar->showMessage(message);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Message" << message;
+#endif
+}
+
+void MainWindow::statusMessageChanged(const QString& text)
+{
+  if(text.isEmpty())
+  {
+    // Field is cleared. Show number of messages in otherwise empty field.
+    if(statusMessages.isEmpty())
+      ui->statusBar->showMessage(tr("No Messages"));
+    else
+      ui->statusBar->showMessage(tr("%1 %2").
+                                 arg(statusMessages.size()).
+                                 arg(statusMessages.size() > 1 ? tr("Messages") : tr("Message")));
+  }
 }
 
 void MainWindow::setDetailLabelText(const QString& text)
@@ -3088,8 +3236,13 @@ void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
+  // Set empty to disable arbitrary messages from map view changes
+  setStatusMessage(QString());
+
   // Enable dock handler
   dockHandler->setHandleDockViews(true);
+
+  qDebug() << Q_FUNC_INFO << "UI font" << font();
 
   // Postpone loading of KML etc. until now when everything is set up
   mapWidget->mainWindowShown();
@@ -3097,51 +3250,72 @@ void MainWindow::mainWindowShown()
 
   mapWidget->showSavedPosOnStartup();
 
-  atools::gui::Application::sendFontChanged();
-
   // Show a warning if SSL was not intiaized properly. Can happen if the redist packages are not installed.
   if(!QSslSocket::supportsSsl())
   {
     NavApp::deleteSplashScreen();
 
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallRedistUrl, lnm::helpLanguageOnline());
     QString message = QObject::tr("<p>Error initializing SSL subsystem.</p>"
                                     "<p>The program will not be able to use encrypted network connections<br/>"
                                     "(i.e. HTTPS) that are needed to check for updates or<br/>"
                                     "to load online maps.</p>");
 
 #if defined(Q_OS_WIN32)
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallRedistUrl, lnm::helpLanguageOnline());
     QString message2 = QObject::tr("<p><b>Click the link below for more information:<br/><br/>"
                                    "<a href=\"%1\">Online Manual - Installation</a></b><br/></p>").
                        arg(url.toString());
     message += message2;
 #endif
 
-    atools::gui::Dialog(nullptr).showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message,
-                                                QObject::tr("Do not &show this dialog again."));
+    atools::gui::Dialog(this).showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message,
+                                             QObject::tr("Do not &show this dialog again."));
   }
 
   if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
   {
     NavApp::deleteSplashScreen();
 
+    // Text from options
+    // <p><a href="https://www.ngdc.noaa.gov/mgg/topo/gltiles.html"><b>Click here to open the download page for the GLOBE data in your browser</b></a><br/>
+    // Download the file <b><i>All Tiles in One .zip (all10g.zip)</i></b> from the page and extract
+    // the archive to an arbitrary place, e.g in \"Documents\". Then click \"Select GLOBE Directory ...\"
+    // above and choose the directory with the extracted files.</p>
+    // <p><a href="%1"><b>Click here for more information in the <i>Little Navmap</i> online manual</b></a></p>
+
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
-    QString message = QObject::tr("<p>The online elevation data which is used by default for the elevation profile "
-                                    "is limited and has a lot of errors.<br/>"
-                                    "Therefore, it is recommended to download and use the offline GLOBE elevation data "
-                                    "which provides world wide coverage.</p>"
-                                    "<p><b>Click the link below for more information:<br/><br/>"
-                                    "<a href=\"%1\">Online Manual - Options Dialog / Flight Plan Elevation Profile</a></b><br/></p>")
+    QString message = QObject::tr(
+      "<p>The online elevation data which is used by default for the elevation profile "
+        "is limited and has a lot of errors.<br/>"
+        "Therefore, it is recommended to download and use the offline GLOBE elevation data "
+        "which provides world wide coverage.</p>"
+        "<p><b>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and "
+          "then to page \"Cache and files\" to add the GLOBE data.</b></p>"
+          "<p><a href=\"%1\"><b>Click here for more information in the "
+            "<i>Little Navmap</i> online manual</b></a></p>",
+      "Keep instructions in sync with translated menus")
                       .arg(url.toString());
 
-    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
-                                                QObject::tr("Do not &show this dialog again."));
+    atools::gui::Dialog(this).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
+                                             QObject::tr("Do not &show this dialog again."));
+  }
+
+  // Create recommended folder structure if user confirms
+  DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
+  if(!dirTool.hasAllDirs())
+  {
+    NavApp::deleteSplashScreen();
+    dirTool.run();
   }
 
   DatabaseManager *databaseManager = NavApp::getDatabaseManager();
   if(firstApplicationStart)
   {
     firstApplicationStart = false;
+
+    // Open a start page in the web browser ============================
+    helpHandler->openHelpUrlWeb(this, lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
+
     if(!databaseManager->hasSimulatorDatabases())
     {
       NavApp::deleteSplashScreen();
@@ -3160,13 +3334,14 @@ void MainWindow::mainWindowShown()
         msgBox.setText(
           tr("Could not find a<ul>"
              "<li>Microsoft Flight Simulator X,</li>"
-               "<li>Flight Simulator - Steam Edition or</li>"
-                 "<li>Prepar3D installation</li></ul>"
-                   "on this computer. Also, no scenery library databases were found.<br/><br/>"
-                   "You can copy a Little Navmap scenery library database from another computer.<br/>"
-                   "Press the help button for more information on this.<br/><br/>"
-                   "If you have X-Plane 11 installed you can go to the scenery library "
-                   "loading dialog by clicking the X-Plane button below.<br/><br/>"
+               "<li>Microsoft Flight Simulator - Steam Edition,</li>"
+                 "<li>Prepar3D or</li></ul>"
+                   "<li>Microsoft Flight Simulator 2020 installation</li>"
+                     "on this computer. Also, no scenery library databases were found.<br/><br/>"
+                     "You can copy a Little Navmap scenery library database from another computer.<br/>"
+                     "Press the help button for more information on this.<br/><br/>"
+                     "If you have X-Plane 11 installed you can go to the scenery library "
+                     "loading dialog by clicking the X-Plane button below.<br/><br/>"
              )
           );
         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Open | QMessageBox::Help);
@@ -3180,12 +3355,14 @@ void MainWindow::mainWindowShown()
           databaseManager->run();
       }
 #else
-      // Show always on non Windows systems
+      // Show always on non Windows systems ========================
       databaseManager->run();
 #endif
-    }
+    } // else have databases do nothing
 
-    // else have databases do nothing
+    // Open connection dialog ============================
+    NavApp::deleteSplashScreen();
+    NavApp::getConnectClient()->connectToServerDialog();
   }
   else if(databasesErased)
   {
@@ -3198,6 +3375,7 @@ void MainWindow::mainWindowShown()
   // If enabled connect to simulator without showing dialog
   NavApp::getConnectClient()->tryConnectOnStartup();
 
+  // Start weather downloads
   weatherUpdateTimeout();
 
   // Update the weather every 15 seconds if connected
@@ -3205,26 +3383,176 @@ void MainWindow::mainWindowShown()
   weatherUpdateTimer.start();
 
   // Check for updates once main window is visible
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(),
+                          false /* manually triggered */, false /* forceDebug */);
 
+  optionsDialog->checkOfficialOnlineUrls();
+
+  // Start regular download of online network files
   NavApp::getOnlinedataController()->startProcessing();
+
+  // Start webserver
   if(ui->actionRunWebserver->isChecked())
     NavApp::getWebController()->startServer();
   webserverStatusChanged(NavApp::getWebController()->isRunning());
 
-  // Raise all floating docks and focus map widget
-  QTimer::singleShot(10, this, &MainWindow::raiseFloatingWindows);
+  renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
 
-  //// Workaround for profile dock widget which is not resized properly on startup
-  // QTimer::singleShot(20, this, &MainWindow::adjustProfileDockHeight);
+  // Do delayed dock window formatting and fullscreen state after widget layout is done
+  QTimer::singleShot(100, this, &MainWindow::mainWindowShownDelayed);
 
-  setStatusMessage(tr("Ready."));
+  if(ui->actionRouteDownloadTracks->isChecked())
+    QTimer::singleShot(1000, NavApp::getTrackController(), &TrackController::startDownload);
+
+  // Log screen information ==============
+  for(QScreen *screen : QGuiApplication::screens())
+    qDebug() << Q_FUNC_INFO
+             << (screen == QGuiApplication::primaryScreen() ? "Primary Screen" : "Screen")
+             << "name" << screen->name() << "model" << screen->model() << "manufacturer" << screen->manufacturer()
+             << "geo" << screen->geometry() << "available geo" << screen->availableGeometry()
+             << "available virtual geo" << screen->availableVirtualGeometry();
 
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
+void MainWindow::mainWindowShownDelayed()
+{
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
+  {
+    try
+    {
+      // Reload last layout file - does not apply state
+      dockHandler->loadWindowState(layoutFileHistory->getTopFile(),
+                                   OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
+                                   layoutWarnText);
+      QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
+    }
+    catch(atools::Exception& e)
+    {
+      atools::gui::ErrorHandler(this).handleException(e);
+    }
+  }
+  // else layout was already loaded from settings earlier
+
+  // Apply layout again to avoid issues with formatting
+  if(!dockHandler->isDelayedFullscreen())
+    dockHandler->normalStateToWindow();
+  else
+  {
+    // Started with normal screen layout but was saved as fullscreen - restore full now
+    // Switch to fullscreen now after applying normal layout to avoid a distorted layout
+    dockHandler->fullscreenStateToWindow();
+
+    if(centralWidget() != ui->dockWidgetMap)
+      // Hide the map window title bar if map is undockable
+      ui->dockWidgetMap->setTitleBarWidget(new QWidget(ui->dockWidgetMap));
+
+    // Update action
+    ui->actionShowFullscreenMap->blockSignals(true);
+    ui->actionShowFullscreenMap->setChecked(dockHandler->isFullScreen());
+    ui->actionShowFullscreenMap->blockSignals(false);
+
+    mapWidget->addFullScreenExitButton();
+    mapWidget->setFocus();
+  }
+
+  // Set window flag
+  stayOnTop();
+
+  // Raise all floating docks and focus map widget
+  raiseFloatingWindows();
+
+  ui->actionShowStatusbar->blockSignals(true);
+  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+  ui->actionShowStatusbar->blockSignals(false);
+
+  if(migrate::getOptionsVersion().isValid() &&
+     migrate::getOptionsVersion() <= atools::util::Version("2.6.6") &&
+     atools::util::Version(QApplication::applicationVersion()) == atools::util::Version("2.6.7"))
+  {
+    qDebug() << Q_FUNC_INFO << "Fixing status bar visibility";
+    ui->actionShowStatusbar->setChecked(true);
+    ui->statusBar->setVisible(true);
+  }
+
+  NavApp::setMainWindowVisible();
+}
+
+void MainWindow::exitFullScreenPressed()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Let the action pass a signal to toggle fs off
+  ui->actionShowFullscreenMap->setChecked(false);
+}
+
+bool MainWindow::isFullScreen() const
+{
+  return dockHandler->isFullScreen();
+}
+
+void MainWindow::fullScreenOn()
+{
+  qDebug() << Q_FUNC_INFO << "setFullScreenOn";
+
+  // Hide toolbars and docks initially - user can open again if needed and state is saved then
+  dockHandler->setFullScreenOn(atools::gui::HIDE_TOOLBARS | atools::gui::HIDE_DOCKS);
+
+  if(centralWidget() != ui->dockWidgetMap)
+    // Add a dummy widget to erase the title bar if map is inside a dock widget
+    ui->dockWidgetMap->setTitleBarWidget(new QWidget(ui->dockWidgetMap));
+
+  mapWidget->addFullScreenExitButton();
+  mapWidget->setFocus();
+  ui->actionShowStatusbar->blockSignals(true);
+  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+  ui->actionShowStatusbar->blockSignals(false);
+}
+
+void MainWindow::fullScreenOff()
+{
+  qDebug() << Q_FUNC_INFO << "setFullScreenOff";
+  mapWidget->removeFullScreenExitButton();
+
+  dockHandler->setFullScreenOff();
+
+  if(centralWidget() != ui->dockWidgetMap)
+  {
+    // Delete dummy widget to restore title bar
+    QWidget *oldTitleBar = ui->dockWidgetMap->titleBarWidget();
+    ui->dockWidgetMap->setTitleBarWidget(nullptr);
+    delete oldTitleBar;
+  }
+  ui->actionShowStatusbar->blockSignals(true);
+  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+  ui->actionShowStatusbar->blockSignals(false);
+}
+
+void MainWindow::fullScreenMapToggle()
+{
+  if(ui->actionShowFullscreenMap->isChecked())
+    fullScreenOn();
+  else
+    fullScreenOff();
+}
+
+void MainWindow::stayOnTop()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->setStayOnTop(marbleAboutDialog, ui->actionWindowStayOnTop->isChecked());
+  dockHandler->setStayOnTop(optionsDialog, ui->actionWindowStayOnTop->isChecked());
+  dockHandler->setStayOnTopMain(ui->actionWindowStayOnTop->isChecked());
+}
+
+void MainWindow::allowDockingWindows()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->setDockingAllowed(ui->actionShowAllowDocking->isChecked());
+}
+
 void MainWindow::raiseFloatingWindows()
 {
+  qDebug() << Q_FUNC_INFO;
   dockHandler->raiseFloatingWindows();
 
   // Map window is not used by dockHandler
@@ -3234,32 +3562,10 @@ void MainWindow::raiseFloatingWindows()
   mapWidget->setFocus();
 }
 
-// void MainWindow::adjustProfileDockHeight()
-// {
-//// Load last height
-// int profileHeight = Settings::instance().valueInt(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", -1);
-// if(profileHeight > 20)
-// {
-//// resizeDocks({ui->dockWidgetProfile}, {profileHeight}, Qt::Vertical);
-//// Workaround - set minimum since resize and resize docks does not work
-// int oldMinHeight = ui->dockWidgetContentsProfile->minimumHeight();
-// ui->dockWidgetContentsProfile->setMinimumHeight(profileHeight);
-//// Reset to old value later in event loop
-// QTimer::singleShot(0, [ = ]() -> void {
-// ui->dockWidgetContentsProfile->setMinimumHeight(oldMinHeight);
-// });
-// }
-// }
-
 /* Enable or disable actions related to online networks */
 void MainWindow::updateOnlineActionStates()
 {
-  if(NavApp::isOnlineNetworkActive())
-    // Show action in menu and toolbar
-    ui->actionViewAirspaceSrcOnline->setVisible(true);
-  else
-    // Hide action in menu and toolbar
-    ui->actionViewAirspaceSrcOnline->setVisible(false);
+  ui->actionViewAirspaceSrcOnline->setEnabled(NavApp::isOnlineNetworkActive());
 }
 
 /* Enable or disable actions */
@@ -3275,7 +3581,7 @@ void MainWindow::updateMarkActionStates()
 void MainWindow::updateHighlightActionStates()
 {
   ui->actionMapClearAllHighlights->setEnabled(
-    mapWidget->hasHighlights() || searchController->hasSelection() || routeController->hasSelection());
+    mapWidget->hasHighlights() || searchController->hasSelection() || routeController->hasTableSelection());
 }
 
 /* Enable or disable actions */
@@ -3286,43 +3592,23 @@ void MainWindow::updateActionStates()
   if(NavApp::isShuttingDown())
     return;
 
-  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
-
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
   // Enable MORA button depending on available data
   ui->actionMapShowMinimumAltitude->setEnabled(NavApp::getMoraReader()->isDataAvailable());
 
   bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
+  bool hasTrack = !NavApp::isAircraftTrackEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan /* && routeController->hasChanged()*/);
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsGfp->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsTxt->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsRte->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFlp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFlightGear->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFpr->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFpl->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsCorteIn->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFms3->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms11->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsRxpGtn->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsRxpGns->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsPln->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsPlnMsfs->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan || hasTrack);
   ui->actionRouteSaveAsHtml->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsClean->setEnabled(hasFlightplan);
-
-  ui->actionRouteSaveAsIFly->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsXFmc->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsUfmc->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsProSim->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsBbsAirbus->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFeelthereFpl->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsLeveldRte->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsEfbr->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsQwRte->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsMdr->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAll->setEnabled(hasFlightplan && routeExport->hasSelected());
 
   ui->actionRouteSaveAsVfp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsIvap->setEnabled(hasFlightplan);
@@ -3332,11 +3618,16 @@ void MainWindow::updateActionStates()
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(NavApp::getRouteConst().hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
+  ui->actionMapShowTocTod->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
   ui->actionInfoApproachShowMissedAppr->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
   ui->actionRouteCopyString->setEnabled(hasFlightplan);
   ui->actionRouteAdjustAltitude->setEnabled(hasFlightplan);
+
+  bool hasTracks = NavApp::hasTracks();
+  ui->actionRouteDeleteTracks->setEnabled(hasTracks);
+  ui->actionMapShowTracks->setEnabled(hasTracks);
 
   // Remove or add empty airport action from menu and toolbar depending on option
   if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
@@ -3389,10 +3680,7 @@ void MainWindow::updateActionStates()
 
   bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
   ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
-  ui->actionRouteCalcRadionav->setEnabled(canCalcRoute);
-  ui->actionRouteCalcHighAlt->setEnabled(canCalcRoute);
-  ui->actionRouteCalcLowAlt->setEnabled(canCalcRoute);
-  ui->actionRouteCalcSetAlt->setEnabled(canCalcRoute && ui->spinBoxRouteAlt->value() > 0);
+  // ui->actionRouteCalc->setEnabled(canCalcRoute);
   ui->actionRouteReverse->setEnabled(canCalcRoute);
 
   ui->actionMapShowHome->setEnabled(mapWidget->getHomePos().isValid());
@@ -3434,25 +3722,26 @@ void MainWindow::resetWindowLayout()
 {
   qDebug() << Q_FUNC_INFO;
 
-  setWindowState(windowState() & ~Qt::WindowMinimized);
-  setWindowState(windowState() & ~Qt::WindowMaximized);
-  setWindowState(windowState() & ~Qt::WindowFullScreen);
+  mapWidget->removeFullScreenExitButton();
 
-  resize(lnm::DEFAULT_MAINWINDOW_SIZE);
-  // QRect screenSize = QApplication::desktop()->availableGeometry(this);
-  // move((screenSize.width() - lnm::DEFAULT_MAINWINDOW_SIZE.width()) / 2,
-  // (screenSize.height() - lnm::DEFAULT_MAINWINDOW_SIZE.height()) / 2);
+  bool allowUndockMap = OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK);
+  dockHandler->resetWindowState(lnm::DEFAULT_MAINWINDOW_SIZE,
+                                QString(":/littlenavmap/resources/config/mainwindow_state_%1.bin").
+                                arg(allowUndockMap ? "dock" : "nodock"));
 
-  restoreState(lnm::DEFAULT_MAINWINDOW_STATE, lnm::MAINWINDOW_STATE_VERSION);
-
-  if(!(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK))
-    ui->dockWidgetMap->hide();
-  else
-    ui->dockWidgetMap->show();
+  ui->dockWidgetMap->setVisible(allowUndockMap);
 
   NavApp::getRouteTabHandler()->reset();
   infoController->resetWindowLayout();
   searchController->resetWindowLayout();
+
+  ui->actionShowFullscreenMap->blockSignals(true);
+  ui->actionShowFullscreenMap->setChecked(false);
+  ui->actionShowFullscreenMap->blockSignals(false);
+
+  ui->actionShowStatusbar->setChecked(true);
+  ui->statusBar->setVisible(true);
+  ui->menuBar->setVisible(true);
 }
 
 /* Read settings for all windows, docks, controller and manager classes */
@@ -3461,61 +3750,54 @@ void MainWindow::restoreStateMain()
   qDebug() << Q_FUNC_INFO << "enter";
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.restore(ui->statusBar);
 
   Settings& settings = Settings::instance();
 
-  if(settings.contains(lnm::MAINWINDOW_WIDGET_STATE))
+  if(settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
   {
-    restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE).toByteArray(), lnm::MAINWINDOW_STATE_VERSION);
+    dockHandler->restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray());
 
-    move(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_POS, QPoint(0, 0)).toPoint());
-    resize(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_SIZE, lnm::DEFAULT_MAINWINDOW_SIZE).toSize());
+    // Start with normal state - apply fullscreen later to avoid layout mess up
+    dockHandler->normalStateToWindow();
+    ui->actionShowFullscreenMap->blockSignals(true);
+    ui->actionShowFullscreenMap->setChecked(dockHandler->isFullScreen());
+    ui->actionShowFullscreenMap->blockSignals(false);
 
-#if !defined(Q_OS_MACOS)
-    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_FULLSCREEN, false).toBool())
-    {
-      qDebug() << Q_FUNC_INFO << "Full screen";
-      setWindowState(windowState() & ~Qt::WindowMinimized);
-      setWindowState(windowState() & ~Qt::WindowMaximized);
-      setWindowState(windowState() | Qt::WindowFullScreen);
-    }
-    else
-#endif
-    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, false).toBool())
-    {
-      qDebug() << Q_FUNC_INFO << "Maximized";
-      setWindowState(windowState() & ~Qt::WindowMinimized);
-      setWindowState(windowState() | Qt::WindowMaximized);
-      setWindowState(windowState() & ~Qt::WindowFullScreen);
-    }
-    else
-    {
-      qDebug() << Q_FUNC_INFO << "Normal";
-      setWindowState(windowState() & ~Qt::WindowMinimized);
-      setWindowState(windowState() & ~Qt::WindowMaximized);
-      setWindowState(windowState() & ~Qt::WindowFullScreen);
-    }
+    ui->actionShowStatusbar->blockSignals(true);
+    ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+    ui->actionShowStatusbar->blockSignals(false);
   }
   else
     // Use default state saved in application
     resetWindowLayout();
 
-  const QRect geo = QApplication::desktop()->availableGeometry(this);
-
-  // Check if window if off screen
-  qDebug() << "Screen geometry" << geo << "Win geometry" << frameGeometry();
-  if(!geo.intersects(frameGeometry()))
+#ifdef DEBUG_MENU_TOOLTIPS
+  // Enable tooltips for all menus
+  QList<QAction *> stack;
+  stack.append(ui->menuBar->actions());
+  while(!stack.isEmpty())
   {
-    qDebug() << Q_FUNC_INFO << "Getting window back on screen";
-    move(geo.topLeft());
+    QMenu *menu = stack.takeLast()->menu();
+    if(menu != nullptr)
+    {
+      menu->setToolTipsVisible(true);
+      for(QAction *sub : menu->actions())
+      {
+        if(sub->menu() != nullptr)
+          stack.append(sub);
+      }
+    }
   }
+#endif
 
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
 
   qDebug() << "kmlFileHistory";
   kmlFileHistory->restoreState();
+
+  qDebug() << "layoutFileHistory";
+  layoutFileHistory->restoreState();
 
   qDebug() << "searchController";
   routeFileHistory->restoreState();
@@ -3553,40 +3835,46 @@ void MainWindow::restoreStateMain()
   qDebug() << "connectClient";
   NavApp::getConnectClient()->restoreState();
 
+  qDebug() << "trackController";
+  NavApp::getTrackController()->restoreState();
+
   qDebug() << "infoController";
   infoController->restoreState();
 
   qDebug() << "printSupport";
   printSupport->restoreState();
 
+  qDebug() << "routeExport";
+  routeExport->restoreState();
+
   widgetState.setBlockSignals(true);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
     // Restore map settings if desired by the user
-    widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
-                         ui->actionMapShowEmptyAirports,
-                         ui->actionMapShowAddonAirports,
-                         ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
-                         ui->actionMapShowIls,
-                         ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                         ui->actionShowAirspaces,
-                         ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
-                         ui->actionMapAircraftCenter,
-                         ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                         ui->actionMapShowAircraftTrack,
-                         ui->actionInfoApproachShowMissedAppr});
+    widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
+                         ui->actionMapShowAddonAirports, ui->actionMapShowVor, ui->actionMapShowNdb,
+                         ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowVictorAirways,
+                         ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
+                         ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
+                         ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,
+                         ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
+                         ui->actionInfoApproachShowMissedAppr, ui->actionSearchLogdataShowDirect,
+                         ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack});
   }
   else
     mapWidget->resetSettingActionsToDefault();
 
   // Map settings that are always loaded
-  widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
-                       ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionRouteEditMode,
-                       ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                       ui->actionLogdataCreateLogbook,
-                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
-                       ui->actionRunWebserver});
+  widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid, ui->actionMapShowCities,
+                       ui->actionMapShowHillshading, ui->actionRouteEditMode,
+                       ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
+                       ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionMapShowSunShading,
+                       ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRunWebserver,
+                       ui->actionShowAllowDocking, ui->actionWindowStayOnTop});
   widgetState.setBlockSignals(false);
+
+  // Load status and allow to send signals
+  widgetState.restore(ui->actionWorkOffline);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 
@@ -3601,6 +3889,12 @@ void MainWindow::restoreStateMain()
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
+void MainWindow::optionsChanged()
+{
+  dockHandler->setAutoRaiseDockWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
+  dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
+}
+
 void MainWindow::saveStateNow()
 {
   saveStateMain();
@@ -3612,60 +3906,20 @@ void MainWindow::saveStateMain()
   qDebug() << Q_FUNC_INFO;
 
 #ifdef DEBUG_CREATE_WINDOW_STATE
-  // Print the main window state as binary for inclusion into the program =====================
-  qDebug() << "===============================================================================";
-  QStringList hexStr;
-  QByteArray state = saveState();
-  for(char i : state)
-    hexStr.append("0x" + QString::number(static_cast<unsigned char>(i), 16));
-  qDebug().noquote().nospace() << "\n\nconst static unsigned char mainWindowState["
-                               << state.size() << "] ="
-                               << "{" << hexStr.join(",") << "};\n";
-  qDebug() << "===============================================================================";
-  #endif
-
-#ifdef DEBUG_DUMP_SORTCUTS
-  // Print all main menu and sub menu shortcuts ==============================================
-  qDebug() << "===============================================================================";
-  QList<const QAction *> actions;
-
-  QString out;
-  QTextStream stream(&out, QIODevice::WriteOnly);
-
-  stream << "| Menu | Shortcut |" << endl;
-  stream << "| --- | --- |" << endl;
-  for(const QAction *mainmenus : ui->menuBar->actions())
+  // Save the state into a binary file to be used for reset window layout
+  // One state is needed with undockable map window and one without
+  QFile stateFile(QString("mainwindow_state_%1.bin").
+                  arg(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK) ? "dock" : "nodock"));
+  if(stateFile.open(QFile::WriteOnly))
   {
-    if(mainmenus->menu() != nullptr)
-    {
-      QString mainmenu = mainmenus->text().remove("&");
-      for(const QAction *mainAction : mainmenus->menu()->actions())
-      {
-        if(mainAction->menu() != nullptr)
-        {
-          QString submenu = mainAction->text().remove("&");
-          for(const QAction *subAction : mainAction->menu()->actions())
-          {
-            if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
-              stream << "| " << mainmenu << " -> " << submenu << " -> "
-                     << subAction->text().remove("&")
-                     << " | `" << subAction->shortcut().toString() << "` |" << endl;
-          }
-          submenu.clear();
-        }
-        else
-        {
-          if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
-            stream << "| " << mainmenu << " -> "
-                   << mainAction->text().remove("&")
-                   << " | `" << mainAction->shortcut().toString() << "` |" << endl;
-        }
-      }
-    }
+    stateFile.write(saveState());
+    stateFile.close();
   }
-  qDebug().nospace().noquote() << endl << out;
 
-  qDebug() << "===============================================================================";
+#endif
+
+#ifdef DEBUG_DUMP_SHORTCUTS
+  printShortcuts();
 #endif
 
   // About to reset all settings and restart application
@@ -3721,6 +3975,10 @@ void MainWindow::saveStateMain()
   if(NavApp::getConnectClient() != nullptr)
     NavApp::getConnectClient()->saveState();
 
+  qDebug() << "trackController";
+  if(NavApp::getTrackController() != nullptr)
+    NavApp::getTrackController()->saveState();
+
   qDebug() << "infoController";
   if(infoController != nullptr)
     infoController->saveState();
@@ -3730,6 +3988,10 @@ void MainWindow::saveStateMain()
   qDebug() << "printSupport";
   if(printSupport != nullptr)
     printSupport->saveState();
+
+  qDebug() << "routeExport";
+  if(routeExport != nullptr)
+    routeExport->saveState();
 
   qDebug() << "optionsDialog";
   if(optionsDialog != nullptr)
@@ -3756,6 +4018,7 @@ void MainWindow::saveStateMain()
 void MainWindow::saveFileHistoryStates()
 {
   qDebug() << Q_FUNC_INFO;
+
   qDebug() << "routeFileHistory";
   if(routeFileHistory != nullptr)
     routeFileHistory->saveState();
@@ -3763,6 +4026,11 @@ void MainWindow::saveFileHistoryStates()
   qDebug() << "kmlFileHistory";
   if(kmlFileHistory != nullptr)
     kmlFileHistory->saveState();
+
+  qDebug() << "layoutFileHistory";
+  if(layoutFileHistory != nullptr)
+    layoutFileHistory->saveState();
+
   Settings::instance().syncSettings();
 }
 
@@ -3771,17 +4039,9 @@ void MainWindow::saveMainWindowStates()
   qDebug() << Q_FUNC_INFO;
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save(ui->statusBar);
 
   Settings& settings = Settings::instance();
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE, saveState(lnm::MAINWINDOW_STATE_VERSION));
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_POS, pos());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_SIZE, size());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, isMaximized());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_FULLSCREEN, isFullScreen());
-
-  qDebug() << Q_FUNC_INFO << "pos" << pos() << "size" << size()
-           << "maximized" << isMaximized() << "fullscreen" << isFullScreen();
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER, dockHandler->saveState());
 
   // Save profile dock size separately since it is sometimes resized by other docks
   // settings.setValue(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", ui->dockWidgetContentsProfile->height());
@@ -3793,25 +4053,105 @@ void MainWindow::saveActionStates()
   qDebug() << Q_FUNC_INFO;
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save({mapProjectionComboBox, mapThemeComboBox,
-                    ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
-                    ui->actionMapShowAddonAirports,
-                    ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
-                    ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                    ui->actionShowAirspaces,
-                    ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
-                    ui->actionMapAircraftCenter,
-                    ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                    ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
-                    ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowSunShading,
-                    ui->actionMapShowHillshading, ui->actionMapShowAirportWeather,
-                    ui->actionMapShowMinimumAltitude,
-                    ui->actionRouteEditMode,
-                    ui->actionWorkOffline,
+  widgetState.save({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
+                    ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports, ui->actionMapShowVor,
+                    ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowVictorAirways,
+                    ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
+                    ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
+                    ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,
+                    ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
+                    ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid, ui->actionMapShowCities,
+                    ui->actionMapShowSunShading, ui->actionMapShowHillshading, ui->actionMapShowAirportWeather,
+                    ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionWorkOffline,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                    ui->actionLogdataCreateLogbook, ui->actionRunWebserver});
+                    ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionRunWebserver,
+                    ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
+                    ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionWindowStayOnTop});
   Settings::instance().syncSettings();
 }
+
+#ifdef DEBUG_DUMP_SHORTCUTS
+void MainWindow::printShortcuts()
+{
+  // Print all main menu and sub menu shortcuts ==============================================
+  qDebug() << "===============================================================================";
+
+  QString out;
+  QTextStream stream(&out, QIODevice::WriteOnly);
+  QSet<QKeySequence> keys;
+  QStringList warnings;
+
+  int c1 = 80, c2 = 25;
+
+  for(const QAction *mainmenus : ui->menuBar->actions())
+  {
+    if(mainmenus->menu() != nullptr)
+    {
+      QString text = mainmenus->menu()->menuAction()->text().remove("&");
+
+      stream << endl << ".. _shortcuts-main-" << text.toLower() << ":" << endl << endl;
+
+      stream << text << endl;
+      stream << QString("^").repeated(text.size()) << endl << endl;
+
+      stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+      stream << "| " << QString("Menu").leftJustified(c1 - 1)
+             << "| " << QString("Shortcut").leftJustified(c2 - 1) << "|" << endl;
+      stream << "+" << QString("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << endl;
+
+      QString mainmenu = mainmenus->text().remove("&");
+      for(const QAction *mainAction : mainmenus->menu()->actions())
+      {
+        if(mainAction->menu() != nullptr)
+        {
+          QString submenu = mainAction->text().remove("&");
+          for(const QAction *subAction : mainAction->menu()->actions())
+          {
+            if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
+            {
+              if(keys.contains(subAction->shortcut()))
+                warnings.append(QString("Duplicate shortcut") + subAction->shortcut().toString());
+
+              stream << "| "
+                     << QString(mainmenu + " -> " + submenu + " -> " +
+                         subAction->text().remove("&")).leftJustified(c1 - 1)
+                     << "| "
+                     << ("``" + subAction->shortcut().toString() + "``").leftJustified(c2 - 1)
+                     << "|" << endl;
+              stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+              keys.insert(subAction->shortcut());
+            }
+          }
+          submenu.clear();
+        }
+        else
+        {
+          if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
+          {
+            if(keys.contains(mainAction->shortcut()))
+              warnings.append(QString("Duplicate shortcut") + mainAction->shortcut().toString());
+
+            stream << "| "
+                   << QString(mainmenu + " -> " + mainAction->text().remove("&")).leftJustified(c1 - 1)
+                   << "| "
+                   << ("``" + mainAction->shortcut().toString() + "``").leftJustified(c2 - 1)
+                   << "|" << endl;
+            stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+            keys.insert(mainAction->shortcut());
+          }
+        }
+      }
+    }
+  }
+  qDebug().nospace().noquote() << endl << out;
+
+  for(const QString& warning : warnings)
+    qWarning() << Q_FUNC_INFO << warning;
+
+  qDebug() << "===============================================================================";
+}
+
+#endif
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -3906,6 +4246,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     infoController->postDatabaseLoad();
     weatherReporter->postDatabaseLoad(type);
     windReporter->postDatabaseLoad(type);
+    routeExport->postDatabaseLoad();
 
     // U actions for flight simulator database switch in main menu
     NavApp::getDatabaseManager()->insertSimSwitchActions();
@@ -3995,11 +4336,11 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 
   if(flags & optsw::WEATHER_INFO_VATSIM)
   {
-    QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->vatsimMetar))
+    atools::fs::weather::MetarResult vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
+    if(newAirport || (!vatsimMetar.isEmpty() && vatsimMetar != currentWeatherContext->vatsimMetar))
     {
       // Airport has changed or METAR has changed
-      currentWeatherContext->vatsimMetar = metarStr;
+      currentWeatherContext->vatsimMetar = vatsimMetar;
       changed = true;
     }
   }
@@ -4051,7 +4392,7 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
     weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
   if(flags & optsw::WEATHER_INFO_VATSIM)
-    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
 
   if(flags & optsw::WEATHER_INFO_IVAO)
     weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
@@ -4084,7 +4425,7 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
     weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
   if(flags & optsw::WEATHER_TOOLTIP_VATSIM)
-    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
 
   if(flags & optsw::WEATHER_TOOLTIP_IVAO)
     weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
@@ -4114,9 +4455,8 @@ void MainWindow::clearWeatherContext()
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
   qDebug() << Q_FUNC_INFO;
-  // Accept only one flight plan
-  if(event->mimeData() != nullptr && event->mimeData()->hasUrls() &&
-     event->mimeData()->urls().size() == 1)
+  // Accept only one file
+  if(event->mimeData() != nullptr && event->mimeData()->hasUrls() && event->mimeData()->urls().size() == 1)
   {
     QList<QUrl> urls = event->mimeData()->urls();
 
@@ -4126,13 +4466,14 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
       QUrl url = urls.first();
       if(url.isLocalFile())
       {
-        // accept if file exists, is readable and matches the supported extensions
+        // accept if file exists, is readable and matches the supported extensions or content
         QFileInfo file(url.toLocalFile());
+
         if(file.exists() && file.isReadable() && file.isFile() &&
            (atools::fs::pln::FlightplanIO::detectFormat(file.filePath()) ||
-            AircraftPerfController::isPerformanceFile(file.filePath())))
+            AircraftPerfController::isPerformanceFile(file.filePath()) ||
+            atools::gui::DockWidgetHandler::isWindowLayoutFile(file.filePath())))
         {
-
           qDebug() << Q_FUNC_INFO << "accepting" << url;
           event->acceptProposedAction();
           return;
@@ -4150,7 +4491,10 @@ void MainWindow::dropEvent(QDropEvent *event)
     QString filepath = event->mimeData()->urls().first().toLocalFile();
     qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
 
-    if(AircraftPerfController::isPerformanceFile(filepath))
+    if(atools::gui::DockWidgetHandler::isWindowLayoutFile(filepath))
+      // Open window layout file
+      layoutOpenDrag(filepath);
+    else if(AircraftPerfController::isPerformanceFile(filepath))
       // Load aircraft performance file
       NavApp::getAircraftPerfController()->loadFile(filepath);
     else
@@ -4159,24 +4503,48 @@ void MainWindow::dropEvent(QDropEvent *event)
   }
 }
 
+#ifdef DEBUG_SIZE_INFORMATION
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+  qDebug() << event->size();
+}
+
+#endif
+
 void MainWindow::updateErrorLabels()
 {
-  QString toolTipTxt, statusTipTxt;
-  QString err;
-  // Show only if route is valid, there are errors and nothing is collecting performance
-  bool showError = NavApp::getRoute().getSizeWithoutAlternates() >= 2 && NavApp::getAltitudeLegs().hasErrors();
-  if(showError)
-    err = atools::util::HtmlBuilder::errorMessage(NavApp::getAltitudeLegs().getErrorStrings(toolTipTxt, statusTipTxt));
+  using atools::util::HtmlBuilder;
 
-  ui->labelRouteError->setVisible(showError);
-  ui->labelRouteError->setText(err);
-  ui->labelRouteError->setToolTip(toolTipTxt);
-  ui->labelRouteError->setStatusTip(statusTipTxt);
+  const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
 
-  ui->labelProfileError->setVisible(showError);
-  ui->labelProfileError->setText(err);
-  ui->labelProfileError->setToolTip(toolTipTxt);
-  ui->labelProfileError->setStatusTip(statusTipTxt);
+  QStringList toolTipTxtRoute, toolTipTxtProfile, errRoute, errProfile;
+  QString hintText = tr("Click here for details.");
+
+  // Do not show error for single waypoint plans since it is obvious that there is no profile
+  if(NavApp::getRoute().getSizeWithoutAlternates() >= 2 && altitudeLegs.hasErrors())
+    errProfile.append(altitudeLegs.getErrorStrings(toolTipTxtProfile));
+
+  if(routeController->hasErrors())
+    errRoute.append(routeController->getErrorStrings(toolTipTxtRoute));
+
+  errRoute.append(errProfile);
+  toolTipTxtRoute.append(toolTipTxtProfile);
+
+  if(!errRoute.isEmpty())
+    errRoute.append(hintText);
+  if(!errProfile.isEmpty())
+    errProfile.append(hintText);
+
+  ui->labelRouteError->setVisible(!errRoute.isEmpty());
+  ui->labelRouteError->setText(HtmlBuilder::errorMessage(errRoute.join(tr(" "))));
+  ui->labelRouteError->setToolTip(toolTipTxtRoute.join("\n"));
+  ui->labelRouteError->setStatusTip(tr("Error reading flight plan."));
+
+  ui->labelProfileError->setVisible(!errProfile.isEmpty());
+  ui->labelProfileError->setText(HtmlBuilder::errorMessage(errProfile.join(tr(" "))));
+  ui->labelProfileError->setToolTip(toolTipTxtProfile.join("\n"));
+  ui->labelProfileError->setStatusTip(tr("Error calculating profile."));
 }
 
 map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
@@ -4186,26 +4554,32 @@ map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
 
 void MainWindow::showFlightPlan()
 {
-  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutFlightPlanTriggered();
 }
 
 void MainWindow::showAircraftPerformance()
 {
-  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutAircraftPerformanceTriggered();
 }
 
 void MainWindow::showLogbookSearch()
 {
-  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutLogbookSearchTriggered();
 }
 
 void MainWindow::showUserpointSearch()
 {
-  if(OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutUserpointSearchTriggered();
+}
+
+void MainWindow::showRouteCalc()
+{
+  if(NavApp::isMainWindowVisible())
+    actionShortcutCalcRouteTriggered();
 }
 
 void MainWindow::webserverStatusChanged(bool running)

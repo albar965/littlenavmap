@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,17 @@ class Pos;
 
 class OptionData;
 
+/*
+ * Converts arbitrary values and units into local user selected units.
+ *
+ * All functions have names based on the input unit. Output is always user selected unit.
+ *
+ * Used parameters:
+ * @param addUnit Add unit to string. Based on user selected unit.
+ * @param narrow Omit space between unit and value and use C locale. Mostly for map display.
+ * @param minValPrec Add one decimal if value is below.
+ * @param round Round resulting value to closest multiple of given round value.
+ */
 class Unit
 {
   Q_DECLARE_TR_FUNCTIONS(Unit)
@@ -88,8 +99,8 @@ public:
   static float speedVertFpmF(float value);
 
   /* Altitude: Returns either meter or feet */
-  static QString altMeter(float value, bool addUnit = true, bool narrow = false);
-  static QString altFeet(float value, bool addUnit = true, bool narrow = false);
+  static QString altMeter(float value, bool addUnit = true, bool narrow = false, float round = 0.f);
+  static QString altFeet(float value, bool addUnit = true, bool narrow = false, float round = 0.f);
 
   static float altMeterF(float value);
   static float altFeetF(float value);
@@ -150,7 +161,7 @@ public:
   /* Can be used as function pointers for conversion. fromCopy is a dummy returning the same value */
   static float fromUsToMetric(float value, bool fuelAsVolume);
   static float fromMetricToUs(float value, bool fuelAsVolume);
-  static float fromCopy(float value, bool fuelAsVolume);
+  static float fromCopy(float value, bool);
 
   /* Coordinates: Returns either decimal or sexagesimal notation */
   static QString coords(const atools::geo::Pos& pos);

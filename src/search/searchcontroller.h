@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ class Pos;
 }
 
 namespace map {
-struct MapSearchResult;
+struct MapResult;
 
 }
 
@@ -69,7 +69,7 @@ class SearchController :
 
 public:
   SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam);
-  virtual ~SearchController();
+  virtual ~SearchController() override;
 
   /* Create the airport search tab */
   void createAirportSearch(QTableView *tableView);
@@ -136,10 +136,10 @@ public:
 
   /* Reset search and show the given type in the search result. Search widgets are populated with the
    * given parameters. Types can be airport, VOR, NDB or waypoint */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
+  void showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select);
 
   /* Get all selected airports or navaids from the active search tab */
-  void getSelectedMapObjects(map::MapSearchResult& result) const;
+  void getSelectedMapObjects(map::MapResult& result) const;
 
   /* Options have changed. Update table font, empty airport handling etc. */
   void optionsChanged();

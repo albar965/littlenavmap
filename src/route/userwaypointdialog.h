@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,13 +27,21 @@ class UserWaypointDialog;
 }
 
 namespace atools {
+namespace fs {
+namespace pln {
+class FlightplanEntry;
+}
+}
 namespace geo {
 class Pos;
 }
 }
 
+class QAbstractButton;
+
 /*
  * Edit coordinates or the name of a user defined flight plan position.
+ * Also used to edit remarks for a flight plan waypoint.
  */
 class UserWaypointDialog :
   public QDialog
@@ -41,18 +49,21 @@ class UserWaypointDialog :
   Q_OBJECT
 
 public:
-  UserWaypointDialog(QWidget *parent, const QString& name, const atools::geo::Pos& pos);
-  virtual ~UserWaypointDialog();
+  UserWaypointDialog(QWidget *parent, const atools::fs::pln::FlightplanEntry& entryParam);
+  virtual ~UserWaypointDialog() override;
 
-  QString getName() const;
-  atools::geo::Pos getPos() const;
+  /* Entry is copyied. Get changed copy here */
+  const atools::fs::pln::FlightplanEntry& getEntry() const
+  {
+    return *entry;
+  }
 
 private:
-  void coordsEdited(const QString& text);
-  void helpClicked();
+  void coordsEdited(const QString&);
+  void buttonBoxClicked(QAbstractButton *button);
 
   Ui::UserWaypointDialog *ui;
-
+  atools::fs::pln::FlightplanEntry *entry;
 };
 
 #endif // LITTLENAVMAP_USERWAYPOINTDIALOG_H

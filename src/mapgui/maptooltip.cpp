@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,9 +52,13 @@ MapTooltip::~MapTooltip()
   qDebug() << Q_FUNC_INFO;
 }
 
-QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, const Route& route, bool airportDiagram)
+QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const Route& route, bool airportDiagram)
 {
   optsd::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << mapSearchResult;
+#endif
 
   HtmlBuilder html(false);
   HtmlInfoBuilder info(mainWindow, false);
@@ -65,55 +69,61 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   // If max number of entries or lines is exceeded return the html
 
   // User Aircraft ===========================================================================
-  if(mapSearchResult.userAircraft.getPosition().isValid())
+  if(opts.testFlag(optsd::TOOLTIP_AIRCRAFT_USER))
   {
-    if(checkText(html))
-      return html.getHtml();
+    if(mapSearchResult.userAircraft.getPosition().isValid())
+    {
+      if(checkText(html))
+        return html.getHtml();
 
-    if(!html.isEmpty())
-      html.textBar(TEXT_BAR_LENGTH);
+      if(!html.isEmpty())
+        html.textBar(TEXT_BAR_LENGTH);
 
-    info.aircraftText(mapSearchResult.userAircraft, html);
-    info.aircraftProgressText(mapSearchResult.userAircraft, html, route,
-                              false /* show more/less switch */, false /* true if less info mode */);
+      info.aircraftText(mapSearchResult.userAircraft.getAircraft(), html);
+      info.aircraftProgressText(mapSearchResult.userAircraft.getAircraft(), html, route,
+                                false /* show more/less switch */, false /* true if less info mode */);
 
-    numEntries++;
+      numEntries++;
+    }
   }
 
-  // Online Aircraft ===========================================================================
-  for(const SimConnectAircraft& aircraft : mapSearchResult.onlineAircraft)
+  if(opts.testFlag(optsd::TOOLTIP_AIRCRAFT_AI))
   {
-    if(checkText(html))
-      return html.getHtml();
+    // Online Aircraft ===========================================================================
+    for(const map::MapOnlineAircraft& aircraft : mapSearchResult.onlineAircraft)
+    {
+      if(checkText(html))
+        return html.getHtml();
 
-    if(!html.isEmpty())
-      html.textBar(TEXT_BAR_LENGTH);
+      if(!html.isEmpty())
+        html.textBar(TEXT_BAR_LENGTH);
 
-    info.aircraftText(aircraft, html);
-    info.aircraftProgressText(aircraft, html, Route(),
-                              false /* show more/less switch */, false /* true if less info mode */);
+      info.aircraftText(aircraft.getAircraft(), html);
+      info.aircraftProgressText(aircraft.getAircraft(), html, Route(),
+                                false /* show more/less switch */, false /* true if less info mode */);
 
-    numEntries++;
-  }
+      numEntries++;
+    }
 
-  // AI Aircraft ===========================================================================
-  for(const SimConnectAircraft& aircraft : mapSearchResult.aiAircraft)
-  {
-    if(checkText(html))
-      return html.getHtml();
+    // AI Aircraft ===========================================================================
+    for(const map::MapAiAircraft& aircraft : mapSearchResult.aiAircraft)
+    {
+      if(checkText(html))
+        return html.getHtml();
 
-    if(!html.isEmpty())
-      html.textBar(TEXT_BAR_LENGTH);
+      if(!html.isEmpty())
+        html.textBar(TEXT_BAR_LENGTH);
 
-    info.aircraftText(aircraft, html);
-    info.aircraftProgressText(aircraft, html, Route(),
-                              false /* show more/less switch */, false /* true if less info mode */);
+      info.aircraftText(aircraft.getAircraft(), html);
+      info.aircraftProgressText(aircraft.getAircraft(), html, Route(),
+                                false /* show more/less switch */, false /* true if less info mode */);
 
-    numEntries++;
+      numEntries++;
+    }
   }
 
   // Navaids from procedure points ===========================================================================
-  if(opts & optsd::TOOLTIP_NAVAID)
+  if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
     for(const proc::MapProcedurePoint& ap : mapSearchResult.procPoints)
     {
@@ -143,7 +153,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
     numEntries++;
   }
 
-  // Holds ===========================================================================
+  // Traffic pattern ===========================================================================
   for(const TrafficPattern& entry : mapSearchResult.trafficPatterns)
   {
     if(checkText(html))
@@ -157,8 +167,22 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
     numEntries++;
   }
 
+  // Range rings ===========================================================================
+  for(const RangeMarker& entry : mapSearchResult.rangeMarkers)
+  {
+    if(checkText(html))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.textBar(TEXT_BAR_LENGTH);
+
+    info.rangeMarkerText(entry, html);
+
+    numEntries++;
+  }
+
   // Logbook entries ===========================================================================
-  if(opts & optsd::TOOLTIP_NAVAID)
+  if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
     for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
     {
@@ -189,7 +213,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Airports ===========================================================================
-  if(opts & optsd::TOOLTIP_AIRPORT)
+  if(opts.testFlag(optsd::TOOLTIP_AIRPORT))
   {
     for(const MapAirport& airport : mapSearchResult.airports)
     {
@@ -209,7 +233,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Navaids ===========================================================================
-  if(opts & optsd::TOOLTIP_NAVAID)
+  if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
 
     for(const MapVor& vor : mapSearchResult.vors)
@@ -279,7 +303,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Airport stuff ===========================================================================
-  if(airportDiagram && opts & optsd::TOOLTIP_AIRPORT)
+  if(airportDiagram && opts.testFlag(optsd::TOOLTIP_AIRPORT))
   {
     for(const MapAirport& ap : mapSearchResult.towers)
     {
@@ -319,9 +343,9 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
     }
   }
 
-  if(opts & optsd::TOOLTIP_NAVAID)
+  if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
-    for(const MapUserpointRoute& up : mapSearchResult.userPointsRoute)
+    for(const MapUserpointRoute& up : mapSearchResult.userpointsRoute)
     {
       if(checkText(html))
         return html.getHtml();
@@ -349,7 +373,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // High altitude winds ===========================================================================
-  if(opts & optsd::TOOLTIP_WIND && mapSearchResult.windPos.isValid())
+  if(opts.testFlag(optsd::TOOLTIP_WIND) && mapSearchResult.windPos.isValid())
   {
     WindReporter *windReporter = NavApp::getWindReporter();
     atools::grib::WindPosVector winds = windReporter->getWindStackForPos(mapSearchResult.windPos);
@@ -375,10 +399,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult, co
   }
 
   // Airspaces ===========================================================================
-  if(opts & optsd::TOOLTIP_AIRSPACE)
+  if(opts.testFlag(optsd::TOOLTIP_AIRSPACE))
   {
     // Put all online airspace on top of the list to have consistent ordering with menus and info windows
-    MapSearchResult res = mapSearchResult.moveOnlineAirspacesToFront();
+    MapResult res = mapSearchResult.moveOnlineAirspacesToFront();
 
     for(const MapAirspace& airspace : res.airspaces)
     {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QPushButton>
+#include <QStringList>
 
 ColumnList::ColumnList(const QString& tableName, const QString& idColumnName)
   : table(tableName), idColumn(idColumnName)
@@ -163,7 +164,7 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
     if(!exceptColNames.contains(cd->getColumnName()))
     {
       if(QLineEdit *le = cd->getLineEditWidget())
-        le->setText(QString());
+        le->clear();
       if(QComboBox *cb = cd->getComboBoxWidget())
       {
         if(cb->isEditable())
@@ -212,6 +213,8 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
 
   if(distanceCheckBox != nullptr)
     distanceCheckBox->setCheckState(Qt::Unchecked);
+
+  queryBuilder.resetWidgets();
 }
 
 void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
@@ -235,4 +238,9 @@ void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
 
   if(distanceDirectionWidget != nullptr)
     distanceDirectionWidget->setEnabled(enabled);
+}
+
+void ColumnList::setQueryBuilder(const QueryBuilder& builder)
+{
+  queryBuilder = builder;
 }

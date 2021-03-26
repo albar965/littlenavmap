@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,11 @@
 #include "settings/settings.h"
 #include "atools.h"
 #include "geo/calculations.h"
+#include "geo/linestring.h"
 
 #include <QDataStream>
 #include <QDateTime>
 #include <QFile>
-
-AircraftTrack::AircraftTrack()
-{
-
-}
-
-AircraftTrack::~AircraftTrack()
-{
-
-}
 
 namespace at {
 
@@ -83,6 +74,11 @@ void AircraftTrack::restoreState()
   }
 }
 
+void AircraftTrack::clearTrack()
+{
+  clear();
+}
+
 void AircraftTrack::saveToStream(QDataStream& out)
 {
   out.setVersion(QDataStream::Qt_5_5);
@@ -118,6 +114,17 @@ bool AircraftTrack::readFromStream(QDataStream& in)
   return retval;
 }
 
+void AircraftTrack::convert(atools::geo::LineString *track, QVector<quint32> *timestamps) const
+{
+  for(const at::AircraftTrackPos& pos : (*this))
+  {
+    if(track != nullptr)
+      track->append(pos.pos);
+    if(timestamps != nullptr)
+      timestamps->append(pos.timestamp);
+  }
+}
+
 bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime& timestamp, bool onGround)
 {
   bool pruned = false;
@@ -134,19 +141,11 @@ bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime&
 
     if(!pos.almostEqual(last().pos, epsilon) && !atools::almostEqual(lastTime, time, timeDiff))
     {
-      if(pos.distanceMeterTo(last().pos) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM))
+      if(size() > maxTrackEntries)
       {
-        clear();
+        for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
+          removeFirst();
         pruned = true;
-      }
-      else
-      {
-        if(size() > maxTrackEntries)
-        {
-          for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
-            removeFirst();
-          pruned = true;
-        }
       }
       append({pos, timestamp.toTime_t(), onGround});
     }
@@ -160,4 +159,18 @@ float AircraftTrack::getMaxAltitude() const
   for(const at::AircraftTrackPos& trackPos : *this)
     maxAlt = std::max(maxAlt, trackPos.pos.getAltitude());
   return maxAlt;
+}
+
+atools::geo::LineString AircraftTrack::getLineString() const
+{
+  atools::geo::LineString linestring;
+
+  if(linestring.size() != size())
+  {
+    linestring.clear();
+    for(const at::AircraftTrackPos& tpos : *this)
+      linestring.append(tpos.pos);
+  }
+
+  return linestring;
 }

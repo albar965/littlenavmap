@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ struct MapAirport;
 
 struct MapAirspace;
 struct MapAirway;
+struct MapStart;
 
 }
 
@@ -52,6 +53,8 @@ extern QColor airportDetailBackColor;
 extern QColor airportEmptyColor;
 extern QColor toweredAirportColor;
 extern QColor unToweredAirportColor;
+extern QColor addonAirportBackgroundColor;
+extern QColor addonAirportFrameColor;
 extern QColor vorSymbolColor;
 extern QColor ndbSymbolColor;
 extern QColor markerSymbolColor;
@@ -59,11 +62,11 @@ extern QColor ilsSymbolColor;
 extern QColor ilsFillColor;
 extern QColor ilsTextColor;
 extern QColor waypointSymbolColor;
-extern QPen airwayVictorPen;
-extern QPen airwayJetPen;
-extern QPen airwayBothPen;
+extern QColor airwayVictorColor;
+extern QColor airwayJetColor;
+extern QColor airwayBothColor;
+extern QColor airwayTrackColor;
 extern QColor airwayTextColor;
-extern QColor distanceRhumbColor;
 extern QColor rangeRingColor;
 extern QColor rangeRingTextColor;
 extern QColor compassRoseColor;
@@ -82,6 +85,10 @@ extern QColor weatherVfrColor;
 /* Minimum off route altitude (MORA) */
 extern QPen minimumAltitudeGridPen;
 extern QColor minimumAltitudeNumberColor;
+
+/* For dark map themes */
+extern QPen minimumAltitudeGridPenDark;
+extern QColor minimumAltitudeNumberColorDark;
 
 /* Elevation profile colors and pens */
 extern QColor profileSkyColor;
@@ -125,6 +132,12 @@ extern QPen searchCenterFillPen;
 extern QPen touchMarkBackPen;
 extern QPen touchMarkFillPen;
 extern QColor touchRegionFillColor;
+
+extern QColor aircraftUserLabelColor;
+extern QColor aircraftUserLabelColorBg;
+
+extern QColor aircraftAiLabelColor;
+extern QColor aircraftAiLabelColorBg;
 
 // ==========================================================================
 
@@ -222,7 +235,7 @@ const QColor nextWaypointColor(QColor(255, 100, 255));
 const QColor nextWaypointColorDark(QColor(150, 20, 150));
 
 /* Get an icon for the start type (RUNWAY, HELIPAD or WATER) */
-const QIcon& iconForStartType(const QString& type);
+const QIcon& iconForStart(const map::MapStart& start);
 
 /* General icon for parking (RAMP_MIL_*, GATE_*, RAMP_GA_* or RAMP_CARGO */
 const QIcon& iconForParkingType(const QString& type);
@@ -246,7 +259,7 @@ const QPen aircraftTrailPen(float size);
 const QPen& penForAirspace(const map::MapAirspace& airspace);
 const QColor& colorForAirspaceFill(const map::MapAirspace& airspace);
 
-const QPen& penForAirway(const map::MapAirway& airway);
+const QColor& colorForAirwayTrack(const map::MapAirway& airway);
 
 /* Convert current pen into dotted pen leaving style and color as is */
 void adjustPenForCircleToLand(QPainter *painter);

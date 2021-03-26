@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class PrintSupport
 
 public:
   PrintSupport(MainWindow *parent);
-  virtual ~PrintSupport();
+  virtual ~PrintSupport() override;
 
   /* Open preview for the current map view */
   void printMap();
@@ -86,8 +86,6 @@ private:
   /* Create and file the document for the flight plan print job */
   void createFlightplanDocuments();
   void deleteFlightplanDocuments();
-
-  void addHeader(atools::util::HtmlBuilder& html);
 
   /* Load weather so it is available for printing */
   void fillWeatherCache();

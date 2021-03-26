@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ enum ConnectSimType
 {
   UNKNOWN,
   REMOTE,
-  FSX_P3D,
+  FSX_P3D_MSFS,
   XPLANE
 };
 
@@ -47,7 +47,7 @@ class ConnectDialog :
 
 public:
   ConnectDialog(QWidget *parent, bool simConnectAvailable);
-  ~ConnectDialog();
+  virtual ~ConnectDialog() override;
 
   /* Get hostname as entered in the edit field */
   QString getRemoteHostname() const;
@@ -70,25 +70,32 @@ public:
 
   cd::ConnectSimType getCurrentSimType() const;
 
-  unsigned int getDirectUpdateRateMs(cd::ConnectSimType type);
+  unsigned int getUpdateRateMs(cd::ConnectSimType type);
+  int getAiFetchRadiusNm(cd::ConnectSimType type);
+
+  int execConnectDialog(cd::ConnectSimType connectionType);
 
 signals:
   void disconnectClicked();
   void autoConnectToggled(bool state);
 
-  void directUpdateRateChanged(cd::ConnectSimType type);
+  void aiFetchRadiusChanged(cd::ConnectSimType type);
+  void updateRateChanged(cd::ConnectSimType type);
   void fetchOptionsChanged(cd::ConnectSimType type);
 
 private:
-  void directUpdateRateClicked();
+  void aiFetchRadiusHasChanged();
+  void updateRateHasChanged();
   void fetchOptionsClicked();
 
   void buttonBoxClicked(QAbstractButton *button);
   void deleteClicked();
   void updateButtonStates();
+  void activateTab(QWidget *tabWidget);
 
   Ui::ConnectDialog *ui;
   bool simConnect = false;
+
 };
 
 #endif // LITTLENAVMAP_CONNECTDIALOG_H

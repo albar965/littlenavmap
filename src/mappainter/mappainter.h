@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,13 +38,17 @@ class GeoDataLineString;
 class GeoPainter;
 }
 
-class SymbolPainter;
-class MapLayer;
-class MapQuery;
 class AirportQuery;
+class AirwayTrackQuery;
+class MapLayer;
+class MapPaintWidget;
+class MapQuery;
 class MapScale;
 class MapWidget;
-class MapPaintWidget;
+class SymbolPainter;
+class WaypointTrackQuery;
+class AircraftTrack;
+class Route;
 
 namespace map {
 struct MapAirport;
@@ -52,23 +56,27 @@ struct MapObjectRef;
 
 }
 
-/* Struct that is passed on each paint event to all painters */
+/* Struct that is passed to all painters */
 struct PaintContext
 {
   const MapLayer *mapLayer; /* layer for the current zoom distance also affected by detail level
                              *  should be used to visibility of map objects */
   const MapLayer *mapLayerEffective; /* layer for the current zoom distance not affected by detail level.
                                       *  Should be used to determine text visibility and object sizes. */
+  const MapLayer *mapLayerRoute; /* layer for the current zoom distance and details with more details for route. */
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
   float zoomDistanceMeter;
   bool drawFast; /* true if reduced details should be used */
   bool lazyUpdate; /* postpone reloading until map is still */
-  map::MapObjectTypes objectTypes; /* Object types that should be drawn */
+  bool darkMap; /* CartoDark or similar. Not Night mode */
+  map::MapTypes objectTypes; /* Object types that should be drawn */
   map::MapObjectDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
+  QRect screenRect; /* Screen coordinate rect */
+
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
   float distance; /* Zoom distance in NM */
@@ -76,21 +84,29 @@ struct PaintContext
               userPointTypesAll; /* All available tyes */
   bool userPointTypeUnknown; /* Show unknown types */
 
+  const Route *route;
+
   // All waypoints from the route and add them to the map to avoid duplicate drawing
-  QSet<map::MapObjectRef> routeIdMap;
+  // Same for procedure preview
+  QSet<map::MapObjectRef> routeProcIdMap;
 
   optsd::DisplayOptions dispOpts;
+  optsd::DisplayOptionsAirport dispOptsAirport;
   optsd::DisplayOptionsRose dispOptsRose;
+  optsd::DisplayOptionsMeasurement dispOptsMeasurement;
   optsd::DisplayOptionsRoute dispOptsRoute;
   opts::Flags flags;
   opts2::Flags2 flags2;
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
 
+  /* Text sizes and line thickness in percent / 100 */
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
   float thicknessFlightplan = 1.f;
   float textSizeNavaid = 1.f;
+  float textSizeAirway = 1.f;
+  float thicknessAirway = 1.f;
   float textSizeCompassRose = 1.f;
   float textSizeRangeDistance = 1.f;
   float symbolSizeAirport = 1.f;
@@ -107,35 +123,59 @@ struct PaintContext
   float textSizeMora = 1.f;
   float transparencyMora = 1.f;
 
-  // Needs to be larger than number of highest level airports
-  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 8000;
   int objectCount = 0;
+  bool queryOverflow = false;
 
   /* Increase drawn object count and return true if exceeded */
   bool objCount()
   {
     objectCount++;
-    return objectCount > MAX_OBJECT_COUNT;
+    return objectCount > map::MAX_MAP_OBJECTS;
   }
 
-  bool isOverflow()
+  bool isObjectOverflow() const
   {
-    return objectCount > MAX_OBJECT_COUNT;
+    return objectCount >= map::MAX_MAP_OBJECTS;
   }
 
-  bool  dOpt(const optsd::DisplayOptions& opts) const
+  int getObjectCount() const
   {
-    return dispOpts & opts;
+    return objectCount;
   }
 
-  bool  dOptRose(const optsd::DisplayOptionsRose& opts) const
+  void setQueryOverflow(bool overflow)
   {
-    return dispOptsRose & opts;
+    queryOverflow |= overflow;
   }
 
-  bool  dOptRoute(const optsd::DisplayOptionsRoute& opts) const
+  bool isQueryOverflow() const
   {
-    return dispOptsRoute & opts;
+    return queryOverflow;
+  }
+
+  bool  dOpt(optsd::DisplayOption opts) const
+  {
+    return dispOpts.testFlag(opts);
+  }
+
+  bool  dOptAp(optsd::DisplayOptionAirport opts) const
+  {
+    return dispOptsAirport.testFlag(opts);
+  }
+
+  bool  dOptRose(optsd::DisplayOptionRose opts) const
+  {
+    return dispOptsRose.testFlag(opts);
+  }
+
+  bool  dOptMeasurement(optsd::DisplayOptionMeasurement opts) const
+  {
+    return dispOptsMeasurement.testFlag(opts);
+  }
+
+  bool  dOptRoute(optsd::DisplayOptionRoute opts) const
+  {
+    return dispOptsRoute.testFlag(opts);
   }
 
   /* Calculate real symbol size */
@@ -178,11 +218,28 @@ struct PaintContext
 
 };
 
+/* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */
 struct PaintAirportType
 {
-  const map::MapAirport *airport;
+  PaintAirportType(const map::MapAirport& ap, float x, float y);
+  PaintAirportType()
+  {
+  }
+
+  ~PaintAirportType();
+
+  PaintAirportType(const PaintAirportType& other)
+  {
+    this->operator=(other);
+  }
+
+  PaintAirportType& operator=(const PaintAirportType& other);
+
+  map::MapAirport *airport = nullptr;
   QPointF point;
 };
+
+// =============================================================================================
 
 /*
  * Base class for all map painters
@@ -193,31 +250,52 @@ class MapPainter :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainter(MapPaintWidget *marbleWidget, MapScale *mapScale);
+  MapPainter(MapPaintWidget *marbleWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainter();
 
-  virtual void render(PaintContext *context) = 0;
+  virtual void render() = 0;
+
+  bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
 
 protected:
+  /* All wToSBuf() methods receive a margin parameter. Margins are applied to the screen rectangle for an
+   * additional visibility check to avoid objects or texts popping out of view at the screen borders */
+  bool wToSBuf(const atools::geo::Pos& coords, int& x, int& y, QSize size, const QMargins& margins,
+               bool *hidden = nullptr) const;
+
+  bool wToSBuf(const atools::geo::Pos& coords, int& x, int& y, const QMargins& margins,
+               bool *hidden = nullptr) const
+  {
+    return wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
+  }
+
+  bool wToSBuf(const atools::geo::Pos& coords, float& x, float& y, QSize size, const QMargins& margins,
+               bool *hidden = nullptr) const;
+
+  bool wToSBuf(const atools::geo::Pos& coords, float& x, float& y, const QMargins& margins,
+               bool *hidden = nullptr) const
+  {
+    return wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
+  }
+
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance */
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,
                    float radiusNm, bool fast, int& xtext, int& ytext);
 
-  /* Drawing functions for simple geometry */
-  void drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring);
-  void drawLineString(const PaintContext *context, const atools::geo::LineString& linestring);
-  void drawLine(const PaintContext *context, const atools::geo::Line& line);
-  void drawCircle(const PaintContext *context, const atools::geo::Pos& center, int radius);
+  void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
+  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line);
 
   /* Draw simple text with current settings. Corners are the text corners pointing to the position */
-  void drawText(const PaintContext *context, const atools::geo::Pos& pos, const QString& text, bool topCorner,
+  void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner,
                 bool leftCorner);
 
-  void drawCross(const PaintContext *context, int x, int y, int size);
+  /* Drawing functions for simple geometry */
+  void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, int radius);
+  void drawCross(Marble::GeoPainter *painter, int x, int y, int size);
 
   /* No GC and no rhumb */
-  void drawLineStraight(const PaintContext *context, const atools::geo::Line& line);
+  void drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line);
 
   /* Save versions of drawLine which check for valid coordinates and bounds */
   void drawLine(QPainter *painter, const QLineF& line);
@@ -254,9 +332,8 @@ protected:
 
   /* Draw arrow at line position. pos = 0 is beginning and pos = 1 is end of line */
   void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);
-  void paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos = 0.5f);
-
-  static bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
+  void paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos = 0.5f,
+                           float minLengthPx = 0.f);
 
   /* Interface method to QPixmapCache*/
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);
@@ -266,12 +343,14 @@ protected:
   /* Maximum points to use for a circle */
   const int CIRCLE_MAX_POINTS = 72;
 
+  PaintContext *context;
   SymbolPainter *symbolPainter;
   MapPaintWidget *mapPaintWidget;
   MapQuery *mapQuery;
+  AirwayTrackQuery *airwayQuery;
+  WaypointTrackQuery *waypointQuery;
   AirportQuery *airportQuery;
   MapScale *scale;
-
 };
 
 #endif // LITTLENAVMAP_MAPPAINTER_H

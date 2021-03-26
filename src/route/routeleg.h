@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,12 @@ class RouteLeg
   Q_DECLARE_TR_FUNCTIONS(RouteLeg)
 
 public:
-  RouteLeg();
+  RouteLeg()
+  {
+
+  }
+
   RouteLeg(atools::fs::pln::Flightplan *parentFlightplan);
-  ~RouteLeg();
 
   /*
    * Creates a route map object from a flight plan entry. Queries the database for existing navaids and airports.
@@ -66,7 +69,12 @@ public:
    */
   void createFromAirport(int entryIndex, const map::MapAirport& newAirport, const RouteLeg *prevLeg);
 
-  void createFromProcedureLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg);
+  /* Create dummy procedure legs and copy all waypoint, etc. information into the waypoint, vor and other structs */
+  void createFromProcedureLeg(int entryIndex, const proc::MapProcedureLeg& leg, const RouteLeg *prevLeg);
+  void createFromProcedureLegs(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg);
+
+  /* Creates a clone of waypoint type but does not assign type PROCEDURE */
+  void createCopyFromProcedureLeg(int entryIndex, const RouteLeg& leg, const RouteLeg *prevLeg);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
@@ -76,10 +84,6 @@ public:
 
   /* Get magvar from all known objects */
   void updateMagvar();
-
-  /* Change user defined waypoint name and position */
-  void updateUserName(const QString& name);
-  void updateUserPosition(const atools::geo::Pos& pos);
 
   /* Set parking and start position. Does not modify the flight plan entry.
    * Parking clears start and vice versa. */
@@ -96,8 +100,14 @@ public:
   const atools::geo::Pos& getPosition() const;
   float getAltitude() const;
 
+  /* Get the real position of the procedure fix instead of the endpoint. Otherwise like getPosition() */
+  const atools::geo::Pos& getFixPosition() const;
+
   /* Get ident of airport or navaid. Source can be flight plan entry or database. */
   QString getIdent() const;
+
+  /* Comment section from flight plan entry */
+  QString getComment() const;
 
   QString getRegion() const;
 
@@ -146,7 +156,7 @@ public:
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
 
-  map::MapObjectTypes getMapObjectType() const
+  map::MapTypes getMapObjectType() const
   {
     return type;
   }
@@ -206,28 +216,13 @@ public:
     return distanceTo;
   }
 
-  /* Rhumb line distance to this route map object from the predecessor in nautical miles or 0 if first in route */
-  float getDistanceToRhumb() const
-  {
-    return distanceToRhumb;
-  }
-
   /* Great circle start magnetic course to this route map object from the predecessor in degrees or 0 if first in route */
   float getCourseToMag() const;
-
-  /* Rhumb line magnetic  course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseToRhumbMag() const;
 
   /* Great circle start true course to this route map object from the predecessor in degrees or 0 if first in route */
   float getCourseToTrue() const
   {
     return courseTo;
-  }
-
-  /* Rhumb line true course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseToRhumbTrue() const
-  {
-    return courseRhumbTo;
   }
 
   /* @return false if this waypoint was not found in the database */
@@ -268,10 +263,8 @@ public:
     return type & map::PROCEDURE;
   }
 
-  float getGroundAltitude() const
-  {
-    return groundAltitude;
-  }
+  /* User defined waypoint */
+  bool isUser() const;
 
   void setFlightplan(atools::fs::pln::Flightplan *fp)
   {
@@ -321,20 +314,33 @@ public:
   }
 
   /* true if airway given but not found in database. Also true if one-way direction is violated */
-  bool isAirwaySetAndInvalid(float altitudeFt, QStringList *errors = nullptr) const;
+  bool isAirwaySetAndInvalid(float altitudeFt, QStringList *errors = nullptr, bool *trackError = nullptr) const;
+
+  bool isTrack() const
+  {
+    return airway.isValid() && airway.isTrack();
+  }
+
+  bool isAirway() const
+  {
+    return airway.isValid() && airway.isAirway();
+  }
+
+  void clearAirwayOrTrack();
 
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
+  atools::fs::pln::FlightplanEntry *getFlightplanEntry();
 
 private:
   // TODO assign functions are duplicatd in FlightplanEntryBuilder
-  void assignIntersection(const map::MapSearchResult& mapobjectResult,
+  void assignIntersection(const map::MapResult& mapobjectResult,
                           atools::fs::pln::FlightplanEntry *flightplanEntry);
-  void assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
-  void assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignVor(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last,
                        float maxDistance);
   void assignRunwayOrHelipad(const QString& name);
-  void assignAirport(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignAirport(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry);
 
   /* Parent flight plan */
@@ -342,7 +348,7 @@ private:
   /* Associated flight plan entry or approach leg entry */
   int index = -1;
 
-  map::MapObjectTypes type = map::NONE;
+  map::MapTypes type = map::NONE;
   map::MapAirport airport;
   map::MapParking parking;
   map::MapStart start;
@@ -357,10 +363,7 @@ private:
   bool validWaypoint = false, alternate = false, valid = false;
 
   float distanceTo = 0.f,
-        distanceToRhumb = 0.f,
         courseTo = 0.f,
-        courseRhumbTo = 0.f,
-        groundAltitude = 0.f,
         magvar = 0.f, /* Either taken from navaid or average across the route */
         magvarPos = 0.f; /* Calculate environment value */
   atools::geo::LineString geometry;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -159,19 +159,25 @@ QString capNavString(const QString& str)
   return atools::fs::util::capNavString(str);
 }
 
-bool checkCoordinates(QString& message, const QString& text)
+bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
 {
-  Q_UNUSED(text);
+  atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text);
 
-  atools::geo::Pos pos = atools::fs::util::fromAnyFormat(text);
+  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+    // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
+    atools::fs::util::maybeSwapOrdinates(readPos, text);
 
-  if(pos.isValid())
+  if(pos != nullptr)
+    *pos = readPos;
+
+  if(readPos.isValidRange())
   {
-    QString coords = Unit::coords(pos);
-    if(coords != text)
+    QString coords = Unit::coords(readPos);
+    if(coords.simplified() != text.simplified())
     {
       if(Unit::getUnitCoords() == opts::COORDS_LATY_LONX || Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-        message = QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(pos, opts::COORDS_DMS));
+        message =
+          QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(readPos, opts::COORDS_DMS));
       else
         message = QObject::tr("Coordinates are valid: %1").arg(coords);
     }
@@ -203,7 +209,7 @@ void initTranslateableTexts()
 
   // System locale ==================================
   // This is independent from locale overridden in the options dialog
-  QLocale locale = QLocale::system();
+  QLocale locale;
   dateTimeFormats.clear();
   dateTimeFormats.append(locale.dateTimeFormat(QLocale::ShortFormat));
   dateTimeFormats.append(locale.dateTimeFormat(QLocale::LongFormat));
@@ -245,7 +251,7 @@ QDateTime readDateTime(QString str)
   QDateTime retval;
 
   // This is independent from locale overridden in the options dialog
-  QLocale locale = QLocale::system();
+  QLocale locale;
 
   // if(str.endsWith("UTC"))
   // str.chop(3);
@@ -300,16 +306,16 @@ QString windInformation(float headWind, float crossWind)
   return windTxt.join(QObject::tr(", "));
 }
 
-QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool trueSmall)
+QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool trueSmall, bool narrow)
 {
   // true to magnetic
-  return courseText(atools::geo::normalizeCourse(trueCourse - magvar), trueCourse, magBold, trueSmall);
+  return courseText(atools::geo::normalizeCourse(trueCourse - magvar), trueCourse, magBold, trueSmall, narrow);
 }
 
-QString courseTextFromMag(float magCourse, float magvar, bool magBold, bool trueSmall)
+QString courseTextFromMag(float magCourse, float magvar, bool magBold, bool trueSmall, bool narrow)
 {
   // magnetic to true
-  return courseText(magCourse, atools::geo::normalizeCourse(magCourse + magvar), magBold, trueSmall);
+  return courseText(magCourse, atools::geo::normalizeCourse(magCourse + magvar), magBold, trueSmall, narrow);
 }
 
 QString courseSuffix()
@@ -317,7 +323,7 @@ QString courseSuffix()
   return OptionData::instance().getFlags2() & opts2::UNIT_TRUE_COURSE ? QObject::tr("°M/T") : QObject::tr("°M");
 }
 
-QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSmall)
+QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSmall, bool narrow)
 {
   QString magStr, trueStr;
   if(magCourse < map::INVALID_COURSE_VALUE / 2.f)
@@ -350,7 +356,10 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSma
       QLatin1String smallEnd = trueSmall ? QLatin1Literal("</span>") : QLatin1String();
 
       // Values differ and both are valid - display magnetic and true
-      return QObject::tr("%1%2°M%3, %4%5°T%6").arg(bold).arg(magStr).arg(boldEnd).arg(small).arg(trueStr).arg(smallEnd);
+      return QObject::tr("%1%2°M%3,%4%5%6°T%7").
+             arg(bold).arg(magStr).arg(boldEnd).
+             arg(narrow ? QString() : QObject::tr(" ", "Separator for mag/true course text")).
+             arg(small).arg(trueStr).arg(smallEnd);
     }
     else if(!magStr.isEmpty())
       // Only mag value is valid

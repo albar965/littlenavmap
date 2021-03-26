@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -166,11 +166,12 @@ void AirspaceToolBarHandler::createToolButtons()
 {
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspaceicao.svg",
                            tr("Select ICAO airspaces"),
-                           {map::CLASS_A, map::CLASS_B, map::CLASS_C, map::CLASS_D, map::CLASS_E}, {});
+                           {map::CLASS_A, map::CLASS_B, map::CLASS_C, map::CLASS_D, map::CLASS_E,
+                            map::CLASS_F, map::CLASS_G}, {});
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspacefir.svg",
                            tr("Select FIR airspaces"),
-                           {map::CLASS_F, map::CLASS_G}, {});
+                           {map::FIR, map::UIR}, {});
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspacerestr.svg",
                            tr("Select MOA, restricted, prohibited and danger airspaces"),
@@ -218,6 +219,12 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
   button->setCheckable(true);
   airspaceToolButtons.append(button);
 
+  // Add tear off menu =======
+  button->setMenu(new QMenu(button));
+  QMenu *buttonMenu = button->menu();
+  buttonMenu->setToolTipsVisible(true);
+  buttonMenu->setTearOffEnabled(true);
+
   map::MapAirspaceFilter filter;
   filter.types = allTypes;
   filter.flags = allFlags;
@@ -226,35 +233,37 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
   if(!groupActions)
   {
     // Add all on / all off menu items
-    QAction *action = new QAction(tr("&All"), button);
+    QAction *action = new QAction(tr("&All"), buttonMenu);
     action->setToolTip(tr("Show all airspaces in this category"));
     action->setStatusTip(action->toolTip());
     map::MapAirspaceFilter filterOn;
     filterOn.types = allTypes;
     filterOn.flags = map::AIRSPACE_ALL_ON | allFlags;
     action->setData(QVariant::fromValue(filterOn));
-    button->addAction(action);
+    buttonMenu->addAction(action);
     airspaceActions.append(action);
     connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);
 
-    action = new QAction(tr("&None"), button);
+    action = new QAction(tr("&None"), buttonMenu);
     action->setToolTip(tr("Hide all airspaces in this category"));
     action->setStatusTip(action->toolTip());
     map::MapAirspaceFilter filterOff;
     filterOff.types = allTypes;
     filterOff.flags = map::AIRSPACE_ALL_OFF | allFlags;
     action->setData(QVariant::fromValue(filterOff));
-    button->addAction(action);
+    buttonMenu->addAction(action);
     airspaceActions.append(action);
     connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);
+
+    buttonMenu->addSeparator();
   }
 
   QActionGroup *group = nullptr;
-  QObject *parent = button;
+  QObject *parent = buttonMenu;
 
-  if(groupActions) // Add radion button group
+  if(groupActions) // Add radio button group
   {
-    group = new QActionGroup(button);
+    group = new QActionGroup(buttonMenu);
     connect(group, &QActionGroup::triggered, this, &AirspaceToolBarHandler::actionGroupTriggered);
     parent = group;
     airspaceToolGroups.append(group);
@@ -270,7 +279,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
       f.flags = flag;
 
       action->setData(QVariant::fromValue(f));
-      button->addAction(action);
+      buttonMenu->addAction(action);
       airspaceActions.append(action);
       if(!groupActions)
         connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);
@@ -293,7 +302,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
 
       action->setData(QVariant::fromValue(f));
 
-      button->addAction(action);
+      buttonMenu->addAction(action);
       airspaceActions.append(action);
       if(!groupActions)
         connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);

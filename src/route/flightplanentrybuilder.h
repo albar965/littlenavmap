@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ struct MapWaypoint;
 
 struct MapUserpoint;
 
-struct MapSearchResult;
+struct MapResult;
 
 }
 
@@ -58,25 +58,25 @@ class FlightplanEntryBuilder
 {
 public:
   FlightplanEntryBuilder();
-  virtual ~FlightplanEntryBuilder();
 
   void buildFlightplanEntry(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry,
                             bool alternate) const;
 
-  void buildFlightplanEntry(int id, const atools::geo::Pos& userPos, map::MapObjectTypes type,
+  void buildFlightplanEntry(int id, const atools::geo::Pos& userPos, map::MapTypes type,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
-  void buildFlightplanEntry(const atools::geo::Pos& userPos, const map::MapSearchResult& result,
+  void buildFlightplanEntry(const atools::geo::Pos& userPos, const map::MapResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints,
-                            map::MapObjectTypes type);
+                            map::MapTypes type);
 
-  void buildFlightplanEntry(const map::MapSearchResult& result,
+  void buildFlightplanEntry(const map::MapResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
   void buildFlightplanEntry(const proc::MapProcedureLeg& leg,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
-  void entryFromUserPos(const atools::geo::Pos& userPos, atools::fs::pln::FlightplanEntry& entry);
+  void entryFromUserPos(const atools::geo::Pos& userPos, atools::fs::pln::FlightplanEntry& entry, const QString& ident,
+                        const QString& region, const QString& name);
 
   void entryFromNdb(const map::MapNdb& ndb, atools::fs::pln::FlightplanEntry& entry) const;
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"
 #include "util/paintercontextsaver.h"
+#include "route/route.h"
 
 #include <QElapsedTimer>
 
@@ -33,8 +34,8 @@ using namespace Marble;
 using namespace atools::geo;
 using map::MapIls;
 
-MapPainterIls::MapPainterIls(MapPaintWidget* mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterIls::MapPainterIls(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -42,49 +43,77 @@ MapPainterIls::~MapPainterIls()
 {
 }
 
-void MapPainterIls::render(PaintContext *context)
+void MapPainterIls::render()
 {
-  if(!context->objectTypes.testFlag(map::ILS))
-    return;
-
   if(context->mapLayer->isIls())
   {
+    // Get ILS from flight plan which are also painted in the profile
+    QVector<map::MapIls> routeIls;
+    QSet<int> routeIlsIds;
+    if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
+    {
+      routeIls = context->route->getDestRunwayIls();
+      for(const map::MapIls& ils : routeIls)
+        routeIlsIds.insert(ils.id);
+    }
+
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 
-    const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate);
-    if(ilsList != nullptr)
+    int x, y;
+    if(context->objectTypes.testFlag(map::ILS))
     {
-      atools::util::PainterContextSaver saver(context->painter);
-      Q_UNUSED(saver);
+      bool overflow = false;
+      const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
+      context->setQueryOverflow(overflow);
 
-      for(const MapIls& ils : *ilsList)
+      if(ilsList != nullptr)
       {
-        int x, y;
-        // Need to get the real ILS size on the screen for mercator projection - otherwise feather may vanish
-        bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
+        atools::util::PainterContextSaver saver(context->painter);
 
-        if(!visible)
-          // Check bounding rect for visibility
-          visible = ils.bounding.overlaps(context->viewportRect);
-
-        if(visible)
+        for(const MapIls& ils : *ilsList)
         {
-          if(context->objCount())
-            return;
+          if(routeIlsIds.contains(ils.id))
+            // Part of flight plan - paint later
+            continue;
 
-          drawIlsSymbol(context, ils);
+          // Need to get the real ILS size on the screen for Mercator projection - otherwise feather may vanish
+          bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
+
+          if(!visible)
+            // Check bounding rect for visibility
+            visible = ils.bounding.overlaps(context->viewportRect);
+
+          if(visible)
+          {
+            if(context->objCount())
+              return;
+
+            drawIlsSymbol(ils, context->drawFast);
+          }
         }
       }
+    }
+
+    // Paint ILS from approach
+    for(const MapIls& ils : routeIls)
+    {
+      bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
+
+      if(!visible)
+        visible = ils.bounding.overlaps(context->viewportRect);
+
+      if(visible)
+        drawIlsSymbol(ils, context->drawFast);
     }
   }
 }
 
-void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls& ils)
+void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 {
   atools::util::PainterContextSaver saver(context->painter);
 
   context->painter->setBackgroundMode(Qt::TransparentMode);
-  context->painter->setBrush(mapcolors::ilsFillColor);
+  context->painter->setBrush(fast ? QBrush(Qt::transparent) : QBrush(mapcolors::ilsFillColor));
   context->painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
 
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
@@ -104,11 +133,11 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls
   else
     context->painter->drawPolygon(QPolygonF({origin, p1, pmid, p2, origin}));
 
-  context->painter->setPen(QPen(mapcolors::ilsCenterPen));
-  context->painter->drawLine(origin, pmid);
-
   if(!context->drawFast)
   {
+    context->painter->setPen(QPen(mapcolors::ilsCenterPen));
+    context->painter->drawLine(origin, pmid);
+
     // Draw ILS text -----------------------------------
     QString text;
     if(context->mapLayer->isIlsInfo())
@@ -126,7 +155,7 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls
 
       // Rotate to draw the text upwards so it is readable
       float rotate;
-      if(ils.heading > 180)
+      if(ils.heading > 180.f)
         rotate = ils.heading + 90.f - width / 2.f;
       else
         rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + width / 2.f;

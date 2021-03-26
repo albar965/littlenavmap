@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -86,9 +86,8 @@ OnlineCenterSearch::~OnlineCenterSearch()
 {
 }
 
-void OnlineCenterSearch::overrideMode(const QStringList& overrideColumnTitles)
+void OnlineCenterSearch::overrideMode(const QStringList&)
 {
-  Q_UNUSED(overrideColumnTitles);
 }
 
 void OnlineCenterSearch::connectSearchSlots()
@@ -146,16 +145,14 @@ void OnlineCenterSearch::restoreState()
       NavApp::getMainUi()->tableViewOnlineCenterSearch);
 }
 
-void OnlineCenterSearch::saveViewState(bool distSearchActive)
+void OnlineCenterSearch::saveViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).save(
     NavApp::getMainUi()->tableViewOnlineCenterSearch);
 }
 
-void OnlineCenterSearch::restoreViewState(bool distSearchActive)
+void OnlineCenterSearch::restoreViewState(bool)
 {
-  Q_UNUSED(distSearchActive);
   atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).restore(
     NavApp::getMainUi()->tableViewOnlineCenterSearch);
 }
@@ -227,7 +224,7 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
   return SearchBaseTable::formatModelData(col, displayRoleValue);
 }
 
-void OnlineCenterSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void OnlineCenterSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;

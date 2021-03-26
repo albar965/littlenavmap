@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 #include "util/paintercontextsaver.h"
 #include "mapgui/maplayer.h"
 #include "query/mapquery.h"
+#include "query/airwaytrackquery.h"
+#include "query/waypointtrackquery.h"
 
 #include <QElapsedTimer>
 
@@ -36,8 +38,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterNav::MapPainterNav(MapPaintWidget *mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterNav::MapPainterNav(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+  : MapPainter(mapWidget, mapScale, paintContext)
 {
 }
 
@@ -45,7 +47,7 @@ MapPainterNav::~MapPainterNav()
 {
 }
 
-void MapPainterNav::render(PaintContext *context)
+void MapPainterNav::render()
 {
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
@@ -56,53 +58,78 @@ void MapPainterNav::render(PaintContext *context)
                     (context->objectTypes.testFlag(map::AIRWAYJ) ||
                      context->objectTypes.testFlag(map::AIRWAYV));
 
-  context->szFont(context->textSizeNavaid);
+  context->szFont(context->textSizeAirway);
 
-  if(drawAirway && !context->isOverflow())
+  if(drawAirway && !context->isObjectOverflow())
   {
     // Draw airway lines
-    const QList<MapAirway> *airways = mapQuery->getAirways(curBox, context->mapLayer, context->lazyUpdate);
-    if(airways != nullptr)
-      paintAirways(context, airways, context->drawFast);
+    QList<MapAirway> airways;
+    airwayQuery->getAirways(airways, curBox, context->mapLayer, context->lazyUpdate);
+    paintAirways(&airways, context->drawFast);
   }
 
+  // Tracks -------------------------------------------------
+  bool drawTrack = context->mapLayer->isTrack() && context->objectTypes.testFlag(map::TRACK);
+  if(drawTrack && !context->isObjectOverflow())
+  {
+    // Draw track lines
+    QList<MapAirway> tracks;
+    airwayQuery->getTracks(tracks, curBox, context->mapLayer, context->lazyUpdate);
+    paintAirways(&tracks, context->drawFast);
+  }
+
+  context->szFont(context->textSizeNavaid);
   // Waypoints -------------------------------------------------
   bool drawWaypoint = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(map::WAYPOINT);
-  if((drawWaypoint || drawAirway) && !context->isOverflow())
+  if((drawWaypoint || drawAirway || drawTrack) && !context->isObjectOverflow())
   {
     // If airways are drawn we also have to go through waypoints
-    const QList<MapWaypoint> *waypoints = mapQuery->getWaypoints(curBox, context->mapLayer, context->lazyUpdate);
-    if(waypoints != nullptr)
-      paintWaypoints(context, waypoints, drawWaypoint);
+    bool overflow = false;
+    QList<MapWaypoint> waypoints;
+    waypointQuery->getWaypoints(waypoints, curBox, context->mapLayer, context->lazyUpdate, overflow);
+    context->setQueryOverflow(overflow);
+
+    if(!waypoints.isEmpty())
+      paintWaypoints(&waypoints, drawWaypoint);
   }
 
   // VOR -------------------------------------------------
-  if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR) && !context->isOverflow())
+  if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR) && !context->isObjectOverflow())
   {
-    const QList<MapVor> *vors = mapQuery->getVors(curBox, context->mapLayer, context->lazyUpdate);
+    bool overflow = false;
+    const QList<MapVor> *vors = mapQuery->getVors(curBox, context->mapLayer, context->lazyUpdate, overflow);
+    context->setQueryOverflow(overflow);
+
     if(vors != nullptr)
-      paintVors(context, vors, context->drawFast);
+      paintVors(vors, context->drawFast);
   }
 
   // NDB -------------------------------------------------
-  if(context->mapLayer->isNdb() && context->objectTypes.testFlag(map::NDB) && !context->isOverflow())
+  if(context->mapLayer->isNdb() && context->objectTypes.testFlag(map::NDB) && !context->isObjectOverflow())
   {
-    const QList<MapNdb> *ndbs = mapQuery->getNdbs(curBox, context->mapLayer, context->lazyUpdate);
+    bool overflow = false;
+    const QList<MapNdb> *ndbs = mapQuery->getNdbs(curBox, context->mapLayer, context->lazyUpdate, overflow);
+    context->setQueryOverflow(overflow);
+
     if(ndbs != nullptr)
-      paintNdbs(context, ndbs, context->drawFast);
+      paintNdbs(ndbs, context->drawFast);
   }
 
   // Marker -------------------------------------------------
-  if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::ILS) && !context->isOverflow())
+  // Show only with ILS enabled
+  if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::MARKER) && !context->isObjectOverflow())
   {
-    const QList<MapMarker> *markers = mapQuery->getMarkers(curBox, context->mapLayer, context->lazyUpdate);
+    bool overflow = false;
+    const QList<MapMarker> *markers = mapQuery->getMarkers(curBox, context->mapLayer, context->lazyUpdate, overflow);
+    context->setQueryOverflow(overflow);
+
     if(markers != nullptr)
-      paintMarkers(context, markers, context->drawFast);
+      paintMarkers(markers, context->drawFast);
   }
 }
 
 /* Draw airways and texts */
-void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *airways, bool fast)
+void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 {
   QFontMetrics metrics = context->painter->fontMetrics();
 
@@ -126,25 +153,37 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     QVector<bool> positionReversed; // Line is reversed for text
   };
 
+  bool fill = context->flags2 & opts2::MAP_AIRWAY_TEXT_BACKGROUND;
+  float linewidthAirway = context->szF(context->thicknessAirway, 1.f);
+  float linewidthTrack = context->szF(context->thicknessAirway, 2.f);
+
   // Used to combine texts of different airway lines with the same coordinates into one text.
   // Key is line coordinates as text (avoid floating point compare) and
   // value is index into texts and airwayIndex
   QHash<QString, int> lines;
   // Contains combined text for overlapping airway lines and points to index or airway in airway list
   QVector<Place> textlist;
-  QPolygonF arrow = buildArrow(static_cast<float>(mapcolors::airwayBothPen.widthF() * 2.5));
+  QPolygonF arrowAirway = buildArrow(static_cast<float>(linewidthAirway * 2.5));
+  QPolygonF arrowTrack = buildArrow(static_cast<float>(linewidthTrack * 2.5));
+  Marble::GeoPainter *painter = context->painter;
 
   for(int i = 0; i < airways->size(); i++)
   {
     const MapAirway& airway = airways->at(i);
+    bool isTrack = airway.isTrack();
 
-    if(airway.type == map::JET && !context->objectTypes.testFlag(map::AIRWAYJ))
+    bool ident = (!isTrack && context->mapLayer->isAirwayIdent()) || (isTrack && context->mapLayer->isTrackIdent());
+    bool info = (!isTrack && context->mapLayer->isAirwayInfo()) || (isTrack && context->mapLayer->isTrackInfo());
+
+    if(airway.type == map::AIRWAY_JET && !context->objectTypes.testFlag(map::AIRWAYJ))
       continue;
-    if(airway.type == map::VICTOR && !context->objectTypes.testFlag(map::AIRWAYV))
+    if(airway.type == map::AIRWAY_VICTOR && !context->objectTypes.testFlag(map::AIRWAYV))
+      continue;
+    if(isTrack && !context->objectTypes.testFlag(map::TRACK))
       continue;
 
-    context->painter->setPen(mapcolors::penForAirway(airway));
-    context->painter->setBrush(context->painter->pen().color());
+    painter->setPen(QPen(mapcolors::colorForAirwayTrack(airway), isTrack ? linewidthTrack : linewidthAirway));
+    painter->setBrush(painter->pen().color());
 
     // Get start and end point of airway segment in screen coordinates
     int x1, y1, x2, y2;
@@ -166,25 +205,30 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
       if(context->objCount())
         return;
 
-      drawLine(context, Line(airway.from, airway.to));
+      drawLine(painter, Line(airway.from, airway.to));
 
       if(!fast)
       {
-        if(airway.direction != map::DIR_BOTH && !context->mapLayer->isAirwayIdent())
+        if(airway.direction != map::DIR_BOTH && !ident)
         {
           Line arrLine = airway.direction != map::DIR_FORWARD ?
                          Line(airway.from, airway.to) : Line(airway.to, airway.from);
-          paintArrowAlongLine(context->painter, arrLine, arrow, 0.5f);
+          paintArrowAlongLine(painter, arrLine, isTrack ? arrowTrack : arrowAirway, 0.5f);
         }
 
         // Build text index
         QString text;
-        if(context->mapLayer->isAirwayIdent())
+        if(ident)
           text += airway.name;
 
-        if(context->mapLayer->isAirwayInfo())
+        if(info)
         {
-          text += QString(tr(" / ")) + map::airwayTypeToShortString(airway.type);
+          text += QString(tr(" / "));
+
+          if(isTrack)
+            text += map::airwayTrackTypeToString(airway.type);
+          else
+            text += map::airwayTrackTypeToShortString(airway.type);
 
           QString altTxt = map::airwayAltTextShort(airway);
 
@@ -232,13 +276,20 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     }
   }
 
-  TextPlacement textPlacement(context->painter, this);
+  TextPlacement textPlacement(painter, this, QRect());
 
   // Draw texts ----------------------------------------
   if(!textlist.isEmpty())
   {
     int i = 0;
-    context->painter->setPen(mapcolors::airwayTextColor);
+    painter->setPen(mapcolors::airwayTextColor);
+    if(fill)
+    {
+      painter->setBackgroundMode(Qt::OpaqueMode);
+      painter->setBrush(mapcolors::textBoxColor);
+      painter->setBackground(mapcolors::textBoxColor);
+    }
+
     for(Place& place: textlist)
     {
       const MapAirway& airway = airways->at(place.airwayIndexByText.first());
@@ -264,11 +315,11 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
         }
         text = place.texts.join(tr(", "));
 
-        context->painter->translate(xt, yt);
-        context->painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
-        context->painter->drawText(-context->painter->fontMetrics().width(text) / 2,
-                                   context->painter->fontMetrics().ascent(), text);
-        context->painter->resetTransform();
+        painter->translate(xt, yt);
+        painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
+        painter->drawText(-painter->fontMetrics().width(text) / 2,
+                          painter->fontMetrics().ascent() + linewidthAirway, text);
+        painter->resetTransform();
       }
       i++;
     }
@@ -276,63 +327,76 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
 }
 
 /* Draw waypoints. If airways are enabled corresponding waypoints are drawn too */
-void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoint> *waypoints, bool drawWaypoint)
+void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool drawWaypoint)
 {
   bool drawAirwayV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
   bool drawAirwayJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
+  bool drawTrack = context->mapLayer->isTrackWaypoint() && context->objectTypes.testFlag(map::TRACK);
 
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
+  // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
+  QMargins margins(50, 10, 10, 10);
   for(const MapWaypoint& waypoint : *waypoints)
   {
     // If waypoints are off, airways are on and waypoint has no airways skip it
-    if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways)))
+    if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways) ||
+         (drawTrack && waypoint.hasTracks)))
       continue;
 
-    if(context->routeIdMap.contains(waypoint.getRef()))
+    if(context->routeProcIdMap.contains(waypoint.getRef()))
       continue;
 
-    int x, y;
-    bool visible = wToS(waypoint.position, x, y);
-
-    if(visible)
+    float x, y;
+    if(wToSBuf(waypoint.position, x, y, margins))
     {
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+      int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
+
+      // Use minimum size for airway waypoints if respective airways are shown
+      if((waypoint.hasJetAirways && drawAirwayJ) || (waypoint.hasVictorAirways && drawAirwayV) ||
+         (waypoint.hasTracks && drawTrack))
+        size = std::max(5, size);
+
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
 
       // If airways are drawn force display of the respecive waypoints
       if(context->mapLayer->isWaypointName() || // Draw all waypoint names or ...
          (context->mapLayer->isAirwayIdent() && // Draw names for specific airway waypoints
-          ((drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways))))
+          ((drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways))) ||
+         (context->mapLayer->isTrackIdent() && // Draw names for specific airway waypoints
+          (drawTrack && waypoint.hasTracks)))
         symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT, size, fill);
     }
   }
 }
 
-void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, bool drawFast)
+void MapPainterNav::paintVors(const QList<MapVor> *vors, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
+  int vorSize = context->mapLayer->isVorLarge() ? size * 5 : 0;
+
+  // Use margins for text placed on the left side of the object to avoid disappearing at the right screen border
+  // Also consider VOR size
+  int margin = std::max(vorSize, size);
+  QMargins margins(margin, margin, std::max(margin, 50), margin);
+
   for(const MapVor& vor : *vors)
   {
-    if(context->routeIdMap.contains(vor.getRef()))
+    if(context->routeProcIdMap.contains(vor.getRef()))
       continue;
 
-    int x, y;
-    bool visible = wToS(vor.position, x, y);
-
-    if(visible)
+    float x, y;
+    if(wToSBuf(vor.position, x, y, margins))
     {
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
-      symbolPainter->drawVorSymbol(context->painter, vor, x, y,
-                                   size, false, drawFast,
-                                   context->mapLayerEffective->isVorLarge() ? size * 5 : 0);
+      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, false, drawFast, vorSize);
 
       textflags::TextFlags flags;
 
@@ -346,24 +410,26 @@ void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, 
   }
 }
 
-void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, bool drawFast)
+void MapPainterNav::paintNdbs(const QList<MapNdb> *ndbs, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
+
+  // Use margins for text placed on the bottom of the object to avoid disappearing at the top screen border
+  QMargins margins(size, std::max(size, 50), size, size);
+
   for(const MapNdb& ndb : *ndbs)
   {
-    if(context->routeIdMap.contains(ndb.getRef()))
+    if(context->routeProcIdMap.contains(ndb.getRef()))
       continue;
 
-    int x, y;
-    bool visible = wToS(ndb.position, x, y);
-
-    if(visible)
+    float x, y;
+    if(wToSBuf(ndb.position, x, y, margins))
     {
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
       symbolPainter->drawNdbSymbol(context->painter, x, y, size, false, drawFast);
 
       textflags::TextFlags flags;
@@ -378,21 +444,23 @@ void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, 
   }
 }
 
-void MapPainterNav::paintMarkers(PaintContext *context, const QList<MapMarker> *markers, bool drawFast)
+void MapPainterNav::paintMarkers(const QList<MapMarker> *markers, bool drawFast)
 {
   int transparency = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
 
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getMarkerSymbolSize());
+  QMargins margins(size, size, size, size);
+
   for(const MapMarker& marker : *markers)
   {
-    int x, y;
-    bool visible = wToS(marker.position, x, y);
+    float x, y;
+    bool visible = wToSBuf(marker.position, x, y, margins);
 
     if(visible)
     {
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getMarkerSymbolSize());
       symbolPainter->drawMarkerSymbol(context->painter, marker, x, y, size, drawFast);
 
       if(context->mapLayer->isMarkerInfo())
@@ -400,8 +468,8 @@ void MapPainterNav::paintMarkers(PaintContext *context, const QList<MapMarker> *
         QString type = marker.type.toLower();
         type[0] = type.at(0).toUpper();
         x -= size / 2 + 2;
-        symbolPainter->textBox(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
-                               textatt::BOLD | textatt::RIGHT, transparency);
+        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
+                                textatt::RIGHT, transparency);
       }
     }
   }

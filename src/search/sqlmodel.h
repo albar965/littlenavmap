@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include "geo/rect.h"
 
-#include <functional>
+#include "search/querybuilder.h"
 
 #include <QSqlQueryModel>
 
@@ -50,7 +50,10 @@ public:
    * @param columnList column descriptors that will be used to build the SQL queries
    */
   SqlModel(QWidget *parent, atools::sql::SqlDatabase *sqlDb, const ColumnList *columnList);
-  virtual ~SqlModel();
+  virtual ~SqlModel() override;
+
+  /* Filter by using query builder callback */
+  void filterByBuilder(const QueryBuilder& builder);
 
   /* Creates an include filer for value at index in the table */
   void filterIncluding(QModelIndex index);
@@ -192,7 +195,7 @@ private:
   void clearWhereConditions();
   void filterBy(QModelIndex index, bool exclude);
   QString  sortOrderToSql(Qt::SortOrder order);
-  QVariant defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+  QVariant defaultDataHandler(int, int, const Column *, const QVariant&,
                               const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   void updateTotalCount();
   void buildSqlWhereValue(QVariant& whereValue) const;
@@ -213,6 +216,8 @@ private:
 
   /* A bounding rectangle query is used if this is valid */
   atools::geo::Rect boundingRect;
+
+  QueryBuilder queryBuilder;
 
   /* Maps column name to where condition struct */
   QHash<QString, WhereCondition> whereConditionMap;

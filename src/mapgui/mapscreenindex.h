@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,37 @@
 #define LITTLENAVMAP_MAPSCREENINDEX_H
 
 #include "fs/sc/simconnectdata.h"
+#include "common/mapflags.h"
 
-#include "route/route.h"
+namespace atools {
+namespace geo {
+class Line;
+}
+}
+
+namespace proc {
+struct MapProcedureLeg;
+struct MapProcedureLegs;
+}
 
 namespace map {
-struct MapSearchResult;
-
+struct MapResult;
+struct MapAirport;
+struct MapVor;
+struct MapNdb;
+struct MapWaypoint;
+struct MapIls;
+struct MapUserpointRoute;
+struct MapAirway;
+struct MapParking;
+struct MapHelipad;
+struct MapAirspace;
+struct MapUserpoint;
+struct MapLogbookEntry;
+struct RangeMarker;
+struct DistanceMarker;
+struct Hold;
+struct TrafficPattern;
 }
 
 namespace Marble {
@@ -32,8 +57,11 @@ class GeoDataLatLonBox;
 }
 
 class MapPaintWidget;
+class AirwayTrackQuery;
 class AirportQuery;
 class MapPaintLayer;
+class MapQuery;
+class CoordinateConverter;
 
 /*
  * Keeps an indes of certain map objects like flight plan lines, airway lines in screen coordinates
@@ -49,6 +77,10 @@ public:
 
   void copy(const MapScreenIndex& other);
 
+  /* Do not allow copying */
+  MapScreenIndex(MapScreenIndex const&) = delete;
+  MapScreenIndex& operator=(MapScreenIndex const&) = delete;
+
   /*
    * Finds all objects near the screen coordinates with maximal distance of maxDistance to xs/ys.
    * Gets airways, visible map objects like airports, navaids and lightlighted objects.
@@ -56,7 +88,7 @@ public:
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
-  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+  void getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result,
                      map::MapObjectQueryTypes types) const;
 
   /* Get nearest distance measurement line index (only the endpoint)
@@ -73,7 +105,7 @@ public:
   int getNearestRouteLegIndex(int xs, int ys, int maxDistance) const;
 
   /* Get index of nearest flight plan waypoint or -1 if nothing was found nearby. */
-  int getNearestRoutePointIndex(int xs, int ys, int maxDistance) const;
+  int getNearestRoutePointIndex(int xs, int ys, int maxDistance, bool editableOnly) const;
 
   /* Update geometry after a route or scroll or map change */
   void updateAllGeometry(const Marble::GeoDataLatLonBox& curBox);
@@ -104,27 +136,18 @@ public:
   }
 
   /* Get objects that are highlighted because of selected rows in a search result table */
-  void changeSearchHighlights(const map::MapSearchResult& newHighlights)
+  void changeSearchHighlights(const map::MapResult& newHighlights);
+
+  const map::MapResult& getSearchHighlights() const
   {
-    searchHighlights = newHighlights;
+    return *searchHighlights;
   }
 
-  const map::MapSearchResult& getSearchHighlights() const
-  {
-    return searchHighlights;
-  }
-
-  void setApproachLegHighlights(const proc::MapProcedureLeg *leg)
-  {
-    if(leg != nullptr)
-      approachLegHighlights = *leg;
-    else
-      approachLegHighlights = proc::MapProcedureLeg();
-  }
+  void setApproachLegHighlights(const proc::MapProcedureLeg *leg);
 
   const proc::MapProcedureLeg& getApproachLegHighlights() const
   {
-    return approachLegHighlights;
+    return *approachLegHighlights;
   }
 
   /* Get range rings */
@@ -176,6 +199,11 @@ public:
     return simData.getUserAircraftConst();
   }
 
+  const atools::fs::sc::SimConnectData& getSimConnectData() const
+  {
+    return simData;
+  }
+
   const atools::fs::sc::SimConnectUserAircraft& getLastUserAircraft() const
   {
     return lastSimData.getUserAircraftConst();
@@ -203,12 +231,12 @@ public:
 
   const proc::MapProcedureLegs& getProcedureHighlight() const
   {
-    return approachHighlight;
+    return *approachHighlight;
   }
 
   proc::MapProcedureLegs& getProcedureHighlight()
   {
-    return approachHighlight;
+    return *approachHighlight;
   }
 
   void setProfileHighlight(const atools::geo::Pos& value)
@@ -241,22 +269,28 @@ public:
     airwayHighlights = value;
   }
 
-private:
-  void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
-  void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
+  /* For debug functions */
+  QList<std::pair<int, QLine> > getAirwayLines() const
+  {
+    return airwayLines;
+  }
 
-  void getNearestIls(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
-  void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result) const;
-  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+private:
+  void getNearestAirways(int xs, int ys, int maxDistance, map::MapResult& result) const;
+  void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapResult& result) const;
+
+  void getNearestIls(int xs, int ys, int maxDistance, map::MapResult& result) const;
+  void getNearestAirspaces(int xs, int ys, map::MapResult& result) const;
+  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
                             map::MapObjectQueryTypes types) const;
-  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
                                      map::MapObjectQueryTypes types) const;
   void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids,
                                             map::MapAirspaceSources source,
                                             const Marble::GeoDataLatLonBox& curBox, bool highlights);
   void updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight);
 
-  void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::LineString& line,
+  void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
                                 const Marble::GeoDataLatLonBox& curBox,
                                 const CoordinateConverter& conv);
 
@@ -269,13 +303,14 @@ private:
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapPaintWidget *mapPaintWidget;
   MapQuery *mapQuery;
+  AirwayTrackQuery *airwayQuery;
   AirportQuery *airportQuery;
   MapPaintLayer *paintLayer;
 
   /* All highlights from search windows - also online airspaces */
-  map::MapSearchResult searchHighlights;
-  proc::MapProcedureLeg approachLegHighlights;
-  proc::MapProcedureLegs approachHighlight;
+  map::MapResult *searchHighlights;
+  proc::MapProcedureLeg *approachLegHighlights;
+  proc::MapProcedureLegs *approachHighlight;
 
   /* All airspace highlights from information window */
   QList<map::MapAirspace> airspaceHighlights;
@@ -297,10 +332,13 @@ private:
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;
-  QList<std::pair<int, QPoint> > routePoints;
+  QList<std::pair<int, QPoint> > routePoints; /* Editable points */
+  QList<std::pair<int, QPoint> > routePointsAll; /* All points */
 
   /* Geometry objects that are cached in screen coordinate system for faster access to tooltips etc. */
   QList<std::pair<int, QLine> > airwayLines;
+
+  /* Collects logbook entry route and direct line geometry */
   QList<std::pair<int, QLine> > logEntryLines;
   QList<std::pair<map::MapAirspaceId, QPolygon> > airspacePolygons;
   QList<std::pair<int, QPolygon> > ilsPolygons;

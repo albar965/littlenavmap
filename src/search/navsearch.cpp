@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   };
 
   // Show/hide all search options menu action
-  connect(ui->actionNavSearchShowAllOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionNavSearchShowAllOptions, &QAction::toggled, this, [ = ](bool state)
   {
     for(QAction *a: navSearchMenuActions)
       a->setChecked(state);
@@ -103,30 +103,29 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   // Build SQL query conditions
   QStringList typeCondMap;
   typeCondMap << QString()
-              << "type = 'VH'"
-              << "type = 'VL'"
-              << "type = 'VT'"
-              << "type = 'NHH'"
-              << "type = 'NH'"
-              << "type = 'NMH'"
-              << "type = 'NCP'"
-              << "type = 'WN'"
-              << "type = 'WU'"
-              << "type = 'V'"
-              << "type = 'N'";
+              << "type = 'VH'"  // VOR/VORTAC - High
+              << "type = 'VL'"  // VOR/VORTAC - Low
+              << "type = 'VT'"  // VOR/VORTAC - Terminal
+              << "type = 'NHH'" // NDB - HH
+              << "type = 'NH'"  // NDB - H
+              << "type = 'NMH'" // NDB - MH
+              << "type = 'NCP'" // NDB - Compass Locator
+              << "type = 'V'"   // Waypoint - VOR
+              << "type = 'N'"  // Waypoint - NDB
+              << "type in ('WN', 'WU', 'FAF', 'IAF', 'VFR', 'RNAV', 'OA')"; // Waypoint - Other
 
   QStringList navTypeCondMap;
   navTypeCondMap << QString()
-                 << "(nav_type like ('V%') or nav_type in ('D', 'TC'))"
-                 << "(nav_type like ('V%') or nav_type in ('D', 'TC', 'N'))"
-                 << "nav_type in ('VD')"
-                 << "nav_type in ('V')"
-                 << "nav_type in ('D')"
-                 << "nav_type in ('VT')"
-                 << "nav_type in ('TC', 'TCD')"
-                 << "nav_type = 'N'"
-                 << "nav_type = 'W'"
-                 << "nav_type = 'W' and "
+                 << "(nav_type like ('V%') or nav_type in ('D', 'TC'))"      // All VOR/VORTAC/TACAN
+                 << "(nav_type like ('V%') or nav_type in ('D', 'TC', 'N'))" // All VOR/VORTAC/TACAN/NDB
+                 << "nav_type = 'VD'"                                        // Only VOR-DME
+                 << "nav_type = 'V'"                                         // Only VOR
+                 << "nav_type = 'D'"                                         // Only DME
+                 << "nav_type = 'VT'"                                        // Only VORTAC
+                 << "nav_type in ('TC', 'TCD')"                              // Only TACAN
+                 << "nav_type = 'N'"                                         // All NDB
+                 << "nav_type = 'W'"                                         // All Waypoints
+                 << "nav_type = 'W' and "                                    // All Waypoints on Airways
      "(waypoint_num_victor_airway > 0 or waypoint_num_jet_airway > 0)";
 
   // Default view column descriptors
@@ -226,20 +225,20 @@ void NavSearch::connectSearchSlots()
                                        ui->actionNavSearchShowSceneryOptions});
 
   // Drop down menu actions
-  connect(ui->actionNavSearchShowTypeOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionNavSearchShowTypeOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->gridLayoutNavSearchType}, state,
                                               {ui->lineNavTypeSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state,
                                               {ui->lineNavDistanceSearch});
     updateButtonMenu();
   });
-  connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
+  connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, this, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state,
                                               {ui->lineNavScenerySearch});
@@ -317,11 +316,9 @@ void NavSearch::restoreViewState(bool distSearchActive)
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
-QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                                      const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
-  Q_UNUSED(roleValue);
-
   switch(role)
   {
     case Qt::DisplayRole:
@@ -388,7 +385,7 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
   return displayRoleValue.toString();
 }
 
-void NavSearch::getSelectedMapObjects(map::MapSearchResult& result) const
+void NavSearch::getSelectedMapObjects(map::MapResult& result) const
 {
   if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;
@@ -409,7 +406,7 @@ void NavSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 
       // All objects are fully populated
       QString navType = rec.valueStr("nav_type");
-      map::MapObjectTypes type = map::navTypeToMapObjectType(navType);
+      map::MapTypes type = map::navTypeToMapObjectType(navType);
 
       if(type == map::WAYPOINT)
       {

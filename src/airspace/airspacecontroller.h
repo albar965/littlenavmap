@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define LNM_AIRSPACECONTROLLER_H
 
 #include "common/maptypes.h"
+#include "fs/fspaths.h"
 
 #include <QObject>
 
@@ -70,7 +71,8 @@ public:
 
   /* Get airspaces from all enabled sources for map display */
   void getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                    map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy, map::MapAirspaceSources src);
+                    map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy,
+                    map::MapAirspaceSources sources, bool& overflow);
 
   /* Get Geometry for any airspace and source database */
   const atools::geo::LineString *getAirspaceGeometry(map::MapAirspaceId id);
@@ -141,7 +143,7 @@ private:
 
   void getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
                             const MapLayer *mapLayer, map::MapAirspaceFilter filter, float flightPlanAltitude,
-                            bool lazy, map::MapAirspaceSources src);
+                            bool lazy, map::MapAirspaceSources src, bool& overflow);
   void preLoadAirpaces();
   void postLoadAirpaces();
 

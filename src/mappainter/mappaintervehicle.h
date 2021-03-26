@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,40 +48,32 @@ class MapPainterVehicle :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterVehicle(MapPaintWidget* mapPaintWidget, MapScale *mapScale);
-  virtual ~MapPainterVehicle();
+  MapPainterVehicle(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
+  virtual ~MapPainterVehicle() override;
 
-  virtual void render(PaintContext *context) = 0;
+  virtual void render() override = 0;
 
 protected:
-  void paintTrack(const PaintContext *context);
+  void paintAircraftTrack();
 
-  void paintUserAircraft(const PaintContext *context,
-                         const atools::fs::sc::SimConnectUserAircraft& userAircraft, float x, float y);
-  void paintAiVehicle(const PaintContext *context,
-                      const atools::fs::sc::SimConnectAircraft& vehicle, bool forceLabel);
+  void paintUserAircraft(const atools::fs::sc::SimConnectUserAircraft& userAircraft, float x, float y);
+  void paintAiVehicle(const atools::fs::sc::SimConnectAircraft& vehicle, bool forceLabel);
 
-  void paintTextLabelUser(const PaintContext *context, float x, float y, int size,
-                          const atools::fs::sc::SimConnectUserAircraft& aircraft);
-  void paintTextLabelAi(const PaintContext *context, float x, float y, int size,
-                        const atools::fs::sc::SimConnectAircraft& aircraft, bool forceLabel);
+  void paintTextLabelUser(float x, float y, int size, const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void paintTextLabelAi(float x, float y, int size, const atools::fs::sc::SimConnectAircraft& aircraft,
+                        bool forceLabel);
   void appendClimbSinkText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft);
   void appendAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
                      bool registration, bool type, bool airline, bool flightnumber);
-  void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
-                       bool ias, bool gs);
+  void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft, bool ias, bool gs,
+                       bool tas);
   void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft);
 
-  void paintWindPointer(const PaintContext *context, const atools::fs::sc::SimConnectUserAircraft& aircraft,
-                        int x, int y);
-  void paintTextLabelWind(const PaintContext *context, int x, int y, int size,
-                          const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, int x, int y);
+  void paintTextLabelWind(int x, int y, int size, const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* Calculate rotation for aircraft icon */
-  float calcRotation(const PaintContext *context, const atools::fs::sc::SimConnectAircraft& aircraft);
-
-  /* Minimum length in pixel of a track segment to be drawn */
-  static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
+  float calcRotation(const atools::fs::sc::SimConnectAircraft& aircraft);
 
   static Q_DECL_CONSTEXPR int WIND_POINTER_SIZE = 40;
 

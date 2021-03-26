@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ public:
   virtual ~ProcedureSearch() override;
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
-  void showProcedures(map::MapAirport airport);
+  void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
 
   /* Save tree view state */
   virtual void saveState() override;
@@ -79,9 +79,11 @@ public:
   virtual void postDatabaseLoad() override;
 
   /* No op overrides */
-  virtual void getSelectedMapObjects(map::MapSearchResult& result) const override;
+  virtual void getSelectedMapObjects(map::MapResult&) const override;
   virtual void connectSearchSlots() override;
   virtual void updateUnits() override;
+
+  /* Overrides with implementation */
   virtual void updateTableSelection(bool noFollow) override;
   virtual void clearSelection() override;
   virtual bool hasSelection() const override;
@@ -99,10 +101,10 @@ signals:
   void routeInsertProcedure(const proc::MapProcedureLegs& legs, const QString& sidStarRunway);
 
   /* Show information info window on navaid on double click */
-  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
+  void showInformation(map::MapResult result);
 
   /* Show a map object in the search panel (context menu) */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
+  void showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select);
 
 private:
   friend class TreeEventFilter;
@@ -133,7 +135,7 @@ private:
 
   void itemSelectionChanged();
   void itemSelectionChangedInternal(bool noFollow);
-  void itemDoubleClicked(QTreeWidgetItem *item, int column);
+  void itemDoubleClicked(QTreeWidgetItem *item, int);
 
   /* Load legs dynamically as approaches or transitions are expanded */
   void itemExpanded(QTreeWidgetItem *item);
@@ -145,6 +147,7 @@ private:
   void showOnMapSelected();
   void approachAttachSelected();
   void attachApproach(QString runway);
+  void showApproachTriggered();
 
   // Save and restore expanded and selected item state
   QBitArray saveTreeViewState();
@@ -178,13 +181,9 @@ private:
   void updateTreeHeader();
   void createFonts();
 
-  /* Get parent items of a leg item or current */
-  QTreeWidgetItem *parentApproachItem(QTreeWidgetItem *item) const;
-  QTreeWidgetItem *parentTransitionItem(QTreeWidgetItem *item) const;
-
   void updateHeaderLabel();
   void filterIndexChanged(int index);
-  void filterIndexRunwayChanged(int index);
+  void filterIndexRunwayChanged(int);
   void clearRunwayFilter();
   void updateFilterBoxes();
   void resetSearch();
@@ -212,10 +211,11 @@ private:
 
   InfoQuery *infoQuery = nullptr;
   ProcedureQuery *procedureQuery = nullptr;
-  AirportQuery *airportQuery = nullptr;
+  AirportQuery *airportQueryNav = nullptr;
   QTreeWidget *treeWidget = nullptr;
   QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;
-  map::MapAirport currentAirportNav;
+
+  map::MapAirport currentAirportNav, currentAirportSim;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QBitArray> recentTreeState;
@@ -224,7 +224,7 @@ private:
 
   FilterIndex filterIndex = FILTER_ALL_PROCEDURES;
   TreeEventFilter *treeEventFilter = nullptr;
-
+  bool errors = false;
 };
 
 #endif // LITTLENAVMAP_PROCTREECONTROLLER_H

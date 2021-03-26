@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ using atools::gui::Dialog;
 using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 
-CsvExporter::CsvExporter(QWidget *parent, SqlController *controller) :
-  Exporter(parent, controller)
+CsvExporter::CsvExporter(QWidget *parent, SqlController *controllerParam)
+  : Exporter(parent, controllerParam)
 {
 }
 
@@ -53,8 +53,7 @@ QString CsvExporter::saveCsvFileDialog()
   return dialog->saveFileDialog(tr("Export CSV Document"),
                                 tr("CSV Documents (*.csv);;All Files (*)"),
                                 "csv", lnm::EXPORT_FILEDIALOG,
-                                QString(), QString(), false,
-                                OptionData::instance().getFlags2() & opts2::PROPOSE_FILENAME);
+                                QString(), QString(), false);
 }
 
 #ifdef ENABLE_CSV_EXPORT

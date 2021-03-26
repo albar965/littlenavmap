@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
 #ifndef LITTLENAVMAP_COLUMNLIST_H
 #define LITTLENAVMAP_COLUMNLIST_H
 
+#include "search/querybuilder.h"
+
 #include <QHash>
-#include <QObject>
-#include <QVector>
-#include <QStringList>
 
 class QWidget;
 class Column;
@@ -29,6 +28,7 @@ class QSpinBox;
 class QComboBox;
 class QCheckBox;
 class QPushButton;
+class QStringList;
 
 /*
  * A list of column descriptors that define behavior and display in the table
@@ -38,7 +38,7 @@ class ColumnList
 {
 public:
   ColumnList(const QString& tableName, const QString& idColumnName);
-  virtual ~ColumnList();
+  ~ColumnList();
 
   /* Get column descriptor for the given query column name or alias */
   const Column *getColumn(int index) const;
@@ -106,7 +106,18 @@ public:
 
   void updateUnits();
 
+  /* Set a callback object which can build a where clause for more than one column.
+   *  Only one per search can be used. */
+  void setQueryBuilder(const QueryBuilder& builder);
+
+  const QueryBuilder& getQueryBuilder() const
+  {
+    return queryBuilder;
+  }
+
 private:
+  QueryBuilder queryBuilder;
+
   QSpinBox *minDistanceWidget = nullptr, *maxDistanceWidget = nullptr;
   QString minDistanceWidgetSuffix, maxDistanceWidgetSuffix;
   QCheckBox *distanceCheckBox = nullptr;

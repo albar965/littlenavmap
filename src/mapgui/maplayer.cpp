@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,15 +42,16 @@ bool MapLayer::hasSameQueryParametersAirspace(const MapLayer *other) const
   // Or any airspace parameter which needs a new query
   return layerAirspaceCenter == other->layerAirspaceCenter &&
          layerAirspaceIcao == other->layerAirspaceIcao &&
-         layerAirspaceFir == other->layerAirspaceFir &&
+         layerAirspaceFg == other->layerAirspaceFg &&
+         layerAirspaceFirUir == other->layerAirspaceFirUir &&
          layerAirspaceRestricted == other->layerAirspaceRestricted &&
          layerAirspaceSpecial == other->layerAirspaceSpecial &&
          layerAirspaceOther == other->layerAirspaceOther;
 }
 
-bool MapLayer::hasSameQueryParametersAirway(const MapLayer *other) const
+bool MapLayer::hasSameQueryParametersAirwayTrack(const MapLayer *other) const
 {
-  return layerAirway == other->layerAirway;
+  return layerAirway == other->layerAirway && layerTrack == other->layerTrack;
 }
 
 bool MapLayer::hasSameQueryParametersVor(const MapLayer *other) const
@@ -95,9 +96,15 @@ MapLayer& MapLayer::approach(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::approachTextAndDetail(bool value)
+MapLayer& MapLayer::approachDetail(bool value)
 {
-  layerApproachTextAndDetail = value;
+  layerApproachDetail = value;
+  return *this;
+}
+
+MapLayer& MapLayer::approachText(bool value)
+{
+  layerApproachText = value;
   return *this;
 }
 
@@ -340,6 +347,30 @@ MapLayer& MapLayer::airwayInfo(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::track(bool value)
+{
+  layerTrack = value;
+  return *this;
+}
+
+MapLayer& MapLayer::trackWaypoint(bool value)
+{
+  layerTrackWaypoint = value;
+  return *this;
+}
+
+MapLayer& MapLayer::trackIdent(bool value)
+{
+  layerTrackIdent = value;
+  return *this;
+}
+
+MapLayer& MapLayer::trackInfo(bool value)
+{
+  layerTrackInfo = value;
+  return *this;
+}
+
 MapLayer& MapLayer::airspaceCenter(bool value)
 {
   layerAirspaceCenter = value;
@@ -352,9 +383,15 @@ MapLayer& MapLayer::airspaceIcao(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::airspaceFir(bool value)
+MapLayer& MapLayer::airspaceFg(bool value)
 {
-  layerAirspaceFir = value;
+  layerAirspaceFg = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airspaceFirUir(bool value)
+{
+  layerAirspaceFirUir = value;
   return *this;
 }
 
@@ -484,7 +521,7 @@ MapLayer& MapLayer::userpointInfo(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::userpoinSymbolSize(int size)
+MapLayer& MapLayer::userpointSymbolSize(int size)
 {
   layerUserpointSymbolSize = size;
   return *this;

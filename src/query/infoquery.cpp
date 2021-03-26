@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,16 +30,13 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
 
-InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav)
-  : dbSim(sqlDb), dbNav(sqlDbNav)
+InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack)
+  : dbSim(sqlDb), dbNav(sqlDbNav), dbTrack(sqlDbTrack)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   airportCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportCache", 100).toInt());
   vorCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "VorCache", 100).toInt());
   ndbCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "NdbCache", 100).toInt());
-  waypointCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "WaypointCache", 100).toInt());
-  airwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirwayCache", 100).toInt());
-  airwayWaypointCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirwayWpCache", 100).toInt());
   runwayEndCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayEndCache", 100).toInt());
   ilsCacheSim.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "IlsCache", 100).toInt());
   ilsCacheNav.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "IlsCache", 100).toInt());
@@ -211,23 +208,16 @@ const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
   return query::cachedRecord(ndbCache, ndbQuery, ndbId);
 }
 
-const atools::sql::SqlRecord *InfoQuery::getWaypointInformation(int waypointId)
+atools::sql::SqlRecord InfoQuery::getTrackMetadata(int trackId)
 {
-  waypointQuery->bindValue(":id", waypointId);
-  return query::cachedRecord(waypointCache, waypointQuery, waypointId);
-}
-
-const atools::sql::SqlRecord *InfoQuery::getAirwayInformation(int airwayId)
-{
-  airwayQuery->bindValue(":id", airwayId);
-  return query::cachedRecord(airwayCache, airwayQuery, airwayId);
-}
-
-const atools::sql::SqlRecordVector *InfoQuery::getAirwayWaypointInformation(const QString& name, int fragment)
-{
-  airwayWaypointQuery->bindValue(":name", name);
-  airwayWaypointQuery->bindValue(":fragment", fragment);
-  return query::cachedRecordVector(airwayWaypointCache, airwayWaypointQuery, {name, fragment});
+  SqlQuery query(dbTrack);
+  query.prepare("select m.* from track t join trackmeta m on t.trackmeta_id = m.trackmeta_id where track_id = :id");
+  query.bindValue(":id", trackId);
+  query.exec();
+  if(query.next())
+    return query.record();
+  else
+    return SqlRecord();
 }
 
 void InfoQuery::initQueries()
@@ -262,15 +252,6 @@ void InfoQuery::initQueries()
                     "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                     "where ndb_id = :id");
 
-  waypointQuery = new SqlQuery(dbNav);
-  waypointQuery->prepare("select * from waypoint "
-                         "join bgl_file on waypoint.file_id = bgl_file.bgl_file_id "
-                         "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
-                         "where waypoint_id = :id");
-
-  airwayQuery = new SqlQuery(dbNav);
-  airwayQuery->prepare("select * from airway where airway_id = :id");
-
   runwayQuery = new SqlQuery(dbSim);
   runwayQuery->prepare("select * from runway where airport_id = :id order by heading");
 
@@ -300,18 +281,6 @@ void InfoQuery::initQueries()
   ilsQuerySimByName = new SqlQuery(dbSim);
   ilsQuerySimByName->prepare("select * from ils where loc_airport_ident = :apt and loc_runway_name = :rwy");
 
-  airwayWaypointQuery = new SqlQuery(dbNav);
-  airwayWaypointQuery->prepare("select "
-                               " w1.ident as from_ident, w1.region as from_region, "
-                               " w1.lonx as from_lonx, w1.laty as from_laty, "
-                               " w2.ident as to_ident, w2.region as to_region, "
-                               " w2.lonx as to_lonx, w2.laty as to_laty "
-                               " from airway a "
-                               " join waypoint w1 on w1.waypoint_id = a.from_waypoint_id "
-                               " join waypoint w2 on w2.waypoint_id = a.to_waypoint_id "
-                               " where airway_name = :name and airway_fragment_no = :fragment "
-                               " order by a.sequence_no");
-
   vorIdentRegionQuery = new SqlQuery(dbNav);
   vorIdentRegionQuery->prepare("select * from vor where ident = :ident and region = :region");
 
@@ -330,9 +299,6 @@ void InfoQuery::deInitQueries()
   airportCache.clear();
   vorCache.clear();
   ndbCache.clear();
-  waypointCache.clear();
-  airwayCache.clear();
-  airwayWaypointCache.clear();
   runwayEndCache.clear();
   ilsCacheSim.clear();
   ilsCacheNav.clear();
@@ -360,12 +326,6 @@ void InfoQuery::deInitQueries()
   delete ndbQuery;
   ndbQuery = nullptr;
 
-  delete waypointQuery;
-  waypointQuery = nullptr;
-
-  delete airwayQuery;
-  airwayQuery = nullptr;
-
   delete runwayQuery;
   runwayQuery = nullptr;
 
@@ -392,9 +352,6 @@ void InfoQuery::deInitQueries()
 
   delete ilsQueryNavById;
   ilsQueryNavById = nullptr;
-
-  delete airwayWaypointQuery;
-  airwayWaypointQuery = nullptr;
 
   delete vorIdentRegionQuery;
   vorIdentRegionQuery = nullptr;

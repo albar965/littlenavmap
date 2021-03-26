@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,15 @@
 #include <QObject>
 #include <QPoint>
 
-class QResizeEvent;
-class QWheelEvent;
-class QMouseEvent;
+class ProfileLabelWidget;
+class ProfileWidget;
 class QKeyEvent;
+class QMouseEvent;
+class QResizeEvent;
 class QScrollArea;
 class QScrollBar;
-class ProfileWidget;
-class ProfileLabelWidget;
+class QWheelEvent;
+class QLabel;
 
 namespace atools {
 namespace geo {
@@ -103,6 +104,11 @@ public:
     profileTopOffset = value;
   }
 
+  /* Show or hide tooltip. Windows will be positioned on the left or right side depending on global mouse position */
+  void showTooltip(const QPoint& globalPos, const QString& text);
+  void hideTooltip();
+  bool isTooltipVisible() const;
+
 signals:
   /* Show flight plan waypoint or user position on map. x is widget position. */
   void showPosAlongFlightplan(int x, bool doubleClick);
@@ -116,13 +122,16 @@ private:
   void horizScrollBarChanged();
 
   /* Show scrollbars on scroll area */
-  void showScrollbars(bool show);
+  void showScrollbarsToggled(bool show);
 
   /* Show label widget on the left side */
-  void showLabels(bool show);
+  void showLabelsToggled(bool show);
 
   /* Show right side of split window from action in menu */
-  void showZoom(bool show);
+  void showZoomToggled(bool show);
+
+  /* Enable or disable tooltip */
+  void showTooltipToggled(bool show);
 
   /* Help push button clicked */
   void helpClicked();
@@ -175,6 +184,9 @@ private:
   QScrollArea *scrollArea;
   QWidget *viewport;
   ProfileLabelWidget *labelWidget = nullptr;
+
+  /* Frameless label widget  */
+  QLabel *tooltipLabel = nullptr;
 
   /* Mouse dragging position on button down */
   QPoint startDragPos;

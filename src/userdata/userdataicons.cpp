@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -161,8 +161,6 @@ QString UserdataIcons::getDefaultType(const QString& type)
 void UserdataIcons::loadIcon(const QFileInfo& entry)
 {
   static QRegularExpression typeRegexp("userpoint_(.+)\\.(svg|png|jpg|gif)");
-  QString name = atools::settings::Settings::instance().getOverloadedPath(entry.filePath());
-
   QRegularExpressionMatch match = typeRegexp.match(entry.fileName());
   if(match.hasMatch())
   {

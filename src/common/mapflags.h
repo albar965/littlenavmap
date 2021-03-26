@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,8 +48,11 @@ Q_DECL_CONSTEXPR static float MIN_GROUND_SPEED = 30.f;
 /* Do not draw barbs below this altitude */
 Q_DECL_CONSTEXPR static float MIN_WIND_BARB_ALTITUDE = 4000.f;
 
+/* Maximum number of objects to query and show on map */
+Q_DECL_CONSTEXPR static int MAX_MAP_OBJECTS = 8000;
+
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
-enum MapObjectType
+enum MapType
 {
   NONE = 0,
   AIRPORT = 1 << 0,
@@ -65,8 +68,8 @@ enum MapObjectType
   AIRWAY = 1 << 10,
   AIRWAYV = 1 << 11,
   AIRWAYJ = 1 << 12,
-  FLIGHTPLAN = 1 << 13, /* Flight plan */
-  AIRCRAFT = 1 << 14, /* Simulator aircraft */
+  // 13
+  AIRCRAFT = 1 << 14, /* Simulator user aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
   AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track */
@@ -76,20 +79,23 @@ enum MapObjectType
   INVALID = 1 << 21, /* Flight plan waypoint not found in database */
   MISSED_APPROACH = 1 << 22, /* Only procedure type that can be hidden */
   PROCEDURE = 1 << 23, /* General procedure leg */
-  AIRSPACE = 1 << 24, /* General airspace boundary */
+  AIRSPACE = 1 << 24, /* General airspace boundary, online or offline */
   HELIPAD = 1 << 25, /* Helipads on airports */
-  COMPASS_ROSE = 1 << 26, /* Compass rose */
+  // 26
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
-
-  // AIRSPACE_ONLINE = 1 << 28, /* Online network center - not used in display map flags */
+  TRACK = 1 << 28, /* NAT, PACOTS or AUSOTS track */
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
 
   LOGBOOK = 1 << 30, /* Logbook entry */
+  // LAST = 1 << 31,
 
   /* All online, AI and multiplayer aircraft */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
 
-  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
+  AIRWAY_ALL = AIRWAY | AIRWAYV | AIRWAYJ,
+
+  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY,
+  AIRPORT_ALL_ADDON = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
 
   /* All navaids */
   NAV_ALL = VOR | NDB | WAYPOINT,
@@ -100,10 +106,10 @@ enum MapObjectType
   ALL = 0xffffffff
 };
 
-Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectTypes);
+Q_DECLARE_FLAGS(MapTypes, MapType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes);
 
-QDebug operator<<(QDebug out, const map::MapObjectTypes& type);
+QDebug operator<<(QDebug out, const map::MapTypes& type);
 
 /* Type that is used only for flags to determine what should be drawn. Not used in other contexts. */
 enum MapObjectDisplayType
@@ -111,21 +117,39 @@ enum MapObjectDisplayType
   DISPLAY_TYPE_NONE = 0,
   AIRPORT_WEATHER = 1 << 0, /* Airport weather icons */
   MINIMUM_ALTITUDE = 1 << 1, /* MORA (minimum off route altitude) */
+
   WIND_BARBS = 1 << 2, /* Wind barbs grid */
-  WIND_BARBS_ROUTE = 1 << 3 /* Wind barbs at flight plan waypoints */
+  WIND_BARBS_ROUTE = 1 << 3, /* Wind barbs at flight plan waypoints */
+
+  LOGBOOK_DIRECT = 1 << 4, /* GC direct line in logbook entry highlight */
+  LOGBOOK_ROUTE = 1 << 5, /* Route in logbook entry highlight */
+  LOGBOOK_TRACK = 1 << 6, /* Track in logbook entry highlight */
+
+  COMPASS_ROSE = 1 << 7, /* Compass rose */
+  COMPASS_ROSE_ATTACH = 1 << 8, /* Attach to user aircraft */
+
+  FLIGHTPLAN = 1 << 9, /* Flight plan */
+  FLIGHTPLAN_TOC_TOD = 1 << 10, /* Top of climb and top of descent */
+
+  LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
 
 Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectDisplayTypes);
+
+QDebug operator<<(QDebug out, const map::MapObjectDisplayTypes& type);
 
 /* Query type for all getNearest and other functions. Covers all what is not included in MapObjectTypes */
 enum MapObjectQueryType
 {
   QUERY_NONE = 0,
   QUERY_PROC_POINTS = 1 << 0, /* Procedure points */
-  QUERY_HOLDS = 1 << 1, /* Holds */
-  QUERY_PATTERNS = 1 << 2, /* Traffic patterns */
-  QUERY_PROCEDURES = 1 << 3, /* Procedures when querying route */
+  QUERY_PROC_MISSED_POINTS = 1 << 1, /* Missed procedure points */
+  QUERY_HOLDS = 1 << 2, /* Holds */
+  QUERY_PATTERNS = 1 << 3, /* Traffic patterns */
+  QUERY_PROCEDURES = 1 << 4, /* Procedures when querying route */
+  QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedures when querying route */
+  QUERY_RANGEMARKER = 1 << 6 /* Range rings */
 };
 
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
@@ -165,28 +189,29 @@ enum MapAirspaceType
 
   ONLINE_OBSERVER = 1 << 26, // VATSIM or IVAO observer
 
-  AIRSPACE_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
-  AIRSPACE_FIR = CLASS_F | CLASS_G,
+  FIR = 1 << 27, // New FIR region instead of center
+  UIR = 1 << 28, // New UIR region instead of center
+
+  AIRSPACE_CLASS_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
+  AIRSPACE_CLASS_FG = CLASS_F | CLASS_G,
+  AIRSPACE_FIR_UIR = FIR | UIR,
   AIRSPACE_CENTER = CENTER,
   AIRSPACE_RESTRICTED = RESTRICTED | PROHIBITED | GLIDERPROHIBITED | MOA | DANGER,
   AIRSPACE_SPECIAL = WARNING | ALERT | TRAINING | CAUTION,
   AIRSPACE_OTHER = TOWER | CLEARANCE | GROUND | DEPARTURE | APPROACH | MODEC | RADAR | NATIONAL_PARK | WAVEWINDOW |
                    ONLINE_OBSERVER,
 
-  AIRSPACE_FOR_VFR = CLASS_B | CLASS_C | CLASS_D | CLASS_E | AIRSPACE_FIR,
-  AIRSPACE_FOR_IFR = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E | CENTER,
-
-  AIRSPACE_ALL = AIRSPACE_ICAO | AIRSPACE_FIR | AIRSPACE_CENTER | AIRSPACE_RESTRICTED | AIRSPACE_SPECIAL |
-                 AIRSPACE_OTHER,
+  AIRSPACE_ALL = AIRSPACE_CLASS_ICAO | AIRSPACE_CLASS_FG | AIRSPACE_FIR_UIR | AIRSPACE_CENTER | AIRSPACE_RESTRICTED |
+                 AIRSPACE_SPECIAL | AIRSPACE_OTHER,
 
   // Default value on first start
-  AIRSPACE_DEFAULT = AIRSPACE_ICAO | AIRSPACE_RESTRICTED
+  AIRSPACE_DEFAULT = AIRSPACE_CLASS_ICAO | AIRSPACE_RESTRICTED
 };
 
 Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
 
-Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 27;
+Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 29;
 
 /* Source database for airspace */
 enum MapAirspaceSource
@@ -205,11 +230,8 @@ enum MapAirspaceSource
 Q_DECLARE_FLAGS(MapAirspaceSources, MapAirspaceSource);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources);
 
-static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES =
-{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_ONLINE, AIRSPACE_SRC_USER};
-
-static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES =
-{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER};
+extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES;
+extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 
 /* Airspace filter flags */
 enum MapAirspaceFlag
@@ -300,7 +322,6 @@ enum MapAirportFlag
   AP_PARKING = 1 << 16,
   AP_ALS = 1 << 17, /* Has at least one runway with an approach lighting system */
   AP_VASI = 1 << 18, /* Has at least one runway with a VASI */
-  AP_FENCE = 1 << 19,
   AP_RW_CLOSED = 1 << 20, /* Has at least one closed runway */
   AP_COMPLETE = 1 << 21, /* Struct completely loaded? */
   AP_3D = 1 << 22, /* X-Plane 3D airport */
@@ -324,6 +345,10 @@ enum MapThemeComboIndex
   CUSTOM, /* Custom maps count from this index up */
   INVALID_THEME = -1
 };
+
+/* All known map theme names =========================================== */
+static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "opentopomap", "plain",
+                                           "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
 
 /* Sun shading sub menu actions.
  * Values are saved in settings do not change */
@@ -379,11 +404,12 @@ enum TextAttribute
   ITALIC = 0x0002,
   UNDERLINE = 0x0004,
   OVERLINE = 0x0008,
-  RIGHT = 0x0010, /* Reference point is at the right of the text (left-aligned) */
-  LEFT = 0x0020,
-  CENTER = 0x0040,
-  ROUTE_BG_COLOR = 0x0080, /* Use light yellow background for route objects */
-  LOG_BG_COLOR = 0x0100 /* Use light blue text background for log */
+  STRIKEOUT = 0x0010,
+  RIGHT = 0x0020, /* Reference point is at the right of the text (left-aligned) */
+  LEFT = 0x0040,
+  CENTER = 0x0080,
+  ROUTE_BG_COLOR = 0x0100, /* Use light yellow background for route objects */
+  LOG_BG_COLOR = 0x0200 /* Use light blue text background for log */
 };
 
 Q_DECLARE_FLAGS(TextAttributes, TextAttribute);

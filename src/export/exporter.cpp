@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,10 @@
 using atools::gui::Dialog;
 using atools::gui::ErrorHandler;
 
-Exporter::Exporter(QWidget *parentWidget, SqlController *controllerObj)
+Exporter::Exporter(QWidget *parentWidgetParam, SqlController *controllerObj)
   : controller(controllerObj)
 {
+  parentWidget = parentWidgetParam;
   dialog = new Dialog(parentWidget);
   errorHandler = new ErrorHandler(parentWidget);
 }
