@@ -198,6 +198,8 @@ public:
 
   MapLayer& windBarbsSymbolSize(int size);
 
+  MapLayer& aiAircraftSize(int value);
+
   bool operator<(const MapLayer& other) const;
 
   float getMaxRange() const
@@ -597,6 +599,11 @@ public:
     return layerWindBarbsSymbolSize;
   }
 
+  int getAiAircraftSize() const
+  {
+    return layerAiAircraftSize;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -637,6 +644,7 @@ private:
   bool layerAirspaceCenter = false, layerAirspaceIcao = false, layerAirspaceFg = false, layerAirspaceFirUir = false,
        layerAirspaceRestricted = false, layerAirspaceSpecial = false, layerAirspaceOther = false;
 
+  int layerAiAircraftSize = 32;
   bool layerAiAircraftGround = false, layerAiAircraftLarge = false, layerAiAircraftSmall = false,
        layerOnlineAircraft = false, layerAiShipLarge = false, layerAiShipSmall = false,
        layerAiAircraftGroundText = false, layerAiAircraftText = false, layerOnlineAircraftText = false;

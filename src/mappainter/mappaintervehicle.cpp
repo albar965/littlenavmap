@@ -75,7 +75,14 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, bool f
         context->painter->rotate(rotate);
 
         int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
-        int minSize = vehicle.isAnyBoat() ? 28 : 32;
+
+        int minSize;
+        if(vehicle.isUser())
+          minSize = 32;
+        else
+          minSize = vehicle.isAnyBoat() ?
+                    context->mapLayer->getAiAircraftSize() - 4 :
+                    context->mapLayer->getAiAircraftSize();
 
         int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
         int offset = -(size / 2);

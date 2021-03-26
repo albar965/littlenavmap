@@ -497,6 +497,12 @@ MapLayer& MapLayer::windBarbsSymbolSize(int size)
   return *this;
 }
 
+MapLayer& MapLayer::aiAircraftSize(int value)
+{
+  layerAiAircraftSize = value;
+  return *this;
+}
+
 MapLayer& MapLayer::airportWeatherDetails(bool value)
 {
   layerAirportWeatherDetails = value;

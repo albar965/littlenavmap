@@ -325,7 +325,7 @@ void MapPaintLayer::initMapLayerSettings()
          waypointSymbolSize(3).
          windBarbsSymbolSize(14).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
-         vorSymbolSize(16).vorIdent().
+         vorSymbolSize(20).vorIdent().
          ndbSymbolSize(16).ndbIdent().
          airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
@@ -345,7 +345,7 @@ void MapPaintLayer::initMapLayerSettings()
          airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(22).userpointMaxTextLength(8).
-         marker(false).ils(false).
+         marker(false).
          airportMaxTextLength(16)).
 
   // airport > 4000, VOR
@@ -357,7 +357,7 @@ void MapPaintLayer::initMapLayerSettings()
          onlineAircraftText(false).
          airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
-         vorSymbolSize(8).ndbSymbolSize(8).waypoint(false).marker(false).ils(false).
+         vorSymbolSize(8).ndbSymbolSize(8).waypoint(false).marker(false).
          userpoint().userpointInfo().userpointSymbolSize(16).userpointMaxTextLength(8).
          airportMaxTextLength(16)).
 
@@ -368,6 +368,7 @@ void MapPaintLayer::initMapLayerSettings()
          approachText(false).
          aiAircraftGround(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
+         aiAircraftSize(26).
          onlineAircraftText(false).
          trackIdent().trackInfo(false).trackWaypoint().
          vorSymbolSize(6).ndbSymbolSize(4).waypoint(false).marker(false).ils(false).
@@ -384,6 +385,7 @@ void MapPaintLayer::initMapLayerSettings()
          approachText(false).
          aiAircraftGround(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
+         aiAircraftSize(24).
          onlineAircraftText(false).
          airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          vorSymbolSize(3).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
@@ -400,6 +402,7 @@ void MapPaintLayer::initMapLayerSettings()
          approachText(false).approachDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
+         aiAircraftSize(20).
          onlineAircraftText(false).
          airspaceFg(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          airspaceIcao(false).
@@ -420,7 +423,8 @@ void MapPaintLayer::initMapLayerSettings()
          approachText(false).approachDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
-         onlineAircraft(false).onlineAircraftText(false).
+         aiAircraftSize(10).
+         onlineAircraftText(false).
          airspaceCenter(false).airspaceFg(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
@@ -438,7 +442,8 @@ void MapPaintLayer::initMapLayerSettings()
          approach(false).approachText(false).approachDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
-         onlineAircraft(false).onlineAircraftText(false).
+         aiAircraftSize(10).
+         onlineAircraftText(false).
          airspaceCenter(false).airspaceFirUir(false).airspaceFg(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
@@ -700,7 +705,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       if(!context.isObjectOverflow())
         mapPainterTrack->render();
 
-      // if(!context.isOverflow())
       mapPainterMark->render();
 
       mapPainterAircraft->render();
