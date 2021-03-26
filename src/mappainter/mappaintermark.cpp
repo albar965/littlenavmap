@@ -191,11 +191,17 @@ void MapPainterMark::paintHighlights()
 
   // Draw boundary for selected online network airspaces =====================================================
   for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
-    paintAirspace(airspace);
+  {
+    if(airspace.hasValidGeometry())
+      paintAirspace(airspace);
+  }
 
   // Draw boundary for airspaces highlighted in the information window =======================================
   for(const MapAirspace& airspace: mapPaintWidget->getAirspaceHighlights())
-    paintAirspace(airspace);
+  {
+    if(airspace.hasValidGeometry())
+      paintAirspace(airspace);
+  }
 
   // Draw airways highlighted in the information window =====================================================
   for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())

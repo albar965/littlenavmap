@@ -603,7 +603,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
   OnlinedataController *odc = NavApp::getOnlinedataController();
 
   currentSearchResult.userAircraft = result.userAircraft;
-  foundUserAircraft = currentSearchResult.userAircraft.getPosition().isValid();
+  foundUserAircraft = currentSearchResult.userAircraft.isValid();
   if(foundUserAircraft)
     foundUserAircraftShadow = currentSearchResult.userAircraft.getAircraft().isOnlineShadow();
 

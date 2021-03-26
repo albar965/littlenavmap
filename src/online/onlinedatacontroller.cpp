@@ -63,6 +63,9 @@ atools::fs::online::Format convertFormat(opts::OnlineFormat format)
     case opts::ONLINE_FORMAT_VATSIM:
       return atools::fs::online::VATSIM;
 
+    case opts::ONLINE_FORMAT_VATSIM_JSON:
+      return atools::fs::online::VATSIM_JSON3;
+
     case opts::ONLINE_FORMAT_IVAO:
       return atools::fs::online::IVAO;
   }
@@ -80,6 +83,9 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DEBUG, false).toBool();
 
   downloader = new atools::util::HttpDownloader(mainWindow, verbose);
+
+  // Request gzipped content if possible
+  downloader->setAcceptEncoding("gzip");
 
   updateAtcSizes();
 
@@ -183,7 +189,8 @@ void OnlinedataController::startDownloadInternal()
   // Get URLs from configuration which are already set accoding to selected network
   QString onlineStatusUrl = od.getOnlineStatusUrl();
   QString onlineWhazzupUrl = od.getOnlineWhazzupUrl();
-  QString whazzupUrlFromStatus = manager->getWhazzupUrlFromStatus(whazzupGzipped);
+  bool whazzupGzipped = false, whazzupJson = false;
+  whazzupUrlFromStatus = manager->getWhazzupUrlFromStatus(whazzupGzipped, whazzupJson);
 
   if(currentState == NONE)
   {
@@ -211,20 +218,25 @@ void OnlinedataController::startDownloadInternal()
     {
       // Trigger the download chain
       downloader->setUrl(url);
-
-      // Call later in the event loop to avoid recursion
-      QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
+      startDownloader();
     }
   }
-  // opts::OnlineFormat onlineFormat = od.getOnlineFormat();
-  // int onlineReloadTimeSeconds = od.getOnlineReloadTimeSeconds();
-  // QString onlineStatusUrl = od.getOnlineStatusUrl();
-  // QString onlineWhazzupUrl = od.getOnlineWhazzupUrl();
 }
 
 atools::sql::SqlDatabase *OnlinedataController::getDatabase()
 {
   return manager->getDatabase();
+}
+
+QString OnlinedataController::uncompress(const QByteArray& data, const QString& func, bool utf8)
+{
+  QByteArray textData = atools::zip::gzipDecompressIf(data, func);
+
+  if(utf8)
+    return QString(textData);
+  else
+    // Convert from encoding to UTF-8. Some formats use windows encoding
+    return codec->toUnicode(textData);
 }
 
 void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
@@ -235,23 +247,29 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
   if(currentState == DOWNLOADING_STATUS)
   {
     // Parse status file
-    manager->readFromStatus(codec->toUnicode(data));
+    manager->readFromStatus(uncompress(data, Q_FUNC_INFO, false /* utf8 */));
 
     // Get URL from status file
-    QString whazzupUrlFromStatus = manager->getWhazzupUrlFromStatus(whazzupGzipped);
+    bool whazzupGzipped = false, whazzupJson = false;
+    whazzupUrlFromStatus = manager->getWhazzupUrlFromStatus(whazzupGzipped, whazzupJson);
 
     if(!manager->getMessageFromStatus().isEmpty())
       // Call later in the event loop
       QTimer::singleShot(0, this, &OnlinedataController::showMessageDialog);
 
-    if(!whazzupUrlFromStatus.isEmpty())
+    if(whazzupJson)
+    {
+      // Next in chain is transceivers JSON
+      currentState = DOWNLOADING_TRANSCEIVERS;
+      downloader->setUrl(OptionData::instance().getOnlineTransceiverUrl());
+      startDownloader();
+    }
+    else if(!whazzupUrlFromStatus.isEmpty())
     {
       // Next in chain is whazzup.txt
       currentState = DOWNLOADING_WHAZZUP;
       downloader->setUrl(whazzupUrlFromStatus);
-
-      // Call later in the event loop to avoid recursion
-      QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
+      startDownloader();
     }
     else
     {
@@ -261,21 +279,24 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       lastUpdateTime = QDateTime::currentDateTime();
     }
   }
+  else if(currentState == DOWNLOADING_TRANSCEIVERS)
+  {
+    manager->readFromTransceivers(uncompress(data, Q_FUNC_INFO, true /* utf8 */));
+
+    // Next in chain after transceivers is JSON
+    currentState = DOWNLOADING_WHAZZUP;
+    downloader->setUrl(whazzupUrlFromStatus);
+    startDownloader();
+  }
   else if(currentState == DOWNLOADING_WHAZZUP)
   {
-    QByteArray whazzupData;
+    atools::fs::online::Format format = convertFormat(OptionData::instance().getOnlineFormat());
 
-    if(whazzupGzipped)
-    {
-      if(!atools::zip::gzipDecompress(data, whazzupData))
-        qWarning() << Q_FUNC_INFO << "Error unzipping data";
-    }
-    else
-      whazzupData = data;
+    // Contains servers and does not need an extra download
+    bool vatsimJson = format == atools::fs::online::VATSIM_JSON3;
 
-    if(manager->readFromWhazzup(codec->toUnicode(whazzupData),
-                                convertFormat(OptionData::instance().getOnlineFormat()),
-                                manager->getLastUpdateTimeFromWhazzup()))
+    if(manager->readFromWhazzup(uncompress(data, Q_FUNC_INFO, vatsimJson /* utf8 */),
+                                format, manager->getLastUpdateTimeFromWhazzup()))
     {
       // Get all callsigns and positions from online list to allow deduplication
       clientCallsignAndPosMap.clear();
@@ -284,15 +305,13 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
         qDebug() << Q_FUNC_INFO << clientCallsignAndPosMap.size();
 
       QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
-      if(!whazzupVoiceUrlFromStatus.isEmpty() &&
+      if(!vatsimJson && !whazzupVoiceUrlFromStatus.isEmpty() &&
          lastServerDownload < QDateTime::currentDateTime().addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
       {
         // Next in chain is server file
         currentState = DOWNLOADING_WHAZZUP_SERVERS;
         downloader->setUrl(whazzupVoiceUrlFromStatus);
-
-        // Call later in the event loop to avoid recursion
-        QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
+        startDownloader();
       }
       else
       {
@@ -305,6 +324,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
         simulatorAiRegistrations.clear();
 
         // Message for search tabs, map widget and info
+        emit onlineServersUpdated(true /* load all */, true /* keep selection */);
         emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
         statusBarMessage();
       }
@@ -322,7 +342,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
   }
   else if(currentState == DOWNLOADING_WHAZZUP_SERVERS)
   {
-    manager->readServersFromWhazzup(codec->toUnicode(data),
+    manager->readServersFromWhazzup(uncompress(data, Q_FUNC_INFO, false /* utf8 */),
                                     convertFormat(OptionData::instance().getOnlineFormat()),
                                     manager->getLastUpdateTimeFromWhazzup());
     lastServerDownload = QDateTime::currentDateTime();
@@ -340,6 +360,12 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     emit onlineServersUpdated(true /* load all */, true /* keep selection */);
     statusBarMessage();
   }
+}
+
+void OnlinedataController::startDownloader()
+{
+  // Call later in the event loop to avoid recursion
+  QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
 }
 
 void OnlinedataController::downloadFailed(const QString& error, int errorCode, QString url)
@@ -425,7 +451,6 @@ void OnlinedataController::optionsChanged()
   // Clear all URL from status.txt too
   manager->resetForNewOptions();
   stopAllProcesses();
-  whazzupGzipped = false;
 
   // Remove all from the database
   manager->clearData();
@@ -674,18 +699,14 @@ void OnlinedataController::startDownloadTimer()
   QString source;
 
   // Use three minutes as default if nothing is given
-  int intervalSeconds;
+  int intervalSeconds = OptionData::instance().getOnlineReload(onlineNetwork);
 
   if(onlineNetwork == opts::ONLINE_CUSTOM || onlineNetwork == opts::ONLINE_CUSTOM_STATUS)
-  {
     // Use options for custom network - ignore reload in whazzup.txt
-    intervalSeconds = OptionData::instance().getOnlineReloadTimeSeconds();
     source = "options";
-  }
   else
   {
-    int reloadFromCfg = OptionData::instance().getOnlineReloadTimeSecondsConfig();
-    if(reloadFromCfg == -1)
+    if(intervalSeconds == -1)
     {
       // Use time from whazzup.txt - mode auto
       intervalSeconds = std::max(manager->getReloadMinutesFromWhazzup() * 60, 60);
@@ -693,7 +714,7 @@ void OnlinedataController::startDownloadTimer()
     }
     else
     {
-      intervalSeconds = std::max(reloadFromCfg, 60);
+      intervalSeconds = std::max(intervalSeconds, 60);
       source = "networks.cfg";
     }
   }

@@ -751,7 +751,7 @@ void OptionsDialog::checkOfficialOnlineUrls()
 
         // Reset both widget and data
         ui->spinBoxOptionsOnlineUpdate->setValue(MIN_ONLINE_UPDATE);
-        OptionData::instanceInternal().onlineReloadSeconds = MIN_ONLINE_UPDATE;
+        OptionData::instanceInternal().onlineCustomReload = MIN_ONLINE_UPDATE;
       }
     }
   }
@@ -1034,18 +1034,17 @@ void OptionsDialog::restoreState()
   OptionData& od = OptionData::instanceInternal();
 
   od.onlineVatsimStatusUrl = networkSettings.value("vatsim/statusurl").toString();
+  od.onlineVatsimTransceiverUrl = networkSettings.value("vatsim/transceiverurl").toString();
+  od.onlineVatsimReload = networkSettings.value("vatsim/update") == "auto" ? -1 :
+                          networkSettings.value("vatsim/update").toInt();
+
   od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();
+  od.onlineIvaoReload = networkSettings.value("ivao/update") == "auto" ? -1 :
+                        networkSettings.value("ivao/update").toInt();
+
   od.onlinePilotEdgeStatusUrl = networkSettings.value("pilotedge/statusurl").toString();
-
-  int update;
-  if(networkSettings.value("options/update").toString().trimmed().toLower() == "auto")
-    update = -1;
-  else
-    update = networkSettings.value("options/update").toInt();
-
-  if(update < 60 && update != -1)
-    update = 60;
-  od.onlineReloadSecondsConfig = update;
+  od.onlinePilotEdgeReload = networkSettings.value("pilotedge/update") == "auto" ? -1 :
+                             networkSettings.value("pilotedge/update").toInt();
 
   // Disable selection based on what was found in the file
   ui->radioButtonOptionsOnlineIvao->setVisible(!od.onlineIvaoStatusUrl.isEmpty());
@@ -1730,7 +1729,7 @@ void OptionsDialog::widgetsToOptionData()
 
   data.onlineStatusUrl = ui->lineEditOptionsOnlineStatusUrl->text();
   data.onlineWhazzupUrl = ui->lineEditOptionsOnlineWhazzupUrl->text();
-  data.onlineReloadSeconds = ui->spinBoxOptionsOnlineUpdate->value();
+  data.onlineCustomReload = ui->spinBoxOptionsOnlineUpdate->value();
   data.onlineFormat = static_cast<opts::OnlineFormat>(ui->comboBoxOptionsOnlineFormat->currentIndex());
 
   data.displayOnlineClearance = displayOnlineRangeToData(ui->spinBoxDisplayOnlineClearance,
@@ -1998,7 +1997,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   }
   ui->lineEditOptionsOnlineStatusUrl->setText(data.onlineStatusUrl);
   ui->lineEditOptionsOnlineWhazzupUrl->setText(data.onlineWhazzupUrl);
-  ui->spinBoxOptionsOnlineUpdate->setValue(data.onlineReloadSeconds);
+  ui->spinBoxOptionsOnlineUpdate->setValue(data.onlineCustomReload);
   ui->comboBoxOptionsOnlineFormat->setCurrentIndex(data.onlineFormat);
 
   displayOnlineRangeFromData(ui->spinBoxDisplayOnlineClearance, ui->checkBoxDisplayOnlineClearanceRange,

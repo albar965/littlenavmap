@@ -928,12 +928,23 @@ struct MapAirspace
    *  U Unknown - do not display value */
 
   QVector<int> comFrequencies;
-  map::MapAirspaceTypes type;
+  map::MapAirspaceTypes type = map::AIRSPACE_NONE;
   map::MapAirspaceSources src;
 
   map::MapAirspaceId combinedId() const
   {
     return {id, src};
+  }
+
+  /* Online airspaces can have missing coordinates and isValid is not reliable, therefore */
+  bool isValidAirspace() const
+  {
+    return type != map::AIRSPACE_NONE;
+  }
+
+  bool hasValidGeometry() const
+  {
+    return bounding.isValid();
   }
 
   bool isOnline() const

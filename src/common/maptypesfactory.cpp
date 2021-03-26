@@ -664,9 +664,12 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   airspace.maxAltitude = record.valueInt("max_altitude", 0);
   airspace.minAltitude = record.valueInt("min_altitude", 60000);
 
-  // explicit Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY);
-  airspace.bounding = Rect(record.valueFloat("min_lonx"), record.valueFloat("max_laty"),
-                           record.valueFloat("max_lonx"), record.valueFloat("min_laty"));
+  Pos topLeft(record.value("min_lonx"), record.value("max_laty"));
+  Pos bottomRight(record.value("max_lonx"), record.value("min_laty"));
 
-  airspace.position = airspace.bounding.getCenter();
+  if(topLeft.isValid() && bottomRight.isValid())
+  {
+    airspace.bounding = Rect(topLeft, bottomRight);
+    airspace.position = airspace.bounding.getCenter();
+  }
 }

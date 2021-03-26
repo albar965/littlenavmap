@@ -71,7 +71,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const Ro
   // User Aircraft ===========================================================================
   if(opts.testFlag(optsd::TOOLTIP_AIRCRAFT_USER))
   {
-    if(mapSearchResult.userAircraft.getPosition().isValid())
+    if(mapSearchResult.userAircraft.isValid())
     {
       if(checkText(html))
         return html.getHtml();

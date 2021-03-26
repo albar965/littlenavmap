@@ -110,11 +110,17 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
 
     // Get highlighted airspaces from info window ================================
     for(const map::MapAirspace& airspace : airspaceHighlights)
-      airspaces.append(&airspace);
+    {
+      if(airspace.hasValidGeometry())
+        airspaces.append(&airspace);
+    }
 
     // Get highlighted airspaces from online center search ================================
     for(const map::MapAirspace& airspace : searchHighlights->airspaces)
-      airspaces.append(&airspace);
+    {
+      if(airspace.hasValidGeometry())
+        airspaces.append(&airspace);
+    }
 
     CoordinateConverter conv(mapPaintWidget->viewport());
     for(const map::MapAirspace *airspace : airspaces)
@@ -547,7 +553,8 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
     {
       for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraftConst())
       {
-        if(obj.isAnyBoat() && (obj.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
+        if(obj.isValid() && obj.isAnyBoat() &&
+           (obj.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
         {
           if(conv.wToS(obj.getPosition(), x, y))
             if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
@@ -564,7 +571,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
     {
       for(const atools::fs::sc::SimConnectAircraft& obj : mapPaintWidget->getAiAircraft())
       {
-        if(!obj.isAnyBoat() && mapfunc::aircraftVisible(obj, mapLayer))
+        if(obj.isValid() && !obj.isAnyBoat() && mapfunc::aircraftVisible(obj, mapLayer))
         {
           if(conv.wToS(obj.getPosition(), x, y))
           {
@@ -588,7 +595,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
     {
       if(mapfunc::aircraftVisible(obj, mapLayer))
       {
-        if(conv.wToS(obj.getPosition(), x, y))
+        if(obj.isValid() && conv.wToS(obj.getPosition(), x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
             insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys,
                                    map::MapOnlineAircraft(obj));

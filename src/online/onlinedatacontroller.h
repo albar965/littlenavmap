@@ -157,6 +157,8 @@ private:
 
   /* Show message from status.txt */
   void showMessageDialog();
+  QString uncompress(const QByteArray& data, const QString& func, bool utf8);
+  void startDownloader();
 
   /* Tries to fetch geometry for atc centers from the user geometry database from cache */
   atools::geo::LineString *geometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type);
@@ -169,7 +171,8 @@ private:
   {
     NONE, /* Not downloading anything */
     DOWNLOADING_STATUS, /* Downloading status.txt */
-    DOWNLOADING_WHAZZUP, /* Downloading whazzup.txt */
+    DOWNLOADING_WHAZZUP, /* Downloading whazzup.txt or JSON file */
+    DOWNLOADING_TRANSCEIVERS, /* Downloading transceivers-data-fmt.json */
     DOWNLOADING_WHAZZUP_SERVERS /* Downloading servers */
   };
 
@@ -183,8 +186,7 @@ private:
   /*  Last update from whazzup */
   QDateTime lastUpdateTime;
 
-  /* Set after parsing status.txt to indicate compressed file */
-  bool whazzupGzipped = false;
+  QString whazzupUrlFromStatus;
 
   QTextCodec *codec = nullptr;
 

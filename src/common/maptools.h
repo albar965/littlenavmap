@@ -176,7 +176,7 @@ void insertSorted(const CoordinateConverter& conv, int xs, int ys, const QList<T
   int x, y;
   for(const TYPE& obj : list)
   {
-    if(conv.wToS(obj.getPosition(), x, y))
+    if(obj.getPosition().isValid() && conv.wToS(obj.getPosition(), x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         maptools::insertSortedByDistance(conv, result, ids, xs, ys, obj);
   }

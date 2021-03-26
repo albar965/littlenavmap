@@ -435,15 +435,14 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   else if(type == map::AIRSPACE)
   {
     map::MapAirspace airspace = NavApp::getAirspaceController()->getAirspaceById({id, src});
-    if(airspace.isValid())
+    if(airspace.isValidAirspace())
       result.airspaces.append(airspace);
   }
   else if(type == map::AIRCRAFT_ONLINE)
   {
     atools::fs::sc::SimConnectAircraft aircraft;
     NavApp::getOnlinedataController()->getClientAircraftById(aircraft, id);
-    if(aircraft.isValid())
-      result.onlineAircraft.append(map::MapOnlineAircraft(aircraft));
+    result.onlineAircraft.append(map::MapOnlineAircraft(aircraft));
   }
   else if(type == map::AIRWAY)
   {

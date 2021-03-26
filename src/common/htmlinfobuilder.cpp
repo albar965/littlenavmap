@@ -2568,7 +2568,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     navaidTitle(html, ((info && !airspace.isOnline()) ? tr("Airspace: ") : QString()) + name + suffix);
   }
 
-  if(info)
+  if(info && airspace.hasValidGeometry())
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
@@ -2608,6 +2608,9 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
   if(!header.isEmpty())
     html.p(header.join("\n"));
+
+  if(!airspace.hasValidGeometry())
+    html.p().warning(tr("Airspace has no geometry and cannot be shown on the map.")).pEnd();
 
   html.table();
 
@@ -2649,7 +2652,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
       // Round frequencies to nearest valid value to workaround for a compiler rounding bug
 
       if(airspace.isOnline())
-        // Use online freqencies as is
+        // Use online freqencies as is - convert kHz to MHz
         freqTxt.append(locale.toString(freq / 1000.f, 'f', 3));
       else
         freqTxt.append(locale.toString(roundComFrequency(freq), 'f', 3));
@@ -2659,7 +2662,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 #endif
     }
 
-    html.row2(tr("COM Frequency:"), freqTxt.join(tr(", ") + tr(" MHz")));
+    html.row2(freqTxt.size() > 1 ? tr("COM Frequencies:") : tr("COM Frequency:"), freqTxt.join(tr(", ")) + tr(" MHz"));
   }
 
   if(!onlineRec.isEmpty() && info)
@@ -2997,9 +3000,6 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& procPoin
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html, int num,
                                    int total)
 {
-  if(!aircraft.getPosition().isValid())
-    return;
-
   aircraftTitle(aircraft, html, false /* show more/less switch */, false /* true if less info mode */);
 
   QString aircraftText;
@@ -3092,6 +3092,10 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
 {
   if(!onlineRec.isEmpty() && info)
   {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << onlineRec;
+#endif
+
     // General online information =================================================================
     head(html, tr("Online Information"));
     html.table();
@@ -3198,9 +3202,10 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     html.row2If(tr("Persons on Board:"), onlineRec.valueInt("flightplan_persons_on_board"));
     html.tableEnd();
 
-    if(info)
+    if(info && aircraft.getPosition().isValid())
     {
       head(html, tr("Position"));
+      html.table();
       addCoordinates(aircraft.getPosition(), html);
       html.tableEnd();
     }
@@ -3210,7 +3215,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
 void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
                                                 HtmlBuilder& html) const
 {
-  if(!userAircraft.getPosition().isValid())
+  if(!userAircraft.isValid())
     return;
 
   if(info)
@@ -3267,7 +3272,7 @@ void HtmlInfoBuilder::dateAndTime(const SimConnectUserAircraft *userAircraft, Ht
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                            HtmlBuilder& html, const Route& route, bool moreLessSwitch, bool less)
 {
-  if(!aircraft.getPosition().isValid())
+  if(!aircraft.isValid())
     return;
 
   const SimConnectUserAircraft *userAircaft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
@@ -4053,10 +4058,10 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
     title2 += (title2.isEmpty() ? "" : ", ") + aircraft.getAirplaneModel();
 
   if(!title2.isEmpty())
-    title += " - " + title2;
+    title += tr(" - %1").arg(title2);
 
   if(!title3.isEmpty())
-    title += " (" + title3 + ")";
+    title += tr(" (%1)").arg(title3);
 
 #ifdef DEBUG_INFORMATION
   static bool heartbeat = false;
@@ -4070,10 +4075,14 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
 
   if(info && !print)
   {
-    html.nbsp().nbsp();
-    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(aircraft.getPosition().getLonX()).arg(aircraft.getPosition().getLatY()),
-           ahtml::LINK_NO_UL);
+    if(aircraft.getPosition().isValid())
+    {
+      html.nbsp().nbsp();
+      html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
+             arg(aircraft.getPosition().getLonX()).arg(aircraft.getPosition().getLatY()),
+             ahtml::LINK_NO_UL);
+    }
+
     if(moreLessSwitch)
     {
       // Show more/less links =============================================
@@ -4232,7 +4241,8 @@ void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuil
 
 void HtmlInfoBuilder::addCoordinates(const Pos& pos, HtmlBuilder& html) const
 {
-  html.row2(tr("Coordinates:"), Unit::coords(pos));
+  if(pos.isValid())
+    html.row2(tr("Coordinates:"), Unit::coords(pos));
 
 #ifdef DEBUG_INFORMATION
   html.row2(tr("Pos:"), QString("Pos(%1, %2)").arg(pos.getLonX()).arg(pos.getLatY()), ahtml::PRE);

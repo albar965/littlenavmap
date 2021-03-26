@@ -242,7 +242,8 @@ enum OnlineNetwork
 enum OnlineFormat
 {
   ONLINE_FORMAT_VATSIM,
-  ONLINE_FORMAT_IVAO
+  ONLINE_FORMAT_IVAO,
+  ONLINE_FORMAT_VATSIM_JSON
 };
 
 } // namespace opts
@@ -976,21 +977,10 @@ public:
 
   /* URL to "status.txt" or empty if not applicable */
   QString getOnlineStatusUrl() const;
+  QString getOnlineTransceiverUrl() const;
 
   /* URL to "whazzup.txt" or empty if not applicable */
   QString getOnlineWhazzupUrl() const;
-
-  /* Reload files or automatic or not applicable if -1 */
-  int getOnlineReloadTimeSeconds() const
-  {
-    return onlineReloadSeconds;
-  }
-
-  /* Value from networks.cfg or -1 if auto */
-  int getOnlineReloadTimeSecondsConfig() const
-  {
-    return onlineReloadSecondsConfig;
-  }
 
   int getDisplayTextSizeRangeDistance() const
   {
@@ -1103,6 +1093,32 @@ public:
 
   /* Get user interface font */
   QFont getGuiFont() const;
+
+  /* User set online refresh rate in seconds for custom configurations or stock networks in seconds
+   * or -1 for auto value fetched from whazzup or JSON */
+  int getOnlineReload(opts::OnlineNetwork network) const
+  {
+    switch(network)
+    {
+      break;
+      case opts::ONLINE_VATSIM:
+        return onlineVatsimReload;
+
+      case opts::ONLINE_IVAO:
+        return onlineIvaoReload;
+
+      case opts::ONLINE_PILOTEDGE:
+        return onlinePilotEdgeReload;
+
+      case opts::ONLINE_CUSTOM_STATUS:
+      case opts::ONLINE_CUSTOM:
+        return onlineCustomReload;
+
+      case opts::ONLINE_NONE:
+        break;
+    }
+    return 180;
+  }
 
 private:
   friend class OptionsDialog;
@@ -1390,8 +1406,12 @@ private:
   QString onlineStatusUrl, onlineWhazzupUrl;
 
   /* Values loaded from networks.cfg */
-  int onlineReloadSeconds = 180, onlineReloadSecondsConfig = 180;
-  QString onlineVatsimStatusUrl;
+  int onlineCustomReload = 180,
+      onlineVatsimReload = 180,
+      onlinePilotEdgeReload = 180,
+      onlineIvaoReload = 180;
+
+  QString onlineVatsimStatusUrl, onlineVatsimTransceiverUrl;
   QString onlineIvaoStatusUrl;
   QString onlinePilotEdgeStatusUrl;
 

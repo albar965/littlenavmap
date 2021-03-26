@@ -221,7 +221,7 @@ public:
 
   bool isUserAircraftValid() const
   {
-    return simData.getUserAircraftConst().getPosition().isValid();
+    return simData.getUserAircraftConst().isValid();
   }
 
   void updateLastSimData(const atools::fs::sc::SimConnectData& data)

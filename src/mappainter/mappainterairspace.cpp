@@ -83,6 +83,9 @@ void MapPainterAirspace::render()
       if(!(airspace->type & context->airspaceFilterByLayer.types))
         continue;
 
+      if(!airspace->hasValidGeometry())
+        continue;
+
       if(context->viewportRect.overlaps(airspace->bounding))
       {
         if(context->objCount())

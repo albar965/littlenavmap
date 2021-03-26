@@ -48,7 +48,7 @@ opts::OnlineFormat OptionData::getOnlineFormat() const
       return onlineFormat;
 
     case opts::ONLINE_VATSIM:
-      return opts::ONLINE_FORMAT_VATSIM;
+      return opts::ONLINE_FORMAT_VATSIM_JSON;
 
     case opts::ONLINE_IVAO:
       return opts::ONLINE_FORMAT_IVAO;
@@ -78,6 +78,23 @@ QString OptionData::getOnlineStatusUrl() const
 
     case opts::ONLINE_CUSTOM_STATUS:
       return onlineStatusUrl;
+  }
+  return QString();
+}
+
+QString OptionData::getOnlineTransceiverUrl() const
+{
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_CUSTOM:
+    case opts::ONLINE_NONE:
+    case opts::ONLINE_IVAO:
+    case opts::ONLINE_PILOTEDGE:
+    case opts::ONLINE_CUSTOM_STATUS:
+      return QString();
+
+    case opts::ONLINE_VATSIM:
+      return onlineVatsimTransceiverUrl;
   }
   return QString();
 }

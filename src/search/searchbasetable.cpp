@@ -806,35 +806,44 @@ void SearchBaseTable::showRow(int row, bool showInfo)
        columns->hasColumn("right_lonx") && columns->hasColumn("bottom_laty"))
     {
       // Rectangle at airports
-      float leftLon = controller->getRawData(row, "left_lonx").toFloat();
-      float topLat = controller->getRawData(row, "top_laty").toFloat();
-      float rightLon = controller->getRawData(row, "right_lonx").toFloat();
-      float bottomLat = controller->getRawData(row, "bottom_laty").toFloat();
-      emit showRect(atools::geo::Rect(leftLon, topLat, rightLon, bottomLat), true);
+      atools::geo::Pos topLeft(controller->getRawData(row, "left_lonx"),
+                               controller->getRawData(row, "top_laty"));
+      atools::geo::Pos bottomRight(controller->getRawData(row, "right_lonx"),
+                                   controller->getRawData(row, "bottom_laty"));
+
+      if(topLeft.isValid() && bottomRight.isValid())
+        emit showRect(atools::geo::Rect(topLeft, bottomRight), true);
     }
     else if(columns->hasColumn("min_lonx") && columns->hasColumn("max_laty") &&
             columns->hasColumn("max_lonx") && columns->hasColumn("min_laty"))
     {
       // Different column names for airspaces and online centers
-      float leftLon = controller->getRawData(row, "min_lonx").toFloat();
-      float topLat = controller->getRawData(row, "max_laty").toFloat();
-      float rightLon = controller->getRawData(row, "max_lonx").toFloat();
-      float bottomLat = controller->getRawData(row, "min_laty").toFloat();
-      emit showRect(atools::geo::Rect(leftLon, topLat, rightLon, bottomLat), true);
+      atools::geo::Pos topLeft(controller->getRawData(row, "min_lonx"),
+                               controller->getRawData(row, "max_laty"));
+      atools::geo::Pos bottomRight(controller->getRawData(row, "max_lonx"),
+                                   controller->getRawData(row, "min_laty"));
+
+      if(topLeft.isValid() && bottomRight.isValid())
+        emit showRect(atools::geo::Rect(topLeft, bottomRight), true);
     }
     else if(columns->hasColumn("departure_lonx") && columns->hasColumn("departure_laty") &&
             columns->hasColumn("destination_lonx") && columns->hasColumn("destination_laty"))
     {
-      atools::geo::Pos departPos(controller->getRawData(row, "departure_lonx"),
-                                 controller->getRawData(row, "departure_laty"));
-      atools::geo::Pos destPos(controller->getRawData(row, "destination_lonx"),
-                               controller->getRawData(row, "destination_laty"));
-      emit showRect(atools::geo::boundingRect({departPos, destPos}), true);
+      atools::geo::Pos depart(controller->getRawData(row, "departure_lonx"),
+                              controller->getRawData(row, "departure_laty"));
+      atools::geo::Pos dest(controller->getRawData(row, "destination_lonx"),
+                            controller->getRawData(row, "destination_laty"));
+
+      if(depart.isValid() && dest.isValid())
+        emit showRect(atools::geo::boundingRect({depart, dest}), true);
+      else if(depart.isValid())
+        emit showPos(depart, 0.f, true);
+      else if(dest.isValid())
+        emit showPos(dest, 0.f, true);
     }
     else
     {
-      atools::geo::Pos p(controller->getRawData(row, "lonx").toFloat(),
-                         controller->getRawData(row, "laty").toFloat());
+      atools::geo::Pos p(controller->getRawData(row, "lonx"), controller->getRawData(row, "laty"));
       if(p.isValid())
         emit showPos(p, 0.f, true);
     }
@@ -843,7 +852,6 @@ void SearchBaseTable::showRow(int row, bool showInfo)
     {
       map::MapResult result;
       mapQuery->getMapObjectById(result, navType, airspaceSource, id, false /* airport from nav database */);
-
       emit showInformation(result);
     }
   }
@@ -926,8 +934,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
     if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
       // Get position to display range rings
-      position = atools::geo::Pos(controller->getRawData(index.row(), "lonx").toFloat(),
-                                  controller->getRawData(index.row(), "laty").toFloat());
+      position = atools::geo::Pos(controller->getRawData(index.row(), "lonx"),
+                                  controller->getRawData(index.row(), "laty"));
 
     // get airport, VOR, NDB or waypoint id from model row
     getNavTypeAndId(index.row(), navType, id);
@@ -1035,8 +1043,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   else
     ui->actionSearchShowApproaches->setText(tr("Show &procedures"));
 
-  ui->actionMapRangeRings->setEnabled(index.isValid());
-  ui->actionSearchSetMark->setEnabled(index.isValid());
+  ui->actionMapRangeRings->setEnabled(index.isValid() && position.isValid());
+  ui->actionSearchSetMark->setEnabled(index.isValid() && position.isValid());
 
   ui->actionMapNavaidRange->setText(tr("Add &Navaid Range Ring"));
   ui->actionRouteAddPos->setText(tr("&Add to Flight Plan"));
@@ -1110,7 +1118,11 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       menu.addAction(ui->actionSearchShowApproachesCustom);
     }
     menu.addAction(ui->actionSearchShowOnMap);
-    ui->actionSearchShowOnMap->setEnabled(selectedRows > 0);
+
+    if(tabIndex == si::SEARCH_ONLINE_CENTER || tabIndex == si::SEARCH_ONLINE_CLIENT)
+      ui->actionSearchShowOnMap->setEnabled(selectedRows > 0 && position.isValid());
+    else
+      ui->actionSearchShowOnMap->setEnabled(selectedRows > 0);
     menu.addSeparator();
   }
 
