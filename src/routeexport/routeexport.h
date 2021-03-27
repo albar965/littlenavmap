@@ -202,7 +202,8 @@ public:
 
   /* Build filename according to pattern set in options. */
   static QString buildDefaultFilename(const QString& suffix = ".lnmpln", bool normalize = false);
-  static QString buildDefaultFilename(const RouteExportFormat&, const QString& suffix = ".lnmpln", bool normalize = false);
+  static QString buildDefaultFilename(const RouteExportFormat&, const QString& suffix = ".lnmpln",
+                                      bool normalize = false);
   static QString buildDefaultFilename(const atools::fs::pln::Flightplan& plan, const QString& suffix = ".lnmpln",
                                       bool normalize = false);
 
@@ -249,7 +250,10 @@ private:
                        std::function<void(const atools::fs::pln::Flightplan&, const QString&)> exportFunc);
 
   /* Shows dialog for IVAP data before exporting */
-  bool routeExportIvapInternal(re::RouteExportType type, const RouteExportFormat& format);
+  bool routeExportIvapInternal(re::RouteExportType type, const RouteExportFormat& format,
+                               const QString& settingsSuffix);
+
+  bool routeExportVfpInternal(const RouteExportFormat& format, const QString& settingsSuffix);
 
   /* Show online network dialog which allows the user to enter needed data */
   bool routeExportDialog(RouteExportData& exportData, re::RouteExportType flightplanType);

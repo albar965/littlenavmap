@@ -879,10 +879,15 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
 
 bool RouteExport::routeExportVfpMan()
 {
-  return routeExportVfp(exportFormatMap->getForManualSave(rexp::VFP));
+  return routeExportVfpInternal(exportFormatMap->getForManualSave(rexp::VFP), "Route/Vfp");
 }
 
 bool RouteExport::routeExportVfp(const RouteExportFormat& format)
+{
+  return routeExportVfpInternal(format, QString());
+}
+
+bool RouteExport::routeExportVfpInternal(const RouteExportFormat& format, const QString& settingsSuffix)
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
@@ -890,7 +895,13 @@ bool RouteExport::routeExportVfp(const RouteExportFormat& format)
     RouteExportData exportData = createRouteExportData(re::VFP);
     if(routeExportDialog(exportData, re::VFP))
     {
-      QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".vfp"));
+      QString defaultFilename = buildDefaultFilenameShort(QString(), ".vfp");
+      QString routeFile;
+      if(format.isManual())
+        routeFile = exportFile(format, settingsSuffix, atools::documentsDir(),
+                               defaultFilename, false /* dontComfirmOverwrite */);
+      else
+        routeFile = exportFileMulti(format, defaultFilename);
 
       if(!routeFile.isEmpty())
       {
@@ -907,25 +918,26 @@ bool RouteExport::routeExportVfp(const RouteExportFormat& format)
 
 bool RouteExport::routeExportXIvapMan()
 {
-  return routeExportXIvap(exportFormatMap->getForManualSave(rexp::XIVAP));
+  return routeExportIvapInternal(re::XIVAP, exportFormatMap->getForManualSave(rexp::XIVAP), "Route/Xivap");
 }
 
 bool RouteExport::routeExportXIvap(const RouteExportFormat& format)
 {
-  return routeExportIvapInternal(re::XIVAP, format);
+  return routeExportIvapInternal(re::XIVAP, format, QString());
 }
 
 bool RouteExport::routeExportIvapMan()
 {
-  return routeExportIvap(exportFormatMap->getForManualSave(rexp::IVAP));
+  return routeExportIvapInternal(re::IVAP, exportFormatMap->getForManualSave(rexp::IVAP), "Route/Ivap");
 }
 
 bool RouteExport::routeExportIvap(const RouteExportFormat& format)
 {
-  return routeExportIvapInternal(re::IVAP, format);
+  return routeExportIvapInternal(re::IVAP, format, QString());
 }
 
-bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteExportFormat& format)
+bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteExportFormat& format,
+                                          const QString& settingsSuffix)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -934,7 +946,14 @@ bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteE
     RouteExportData exportData = createRouteExportData(type);
     if(routeExportDialog(exportData, type))
     {
-      QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
+      QString defaultFilename = buildDefaultFilenameShort(QString(), ".fpl");
+      QString routeFile;
+      if(format.isManual())
+        routeFile = exportFile(format, settingsSuffix, atools::documentsDir(),
+                               defaultFilename, false /* dontComfirmOverwrite */);
+      else
+        routeFile = exportFileMulti(format, defaultFilename);
+
       if(!routeFile.isEmpty())
       {
         if(exportFlighplanAsIvap(exportData, routeFile, type))
@@ -1503,7 +1522,7 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
       writeIvapLine(stream, "ROUTE", exportData.getRoute(), type);
       writeIvapLine(stream, "LEVEL", exportData.getCruiseAltitude() / 100, type);
       writeIvapLine(stream, "LEVELTYPE", "F", type);
-      writeIvapLine(stream, "SPEED", exportData.getSpeed(), type);
+      writeIvapLine(stream, "SPEED", QString("%1").arg(exportData.getSpeed(), 4, 10, QChar('0')), type);
       writeIvapLine(stream, "DEPTIME", exportData.getDepartureTime().toString("HHmm"), type);
       writeIvapLine(stream, "DEPICAO", exportData.getDeparture(), type);
       writeIvapLine(stream, "TRANSPONDER", exportData.getTransponder(), type);
@@ -1527,7 +1546,7 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
       writeIvapLine(stream, "DEPICAO", exportData.getDeparture(), type);
       writeIvapLine(stream, "DEPTIME", exportData.getDepartureTime().toString("HHmm"), type);
       writeIvapLine(stream, "SPEEDTYPE", "N", type);
-      writeIvapLine(stream, "SPEED", exportData.getSpeed(), type);
+      writeIvapLine(stream, "SPEED", QString("%1").arg(exportData.getSpeed(), 4, 10, QChar('0')), type);
       writeIvapLine(stream, "LEVELTYPE", "F", type);
       writeIvapLine(stream, "LEVEL", exportData.getCruiseAltitude() / 100, type);
       writeIvapLine(stream, "ROUTE", exportData.getRoute(), type);
