@@ -69,6 +69,7 @@ enum RouteExportFormatType : quint16
   /* Aircraft ================ */
   FLP = 14, /* Aerosoft Airbus FLP */
   FLPCRJ = 30, /* Aerosoft CRJ FLP */
+  FLPCRJMSFS = 37, /* Aerosoft CRJ FLP for MSFS */
   TXT = 15, /* Rotate MD-80 and others */
   TXTJAR = 36, /* Jar Design */
   RTE = 16, /* PMDG RTE format */
@@ -88,7 +89,7 @@ enum RouteExportFormatType : quint16
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29 /* Export as HTML page */
 
-         // Next = 37
+         // Next = 38
 };
 
 /* Flags for export format. Some flags are saved to the configuration,

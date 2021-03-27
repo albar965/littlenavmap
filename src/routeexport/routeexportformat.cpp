@@ -148,6 +148,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[FMS11       ].CB(bind(&RouteExport::routeExportFms11,             routeExport, _1));
   (*this)[FLP         ].CB(bind(&RouteExport::routeExportFlpMulti,          routeExport, _1));
   (*this)[FLPCRJ      ].CB(bind(&RouteExport::routeExportFlpCrjMulti,       routeExport, _1));
+  (*this)[FLPCRJMSFS  ].CB(bind(&RouteExport::routeExportFlpCrjMulti,       routeExport, _1));
   (*this)[FLIGHTGEAR  ].CB(bind(&RouteExport::routeExportFlightgear,        routeExport, _1));
   (*this)[GFP         ].CB(bind(&RouteExport::routeExportGfpMulti,          routeExport, _1));
   (*this)[GFPUWP      ].CB(bind(&RouteExport::routeExportGfpMulti,          routeExport, _1));
@@ -209,6 +210,7 @@ void RouteExportFormatMap::init()
   INS(FMS11,        RF(FMS11,        AIRPORTS|CYCLE,   tr("fms"),             tr("Simulator"), tr("X-Plane FMS 11")                                                  ));
   INS(FLP,          RF(FLP,          AIRPORTS,         tr("flp"),             tr("Aircraft"),  tr("Aerosoft Airbus and others")                                      ));
   INS(FLPCRJ,       RF(FLPCRJ,       AIRPORTS,         tr("flp"),             tr("Aircraft"),  tr("Aerosoft CRJ")                                                    ));
+  INS(FLPCRJMSFS,   RF(FLPCRJMSFS,   AIRPORTS,         tr("flp"),             tr("Aircraft"),  tr("Aerosoft CRJ for MSFS")                                           ));
   INS(FLIGHTGEAR,   RF(FLIGHTGEAR,   AIRPORTS,         tr("fgfp"),            tr("Simulator"), tr("FlightGear")                                                      ));
   INS(GFP,          RF(GFP,          AIRPORTS,         tr("gfp"),             tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                      ));
   INS(GFPUWP,       RF(GFPUWP,       AIRPORTS|GARMIN_AS_WAYPOINTS, tr("gfp"), tr("Garmin"),    tr("Flight1 Garmin GTN 650/750 with user defined waypoints") +
@@ -330,6 +332,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[FMS11       ].DP(xpFilesPath);
   (*this)[FLP         ].DP(documents);
   (*this)[FLPCRJ      ].DP(documents + SEP + "Aerosoft" + SEP + "Digital Aviation CRJ" + SEP + "FlightPlans");
+  (*this)[FLPCRJMSFS  ].DP(documents);
   (*this)[FLIGHTGEAR  ].DP(documents);
   (*this)[GFP         ].DP(fsxP3dBasePath + SEP + "F1TGTN" + SEP + "FPL");
   (*this)[GFPUWP      ].DP(fsxP3dBasePath + SEP + "F1TGTN" + SEP + "FPL");

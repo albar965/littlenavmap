@@ -233,7 +233,7 @@ signals:
 
 private:
   bool routeExportInternalPln(const RouteExportFormat& format);
-  bool routeExportInternalFlp(const RouteExportFormat& format, bool crj);
+  bool routeExportInternalFlp(const RouteExportFormat& format, bool crj, bool msfs);
 
   /* Formats that have no export method in FlightplanIO */
   bool exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints);

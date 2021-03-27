@@ -381,21 +381,24 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
 
 bool RouteExport::routeExportFlpCrjMulti(const RouteExportFormat& format)
 {
-  return routeExportInternalFlp(format, true /* CRJ */);
+  return routeExportInternalFlp(format, true /* CRJ */, format.getType() == rexp::FLPCRJMSFS /* msfs */);
 }
 
 bool RouteExport::routeExportFlpMulti(const RouteExportFormat& format)
 {
-  return routeExportInternalFlp(format, false /* CRJ */);
+  return routeExportInternalFlp(format, false /* CRJ */, false /* msfs */);
 }
 
-bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool crj)
+bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool crj, bool msfs)
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
+    // Use shorter suffix for MSFS CFJ since it accepts only 8 characters
+    QString suffix = msfs ? ".flp" : "01.flp";
+
     // <Documents>/Aerosoft/Airbus/Flightplans.
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), "01.flp"));
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), suffix));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
