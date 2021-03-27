@@ -1472,12 +1472,15 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShowAirspaces, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapResetSettings, &QAction::triggered, this, &MainWindow::resetMapObjectsShown);
 
+  // Airspace sources ======
   AirspaceController *airspaceController = NavApp::getAirspaceController();
   connect(airspaceController, &AirspaceController::updateAirspaceSources,
           this, &MainWindow::updateMapObjectsShown);
   connect(airspaceController, &AirspaceController::updateAirspaceSources,
           NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
+  connect(airspaceController, &AirspaceController::updateAirspaceSources, this, &MainWindow::updateAirspaceSources);
 
+  // Other airspace signals ======
   connect(airspaceController, &AirspaceController::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
   connect(airspaceController, &AirspaceController::userAirspacesUpdated,
           NavApp::getOnlinedataController(), &OnlinedataController::userAirspacesUpdated);
@@ -3075,7 +3078,12 @@ void MainWindow::updateAirspaceTypes(map::MapAirspaceFilter types)
 {
   mapWidget->setShowMapAirspaces(types);
   mapWidget->updateMapObjectsShown();
-  // setStatusMessage(tr("Map settings changed."));
+}
+
+void MainWindow::updateAirspaceSources()
+{
+  mapWidget->setShowMapAirspaces(mapWidget->getShownAirspaces());
+  mapWidget->updateMapObjectsShown();
 }
 
 void MainWindow::resetMapObjectsShown()

@@ -354,6 +354,7 @@ private:
   void weatherUpdateTimeout();
   void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
   void updateAirspaceTypes(map::MapAirspaceFilter types);
+  void updateAirspaceSources();
   void resetWindowLayout();
 
   /* Question dialog and then delete map and profile trail */

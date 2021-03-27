@@ -57,7 +57,7 @@ AirspaceController::AirspaceController(MainWindow *mainWindowParam,
   if(dbOnline != nullptr)
     queries.insert(map::AIRSPACE_SRC_ONLINE, new AirspaceQuery(dbOnline, map::AIRSPACE_SRC_ONLINE));
 
-  for(AirspaceQuery *q:queries.values())
+  for(AirspaceQuery *q : queries)
     q->initQueries();
 
   // Button and action handler =================================
@@ -247,7 +247,7 @@ void AirspaceController::optionsChanged()
 {
   if(!loadingUserAirspaces)
   {
-    for(AirspaceQuery *q:queries.values())
+    for(AirspaceQuery *q : queries)
       // Also calls deinit before and clears caches
       q->initQueries();
   }
@@ -259,7 +259,7 @@ void AirspaceController::preDatabaseLoad()
   // preDatabaseLoadAirspaces and postDatabaseLoadAirspaces
   if(!loadingUserAirspaces)
   {
-    for(AirspaceQuery *q:queries.values())
+    for(AirspaceQuery *q : queries)
       q->deInitQueries();
   }
 }
@@ -270,7 +270,7 @@ void AirspaceController::postDatabaseLoad()
   // preDatabaseLoadAirspaces and postDatabaseLoadAirspaces
   if(!loadingUserAirspaces)
   {
-    for(AirspaceQuery *q:queries.values())
+    for(AirspaceQuery *q : queries)
       q->initQueries();
   }
 }
