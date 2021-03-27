@@ -133,11 +133,8 @@ void MapPainterWeather::render()
                                   airportWeather.airport->position, context->weatherSource);
 
     if(metar.isValid())
-    {
-      float x = static_cast<float>(airportWeather.point.x());
-      float y = static_cast<float>(airportWeather.point.y());
-      drawAirportWeather(metar, x, y);
-    }
+      drawAirportWeather(metar, static_cast<float>(airportWeather.point.x()),
+                         static_cast<float>(airportWeather.point.y()));
   }
 }
 

@@ -381,7 +381,6 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(750.f).airportSymbolSize(8).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          windBarbsSymbolSize(12).
-         airportWeatherDetails(false).
          approachText(false).
          aiAircraftGround(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -397,7 +396,6 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 8000
   append(defLayer.clone(1200.f).airportSymbolSize(6).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
-         airportWeather(false).airportWeatherDetails(false).
          windBarbsSymbolSize(10).
          approachText(false).approachDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
