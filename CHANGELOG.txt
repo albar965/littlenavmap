@@ -33,7 +33,8 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 ### Flight Plans
 
 * Corrected approach identifier in FLP flight plan export and loading for Aerosoft aircraft. Now
-  using ARINC identifier for approaches and ignoring transitions of type `VECTOR`.
+  using ARINC identifier for approaches and ignoring transitions of type `VECTOR`. Adapted changed
+  keywords in file for CRJ. Problems might still appear when loading flight plans into the aircraft.
 * Added extra entry for Aerosoft MSFS CRJ to avoid loading issues because of a too long file name.
 * Added patch by Slawek Mikula to support loading of Aviamaps flight plans. #616
 * Export online network flight plan files from menu now correctly remembers last used folder for
