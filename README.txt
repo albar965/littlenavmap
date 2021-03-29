@@ -67,4 +67,4 @@ https://github.com/albar965/littlenavmap
 The source code for Little Navconnect is available at Github too:
 https://github.com/albar965/littlenavconnect
 
-Copyright 2015-2020 Alexander Barthel (alex@littlenavmap.org).
+Copyright 2015-2020 Alexander Barthel (https://www.littlenavmap.org/contact.html).

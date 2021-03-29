@@ -1486,7 +1486,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
                            "of the contact addresses below.</b>"
                            "<hr/>%1"
                              "<hr/>%2").
-                      arg(atools::gui::Application::getEmailHtml()).
+                      arg(atools::gui::Application::getContactHtml()).
                       arg(atools::gui::Application::getReportPathHtml()));
 
     errorTexts.append(tr("<hr/>Some files or scenery directories could not be read.<br/>"
