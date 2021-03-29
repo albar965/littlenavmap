@@ -1,4 +1,4 @@
-﻿Numbers (#) refer to GitHub issues.
+Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
@@ -22,34 +22,35 @@ https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/APPENDIX.html#p
 
 ### Weather
 
-* Adapted URL for winds aloft download to NOAA changes and added `atmos` as directory. This fixes
-  the `Error downloading or reading wind data` issue. #623
-* Now supressing wind and other downloads with log warning message if URLs are empty. #623
-* New decompression methods to speed up weather and track downloads. Added accept Gzip
-  encoding to HTTP downloader to allow compressed downloads.
-* Now showing airport weather on higher zoom levels. Avoiding simple line on wind barb which can be
-  confused with low wind.
+* Fixed `Error downloading or reading wind data` issue. Adapted URL for winds aloft download to
+  NOAA changes and added `atmos` as directory. #623
+* Now suppressing wind and other downloads with log warning message if URLs are empty. #623
+* New decompression methods to speed up weather and track downloads.
+* Now showing airport weather symbols on higher zoom levels. Avoiding simple line on wind barb
+  which can be confused with low wind.
 
 ### Flight Plans
 
 * Corrected approach identifier in FLP flight plan export and loading for Aerosoft aircraft. Now
   using ARINC identifier for approaches and ignoring transitions of type `VECTOR`. Adapted changed
-  keywords in file for CRJ. Problems might still appear when loading flight plans into the aircraft.
-* Added extra entry for Aerosoft MSFS CRJ to avoid loading issues because of a too long file name.
+  keywords in file for CRJ. Problems still appear when loading flight plans into the aircraft. This
+  will be fixed in one of the next updates.
+* Added extra entry for Aerosoft MSFS CRJ in multi export to avoid loading issues because of a
+  too long file name.
 * Added patch by Slawek Mikula to support loading of Aviamaps flight plans. #616
-* Export online network flight plan files from menu now correctly remembers last used folder for
+* Exporting online network flight plan files from menu now correctly remembers last used folder for
   each format.
 
 ### Other
 
-* Adjustments to drawing. ILS, online aircraft and AI aircraft now shown at higher zoom levels.
-* Added support for new VATSIM JSON version 3 feed. Reduced update rate for online networks to one
-  minute for VATSIM and PilotEdge and two minutes for IVAO. Allowing centers and clients (VATSIM
-  prefile) without coordinates now throughout program. #606
+* Adjustments to drawing. ILS, online aircraft and AI aircraft are now shown at higher zoom levels.
+* Added support for new VATSIM JSON version 3 data feed. Better update rate for online networks is now
+  one minute for VATSIM and PilotEdge and two minutes for IVAO. Allowing centers and clients (VATSIM
+  prefile) without coordinates now throughout program. Keep in mind that the real center boundaries are
+  not depicted yet. #606
 * MSFS: Now ignoring invalid content types like `Unknown` in MSFS `manifest.json` file which are
-  often set wrongly by add-on developers. Added warnings for JSON parsing errors in files `layout.json`
-  and `manifest.json`.
-* Fixed issue where userdata CSV backup files could not be imported and needed to be manually
+  often set wrongly by add-on developers. This kept add-on airports from showing up.
+* Fixed issue where userdata CSV backup files could not be loaded and had to be manually
   corrected before import.
 * Updates for detection of military airports and name capitalization.
 * More small user interface corrections.
