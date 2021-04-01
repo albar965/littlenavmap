@@ -20818,17 +20818,17 @@ Really use it?</source>
     <message>
         <location filename="src/common/formatter.cpp" line="152"/>
         <source>minute</source>
-        <translation type="unfinished">分</translation>
+        <translation>分</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="152"/>
         <source>minutes</source>
-        <translation type="unfinished">分</translation>
+        <translation>分</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="180"/>
         <source>Coordinates are valid: %1 (%2)</source>
-        <translation>坐标有效： %1 (%2)</translation>
+        <translation>坐标有效：%1 (%2)</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="182"/>
@@ -20913,13 +20913,13 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="1942"/>
         <location filename="src/common/maptypes.cpp" line="1958"/>
         <source>LOC</source>
-        <translation>信标(LOC)</translation>
+        <translation>LOC</translation>
     </message>
     <message>
         <location filename="src/common/mapflags.cpp" line="165"/>
         <location filename="src/common/maptypes.cpp" line="1670"/>
         <source>Simulator</source>
-        <translation type="unfinished">模拟器</translation>
+        <translation>模拟器</translation>
     </message>
     <message>
         <location filename="src/common/mapflags.cpp" line="168"/>
@@ -20929,17 +20929,17 @@ Really use it?</source>
     <message>
         <location filename="src/common/mapflags.cpp" line="171"/>
         <source>NOAA</source>
-        <translation type="unfinished">NOAA</translation>
+        <translation>NOAA</translation>
     </message>
     <message>
         <location filename="src/common/mapflags.cpp" line="174"/>
         <source>VATSIM</source>
-        <translation type="unfinished">VATSIM</translation>
+        <translation>VATSIM</translation>
     </message>
     <message>
         <location filename="src/common/mapflags.cpp" line="177"/>
         <source>IVAO</source>
-        <translation type="unfinished">IVAO</translation>
+        <translation>IVAO</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="69"/>
@@ -20955,7 +20955,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="71"/>
         <location filename="src/common/maptypes.cpp" line="803"/>
         <source>Water</source>
-        <translation type="unfinished">水面</translation>
+        <translation>水面</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="72"/>
@@ -21054,7 +21054,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="149"/>
         <location filename="src/common/maptypes.cpp" line="174"/>
         <source>Unknown</source>
-        <translation type="unfinished">未知</translation>
+        <translation>未知</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="91"/>
@@ -21071,7 +21071,7 @@ Really use it?</source>
         <location filename="src/common/unit.cpp" line="636"/>
         <location filename="src/common/unit.cpp" line="673"/>
         <source>Invalid</source>
-        <translation type="unfinished">无效的</translation>
+        <translation>无效的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="99"/>
@@ -21102,7 +21102,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="103"/>
         <location filename="src/common/maptypes.cpp" line="129"/>
         <source>Ramp Extra</source>
-        <translation>额外机坪</translation>
+        <translation>外部机坪</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="104"/>
@@ -21182,7 +21182,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="141"/>
         <location filename="src/common/maptypes.cpp" line="167"/>
         <source>Fuel</source>
-        <translation type="unfinished">燃油</translation>
+        <translation>燃油</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="117"/>
@@ -21225,12 +21225,12 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="139"/>
         <location filename="src/common/maptypes.cpp" line="165"/>
         <source>Gate Extra</source>
-        <translation>额外登机口</translation>
+        <translation>外部登机口</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="154"/>
         <source>Ramp GA Extra</source>
-        <translation>额外通航机坪</translation>
+        <translation>外部通航机坪</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="175"/>
@@ -21241,7 +21241,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="176"/>
         <location filename="src/common/maptypes.cpp" line="759"/>
         <source>Parking</source>
-        <translation type="unfinished">停机位</translation>
+        <translation>停机位</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="177"/>
@@ -21634,7 +21634,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="265"/>
         <location filename="src/common/maptypes.cpp" line="1148"/>
         <source>T</source>
-        <translation type="unfinished">T</translation>
+        <translation>T</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="271"/>
@@ -21686,7 +21686,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="296"/>
         <location filename="src/common/maptypes.cpp" line="1114"/>
         <source>Track</source>
-        <translation>航向</translation>
+        <translation>航迹</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="297"/>
@@ -21701,7 +21701,7 @@ Really use it?</source>
         <location filename="src/common/proctypes.cpp" line="67"/>
         <location filename="src/common/proctypes.cpp" line="79"/>
         <source>VOR</source>
-        <translation type="unfinished">甚高频全向信标(VOR)</translation>
+        <translation>VOR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="299"/>
@@ -21710,17 +21710,17 @@ Really use it?</source>
         <location filename="src/common/proctypes.cpp" line="68"/>
         <location filename="src/common/proctypes.cpp" line="80"/>
         <source>NDB</source>
-        <translation type="unfinished">NDB</translation>
+        <translation>NDB</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="300"/>
         <source>VFR</source>
-        <translation>VFR-目视飞行</translation>
+        <translation>VFR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="302"/>
         <source>Off Airway</source>
-        <translation>偏离跑道</translation>
+        <translation>偏离航路</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="310"/>
@@ -21728,14 +21728,14 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="1527"/>
         <location filename="src/common/proctypes.cpp" line="85"/>
         <source>VORDME</source>
-        <translation type="unfinished">甚高频全向信标测距机(VORDME)</translation>
+        <translation>VORDME</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="311"/>
         <location filename="src/common/maptypes.cpp" line="1302"/>
         <location filename="src/common/maptypes.cpp" line="1523"/>
         <source>VORTAC</source>
-        <translation type="unfinished">甚高频全向信标战术空中导航系统(VORTAC)</translation>
+        <translation>VORTAC</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="312"/>
@@ -21748,7 +21748,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="1315"/>
         <location filename="src/common/maptypes.cpp" line="1525"/>
         <source>DME</source>
-        <translation type="unfinished">测距机(DME)</translation>
+        <translation>DME</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="315"/>
@@ -21756,7 +21756,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="1519"/>
         <location filename="src/common/proctypes.cpp" line="94"/>
         <source>TACAN</source>
-        <translation type="unfinished">战术空中导航系统(TACAN)</translation>
+        <translation>TACAN</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="316"/>
@@ -21768,14 +21768,14 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="318"/>
         <location filename="src/common/proctypes.cpp" line="70"/>
         <source>Waypoint</source>
-        <translation type="unfinished">航路点</translation>
+        <translation>航路点</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="324"/>
         <location filename="src/common/maptypes.cpp" line="1568"/>
         <location filename="src/common/maptypes.cpp" line="1664"/>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="330"/>
@@ -22050,12 +22050,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="400"/>
         <source>UIR</source>
-        <translation>高空情报区</translation>
+        <translation>高空飞行情报区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="401"/>
         <source>Tower</source>
-        <translation type="unfinished">塔台</translation>
+        <translation>塔台</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="402"/>
@@ -22096,7 +22096,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="409"/>
         <source>Warning</source>
-        <translation type="unfinished">警告</translation>
+        <translation>警告</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="410"/>
@@ -22298,17 +22298,17 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="801"/>
         <location filename="src/common/proctypes.cpp" line="72"/>
         <source>Runway</source>
-        <translation type="unfinished">跑道</translation>
+        <translation>跑道</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="805"/>
         <source>Helipad</source>
-        <translation type="unfinished">直升机坪</translation>
+        <translation>直升机坪</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1026"/>
         <source>V</source>
-        <translation type="unfinished">V</translation>
+        <translation>V</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1029"/>
@@ -22361,7 +22361,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1099"/>
         <source>Direct</source>
-        <translation>直接/直飞</translation>
+        <translation>直飞</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1102"/>
@@ -22376,7 +22376,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1111"/>
         <source>Undesignated</source>
-        <translation>没有指定的</translation>
+        <translation>未指定</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1130"/>
@@ -22476,17 +22476,17 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="2026"/>
         <source> Ship</source>
-        <translation> 船舶</translation>
+        <translation> 航船</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2029"/>
         <source> Carrier</source>
-        <translation> 运营商</translation>
+        <translation> 航空母舰</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2032"/>
         <source> Frigate</source>
-        <translation> 货运门</translation>
+        <translation> 护卫舰</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2035"/>
@@ -22539,7 +22539,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="1442"/>
         <location filename="src/common/maptypes.cpp" line="1473"/>
         <source>E</source>
-        <translation type="unfinished">东</translation>
+        <translation>东</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1442"/>
@@ -22571,7 +22571,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="1145"/>
         <location filename="src/common/maptypes.cpp" line="1477"/>
         <source>S</source>
-        <translation type="unfinished">南</translation>
+        <translation>南</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1414"/>
@@ -22592,13 +22592,13 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="1509"/>
         <location filename="src/common/proctypes.cpp" line="280"/>
         <source>Left</source>
-        <translation type="unfinished">向左</translation>
+        <translation>向左</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1511"/>
         <location filename="src/common/proctypes.cpp" line="282"/>
         <source>Right</source>
-        <translation type="unfinished">向右</translation>
+        <translation>向右</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1536"/>
@@ -22628,7 +22628,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1550"/>
         <source>NDB (%1)</source>
-        <translation type="unfinished">NDB (%1)</translation>
+        <translation>NDB (%1)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1404"/>
@@ -22690,7 +22690,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1942"/>
         <source>ILS, GS</source>
-        <translation>盲降(ILS)，下滑道(GS)</translation>
+        <translation>ILS, GS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1944"/>
@@ -22702,17 +22702,17 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="1955"/>
         <location filename="src/common/proctypes.cpp" line="81"/>
         <source>ILS</source>
-        <translation type="unfinished">ILS</translation>
+        <translation>ILS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1956"/>
         <source>ILS </source>
-        <translation>盲降(ILS) </translation>
+        <translation>ILS </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1962"/>
         <source>LOC </source>
-        <translation>信标(LOC) </translation>
+        <translation>LOC </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1971"/>
@@ -23080,7 +23080,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="804"/>
         <source> min</source>
-        <translation type="unfinished"> 分钟</translation>
+        <translation> 分钟</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="832"/>
@@ -23125,22 +23125,22 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="888"/>
         <source>Missed</source>
-        <translation type="unfinished">复飞</translation>
+        <translation>复飞</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="890"/>
         <source>Transition</source>
-        <translation type="unfinished">过渡</translation>
+        <translation>过渡程序</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="892"/>
         <source>STAR</source>
-        <translation type="unfinished">STAR</translation>
+        <translation>STAR</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="894"/>
         <source>SID</source>
-        <translation type="unfinished">SID</translation>
+        <translation>SID</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="896"/>
@@ -23196,7 +23196,7 @@ Really use it?</source>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2021 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2021 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
         <translatorcomment>添加了翻译者姓名、许可证及网站。Added translator name license and website.</translatorcomment>
-        <translation>&lt;p&gt;是一个适用于 X-Plane 11、Flight Simulator X 、Prepar3D 和微软模拟飞行 2020 的免费的开源飞行计划工具、导航工具、动态地图、机场搜索和机场信息系统。&lt;/p&gt;&lt;p&gt;&lt;b&gt;如您愿意您可以在&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;这里&lt;/a&gt;捐助.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此软件许可证适用于&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本&lt;/p&gt;&lt;p&gt;此软件的源代码在 &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;。&lt;/p&gt;&lt;p&gt;关于我的更多项目&lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;版权所有 2015-2021 Alexander Barthel&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此版本中文翻译由&lt;a href=&quot;https://github.com/tonghuix&quot;&gt;Tong Hui&lt;/a&gt;和&lt;a href=&quot;https://github.com/J0hnLiu&quot;&gt;John Liu&lt;/a&gt;提供，适用同样的&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本的许可证。因水平有限，翻译可能存在一些不足，请发&lt;a href=&quot;https://github.com/albar965&quot;&gt; Issue &lt;/a&gt;赐教指正。&lt;/p&gt;</translation>
+        <translation type="unfinished">&lt;p&gt;是一个适用于 X-Plane 11、Flight Simulator X 、Prepar3D 和微软模拟飞行 2020 的免费且开源飞行计划工具、导航工具、动态地图、机场搜索和机场信息系统。&lt;/p&gt;&lt;p&gt;&lt;b&gt;如您愿意您可以在&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;这里&lt;/a&gt;捐助.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此软件许可证适用于&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本&lt;/p&gt;&lt;p&gt;此软件的源代码在 &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;。&lt;/p&gt;&lt;p&gt;关于我的更多项目&lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;版权所有 2015-2021 Alexander Barthel&lt;/b&gt;&lt;/p&gt;&lt;p&gt;此版本中文翻译由&lt;a href=&quot;https://github.com/tonghuix&quot;&gt;Tong Hui&lt;/a&gt;和&lt;a href=&quot;https://github.com/J0hnLiu&quot;&gt;John Liu&lt;/a&gt;提供，适用同样的&lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt;或任何更新版本的许可证。因水平有限，翻译可能存在一些不足，请发&lt;a href=&quot;https://github.com/albar965&quot;&gt; Issue &lt;/a&gt;赐教指正。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3258"/>
@@ -23274,17 +23274,17 @@ Spaces are replaced with underscores.</source>
     <message>
         <location filename="src/route/route.cpp" line="2866"/>
         <source>Transition %1</source>
-        <translation type="unfinished">过渡 %1</translation>
+        <translation>过渡程序 %1</translation>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="2868"/>
         <source>STAR %1</source>
-        <translation type="unfinished">STAR %1</translation>
+        <translation>STAR %1</translation>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="2870"/>
         <source>SID %1</source>
-        <translation type="unfinished">SID %1</translation>
+        <translation>SID %1</translation>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="2872"/>
@@ -23304,7 +23304,7 @@ Spaces are replaced with underscores.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="130"/>
         <source>Region</source>
-        <translation type="unfinished">区域</translation>
+        <translation>区域</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="131"/>
@@ -23314,7 +23314,7 @@ Spaces are replaced with underscores.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="132"/>
         <source>Procedure</source>
-        <translation type="unfinished">程序</translation>
+        <translation>进离场程序</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="133"/>
@@ -23331,7 +23331,7 @@ Procedure</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="135"/>
         <source>Type</source>
-        <translation type="unfinished">类型</translation>
+        <translation>类型</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="136"/>
@@ -23343,21 +23343,21 @@ MHz/kHz/Cha.</source>
         <location filename="src/route/routecontroller.cpp" line="137"/>
         <source>Range
 %dist%</source>
-        <translation type="unfinished">范围
+        <translation>范围
 %dist%</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="138"/>
         <source>Course
 °M</source>
-        <translation type="unfinished">磁航迹
+        <translation>磁航迹
 °M</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="139"/>
         <source>Course
 °T</source>
-        <translation>航向
+        <translation type="unfinished">航迹
 °T</translation>
     </message>
     <message>
@@ -23370,7 +23370,7 @@ MHz/kHz/Cha.</source>
         <location filename="src/route/routecontroller.cpp" line="140"/>
         <source>Distance
 %dist%</source>
-        <translation type="unfinished">距离
+        <translation>距离
 %dist%</translation>
     </message>
     <message>
@@ -23409,8 +23409,8 @@ hh:mm</source>
 °M/%speed%</source>
         <oldsource>Wind °M
 %speed%</oldsource>
-        <translation type="unfinished">风 °M
-%speed%</translation>
+        <translation type="unfinished">风
+°磁航向/%speed%</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="147"/>
@@ -23434,12 +23434,12 @@ hh:mm</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="153"/>
         <source>ICAO ident of the navaid or airport.</source>
-        <translation>此助航设备或机场的ICAO识别代码。</translation>
+        <translation>此助航设备或机场的 ICAO 识别代码。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="154"/>
         <source>Two letter region code of a navaid.</source>
-        <translation>2字母助航设备区域代码。</translation>
+        <translation>两字助航设备区域代码。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="155"/>
@@ -23449,7 +23449,7 @@ hh:mm</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="156"/>
         <source>Either SID, SID transition, STAR, STAR transition, transition, approach or missed plus the name of the procedure.</source>
-        <translation>此程序的SID, SID 过渡, STAR, STAR 过渡, 过渡, 进近或复飞。</translation>
+        <translation type="unfinished">要么是此程序的 SID、SID 过渡程序、STAR、STAR 过渡程序、过渡程序、进近或复飞。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="158"/>
@@ -23459,21 +23459,21 @@ hh:mm</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="159"/>
         <source>Either minimum altitude for en route airway segment, procedure altitude restriction or procedure speed limit.</source>
-        <translation>途中航段的最低高度，程序高度限制或程序速度限制。</translation>
+        <translation type="unfinished">航路最低高度、程序高度限制或程序速度限制。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="161"/>
         <source>Type of a radio navaid. Shows ILS or LOC for
 localizer approaches on the last runway leg.</source>
-        <translation>无线电助航设备的种类。最后一个
-跑道航段的航向台将显示为ILS或LOC。</translation>
+        <translation type="unfinished">无线电助航设备的种类。最后一个跑道航段的
+信标台将显示为 ILS 或 LOC。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="163"/>
         <source>Frequency or channel of a radio navaid.
 Also shows ILS or localizer frequency for corresponding approaches on the last runway leg.</source>
-        <translation>无线电助航设备的频率或频道。也会显示
-最后一个跑道航段的航向台ILS或LOC的频率。</translation>
+        <translation type="unfinished">无线电助航设备的频率或频道。
+也会显示最后一个跑道航段的信标台或 ILS 的频率。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="165"/>
@@ -23483,7 +23483,7 @@ Also shows ILS or localizer frequency for corresponding approaches on the last r
     <message>
         <location filename="src/route/routecontroller.cpp" line="166"/>
         <source>Magnetic start course of the great circle route connecting the two waypoints of the leg.</source>
-        <translation>连接此航段两个航路点的大圆航路起始磁航向。</translation>
+        <translation type="unfinished">连接此航段两个航路点的大圆航路起始磁航迹。</translation>
     </message>
     <message>
         <source>Magnetic constant course of the rhumb line connecting two waypoints of a leg.</source>
@@ -23544,7 +23544,7 @@ Calculated based on the aircraft performance profile.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="177"/>
         <source>Head- or tailwind at waypoint.</source>
-        <translation>航路点顺风或逆风。</translation>
+        <translation>在航路点顺风或逆风。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="178"/>
@@ -23556,17 +23556,17 @@ Calculated based on the aircraft performance profile.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="180"/>
         <source>Turn instructions, flyover or related navaid for procedure legs.</source>
-        <translation>转向指示，程序航段中飞跃或相关的助航设备。</translation>
+        <translation>为程序航段提供转向指示、飞跃或相关的助航设备。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="458"/>
         <source>Error reading multiexport configuration: Invalid magic number. Not a multiexport configuration.</source>
-        <translation>读取多重导出配置时出错：无效的幻数。 不是多重导出配置。</translation>
+        <translation>读取多重导出配置时出错：无效的幻数。不是多重导出配置。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="468"/>
         <source>Error reading multiexport configuration: Invalid version. Incompatible multiexport configuration.</source>
-        <translation>读取多重导出配置时出错：无效的版本。 不兼容的多重导出配置。</translation>
+        <translation>读取多重导出配置时出错：无效的版本。不兼容的多重导出配置。</translation>
     </message>
 </context>
 <context>
