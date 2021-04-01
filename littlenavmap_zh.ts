@@ -7065,7 +7065,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7213"/>
         <source>F1</source>
-        <translation type="unfinished"></translation>
+        <translation>F1</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7222"/>
@@ -7932,7 +7932,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="10498"/>
         <location filename="src/gui/mainwindow.ui" line="10501"/>
         <source>Export flight plan as FGFP file for the FlightGear simulator</source>
-        <translation type="unfinished">导出飞行计划为 FGFP 文件以供 FlightGear 模拟器使用</translation>
+        <translation>导出飞行计划为 FGFP 文件以供 FlightGear 模拟器使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11120"/>
@@ -9684,7 +9684,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10347"/>
         <source>F4</source>
-        <translation type="unfinished"></translation>
+        <translation>F4</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10355"/>
@@ -9700,7 +9700,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10364"/>
         <source>F5</source>
-        <translation type="unfinished"></translation>
+        <translation>F5</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10372"/>
@@ -9716,7 +9716,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10381"/>
         <source>F6</source>
-        <translation type="unfinished"></translation>
+        <translation>F6</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10389"/>
@@ -9732,7 +9732,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10398"/>
         <source>F7</source>
-        <translation type="unfinished"></translation>
+        <translation>F7</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10406"/>
@@ -9748,7 +9748,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10415"/>
         <source>F9</source>
-        <translation type="unfinished"></translation>
+        <translation>F9</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10423"/>
@@ -9764,7 +9764,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10432"/>
         <source>F10</source>
-        <translation type="unfinished"></translation>
+        <translation>F10</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10440"/>
@@ -9780,7 +9780,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10449"/>
         <source>F11</source>
-        <translation type="unfinished"></translation>
+        <translation>F11</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10457"/>
@@ -9796,7 +9796,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10466"/>
         <source>F8</source>
-        <translation type="unfinished"></translation>
+        <translation>F8</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10474"/>
@@ -9812,7 +9812,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10483"/>
         <source>F12</source>
-        <translation type="unfinished"></translation>
+        <translation>F12</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10504"/>
@@ -9868,7 +9868,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10557"/>
         <source>F3</source>
-        <translation type="unfinished"></translation>
+        <translation>F3</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10569"/>
@@ -14564,7 +14564,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="4213"/>
         <source> (file not found)</source>
         <oldsource> (File not found)</oldsource>
-        <translation> （文件未找到）</translation>
+        <translation>（文件未找到）</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4235"/>
@@ -21911,7 +21911,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="367"/>
         <source>Information</source>
-        <translation type="unfinished">信息</translation>
+        <translation>信息</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="368"/>
@@ -22070,7 +22070,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="403"/>
         <source>Ground</source>
-        <translation type="unfinished">地面</translation>
+        <translation>地面</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="404"/>
