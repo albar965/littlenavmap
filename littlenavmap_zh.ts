@@ -4506,7 +4506,7 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="321"/>
         <source>&amp;Airspaces</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">空域(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="327"/>
@@ -4521,7 +4521,7 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="348"/>
         <source>&amp;Airports</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">机场(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="292"/>
@@ -9377,7 +9377,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9818"/>
         <source>&amp;Active Sky</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Active Sky(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9821"/>
@@ -10541,7 +10541,7 @@ Local: %2</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1906"/>
         <source>Error opening help URL &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">打开帮助 URL “%1” 出错</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1930"/>
@@ -14819,17 +14819,17 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="203"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="245"/>
         <source>HDG %3°M</source>
-        <translation>航向 %3°磁航向</translation>
+        <translation>HDG %3°M</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="214"/>
         <source>ALT %1%2</source>
-        <translation>高度 %1%2</translation>
+        <translation>ALT %1%2</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="259"/>
         <source>ALT %1, IND %2%3</source>
-        <translation>高度 %1，指示高度 %2%3</translation>
+        <translation>ALT %1, IND %2%3</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="265"/>
@@ -14850,17 +14850,17 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="337"/>
         <source>IAS %1</source>
-        <translation>表速 %1</translation>
+        <translation>IAS %1</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="340"/>
         <source>GS %2</source>
-        <translation>地速 %2</translation>
+        <translation>GS %2</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="343"/>
         <source>TAS %1</source>
-        <translation>真空速 %1</translation>
+        <translation>TAS %1</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="373"/>
@@ -16402,7 +16402,7 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
         <location filename="src/options/options.ui" line="3021"/>
         <location filename="src/options/options.ui" line="3991"/>
         <source> %</source>
-        <translation type="unfinished"> %</translation>
+        <translation> %</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="884"/>
@@ -16521,7 +16521,7 @@ userpoints and logbook entries when hovering the cursor over the map</source>
         <location filename="src/options/options.ui" line="1136"/>
         <location filename="src/options/options.ui" line="1246"/>
         <source>&amp;Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>机场(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1279"/>
@@ -16538,7 +16538,7 @@ userpoints and logbook entries when clicking on the map</source>
     <message>
         <location filename="src/options/options.ui" line="1296"/>
         <source>&amp;Airspaces</source>
-        <translation type="unfinished"></translation>
+        <translation>空域(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1309"/>
@@ -16556,7 +16556,10 @@ userpoints and logbook entries when clicking on the map</source>
 This can cause several unwanted effects when arranging dock windows.
 Uncheck this if you do experience strange effects when resizing dock windows.
 Restart the program after changing this option. You might also need to reset the window layout.</source>
-        <translation type="unfinished"></translation>
+        <translation>可以解锁地图窗口停靠并进入浮动状态。
+这可能会比停靠窗口多出各种意料之外的行为。
+如果缩放停靠窗口时遇到意料之外的情况可以不选此项。
+改变此项后需要重启程序。您可能需要重置窗口布局。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1360"/>
@@ -16596,7 +16599,9 @@ provide a toolbar button for disabling them if this checkbox is enabled.</source
 will be displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled
 together with &quot;Treat empty airports special&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>所有 X-Plane 中没有 3D 化且不是插件机场的
+会排在其他机场下面，如果选中此选项和“特殊对待空机场”
+会使用灰色符号并提供了一个工具栏按钮来禁用它们。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1452"/>
@@ -16718,7 +16723,7 @@ Smaller values will zoom in closer to an airport or navaid. </source>
         <location filename="src/options/options.ui" line="3432"/>
         <location filename="src/options/options.ui" line="3491"/>
         <source> %dist%</source>
-        <translation type="unfinished"> %dist%</translation>
+        <translation> %dist%</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1594"/>
@@ -16743,7 +16748,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
         <location filename="src/options/options.ui" line="1633"/>
         <source>&amp;Avoid blurred map display by zooming out
 to next best step</source>
-        <translation>缩小到下一个最佳档位以避免地图显示模糊(&amp;A)</translation>
+        <translation>缩小到下一个最佳档位
+以避免地图显示模糊(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1939"/>
@@ -16788,7 +16794,7 @@ Afftects map and elevation profile.</source>
     <message>
         <location filename="src/options/options.ui" line="2212"/>
         <source>&amp;Airports:</source>
-        <translation type="unfinished"></translation>
+        <translation>机场(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2507"/>
@@ -16798,7 +16804,7 @@ Afftects map and elevation profile.</source>
     <message>
         <location filename="src/options/options.ui" line="2510"/>
         <source>Active Leg Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Active Leg 颜色</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2587"/>
@@ -16917,12 +16923,12 @@ Afftects map and elevation profile.</source>
     <message>
         <location filename="src/options/options.ui" line="2527"/>
         <source>AI or &amp;multiplayer aircraft:</source>
-        <translation type="unfinished"></translation>
+        <translation>AI 或多人游戏航空器(&amp;M)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2517"/>
         <source>Airport &amp;Weather:</source>
-        <translation>机场及气象(&amp;W)：</translation>
+        <translation>机场及天气(&amp;W)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2154"/>
@@ -16964,7 +16970,7 @@ Change color with the &quot;Passed Leg Color&quot;.</source>
         <location filename="src/options/options.ui" line="2776"/>
         <location filename="src/options/options.ui" line="2851"/>
         <source> % Brightness</source>
-        <translation type="unfinished"></translation>
+        <translation> % 亮度</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2808"/>
@@ -17054,7 +17060,7 @@ Value 0 is opaque and 90 is most transparent.</oldsource>
     <message>
         <location filename="src/options/options.ui" line="3396"/>
         <source>&amp;Approach Control:</source>
-        <translation type="unfinished"></translation>
+        <translation>进近管制(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3204"/>
@@ -17091,7 +17097,7 @@ Value 0 is opaque and 90 is most transparent.</oldsource>
     <message>
         <location filename="src/options/options.ui" line="3340"/>
         <source>&amp;Area Control Center:</source>
-        <translation type="unfinished"></translation>
+        <translation>区域管制中心(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3481"/>
@@ -17249,7 +17255,7 @@ Also affects labels at holds and traffic patterns.</source>
     <message>
         <location filename="src/options/options.ui" line="3650"/>
         <source>&amp;Altitude and elevation:</source>
-        <translation type="unfinished"></translation>
+        <translation>高度和标高(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3765"/>
@@ -17396,7 +17402,7 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
     <message>
         <location filename="src/options/options.ui" line="4137"/>
         <source>Aircraft Trail</source>
-        <translation type="unfinished">航空器轨迹</translation>
+        <translation>航空器轨迹</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4158"/>
@@ -17464,7 +17470,7 @@ Note that this value does not affect flight plan calculation or saving of flight
     <message>
         <location filename="src/options/options.ui" line="4510"/>
         <source> %alt%</source>
-        <translation type="unfinished"> %alt%</translation>
+        <translation> %alt%</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4308"/>
@@ -17490,7 +17496,7 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
     <message>
         <location filename="src/options/options.ui" line="4369"/>
         <source>&amp;Avoid overwriting Flight Plan with not matching departure and destination</source>
-        <translation type="unfinished"></translation>
+        <translation>匹配离场和到达机场之前避免覆盖飞行计划(&amp;A)</translation>
     </message>
     <message>
         <source>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX, P3D or
@@ -17560,7 +17566,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
     <message>
         <location filename="src/options/options.ui" line="4866"/>
         <source>Active Sky weather &amp;File:</source>
-        <translation type="unfinished"></translation>
+        <translation>Active Sky 天气文件(&amp;F)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4886"/>
@@ -17657,7 +17663,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
         <location filename="src/options/options.ui" line="4617"/>
         <location filename="src/options/options.ui" line="4697"/>
         <source>&amp;Active Sky</source>
-        <translation type="unfinished"></translation>
+        <translation>Active Sky(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4627"/>
@@ -17843,7 +17849,7 @@ Font size is limited to 30 points/pixels.</source>
     <message>
         <location filename="src/options/options.ui" line="767"/>
         <source>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</source>
-        <translation>&lt;b&gt;更改高DPI支持后需要重新启动&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;更改高 DPI 支持后需要重新启动&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="807"/>
@@ -17884,7 +17890,7 @@ This does not affect the map window which can be changed separately on the optio
         <location filename="src/options/options.ui" line="1116"/>
         <location filename="src/options/options.ui" line="1226"/>
         <source>AI / multiplayer vehicles</source>
-        <translation>AI或多人游戏载具</translation>
+        <translation>AI 或多人游戏载具</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1163"/>
@@ -18073,13 +18079,13 @@ DESTIDENT: Destination airport ICAO code
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</oldsource>
         <extracomment>Do not translate the keywords</extracomment>
-        <translation>保存LNMPLN，FSX，Prepar3D，FlightGear或MSFS飞行计划时，适用于新文件名。
-文件后缀“ .lnmpln”，“。pln”或“ .fgfp”会自动添加。
+        <translation>保存 LNMPLN、FSX、Prepar3D、FlightGear 或 MSFS 飞行计划时，设置新文件名。
+文件后缀“ .lnmpln”、“.pln”或“ .fgfp”会自动添加。
 
-PLANTYPE：IFR或VFR
-DEPARTIDENT：出发机场ICAO代码
+PLANTYPE：IFR 或 VFR
+DEPARTIDENT：离场机场 ICAO 代码
 DEPARTNAME：出发机场名称
-DESTIDENT：到达机场ICAO代码
+DESTIDENT：到达机场 ICAO 代码
 DESTNAME：到达机场名称
 CRUISEALT：巡航高度</translation>
     </message>
@@ -18133,10 +18139,10 @@ Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.T
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading wind reports.
 Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</source>
-        <translation>NOAA气象服务的基础地址URL。
-通常不需要改变这个URL。
+        <translation type="unfinished">NOAA 气象服务的基地址 URL。
+通常不需要改变这个 URL。
 输入错误的值将会导致下载风况报告时候出错。
-默认值是&quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</translation>
+默认值是“https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl”。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5230"/>
@@ -18300,9 +18306,9 @@ Change this if you get an error message like &quot;Bound address already in use&
         <source>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
 There is usually no need to change this value.
 Use this to serve your own modifed Little Navmap web page.</source>
-        <translation>Web服务器的根目录。这是有“index.html”文件的目录。
+        <translation>Web 服务器的根目录。这是有“index.html”文件的目录。
 通常不需要更改这个值。
-用以服务您自行修改过的Little Navmap网页。</translation>
+用以服务您自行修改过的 Little Navmap 网页。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5599"/>
@@ -18411,7 +18417,7 @@ Little Navmap GIT repository.
 Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select GLOBE Directory ...&lt;/i&gt; above and choose the directory with the extracted files.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here for more information in the &lt;i&gt;Little Navmap&lt;/i&gt; online manual&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;点击这里在默认浏览器中打开GLOBE高程数据下载页&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
+        <translation>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;点击这里在默认浏览器中打开 GLOBE 海拔数据下载页&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
 下载此文件：&lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; 并解压到任意位置例如&lt;i&gt;文档&lt;/i&gt;. 再点击上面的 &lt;i&gt;选择 GLOBE 目录 ...&lt;/i&gt; 并选择包含上述文件的目录。&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;点击这里在 &lt;i&gt;Little Navmap&lt;/i&gt; 在线手册中查看更多信息&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
@@ -18493,7 +18499,7 @@ Little Navmap当前只能读取OpenAIR文件。 </translation>
     <message>
         <location filename="src/options/options.ui" line="6232"/>
         <source>A&amp;dd ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加(&amp;D)...</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6239"/>
@@ -18503,12 +18509,12 @@ Little Navmap当前只能读取OpenAIR文件。 </translation>
     <message>
         <location filename="src/options/options.ui" line="6152"/>
         <source>&amp;Add Directory ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加目录(&amp;A)...</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6159"/>
         <source>&amp;Add Files ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加文件(&amp;A)...</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6166"/>
@@ -18525,9 +18531,9 @@ You have to reload the scenery library so that the changes take effect.</source>
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
 You have to reload the scenery library so that the changes take effect.</oldsource>
-        <translation>在此列表里的所有目录包括子目录及文件都将在载入地景到Little Navmap数据库时被忽略。
+        <translation>在此列表里的所有目录包括子目录及文件都将在载入地景到 Little Navmap 数据库时被忽略。
 如您希望排除不包含机场或助航设备的目录，您也可以用这个列表来加速数据库载入。
-这个路径适用于所有的飞行模拟器(FSX，P3D和X-Plane)。
+这个路径适用于所有的飞行模拟器（FSX、P3D 和 X-Plane）。
 您需要重新载入地景库以使更改生效。</translation>
     </message>
     <message>
@@ -18542,10 +18548,10 @@ You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
 These paths apply to all Flight Simulators  (FSX, P3D and X-Plane).
 You have to reload the scenery library so that the changes take effect.</oldsource>
-        <translation>所有在默认“scenery”目录外找到的机场会被认为是附加机场。
+        <translation>所有在默认“scenery”目录外找到的机场会被认为是插件机场。
 您可以用这个列表来改变此行为。
-在这些目录及子目录里找到的机场不会被认为是附加机场。
-这个路径适用于所有的飞行模拟器(FSX，P3D和X-Plane)。
+在这些目录及子目录里找到的机场不会被认为是插件机场。
+这个路径适用于所有的飞行模拟器（FSX、P3D 和 X-Plane）。
 您需要重新载入地景库以使更改生效。</translation>
     </message>
     <message>
@@ -18608,7 +18614,7 @@ and other user interface behavior.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="171"/>
         <source>General map settings: Zoom, click and tooltip settings.</source>
-        <translation>通用地图设置：缩放，点击和工具栏提示设置。</translation>
+        <translation>通用地图设置：缩放、点击和工具栏提示设置。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="172"/>
@@ -18618,7 +18624,7 @@ and other user interface behavior.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="172"/>
         <source>Zoom, click and screen navigation settings.</source>
-        <translation>缩放，点击及屏幕导航设置。</translation>
+        <translation>缩放、点击及屏幕导航设置。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="173"/>
@@ -18658,8 +18664,8 @@ and other user interface behavior.</source>
         <location filename="src/options/optionsdialog.cpp" line="176"/>
         <source>Fuel, distance, speed and coordindate units as well as
 options for course and heading display.</source>
-        <translation>燃油，距离，速度及坐标单位，
-以及航向和朝向显示的选项。</translation>
+        <translation>燃油、距离、速度及坐标单位，
+以及航迹和航向显示的选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="177"/>
@@ -18669,7 +18675,7 @@ options for course and heading display.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="177"/>
         <source>Update and movement options for the user aircraft and trail.</source>
-        <translation type="unfinished">用户航空器及轨迹的更新及移动选项。</translation>
+        <translation>用户航空器及轨迹的更新及移动选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="178"/>
@@ -18685,7 +18691,7 @@ options for course and heading display.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="179"/>
         <source>Weather</source>
-        <translation>气象</translation>
+        <translation>天气</translation>
     </message>
     <message>
         <source>Define paths as well weather sources for information and tooltips.</source>
@@ -18699,12 +18705,12 @@ options for course and heading display.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="181"/>
         <source>Select online flying services like VATSIM, IVAO or custom.</source>
-        <translation>选择在线飞行服务例如VATSIM, IVAO或自定义。</translation>
+        <translation>选择在线飞行服务例如 VATSIM、IVAO 或自定义。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="182"/>
         <source>Web Server</source>
-        <translation>Web服务器</translation>
+        <translation>Web 服务器</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="182"/>
@@ -18730,8 +18736,8 @@ options for course and heading display.</source>
         <location filename="src/options/optionsdialog.cpp" line="184"/>
         <source>Exclude scenery files from loading and
 add-on recognition.</source>
-        <translation>排除载入的地景目录
-及附加机场识别。</translation>
+        <translation>从插件中排除
+地景文件。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="191"/>
@@ -18851,7 +18857,7 @@ Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is en
     <message>
         <location filename="src/options/optionsdialog.cpp" line="216"/>
         <source>Select display options for the flight plan line.</source>
-        <translation>选择飞行计划线的显示选项。</translation>
+        <translation>选择显示飞行计划线的选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="217"/>
@@ -18887,7 +18893,7 @@ Indicated with &quot;R&quot; if both rhumb and great circle are selected.</sourc
     <message>
         <location filename="src/options/optionsdialog.cpp" line="218"/>
         <source>Magnetic great circle course</source>
-        <translation>磁大圆航向</translation>
+        <translation>大圆的磁航迹</translation>
     </message>
     <message>
         <source>Show magnetic great circle start course at flight plan leg.
@@ -18940,7 +18946,7 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
         <location filename="src/options/optionsdialog.cpp" line="180"/>
         <source>Weather Files</source>
         <oldsource>Weather URLs</oldsource>
-        <translation>气象文件</translation>
+        <translation>天气文件</translation>
     </message>
     <message>
         <source>Crab Angle Indicator</source>
@@ -18949,7 +18955,7 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="205"/>
         <source>Show runway length, width and light indicator text.</source>
-        <translation>显示跑道的长度，宽度和灯光指示器文本。</translation>
+        <translation>显示跑道的长度、宽度和灯光指示器文本。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="208"/>
@@ -18999,7 +19005,7 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="212"/>
         <source>Show fuel, tower, helipads, gates and ramp parking.</source>
-        <translation>显示燃料，塔台，直升机坪，登机口和机坪停机位。</translation>
+        <translation>显示燃料、塔台、直升机坪、登机口和机坪停机位。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="213"/>
@@ -19014,12 +19020,12 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="218"/>
         <source>Show magnetic great circle start course at flight plan leg.</source>
-        <translation>在飞行计划行程中显示大圆起始磁航向。</translation>
+        <translation>在飞行计划行程中显示大圆起始磁航线角。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="219"/>
         <source>Show true great circle start course at flight plan leg.</source>
-        <translation>在飞行计划行程中显示大圆起始真航向。</translation>
+        <translation>在飞行计划行程中显示大圆的真航迹。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="221"/>
@@ -19098,22 +19104,22 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
         <location filename="src/options/optionsdialog.cpp" line="233"/>
         <location filename="src/options/optionsdialog.cpp" line="254"/>
         <source>Track Line</source>
-        <translation type="unfinished">航迹线</translation>
+        <translation>航迹线</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="226"/>
         <source>Value prefixed with &quot;IAS&quot; on the map</source>
-        <translation>在地图上以&quot;IAS&quot;开头的值</translation>
+        <translation>在地图上以“IAS”开头的值</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="227"/>
         <source>Value prefixed with &quot;GS&quot; on the map</source>
-        <translation>在地图上以&quot;GS&quot;开头的值</translation>
+        <translation>在地图上以“GS”开头的值</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="228"/>
         <source>Value prefixed with &quot;TAS&quot; on the map</source>
-        <translation>在地图上以&quot;TAS&quot;开头的值</translation>
+        <translation>在地图上以“TAS”开头的值</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="230"/>
@@ -19128,22 +19134,22 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="231"/>
         <source>Real aircraft altitude prefixed with &quot;ALT&quot; on the map</source>
-        <translation>在地图上以&quot;ALT&quot;开头的航空器真高</translation>
+        <translation>在地图上以&quot;ALT&quot;开头显示航空器真高</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="232"/>
         <source>Indicated Altitude</source>
-        <translation>表显高度</translation>
+        <translation>指示高度</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="232"/>
         <source>Indicated aircraft altitude prefixed with &quot;IND&quot; on the map</source>
-        <translation>在地图上以&quot;IND&quot;开头的航空器表显高度</translation>
+        <translation>在地图上以&quot;IND&quot;开头的航空器表示指示高度</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="233"/>
         <source>Show the aircraft track as a black needle protruding from the aircraft nose.</source>
-        <translation type="unfinished">显示航空器的轨迹线为从航空器外圈发散出的黑色箭头。</translation>
+        <translation>显示航空器的轨迹线为从航空器外圈发散出的黑色箭头。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="235"/>
@@ -19173,7 +19179,7 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="248"/>
         <source>Select display options for the compass rose.</source>
-        <translation>选择显示罗盘刻度的选项。</translation>
+        <translation>选择显示罗盘刻度盘的选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="249"/>
@@ -19208,12 +19214,12 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="252"/>
         <source>Range Rings</source>
-        <translation>范围圆环</translation>
+        <translation>距离环</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="252"/>
         <source>Show range rings and distance labels inside.</source>
-        <translation>在里侧显示范围圆环和距离标签。</translation>
+        <translation>在里侧显示距离环和距离标签。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="253"/>
@@ -19233,18 +19239,18 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="255"/>
         <source>Track Label</source>
-        <translation type="unfinished">轨迹标签</translation>
+        <translation>轨迹标签</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="255"/>
         <source>Show track label for user aircraft.</source>
-        <translation type="unfinished">为用户航空器显示轨迹标签。</translation>
+        <translation>为用户航空器显示航迹标签。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="256"/>
         <source>Heading Indicator</source>
         <oldsource>Crab Angle Indicator</oldsource>
-        <translation type="unfinished">蟹型角度指示器</translation>
+        <translation>航向指示器</translation>
     </message>
     <message>
         <source>Show the crab angle for the user aircraft as a small magenta circle.</source>
@@ -19258,42 +19264,42 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="257"/>
         <source>Show the course to next waypoint for the user aircraft as a small magenta line.</source>
-        <translation>为用户显示前往下一航点的航迹为一条细品红线。</translation>
+        <translation>为用户显示前往下一航点的航迹线为一条细品红线。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="259"/>
         <source>Measurement Lines</source>
-        <translation>测量线</translation>
+        <translation>测距线</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="259"/>
         <source>Select display options measurement lines.</source>
-        <translation>选择测量线的显示选项。</translation>
+        <translation>选择显示测距线的选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="260"/>
         <source>Great circle distance for measurement line.</source>
-        <translation>为测量线使用大圆航程。</translation>
+        <translation>为测距线使用大圆航程。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="261"/>
         <source>Magnetic Course</source>
-        <translation>磁航向</translation>
+        <translation>磁航迹</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="261"/>
         <source>Show magnetic course for start and end of line.</source>
-        <translation>显示测量线起点到终点的磁航向。</translation>
+        <translation>显示测距线起点到终点的磁航线角。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="262"/>
         <source>True Course</source>
-        <translation>真航向</translation>
+        <translation>真航迹</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="262"/>
         <source>Show true course for start and end of line.</source>
-        <translation>显示测量线起点到终点的真航向。</translation>
+        <translation>显示测距线起点到终点的真航迹。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="263"/>
@@ -19312,7 +19318,7 @@ Also show frequency if attached to a radio navaid. </source>
         <source>Do not use an update period smaller than %1 seconds for official networks like VATSIM, IVAO or PilotEdge.
 
 Resetting update period back to %1 seconds.</source>
-        <translation>对于VATSIM，IVAO或PilotEdge之类的官方网络，更新时间不得少于 %1 秒。
+        <translation>对 VATSIM、IVAO 或 PilotEdge 这类官方网络服务，更新时间不得少于 %1 秒。
 
 将更新周期重置为 %1 秒。</translation>
     </message>
@@ -19367,7 +19373,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2552"/>
         <source>Example: &quot;%1&quot;</source>
-        <translation>例如： &quot;%1&quot;</translation>
+        <translation>例如：“%1”</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2556"/>
@@ -19377,7 +19383,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2557"/>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.</source>
-        <translation>模式包含无效字符，双倍空格或超过%1个字符。</translation>
+        <translation>模式包含无效字符、双倍空格或超过 %1 个字符。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2560"/>
@@ -19399,7 +19405,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2567"/>
         <source>Pattern is empty. Using default &quot;%1&quot;.</source>
-        <translation>模式为空。 使用默认 &quot;%1&quot;。</translation>
+        <translation>模式为空。使用默认“%1”。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="180"/>
@@ -19409,7 +19415,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="256"/>
         <source>Show the heading for the user aircraft as a small magenta circle.</source>
-        <translation type="unfinished"></translation>
+        <translation>为用户航空器航向显示为一个小品红圆圈。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2607"/>
@@ -19423,22 +19429,22 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1405"/>
         <source>Open Directory to exclude from Scenery Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>打开从地景载入中排除的目录</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1422"/>
         <source>Open Files to exclude from Scenery Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>打开从地景载入中排除的文件</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1454"/>
         <source>Open Directory to exclude from Add-On Recognition</source>
-        <translation type="unfinished"></translation>
+        <translation>打开从插件识别中排除的目录</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2101"/>
         <source>Open GLOBE data directory</source>
-        <translation type="unfinished"></translation>
+        <translation>打开 GLOBE 数据目录</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2121"/>
@@ -19449,7 +19455,7 @@ Resetting update period back to %1 seconds.</source>
         <location filename="src/options/optionsdialog.cpp" line="2139"/>
         <location filename="src/options/optionsdialog.cpp" line="2161"/>
         <source>Directory does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>目录不存在。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2143"/>
@@ -19460,81 +19466,81 @@ Resetting update period back to %1 seconds.</source>
         <location filename="src/options/optionsdialog.cpp" line="2146"/>
         <location filename="src/options/optionsdialog.cpp" line="2170"/>
         <source>No directory selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选择目录。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2165"/>
         <source>No valid GLOBE data found.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有找到有效的 GLOBE 数据。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2167"/>
         <source>Directory and files are valid.</source>
-        <translation type="unfinished">目录和文件是有效的。</translation>
+        <translation>目录和文件是有效的。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2206"/>
         <location filename="src/options/optionsdialog.cpp" line="2263"/>
         <location filename="src/options/optionsdialog.cpp" line="2283"/>
         <source>File does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>文件不存在。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2208"/>
         <location filename="src/options/optionsdialog.cpp" line="2265"/>
         <location filename="src/options/optionsdialog.cpp" line="2285"/>
         <source>Is not a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>不是文件。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2211"/>
         <source>Is not an Active Sky weather snapshot file.</source>
-        <translation type="unfinished"></translation>
+        <translation>不是 Active Sky 气象快照文件。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2214"/>
         <source>Weather snapshot file is valid. Using this one for all simulators</source>
-        <translation type="unfinished"></translation>
+        <translation>天气文件有效。将为所有模拟器启用</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2226"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选择 Active Sky 气象快照文件。Active Sky METAR 不可用。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2229"/>
         <source>Will use default weather snapshot after confirming change.</source>
-        <translation type="unfinished"></translation>
+        <translation>确认更改以后会使用默认的天气快照。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2232"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选择 Active Sky 气象快照文件。为 %1 使用默认 Active Sky Next。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2236"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选择 Active Sky 气象快照文件。为 %1 使用默认 AS16。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2241"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选择 Active Sky 气象快照文件。为 %1 使用默认 ASP4。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2246"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选择 Active Sky 气象快照文件。为 %1 使用默认 Active Sky XP。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2268"/>
         <source>Weather file is valid. Using this one for X-Plane.</source>
-        <translation>气象快照文件有效。将为 X-Plane.启用。</translation>
+        <translation>天气文件有效。将为 X-Plane.启用。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2272"/>
         <source>Using default weather from X-Plane base path.</source>
-        <translation>正在使用来自X-Plane根目录的默认气象。</translation>
+        <translation>正在使用来自 X-Plane 根目录的默认气象。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2287"/>
@@ -19554,7 +19560,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2300"/>
         <source>Open Active Sky Weather Snapshot File</source>
-        <translation type="unfinished"></translation>
+        <translation>打开 Active Sky 天气快照文件</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2301"/>
@@ -19564,12 +19570,12 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2315"/>
         <source>Open X-Plane METAR File</source>
-        <translation>打开 X-Plane METAR文件</translation>
+        <translation>打开 X-Plane METAR 文件</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2316"/>
         <source>X-Plane METAR Files %1;;All Files (*)</source>
-        <translation>X-Plane METAR文件  %1;;所有文件 (*)</translation>
+        <translation>X-Plane METAR 文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2331"/>
@@ -19584,7 +19590,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2352"/>
         <source>Memory cache cleared.</source>
-        <translation type="unfinished"></translation>
+        <translation>内存缓存已清空。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2361"/>
@@ -19598,22 +19604,22 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2371"/>
         <source>Disk cache cleared.</source>
-        <translation type="unfinished"></translation>
+        <translation>磁盘缓存已经清空。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2384"/>
         <source>Error opening help URL &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>打开帮助 URL “%1” 出错</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2415"/>
         <source>Web Server is running at&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation>Web服务器已在&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;运行</translation>
+        <translation>Web 服务器已在 &lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt; 运行</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2418"/>
         <source>Web Server is running at %1</source>
-        <translation>Web服务器已在 %1 运行</translation>
+        <translation>Web 服务器已在 %1 运行</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2418"/>
@@ -19623,27 +19629,27 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2420"/>
         <source>&amp;Stop Web Server</source>
-        <translation>停止Web服务器(&amp;S)</translation>
+        <translation>停止 Web 服务器(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2424"/>
         <source>Web Server is not running.</source>
-        <translation>Web服务器未运行。</translation>
+        <translation>Web 服务器未运行。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2425"/>
         <source>&amp;Start Web Server</source>
-        <translation>启动Web服务器(&amp;S)</translation>
+        <translation>启动 Web 服务器(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2438"/>
         <source>Error: Directory does not exist.</source>
-        <translation>错误： 目录不存在。</translation>
+        <translation>错误：目录不存在。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2440"/>
         <source>Error: Is not a directory.</source>
-        <translation>错误： 不是一个目录。</translation>
+        <translation>错误：不是一个目录。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2442"/>
