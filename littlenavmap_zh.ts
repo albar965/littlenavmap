@@ -20877,17 +20877,17 @@ Really use it?</source>
     <message>
         <location filename="src/common/formatter.cpp" line="182"/>
         <source>Coordinates are valid: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>座标是有效的：%1</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="186"/>
         <source>Coordinates are valid.</source>
-        <translation type="unfinished"></translation>
+        <translation>座标是有效的。</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="191"/>
         <source>Coordinates are not valid.</source>
-        <translation type="unfinished"></translation>
+        <translation>座标是有效的。</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="278"/>
@@ -20988,12 +20988,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="69"/>
         <source>Concrete</source>
-        <translation type="unfinished"></translation>
+        <translation>混凝土</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="70"/>
         <source>Grass</source>
-        <translation type="unfinished"></translation>
+        <translation>草地</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="71"/>
@@ -21009,32 +21009,32 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="73"/>
         <source>Cement</source>
-        <translation type="unfinished"></translation>
+        <translation>水泥</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="74"/>
         <source>Clay</source>
-        <translation type="unfinished"></translation>
+        <translation>粘土</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="75"/>
         <source>Snow</source>
-        <translation type="unfinished"></translation>
+        <translation>雪地</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="76"/>
         <source>Ice</source>
-        <translation type="unfinished"></translation>
+        <translation>冰面</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="77"/>
         <source>Dirt</source>
-        <translation type="unfinished"></translation>
+        <translation>污垢</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="78"/>
         <source>Coral</source>
-        <translation type="unfinished"></translation>
+        <translation>珊瑚</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="79"/>
@@ -21054,12 +21054,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="82"/>
         <source>Bituminous</source>
-        <translation type="unfinished"></translation>
+        <translation>沥青</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="83"/>
         <source>Brick</source>
-        <translation type="unfinished"></translation>
+        <translation>砖石</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="84"/>
@@ -21219,7 +21219,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="140"/>
         <location filename="src/common/maptypes.cpp" line="166"/>
         <source>Dock GA</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">通航飞机码头</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="116"/>
@@ -21245,7 +21245,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="161"/>
         <location filename="src/common/maptypes.cpp" line="185"/>
         <source>Gate</source>
-        <translation type="unfinished"></translation>
+        <translation>登机口</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="136"/>
@@ -21300,7 +21300,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="179"/>
         <source>E Parking</source>
-        <translation type="unfinished"></translation>
+        <translation>E 停机位</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="180"/>
@@ -21330,17 +21330,17 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="186"/>
         <source>Dock</source>
-        <translation type="unfinished"></translation>
+        <translation>码头</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="187"/>
         <source>Gate A</source>
-        <translation type="unfinished"></translation>
+        <translation>A 登机口</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="188"/>
         <source>Gate B</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">BB 登机口</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="189"/>
@@ -21488,7 +21488,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="221"/>
         <source>EP</source>
-        <translation type="unfinished"></translation>
+        <translation>EP</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="222"/>
@@ -21518,19 +21518,19 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="227"/>
         <source>G</source>
-        <translation type="unfinished"></translation>
+        <translation>G</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="228"/>
         <location filename="src/common/maptypes.cpp" line="1133"/>
         <location filename="src/common/maptypes.cpp" line="1487"/>
         <source>D</source>
-        <translation type="unfinished"></translation>
+        <translation>D</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="229"/>
         <source>GA</source>
-        <translation type="unfinished"></translation>
+        <translation>GA</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="230"/>
@@ -21719,7 +21719,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="285"/>
         <location filename="src/common/maptypes.cpp" line="289"/>
         <source>Compass Locator</source>
-        <translation type="unfinished"></translation>
+        <translation>罗盘定位器</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="295"/>
@@ -21785,7 +21785,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="312"/>
         <location filename="src/common/maptypes.cpp" line="1300"/>
         <source>DME only VORTAC</source>
-        <translation type="unfinished"></translation>
+        <translation>仅 DME 的 VORTAC</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="314"/>
@@ -21806,7 +21806,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="316"/>
         <location filename="src/common/maptypes.cpp" line="1307"/>
         <source>DME only TACAN</source>
-        <translation type="unfinished"></translation>
+        <translation>仅 DME 的 TACAN</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="318"/>
@@ -21824,7 +21824,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="330"/>
         <source>CTAF</source>
-        <translation type="unfinished"></translation>
+        <translation>CTAF</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="341"/>
@@ -21869,27 +21869,27 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="351"/>
         <source>AWIB</source>
-        <translation type="unfinished"></translation>
+        <translation>AWIB</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="352"/>
         <source>AWOS</source>
-        <translation type="unfinished"></translation>
+        <translation>AWOS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="353"/>
         <source>AWIS</source>
-        <translation type="unfinished"></translation>
+        <translation>AWIS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="354"/>
         <source>Clearance Delivery</source>
-        <translation type="unfinished"></translation>
+        <translation>放行管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="355"/>
         <source>Clearance Pre-Taxi</source>
-        <translation type="unfinished"></translation>
+        <translation>滑行前放行</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="356"/>
@@ -21900,32 +21900,32 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="357"/>
         <location filename="src/common/maptypes.cpp" line="1096"/>
         <source>Control</source>
-        <translation type="unfinished"></translation>
+        <translation>管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="358"/>
         <source>Departure Control</source>
-        <translation type="unfinished"></translation>
+        <translation>离场管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="359"/>
         <source>Director (Approach Control Radar)</source>
-        <translation type="unfinished"></translation>
+        <translation>主任（进近管制雷达）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="360"/>
         <source>Enroute Flight Advisory Service (EFAS)</source>
-        <translation type="unfinished"></translation>
+        <translation>航路飞行咨询服务（EFAS）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="361"/>
         <source>Emergency</source>
-        <translation type="unfinished"></translation>
+        <translation>紧急</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="362"/>
         <source>Flight Service Station</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行服务站</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="363"/>
@@ -22049,42 +22049,42 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="391"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>中心</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="392"/>
         <source>Class A</source>
-        <translation type="unfinished"></translation>
+        <translation>A 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="393"/>
         <source>Class B</source>
-        <translation type="unfinished"></translation>
+        <translation>B 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="394"/>
         <source>Class C</source>
-        <translation type="unfinished"></translation>
+        <translation>C 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="395"/>
         <source>Class D</source>
-        <translation type="unfinished"></translation>
+        <translation>D 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="396"/>
         <source>Class E</source>
-        <translation type="unfinished"></translation>
+        <translation>E 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="397"/>
         <source>Class F</source>
-        <translation type="unfinished"></translation>
+        <translation>F 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="398"/>
         <source>Class G</source>
-        <translation type="unfinished"></translation>
+        <translation>G 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="399"/>
@@ -22104,7 +22104,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="402"/>
         <source>Clearance</source>
-        <translation type="unfinished"></translation>
+        <translation>许可</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="403"/>
@@ -22114,7 +22114,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="404"/>
         <source>Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>离场</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="405"/>
@@ -22145,7 +22145,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="410"/>
         <source>Caution</source>
-        <translation type="unfinished"></translation>
+        <translation>注意</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="411"/>
@@ -22155,7 +22155,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="412"/>
         <source>Danger</source>
-        <translation type="unfinished"></translation>
+        <translation>危险区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="413"/>
@@ -22195,12 +22195,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="426"/>
         <source>Below 10,000 ft only</source>
-        <translation type="unfinished"></translation>
+        <translation>仅 10,000 以下</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="427"/>
         <source>Below 18,000 ft only</source>
-        <translation type="unfinished"></translation>
+        <translation>仅 18,000 以下</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="428"/>
@@ -22220,23 +22220,23 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="437"/>
         <source>Controlled, above 18,000 ft MSL, IFR, no VFR, ATC clearance required.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">管制空域，高于18,000 英尺 MSL、IFR、不允许 VFR、需要 ATC 的许可。</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="438"/>
         <location filename="src/common/maptypes.cpp" line="440"/>
         <source>Controlled, IFR and VFR, ATC clearance required.</source>
-        <translation type="unfinished"></translation>
+        <translation>管制空域、允许 IFR 和 VFR、需要得到 ATC 许可。</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="439"/>
         <source>Controlled, IFR and VFR, ATC clearance required, transponder required.</source>
-        <translation type="unfinished"></translation>
+        <translation>管制空域、允许 IFR 和 VFR、需要得到 ATC 许可、需要应答机。</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="441"/>
         <source>Controlled, IFR and VFR, ATC clearance required for IFR only.</source>
-        <translation type="unfinished"></translation>
+        <translation>管制空域、允许 IFR 和 VFR、只有 IFR 需要得到 ATC 许可。</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="442"/>
@@ -22264,7 +22264,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="455"/>
         <source>Contains activity that may be hazardous to aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>包括可能会危及航空器的活动。</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="457"/>
@@ -22274,7 +22274,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="458"/>
         <source>Avoid or proceed with caution.</source>
-        <translation type="unfinished"></translation>
+        <translation>避免或小心行事。</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="460"/>
@@ -22300,7 +22300,7 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="658"/>
         <location filename="src/common/maptypes.cpp" line="659"/>
         <source>Below %1 only</source>
-        <translation type="unfinished"></translation>
+        <translation>仅低于 %1</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="660"/>
@@ -22365,7 +22365,7 @@ Really use it?</source>
         <location filename="src/common/proctypes.cpp" line="377"/>
         <location filename="src/common/proctypes.cpp" line="463"/>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1046"/>
@@ -22380,7 +22380,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1052"/>
         <source>AUSOTS</source>
-        <translation type="unfinished"></translation>
+        <translation>AUSOTS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1055"/>
@@ -22425,7 +22425,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1130"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1139"/>
@@ -22588,7 +22588,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1442"/>
         <source> East</source>
-        <translation type="unfinished"></translation>
+        <translation> 以东</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1444"/>
@@ -22652,7 +22652,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1538"/>
         <source>DME (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>DME (%1)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1540"/>
@@ -22773,12 +22773,12 @@ Really use it?</source>
         <location filename="src/common/maptypes.cpp" line="304"/>
         <location filename="src/common/proctypes.cpp" line="46"/>
         <source>FAF</source>
-        <translation type="unfinished"></translation>
+        <translation>FAF</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="47"/>
         <source>FACF</source>
-        <translation type="unfinished"></translation>
+        <translation>FACF</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="48"/>
@@ -22788,7 +22788,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="49"/>
         <source>FEP</source>
-        <translation type="unfinished"></translation>
+        <translation>FEP</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="55"/>
@@ -22798,12 +22798,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="56"/>
         <source>Final Approach Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>最终进近定位点</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="57"/>
         <source>Final Approach Course Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>最终进近航迹点</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="58"/>
@@ -22813,7 +22813,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="59"/>
         <source>Final Endpoint Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>最终终端定位点</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="66"/>
@@ -22834,7 +22834,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="73"/>
         <source>Custom Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义航路点</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="78"/>
@@ -22871,7 +22871,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="91"/>
         <source>FMS</source>
-        <translation type="unfinished"></translation>
+        <translation>FMS</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="92"/>
@@ -22886,7 +22886,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="95"/>
         <source>Circle to Land</source>
-        <translation type="unfinished"></translation>
+        <translation>盘旋着陆</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="96"/>
@@ -22906,37 +22906,37 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="105"/>
         <source>Course to altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>到高度的路线</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="106"/>
         <source>Course to DME distance</source>
-        <translation type="unfinished"></translation>
+        <translation>到 DME 的航迹</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="107"/>
         <source>Course to fix</source>
-        <translation type="unfinished"></translation>
+        <translation>到导航点的航迹</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="108"/>
         <source>Course to intercept</source>
-        <translation type="unfinished"></translation>
+        <translation>到截获点的航迹</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="109"/>
         <source>Course to radial termination</source>
-        <translation type="unfinished"></translation>
+        <translation>到径向线终止点的航迹</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="110"/>
         <source>Direct to fix</source>
-        <translation type="unfinished"></translation>
+        <translation>直飞到航路点</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="111"/>
         <source>Fix to altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>固定到高度</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="112"/>
@@ -22951,7 +22951,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="114"/>
         <source>From fix to manual termination</source>
-        <translation type="unfinished"></translation>
+        <translation>从定位点到手动终止</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="115"/>
@@ -22981,7 +22981,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="120"/>
         <source>Constant radius arc</source>
-        <translation type="unfinished"></translation>
+        <translation>等半径弧</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="121"/>
@@ -23021,7 +23021,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="129"/>
         <source>Circle to land</source>
-        <translation type="unfinished"></translation>
+        <translation>盘旋着陆</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="130"/>
@@ -23062,17 +23062,17 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="337"/>
         <source>At or above %1</source>
-        <translation type="unfinished"></translation>
+        <translation>包括或高于 %1</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="340"/>
         <source>At or below %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">包括或低于 %1</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="343"/>
         <source>At or above %1 and at or below %2</source>
-        <translation type="unfinished"></translation>
+        <translation>包括或高于 %1 且包括或低于 %2</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1023"/>
@@ -23099,7 +23099,7 @@ Really use it?</source>
         <location filename="src/common/proctypes.cpp" line="401"/>
         <location filename="src/common/proctypes.cpp" line="425"/>
         <source>B </source>
-        <translation type="unfinished"></translation>
+        <translation>B </translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="404"/>
@@ -23119,7 +23119,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="444"/>
         <source>Below </source>
-        <translation type="unfinished"></translation>
+        <translation>低于 </translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="804"/>
@@ -23129,7 +23129,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="832"/>
         <source>Fly over</source>
-        <translation type="unfinished"></translation>
+        <translation>飞越</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="835"/>
@@ -23159,12 +23159,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="859"/>
         <source>Error: Fix %1/%2 type %3 not found</source>
-        <translation type="unfinished"></translation>
+        <translation>错误：找不到导航点 %1/%2 类型 %3</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="862"/>
         <source>Error: Recommended fix %1/%2 type %3 not found</source>
-        <translation type="unfinished"></translation>
+        <translation>错误：找不到推荐的导航点 %1/%2 类型 %3</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="888"/>
@@ -23233,7 +23233,7 @@ Really use it?</source>
         <location filename="src/gui/mainwindow.cpp" line="3272"/>
         <location filename="src/gui/mainwindow.cpp" line="3300"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示此对话框 (&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="129"/>
@@ -23281,12 +23281,12 @@ Spaces are replaced with underscores.</source>
     <message>
         <location filename="src/main.cpp" line="286"/>
         <source>Database directory:</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库目录：</translation>
     </message>
     <message>
         <location filename="src/main.cpp" line="288"/>
         <source>Configuration:</source>
-        <translation type="unfinished"></translation>
+        <translation>配置：</translation>
     </message>
     <message>
         <location filename="src/main.cpp" line="311"/>
@@ -23382,7 +23382,8 @@ Procedure</source>
         <location filename="src/route/routecontroller.cpp" line="136"/>
         <source>Freq.
 MHz/kHz/Cha.</source>
-        <translation type="unfinished"></translation>
+        <translation>频率
+MHz/kHz/Cha.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="137"/>
@@ -23434,19 +23435,22 @@ hh:mm</source>
         <location filename="src/route/routecontroller.cpp" line="143"/>
         <source>ETA
 hh:mm</source>
-        <translation type="unfinished"></translation>
+        <translation>ETA
+hh:mm</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="144"/>
         <source>Fuel Rem.
 %weight%</source>
-        <translation type="unfinished"></translation>
+        <translation>剩余油量
+%weight%</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="145"/>
         <source>Fuel Rem.
 %volume%</source>
-        <translation type="unfinished"></translation>
+        <translation>剩余油量
+%volume%</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="146"/>
