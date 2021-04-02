@@ -3051,7 +3051,7 @@ Then choose your simulator and click &quot;Connect&quot;.
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="335"/>
         <source>Departure Times</source>
-        <translation>出发时间</translation>
+        <translation>离场时间</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="339"/>
@@ -3165,7 +3165,7 @@ Then choose your simulator and click &quot;Connect&quot;.
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="330"/>
         <source>Distinct departures:</source>
-        <translation>差异的出发机场：</translation>
+        <translation>差异的离场机场：</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="331"/>
@@ -3213,13 +3213,13 @@ visits</source>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="379"/>
         <source>Top departure airports</source>
-        <translation>最常出发机场</translation>
+        <translation>最常使用离场机场</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="380"/>
         <source>Number of
 departures</source>
-        <translation>出发
+        <translation>离场
 次数</translation>
     </message>
     <message>
@@ -3249,12 +3249,12 @@ Distance %dist%</source>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="396"/>
         <source>From ICAO</source>
-        <translation>出发机场 ICAO</translation>
+        <translation>离场机场 ICAO</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="396"/>
         <source>From Name</source>
-        <translation>出发机场名称</translation>
+        <translation>离场机场名称</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="396"/>
@@ -3317,7 +3317,7 @@ hours</source>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="422"/>
         <source>From Airport
 ICAO</source>
-        <translation>出发机场
+        <translation>离场机场
 ICAO</translation>
     </message>
     <message>
@@ -3325,7 +3325,7 @@ ICAO</translation>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="422"/>
         <source>From Airport
 Name</source>
-        <translation>出发机场
+        <translation>离场机场
 名称</translation>
     </message>
     <message>
@@ -3430,12 +3430,12 @@ hours</source>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="189"/>
         <source>Departure</source>
-        <translation>出发</translation>
+        <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="189"/>
         <source>Arrival</source>
-        <translation>到达</translation>
+        <translation>到达机场</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="190"/>
@@ -3688,17 +3688,17 @@ Columns will be empty on export if disabled.</source>
     <message>
         <location filename="src/logbook/logdataconverter.cpp" line="114"/>
         <source>Entry has both departure and destination tag: %1.</source>
-        <translation>同时有出发地和到达地标签的条目： %1。</translation>
+        <translation>同时有离场机场和到达机场标签的条目：%1。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdataconverter.cpp" line="123"/>
         <source>Entry has neither departure nor destination tag: %1.</source>
-        <translation>没有出发地也没有到达地标签的条目： %1。</translation>
+        <translation>没有离场机场也没有到达机场标签的条目：%1。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdataconverter.cpp" line="130"/>
         <source>Additional departure found: %1.</source>
-        <translation>找到了额外的出发地： %1。</translation>
+        <translation>找到了额外的离场机场：%1。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdataconverter.cpp" line="137"/>
@@ -3714,7 +3714,7 @@ Columns will be empty on export if disabled.</source>
         <extracomment>The text &quot;Converted from userdata&quot; has to match the one in LogdataController::convertUserdata</extracomment>
         <translation>*转换自用户数据*(*Converted from userdata*)
 
-====原始出发地描述：
+====原始离场机场描述：
 </translation>
     </message>
     <message>
@@ -3832,7 +3832,7 @@ Columns will be empty on export if disabled.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="176"/>
         <source>Departure</source>
-        <translation>出发</translation>
+        <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="206"/>
@@ -3843,12 +3843,12 @@ Columns will be empty on export if disabled.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="223"/>
         <source>Departure time in simulator (takeoff)</source>
-        <translation>模拟器中出发时间（起飞）</translation>
+        <translation>模拟器中离场时间（起飞）</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="216"/>
         <source>Departure airport runway</source>
-        <translation>出发机场跑道</translation>
+        <translation>离场机场跑道</translation>
     </message>
     <message>
         <source>Destination:</source>
@@ -3883,12 +3883,12 @@ Columns will be empty on export if disabled.</source>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="291"/>
         <source>Local departure time in real world (takeoff)</source>
-        <translation>真实世界本地出发时间（起飞）</translation>
+        <translation>真实世界本地离场时间（起飞）</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="304"/>
         <source>Departure airport ICAO code</source>
-        <translation>出发机场 ICAO 代码</translation>
+        <translation>离场机场 ICAO 代码</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="406"/>
@@ -4314,20 +4314,20 @@ This updates only the path and does not attach the file to the logbook entry.</s
         <location filename="src/search/logdatasearch.cpp" line="64"/>
         <source>Departure
 Real Time</source>
-        <translation>出发地
+        <translation>离场机场
 真实时间</translation>
     </message>
     <message>
         <location filename="src/search/logdatasearch.cpp" line="66"/>
         <source>Departure
 ICAO</source>
-        <translation>出发地
+        <translation>离场机场
 ICAO</translation>
     </message>
     <message>
         <location filename="src/search/logdatasearch.cpp" line="67"/>
         <source>Departure</source>
-        <translation>出发地</translation>
+        <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/search/logdatasearch.cpp" line="69"/>
@@ -4391,7 +4391,7 @@ Type</source>
         <location filename="src/search/logdatasearch.cpp" line="65"/>
         <source>Departure
 Sim. Time UTC</source>
-        <translation>出发地
+        <translation>离场机场
 模拟时间 UTC</translation>
     </message>
     <message>
@@ -13375,7 +13375,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2281"/>
         <source>Departure time:</source>
-        <translation>出发时间：</translation>
+        <translation>离场时间：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2287"/>
@@ -18095,7 +18095,7 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</so
 Example: &quot;EDDF LIRF.lnmpln&quot;</source>
         <oldsource>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
 Example: &quot;EDDF_LIRF.lnmpln&quot;</oldsource>
-        <translation>将飞行计划文件模式设置为短名称“出发地代码 到达地代码”。
+        <translation>将飞行计划文件模式设置为短名称“离场机场代码 到达机场代码”。
 示例：“ZGGG ZBAD.Inmpln”</translation>
     </message>
     <message>
@@ -18129,7 +18129,7 @@ CRUISEALT: Cruise altitude</oldsource>
 
 PLANTYPE：IFR 或 VFR
 DEPARTIDENT：离场机场 ICAO 代码
-DEPARTNAME：出发机场名称
+DEPARTNAME：离场机场名称
 DESTIDENT：到达机场 ICAO 代码
 DESTNAME：到达机场名称
 CRUISEALT：巡航高度</translation>
@@ -19743,7 +19743,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/route/parkingdialog.cpp" line="41"/>
         <source>&lt;b&gt;&amp;Select a start position for departure at&lt;br/&gt;%1:&lt;/b&gt;</source>
-        <translation>&lt;b&gt;选择出发地&lt;br/&gt;%1:&lt;/b&gt;的起始点(&amp;S)</translation>
+        <translation>&lt;b&gt;选择离场机场&lt;br/&gt;%1:&lt;/b&gt;的起始点(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/route/parkingdialog.cpp" line="88"/>
@@ -20194,7 +20194,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/print/printsupport.cpp" line="224"/>
         <source>Departure</source>
-        <translation>出发机场</translation>
+        <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/print/printsupport.cpp" line="226"/>
@@ -23785,7 +23785,7 @@ climb/descent speeds in the Aircraft Performance.</oldsource>
     <message>
         <location filename="src/route/routealtitude.cpp" line="882"/>
         <source>Departure is not valid. Must be an airport.</source>
-        <translation>出发地无效，必须是个机场。</translation>
+        <translation>离场机场无效，必须是个机场。</translation>
     </message>
 </context>
 <context>
@@ -25065,7 +25065,7 @@ Really continue?</source>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1115"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable by the simulator.</source>
-        <translation>飞行计划必须有有效的机场作为出发地和到达地，这将可能不能用于模拟器。</translation>
+        <translation>飞行计划必须有有效的机场作为离场机场和到达机场，这将可能不能用于模拟器。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1133"/>
@@ -25104,7 +25104,7 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1112"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable for the selected export formats.</source>
-        <translation>飞行计划必须有有效的机场作为出发地和到达地，这将可能不能用于选定的导出格式。</translation>
+        <translation>飞行计划必须有有效的机场作为离场机场和到达机场，这将可能不能用于选定的导出格式。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1101"/>
@@ -26296,7 +26296,7 @@ ALTERNATES is a list of alternate airports.
 ETD and ETA are ignored.
 </source>
         <translation>格式是：FROM[ETD] [SPEEDALT] [SID][.TRANS] [ENROUTE] [STAR][.TRANS] TO[ETA] [ALTERNATES]。
-出发及到达机场是必须的，其余都是可选的。
+离场机场及到达机场是必须的，其余都是可选的。
 SPEEDALT 描述飞行计划高度及速度
 ENROUTE 是空格分割的助航设备、航路或助航设备组合或用户定义航路点。
 ALTERNATES 是备降机场的列表。
@@ -26427,7 +26427,7 @@ ETD 及 ETA 将会被忽略。
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="92"/>
         <source>Write departure and destination airport</source>
-        <translation>写入出发和到达机场</translation>
+        <translation>写入离场和到达机场</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="100"/>
