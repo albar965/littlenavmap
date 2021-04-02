@@ -1576,7 +1576,7 @@ Runway Surface</source>
     <message>
         <location filename="src/connect/connectclient.cpp" line="358"/>
         <source>The connection is not reliable.&lt;br/&gt;&lt;br/&gt;Check your network or installation.</source>
-        <translation>连接不可靠。&lt;br/&gt;&lt;br/&gt;请检查你的网络或者安装。</translation>
+        <translation>连接不可靠。&lt;br/&gt;&lt;br/&gt;请检查您的网络或者安装。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="364"/>
@@ -1767,7 +1767,7 @@ FSX、P3D 和 MSFS 允许最大 105 海里。</translation>
         <source>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
         <translation>启动时添加 Little Navconnect 上显示的&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;主机名&lt;/span&gt;或&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt; IP 地址&lt;/span&gt;。
-如果使用 Little Xpconnect 的 X-Plane 插件，会使用你的 X-Plane 计算机名。</translation>
+如果使用 Little Xpconnect 的 X-Plane 插件，会使用您的 X-Plane 计算机名。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="360"/>
@@ -1811,7 +1811,7 @@ Little Navmap 从飞行模拟器获取数据使用此时间间隔。
         <source>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
         <translation>启动时添加 Little Navconnect 上显示的&lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;端口&lt;/span&gt;。
-如果使用 Little Xpconnect 的 X-Plane 插件，会使用你的 X-Plane 计算机名。</translation>
+如果使用 Little Xpconnect 的 X-Plane 插件，会使用您的 X-Plane 计算机名。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="121"/>
@@ -1858,7 +1858,7 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
 You have to click &quot;Connect&quot; to start the constant connection checking.
 Unchecking this will stop all automatic connection attempts immediately.</source>
         <translation>自动连接到此地址和端口的远程飞行模拟器或本地飞行模拟器。
-你必须点击“连接”按钮才能开启连续连接检查。
+您必须点击“连接”按钮才能开启连续连接检查。
 不勾选此项将会立即停止自动连接尝试。</translation>
     </message>
     <message>
@@ -1869,7 +1869,7 @@ Unchecking this will stop all automatic connection attempts immediately.</source
     <message>
         <location filename="src/connect/connectdialog.cpp" line="51"/>
         <source>SimConnect not found. Your &lt;i&gt;Little Navmap&lt;/i&gt; installation is missing the file &quot;SimConnect.dll&quot;.&lt;br/&gt;Reinstall &lt;i&gt;Little Navmap&lt;/i&gt; or install a FSX SP2 compatible version of SimConnect on your computer.&lt;br/&gt;</source>
-        <translation>没有找到 SimConnect。你的 &lt;i&gt;Little Navmap&lt;/i&gt; 安装缺少文件&quot;SimConnect.dll&quot;。&lt;br/&gt;在你的计算机上重新安装 &lt;i&gt;Little Navmap&lt;/i&gt; 或者安装 FSX SP2 兼容版本的 SimConnect。&lt;br/&gt;</translation>
+        <translation>没有找到 SimConnect。您的 &lt;i&gt;Little Navmap&lt;/i&gt; 安装缺少文件&quot;SimConnect.dll&quot;。&lt;br/&gt;在您的计算机上重新安装 &lt;i&gt;Little Navmap&lt;/i&gt; 或者安装 FSX SP2 兼容版本的 SimConnect。&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="69"/>
@@ -4428,17 +4428,17 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="36"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>文件(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="40"/>
         <source>&amp;Recent Flight Plans</source>
-        <translation type="unfinished"></translation>
+        <translation>最近的飞行计划(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="47"/>
         <source>Recent &amp;Google Earth KML</source>
-        <translation type="unfinished"></translation>
+        <translation>最近的 Google Earth KML 文件(&amp;G)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="53"/>
@@ -4449,7 +4449,7 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="110"/>
         <source>&amp;Window</source>
-        <translation type="unfinished"></translation>
+        <translation>窗口(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="114"/>
@@ -4460,48 +4460,48 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="123"/>
         <source>&amp;Style</source>
-        <translation type="unfinished"></translation>
+        <translation>样式(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="128"/>
         <source>Short&amp;cuts</source>
-        <translation type="unfinished"></translation>
+        <translation>快捷键(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="177"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>帮助(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="199"/>
         <source>&amp;Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>工具(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="224"/>
         <location filename="src/gui/mainwindow.ui" line="10531"/>
         <source>&amp;Map</source>
-        <translation type="unfinished"></translation>
+        <translation>地图(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="241"/>
         <source>Flight &amp;Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="273"/>
         <source>&amp;Scenery Library</source>
-        <translation type="unfinished"></translation>
+        <translation>地景库(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="309"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>视图(&amp;V)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="313"/>
         <source>&amp;Details</source>
-        <translation type="unfinished"></translation>
+        <translation>详情(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="321"/>
@@ -4511,12 +4511,12 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="327"/>
         <source>&amp;Projection</source>
-        <translation type="unfinished"></translation>
+        <translation>保护(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="334"/>
         <source>&amp;Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>主题(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="348"/>
@@ -4537,12 +4537,12 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="364"/>
         <source>Sun &amp;Shading Time</source>
-        <translation type="unfinished"></translation>
+        <translation>太阳阴影时间(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="374"/>
         <source>&amp;Navaids</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="387"/>
@@ -4561,12 +4561,12 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="438"/>
         <source>&amp;Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="442"/>
         <source>&amp;Recent Performance Files</source>
-        <translation type="unfinished"></translation>
+        <translation>最近的性能文件(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="460"/>
@@ -4596,7 +4596,7 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="538"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="576"/>
@@ -4607,29 +4607,29 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="579"/>
         <source>Search for airports</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="616"/>
         <location filename="src/gui/mainwindow.ui" line="619"/>
         <source>Airport ICAO code</source>
-        <translation type="unfinished"></translation>
+        <translation>机场 ICAO 代码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="625"/>
         <source>ICAO Code</source>
-        <translation type="unfinished"></translation>
+        <translation>ICAO 代码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="647"/>
         <location filename="src/gui/mainwindow.ui" line="650"/>
         <source>Airport name</source>
-        <translation type="unfinished"></translation>
+        <translation>机场名称</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="653"/>
         <source>Airport Name</source>
-        <translation type="unfinished"></translation>
+        <translation>机场名称</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="663"/>
@@ -4647,7 +4647,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="6956"/>
         <location filename="src/gui/mainwindow.ui" line="6959"/>
         <source>Clear all search filters</source>
-        <translation type="unfinished"></translation>
+        <translation>清空所有搜索过滤器</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="680"/>
@@ -4665,7 +4665,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="4256"/>
         <location filename="src/gui/mainwindow.ui" line="4259"/>
         <source>Clear selection and remove any highlights on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>清空选中并移除地图上所有高亮</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="697"/>
@@ -4692,7 +4692,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="715"/>
         <location filename="src/gui/mainwindow.ui" line="6390"/>
         <source>Show help for the airport search tab</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场搜索选项卡的帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="729"/>
@@ -4704,13 +4704,13 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="3168"/>
         <location filename="src/gui/mainwindow.ui" line="3171"/>
         <source>Show or hide search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="759"/>
         <location filename="src/gui/mainwindow.ui" line="762"/>
         <source>Airport city</source>
-        <translation type="unfinished"></translation>
+        <translation>机场所在城市</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="765"/>
@@ -4721,95 +4721,95 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="775"/>
         <location filename="src/gui/mainwindow.ui" line="778"/>
         <source>Airport state or province</source>
-        <translation type="unfinished"></translation>
+        <translation>机场所在州或省</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="781"/>
         <source>State / Province</source>
-        <translation type="unfinished"></translation>
+        <translation>州/省</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="791"/>
         <location filename="src/gui/mainwindow.ui" line="794"/>
         <source>Airport country or area code if available</source>
-        <translation type="unfinished"></translation>
+        <translation>若可用，显示机场所在国家或地区代码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="797"/>
         <source>Country / Area Code</source>
-        <translation type="unfinished"></translation>
+        <translation>国家或地区代码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="827"/>
         <location filename="src/gui/mainwindow.ui" line="830"/>
         <source>Airports where all runways are closed</source>
-        <translation type="unfinished"></translation>
+        <translation>所有跑道都关闭的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="833"/>
         <source>&amp;Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>已关闭(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="843"/>
         <location filename="src/gui/mainwindow.ui" line="846"/>
         <source>Airports that have jet fuel</source>
-        <translation type="unfinished"></translation>
+        <translation>有航空煤油（JetFuel）的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="849"/>
         <source>Jet&amp;fuel</source>
-        <translation type="unfinished"></translation>
+        <translation>航空煤油（Jetfue）(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="859"/>
         <location filename="src/gui/mainwindow.ui" line="862"/>
         <source>Airports with tower frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>有塔台频率的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="865"/>
         <source>&amp;Tower</source>
-        <translation type="unfinished"></translation>
+        <translation>塔台(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="875"/>
         <location filename="src/gui/mainwindow.ui" line="878"/>
         <source>Airports with at least one lighted runway</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有一个带灯光跑道的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="881"/>
         <source>&amp;Lighted</source>
-        <translation type="unfinished"></translation>
+        <translation>有灯光的(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="891"/>
         <location filename="src/gui/mainwindow.ui" line="894"/>
         <source>Military airports</source>
-        <translation type="unfinished"></translation>
+        <translation>军用机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="897"/>
         <source>Militar&amp;y</source>
-        <translation type="unfinished"></translation>
+        <translation>军用(&amp;Y)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="907"/>
         <location filename="src/gui/mainwindow.ui" line="910"/>
         <source>Airports that have avgas</source>
-        <translation type="unfinished"></translation>
+        <translation>有航空汽油（avgas）的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="913"/>
         <source>Av&amp;gas</source>
-        <translation type="unfinished"></translation>
+        <translation>航空汽油（Avgas）(&amp;G)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="923"/>
         <location filename="src/gui/mainwindow.ui" line="926"/>
         <source>Airports with procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>有进离场程序的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="929"/>
@@ -4820,7 +4820,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="939"/>
         <location filename="src/gui/mainwindow.ui" line="942"/>
         <source>Airports with at least one ILS</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有一个 ILS 的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="945"/>
@@ -4836,148 +4836,148 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1028"/>
         <source>Add&amp;on</source>
-        <translation type="unfinished"></translation>
+        <translation>插件(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="972"/>
         <location filename="src/gui/mainwindow.ui" line="975"/>
         <source>Airports that have a minimum star rating</source>
-        <translation type="unfinished"></translation>
+        <translation>有最低星级的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="982"/>
         <source>All Ratings</source>
-        <translation type="unfinished"></translation>
+        <translation>所有评分</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="987"/>
         <source>At least ★</source>
-        <translation type="unfinished"></translation>
+        <translation>至少 ★</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="992"/>
         <source>At least ★★</source>
-        <translation type="unfinished"></translation>
+        <translation>至少 ★★</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="997"/>
         <source>At least ★★★</source>
-        <translation type="unfinished"></translation>
+        <translation>至少 ★★★</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1002"/>
         <source>At least ★★★★</source>
-        <translation type="unfinished"></translation>
+        <translation>至少 ★★★★</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1007"/>
         <source>★★★★★</source>
-        <translation type="unfinished"></translation>
+        <translation>★★★★★</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1012"/>
         <source>3D (X-Plane)</source>
-        <translation type="unfinished"></translation>
+        <translation>3D (X-Plane)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1113"/>
         <location filename="src/gui/mainwindow.ui" line="1116"/>
         <source>Airports that have certain ramp parking types</source>
-        <translation type="unfinished"></translation>
+        <translation>有特定停机坪停机位类型的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1120"/>
         <source>Any or no Ramp</source>
-        <translation type="unfinished"></translation>
+        <translation>任何或没有停机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1125"/>
         <source>At least Ramp GA Small</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有小型通航飞机停机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1130"/>
         <source>At least Ramp GA Medium</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有中型通航飞机停机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1135"/>
         <source>At least Ramp GA Large</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有大型通航飞机停机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1140"/>
         <source>At least one Ramp Cargo</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有一个货机停机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1145"/>
         <source>At least one Ramp Military Cargo</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有一个军用货机停机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1150"/>
         <source>At least one Ramp Military Combat</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有一个军用战斗机停机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1083"/>
         <location filename="src/gui/mainwindow.ui" line="1086"/>
         <source>Airports that have certain gate parking types</source>
-        <translation type="unfinished"></translation>
+        <translation>有特定登机口停机位类型的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1090"/>
         <source>Any or no Gate</source>
-        <translation type="unfinished"></translation>
+        <translation>任何或没有登机口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1095"/>
         <source>At least Gate Small</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有小型机登机口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1100"/>
         <source>At least Gate Medium</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有中型机登机口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1105"/>
         <source>At least Gate Heavy</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有重型机登机口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1058"/>
         <location filename="src/gui/mainwindow.ui" line="1061"/>
         <source>Airports that have helipads</source>
-        <translation type="unfinished"></translation>
+        <translation>有直升机坪的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1065"/>
         <source>Any or no Helipad</source>
-        <translation type="unfinished"></translation>
+        <translation>任何或没有直升机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1070"/>
         <source>At least one Helipad</source>
-        <translation type="unfinished"></translation>
+        <translation>至少有一个直升机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1075"/>
         <source>Only Helipads</source>
-        <translation type="unfinished"></translation>
+        <translation>只有直升机坪</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1197"/>
         <location filename="src/gui/mainwindow.ui" line="1200"/>
         <source>Airports that have no runway that is longer than this value</source>
-        <translation type="unfinished"></translation>
+        <translation>机场没有一个跑道长于此值</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1225"/>
         <location filename="src/gui/mainwindow.ui" line="1228"/>
         <source>Airports that have at least one runway that is longer than this value</source>
-        <translation type="unfinished"></translation>
+        <translation>机场至少有一个跑道长于此值</translation>
     </message>
     <message>
         <source>&amp;Max:</source>
@@ -4998,7 +4998,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="1250"/>
         <location filename="src/gui/mainwindow.ui" line="1253"/>
         <source>Airports that have certain runway surfaces</source>
-        <translation type="unfinished"></translation>
+        <translation>有特定跑道道面的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="64"/>
@@ -5008,37 +5008,37 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1257"/>
         <source>Any Surface</source>
-        <translation type="unfinished"></translation>
+        <translation>任何道面</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1262"/>
         <source>Any is Hard</source>
-        <translation type="unfinished"></translation>
+        <translation>任何硬质道面</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1267"/>
         <source>Any is Soft</source>
-        <translation type="unfinished"></translation>
+        <translation>任何软质道面</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1272"/>
         <source>Any is Water</source>
-        <translation type="unfinished"></translation>
+        <translation>任何水面</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1277"/>
         <source>All Hard</source>
-        <translation type="unfinished"></translation>
+        <translation>所有硬质道面</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1282"/>
         <source>All Soft</source>
-        <translation type="unfinished"></translation>
+        <translation>所有软质道面</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1287"/>
         <source>All Water</source>
-        <translation type="unfinished"></translation>
+        <translation>所有水面</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1292"/>
@@ -5049,7 +5049,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="1342"/>
         <location filename="src/gui/mainwindow.ui" line="1345"/>
         <source>Minimum elevation for airport</source>
-        <translation type="unfinished"></translation>
+        <translation>机场的最低标高</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4205"/>
@@ -5061,19 +5061,19 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="1370"/>
         <location filename="src/gui/mainwindow.ui" line="1373"/>
         <source>Maximum elevation for airport</source>
-        <translation type="unfinished"></translation>
+        <translation>机场的最高标高</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1430"/>
         <location filename="src/gui/mainwindow.ui" line="1433"/>
         <source>Search for all airports within the given distance limits around the distance search center</source>
-        <translation type="unfinished"></translation>
+        <translation>围绕搜索中心的给定搜索限制内搜索所有机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1446"/>
         <location filename="src/gui/mainwindow.ui" line="1449"/>
         <source>Minimum airport distance to search center</source>
-        <translation type="unfinished"></translation>
+        <translation>距离搜索中心的最近机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2092"/>
@@ -5084,7 +5084,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="1471"/>
         <location filename="src/gui/mainwindow.ui" line="1474"/>
         <source>Maximum airport distance to search center</source>
-        <translation type="unfinished"></translation>
+        <translation>距离搜索中心的最远机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1505"/>
@@ -5092,37 +5092,37 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="2218"/>
         <location filename="src/gui/mainwindow.ui" line="2221"/>
         <source>Approximate direction to search center</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索中心的大致方位</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1517"/>
         <location filename="src/gui/mainwindow.ui" line="2230"/>
         <source>North</source>
-        <translation type="unfinished"></translation>
+        <translation>向北</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1522"/>
         <location filename="src/gui/mainwindow.ui" line="2235"/>
         <source>East</source>
-        <translation type="unfinished"></translation>
+        <translation>向东</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1527"/>
         <location filename="src/gui/mainwindow.ui" line="2240"/>
         <source>South</source>
-        <translation type="unfinished"></translation>
+        <translation>向南</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1532"/>
         <location filename="src/gui/mainwindow.ui" line="2245"/>
         <source>West</source>
-        <translation type="unfinished"></translation>
+        <translation>向西</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1563"/>
         <location filename="src/gui/mainwindow.ui" line="1566"/>
         <source>Path of the scenery file containing the airport</source>
-        <translation type="unfinished"></translation>
+        <translation>包含机场的地景文件路径</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1569"/>
@@ -5134,7 +5134,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="1579"/>
         <location filename="src/gui/mainwindow.ui" line="1582"/>
         <source>Name of the scenery file containg the airport</source>
-        <translation type="unfinished"></translation>
+        <translation>地景文件包含的机场名称</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1585"/>
@@ -5147,30 +5147,30 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="5225"/>
         <location filename="src/gui/mainwindow.cpp" line="2952"/>
         <source>Navaids</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1683"/>
         <source>Search for VOR, NDB and waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>搜素 VOR、NDB 和航路点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1732"/>
         <location filename="src/gui/mainwindow.ui" line="1735"/>
         <source>Navaid ICAO ident</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备 ICAO 识别码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1741"/>
         <location filename="src/gui/mainwindow.ui" line="2611"/>
         <source>Ident</source>
-        <translation type="unfinished"></translation>
+        <translation>识别码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1757"/>
         <location filename="src/gui/mainwindow.ui" line="1760"/>
         <source>Navaid name</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备名称</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1763"/>
@@ -5178,13 +5178,13 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="3579"/>
         <location filename="src/gui/mainwindow.ui" line="3826"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1779"/>
         <location filename="src/gui/mainwindow.ui" line="1782"/>
         <source>Navaid two-letter code for region</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备的两字地区代码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1788"/>
@@ -5196,12 +5196,12 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="1804"/>
         <location filename="src/gui/mainwindow.ui" line="1807"/>
         <source>Navaid airport ICAO code</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备机场的 ICAO 代码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1813"/>
         <source>Airport ICAO Code</source>
-        <translation type="unfinished"></translation>
+        <translation>机场 ICAO 代码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1857"/>
@@ -5225,7 +5225,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="3700"/>
         <location filename="src/gui/mainwindow.ui" line="3963"/>
         <source>Show help for the navaid search tab</source>
-        <translation type="unfinished"></translation>
+        <translation>显示助航设备搜索选项卡的帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2053"/>
@@ -5236,159 +5236,159 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="2083"/>
         <location filename="src/gui/mainwindow.ui" line="2086"/>
         <source>Minimum range of a VOR or NDB</source>
-        <translation type="unfinished"></translation>
+        <translation>范围最近的一个 VOR 或 NDB</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2067"/>
         <source>Min &amp;Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>最小范围(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1996"/>
         <location filename="src/gui/mainwindow.ui" line="1999"/>
         <source>Navaid types</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备类型</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2003"/>
         <source>All Types</source>
-        <translation type="unfinished"></translation>
+        <translation>所有类型</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2008"/>
         <source>VOR/VORTAC - High</source>
-        <translation type="unfinished"></translation>
+        <translation>VOR/VORTAC - 高空</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2013"/>
         <source>VOR/VORTAC - Low</source>
-        <translation type="unfinished"></translation>
+        <translation>VOR/VORTAC - 低空</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2018"/>
         <source>VOR/VORTAC - Terminal</source>
-        <translation type="unfinished"></translation>
+        <translation>VOR/VORTAC - 终端</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2023"/>
         <source>NDB - HH</source>
-        <translation type="unfinished"></translation>
+        <translation>NDB - 高高</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2028"/>
         <source>NDB - H</source>
-        <translation type="unfinished"></translation>
+        <translation>NDB - 高</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2033"/>
         <source>NDB - MH</source>
-        <translation type="unfinished"></translation>
+        <translation>NDB - 中高</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2038"/>
         <source>NDB - Compass Locator</source>
-        <translation type="unfinished"></translation>
+        <translation>NDB - 罗盘定位器</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2043"/>
         <source>Waypoint - VOR</source>
-        <translation type="unfinished"></translation>
+        <translation>导航点 - VOR</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2048"/>
         <source>Waypoint - NDB</source>
-        <translation type="unfinished"></translation>
+        <translation>导航点 - NDB</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1931"/>
         <location filename="src/gui/mainwindow.ui" line="1934"/>
         <source>Navaid categories</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备类别</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1938"/>
         <source>All Navaids</source>
-        <translation type="unfinished"></translation>
+        <translation>所有助航设备</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1943"/>
         <source>All VOR/VORTAC/TACAN</source>
-        <translation type="unfinished"></translation>
+        <translation>所有 VOR/VORTAC/TACAN</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1948"/>
         <source>All VOR/VORTAC/TACAN/NDB</source>
-        <translation type="unfinished"></translation>
+        <translation>所有 VOR/VORTAC/TACAN/NDB</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1953"/>
         <source>Only VOR-DME</source>
-        <translation type="unfinished"></translation>
+        <translation>只有 VOR-DME</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1958"/>
         <source>Only VOR</source>
-        <translation type="unfinished"></translation>
+        <translation>只有 VOR</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1963"/>
         <source>Only DME</source>
-        <translation type="unfinished"></translation>
+        <translation>只有 DME</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1968"/>
         <source>Only VORTAC</source>
-        <translation type="unfinished"></translation>
+        <translation>只有 VORTAC</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1973"/>
         <source>Only TACAN</source>
-        <translation type="unfinished"></translation>
+        <translation>只有 TACAN</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1978"/>
         <source>All NDB</source>
-        <translation type="unfinished"></translation>
+        <translation>所有 NDB</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1983"/>
         <source>All Waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>所有导航点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1988"/>
         <source>All Waypoints on Airways</source>
-        <translation type="unfinished"></translation>
+        <translation>所有航路上的导航点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2143"/>
         <location filename="src/gui/mainwindow.ui" line="2146"/>
         <source>Search for all navaids within the given distance limits around the distance search center</source>
-        <translation type="unfinished"></translation>
+        <translation>围绕搜索中心的给定搜索限制内搜索所有助航设备</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2159"/>
         <location filename="src/gui/mainwindow.ui" line="2162"/>
         <source>Minimum navaid distance to search center</source>
-        <translation type="unfinished"></translation>
+        <translation>距离搜索中心的最近助航设备</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2184"/>
         <location filename="src/gui/mainwindow.ui" line="2187"/>
         <source>Maximum navaid distance to search center</source>
-        <translation type="unfinished"></translation>
+        <translation>距离搜索中心的最远助航设备</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2276"/>
         <location filename="src/gui/mainwindow.ui" line="2279"/>
         <source>Path of the scenery file containing the navaid</source>
-        <translation type="unfinished"></translation>
+        <translation>包含助航设备的地景文件路径</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2292"/>
         <location filename="src/gui/mainwindow.ui" line="2295"/>
         <source>Name of the scenery file containg the navaid</source>
-        <translation type="unfinished"></translation>
+        <translation>地景文件包含的助航设备名称</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2393"/>
@@ -5399,27 +5399,27 @@ Flown %dist%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2396"/>
         <source>Search for SID, STAR and approach procedures of an airport</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索机场的 SID、STAR 和进近程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2435"/>
         <source>All Procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>所有进离场程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2440"/>
         <source>Departure Procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>离场程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2445"/>
         <source>Arrival Procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>进场程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2450"/>
         <source>Only Approaches and Transitions</source>
-        <translation type="unfinished"></translation>
+        <translation>只有进近和过渡程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2459"/>
@@ -5430,49 +5430,49 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="2480"/>
         <location filename="src/gui/mainwindow.ui" line="2483"/>
         <source>Clear selection and remove any highlights and preview on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>清空选中并移除地图上所有高亮和预览</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2497"/>
         <location filename="src/gui/mainwindow.ui" line="2500"/>
         <source>Show help for the procedure search tab</source>
-        <translation type="unfinished"></translation>
+        <translation>显示进离场搜索选项卡的帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2564"/>
         <location filename="src/gui/mainwindow.ui" line="5295"/>
         <location filename="src/gui/mainwindow.cpp" line="2958"/>
         <source>Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>用户导航点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2567"/>
         <source>Search, add and edit user defined waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索、添加和编辑用户定义的航路点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2602"/>
         <location filename="src/gui/mainwindow.ui" line="2605"/>
         <source>Short ident of the userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>此用户航点的短识别码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2627"/>
         <location filename="src/gui/mainwindow.ui" line="2630"/>
         <source>Two-letter code for ICAO region</source>
-        <translation type="unfinished"></translation>
+        <translation>两字 ICAO 地区代码</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2649"/>
         <location filename="src/gui/mainwindow.ui" line="2652"/>
         <source>Userpoint type</source>
-        <translation type="unfinished"></translation>
+        <translation>用户航点类型</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2671"/>
         <location filename="src/gui/mainwindow.ui" line="2674"/>
         <source>Add a new userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>添加一个新用户航点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2688"/>
@@ -5481,7 +5481,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="9517"/>
         <location filename="src/gui/mainwindow.ui" line="10728"/>
         <source>Edit one or more userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑一个或多个用户航点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2705"/>
@@ -5490,7 +5490,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="9550"/>
         <location filename="src/gui/mainwindow.ui" line="10764"/>
         <source>Remove one or more userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>移除一个或多个用户航点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2872"/>
@@ -5501,12 +5501,12 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="2888"/>
         <location filename="src/gui/mainwindow.ui" line="2891"/>
         <source>File name and path if this waypoint was imported from a file</source>
-        <translation type="unfinished"></translation>
+        <translation>如果此航路点从文件导入此航路点，显示文件名和路径</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2894"/>
         <source>Import file name and path</source>
-        <translation type="unfinished"></translation>
+        <translation>导入文件名和路径</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2971"/>
@@ -5531,7 +5531,7 @@ Will match any visited airport.</oldsource>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3013"/>
         <source>Departure or destination airport ICAO code. </source>
-        <translation>离场或到达机场的 ICAO 代码。</translation>
+        <translation>离场或到达机场的 ICAO 代码。 </translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3019"/>
@@ -5598,7 +5598,7 @@ Will match any visited airport.</oldsource>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3154"/>
         <source>Show help for the logbook search tab</source>
-        <translation>显示记录本搜索的帮助</translation>
+        <translation>显示记录本搜索选项卡的帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3285"/>
@@ -5641,18 +5641,18 @@ Will match any visited airport.</oldsource>
         <location filename="src/gui/mainwindow.ui" line="3516"/>
         <location filename="src/gui/mainwindow.ui" line="5365"/>
         <source>Online Clients</source>
-        <translation type="unfinished"></translation>
+        <translation>在线客户端</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3519"/>
         <source>Search for online network clients/aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索所有在线网络客户端/航空器</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3551"/>
         <location filename="src/gui/mainwindow.ui" line="3554"/>
         <source>Client Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>客户端呼号</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3557"/>
@@ -5664,7 +5664,7 @@ Will match any visited airport.</oldsource>
         <location filename="src/gui/mainwindow.ui" line="3573"/>
         <location filename="src/gui/mainwindow.ui" line="3576"/>
         <source>Client Name</source>
-        <translation type="unfinished"></translation>
+        <translation>客户端名称</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3601"/>
@@ -5700,38 +5700,38 @@ Will match any visited airport.</oldsource>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3778"/>
         <source>Search for online network centers</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索所有在线网络中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3858"/>
         <location filename="src/gui/mainwindow.ui" line="3861"/>
         <source>Facility Type</source>
-        <translation type="unfinished"></translation>
+        <translation>设施类型</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3865"/>
         <source>All Facility Types</source>
-        <translation type="unfinished"></translation>
+        <translation>所有管制设施类型</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3870"/>
         <source>No Observer</source>
-        <translation type="unfinished"></translation>
+        <translation>没有观察者</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3875"/>
         <source>Observer</source>
-        <translation type="unfinished"></translation>
+        <translation>观察者</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3880"/>
         <source>Flight Information</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3885"/>
         <source>Delivery</source>
-        <translation type="unfinished"></translation>
+        <translation>放行</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3890"/>
@@ -5751,7 +5751,7 @@ Will match any visited airport.</oldsource>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3905"/>
         <source>ACC</source>
-        <translation type="unfinished"></translation>
+        <translation>ACC</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3910"/>
@@ -5762,12 +5762,12 @@ Will match any visited airport.</oldsource>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4038"/>
         <source>Online Server</source>
-        <translation type="unfinished"></translation>
+        <translation>在线服务器</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4041"/>
         <source>Search for online network servers</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索所有在线网络服务器</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4117"/>
@@ -5782,13 +5782,13 @@ Will match any visited airport.</oldsource>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4161"/>
         <source>Flight Plan Table</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划表格</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4230"/>
         <location filename="src/gui/mainwindow.ui" line="4233"/>
         <source>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) for flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划使用 VFR（目视飞行规则）或 IFR（仪表飞行规则）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4237"/>
@@ -5812,12 +5812,12 @@ Will match any visited airport.</oldsource>
         <location filename="src/gui/mainwindow.ui" line="4302"/>
         <location filename="src/gui/mainwindow.ui" line="4305"/>
         <source>Show help for the flight plan window</source>
-        <translation type="unfinished"></translation>
+        <translation>显示飞行计划窗口的帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4335"/>
         <source>No Flight Plan loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>没有载入飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4411"/>
@@ -5866,7 +5866,7 @@ wind display in the elevation profile top line.</source>
         <location filename="src/gui/mainwindow.ui" line="10164"/>
         <location filename="src/gui/mainwindow.ui" line="10167"/>
         <source>Edit Aircraft Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑航空器性能</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4556"/>
@@ -5874,7 +5874,7 @@ wind display in the elevation profile top line.</source>
         <location filename="src/gui/mainwindow.ui" line="10232"/>
         <location filename="src/gui/mainwindow.ui" line="10235"/>
         <source>Add new aircraft performance data</source>
-        <translation type="unfinished"></translation>
+        <translation>新建航空器性能数据</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4579"/>
@@ -5898,7 +5898,7 @@ wind display in the elevation profile top line.</source>
         <location filename="src/gui/mainwindow.ui" line="10217"/>
         <location filename="src/gui/mainwindow.ui" line="10220"/>
         <source>Save Aircraft Performance File as</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能文件另存为</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4655"/>
@@ -5906,12 +5906,12 @@ wind display in the elevation profile top line.</source>
         <location filename="src/gui/mainwindow.ui" line="4856"/>
         <location filename="src/gui/mainwindow.ui" line="4859"/>
         <source>Show help for aircraft performance</source>
-        <translation type="unfinished"></translation>
+        <translation>显示航空器性能的帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4685"/>
         <source>&amp;Wind:</source>
-        <translation type="unfinished"></translation>
+        <translation>风况(&amp;W)：</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4695"/>
@@ -5943,7 +5943,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4748"/>
         <source>No aircraft performance report available.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有可用的航空器性能报告。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4759"/>
@@ -6014,17 +6014,17 @@ Wind speed will be interpolated for climb and descent phases.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5033"/>
         <source>Runway and helipad information</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道和直升机坪信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5068"/>
         <source>Com</source>
-        <translation type="unfinished"></translation>
+        <translation>Com</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5071"/>
         <source>Airport communication frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>机场通讯频率</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5109"/>
@@ -6051,7 +6051,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5189"/>
         <source>Decoded weather information for airport</source>
-        <translation type="unfinished"></translation>
+        <translation>为机场解码天气信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5228"/>
@@ -6071,7 +6071,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5284"/>
         <source>No airspace selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选中航空器。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5298"/>
@@ -6101,7 +6101,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5389"/>
         <source>No online client/aircraft selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选中在线客户端/航空器。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5403"/>
@@ -6111,27 +6111,27 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5424"/>
         <source>No online network center selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选中在线网络中心。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5440"/>
         <source>Map Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>地图工具栏</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5462"/>
         <source>Map Options Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>地图选项工具栏</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5505"/>
         <source>Flight Plan Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划工具栏</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5533"/>
         <source>Flight Plan Elevation Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划纵剖图</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11649"/>
@@ -6181,13 +6181,13 @@ relation to shown airport</source>
         <location filename="src/gui/mainwindow.ui" line="9976"/>
         <location filename="src/gui/mainwindow.ui" line="9979"/>
         <source>Expand elevation profile to window size</source>
-        <translation type="unfinished"></translation>
+        <translation>将纵剖图展开到窗口尺寸</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5713"/>
         <location filename="src/gui/mainwindow.ui" line="5716"/>
         <source>Show help for the elevation profile window</source>
-        <translation type="unfinished"></translation>
+        <translation>显示纵剖图窗口的帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5831"/>
@@ -6202,7 +6202,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5869"/>
         <source>General user aircraft information</source>
-        <translation type="unfinished"></translation>
+        <translation>通用用户航空器信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5893"/>
@@ -6214,12 +6214,12 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5904"/>
         <source>Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>进程</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5907"/>
         <source>User aircraft progress and environment information</source>
-        <translation type="unfinished"></translation>
+        <translation>用户航空器进度和环境信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5942"/>
@@ -6229,22 +6229,22 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5945"/>
         <source>Information about AI or multplayer aircraft or ships</source>
-        <translation type="unfinished"></translation>
+        <translation>AI 或多人游戏航空器或航船的信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5982"/>
         <source>Dock Window Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>窗口停靠工具栏</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6007"/>
         <source>Legend</source>
-        <translation type="unfinished"></translation>
+        <translation>图例</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6036"/>
         <source>Navmap</source>
-        <translation type="unfinished"></translation>
+        <translation>导航图</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6068"/>
@@ -6255,7 +6255,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6138"/>
         <source>Map Airspaces Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>地图空域工具栏</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6150"/>
@@ -6521,30 +6521,30 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6829"/>
         <source>Filter by Entries &amp;including %1</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤器按条目包含 %1 (&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6832"/>
         <location filename="src/gui/mainwindow.ui" line="6835"/>
         <source>Filter by entries including text</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤器按条目包含文本</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6844"/>
         <source>Filter by Entries e&amp;xcluding %1</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤器按条目排除 %1 (&amp;E)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6847"/>
         <location filename="src/gui/mainwindow.ui" line="6850"/>
         <source>Filter by entries excluding text</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤器按条目排除文本</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6859"/>
         <location filename="src/gui/mainwindow.ui" line="9660"/>
         <source>&amp;Reset View</source>
-        <translation type="unfinished"></translation>
+        <translation>重置视图(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6862"/>
@@ -6552,13 +6552,13 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9663"/>
         <location filename="src/gui/mainwindow.ui" line="9666"/>
         <source>Reset sort order, column order and column sizes to default</source>
-        <translation type="unfinished"></translation>
+        <translation>重置排序顺序、列顺序和列尺寸到默认</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6870"/>
         <location filename="src/gui/mainwindow.ui" line="9642"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索全部(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6873"/>
@@ -6566,13 +6566,13 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9645"/>
         <location filename="src/gui/mainwindow.ui" line="9648"/>
         <source>Select all entries in the table</source>
-        <translation type="unfinished"></translation>
+        <translation>在表格中搜索全部条目</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6879"/>
         <location filename="src/gui/mainwindow.ui" line="9651"/>
         <source>Ctrl+A</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+A</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6888"/>
@@ -6586,157 +6586,157 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8392"/>
         <location filename="src/gui/mainwindow.ui" line="8395"/>
         <source>Copy selected entries in CSV format into the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中条目以 CSV 格式复制到剪贴板</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6897"/>
         <location filename="src/gui/mainwindow.ui" line="8398"/>
         <source>Ctrl+C</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+C</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6906"/>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation>放大(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6909"/>
         <source>Zoom In</source>
-        <translation type="unfinished"></translation>
+        <translation>放大</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6912"/>
         <location filename="src/gui/mainwindow.ui" line="6915"/>
         <source>Increase font size in table view</source>
-        <translation type="unfinished"></translation>
+        <translation>增加表格视图的字体尺寸</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6924"/>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation>缩小(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6927"/>
         <location filename="src/gui/mainwindow.ui" line="6930"/>
         <source>Decrease font size in table view</source>
-        <translation type="unfinished"></translation>
+        <translation>在表格视图减小字体尺寸</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6938"/>
         <source>&amp;Default Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>默认缩放(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6941"/>
         <location filename="src/gui/mainwindow.ui" line="6944"/>
         <source>Reset font size in table view to default</source>
-        <translation type="unfinished"></translation>
+        <translation>将表格视图的字体尺寸重置为默认</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6953"/>
         <source>R&amp;eset Search</source>
-        <translation type="unfinished"></translation>
+        <translation>重置搜索(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6962"/>
         <source>Ctrl+R</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+R</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6971"/>
         <source>Un&amp;group</source>
-        <translation type="unfinished"></translation>
+        <translation>解除编组(&amp;G)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6974"/>
         <location filename="src/gui/mainwindow.ui" line="6977"/>
         <source>Release column grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>释放列分组</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6980"/>
         <source>Ctrl+G</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+G</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6989"/>
         <source>&amp;Show All</source>
-        <translation type="unfinished"></translation>
+        <translation>显示所有(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6992"/>
         <location filename="src/gui/mainwindow.ui" line="6995"/>
         <source>Load all entries into the view</source>
-        <translation type="unfinished"></translation>
+        <translation>将所有条目载入视图</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6998"/>
         <source>Ctrl+Shift+O</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+O</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7007"/>
         <source>&amp;Open Flight Plan ...</source>
-        <translation type="unfinished"></translation>
+        <translation>打开飞行计划(&amp;O) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7010"/>
         <location filename="src/gui/mainwindow.ui" line="7013"/>
         <source>Open flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>打开飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7016"/>
         <source>Ctrl+O</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+O</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7025"/>
         <source>&amp;Save Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7028"/>
         <location filename="src/gui/mainwindow.ui" line="7031"/>
         <source>Save flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7034"/>
         <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+S</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7043"/>
         <source>&amp;Load Scenery Library ...</source>
-        <translation type="unfinished"></translation>
+        <translation>载入地景库(&amp;L) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7046"/>
         <source>Load Scenery Library</source>
-        <translation type="unfinished"></translation>
+        <translation>载入地景库</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7049"/>
         <location filename="src/gui/mainwindow.ui" line="7052"/>
         <source>Load a flight simulator scenery library into the Little Navmap database</source>
-        <translation type="unfinished"></translation>
+        <translation>从飞行模拟器的地景库载入到 Little Navmap 的数据库</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7055"/>
         <source>Ctrl+Shift+L</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+L</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7066"/>
         <source>Facilities</source>
-        <translation type="unfinished"></translation>
+        <translation>设施</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7069"/>
         <location filename="src/gui/mainwindow.ui" line="7072"/>
         <source>Show airport facility search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场设施搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7083"/>
@@ -6747,7 +6747,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7086"/>
         <location filename="src/gui/mainwindow.ui" line="7089"/>
         <source>Show airport parking search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场停机位搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7100"/>
@@ -6758,58 +6758,58 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7103"/>
         <location filename="src/gui/mainwindow.ui" line="7106"/>
         <source>Show airport runway search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场跑道搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7117"/>
         <source>Elevation</source>
-        <translation type="unfinished"></translation>
+        <translation>标高</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7120"/>
         <location filename="src/gui/mainwindow.ui" line="7123"/>
         <source>Show airport elevation search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场标高搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7134"/>
         <location filename="src/gui/mainwindow.ui" line="7345"/>
         <source>Distance from Mark</source>
-        <translation type="unfinished"></translation>
+        <translation>从标记的距离</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7137"/>
         <location filename="src/gui/mainwindow.ui" line="7140"/>
         <source>Show airport distance search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场距离搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7151"/>
         <location filename="src/gui/mainwindow.ui" line="7362"/>
         <source>Scenery</source>
-        <translation type="unfinished"></translation>
+        <translation>地景</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7154"/>
         <location filename="src/gui/mainwindow.ui" line="7157"/>
         <source>Show airport scenery search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场地景搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7166"/>
         <source>&amp;Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>退出(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7169"/>
         <location filename="src/gui/mainwindow.ui" line="7172"/>
         <source>Exit the application</source>
-        <translation type="unfinished"></translation>
+        <translation>退出此应用程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7175"/>
         <source>Ctrl+Q</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Q</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7659"/>
@@ -6831,12 +6831,12 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7941"/>
         <source>Add selected entry to the nearest flight plan leg</source>
         <oldsource>Copy airspaces from the currently selected database to the X-Plane database</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>将选定的条目添加到最近的飞行计划航段</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8124"/>
         <source>Ctrl+Alt+O</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+O</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8154"/>
@@ -6853,7 +6853,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9018"/>
         <location filename="src/gui/mainwindow.ui" line="9036"/>
         <source>Alt+Shift+R</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Shift+R</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9913"/>
@@ -7010,57 +7010,57 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="11681"/>
         <location filename="src/gui/mainwindow.ui" line="11684"/>
         <source>Manual wind in fuel report overrides other</source>
-        <translation type="unfinished"></translation>
+        <translation>在燃油报告中人工风况会覆盖其他风况</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11695"/>
         <source>&amp;NAT</source>
-        <translation type="unfinished"></translation>
+        <translation>NAT(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11698"/>
         <location filename="src/gui/mainwindow.ui" line="11701"/>
         <source>Download North Atlantic Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>下载北大西洋航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11712"/>
         <source>&amp;PACOTS</source>
-        <translation type="unfinished"></translation>
+        <translation>PACOTS(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11715"/>
         <location filename="src/gui/mainwindow.ui" line="11718"/>
         <source>Download tracks for Pacific Organized Track System</source>
-        <translation type="unfinished"></translation>
+        <translation>下载太平洋组织航路系统的航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11726"/>
         <source>&amp;AUSOTS</source>
-        <translation type="unfinished"></translation>
+        <translation>AUSOTS(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11729"/>
         <location filename="src/gui/mainwindow.ui" line="11732"/>
         <source>Download tracks for Australian Organised Track Structure</source>
-        <translation type="unfinished"></translation>
+        <translation>下载澳大利亚组织的航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7192"/>
         <location filename="src/gui/mainwindow.ui" line="7195"/>
         <source>Show the statusbar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示状态栏</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7204"/>
         <source>&amp;Contents (Online)</source>
-        <translation type="unfinished"></translation>
+        <translation>内容（在线）(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7207"/>
         <location filename="src/gui/mainwindow.ui" line="7210"/>
         <source>Show the online help in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器里显示在线帮助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7213"/>
@@ -7070,40 +7070,40 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7222"/>
         <source>&amp;About Little Navmap</source>
-        <translation type="unfinished"></translation>
+        <translation>关于 Little Navmap(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7225"/>
         <location filename="src/gui/mainwindow.ui" line="7228"/>
         <source>About Little Navmap</source>
-        <translation type="unfinished"></translation>
+        <translation>关于 Little Navmap</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7240"/>
         <source>About &amp;Qt</source>
-        <translation type="unfinished"></translation>
+        <translation>关于 Qt(&amp;Q)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7243"/>
         <location filename="src/gui/mainwindow.ui" line="7246"/>
         <source>About Qt</source>
-        <translation type="unfinished"></translation>
+        <translation>关于 Qt</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7258"/>
         <source>&amp;Options ...</source>
-        <translation type="unfinished"></translation>
+        <translation>选项(&amp;O) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7261"/>
         <location filename="src/gui/mainwindow.ui" line="7264"/>
         <source>Open the options dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>打开选项对话框</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7267"/>
         <source>Ctrl+Shift+,</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+,</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7281"/>
@@ -7115,7 +7115,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7284"/>
         <location filename="src/gui/mainwindow.ui" line="7287"/>
         <source>Show all or no additional search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示所有或没有额外搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9223"/>
@@ -7131,7 +7131,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9916"/>
         <location filename="src/gui/mainwindow.ui" line="9919"/>
         <source>Show Airport traffic pattern for a runway at this airport</source>
-        <translation type="unfinished"></translation>
+        <translation>在此机场上显示一条跑道的起落航线</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9928"/>
@@ -7174,7 +7174,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11287"/>
         <source>Ctrl+Alt+Shift+M</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+Shift+M</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11296"/>
@@ -7324,37 +7324,37 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9678"/>
         <location filename="src/gui/mainwindow.ui" line="9681"/>
         <source>Set center mark for distance search</source>
-        <translation type="unfinished"></translation>
+        <translation>设置距离搜索的中心标记</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7331"/>
         <location filename="src/gui/mainwindow.ui" line="7334"/>
         <source>Show all or no additional navaid search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示所有或没有额外助航设备的搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7348"/>
         <location filename="src/gui/mainwindow.ui" line="7351"/>
         <source>Show navaid distance search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示助航设备距离搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7365"/>
         <location filename="src/gui/mainwindow.ui" line="7368"/>
         <location filename="src/gui/mainwindow.ui" line="9698"/>
         <source>Show navaid scenery search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示助航设备地景搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7377"/>
         <source>&amp;More Detail</source>
-        <translation type="unfinished"></translation>
+        <translation>更多详情(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7380"/>
         <location filename="src/gui/mainwindow.ui" line="7383"/>
         <source>Show more detail on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示更多的详情</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7386"/>
@@ -7364,13 +7364,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7395"/>
         <source>&amp;Less Detail</source>
-        <translation type="unfinished"></translation>
+        <translation>更少详情(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7398"/>
         <location filename="src/gui/mainwindow.ui" line="7401"/>
         <source>Show less detail on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示更少的详情</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7404"/>
@@ -7380,66 +7380,66 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7413"/>
         <source>Goto &amp;Home</source>
-        <translation type="unfinished"></translation>
+        <translation>返回起始视图(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7416"/>
         <location filename="src/gui/mainwindow.ui" line="7419"/>
         <source>Goto home view</source>
-        <translation type="unfinished"></translation>
+        <translation>返回起始视图</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7422"/>
         <source>Ctrl+Home</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Home</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7431"/>
         <source>Map Position &amp;Back</source>
-        <translation type="unfinished"></translation>
+        <translation>地图位置向后(&amp;B)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7434"/>
         <location filename="src/gui/mainwindow.ui" line="7437"/>
         <source>Go back to the last map position</source>
-        <translation type="unfinished"></translation>
+        <translation>回到地图最后位置</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7440"/>
         <source>Alt+Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+左箭头</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7449"/>
         <source>Map Position &amp;Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>地图位置向前(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7452"/>
         <location filename="src/gui/mainwindow.ui" line="7455"/>
         <source>Go forward to the next map position</source>
-        <translation type="unfinished"></translation>
+        <translation>前进到下一个地图位置</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7458"/>
         <source>Alt+Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+右箭头</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7467"/>
         <source>Goto Center for &amp;Distance Search</source>
-        <translation type="unfinished"></translation>
+        <translation>前往距离搜索中心(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7470"/>
         <location filename="src/gui/mainwindow.ui" line="7473"/>
         <source>Goto center mark for distance search</source>
-        <translation type="unfinished"></translation>
+        <translation>前往距离搜索的中心标记</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7476"/>
         <source>Ctrl+End</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+End</translation>
     </message>
     <message>
         <source>Set Home View</source>
@@ -7449,109 +7449,109 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7488"/>
         <location filename="src/gui/mainwindow.ui" line="7491"/>
         <source>Sets currently visible map view as home view</source>
-        <translation type="unfinished"></translation>
+        <translation>将当前可视的地图视图设置为起始视图</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7506"/>
         <source>Show Airports with &amp;hard Runways</source>
-        <translation type="unfinished"></translation>
+        <translation>显示有硬质跑道道面的机场(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7509"/>
         <location filename="src/gui/mainwindow.ui" line="7512"/>
         <source>Show airports with hard runways on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示有硬质跑道道面的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7515"/>
         <source>Ctrl+Alt+H</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+H</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7530"/>
         <source>Show &amp;VOR Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 VOR 导航台(&amp;V)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7533"/>
         <location filename="src/gui/mainwindow.ui" line="7536"/>
         <source>Show VOR stations on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 VOR 导航台</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7539"/>
         <source>Ctrl+Alt+V</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+V</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7554"/>
         <source>Show &amp;NDB Stations</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 NDB 导航台(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7557"/>
         <location filename="src/gui/mainwindow.ui" line="7560"/>
         <source>Show NDB stations on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 NDB 导航台</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7563"/>
         <source>Ctrl+Alt+N</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+N</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7578"/>
         <source>Show &amp;Waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>显示航路点(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7581"/>
         <location filename="src/gui/mainwindow.ui" line="7584"/>
         <source>Show waypoints on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示航路点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7587"/>
         <source>Ctrl+Alt+W</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+W</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7602"/>
         <source>Show &amp;Country and City Names</source>
-        <translation type="unfinished"></translation>
+        <translation>显示国家和城市名称(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7605"/>
         <location filename="src/gui/mainwindow.ui" line="7608"/>
         <source>Show country and city names on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示国家和城市名称</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7623"/>
         <source>Show &amp;ILS Feathers</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 ILS 波束(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7626"/>
         <location filename="src/gui/mainwindow.ui" line="7629"/>
         <source>Show ILS feathers on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 ILS 波束</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7632"/>
         <source>Ctrl+Alt+I</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+I</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7641"/>
         <source>&amp;Default Detail</source>
-        <translation type="unfinished"></translation>
+        <translation>默认详情(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7644"/>
         <location filename="src/gui/mainwindow.ui" line="7647"/>
         <source>Go back to default detail on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>回到地图默认详情</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7650"/>
@@ -7568,7 +7568,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7677"/>
         <location filename="src/gui/mainwindow.ui" line="7680"/>
         <source>Show range for navaid on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示助航设备范围</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7689"/>
@@ -7583,56 +7583,56 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7698"/>
         <source>Alt+Shift+H</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Shift+H</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7713"/>
         <source>Show Airports with &amp;soft Runways</source>
-        <translation type="unfinished"></translation>
+        <translation>显示有软质跑道道面的机场(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7716"/>
         <location filename="src/gui/mainwindow.ui" line="7719"/>
         <source>Show airports with soft or water runways on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示有软质跑道道面或水上跑道的机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7722"/>
         <source>Ctrl+Alt+S</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+S</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7737"/>
         <source>Show &amp;empty Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>显示空机场(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7740"/>
         <location filename="src/gui/mainwindow.ui" line="7743"/>
         <source>Show empty airports on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示空机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7746"/>
         <source>Ctrl+Alt+E</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+E</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7758"/>
         <location filename="src/gui/mainwindow.ui" line="7761"/>
         <source>Remove this range ring</source>
-        <translation type="unfinished"></translation>
+        <translation>移除此距离环</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7770"/>
         <source>Remove Distance Measurement</source>
-        <translation type="unfinished"></translation>
+        <translation>移除测距线</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7773"/>
         <location filename="src/gui/mainwindow.ui" line="7776"/>
         <source>Remove this distance measurement</source>
-        <translation type="unfinished"></translation>
+        <translation>移除此测距线</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10990"/>
@@ -7701,17 +7701,17 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7788"/>
         <location filename="src/gui/mainwindow.ui" line="7791"/>
         <source>Save flight plan as</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划另存为</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7794"/>
         <source>Ctrl+Shift+S</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7803"/>
         <source>&amp;New Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>新建飞行计划(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7806"/>
@@ -7722,18 +7722,18 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7812"/>
         <source>Ctrl+N</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+N</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7821"/>
         <source>Center &amp;Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>中心飞行计划(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7824"/>
         <location filename="src/gui/mainwindow.ui" line="7827"/>
         <source>Center flight plan on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图中心显示飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11619"/>
@@ -7761,56 +7761,56 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7842"/>
         <source>Show &amp;Victor Airways</source>
-        <translation type="unfinished"></translation>
+        <translation>显示低空航路(&amp;V)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7845"/>
         <location filename="src/gui/mainwindow.ui" line="7848"/>
         <source>Show Victor airways on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示低空航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7851"/>
         <source>Ctrl+V</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+V</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7863"/>
         <source>Show &amp;Jet Airways</source>
-        <translation type="unfinished"></translation>
+        <translation>显示高空航路(&amp;J)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7866"/>
         <location filename="src/gui/mainwindow.ui" line="7869"/>
         <source>Show Jet airways on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示高空航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7872"/>
         <source>Ctrl+J</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+J</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7887"/>
         <source>Show &amp;Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>显示飞行计划(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7890"/>
         <location filename="src/gui/mainwindow.ui" line="7893"/>
         <source>Show flight plan on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7896"/>
         <source>Ctrl+Alt+F</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+F</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7908"/>
         <location filename="src/gui/mainwindow.ui" line="7911"/>
         <source>Set this as departure for the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将此处设置为飞行计划的离场机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7923"/>
@@ -7827,52 +7827,52 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="7953"/>
         <location filename="src/gui/mainwindow.ui" line="7956"/>
         <source>Delete all selected flight plan legs</source>
-        <translation type="unfinished"></translation>
+        <translation>删所所有选定的飞行计划航段</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7971"/>
         <location filename="src/gui/mainwindow.ui" line="7974"/>
         <source>Move selected flight plan legs up</source>
-        <translation type="unfinished"></translation>
+        <translation>将选定的飞行计划航段上移</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7977"/>
         <source>Ctrl+Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+上箭头</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7989"/>
         <location filename="src/gui/mainwindow.ui" line="7992"/>
         <source>Move selected flight plan legs down</source>
-        <translation type="unfinished"></translation>
+        <translation>将选定的飞行计划航段下移</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7995"/>
         <source>Ctrl+Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+下箭头</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8004"/>
         <source>Calculate &amp;Direct</source>
-        <translation type="unfinished"></translation>
+        <translation>计算直飞(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6214"/>
         <location filename="src/gui/mainwindow.ui" line="8007"/>
         <location filename="src/gui/mainwindow.ui" line="8010"/>
         <source>Calculate a direct flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>计算直飞的飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8019"/>
         <source>&amp;Reverse Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>反向飞行计划(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8022"/>
         <location filename="src/gui/mainwindow.ui" line="8025"/>
         <source>Reverse flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>反向飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8037"/>
@@ -7883,7 +7883,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8040"/>
         <location filename="src/gui/mainwindow.ui" line="8043"/>
         <source>Set parking position as flight plan departure</source>
-        <translation type="unfinished"></translation>
+        <translation>设置停机位置为飞行计划离场机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8052"/>
@@ -7894,7 +7894,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8055"/>
         <location filename="src/gui/mainwindow.ui" line="8058"/>
         <source>Select start position for flight plan departure</source>
-        <translation type="unfinished"></translation>
+        <translation>选择飞行计划离场机场的起始位置</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9561"/>
@@ -8032,24 +8032,24 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8076"/>
         <source>Show &amp;Hillshading</source>
-        <translation type="unfinished"></translation>
+        <translation>显示地形阴影(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8079"/>
         <location filename="src/gui/mainwindow.ui" line="8082"/>
         <source>Show hillshading on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示地形阴影</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8091"/>
         <source>A&amp;bout Marble</source>
-        <translation type="unfinished"></translation>
+        <translation>关于 Marble(&amp;B)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8094"/>
         <location filename="src/gui/mainwindow.ui" line="8097"/>
         <source>About the Marble Widget</source>
-        <translation type="unfinished"></translation>
+        <translation>关于 Marble 小部件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8115"/>
@@ -8061,126 +8061,126 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8118"/>
         <location filename="src/gui/mainwindow.ui" line="8121"/>
         <source>Force map to show add-on airports</source>
-        <translation type="unfinished"></translation>
+        <translation>强制地图显示插件机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8139"/>
         <source>Show Map &amp;Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>显示地图网格(&amp;G)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8142"/>
         <location filename="src/gui/mainwindow.ui" line="8145"/>
         <source>Show map grid</source>
-        <translation type="unfinished"></translation>
+        <translation>显示地图网格</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8157"/>
         <location filename="src/gui/mainwindow.ui" line="8160"/>
         <source>Connect to or disconnect from simulator via Little Navconnect on another computer or directly to a simulator on the same computer</source>
-        <translation type="unfinished"></translation>
+        <translation>通过运行在其他计算机或与模拟器相同计算机上的 Little Navconnect 连接或断开到模拟器的连接</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8163"/>
         <source>Ctrl+Shift+C</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+C</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8178"/>
         <source>Show &amp;Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>显示航空器(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8181"/>
         <location filename="src/gui/mainwindow.ui" line="8184"/>
         <source>Show simulator aircraft position and data on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示模拟航空器位置和数据</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8199"/>
         <location filename="src/gui/mainwindow.ui" line="10005"/>
         <source>Center &amp;Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>中心航空器(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8202"/>
         <location filename="src/gui/mainwindow.ui" line="8205"/>
         <source>Center simulator aircraft on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图中心显示模拟器的航空器</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8208"/>
         <source>Ctrl+Alt+A</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+A</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8223"/>
         <source>Show Aircraft &amp;Trail</source>
-        <translation type="unfinished"></translation>
+        <translation>显示航空器轨迹(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8226"/>
         <location filename="src/gui/mainwindow.ui" line="8229"/>
         <source>Show simulator aircraft trail on map</source>
-        <translation type="unfinished"></translation>
+        <translation>地图上显示模拟航空器轨迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8241"/>
         <location filename="src/gui/mainwindow.ui" line="10313"/>
         <source>Delete Aircraft &amp;Trail</source>
-        <translation type="unfinished"></translation>
+        <translation>删除航空器轨迹(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8244"/>
         <location filename="src/gui/mainwindow.ui" line="8247"/>
         <location filename="src/gui/mainwindow.cpp" line="2054"/>
         <source>Delete simulator aircraft trail from map and elevation profile</source>
-        <translation type="unfinished"></translation>
+        <translation>从地图和纵剖图上删除模拟航空器的轨迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8250"/>
         <source>Alt+Shift+T</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Shift+T</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8265"/>
         <source>&amp;Edit Flight Plan on Map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上编辑飞行计划(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8268"/>
         <location filename="src/gui/mainwindow.ui" line="8271"/>
         <source>Enable or disable flight plan edit mode on map</source>
-        <translation type="unfinished"></translation>
+        <translation>启用或禁用地图上编辑飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8274"/>
         <source>Ctrl+Shift+E</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+E</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8279"/>
         <location filename="src/gui/mainwindow.ui" line="10175"/>
         <location filename="src/gui/mainwindow.ui" line="11566"/>
         <source>&amp;Clear Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>清除菜单(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8282"/>
         <location filename="src/gui/mainwindow.ui" line="8285"/>
         <source>Remove all recent flight plans from menu</source>
-        <translation type="unfinished"></translation>
+        <translation>从菜单移除所有最近的飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8294"/>
         <source>&amp;Navmap Legend</source>
-        <translation type="unfinished"></translation>
+        <translation>导航图图例(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8297"/>
         <location filename="src/gui/mainwindow.ui" line="8300"/>
         <source>Show the navigation map legend online in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在在线浏览器里显示导航地图图例</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8303"/>
@@ -8190,227 +8190,227 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8308"/>
         <source>Reset all &amp;Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>重置所有消息(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8311"/>
         <location filename="src/gui/mainwindow.ui" line="8314"/>
         <source>Reset all messages that were disabled with the &quot;do not show again&quot; button</source>
-        <translation type="unfinished"></translation>
+        <translation>重置所有设置了“不要再显示此对话框”的消息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8319"/>
         <source>&amp;Show Database Files</source>
-        <translation type="unfinished"></translation>
+        <translation>显示数据库文件(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8334"/>
         <source>Add Google Earth &amp;KML ...</source>
-        <translation type="unfinished"></translation>
+        <translation>添加 Google Earth KML 文件(&amp;K) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8337"/>
         <location filename="src/gui/mainwindow.ui" line="8340"/>
         <source>Add Google Earth KML files to map</source>
-        <translation type="unfinished"></translation>
+        <translation>添加 Google Earth KML 文件 到地图上</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8345"/>
         <source>Clear Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>清除菜单</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8348"/>
         <location filename="src/gui/mainwindow.ui" line="8351"/>
         <source>Remove all recent KML files from menu</source>
-        <translation type="unfinished"></translation>
+        <translation>从菜单移除所有最近的 KML 文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8360"/>
         <source>&amp;Clear Google Earth KML from Map</source>
-        <translation type="unfinished"></translation>
+        <translation>从地图上清除 Google Earth KML(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8363"/>
         <location filename="src/gui/mainwindow.ui" line="8366"/>
         <source>Remove all Google Earth KML files from the map</source>
-        <translation type="unfinished"></translation>
+        <translation>从地图上移除所有 Google Earth KML 文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8374"/>
         <source>&amp;Work Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>离线模式(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8377"/>
         <location filename="src/gui/mainwindow.ui" line="8380"/>
         <source>Work offline and stop loading of map data</source>
-        <translation type="unfinished"></translation>
+        <translation>离线模式并停止载入地图数据</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8410"/>
         <location filename="src/gui/mainwindow.ui" line="8413"/>
         <source>Show the airport or navaid on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示此机场或助航设备</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8416"/>
         <location filename="src/gui/mainwindow.ui" line="8470"/>
         <location filename="src/gui/mainwindow.ui" line="10301"/>
         <source>Ctrl+M</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+M</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8428"/>
         <location filename="src/gui/mainwindow.ui" line="8431"/>
         <source>Show information about the airport or navaid</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场或助航设备的信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8434"/>
         <location filename="src/gui/mainwindow.ui" line="8452"/>
         <location filename="src/gui/mainwindow.ui" line="10268"/>
         <source>Ctrl+I</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+I</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8446"/>
         <location filename="src/gui/mainwindow.ui" line="8449"/>
         <source>Show information about the selected entry</source>
-        <translation type="unfinished"></translation>
+        <translation>显示选中条目的信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8464"/>
         <location filename="src/gui/mainwindow.ui" line="8467"/>
         <source>Show the selected entry on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示选定的条目</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8481"/>
         <source>&amp;Mercator</source>
-        <translation type="unfinished"></translation>
+        <translation>墨卡托投影(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8484"/>
         <location filename="src/gui/mainwindow.ui" line="8487"/>
         <source>Mercator Map projection (flat)</source>
-        <translation type="unfinished"></translation>
+        <translation>墨卡托投影（平面）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8495"/>
         <source>&amp;Spherical</source>
-        <translation type="unfinished"></translation>
+        <translation>球形投影(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8498"/>
         <location filename="src/gui/mainwindow.ui" line="8501"/>
         <source>Spherical map projection (globe)</source>
-        <translation type="unfinished"></translation>
+        <translation>球形地图投影（地球）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8512"/>
         <source>&amp;OpenStreetMap</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenStreetMap(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8515"/>
         <location filename="src/gui/mainwindow.ui" line="8518"/>
         <source>OpenStreetMap Mapnik online map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenStreetMap Mapnik 在线地图主题</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8526"/>
         <source>&amp;Stamen Terrain</source>
-        <translation type="unfinished"></translation>
+        <translation>Stamen 地形(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8529"/>
         <location filename="src/gui/mainwindow.ui" line="8532"/>
         <source>Stamen Terrain online map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Stamen 地形在线地图主题</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8540"/>
         <source>CARTO &amp;Light</source>
-        <translation type="unfinished"></translation>
+        <translation>CARTO 明亮(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8543"/>
         <location filename="src/gui/mainwindow.ui" line="8546"/>
         <source>CARTO Light online map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>CARTO 明亮在线地图主题</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8554"/>
         <source>CARTO &amp;Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>CARTO 暗黑(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8557"/>
         <location filename="src/gui/mainwindow.ui" line="8560"/>
         <source>CARTO Dark online map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>CARTO 暗黑在线地图主题</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8568"/>
         <source>Open&amp;TopoMap</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenTopoMap(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8571"/>
         <location filename="src/gui/mainwindow.ui" line="8574"/>
         <source>OpenTopoMap online map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenTopoMap 在线地图主题</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8582"/>
         <source>&amp;Plain (Offline)</source>
-        <translation type="unfinished"></translation>
+        <translation>朴素（离线）(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8585"/>
         <location filename="src/gui/mainwindow.ui" line="8588"/>
         <source>Plain offline map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>朴素离线地图主题</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8596"/>
         <source>&amp;Atlas (Offline)</source>
-        <translation type="unfinished"></translation>
+        <translation>Atlas（离线）(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8599"/>
         <location filename="src/gui/mainwindow.ui" line="8602"/>
         <source>Atlas offline map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Atlas 离线地图主题</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8610"/>
         <source>&amp;Simple (Offline)</source>
-        <translation type="unfinished"></translation>
+        <translation>简单（离线）(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8613"/>
         <location filename="src/gui/mainwindow.ui" line="8616"/>
         <source>Simple offline map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>简单离线地图主题</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8625"/>
         <source>&amp;Map Legend for current Map Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>当前地图主题的图例(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8628"/>
         <location filename="src/gui/mainwindow.ui" line="8631"/>
         <source>Show the map legend for the current map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>显示当前地图主题的图例</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8640"/>
         <location filename="src/gui/mainwindow.ui" line="9958"/>
         <source>&amp;Append Flight Plan ...</source>
-        <translation type="unfinished"></translation>
+        <translation>追加到飞行计划(&amp;A) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8643"/>
@@ -8418,67 +8418,67 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9961"/>
         <location filename="src/gui/mainwindow.ui" line="9964"/>
         <source>Append flight plan legs to current flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>追加飞行计划航段到当前飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8661"/>
         <source>Show AI and &amp;Multiplayer Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 AI 或多人游戏航空器(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8664"/>
         <location filename="src/gui/mainwindow.ui" line="8667"/>
         <source>Show simulator AI, multiplayer and online client aircraft position and data on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 AI 和多人游戏的在线客户端航空器位置和数据</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8676"/>
         <source>Print &amp;Map ...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印地图(&amp;M) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8679"/>
         <location filename="src/gui/mainwindow.ui" line="8682"/>
         <source>Print the current map view</source>
-        <translation type="unfinished"></translation>
+        <translation>打印当前地图视图</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8685"/>
         <source>Ctrl+P</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+P</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8694"/>
         <source>Print &amp;Flight Plan ...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印飞行计划(&amp;F) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8697"/>
         <location filename="src/gui/mainwindow.ui" line="8700"/>
         <source>Print the flight plan and airport information</source>
-        <translation type="unfinished"></translation>
+        <translation>打印飞行计划和机场信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8703"/>
         <source>Ctrl+Alt+P</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+P</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8712"/>
         <source>Save Map as &amp;Image ...</source>
-        <translation type="unfinished"></translation>
+        <translation>保存地图为图像(&amp;I) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8715"/>
         <location filename="src/gui/mainwindow.ui" line="8718"/>
         <source>Save current map view as an image</source>
-        <translation type="unfinished"></translation>
+        <translation>保存当前地图视图为图像</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8730"/>
         <location filename="src/gui/mainwindow.ui" line="8733"/>
         <source>Copy flight plan route description to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>复制飞行计划路径描述到剪贴板</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8742"/>
@@ -8489,17 +8489,17 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8745"/>
         <location filename="src/gui/mainwindow.ui" line="8748"/>
         <source>Create a new flight plan from route description</source>
-        <translation type="unfinished"></translation>
+        <translation>根据航路描述新建飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8751"/>
         <source>Ctrl+Shift+N</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+N</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8760"/>
         <source>Adjust Flight Plan Altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>调整飞行计划高度</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6780"/>
@@ -8507,7 +8507,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8763"/>
         <location filename="src/gui/mainwindow.ui" line="8766"/>
         <source>Adjust flight plan altitude using simplified east/west and IFR/VFR rules</source>
-        <translation type="unfinished"></translation>
+        <translation>使用简单的东西向和 IFR/VFR 规则调整飞行计划高度</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="203"/>
@@ -8687,7 +8687,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8783"/>
         <location filename="src/gui/mainwindow.ui" line="8786"/>
         <source>Show or hide the compass map floating overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏地图上的罗盘图层</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8797"/>
@@ -8698,29 +8698,29 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8800"/>
         <location filename="src/gui/mainwindow.ui" line="8803"/>
         <source>Show or hide the overview map floating overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏预览地图上的浮动图层</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8814"/>
         <source>&amp;Scalebar</source>
-        <translation type="unfinished"></translation>
+        <translation>比例尺(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8817"/>
         <location filename="src/gui/mainwindow.ui" line="8820"/>
         <source>Show or hide the scalebar map floating overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏地图上的标尺浮动图层</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8831"/>
         <source>&amp;Navigation</source>
-        <translation type="unfinished"></translation>
+        <translation>导航(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8834"/>
         <location filename="src/gui/mainwindow.ui" line="8837"/>
         <source>Show or hide the navigation map floating overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏导航地图的浮动图层</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11054"/>
@@ -8731,46 +8731,46 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8846"/>
         <source>&amp;Contents (Offline, PDF)</source>
-        <translation type="unfinished"></translation>
+        <translation>内容（离线 PDF）(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8849"/>
         <location filename="src/gui/mainwindow.ui" line="8852"/>
         <source>Show the offline help also including the legend in a PDF viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>在 PDF 浏览器里查看离线帮助并包含此图例</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8857"/>
         <source>&amp;Expand All</source>
-        <translation type="unfinished"></translation>
+        <translation>展开全部(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8860"/>
         <location filename="src/gui/mainwindow.ui" line="8863"/>
         <source>Show all procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>显示所有进离场程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8868"/>
         <source>&amp;Collapse All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部收缩(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8871"/>
         <location filename="src/gui/mainwindow.ui" line="8874"/>
         <source>Collapse All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部收缩</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8883"/>
         <source>&amp;Show %1 on Map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 %1 (&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8886"/>
         <location filename="src/gui/mainwindow.ui" line="8889"/>
         <source>Show procedure on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示进离场程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8901"/>
@@ -8778,13 +8778,13 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9117"/>
         <location filename="src/gui/mainwindow.ui" line="9135"/>
         <source>Clear &amp;Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>清除选中(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8904"/>
         <location filename="src/gui/mainwindow.ui" line="8907"/>
         <source>Clear selection and preview on map</source>
-        <translation type="unfinished"></translation>
+        <translation>从地图上清除选中和预览</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8910"/>
@@ -8792,23 +8792,23 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9126"/>
         <location filename="src/gui/mainwindow.ui" line="9144"/>
         <source>Ctrl+Shift+A</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+A</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8925"/>
         <source>Show &amp;Missed Approaches</source>
-        <translation type="unfinished"></translation>
+        <translation>显示进近复飞航路(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8928"/>
         <location filename="src/gui/mainwindow.ui" line="8931"/>
         <source>Show missed approach legs on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示进近复飞航路</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8934"/>
         <source>Ctrl+Alt+M</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+M</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8943"/>
@@ -8819,18 +8819,18 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="8946"/>
         <location filename="src/gui/mainwindow.ui" line="8949"/>
         <source>Show procedures for airport</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场的进离场程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8958"/>
         <source>&amp;Return to Procedure Overview</source>
-        <translation type="unfinished"></translation>
+        <translation>返回到进离场程序预览(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8961"/>
         <location filename="src/gui/mainwindow.ui" line="8964"/>
         <source>Return to the overview showing all procedures for an airport</source>
-        <translation type="unfinished"></translation>
+        <translation>返回到显示该机场的所有程序</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8976"/>
@@ -8878,23 +8878,23 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9045"/>
         <source>Insert %1 into Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>插入 %1 到飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9048"/>
         <source>Attach to Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>附加到飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9051"/>
         <location filename="src/gui/mainwindow.ui" line="9054"/>
         <source>Insert the selected procedure into the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将选定的程序插入到飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9057"/>
         <source>Ctrl+Shift+I</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+I</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9066"/>
@@ -8905,12 +8905,12 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9069"/>
         <location filename="src/gui/mainwindow.ui" line="9072"/>
         <source>Activate Flight Plan Leg</source>
-        <translation type="unfinished"></translation>
+        <translation>激活飞行计划航段</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9075"/>
         <source>Ctrl+L</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+L</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9084"/>
@@ -8921,7 +8921,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9087"/>
         <location filename="src/gui/mainwindow.ui" line="9090"/>
         <source>Add airport, navaid or map position to the end of the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>将机场、助航设施或者地图位置追加到飞行计划的最末</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9102"/>
@@ -8931,7 +8931,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9138"/>
         <location filename="src/gui/mainwindow.ui" line="9141"/>
         <source>Unselect all entries in the table</source>
-        <translation type="unfinished"></translation>
+        <translation>不选此表中的所有条目</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9159"/>
@@ -8942,100 +8942,100 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9162"/>
         <location filename="src/gui/mainwindow.ui" line="9165"/>
         <source>Show or hide all airspaces</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏全部空域</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9168"/>
         <source>Ctrl+Alt+C</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+C</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9177"/>
         <source>&amp;Reset Display Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>重置显示设置(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9180"/>
         <location filename="src/gui/mainwindow.ui" line="9183"/>
         <source>Reset the map display settings back to the default values</source>
-        <translation type="unfinished"></translation>
+        <translation>重置地图显示设置到默认值</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9186"/>
         <source>Ctrl+Alt+R</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+R</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9201"/>
         <source>Show AI and &amp;Multiplayer Ships</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 AI 或多人游戏航船(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9204"/>
         <location filename="src/gui/mainwindow.ui" line="9207"/>
         <source>Show simulator AI and multiplayer ship position and data on map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 AI 和多人游戏的航船位置和数据</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9212"/>
         <source>Export Flight Plan as GP&amp;X ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划为 GPX 文件(&amp;X) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9215"/>
         <location filename="src/gui/mainwindow.ui" line="9218"/>
         <source>Save flight plan and flown track in GPS Exchange Format usable by Google Earth and many other Programs</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划和已飞的轨迹为 Google Earth 和其他程序使用的 GPS 交换格式</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9226"/>
         <location filename="src/gui/mainwindow.ui" line="9229"/>
         <source>Reset the window layout and all dock windows back to default</source>
-        <translation type="unfinished"></translation>
+        <translation>重置窗口布局和所有停靠窗口到默认</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9238"/>
         <source>&amp;Tutorials (Online)</source>
-        <translation type="unfinished"></translation>
+        <translation>教程（在线）(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9241"/>
         <location filename="src/gui/mainwindow.ui" line="9244"/>
         <location filename="src/gui/mainwindow.ui" line="10250"/>
         <source>Show the online tutorials in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器里显示在线教程</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9249"/>
         <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
+        <translation>导出(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9258"/>
         <source>Check for &amp;Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>检查更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9261"/>
         <location filename="src/gui/mainwindow.ui" line="9264"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>检查更新</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9276"/>
         <source>&amp;Donate for this Program</source>
-        <translation type="unfinished"></translation>
+        <translation>为此程序捐款(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9279"/>
         <location filename="src/gui/mainwindow.ui" line="9282"/>
         <source>If you would like show your appreciation you can donate here</source>
-        <translation type="unfinished"></translation>
+        <translation>若您愿意略施小恩，可以在此捐助</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9303"/>
         <source>Ctrl+Shift+X</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+X</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9294"/>
@@ -9074,44 +9074,44 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9620"/>
         <location filename="src/gui/mainwindow.ui" line="10775"/>
         <source>&amp;Follow Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>追踪选中(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9338"/>
         <location filename="src/gui/mainwindow.ui" line="9341"/>
         <source>Centers the selected flight plan waypoint on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的飞行计划导航点置于地图中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9352"/>
         <location filename="src/gui/mainwindow.ui" line="9355"/>
         <source>Centers the selected airport on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的机场置于地图中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9366"/>
         <location filename="src/gui/mainwindow.ui" line="9369"/>
         <source>Centers the selected procedure on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的进离场程序置于地图中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9380"/>
         <location filename="src/gui/mainwindow.ui" line="9383"/>
         <source>Centers the selected navaid on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的助航设备置于地图中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9394"/>
         <location filename="src/gui/mainwindow.ui" line="9397"/>
         <location filename="src/gui/mainwindow.ui" line="10781"/>
         <source>Centers the selected userpoint on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的用户航点置于地图中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9408"/>
         <location filename="src/gui/mainwindow.ui" line="10707"/>
         <source>More search options</source>
-        <translation type="unfinished"></translation>
+        <translation>更多搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9411"/>
@@ -9119,97 +9119,97 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="10710"/>
         <location filename="src/gui/mainwindow.ui" line="10713"/>
         <source>Show more search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示更多搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9419"/>
         <location filename="src/gui/mainwindow.ui" line="10786"/>
         <source>Import &amp;CSV ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导入 CSV 文件(&amp;C) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9422"/>
         <location filename="src/gui/mainwindow.ui" line="9425"/>
         <source>Import Userpoints from CSV File</source>
-        <translation type="unfinished"></translation>
+        <translation>从 CSV 文件导入用户航路点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9430"/>
         <source>Import &amp;X-Plane user_fix.dat ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导入 X-Plane 的 user_fix.dat 文件(&amp;X)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9433"/>
         <location filename="src/gui/mainwindow.ui" line="9436"/>
         <source>Import Userpoints from X-Plane &quot;user_fix.dat&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>从 X-Plane 的“user_fix.dat”文件导入用户航路点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9441"/>
         <source>Import &amp;Garmin GTN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导入 Garmin GTN 文件(&amp;G) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9444"/>
         <location filename="src/gui/mainwindow.ui" line="9447"/>
         <source>Import Userpoints from Garmin GTN &quot;user.wpt&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>从 Garmin GTN 的“user.wpt”文件导入用户航路点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9452"/>
         <location filename="src/gui/mainwindow.ui" line="10797"/>
         <source>Export &amp;CSV ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出 CSV 文件(&amp;C) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9455"/>
         <location filename="src/gui/mainwindow.ui" line="9458"/>
         <source>Export Userpoints to CSV File</source>
-        <translation type="unfinished"></translation>
+        <translation>导出用户航路点为 CSV 文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9463"/>
         <source>Export &amp;X-Plane user_fix.dat ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出为 X-Plane 的 user_fix.dat 文件(&amp;X)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9466"/>
         <location filename="src/gui/mainwindow.ui" line="9469"/>
         <source>Export Userpoints to X-Plane &quot;user_fix.dat&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>导出用户航路点为 X-Plane 的“user_fix.dat”文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9474"/>
         <source>Export &amp;Garmin GTN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出为 Garmin GTN 文件(&amp;G) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9477"/>
         <location filename="src/gui/mainwindow.ui" line="9480"/>
         <source>Export Userpoints to Garmin GTN &quot;user.wpt&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>导出用户航路点为 Garmin GTN 的“user.wpt”文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9485"/>
         <source>Export &amp;XML for FSX/P3D BGL Compiler ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出为 FSX/P3D BGL 编译器的 XML 文件(&amp;X) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9488"/>
         <location filename="src/gui/mainwindow.ui" line="9491"/>
         <source>Export Userpoints to XML File for FSX/P3D BGL Compiler</source>
-        <translation type="unfinished"></translation>
+        <translation>导出用户航路点为 FSX/P3D BGL 编译器的 XML 文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9496"/>
         <source>Clear database</source>
-        <translation type="unfinished"></translation>
+        <translation>清除数据库</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9499"/>
         <location filename="src/gui/mainwindow.ui" line="9502"/>
         <source>Clear Userpoint Database</source>
-        <translation type="unfinished"></translation>
+        <translation>清空用户航点数据库</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8892"/>
@@ -9217,30 +9217,30 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="10731"/>
         <location filename="src/gui/mainwindow.ui" line="11060"/>
         <source>Return</source>
-        <translation type="unfinished"></translation>
+        <translation>返回</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9532"/>
         <location filename="src/gui/mainwindow.ui" line="10746"/>
         <source>Add Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>新建用户航点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9535"/>
         <location filename="src/gui/mainwindow.ui" line="10749"/>
         <source>Ins</source>
-        <translation type="unfinished"></translation>
+        <translation>Ins</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9544"/>
         <source>&amp;Delete Userpoint(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>删除用户航点(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9553"/>
         <location filename="src/gui/mainwindow.ui" line="10767"/>
         <source>Del</source>
-        <translation type="unfinished"></translation>
+        <translation>Del</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9529"/>
@@ -9263,45 +9263,45 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9609"/>
         <location filename="src/gui/mainwindow.ui" line="9612"/>
         <source>Centers the selected client position on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的客户端位置置于地图中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9623"/>
         <location filename="src/gui/mainwindow.ui" line="9626"/>
         <source>Centers the selected center on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>将选中的中心置于地图中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9631"/>
         <source>Show Flight Plan in Sky&amp;Vector ...</source>
-        <translation type="unfinished"></translation>
+        <translation>在 SkyVector 上显示飞行计划(&amp;V) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9634"/>
         <location filename="src/gui/mainwindow.ui" line="9637"/>
         <source>Show the flight plan in SkyVector in the default web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>用默认 Web 浏览器进入 SkyVector 并显示此飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9692"/>
         <source>Types</source>
-        <translation type="unfinished"></translation>
+        <translation>类型</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9695"/>
         <source>Show navaid type search options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示助航设备类型搜索选项</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9703"/>
         <source>Show all &amp;floating Windows</source>
-        <translation type="unfinished"></translation>
+        <translation>显示所有浮动窗口(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9706"/>
         <location filename="src/gui/mainwindow.ui" line="9709"/>
         <source>Raise and show all undocked floating windows</source>
-        <translation type="unfinished"></translation>
+        <translation>提升并显示所有未停靠的浮动窗口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9712"/>
@@ -9311,46 +9311,46 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9727"/>
         <source>Show Sun &amp;Shading</source>
-        <translation type="unfinished"></translation>
+        <translation>显示太阳阴影(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9730"/>
         <location filename="src/gui/mainwindow.ui" line="9733"/>
         <source>Show sun shading on the globe</source>
-        <translation type="unfinished"></translation>
+        <translation>在地球上显示太阳阴影</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9741"/>
         <source>&amp;Real UTC Time</source>
-        <translation type="unfinished"></translation>
+        <translation>实际 UTC 时间(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9744"/>
         <location filename="src/gui/mainwindow.ui" line="9747"/>
         <source>Draw sun shading based on UTC real time</source>
-        <translation type="unfinished"></translation>
+        <translation>根据实际 UTC 时间勾画太阳阴影</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9758"/>
         <source>&amp;Simulator Time</source>
-        <translation type="unfinished"></translation>
+        <translation>模拟器时间(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9761"/>
         <location filename="src/gui/mainwindow.ui" line="9764"/>
         <source>Draw sun shading based on simulator time</source>
-        <translation type="unfinished"></translation>
+        <translation>根据模拟器时间勾画太阳阴影</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9772"/>
         <source>&amp;User defined Time</source>
-        <translation type="unfinished"></translation>
+        <translation>用户定义主题(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9775"/>
         <location filename="src/gui/mainwindow.ui" line="9778"/>
         <source>Draw sun shading based on user defined time</source>
-        <translation type="unfinished"></translation>
+        <translation>根据用户定义的时间勾画太阳阴影</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9783"/>
@@ -9361,18 +9361,18 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9786"/>
         <location filename="src/gui/mainwindow.ui" line="9789"/>
         <source>Set user defined time for sun shading</source>
-        <translation type="unfinished"></translation>
+        <translation>为太阳阴影设置用户定义的时间</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9804"/>
         <source>Show Airport &amp;Weather</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场气象(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9807"/>
         <location filename="src/gui/mainwindow.ui" line="9810"/>
         <source>Show airport weather icons</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场天气图标</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9818"/>
@@ -9383,230 +9383,230 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="9821"/>
         <location filename="src/gui/mainwindow.ui" line="9824"/>
         <source>Use ActiveSky weather to display weather icons on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上使用 ActiveSky 天气来显示天气图标</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9835"/>
         <source>&amp;Flight Simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行模拟器(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9838"/>
         <location filename="src/gui/mainwindow.ui" line="9841"/>
         <source>Use Flight Simulator weather to display weather icons on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上使用飞行模拟器的天气来显示天气图标</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9849"/>
         <location filename="src/gui/mainwindow.ui" line="10616"/>
         <source>&amp;NOAA</source>
-        <translation type="unfinished"></translation>
+        <translation>NOAA(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9852"/>
         <location filename="src/gui/mainwindow.ui" line="9855"/>
         <source>Use NOAA weather to display weather icons on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上使用 NOAA 的天气来显示天气图标</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9863"/>
         <source>&amp;VATSIM</source>
-        <translation type="unfinished"></translation>
+        <translation>VATSIM(&amp;V)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9866"/>
         <location filename="src/gui/mainwindow.ui" line="9869"/>
         <source>Use VATSIM weather to display weather icons on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上使用 VATSIM 的天气来显示天气图标</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9877"/>
         <source>&amp;IVAO</source>
-        <translation type="unfinished"></translation>
+        <translation>IVAO(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9880"/>
         <location filename="src/gui/mainwindow.ui" line="9883"/>
         <source>Use IVAO weather to display weather icons on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上使用 ICAO 的天气来显示天气图标</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9898"/>
         <source>Show &amp;Minimum Altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>显示最低高度(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9901"/>
         <location filename="src/gui/mainwindow.ui" line="9904"/>
         <source>Show Minimum Altitude (MORA) on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示最低高度（MORA）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9931"/>
         <location filename="src/gui/mainwindow.ui" line="9934"/>
         <source>Remove this airport traffic pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>移除此机场的起落航线</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9943"/>
         <source>&amp;Insert Flight Plan before %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>在 %1 之前插入飞行计划(&amp;I) …</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9946"/>
         <location filename="src/gui/mainwindow.ui" line="9949"/>
         <source>Insert flight plan before the current position</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前位置之前插入飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9973"/>
         <source>&amp;Expand to Window</source>
-        <translation type="unfinished"></translation>
+        <translation>展开到窗口(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9987"/>
         <source>&amp;Follow on Map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上跟踪(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9990"/>
         <location filename="src/gui/mainwindow.ui" line="9993"/>
         <source>Follow the cursor position above the elevation profile on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>当鼠标指针滑过纵剖图时在地图上跟踪显示</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10008"/>
         <location filename="src/gui/mainwindow.ui" line="10011"/>
         <source>Center the user aircraft on the elevation profile</source>
-        <translation type="unfinished"></translation>
+        <translation>在纵剖图中心显示用户航空器</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10022"/>
         <source>Show &amp;Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>显示标签(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10025"/>
         <location filename="src/gui/mainwindow.ui" line="10028"/>
         <source>Show or hide the labels at the left side of the elevation profile</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏纵剖图左侧的标签</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10039"/>
         <source>Show Scroll&amp;bars</source>
-        <translation type="unfinished"></translation>
+        <translation>显示滚动栏(&amp;B)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10042"/>
         <location filename="src/gui/mainwindow.ui" line="10045"/>
         <source>Show or hide scrollbars around the elevation profile</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏纵剖图的旁的滚动栏</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10054"/>
         <source>&amp;Show Position on Map</source>
-        <translation type="unfinished"></translation>
+        <translation>显示地图上位置(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10057"/>
         <location filename="src/gui/mainwindow.ui" line="10060"/>
         <source>Show this position on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示此位置</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10071"/>
         <source>Show &amp;Zoom Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>显示缩放标尺(&amp;Z)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10074"/>
         <location filename="src/gui/mainwindow.ui" line="10077"/>
         <source>Show or hide the zoom sliders in the split window on the right</source>
-        <translation type="unfinished"></translation>
+        <translation>显示或隐藏右侧分裂窗口的缩放标尺</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10092"/>
         <source>Show &amp;VASI</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 VASI(&amp;V)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10095"/>
         <location filename="src/gui/mainwindow.ui" line="10098"/>
         <source>Show VASI slope at destination if a procedure is selected</source>
-        <translation type="unfinished"></translation>
+        <translation>如果选中了到达机场的一个进场程序则显示 VASI 下滑道</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10107"/>
         <source>&amp;Remove all &amp;Highlights and Selections</source>
-        <translation type="unfinished"></translation>
+        <translation>移除选中和地图上所有高亮(&amp;R&amp;H)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10110"/>
         <location filename="src/gui/mainwindow.ui" line="10113"/>
         <source>Clear all highlights on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>清除地图上的所有高亮</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10116"/>
         <source>Ctrl+H</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+H</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10131"/>
         <source>Show &amp;ILS</source>
-        <translation type="unfinished"></translation>
+        <translation>显示 ILS(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10134"/>
         <location filename="src/gui/mainwindow.ui" line="10137"/>
         <source>Show ILS slope at destination if a procedure is selected</source>
-        <translation type="unfinished"></translation>
+        <translation>如果选中了到达机场的一个进场程序则显示 ILS 下滑道</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10146"/>
         <source>&amp;Open Aircraft Performance ...</source>
-        <translation type="unfinished"></translation>
+        <translation>打开航空器性能(&amp;O) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10161"/>
         <source>&amp;Edit Aircraft Performance ...</source>
-        <translation type="unfinished"></translation>
+        <translation>新建航空器性能(&amp;E) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10170"/>
         <source>Alt+Shift+E</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Shift+E</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10178"/>
         <location filename="src/gui/mainwindow.ui" line="10181"/>
         <source>Remove all recent aircraft performance files from menu</source>
-        <translation type="unfinished"></translation>
+        <translation>从菜单移除所有最近的航空器性能文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10190"/>
         <source>&amp;Save Aircraft Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>保存航空器性能(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10193"/>
         <source>Save Aircraft Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>保存航空器性能</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10202"/>
         <source>Alt+Shift+S</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Shift+S</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10211"/>
         <source>Save Aircraft Performance &amp;as ...</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能另存为(&amp;A)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10214"/>
         <source>Save Aircraft Performance as</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能另存为</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10229"/>
@@ -9616,18 +9616,18 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10244"/>
         <source>&amp;Frequently asked Questions (Online)</source>
-        <translation type="unfinished"></translation>
+        <translation>常见问题（在线）(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10247"/>
         <source>Show the online frequently asked questions in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器李显示在线的常见问答</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10262"/>
         <location filename="src/gui/mainwindow.ui" line="10265"/>
         <source>Show Information for airport</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场的信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10277"/>
@@ -9638,7 +9638,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="10280"/>
         <location filename="src/gui/mainwindow.ui" line="10283"/>
         <source>Show airport in search window</source>
-        <translation type="unfinished"></translation>
+        <translation>在搜索窗口显示机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10295"/>
@@ -9646,40 +9646,40 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="11314"/>
         <location filename="src/gui/mainwindow.ui" line="11317"/>
         <source>Show the airport on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示此机场</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10316"/>
         <location filename="src/gui/mainwindow.ui" line="10319"/>
         <source>Delete simulator aircraft trail from elevation profile</source>
-        <translation type="unfinished"></translation>
+        <translation>从纵剖图上删除模拟航空器的轨迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10324"/>
         <source>Copy Map &amp;Image to Clipboard ...</source>
-        <translation type="unfinished"></translation>
+        <translation>复制地图图像到剪贴板(&amp;I) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10327"/>
         <location filename="src/gui/mainwindow.ui" line="10330"/>
         <source>Save current map view as an image to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>保存当前地图视图为图像到剪贴板</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10333"/>
         <source>Alt+Shift+P</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Shift+P</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10338"/>
         <source>&amp;Airport Search</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索机场(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10341"/>
         <location filename="src/gui/mainwindow.ui" line="10344"/>
         <source>Show and activate Airport Search Window</source>
-        <translation type="unfinished"></translation>
+        <translation>显示并激活机场搜索窗口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10347"/>
@@ -9689,13 +9689,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10355"/>
         <source>&amp;Navaid Search</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索助航设备(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10358"/>
         <location filename="src/gui/mainwindow.ui" line="10361"/>
         <source>Show and activate Navaid Search Window</source>
-        <translation type="unfinished"></translation>
+        <translation>显示并激活助航设备搜索窗口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10364"/>
@@ -9705,13 +9705,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10372"/>
         <source>&amp;Userpoint Search</source>
-        <translation type="unfinished"></translation>
+        <translation>用户航点搜索(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10375"/>
         <location filename="src/gui/mainwindow.ui" line="10378"/>
         <source>Show and activate Userpoint Search Window</source>
-        <translation type="unfinished"></translation>
+        <translation>显示并激活用户航点搜索窗口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10381"/>
@@ -9721,13 +9721,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10389"/>
         <source>&amp;Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10392"/>
         <location filename="src/gui/mainwindow.ui" line="10395"/>
         <source>Show and activate Flight Plan table</source>
-        <translation type="unfinished"></translation>
+        <translation>显示并激活飞行计划表</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10398"/>
@@ -9737,13 +9737,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10406"/>
         <source>Airport &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>机场信息(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10409"/>
         <location filename="src/gui/mainwindow.ui" line="10412"/>
         <source>Show Airport Information</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10415"/>
@@ -9753,13 +9753,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10423"/>
         <source>Airport &amp;Weather Information</source>
-        <translation type="unfinished"></translation>
+        <translation>机场天气信息(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10426"/>
         <location filename="src/gui/mainwindow.ui" line="10429"/>
         <source>Show Airport Weather Information</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10432"/>
@@ -9769,13 +9769,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10440"/>
         <source>Navaid &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>助航设备信息(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10443"/>
         <location filename="src/gui/mainwindow.ui" line="10446"/>
         <source>Show Navaid Information</source>
-        <translation type="unfinished"></translation>
+        <translation>显示助航设备信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10449"/>
@@ -9791,7 +9791,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="10460"/>
         <location filename="src/gui/mainwindow.ui" line="10463"/>
         <source>Show Aircraft Performance and Fuel Planning</source>
-        <translation type="unfinished"></translation>
+        <translation>显示燃油计划和航空器性能</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10466"/>
@@ -9801,13 +9801,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10474"/>
         <source>&amp;Simulator Aircraft Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>模拟器里航空器的进度(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10477"/>
         <location filename="src/gui/mainwindow.ui" line="10480"/>
         <source>Show Simulator Aircraft Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>显示模拟航空器进度</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10483"/>
@@ -9817,7 +9817,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10504"/>
         <source>Ctrl+Shift+G</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+G</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10509"/>
@@ -9847,7 +9847,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="10534"/>
         <location filename="src/gui/mainwindow.ui" line="10537"/>
         <source>Show and activate Map Window</source>
-        <translation type="unfinished"></translation>
+        <translation>显示并激活地图窗口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10540"/>
@@ -9857,13 +9857,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10548"/>
         <source>&amp;Elevation Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>纵剖图(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10551"/>
         <location filename="src/gui/mainwindow.ui" line="10554"/>
         <source>Show and activate Elevation Profile Window</source>
-        <translation type="unfinished"></translation>
+        <translation>显示并激活纵剖图窗口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10557"/>
@@ -9873,13 +9873,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10569"/>
         <source>Save Map as &amp;Image for AviTab ...</source>
-        <translation type="unfinished"></translation>
+        <translation>保存地图为图像以供 AviTab 使用(&amp;I) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10572"/>
         <location filename="src/gui/mainwindow.ui" line="10575"/>
         <source>Save current map view as an image for AviTab</source>
-        <translation type="unfinished"></translation>
+        <translation>保存当前地图为图像以供 AviTab 使用</translation>
     </message>
     <message>
         <source>Export Flight Plan as Maddog X &amp;MDR ...</source>
@@ -10262,102 +10262,104 @@ Apply the loaded window layout anyway?</source>
         <source>Day of month and UTC time.
 %1
 Local: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>月的天数和 UTC 时间。
+%1
+本地：%2</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="600"/>
         <source>Opened navigation map legend.</source>
-        <translation type="unfinished"></translation>
+        <translation>已打开导航地图图例。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="606"/>
         <source>Opened map legend in browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>已在模拟器中打开地图。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="695"/>
         <source>Opened map legend.</source>
-        <translation type="unfinished"></translation>
+        <translation>已打开地图图例。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="706"/>
         <source>Opened legend link in browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>已在模拟器中打开图例。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="733"/>
         <source>Select map projection</source>
-        <translation type="unfinished"></translation>
+        <translation>选择地图投影</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="736"/>
         <source>Mercator</source>
-        <translation type="unfinished"></translation>
+        <translation>墨卡托投影</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="737"/>
         <source>Spherical</source>
-        <translation type="unfinished"></translation>
+        <translation>球形投影</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="749"/>
         <source>Select map theme</source>
-        <translation type="unfinished"></translation>
+        <translation>选择地图主题</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="753"/>
         <source>OpenStreetMap</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenStreetMap</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="754"/>
         <source>OpenTopoMap</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenTopoMap</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="755"/>
         <source>Stamen Terrain</source>
-        <translation type="unfinished"></translation>
+        <translation>Stamen 地形</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="756"/>
         <source>CARTO Light</source>
-        <translation type="unfinished"></translation>
+        <translation>CARTO 明亮</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="757"/>
         <source>CARTO Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>CARTO 暗黑</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="758"/>
         <source>Simple (Offline)</source>
-        <translation type="unfinished"></translation>
+        <translation>简单（离线）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="759"/>
         <source>Plain (Offline)</source>
-        <translation type="unfinished"></translation>
+        <translation>朴素（离线）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="760"/>
         <source>Atlas (Offline)</source>
-        <translation type="unfinished"></translation>
+        <translation>Atlas（离线）</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="823"/>
         <source>* %1</source>
-        <translation type="unfinished"></translation>
+        <translation>* %1</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="829"/>
         <source>Custom (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义 (%1)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="830"/>
         <source>Custom map theme (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义地图主题 (%1)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="844"/>
@@ -10373,7 +10375,7 @@ Local: %2</source>
         <location filename="src/gui/mainwindow.cpp" line="876"/>
         <location filename="src/gui/mainwindow.cpp" line="882"/>
         <source>Open or show the %1 dock window</source>
-        <translation type="unfinished"></translation>
+        <translation>打开或显示 %1 停靠窗口</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="850"/>
@@ -10408,42 +10410,42 @@ Local: %2</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="927"/>
         <source>Not connected.</source>
-        <translation type="unfinished"></translation>
+        <translation>未连接。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="928"/>
         <source>Simulator connection status.</source>
-        <translation type="unfinished"></translation>
+        <translation>模拟器连接状态。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="939"/>
         <source>Map detail level.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图详情等级。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="945"/>
         <source>Map rendering and download status.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图渲染和下载状态。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="951"/>
         <source>Map view distance to ground.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图到地面距离视图。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="957"/>
         <source>Coordinates and elevation at cursor position.</source>
-        <translation type="unfinished"></translation>
+        <translation>鼠标位置的座标和标高。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="963"/>
         <source>Magnetic declination at cursor position.</source>
-        <translation type="unfinished"></translation>
+        <translation>当前位置的磁差角。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="973"/>
         <source>Day of month and UTC time.</source>
-        <translation type="unfinished"></translation>
+        <translation>月的天数和 UTC 时间。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1865"/>
@@ -10475,29 +10477,29 @@ Local: %2</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2143"/>
         <source> - (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation> - (%1)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2146"/>
         <source> - %1</source>
-        <translation type="unfinished"></translation>
+        <translation> - %1</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2154"/>
         <location filename="src/gui/mainwindow.cpp" line="2156"/>
         <source> / N</source>
-        <translation type="unfinished"></translation>
+        <translation> / N</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2158"/>
         <source> / (N)</source>
-        <translation type="unfinished"></translation>
+        <translation> / (N)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2166"/>
         <location filename="src/gui/mainwindow.cpp" line="2174"/>
         <source> - %1%2</source>
-        <translation type="unfinished"></translation>
+        <translation> - %1%2</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2461"/>
@@ -10517,17 +10519,17 @@ Local: %2</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2785"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPG 图像文件 (*.jpg *.jpeg);;PNG 图像文件 (*.png);;BMP 图像文件 (*.bmp);;全部文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2837"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPG 图像文件 (*.jpg *.jpeg);;PNG 图像文件 (*.png);;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3126"/>
         <source>Close other dialog boxes before opening preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>开启配置之前关闭其他对话框</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3196"/>
@@ -10684,7 +10686,7 @@ Online Network:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2121"/>
         <source>No position</source>
-        <translation type="unfinished"></translation>
+        <translation>没有位置</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2168"/>
@@ -10701,24 +10703,24 @@ Online Network:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2197"/>
         <source>Delete aircraft trail?</source>
-        <translation type="unfinished"></translation>
+        <translation>要删除航空器轨迹吗？</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2198"/>
         <location filename="src/gui/mainwindow.cpp" line="2545"/>
         <location filename="src/gui/mainwindow.cpp" line="4189"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示此对话框 (&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2207"/>
         <source>Aircraft track removed from map.</source>
-        <translation type="unfinished"></translation>
+        <translation>已从地图上移除航空器轨迹。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2220"/>
         <source>Flight Plan has been changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已改变。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2221"/>
@@ -10728,12 +10730,12 @@ Online Network:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2263"/>
         <source>Created new flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>已创建新的飞行计划。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2280"/>
         <source>Created new empty flight plan.</source>
-        <translation type="unfinished"></translation>
+        <translation>创建一个新的空飞行计划。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2293"/>
@@ -10753,32 +10755,32 @@ Online Network:
         <location filename="src/gui/mainwindow.cpp" line="2330"/>
         <location filename="src/gui/mainwindow.cpp" line="2411"/>
         <source>Flight plan opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>已打开飞行计划。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2359"/>
         <source>Append Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>追加到飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2372"/>
         <source>Flight plan appended.</source>
-        <translation type="unfinished"></translation>
+        <translation>已追加飞行计划。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2382"/>
         <source>Insert info Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划插入信息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2393"/>
         <source>Flight plan inserted.</source>
-        <translation type="unfinished"></translation>
+        <translation>已插入飞行计划。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2419"/>
         <source>File &quot;%1&quot; does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>文件“%1”不存在</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2444"/>
@@ -10817,29 +10819,29 @@ Reduce map details in the &quot;View&quot; menu.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2561"/>
         <source>Google Earth KML files removed from map.</source>
-        <translation type="unfinished"></translation>
+        <translation>已从地图上移除 Google Earth KML 文件。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2568"/>
         <source>Google Earth KML</source>
-        <translation type="unfinished"></translation>
+        <translation>Google Earth KML</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2569"/>
         <source>Google Earth KML %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Google Earth KML 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2579"/>
         <location filename="src/gui/mainwindow.cpp" line="2599"/>
         <source>Google Earth KML file opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>已打开 Google Earth KML 文件。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2582"/>
         <location filename="src/gui/mainwindow.cpp" line="2604"/>
         <source>Opening Google Earth KML file failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>打开 Google Earth KML 文件失败。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2614"/>
@@ -10888,24 +10890,25 @@ Reduce map details in the &quot;View&quot; menu.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2784"/>
         <source>Save Map as Image</source>
-        <translation type="unfinished"></translation>
+        <translation>保存地图为图像</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2787"/>
         <source>Little Navmap Map %1.jpg</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap 地图 %1.jpg</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2809"/>
         <source>Error saving image.
 Only JPG, PNG and BMP are allowed.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存图像错误。
+仅支持 JPG、PNG 和 BMP 格式。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2811"/>
         <location filename="src/gui/mainwindow.cpp" line="2869"/>
         <source>Map image saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>已经保存地图图像。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2822"/>
@@ -10915,23 +10918,24 @@ Only JPG, PNG and BMP are allowed.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2829"/>
         <source>LittleNavmap_%1.png</source>
-        <translation type="unfinished"></translation>
+        <translation>LittleNavmap_%1.png</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2836"/>
         <source>Save Map as Image for AviTab</source>
-        <translation type="unfinished"></translation>
+        <translation>保存地图为图像以供 AviTab 使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2860"/>
         <source>Error saving image.
 Only JPG and PNG are allowed.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存图像错误。
+仅支持 JPG 和 PNG 格式。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2872"/>
         <source>Error saving JSON.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存 JSON 错误。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2878"/>
@@ -10943,7 +10947,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2884"/>
         <source>You have to switch to the Mercator map projection before saving the image.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">保存图像之前您必须切换到墨卡托地图投影。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2890"/>
@@ -10953,12 +10957,12 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2896"/>
         <source>Map image copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图图像已经复制到粘帖板。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2942"/>
         <source>%1 of %2 %3 selected, %4 visible.%5</source>
-        <translation type="unfinished"></translation>
+        <translation>已选择 %2 %3 的 %1，%4 可见 %5</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2965"/>
@@ -10968,18 +10972,18 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2971"/>
         <source>Clients</source>
-        <translation type="unfinished"></translation>
+        <translation>客户端</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2972"/>
         <location filename="src/gui/mainwindow.cpp" line="2982"/>
         <source> Last Update: %1</source>
-        <translation type="unfinished"></translation>
+        <translation> 最后更新：%1</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2981"/>
         <source>Centers</source>
-        <translation type="unfinished"></translation>
+        <translation>中心</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3098"/>
@@ -10989,7 +10993,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3179"/>
         <source>All message dialogs reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>所有消息对话框已重置。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3203"/>
@@ -15058,7 +15062,7 @@ kHz/MHz</translation>
         <location filename="src/mapgui/mapvisible.cpp" line="51"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then choose your simulator and press &quot;Load&quot;.&lt;/p&gt;</source>
         <comment>Keep instructions in sync with translated menus and shortcuts</comment>
-        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;当前选中的该模拟器的地景数据库是空的&lt;br/&gt;到“主菜单” - “地景库” - “载入地景库”或者按&lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;并选择你模拟器，然后点击“载入”&lt;/p&gt;</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;当前选中的该模拟器的地景数据库是空的&lt;br/&gt;到“主菜单” - “地景库” - “载入地景库”或者按&lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;并选择您的模拟器，然后点击“载入”&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="68"/>
