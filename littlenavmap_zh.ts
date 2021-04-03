@@ -549,7 +549,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1121"/>
         <source>Block Fuel:</source>
-        <translation>轮档油量：</translation>
+        <translation>轮挡油量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1121"/>
@@ -1115,7 +1115,7 @@ Default is cruise speed.</source>
     <message>
         <location filename="src/search/airportsearch.cpp" line="156"/>
         <source>Name</source>
-        <translation>名字</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="158"/>
@@ -1156,7 +1156,7 @@ Area Code</source>
         <location filename="src/search/airportsearch.cpp" line="166"/>
         <source>Mag.
 Decl.°</source>
-        <translation>磁航向
+        <translation>磁偏角
 Decl.°</translation>
     </message>
     <message>
@@ -1261,7 +1261,7 @@ Runways</source>
     <message>
         <location filename="src/search/airportsearch.cpp" line="193"/>
         <source>Procedures</source>
-        <translation>程序</translation>
+        <translation>进离场程序</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="196"/>
@@ -1531,7 +1531,7 @@ Runway Surface</source>
         <location filename="src/connect/connectclient.cpp" line="542"/>
         <location filename="src/connect/connectclient.cpp" line="696"/>
         <source>Disconnected</source>
-        <translation>已断开</translation>
+        <translation>已断开连接</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="216"/>
@@ -2119,7 +2119,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/db/databasemanager.cpp" line="381"/>
         <source>&amp;Erase</source>
-        <translation>删除(&amp;E)</translation>
+        <translation>擦除(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="391"/>
@@ -2703,7 +2703,7 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/gui/holddialog.ui" line="255"/>
         <source>&amp;Course:</source>
-        <translation>航迹(&amp;C)：</translation>
+        <translation>航向道(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/gui/holddialog.ui" line="79"/>
@@ -2713,12 +2713,12 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     <message>
         <location filename="src/gui/holddialog.ui" line="27"/>
         <source>Magnetic heading of inbound course to fix</source>
-        <translation>向台航迹的磁航向</translation>
+        <translation>向台航向道的磁航向</translation>
     </message>
     <message>
         <location filename="src/gui/holddialog.ui" line="33"/>
         <source> °M</source>
-        <translation> ° 磁航向</translation>
+        <translation> °M</translation>
     </message>
     <message>
         <location filename="src/gui/holddialog.cpp" line="150"/>
@@ -2856,12 +2856,12 @@ Note that all options except &quot;Current Map View&quot; will change visible de
     <message>
         <location filename="src/mapgui/imageexportdialog.ui" line="134"/>
         <source>&amp;Height:</source>
-        <translation>高(&amp;H)：</translation>
+        <translation>高度(&amp;H)：</translation>
     </message>
     <message>
         <location filename="src/mapgui/imageexportdialog.ui" line="144"/>
         <source>&amp;Width:</source>
-        <translation>宽(&amp;W)：</translation>
+        <translation>宽度(&amp;W)：</translation>
     </message>
     <message>
         <location filename="src/mapgui/imageexportdialog.ui" line="154"/>
@@ -3604,7 +3604,7 @@ Columns will be empty on export if disabled.</source>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="632"/>
         <source>This will convert all userpoints of type &lt;code&gt;Logbook&lt;/code&gt; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &lt;code&gt;Description&lt;/code&gt; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&lt;code&gt;*Converted from userdata*&lt;/code&gt;&lt;br/&gt;in the field &amp;quot;Remarks&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continue?</source>
-        <translation>这将会把所有的&lt;code&gt;记录本&lt;/code&gt;类型的用户航点转换到记录本条目。&lt;br/&gt;&lt;br/&gt;最好没有修改用户航路点中的&lt;code&gt;描述&lt;/code&gt;字段并且也没有手工插入条目时。&lt;br/&gt;&lt;br/&gt;注意不是所有的字段都会被自动转换。&lt;br/&gt;&lt;br/&gt;创建的记录本条目可以在描述字段搜索&lt;br/&gt;&lt;code&gt;;*转换自用户数据*(*Converted from userdata*)&lt;/code&gt;&lt;br/&gt;找到&lt;br/&gt;&lt;br/&gt;继续？</translation>
+        <translation>这将会把所有的&lt;code&gt;记录本&lt;/code&gt;类型的用户航点转换到记录本条目。&lt;br/&gt;&lt;br/&gt;最好没有修改用户航路点中的&lt;code&gt;描述&lt;/code&gt;字段并且也没有手工插入条目时。&lt;br/&gt;&lt;br/&gt;注意不是所有的字段都会被自动转换。&lt;br/&gt;&lt;br/&gt;创建的记录本条目可以在描述字段搜索&lt;br/&gt;&lt;code&gt;;*转换自用户数据*&lt;/code&gt;&lt;br/&gt;找到&lt;br/&gt;&lt;br/&gt;继续？</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="792"/>
@@ -3670,7 +3670,7 @@ Columns will be empty on export if disabled.</source>
         <location filename="src/logbook/logdatacontroller.cpp" line="693"/>
         <source>*Converted from userdata*</source>
         <extracomment>The text &quot;Converted from userdata&quot; has to match the one in LogdataConverter::convertFromUserdata</extracomment>
-        <translation>*转换自用户数据*(*Converted from userdata*)</translation>
+        <translation>*转换自用户数据*</translation>
     </message>
 </context>
 <context>
@@ -3712,7 +3712,7 @@ Columns will be empty on export if disabled.</source>
 ==== Original departure description:
 </source>
         <extracomment>The text &quot;Converted from userdata&quot; has to match the one in LogdataController::convertUserdata</extracomment>
-        <translation>*转换自用户数据*(*Converted from userdata*)
+        <translation>*转换自用户数据*
 
 ====原始离场机场描述：
 </translation>
@@ -4527,7 +4527,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="292"/>
         <location filename="src/gui/mainwindow.ui" line="358"/>
         <source>&amp;Userpoints</source>
-        <translation>用户航点(&amp;U)</translation>
+        <translation>用户航路点(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="150"/>
@@ -5466,7 +5466,7 @@ Flown %dist%</source>
         <location filename="src/gui/mainwindow.ui" line="5295"/>
         <location filename="src/gui/mainwindow.cpp" line="2958"/>
         <source>Userpoints</source>
-        <translation>用户导航点</translation>
+        <translation>用户航路点</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2567"/>
@@ -6238,7 +6238,7 @@ relation to shown airport</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5904"/>
         <source>Progress</source>
-        <translation>进程</translation>
+        <translation>进度</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5907"/>
@@ -7006,13 +7006,13 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11591"/>
         <source>Open &amp;Log File</source>
-        <translation>打开记录本文件(&amp;L)</translation>
+        <translation>打开日志文件(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11594"/>
         <location filename="src/gui/mainwindow.ui" line="11597"/>
         <source>Opens the log file of Little Navmap in the default text editor</source>
-        <translation>在默认的文本编辑器里打开 Little Navmap 记录本文件</translation>
+        <translation>在默认的文本编辑器里打开 Little Navmap 日志文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11602"/>
@@ -7056,7 +7056,7 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="11715"/>
         <location filename="src/gui/mainwindow.ui" line="11718"/>
         <source>Download tracks for Pacific Organized Track System</source>
-        <translation>下载太平洋组织航路系统的航迹</translation>
+        <translation>下载太平洋组织化航路系统的航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11726"/>
@@ -8716,7 +8716,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8797"/>
         <source>&amp;Overview</source>
-        <translation>概要(&amp;O)</translation>
+        <translation>概述(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8800"/>
@@ -10986,7 +10986,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2942"/>
         <source>%1 of %2 %3 selected, %4 visible.%5</source>
-        <translation>已选择 %2 %3 的 %1，%4 可见 %5</translation>
+        <translation>已选择 %2 个%3中的 %1 个，%4 个可见 %5</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2965"/>
@@ -11117,7 +11117,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="182"/>
         <source>&amp;Userpoints</source>
-        <translation>用户航点(&amp;U)</translation>
+        <translation>用户航路点(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="206"/>
@@ -11694,7 +11694,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="281"/>
         <source>Aprons</source>
-        <translation>机坪</translation>
+        <translation>停机坪</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="283"/>
@@ -11745,7 +11745,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="305"/>
         <source>ALS</source>
-        <translation>ALS</translation>
+        <translation>进近灯光系统</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="313"/>
@@ -12438,7 +12438,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1044"/>
         <source>ALS Type:</source>
-        <translation>ALS 类型：</translation>
+        <translation>进近灯光系统类型：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1049"/>
@@ -13712,7 +13712,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3611"/>
         <source>Course to waypoint:</source>
-        <translation>到下个航路点的航迹：</translation>
+        <translation>到航路点的航道：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4398"/>
@@ -13866,7 +13866,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2971"/>
         <source>Course:</source>
-        <translation>航迹：</translation>
+        <translation>航道：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2976"/>
@@ -14143,7 +14143,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3410"/>
         <source>Not valid.</source>
-        <translation>无效的。</translation>
+        <translation>无效。</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3449"/>
@@ -14203,7 +14203,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3624"/>
         <source>Leg Course:</source>
-        <translation>航段航迹：</translation>
+        <translation>航段航向：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3647"/>
@@ -14249,7 +14249,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3702"/>
         <source>Departure:</source>
-        <translation>离场：</translation>
+        <translation>离场机场：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3703"/>
@@ -14786,21 +14786,21 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="100"/>
         <source>°M/T</source>
-        <translation>°磁/真航向</translation>
+        <translation>°M/T</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="104"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="869"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="904"/>
         <source>°M</source>
-        <translation>°磁航向</translation>
+        <translation>°M</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="106"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="869"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="904"/>
         <source>°T</source>
-        <translation>°真航向</translation>
+        <translation>°T</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="405"/>
@@ -14899,7 +14899,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="373"/>
         <source>%1 °M</source>
-        <translation>%1 °磁航向</translation>
+        <translation>%1 °M</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="377"/>
@@ -14988,7 +14988,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappaintermark.cpp" line="1074"/>
         <source>%1°M</source>
-        <translation>%1°磁航向</translation>
+        <translation>%1°M</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintermark.cpp" line="1075"/>
@@ -15004,34 +15004,34 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappaintermark.cpp" line="1173"/>
         <location filename="src/mappainter/mappaintermark.cpp" line="1175"/>
         <source>°T</source>
-        <translation>°真航向</translation>
+        <translation>°T</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintermark.cpp" line="1156"/>
         <location filename="src/mappainter/mappaintermark.cpp" line="1158"/>
         <source>°M/T</source>
-        <translation>°磁/真航向</translation>
+        <translation>°M/T</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintermark.cpp" line="1158"/>
         <source>°M/T </source>
-        <translation>°磁/真航向 </translation>
+        <translation>°M/T </translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintermark.cpp" line="1165"/>
         <location filename="src/mappainter/mappaintermark.cpp" line="1167"/>
         <source>°M</source>
-        <translation>°磁航向</translation>
+        <translation>°M</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintermark.cpp" line="1167"/>
         <source>°M </source>
-        <translation>°磁航向 </translation>
+        <translation>°M </translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintermark.cpp" line="1175"/>
         <source>°T </source>
-        <translation>°真航向 </translation>
+        <translation>°T </translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintermark.cpp" line="1237"/>
@@ -15806,7 +15806,7 @@ Type</source>
     <message>
         <location filename="src/search/navsearch.cpp" line="144"/>
         <source>Name</source>
-        <translation>名字</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="src/search/navsearch.cpp" line="145"/>
@@ -15879,7 +15879,7 @@ Decl.°</translation>
     <message>
         <location filename="src/search/onlinecentersearch.cpp" line="57"/>
         <source>Name</source>
-        <translation>名字</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="src/search/onlinecentersearch.cpp" line="59"/>
@@ -15962,7 +15962,7 @@ Time</source>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="46"/>
         <source>Name</source>
-        <translation>名字</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="47"/>
@@ -15972,7 +15972,7 @@ Time</source>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="48"/>
         <source>Departure</source>
-        <translation>离场</translation>
+        <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="49"/>
@@ -16048,13 +16048,15 @@ Code</source>
         <location filename="src/search/onlineclientsearch.cpp" line="62"/>
         <source>ICAO Flight
 Rules</source>
-        <translation>ICAO 飞行规则</translation>
+        <translation>ICAO
+飞行规则</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="63"/>
         <source>ICAO Flight
 Type</source>
-        <translation>ICAO 飞行类型</translation>
+        <translation>ICAO
+飞行类型</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="64"/>
@@ -16108,12 +16110,12 @@ Time</source>
     <message>
         <location filename="src/search/onlineserversearch.cpp" line="44"/>
         <source>Name</source>
-        <translation>名字</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="src/search/onlineserversearch.cpp" line="45"/>
         <source>Ident</source>
-        <translation>识别名</translation>
+        <translation>识别码</translation>
     </message>
     <message>
         <location filename="src/search/onlineserversearch.cpp" line="46"/>
@@ -16399,7 +16401,7 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
     <message>
         <location filename="src/options/options.ui" line="825"/>
         <source>Text Size</source>
-        <translation>文字尺寸</translation>
+        <translation>文字大小</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="846"/>
@@ -16637,14 +16639,14 @@ provide a toolbar button for disabling them if this checkbox is enabled.</source
 will be displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled
 together with &quot;Treat empty airports special&quot;.</source>
-        <translation>所有 X-Plane 中没有 3D 化且不是插件机场的
+        <translation>所有 X-Plane 中没有 3D 建模且不是插件机场的
 会排在其他机场下面，如果选中此选项和“特殊对待空机场”
 会使用灰色符号并提供了一个工具栏按钮来禁用它们。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1452"/>
         <source>&amp;Consider all X-Plane airports not being 3D empty</source>
-        <translation>认为所有 X-Plane 的机场不是没有 3D 化的(&amp;C)</translation>
+        <translation>认为所有 X-Plane 的机场是未经 3D 建模的(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1736"/>
@@ -17211,12 +17213,12 @@ information displays and tooltips besides selected units.</source>
     <message>
         <location filename="src/options/options.ui" line="3738"/>
         <source>US Gallon / Pound (gal / lbs)</source>
-        <translation>美制加仑 / 磅（加仑/磅）</translation>
+        <translation>美制加仑、磅（加仑、磅）</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3743"/>
         <source>Liter / Kilogram (l, kg)</source>
-        <translation>升 / 千克（升、千克）</translation>
+        <translation>升、千克（升、千克）</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3775"/>
@@ -17288,14 +17290,14 @@ also define the order when reading coordinates in the user interface if enabled.
 in information displays and tooltips .
 Only magnetic course is shown if both values are equal.
 Also affects labels at holds and traffic patterns.</source>
-        <translation>除了磁航迹，在信息显示中同时以较小的文字显示真航迹和真航向
+        <translation>除了磁航道，在信息显示中同时以较小的文字显示真航道和真航向
 在两个数值相等时候将会只显示磁航迹。
 同时也会影响等待和起落航线的标签。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3843"/>
         <source>Show &amp;true course and heading besides magnetic course in information displays</source>
-        <translation>除了磁航迹，在信息显示中同时显示真航迹和真航向(&amp;T)</translation>
+        <translation>除了磁航道，在信息显示中同时显示真航道和真航向(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3650"/>
@@ -17392,7 +17394,7 @@ See notes in the manual for details of this setting and how to move around in th
     <message>
         <location filename="src/options/options.ui" line="3928"/>
         <source>&amp;Low - Aircraft position and label is updated rarely, only for large course or altitude changes.</source>
-        <translation>低 - 航空器位置和标签很少更新，只在大幅改变航迹或高度改变时(&amp;L)。</translation>
+        <translation>低 - 航空器位置和标签很少更新，只在大幅改变航道或高度改变时(&amp;L)。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3935"/>
@@ -17402,7 +17404,7 @@ See notes in the manual for details of this setting and how to move around in th
     <message>
         <location filename="src/options/options.ui" line="3945"/>
         <source>&amp;High - Aircraft position and label is updated often, even for small course or altitude changes.</source>
-        <translation>高 - 航空器位置和标签经常更新，即使很小的航迹改变或高度改变(&amp;H)。</translation>
+        <translation>高 - 航空器位置和标签经常更新，即使很小的航道改变或高度改变(&amp;H)。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3955"/>
@@ -17566,7 +17568,7 @@ Garmin GTN and GNS to avoid locked waypoints</source>
     <message>
         <location filename="src/options/options.ui" line="4432"/>
         <source>Course Calculation</source>
-        <translation>航迹计算</translation>
+        <translation>航道计算</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4453"/>
@@ -17574,9 +17576,9 @@ Garmin GTN and GNS to avoid locked waypoints</source>
 Little Navmap normally uses the station declination when calculating a course to a VOR
 which can result in wrong course values if the calibration of a VOR is very old.
 Check this if you rely on GPS when flying.</source>
-        <translation>如选中，将会基于环境计算磁航迹，并忽略甚高频全向信标（VOR）的磁偏。
-Little Navmap 通常在计算甚高频全向信标（VOR）的向台航迹时使用台站的磁偏角
-如果一个甚高频全向信标（VOR）非常旧，这将可能导致错误的航迹。
+        <translation>如选中，将会基于环境计算磁航向道，并忽略甚高频全向信标（VOR）的磁偏。
+Little Navmap 通常在计算甚高频全向信标（VOR）的向台航向道时使用台站的磁偏角
+如果一个甚高频全向信标（VOR）非常旧，这将可能导致错误的航向道。
 如您依赖 GPS 飞行，选中此选项。</translation>
     </message>
     <message>
@@ -17828,7 +17830,8 @@ Note that some translations might be incomplete.</source>
         <location filename="src/options/options.ui" line="489"/>
         <source>Use English &amp;number and date formats
 independent of current computer settings and language selection</source>
-        <translation>使用独立于当前系统设置的英文数字和日期格式(Force use English &amp;number and date formats)</translation>
+        <translation>使用英文数字和日期格式
+即独立于当前系统设置的英文数字和日期格式(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="525"/>
@@ -17989,7 +17992,7 @@ A range ring will be added for each radius value which can be between 0.01 and 4
 Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</source>
         <translation>以空格分隔的距离环半径列表。
 将为每个半径值添加一个范围为 0.01 到 4000 %dist%的距离环。
-如果为空或无效，则回滚到 50%、100%、200% 和 500% %dist%。</translation>
+如果为空或无效，则回滚到 50、100、200 和 500 %dist%。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1469"/>
@@ -18725,7 +18728,7 @@ and other user interface behavior.</source>
         <source>Fuel, distance, speed and coordindate units as well as
 options for course and heading display.</source>
         <translation>燃油、距离、速度及坐标单位，
-以及航迹和航向显示的选项。</translation>
+以及航道和航向显示的选项。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="177"/>
@@ -18953,7 +18956,7 @@ Indicated with &quot;R&quot; if both rhumb and great circle are selected.</sourc
     <message>
         <location filename="src/options/optionsdialog.cpp" line="218"/>
         <source>Magnetic great circle course</source>
-        <translation>大圆的磁航迹</translation>
+        <translation>大圆的磁航道</translation>
     </message>
     <message>
         <source>Show magnetic great circle start course at flight plan leg.
@@ -18964,7 +18967,7 @@ Indicated with &quot;GC&quot; if both rhumb and great circle are selected.</sour
     <message>
         <location filename="src/options/optionsdialog.cpp" line="219"/>
         <source>True great circle course</source>
-        <translation>真大圆航向</translation>
+        <translation>大圆的真航道</translation>
     </message>
     <message>
         <source>Show true great circle start course at flight plan leg.
@@ -19050,7 +19053,7 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="211"/>
         <source>Aprons</source>
-        <translation>机坪</translation>
+        <translation>停机坪</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="211"/>
@@ -19085,7 +19088,7 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="219"/>
         <source>Show true great circle start course at flight plan leg.</source>
-        <translation>在飞行计划行程中显示大圆的真航迹。</translation>
+        <translation>在飞行计划行程中显示大圆的真航道。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="221"/>
@@ -19319,12 +19322,12 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="257"/>
         <source>Course to Next Waypoint</source>
-        <translation>到下一航点的航迹</translation>
+        <translation>到下一航点的航道</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="257"/>
         <source>Show the course to next waypoint for the user aircraft as a small magenta line.</source>
-        <translation>为用户显示前往下一航点的航迹线为一条细品红线。</translation>
+        <translation>为用户显示前往下一航点的航道线为一条细品红线。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="259"/>
@@ -19344,7 +19347,7 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="261"/>
         <source>Magnetic Course</source>
-        <translation>磁航迹</translation>
+        <translation>磁航道</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="261"/>
@@ -19354,12 +19357,12 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="262"/>
         <source>True Course</source>
-        <translation>真航迹</translation>
+        <translation>真航道</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="262"/>
         <source>Show true course for start and end of line.</source>
-        <translation>显示测距线起点到终点的真航迹。</translation>
+        <translation>显示测距线起点到终点的真航道。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="263"/>
@@ -20051,7 +20054,7 @@ This process will run in background and can take a while.</source>
         <location filename="src/print/printdialog.ui" line="92"/>
         <location filename="src/print/printdialog.ui" line="184"/>
         <source>Text size </source>
-        <translation>文本尺寸 </translation>
+        <translation>文字大小 </translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="133"/>
@@ -20097,7 +20100,7 @@ This process will run in background and can take a while.</source>
         <location filename="src/print/printdialog.ui" line="286"/>
         <location filename="src/print/printdialog.ui" line="406"/>
         <source>&amp;Overview</source>
-        <translation>概要(&amp;O)</translation>
+        <translation>概述(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="296"/>
@@ -20144,7 +20147,7 @@ This process will run in background and can take a while.</source>
         <location filename="src/print/printdialog.ui" line="359"/>
         <location filename="src/print/printdialog.ui" line="479"/>
         <source>&amp;Procedures</source>
-        <translation>程序(&amp;P)</translation>
+        <translation>进离场程序(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="366"/>
@@ -20273,7 +20276,7 @@ This process will run in background and can take a while.</source>
         <location filename="src/query/procedurequery.cpp" line="1614"/>
         <location filename="src/query/procedurequery.cpp" line="1659"/>
         <source>°M</source>
-        <translation>°磁航向</translation>
+        <translation>°M</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="1391"/>
@@ -20292,7 +20295,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/query/procedurequery.cpp" line="1508"/>
         <source>Course to Fix</source>
-        <translation>到航路点的航迹</translation>
+        <translation>到航路点的航道</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="1548"/>
@@ -20304,7 +20307,7 @@ This process will run in background and can take a while.</source>
         <location filename="src/query/procedurequery.cpp" line="1614"/>
         <location filename="src/query/procedurequery.cpp" line="1659"/>
         <source>°T</source>
-        <translation>°真航向</translation>
+        <translation>°T</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="1684"/>
@@ -20450,7 +20453,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="653"/>
         <source>Ident</source>
-        <translation>标识</translation>
+        <translation>识别码</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="654"/>
@@ -20463,7 +20466,7 @@ This process will run in background and can take a while.</source>
         <location filename="src/search/proceduresearch.cpp" line="655"/>
         <source>Course
 °M</source>
-        <translation>磁航迹
+        <translation>磁航道
 °M</translation>
     </message>
     <message>
@@ -20502,7 +20505,7 @@ This process will run in background and can take a while.</source>
         <location filename="src/search/proceduresearch.cpp" line="936"/>
         <location filename="src/search/proceduresearch.cpp" line="937"/>
         <source>Procedure</source>
-        <translation>起降程序</translation>
+        <translation>进离场程序</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="945"/>
@@ -20691,7 +20694,7 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1801"/>
         <source>Course: </source>
-        <translation>航迹： </translation>
+        <translation>航道： </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1819"/>
@@ -20721,7 +20724,7 @@ Really use it?</source>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1854"/>
         <source>%1°M, %2</source>
-        <translation>%1°磁航向，%2</translation>
+        <translation>%1°M, %2</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1864"/>
@@ -20934,14 +20937,14 @@ Really use it?</source>
     <message>
         <location filename="src/common/formatter.cpp" line="323"/>
         <source>°M/T</source>
-        <translation>°磁/真航向</translation>
+        <translation>°M/T</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="323"/>
         <location filename="src/common/maptypes.cpp" line="1925"/>
         <location filename="src/common/proctypes.cpp" line="850"/>
         <source>°M</source>
-        <translation>°磁航向</translation>
+        <translation>°M</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="348"/>
@@ -22128,7 +22131,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="404"/>
         <source>Departure</source>
-        <translation>离场</translation>
+        <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="405"/>
@@ -22399,12 +22402,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="1055"/>
         <source>Victor</source>
-        <translation>甚高频导航</translation>
+        <translation>低空航路</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1058"/>
         <source>Jet</source>
-        <translation>喷气式</translation>
+        <translation>高空航路</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1061"/>
@@ -22797,6 +22800,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="48"/>
         <source>MAP</source>
+        <translatorcomment>这不是“地图”的意思，实际是 Missed Approach Point 的缩写，应译为“复飞点”</translatorcomment>
         <translation>MAP</translation>
     </message>
     <message>
@@ -22817,7 +22821,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="57"/>
         <source>Final Approach Course Fix</source>
-        <translation>最终进近航迹点</translation>
+        <translation>最终进近定位点</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="58"/>
@@ -22925,22 +22929,22 @@ Really use it?</source>
     <message>
         <location filename="src/common/proctypes.cpp" line="106"/>
         <source>Course to DME distance</source>
-        <translation>到 DME 的航迹</translation>
+        <translation>到 DME 的航道</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="107"/>
         <source>Course to fix</source>
-        <translation>到导航点的航迹</translation>
+        <translation>到导航点的航道</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="108"/>
         <source>Course to intercept</source>
-        <translation>到截获点的航迹</translation>
+        <translation>到截获点的航道</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="109"/>
         <source>Course to radial termination</source>
-        <translation>到径向线终止点的航迹</translation>
+        <translation>到径向线终止点的航向道</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="110"/>
@@ -23367,7 +23371,7 @@ Spaces are replaced with underscores.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="131"/>
         <source>Name</source>
-        <translation>名字</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="132"/>
@@ -23411,14 +23415,14 @@ MHz/kHz/Cha.</translation>
         <location filename="src/route/routecontroller.cpp" line="138"/>
         <source>Course
 °M</source>
-        <translation>磁航迹
+        <translation>磁航道
 °M</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="139"/>
         <source>Course
 °T</source>
-        <translation>航迹
+        <translation>真航道
 °T</translation>
     </message>
     <message>
@@ -23476,7 +23480,7 @@ hh:mm</translation>
         <oldsource>Wind °M
 %speed%</oldsource>
         <translation>风
-°磁航向/%speed%</translation>
+°M/%speed%</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="147"/>
@@ -23549,7 +23553,7 @@ Also shows ILS or localizer frequency for corresponding approaches on the last r
     <message>
         <location filename="src/route/routecontroller.cpp" line="166"/>
         <source>Magnetic start course of the great circle route connecting the two waypoints of the leg.</source>
-        <translation>连接此航段两个航路点的大圆航路起始磁航迹。</translation>
+        <translation>连接此航段两个航路点的大圆航路起始磁航道。</translation>
     </message>
     <message>
         <source>Magnetic constant course of the rhumb line connecting two waypoints of a leg.</source>
@@ -23558,7 +23562,7 @@ Also shows ILS or localizer frequency for corresponding approaches on the last r
     <message>
         <location filename="src/route/routecontroller.cpp" line="167"/>
         <source>True start course of the great circle route connecting the two waypoints of the leg.</source>
-        <translation>连接此航段两个航路点的大圆航路起始真航向。</translation>
+        <translation>连接此航段两个航路点的大圆航路起始真航道。</translation>
     </message>
     <message>
         <source>True constant course of the rhumb line connecting two waypoints of a leg.</source>
@@ -24139,7 +24143,7 @@ The start position is now set to the longest primary runway of the departure air
     <message>
         <location filename="src/route/routecontroller.cpp" line="2249"/>
         <source>Departure </source>
-        <translation>离场 </translation>
+        <translation>离场机场 </translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2252"/>
@@ -24425,7 +24429,7 @@ create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3757"/>
         <source>Departure</source>
-        <translation>离场</translation>
+        <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3759"/>
@@ -26643,7 +26647,7 @@ Otherwise airports are added as waypoints.</source>
     <message>
         <location filename="src/gui/runwayselection.cpp" line="166"/>
         <source>%1°M</source>
-        <translation>%1°磁航向</translation>
+        <translation>%1°M</translation>
     </message>
 </context>
 <context>
@@ -26690,7 +26694,7 @@ Right-click into the map and select
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1005"/>
         <source>Departure </source>
-        <translation>离场 </translation>
+        <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1008"/>
@@ -28127,7 +28131,7 @@ before deleting.</source>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="415"/>
         <source>&amp;Name:</source>
-        <translation>名字(&amp;N)：</translation>
+        <translation>名称(&amp;N)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="346"/>
@@ -28590,7 +28594,7 @@ Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
     <message>
         <location filename="src/search/userdatasearch.cpp" line="74"/>
         <source>Ident</source>
-        <translation>标识</translation>
+        <translation>识别码</translation>
     </message>
     <message>
         <location filename="src/search/userdatasearch.cpp" line="75"/>
@@ -28600,7 +28604,7 @@ Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
     <message>
         <location filename="src/search/userdatasearch.cpp" line="76"/>
         <source>Name</source>
-        <translation>名字</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="src/search/userdatasearch.cpp" line="77"/>
