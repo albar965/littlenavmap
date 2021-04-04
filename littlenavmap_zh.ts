@@ -11704,7 +11704,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="285"/>
         <source>Tower Object</source>
-        <translation>塔台对象</translation>
+        <translation>塔台建筑</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="287"/>
