@@ -7078,7 +7078,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7204"/>
         <source>&amp;Contents (Online)</source>
-        <translation>内容（在线）(&amp;C)</translation>
+        <translation>帮助内容（在线）(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7207"/>
@@ -8755,7 +8755,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8846"/>
         <source>&amp;Contents (Offline, PDF)</source>
-        <translation>内容（离线 PDF）(&amp;C)</translation>
+        <translation>帮助内容（离线 PDF）(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8849"/>
