@@ -711,7 +711,7 @@ This is for informational purposes only.</source>
 The fuel report will show a warning if this does not match the simulator aircraft type.</source>
         <oldsource>ICAO aircraft type like B732 or C172. 
 The fuel report will show a warning if this does not match the simulator aircraft type.</oldsource>
-        <translation>ICAO航空器型号代码例如 B732 或 C172。
+        <translation>ICAO 航空器型号代码例如 B732 或 C172。
 若模拟器中的航空器型号不匹配，燃油报告会显示警告。</translation>
     </message>
     <message>
@@ -9390,7 +9390,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9804"/>
         <source>Show Airport &amp;Weather</source>
-        <translation>显示机场气象(&amp;W)</translation>
+        <translation>显示机场天气(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9807"/>
@@ -11052,12 +11052,12 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3225"/>
         <source>Messages</source>
-        <translation>消息</translation>
+        <translation>条消息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3225"/>
         <source>Message</source>
-        <translation>消息</translation>
+        <translation>条消息</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3335"/>
@@ -12175,7 +12175,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="815"/>
         <source>Runway </source>
-        <translation>跑道</translation>
+        <translation>跑道 </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="820"/>
@@ -12198,12 +12198,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="833"/>
         <source>Edge Lights:</source>
-        <translation>边灯：</translation>
+        <translation>边灯光强：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="835"/>
         <source>Center Lights:</source>
-        <translation>中线灯：</translation>
+        <translation>中线灯光强：</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="837"/>
@@ -12213,12 +12213,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="843"/>
         <source>Edges</source>
-        <translation>边灯</translation>
+        <translation>边线</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="845"/>
         <source>Threshold</source>
-        <translation>入口</translation>
+        <translation>入口标识</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="847"/>
@@ -12234,7 +12234,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="851"/>
         <source>Dashes</source>
-        <translation>虚线</translation>
+        <translation>跑道中线</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="855"/>
@@ -12244,7 +12244,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="857"/>
         <source>Edge Pavement</source>
-        <translation>边缘铺设</translation>
+        <translation>道边铺设</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="859"/>
@@ -12279,7 +12279,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="874"/>
         <source>No Threshold End Arrows</source>
-        <translation>没有跑道入口终点箭头</translation>
+        <translation>没有跑道入口箭头</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="879"/>
@@ -15432,7 +15432,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="351"/>
         <source>No airport weather shown</source>
-        <translation>没有显示机场气象</translation>
+        <translation>没有显示机场天气</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="355"/>
@@ -16406,7 +16406,7 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
     <message>
         <location filename="src/options/options.ui" line="846"/>
         <source>Text size for &amp;flight plan table:</source>
-        <translation>飞行计划表格文字尺寸(&amp;F)：</translation>
+        <translation>飞行计划表格文字大小(&amp;F)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="865"/>
@@ -16443,7 +16443,7 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
     <message>
         <location filename="src/options/options.ui" line="884"/>
         <source>Text size for &amp;simulator aircraft information dock window:</source>
-        <translation>模拟航空器信息停靠窗口文字尺寸(&amp;S)：</translation>
+        <translation>模拟航空器信息停靠窗口文字大小(&amp;S)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="960"/>
@@ -16453,12 +16453,12 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
     <message>
         <location filename="src/options/options.ui" line="970"/>
         <source>Text size for &amp;information dock window:</source>
-        <translation>信息停靠窗口文字尺寸(&amp;I)：</translation>
+        <translation>信息停靠窗口文字大小(&amp;I)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="980"/>
         <source>Text size for &amp;search result tables and procedure view:</source>
-        <translation>搜索结构表格和进离场程序视图文字尺寸(&amp;S)：</translation>
+        <translation>搜索结构表格和进离场程序视图文字大小(&amp;S)：</translation>
     </message>
     <message>
         <source>Language (restart required after change)</source>
@@ -17589,7 +17589,7 @@ Little Navmap 通常在计算甚高频全向信标（VOR）的向台航向道时
     <message>
         <location filename="src/options/options.ui" line="4791"/>
         <source>Files and Web Addresses for Airport Weather</source>
-        <translation>机场气象的文件及 Web 地址</translation>
+        <translation>机场天气的文件及 Web 地址</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4812"/>
@@ -17612,7 +17612,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
     <message>
         <location filename="src/options/options.ui" line="4836"/>
         <source>X-&amp;Plane weather file:</source>
-        <translation>X-&amp;Plane 气象文件：</translation>
+        <translation>X-&amp;Plane 天气文件：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4856"/>
@@ -17653,12 +17653,12 @@ If this field is empty, the default Active Sky weather file path will be used wh
         <location filename="src/options/options.ui" line="4920"/>
         <location filename="src/options/options.ui" line="5131"/>
         <source>Send a test request to the NOAA weather service.</source>
-        <translation>给 NOAA 天气服务器发送测试请求。</translation>
+        <translation>给 NOAA 气象服务器发送测试请求。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4930"/>
         <source>Send a test request to the VATSIM weather service.</source>
-        <translation>给 VATSIM 天气服务器发送测试请求。</translation>
+        <translation>给 VATSIM 气象服务器发送测试请求。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4940"/>
@@ -17676,7 +17676,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
     <message>
         <location filename="src/options/options.ui" line="4950"/>
         <source>&amp;VATSIM Weather Service URL:</source>
-        <translation>VATSIM 天气服务 URL(&amp;V)：</translation>
+        <translation>VATSIM 气象服务 URL(&amp;V)：</translation>
     </message>
     <message>
         <source>Complete URL of the NOAA weather service file.
@@ -17693,7 +17693,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
     <message>
         <location filename="src/options/options.ui" line="4981"/>
         <source>&amp;NOAA Weather Service URL:</source>
-        <translation>NOAA 天气服务 URL(&amp;N)：</translation>
+        <translation>NOAA 气象服务 URL(&amp;N)：</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5007"/>
@@ -18171,7 +18171,7 @@ CRUISEALT：巡航高度</translation>
         <location filename="src/options/options.ui" line="4846"/>
         <source>Download URL for the IVAO weather file.
 Default is &quot;http://wx.ivao.aero/metar.php&quot;.</source>
-        <translation>IVAO 气象文件的下载 URL
+        <translation>IVAO 天气文件的下载 URL
 默认是“http://wx.ivao.aero/metar.php”。</translation>
     </message>
     <message>
@@ -19558,7 +19558,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2211"/>
         <source>Is not an Active Sky weather snapshot file.</source>
-        <translation>不是 Active Sky 气象快照文件。</translation>
+        <translation>不是 Active Sky 天气快照文件。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2214"/>
@@ -19568,7 +19568,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2226"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
-        <translation>没有选择 Active Sky 气象快照文件。Active Sky METAR 不可用。</translation>
+        <translation>没有选择 Active Sky 天气快照文件。Active Sky METAR 不可用。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2229"/>
@@ -19578,22 +19578,22 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2232"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
-        <translation>没有选择 Active Sky 气象快照文件。为 %1 使用默认 Active Sky Next。</translation>
+        <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 Active Sky Next。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2236"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
-        <translation>没有选择 Active Sky 气象快照文件。为 %1 使用默认 AS16。</translation>
+        <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 AS16。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2241"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
-        <translation>没有选择 Active Sky 气象快照文件。为 %1 使用默认 ASP4。</translation>
+        <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 ASP4。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2246"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP for %1.</source>
-        <translation>没有选择 Active Sky 气象快照文件。为 %1 使用默认 Active Sky XP。</translation>
+        <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 Active Sky XP。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2268"/>
@@ -19603,7 +19603,7 @@ Resetting update period back to %1 seconds.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2272"/>
         <source>Using default weather from X-Plane base path.</source>
-        <translation>正在使用来自 X-Plane 根目录的默认气象。</translation>
+        <translation>正在使用来自 X-Plane 根目录的默认天气。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2287"/>
@@ -21046,7 +21046,7 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="77"/>
         <source>Dirt</source>
-        <translation>污垢</translation>
+        <translation>泥渣</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="78"/>
@@ -22328,12 +22328,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="716"/>
         <source>Very smooth</source>
-        <translation>非常平滑</translation>
+        <translation>非常平坦</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="718"/>
         <source>Smooth</source>
-        <translation>平滑</translation>
+        <translation>平坦</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="720"/>
@@ -22343,12 +22343,12 @@ Really use it?</source>
     <message>
         <location filename="src/common/maptypes.cpp" line="722"/>
         <source>Rough</source>
-        <translation>剧烈</translation>
+        <translation>颠簸</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="724"/>
         <source>Very rough</source>
-        <translation>非常剧烈</translation>
+        <translation>非常颠簸</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="764"/>
@@ -28661,17 +28661,17 @@ from File</source>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="133"/>
         <source>NOAA weather downloaded.</source>
-        <translation>NOAA 气象信息已下载。</translation>
+        <translation>NOAA 天气信息已下载。</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="139"/>
         <source>IVAO weather downloaded.</source>
-        <translation>IVAO 气象信息已下载。</translation>
+        <translation>IVAO 天气信息已下载。</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="145"/>
         <source>VATSIM weather downloaded.</source>
-        <translation>VATSIM 气象信息已下载。</translation>
+        <translation>VATSIM 天气信息已下载。</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="554"/>
@@ -28701,7 +28701,7 @@ from File</source>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="575"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download weather information:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;尝试建立加密连接以下载气象数据时出错：&lt;/p&gt; &lt;p&gt; URL：%1 &lt;/p&gt; &lt;p&gt;错误消息：&lt;br/&gt;%2 &lt;/p&gt; &lt;p&gt;继续吗？&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;尝试建立加密连接以下载天气数据时出错：&lt;/p&gt; &lt;p&gt; URL：%1 &lt;/p&gt; &lt;p&gt;错误消息：&lt;br/&gt;%2 &lt;/p&gt; &lt;p&gt;继续吗？&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="581"/>
@@ -28717,13 +28717,13 @@ from File</source>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="597"/>
         <source>Weather download failed.</source>
-        <translation>气象信息下载失败。</translation>
+        <translation>天气信息下载失败。</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="604"/>
         <source>&lt;p&gt;Download of weather from&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;failed.&lt;/p&gt;&lt;p&gt;Error: %2 (%3)&lt;/p&gt;&lt;p&gt;Check your weather settings or disable weather downloads.&lt;/p&gt;&lt;p&gt;Suppressing further messages during this session.&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;Download of weather from&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;failed.&lt;/p&gt;&lt;p&gt;Error: %2 (%3)&lt;/p&gt;&lt;p&gt;Check you weather settings or disable weather downloads.&lt;/p&gt;&lt;p&gt;Suppressing further messages during this session.&lt;/p&gt;</oldsource>
-        <translation>&lt;p&gt;从&lt;br/&gt;“%1”&lt;br/&gt;下载气象信息失败了。&lt;/p&gt;&lt;p&gt;错误是：%2 (%3)&lt;/p&gt;&lt;p&gt;检查气象设置或者禁用气象下载。&lt;/p&gt;&lt;p&gt;此次会话将不会再显示此消息。&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;从&lt;br/&gt;“%1”&lt;br/&gt;下载天气信息失败了。&lt;/p&gt;&lt;p&gt;错误是：%2 (%3)&lt;/p&gt;&lt;p&gt;检查天气设置或者禁用天气下载。&lt;/p&gt;&lt;p&gt;此次会话将不会再显示此消息。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="609"/>
@@ -28793,7 +28793,7 @@ from File</source>
     <message>
         <location filename="src/weather/windreporter.cpp" line="228"/>
         <source>Wind forecast altitude levels to display</source>
-        <translation>显示高度层的预报风况</translation>
+        <translation>显示预报风况的高度层</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="243"/>
@@ -28833,7 +28833,7 @@ from File</source>
     <message>
         <location filename="src/weather/windreporter.cpp" line="165"/>
         <source> Forecast from %1 to %2 UTC.</source>
-        <translation> 从 %1 到 %2 UTC的预报。</translation>
+        <translation> 从 %1 到 %2 UTC 的预报。</translation>
     </message>
     <message>
         <location filename="src/weather/windreporter.cpp" line="176"/>
