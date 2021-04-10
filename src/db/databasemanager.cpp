@@ -1394,12 +1394,12 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
       if(QFileInfo(fileOrPath).isDir())
       {
         qInfo() << Q_FUNC_INFO << "Directory exclusion" << fileOrPath;
-        navDatabaseOpts.addToDirectoryExcludes({fileOrPath});
+        navDatabaseOpts.addToDirectoryExcludesGui({fileOrPath});
       }
       else
       {
         qInfo() << Q_FUNC_INFO << "File exclusion" << fileOrPath;
-        navDatabaseOpts.addToFilePathExcludes({fileOrPath});
+        navDatabaseOpts.addToFilePathExcludesGui({fileOrPath});
       }
     }
     else
