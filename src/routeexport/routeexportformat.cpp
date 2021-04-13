@@ -82,10 +82,10 @@ void RouteExportFormatMap::restoreState()
 
   // Load selection status and user updated paths from settings
   atools::settings::Settings& settings = Settings::instance();
-  RouteExportFormatMap formatList;
+  RouteExportFormatMap loadedFormats;
   try
   {
-    formatList = settings.valueVar(lnm::ROUTE_EXPORT_FORMATS).value<RouteExportFormatMap>();
+    loadedFormats = settings.valueVar(lnm::ROUTE_EXPORT_FORMATS).value<RouteExportFormatMap>();
   }
   catch(atools::Exception& e)
   {
@@ -98,16 +98,22 @@ void RouteExportFormatMap::restoreState()
     atools::gui::ErrorHandler(NavApp::getQMainWidget()).handleUnknownException();
   }
 
-  for(const RouteExportFormat& loadedFmt : formatList)
+  for(const RouteExportFormat& loadedFmt : loadedFormats)
   {
-    RouteExportFormat& f = (*this)[loadedFmt.getType()];
-
     if(contains(loadedFmt.getType()))
-      loadedFmt.copyLoadedData(f);
-    else
-      qWarning() << Q_FUNC_INFO << "Type not found in internal list" << loadedFmt.getTypeAsInt();
+    {
+      RouteExportFormat& stockFmt = (*this)[loadedFmt.getType()];
 
-    f.updatePathError();
+      if(contains(loadedFmt.getType()))
+        loadedFmt.copyLoadedData(stockFmt);
+      else
+        qWarning() << Q_FUNC_INFO << "Type not found in internal list" << loadedFmt.getTypeAsInt();
+
+      stockFmt.updatePathError();
+    }
+    else
+      // Saved format not found in default list
+      qWarning() << Q_FUNC_INFO << "Stock format not found" << loadedFmt.getType();
   }
 }
 
