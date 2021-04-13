@@ -3983,9 +3983,15 @@ Also affects labels at holds and traffic patterns.</string>
                <item row="2" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsSimUpdateBox">
                  <property name="toolTip">
-                  <string>Smaller values keep the aircraft centered and will move the map often.
-Bigger values will update map only when aircraft reaches map boundary.
-Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is checked and a flight plan is set.</string>
+                  <string>&lt;p&gt;Defines a box in percent of the map size.&lt;/p&gt;
+
+&lt;p&gt;Function depends on &quot;Center map on aircraft and next flight plan waypoint&quot; above:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Checked: User aircraft and next flight plan waypoint are kept within the box defined by this input field. Smaller values zoom more out and larger values zoom closer. Only applied if aircraft is flying.&lt;/li&gt;
+&lt;li&gt;Not checked: User aircraft is centered once it moves outside the box. Smaller values keep the aircraft centered and will move the map more often. Bigger values center the aircraft only if it reaches map boundary.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Refer to the online manual for more information.&lt;/p&gt;</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
