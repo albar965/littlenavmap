@@ -312,7 +312,7 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
                    std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2) :
                    std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
 
-      if(exportFlighplan(routeFile, msfs ? rf::DEFAULT_OPTS_MSFS : rf::DEFAULT_OPTS, func))
+      if(exportFlighplan(routeFile, msfs ? rf::DEFAULT_OPTS_MSFS : rf::DEFAULT_OPTS_NO_PROC, func))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").arg(annotated ? tr("annotated ") : QString()));
         formatExportedCallback(format, routeFile);
@@ -564,7 +564,7 @@ bool RouteExport::routeExportRteMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveRte, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::saveRte, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -586,7 +586,7 @@ bool RouteExport::routeExportFprMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFpr, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::saveFpr, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -649,7 +649,8 @@ bool RouteExport::routeExportFltplanMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveFltplan, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
+                         std::bind(&FlightplanIO::saveFltplan, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -734,7 +735,8 @@ bool RouteExport::routeExportBbsMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveBbsPln, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::saveBbsPln, flightplanIO, _1,
+                                                                        _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -757,7 +759,7 @@ bool RouteExport::routeExportFeelthereFplMulti(const RouteExportFormat& format)
         groundSpeed = atools::roundToInt(NavApp::getAircraftPerformance().getCruiseSpeed());
 
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS,
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
                          std::bind(&FlightplanIO::saveFeelthereFpl, flightplanIO, _1, _2, groundSpeed)))
       {
         formatExportedCallback(format, routeFile);
@@ -777,7 +779,8 @@ bool RouteExport::routeExportLeveldRteMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveLeveldRte, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
+                         std::bind(&FlightplanIO::saveLeveldRte, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -798,7 +801,7 @@ bool RouteExport::routeExportEfbrMulti(const RouteExportFormat& format)
       QString route = RouteStringWriter().createStringForRoute(NavApp::getRouteConst(), 0.f, rs::NONE);
       QString cycle = NavApp::getDatabaseAiracCycleNav();
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS,
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
                          std::bind(&FlightplanIO::saveEfbr, flightplanIO, _1, _2, route, cycle, QString(), QString())))
       {
         formatExportedCallback(format, routeFile);
@@ -818,7 +821,8 @@ bool RouteExport::routeExportQwRteMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveQwRte, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
+                         std::bind(&FlightplanIO::saveQwRte, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -837,7 +841,7 @@ bool RouteExport::routeExportMdrMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(&FlightplanIO::saveMdr, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::saveMdr, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -859,7 +863,7 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
     {
       try
       {
-        Route route = buildAdjustedRoute(rf::DEFAULT_OPTS);
+        Route route = buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC);
         flightplanIO->saveTfdi(route.getFlightplan(), routeFile, route.getJetAirwayFlags());
       }
       catch(atools::Exception& e)
@@ -1235,7 +1239,7 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserW
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString gfp = RouteStringWriter().createGfpStringForRoute(
-    buildAdjustedRoute(rf::DEFAULT_OPTS), false /* procedures */, saveAsUserWaypoints);
+    buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC), false /* procedures */, saveAsUserWaypoints);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -1324,7 +1328,8 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUs
   {
     // Regions are required for the export
     NavApp::getRoute().updateAirportRegions();
-    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS).getFlightplan(), filename, saveAsUserWaypoints);
+    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC).getFlightplan(), filename,
+                                 saveAsUserWaypoints);
   }
   catch(atools::Exception& e)
   {

@@ -2257,7 +2257,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   route.updateDepartureAndDestination();
 
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
-  if(options.testFlag(rf::FIX_PROC_ENTRY_EXIT))
+  if(options.testFlag(rf::FIX_PROC_ENTRY_EXIT) || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS))
   {
     QVector<float> altVector = route.getAltitudeLegs().getAltitudes();
 
@@ -2272,8 +2272,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       if(airway.isEmpty())
         airway = plan.getProperties().value(atools::fs::pln::PROCAIRWAY);
 
-      if(!airway.isEmpty() && proc::procedureLegFixAtStart(arrivalLeg.getProcedureLegType()) &&
-         !arrivalLeg.isNavaidEqualTo(routeLeg))
+      if((!airway.isEmpty() || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS)) &&
+         proc::procedureLegFixAtStart(arrivalLeg.getProcedureLegType()) && !arrivalLeg.isNavaidEqualTo(routeLeg))
       {
         FlightplanEntry entry;
         entryBuilder.buildFlightplanEntry(arrivalLeg.getProcedureLeg(), entry,
@@ -2301,8 +2301,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       const RouteLeg& departureLeg = route.value(startIndexAfterProcedure - 1);
       const RouteLeg& routeLeg = route.value(startIndexAfterProcedure);
 
-      if(!routeLeg.getAirwayName().isEmpty() && proc::procedureLegFixAtEnd(departureLeg.getProcedureLegType()) &&
-         !departureLeg.isNavaidEqualTo(routeLeg))
+      if((!routeLeg.getAirwayName().isEmpty() || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS)) &&
+         proc::procedureLegFixAtEnd(departureLeg.getProcedureLegType()) && !departureLeg.isNavaidEqualTo(routeLeg))
       {
         FlightplanEntry entry;
         entryBuilder.buildFlightplanEntry(departureLeg.getProcedureLeg(), entry,

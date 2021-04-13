@@ -33,14 +33,19 @@ enum RouteAdjustOption
   REMOVE_ALTERNATE = 1 << 4, /* Remove all alternate legs. */
   REMOVE_TRACKS = 1 << 5, /* Empty track name to force direct */
   FIX_CIRCLETOLAND = 1 << 7, /* Add a dummy best guess runway for circle-to-land approaches for X-Plane */
-  FIX_PROC_ENTRY_EXIT = 1 << 8, /* Add any removed procedure entry and exit points back */
-  SAVE_MSFS = 1 << 9, /* Insert all SID/STAR waypoints and add procedure information for each waypoint.
-                       * Add approach information to last waypoint/destination.
-                       * Also adds airport information to waypoints from simulator database.  */
-  SAVE_LNMPLN = 1 << 10, /* Ignore menu options to save procedures or airways as waypoints */
+  FIX_PROC_ENTRY_EXIT = 1 << 8, /* Add any removed procedure entry and exit points back
+                                 * if they are attached to an airway. */
+  FIX_PROC_ENTRY_EXIT_ALWAYS = 1 << 9, /* Always add any removed procedure entry and exit points back */
+  SAVE_MSFS = 1 << 10, /* Insert all SID/STAR waypoints and add procedure information for each waypoint.
+                        * Add approach information to last waypoint/destination.
+                        * Also adds airport information to waypoints from simulator database.  */
+  SAVE_LNMPLN = 1 << 11, /* Ignore menu options to save procedures or airways as waypoints */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
+
+  /* Always add entry and exit waypoints for procedures. This is used for formats not supporting procedures. */
+  DEFAULT_OPTS_NO_PROC = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT_ALWAYS,
 
   /* LNMPLN save and load format. Does not mangle anything. */
   DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT | SAVE_LNMPLN,
@@ -55,7 +60,7 @@ enum RouteAdjustOption
   DEFAULT_OPTS_MSFS = DEFAULT_OPTS | SAVE_MSFS,
 
   /* Export adjust options for XP11 and old FMS3 */
-  DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS,
+  DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS_NO_PROC,
   DEFAULT_OPTS_FMS11 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND,
 
   /* Garmin GPX */
