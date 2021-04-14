@@ -2191,8 +2191,6 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   // Limit number of updates per second =================================================
   if(now - lastSimUpdateMs > deltas.timeDeltaMs)
   {
-    lastSimUpdateMs = now;
-
     // Check if any AI aircraft are visible
     bool aiVisible = false;
     if(paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
@@ -2226,6 +2224,13 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                                          aircraft.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
                           almostNotEqual(last.getPosition().getAltitude(),
                                          aircraft.getPosition().getAltitude(), deltas.altitudeDelta); // Altitude has changed
+
+    // Force an update every five seconds to avoid hanging map view if aircraft does not move on map
+    if(now - lastSimUpdateMs > 5000)
+      dataHasChanged = true;
+
+    // We can update this after checking for time difference
+    lastSimUpdateMs = now;
 
     if(dataHasChanged)
       getScreenIndex()->updateLastSimData(simulatorData);
@@ -2318,10 +2323,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               {
                 centerRectOnMap(rect);
 
-                float altToZoom = aircraft.getAltitudeAboveGroundFt() > 12000.f ? 1400.f : 2800.f;
                 // Minimum zoom depends on flight altitude
+                float altToZoom = aircraft.getAltitudeAboveGroundFt() > 12000.f ? 1400.f : 2800.f;
                 float minZoomDist = atools::geo::nmToKm(
-                  std::min(std::max(aircraft.getAltitudeAboveGroundFt() / altToZoom, 0.4f), 28.f));
+                  std::min(std::max(aircraft.getAltitudeAboveGroundFt() / altToZoom, 0.2f), 28.f));
 
                 // Zoom out for a maximum of four times until aircraft and waypoint fit into the shrinked rectangle
                 for(int i = 0; i < 4; i++)
