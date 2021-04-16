@@ -282,5 +282,12 @@
         <file>resources/icons/checkbox_dark_checked_disabled.png</file>
         <file>resources/icons/lock.svg</file>
         <file>resources/icons/unlock.svg</file>
+        <file>resources/icons/userpoint_Water.svg</file>
+        <file>resources/icons/userpoint_Settlement.svg</file>
+        <file>resources/icons/userpoint_Park.svg</file>
+        <file>resources/icons/userpoint_Landform.svg</file>
+        <file>resources/icons/userpoint_History.svg</file>
+        <file>resources/icons/userpoint_Building.svg</file>
+        <file>resources/icons/userpoint_Other.svg</file>
     </qresource>
 </RCC>

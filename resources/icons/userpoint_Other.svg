@@ -14,7 +14,7 @@
    viewBox="0 0 33.866666 33.866668"
    version="1.1"
    id="svg821"
-   sodipodi:docname="userpoint_Cabin.svg"
+   sodipodi:docname="userpoint_Other.svg"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
   <defs
      id="defs815">
@@ -38,9 +38,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="31.117928"
-     inkscape:cy="25.812759"
+     inkscape:zoom="2.8"
+     inkscape:cx="-12.214286"
+     inkscape:cy="8.2279322"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -74,30 +74,12 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-263.13332)">
-    <path
-       style="fill:#867b33;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 4.8379714,278.24081 0.047906,16.9562 24.4872156,-0.18091 -0.143504,-16.30282 -12.762773,-13.89712 z"
-       id="path840"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.7613312;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 4.8358257,278.77096 24.9271723,0.19849"
-       id="path1397"
-       inkscape:connector-curvature="0" />
-    <rect
-       style="opacity:1;fill:#b3b4b5;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect819"
-       width="4.7440343"
-       height="5.9467468"
-       x="19.777945"
-       y="281.63199" />
-    <rect
-       style="opacity:1;fill:#b3b4b5;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.75466561;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect819-6"
-       width="7.0366449"
-       height="12.343842"
-       x="8.8094835"
-       y="281.99387" />
+    <ellipse
+       style="opacity:1;fill:#7d7dff;fill-opacity:1;stroke:#000000;stroke-width:4.70007086;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path823"
+       cx="17.001923"
+       cy="280.11221"
+       rx="14.171733"
+       ry="14.110909" />
   </g>
 </svg>
