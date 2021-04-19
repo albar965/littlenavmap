@@ -1053,7 +1053,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
+             <width>560</width>
              <height>486</height>
             </rect>
            </property>
@@ -1514,8 +1514,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>591</width>
+             <height>290</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -1849,7 +1849,7 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
+             <width>449</width>
              <height>583</height>
             </rect>
            </property>
@@ -2713,8 +2713,8 @@ Afftects map and elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>407</width>
+             <height>317</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -3085,8 +3085,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>325</width>
+             <height>352</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -3550,8 +3550,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>600</width>
-             <height>480</height>
+             <width>557</width>
+             <height>348</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -3983,15 +3983,10 @@ Also affects labels at holds and traffic patterns.</string>
                <item row="2" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsSimUpdateBox">
                  <property name="toolTip">
-                  <string>&lt;p&gt;Defines a box in percent of the map size.&lt;/p&gt;
-
-&lt;p&gt;Function depends on &quot;Center map on aircraft and next flight plan waypoint&quot; above:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Checked: User aircraft and next flight plan waypoint are kept within the box defined by this input field. Smaller values zoom more out and larger values zoom closer. Only applied if aircraft is flying.&lt;/li&gt;
-&lt;li&gt;Not checked: User aircraft is centered once it moves outside the box. Smaller values keep the aircraft centered and will move the map more often. Bigger values center the aircraft only if it reaches map boundary.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Refer to the online manual for more information.&lt;/p&gt;</string>
+                  <string>Defines a box in percent of the map size. 
+A small value keeps the aircraft centered and will move the map often. 
+A large value will update the map only when aircraft reaches the map boundary.
+Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is checked and a flight plan with an active leg is detected.</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>

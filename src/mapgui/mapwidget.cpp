@@ -88,6 +88,9 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
   }
 });
 
+// Keep aircraft and next waypoint centered within this margins
+const int PLAN_SIM_UPDATE_BOX = 75;
+
 // Get elevation when mouse is still
 const int ALTITUDE_UPDATE_TIMEOUT = 200;
 
@@ -2128,8 +2131,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
   // Create screen coordinates =============================
   CoordinateConverter conv(viewport());
-  bool aircraftVisible = false;
-  QPoint aircraftPoint = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &aircraftVisible);
+  bool visible = false;
+  QPoint aircraftPoint = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
 
   // Difference from last movement on map
   QPoint aircraftPointDiff = aircraftPoint - conv.wToS(last.getPosition());
@@ -2139,18 +2142,21 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   bool centerAircraftAndLeg = isCenterLegAndAircraftActive();
 
   // Used to check if objects are still visible within smaller bounds
-  QRect widgetRectSmall(rect());
   // Calculate the amount that has to be subtracted from each side of the rectangle
   float boxFactor = (100.f - od.getSimUpdateBox()) / 100.f / 2.f;
   if(centerAircraftAndLeg)
     boxFactor = std::min(boxFactor, 0.35f);
 
-  // Calculate margins for all sides - keep minimum of 32 pixels
+  // Calculate margins for all sides - keep minimum of 32 pixels - this is used for plain aircraft centering
+  QRect widgetRectSmall(rect()), widgetRectSmallPlan(rect());
   int dx = std::max(static_cast<int>(width() * boxFactor), 32);
   int dy = std::max(static_cast<int>(height() * boxFactor), 32);
   widgetRectSmall.adjust(dx, dy, -dx, -dy);
 
-  aircraftVisible = widgetRectSmall.contains(aircraftPoint);
+  boxFactor = (100.f - PLAN_SIM_UPDATE_BOX) / 100.f / 2.f;
+  dx = std::max(static_cast<int>(width() * boxFactor), 32);
+  dy = std::max(static_cast<int>(height() * boxFactor), 32);
+  widgetRectSmallPlan.adjust(dx, dy, -dx, -dy);
 
   bool wasEmpty = aircraftTrack->isEmpty();
 #ifdef DEBUG_INFORMATION_DISABLED
@@ -2255,6 +2261,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
     if(centerAircraft && !contextMenuActive) // centering required by button but not while menu is open
     {
+      bool aircraftVisible = widgetRectSmallPlan.contains(aircraftPoint);
+
       if(!aircraftVisible || // Not visible on world map
          posHasChanged) // Significant change in position might require zooming or re-centering
       {
