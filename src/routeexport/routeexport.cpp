@@ -395,17 +395,24 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
   if(routeValidateMulti(format))
   {
     // Use shorter suffix for MSFS CFJ since it accepts only 8 characters
-    QString suffix = msfs ? ".flp" : "01.flp";
+    QString suffix = msfs || crj ? ".flp" : "01.flp";
 
     // <Documents>/Aerosoft/Airbus/Flightplans.
     QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), suffix));
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS,
-                         crj ?
-                         std::bind(&FlightplanIO::saveCrjFlp, flightplanIO, _1, _2) :
-                         std::bind(&FlightplanIO::saveFlp, flightplanIO, _1, _2)))
+      auto exportFunc = &FlightplanIO::saveFlp;
+      if(crj)
+      {
+        // Adapt to the format changes between the different aircraft (not sure if these are real)
+        if(msfs)
+          exportFunc = &FlightplanIO::saveMsfsCrjFlp;
+        else
+          exportFunc = &FlightplanIO::saveCrjFlp;
+      }
+
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(exportFunc, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
