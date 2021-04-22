@@ -332,7 +332,7 @@ private:
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;
-  QList<std::pair<int, QPoint> > routePoints; /* Editable points */
+  QList<std::pair<int, QPoint> > routePointsEditable; /* Editable points */
   QList<std::pair<int, QPoint> > routePointsAll; /* All points */
 
   /* Geometry objects that are cached in screen coordinate system for faster access to tooltips etc. */

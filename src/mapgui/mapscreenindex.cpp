@@ -84,7 +84,7 @@ void MapScreenIndex::copy(const MapScreenIndex& other)
   airspacePolygons = other.airspacePolygons;
   ilsPolygons = other.ilsPolygons;
   ilsLines = other.ilsLines;
-  routePoints = other.routePoints;
+  routePointsEditable = other.routePointsEditable;
   routePointsAll = other.routePointsAll;
 }
 
@@ -463,8 +463,11 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
 {
   const Route& route = NavApp::getRouteConst();
 
+  map::MapTypes shown = paintLayer->getShownMapObjects();
+  bool missed = shown.testFlag(map::MISSED_APPROACH);
+
   routeLines.clear();
-  routePoints.clear();
+  routePointsEditable.clear();
   routePointsAll.clear();
 
   QList<std::pair<int, QPoint> > airportPoints;
@@ -481,6 +484,10 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
     for(int i = 0; i < route.size(); i++)
     {
       const RouteLeg& routeLeg = route.value(i);
+
+      // Do not add the missed legs if they are not shown
+      if(routeLeg.getProcedureLeg().isMissed() && !missed)
+        continue;
 
       const Pos& p2 = routeLeg.getPosition();
       int x2, y2;
@@ -506,8 +513,8 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
         updateLineScreenGeometry(routeLines, i - 1, Line(p1, p2), curBox, conv);
       p1 = p2;
     }
-    routePoints.append(airportPoints);
-    routePoints.append(otherPointsEditable);
+    routePointsEditable.append(airportPoints);
+    routePointsEditable.append(otherPointsEditable);
 
     routePointsAll.append(airportPoints);
     routePointsAll.append(otherPointsEditable);
@@ -784,7 +791,7 @@ int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance, b
   int minIndex = -1;
   float minDist = map::INVALID_DISTANCE_VALUE;
 
-  for(const std::pair<int, QPoint>& rsp : (editableOnly ? routePoints : routePointsAll))
+  for(const std::pair<int, QPoint>& rsp : (editableOnly ? routePointsEditable : routePointsAll))
   {
     const QPoint& point = rsp.second;
     float dist = atools::geo::manhattanDistance(point.x(), point.y(), xs, ys);

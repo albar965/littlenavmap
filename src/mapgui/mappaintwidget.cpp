@@ -378,6 +378,9 @@ void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
 
   if(type.testFlag(map::ILS) && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
+
+  if(type.testFlag(map::MISSED_APPROACH) && show != curShow)
+    screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
 }
 
 void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show)
