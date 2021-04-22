@@ -37,9 +37,9 @@ DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, c
    * Change only once. Otherwise program might suggest the user to create the new folders again */
   applicationDir = tr("%1 Files").arg(appName);
 
-#ifndef QT_NO_DEBUG
-  applicationDir += " - DEBUG";
-#endif
+  // #ifndef QT_NO_DEBUG
+  // applicationDir += " - DEBUG";
+  // #endif
 
   /*: Default folder name which might be created initially by program.
    * Change only once. Otherwise program might suggest the user to create the new folders again */

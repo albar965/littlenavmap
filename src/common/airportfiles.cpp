@@ -45,8 +45,8 @@ QStringList AirportFiles::getAirportFilesBase(const QString& airportIdent)
   /*: Important path parts "Files/Airports" to airport and files (".../Documents/Litte Navmap Files/Airports").
    *  Do not change after initial translation to avoid breaking the file lookup. */
   QFileInfo translatedPath = atools::documentsDir() +
-                             QDir::separator() + QApplication::applicationName() +
-                             tr(" Files") +
+                             QDir::separator() +
+                             tr("%1 Files").arg(QApplication::applicationName()) +
                              QDir::separator() +
                              tr("Airports") +
                              QDir::separator() + airportIdent;
