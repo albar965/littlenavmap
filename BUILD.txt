@@ -25,6 +25,15 @@ Build and install it according to the included instructions here
 https://github.com/albar965/littlenavmap/wiki/Compiling#compile-marble .
 Use branch `lnm/1.1` for the Marble build.
 
+A typical Marble build script for Windows minimizing uneeded features looks like below:
+
+cd $APROJECTS/build-marble-release
+
+cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC_BUILD=TRUE -DQTONLY=TRUE -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_INHIBIT_SCREENSAVER_PLUGIN=NO -DBUILD_MARBLE_APPS=NO -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_MARBLE_TESTS=NO -DBUILD_MARBLE_TOOLS=NO -DBUILD_TESTING=NO -DBUILD_WITH_DBUS=NO -DMARBLE_EMPTY_MAPTHEME=YES -DMOBILE=NO -DWITH_DESIGNER_PLUGIN=NO -DWITH_Phonon=NO -DWITH_Qt5Location=NO -DWITH_Qt5Positioning=NO -DWITH_Qt5SerialPort=NO -DWITH_ZLIB=NO -DWITH_libgps=NO -DWITH_libshp=NO -DWITH_libwlocate=NO -DCMAKE_INSTALL_PREFIX=$APROJECTS/Marble-release -DEXEC_INSTALL_PREFIX=$APROJECTS/Marble-release -DCMAKE_PREFIX_PATH=$HOME/Qt/5.12.8/gcc_64/ ../marble/
+
+Keep in mind that the Marble build is buggy on Windows and macOS and does not build a proper installation on `make install`. 
+You have to copy library and include files manually.
+
 ## Default paths and Environment Variables
 
 The project can be built with almost no configuration changes since all project files fall back to sensible

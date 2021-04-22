@@ -1213,13 +1213,20 @@ void RouteAltitude::calculateArrival()
     qWarning() << Q_FUNC_INFO << "descentRateWindFtPerNm " << descentRateWindFtPerNm;
     return;
   }
+  int destinationAirportLegIndex = route->getDestinationAirportLegIndex();
 
   // Calculate from last leg down until we hit the cruise altitude (TOD)
-  for(int i = route->getDestinationAirportLegIndex(); i >= 0; i--)
+  for(int i = destinationAirportLegIndex; i >= 0; i--)
   {
     RouteAltitudeLeg& alt = (*this)[i];
     RouteAltitudeLeg *lastAltLeg = i < destinationLegIdx ? &(*this)[i + 1] : nullptr;
+
+    // Use altitude of last leg
     float lastLegAlt = lastAltLeg != nullptr ? lastAltLeg->y2() : 0.;
+
+    // Use altitude of airport if destination
+    if(i == destinationAirportLegIndex)
+      lastLegAlt = route->value(i).getAltitude();
 
     // Start with altitude of the right leg (close to dest)
     float newAltitude = lastLegAlt;
