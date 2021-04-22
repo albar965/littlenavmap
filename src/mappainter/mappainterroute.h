@@ -75,9 +75,9 @@ private:
   void paintRoute();
 
   void paintAirport(int x, int y, const map::MapAirport& obj);
-  void paintVor(int x, int y, const map::MapVor& obj, bool preview);
+  void paintVor(float x, float y, const map::MapVor& obj, bool preview);
   void paintNdb(float x, float y, bool preview);
-  void paintWaypoint(const QColor& col, int x, int y, bool preview);
+  void paintWaypoint(const QColor& col, float x, float y, bool preview);
   void paintProcedure(proc::MapProcedureLeg& lastLegPoint,
                       const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview);
   void paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawAsRoute,
@@ -90,7 +90,7 @@ private:
   void paintText(const QColor& color, float x, float y, const QStringList& texts,
                  bool drawAsRoute, textatt::TextAttributes atts = textatt::NONE);
   void paintUserpoint(int x, int y, bool preview);
-  void paintProcedurePoint(int x, int y, bool preview);
+  void paintProcedurePoint(float x, float y, bool preview);
 
   void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint,
                            const proc::MapProcedureLegs& legs, int index, bool preview,
@@ -112,7 +112,7 @@ private:
                          QLineF line, const proc::MapProcedureLeg& leg, const QPointF& intersectPoint, bool draw);
 
   /* Waypoint Underlays */
-  void paintProcedureUnderlay(const proc::MapProcedureLeg& leg, int x, int y, int size);
+  void paintProcedureUnderlay(const proc::MapProcedureLeg& leg, float x, float y, int size);
 
   void drawStartParking();
   void drawWindBarbs(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);

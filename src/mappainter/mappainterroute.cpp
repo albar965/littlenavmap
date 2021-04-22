@@ -1304,10 +1304,9 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     {
       if(wToSBuf(leg.interceptPos, x, y, margins))
       {
-        // Draw intercept comment - no altitude restriction there
+        // Draw intercept comment - no altitude restriction and no underlay there
         texts.append(leg.displayText);
-        if(drawText)
-          paintProcedureUnderlay(leg, x, y, defaultOverflySize);
+
         paintProcedurePoint(x, y, false);
         if(drawText)
           paintText(mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
@@ -1487,7 +1486,7 @@ void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& 
                                  context->mapLayerRoute->getMaxTextLengthAirport());
 }
 
-void MapPainterRoute::paintWaypoint(const QColor& col, int x, int y, bool preview)
+void MapPainterRoute::paintWaypoint(const QColor& col, float x, float y, bool preview)
 {
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
   size = std::max(size, 8.f);
@@ -1518,13 +1517,13 @@ void MapPainterRoute::paintWaypointText(float x, float y,
   symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, fill, additionalText);
 }
 
-void MapPainterRoute::paintVor(int x, int y, const map::MapVor& obj, bool preview)
+void MapPainterRoute::paintVor(float x, float y, const map::MapVor& obj, bool preview)
 {
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
   size = std::max(size, 8.f);
   symbolPainter->drawVorSymbol(context->painter, obj, x, y,
                                size, !preview, false,
-                               context->mapLayerRoute->isVorLarge() ? size * 5 : 0);
+                               context->mapLayerRoute->isVorLarge() ? static_cast<int>(size) * 5 : 0);
 }
 
 void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, bool drawAsRoute,
@@ -1587,14 +1586,13 @@ void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& obj, boo
 }
 
 /* paint intermediate approach point */
-void MapPainterRoute::paintProcedurePoint(int x, int y, bool preview)
+void MapPainterRoute::paintProcedurePoint(float x, float y, bool preview)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
   symbolPainter->drawProcedureSymbol(context->painter, x, y, size + 3, !preview);
 }
 
-void MapPainterRoute::paintProcedureUnderlay(const proc::MapProcedureLeg& leg,
-                                             int x, int y, int size)
+void MapPainterRoute::paintProcedureUnderlay(const proc::MapProcedureLeg& leg, float x, float y, int size)
 {
   // Ring to indicate fly over
   // Maltese cross to indicate FAF on the map

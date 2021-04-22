@@ -132,19 +132,19 @@ public:
   void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill);
 
   /* Circle for approach points which are not navaids */
-  void drawProcedureSymbol(QPainter *painter, int x, int y, int size, bool routeFill);
+  void drawProcedureSymbol(QPainter *painter, float x, float y, int size, bool routeFill);
 
   /* Circle for flight plan waypoints */
   void drawLogbookPreviewSymbol(QPainter *painter, float x, float y, float size);
 
   /* Maltese cross to indicate FAF on the map and ring to indicate fly over*/
-  void drawProcedureUnderlay(QPainter *painter, int x, int y, int size, bool flyover, bool faf);
+  void drawProcedureUnderlay(QPainter *painter, float x, float y, int size, bool flyover, bool faf);
 
   /* Flyover underlay */
-  void drawProcedureFlyover(QPainter *painter, int x, int y, int size);
+  void drawProcedureFlyover(QPainter *painter, float x, float y, int size);
 
   /* Maltese cross to indicate FAF on the map */
-  void drawProcedureFaf(QPainter *painter, int x, int y, int size);
+  void drawProcedureFaf(QPainter *painter, float x, float y, int size);
 
   /* Draw a custom text box */
   void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,

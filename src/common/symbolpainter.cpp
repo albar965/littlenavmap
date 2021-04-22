@@ -653,7 +653,7 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
   painter->drawRect(x - radius, y - radius, size, size);
 }
 
-void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int size, bool routeFill)
+void SymbolPainter::drawProcedureSymbol(QPainter *painter, float x, float y, int size, bool routeFill)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -682,7 +682,7 @@ void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, float x, float y
   painter->drawEllipse(x - radius, y - radius, size, size);
 }
 
-void SymbolPainter::drawProcedureUnderlay(QPainter *painter, int x, int y, int size, bool flyover, bool faf)
+void SymbolPainter::drawProcedureUnderlay(QPainter *painter, float x, float y, int size, bool flyover, bool faf)
 {
   if(flyover)
     // Ring to indicate fly over
@@ -693,7 +693,7 @@ void SymbolPainter::drawProcedureUnderlay(QPainter *painter, int x, int y, int s
     drawProcedureFaf(painter, x, y, size + 18);
 }
 
-void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int size)
+void SymbolPainter::drawProcedureFlyover(QPainter *painter, float x, float y, int size)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::OpaqueMode);
@@ -706,7 +706,7 @@ void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int si
   painter->drawEllipse(x - radius, y - radius, size, size);
 }
 
-void SymbolPainter::drawProcedureFaf(QPainter *painter, int x, int y, int size)
+void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, int size)
 {
   static QPolygonF polygon(
   {
