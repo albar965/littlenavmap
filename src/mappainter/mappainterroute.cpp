@@ -1061,7 +1061,7 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
     angleAbsDiff(normalizeCourse(angleFromQt(lastLine.angle())), normalizeCourse(angleFromQt(line.angle())));
 
   // Use a bigger extension (modify course more) if the course is a 180 (e.g. 90 and returning to 270)
-  float extension = atools::almostEqual(diff, 0., 1.) || atools::almostEqual(diff, 180., 1.) ? 1.f : 0.15f;
+  float extension = atools::almostEqual(diff, 0., 1.) || atools::almostEqual(diff, 180., 1.) ? 1.f : 0.5f;
 
   // Calculate the start position of the next line and leave space for the arc
   QLineF arc(line.p1(), QPointF(line.x2(), line.y2() /* + 100.*/));
