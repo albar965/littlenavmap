@@ -89,7 +89,7 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
 });
 
 // Keep aircraft and next waypoint centered within this margins
-const int PLAN_SIM_UPDATE_BOX = 75;
+const int PLAN_SIM_UPDATE_BOX = 85;
 
 // Get elevation when mouse is still
 const int ALTITUDE_UPDATE_TIMEOUT = 200;
@@ -2189,7 +2189,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   // Check if screen has to be updated/scrolled/zoomed
 
   // Show aircraft is enabled
-  bool centerAircraft = mainWindow->getUi()->actionMapAircraftCenter->isChecked();
+  bool centerAircraftChecked = mainWindow->getUi()->actionMapAircraftCenter->isChecked();
 
   // Get delta values for update rate
   const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(od.getSimUpdateRate());
@@ -2256,12 +2256,14 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     {
       nextWpPos = activeLeg != nullptr ? route.getActiveLeg()->getPosition() : Pos();
       nextWpPoint = conv.wToS(nextWpPos, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
-      nextWpPosVisible = widgetRectSmall.contains(nextWpPoint);
+      nextWpPosVisible = widgetRectSmallPlan.contains(nextWpPoint);
     }
 
-    if(centerAircraft && !contextMenuActive) // centering required by button but not while menu is open
+    if(centerAircraftChecked && !contextMenuActive) // centering required by button but not while menu is open
     {
-      bool aircraftVisible = widgetRectSmallPlan.contains(aircraftPoint);
+      bool aircraftVisible = centerAircraftAndLeg ?
+                             widgetRectSmallPlan.contains(aircraftPoint) : // Box for aircraft and waypoint
+                             widgetRectSmall.contains(aircraftPoint); // Use defined box in options
 
       if(!aircraftVisible || // Not visible on world map
          posHasChanged) // Significant change in position might require zooming or re-centering
@@ -2347,8 +2349,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                     aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &aircraftVisible);
                   nextWpPoint = conv.wToS(nextWpPos, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
 
-                  aircraftVisible = widgetRectSmall.contains(aircraftPoint);
-                  nextWpPosVisible = widgetRectSmall.contains(nextWpPoint);
+                  aircraftVisible = widgetRectSmallPlan.contains(aircraftPoint);
+                  nextWpPosVisible = widgetRectSmallPlan.contains(nextWpPoint);
 
                   if(!aircraftVisible || !nextWpPosVisible)
                     // Either point is not visible - zoom out
@@ -2378,7 +2380,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
           else
           {
             // Center aircraft only ===================================================================
-            if(!widgetRectSmall.contains(aircraftPoint) || // Aircraft out of box or ...
+            if(!widgetRectSmall.contains(aircraftPoint) || // Aircraft out of user defined box or ...
                updateAlways) // ... update always
             {
               setUpdatesEnabled(false);
