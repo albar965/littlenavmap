@@ -1120,6 +1120,12 @@ public:
     return 180;
   }
 
+  /* Seconds */
+  int getOnlineVatsimTransceiverReload() const
+  {
+    return onlineVatsimTransceiverReload;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1408,6 +1414,7 @@ private:
   /* Values loaded from networks.cfg */
   int onlineCustomReload = 180,
       onlineVatsimReload = 180,
+      onlineVatsimTransceiverReload = 180,
       onlinePilotEdgeReload = 180,
       onlineIvaoReload = 180;
 

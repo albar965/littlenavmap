@@ -42,6 +42,7 @@
 // #define DEBUG_ONLINE_DOWNLOAD 1
 
 static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
+static const int MIN_TRANSCEIVER_DOWNLOAD_INTERVAL_MIN = 5;
 
 // Remove if duplicates with same registration if they are this close (500 kts for 3 min)
 #ifdef DEBUG_INFORMATION
@@ -192,26 +193,42 @@ void OnlinedataController::startDownloadInternal()
   bool whazzupGzipped = false, whazzupJson = false;
   whazzupUrlFromStatus = manager->getWhazzupUrlFromStatus(whazzupGzipped, whazzupJson);
 
-  if(currentState == NONE)
+  if(currentState == NONE) // Happens if the timeout is triggered - not in a download chain
   {
-    // Create a default user agent if not disabled for debugging
-    if(!atools::settings::Settings::instance().valueBool(lnm::OPTIONS_NO_USER_AGENT))
-      downloader->setDefaultUserAgentShort(QString(" Config/%1").arg(getNetwork()));
+    // Check for timeout of transceivers and start download before whazzup JSON
+    int transceiverReload = OptionData::instance().getOnlineVatsimTransceiverReload();
+    if(transceiverReload == -1)
+      transceiverReload = MIN_TRANSCEIVER_DOWNLOAD_INTERVAL_MIN * 60;
 
     QString url;
-    if(whazzupUrlFromStatus.isEmpty() && // Status not downloaded yet
-       !onlineStatusUrl.isEmpty()) // Need  status.txt by configuration
+    if(convertFormat(OptionData::instance().getOnlineFormat()) == atools::fs::online::VATSIM_JSON3 &&
+       lastUpdateTimeTransceivers.isValid() && // Initial download already happened
+       lastUpdateTimeTransceivers < QDateTime::currentDateTime().addSecs(-transceiverReload)) // Check age of download
     {
-      // Start status.txt and whazzup.txt download cycle
-      url = onlineStatusUrl;
-      currentState = DOWNLOADING_STATUS;
+      // Download transceivers since data is too old - whazzup is downloaded right after this
+      url = OptionData::instance().getOnlineTransceiverUrl();
+      currentState = DOWNLOADING_TRANSCEIVERS;
     }
-    else if(!onlineWhazzupUrl.isEmpty() || !whazzupUrlFromStatus.isEmpty())
-    // Have whazzup.txt url either from config or status
+    else
     {
-      // Start whazzup.txt and servers.txt download cycle
-      url = whazzupUrlFromStatus.isEmpty() ? onlineWhazzupUrl : whazzupUrlFromStatus;
-      currentState = DOWNLOADING_WHAZZUP;
+      // Create a default user agent if not disabled for debugging
+      if(!atools::settings::Settings::instance().valueBool(lnm::OPTIONS_NO_USER_AGENT))
+        downloader->setDefaultUserAgentShort(QString(" Config/%1").arg(getNetwork()));
+
+      if(whazzupUrlFromStatus.isEmpty() && // Status not downloaded yet
+         !onlineStatusUrl.isEmpty()) // Need  status.txt by configuration
+      {
+        // Start status.txt and whazzup.txt download cycle
+        url = onlineStatusUrl;
+        currentState = DOWNLOADING_STATUS;
+      }
+      else if(!onlineWhazzupUrl.isEmpty() || !whazzupUrlFromStatus.isEmpty())
+      // Have whazzup.txt url either from config or status
+      {
+        // Start whazzup.txt and servers.txt download cycle
+        url = whazzupUrlFromStatus.isEmpty() ? onlineWhazzupUrl : whazzupUrlFromStatus;
+        currentState = DOWNLOADING_WHAZZUP;
+      }
     }
 
     if(!url.isEmpty())
@@ -242,10 +259,13 @@ QString OnlinedataController::uncompress(const QByteArray& data, const QString& 
 void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
+    qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size() << "state" << stateAsStr(currentState);
 
+  const QDateTime now = QDateTime::currentDateTime();
   if(currentState == DOWNLOADING_STATUS)
   {
+    // status.txt downloaded ============================================
+
     // Parse status file
     manager->readFromStatus(uncompress(data, Q_FUNC_INFO, false /* utf8 */));
 
@@ -274,22 +294,26 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     else
     {
       // Done after downloading status.txt - start timer for next session
+      // Should never happen
       startDownloadTimer();
       currentState = NONE;
-      lastUpdateTime = QDateTime::currentDateTime();
+      lastUpdateTime = now;
     }
   }
   else if(currentState == DOWNLOADING_TRANSCEIVERS)
   {
+    // transceivers.json downloaded ============================================
     manager->readFromTransceivers(uncompress(data, Q_FUNC_INFO, true /* utf8 */));
 
     // Next in chain after transceivers is JSON
     currentState = DOWNLOADING_WHAZZUP;
+    lastUpdateTimeTransceivers = now;
     downloader->setUrl(whazzupUrlFromStatus);
     startDownloader();
   }
   else if(currentState == DOWNLOADING_WHAZZUP)
   {
+    // whazzup.txt or JSON downloaded ============================================
     atools::fs::online::Format format = convertFormat(OptionData::instance().getOnlineFormat());
 
     // Contains servers and does not need an extra download
@@ -301,12 +325,10 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       // Get all callsigns and positions from online list to allow deduplication
       clientCallsignAndPosMap.clear();
       manager->getClientCallsignAndPosMap(clientCallsignAndPosMap);
-      if(verbose)
-        qDebug() << Q_FUNC_INFO << clientCallsignAndPosMap.size();
 
       QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
       if(!vatsimJson && !whazzupVoiceUrlFromStatus.isEmpty() &&
-         lastServerDownload < QDateTime::currentDateTime().addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
+         lastServerDownload < now.addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
       {
         // Next in chain is server file
         currentState = DOWNLOADING_WHAZZUP_SERVERS;
@@ -318,7 +340,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
         // Done after downloading whazzup.txt - start timer for next session
         startDownloadTimer();
         currentState = NONE;
-        lastUpdateTime = QDateTime::currentDateTime();
+        lastUpdateTime = now;
 
         aircraftCache.clear();
         simulatorAiRegistrations.clear();
@@ -337,7 +359,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       // Done after old update - try again later
       startDownloadTimer();
       currentState = NONE;
-      lastUpdateTime = QDateTime::currentDateTime();
+      lastUpdateTime = now;
     }
   }
   else if(currentState == DOWNLOADING_WHAZZUP_SERVERS)
@@ -345,12 +367,12 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     manager->readServersFromWhazzup(uncompress(data, Q_FUNC_INFO, false /* utf8 */),
                                     convertFormat(OptionData::instance().getOnlineFormat()),
                                     manager->getLastUpdateTimeFromWhazzup());
-    lastServerDownload = QDateTime::currentDateTime();
+    lastServerDownload = now;
 
     // Done after downloading server.txt - start timer for next session
     startDownloadTimer();
     currentState = NONE;
-    lastUpdateTime = QDateTime::currentDateTime();
+    lastUpdateTime = now;
 
     aircraftCache.clear();
     simulatorAiRegistrations.clear();
@@ -364,6 +386,9 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 
 void OnlinedataController::startDownloader()
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << downloader->getUrl();
+
   // Call later in the event loop to avoid recursion
   QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
 }
@@ -728,4 +753,26 @@ void OnlinedataController::startDownloadTimer()
   downloadTimer.setInterval(intervalSeconds * 1000);
 #endif
   downloadTimer.start();
+}
+
+QString OnlinedataController::stateAsStr(OnlinedataController::State state)
+{
+  switch(state)
+  {
+    case OnlinedataController::NONE:
+      return "None";
+
+    case OnlinedataController::DOWNLOADING_STATUS:
+      return "Downloading Status";
+
+    case OnlinedataController::DOWNLOADING_WHAZZUP:
+      return "Downloading Whazzup";
+
+    case OnlinedataController::DOWNLOADING_TRANSCEIVERS:
+      return "Downloading Transceivers";
+
+    case OnlinedataController::DOWNLOADING_WHAZZUP_SERVERS:
+      return "Downloading Servers";
+  }
+  return QString();
 }

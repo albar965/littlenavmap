@@ -144,7 +144,7 @@ signals:
   void onlineNetworkChanged();
 
 private:
-  /* HTTP download signal slots */
+  /* HTTP download signal slots for all possible files/URLs */
   void downloadFinished(const QByteArray& data, QString url);
   void downloadFailed(const QString& error, int errorCode, QString url);
   void downloadSslErrors(const QStringList& errors, const QString& downloadUrl);
@@ -163,10 +163,16 @@ private:
   /* Tries to fetch geometry for atc centers from the user geometry database from cache */
   atools::geo::LineString *geometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type);
 
+  /* Database manager */
   atools::fs::online::OnlinedataManager *manager;
+
+  /* Downloader for all files */
   atools::util::HttpDownloader *downloader;
+
   MainWindow *mainWindow;
 
+  /* State is set before triggering the download and clear on the last download in the chain.
+   *  Set to NONE while timeout for whazzup download is running. */
   enum State
   {
     NONE, /* Not downloading anything */
@@ -176,15 +182,20 @@ private:
     DOWNLOADING_WHAZZUP_SERVERS /* Downloading servers */
   };
 
+  QString stateAsStr(OnlinedataController::State state);
+
   State currentState = NONE;
 
-  QTimer downloadTimer; /* Triggers recurring downloads */
+  QTimer downloadTimer; /* Triggers recurring downloads OnlinedataController::startDownloadInternal */
 
   /* Used to check server downloads and limit them to 15 minutes */
   QDateTime lastServerDownload;
 
-  /*  Last update from whazzup */
+  /*  Last update from whazzup only used to display in the user interface */
   QDateTime lastUpdateTime;
+
+  /*  Last update from transceivers - used to trigger a transceivers download */
+  QDateTime lastUpdateTimeTransceivers;
 
   QString whazzupUrlFromStatus;
 

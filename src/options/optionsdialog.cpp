@@ -1037,6 +1037,8 @@ void OptionsDialog::restoreState()
   od.onlineVatsimTransceiverUrl = networkSettings.value("vatsim/transceiverurl").toString();
   od.onlineVatsimReload = networkSettings.value("vatsim/update") == "auto" ? -1 :
                           networkSettings.value("vatsim/update").toInt();
+  od.onlineVatsimTransceiverReload = networkSettings.value("vatsim/updatetransceiver") == "auto" ? -1 :
+                                     networkSettings.value("vatsim/updatetransceiver").toInt();
 
   od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();
   od.onlineIvaoReload = networkSettings.value("ivao/update") == "auto" ? -1 :
