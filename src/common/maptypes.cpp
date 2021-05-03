@@ -413,6 +413,9 @@ void initTranslateableTexts()
       {map::NATIONAL_PARK, QObject::tr("National Park")},
       {map::MODEC, QObject::tr("Mode-C")},
       {map::RADAR, QObject::tr("Radar")},
+      {map::GCA, QObject::tr("General Control Area")},
+      {map::MCTR, QObject::tr("Military Control Zone")},
+      {map::TRSA, QObject::tr("Terminal Radar Service Area")},
       {map::TRAINING, QObject::tr("Training")},
       {map::GLIDERPROHIBITED, QObject::tr("Glider Prohibited")},
       {map::WAVEWINDOW, QObject::tr("Wave Window")},
@@ -459,6 +462,9 @@ void initTranslateableTexts()
       {map::NATIONAL_PARK, QString()},
       {map::MODEC, QObject::tr("Needs altitude aware transponder.")},
       {map::RADAR, QObject::tr("Terminal radar area. Not controlled.")},
+      {map::GCA, QString()},
+      {map::MCTR, QString()},
+      {map::TRSA, QString()},
       {map::TRAINING, QString()},
       {map::GLIDERPROHIBITED, QString()},
       {map::WAVEWINDOW, QObject::tr("Sailplane Area.")},
@@ -567,6 +573,9 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"NP", map::NATIONAL_PARK},
     {"MD", map::MODEC},
     {"RD", map::RADAR},
+    {"GCA", map::GCA}, // Control area - new type
+    {"MCTR", map::MCTR},
+    {"TRSA", map::TRSA},
     {"TR", map::TRAINING},
     {"GP", map::GLIDERPROHIBITED},
     {"WW", map::WAVEWINDOW},
@@ -601,6 +610,9 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
     {map::NATIONAL_PARK, "NP"},
     {map::MODEC, "MD"},
     {map::RADAR, "RD"},
+    {map::GCA, "GCA"},
+    {map::MCTR, "MCTR"},
+    {map::TRSA, "TRSA"},
     {map::TRAINING, "TR"},
     {map::GLIDERPROHIBITED, "GP"},
     {map::WAVEWINDOW, "WW"},
@@ -649,6 +661,11 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
     {map::NATIONAL_PARK, 2},
     {map::MODEC, 6},
     {map::RADAR, 7},
+
+    {map::GCA, 15},
+    {map::MCTR, 16},
+    {map::TRSA, 17},
+
     {map::TRAINING, 59},
   });
 

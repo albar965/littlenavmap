@@ -183,8 +183,9 @@ void AirspaceToolBarHandler::createToolButtons()
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspaceother.svg",
                            tr("Select centers and other airspaces"),
-                           {map::CENTER, map::TOWER, map::CLEARANCE, map::GROUND, map::DEPARTURE, map::APPROACH,
-                            map::NATIONAL_PARK, map::MODEC, map::RADAR, map::WAVEWINDOW, map::ONLINE_OBSERVER}, {});
+                           {map::CENTER, map::TOWER, map::GCA, map::MCTR, map::TRSA, map::CLEARANCE, map::GROUND,
+                            map::DEPARTURE, map::APPROACH, map::NATIONAL_PARK, map::MODEC, map::RADAR, map::WAVEWINDOW,
+                            map::ONLINE_OBSERVER}, {});
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspacealt.svg",
                            tr("Select altitude limitations for airspace display"),
