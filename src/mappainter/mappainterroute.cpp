@@ -758,8 +758,11 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
                               proc::COURSE_TO_RADIAL_TERMINATION,
                               proc::HEADING_TO_RADIAL_TERMINATION}))
   {
-    if(contains(leg.turnDirection, {"R", "L"}) &&
-       prevLeg != nullptr /*&& !prevLeg->isInitialFix() && prevLeg->type != proc::START_OF_PROCEDURE*/)
+    if(
+#ifndef DEBUG_DRAW_ALWAYS_BOW
+      contains(leg.turnDirection, {"R", "L"}) &&
+#endif
+      prevLeg != nullptr /*&& !prevLeg->isInitialFix() && prevLeg->type != proc::START_OF_PROCEDURE*/)
     {
       float lineDist = static_cast<float>(QLineF(lastLines.last().p2(), line.p1()).length());
       if(!lastLines.last().p2().isNull() && lineDist > 2.f)

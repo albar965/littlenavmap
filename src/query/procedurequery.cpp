@@ -1440,6 +1440,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 
         Pos intersect;
 
+#ifndef DEBUG_DRAW_ALWAYS_BOW
         // Check if this is a reversal maneuver which should be connected with a bow instead of an intercept
         // Always intercept if course could not be calculated (e.g. first procedure leg)
         // Everything bigger than 150 degree is considered a reversal - draw bow instead of intercept
@@ -1457,6 +1458,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
           else
             intersect = intr2;
         }
+#endif
 
         if(intersect.isValid())
         {
