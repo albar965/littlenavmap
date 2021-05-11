@@ -3834,10 +3834,22 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.table();
     if(longDisplay && !aircraft.isAnyBoat() && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
     {
-      if(aircraft.getIndicatedAltitudeFt() < 10000.f && aircraft.getIndicatedSpeedKts() > 251.)
-        html.row2Warning(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
+      if(Unit::getUnitSpeed() == opts::SPEED_KTS)
+      {
+        // Use int value to compare and display to avoid confusing warning display for 250 on rounding errors
+        int indicatedSpeedKts = static_cast<int>(aircraft.getIndicatedSpeedKts());
+        if(aircraft.getIndicatedAltitudeFt() < 10000.f && indicatedSpeedKts > 250)
+          html.row2Warning(tr("Indicated:"), locale.toString(indicatedSpeedKts));
+        else
+          html.row2(tr("Indicated:"), locale.toString(indicatedSpeedKts), ahtml::BOLD);
+      }
       else
-        html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()), ahtml::BOLD);
+      {
+        if(aircraft.getIndicatedAltitudeFt() < 10000.f && aircraft.getIndicatedSpeedKts() > 251.f)
+          html.row2Warning(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
+        else
+          html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()), ahtml::BOLD);
+      }
     }
 
     if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)

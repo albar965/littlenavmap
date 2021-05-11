@@ -228,6 +228,11 @@ public:
     return unitDist;
   }
 
+  static opts::UnitSpeed getUnitSpeed()
+  {
+    return unitSpeed;
+  }
+
   static opts::UnitShortDist getUnitShortDist()
   {
     return unitShortDist;
