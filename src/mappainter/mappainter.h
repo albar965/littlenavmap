@@ -90,7 +90,8 @@ struct PaintContext
   // Same for procedure preview
   QSet<map::MapObjectRef> routeProcIdMap;
 
-  optsd::DisplayOptions dispOpts;
+  optsac::DisplayOptionsUserAircraft dispOptsUser;
+  optsac::DisplayOptionsAiAircraft dispOptsAi;
   optsd::DisplayOptionsAirport dispOptsAirport;
   optsd::DisplayOptionsRose dispOptsRose;
   optsd::DisplayOptionsMeasurement dispOptsMeasurement;
@@ -153,9 +154,14 @@ struct PaintContext
     return queryOverflow;
   }
 
-  bool  dOpt(optsd::DisplayOption opts) const
+  bool  dOptUserAc(optsac::DisplayOptionUserAircraft opts) const
   {
-    return dispOpts.testFlag(opts);
+    return dispOptsUser.testFlag(opts);
+  }
+
+  bool  dOptAiAc(optsac::DisplayOptionAiAircraft opts) const
+  {
+    return dispOptsAi.testFlag(opts);
   }
 
   bool  dOptAp(optsd::DisplayOptionAirport opts) const

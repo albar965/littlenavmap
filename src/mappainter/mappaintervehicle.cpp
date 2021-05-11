@@ -113,7 +113,7 @@ void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAirc
   context->szFont(context->textSizeAircraftUser);
   int offset = -(size / 2);
 
-  if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_TRACK_LINE) &&
+  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRACK_LINE) &&
      userAircraft.getGroundSpeedKts() > 30 &&
      userAircraft.getTrackDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
   {
@@ -176,18 +176,19 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
      (aircraft.isOnline() && context->mapLayer->isOnlineAircraftText()) || // All online
      forceLabel) // Force label for nearby aircraft
   {
-    appendAtcText(texts, aircraft, context->dOpt(optsd::ITEM_AI_AIRCRAFT_REGISTRATION),
-                  context->dOpt(optsd::ITEM_AI_AIRCRAFT_TYPE),
-                  context->dOpt(optsd::ITEM_AI_AIRCRAFT_AIRLINE),
-                  context->dOpt(optsd::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER));
+    appendAtcText(texts, aircraft, context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_REGISTRATION),
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TYPE),
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_AIRLINE),
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER),
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE));
 
     if(aircraft.getGroundSpeedKts() > 30)
       appendSpeedText(texts, aircraft,
-                      context->dOpt(optsd::ITEM_AI_AIRCRAFT_IAS),
-                      context->dOpt(optsd::ITEM_AI_AIRCRAFT_GS),
-                      context->dOpt(optsd::ITEM_AI_AIRCRAFT_TAS));
+                      context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_IAS),
+                      context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_GS),
+                      context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TAS));
 
-    if(context->dOpt(optsd::ITEM_AI_AIRCRAFT_DEP_DEST) &&
+    if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DEP_DEST) &&
        (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()))
     {
       texts.append(tr("%1 to %2").
@@ -197,7 +198,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
 
     if(!aircraft.isOnGround())
     {
-      if(context->dOpt(optsd::ITEM_AI_AIRCRAFT_HEADING))
+      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_HEADING))
       {
         float heading = atools::fs::sc::SC_INVALID_FLOAT;
         if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
@@ -210,13 +211,13 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
           texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
       }
 
-      if(context->dOpt(optsd::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
         appendClimbSinkText(texts, aircraft);
 
-      if(context->dOpt(optsd::ITEM_AI_AIRCRAFT_ALTITUDE))
+      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_ALTITUDE))
       {
         QString upDown;
-        if(!context->dOpt(optsd::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+        if(!context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
           climbSinkPointer(upDown, aircraft);
         texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
       }
@@ -235,42 +236,45 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
 {
   QStringList texts;
 
-  appendAtcText(texts, aircraft, context->dOpt(optsd::ITEM_USER_AIRCRAFT_REGISTRATION),
-                context->dOpt(optsd::ITEM_USER_AIRCRAFT_TYPE),
-                context->dOpt(optsd::ITEM_USER_AIRCRAFT_AIRLINE),
-                context->dOpt(optsd::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER));
+  appendAtcText(texts, aircraft, context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_REGISTRATION),
+                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TYPE),
+                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_AIRLINE),
+                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER),
+                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE));
 
   if(aircraft.getGroundSpeedKts() > 30)
   {
     appendSpeedText(texts, aircraft,
-                    context->dOpt(optsd::ITEM_USER_AIRCRAFT_IAS),
-                    context->dOpt(optsd::ITEM_USER_AIRCRAFT_GS),
-                    context->dOpt(optsd::ITEM_USER_AIRCRAFT_TAS));
+                    context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_IAS),
+                    context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_GS),
+                    context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TAS));
   }
 
-  if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_HEADING) && aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
+  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_HEADING) &&
+     aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
     texts.append(tr("HDG %3°M").arg(QString::number(aircraft.getHeadingDegMag(), 'f', 0)));
 
-  if(!aircraft.isOnGround() && context->dOpt(optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK))
+  if(!aircraft.isOnGround() && context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK))
     appendClimbSinkText(texts, aircraft);
 
-  if(!aircraft.isOnGround() && (context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE) ||
-                                context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE)))
+  if(!aircraft.isOnGround() && (context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE) ||
+                                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE)))
   {
     QString upDown;
-    if(!context->dOpt(optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK))
+    if(!context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK))
       climbSinkPointer(upDown, aircraft);
 
-    if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE) && context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
+    if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE) &&
+       context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
     {
       texts.append(tr("ALT %1, IND %2%3").
                    arg(Unit::altFeet(aircraft.getPosition().getAltitude())).
                    arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).
                    arg(upDown));
     }
-    else if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_ALTITUDE))
+    else if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE))
       texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
-    else if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
+    else if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
       texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).arg(upDown));
   }
 
@@ -308,7 +312,8 @@ void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnect
 }
 
 void MapPainterVehicle::appendAtcText(QStringList& texts, const SimConnectAircraft& aircraft,
-                                      bool registration, bool type, bool airline, bool flightnumber)
+                                      bool registration, bool type, bool airline, bool flightnumber,
+                                      bool transponderCode)
 {
   QStringList line;
   if(registration)
@@ -334,6 +339,9 @@ void MapPainterVehicle::appendAtcText(QStringList& texts, const SimConnectAircra
 
   if(!line.isEmpty())
     texts.append(line.join(tr(" / ")));
+
+  if(transponderCode && aircraft.isTransponderCodeValid())
+    texts.append(tr("TCAS %1").arg(aircraft.getTransponderCodeStr()));
 }
 
 void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAircraft& aircraft,
@@ -375,7 +383,7 @@ void MapPainterVehicle::paintTextLabelWind(int x, int y, int size,
     textatt::TextAttributes atts = textatt::ROUTE_BG_COLOR;
     if(aircraft.getWindSpeedKts() >= 1.f)
     {
-      if(context->dOpt(optsd::ITEM_USER_AIRCRAFT_WIND))
+      if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND))
       {
         texts.append(tr("%1 °M").arg(QString::number(atools::geo::normalizeCourse(
                                                        aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),

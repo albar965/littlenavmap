@@ -189,8 +189,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();
 
   QTreeWidgetItem *topOfMap = addTopItem(root, tr("Top of Map"), tr("Select information that is displayed on top of the map."));
-  addItem<optsd::DisplayOptions>(topOfMap, displayOptItemIndex, tr("Wind Direction and Speed"), tr("Show wind direction and speed on the top center of the map."), optsd::ITEM_USER_AIRCRAFT_WIND, true);
-  addItem<optsd::DisplayOptions>(topOfMap, displayOptItemIndex, tr("Wind Pointer"), tr("Show wind direction pointer on the top center of the map."), optsd::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Direction and Speed"), tr("Show wind direction and speed on the top center of the map."), optsac::ITEM_USER_AIRCRAFT_WIND, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Pointer"), tr("Show wind direction pointer on the top center of the map."), optsac::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
   QTreeWidgetItem *navAids = addTopItem(root, tr("Map Navigation Aids"), QString());
   addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Center Cross"), tr("Shows the map center. Useful if \"Click map to center position\" on page \"Map Navigation\" is enabled."), optsd::NAVAIDS_CENTER_CROSS);
@@ -219,31 +219,33 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True great circle course"), tr("Show true great circle start course at flight plan leg."), optsd::ROUTE_TRUE_COURSE_GC);
 
   QTreeWidgetItem *userAircraft = addTopItem(root, tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Registration"), QString(), optsd::ITEM_USER_AIRCRAFT_REGISTRATION);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Type"), tr("Show the aircraft type, like B738, B350 or M20T."), optsd::ITEM_USER_AIRCRAFT_TYPE);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Airline"), QString(), optsd::ITEM_USER_AIRCRAFT_AIRLINE);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Flight Number"), QString(), optsd::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map"), optsd::ITEM_USER_AIRCRAFT_IAS);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsd::ITEM_USER_AIRCRAFT_GS, true);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map"), optsd::ITEM_USER_AIRCRAFT_TAS);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Climb- and Sinkrate"), QString(), optsd::ITEM_USER_AIRCRAFT_CLIMB_SINK);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Heading"), tr("Aircraft heading prefixed with \"HDG\" on the map"), optsd::ITEM_USER_AIRCRAFT_HEADING);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsd::ITEM_USER_AIRCRAFT_ALTITUDE, false);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsd::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE, true);
-  addItem<optsd::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Track Line"), tr("Show the aircraft track as a black needle protruding from the aircraft nose."), optsd::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Registration"), QString(), optsac::ITEM_USER_AIRCRAFT_REGISTRATION);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Type"), tr("Show the aircraft type, like B738, B350 or M20T."), optsac::ITEM_USER_AIRCRAFT_TYPE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Airline"), QString(), optsac::ITEM_USER_AIRCRAFT_AIRLINE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Flight Number"), QString(), optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Transponder Code"), QString(), optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map"), optsac::ITEM_USER_AIRCRAFT_IAS);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsac::ITEM_USER_AIRCRAFT_GS, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map"), optsac::ITEM_USER_AIRCRAFT_TAS);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Climb- and Sinkrate"), QString(), optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Heading"), tr("Aircraft heading prefixed with \"HDG\" on the map"), optsac::ITEM_USER_AIRCRAFT_HEADING);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsac::ITEM_USER_AIRCRAFT_ALTITUDE, false);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Track Line"), tr("Show the aircraft track as a black needle protruding from the aircraft nose."), optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
 
   QTreeWidgetItem *aiAircraft = addTopItem(root, tr("AI, Multiplayer and Online Client Aircraft"), tr("Select text labels for the AI, multiplayer and online client aircraft."));
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Registration, Number or Callsign"), QString(), optsd::ITEM_AI_AIRCRAFT_REGISTRATION, true);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Type"), QString(), optsd::ITEM_AI_AIRCRAFT_TYPE, true);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Airline"), QString(), optsd::ITEM_AI_AIRCRAFT_AIRLINE, true);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Flight Number"), QString(), optsd::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Indicated Airspeed"), QString(), optsd::ITEM_AI_AIRCRAFT_IAS);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Ground Speed"), QString(), optsd::ITEM_AI_AIRCRAFT_GS, true);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("True Airspeed"), QString(), optsd::ITEM_AI_AIRCRAFT_TAS);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Climb- and Sinkrate"), QString(), optsd::ITEM_AI_AIRCRAFT_CLIMB_SINK);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Heading"), QString(), optsd::ITEM_AI_AIRCRAFT_HEADING);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Altitude"), QString(), optsd::ITEM_AI_AIRCRAFT_ALTITUDE, true);
-  addItem<optsd::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Departure and Destination"), QString(), optsd::ITEM_AI_AIRCRAFT_DEP_DEST, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"), QString(), optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Type"), QString(), optsac::ITEM_AI_AIRCRAFT_TYPE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Airline"), QString(), optsac::ITEM_AI_AIRCRAFT_AIRLINE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Flight Number"), QString(), optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Transponder Code"), QString(), optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Airspeed"), QString(), optsac::ITEM_AI_AIRCRAFT_IAS);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Ground Speed"), QString(), optsac::ITEM_AI_AIRCRAFT_GS, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"), QString(), optsac::ITEM_AI_AIRCRAFT_TAS);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Climb- and Sinkrate"), QString(), optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Heading"), QString(), optsac::ITEM_AI_AIRCRAFT_HEADING);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Altitude"), QString(), optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Departure and Destination"), QString(), optsac::ITEM_AI_AIRCRAFT_DEP_DEST, true);
 
   QTreeWidgetItem *compassRose = addTopItem(root, tr("Compass Rose"), tr("Select display options for the compass rose."));
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"), tr("Show N, S, E and W labels."), optsd::ROSE_DIR_LABLES, true);
@@ -986,7 +988,8 @@ void OptionsDialog::saveState()
   state.save(widgets);
   state.save(this);
 
-  saveDisplayOptItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
+  saveDisplayOptItemStates(displayOptItemIndexUser, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_USER_AIRCRAFT);
+  saveDisplayOptItemStates(displayOptItemIndexAi, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_AI_AIRCRAFT);
   saveDisplayOptItemStates(displayOptItemIndexAirport, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_AIRPORT);
   saveDisplayOptItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   saveDisplayOptItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
@@ -1057,7 +1060,8 @@ void OptionsDialog::restoreState()
   state.restore(this);
   state.restore(widgets);
 
-  restoreOptionItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
+  restoreOptionItemStates(displayOptItemIndexUser, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_USER_AIRCRAFT);
+  restoreOptionItemStates(displayOptItemIndexAi, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_AI_AIRCRAFT);
   restoreOptionItemStates(displayOptItemIndexAirport, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_AIRPORT);
   restoreOptionItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   restoreOptionItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
@@ -1519,8 +1523,11 @@ void OptionsDialog::widgetsToOptionData()
   data.flightplanPassedColor = flightplanPassedColor;
   data.trailColor = trailColor;
 
-  data.displayOptions = optsd::ITEM_NONE;
-  displayOptWidgetToOptionData(data.displayOptions, displayOptItemIndex);
+  data.displayOptionsUserAircraft = optsac::ITEM_USER_AIRCRAFT_NONE;
+  displayOptWidgetToOptionData(data.displayOptionsUserAircraft, displayOptItemIndexUser);
+
+  data.displayOptionsAiAircraft = optsac::ITEM_AI_AIRCRAFT_NONE;
+  displayOptWidgetToOptionData(data.displayOptionsAiAircraft, displayOptItemIndexAi);
 
   data.displayOptionsAirport = optsd::AIRPORT_NONE;
   displayOptWidgetToOptionData(data.displayOptionsAirport, displayOptItemIndexAirport);
@@ -1786,7 +1793,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   flightplanPassedColor = data.flightplanPassedColor;
   trailColor = data.trailColor;
 
-  displayOptDataToWidget(data.displayOptions, displayOptItemIndex);
+  displayOptDataToWidget(data.displayOptionsUserAircraft, displayOptItemIndexUser);
+  displayOptDataToWidget(data.displayOptionsAiAircraft, displayOptItemIndexAi);
   displayOptDataToWidget(data.displayOptionsAirport, displayOptItemIndexAirport);
   displayOptDataToWidget(data.displayOptionsRose, displayOptItemIndexRose);
   displayOptDataToWidget(data.displayOptionsMeasurement, displayOptItemIndexMeasurement);

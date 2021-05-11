@@ -3041,21 +3041,18 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   else
     html.row2(tr("Number:"), locale.toString(aircraft.getObjectId() + 1));
 
-  if(!aircraft.getAirplaneAirline().isEmpty())
-    html.row2(tr("Airline:"), aircraft.getAirplaneAirline());
+  html.row2If(tr("Airline:"), aircraft.getAirplaneAirline());
 
-  if(!aircraft.getAirplaneFlightnumber().isEmpty())
-    html.row2(tr("Flight Number:"), aircraft.getAirplaneFlightnumber());
+  html.row2If(tr("Flight Number:"), aircraft.getAirplaneFlightnumber());
 
-  if(!aircraft.getAirplaneModel().isEmpty())
-    html.row2(tr("Type:"), aircraft.getAirplaneModel()); // BE58
+  html.row2If(tr("Transponder Code:"), aircraft.getTransponderCodeStr());
 
-  if(!aircraft.getAirplaneRegistration().isEmpty())
-    html.row2(tr("Registration:"), aircraft.getAirplaneRegistration()); // ASXGS
+  html.row2If(tr("Type:"), aircraft.getAirplaneModel()); // BE58
+
+  html.row2If(tr("Registration:"), aircraft.getAirplaneRegistration()); // ASXGS
 
   QString model = map::aircraftType(aircraft);
-  if(!model.isEmpty())
-    html.row2(tr("Model:"), model); // Beechcraft
+  html.row2If(tr("Model:"), model); // Beechcraft
 
   if(aircraft.isAnyBoat())
   {
@@ -3152,8 +3149,6 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
       html.row2If(tr("Cruising Level:"), tr("%1 (%2)").arg(alt).arg(Unit::altFeet(altitude)));
     else
       html.row2If(tr("Cruising Level:"), alt);
-
-    html.row2If(tr("Transponder Code:"), onlineRec.valueStr("transponder_code"));
 
     float range = onlineRec.valueFloat("visual_range");
     if(range > 0.f && range < map::INVALID_ALTITUDE_VALUE)

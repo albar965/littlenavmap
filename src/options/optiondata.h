@@ -401,16 +401,16 @@ Q_DECLARE_FLAGS(FlagsWeather, FlagWeather);
 Q_DECLARE_OPERATORS_FOR_FLAGS(optsw::FlagsWeather);
 } // namespace opts2
 
-namespace optsd {
+namespace optsac {
 /* Changing these option values will also change the saved values thus invalidating user settings */
-enum DisplayOption
+enum DisplayOptionUserAircraft
 {
-  ITEM_NONE = 0,
-
+  ITEM_USER_AIRCRAFT_NONE = 0,
   ITEM_USER_AIRCRAFT_REGISTRATION = 1 << 8,
   ITEM_USER_AIRCRAFT_TYPE = 1 << 9,
   ITEM_USER_AIRCRAFT_AIRLINE = 1 << 10,
   ITEM_USER_AIRCRAFT_FLIGHT_NUMBER = 1 << 11,
+  ITEM_USER_AIRCRAFT_TRANSPONDER_CODE = 1 << 21,
   ITEM_USER_AIRCRAFT_IAS = 1 << 12,
   ITEM_USER_AIRCRAFT_GS = 1 << 13,
   ITEM_USER_AIRCRAFT_CLIMB_SINK = 1 << 14,
@@ -421,12 +421,20 @@ enum DisplayOption
   ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
   ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
   ITEM_USER_AIRCRAFT_TAS = 1 << 20,
+};
 
+Q_DECLARE_FLAGS(DisplayOptionsUserAircraft, DisplayOptionUserAircraft);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsUserAircraft);
+
+enum DisplayOptionAiAircraft
+{
+  ITEM_AI_AIRCRAFT_NONE = 0,
   ITEM_AI_AIRCRAFT_DEP_DEST = 1 << 21,
   ITEM_AI_AIRCRAFT_REGISTRATION = 1 << 22,
   ITEM_AI_AIRCRAFT_TYPE = 1 << 23,
   ITEM_AI_AIRCRAFT_AIRLINE = 1 << 24,
   ITEM_AI_AIRCRAFT_FLIGHT_NUMBER = 1 << 25,
+  ITEM_AI_AIRCRAFT_TRANSPONDER_CODE = 1 << 20,
   ITEM_AI_AIRCRAFT_IAS = 1 << 26,
   ITEM_AI_AIRCRAFT_GS = 1 << 27,
   ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 28,
@@ -435,8 +443,11 @@ enum DisplayOption
   ITEM_AI_AIRCRAFT_TAS = 1 << 31
 };
 
-Q_DECLARE_FLAGS(DisplayOptions, DisplayOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptions);
+Q_DECLARE_FLAGS(DisplayOptionsAiAircraft, DisplayOptionAiAircraft);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsAiAircraft);
+}
+
+namespace optsd {
 
 /* Changing these option values will also change the saved values thus invalidating user settings */
 enum DisplayOptionAirport
@@ -873,11 +884,6 @@ public:
     return trailColor;
   }
 
-  const optsd::DisplayOptions& getDisplayOptions() const
-  {
-    return displayOptions;
-  }
-
   const optsd::DisplayOptionsAirport& getDisplayOptionsAirport() const
   {
     return displayOptionsAirport;
@@ -1126,6 +1132,16 @@ public:
     return onlineVatsimTransceiverReload;
   }
 
+  const optsac::DisplayOptionsUserAircraft& getDisplayOptionsUserAircraft() const
+  {
+    return displayOptionsUserAircraft;
+  }
+
+  const optsac::DisplayOptionsAiAircraft& getDisplayOptionsAiAircraft() const
+  {
+    return displayOptionsAiAircraft;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1369,13 +1385,15 @@ private:
   opts::DisplayTrailType displayTrailType = opts::DASHED;
 
   /* Default values are set by widget states - these are needed for the reset button */
-  optsd::DisplayOptions displayOptions =
-    optsd::ITEM_USER_AIRCRAFT_GS | optsd::ITEM_USER_AIRCRAFT_ALTITUDE |
-    optsd::ITEM_USER_AIRCRAFT_WIND | optsd::ITEM_USER_AIRCRAFT_TRACK_LINE |
-    optsd::ITEM_USER_AIRCRAFT_WIND_POINTER |
-    optsd::ITEM_AI_AIRCRAFT_REGISTRATION | optsd::ITEM_AI_AIRCRAFT_TYPE |
-    optsd::ITEM_AI_AIRCRAFT_AIRLINE | optsd::ITEM_AI_AIRCRAFT_GS |
-    optsd::ITEM_AI_AIRCRAFT_ALTITUDE | optsd::ITEM_AI_AIRCRAFT_DEP_DEST;
+  optsac::DisplayOptionsUserAircraft displayOptionsUserAircraft =
+    optsac::ITEM_USER_AIRCRAFT_GS | optsac::ITEM_USER_AIRCRAFT_ALTITUDE |
+    optsac::ITEM_USER_AIRCRAFT_WIND | optsac::ITEM_USER_AIRCRAFT_TRACK_LINE |
+    optsac::ITEM_USER_AIRCRAFT_WIND_POINTER;
+
+  optsac::DisplayOptionsAiAircraft displayOptionsAiAircraft =
+    optsac::ITEM_AI_AIRCRAFT_REGISTRATION | optsac::ITEM_AI_AIRCRAFT_TYPE |
+    optsac::ITEM_AI_AIRCRAFT_AIRLINE | optsac::ITEM_AI_AIRCRAFT_GS |
+    optsac::ITEM_AI_AIRCRAFT_ALTITUDE | optsac::ITEM_AI_AIRCRAFT_DEP_DEST;
 
   optsd::DisplayOptionsAirport displayOptionsAirport =
     optsd::ITEM_AIRPORT_NAME | optsd::ITEM_AIRPORT_TOWER | optsd::ITEM_AIRPORT_ATIS |

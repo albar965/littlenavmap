@@ -235,6 +235,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 /* Posts data received directly from simconnect or the socket and caches any metar reports */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
+  // AI list does not include user aircraft
   atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
 
   // Workaround for MSFS sending wrong positions around 0/0 while in menu

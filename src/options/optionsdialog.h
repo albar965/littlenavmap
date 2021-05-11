@@ -234,7 +234,8 @@ private:
   RangeRingValidator *rangeRingValidator;
 
   // Maps options flags to items in the tree widget
-  QHash<optsd::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
+  QHash<optsac::DisplayOptionsUserAircraft, QTreeWidgetItem *> displayOptItemIndexUser;
+  QHash<optsac::DisplayOptionsAiAircraft, QTreeWidgetItem *> displayOptItemIndexAi;
   QHash<optsd::DisplayOptionsAirport, QTreeWidgetItem *> displayOptItemIndexAirport;
   QHash<optsd::DisplayOptionsNavAid, QTreeWidgetItem *> displayOptItemIndexNavAid;
   QHash<optsd::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
