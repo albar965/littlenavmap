@@ -297,6 +297,9 @@ public:
   static bool isAircraftTrackEmpty();
   static const AircraftTrack& getAircraftTrack();
 
+  static const AircraftTrack& getAircraftTrackLogbook();
+  static void deleteAircraftTrackLogbook();
+
   static void initSplashScreen();
   static void finishSplashScreen();
 

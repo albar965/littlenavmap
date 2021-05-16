@@ -997,6 +997,16 @@ const AircraftTrack& NavApp::getAircraftTrack()
   return getMapWidget()->getAircraftTrack();
 }
 
+const AircraftTrack& NavApp::getAircraftTrackLogbook()
+{
+  return getMapWidget()->getAircraftTrackLogbook();
+}
+
+void NavApp::deleteAircraftTrackLogbook()
+{
+  return getMapWidget()->deleteAircraftTrackLogbook();
+}
+
 bool NavApp::isAircraftTrackEmpty()
 {
   return getAircraftTrack().isEmpty();

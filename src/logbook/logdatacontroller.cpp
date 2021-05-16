@@ -85,10 +85,13 @@ void LogdataController::showSearch()
 
 void LogdataController::saveState()
 {
+  // Not used yet
+  atools::settings::Settings::instance().setValue(lnm::LOGDATA_ENTRY_ID, logEntryId);
 }
 
 void LogdataController::restoreState()
 {
+  // logEntryId = atools::settings::Settings::instance().valueInt(lnm::LOGDATA_ENTRY_ID);
 }
 
 void LogdataController::optionsChanged()
@@ -214,6 +217,9 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("simulator", NavApp::getCurrentSimulatorShortName()); // varchar(50),
       record.setValue("route_string", NavApp::getRouteString()); // varchar(1024),
 
+      // Clear separate logbook track =========================
+      NavApp::deleteAircraftTrackLogbook();
+
       // Record flight plan and aircraft performance =========================
       recordFlightplanAndPerf(record);
 
@@ -256,14 +262,16 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       recordFlightplanAndPerf(record);
 
       // Save GPX with simplified flight plan and trail =========================
-      atools::geo::LineString track;
-      QVector<quint32> timestamps;
-      NavApp::getAircraftTrack().convert(&track, &timestamps);
       record.setValue("aircraft_trail",
                       FlightplanIO().saveGpxGz(NavApp::getRoute().
-                                               updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).getFlightplan(),
-                                               track, timestamps,
+                                               updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
+                                               getFlightplan(),
+                                               NavApp::getAircraftTrackLogbook().getLineStrings(),
+                                               NavApp::getAircraftTrackLogbook().getTimestamps(),
                                                static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
+
+      // Clear separate logbook track =========================
+      NavApp::deleteAircraftTrackLogbook();
 
       // Determine fuel type again =========================
       float weightVolRatio = 0.f;
@@ -369,10 +377,10 @@ const atools::geo::LineString *LogdataController::getRouteGeometry(int id)
   return entry != nullptr ? &entry->route : nullptr;
 }
 
-const atools::geo::LineString *LogdataController::getTrackGeometry(int id)
+const QVector<atools::geo::LineString> *LogdataController::getTrackGeometry(int id)
 {
   const atools::fs::userdata::LogEntryGeometry *entry = manager->getGeometry(id);
-  return entry != nullptr ? &entry->track : nullptr;
+  return entry != nullptr ? &entry->tracks : nullptr;
 }
 
 void LogdataController::editLogEntryFromMap(int id)

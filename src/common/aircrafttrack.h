@@ -27,11 +27,34 @@ class LineString;
 }
 
 namespace at {
-/* Track position. Can be converted to QVariant and thus be saved to settings */
+/* Track position. Can be converted to QVariant and thus be saved to settings.
+ *
+ * An invalid position indicates a break of the tracks.
+ * Aircraft warp to destination above ground is not broken but a movement on ground or airport change is.
+ * Done to avoid format changes. */
 struct AircraftTrackPos
 {
+  AircraftTrackPos()
+  {
+  }
+
+  AircraftTrackPos(atools::geo::Pos position, quint32 time, bool ground)
+    : pos(position), timestamp(time), onGround(ground)
+  {
+  }
+
+  AircraftTrackPos(quint32 time, bool ground)
+    : timestamp(time), onGround(ground)
+  {
+  }
+
+  bool isValid() const
+  {
+    return pos.isValid();
+  }
+
   atools::geo::Pos pos;
-  quint32 timestamp;
+  quint32 timestamp; // TODO future overflow
   bool onGround;
 };
 
@@ -51,8 +74,8 @@ class AircraftTrack :
 {
 public:
   /* Saves and restores track into a separate file (little_navmap.track) */
-  void saveState();
-  void restoreState();
+  void saveState(const QString& suffix);
+  void restoreState(const QString& suffix);
 
   void clearTrack();
 
@@ -65,17 +88,18 @@ public:
 
   float getMaxAltitude() const;
 
-  /* Copies the coordinates from the structs. Slow. */
-  atools::geo::LineString getLineString() const;
+  /* Copies the coordinates from the structs to a list of linestrings.
+   * More than one linestring might be returned if the trail is interrupted. */
+  QVector<atools::geo::LineString> getLineStrings() const;
 
-  /* Pull only needed methods into public space */
+  /* Same as getLineStrings() but returns the timestamps for each position */
+  QVector<QVector<quint32> > getTimestamps() const;
+
+  /* Convert to linestring and timestamp values for export functions like GPX */
+  // void convert(atools::geo::LineString *track) const;
+
+  /* Pull only needed methods of the base class into public space */
   using QList::isEmpty;
-  using QList::first;
-  using QList::last;
-  using QList::size;
-  using QList::at;
-  using QList::begin;
-  using QList::end;
 
   /* Track will be pruned if it contains more track entries than this value. Default is 20000. */
   void setMaxTrackEntries(int value)
@@ -88,23 +112,23 @@ public:
 
   bool readFromStream(QDataStream & in);
 
-  /* Convert to linestring and timestamp values for export functions like GPX */
-  void convert(atools::geo::LineString *track, QVector<quint32> *timestamps) const;
-
 private:
+  /* Insert an invalid position as an break indicator if aircraft jumps too far on ground. */
+  static const int MAX_POINT_DISTANCE_NM = 5;
+
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */
   int maxTrackEntries = 20000;
   /* Number of entries to remove at once */
-  static Q_DECL_CONSTEXPR int PRUNE_TRACK_ENTRIES = 200;
+  static const int PRUNE_TRACK_ENTRIES = 200;
 
   /* Minimum time difference between recordings */
-  static Q_DECL_CONSTEXPR int MIN_POSITION_TIME_DIFF_MS = 1000;
-  static Q_DECL_CONSTEXPR int MIN_POSITION_TIME_DIFF_GROUND_MS = 250;
+  static const int MIN_POSITION_TIME_DIFF_MS = 1000;
+  static const int MIN_POSITION_TIME_DIFF_GROUND_MS = 250;
 
-  static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
+  static const quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 
   /* Version 2 to adds timstamp and single floating point precision */
-  static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 2;
+  static const quint16 FILE_VERSION = 2;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H

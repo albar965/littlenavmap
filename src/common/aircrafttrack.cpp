@@ -42,9 +42,9 @@ QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& tra
 
 }
 
-void AircraftTrack::saveState()
+void AircraftTrack::saveState(const QString& suffix)
 {
-  QFile trackFile(atools::settings::Settings::getConfigFilename(".track"));
+  QFile trackFile(atools::settings::Settings::getConfigFilename(suffix));
 
   if(trackFile.open(QIODevice::WriteOnly))
   {
@@ -56,11 +56,11 @@ void AircraftTrack::saveState()
     qWarning() << "Cannot write track" << trackFile.fileName() << ":" << trackFile.errorString();
 }
 
-void AircraftTrack::restoreState()
+void AircraftTrack::restoreState(const QString& suffix)
 {
   clear();
 
-  QFile trackFile(atools::settings::Settings::getConfigFilename(".track"));
+  QFile trackFile(atools::settings::Settings::getConfigFilename(suffix));
   if(trackFile.exists())
   {
     if(trackFile.open(QIODevice::ReadOnly))
@@ -114,17 +114,6 @@ bool AircraftTrack::readFromStream(QDataStream& in)
   return retval;
 }
 
-void AircraftTrack::convert(atools::geo::LineString *track, QVector<quint32> *timestamps) const
-{
-  for(const at::AircraftTrackPos& pos : (*this))
-  {
-    if(track != nullptr)
-      track->append(pos.pos);
-    if(timestamps != nullptr)
-      timestamps->append(pos.timestamp);
-  }
-}
-
 bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime& timestamp, bool onGround)
 {
   bool pruned = false;
@@ -133,7 +122,7 @@ bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime&
   long timeDiff = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_MS;
 
   if(isEmpty())
-    append({pos, timestamp.toTime_t(), onGround});
+    append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
   else
   {
     long time = timestamp.toMSecsSinceEpoch();
@@ -141,13 +130,23 @@ bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime&
 
     if(!pos.almostEqual(last().pos, epsilon) && !atools::almostEqual(lastTime, time, timeDiff))
     {
-      if(size() > maxTrackEntries)
+      if(last().onGround && onGround && // Both positions on ground
+         pos.distanceMeterTo(last().pos) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM)) // Jump more than 5 NM
       {
-        for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
-          removeFirst();
-        pruned = true;
+        // Add an invalid position before indicating a break
+        append(at::AircraftTrackPos(timestamp.toTime_t(), onGround));
+        append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
       }
-      append({pos, timestamp.toTime_t(), onGround});
+      else
+      {
+        if(size() > maxTrackEntries)
+        {
+          for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
+            removeFirst();
+          pruned = true;
+        }
+        append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
+      }
     }
   }
   return pruned;
@@ -161,16 +160,58 @@ float AircraftTrack::getMaxAltitude() const
   return maxAlt;
 }
 
-atools::geo::LineString AircraftTrack::getLineString() const
+QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
 {
-  atools::geo::LineString linestring;
+  QVector<atools::geo::LineString> linestrings;
 
-  if(linestring.size() != size())
+  if(!isEmpty())
   {
-    linestring.clear();
-    for(const at::AircraftTrackPos& tpos : *this)
-      linestring.append(tpos.pos);
-  }
+    atools::geo::LineString line;
+    linestrings.reserve(size());
 
-  return linestring;
+    for(const at::AircraftTrackPos& trackPos : *this)
+    {
+      if(!trackPos.isValid())
+      {
+        // An invalid position shows a break in the lines - add line and start a new one
+        linestrings.append(line);
+        line.clear();
+      }
+      else
+        line.append(trackPos.pos);
+    }
+
+    // Add rest
+    if(!line.isEmpty())
+      linestrings.append(line);
+  }
+  return linestrings;
+}
+
+QVector<QVector<quint32> > AircraftTrack::getTimestamps() const
+{
+  QVector<QVector<quint32> > timestamps;
+
+  if(!isEmpty())
+  {
+    QVector<quint32> times;
+    timestamps.reserve(size());
+
+    for(const at::AircraftTrackPos& trackPos : *this)
+    {
+      if(!trackPos.isValid())
+      {
+        // An invalid position shows a break in the lines - start a new list
+        timestamps.append(times);
+        times.clear();
+      }
+      else
+        times.append(trackPos.timestamp);
+    }
+
+    // Add rest
+    if(!times.isEmpty())
+      timestamps.append(times);
+  }
+  return timestamps;
 }

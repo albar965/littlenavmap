@@ -67,6 +67,7 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
 
   aircraftTrack = new AircraftTrack;
+  aircraftTrackLogbook = new AircraftTrack;
 
   // Set the map quality to gain speed while moving
   setMapQualityForViewContext(HighQuality, Still);
@@ -103,6 +104,7 @@ MapPaintWidget::~MapPaintWidget()
   delete screenIndex;
 
   delete aircraftTrack;
+  delete aircraftTrackLogbook;
 
   delete apronGeometryCache;
 }
@@ -158,6 +160,7 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   // Copy own/internal settings
   currentThemeIndex = other.currentThemeIndex;
   *aircraftTrack = *other.aircraftTrack;
+  *aircraftTrackLogbook = *other.aircraftTrackLogbook;
   searchMarkPos = other.searchMarkPos;
   homePos = other.homePos;
   homeDistance = other.homeDistance;

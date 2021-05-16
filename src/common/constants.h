@@ -237,6 +237,8 @@ const QLatin1Literal LOGDATA_STATS_DIALOG("LogdataStatsDialog/Widget");
 
 const QLatin1Literal LOGDATA_EXPORT_CSV("Logdata/CsvExport");
 
+const QLatin1Literal LOGDATA_ENTRY_ID("Logdata/EntryId");
+
 /* Options dialog */
 const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
 const QLatin1Literal OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogAsn");

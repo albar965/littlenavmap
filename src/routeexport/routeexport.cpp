@@ -1775,10 +1775,8 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
 
   try
   {
-    atools::geo::LineString track;
-    QVector<quint32> timestamps;
-    NavApp::getAircraftTrack().convert(&track, &timestamps);
-    FlightplanIO().saveGpx(buildAdjustedRoute(rf::DEFAULT_OPTS_GPX).getFlightplan(), filename, track, timestamps,
+    FlightplanIO().saveGpx(buildAdjustedRoute(rf::DEFAULT_OPTS_GPX).getFlightplan(), filename,
+                           NavApp::getAircraftTrack().getLineStrings(), NavApp::getAircraftTrack().getTimestamps(),
                            static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()));
   }
   catch(atools::Exception& e)

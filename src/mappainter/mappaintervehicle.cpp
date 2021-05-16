@@ -157,12 +157,14 @@ float MapPainterVehicle::calcRotation(const SimConnectAircraft& aircraft)
 
 void MapPainterVehicle::paintAircraftTrack()
 {
-  const AircraftTrack& aircraftTrack = mapPaintWidget->getAircraftTrack();
+  const AircraftTrack& aircraftTrack = NavApp::getAircraftTrack();
 
   if(!aircraftTrack.isEmpty())
   {
     context->painter->setPen(mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2)));
-    drawLineString(context->painter, aircraftTrack.getLineString());
+
+    for(const LineString& line : aircraftTrack.getLineStrings())
+      drawLineString(context->painter, line);
   }
 }
 

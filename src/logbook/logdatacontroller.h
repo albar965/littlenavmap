@@ -137,7 +137,7 @@ public:
   /* Resets detection of flight */
   void resetTakeoffLandingDetection();
 
-  const atools::geo::LineString *getTrackGeometry(int id);
+  const QVector<atools::geo::LineString>* getTrackGeometry(int id);
   const atools::geo::LineString *getRouteGeometry(int id);
 
   /* Clear caches */

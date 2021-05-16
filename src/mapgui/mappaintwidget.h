@@ -146,6 +146,11 @@ public:
     return *aircraftTrack;
   }
 
+  const AircraftTrack& getAircraftTrackLogbook() const
+  {
+    return *aircraftTrackLogbook;
+  }
+
   bool hasTrackPoints() const;
 
   /* Disconnect painter to avoid updates while no data is available */
@@ -457,7 +462,7 @@ protected:
   map::MapThemeComboIndex currentThemeIndex = map::INVALID_THEME;
 
   /* Trail/track of user aircraft */
-  AircraftTrack *aircraftTrack;
+  AircraftTrack *aircraftTrack, *aircraftTrackLogbook;
 
 private:
   /* Set map theme and adjust properties accordingly */

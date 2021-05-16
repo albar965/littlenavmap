@@ -2164,7 +2164,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   qDebug() << "widgetRectSmall" << widgetRectSmall;
 #endif
 
-  if(aircraftTrack->appendTrackPos(aircraft.getPosition(), aircraft.getZuluTime(), aircraft.isOnGround()))
+  bool pruned = aircraftTrack->appendTrackPos(aircraft.getPosition(), aircraft.getZuluTime(), aircraft.isOnGround());
+  pruned |= aircraftTrackLogbook->appendTrackPos(aircraft.getPosition(), aircraft.getZuluTime(), aircraft.isOnGround());
+
+  if(pruned)
     emit aircraftTrackPruned();
 
   if(wasEmpty != aircraftTrack->isEmpty())
@@ -2617,7 +2620,8 @@ void MapWidget::saveState()
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   getScreenIndexConst()->saveState();
-  aircraftTrack->saveState();
+  aircraftTrack->saveState(".track");
+  aircraftTrackLogbook->saveState(".logbooktrack");
 
   overlayStateToMenu();
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
@@ -2678,8 +2682,11 @@ void MapWidget::restoreState()
   getScreenIndex()->restoreState();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL)
-    aircraftTrack->restoreState();
+    aircraftTrack->restoreState(".track");
   aircraftTrack->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
+
+  aircraftTrackLogbook->restoreState(".logbooktrack");
+  aircraftTrackLogbook->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : mapOverlays.values())
@@ -3436,6 +3443,11 @@ void MapWidget::deleteAircraftTrack()
   aircraftTrack->clearTrack();
   emit updateActionStates();
   update();
+}
+
+void MapWidget::deleteAircraftTrackLogbook()
+{
+  aircraftTrackLogbook->clearTrack();
 }
 
 void MapWidget::setDetailLevel(int factor)

@@ -411,7 +411,13 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 
         // Limit number of visible tracks
         if(context->objectDisplayTypes & map::LOGBOOK_TRACK && context->viewportRect.overlaps(geometry->trackRect))
-          visibleTrackGeometries.append(geometry->track);
+        {
+          for(const atools::geo::LineString& line : geometry->tracks)
+          {
+            if(context->viewportRect.overlaps(line.boundingRect()))
+              visibleTrackGeometries.append(line);
+          }
+        }
       }
     }
   }

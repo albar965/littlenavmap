@@ -192,6 +192,9 @@ public:
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrack();
 
+  /* Clear separate track collected for the logbook */
+  void deleteAircraftTrackLogbook();
+
   /* Clear all entries and reset current index */
   void clearHistory();
 
