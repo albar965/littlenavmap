@@ -2164,8 +2164,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   qDebug() << "widgetRectSmall" << widgetRectSmall;
 #endif
 
-  bool pruned = aircraftTrack->appendTrackPos(aircraft.getPosition(), aircraft.getZuluTime(), aircraft.isOnGround());
-  pruned |= aircraftTrackLogbook->appendTrackPos(aircraft.getPosition(), aircraft.getZuluTime(), aircraft.isOnGround());
+  bool pruned = aircraftTrack->appendTrackPos(aircraft, true /* allowSplit */);
+  pruned |= aircraftTrackLogbook->appendTrackPos(aircraft, false /* allowSplit */);
 
   if(pruned)
     emit aircraftTrackPruned();

@@ -21,6 +21,7 @@
 #include "atools.h"
 #include "geo/calculations.h"
 #include "geo/linestring.h"
+#include "fs/sc/simconnectuseraircraft.h"
 
 #include <QDataStream>
 #include <QDateTime>
@@ -40,6 +41,16 @@ QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& tra
   return dataStream;
 }
 
+}
+
+AircraftTrack::AircraftTrack()
+{
+  lastUserAircraft = new atools::fs::sc::SimConnectUserAircraft;
+}
+
+AircraftTrack::~AircraftTrack()
+{
+  delete lastUserAircraft;
 }
 
 void AircraftTrack::saveState(const QString& suffix)
@@ -114,25 +125,49 @@ bool AircraftTrack::readFromStream(QDataStream& in)
   return retval;
 }
 
-bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime& timestamp, bool onGround)
+bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit)
 {
-  bool pruned = false;
-  // Use a larger distance on ground before storing position
-  float epsilon = onGround ? atools::geo::Pos::POS_EPSILON_5M : atools::geo::Pos::POS_EPSILON_100M;
-  long timeDiff = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_MS;
+  if(!userAircraft.isValid())
+  {
+    qDebug() << Q_FUNC_INFO << "Aircraft not valid";
+    return false;
+  }
 
-  if(isEmpty())
+  if(!lastUserAircraft->isValid() && !userAircraft.isFullyValid())
+  {
+    // Avoid spurious aircraft repositioning to 0/0 like done by MSFS
+    qDebug() << Q_FUNC_INFO << "Aircraft not fully valid";
+    return false;
+  }
+
+  bool pruned = false;
+  const QDateTime timestamp = userAircraft.getZuluTime();
+  atools::geo::Pos pos = userAircraft.getPosition();
+  bool onGround = userAircraft.isOnGround();
+
+  if(isEmpty() && userAircraft.isValid())
     append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
   else
   {
+    // Use a smaller distance on ground before storing position
+    float epsilonPos = onGround ? atools::geo::Pos::POS_EPSILON_5M : atools::geo::Pos::POS_EPSILON_100M;
+    long epsilonTime = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_MS;
+
     long time = timestamp.toMSecsSinceEpoch();
     long lastTime = last().timestamp * 1000L;
 
-    if(!pos.almostEqual(last().pos, epsilon) && !atools::almostEqual(lastTime, time, timeDiff))
+    if(!pos.almostEqual(last().pos, epsilonPos) && !atools::almostEqual(lastTime, time, epsilonTime))
     {
-      if(last().onGround && onGround && // Both positions on ground
-         pos.distanceMeterTo(last().pos) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM)) // Jump more than 5 NM
+      bool lastValid = lastUserAircraft->isValid();
+      bool aircraftChanged = lastValid && lastUserAircraft->hasAircraftChanged(userAircraft);
+      bool jumped = !isEmpty() && pos.distanceMeterTo(last().pos) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM);
+
+      if(allowSplit && jumped && (last().onGround || onGround || aircraftChanged))
       {
+        qDebug() << Q_FUNC_INFO << "Splitting trail" << "allowSplit" << allowSplit << "jumped" << jumped
+                 << "last().onGround" << last().onGround << "onGround" << onGround
+                 << "aircraftChanged" << aircraftChanged;
+
         // Add an invalid position before indicating a break
         append(at::AircraftTrackPos(timestamp.toTime_t(), onGround));
         append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
@@ -147,6 +182,8 @@ bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime&
         }
         append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
       }
+
+      *lastUserAircraft = userAircraft;
     }
   }
   return pruned;

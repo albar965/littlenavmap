@@ -21,6 +21,11 @@
 #include "geo/pos.h"
 
 namespace atools {
+namespace fs {
+namespace sc {
+class SimConnectUserAircraft;
+}
+}
 namespace geo {
 class LineString;
 }
@@ -73,6 +78,9 @@ class AircraftTrack :
   private QList<at::AircraftTrackPos>
 {
 public:
+  AircraftTrack();
+  ~AircraftTrack();
+
   /* Saves and restores track into a separate file (little_navmap.track) */
   void saveState(const QString& suffix);
   void restoreState(const QString& suffix);
@@ -84,7 +92,7 @@ public:
    * or less points skipped.
    * @return true if the track was pruned
    */
-  bool appendTrackPos(const atools::geo::Pos& pos, const QDateTime& timestamp, bool onGround);
+  bool appendTrackPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit);
 
   float getMaxAltitude() const;
 
@@ -129,6 +137,8 @@ private:
 
   /* Version 2 to adds timstamp and single floating point precision */
   static const quint16 FILE_VERSION = 2;
+
+  atools::fs::sc::SimConnectUserAircraft *lastUserAircraft;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H
