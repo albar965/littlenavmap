@@ -284,7 +284,7 @@ void MapScreenIndex::updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox
           if(types.testFlag(map::LOGBOOK_DIRECT))
             updateLineScreenGeometry(logEntryLines, entry.id, entry.line(), curBox, conv);
 
-          if(types.testFlag(map::LOGBOOK_ROUTE))
+          if(types.testFlag(map::LOGBOOK_ROUTE) && searchHighlights->logbookEntries.size() == 1)
           {
             // Get geometry for flight plan if preview is enabled
             const atools::geo::LineString *geo = NavApp::getLogdataController()->getRouteGeometry(entry.id);
