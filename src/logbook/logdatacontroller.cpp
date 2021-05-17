@@ -212,8 +212,14 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("departure_lonx", airport.position.getLonX()); // integer,
       record.setValue("departure_laty", airport.position.getLatY()); // integer,
       record.setValue("departure_alt", airport.position.getAltitude()); // integer,
-      record.setValue("departure_time", QDateTime::currentDateTime()); // varchar(100),
+
+      // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
+      // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
+      record.setValue("departure_time", atools::convertToIsoWithOffset(QDateTime::currentDateTime())); // varchar(100),
+
+      // 2021-05-16T21:50:24.973Z
       record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
+
       record.setValue("simulator", NavApp::getCurrentSimulatorShortName()); // varchar(50),
       record.setValue("route_string", NavApp::getRouteString()); // varchar(1024),
 
@@ -243,57 +249,67 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
     }
     else if(logEntryId >= 0)
     {
-      // Update takeoff record with landing data ===========================================
-      atools::sql::SqlRecord record = manager->getRecord(logEntryId);
-      record.setValue("distance", NavApp::getRoute().getTotalDistance()); // integer,
-      record.setValue("distance_flown", flownDistanceNm); // integer,
-      if(aircraftAtTakeoff != nullptr)
-        record.setValue("used_fuel", aircraftAtTakeoff->getFuelTotalWeightLbs() - aircraft.getFuelTotalWeightLbs()); // integer,
-      record.setValue("destination_ident", airport.ident); // varchar(10),
-      record.setValue("destination_name", airport.name); // varchar(200),
-      record.setValue("destination_runway", runwayEnd.name); // varchar(200),
-      record.setValue("destination_lonx", airport.position.getLonX()); // integer,
-      record.setValue("destination_laty", airport.position.getLatY()); // integer,
-      record.setValue("destination_alt", airport.position.getAltitude()); // integer,
-      record.setValue("destination_time", QDateTime::currentDateTime()); // varchar(100),
-      record.setValue("destination_time_sim", aircraft.getZuluTime()); // varchar(100),
+      if(manager->hasRecord(logEntryId))
+      {
+        // Update takeoff record with landing data ===========================================
+        atools::sql::SqlRecord record = manager->getRecord(logEntryId);
+        record.setValue("distance", NavApp::getRoute().getTotalDistance()); // integer,
+        record.setValue("distance_flown", flownDistanceNm); // integer,
+        if(aircraftAtTakeoff != nullptr)
+          record.setValue("used_fuel", aircraftAtTakeoff->getFuelTotalWeightLbs() - aircraft.getFuelTotalWeightLbs()); // integer,
+        record.setValue("destination_ident", airport.ident); // varchar(10),
+        record.setValue("destination_name", airport.name); // varchar(200),
+        record.setValue("destination_runway", runwayEnd.name); // varchar(200),
+        record.setValue("destination_lonx", airport.position.getLonX()); // integer,
+        record.setValue("destination_laty", airport.position.getLatY()); // integer,
+        record.setValue("destination_alt", airport.position.getAltitude()); // integer,
 
-      // Update flight plan and aircraft performance =========================
-      recordFlightplanAndPerf(record);
+        // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
+        // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
+        record.setValue("destination_time", atools::convertToIsoWithOffset(QDateTime::currentDateTime())); // varchar(100),
 
-      // Save GPX with simplified flight plan and trail =========================
-      record.setValue("aircraft_trail",
-                      FlightplanIO().saveGpxGz(NavApp::getRoute().
-                                               updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
-                                               getFlightplan(),
-                                               NavApp::getAircraftTrackLogbook().getLineStrings(),
-                                               NavApp::getAircraftTrackLogbook().getTimestamps(),
-                                               static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
+        // 2021-05-16T21:50:24.973Z
+        record.setValue("destination_time_sim", aircraft.getZuluTime()); // varchar(100),
 
-      // Clear separate logbook track =========================
-      NavApp::deleteAircraftTrackLogbook();
+        // Update flight plan and aircraft performance =========================
+        recordFlightplanAndPerf(record);
 
-      // Determine fuel type again =========================
-      float weightVolRatio = 0.f;
-      bool jetfuel = aircraft.isJetfuel(weightVolRatio);
-      if(weightVolRatio > 0.f)
-        record.setValue("is_jetfuel", jetfuel); // integer,
+        // Save GPX with simplified flight plan and trail =========================
+        record.setValue("aircraft_trail",
+                        FlightplanIO().saveGpxGz(NavApp::getRoute().
+                                                 updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
+                                                 getFlightplan(),
+                                                 NavApp::getAircraftTrackLogbook().getLineStrings(),
+                                                 NavApp::getAircraftTrackLogbook().getTimestamps(),
+                                                 static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
 
-      SqlTransaction transaction(manager->getDatabase());
-      manager->updateByRecord(record, {logEntryId});
-      transaction.commit();
+        // Clear separate logbook track =========================
+        NavApp::deleteAircraftTrackLogbook();
 
-      logChanged(false /* load all */, false /* keep selection */);
+        // Determine fuel type again =========================
+        float weightVolRatio = 0.f;
+        bool jetfuel = aircraft.isJetfuel(weightVolRatio);
+        if(weightVolRatio > 0.f)
+          record.setValue("is_jetfuel", jetfuel); // integer,
 
-      mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 updated.").
-                                   arg(departureArrivalText).
-                                   arg(airport.ident).
-                                   arg(runwayText), true /* addToLog */);
+        SqlTransaction transaction(manager->getDatabase());
+        manager->updateByRecord(record, {logEntryId});
+        transaction.commit();
 
-      logEntryId = -1;
+        logChanged(false /* load all */, false /* keep selection */);
+
+        mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 updated.").
+                                     arg(departureArrivalText).
+                                     arg(airport.ident).
+                                     arg(runwayText), true /* addToLog */);
+
+        logEntryId = -1;
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Log entry ID not found" << logEntryId;
     }
     else
-      qWarning() << Q_FUNC_INFO << "no previous takeoff";
+      qWarning() << Q_FUNC_INFO << "no previous takeoff for ID" << logEntryId;
   }
 
   resetTakeoffLandingDetection();
