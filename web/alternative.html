@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html id="alternative" lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/styles.css">
+    <link rel="stylesheet" href="/assets/styles-alternative.css">
+    <title>
+      {applicationName} {applicationVersion} - Webserver
+    </title>
+    <script src="/assets/scripts.js"></script>
+    <script src="/assets/scripts-alternative.js"></script>
+  </head>
+  <body onclick="bodyFunctions()">
+    <div id="content" data-toolbarsplacement="top">
+      <div id="contentContainer">
+        <iframe src="map.html" onload="injectAlternativeStyling()" title="original content"></iframe>
+      </div>
+      <div id="toolbars">
+        <div id="toolbarsContainer">
+          <div class="toolbar">
+            <button class="active">Map</button>
+            <button>Flight Plan</button>
+            <button>Aircraft</button>
+            <button>Progress</button>
+            <button>Airport</button>
+            <button>Help</button>
+          </div>
+          <div id="toggleOptionsContainer">
+            <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)">
+              <div id="toolbarsOptions">
+                <form>
+                  <fieldset>
+                    <div class="input-block">
+                      <input type="checkbox" id="toolbarAlternativeUIToggle" checked onclick="toggleAlternativeUI()"><label for="toolbarAlternativeUIToggle">Toggle "alternative ui"</label>
+                    </div>
+                  </fieldset>
+                  <fieldset>
+                    <legend>Position</legend>
+                    <div class="input-block">
+                      <input type="radio" id="toolbarPositionTop" name="position" value="top" checked onchange="setToolbarPosition(this)"><label for="toolbarPositionTop">top</label>
+                    </div>
+                    <div class="input-block">
+                      <input type="radio" id="toolbarPositionRight" name="position" value="right" onchange="setToolbarPosition(this)"><label for="toolbarPositionRight">right</label>
+                    </div>
+                    <div class="input-block">
+                      <input type="radio" id="toolbarPositionBottom" name="position" value="bottom" onchange="setToolbarPosition(this)"><label for="toolbarPositionBottom">bottom</label>
+                    </div>
+                    <div class="input-block">
+                      <input type="radio" id="toolbarPositionLeft" name="position" value="left" onchange="setToolbarPosition(this)"><label for="toolbarPositionLeft">left</label>
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

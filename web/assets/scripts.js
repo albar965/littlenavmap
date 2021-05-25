@@ -116,6 +116,32 @@ function submitMapRouteCmd() {
     "&session&mapcmd=route&cmd=" + Math.random();
 }
 
+/*
+ * Toggles to and from the alternative UI
+ */
+function toggleAlternativeUI() {
+  var activeUI = sessionStorage.getItem("activeUI");
+  if(activeUI !== null) {
+    switch(activeUI) {
+      case "alternative":
+        sessionStorage.setItem("activeUI", "original");
+        location.href = "index.html";
+        break;
+      case "original":
+        sessionStorage.setItem("activeUI", "alternative");
+        location.href = "alternative.html";
+        break;
+      default:
+        sessionStorage.setItem("activeUI", "original");
+        location.href = "index.html";
+
+    }
+  } else {
+    sessionStorage.setItem("activeUI", "alternative");
+    location.href = "alternative.html";
+  }
+}
+
 
 /*
  * Refresh the map image periodically and udpate the interval in the server session by sending a request
