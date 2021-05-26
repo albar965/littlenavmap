@@ -1,0 +1,54 @@
+/* toolbars container taking up a sides whole edge space */
+#toolbarsContainer {
+
+}
+
+/* any toolbar; when wanting to modify gaps, take [data-toolbarsplacement="X"] from internal.css into consideration */
+.toolbar {
+
+}
+
+/* outer toolbar */
+#toolbarOuter {
+
+}
+
+/* any toolbar's all buttons */
+.toolbar button {
+
+}
+
+/* outer toolbar's all buttons */
+#toolbarOuter button {
+
+}
+
+/* specific buttons */
+#alternative #buttonMap {
+
+}
+#alternative #buttonFlightPlan {
+
+}
+#alternative #buttonAircraft {
+
+}
+#alternative #buttonProgress {
+
+}
+#alternative #buttonAirport {
+
+}
+#alternative #buttonHelp {
+
+}
+
+/* see internal.css for detailed cross-effects when changing :hover, ::before or .shown::before of below selector */
+#toggleOptionsToggle {
+
+}
+
+/* the openable options to the toolbar, see internal.css for existing children's style */
+#toolbarsOptions {
+
+}

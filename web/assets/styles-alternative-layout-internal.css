@@ -1,0 +1,153 @@
+#alternative {
+  height: 100%;
+}
+
+#alternative body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#mainContainer {
+  width: 100%;
+  height: 100%;
+}
+
+[data-toolbarsplacement] {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+[data-toolbarsplacement="top"] {
+  flex-direction: column-reverse;
+}
+
+[data-toolbarsplacement="right"] {
+  flex-direction: row;
+}
+
+[data-toolbarsplacement="bottom"] {
+  flex-direction: column;
+}
+
+[data-toolbarsplacement="left"] {
+  flex-direction: row-reverse;
+}
+
+[data-toolbarsplacement] > :first-child  {
+  flex: 1 0;
+}
+
+#toolbarsContainer {
+  flex: 0 1;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+iframe {
+  border: 0;
+  width: 100%;
+  height: 100%;
+}
+
+[data-toolbarsplacement="right"] #toolbarsContainer, [data-toolbarsplacement="left"] #toolbarsContainer {
+  flex-direction: column;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+[data-toolbarsplacement="top"] .toolbar , [data-toolbarsplacement="bottom"] .toolbar  {
+  flex: 1 1;
+}
+
+[data-toolbarsplacement="right"] .toolbar , [data-toolbarsplacement="left"] .toolbar  {
+  flex: 0 1;
+}
+
+#toggleOptionsContainer {
+  flex: 0 1;
+  display: flex;
+  align-items: stretch;
+}
+
+.toolbar button {
+  display: block;
+  cursor: pointer;
+}
+
+#toggleOptionsToggle {
+  position: relative;
+  cursor: pointer;
+}
+
+[data-toolbarsplacement="top"] #toggleOptionsToggle, [data-toolbarsplacement="bottom"] #toggleOptionsToggle {
+  height: 100%;
+}
+
+[data-toolbarsplacement="right"] #toggleOptionsToggle, [data-toolbarsplacement="left"] #toggleOptionsToggle {
+  width: 100%;
+}
+
+#toggleOptionsToggle::before {
+	content: "";
+	border-color: transparent;
+	border: solid transparent;
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+#toolbarsOptions {
+  position: absolute;
+  display: none;
+}
+
+[data-toolbarsplacement="top"] #toolbarsOptions {
+  top: 100%;
+  right: 0;
+}
+
+[data-toolbarsplacement="right"] #toolbarsOptions {
+  right: 100%;
+  bottom: 0;
+}
+
+[data-toolbarsplacement="bottom"] #toolbarsOptions {
+  bottom: 100%;
+  right: 0;
+}
+
+[data-toolbarsplacement="left"] #toolbarsOptions {
+  left: 100%;
+  bottom: 0;
+}
+
+.shown #toolbarsOptions {
+  display: block !important;
+}
+
+#toolbarsOptions .input-block {
+  display: flex;
+  position: relative;
+}
+
+#toolbarsOptions input[type="checkbox"] {
+  cursor: pointer;
+  position: absolute;
+  margin: 0;          /* is a default browser style "undo" */
+}
+
+#toolbarsOptions input[type="radio"] {
+  cursor: pointer;
+  position: absolute;
+  margin: 0;          /* is a default browser style "undo" */
+}
+
+#toolbarsOptions .input-block label {
+  cursor: pointer;
+  width: 100%;
+}
