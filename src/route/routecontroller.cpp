@@ -81,6 +81,7 @@
 #include <QPlainTextEdit>
 #include <QProgressDialog>
 #include <QScrollBar>
+#include <QUrlQuery>
 
 namespace rcol {
 // Route table column indexes
@@ -329,6 +330,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(routeWindow, &RouteCalcWindow::calculateReverseClicked, this, &RouteController::reverseRoute);
   connect(routeWindow, &RouteCalcWindow::downloadTrackClicked,
           NavApp::getTrackController(), &TrackController::startDownload);
+
+  connect(ui->labelRouteInfo, &QLabel::linkActivated, this, &RouteController::flightplanLabelLinkActivated);
 }
 
 RouteController::~RouteController()
@@ -499,7 +502,7 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
 
 void RouteController::flightplanHeaderPrint(atools::util::HtmlBuilder& html, bool titleOnly) const
 {
-  html.text(buildFlightplanLabel(true /* print */, titleOnly), atools::util::html::NO_ENTITIES);
+  html.text(buildFlightplanLabel(true /* print */, false /* widget */, titleOnly), atools::util::html::NO_ENTITIES);
 
   if(!titleOnly)
     html.p(buildFlightplanLabel2(true /* print */), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
@@ -1941,18 +1944,27 @@ void RouteController::doubleClick(const QModelIndex& index)
   if(index.isValid())
   {
     qDebug() << "mouseDoubleClickEvent";
+    showAtIndex(index.row());
+  }
+}
 
-    const RouteLeg& mo = route.value(index.row());
+void RouteController::showAtIndex(int index)
+{
+  if(index >= 0 && index < map::INVALID_INDEX_VALUE)
+  {
+    const RouteLeg& routeLeg = route.value(index);
+    if(routeLeg.isValid())
+    {
+      if(routeLeg.getMapObjectType() == map::AIRPORT)
+        emit showRect(routeLeg.getAirport().bounding, true);
+      else
+        emit showPos(routeLeg.getPosition(), 0.f, true);
 
-    if(mo.getMapObjectType() == map::AIRPORT)
-      emit showRect(mo.getAirport().bounding, true);
-    else
-      emit showPos(mo.getPosition(), 0.f, true);
-
-    map::MapResult result;
-    mapQuery->getMapObjectById(result, mo.getMapObjectType(), map::AIRSPACE_SRC_NONE, mo.getId(),
-                               false /* airport from nav database */);
-    emit showInformation(result);
+      map::MapResult result;
+      mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg.getId(),
+                                 false /* airport from nav database */);
+      emit showInformation(result);
+    }
   }
 }
 
@@ -4416,7 +4428,10 @@ QString RouteController::getErrorStrings(QStringList& toolTip) const
 void RouteController::updateWindowLabel()
 {
   QString tooltip, statustip;
-  QString text = buildFlightplanLabel(false, false, &tooltip, &statustip) + "<br/>" + buildFlightplanLabel2();
+  QString text =
+    buildFlightplanLabel(false /* print */, true /* widget */, false /* titleOnly */, &tooltip, &statustip) +
+    "<br/>" +
+    buildFlightplanLabel2();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->labelRouteInfo->setText(text);
@@ -4427,11 +4442,13 @@ void RouteController::updateWindowLabel()
   ui->tableViewRoute->setStatusTip(statustip);
 }
 
-QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QString *tooltip, QString *statustip) const
+QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titleOnly, QString *tooltip,
+                                              QString *statustip) const
 {
   const Flightplan& flightplan = route.getFlightplan();
 
-  QString departure(tr("Invalid")), destination(tr("Invalid")), approach;
+  QString departure(tr("Invalid")), departureIdent, destination(tr("Invalid")), destinationIdent, approach;
+  int departureIndex = -1, destinationIndex = -1;
 
   if(!flightplan.isEmpty())
   {
@@ -4440,7 +4457,9 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
     // Add departure to text ==============================================================
     if(route.hasValidDeparture())
     {
-      departure = tr("%1 (%2)").arg(flightplan.getDepartureName()).arg(flightplan.getDepartureIdent());
+      departureIdent = flightplan.getDepartureIdent();
+      departureIndex = route.getDepartureAirportLegIndex();
+      departure = tr("%1 (%2)").arg(flightplan.getDepartureName()).arg(departureIdent);
 
       if(route.getDepartureAirportLeg().getDepartureParking().isValid())
         departure += " " + map::parkingNameNumberType(route.getDepartureAirportLeg().getDepartureParking());
@@ -4456,18 +4475,29 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
       }
     }
     else
+    {
+      departureIdent = flightplan.getEntries().first().getIdent();
+      departureIndex = 0;
       departure = tr("%1 (%2)").
                   arg(flightplan.getEntries().first().getIdent()).
                   arg(flightplan.getEntries().first().getWaypointTypeAsDisplayString());
+    }
 
     // Add destination to text ==============================================================
+    destinationIndex = route.getDestinationAirportLegIndex();
     if(route.hasValidDestination())
-      destination = tr("%1 (%2)").arg(flightplan.getDestinationName()).arg(flightplan.getDestinationIdent());
+    {
+      destinationIdent = flightplan.getDestinationIdent();
+      destination = tr("%1 (%2)").arg(flightplan.getDestinationName()).arg(destinationIdent);
+    }
     else
+    {
+      destinationIdent = flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent();
       destination = tr("%1 (%2)").
-                    arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent()).
+                    arg(destinationIdent).
                     arg(flightplan.getEntries().at(
                           route.getDestinationAirportLegIndex()).getWaypointTypeAsDisplayString());
+    }
 
     if(!titleOnly)
     {
@@ -4619,8 +4649,15 @@ QString RouteController::buildFlightplanLabel(bool print, bool titleOnly, QStrin
   if(!flightplan.isEmpty())
   {
     if(print)
+      // Printer
       title = tr("<h2>%1 to %2</h2>").arg(departure).arg(destination);
+    else if(widget)
+      // Table header
+      title = tr("<a style=\"text-decoration:none;\" href=\"lnm://showdeparture?index=%1\"><b>%2</b></a> to "
+                   "<a style=\"text-decoration:none;\" href=\"lnm://showdestination?index=%3\"><b>%4</b></a>").
+              arg(departureIndex).arg(departure).arg(destinationIndex).arg(destination);
     else
+      // HTML export
       title = tr("<b>%1</b> to <b>%2</b>").arg(departure).arg(destination);
   }
   else
@@ -4667,6 +4704,20 @@ QString RouteController::buildFlightplanLabel2(bool print) const
   }
   else
     return QString();
+}
+
+void RouteController::flightplanLabelLinkActivated(const QString& link)
+{
+  qDebug() << Q_FUNC_INFO << link;
+  // lnm://showdeparture?index=%1
+
+  QUrl url(link);
+  if(url.scheme() == "lnm")
+  {
+    QUrlQuery query(url);
+    if(url.host() == "showdeparture" || url.host() == "showdestination")
+      showAtIndex(query.queryItemValue("index").toInt());
+  }
 }
 
 /* Reset route and clear undo stack (new route) */

@@ -348,6 +348,8 @@ private:
   void updateWindowLabel();
 
   void doubleClick(const QModelIndex& index);
+  void showAtIndex(int index);
+
   void tableContextMenu(const QPoint& pos);
 
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
@@ -421,8 +423,8 @@ private:
   void cleanupTableTimeout();
 
   /* Departure, destination and procedures. */
-  QString buildFlightplanLabel(bool print = false, bool titleOnly = false, QString *tooltip = nullptr,
-                               QString *statustip = nullptr) const;
+  QString buildFlightplanLabel(bool print = false, bool widget = false, bool titleOnly = false,
+                               QString *tooltip = nullptr, QString *statustip = nullptr) const;
 
   /* Distance and time. */
   QString buildFlightplanLabel2(bool print = false) const;
@@ -462,6 +464,9 @@ private:
 
   /* Remove all errors from lists */
   void clearAllErrors();
+
+  /* Departure or destination link in the header clicked */
+  void flightplanLabelLinkActivated(const QString& link);
 
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
