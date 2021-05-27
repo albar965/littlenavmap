@@ -81,7 +81,6 @@
 #include <QPlainTextEdit>
 #include <QProgressDialog>
 #include <QScrollBar>
-#include <QUrlQuery>
 
 namespace rcol {
 // Route table column indexes
@@ -3100,7 +3099,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   emit routeChanged(true);
 
   NavApp::setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.getDepartureAirportLeg().getIdent()).
-                           arg(map::parkingNameNumberType(parking)));
+                           arg(map::parkingNameNumber(parking)));
 }
 
 /* Set start position (runway, helipad) for departure */
@@ -4447,8 +4446,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
 {
   const Flightplan& flightplan = route.getFlightplan();
 
-  QString departure(tr("Invalid")), departureIdent, destination(tr("Invalid")), destinationIdent, approach;
-  int departureIndex = -1, destinationIndex = -1;
+  QString departureAirport(tr("Invalid")), departureParking, destinationAirport(tr("Invalid")), approach;
 
   if(!flightplan.isEmpty())
   {
@@ -4457,47 +4455,35 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
     // Add departure to text ==============================================================
     if(route.hasValidDeparture())
     {
-      departureIdent = flightplan.getDepartureIdent();
-      departureIndex = route.getDepartureAirportLegIndex();
-      departure = tr("%1 (%2)").arg(flightplan.getDepartureName()).arg(departureIdent);
+      departureAirport = tr("%1 (%2)").arg(flightplan.getDepartureName()).arg(flightplan.getDepartureIdent());
 
       if(route.getDepartureAirportLeg().getDepartureParking().isValid())
-        departure += " " + map::parkingNameNumberType(route.getDepartureAirportLeg().getDepartureParking());
+        departureParking = tr(" %1").arg(map::parkingNameNumber(route.getDepartureAirportLeg().getDepartureParking()));
       else if(route.getDepartureAirportLeg().getDepartureStart().isValid())
       {
         const map::MapStart& start = route.getDepartureAirportLeg().getDepartureStart();
         if(route.hasDepartureHelipad())
-          departure += tr(" Helipad %1").arg(start.runwayName);
-        else if(!start.runwayName.isEmpty())
-          departure += tr(" Runway %1").arg(start.runwayName);
+          departureParking += tr(" Helipad %1").arg(start.runwayName);
+        else if(route.hasDepartureRunway())
+          departureParking += tr(" Runway %1").arg(start.runwayName);
         else
-          departure += tr(" Unknown Start");
+          departureParking += tr(" Unknown Start");
       }
     }
     else
     {
-      departureIdent = flightplan.getEntries().first().getIdent();
-      departureIndex = 0;
-      departure = tr("%1 (%2)").
-                  arg(flightplan.getEntries().first().getIdent()).
-                  arg(flightplan.getEntries().first().getWaypointTypeAsDisplayString());
+      departureAirport = tr("%1 (%2)").
+                         arg(flightplan.getEntries().first().getIdent()).
+                         arg(flightplan.getEntries().first().getWaypointTypeAsDisplayString());
     }
 
     // Add destination to text ==============================================================
-    destinationIndex = route.getDestinationAirportLegIndex();
     if(route.hasValidDestination())
-    {
-      destinationIdent = flightplan.getDestinationIdent();
-      destination = tr("%1 (%2)").arg(flightplan.getDestinationName()).arg(destinationIdent);
-    }
+      destinationAirport = tr("%1 (%2)").arg(flightplan.getDestinationName()).arg(flightplan.getDestinationIdent());
     else
-    {
-      destinationIdent = flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent();
-      destination = tr("%1 (%2)").
-                    arg(destinationIdent).
-                    arg(flightplan.getEntries().at(
-                          route.getDestinationAirportLegIndex()).getWaypointTypeAsDisplayString());
-    }
+      destinationAirport = tr("%1 (%2)").
+                           arg(flightplan.at(route.getDestinationAirportLegIndex()).getIdent()).
+                           arg(flightplan.at(route.getDestinationAirportLegIndex()).getWaypointTypeAsDisplayString());
 
     if(!titleOnly)
     {
@@ -4650,15 +4636,16 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
   {
     if(print)
       // Printer
-      title = tr("<h2>%1 to %2</h2>").arg(departure).arg(destination);
+      title = tr("<h2>%1%2 to %3</h2>").arg(departureAirport).arg(departureParking).arg(destinationAirport);
     else if(widget)
       // Table header
-      title = tr("<a style=\"text-decoration:none;\" href=\"lnm://showdeparture?index=%1\"><b>%2</b></a> to "
-                   "<a style=\"text-decoration:none;\" href=\"lnm://showdestination?index=%3\"><b>%4</b></a>").
-              arg(departureIndex).arg(departure).arg(destinationIndex).arg(destination);
+      title = tr("<b><a style=\"text-decoration:none;\" href=\"lnm://showdeparture\">%1</a>"
+                   "<a style=\"text-decoration:none;\" href=\"lnm://showdepartureparking\">%2</a></b> to "
+                     "<b><a style=\"text-decoration:none;\" href=\"lnm://showdestination\">%3</a></b>").
+              arg(departureAirport).arg(departureParking).arg(destinationAirport);
     else
       // HTML export
-      title = tr("<b>%1</b> to <b>%2</b>").arg(departure).arg(destination);
+      title = tr("<b>%1%2</b> to <b>%3</b>").arg(departureAirport).arg(departureParking).arg(destinationAirport);
   }
   else
   {
@@ -4709,14 +4696,23 @@ QString RouteController::buildFlightplanLabel2(bool print) const
 void RouteController::flightplanLabelLinkActivated(const QString& link)
 {
   qDebug() << Q_FUNC_INFO << link;
-  // lnm://showdeparture?index=%1
+  // lnm://showdeparture
 
   QUrl url(link);
   if(url.scheme() == "lnm")
   {
-    QUrlQuery query(url);
-    if(url.host() == "showdeparture" || url.host() == "showdestination")
-      showAtIndex(query.queryItemValue("index").toInt());
+    if(url.host() == "showdeparture")
+      showAtIndex(route.getDepartureAirportLegIndex());
+    else if(url.host() == "showdepartureparking")
+    {
+      const RouteLeg& departureAirportLeg = route.getDepartureAirportLeg();
+      if(departureAirportLeg.getDepartureParking().isValid())
+        emit showPos(departureAirportLeg.getDepartureParking().getPosition(), 0.f, false /* doubleClick */);
+      else if(departureAirportLeg.getDepartureStart().isValid())
+        emit showPos(departureAirportLeg.getDepartureStart().getPosition(), 0.f, false /* doubleClick */);
+    }
+    else if(url.host() == "showdestination")
+      showAtIndex(route.getDestinationAirportLegIndex());
   }
 }
 
