@@ -812,6 +812,18 @@ QString parkingNameNumberType(const map::MapParking& parking)
   return atools::strJoin(name, QObject::tr(", "));
 }
 
+QString parkingNameNumber(const MapParking& parking)
+{
+  QStringList name;
+
+  if(parking.number != -1)
+    name.append(map::parkingName(parking.name) + " " + QLocale().toString(parking.number));
+  else
+    name.append(map::parkingName(parking.name));
+
+  return atools::strJoin(name, QObject::tr(", "));
+}
+
 QString startType(const map::MapStart& start)
 {
   if(start.isRunway())
@@ -1765,6 +1777,15 @@ QStringList runwayNameZeroPrefixVariants(QString name)
   return retval;
 }
 
+QString runwayNamePrefixZero(const QString& name)
+{
+  QString number, designator;
+  if(runwayNameSplit(name, &number, &designator))
+    return number + designator;
+  else
+    return name;
+}
+
 /* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list for an
  * ARINC name like N32 or I19-Y */
 QStringList arincNameNameVariants(const QString& name)
@@ -1773,7 +1794,7 @@ QStringList arincNameNameVariants(const QString& name)
   QString prefix, suffix, rw;
   if(name.size() >= 3 && name.at(1).isDigit() && name.at(2).isDigit())
   {
-    prefix = name.left(1);
+    prefix = name.at(0);
     rw = name.mid(1, 2);
     suffix = name.mid(3);
 

@@ -238,6 +238,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
               parking = parkings.first();
               // Update flightplan with found name
               flightplan->setDepartureParkingName(name);
+              flightplan->setDepartureParkingType(atools::fs::pln::PARKING);
             }
           }
           else
@@ -271,6 +272,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
                 parking = parkings.first();
                 // Update flightplan with found name
                 flightplan->setDepartureParkingName(map::parkingNameForFlightplan(parking));
+                flightplan->setDepartureParkingType(atools::fs::pln::PARKING);
               }
             }
             else
@@ -949,10 +951,18 @@ void RouteLeg::assignRunwayOrHelipad(const QString& name)
     qWarning() << "Found no start positions";
     // Clear departure position in flight plan
     flightplan->setDepartureParkingName(QString());
+    flightplan->setDepartureParkingType(atools::fs::pln::NO_POS);
   }
   else
+  {
     // Helicopter pad or runway name
     flightplan->setDepartureParkingName(start.runwayName);
+
+    if(start.helipadNumber != -1)
+      flightplan->setDepartureParkingType(atools::fs::pln::HELIPAD);
+    else if(!start.runwayName.isEmpty())
+      flightplan->setDepartureParkingType(atools::fs::pln::RUNWAY);
+  }
 }
 
 QDebug operator<<(QDebug out, const RouteLeg& leg)

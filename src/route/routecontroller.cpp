@@ -958,6 +958,11 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   routeFilename = filename;
 
+  // FSX and P3D use this field for helipad or runway numbers where the latter one is zero prefixed.
+  // MSFS has no helipad number and we need a zero prefix added to the runway number to allow database queries
+  if(format == atools::fs::pln::MSFS_PLN)
+    flightplan.setDepartureParkingName(map::runwayNamePrefixZero(flightplan.getDepartureParkingName()));
+
   assignFlightplanPerfProperties(flightplan);
   route.setFlightplan(flightplan);
 
@@ -984,7 +989,8 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   // Force update start position for other formats than FSX, P3D or LNMPLN since
   // these do not support loading and saving of start positions
-  bool forceUpdate = format != atools::fs::pln::LNM_PLN && format != atools::fs::pln::FSX_PLN;
+  bool forceUpdate = format != atools::fs::pln::LNM_PLN && format != atools::fs::pln::FSX_PLN &&
+                     format != atools::fs::pln::MSFS_PLN;
 
   // Do not create an entry on the undo stack since this plan file type does not support it
   bool showWarning = false;
@@ -1231,6 +1237,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
                                        flightplan.getEntries().first().getPosition().getAltitude());
         routePlan.setDepartureParkingPosition(flightplan.getDepartureParkingPosition());
         routePlan.setDepartureParkingName(flightplan.getDepartureParkingName());
+        routePlan.setDepartureParkingType(flightplan.getDepartureParkingType());
 
         // Copy SID properties from source
         atools::fs::pln::copySidProcedureProperties(routePlan.getProperties(),
@@ -1864,6 +1871,7 @@ void RouteController::reverseRoute()
   flightplan.setDeparturePosition(entries.first().getPosition());
   flightplan.setDepartureParkingPosition(entries.first().getPosition());
   flightplan.setDepartureParkingName(QString());
+  flightplan.setDepartureParkingType(atools::fs::pln::NO_POS);
 
   // Erase all airways to avoid wrong direction travel against one way
   for(int i = 0; i < entries.size(); i++)
@@ -3081,6 +3089,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
 
   // Update the current airport which is new or the same as the one used by the parking spot
   route.getFlightplan().setDepartureParkingName(map::parkingNameForFlightplan(parking));
+  route.getFlightplan().setDepartureParkingType(atools::fs::pln::PARKING);
   route.getFlightplan().setDepartureParkingPosition(parking.position,
                                                     route.getDepartureAirportLeg().getPosition().getAltitude());
   route.setDepartureParking(parking);
@@ -3125,6 +3134,11 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   // Update the current airport which is new or the same as the one used by the parking spot
   // Use helipad number or runway name
   route.getFlightplan().setDepartureParkingName(start.runwayName);
+
+  if(route.hasDepartureRunway())
+    route.getFlightplan().setDepartureParkingType(atools::fs::pln::RUNWAY);
+  else if(route.hasDepartureHelipad())
+    route.getFlightplan().setDepartureParkingType(atools::fs::pln::HELIPAD);
 
   route.getFlightplan().setDepartureParkingPosition(start.position,
                                                     route.getDepartureAirportLeg().getPosition().getAltitude());

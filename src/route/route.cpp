@@ -931,6 +931,14 @@ bool Route::hasDepartureParking() const
   return false;
 }
 
+bool Route::hasDepartureRunway() const
+{
+  if(hasDepartureStart())
+    return !first().getDepartureStart().runwayName.isEmpty();
+
+  return false;
+}
+
 bool Route::hasDepartureHelipad() const
 {
   if(hasDepartureStart())
@@ -1370,6 +1378,7 @@ void Route::updateDepartureAndDestination()
       flightplan.setDepartureParkingName(map::parkingNameForFlightplan(departure.getDepartureParking()));
       flightplan.setDepartureParkingPosition(departure.getDepartureParking().position,
                                              departure.getPosition().getAltitude());
+      flightplan.setDepartureParkingType(atools::fs::pln::PARKING);
     }
     else if(hasDepartureStart())
     {
@@ -1377,12 +1386,19 @@ void Route::updateDepartureAndDestination()
       flightplan.setDepartureParkingName(departure.getDepartureStart().runwayName);
       flightplan.setDepartureParkingPosition(departure.getDepartureStart().position,
                                              departure.getPosition().getAltitude());
+
+      // A start can be a runway or a helipad
+      if(departure.getDepartureStart().helipadNumber != -1)
+        flightplan.setDepartureParkingType(atools::fs::pln::HELIPAD);
+      else if(departure.getDepartureStart().runwayName.isEmpty())
+        flightplan.setDepartureParkingType(atools::fs::pln::RUNWAY);
     }
     else
     {
       // No start position and no parking - use airport/navaid position
       flightplan.setDepartureParkingName(QString());
       flightplan.setDepartureParkingPosition(departure.getPosition());
+      flightplan.setDepartureParkingType(atools::fs::pln::AIRPORT);
     }
 
     const RouteLeg& destination = getDestinationAirportLeg();

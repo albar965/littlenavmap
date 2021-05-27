@@ -271,6 +271,9 @@ public:
   /* @return true if departure is an airport and parking is set */
   bool hasDepartureParking() const;
 
+  /* @return true if departure is an airport and start position is a runway */
+  bool hasDepartureRunway() const;
+
   /* @return true if departure is an airport and a start position is set */
   bool hasDepartureStart() const;
 

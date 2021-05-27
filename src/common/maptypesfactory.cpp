@@ -626,7 +626,7 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.airportId = record.valueInt("airport_id");
   start.type = atools::charAt(record.valueStr("type"), 0);
   start.runwayName = record.valueStr("runway_name");
-  start.helipadNumber = record.valueInt("number");
+  start.helipadNumber = record.isNull("number") ? -1 : record.valueInt("number", -1);
   start.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
   start.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
 }
