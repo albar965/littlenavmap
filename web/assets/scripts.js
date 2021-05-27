@@ -142,6 +142,12 @@ function toggleAlternativeUI() {
   }
 }
 
+/*
+ * Toggle class on #map to fit it to parent.
+ */
+function toggleFitMap() {
+  document.querySelector("#map").classList.toggle("fit-media-to-parent");
+}
 
 /*
  * Refresh the map image periodically and udpate the interval in the server session by sending a request
