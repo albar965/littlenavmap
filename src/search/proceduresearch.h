@@ -200,6 +200,7 @@ private:
   void clearSelectionTriggered();
 
   const proc::MapProcedureLegs *fetchProcData(ProcData& procData, proc::MapProcedureRef& ref, QTreeWidgetItem *item);
+  void airportLabelLinkActivated(const QString& link);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<ProcData> itemIndex;

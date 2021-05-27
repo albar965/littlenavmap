@@ -155,6 +155,8 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &ProcedureSearch::dockVisibilityChanged);
 
+  connect(ui->labelProcedureSearch, &QLabel::linkActivated, this, &ProcedureSearch::airportLabelLinkActivated);
+
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 
@@ -173,6 +175,19 @@ ProcedureSearch::~ProcedureSearch()
   treeWidget->viewport()->removeEventFilter(treeEventFilter);
   delete treeEventFilter;
   delete gridDelegate;
+}
+
+void ProcedureSearch::airportLabelLinkActivated(const QString& link)
+{
+  qDebug() << Q_FUNC_INFO << link;
+  // lnm://showairport
+
+  QUrl url(link);
+  if(url.scheme() == "lnm" && url.host() == "showairport")
+  {
+    showOnMapSelected();
+    showInformationSelected();
+  }
 }
 
 void ProcedureSearch::fontChanged()
@@ -310,7 +325,8 @@ void ProcedureSearch::updateHeaderLabel()
   if(currentAirportSim.isValid())
   {
     atools::util::HtmlBuilder html;
-    html.b(map::airportTextShort(currentAirportSim)).br();
+    html.a(map::airportTextShort(currentAirportSim), "lnm://showairport",
+           atools::util::html::BOLD | atools::util::html::LINK_NO_UL).br();
     if(currentAirportNav.procedure())
       html.text(procs).nbsp();
     else
