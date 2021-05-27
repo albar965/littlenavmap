@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html id="alternative" lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/styles.css">
+    <link rel="stylesheet" href="/assets/styles-alternative-layout-internal.css">
+    <link rel="stylesheet" href="/assets/styles-alternative-look-internal.css">
+    <title>
+      {applicationName} {applicationVersion} - Webserver
+    </title>
+    <script src="/assets/scripts.js"></script>
+    <script src="/assets/scripts-alternative.js"></script>
+  </head>
+  <body onclick="bodyFunctions()">
+    <div id="mainContainer" data-toolbarsplacement="top">
+      <div id="contentContainer">
+        <iframe src="map.html" onload="injectUpdates(this)" name="contentiframe" title="original content"></iframe>
+      </div>
+      <div id="toolbarsContainer">
+        <div id="toolbarOuter" class="toolbar" onclick="setActive(event)">
+          <button id="buttonMap" class="active"><a href="map.html" target="contentiframe">Map</a></button>
+          <button id="buttonFlightPlan"><a href="flightplan.html" target="contentiframe">Flight Plan</a></button>
+          <button id="buttonAircraft"><a href="aircraft.html" target="contentiframe">Aircraft</a></button>
+          <button id="buttonProgress"><a href="progress.html" target="contentiframe">Progress</a></button>
+          <button id="buttonAirport"><a href="airport.html" target="contentiframe">Airport</a></button>
+          <button id="buttonHelp"><a href="{helpUrl}" target="contentiframe">Help</a></button>
+        </div>
+        <div id="toggleOptionsContainer">
+          <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)">
+            <div id="toolbarsOptions">
+              <form>
+                <fieldset>
+                  <div class="input-block">
+                    <input type="checkbox" id="toolbarAlternativeUIToggle" checked onclick="toggleAlternativeUI()"><label for="toolbarAlternativeUIToggle">Toggle "alternative ui"</label>
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>Position</legend>
+                  <div class="input-block">
+                    <input type="radio" id="toolbarPositionTop" name="position" value="top" checked onchange="setToolbarPosition(this)"><label for="toolbarPositionTop">top</label>
+                  </div>
+                  <div class="input-block">
+                    <input type="radio" id="toolbarPositionRight" name="position" value="right" onchange="setToolbarPosition(this)"><label for="toolbarPositionRight">right</label>
+                  </div>
+                  <div class="input-block">
+                    <input type="radio" id="toolbarPositionBottom" name="position" value="bottom" onchange="setToolbarPosition(this)"><label for="toolbarPositionBottom">bottom</label>
+                  </div>
+                  <div class="input-block">
+                    <input type="radio" id="toolbarPositionLeft" name="position" value="left" onchange="setToolbarPosition(this)"><label for="toolbarPositionLeft">left</label>
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>Theme</legend>
+                  <select onchange="switchTheme(this)" onclick="event.stopPropagation()" name="theme" title="theme switcher">
+                    <option value="">Default</option>
+                    <option value="doremi">Doremi</option>
+                  </select>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

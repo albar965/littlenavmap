@@ -117,6 +117,32 @@ function submitMapRouteCmd() {
 }
 
 /*
+ * Toggles to and from the alternative UI
+ */
+function toggleAlternativeUI() {
+  var activeUI = sessionStorage.getItem("activeUI");
+  if(activeUI !== null) {
+    switch(activeUI) {
+      case "alternative":
+        sessionStorage.setItem("activeUI", "original");
+        location.href = "index.html";
+        break;
+      case "original":
+        sessionStorage.setItem("activeUI", "alternative");
+        location.href = "alternative.html";
+        break;
+      default:
+        sessionStorage.setItem("activeUI", "original");
+        location.href = "index.html";
+
+    }
+  } else {
+    sessionStorage.setItem("activeUI", "alternative");
+    location.href = "alternative.html";
+  }
+}
+
+/*
  * Toggle class on #map to fit it to parent.
  */
 function toggleFitMap() {
