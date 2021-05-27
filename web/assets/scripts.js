@@ -119,26 +119,26 @@ function submitMapRouteCmd() {
 /*
  * Toggles to and from the alternative UI
  */
-function toggleAlternativeUI() {
+function toggleLegacyUI() {
   var activeUI = sessionStorage.getItem("activeUI");
   if(activeUI !== null) {
     switch(activeUI) {
-      case "alternative":
-        sessionStorage.setItem("activeUI", "original");
-        location.href = "index.html";
+      case "2021-a":
+        sessionStorage.setItem("activeUI", "legacy");
+        location.href = "legacy.html";
         break;
-      case "original":
-        sessionStorage.setItem("activeUI", "alternative");
-        location.href = "alternative.html";
+      case "legacy":
+        sessionStorage.setItem("activeUI", "2021-a");
+        location.href = "index.html";
         break;
       default:
-        sessionStorage.setItem("activeUI", "original");
-        location.href = "index.html";
+        sessionStorage.setItem("activeUI", "legacy");
+        location.href = "legacy.html";
 
     }
   } else {
-    sessionStorage.setItem("activeUI", "alternative");
-    location.href = "alternative.html";
+    sessionStorage.setItem("activeUI", "2021-a");
+    location.href = "index.html";
   }
 }
 
