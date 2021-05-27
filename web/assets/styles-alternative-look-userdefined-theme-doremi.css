@@ -1,0 +1,114 @@
+/* toolbars container taking up a sides whole edge space */
+#toolbarsContainer {
+
+}
+
+/* any toolbar; when wanting to modify gaps, take [data-toolbarsplacement="X"] from internal.css into consideration */
+.toolbar {
+
+}
+
+/* outer toolbar */
+#toolbarOuter {
+
+}
+
+/* any toolbar's all buttons */
+.toolbar button:hover {
+  filter: brightness(1.5);
+}
+
+/* outer toolbar's all buttons */
+#toolbarOuter button {
+
+}
+
+/* specific buttons */
+#alternative #buttonMap {
+  background: #d00;
+}
+#alternative #buttonFlightPlan {
+  background: #e70;
+}
+#alternative #buttonAircraft {
+  background: #fd0;
+}
+#alternative #buttonProgress {
+  background: #070;
+}
+#alternative #buttonAirport {
+  background: #03b;
+}
+#alternative #buttonHelp {
+  background: #41c;
+}
+
+/* button active style, use !important for each property's value */
+.active {
+  filter: brightness(2) !important;
+}
+#alternative #buttonMap.active  {
+  background: #d00 !important;
+}
+#alternative #buttonFlightPlan.active  {
+  background: #e70 !important;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000 !important;
+}
+#alternative #buttonAircraft.active  {
+  background: #fd0 !important;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000 !important;
+}
+#alternative #buttonProgress.active  {
+  background: #070 !important;
+}
+#alternative #buttonAirport.active  {
+  background: #03b !important;
+}
+#alternative #buttonHelp.active  {
+  background: #41c !important;
+}
+
+/* see internal.css for detailed cross-effects when changing :hover, ::before or .shown::before of below selector */
+[data-toolbarsplacement="top"] #toggleOptionsToggle::before {
+	border-top-color: #81a;
+}
+
+[data-toolbarsplacement="right"] #toggleOptionsToggle::before {
+	border-right-color: #81a;
+}
+
+[data-toolbarsplacement="bottom"] #toggleOptionsToggle::before {
+	border-bottom-color: #81a;
+}
+
+[data-toolbarsplacement="left"] #toggleOptionsToggle::before {
+	border-left-color: #81a;
+}
+
+[data-toolbarsplacement="top"] #toggleOptionsToggle.shown::before {
+	border-top-color: #dad;
+}
+
+[data-toolbarsplacement="right"] #toggleOptionsToggle.shown::before {
+	border-right-color: #dad;
+}
+
+[data-toolbarsplacement="bottom"] #toggleOptionsToggle.shown::before {
+	border-bottom-color: #dad;
+}
+
+[data-toolbarsplacement="left"] #toggleOptionsToggle.shown::before {
+	border-left-color: #dad;
+}
+
+#toggleOptionsToggle:hover {
+  outline-color: #a6b;
+}
+
+#toggleOptionsToggle:hover::before {
+  filter: brightness(1.5);
+}
+
+#toggleOptionsToggle.shown:hover::before {
+  filter: brightness(1);
+}
