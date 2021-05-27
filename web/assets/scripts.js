@@ -132,13 +132,13 @@ function toggleLegacyUI() {
         location.href = "index.html";
         break;
       default:
-        sessionStorage.setItem("activeUI", "legacy");
-        location.href = "legacy.html";
+        sessionStorage.setItem("activeUI", "2021-a");
+        location.href = "index.html";
 
     }
   } else {
-    sessionStorage.setItem("activeUI", "2021-a");
-    location.href = "index.html";
+    sessionStorage.setItem("activeUI", "legacy");
+    location.href = "legacy.html";
   }
 }
 
