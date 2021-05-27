@@ -116,6 +116,35 @@ function injectUpdates(origin) {
       }
     };
 
+    var mapElement = origin.contentDocument.querySelector("#map");
+    mapImageLoaded = true;
+    mapElement.onload = function() {
+      mapImageLoaded = true;
+    };
+    mapWheelZoomTimeout = null;
+    mapElement.onwheel = function(e) {
+      if(mapImageLoaded) {
+        mapImageLoaded = false;
+        origin.contentWindow.clearTimeout(mapWheelZoomTimeout);
+        mapElement.src = "/mapimage?format=jpg&quality=3&width=" + ~~(mapElement.parentElement.clientWidth / 1) + "&height=" + ~~(mapElement.parentElement.clientHeight / 1) +
+              "&session&mapcmd=" + (e.deltaY < 0 ? "in" : "out") + "&cmd=" + Math.random();
+        mapWheelZoomTimeout = origin.contentWindow.setTimeout(function() {
+          origin.contentWindow.reloadMap("refreshonly");
+        }, 1000);
+      }
+    };
+    mapElement.ongestureend = function(e) {
+      if(mapImageLoaded) {
+        mapImageLoaded = false;
+        origin.contentWindow.clearTimeout(mapWheelZoomTimeout);
+        mapElement.src = "/mapimage?format=jpg&quality=3&width=" + ~~(mapElement.parentElement.clientWidth / 1) + "&height=" + ~~(mapElement.parentElement.clientHeight / 1) +
+              "&session&mapcmd=" + (e.scale > 1 ? "in" : "out") + "&cmd=" + Math.random();
+        mapWheelZoomTimeout = origin.contentWindow.setTimeout(function() {
+          origin.contentWindow.reloadMap("refreshonly");
+        }, 1000);
+      }
+    };
+
     var standbyPreventionVideo = origin.contentDocument.querySelector("#preventstandbyVideo");    // iOS need video with audio track to have it work as standby preventer
     standbyPreventionVideo.addEventListener("play", function() {
       standbyPreventionVideo.classList.add("running");
