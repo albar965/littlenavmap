@@ -43,6 +43,10 @@
 
 }
 
+/* button active style, use !important for each property's value */
+.active {
+}
+
 /* see internal.css for detailed cross-effects when changing :hover, ::before or .shown::before of below selector */
 #toggleOptionsToggle {
 

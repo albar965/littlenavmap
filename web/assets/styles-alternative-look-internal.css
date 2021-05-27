@@ -28,6 +28,11 @@
   width: 150px;
 }
 
+.toolbar button a {
+  text-decoration: none;
+  color: inherit;
+}
+
 [data-toolbarsplacement="top"] .toolbar button, [data-toolbarsplacement="bottom"] .toolbar button {
   margin: 5px 2.5px;
 }
@@ -96,19 +101,19 @@
 }
 
 [data-toolbarsplacement="top"] #toggleOptionsToggle.shown::before {
-	border-top-color: #acf !important;
+	border-top-color: #acf;
 }
 
 [data-toolbarsplacement="right"] #toggleOptionsToggle.shown::before {
-	border-right-color: #acf !important;
+	border-right-color: #acf;
 }
 
 [data-toolbarsplacement="bottom"] #toggleOptionsToggle.shown::before {
-	border-bottom-color: #acf !important;
+	border-bottom-color: #acf;
 }
 
 [data-toolbarsplacement="left"] #toggleOptionsToggle.shown::before {
-	border-left-color: #acf !important;
+	border-left-color: #acf;
 }
 
 #toolbarsOptions {
@@ -156,8 +161,8 @@
 }
 
 #toolbarsOptions input[type="radio"]:checked + label {
-  color: #ff0 !important;
-  text-shadow: 0 0 3px rgba(192, 192, 0, .5) !important;
+  color: #ff0;
+  text-shadow: 0 0 3px rgba(192, 192, 0, .5);
 }
 
 #toolbarsOptions .input-block label {

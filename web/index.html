@@ -59,14 +59,19 @@
           "/progress.html">Aircraft Progress</a> - <a href="/airport.html">Airport</a> - <a href="{helpUrl}">Help</a>
           -  {maprefreshsel} <button type="button" onclick="reloadMap()">Reload Map</button> <button type="button"
           onclick="submitMapUserCmd()">User Aircraft</button> <button type="button" onclick=
-          "submitMapRouteCmd()">Flight Plan</button> <button type="button" onclick=
-          "toggleAlternativeUI()">Toggle "alternative ui"</button>
+          "submitMapRouteCmd()">Flight Plan</button>
         </p>
       </form>
       <form id="airportform" action="javascript:submitMapAirportCmd()" name="airportform">
         <p>
           <input id="airporttext" type="text" name="airportident" value="" /> <button type="button" onclick=
           "submitMapAirportCmd()">Show Airport</button>
+        </p>
+      </form>
+      <form id="extrasform" name="extrasform">
+        <p>
+          <button type="button" onclick=
+          "toggleAlternativeUI()">Toggle "alternative ui"</button>
         </p>
       </form>
     </div>

@@ -78,6 +78,14 @@ iframe {
   cursor: pointer;
 }
 
+.toolbar button a {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
 #toggleOptionsToggle {
   position: relative;
   cursor: pointer;
@@ -150,4 +158,10 @@ iframe {
 #toolbarsOptions .input-block label {
   cursor: pointer;
   width: 100%;
+}
+
+#toolbarsOptions select {
+  margin: auto;
+  position: relative;
+  display: table;
 }

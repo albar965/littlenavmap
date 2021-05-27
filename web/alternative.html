@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/assets/styles.css">
     <link rel="stylesheet" href="/assets/styles-alternative-layout-internal.css">
     <link rel="stylesheet" href="/assets/styles-alternative-look-internal.css">
-    <link rel="stylesheet" href="/assets/styles-alternative-look-userdefined.css">
     <title>
       {applicationName} {applicationVersion} - Webserver
     </title>
@@ -17,16 +16,16 @@
   <body onclick="bodyFunctions()">
     <div id="mainContainer" data-toolbarsplacement="top">
       <div id="contentContainer">
-        <iframe src="map.html" onload="injectAlternativeStyling()" title="original content"></iframe>
+        <iframe src="map.html" onload="injectUpdates(this)" name="contentiframe" title="original content"></iframe>
       </div>
       <div id="toolbarsContainer">
-        <div id="toolbarOuter" class="toolbar">
-          <button id="buttonMap" class="active">Map</button>
-          <button id="buttonFlightPlan">Flight Plan</button>
-          <button id="buttonAircraft">Aircraft</button>
-          <button id="buttonProgress">Progress</button>
-          <button id="buttonAirport">Airport</button>
-          <button id="buttonHelp">Help</button>
+        <div id="toolbarOuter" class="toolbar" onclick="setActive(event)">
+          <button id="buttonMap" class="active"><a href="map.html" target="contentiframe">Map</a></button>
+          <button id="buttonFlightPlan"><a href="flightplan.html" target="contentiframe">Flight Plan</a></button>
+          <button id="buttonAircraft"><a href="aircraft.html" target="contentiframe">Aircraft</a></button>
+          <button id="buttonProgress"><a href="progress.html" target="contentiframe">Progress</a></button>
+          <button id="buttonAirport"><a href="airport.html" target="contentiframe">Airport</a></button>
+          <button id="buttonHelp"><a href="{helpUrl}" target="contentiframe">Help</a></button>
         </div>
         <div id="toggleOptionsContainer">
           <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)">
@@ -51,6 +50,13 @@
                   <div class="input-block">
                     <input type="radio" id="toolbarPositionLeft" name="position" value="left" onchange="setToolbarPosition(this)"><label for="toolbarPositionLeft">left</label>
                   </div>
+                </fieldset>
+                <fieldset>
+                  <legend>Theme</legend>
+                  <select onchange="switchTheme(this)" onclick="event.stopPropagation()" name="theme" title="theme switcher">
+                    <option value="">Default</option>
+                    <option value="doremi">Doremi</option>
+                  </select>
                 </fieldset>
               </form>
             </div>
