@@ -258,7 +258,7 @@ function switchTheme(origin) {
   }
   if(origin.value !== "") {
     themeCSS = document.createElement("link");
-    themeCSS.href = "/assets/styles-alternative-look-userdefined-theme-" + origin.value + ".css";
+    themeCSS.href = "/assets/styles-2021-a-look-userdefined-theme-" + origin.value + ".css";
     themeCSS.rel = "stylesheet";
     themeCSS.id = "themeCSS";
     document.head.appendChild(themeCSS);
