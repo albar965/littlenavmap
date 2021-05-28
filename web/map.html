@@ -38,7 +38,7 @@
       margin: 0;
     }
 
-    #interactionoptions, #preventstandbyform {
+    #interactionoptions, #preventstandbyform, #refreshform {
       font-size: 13.333px;
     }
 
@@ -51,27 +51,19 @@
       cursor: pointer;
     }
 
-    [data-interaction="zoom"] {
-      cursor: zoom-in;
-    }
-
-    [data-interaction="widen"] {
-      cursor: zoom-out;
-    }
-
-    [data-interaction="shift"][data-shift="n"] {
+    [data-shift="up"] {
       cursor: url(images/point-up.cur), auto;
     }
 
-    [data-interaction="shift"][data-shift="w"] {
+    [data-shift="left"] {
       cursor: url(images/point-left.cur), auto;
     }
 
-    [data-interaction="shift"][data-shift="e"] {
+    [data-shift="right"] {
       cursor: url(images/point-right.cur), auto;
     }
 
-    [data-interaction="shift"][data-shift="s"] {
+    [data-shift="down"] {
       cursor: url(images/point-down.cur), auto;
     }
 
@@ -113,14 +105,12 @@
     //]]>
     </script>
   </head>
-  <body id="mapPage" onload="(function(){setTimeout(function(){refreshMapPage()},0)})()" onresize="reloadMap()" style="margin:0;height:100%;display:flex;flex-direction:column">
+  <body id="mapPage" onload="(function(){setTimeout(function(){refreshMapPage()},0)})();// async to have the function override apply" onresize="reloadMap()" style="margin:0;height:100%;display:flex;flex-direction:column">
     <div id="header" style="margin:.5em;flex:0 1">
       <div style="white-space:nowrap;overflow:auto">
         <form id="refreshform" name="refreshform">
           <p>
-            {maprefreshsel} <button type="button" onclick="reloadMap()">Reload Map</button> <button type="button"
-            onclick="submitMapUserCmd()">User Aircraft</button> <button type="button" onclick=
-            "submitMapRouteCmd()">Flight Plan</button>
+            <span style="vertical-align:middle;display:inline-block;text-align:center;margin:-7px 0;"><input type="range" min="0" max="120" step="1" value="0" oninput="refreshPage();document.querySelector('#refreshvalue').textContent=this.value" id="refreshselect" style="width:121px"><br><label>refresh every <span id="refreshvalue" style="width:25px;text-align:right;display:inline-block">0</span> s</label></span> <span><button type="button" onclick="reloadMap()">Now</button> <button type="button" onclick="submitMapUserCmd()" style="margin-left:20px">User Aircraft</button> <button type="button" onclick="submitMapRouteCmd()">Flight Plan</button></span>
           </p>
         </form>
         <form id="airportform" action="javascript:submitMapAirportCmd()" name="airportform">
@@ -128,11 +118,6 @@
             <input id="airporttext" type="text" name="airportident" value="" /> <button type="button" onclick=
             "submitMapAirportCmd()">Show Airport</button>
           </p>
-        </form>
-        <form id="interactionoptions" onchange="setMapInteraction(event)">
-           <p>
-              Map Interaction Type: <input type="radio" value="shift" checked name="interaction" id="shift"> <label for="shift">shift</label> <input type="radio" value="zoom" name="interaction" id="zoom"> <label for="zoom">zoom</label> <input type="radio" value="widen" name="interaction" id="widen"> <label for="widen">widen fov (zoom out)</label>
-           </p>
         </form>
         <form id="preventstandbyform">
           <p>
@@ -144,7 +129,7 @@
         </div>
       </div>
     </div>
-    <div id="mapcontainer" style="flex:1 0" onclick="submitMapCmd2(event)" onmousemove="evalCursor(event)" data-interaction="shift">
+    <div id="mapcontainer" style="flex:1 0" onclick="submitMapCmd2(event)">
       <img id="map" src="images/littlenavmap.svg" alt="Map" style="width:100%;height:100%;object-fit:contain;display:none;box-shadow:none;border-radius:0">
     </div>
   </body>

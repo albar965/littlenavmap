@@ -2,8 +2,10 @@
  * adds look and functionality updates for the original HTML to the document loaded in the iframe origin
  */
 function injectUpdates(origin) {
+  var ocw = origin.contentWindow;
+  var ocd = origin.contentDocument;
 
-  if(!origin.contentDocument) {   // likely no CORS
+  if(!ocd) {   // likely no CORS
     return;
   }
 
@@ -15,7 +17,7 @@ function injectUpdates(origin) {
   function updateProgressPage(page) {
     page.querySelector("#defaultCommands").style.display = "none";
 
-    var refresher = origin.contentDocument.querySelector("#refreshselect");
+    var refresher = ocd.querySelector("#refreshselect");
     refresher.addEventListener("change", function() {
       storeState("refreshprogressinterval", this.selectedIndex);
     });
@@ -26,206 +28,178 @@ function injectUpdates(origin) {
     }
   }
 
-  function updateGeneric(page) {
+  function updateGenericPage(page) {
     page.querySelector("#refreshform").style.display = "none";
   }
 
   function updateMapPage(page) {
+    var defaultMapQuality = 30;
 
-    var imageRequestTimeout = null;
-    origin.contentWindow.reloadMap = function(cmd) {
-      clearTimeout(imageRequestTimeout);
-      imageRequestTimeout = setTimeout(function() {
-        var map = origin.contentDocument.querySelector("#map");
-        if(map) {
-          typeof cmd === "undefined" ? map.style.display = "none" : 0;   // to get dimensions of parent unaffected by prior existing larger image enlarging parent when resizing; inline resize event handler case
-          map.src =
-            "/mapimage?format=jpg&quality=30&width=" + map.parentElement.clientWidth + "&height=" + map.parentElement.clientHeight +
-            "&session" + (typeof cmd !== "undefined" && cmd !== "refreshonly" ? "&mapcmd=" + cmd + "&cmd=" : "&reload=") + Math.random();
-          typeof cmd === "undefined" ? map.style.display = "block" : 0;
-        }
-      }, 50);    // wait 50ms before requesting image to avoid server overload
-    };
-    origin.contentWindow.reloadMap();
+    var mapElement = ocd.querySelector("#map");
+    var realPixelsPerCSSPixel = devicePixelRatio || 1;
 
-    origin.contentWindow.setMapInteraction = function(event) {
-      origin.contentDocument.querySelector("#mapcontainer").setAttribute("data-interaction", event.target.value);
-        storeState("mapinteraction", event.target.id);
-    };
-    var mapInteraction = retrieveState("mapinteraction");
-    if(mapInteraction !== null) {
-      origin.contentDocument.querySelector("#" + mapInteraction).click();
+    /**
+     * explicit map source update, performance version requires every parameter!
+     */
+    function updateMapImage(command, quality) {
+      mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapElement.parentElement.clientWidth * realPixelsPerCSSPixel) + "&height=" + ~~(mapElement.parentElement.clientHeight * realPixelsPerCSSPixel) + "&session&" + command + "=" + Math.random();
     }
 
-    origin.contentWindow.evalCursor = function(e) {
-      if(e.currentTarget.getAttribute("data-interaction") === "shift") {
-        var s = e.currentTarget.clientHeight / e.currentTarget.clientWidth;
-        var x = e.offsetX - e.currentTarget.clientWidth / 2;
-        var y = -(e.offsetY - e.currentTarget.clientHeight / 2);
-        if(y > s * x) {
-          if(y > -s * x) {
-            // north
-            e.currentTarget.setAttribute("data-shift", "n");
-          } else {
-            // west
-            e.currentTarget.setAttribute("data-shift", "w");
-          }
+    var imageRequestTimeout = null;
+    // override default function to stay within our new ui look
+    ocw.reloadMap = function() {
+      clearTimeout(imageRequestTimeout);
+      imageRequestTimeout = setTimeout(function() {
+          mapElement.style.display = "none";                    // to get dimensions of parent unaffected by prior existing larger image enlarging parent when resizing; inline resize event handler case
+          updateMapImage("reload", defaultMapQuality);
+          mapElement.style.display = "block";
+      }, 50);                                                   // wait 50ms before requesting image to avoid server overload
+    };
+    ocw.reloadMap();
+
+    // override default function to stay within our new ui look
+    ocw.submitMapRouteCmd = function() {
+      updateMapImage("mapcmd=route&cmd", defaultMapQuality);
+    };
+
+    mapElement.parentElement.onmousemove = function(e) {
+      var s = e.currentTarget.clientHeight / e.currentTarget.clientWidth;
+      var x = e.offsetX - e.currentTarget.clientWidth / 2;
+      var y = -(e.offsetY - e.currentTarget.clientHeight / 2);
+      if(y > s * x) {
+        if(y > -s * x) {
+          // north
+          e.currentTarget.setAttribute("data-shift", "up");
         } else {
-          if(y > -s * x) {
-            // east
-            e.currentTarget.setAttribute("data-shift", "e");
-          } else {
-            // south
-            e.currentTarget.setAttribute("data-shift", "s");
-          }
+          // west
+          e.currentTarget.setAttribute("data-shift", "left");
+        }
+      } else {
+        if(y > -s * x) {
+          // east
+          e.currentTarget.setAttribute("data-shift", "right");
+        } else {
+          // south
+          e.currentTarget.setAttribute("data-shift", "down");
         }
       }
     };
 
-    origin.contentWindow.submitMapCmd2 = function(e) {
-      /*
-      var x = e.offsetX - e.currentTarget.clientWidth / 2;
-      var y = -(e.offsetY - e.currentTarget.clientHeight / 2);
-      // nice to have: set center of map as LatLng in command
-      */
-      var interaction = e.currentTarget.getAttribute("data-interaction");
-      var shiftType = e.currentTarget.getAttribute("data-shift");
-      switch(interaction) {
-        case "shift":
-          switch(shiftType) {
-            case "n":
-              origin.contentWindow.reloadMap("up");
-              break;
-            case "s":
-              origin.contentWindow.reloadMap("down");
-              break;
-            case "e":
-              origin.contentWindow.reloadMap("right");
-              break;
-            case "w":
-              origin.contentWindow.reloadMap("left");
-              break;
-          }
-          break;
-        case "zoom":
-          origin.contentWindow.reloadMap("in");
-          break;
-        case "widen":
-          origin.contentWindow.reloadMap("out");
-          break;
-      }
+    ocw.submitMapCmd2 = function(e) {
+      var shift = e.currentTarget.getAttribute("data-shift");
+      shift !== null ? updateMapImage("mapcmd=" + shift + "&cmd", defaultMapQuality) : 0;         // on touch devices, without initial HTML attribute, shift === null when pinching for zoom in
     };
 
-    var mapElement = origin.contentDocument.querySelector("#map");
-    mapImageLoaded = true;
+    var mapImageLoaded = true;
     mapElement.onload = function() {
       mapImageLoaded = true;
     };
-    mapWheelZoomTimeout = null;
-    mapElement.onwheel = function(e) {
+    var mapWheelZoomTimeout = null;
+    var mapZoomCore = function(condition) {
       if(mapImageLoaded) {
         mapImageLoaded = false;
-        origin.contentWindow.clearTimeout(mapWheelZoomTimeout);
-        mapElement.src = "/mapimage?format=jpg&quality=3&width=" + ~~(mapElement.parentElement.clientWidth / 1) + "&height=" + ~~(mapElement.parentElement.clientHeight / 1) +
-              "&session&mapcmd=" + (e.deltaY < 0 ? "in" : "out") + "&cmd=" + Math.random();
-        mapWheelZoomTimeout = origin.contentWindow.setTimeout(function() {
-          origin.contentWindow.reloadMap("refreshonly");
+        ocw.clearTimeout(mapWheelZoomTimeout);
+        updateMapImage("mapcmd=" + (condition ? "in" : "out") + "&cmd", 3);
+        mapWheelZoomTimeout = ocw.setTimeout(function() {
+          updateMapImage("reload", defaultMapQuality);
         }, 1000);
       }
     };
-    mapElement.ongestureend = function(e) {
-      if(mapImageLoaded) {
-        mapImageLoaded = false;
-        origin.contentWindow.clearTimeout(mapWheelZoomTimeout);
-        mapElement.src = "/mapimage?format=jpg&quality=3&width=" + ~~(mapElement.parentElement.clientWidth / 1) + "&height=" + ~~(mapElement.parentElement.clientHeight / 1) +
-              "&session&mapcmd=" + (e.scale > 1 ? "in" : "out") + "&cmd=" + Math.random();
-        mapWheelZoomTimeout = origin.contentWindow.setTimeout(function() {
-          origin.contentWindow.reloadMap("refreshonly");
-        }, 1000);
-      }
+    mapElement.onwheel = function(e) {
+      mapZoomCore(e.deltaY < 0);
+    };
+    mapElement.ongesturechange = function(e) {
+      mapZoomCore(e.scale > 1);
     };
 
-    var standbyPreventionVideo = origin.contentDocument.querySelector("#preventstandbyVideo");    // iOS need video with audio track to have it work as standby preventer
+    var standbyPreventionVideo = ocd.querySelector("#preventstandbyVideo");    // iOS need video with audio track to have it work as standby preventer
     standbyPreventionVideo.addEventListener("play", function() {
       standbyPreventionVideo.classList.add("running");
     });
-    standbyPreventionVideo.addEventListener("timeupdate", function() {
+    standbyPreventionVideo.addEventListener("timeupdate", function() {         // iOS iPad showed a "unprecision" of 2s, thus rewinding after 2s before the end lead to the video ending and rewinding not applied anymore; loop HTML attribute appeared to get ignored
       standbyPreventionVideo.currentTime > 6 ? standbyPreventionVideo.currentTime = 4 : 0;
     });
     standbyPreventionVideo.addEventListener("pause", function() {
       standbyPreventionVideo.classList.remove("running");
     });
     var testTimeout;
-    origin.contentWindow.preventStandby = function(innerorigin) {
+    ocw.preventStandby = function(innerorigin) {
       if(innerorigin.checked) {
         standbyPreventionVideo.play();
         storeState("preventingstandby", true);
-        testTimeout = origin.contentWindow.setTimeout(function() {
-          if(standbyPreventionVideo.paused) {     // this can occur on "restoring state" after content switch on iOS because it is denied by iOS as it is like an autoplay
-            origin.contentDocument.querySelector("#preventstandby").click();
+        testTimeout = ocw.setTimeout(function() {
+          if(standbyPreventionVideo.paused) {                                 // being paused despite instructing play can occur on "restoring state" after content switch which is a page reload on iOS because it is denied by iOS as it is like an autoplay on page load
+            ocd.querySelector("#preventstandby").click();
           }
         }, 1000);
       } else {
-        origin.contentWindow.clearTimeout(testTimeout);
+        ocw.clearTimeout(testTimeout);
         standbyPreventionVideo.pause();
         storeState("preventingstandby", false);
       }
     };
     if(retrieveState("preventingstandby")) {
-      origin.contentDocument.querySelector("#preventstandby").click();
+      ocd.querySelector("#preventstandby").click();
     }
 
-    origin.contentWindow.refreshPage = function() {
-      origin.contentWindow.reloadMap("refreshonly");
+    ocw.refreshPage = function() {
+      updateMapImage("reload", defaultMapQuality);
 
       // copy from script.js refreshMapPage() follows adjusted for document and window, as well as interval function being contained
-      var refreshvalue = origin.contentDocument.getElementById('refreshselect').value;
-      if (refreshvalue != origin.contentWindow.currentInterval) {
+      var refreshvalue = ocd.getElementById('refreshselect').value;
+      if (refreshvalue != ocw.currentInterval) {
         // Value has changed - stop udpates
-        origin.contentWindow.clearInterval(origin.contentWindow.timeoutHandle);
+        ocw.clearInterval(ocw.timeoutHandle);
 
-        if (origin.contentWindow.currentInterval != -1) {
+        if (ocw.currentInterval != -1) {
           // Not the first load - update session on server
           var xhttp = new XMLHttpRequest();
           xhttp.open("GET", "/refresh?session&maprefresh=" + refreshvalue, true);
           xhttp.send();
         }
 
-        origin.contentWindow.currentInterval = refreshvalue;
+        ocw.currentInterval = refreshvalue;
 
-        if (origin.contentWindow.currentInterval > 0) {
+        if (ocw.currentInterval > 0) {
           // Set interval timer for periodical reload
-          origin.contentWindow.timeoutHandle = origin.contentWindow.setInterval(function(){origin.contentWindow.reloadMap("refreshonly")}, origin.contentWindow.currentInterval * 1000);
+          ocw.timeoutHandle = ocw.setInterval(function() {
+            if(mapImageLoaded) {                                  // on short intervals with high-res images on slower server machines, the previous image might not have been created yet by the server and a new request results in cancellation of the old processing possibly resulting in an image never getting delivered
+              mapImageLoaded = false;
+              updateMapImage("reload", defaultMapQuality);
+            }
+          }, ocw.currentInterval * 1000);
         }
       }
     };
-    var refresher = origin.contentDocument.querySelector("#refreshselect");
+    var refresher = ocd.querySelector("#refreshselect");
     refresher.addEventListener("change", function() {
-      storeState("refreshinterval", this.selectedIndex);
+      storeState("refreshinterval", this.value);
     });
     var refreshInterval = retrieveState("refreshinterval");
     if(refreshInterval !== null) {
-      refresher.selectedIndex = refreshInterval;
-      refresher.dispatchEvent(new Event("change"));
+      refresher.value = refreshInterval;
+      refresher.dispatchEvent(new Event("input"));
     }
 
   }
 
+
   var toDo = {
     "#airportPage": updateAirportPage,
     "#progressPage": updateProgressPage,
-    "#aircraftPage": updateGeneric,
-    "#flightplanPage": updateGeneric,
+    "#aircraftPage": updateGenericPage,
+    "#flightplanPage": updateGenericPage,
     "#mapPage": updateMapPage
   };
 
   for(var i in toDo) {
-    var find = origin.contentDocument.querySelector(i);
+    var find = ocd.querySelector(i);
     if(find) {
       toDo[i](find);
       break;
     }
   }
+
 
   function storeState(key, state) {
     sessionStorage.setItem(key, typeof state === "boolean" ? state ? "1" : "" : "" + state);
