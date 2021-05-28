@@ -50,6 +50,9 @@ public:
   explicit ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollAreaParam);
   virtual ~ProfileScrollArea() override;
 
+  ProfileScrollArea(const ProfileScrollArea& other) = delete;
+  ProfileScrollArea& operator=(const ProfileScrollArea& other) = delete;
+
   /* Top left corner of the viewport inside the widget */
   QPoint getOffset() const;
 

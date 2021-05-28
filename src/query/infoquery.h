@@ -43,6 +43,9 @@ public:
   InfoQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack);
   ~InfoQuery();
 
+  InfoQuery(const InfoQuery& other) = delete;
+  InfoQuery& operator=(const InfoQuery& other) = delete;
+
   /* Get record for joined tables airport, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getAirportInformation(int airportId);
   const atools::sql::SqlRecordVector *getAirportSceneryInformation(const QString& ident);

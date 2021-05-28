@@ -44,6 +44,9 @@ public:
   WaypointQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
   ~WaypointQuery();
 
+  WaypointQuery(const WaypointQuery& other) = delete;
+  WaypointQuery& operator=(const WaypointQuery& other) = delete;
+
   /* Get one by database id */
   map::MapWaypoint getWaypointById(int id);
 

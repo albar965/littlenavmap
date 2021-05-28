@@ -40,6 +40,9 @@ public:
   explicit TextDialog(QWidget *parent, const QString& title, const QString& helpBaseUrlParam = QString());
   virtual ~TextDialog() override;
 
+  TextDialog(const TextDialog& other) = delete;
+  TextDialog& operator=(const TextDialog& other) = delete;
+
   /* Set HTML text message to show.
    * Set printToLog to true to print the HTML as plain text into the log as info when calling this method. */
   void setHtmlMessage(const QString& messages, bool printToLog);

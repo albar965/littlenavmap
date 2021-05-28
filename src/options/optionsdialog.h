@@ -56,6 +56,9 @@ public:
   OptionsDialog(QMainWindow *parentWindow);
   virtual ~OptionsDialog() override;
 
+  OptionsDialog(const OptionsDialog& other) = delete;
+  OptionsDialog& operator=(const OptionsDialog& other) = delete;
+
   /* Saves the state of all widgets */
   void saveState();
 

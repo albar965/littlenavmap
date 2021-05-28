@@ -54,6 +54,9 @@ public:
   explicit RouteCalcWindow(QWidget *parent);
   virtual ~RouteCalcWindow() override;
 
+  RouteCalcWindow(const RouteCalcWindow& other) = delete;
+  RouteCalcWindow& operator=(const RouteCalcWindow& other) = delete;
+
   /* Open and set up the dialog for a full flight plan calculation */
   void showForFullCalculation();
 

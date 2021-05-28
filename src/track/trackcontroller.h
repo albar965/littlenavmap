@@ -31,6 +31,9 @@ public:
   explicit TrackController(TrackManager *trackManagerParam, MainWindow *mainWindowParam);
   virtual ~TrackController() override;
 
+  TrackController(const TrackController& other) = delete;
+  TrackController& operator=(const TrackController& other) = delete;
+
   /* Read and write widget states, source and airspace selection */
   void restoreState();
   void saveState();

@@ -47,6 +47,9 @@ public:
   explicit TrafficPatternDialog(QWidget *parent, const map::MapAirport& mapAirport);
   virtual ~TrafficPatternDialog() override;
 
+  TrafficPatternDialog(const TrafficPatternDialog& other) = delete;
+  TrafficPatternDialog& operator=(const TrafficPatternDialog& other) = delete;
+
   void fillTrafficPattern(map::TrafficPattern& pattern);
 
 private:

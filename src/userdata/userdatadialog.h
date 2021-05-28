@@ -61,6 +61,9 @@ public:
   UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, UserdataIcons *userdataIcons);
   virtual ~UserdataDialog() override;
 
+  UserdataDialog(const UserdataDialog& other) = delete;
+  UserdataDialog& operator=(const UserdataDialog& other) = delete;
+
   /* Get changed data. If mode is EDIT_MULTIPLE only a part of the columns are set */
   const atools::sql::SqlRecord& getRecord() const
   {

@@ -64,6 +64,9 @@ public:
   ProfileWidget(QWidget *parent);
   virtual ~ProfileWidget() override;
 
+  ProfileWidget(const ProfileWidget& other) = delete;
+  ProfileWidget& operator=(const ProfileWidget& other) = delete;
+
   /* If geometry has changed the elevation calculation is started after a short delay */
   void routeChanged(bool geometryChanged, bool newFlightPlan);
   void routeAltitudeChanged(int altitudeFeet);

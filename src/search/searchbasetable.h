@@ -75,6 +75,9 @@ public:
                   si::TabSearchId tabWidgetIndex);
   virtual ~SearchBaseTable() override;
 
+  SearchBaseTable(const SearchBaseTable& other) = delete;
+  SearchBaseTable& operator=(const SearchBaseTable& other) = delete;
+
   /* Disconnect and reconnect queries on database change */
   virtual void preDatabaseLoad() override;
   virtual void postDatabaseLoad() override;

@@ -72,6 +72,9 @@ public:
   UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent);
   virtual ~UserdataController() override;
 
+  UserdataController(const UserdataController& other) = delete;
+  UserdataController& operator=(const UserdataController& other) = delete;
+
   /* Show add dialog and add to the database if accepted */
   void addUserpoint(int id, const atools::geo::Pos& pos);
 

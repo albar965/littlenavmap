@@ -571,6 +571,9 @@ public:
 
   ~OptionData();
 
+  OptionData(const OptionData& other) = delete;
+  OptionData& operator=(const OptionData& other) = delete;
+
   /* Get option flags */
   opts::Flags getFlags() const
   {

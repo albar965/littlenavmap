@@ -44,6 +44,9 @@ public:
   AirportSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
   virtual ~AirportSearch() override;
 
+  AirportSearch(const AirportSearch& other) = delete;
+  AirportSearch& operator=(const AirportSearch& other) = delete;
+
   /* All state saving is done through the widget state */
   virtual void saveState() override;
   virtual void restoreState() override;

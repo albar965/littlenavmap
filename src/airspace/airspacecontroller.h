@@ -57,6 +57,9 @@ public:
                               atools::sql::SqlDatabase *dbOnline);
   virtual ~AirspaceController() override;
 
+  AirspaceController(const AirspaceController& other) = delete;
+  AirspaceController& operator=(const AirspaceController& other) = delete;
+
   /* Get airspace or online center by id and source database. Airspace is not valid if not found. */
   void getAirspaceById(map::MapAirspace& airspace, map::MapAirspaceId id);
   map::MapAirspace getAirspaceById(map::MapAirspaceId id);

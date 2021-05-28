@@ -62,6 +62,9 @@ public:
   MapPaintLayer(MapPaintWidget *widget);
   virtual ~MapPaintLayer() override;
 
+  MapPaintLayer(const MapPaintLayer& other) = delete;
+  MapPaintLayer& operator=(const MapPaintLayer& other) = delete;
+
   void copySettings(const MapPaintLayer& other);
 
   /* Sets databaseLoadStatus to avoid painting while database is offline */

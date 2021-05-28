@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "mappainter/mappaintertrack.h"
+#include "common/maptypes.h"
 
 #include "util/paintercontextsaver.h"
 

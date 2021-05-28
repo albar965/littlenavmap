@@ -59,6 +59,9 @@ public:
   explicit AircraftPerfController(MainWindow *parent);
   virtual ~AircraftPerfController() override;
 
+  AircraftPerfController(const AircraftPerfController& other) = delete;
+  AircraftPerfController& operator=(const AircraftPerfController& other) = delete;
+
   /* Load a new performance file after asking to save currently unchanged */
   void loadFile(const QString& perfFile);
 

@@ -63,6 +63,9 @@ public:
   explicit RouteExport(MainWindow *parent = nullptr);
   virtual ~RouteExport() override;
 
+  RouteExport(const RouteExport& other) = delete;
+  RouteExport& operator=(const RouteExport& other) = delete;
+
   /* Save and restore state of multiexport dialog and format map (custom paths and selection state) */
   void saveState();
   void restoreState();

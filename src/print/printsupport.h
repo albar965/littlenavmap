@@ -55,6 +55,9 @@ public:
   PrintSupport(MainWindow *parent);
   virtual ~PrintSupport() override;
 
+  PrintSupport(const PrintSupport& other) = delete;
+  PrintSupport& operator=(const PrintSupport& other) = delete;
+
   /* Open preview for the current map view */
   void printMap();
 

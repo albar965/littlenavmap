@@ -118,6 +118,9 @@ public:
 
   virtual ~HtmlInfoBuilder();
 
+  HtmlInfoBuilder(const HtmlInfoBuilder& other) = delete;
+  HtmlInfoBuilder& operator=(const HtmlInfoBuilder& other) = delete;
+
   /*
    * Creates a HTML description for an airport.
    * @param airport

@@ -41,6 +41,9 @@ public:
                const QString& header, const QString& settingsPrefixParam, const QString& helpBaseUrlParam);
   virtual ~ChoiceDialog() override;
 
+  ChoiceDialog(const ChoiceDialog& other) = delete;
+  ChoiceDialog& operator=(const ChoiceDialog& other) = delete;
+
   /* Add a checkbox with the given id, text and tooltip */
   void addCheckBox(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
                    bool disabled = false, bool hidden = false);

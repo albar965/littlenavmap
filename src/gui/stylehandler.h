@@ -41,6 +41,9 @@ public:
   StyleHandler(QMainWindow *mainWindowParam);
   virtual ~StyleHandler() override;
 
+  StyleHandler(const StyleHandler& other) = delete;
+  StyleHandler& operator=(const StyleHandler& other) = delete;
+
   /* Insert menu items for all found styles to submenu. */
   void insertMenuItems(QMenu *menu);
 

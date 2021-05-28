@@ -53,6 +53,21 @@ AircraftTrack::~AircraftTrack()
   delete lastUserAircraft;
 }
 
+AircraftTrack::AircraftTrack(const AircraftTrack& other)
+{
+  lastUserAircraft = new atools::fs::sc::SimConnectUserAircraft;
+  this->operator=(other);
+}
+
+AircraftTrack& AircraftTrack::operator=(const AircraftTrack& other)
+{
+  clear();
+  append(other);
+  maxTrackEntries = other.maxTrackEntries;
+  *lastUserAircraft = *other.lastUserAircraft;
+  return *this;
+}
+
 void AircraftTrack::saveState(const QString& suffix)
 {
   QFile trackFile(atools::settings::Settings::getConfigFilename(suffix));

@@ -42,6 +42,9 @@ public:
   Exporter(QWidget *parentWidgetParam, SqlController *controllerObj);
   virtual ~Exporter();
 
+  Exporter(const Exporter& other) = delete;
+  Exporter& operator=(const Exporter& other) = delete;
+
   // Disabled unused export functionality since it is not compatible with other classes
 #ifdef ENABLE_BASE_EXPORT
 

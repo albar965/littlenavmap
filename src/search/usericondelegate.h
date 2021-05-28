@@ -36,6 +36,9 @@ public:
   UserIconDelegate(const ColumnList *columns, UserdataIcons *userdataIcons);
   virtual ~UserIconDelegate() override;
 
+  UserIconDelegate(const UserIconDelegate& other) = delete;
+  UserIconDelegate& operator=(const UserIconDelegate& other) = delete;
+
 private:
   const ColumnList *cols;
   SymbolPainter *symbolPainter;

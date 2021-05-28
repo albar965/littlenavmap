@@ -36,6 +36,9 @@ public:
   explicit MapMarkHandler(QWidget *parent);
   virtual ~MapMarkHandler() override;
 
+  MapMarkHandler(const MapMarkHandler& other) = delete;
+  MapMarkHandler& operator=(const MapMarkHandler& other) = delete;
+
   /* Initialize, create actions and add button to toolbar */
   void addToolbarButton();
 

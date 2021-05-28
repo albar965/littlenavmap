@@ -81,6 +81,10 @@ public:
   AircraftTrack();
   ~AircraftTrack();
 
+  AircraftTrack(const AircraftTrack& other);
+
+  AircraftTrack& operator=(const AircraftTrack& other);
+
   /* Saves and restores track into a separate file (little_navmap.track) */
   void saveState(const QString& suffix);
   void restoreState(const QString& suffix);

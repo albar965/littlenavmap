@@ -45,6 +45,9 @@ public:
   explicit UpdateDialog(QWidget *parent, bool manualCheck, bool downloadAvailable);
   virtual ~UpdateDialog() override;
 
+  UpdateDialog(const UpdateDialog& other) = delete;
+  UpdateDialog& operator=(const UpdateDialog& other) = delete;
+
   /* HTML text and URL for the download button */
   void setMessage(const QString& text, const QUrl& url);
   QDialogButtonBox *getButtonBox();

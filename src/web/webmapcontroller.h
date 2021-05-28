@@ -73,6 +73,9 @@ public:
   explicit WebMapController(QWidget *parent, bool verboseParam);
   virtual ~WebMapController() override;
 
+  WebMapController(const WebMapController& other) = delete;
+  WebMapController& operator=(const WebMapController& other) = delete;
+
   /* Create or delete the map paint widget */
   void init();
   void deInit();

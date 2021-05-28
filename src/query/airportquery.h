@@ -70,6 +70,9 @@ public:
   AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav);
   ~AirportQuery();
 
+  AirportQuery(const AirportQuery& other) = delete;
+  AirportQuery& operator=(const AirportQuery& other) = delete;
+
   void getAirportAdminNamesById(int airportId, QString& city, QString& state, QString& country);
 
   void getAirportById(map::MapAirport& airport, int airportId);

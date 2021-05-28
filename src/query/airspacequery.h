@@ -50,6 +50,9 @@ public:
   AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
   ~AirspaceQuery();
 
+  AirspaceQuery(const AirspaceQuery& other) = delete;
+  AirspaceQuery& operator=(const AirspaceQuery& other) = delete;
+
   void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 
   map::MapAirspace getAirspaceById(int airspaceId);

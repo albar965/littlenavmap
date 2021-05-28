@@ -259,6 +259,9 @@ public:
   MapPainter(MapPaintWidget *marbleWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainter();
 
+  MapPainter(const MapPainter& other) = delete;
+  MapPainter& operator=(const MapPainter& other) = delete;
+
   virtual void render() = 0;
 
   bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);

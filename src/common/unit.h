@@ -55,6 +55,9 @@ public:
 
   ~Unit();
 
+  Unit(const Unit& other) = delete;
+  Unit& operator=(const Unit& other) = delete;
+
   /* Reverse functions. Convert local unit to known unit */
   static inline float rev(float value, std::function<float(float value)> func)
   {

@@ -50,6 +50,9 @@ public:
                            atools::fs::perf::AircraftPerf& destPerf, bool showAll);
   virtual ~PerfMergeDialog() override;
 
+  PerfMergeDialog(const PerfMergeDialog& other) = delete;
+  PerfMergeDialog& operator=(const PerfMergeDialog& other) = delete;
+
   /* True if a value has changed independent if user clicked OK or Cancel */
   bool hasChanged() const
   {

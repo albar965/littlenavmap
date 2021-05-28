@@ -59,6 +59,9 @@ public:
   ConnectClient(MainWindow *parent);
   virtual ~ConnectClient() override;
 
+  ConnectClient(const ConnectClient& other) = delete;
+  ConnectClient& operator=(const ConnectClient& other) = delete;
+
   /* Opens the connect dialog and depending on result connects to the server/agent */
   void connectToServerDialog();
 

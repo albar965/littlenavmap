@@ -50,6 +50,9 @@ public:
                               const QString& modeText);
   virtual ~AircraftPerfDialog() override;
 
+  AircraftPerfDialog(const AircraftPerfDialog& other) = delete;
+  AircraftPerfDialog& operator=(const AircraftPerfDialog& other) = delete;
+
   /* Get edited performance data */
   atools::fs::perf::AircraftPerf getAircraftPerf() const;
 

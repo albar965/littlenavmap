@@ -85,6 +85,9 @@ public:
   /* Also closes database if not already done */
   virtual ~DatabaseManager() override;
 
+  DatabaseManager(const DatabaseManager& other) = delete;
+  DatabaseManager& operator=(const DatabaseManager& other) = delete;
+
   /* Opens the dialog that allows to (re)load a new scenery database. */
   void run();
 

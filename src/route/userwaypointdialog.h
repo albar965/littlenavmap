@@ -52,6 +52,9 @@ public:
   UserWaypointDialog(QWidget *parent, const atools::fs::pln::FlightplanEntry& entryParam);
   virtual ~UserWaypointDialog() override;
 
+  UserWaypointDialog(const UserWaypointDialog& other) = delete;
+  UserWaypointDialog& operator=(const UserWaypointDialog& other) = delete;
+
   /* Entry is copyied. Get changed copy here */
   const atools::fs::pln::FlightplanEntry& getEntry() const
   {

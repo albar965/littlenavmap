@@ -42,6 +42,9 @@ public:
   VehicleIcons();
   ~VehicleIcons();
 
+  VehicleIcons(const VehicleIcons& other) = delete;
+  VehicleIcons& operator=(const VehicleIcons& other) = delete;
+
   QIcon iconFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate);
   const QPixmap *pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate);
 

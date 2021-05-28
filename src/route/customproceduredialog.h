@@ -44,6 +44,9 @@ public:
   explicit CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport);
   virtual ~CustomProcedureDialog() override;
 
+  CustomProcedureDialog(const CustomProcedureDialog& other) = delete;
+  CustomProcedureDialog& operator=(const CustomProcedureDialog& other) = delete;
+
   /* Selected runway and end or invalid if none */
   void getSelected(map::MapRunway& runway, map::MapRunwayEnd& end) const;
 

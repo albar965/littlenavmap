@@ -78,6 +78,9 @@ public:
   RouteController(QMainWindow *parent, QTableView *tableView);
   virtual ~RouteController() override;
 
+  RouteController(const RouteController& other) = delete;
+  RouteController& operator=(const RouteController& other) = delete;
+
   /* Creates a new plan and emits routeChanged */
   void newFlightplan();
 

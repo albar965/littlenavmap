@@ -36,6 +36,9 @@ public:
   AirportIconDelegate(const ColumnList *columns);
   virtual ~AirportIconDelegate() override;
 
+  AirportIconDelegate(const AirportIconDelegate& other) = delete;
+  AirportIconDelegate& operator=(const AirportIconDelegate& other) = delete;
+
 private:
   virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
                      const QModelIndex& index) const override;

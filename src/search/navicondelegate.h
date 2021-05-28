@@ -35,6 +35,9 @@ public:
   NavIconDelegate(const ColumnList *columns);
   virtual ~NavIconDelegate() override;
 
+  NavIconDelegate(const NavIconDelegate& other) = delete;
+  NavIconDelegate& operator=(const NavIconDelegate& other) = delete;
+
 private:
   const ColumnList *cols;
   SymbolPainter *symbolPainter;

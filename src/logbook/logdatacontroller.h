@@ -72,6 +72,9 @@ public:
   LogdataController(atools::fs::userdata::LogdataManager *logdataManager, MainWindow *parent);
   virtual ~LogdataController() override;
 
+  LogdataController(const LogdataController& other) = delete;
+  LogdataController& operator=(const LogdataController& other) = delete;
+
   /* Show edit dialog and save changes to the database if accepted for the given ids */
   void editLogEntries(const QVector<int>& ids);
   void addLogEntry();
@@ -137,7 +140,7 @@ public:
   /* Resets detection of flight */
   void resetTakeoffLandingDetection();
 
-  const QVector<atools::geo::LineString>* getTrackGeometry(int id);
+  const QVector<atools::geo::LineString> *getTrackGeometry(int id);
   const atools::geo::LineString *getRouteGeometry(int id);
 
   /* Clear caches */

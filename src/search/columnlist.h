@@ -40,6 +40,9 @@ public:
   ColumnList(const QString& tableName, const QString& idColumnName);
   ~ColumnList();
 
+  ColumnList(const ColumnList& other) = delete;
+  ColumnList& operator=(const ColumnList& other) = delete;
+
   /* Get column descriptor for the given query column name or alias */
   const Column *getColumn(int index) const;
   const Column *getColumn(const QString& field) const;

@@ -45,6 +45,9 @@ public:
   SqlController(atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *view);
   virtual ~SqlController();
 
+  SqlController(const SqlController& other) = delete;
+  SqlController& operator=(const SqlController& other) = delete;
+
   /* Create a new SqlModel, build and execute a query */
   void prepareModel();
 

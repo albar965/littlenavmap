@@ -54,6 +54,9 @@ public:
   explicit RouteMultiExportDialog(QWidget *parent, RouteExportFormatMap *exportFormatMap);
   virtual ~RouteMultiExportDialog() override;
 
+  RouteMultiExportDialog(const RouteMultiExportDialog& other) = delete;
+  RouteMultiExportDialog& operator=(const RouteMultiExportDialog& other) = delete;
+
   virtual int exec() override;
 
   /* Save and restore dialog state */

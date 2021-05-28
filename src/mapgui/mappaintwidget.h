@@ -62,6 +62,9 @@ public:
   MapPaintWidget(QWidget *parent, bool visible);
   virtual ~MapPaintWidget() override;
 
+  MapPaintWidget(const MapPaintWidget& other) = delete;
+  MapPaintWidget& operator=(const MapPaintWidget& other) = delete;
+
   /* Copy all map display settings, projection, theme, highlights and marks from the other widget. */
   void copySettings(const MapPaintWidget& other);
 

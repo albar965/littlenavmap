@@ -52,6 +52,9 @@ public:
   explicit HoldDialog(QWidget *parent, const map::MapResult& resultParam, const atools::geo::Pos& positionParam);
   virtual ~HoldDialog() override;
 
+  HoldDialog(const HoldDialog& other) = delete;
+  HoldDialog& operator=(const HoldDialog& other) = delete;
+
   void fillHold(map::Hold& hold);
 
 private:

@@ -50,6 +50,9 @@ public:
   RouteStringDialog(QWidget *parent, RouteController *routeController);
   virtual ~RouteStringDialog() override;
 
+  RouteStringDialog(const RouteStringDialog& other) = delete;
+  RouteStringDialog& operator=(const RouteStringDialog& other) = delete;
+
   const atools::fs::pln::Flightplan& getFlightplan() const;
 
   /* Saves and restores all values */

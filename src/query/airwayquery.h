@@ -58,6 +58,9 @@ public:
   AirwayQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
   ~AirwayQuery();
 
+  AirwayQuery(const AirwayQuery& other) = delete;
+  AirwayQuery& operator=(const AirwayQuery& other) = delete;
+
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId);
 

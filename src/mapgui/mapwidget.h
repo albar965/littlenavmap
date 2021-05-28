@@ -79,6 +79,9 @@ public:
   MapWidget(MainWindow *parent);
   virtual ~MapWidget() override;
 
+  MapWidget(const MapWidget& other) = delete;
+  MapWidget& operator=(const MapWidget& other) = delete;
+
   /* Map zoom and scroll position history goto next or last */
   void historyNext();
   void historyBack();

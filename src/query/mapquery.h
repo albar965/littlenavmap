@@ -57,6 +57,9 @@ public:
            atools::sql::SqlDatabase *sqlDbUser);
   ~MapQuery();
 
+  MapQuery(const MapQuery& other) = delete;
+  MapQuery& operator=(const MapQuery& other) = delete;
+
   /* Convert airport instances from/to simulator and third party nav databases */
   map::MapAirport  getAirportSim(const map::MapAirport& airport);
   map::MapAirport  getAirportNav(const map::MapAirport& airport);
@@ -207,7 +210,7 @@ private:
   void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
                             bool navData);
   QString airportIdentFromQuery(const QString& queryStr, const QString& ident, const QString& region,
-                                   const atools::geo::Pos& pos, bool& found);
+                                const atools::geo::Pos& pos, bool& found);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;

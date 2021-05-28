@@ -69,6 +69,9 @@ public:
   WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type);
   virtual ~WeatherReporter() override;
 
+  WeatherReporter(const WeatherReporter& other) = delete;
+  WeatherReporter& operator=(const WeatherReporter& other) = delete;
+
   /*
    * @return Active Sky metar or empty if Active Sky was not found or the airport has no weather report
    */

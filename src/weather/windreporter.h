@@ -75,6 +75,9 @@ public:
   explicit WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType type);
   virtual ~WindReporter() override;
 
+  WindReporter(const WindReporter& other) = delete;
+  WindReporter& operator=(const WindReporter& other) = delete;
+
   /* Does nothing currently */
   void preDatabaseLoad();
 

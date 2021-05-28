@@ -52,6 +52,9 @@ public:
   explicit LogStatisticsDialog(QWidget *parent, LogdataController *logdataControllerParam);
   virtual ~LogStatisticsDialog() override;
 
+  LogStatisticsDialog(const LogStatisticsDialog& other) = delete;
+  LogStatisticsDialog& operator=(const LogStatisticsDialog& other) = delete;
+
   /* Update on new, changed or deleted log entries in database */
   void logDataChanged();
 

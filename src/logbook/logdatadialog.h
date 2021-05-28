@@ -70,6 +70,9 @@ public:
   explicit LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode);
   virtual ~LogdataDialog() override;
 
+  LogdataDialog(const LogdataDialog& other) = delete;
+  LogdataDialog& operator=(const LogdataDialog& other) = delete;
+
   /* Get changed data. If mode is EDIT_MULTIPLE only a part of the columns are set. */
   const atools::sql::SqlRecord& getRecord() const
   {

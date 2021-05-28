@@ -49,6 +49,9 @@ public:
   NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
   virtual ~NavSearch() override;
 
+  NavSearch(const NavSearch& other) = delete;
+  NavSearch& operator=(const NavSearch& other) = delete;
+
   /* All state saving is done through the widget state */
   virtual void saveState() override;
   virtual void restoreState() override;

@@ -42,6 +42,9 @@ public:
   explicit RouteExportDialog(QWidget *parent, re::RouteExportType routeType);
   virtual ~RouteExportDialog() override;
 
+  RouteExportDialog(const RouteExportDialog& other) = delete;
+  RouteExportDialog& operator=(const RouteExportDialog& other) = delete;
+
   void restoreState();
   void saveState();
 

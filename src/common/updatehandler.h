@@ -45,6 +45,9 @@ public:
   explicit UpdateHandler(MainWindow *parent = nullptr);
   virtual ~UpdateHandler() override;
 
+  UpdateHandler(const UpdateHandler& other) = delete;
+  UpdateHandler& operator=(const UpdateHandler& other) = delete;
+
   /*
    * Check asynchronously for updates and call updateFound if anything was found.
    * Skips updates that are in the skip list in settings and also checks the timestamp for the last update.

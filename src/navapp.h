@@ -132,6 +132,9 @@ public:
   NavApp(int& argc, char **argv, int flags = ApplicationFlags);
   virtual ~NavApp() override;
 
+  NavApp(const NavApp& other) = delete;
+  NavApp& operator=(const NavApp& other) = delete;
+
   static NavApp *navAppInstance();
 
   /* Creates all aggregated objects */

@@ -53,6 +53,9 @@ public:
   ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav);
   ~ProcedureQuery();
 
+  ProcedureQuery(const ProcedureQuery& other) = delete;
+  ProcedureQuery& operator=(const ProcedureQuery& other) = delete;
+
   const proc::MapProcedureLeg *getApproachLeg(const map::MapAirport& airport, int approachId, int legId);
   const proc::MapProcedureLeg *getTransitionLeg(const map::MapAirport& airport, int legId);
 

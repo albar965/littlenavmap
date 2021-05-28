@@ -38,6 +38,9 @@ public:
   UserdataIcons();
   virtual ~UserdataIcons();
 
+  UserdataIcons(const UserdataIcons& other) = delete;
+  UserdataIcons& operator=(const UserdataIcons& other) = delete;
+
   QPixmap *getIconPixmap(const QString& type, int size);
 
   /* Resolve icon names, overloads and extract types*/

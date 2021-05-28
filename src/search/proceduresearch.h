@@ -62,6 +62,9 @@ public:
   ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::TabSearchId tabWidgetIndex);
   virtual ~ProcedureSearch() override;
 
+  ProcedureSearch(const ProcedureSearch& other) = delete;
+  ProcedureSearch& operator=(const ProcedureSearch& other) = delete;
+
   /* Fill tree widget and index with all approaches and transitions of an airport */
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
 

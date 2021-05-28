@@ -63,6 +63,9 @@ public:
   RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder);
   virtual ~RouteStringReader();
 
+  RouteStringReader(const RouteStringReader& other) = delete;
+  RouteStringReader& operator=(const RouteStringReader& other) = delete;
+
   /* Create a flight plan for the given route string and include speed and altitude if given (pointers != null).
    * Fills either flightplan and/or mapObjectRefs if not null.
    * Get error, warning and information messages with getMessages() */

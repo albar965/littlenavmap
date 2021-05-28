@@ -44,6 +44,9 @@ public:
   explicit RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableParam);
   virtual ~RunwaySelection() override;
 
+  RunwaySelection(const RunwaySelection& other) = delete;
+  RunwaySelection& operator=(const RunwaySelection& other) = delete;
+
   /* Call to restore settings and to load runway information into the widget */
   void restoreState();
 

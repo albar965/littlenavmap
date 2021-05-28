@@ -71,6 +71,9 @@ public:
   SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam);
   virtual ~SearchController() override;
 
+  SearchController(const SearchController& other) = delete;
+  SearchController& operator=(const SearchController& other) = delete;
+
   /* Create the airport search tab */
   void createAirportSearch(QTableView *tableView);
 

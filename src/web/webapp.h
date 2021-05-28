@@ -38,6 +38,9 @@ class QObject;
 class WebApp
 {
 public:
+  WebApp(const WebApp& other) = delete;
+  WebApp& operator=(const WebApp& other) = delete;
+
   static void init(QObject *parent, const QString& configFileName, const QString& docrootParam);
   static void deinit();
 

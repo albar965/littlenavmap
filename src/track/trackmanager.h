@@ -44,6 +44,9 @@ public:
   explicit TrackManager(atools::sql::SqlDatabase *trackDatabase, atools::sql::SqlDatabase *navDatabase);
   virtual ~TrackManager() override;
 
+  TrackManager(const TrackManager& other) = delete;
+  TrackManager& operator=(const TrackManager& other) = delete;
+
   /* Clears database and loads the given tracks.
    * onlyValid: Do not load tracks that are currently not valid. */
   void loadTracks(const atools::track::TrackVectorType& tracks, bool onlyValid);

@@ -48,6 +48,9 @@ public:
   explicit WebController(QWidget *parent = nullptr);
   virtual ~WebController() override;
 
+  WebController(const WebController& other) = delete;
+  WebController& operator=(const WebController& other) = delete;
+
   /* Start the server if not already done. Ignored if already runnging. */
   void startServer();
 

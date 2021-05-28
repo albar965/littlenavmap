@@ -46,6 +46,9 @@ public:
   UserdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
   virtual ~UserdataSearch() override;
 
+  UserdataSearch(const UserdataSearch& other) = delete;
+  UserdataSearch& operator=(const UserdataSearch& other) = delete;
+
   /* All state saving is done through the widget state */
   virtual void saveState() override;
   virtual void restoreState() override;

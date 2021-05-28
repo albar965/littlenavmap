@@ -54,6 +54,9 @@ public:
   ElevationProvider(QObject *parent, const Marble::ElevationModel *model);
   virtual ~ElevationProvider() override;
 
+  ElevationProvider(const ElevationProvider& other) = delete;
+  ElevationProvider& operator=(const ElevationProvider& other) = delete;
+
   /* Elevation in meter. Only for offline data. */
   float getElevationMeter(const atools::geo::Pos& pos);
 

@@ -54,6 +54,9 @@ public:
   InfoController(MainWindow *parent);
   virtual ~InfoController() override;
 
+  InfoController(const InfoController& other) = delete;
+  InfoController& operator=(const InfoController& other) = delete;
+
   /* Populates all tabs in the information dock with the given results. Only one airport is shown
    * but multiple navaids can be shown in the tab.
    *  Raises all related windows and tabs and scrolls to top. */

@@ -44,6 +44,9 @@ public:
   ApronGeometryCache();
   ~ApronGeometryCache();
 
+  ApronGeometryCache(const ApronGeometryCache& other) = delete;
+  ApronGeometryCache& operator=(const ApronGeometryCache& other) = delete;
+
   /* Get apron geometry in screen coordinates from the cache or create it from map::MapApron.
    * Combined key is apron ID, zoom and draw fast flag */
   QPainterPath getApronGeometry(const map::MapApron& apron, float zoomDistanceMeter, bool fast);

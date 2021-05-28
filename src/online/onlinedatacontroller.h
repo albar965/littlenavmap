@@ -75,6 +75,9 @@ public:
   OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent);
   virtual ~OnlinedataController() override;
 
+  OnlinedataController(const OnlinedataController& other) = delete;
+  OnlinedataController& operator=(const OnlinedataController& other) = delete;
+
   /* Start download and after downloading timer which triggers recurring download */
   void startProcessing();
 
