@@ -38,8 +38,13 @@
       margin: 0;
     }
 
-    #interactionoptions, #preventstandbyform, #refreshform {
+    #preventstandbyform, #airportform {
       font-size: 13.333px;
+      margin-left: 20px;
+    }
+
+    p {
+      margin: 0;
     }
 
     input[type="radio"] , input[type="checkbox"]{
@@ -68,17 +73,17 @@
     }
 
     #preventstandbyVideoContainer {
-      width: 60px;
-      height: 45px;
+      width: 48px;
+      height: 36px;
       display: inline-block;
       vertical-align: middle;
       overflow: hidden;
     }
 
     #preventstandbyVideo {
-      margin: -1px;
-      width: calc(100% + 2px);
-      height: calc(100% + 2px);
+      margin-left: -1px;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       opacity: 0;
       transition: opacity .5s;
@@ -110,7 +115,7 @@
       <div style="white-space:nowrap;overflow:auto">
         <form id="refreshform" name="refreshform">
           <p>
-            <span style="vertical-align:middle;display:inline-block;text-align:center;margin:-7px 0;"><input type="range" min="0" max="120" step="1" value="0" oninput="refreshPage();document.querySelector('#refreshvalue').textContent=this.value" id="refreshselect" style="width:121px"><br><label>refresh every <span id="refreshvalue" style="width:25px;text-align:right;display:inline-block">0</span> s</label></span> <span><button type="button" onclick="reloadMap()">Now</button> <button type="button" onclick="submitMapUserCmd()" style="margin-left:20px">User Aircraft</button> <button type="button" onclick="submitMapRouteCmd()">Flight Plan</button></span>
+            <span style="vertical-align:middle;display:inline-block;text-align:center;margin:-7px 0;"><input type="range" min="0" max="120" step="1" value="0" oninput="refreshPage();document.querySelector('#refreshvalue').textContent=this.value" id="refreshselect" style="width:200px"><br><label style="font-size:11px;display:block;margin-top:-3px">refresh every <span id="refreshvalue" style="width:21px;text-align:right;display:inline-block">0</span> s</label></span> <span style="margin-left:10px"><button type="button" onclick="reloadMap()">Now</button> <button type="button" onclick="submitMapUserCmd()" style="margin-left:20px">User Aircraft</button> <button type="button" onclick="submitMapRouteCmd()">Flight Plan</button></span>
           </p>
         </form>
         <form id="airportform" action="javascript:submitMapAirportCmd()" name="airportform">
