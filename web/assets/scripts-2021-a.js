@@ -220,7 +220,7 @@ function injectUpdates(origin) {
     }
 
     ocw.checkRefresh = function() {
-      if(refreshTypeWAC.checked && refreshvalue > 0) {
+      if(refreshTypeWAC.checked && refresher.value > 0) {
         iAParent.setAttribute("disabled", "");
       } else {
         iAParent.removeAttribute("disabled");
