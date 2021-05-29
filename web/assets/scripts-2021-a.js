@@ -215,8 +215,17 @@ function injectUpdates(origin) {
     retrievedState = retrieveState("refreshinterval");
     if(retrievedState !== null) {
       refresher.value = retrievedState;
+      refresher.dispatchEvent(new Event("change"));
       refresher.dispatchEvent(new Event("input"));
     }
+
+    ocw.checkRefresh = function() {
+      if(refreshTypeWAC.checked && refreshvalue > 0) {
+        iAParent.setAttribute("disabled", "");
+      } else {
+        iAParent.removeAttribute("disabled");
+      }
+    };
 
     ocw.centerMapOnAircraft = function() {
       updateMapImage("mapcmd=user&distance=" + getZoomDistance() + "&cmd", defaultMapQuality);
