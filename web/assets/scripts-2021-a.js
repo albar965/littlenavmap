@@ -21,7 +21,7 @@ function injectUpdates(origin) {
     refresher.addEventListener("change", function() {
       storeState("refreshprogressinterval", this.selectedIndex);
     });
-    var refreshInterval = retrieveState("refreshprogressinterval");
+    var refreshInterval = retrieveState("refreshprogressinterval", null);
     if(refreshInterval !== null) {
       refresher.selectedIndex = refreshInterval;
       refresher.dispatchEvent(new Event("change"));
@@ -142,8 +142,9 @@ function injectUpdates(origin) {
         storeState("preventingstandby", false);
       }
     };
-    if(retrieveState("preventingstandby")) {       // default is unchecked
-      ocd.querySelector("#preventstandby").click();
+    var preventStandby = ocd.querySelector("#preventstandby");
+    if(retrieveState("preventingstandby", preventStandby.checked) !== preventStandby.checked) {
+      preventStandby.click();
     }
 
     ocw.toggleRetinaMap = function(innerorigin) {
@@ -156,8 +157,9 @@ function injectUpdates(origin) {
       }
       ocw.reloadMap(true);
     }
-    if(!retrieveState("retinaon")) {              // default is checked
-      ocd.querySelector("#retinaToggle").click();
+    var retinaToggle = ocd.querySelector("#retinaToggle");
+    if(retrieveState("retinaon", retinaToggle.checked) !== retinaToggle.checked) {
+      retinaToggle.click();
     }
 
     // only called for auto refresh, page initialisation now reloadMap
@@ -200,7 +202,7 @@ function injectUpdates(origin) {
     centerDistance.addEventListener("change", function() {
       storeState("centerdistance", this.value);
     });
-    var retrievedState = retrieveState("centerdistance");
+    var retrievedState = retrieveState("centerdistance", null);
     if(retrievedState !== null) {
       centerDistance.value = retrievedState;
       ocd.querySelector('#refreshvalue2').textContent = retrievedState;
@@ -208,11 +210,11 @@ function injectUpdates(origin) {
     refreshTypeWAC.addEventListener("click", function() {
       storeState("refreshwithaircraft", this.checked);
     });
-    refreshTypeWAC.checked = retrieveState("refreshwithaircraft");
+    refreshTypeWAC.checked = retrieveState("refreshwithaircraft", false);
     refresher.addEventListener("change", function() {
       storeState("refreshinterval", this.value);
     });
-    retrievedState = retrieveState("refreshinterval");
+    retrievedState = retrieveState("refreshinterval", null);
     if(retrievedState !== null) {
       refresher.value = retrievedState;
       refresher.dispatchEvent(new Event("change"));
@@ -308,10 +310,10 @@ function injectUpdates(origin) {
     sessionStorage.setItem(key + "__type", typeof state === "boolean" ? "1" : typeof state === "number" ? "2" : "");
   }
 
-  function retrieveState(key) {
+  function retrieveState(key, defaultValue) {
     var type = sessionStorage.getItem(key + "__type");
     var value = sessionStorage.getItem(key);
-    return type === "1" ? value === "1" : type === "2" ? parseFloat(value) : value;
+    return value === null ? defaultValue : type === "1" ? value === "1" : type === "2" ? parseFloat(value) : value;
   }
 
 }

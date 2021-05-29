@@ -15,6 +15,10 @@
       touch-action: none;
     }
 
+    body {
+      overflow: hidden;   /* prevent a peculiar disabled vertical scrollbar when retina disabled and header horizontally scrolled; this is a fullscreen nobodyscroll ui anyway */
+    }
+
     .indicator-scrollable-toright, .indicator-scrollable-toleft {
       position: relative;
     }
@@ -110,6 +114,8 @@
       display: inline-block;
       vertical-align: middle;
       overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
     }
 
     #preventstandbyVideo {
