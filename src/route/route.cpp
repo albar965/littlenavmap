@@ -2498,7 +2498,13 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
              customApproach && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
             entry.setIdent(leg.getProcedureLeg().fixIdent);
           else
-            entry.setIdent(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
+          {
+            if(msfs)
+              // More relaxed than FSX
+              entry.setIdent(atools::fs::util::adjustMsfsUserWpName(leg.getProcedureLeg().displayText.join(" ")));
+            else
+              entry.setIdent(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
+          }
         }
       } // if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) || ...
 
