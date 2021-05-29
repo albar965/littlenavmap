@@ -1,11 +1,13 @@
 #alternative {
   height: 100%;
+  touch-action: none;
 }
 
 #alternative body {
   margin: 0;
   width: 100%;
   height: 100%;
+  touch-action: none;
 }
 
 #mainContainer {
