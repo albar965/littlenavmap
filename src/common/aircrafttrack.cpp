@@ -54,6 +54,7 @@ AircraftTrack::~AircraftTrack()
 }
 
 AircraftTrack::AircraftTrack(const AircraftTrack& other)
+  : QList<at::AircraftTrackPos>(other)
 {
   lastUserAircraft = new atools::fs::sc::SimConnectUserAircraft;
   this->operator=(other);
