@@ -48,6 +48,7 @@ struct AircraftTrackPos
   {
   }
 
+  /* Create an invalid position which is used as a marker for separate trail segments */
   AircraftTrackPos(quint32 time, bool ground)
     : timestamp(time), onGround(ground)
   {
@@ -72,7 +73,10 @@ Q_DECLARE_TYPEINFO(at::AircraftTrackPos, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(at::AircraftTrackPos);
 
 /*
- * Stores the track of the flight simulator aircraft
+ * Stores the track of the flight simulator aircraft.
+ *
+ * Points where the track is interrupted (new flight) are indicated by invalid coordinates.
+ * Warping at altitude does not interrupt a track.
  */
 class AircraftTrack :
   private QList<at::AircraftTrackPos>

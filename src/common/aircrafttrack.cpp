@@ -194,6 +194,11 @@ bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft&
         {
           for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
             removeFirst();
+
+          // Remove invalid segments
+          while(!isEmpty() && !first().isValid())
+            removeFirst();
+
           pruned = true;
         }
         append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
