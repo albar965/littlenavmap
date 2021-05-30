@@ -1761,7 +1761,8 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       // Remove duplicates in flight plan and route
       route.updateAll();
 
-      flightplan.setCruisingAltitude(atools::roundToInt(Unit::rev(altitudeFt, Unit::altFeetF)));
+      // Set altitude in local units
+      flightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(altitudeFt)));
 
       route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
 
