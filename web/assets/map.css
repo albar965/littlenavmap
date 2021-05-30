@@ -1,0 +1,177 @@
+html, body {
+  touch-action: none;
+}
+
+body {
+  overflow: hidden;   /* prevent a peculiar disabled vertical scrollbar when retina disabled and header horizontally scrolled; this is a fullscreen nobodyscroll ui anyway */
+}
+
+
+.indicator-scrollable-toright, .indicator-scrollable-toleft {
+  position: relative;
+}
+
+.indicator-scrollable-toright::after, .indicator-scrollable-toleft::before {
+  position: absolute;
+  top: 0;
+  z-index: 300;
+  content: "";
+  display: block;
+  width: 53px;
+  pointer-events: none;
+  height: 100%;
+  border-radius: 27px;
+  z-index: -1;
+}
+
+.indicator-scrollable-toleft::before {
+  left: 0;
+  box-shadow: -4px 0 5px 0 rgba(255, 79, 0, .5);
+}
+
+.indicator-scrollable-toright::after {
+  right: 0;
+  box-shadow: 4px 0 5px 0 rgba(255, 79, 0, .5);
+}
+
+
+form, .formparts {
+  font-size: 13.333px;
+  margin-left: 20px;
+}
+
+form:first-of-type, .formparts:first-of-type {
+  margin-left: 0;
+}
+
+
+.slider-container {
+  vertical-align: middle;
+  display: inline-block;
+  text-align: center;
+  margin: -7px 0;
+}
+
+.slider-container + button {
+  margin-left: 10px;
+}
+
+
+[content]::before {
+  content: attr(content);
+  color: #f50;
+  outline: 1px solid grey;
+}
+
+[content="0"]::before {
+  color: inherit;
+  outline: 0;
+}
+
+
+input[type="radio"] , input[type="checkbox"]{
+  margin: 0px 0 0px 8px;
+  vertical-align: -2px;
+}
+
+input:not([type=text]), button, label[for] {
+  cursor: pointer;
+}
+
+
+#refreshWithAircraft {
+  transition: all 1.5s;
+}
+
+.enlarge {
+  transform: scale(2.5) !important;
+  outline: 1px solid #f50;
+}
+
+
+[data-shift="up"] {
+  cursor: url(../images/point-up.cur), auto;
+}
+
+[data-shift="left"] {
+  cursor: url(../images/point-left.cur), auto;
+}
+
+[data-shift="right"] {
+  cursor: url(../images/point-right.cur), auto;
+}
+
+[data-shift="down"] {
+  cursor: url(../images/point-down.cur), auto;
+}
+
+
+#preventstandbyVideoContainer {
+  width: 48px;
+  height: 36px;
+  display: inline-block;
+  vertical-align: middle;
+  border: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+
+#interactionParent {
+  display: flex;
+}
+
+#interactionParent[disabled] {
+  cursor: not-allowed;
+  position: relative;
+}
+
+#interactionParent[disabled]:hover::before {
+  content: "Automap (refresh with Aircraft in center) enabled";
+  display: table;
+  position: absolute;
+  left: 1.2vw;
+  top: 1.2vw;
+  z-index: 3;
+  background: lightyellow;
+  padding: .8vw;
+  border: 1px solid #000;
+  box-shadow: 0 0 0 .4vw rgba(255,0,0,.5);
+  color: #000;
+}
+
+@media (min-width: 1281px) {
+  #interactionParent[disabled]:hover::before {
+    font-size: .8vw;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1280px) {
+  #interactionParent[disabled]:hover::before {
+    font-size: 1.8vw;
+  }
+}
+
+@media (max-width: 767px) {
+  #interactionParent[disabled]:hover::before {
+    font-size: 3.3vw;
+  }
+}
+
+#interactionParent[disabled] #mapcontainer {
+  pointer-events: none;
+}
+
+
+#mapcontainer {
+  z-index: 1;
+  position: relative;
+  width: 100%;
+}
+
+
+@media (max-resolution: 96dpi) {
+  #retinaOption {
+    display: none;
+  }
+}

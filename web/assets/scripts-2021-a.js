@@ -75,7 +75,7 @@ function injectUpdates(origin) {
       clearTimeout(imageRequestTimeout);                            // only let the last size from resizing trigger a map update
       imageRequestTimeout = setTimeout(function() {
         mapElement.style.display = "none";                          // to get dimensions of parent unaffected by prior existing larger image enlarging parent when resizing
-        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&distance=" + getZoomDistance() + "&cmd" : "reload", defaultMapQuality);
+        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&distance=" + getZoomDistance() + "&cmd" : "distance=" + getZoomDistance() + "&reload", defaultMapQuality);
         mapElement.style.display = "block";
       }, force ? 0 : 50);
     };
@@ -173,7 +173,7 @@ function injectUpdates(origin) {
           // Set interval timer for periodical reload
           ocw.timeoutHandle = ocw.setInterval(function() {
             if(mapImageLoaded) {                                  // on short intervals with high-res images on slower server machines, the previous image might not have been created yet by the server and a new request results in cancellation of the old processing possibly resulting in an image never getting delivered
-              updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&distance=" + getZoomDistance() + "&cmd" : "reload", defaultMapQuality);
+              updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&distance=" + getZoomDistance() + "&cmd" : "distance=" + getZoomDistance() + "&reload", defaultMapQuality);
             }
           }, ocw.currentInterval * 1000);
         }
@@ -226,7 +226,7 @@ function injectUpdates(origin) {
 
     // override default function to stay within our new ui look
     ocw.submitMapRouteCmd = function() {
-      handleAutomap(function(){updateMapImage("mapcmd=route&cmd", defaultMapQuality)});
+      handleAutomap(function(){updateMapImage("mapcmd=route&distance=" + getZoomDistance() + "&cmd", defaultMapQuality)});
     };
 
     // override default function to stay within our new ui look
@@ -234,7 +234,7 @@ function injectUpdates(origin) {
       handleAutomap(function(){updateMapImage("mapcmd=airport&airport=" + airportText.value + "&distance=" + getZoomDistance() + "&cmd", defaultMapQuality)});
     };
 
-    var standbyPreventionVideo = ocd.querySelector("#preventstandbyVideo");    // iOS need video with audio track to have it work as standby preventer
+    var standbyPreventionVideo = ocd.querySelector("#preventstandbyVideoContainer").contentDocument.querySelector("video");    // iOS need video with audio track to have it work as standby preventer
     standbyPreventionVideo.addEventListener("play", function() {
       standbyPreventionVideo.classList.add("running");
     });
