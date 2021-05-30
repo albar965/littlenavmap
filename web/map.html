@@ -1,205 +1,208 @@
-<?xml version="1.0"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" style="height:100%">
+<html style="height:100%" lang="en">
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <meta name='viewport' content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/assets/styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <link rel="stylesheet" href="/assets/styles.css">
     <title>
       {applicationName} {applicationVersion} - Webserver
     </title>
-    <style type="text/css" media="screen" xml:space="preserve">
-    /*<![CDATA[*/
-    html, body {
-      touch-action: none;
-    }
-
-    body {
-      overflow: hidden;   /* prevent a peculiar disabled vertical scrollbar when retina disabled and header horizontally scrolled; this is a fullscreen nobodyscroll ui anyway */
-    }
-
-    .indicator-scrollable-toright, .indicator-scrollable-toleft {
-      position: relative;
-    }
-
-    .indicator-scrollable-toright::after, .indicator-scrollable-toleft::before {
-      position: absolute;
-      top: 0;
-      z-index: 300;
-      content: "";
-      display: block;
-      width: 4px;
-      height: 100%;
-    }
-
-    .indicator-scrollable-toleft::before {
-      left: 0;
-      box-shadow: 4px 0 5px 0 rgba(255, 79, 0, .5);
-    }
-
-    .indicator-scrollable-toright::after {
-      right: 0;
-      box-shadow: -4px 0 5px 0 rgba(255, 79, 0, .5);
-    }
-
-    form, .formparts {
-      font-size: 13.333px;
-      margin-left: 20px;
-    }
-
-    form:first-of-type, .formparts:first-of-type {
-      margin-left: 0;
-    }
-
-    .slider-container {
-      vertical-align: middle;
-      display: inline-block;
-      text-align: center;
-      margin: -7px 0;
-    }
-
-    .slider-container + button {
-      margin-left: 10px;
-    }
-
-    [content]::before {
-      content: attr(content);
-      color: #f50;
-      outline: 1px solid grey;
-    }
-
-    [content="0"]::before {
-      color: inherit;
-      outline: 0;
-    }
-
-    input[type="radio"] , input[type="checkbox"]{
-      margin: 0px 0 0px 8px;
-      vertical-align: -2px;
-    }
-
-    input:not([type=text]), button, label[for] {
-      cursor: pointer;
-    }
-
-    #refreshWithAircraft {
-      transition: all 1.5s;
-    }
-
-    .enlarge {
-      transform: scale(2.5) !important;
-      outline: 1px solid #f50;
-    }
-
-    [data-shift="up"] {
-      cursor: url(images/point-up.cur), auto;
-    }
-
-    [data-shift="left"] {
-      cursor: url(images/point-left.cur), auto;
-    }
-
-    [data-shift="right"] {
-      cursor: url(images/point-right.cur), auto;
-    }
-
-    [data-shift="down"] {
-      cursor: url(images/point-down.cur), auto;
-    }
-
-    #preventstandbyVideoContainer {
-      width: 48px;
-      height: 36px;
-      display: inline-block;
-      vertical-align: middle;
-      overflow: hidden;
-      pointer-events: none;
-      opacity: 0;
-    }
-
-    #preventstandbyVideo {
-      margin-left: -1px;
-      width: calc(100% - 1px);
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      transition: opacity .5s;
-    }
-
-    .running {
-      opacity: 1 !important;
-    }
-
-    #interactionParent {
-      display: flex;
-    }
-
-    #interactionParent[disabled] {
-      cursor: not-allowed;
-      position: relative;
-    }
-
-    #interactionParent[disabled]:hover::before {
-      content: "Automap (refresh with aircraft in center) enabled";
-      display: table;
-      position: absolute;
-      left: 1.2vw;
-      top: 1.2vw;
-      z-index: 3;
-      background: lightyellow;
-      padding: .8vw;
-      border: 1px solid #000;
-      box-shadow: 0 0 0 .4vw rgba(255,0,0,.5);
-      color: #000;
-      font-size: .8vw;
-    }
-
-    #interactionParent[disabled] #mapcontainer {
-      pointer-events: none;
-    }
-
-    #mapcontainer {
-      z-index: 1;
-      position:relative;
-      width: 100%;
-    }
-
-    #map {
-      box-shadow: 0px 0px 18px #000000;
-      border-radius: 25px;
-      margin: 0em;
-    }
-
-    #navigation {
-      z-index: 2;
-      position:absolute;
-      bottom: 0;
-      right: 0;
-      margin: 0;
-    }
-
-    #navtable {
-      margin: 0;
-    }
-
-    @media (max-resolution: 96dpi) {
-      #retinaOption {
-        display: none;
+    <style>
+      html, body {
+        touch-action: none;
       }
-    }
 
-    /*]]>*/
+      body {
+        overflow: hidden;   /* prevent a peculiar disabled vertical scrollbar when retina disabled and header horizontally scrolled; this is a fullscreen nobodyscroll ui anyway */
+      }
+
+
+      .indicator-scrollable-toright, .indicator-scrollable-toleft {
+        position: relative;
+      }
+
+      .indicator-scrollable-toright::after, .indicator-scrollable-toleft::before {
+        position: absolute;
+        top: 0;
+        z-index: 300;
+        content: "";
+        display: block;
+        width: 53px;
+        pointer-events: none;
+        height: 100%;
+        border-radius: 27px;
+        z-index: -1;
+      }
+
+      .indicator-scrollable-toleft::before {
+        left: 0;
+        box-shadow: -4px 0 5px 0 rgba(255, 79, 0, .5);
+      }
+
+      .indicator-scrollable-toright::after {
+        right: 0;
+        box-shadow: 4px 0 5px 0 rgba(255, 79, 0, .5);
+      }
+
+
+      form, .formparts {
+        font-size: 13.333px;
+        margin-left: 20px;
+      }
+
+      form:first-of-type, .formparts:first-of-type {
+        margin-left: 0;
+      }
+
+
+      .slider-container {
+        vertical-align: middle;
+        display: inline-block;
+        text-align: center;
+        margin: -7px 0;
+      }
+
+      .slider-container + button {
+        margin-left: 10px;
+      }
+
+
+      [content]::before {
+        content: attr(content);
+        color: #f50;
+        outline: 1px solid grey;
+      }
+
+      [content="0"]::before {
+        color: inherit;
+        outline: 0;
+      }
+
+
+      input[type="radio"] , input[type="checkbox"]{
+        margin: 0px 0 0px 8px;
+        vertical-align: -2px;
+      }
+
+      input:not([type=text]), button, label[for] {
+        cursor: pointer;
+      }
+
+
+      #refreshWithAircraft {
+        transition: all 1.5s;
+      }
+
+      .enlarge {
+        transform: scale(2.5) !important;
+        outline: 1px solid #f50;
+      }
+
+
+      [data-shift="up"] {
+        cursor: url(images/point-up.cur), auto;
+      }
+
+      [data-shift="left"] {
+        cursor: url(images/point-left.cur), auto;
+      }
+
+      [data-shift="right"] {
+        cursor: url(images/point-right.cur), auto;
+      }
+
+      [data-shift="down"] {
+        cursor: url(images/point-down.cur), auto;
+      }
+
+
+      #preventstandbyVideoContainer {
+        width: 48px;
+        height: 36px;
+        display: inline-block;
+        vertical-align: middle;
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 0;
+      }
+
+      #preventstandbyVideo {
+        margin-left: -1px;
+        width: calc(100% - 1px);
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity .5s;
+      }
+
+      .running {
+        opacity: 1 !important;
+      }
+
+
+      #interactionParent {
+        display: flex;
+      }
+
+      #interactionParent[disabled] {
+        cursor: not-allowed;
+        position: relative;
+      }
+
+      #interactionParent[disabled]:hover::before {
+        content: "Automap (refresh with Aircraft in center) enabled";
+        display: table;
+        position: absolute;
+        left: 1.2vw;
+        top: 1.2vw;
+        z-index: 3;
+        background: lightyellow;
+        padding: .8vw;
+        border: 1px solid #000;
+        box-shadow: 0 0 0 .4vw rgba(255,0,0,.5);
+        color: #000;
+      }
+
+      @media (min-width: 1281px) {
+        #interactionParent[disabled]:hover::before {
+          font-size: .8vw;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 1280px) {
+        #interactionParent[disabled]:hover::before {
+          font-size: 1.8vw;
+        }
+      }
+
+      @media (max-width: 767px) {
+        #interactionParent[disabled]:hover::before {
+          font-size: 3.3vw;
+        }
+      }
+
+      #interactionParent[disabled] #mapcontainer {
+        pointer-events: none;
+      }
+
+
+      #mapcontainer {
+        z-index: 1;
+        position: relative;
+        width: 100%;
+      }
+
+
+      @media (max-resolution: 96dpi) {
+        #retinaOption {
+          display: none;
+        }
+      }
     </style>
-    <script type="text/javascript" src="/assets/scripts.js" xml:space="preserve">
-    </script>
-    <script type="text/javascript" xml:space="preserve">
-    //<![CDATA[
-
+    <script src="/assets/scripts.js"></script>
+    <script type="text/javascript" >
       window.timeoutHandle = 0;
       window.currentInterval = -1;
-
-    //]]>
     </script>
   </head>
   <body id="mapPage" onresize="reloadMap()" style="margin:0;height:100%;display:flex;flex-direction:column">
@@ -244,8 +247,8 @@
       </div>
     </div>
     <div id="interactionParent" style="flex:1 0">
-      <div id="mapcontainer" onclick="submitMapCmd2(event)">
-        <img id="map" src="images/littlenavmap.svg" alt="Map" style="width:100%;height:100%;object-fit:contain;display:none;box-shadow:none;border-radius:0">
+      <div id="mapcontainer" onclick="handleInteraction(event)">
+        <img id="map" src="images/littlenavmap.svg" alt="Map" style="width:100%;height:100%;object-fit:contain;display:none">
       </div>
     </div>
   </body>

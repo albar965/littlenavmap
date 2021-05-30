@@ -117,7 +117,7 @@ function submitMapRouteCmd() {
 }
 
 /*
- * Toggles to and from the alternative UI
+ * Toggles to and from the legacy UI
  */
 function toggleLegacyUI() {
   var activeUI = sessionStorage.getItem("activeUI");

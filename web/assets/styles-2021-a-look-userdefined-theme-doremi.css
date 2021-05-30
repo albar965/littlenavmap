@@ -24,22 +24,22 @@
 }
 
 /* specific buttons */
-#alternative #buttonMap {
+#ui-2021-a #buttonMap {
   background: #d00;
 }
-#alternative #buttonFlightPlan {
+#ui-2021-a #buttonFlightPlan {
   background: #e70;
 }
-#alternative #buttonAircraft {
+#ui-2021-a #buttonProgress {
   background: #fd0;
 }
-#alternative #buttonProgress {
+#ui-2021-a #buttonAircraft {
   background: #070;
 }
-#alternative #buttonAirport {
+#ui-2021-a #buttonAirport {
   background: #03b;
 }
-#alternative #buttonHelp {
+#ui-2021-a #buttonHelp {
   background: #41c;
 }
 
@@ -47,24 +47,24 @@
 .active {
   filter: brightness(2) !important;
 }
-#alternative #buttonMap.active  {
+#ui-2021-a #buttonMap.active  {
   background: #d00 !important;
 }
-#alternative #buttonFlightPlan.active  {
+#ui-2021-a #buttonFlightPlan.active  {
   background: #e70 !important;
   text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000 !important;
 }
-#alternative #buttonAircraft.active  {
+#ui-2021-a #buttonProgress.active  {
   background: #fd0 !important;
   text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000 !important;
 }
-#alternative #buttonProgress.active  {
+#ui-2021-a #buttonAircraft.active  {
   background: #070 !important;
 }
-#alternative #buttonAirport.active  {
+#ui-2021-a #buttonAirport.active  {
   background: #03b !important;
 }
-#alternative #buttonHelp.active  {
+#ui-2021-a #buttonHelp.active  {
   background: #41c !important;
 }
 
