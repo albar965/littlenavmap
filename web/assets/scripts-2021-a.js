@@ -1,3 +1,5 @@
+sessionStorage.setItem("activeUI", "2021-a");
+
 /*
  * adds look and functionality updates for the original HTML to the document loaded in the iframe origin
  */
