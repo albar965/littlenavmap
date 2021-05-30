@@ -27,10 +27,10 @@
           <button id="buttonHelp"><a href="{helpUrl}" target="contentiframe">Help</a></button>
         </div>
         <div id="toggleOptionsContainer">
-          <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)" class="has-legend">
+          <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)">
             <div id="toolbarsOptions">
               <form>
-                <fieldset onchange="setToolbarPosition(event)">
+                <fieldset class="has-legend" onchange="setToolbarPosition(event)">
                   <legend>Position</legend>
                   <div class="input-block">
                     <input type="radio" id="toolbarPositionTop" name="position" value="top" checked><label for="toolbarPositionTop">top</label>
