@@ -351,7 +351,7 @@ private:
   void updateWindowLabel();
 
   void doubleClick(const QModelIndex& index);
-  void showAtIndex(int index);
+  void showAtIndex(int index, bool info, bool map, bool doubleClick);
 
   void tableContextMenu(const QPoint& pos);
 

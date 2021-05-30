@@ -1068,7 +1068,7 @@ void ProcedureSearch::showOnMapSelected()
 {
   // ui->actionSearchProcedureShowOnMap
   if(currentAirportSim.isValid())
-    emit showRect(currentAirportSim.bounding, false);
+    emit showRect(currentAirportSim.bounding, false /* doubleClick */);
 }
 
 const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(ProcData& procData, MapProcedureRef& ref,

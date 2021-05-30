@@ -1952,26 +1952,32 @@ void RouteController::doubleClick(const QModelIndex& index)
   if(index.isValid())
   {
     qDebug() << "mouseDoubleClickEvent";
-    showAtIndex(index.row());
+    showAtIndex(index.row(), true /* info */, true /* map */, true /* doubleClick */);
   }
 }
 
-void RouteController::showAtIndex(int index)
+void RouteController::showAtIndex(int index, bool info, bool map, bool doubleClick)
 {
   if(index >= 0 && index < map::INVALID_INDEX_VALUE)
   {
     const RouteLeg& routeLeg = route.value(index);
     if(routeLeg.isValid())
     {
-      if(routeLeg.getMapObjectType() == map::AIRPORT)
-        emit showRect(routeLeg.getAirport().bounding, true);
-      else
-        emit showPos(routeLeg.getPosition(), 0.f, true);
+      if(map)
+      {
+        if(routeLeg.getMapObjectType() == map::AIRPORT)
+          emit showRect(routeLeg.getAirport().bounding, doubleClick);
+        else
+          emit showPos(routeLeg.getPosition(), 0.f, doubleClick);
+      }
 
-      map::MapResult result;
-      mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg.getId(),
-                                 false /* airport from nav database */);
-      emit showInformation(result);
+      if(info)
+      {
+        map::MapResult result;
+        mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg.getId(),
+                                   false /* airport from nav database */);
+        emit showInformation(result);
+      }
     }
   }
 }
@@ -4717,7 +4723,7 @@ void RouteController::flightplanLabelLinkActivated(const QString& link)
   if(url.scheme() == "lnm")
   {
     if(url.host() == "showdeparture")
-      showAtIndex(route.getDepartureAirportLegIndex());
+      showAtIndex(route.getDepartureAirportLegIndex(), true /* info */, true /* map */, false /* doubleClick */);
     else if(url.host() == "showdepartureparking")
     {
       const RouteLeg& departureAirportLeg = route.getDepartureAirportLeg();
@@ -4725,9 +4731,10 @@ void RouteController::flightplanLabelLinkActivated(const QString& link)
         emit showPos(departureAirportLeg.getDepartureParking().getPosition(), 0.f, false /* doubleClick */);
       else if(departureAirportLeg.getDepartureStart().isValid())
         emit showPos(departureAirportLeg.getDepartureStart().getPosition(), 0.f, false /* doubleClick */);
+      showAtIndex(route.getDepartureAirportLegIndex(), true /* info */, false /* map */, false /* doubleClick */);
     }
     else if(url.host() == "showdestination")
-      showAtIndex(route.getDestinationAirportLegIndex());
+      showAtIndex(route.getDestinationAirportLegIndex(), true /* info */, true /* map */, false /* doubleClick */);
   }
 }
 
