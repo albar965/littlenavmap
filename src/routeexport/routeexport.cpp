@@ -891,6 +891,39 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
   return false;
 }
 
+bool RouteExport::routeExportFslabsMulti(const RouteExportFormat& format)
+{
+  // C:\Users\Public\Documents\FSLabs Data\Routes
+
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidateMulti(format))
+  {
+    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".pln"));
+    if(!routeFile.isEmpty())
+    {
+      try
+      {
+        Route route = buildAdjustedRoute(rf::DEFAULT_OPTS);
+        flightplanIO->savePln(route.getFlightplan(), routeFile);
+      }
+      catch(atools::Exception& e)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleException(e);
+        return false;
+      }
+      catch(...)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+        return false;
+      }
+
+      formatExportedCallback(format, routeFile);
+      return true;
+    }
+  }
+  return false;
+}
+
 bool RouteExport::routeExportVfpMan()
 {
   return routeExportVfpInternal(exportFormatMap->getForManualSave(rexp::VFP), "Route/Vfp");

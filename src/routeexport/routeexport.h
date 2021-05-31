@@ -193,6 +193,9 @@ public:
   /* TFDi Design 717 */
   bool routeExportTfdiMulti(const RouteExportFormat& format);
 
+  /* Flight Sim Labs A320 */
+  bool routeExportFslabsMulti(const RouteExportFormat& format);
+
   /* End of methods for multiexport ========================================================= */
 
   /* Check if route has valid departure  and destination and departure parking.

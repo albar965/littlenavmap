@@ -184,6 +184,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[QWRTE       ].CB(bind(&RouteExport::routeExportQwRteMulti,        routeExport, _1));
   (*this)[MDR         ].CB(bind(&RouteExport::routeExportMdrMulti,          routeExport, _1));
   (*this)[TFDI        ].CB(bind(&RouteExport::routeExportTfdiMulti,         routeExport, _1));
+  (*this)[FSLABS      ].CB(bind(&RouteExport::routeExportFslabsMulti,       routeExport, _1));
   /* *INDENT-ON* */
 
 #undef CB
@@ -250,6 +251,7 @@ void RouteExportFormatMap::init()
   INS(QWRTE,        RF(QWRTE,        AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("QualityWings")                                                    ));
   INS(MDR,          RF(MDR,          AIRPORTS,         tr("mdr"),             tr("Aircraft"),  tr("Leonardo Maddog X")                                               ));
   INS(TFDI,         RF(TFDI,         AIRPORTS,         tr("xml"),             tr("Aircraft"),  tr("TFDi Design 717")                                                 ));
+  INS(FSLABS,       RF(FSLABS,       AIRPORTS,         tr("pln"),             tr("Aircraft"),  tr("Flight Sim Labs A320")                                            ));
   /* *INDENT-ON* */
 
 #undef RF
@@ -368,6 +370,11 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[QWRTE       ].DP(fsxP3dBasePath);
   (*this)[MDR         ].DP(fsxP3dBasePath);
   (*this)[TFDI        ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "TFDi_Design_717" + SEP + "Documents" + SEP + "Company Routes");
+#if defined(Q_OS_WIN32)
+  (*this)[FSLABS      ].DP(QString("C:") + SEP + "Users" + SEP + "Public" + SEP + "Documents" + SEP + "FSLabs Data" + SEP + "Routes"); // No variable for public documents
+#else
+  (*this)[FSLABS      ].DP(documents);
+#endif
   /* *INDENT-ON* */
 #undef DP
 
