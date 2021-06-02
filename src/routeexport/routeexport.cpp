@@ -291,30 +291,50 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    bool msfs = format.getType() == rexp::PLNMSFS;
-
     // Use always same settings prefix for MSFS independent of scenery library selection
     // Other simulators share same PLN settings prefix also independent of scenery library
-    QString shortName = msfs ? atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS) : "Pln";
+    QString shortName = format.getType() == rexp::PLNMSFS ?
+                        atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS) : "Pln";
 
     QString routeFile = exportFile(format, "Route/Pln" + shortName,
-                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(format, ".pln", msfs),
+                                   NavApp::getCurrentSimulatorFilesPath(),
+                                   buildDefaultFilename(format, ".pln", format.getType() == rexp::PLNMSFS),
                                    false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
     {
-      bool annotated = format.getType() == rexp::PLNANNOTATED;
-
       using namespace std::placeholders;
-      auto func = msfs ?
-                  std::bind(&FlightplanIO::savePlnMsfs, flightplanIO, _1, _2) :
-                  (annotated ?
-                   std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2) :
-                   std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
-
-      if(exportFlighplan(routeFile, msfs ? rf::DEFAULT_OPTS_MSFS : rf::DEFAULT_OPTS_NO_PROC, func))
+      bool result = false;
+      switch(format.getType())
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").arg(annotated ? tr("annotated ") : QString()));
+        case rexp::PLNANNOTATED:
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
+                                   std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2));
+          break;
+
+        case rexp::PLN:
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
+                                   std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
+          break;
+
+        case rexp::PLNMSFS:
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS,
+                                   std::bind(&FlightplanIO::savePlnMsfs, flightplanIO, _1, _2));
+          break;
+
+        case rexp::PLNISG:
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC | rf::ISG_USER_WP_NAMES,
+                                   std::bind(&FlightplanIO::savePlnIsg, flightplanIO, _1, _2));
+          break;
+
+        default:
+          qWarning() << Q_FUNC_INFO << "Unexpected format for PLN export" << format.getType();
+      }
+
+      if(result)
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").
+                                     arg(format.getType() == rexp::PLNANNOTATED ? tr("annotated ") : QString()));
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -742,8 +762,8 @@ bool RouteExport::routeExportBbsMulti(const RouteExportFormat& format)
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::saveBbsPln, flightplanIO, _1,
-                                                                        _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
+                         std::bind(&FlightplanIO::saveBbsPln, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -891,10 +911,8 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
   return false;
 }
 
-bool RouteExport::routeExportFslabsMulti(const RouteExportFormat& format)
+bool RouteExport::routeExportIsgMulti(const RouteExportFormat& format)
 {
-  // C:\Users\Public\Documents\FSLabs Data\Routes
-
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
@@ -903,8 +921,8 @@ bool RouteExport::routeExportFslabsMulti(const RouteExportFormat& format)
     {
       try
       {
-        Route route = buildAdjustedRoute(rf::DEFAULT_OPTS);
-        flightplanIO->savePln(route.getFlightplan(), routeFile);
+        Route route = buildAdjustedRoute(rf::DEFAULT_OPTS | rf::ISG_USER_WP_NAMES);
+        flightplanIO->savePlnIsg(route.getFlightplan(), routeFile);
       }
       catch(atools::Exception& e)
       {

@@ -184,7 +184,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[QWRTE       ].CB(bind(&RouteExport::routeExportQwRteMulti,        routeExport, _1));
   (*this)[MDR         ].CB(bind(&RouteExport::routeExportMdrMulti,          routeExport, _1));
   (*this)[TFDI        ].CB(bind(&RouteExport::routeExportTfdiMulti,         routeExport, _1));
-  (*this)[FSLABS      ].CB(bind(&RouteExport::routeExportFslabsMulti,       routeExport, _1));
+  (*this)[PLNISG      ].CB(bind(&RouteExport::routeExportIsgMulti,          routeExport, _1));
   /* *INDENT-ON* */
 
 #undef CB
@@ -211,7 +211,7 @@ void RouteExportFormatMap::init()
                                                                                                       "Note that using this option is the same as using "
                                                                                                       "\"Save\" or \"Save as\" in the file menu.")                   ));
   INS(PLN,          RF(PLN,          AIRPORTS|PARKING, tr("pln"),             tr("Simulator"), tr("FSX and Prepar3D")                                                ));
-  INS(PLNMSFS,      RF(PLNMSFS,      AIRPORTS/*|PARKING*/, tr("pln"),         tr("Simulator"), tr("Microsoft Flight Simulator 2020")                                 ));
+  INS(PLNMSFS,      RF(PLNMSFS,      AIRPORTS|PARKING, tr("pln"),             tr("Simulator"), tr("Microsoft Flight Simulator 2020")                                 ));
   INS(PLNANNOTATED, RF(PLNANNOTATED, AIRPORTS|PARKING, tr("pln"),             tr("Simulator"), tr("FSX and Prepar3D annotated\nOnly for old Little Navmap versions.")));
   INS(FMS3,         RF(FMS3,         AIRPORTS,         tr("fms"),             tr("Simulator"), tr("X-Plane FMS 3\nOld limited format.")                              ));
   INS(FMS11,        RF(FMS11,        AIRPORTS|CYCLE,   tr("fms"),             tr("Simulator"), tr("X-Plane FMS 11")                                                  ));
@@ -251,7 +251,7 @@ void RouteExportFormatMap::init()
   INS(QWRTE,        RF(QWRTE,        AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("QualityWings")                                                    ));
   INS(MDR,          RF(MDR,          AIRPORTS,         tr("mdr"),             tr("Aircraft"),  tr("Leonardo Maddog X")                                               ));
   INS(TFDI,         RF(TFDI,         AIRPORTS,         tr("xml"),             tr("Aircraft"),  tr("TFDi Design 717")                                                 ));
-  INS(FSLABS,       RF(FSLABS,       AIRPORTS,         tr("pln"),             tr("Aircraft"),  tr("Flight Sim Labs A320")                                            ));
+  INS(PLNISG,       RF(PLNISG,       AIRPORTS,         tr("pln"),             tr("FMS"),       tr("ISG Integrated Simavionics gauges")                               ));
   /* *INDENT-ON* */
 
 #undef RF
@@ -370,11 +370,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[QWRTE       ].DP(fsxP3dBasePath);
   (*this)[MDR         ].DP(fsxP3dBasePath);
   (*this)[TFDI        ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "TFDi_Design_717" + SEP + "Documents" + SEP + "Company Routes");
-#if defined(Q_OS_WIN32)
-  (*this)[FSLABS      ].DP(QString("C:") + SEP + "Users" + SEP + "Public" + SEP + "Documents" + SEP + "FSLabs Data" + SEP + "Routes"); // No variable for public documents
-#else
-  (*this)[FSLABS      ].DP(documents);
-#endif
+  (*this)[PLNISG      ].DP(fsxP3dBasePath + SEP + "ISG" + SEP + "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
   /* *INDENT-ON* */
 #undef DP
 

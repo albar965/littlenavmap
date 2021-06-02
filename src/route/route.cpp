@@ -32,6 +32,7 @@
 #include "fs/util/fsutil.h"
 #include "route/routealtitude.h"
 #include "fs/perf/aircraftperf.h"
+#include "fs/util/coordinates.h"
 #include "settings/settings.h"
 
 #include <QBitArray>
@@ -2654,6 +2655,21 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       plan.setRouteType(atools::fs::pln::LOW_ALTITUDE);
     else
       plan.setRouteType(atools::fs::pln::HIGH_ALTITUDE);
+  }
+
+  if(options.testFlag(rf::ISG_USER_WP_NAMES))
+  {
+    for(int i = 0; i < entries.size(); i++)
+    {
+      // <ATCWaypoint id="3924N11657W">
+      // <ATCWaypointType>User</ATCWaypointType>
+      // <WorldPosition>N39° 24' 0.01",W116° 57' 0.00",+010000.00</WorldPosition>
+      // </ATCWaypoint>
+
+      FlightplanEntry& entry = entries[i];
+      if(entry.getWaypointType() == atools::fs::pln::entry::USER)
+        entry.setIdent(atools::fs::util::toDegMinFormat(entry.getPosition()));
+    }
   }
 
   route.updateRouteCycleMetadata();

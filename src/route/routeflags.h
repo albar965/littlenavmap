@@ -41,6 +41,8 @@ enum RouteAdjustOption
                         * Also adds airport information to waypoints from simulator database.  */
   SAVE_LNMPLN = 1 << 11, /* Ignore menu options to save procedures or airways as waypoints */
 
+  ISG_USER_WP_NAMES = 1 << 12, /* Modified user waypoint names for ISG */
+
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
 

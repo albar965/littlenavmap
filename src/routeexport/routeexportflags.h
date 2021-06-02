@@ -34,7 +34,7 @@ enum RouteExportType
 namespace rexp {
 
 /* Enum for all export formats. Order in multiexport dialog list is defined by order in this enumeration.
- *  Do not change ids */
+ * Do not change ids. Only append new ids and do not reuse. */
 enum RouteExportFormatType : quint16
 {
   /* Simulators ================ */
@@ -43,7 +43,7 @@ enum RouteExportFormatType : quint16
 
   PLN = 0, /* FSX/P3D XML PLN format */
   PLNANNOTATED = 1, /* Save as above but with annotations for procedures as used by LNM before 2.4.5 */
-  PLNMSFS = 31, /* Microsoft Flight Simulator 2020 */ // LAST VALUE
+  PLNMSFS = 31, /* Microsoft Flight Simulator 2020 */
   FMS3 = 2, /* Old X-Plane FMS 3 */
   FMS11 = 3, /* New X-Plane FMS 11 */
   FLIGHTGEAR = 4, /* FlightGear XML */
@@ -65,6 +65,7 @@ enum RouteExportFormatType : quint16
   /* FMC ================ */
   XFMC = 12, /* X-FMC */
   UFMC = 13, /* UFMC */
+  PLNISG = 38, /* Integrated Simavionics / ISG - modified FSX PLN */
 
   /* Aircraft ================ */
   FLP = 14, /* Aerosoft Airbus FLP */
@@ -83,14 +84,13 @@ enum RouteExportFormatType : quint16
   QWRTE = 24, /* QualityWings Aircraft RTE */
   MDR = 25, /* Leonardo Maddog X */
   TFDI = 26, /* TFDi Design 717 */
-  FSLABS = 38, /* FSLabs A320 - FSX PLN */
 
   /* Other ================ */
   EFBR = 27, /* AivlaSoft EFB */
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
-  HTML = 29 /* Export as HTML page */
+  HTML = 29, /* Export as HTML page */
 
-         // Next = 39
+  // Next = 39
 };
 
 /* Flags for export format. Some flags are saved to the configuration,

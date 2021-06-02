@@ -193,8 +193,8 @@ public:
   /* TFDi Design 717 */
   bool routeExportTfdiMulti(const RouteExportFormat& format);
 
-  /* Flight Sim Labs A320 */
-  bool routeExportFslabsMulti(const RouteExportFormat& format);
+  /* Integrated Simavionics / ISG - FSX/PLN format with modified user waypoints */
+  bool routeExportIsgMulti(const RouteExportFormat& format);
 
   /* End of methods for multiexport ========================================================= */
 
@@ -238,7 +238,10 @@ signals:
   void  optionsUpdated();
 
 private:
+  /* Saves all FSX/P3D PLN based formats */
   bool routeExportInternalPln(const RouteExportFormat& format);
+
+  /* Saves all Aerosoft FLP variations */
   bool routeExportInternalFlp(const RouteExportFormat& format, bool crj, bool msfs);
 
   /* Formats that have no export method in FlightplanIO */
